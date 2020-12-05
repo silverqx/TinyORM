@@ -59,6 +59,20 @@ namespace Tiny
         with(const QString &relation)
         { return with(QVector<WithItem> {{relation}}); }
 
+        /*! Delete the model from the database. */
+        bool remove();
+        /*! Delete the model from the database. */
+        inline bool deleteModel()
+        { return remove(); }
+        // TODO cpp check all int types and use std::size_t where appropriate silverqx
+        // WARNING id should be Model::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
+        /*! Destroy the models for the given IDs. */
+        static std::size_t
+        destroy(const QVector<QVariant> &ids);
+        static inline std::size_t
+        destroy(const QVariant id)
+        { return destroy({id}); }
+
         /*! Get a new query builder for the model's table. */
         inline std::unique_ptr<TinyBuilder<Model>> newQuery()
         { return newQueryWithoutScopes(); }
@@ -240,6 +254,15 @@ namespace Tiny
         template<typename Related>
         QString guessBelongsToRelation() const;
 
+        /*! Perform the actual delete query on this model instance. */
+        void performDeleteOnModel();
+
+        /*! Set the keys for a save update query. */
+        TinyBuilder<Model> &
+        setKeysForSaveQuery(TinyBuilder<Model> &query);
+        /*! Get the primary key value for a save query. */
+        QVariant getKeyForSaveQuery() const;
+
         /*! The connection name for the model. */
         QString u_connection {""};
         /*! The primary key for the model. */
@@ -304,6 +327,69 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::remove()
+    {
+        // TODO future add support for attributes casting silverqx
+//        $this->mergeAttributesFromClassCasts();
+
+        if (getKeyName().isEmpty())
+            throw OrmError("No primary key defined on model.");
+
+        /* If the model doesn't exist, there is nothing to delete so we'll just return
+           immediately and not do anything else. Otherwise, we will continue with a
+           deletion process on the model, firing the proper events, and so forth. */
+        if (!exists)
+            // TODO api different silverqx
+            return false;
+
+        // TODO future add support for model events silverqx
+//        if ($this->fireModelEvent('deleting') === false) {
+//            return false;
+//        }
+
+        // TODO add support for model timestamps silverqx
+        /* Here, we'll touch the owning models, verifying these timestamps get updated
+           for the models. This will allow any caching to get broken on the parents
+           by the timestamp. Then we will go ahead and delete the model instance. */
+//        $this->touchOwners();
+
+        // TODO performDeleteOnModel() and return value, check logic here, eg what happens when no model is delete and combinations silverqx
+        performDeleteOnModel();
+
+        /* Once the model has been deleted, we will fire off the deleted event so that
+           the developers may hook into post-delete operations. We will then return
+           a boolean true as the delete is presumably successful on the database. */
+//        $this->fireModelEvent('deleted', false);
+
+        return true;
+    }
+
+    // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
+    template<typename Model, typename ...AllRelations>
+    size_t
+    BaseModel<Model, AllRelations...>::destroy(const QVector<QVariant> &ids)
+    {
+        if (ids.isEmpty())
+            return 0;
+
+        /* We will actually pull the models from the database table and call delete on
+           each of them individually so that their events get fired properly with a
+           correct set of attributes in case the developers wants to check these. */
+        Model instance;
+        const auto &key = instance.getKeyName();
+
+        std::size_t count = 0;
+
+        // TODO diff call whereIn() on Model vs TinyBuilder silverqx
+        // Ownership of a unique_ptr()
+        for (auto &model : instance.newQuery()->whereIn(key, ids).get())
+            if (model.remove())
+                ++count;
+
+        return count;
+    }
+
+    template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
     BaseModel<Model, AllRelations...>::newQueryWithoutScopes()
     {
@@ -365,8 +451,6 @@ namespace Tiny
     {
         return getConnection().queryBuilder();
     }
-
-
 
     template<typename Model, typename ...AllRelations>
     template<class Related, template<typename> typename Container>
@@ -770,6 +854,36 @@ namespace Tiny
     {
         if (!model().u_relations.contains(name))
             throw OrmError("Undefined relation key (in relations) : " + name);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::performDeleteOnModel()
+    {
+        // TODO ask eg on stackoverflow, if I have to save unique_ptr to local variable or pass it right away down silverqx
+        // Ownership of a unique_ptr()
+        setKeysForSaveQuery(*newModelQuery()).remove();
+
+        this->exists = false;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    TinyBuilder<Model> &
+    BaseModel<Model, AllRelations...>::setKeysForSaveQuery(TinyBuilder<Model> &query)
+    {
+        return query.where(getKeyName(), QStringLiteral("="), getKeyForSaveQuery());
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant BaseModel<Model, AllRelations...>::getKeyForSaveQuery() const
+    {
+        // TODO reason, why m_attributes and m_original should be QHash silverqx
+        const auto itOriginal = ranges::find(m_original, true,
+                                             [&key = getKeyName()](const auto &original)
+        {
+            return original.key == key;
+        });
+
+        return itOriginal != ranges::end(m_original) ? itOriginal->value : getKey();
     }
 
 } // namespace Orm::Tiny

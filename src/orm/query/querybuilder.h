@@ -72,12 +72,17 @@ namespace Orm::Query
         update(const QVector<UpdateItem> &values) const;
 
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery>
-        deleteRow() const;
+        inline std::tuple<int, QSqlQuery>
+        deleteRow() const
+        { return remove(); }
+        /*! Delete records from the database. */
         std::tuple<int, QSqlQuery>
         remove() const;
-        std::tuple<int, QSqlQuery>
-        deleteRow(const quint64 id);
+        /*! Delete records from the database. */
+        inline std::tuple<int, QSqlQuery>
+        deleteRow(const quint64 id)
+        { return remove(id); }
+        /*! Delete records from the database. */
         std::tuple<int, QSqlQuery>
         remove(const quint64 id);
 

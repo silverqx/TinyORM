@@ -119,20 +119,10 @@ Builder::update(const QVector<UpdateItem> &values) const
                                                                         values)));
 }
 
-std::tuple<int, QSqlQuery> Builder::deleteRow() const
-{
-    return remove();
-}
-
 std::tuple<int, QSqlQuery> Builder::remove() const
 {
     return m_db.remove(m_grammar.compileDelete(*this),
                        cleanBindings(m_grammar.prepareBindingsForDelete(getRawBindings())));
-}
-
-std::tuple<int, QSqlQuery> Builder::deleteRow(const quint64 id)
-{
-    return remove(id);
 }
 
 std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)

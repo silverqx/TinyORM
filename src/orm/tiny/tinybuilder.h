@@ -36,6 +36,9 @@ namespace Relations
     public:
         Builder(const QSharedPointer<QueryBuilder> query, Model &model);
 
+        /*! Create a new instance of the model being queried. */
+        Model newModelInstance(const QVector<AttributeItem> &attributes = {});
+
         /*! Execute the query as a "select" statement. */
         QVector<Model> get(const QStringList &columns = {"*"});
 
@@ -44,27 +47,21 @@ namespace Relations
         /*! Execute the query and get the first result. */
         std::optional<Model> first(const QStringList &columns = {"*"});
 
-        /*! Get the hydrated models without eager loading. */
-        QVector<Model> getModels(const QStringList &columns = {"*"});
-        /*! Eager load the relationships for the models. */
-        void eagerLoadRelations(QVector<Model> &models);
-        /*! Eagerly load the relationship on a set of models. */
-        template<typename Related>
-        void eagerLoadRelation(QVector<Model> &models, const WithItem &relationItem);
-        /*! Get the relation instance for the given relation name. */
-        template<typename Related>
-        auto getRelation(const QString &name);
-        /*! Create a collection of models from plain arrays. */
-        QVector<Model> hydrate(QSqlQuery result);
-
         /*! Set the relationships that should be eager loaded. */
         Builder &with(const QVector<WithItem> &relations);
         /*! Set the relationships that should be eager loaded. */
         inline Builder &with(const QString &relation)
         { return with({relation}); }
 
-        /*! Create a new instance of the model being queried. */
-        Model newModelInstance(const QVector<AttributeItem> &attributes = {});
+        // TODO future add onDelete (and similar) callback feature silverqx
+        /*! Delete records from the database. */
+        inline std::tuple<int, QSqlQuery>
+        remove()
+        { return toBase().deleteRow(); }
+        /*! Delete records from the database. */
+        inline std::tuple<int, QSqlQuery>
+        deleteModels()
+        { return remove(); }
 
         /* Proxy methods to the QueryBuilder */
         // TODO for all proxy methods can be used parameter pack, check consequences silverqx
@@ -92,6 +89,17 @@ namespace Relations
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const QString &column);
 
+        /*! Add a "where in" clause to the query. */
+        Builder &whereIn(const QString &column, const QVector<QVariant> &values,
+                         const QString &condition = "and", bool nope = false);
+        /*! Add an "or where in" clause to the query. */
+        Builder &orWhereIn(const QString &column, const QVector<QVariant> &values);
+        /*! Add a "where not in" clause to the query. */
+        Builder &whereNotIn(const QString &column, const QVector<QVariant> &values,
+                            const QString &condition = "and");
+        /*! Add an "or where not in" clause to the query. */
+        Builder &orWhereNotIn(const QString &column, const QVector<QVariant> &values);
+
         /*! Set the "limit" value of the query. */
         Builder &limit(int value);
         /*! Alias to set the "limit" value of the query. */
@@ -103,12 +111,31 @@ namespace Relations
         /*! Set the limit and offset for a given page. */
         Builder &forPage(int page, int perPage = 30);
 
+        /*! Get the hydrated models without eager loading. */
+        QVector<Model> getModels(const QStringList &columns = {"*"});
+        /*! Eager load the relationships for the models. */
+        void eagerLoadRelations(QVector<Model> &models);
+        /*! Eagerly load the relationship on a set of models. */
+        template<typename Related>
+        void eagerLoadRelation(QVector<Model> &models, const WithItem &relationItem);
+        /*! Get the relation instance for the given relation name. */
+        template<typename Related>
+        auto getRelation(const QString &name);
+        /*! Create a collection of models from plain arrays. */
+        QVector<Model> hydrate(QSqlQuery result);
+
         /*! Get the model instance being queried. */
         inline Model &getModel()
         { return m_model; }
         /*! Get the underlying query builder instance. */
         inline QueryBuilder &getQuery() const
         { return *m_query; }
+
+        /*! Get a base query builder instance. */
+        inline QueryBuilder &toBase() const
+        { return getQuery(); }
+        // TODO future add Query Scopes feature silverqx
+//        { return $this->applyScopes()->getQuery(); }
 
     protected:
         /*! Parse a list of relations into individuals. */
@@ -142,6 +169,13 @@ namespace Relations
     }
 
     template<typename Model>
+    Model Builder<Model>::newModelInstance(const QVector<AttributeItem> &attributes)
+    {
+        return m_model.newInstance(attributes)
+                .setConnection(m_query->getConnection().getName());
+    }
+
+    template<typename Model>
     QVector<Model>
     Builder<Model>::get(const QStringList &columns)
     {
@@ -161,13 +195,6 @@ namespace Relations
     }
 
     template<typename Model>
-    QVector<Model>
-    Builder<Model>::getModels(const QStringList &columns)
-    {
-        return hydrate(std::get<1>(m_query->get(columns)));
-    }
-
-    template<typename Model>
     std::optional<Model>
     Builder<Model>::first(const QStringList &columns)
     {
@@ -180,93 +207,6 @@ namespace Relations
     }
 
     template<typename Model>
-    void Builder<Model>::eagerLoadRelations(QVector<Model> &models)
-    {
-        if (m_eagerLoad.isEmpty())
-            return;
-
-        for (const auto &relation : qAsConst(m_eagerLoad))
-            /* For nested eager loads we'll skip loading them here and they will be set as an
-               eager load on the query to retrieve the relation so that they will be eager
-               loaded on that query, because that is where they get hydrated as models. */
-            if (!relation.name.contains(QChar('.')))
-                m_model.eagerLoadRelationVisitor(relation, *this, models);
-    }
-
-    template<typename Model>
-    template<typename Related>
-    void Builder<Model>::eagerLoadRelation(QVector<Model> &models,
-                                           const WithItem &relationItem)
-    {
-        /* First we will "back up" the existing where conditions on the query so we can
-           add our eager constraints. Then we will merge the wheres that were on the
-           query back to it in order that any where conditions might be specified. */
-        auto relation = getRelation<Related>(relationItem.name);
-
-        relation->addEagerConstraints(models);
-
-        // Add relation contraints defined in a user callback
-//        std::invoke(relationItem.constraints);
-
-        /* Once we have the results, we just match those back up to their parent models
-           using the relationship instance. Then we just return the finished arrays
-           of models which have been eagerly hydrated and are readied for return. */
-        relation->match(relation->initRelation(models, relationItem.name),
-                        relation->getEager(), relationItem.name);
-    }
-
-    template<typename Model>
-    template<typename Related>
-    auto Builder<Model>::getRelation(const QString &name)
-    {
-        const auto &method = m_model.getRelationMethod(name);
-
-        /* We want to run a relationship query without any constrains so that we will
-           not have to remove these where clauses manually which gets really hacky
-           and error prone. We don't want constraints because we add eager ones. */
-        auto relation = Relations::Relation<Model, Related>::noConstraints(
-                    [this, &method]
-        {
-            return std::invoke(std::any_cast<RelationType<Model, Related>>(method),
-                               getModel().newInstance());
-        });
-
-        const auto nested = relationsNestedUnder(name);
-
-        /* If there are nested relationships set on the query, we will put those onto
-           the query instances so that they can be handled after this relationship
-           is loaded. In this way they will all trickle down as they are loaded. */
-        if (nested.size() > 0)
-            relation->getQuery().with(nested);
-
-        return relation;
-    }
-
-    template<typename Model>
-    QVector<Model>
-    Builder<Model>::hydrate(QSqlQuery result)
-    {
-        auto instance = newModelInstance();
-
-        QVector<Model> models;
-
-        while (result.next()) {
-            // Table row
-            QVector<AttributeItem> row;
-
-            // Populate table row with data from the database
-            const auto record = result.record();
-            for (int i = 0; i < record.count(); ++i)
-                row.append({record.fieldName(i), result.value(i)});
-
-            // Create a new model instance from the table row
-            models.append(m_model.newFromBuilder(row));
-        }
-
-        return models;
-    }
-
-    template<typename Model>
     Builder<Model> &
     Builder<Model>::with(const QVector<WithItem> &relations)
     {
@@ -275,13 +215,6 @@ namespace Relations
         ranges::move(eagerLoad, ranges::back_inserter(m_eagerLoad));
 
         return *this;
-    }
-
-    template<typename Model>
-    Model Builder<Model>::newModelInstance(const QVector<AttributeItem> &attributes)
-    {
-        return m_model.newInstance(attributes)
-                .setConnection(m_query->getConnection().getName());
     }
 
     template<typename Model>
@@ -357,6 +290,40 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
+    Builder<Model>::whereIn(const QString &column, const QVector<QVariant> &values,
+                            const QString &condition, bool nope)
+    {
+        m_query->whereIn(column, values, condition, nope);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::orWhereIn(const QString &column, const QVector<QVariant> &values)
+    {
+        m_query->orWhereIn(column, values);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereNotIn(const QString &column, const QVector<QVariant> &values,
+                               const QString &condition)
+    {
+        m_query->whereNotIn(column, values, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::orWhereNotIn(const QString &column, const QVector<QVariant> &values)
+    {
+        m_query->orWhereNotIn(column, values);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
     Builder<Model>::limit(const int value)
     {
         m_query->limit(value);
@@ -391,6 +358,101 @@ namespace Relations
     {
         m_query->forPage(page, perPage);
         return *this;
+    }
+
+    template<typename Model>
+    QVector<Model>
+    Builder<Model>::getModels(const QStringList &columns)
+    {
+        return hydrate(std::get<1>(m_query->get(columns)));
+    }
+
+    template<typename Model>
+    void Builder<Model>::eagerLoadRelations(QVector<Model> &models)
+    {
+        if (m_eagerLoad.isEmpty())
+            return;
+
+        for (const auto &relation : qAsConst(m_eagerLoad))
+            /* For nested eager loads we'll skip loading them here and they will be set as an
+               eager load on the query to retrieve the relation so that they will be eager
+               loaded on that query, because that is where they get hydrated as models. */
+            if (!relation.name.contains(QChar('.')))
+                m_model.eagerLoadRelationVisitor(relation, *this, models);
+    }
+
+    template<typename Model>
+    template<typename Related>
+    void Builder<Model>::eagerLoadRelation(QVector<Model> &models,
+                                           const WithItem &relationItem)
+    {
+        /* First we will "back up" the existing where conditions on the query so we can
+           add our eager constraints. Then we will merge the wheres that were on the
+           query back to it in order that any where conditions might be specified. */
+        auto relation = getRelation<Related>(relationItem.name);
+
+        relation->addEagerConstraints(models);
+
+        // TODO next add support for std::invoke(relationItem.constraints); silverqx
+        // Add relation contraints defined in a user callback
+//        std::invoke(relationItem.constraints);
+
+        /* Once we have the results, we just match those back up to their parent models
+           using the relationship instance. Then we just return the finished arrays
+           of models which have been eagerly hydrated and are readied for return. */
+        relation->match(relation->initRelation(models, relationItem.name),
+                        relation->getEager(), relationItem.name);
+    }
+
+    template<typename Model>
+    template<typename Related>
+    auto Builder<Model>::getRelation(const QString &name)
+    {
+        const auto &method = m_model.getRelationMethod(name);
+
+        /* We want to run a relationship query without any constrains so that we will
+           not have to remove these where clauses manually which gets really hacky
+           and error prone. We don't want constraints because we add eager ones. */
+        auto relation = Relations::Relation<Model, Related>::noConstraints(
+                    [this, &method]
+        {
+            return std::invoke(std::any_cast<RelationType<Model, Related>>(method),
+                               getModel().newInstance());
+        });
+
+        const auto nested = relationsNestedUnder(name);
+
+        /* If there are nested relationships set on the query, we will put those onto
+           the query instances so that they can be handled after this relationship
+           is loaded. In this way they will all trickle down as they are loaded. */
+        if (nested.size() > 0)
+            relation->getQuery().with(nested);
+
+        return relation;
+    }
+
+    template<typename Model>
+    QVector<Model>
+    Builder<Model>::hydrate(QSqlQuery result)
+    {
+        auto instance = newModelInstance();
+
+        QVector<Model> models;
+
+        while (result.next()) {
+            // Table row
+            QVector<AttributeItem> row;
+
+            // Populate table row with data from the database
+            const auto record = result.record();
+            for (int i = 0; i < record.count(); ++i)
+                row.append({record.fieldName(i), result.value(i)});
+
+            // Create a new model instance from the table row
+            models.append(m_model.newFromBuilder(row));
+        }
+
+        return models;
     }
 
     template<typename Model>

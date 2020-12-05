@@ -8,7 +8,7 @@ class TestOrm
 public:
     TestOrm() = default;
 
-    using KeyType = quint64;
+//    using KeyType = quint64;
 
     void run();
 

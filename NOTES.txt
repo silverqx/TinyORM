@@ -1,0 +1,15 @@
+TODOs which look bad in code:
+-----------------------------
+
+ - future add onDelete (and similar) callback feature
+
+/*! Delete records from the database. */
+void deleteModel()
+{
+    // TODO future add onDelete (and similar) callback feature silverqx
+//    if (isset($this->onDelete)) {
+//        return call_user_func($this->onDelete, $this);
+//    }
+
+    return toBase().deleteRow();
+}

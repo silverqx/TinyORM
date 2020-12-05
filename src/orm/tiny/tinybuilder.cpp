@@ -1,7 +1,5 @@
 #include "tinybuilder.h"
 
-#include "orm/tiny/basemodel.h"
-
 #ifdef MANGO_COMMON_NAMESPACE
 namespace MANGO_COMMON_NAMESPACE
 {
