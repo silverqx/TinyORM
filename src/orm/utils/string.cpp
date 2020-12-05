@@ -1,5 +1,12 @@
 #include "string.h"
 
+#ifdef MANGO_COMMON_NAMESPACE
+namespace MANGO_COMMON_NAMESPACE
+{
+#endif
+namespace Orm
+{
+
 QString Utils::String::toSnake(const QString &string)
 {
     static const QRegularExpression regExp1 {"(.)([A-Z][a-z]+)"};
@@ -12,3 +19,8 @@ QString Utils::String::toSnake(const QString &string)
 
     return result.toLower();
 }
+
+} // namespace Orm
+#ifdef MANGO_COMMON_NAMESPACE
+} // namespace MANGO_COMMON_NAMESPACE
+#endif

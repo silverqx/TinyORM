@@ -3,27 +3,32 @@
 
 #include <QRegularExpression>
 
-namespace Utils
+#ifdef MANGO_COMMON_NAMESPACE
+namespace MANGO_COMMON_NAMESPACE
 {
-    namespace Type
+#endif
+namespace Orm::Utils::Type
+{
+    /*! Class name without a namespace and template parameters. */
+    template<typename Type>
+    inline QString classPureBasename()
     {
-        /*! Class name without a namespace and template parameters. */
-        template<typename Type>
-        inline QString classPureBasename()
-        {
-            QRegularExpression re(
-                        QStringLiteral("(?:(?<=^struct )\\w+|(?<=^class )\\w+|(?<=::)\\w+)"
-                                       "(?=<.*>| |$)"));
+        QRegularExpression re(
+                    QStringLiteral("(?:(?<=^struct )\\w+|(?<=^class )\\w+|(?<=::)\\w+)"
+                                   "(?=<.*>| |$)"));
 
-            const auto match = re.match(typeid (Type).name());
+        const auto match = re.match(typeid (Type).name());
 
-            // This should never happen, but who knows 🤔
-            Q_ASSERT_X(match.hasMatch(),
-                       "regex match", "Can not get class base name in getForeignKey().");
+        // This should never happen, but who knows 🤔
+        Q_ASSERT_X(match.hasMatch(),
+                   "regex match", "Can not get class base name in getForeignKey().");
 
-            return match.captured();
-        }
+        return match.captured();
     }
-}
+
+} // namespace Orm::Utils::Type
+#ifdef MANGO_COMMON_NAMESPACE
+} // namespace MANGO_COMMON_NAMESPACE
+#endif
 
 #endif // UTILS_TYPE_H
