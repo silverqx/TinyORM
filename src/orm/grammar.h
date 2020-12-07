@@ -20,6 +20,11 @@ namespace Orm
         /*! Compile an insert ignore statement into SQL. */
         QString compileInsertOrIgnore(const QueryBuilder &query,
                                       const QVector<QVariantMap> &values) const;
+        // TODO postgres, sequence silverqx
+        /*! Compile an insert and get ID statement into SQL. */
+        inline QString
+        compileInsertGetId(const QueryBuilder &query, const QVector<QVariantMap> &values) const
+        { return compileInsert(query, values); }
         /*! Compile an update statement into SQL. */
         QString compileUpdate(const QueryBuilder &query, const QVector<UpdateItem> &values) const;
         /*! Prepare the bindings for an update statement. */

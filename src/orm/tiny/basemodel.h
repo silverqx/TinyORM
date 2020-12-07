@@ -51,6 +51,9 @@ namespace Tiny
         inline static std::unique_ptr<TinyBuilder<Model>> query()
         { return Model().newQuery(); }
 
+        /*! Save the model to the database. */
+        bool save();
+
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Model>>
         with(const QVector<WithItem> &relations);
@@ -119,6 +122,12 @@ namespace Tiny
         /*! Get the value of the model's primary key. */
         inline QVariant getKey() const
         { return getAttribute(getKeyName()); }
+        /*! Get the value indicating whether the IDs are incrementing. */
+        inline bool getIncrementing() const
+        { return model().u_incrementing; }
+        /*! Set whether IDs are incrementing. */
+        inline Model &setIncrementing(const bool value)
+        { model().u_incrementing = value; return model(); }
 
         /*! Fill the model with an array of attributes. */
         Model &fill(const QVector<AttributeItem> &attributes);
@@ -254,6 +263,7 @@ namespace Tiny
         template<typename Related>
         QString guessBelongsToRelation() const;
 
+        /* Others */
         /*! Perform the actual delete query on this model instance. */
         void performDeleteOnModel();
 
@@ -263,8 +273,18 @@ namespace Tiny
         /*! Get the primary key value for a save query. */
         QVariant getKeyForSaveQuery() const;
 
+        /*! Perform a model insert operation. */
+        bool performInsert(const TinyBuilder<Model> &query);
+        /*! Perform any actions that are necessary after the model is saved. */
+        void finishSave(/*array $options*/);
+        /*! Insert the given attributes and set the ID on the model. */
+        void insertAndSetId(const TinyBuilder<Model> &query,
+                            const QVector<AttributeItem> &attributes);
+
         /*! The connection name for the model. */
         QString u_connection {""};
+        /*! Indicates if the IDs are auto-incrementing. */
+        bool u_incrementing = true;
         /*! The primary key for the model. */
         QString u_primaryKey {"id"};
 
@@ -286,7 +306,8 @@ namespace Tiny
         /* HasRelationships */
         /*! The loaded relationships for the model. */
         QHash<QString,
-        std::variant<QVector<AllRelations>..., std::optional<AllRelations>...>> m_relations;
+            std::variant<std::monostate,
+                         QVector<AllRelations>..., std::optional<AllRelations>...>> m_relations;
 
     private:
         /* HasRelationships */
@@ -313,6 +334,51 @@ namespace Tiny
         syncOriginal();
 
         fill(attributes);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::save()
+    {
+//        mergeAttributesFromClassCasts();
+
+        // Ownership of a unique_ptr()
+        auto query = newModelQuery();
+
+        auto saved = false;
+
+        /* If the "saving" event returns false we'll bail out of the save and return
+           false, indicating that the save failed. This provides a chance for any
+           listeners to cancel save operations if validations fail or whatever. */
+//        if (fireModelEvent('saving') === false) {
+//            return false;
+//        }
+
+        /* If the model already exists in the database we can just update our record
+           that is already in this database using the current IDs in this "where"
+           clause to only update this model. Otherwise, we'll just insert them. */
+        if (exists)
+            qt_noop();
+//            saved = isDirty() ? performUpdate(query) : true;
+
+        // If the model is brand new, we'll insert it into our database and set the
+        // ID attribute on the model to the value of the newly inserted row's ID
+        // which is typically an auto-increment value managed by the database.
+        else {
+            saved = performInsert(*query);
+
+            if (const auto &connection = query->getConnection();
+                getConnectionName().isEmpty()
+            )
+                setConnection(connection.getName());
+        }
+
+        /* If the model is successfully saved, we need to do a few more things once
+           that is done. We will call the "saved" method here to run any actions
+           we need to happen after a model gets successfully saved right here. */
+        if (saved)
+            finishSave(/*options*/);
+
+        return saved;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -884,6 +950,68 @@ namespace Tiny
         });
 
         return itOriginal != ranges::end(m_original) ? itOriginal->value : getKey();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::performInsert(const TinyBuilder<Model> &query)
+    {
+//        if (!fireModelEvent('creating'))
+//            return false;
+
+        /* First we'll need to create a fresh query instance and touch the creation and
+           update timestamps on this model, which are maintained by us for developer
+           convenience. After, we will just continue saving these model instances. */
+//        if (usesTimestamps())
+//            updateTimestamps();
+
+        /* If the model has an incrementing key, we can use the "insertGetId" method on
+           the query builder, which will give us back the final inserted ID for this
+           table from the database. Not all tables have to be incrementing though. */
+        const auto &attributes = getAttributes();
+
+        if (getIncrementing())
+            insertAndSetId(query, attributes);
+
+        /* If the table isn't incrementing we'll simply insert these attributes as they
+           are. These attribute arrays must contain an "id" column previously placed
+           there by the developer as the manually determined key for these models. */
+        else
+            if (attributes.isEmpty())
+                return true;
+            else
+                query.insert(attributes);
+
+        /* We will go ahead and set the exists property to true, so that it is set when
+           the created event is fired, just in case the developer tries to update it
+           during the event. This will allow them to do so and run an update here. */
+        this->exists = true;
+
+//        fireModelEvent('created', false);
+
+        return true;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::finishSave()
+    {
+//        fireModelEvent('saved', false);
+
+//        if (isDirty() && ($options['touch'] ?? true))
+//            touchOwners();
+
+        syncOriginal();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::insertAndSetId(
+            const TinyBuilder<Model> &query,
+            const QVector<AttributeItem> &attributes)
+    {
+//        const auto &keyName = getKeyName();
+
+        const auto id = query.insertGetId(attributes/*, keyName*/);
+
+        setAttribute(getKeyName(), id);
     }
 
 } // namespace Orm::Tiny

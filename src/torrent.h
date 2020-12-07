@@ -16,7 +16,7 @@ public:
     /*! The "type" of the primary key ID. */
     using KeyType = quint64;
 
-    Torrent(const QVector<Orm::AttributeItem> &attributes = {});
+    explicit Torrent(const QVector<Orm::AttributeItem> &attributes = {});
 
     std::unique_ptr<
     Orm::Tiny::Relations::Relation<Torrent, TorrentPreviewableFile>>

@@ -78,9 +78,19 @@ namespace
 std::tuple<bool, std::optional<QSqlQuery>>
 Builder::insert(const QVector<QVariantMap> &values) const
 {
+    /* Since every insert gets treated like a batch insert, we will make sure the
+       bindings are structured in a way that is convenient when building these
+       inserts statements by verifying these elements are actually an array. */
     if (values.isEmpty())
         return {true, std::nullopt};
 
+    /* The logic described below is guaranteed by QVariantMap, keys are ordered
+       by default.
+       Here, we will sort the insert keys for every record so that each insert is
+       in the same order for the record. We need to make sure this is the case
+       so there are not any errors or problems when inserting these records. */
+
+    // WARNING cleanBindings() is missing silverqx
     return m_db.insert(m_grammar.compileInsert(*this, values),
                        flatValuesForInsert(values));
 }
@@ -103,12 +113,16 @@ Builder::insertOrIgnore(const QVariantMap &values) const
 
 quint64 Builder::insertGetId(const QVariantMap &values) const
 {
-    auto [ok, query] = insert({values});
+    const QVector<QVariantMap> valuesVector {values};
+
+    auto [ok, query] = m_db.insert(
+            m_grammar.compileInsertGetId(*this, valuesVector),
+            flatValuesForInsert(valuesVector));
 
     if (!ok)
         return 0;
 
-    return query->lastInsertId().toULongLong();
+    return query.lastInsertId().toULongLong();
 }
 
 std::tuple<int, QSqlQuery>

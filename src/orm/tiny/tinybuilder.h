@@ -13,6 +13,7 @@
 #include "orm/tiny/relations/relation.h"
 #include "orm/tiny/relations/belongsto.h"
 #include "orm/tiny/relations/hasmany.h"
+#include "orm/utils/attribute.h"
 
 #ifdef MANGO_COMMON_NAMESPACE
 namespace MANGO_COMMON_NAMESPACE
@@ -52,6 +53,15 @@ namespace Relations
         /*! Set the relationships that should be eager loaded. */
         inline Builder &with(const QString &relation)
         { return with({relation}); }
+
+        /*! Insert new records into the database. */
+        inline std::tuple<bool, std::optional<QSqlQuery>>
+        insert(const QVector<AttributeItem> &attributes) const
+        { return m_query->insert(Utils::Attribute::convertVectorToMap(attributes)); }
+        // TODO primarykey dilema, Model::KeyType vs QVariant silverqx
+        /*! Insert a new record and get the value of the primary key. */
+        inline quint64 insertGetId(const QVector<AttributeItem> &attributes) const
+        { return m_query->insertGetId(Utils::Attribute::convertVectorToMap(attributes)); }
 
         // TODO future add onDelete (and similar) callback feature silverqx
         /*! Delete records from the database. */
@@ -130,6 +140,10 @@ namespace Relations
         /*! Get the underlying query builder instance. */
         inline QueryBuilder &getQuery() const
         { return *m_query; }
+
+        /*! Get a database connection. */
+        inline const DatabaseConnection &getConnection() const
+        { return m_query->getConnection(); }
 
         /*! Get a base query builder instance. */
         inline QueryBuilder &toBase() const

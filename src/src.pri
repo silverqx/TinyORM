@@ -18,7 +18,9 @@ SOURCES += \
     $$PWD/orm/tiny/relations/hasoneormany.cpp \
     $$PWD/orm/tiny/relations/relation.cpp \
     $$PWD/orm/tiny/tinybuilder.cpp\
+    $$PWD/orm/utils/attribute.cpp \
     $$PWD/orm/utils/string.cpp \
+    $$PWD/setting.cpp \
     $$PWD/testorm.cpp \
     $$PWD/torrent.cpp \
     $$PWD/torrentpeer.cpp \
@@ -43,8 +45,10 @@ HEADERS += \
     $$PWD/orm/tiny/relations/hasoneormany.h \
     $$PWD/orm/tiny/relations/relation.h \
     $$PWD/orm/tiny/tinybuilder.h \
+    $$PWD/orm/utils/attribute.h \
     $$PWD/orm/utils/string.h \
     $$PWD/orm/utils/type.h \
+    $$PWD/setting.h \
     $$PWD/testorm.h \
     $$PWD/torrent.h \
     $$PWD/torrentpeer.h \

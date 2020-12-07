@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+#include "setting.h"
 #include "torrent.h"
 #include "torrentpreviewablefile.h"
 #include "torrentpeer.h"
@@ -18,7 +19,7 @@ void TestOrm::run()
 {
 //    anotherTests();
     testTinyOrm();
-//    testQueryBuilder();
+    testQueryBuilder();
 }
 
 void TestOrm::anotherTests()
@@ -142,6 +143,35 @@ void TestOrm::testTinyOrm()
 //    {
 //        auto count = TorrentPreviewableFile::destroy({1007, 1008});
 //        qDebug() << count;
+//        qt_noop();
+//    }
+
+    /* Model::save() insert */
+//    {
+//        TorrentPreviewableFile torrentFiles;
+//        torrentFiles.setAttribute("torrent_id", 1);
+//        torrentFiles.setAttribute("file_index", 11);
+//        torrentFiles.setAttribute("filepath", "test1_file11.mkv");
+//        torrentFiles.setAttribute("size", 2048);
+//        torrentFiles.setAttribute("progress", 250);
+//        auto result = torrentFiles.save();
+//        qt_noop();
+//    }
+
+    /* Model::save() insert - table without autoincrement key */
+//    {
+//        Setting setting;
+//        setting.setAttribute("name", "first");
+//        setting.setAttribute("value", "first value");
+//        auto result = setting.save();
+//        qt_noop();
+//    }
+
+    /* Model::save() insert - empty attributes */
+//    {
+//        Setting setting;
+//        auto result = setting.save();
+//        qDebug() << "save :" << result;
 //        qt_noop();
 //    }
 
@@ -315,6 +345,14 @@ void TestOrm::testQueryBuilder()
 //    qDebug() << "last id :" << id_i;
 //    qt_noop();
 
+    // Empty attributes
+//    {
+//        auto id = m_em.queryBuilder()->table("settings").insertGetId({});
+//        qDebug() << "Insert - empty attributes";
+//        qDebug() << "last id :" << id;
+//        qt_noop();
+//    }
+
 //    const auto id_i = 278;
 //    auto [ok_j, j] = m_em.queryBuilder()->table("torrent_previewable_files").insert({
 //        {{"torrent_id", id_i}, {"file_index", 0}, {"filepath", "abc.mkv"}, {"size", 2048},
@@ -338,7 +376,7 @@ void TestOrm::testQueryBuilder()
 //    }
 //    qt_noop();
 
-//    const auto id_l = 278;
+//    const auto id_l = 1;
 //    auto [ok_l, l] = m_em.queryBuilder()->table("torrent_previewable_files").insertOrIgnore({
 //        {{"torrent_id", id_l}, {"file_index", 2}, {"filepath", "qrs.mkv"}, {"size", 3074},
 //            {"progress", 20}},

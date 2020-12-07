@@ -12,7 +12,7 @@ class TorrentPreviewableFile final : public Orm::Tiny::BaseModel<TorrentPreviewa
 public:
     friend class BaseModel;
 
-    TorrentPreviewableFile(const QVector<Orm::AttributeItem> &attributes = {});
+    explicit TorrentPreviewableFile(const QVector<Orm::AttributeItem> &attributes = {});
 
     /*! Get the torrent record associated with the user. */
     std::unique_ptr<
