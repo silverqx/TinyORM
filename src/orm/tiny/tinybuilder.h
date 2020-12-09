@@ -63,6 +63,11 @@ namespace Relations
         inline quint64 insertGetId(const QVector<AttributeItem> &attributes) const
         { return m_query->insertGetId(Utils::Attribute::convertVectorToMap(attributes)); }
 
+        /*! Update records in the database. */
+        std::tuple<int, QSqlQuery>
+        update(const QVector<UpdateItem> &values) const
+        { return toBase().update(addUpdatedAtColumn(values)); }
+
         // TODO future add onDelete (and similar) callback feature silverqx
         /*! Delete records from the database. */
         inline std::tuple<int, QSqlQuery>
@@ -164,6 +169,12 @@ namespace Relations
         relationsNestedUnder(const QString &topRelationName) const;
         /*! Determine if the relationship is nested. */
         bool isNestedUnder(const QString &topRelation, const QString &nestedRelation) const;
+
+        // TODO timestamps support silverqx
+        /*! Add the "updated at" column to an array of values. */
+        QVector<UpdateItem>
+        addUpdatedAtColumn(const QVector<UpdateItem> &values) const
+        { return values; }
 
         /*! The base query builder instance. */
         const QSharedPointer<QueryBuilder> m_query;

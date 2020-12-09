@@ -18,6 +18,16 @@ Utils::Attribute::convertVectorToMap(const QVector<AttributeItem> &attributes)
     return values;
 }
 
+QVector<UpdateItem>
+Utils::Attribute::convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
+{
+    QVector<UpdateItem> values;
+    for (const auto &attribute : attributes)
+        values.append({attribute.key, attribute.value});
+
+    return values;
+}
+
 } // namespace Orm
 #ifdef MANGO_COMMON_NAMESPACE
 } // namespace MANGO_COMMON_NAMESPACE

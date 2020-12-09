@@ -1,6 +1,8 @@
 #ifndef BASEMODEL_H
 #define BASEMODEL_H
 
+#include <QtSql/QSqlError>
+
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/algorithm/copy.hpp>
 
@@ -151,6 +153,8 @@ namespace Tiny
         QVariant getAttributeValue(const QString &key) const;
         /*! Get an attribute from the $attributes array. */
         QVariant getAttributeFromArray(const QString &key) const;
+        /*! Get the model's raw original attribute values. */
+        QVariant getRawOriginal(const QString &key) const;
         /*! Transform a raw model value using mutators, casts, etc. */
         QVariant transformModelValue(const QString &key, const QVariant &value) const;
         /*! Get a relationship for Many types relation. */
@@ -232,6 +236,23 @@ namespace Tiny
         std::optional<Related>
         getRelationshipFromMethod(const QString &relation);
 
+        /*! Get the attributes that have been changed since last sync. */
+        QVector<AttributeItem> getDirty() const;
+        /*! Determine if the model or any of the given attribute(s) have been modified. */
+        inline bool isDirty(const QVector<AttributeItem> &attributes = {}) const
+        { return hasChanges(getDirty(), attributes); }
+        /*! Determine if any of the given attributes were changed. */
+        bool hasChanges(const QVector<AttributeItem> &changes,
+                        const QVector<AttributeItem> &attributes = {}) const;
+        /*! Get the attributes that were changed. */
+        inline const QVector<AttributeItem> &getChanges() const
+        { return m_changes; }
+        /*! Sync the changed attributes. */
+        inline Model &syncChanges()
+        { m_changes = std::move(getDirty()); return model(); }
+        /*! Determine if the new and old values for a given key are equivalent. */
+        bool originalIsEquivalent(const QString &key) const;
+
         /* HasRelationships */
         /*! Create a new model instance for a related model. */
         template<typename Related>
@@ -275,6 +296,8 @@ namespace Tiny
 
         /*! Perform a model insert operation. */
         bool performInsert(const TinyBuilder<Model> &query);
+        /*! Perform a model insert operation. */
+        bool performUpdate(TinyBuilder<Model> &query);
         /*! Perform any actions that are necessary after the model is saved. */
         void finishSave(/*array $options*/);
         /*! Insert the given attributes and set the ID on the model. */
@@ -302,6 +325,8 @@ namespace Tiny
         QVector<AttributeItem> m_attributes;
         /*! The model attribute's original state. */
         QVector<AttributeItem> m_original;
+        /*! The changed model attributes. */
+        QVector<AttributeItem> m_changes;
 
         /* HasRelationships */
         /*! The loaded relationships for the model. */
@@ -357,8 +382,7 @@ namespace Tiny
            that is already in this database using the current IDs in this "where"
            clause to only update this model. Otherwise, we'll just insert them. */
         if (exists)
-            qt_noop();
-//            saved = isDirty() ? performUpdate(query) : true;
+            saved = isDirty() ? performUpdate(*query) : true;
 
         // If the model is brand new, we'll insert it into our database and set the
         // ID attribute on the model to the value of the newly inserted row's ID
@@ -605,6 +629,89 @@ namespace Tiny
         return relatedModel;
     }
 
+    template<typename Model, typename ...AllRelations>
+    QVector<AttributeItem>
+    BaseModel<Model, AllRelations...>::getDirty() const
+    {
+        QVector<AttributeItem> dirty;
+
+        for (const auto &attribute : getAttributes())
+            if (const auto &key = attribute.key;
+                !originalIsEquivalent(key)
+            )
+                dirty.append({key, attribute.value});
+
+        return dirty;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::hasChanges(const QVector<AttributeItem> &changes,
+                                                       const QVector<AttributeItem> &attributes) const
+    {
+        /* If no specific attributes were provided, we will just see if the dirty array
+           already contains any attributes. If it does we will just return that this
+           count is greater than zero. Else, we need to check specific attributes. */
+        if (attributes.isEmpty())
+            return changes.size() > 0;
+
+        /* Here we will spin through every attribute and see if this is in the array of
+           dirty attributes. If it is, we will return true and if we make it through
+           all of the attributes for the entire array we will return false at end. */
+        for (const auto &attribute : attributes) {
+            // TODO future hasOriginal() silverqx
+            const auto changesContainKey = ranges::contains(changes, true,
+                                                            [&attribute](const auto &changed)
+            {
+                return attribute.key == changed.key;
+            });
+
+            if (changesContainKey)
+                return true;
+        }
+
+        return false;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::originalIsEquivalent(const QString &key) const
+    {
+        // TODO future hasOriginal() silverqx
+        const auto originalContainKey = ranges::contains(m_original, true,
+                                                         [&key](const auto &original)
+        {
+            return original.key == key;
+        });
+
+        if (!originalContainKey)
+            return false;
+
+        const auto attribute = getAttributeFromArray(key);
+        const auto original = getRawOriginal(key);
+
+        if (attribute == original)
+            return true;
+        // TODO next solve how to work with null values and what to do with invalid/unknown values silverqx
+        else if (!attribute.isValid() || attribute.isNull())
+            return false;
+//        else if (isDateAttribute(key)) {
+//            return fromDateTime(attribute) == fromDateTime(original);
+//        else if (hasCast(key, ['object', 'collection']))
+//            return castAttribute(key, attribute) == castAttribute(key, original);
+//        else if (hasCast(key, ['real', 'float', 'double'])) {
+//            if (($attribute === null && $original !== null) || ($attribute !== null && $original === null))
+//                return false;
+
+//            return abs($this->castAttribute($key, $attribute) - $this->castAttribute($key, $original)) < PHP_FLOAT_EPSILON * 4;
+//        } elseif ($this->hasCast($key, static::$primitiveCastTypes)) {
+//            return $this->castAttribute($key, $attribute) ===
+//                   $this->castAttribute($key, $original);
+//        }
+
+//        return is_numeric($attribute) && is_numeric($original)
+//               && strcmp((string) $attribute, (string) $original) === 0;
+        return false;
+    }
+
     // TODO solve different behavior like Eloquent getRelation() silverqx
     // TODO next many relation compiles with Orm::One and exception during runtime occures, solve this during compile, One relation only with Orm::One and many relation type only with Container version silverqx
     template<typename Model, typename ...AllRelations>
@@ -699,7 +806,20 @@ namespace Tiny
     Model &BaseModel<Model, AllRelations...>::setAttribute(
             const QString &key, const QVariant &value)
     {
-        m_attributes.append({key, value});
+        // TODO mistake m_attributes/m_original 😭 silverqx
+        // TODO extract to hasAttribute() silverqx
+        const auto size = m_attributes.size();
+
+        int i;
+        for (i = 0; i < size; ++i)
+            if (m_attributes[i].key == key)
+                break;
+
+        // Not found
+        if (i == size)
+            m_attributes.append({key, value});
+        else
+            m_attributes[i] = {key, value};
 
         return model();
     }
@@ -783,6 +903,22 @@ namespace Tiny
             return {};
 
         return itAttribute->value;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant BaseModel<Model, AllRelations...>::getRawOriginal(const QString &key) const
+    {
+        const auto itOriginal = ranges::find(m_original, true,
+                                              [&key](const auto &original)
+        {
+            return original.key == key;
+        });
+
+        // Not found
+        if (itOriginal == ranges::end(m_original))
+            return {};
+
+        return itOriginal->value;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -955,7 +1091,7 @@ namespace Tiny
     template<typename Model, typename ...AllRelations>
     bool BaseModel<Model, AllRelations...>::performInsert(const TinyBuilder<Model> &query)
     {
-//        if (!fireModelEvent('creating'))
+//        if (!fireModelEvent("creating"))
 //            return false;
 
         /* First we'll need to create a fresh query instance and touch the creation and
@@ -986,7 +1122,44 @@ namespace Tiny
            during the event. This will allow them to do so and run an update here. */
         this->exists = true;
 
-//        fireModelEvent('created', false);
+//        fireModelEvent("created", false);
+
+        return true;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::performUpdate(TinyBuilder<Model> &query)
+    {
+        /* If the updating event returns false, we will cancel the update operation so
+           developers can hook Validation systems into their models and cancel this
+           operation if the model does not pass validation. Otherwise, we update. */
+//        if (!fireModelEvent("updating"))
+//            return false;
+
+        /* First we need to create a fresh query instance and touch the creation and
+           update timestamp on the model which are maintained by us for developer
+           convenience. Then we will just continue saving the model instances. */
+//        if (usesTimestamps())
+//            updateTimestamps();
+
+        /* Once we have run the update operation, we will fire the "updated" event for
+           this model instance. This will allow developers to hook into these after
+           models are updated, giving them a chance to do any special processing. */
+        const auto dirty = getDirty();
+
+        if (!dirty.isEmpty()) {
+            QSqlQuery sqlQuery;
+            std::tie(std::ignore, sqlQuery) =
+                    setKeysForSaveQuery(query).update(
+                        Utils::Attribute::convertVectorToUpdateItem(dirty));
+            // TODO next TinyBuilder return values dilema silverqx
+            if (sqlQuery.lastError().isValid())
+                return false;
+
+            syncChanges();
+
+//            fireModelEvent("updated", false);
+        }
 
         return true;
     }

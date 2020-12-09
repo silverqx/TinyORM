@@ -12,12 +12,21 @@ QString parseExecutedQuery(const QSqlQuery &query)
 {
     auto executedQuery = query.executedQuery();
     const auto boundValues = query.boundValues().values();
+
     for (int i = 0; i < boundValues.size(); ++i) {
         const auto boundValueRaw = boundValues.at(i);
-        // Support for string quoting
-        const auto boundValue = (boundValueRaw.type() == QVariant::Type::String)
-                                ? QStringLiteral("\"%1\"").arg(boundValueRaw.toString())
-                                : boundValueRaw.toString();
+        QString boundValue;
+
+        if (boundValueRaw.isNull())
+            boundValue = "null";
+        else if (!boundValueRaw.isValid())
+            boundValue = "INVALID";
+        else
+            // Support for string quoting
+            boundValue = (boundValueRaw.type() == QVariant::Type::String)
+                         ? QStringLiteral("\"%1\"").arg(boundValueRaw.toString())
+                         : boundValueRaw.toString();
+
         executedQuery.replace(executedQuery.indexOf('?'), 1, boundValue);
     }
 

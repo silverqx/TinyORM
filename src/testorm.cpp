@@ -175,6 +175,41 @@ void TestOrm::testTinyOrm()
 //        qt_noop();
 //    }
 
+    /* Model::save() update - success */
+//    {
+//        auto torrentFile = TorrentPreviewableFile().query()->where("id", "=", 1012).first();
+
+//        torrentFile->setAttribute("file_index", 10);
+//        torrentFile->setAttribute("filepath", "test1_file10.mkv");
+//        torrentFile->setAttribute("progress", 251);
+
+//        auto result = torrentFile->save();
+//        qDebug() << "save :" << result;
+//        qt_noop();
+//    }
+
+    /* Model::save() update - null value */
+    {
+        auto torrentPeer = TorrentPeer().query()->where("id", "=", 4).first();
+
+        torrentPeer->setAttribute("seeds", {});
+
+        auto result = torrentPeer->save();
+        qDebug() << "save :" << result;
+        qt_noop();
+    }
+
+    /* Model::save() update - failed */
+    {
+        auto torrentFile = TorrentPreviewableFile().query()->where("id", "=", 1012).first();
+
+        torrentFile->setAttribute("file_indexx", 11);
+
+        auto result = torrentFile->save();
+        qDebug() << "save :" << result;
+        qt_noop();
+    }
+
     qt_noop();
 }
 

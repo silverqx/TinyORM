@@ -273,7 +273,11 @@ DatabaseConnection::statement(const QString &queryString,
     if (!ok) {
         qDebug() << "Statement in DatabaseConnection::statement() failed :"
                  << query.lastError().text();
+#ifdef MANGO_DEBUG_SQL
+        logQuery(query, timer.elapsed());
+#else
         logQuery(query);
+#endif
     }
 #ifdef MANGO_DEBUG_SQL
     else
@@ -294,11 +298,16 @@ DatabaseConnection::affectingStatement(const QString &queryString,
     timer.start();
 #endif
 
+    // TODO err, throw exceptions when failed, may be configurable by config or compiler directive silverqx
     const auto ok = query.exec();
     if (!ok) {
         qDebug() << "Affecting statement in DatabaseConnection::affectingStatement() failed :"
                  << query.lastError().text();
+#ifdef MANGO_DEBUG_SQL
+        logQuery(query, timer.elapsed());
+#else
         logQuery(query);
+#endif
     }
 #ifdef MANGO_DEBUG_SQL
     else
