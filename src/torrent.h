@@ -55,7 +55,7 @@ private:
     /*! The relations to eager load on every query. */
     QVector<Orm::WithItem> u_with {
 //        {"torrentFiles"},
-        {"torrentPeer"},
+//        {"torrentPeer"},
     };
 
     /*! The connection name for the model. */

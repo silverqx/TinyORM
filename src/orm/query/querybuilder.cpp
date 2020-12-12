@@ -172,6 +172,17 @@ Builder &Builder::orWhere(const QString &column, const QString &comparison,
     return where(column, comparison, value, "or");
 }
 
+Builder &Builder::whereEq(const QString &column, const QVariant &value,
+                          const QString &condition)
+{
+    return where(column, "=", value, condition);
+}
+
+Builder &Builder::orWhereEq(const QString &column, const QVariant &value)
+{
+    return where(column, "=", value, "or");
+}
+
 Builder &Builder::where(const std::function<void(Builder &)> &callback,
                         const QString &condition)
 {
@@ -186,15 +197,12 @@ Builder &Builder::orWhere(const std::function<void (Builder &)> &callback)
     return where(callback, "or");
 }
 
-Builder &Builder::whereEq(const QString &column, const QVariant &value,
-                          const QString &condition)
+Builder &Builder::where(const QVector<WhereItem> &values, const QString &condition)
 {
-    return where(column, "=", value, condition);
-}
-
-Builder &Builder::orWhereEq(const QString &column, const QVariant &value)
-{
-    return where(column, "=", value, "or");
+    /* If the column is an array, we will assume it is the QVector of WhereItem-s
+       and can add them each as a where clause. We will maintain the boolean we
+       received when the method was called and pass it into the nested where. */
+    return addArrayOfWheres(values, condition);
 }
 
 Builder &Builder::whereColumn(const QString &first, const QString &comparison,
@@ -554,6 +562,30 @@ QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings) cons
     return cleanedBindings;
 }
 
+Builder &
+Builder::addArrayOfWheres(const QVector<WhereItem> &values, const QString &condition)
+{
+    return where([&values, &condition](Builder &query)
+    {
+        for (const auto &where : values)
+            query.where(where.column, where.comparison, where.value,
+                        where.condition.isEmpty() ? condition : where.condition);
+
+    }, condition);
+}
+
+Builder &
+Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values, const QString &condition)
+{
+    return where([&values, &condition](Builder &query)
+    {
+        for (const auto &where : values)
+            query.whereColumn(where.first, where.comparison, where.second,
+                              where.condition.isEmpty() ? condition : where.condition);
+
+    }, condition);
+}
+
 QSharedPointer<JoinClause>
 Builder::newJoinClause(const Builder &query, const QString &type, const QString &table) const
 {
@@ -563,13 +595,17 @@ Builder::newJoinClause(const Builder &query, const QString &type, const QString 
 Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> query,
                                       const QString &condition)
 {
-    const auto &rawBindings = query->getRawBindings();
-    Q_ASSERT(rawBindings.contains(BindingType::WHERE));
-    const auto &whereBindings = rawBindings.find(BindingType::WHERE).value();
-    if (whereBindings.size() > 0) {
-        m_wheres.append({.condition = condition, .type = WhereType::NESTED, .nestedQuery = query});
+    if (!(query->m_wheres.size() > 0))
+        return *this;
+
+    m_wheres.append({.condition = condition, .type = WhereType::NESTED,
+                     .nestedQuery = query});
+
+    const auto &whereBindings =
+            query->getRawBindings().find(BindingType::WHERE).value();
+
+    if (whereBindings.size() > 0)
         addBinding(whereBindings, BindingType::WHERE);
-    }
 
     return *this;
 }

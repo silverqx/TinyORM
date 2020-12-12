@@ -5,8 +5,11 @@
 #include <QtSql/QSqlRecord>
 
 #include <range/v3/algorithm/contains.hpp>
+#include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/move.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/remove_if.hpp>
 
 #include "orm/databaseconnection.h"
 #include "orm/query/querybuilder.h"
@@ -42,11 +45,24 @@ namespace Relations
 
         /*! Execute the query as a "select" statement. */
         QVector<Model> get(const QStringList &columns = {"*"});
+        // NOTE Model::KeyType for id silverqx
+        /*! Find a model by its primary key. */
+        std::optional<Model>
+        find(const QVariant &id, const QStringList &columns = {"*"});
 
         /* BuildsQueries */
         // TODO BuildsQueries contains duplicit methods in TinyBuilder and QueryBuilder, make it by multi inheritance, I discovered now, that TinyBuilder will return different types than QueryBuilder, look eg at first() or get(), but investigate if there are cases, when API is same and use multi inheritance patter for this methods silver
         /*! Execute the query and get the first result. */
         std::optional<Model> first(const QStringList &columns = {"*"});
+
+        /* Others */
+        /*! Get the first record matching the attributes or instantiate it. */
+        Model firstOrNew(const QVector<WhereItem> &attributes = {},
+                         const QVector<AttributeItem> &values = {});
+
+        /*! Get the first record matching the attributes or create it. */
+        Model firstOrCreate(const QVector<WhereItem> &attributes = {},
+                            const QVector<AttributeItem> &values = {});
 
         /*! Set the relationships that should be eager loaded. */
         Builder &with(const QVector<WithItem> &relations);
@@ -79,10 +95,12 @@ namespace Relations
         { return remove(); }
 
         /* Proxy methods to the QueryBuilder */
-        // TODO for all proxy methods can be used parameter pack, check consequences silverqx
         /*! Add a basic where clause to the query. */
         Builder &where(const QString &column, const QString &comparison,
                        const QVariant &value, const QString &condition = "and");
+
+        /*! Add an array of basic where clauses to the query. */
+        Builder &where(const QVector<WhereItem> &values, const QString &condition = "and");
 
         /*! Add a "where null" clause to the query. */
         Builder &whereNull(const QStringList &columns = {"*"},
@@ -114,6 +132,11 @@ namespace Relations
                             const QString &condition = "and");
         /*! Add an "or where not in" clause to the query. */
         Builder &orWhereNotIn(const QString &column, const QVector<QVariant> &values);
+
+        /*! Add a where clause on the primary key to the query. */
+        Builder &whereKey(const QVariant &id);
+        /*! Add a where clause on the primary key to the query. */
+        Builder &whereKeyNot(const QVariant &id);
 
         /*! Set the "limit" value of the query. */
         Builder &limit(int value);
@@ -182,6 +205,12 @@ namespace Relations
         Model m_model;
         /*! The relationships that should be eager loaded. */
         QVector<WithItem> m_eagerLoad;
+
+    private:
+        /*! Join attributes for firstOrXx methods. */
+        QVector<AttributeItem>
+        joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
+                                 const QVector<AttributeItem> &values);
     };
 
     template<typename Model>
@@ -221,6 +250,17 @@ namespace Relations
 
     template<typename Model>
     std::optional<Model>
+    Builder<Model>::find(const QVariant &id, const QStringList &columns)
+    {
+//        if (is_array($id) || $id instanceof Arrayable) {
+//            return $this->findMany($id, $columns);
+//        }
+
+        return whereKey(id).first(columns);
+    }
+
+    template<typename Model>
+    std::optional<Model>
     Builder<Model>::first(const QStringList &columns)
     {
         const auto models = take(1).get(columns);
@@ -229,6 +269,38 @@ namespace Relations
             return std::nullopt;
 
         return models.first();
+    }
+
+    template<typename Model>
+    Model
+    Builder<Model>::firstOrNew(const QVector<WhereItem> &attributes,
+                               const QVector<AttributeItem> &values)
+    {
+        auto instance = where(attributes).first();
+
+        // Model found in db
+        if (instance)
+            return *instance;
+
+        return newModelInstance(joinAttributesForFirstOr(attributes, values));
+    }
+
+    template<typename Model>
+    Model
+    Builder<Model>::firstOrCreate(const QVector<WhereItem> &attributes,
+                                  const QVector<AttributeItem> &values)
+    {
+        auto instance = where(attributes).first();
+
+        // Model found in db
+        if (instance)
+            return *instance;
+
+        auto newInstance = newModelInstance(joinAttributesForFirstOr(attributes,
+                                                                      values));
+        newInstance.save();
+
+        return newInstance;
     }
 
     template<typename Model>
@@ -248,6 +320,14 @@ namespace Relations
                           const QVariant &value, const QString &condition)
     {
         m_query->where(column, comparison, value, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::where(const QVector<WhereItem> &values, const QString &condition)
+    {
+        m_query->where(values, condition);
         return *this;
     }
 
@@ -345,6 +425,20 @@ namespace Relations
     {
         m_query->orWhereNotIn(column, values);
         return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereKey(const QVariant &id)
+    {
+        return where(m_model.getQualifiedKeyName(), QStringLiteral("="), id);
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereKeyNot(const QVariant &id)
+    {
+        return where(m_model.getQualifiedKeyName(), QStringLiteral("!="), id);
     }
 
     template<typename Model>
@@ -570,6 +664,32 @@ namespace Relations
     {
         return nestedRelation.contains(QChar('.'))
                 && nestedRelation.startsWith(topRelation + QChar('.'));
+    }
+
+    template<typename Model>
+    QVector<AttributeItem>
+    Builder<Model>::joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
+                                             const QVector<AttributeItem> &values)
+    {
+        // Convert attributes to the QVector<AttributeItem>, so they can be
+        QVector<AttributeItem> attributesConverted;
+        ranges::copy(attributes, ranges::back_inserter(attributesConverted));
+
+        // Attributes which already exist in 'attributes' will be removed from 'values'
+        using namespace ranges;
+        auto valuesFiltered =
+                values | views::remove_if(
+                    [&attributesConverted](const AttributeItem &value)
+        {
+            return ranges::contains(attributesConverted, true,
+                                    [&value](const AttributeItem &attribute)
+            {
+                return attribute.key == value.key;
+            });
+        })
+                | ranges::to<QVector<AttributeItem>>();
+
+        return attributesConverted + valuesFiltered;
     }
 
 } // namespace Orm::Tiny

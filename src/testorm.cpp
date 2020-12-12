@@ -17,6 +17,7 @@ using namespace ranges;
 
 void TestOrm::run()
 {
+//    ctorAggregate();
 //    anotherTests();
     testTinyOrm();
     testQueryBuilder();
@@ -189,29 +190,87 @@ void TestOrm::testTinyOrm()
 //    }
 
     /* Model::save() update - null value */
+//    {
+//        auto torrentPeer = TorrentPeer().query()->where("id", "=", 4).first();
+
+//        torrentPeer->setAttribute("seeds", {});
+
+//        auto result = torrentPeer->save();
+//        qDebug() << "save :" << result;
+//        qt_noop();
+//    }
+
+    /* Model::save() update - failed */
+//    {
+//        auto torrentFile = TorrentPreviewableFile().query()->where("id", "=", 1012).first();
+
+//        torrentFile->setAttribute("file_indexx", 11);
+
+//        auto result = torrentFile->save();
+//        qDebug() << "save :" << result;
+//        qt_noop();
+//    }
+
+    /* Model::find(id) */
+//    {
+//        const auto id = 3;
+//        auto torrentFile = TorrentPreviewableFile().find(id);
+
+//        qDebug() << "torrentFile id :" << id;
+//        qDebug() << torrentFile->getAttribute("filepath");
+//        qt_noop();
+//    }
+
+    /* Model::findWhere(id) */
+//    {
+//        auto torrentFile = TorrentPreviewableFile().whereEq("id", 3)->first();
+//        auto torrentFile1 = TorrentPreviewableFile().firstWhere("id", "=", 4);
+//        auto torrentFile2 = TorrentPreviewableFile().firstWhereEq("id", 5);
+
+//        qt_noop();
+//    }
+
+    /* Model::firstOrNew() */
     {
-        auto torrentPeer = TorrentPeer().query()->where("id", "=", 4).first();
+        auto torrent = Torrent().firstOrNew(
+                           {{"id", 10}},
 
-        torrentPeer->setAttribute("seeds", {});
+                           {{"name", "test10"},
+                            {"size", 20},
+                            {"progress", 800},
+                            {"id", 15}
+                           });
 
-        auto result = torrentPeer->save();
-        qDebug() << "save :" << result;
         qt_noop();
     }
 
-    /* Model::save() update - failed */
+    /* Model::firstOrCreate() */
     {
-        auto torrentFile = TorrentPreviewableFile().query()->where("id", "=", 1012).first();
+        auto torrent = Torrent().firstOrCreate(
+                           {{"name", "test10"}},
 
-        torrentFile->setAttribute("file_indexx", 11);
+                           {{"size", 20},
+                            {"progress", 800},
+                            {"hash", "0679e3af2768cdf52ec84c1f320333f68401dc6e"},
+//                            {"id", 15},
+                           });
 
-        auto result = torrentFile->save();
-        qDebug() << "save :" << result;
+        if (!torrent.exists)
+            // TODO next throw exception really needed here silverqx
+            qDebug() << "Torrent was not created successfuly, name :"
+                     << torrent.getAttribute("name").toString();
+
         qt_noop();
     }
 
     qt_noop();
 }
+
+//OtherTest::OtherTest(AggTest &a)
+//{
+//    name = a.name;
+//    value = a.value;
+//}
 
 void TestOrm::testQueryBuilder()
 {
@@ -309,6 +368,42 @@ void TestOrm::testQueryBuilder()
 //        qDebug() << "id :" << c1.value("id") << "; name :" << c1.value("name");
 //    }
 //    qt_noop();
+
+    /* where() - an array of basic where clauses */
+//    {
+//        auto [ok, query] = m_em.queryBuilder()->from("torrents")
+//                .where({
+//                    {"size", 13, ">="},
+//                    {"progress", 500, ">="},
+//                    {"progress", 700, "<"/*, "or"*/},
+//                }, "and")
+//                .get();
+
+//        while (query.next()) {
+//            qDebug() << "id :" << query.value("id")
+//                     << "; name :" << query.value("name");
+//        }
+
+//        qt_noop();
+//    }
+
+    /* where() - an array of where clauses comparing two columns */
+    {
+//        auto [ok, query] = m_em.queryBuilder()->from("torrents")
+//                .whereColumn({
+//            {"size", "progress", ">"},
+////            {"progress", "size", ">="},
+////            {"progress", "size", "<", "or"},
+//        }, "and")
+//        .get();
+
+//        while (query.next()) {
+//            qDebug() << "id :" << query.value("id")
+//                     << "; name :" << query.value("name");
+//        }
+
+//        qt_noop();
+    }
 
     /* JOINs */
 //    auto e = m_em.queryBuilder()->from("torrents")
@@ -502,5 +597,34 @@ void TestOrm::testQueryBuilder()
 //    qDebug() << "NINETEEN :" << s.executedQuery();
 //    ok_s ? qDebug() << "truncate was successful"
 //            : qDebug() << "truncate was unsuccessful";
-//    qt_noop();
+    //    qt_noop();
+}
+
+void TestOrm::ctorAggregate()
+{
+//    {
+//        AggTest a {.name = "xx", .value = 1};
+//        AggTest a;
+//        a.name = "xx";
+//        a.value = 1;
+//        OtherTest ot {.name = "zz", .value = 10};
+//        OtherTest ot;
+//        ot.name = "zz";
+//        ot.value = 10;
+//        OtherTest o = a.toOther();
+
+//        a.name = std::move(ot.name);
+//        ot = std::move(a);
+
+//        OtherTest o = a;
+
+//        std::vector<AggTest> va {{"x", 1}, {"y", 2}, {"z", 3}};
+//        std::vector<OtherTest> vo;
+
+//        //        std::vector<OtherTest> vo {{"a", 10}, {"b", 20}, {"c", 30}};
+//        //        std::copy(va.begin(), va.end(), std::back_inserter(vo));
+//        std::move(va.begin(), va.end(), std::back_inserter(vo));
+//        ranges::move(std::move(va), ranges::back_inserter(vo));
+//        qt_noop();
+//    }
 }

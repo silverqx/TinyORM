@@ -56,6 +56,46 @@ namespace Tiny
         /*! Save the model to the database. */
         bool save();
 
+        /*! Get the first record matching the attributes or instantiate it. */
+        inline Model
+        firstOrNew(const QVector<WhereItem> &attributes = {},
+                   const QVector<AttributeItem> &values = {})
+        { return newQuery()->firstOrNew(attributes, values); }
+        /*! Get the first record matching the attributes or create it. */
+        inline Model
+        firstOrCreate(const QVector<WhereItem> &attributes = {},
+                      const QVector<AttributeItem> &values = {})
+        { return newQuery()->firstOrCreate(attributes, values); }
+
+        /*! Find a model by its primary key. */
+        inline std::optional<Model>
+        find(const QVariant &id, const QStringList &columns = {"*"})
+        { return newQuery()->find(id, columns); }
+        /*! Add a basic where clause to the query, and return the first result. */
+        inline std::optional<Model>
+        firstWhere(const QString &column, const QString &comparison,
+                   const QVariant &value, const QString &condition = "and")
+        { return where(column, comparison, value, condition)->first(); }
+        /*! Add a basic equal where clause to the query, and return the first result. */
+        inline std::optional<Model>
+        firstWhereEq(const QString &column, const QVariant &value,
+                     const QString &condition = "and")
+        { return where(column, QStringLiteral("="), value, condition)->first(); }
+
+        /*! Add a basic where clause to the query. */
+        std::unique_ptr<TinyBuilder<Model>>
+        where(const QString &column, const QString &comparison,
+              const QVariant &value, const QString &condition = "and");
+        /*! Add a basic equal where clause to the query. */
+        inline std::unique_ptr<TinyBuilder<Model>>
+        whereEq(const QString &column, const QVariant &value,
+                const QString &condition = "and")
+        { return where(column, QStringLiteral("="), value, condition); }
+
+        /*! Add an array of basic where clauses to the query. */
+        std::unique_ptr<TinyBuilder<Model>>
+        where(const QVector<WhereItem> &values, const QString &condition = "and");
+
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Model>>
         with(const QVector<WithItem> &relations);
@@ -121,6 +161,9 @@ namespace Tiny
         /*! Get the primary key for the model. */
         inline const QString &getKeyName() const
         { return model().u_primaryKey; }
+        /*! Get the table qualified key name. */
+        inline QString getQualifiedKeyName() const
+        { return qualifyColumn(getKeyName()); }
         /*! Get the value of the model's primary key. */
         inline QVariant getKey() const
         { return getAttribute(getKeyName()); }
@@ -130,6 +173,9 @@ namespace Tiny
         /*! Set whether IDs are incrementing. */
         inline Model &setIncrementing(const bool value)
         { model().u_incrementing = value; return model(); }
+
+        /*! Qualify the given column name by the model's table. */
+        QString qualifyColumn(const QString &column) const;
 
         /*! Fill the model with an array of attributes. */
         Model &fill(const QVector<AttributeItem> &attributes);
@@ -300,9 +346,10 @@ namespace Tiny
         bool performUpdate(TinyBuilder<Model> &query);
         /*! Perform any actions that are necessary after the model is saved. */
         void finishSave(/*array $options*/);
+        // TODO primary key dilema, add support for Model::KeyType silverqx
         /*! Insert the given attributes and set the ID on the model. */
-        void insertAndSetId(const TinyBuilder<Model> &query,
-                            const QVector<AttributeItem> &attributes);
+        quint64 insertAndSetId(const TinyBuilder<Model> &query,
+                               const QVector<AttributeItem> &attributes);
 
         /*! The connection name for the model. */
         QString u_connection {""};
@@ -403,6 +450,31 @@ namespace Tiny
             finishSave(/*options*/);
 
         return saved;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::where(
+            const QString &column, const QString &comparison,
+            const QVariant &value, const QString &condition)
+    {
+        auto query = newQuery();
+
+        query->where(column, comparison, value, condition);
+
+        return query;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::where(const QVector<WhereItem> &values,
+                                             const QString &condition)
+    {
+        auto query = newQuery();
+
+        query->where(values, condition);
+
+        return query;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -793,6 +865,16 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    QString
+    BaseModel<Model, AllRelations...>::qualifyColumn(const QString &column) const
+    {
+        if (column.contains('.'))
+            return column;
+
+        return getTable() + '.' + column;
+    }
+
+    template<typename Model, typename ...AllRelations>
     Model &
     BaseModel<Model, AllRelations...>::fill(const QVector<AttributeItem> &attributes)
     {
@@ -1105,8 +1187,10 @@ namespace Tiny
            table from the database. Not all tables have to be incrementing though. */
         const auto &attributes = getAttributes();
 
-        if (getIncrementing())
-            insertAndSetId(query, attributes);
+        if (getIncrementing()) {
+            if (insertAndSetId(query, attributes) == 0)
+                return false;
+        }
 
         /* If the table isn't incrementing we'll simply insert these attributes as they
            are. These attribute arrays must contain an "id" column previously placed
@@ -1114,8 +1198,13 @@ namespace Tiny
         else
             if (attributes.isEmpty())
                 return true;
-            else
-                query.insert(attributes);
+            else {
+                bool ok;
+                std::tie(ok, std::ignore) = query.insert(attributes);;
+                // TODO next TinyBuilder return values dilema silverqx
+                if (!ok)
+                    return false;
+            }
 
         /* We will go ahead and set the exists property to true, so that it is set when
            the created event is fired, just in case the developer tries to update it
@@ -1176,7 +1265,7 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
-    void BaseModel<Model, AllRelations...>::insertAndSetId(
+    quint64 BaseModel<Model, AllRelations...>::insertAndSetId(
             const TinyBuilder<Model> &query,
             const QVector<AttributeItem> &attributes)
     {
@@ -1184,7 +1273,11 @@ namespace Tiny
 
         const auto id = query.insertGetId(attributes/*, keyName*/);
 
-        setAttribute(getKeyName(), id);
+        // When insert was successful
+        if (id != 0)
+            setAttribute(getKeyName(), id);
+
+        return id;
     }
 
 } // namespace Orm::Tiny

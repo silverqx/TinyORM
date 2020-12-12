@@ -121,19 +121,31 @@ namespace Orm::Query
         /*! Add a basic where clause to the query. */
         Builder &where(const QString &column, const QString &comparison,
                        const QVariant &value, const QString &condition = "and");
+        /*! Add an "or where" clause to the query. */
         Builder &orWhere(const QString &column, const QString &comparison,
                          const QVariant &value);
+        /*! Add a basic equal where clause to the query. */
+        Builder &whereEq(const QString &column, const QVariant &value,
+                         const QString &condition = "and");
+        /*! Add an equal "or where" clause to the query. */
+        Builder &orWhereEq(const QString &column, const QVariant &value);
         /*! Add a nested where clause to the query. */
         Builder &where(const std::function<void(Builder &)> &callback,
                        const QString &condition = "and");
+        /*! Add a nested "or where" clause to the query. */
         Builder &orWhere(const std::function<void(Builder &)> &callback);
-        Builder &whereEq(const QString &column, const QVariant &value,
-                         const QString &condition = "and");
-        Builder &orWhereEq(const QString &column, const QVariant &value);
+
+        /*! Add an array of basic where clauses to the query. */
+        Builder &where(const QVector<WhereItem> &values, const QString &condition = "and");
+        /*! Add an array of where clauses comparing two columns to the query. */
+        inline Builder &
+        whereColumn(const QVector<WhereColumnItem> &values, const QString &condition = "and")
+        { return addArrayOfWheres(values, condition); }
 
         /*! Add a "where" clause comparing two columns to the query. */
         Builder &whereColumn(const QString &first, const QString &comparison,
                              const QString &second, const QString &condition = "and");
+        /*! Add a "or where" clause comparing two columns to the query. */
         Builder &orWhereColumn(const QString &first, const QString &comparison,
                                const QString &second);
 
@@ -224,6 +236,7 @@ namespace Orm::Query
         inline const BindingsMap &getRawBindings() const
         { return m_bindings; }
 
+        // TODO docs silverqx
         inline bool getDistinct() const
         { return m_distinct; }
         // TODO check up all code and return references when appropriate silverqx
@@ -266,6 +279,14 @@ namespace Orm::Query
                             BindingType type = BindingType::WHERE);
         /*! Remove all of the expressions from a list of bindings. */
         QVector<QVariant> cleanBindings(const QVector<QVariant> &bindings) const;
+
+        /*! Add an array of basic where clauses to the query. */
+        Builder &
+        addArrayOfWheres(const QVector<WhereItem> &values, const QString &condition = "and");
+        /*! Add an array of where clauses comparing two columns to the query. */
+        Builder &
+        addArrayOfWheres(const QVector<WhereColumnItem> &values,
+                         const QString &condition = "and");
 
         /*! Get a new join clause. */
         QSharedPointer<JoinClause>

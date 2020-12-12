@@ -16,6 +16,11 @@ AssignmentList::AssignmentList(const QVariantHash &variantHash)
     }
 }
 
+WhereItem::operator AttributeItem() const
+{
+    return {column, value};
+}
+
 //bool operator==(const WithItem &lhs, const WithItem &rhs)
 //{
 //    return (lhs.name == rhs.name);

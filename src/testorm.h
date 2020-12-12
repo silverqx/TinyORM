@@ -16,9 +16,64 @@ private:
     void anotherTests();
     void testTinyOrm();
     void testQueryBuilder();
+    void ctorAggregate();
 
     Orm::EntityManager m_em;
 };
+
+//struct AggTest
+//{
+//    QString name;
+//    int value;
+
+////    OtherTest toOther()
+////    {
+////        return {name, value};
+////    }
+//};
+
+//struct AggTest;
+
+//struct OtherTest
+//{
+//    QString name;
+//    int value;
+//    QString comparsion {};
+
+//    explicit OtherTest() = default;
+////    explicit OtherTest(AggTest &a);
+
+////    OtherTest &operator=(const AggTest &agg)
+////    {
+////        name = agg.name;
+////        value = agg.value;
+////        return *this;
+////    }
+//};
+
+//struct AggTest
+//{
+//    QString name;
+//    int value;
+
+//    AggTest() = default;
+//    AggTest(OtherTest &o)
+//    {
+//        name = o.name;
+//        value = o.value;
+//    }
+
+//    operator OtherTest() const
+//    {
+//        qDebug() << "operator OtherTest()";
+//        return {name, value};
+//    }
+
+//    OtherTest toOther()
+//    {
+//        return {name, value};
+//    }
+//};
 
 //class MyClass : public QObject
 //{

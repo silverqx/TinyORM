@@ -40,9 +40,9 @@ private:
     /*! The relations to eager load on every query. */
     QVector<Orm::WithItem> u_with {
         // TODO detect (best at compile time) circular eager relation problem, exception during this problem is stackoverflow in QRegularExpression silverqx
-        {"torrent"},
+//        {"torrent"},
         // WARNING check behavior (in Eloquent too), when relation exactly like below and how it intere when Torrent class has enabled the same relation TorrentPeer, so TorrentPeer is defined like nested in TorrentPreviewableFile "torrent.torrentPeer" and like normal in Torrent "torrentPeer" silverqx
-        {"torrent.torrentPeer"},
+//        {"torrent.torrentPeer"},
     };
 };
 

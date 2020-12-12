@@ -50,13 +50,6 @@ namespace Orm
         NOT_NULL,
     };
 
-    struct WhereItem
-    {
-        QString  column;
-        QVariant value;
-        QString  comparison {"="};
-    };
-
 namespace Query
 {
     class Builder;
@@ -125,6 +118,24 @@ namespace Query
     {
         QString  key;
         QVariant value;
+    };
+
+    struct WhereItem
+    {
+        QString  column;
+        QVariant value;
+        QString  comparison {"="};
+        QString  condition  {};
+
+        operator AttributeItem() const;
+    };
+
+    struct WhereColumnItem
+    {
+        QString first;
+        QString second;
+        QString comparison {"="};
+        QString condition  {};
     };
 
     /*! Eager load relation item. */
