@@ -521,12 +521,12 @@ QString Grammar::compileDeleteWithoutJoins(const QString &table, const QString &
 QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString &table,
                                         const QString &wheres) const
 {
-    /* Alias has to be after the delete keyword and aliased table definition after the
-       from keyword. */
-    const auto alias = table.splitRef(QStringLiteral(" as ")).last().trimmed();
+    const auto alias = table.split(QStringLiteral(" as ")).last().trimmed();
 
     const auto joins = compileJoins(query);
 
+    /* Alias has to be after the delete keyword and aliased table definition after the
+       from keyword. */
     return QStringLiteral("delete %1 from %2 %3 %4").arg(alias, table, joins, wheres);
 }
 

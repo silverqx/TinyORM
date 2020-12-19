@@ -361,11 +361,11 @@ void TestOrm::testTinyOrm()
 //    }
 
     /* eager/lazy load - getRelation(), getRelationValue() and with() */
-    {
-        Torrent t;
-        auto torrent = t.find(2);
+//    {
+//        Torrent t;
+//        auto torrent = t.find(2);
 
-        // eager load
+//        // eager load
 //        {
 //            qDebug() << "\neager load:";
 //            auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
@@ -385,28 +385,28 @@ void TestOrm::testTinyOrm()
 //            }
 //        }
 
-        // lazy load
-        {
-            qDebug() << "\nlazy load, !!comment out 'with' relation to prevent eager load:";
-            auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+//        // lazy load
+////        {
+////            qDebug() << "\nlazy load, !!comment out 'with' relation to prevent eager load:";
+////            auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
 
-            for (auto &file : files) {
-                qDebug().nospace().noquote()
-                        << "\nFile : "
-                        << file->getAttribute("filepath").toString()
-                        << "(" << file->getAttribute("id").toString() << ")";
+////            for (auto &file : files) {
+////                qDebug().nospace().noquote()
+////                        << "\nFile : "
+////                        << file->getAttribute("filepath").toString()
+////                        << "(" << file->getAttribute("id").toString() << ")";
 
-                auto fileProperty = file->getRelationValue<TorrentPreviewableFileProperty, Orm::One>("fileProperty");
+////                auto fileProperty = file->getRelationValue<TorrentPreviewableFileProperty, Orm::One>("fileProperty");
 
-                qDebug().nospace().noquote()
-                        << fileProperty->getAttribute("name").toString()
-                        << "(" << fileProperty->getAttribute("id").toString() << ")";
-                qt_noop();
-            }
-        }
+////                qDebug().nospace().noquote()
+////                        << fileProperty->getAttribute("name").toString()
+////                        << "(" << fileProperty->getAttribute("id").toString() << ")";
+////                qt_noop();
+////            }
+////        }
 
-        qt_noop();
-    }
+//        qt_noop();
+//    }
 
     /* Model::with() - One */
 //    {
@@ -752,8 +752,8 @@ void TestOrm::testQueryBuilder()
 //    auto [affected_r, r] = m_em.queryBuilder()->table("torrents")
 //            .join("torrent_previewable_files", "torrents.id", "=",
 //                  "torrent_previewable_files.torrent_id")
-//            .whereEq("torrents.id", 277)
-//            .whereEq("torrent_previewable_files.id", 106)
+//            .whereEq("torrents.id", 7)
+//            .whereEq("torrent_previewable_files.id", 1002)
 //            .remove();
 //    qDebug() << "EIGHTEEN :" << r.executedQuery();
 //    qDebug() << "affected rows :" << affected_r;

@@ -11,7 +11,12 @@ namespace MANGO_COMMON_NAMESPACE
 QString parseExecutedQuery(const QSqlQuery &query)
 {
     auto executedQuery = query.executedQuery();
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    const auto boundValues = query.boundValues();
+#else
     const auto boundValues = query.boundValues().values();
+#endif
 
     for (int i = 0; i < boundValues.size(); ++i) {
         const auto boundValueRaw = boundValues.at(i);
@@ -23,7 +28,11 @@ QString parseExecutedQuery(const QSqlQuery &query)
             boundValue = "INVALID";
         else
             // Support for string quoting
-            boundValue = (boundValueRaw.type() == QVariant::Type::String)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            boundValue = (boundValueRaw.typeId() == QMetaType::QString)
+#else
+            boundValue = (boundValueRaw.userType() == QMetaType::QString)
+#endif
                          ? QStringLiteral("\"%1\"").arg(boundValueRaw.toString())
                          : boundValueRaw.toString();
 

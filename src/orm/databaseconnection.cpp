@@ -68,6 +68,7 @@ DatabaseConnection::DatabaseConnection()
     if (db.open())
         return;
 
+    // TODO next solve how to solve this situation, how to inform end user, exception vs error code, ... silverqx
     qDebug() << "Connect to DB failed :"
              << db.lastError().text();
 }

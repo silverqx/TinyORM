@@ -59,7 +59,7 @@ private:
     QVector<Orm::WithItem> u_with {
 //        {"torrentFiles"},
 //        {"torrentPeer"},
-//        {"torrentFiles.fileProperty"},
+        {"torrentFiles.fileProperty"},
     };
 
     /*! The connection name for the model. */
