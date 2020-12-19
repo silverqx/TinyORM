@@ -12,6 +12,7 @@ SOURCES += \
     $$PWD/orm/repositoryfactory.cpp \
     $$PWD/orm/tiny/basemodel.cpp \
     $$PWD/orm/tiny/concerns/hasattributes.cpp \
+    $$PWD/orm/tiny/concerns/hasrelationstore.cpp \
     $$PWD/orm/tiny/relations/belongsto.cpp \
     $$PWD/orm/tiny/relations/hasmany.cpp \
     $$PWD/orm/tiny/relations/hasone.cpp \
@@ -24,7 +25,8 @@ SOURCES += \
     $$PWD/testorm.cpp \
     $$PWD/torrent.cpp \
     $$PWD/torrentpeer.cpp \
-    $$PWD/torrentpreviewablefile.cpp
+    $$PWD/torrentpreviewablefile.cpp \
+    $$PWD/torrentpreviewablefileproperty.cpp \
 
 HEADERS += \
     $$PWD/orm/databaseconnection.h \
@@ -39,6 +41,7 @@ HEADERS += \
     $$PWD/orm/repositoryfactory.h \
     $$PWD/orm/tiny/basemodel.h \
     $$PWD/orm/tiny/concerns/hasattributes.h \
+    $$PWD/orm/tiny/concerns/hasrelationstore.h \
     $$PWD/orm/tiny/relations/belongsto.h \
     $$PWD/orm/tiny/relations/hasmany.h \
     $$PWD/orm/tiny/relations/hasone.h \
@@ -52,4 +55,5 @@ HEADERS += \
     $$PWD/testorm.h \
     $$PWD/torrent.h \
     $$PWD/torrentpeer.h \
-    $$PWD/torrentpreviewablefile.h
+    $$PWD/torrentpreviewablefile.h \
+    $$PWD/torrentpreviewablefileproperty.h \

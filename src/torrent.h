@@ -18,6 +18,7 @@ public:
 
     explicit Torrent(const QVector<Orm::AttributeItem> &attributes = {});
 
+    /*! Get the previewable files associated with the torrent. */
     std::unique_ptr<
     Orm::Tiny::Relations::Relation<Torrent, TorrentPreviewableFile>>
     torrentFiles()
@@ -26,6 +27,7 @@ public:
 //        return hasMany<TorrentPreviewableFile>("torrent_id", "id");
     }
 
+    /*! Get the torrent peer associated with the torrent. */
     std::unique_ptr<
     Orm::Tiny::Relations::Relation<Torrent, TorrentPeer>>
     torrentPeer()
@@ -35,12 +37,13 @@ public:
     }
 
 private:
-    void eagerVisitor(const QString &relation)
+    /*! The visitor to obtain a type for Related template parameter. */
+    void relationVisitor(const QString &relation)
     {
         if (relation == "torrentFiles")
-            eagerVisited<TorrentPreviewableFile>();
+            relationVisited<TorrentPreviewableFile>();
         else if (relation == "torrentPeer")
-            eagerVisited<TorrentPeer>();
+            relationVisited<TorrentPeer>();
     }
 
     /*! The table associated with the model. */
@@ -49,13 +52,14 @@ private:
     /*! Map of relation names to methods. */
     QHash<QString, std::any> u_relations {
         {"torrentFiles", &Torrent::torrentFiles},
-        {"torrentPeer", &Torrent::torrentPeer},
+        {"torrentPeer",  &Torrent::torrentPeer},
     };
 
     /*! The relations to eager load on every query. */
     QVector<Orm::WithItem> u_with {
 //        {"torrentFiles"},
 //        {"torrentPeer"},
+//        {"torrentFiles.fileProperty"},
     };
 
     /*! The connection name for the model. */
@@ -63,6 +67,6 @@ private:
 };
 
 // TODO finish this, move to base class and test eg in qvector, qhash, etc silverqx
-QDebug operator<<(QDebug debug, const Torrent &c);
+//QDebug operator<<(QDebug debug, const Torrent &c);
 
 #endif // TORRENTS_H

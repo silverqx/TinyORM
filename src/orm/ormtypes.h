@@ -12,6 +12,7 @@
 class Torrent;
 class TorrentPreviewableFile;
 class TorrentPeer;
+class TorrentPreviewableFileProperty;
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
 
@@ -156,6 +157,12 @@ namespace Query
     /*! The type returned by Model's relation methods. */
     template<typename Model, typename Related>
     using RelationType = std::unique_ptr<Tiny::Relations::Relation<Model, Related>>(Model::*)();
+
+    /*! The type in which are saved relationships. */
+    template<typename ...AllRelations>
+    using RelationsType = std::variant<std::monostate,
+                                       QVector<AllRelations>...,
+                                       std::optional<AllRelations>...>;
 
 } // namespace Orm
 #ifdef MANGO_COMMON_NAMESPACE

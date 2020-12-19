@@ -12,6 +12,7 @@ public:
 
     explicit TorrentPeer(const QVector<Orm::AttributeItem> &attributes = {});
 
+    /*! Get the torrent that owns the torrent peer. */
     std::unique_ptr<
     Orm::Tiny::Relations::Relation<TorrentPeer, Torrent>>
     torrent()
@@ -20,10 +21,11 @@ public:
     }
 
 private:
-    void eagerVisitor(const QString &relation)
+    /*! The visitor to obtain a type for Related template parameter. */
+    void relationVisitor(const QString &relation)
     {
         if (relation == "torrent")
-            eagerVisited<Torrent>();
+            relationVisited<Torrent>();
     }
 
     /*! The table associated with the model. */

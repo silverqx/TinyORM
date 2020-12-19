@@ -159,7 +159,7 @@ namespace Relations
         /*! Get the relation instance for the given relation name. */
         template<typename Related>
         auto getRelation(const QString &name);
-        /*! Create a collection of models from plain arrays. */
+        /*! Create a collection of models from QSqlQuery. */
         QVector<Model> hydrate(QSqlQuery result);
 
         /*! Get the model instance being queried. */
@@ -523,10 +523,37 @@ namespace Relations
                         relation->getEager(), relationItem.name);
     }
 
+    // TODO I suspect this code that it can fail, if the same Model/Related combination return different type it fail, I'm pretty sure about this, solution will be to add Orm::One/Many tag, which ensures new template instance silverqx
     template<typename Model>
     template<typename Related>
     auto Builder<Model>::getRelation(const QString &name)
     {
+        // TODO docs add similar note for lazy load silverqx
+        /* How this relation flow works:
+           m_model.getRelationMethod() obtains relation method by relation name,
+           these relation methods are defined on models, relation constraints
+           will be disabled for eager relations by Relation::noConstraints() method,
+           these default constraints are only used for lazy loading, for eager
+           constraints are used constraints, which are defined
+           by Relation::addEagerConstraints() virtual methods.
+           To the Relation::noConstraints() method is passed lambda, which invokes
+           obtained relation method and invokes it on the new model instance.
+           The Relation instance is created by this relation method, this relation
+           method calls factory method, which creates the Relation instance.
+           Every Relation has it's own Relation::create() factory method, to which
+           the following parameters are passed, newly created Related model instance,
+           current/parent model instance, database column names of relationship, and
+           for BelongsTo relation also the name of the relation.
+           The Relation instance creates a copy of the current/parent model instance,
+           a copy of the related model instance because they are created on the stack.
+           The Relation instance creates a new TinyBuilder instance from the Related
+           model instance by TinyBuilder::newQuery() and saves ownership as
+           a shared pointer.
+           Then eager constraints are applied to this newly created TinyBuilder and
+           the result is returned back to the initial model.
+           The result is transformed into models and these models are hydrated.
+           Hydrated models are saved to the BaseModel::m_relations data member. */
+
         const auto &method = m_model.getRelationMethod(name);
 
         /* We want to run a relationship query without any constrains so that we will
@@ -568,7 +595,7 @@ namespace Relations
                 row.append({record.fieldName(i), result.value(i)});
 
             // Create a new model instance from the table row
-            models.append(m_model.newFromBuilder(row));
+            models.append(instance.newFromBuilder(row));
         }
 
         return models;

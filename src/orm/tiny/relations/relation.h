@@ -17,11 +17,14 @@ namespace Orm::Tiny
 namespace Orm::Tiny::Relations
 {
 
+    // TODO now rename to BaseRelation, when staging area will be empty silverqx
     template<class Model, class Related>
     class Relation
     {
+    protected:
+        Relation(std::unique_ptr<Related> &&related, const Model &parent);
+
     public:
-        Relation(std::unique_ptr<Builder<Related>> &&query, const Model &parent);
         virtual ~Relation() = default;
 
         /*! Set the base constraints on the relation query. */
@@ -59,13 +62,17 @@ namespace Orm::Tiny::Relations
         void init() const
         { addConstraints(); }
 
-        // WARNING don't forget to make them references silverqx
-        /*! The Eloquent query builder instance. */
-        std::shared_ptr<Builder<Related>> m_query;
+        /* Much safer to make a copy here than save references, original objects get
+           out of scope, because they are defined in member function blocks.
+           This is true for all constructor parameters counting ctor parameters in
+           derived classes, like m_parent, m_child, m_related, m_ownerKey,
+           m_foreignKey, ... */
         /*! The parent model instance. */
         const Model m_parent;
         /*! The related model instance. */
-        const Related m_related;
+        const std::unique_ptr<Related> m_related;
+        /*! The Eloquent query builder instance. */
+        std::unique_ptr<Builder<Related>> m_query;
         /*! Indicates if the relation is adding constraints. */
         static bool constraints;
     };
@@ -80,11 +87,11 @@ namespace Orm::Tiny::Relations
     bool Relation<Model, Related>::constraints = true;
 
     template<class Model, class Related>
-    Relation<Model, Related>::Relation(std::unique_ptr<Builder<Related>> &&query,
+    Relation<Model, Related>::Relation(std::unique_ptr<Related> &&related,
                                        const Model &parent)
-        : m_query(std::move(query))
-        , m_parent(parent)
-        , m_related(m_query->getModel())
+        : m_parent(parent)
+        , m_related(std::move(related))
+        , m_query(m_related->newQuery())
     {}
 
     template<class Model, class Related>

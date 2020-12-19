@@ -16,11 +16,12 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     class HasOneOrMany : public Relation<Model, Related>
     {
-    public:
-        HasOneOrMany(std::unique_ptr<Builder<Related>> &&query,
+    protected:
+        HasOneOrMany(std::unique_ptr<Related> &&related,
                      const Model &parent,
                      const QString &foreignKey, const QString &localKey);
 
+    public:
         /*! Set the base constraints on the relation query. */
         void addConstraints() const override;
 
@@ -48,7 +49,8 @@ namespace Orm::Tiny::Relations
         inline const QString &getQualifiedForeignKeyName() const
         { return m_foreignKey; }
 
-        // WARNING don't forget to make them references silverqx
+        /* Much safer to make a copy here than save references, original objects get
+           out of scope, because they are defined in member function blocks. */
         /*! The foreign key of the parent model. */
         QString m_foreignKey;
         /*! The local key of the parent model. */
@@ -59,10 +61,10 @@ namespace Orm::Tiny::Relations
     };
 
     template<class Model, class Related>
-    HasOneOrMany<Model, Related>::HasOneOrMany(std::unique_ptr<Builder<Related>> &&query,
+    HasOneOrMany<Model, Related>::HasOneOrMany(std::unique_ptr<Related> &&related,
                                                const Model &parent,
                                                const QString &foreignKey, const QString &localKey)
-        : Relation<Model, Related>(std::move(query), parent)
+        : Relation<Model, Related>(std::move(related), parent)
         , m_foreignKey(foreignKey)
         , m_localKey(localKey)
     {}

@@ -171,7 +171,7 @@ Grammar::compileComponents(const QueryBuilder &query) const
     for (const auto &component : compileMap)
         if (component.isset)
             if (component.isset(query))
-                sql.append(component.compileMethod(query));
+                sql.append(std::invoke(component.compileMethod, query));
 
     return sql;
 }
@@ -312,6 +312,7 @@ Grammar::getWhereMethod(const WhereType whereType) const
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     // An order has to be the same as in enum struct WhereType
+    // TODO future, QHash would has faster lookup, I should choose QHash silverx
     static const QVector<std::function<QString(const WhereConditionItem &)>> cached {
         getBind(&Grammar::whereBasic),
         getBind(&Grammar::whereNested),
@@ -323,7 +324,7 @@ Grammar::getWhereMethod(const WhereType whereType) const
     };
     static const auto size = cached.size();
 
-    // Check if whereType is in range, just for sure 😏
+    // Check if whereType is in the range, just for sure 😏
     const auto type = static_cast<int>(whereType);
     Q_ASSERT((0 <= type) && (type < size));
 

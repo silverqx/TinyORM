@@ -3,18 +3,19 @@
 
 #include <QDebug>
 
-#include "torrent.h"
 #include "orm/tiny/basemodel.h"
-#include "orm/tiny/relations/belongsto.h"
 
-class TorrentPreviewableFile final : public Orm::Tiny::BaseModel<TorrentPreviewableFile, Torrent>
+#include "torrent.h"
+#include "torrentpreviewablefileproperty.h"
+
+class TorrentPreviewableFile final : public Orm::Tiny::BaseModel<TorrentPreviewableFile, Torrent, TorrentPreviewableFileProperty>
 {
 public:
     friend class BaseModel;
 
     explicit TorrentPreviewableFile(const QVector<Orm::AttributeItem> &attributes = {});
 
-    /*! Get the torrent record associated with the user. */
+    /*! Get the torrent that owns the previewable file. */
     std::unique_ptr<
     Orm::Tiny::Relations::Relation<TorrentPreviewableFile, Torrent>>
     torrent()
@@ -22,11 +23,22 @@ public:
         return belongsTo<Torrent>();
     }
 
+    /*! Get the file property associated with the previewable file. */
+    std::unique_ptr<
+    Orm::Tiny::Relations::Relation<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
+    fileProperty()
+    {
+        return hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
+    }
+
 private:
-    void eagerVisitor(const QString &relation)
+    /*! The visitor to obtain a type for Related template parameter. */
+    void relationVisitor(const QString &relation)
     {
         if (relation == "torrent")
-            eagerVisited<Torrent>();
+            relationVisited<Torrent>();
+        else if (relation == "fileProperty")
+            relationVisited<TorrentPreviewableFileProperty>();
     }
 
     /*! The table associated with the model. */
@@ -34,15 +46,16 @@ private:
 
     /*! Map of relation names to methods. */
     QHash<QString, std::any> u_relations {
-        {"torrent", &TorrentPreviewableFile::torrent},
+        {"torrent",      &TorrentPreviewableFile::torrent},
+        {"fileProperty", &TorrentPreviewableFile::fileProperty},
     };
 
     /*! The relations to eager load on every query. */
     QVector<Orm::WithItem> u_with {
         // TODO detect (best at compile time) circular eager relation problem, exception during this problem is stackoverflow in QRegularExpression silverqx
 //        {"torrent"},
-        // WARNING check behavior (in Eloquent too), when relation exactly like below and how it intere when Torrent class has enabled the same relation TorrentPeer, so TorrentPeer is defined like nested in TorrentPreviewableFile "torrent.torrentPeer" and like normal in Torrent "torrentPeer" silverqx
 //        {"torrent.torrentPeer"},
+//        {"fileProperty"},
     };
 };
 

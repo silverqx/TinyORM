@@ -18,10 +18,15 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     class BelongsTo : public Relation<Model, Related>, public OneRelation
     {
+    protected:
+        BelongsTo(std::unique_ptr<Related> &&related, const Model &child,
+                  const QString &foreignKey, const QString &ownerKey,
+                  const QString &relationName);
+
     public:
         /*! Instantiate and initialize a new HasOne instance. */
         static std::unique_ptr<Relation<Model, Related>>
-        create(std::unique_ptr<Builder<Related>> &&query,
+        create(std::unique_ptr<Related> &&related,
                Model &child, const QString &foreignKey,
                const QString &ownerKey, const QString &relation);
 
@@ -49,9 +54,8 @@ namespace Orm::Tiny::Relations
         QHash<typename Model::KeyType, Related>
         buildDictionary(const QVector<Related> &results) const;
 
-        // WARNING don't forget to make them references silverqx
         /*! The child model instance of the relation. */
-        const Model &m_child;
+        const Model m_child;
         /*! The foreign key of the parent model. */
         QString m_foreignKey;
         /*! The associated key on the parent model. */
@@ -60,18 +64,13 @@ namespace Orm::Tiny::Relations
         QString m_relationName;
         /*! The count of self joins. */
         constexpr static int selfJoinCount = 0;
-
-    private:
-        BelongsTo(std::unique_ptr<Builder<Related>> &&query, const Model &child,
-                  const QString &foreignKey, const QString &ownerKey,
-                  const QString &relationName);
     };
 
     template<class Model, class Related>
-    BelongsTo<Model, Related>::BelongsTo(std::unique_ptr<Builder<Related>> &&query,
+    BelongsTo<Model, Related>::BelongsTo(std::unique_ptr<Related> &&related,
                                          const Model &child, const QString &foreignKey,
                                          const QString &ownerKey, const QString &relationName)
-        : Relation<Model, Related>(std::move(query), child)
+        : Relation<Model, Related>(std::move(related), child)
         /* In the underlying base relationship class, this variable is referred to as
            the "parent" since most relationships are not inversed. But, since this
            one is we will create a "child" variable for much better readability. */
@@ -83,12 +82,13 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     std::unique_ptr<Relation<Model, Related>>
-    BelongsTo<Model, Related>::create(std::unique_ptr<Builder<Related>> &&query,
+    BelongsTo<Model, Related>::create(std::unique_ptr<Related> &&related,
                                       Model &child, const QString &foreignKey,
                                       const QString &ownerKey, const QString &relation)
     {
         auto instance = std::unique_ptr<BelongsTo<Model, Related>>(
-                    new BelongsTo(std::move(query), child, foreignKey, ownerKey, relation));
+                    new BelongsTo(std::move(related), child, foreignKey,
+                                  ownerKey, relation));
 
         instance->init();
 
@@ -104,7 +104,7 @@ namespace Orm::Tiny::Relations
         /* For belongs to relationships, which are essentially the inverse of has one
                or has many relationships, we need to actually query on the primary key
                of the related models matching on the foreign key that's on a parent. */
-        const auto &table = this->m_related.getTable();
+        const auto &table = this->m_related->getTable();
 
         this->m_query->where(table + '.' + m_ownerKey, QStringLiteral("="),
                              m_child.getAttribute(m_foreignKey));
@@ -116,7 +116,7 @@ namespace Orm::Tiny::Relations
         /* We'll grab the primary key name of the related models since it could be set to
            a non-standard name and not "id". We will then construct the constraint for
            our eagerly loading query so it returns the proper models from execution. */
-        this->m_query->getQuery().whereIn(this->m_related.getTable() + '.' + m_ownerKey,
+        this->m_query->getQuery().whereIn(this->m_related->getTable() + '.' + m_ownerKey,
                                           getEagerModelKeys(models));
     }
 

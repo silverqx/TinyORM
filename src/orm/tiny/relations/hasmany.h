@@ -13,10 +13,15 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     class HasMany : public HasOneOrMany<Model, Related>, public ManyRelation
     {
+    protected:
+        HasMany(std::unique_ptr<Related> &&related,
+                const Model &parent,
+                const QString &foreignKey, const QString &localKey);
+
     public:
         /*! Instantiate and initialize a new HasMany instance. */
         static std::unique_ptr<Relation<Model, Related>>
-        create(std::unique_ptr<Builder<Related>> &&query, Model &parent,
+        create(std::unique_ptr<Related> &&related, Model &parent,
                const QString &foreignKey, const QString &localKey);
 
         /*! Initialize the relation on a set of models. */
@@ -29,27 +34,23 @@ namespace Orm::Tiny::Relations
         /*! Get the results of the relationship. */
         std::variant<QVector<Related>, std::optional<Related>>
         getResults() const override;
-
-    private:
-        HasMany(std::unique_ptr<Builder<Related>> &&query,
-                const Model &parent,
-                const QString &foreignKey, const QString &localKey);
     };
 
     template<class Model, class Related>
-    HasMany<Model, Related>::HasMany(std::unique_ptr<Builder<Related>> &&query,
+    HasMany<Model, Related>::HasMany(std::unique_ptr<Related> &&related,
                                      const Model &parent,
                                      const QString &foreignKey, const QString &localKey)
-        : HasOneOrMany<Model, Related>(std::move(query), parent, foreignKey, localKey)
+        : HasOneOrMany<Model, Related>(std::move(related), parent, foreignKey, localKey)
     {}
 
     template<class Model, class Related>
     std::unique_ptr<Relation<Model, Related>>
-    HasMany<Model, Related>::create(std::unique_ptr<Builder<Related>> &&query, Model &parent,
+    HasMany<Model, Related>::create(std::unique_ptr<Related> &&related, Model &parent,
                                     const QString &foreignKey, const QString &localKey)
     {
+        // Relations have private ctors, std::make_unique() can't be used
         auto instance = std::unique_ptr<HasMany<Model, Related>>(
-                    new HasMany(std::move(query), parent, foreignKey, localKey));
+                    new HasMany(std::move(related), parent, foreignKey, localKey));
 
         instance->init();
 

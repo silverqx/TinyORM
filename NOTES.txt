@@ -20,3 +20,45 @@ void deleteModel()
 
     return toBase().deleteRow();
 }
+
+
+IsModel:
+--------
+
+/*! Helper class to simply check whether a model is model, eg by std::is_base_of<>. */
+struct IsModel
+{};
+
+class BaseModel : public IsModel
+
+
+Relation store:
+---------------
+
+template<typename Model, typename ...AllRelations>
+template<typename Related>
+void BaseModel<Model, AllRelations...>::relationVisited()
+{
+    if (dynamic_cast<PushStore *>(m_relationStore) == nullptr)
+        eagerVisited<Related>();
+    else
+        pushVisited<Related>();
+}
+
+
+Fuckin relationVisited() in u_relations data member:
+-----------------------------------------------------
+
+std::invoke(model().u_relations.find(relation.name).value().visitor);
+
+struct RelationMethods
+{
+    std::any method;
+    // This only works for eager load, but doesn't for push silverqx
+    std::function<void()> visitor;
+//    std::any visitor;
+};
+
+
+tmp notes:
+----------

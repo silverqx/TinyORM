@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+#include <optional>
 #include "setting.h"
 #include "torrent.h"
 #include "torrentpreviewablefile.h"
@@ -34,19 +35,21 @@ void TestOrm::anotherTests()
 
 void TestOrm::testTinyOrm()
 {
-//    TorrentPreviewableFile a;
-//    auto files = a.query()->where("torrent_id", "=", 2).get();
-//////    auto files = a.query()->where("torrent_id", "=", 261).get();
-//////    auto torrent1 = files.first().getRelation<Torrent, QVector>("torrent");
-//    auto torrent1 = files.first().getRelation<Torrent, Orm::One>("torrent");
-////    qDebug() << torrent1->getAttribute("name");
-//    auto peer1 = torrent1->getRelation<TorrentPeer, Orm::One>("torrentPeer");
-//////    auto torrent2 = files.first().getRelationValue<Torrent>("torrent");
-////    auto torrent3 = files.first().getRelationValue<Torrent, Orm::One>("torrent");
-////    auto torrent3 = a.getRelationValue<Torrent, Orm::One>("torrent");
-//////    qDebug() << torrent2;
-//////    qDebug() << torrent3.has_value();
-//    qt_noop();
+//    {
+//        TorrentPreviewableFile a;
+//        auto files = a.query()->where("torrent_id", "=", 2).get();
+//////        auto files = a.query()->where("torrent_id", "=", 261).get();
+//////        auto torrent1 = files.first().getRelation<Torrent, QVector>("torrent");
+//        auto torrent1 = files.first().getRelation<Torrent, Orm::One>("torrent");
+////        qDebug() << torrent1->getAttribute("name");
+////        auto peer1 = torrent1->getRelation<TorrentPeer, Orm::One>("torrentPeer");
+//////        auto torrent2 = files.first().getRelationValue<Torrent>("torrent");
+////        auto torrent3 = files.first().getRelationValue<Torrent, Orm::One>("torrent");
+////        auto torrent3 = a.getRelationValue<Torrent, Orm::One>("torrent");
+//////        qDebug() << torrent2;
+//////        qDebug() << torrent3.has_value();
+//        qt_noop();
+//    }
 
 //    qMetaTypeId<KeyType>();
 //    QVector<quint64> vec {12, 6, 8, 2, 7, 8, 8};
@@ -113,26 +116,10 @@ void TestOrm::testTinyOrm()
 ////////    auto files = b.getRelationValue<TorrentPreviewableFile>("torrentFiles");
 //    qt_noop();
 
-    /* Model::with() */
-//    {
-//        auto torrents = Torrent().with("torrentPeer")->get();
-//        auto peer = torrents[1].getRelation<TorrentPeer, Orm::One>("torrentPeer");
-//        qDebug() << peer->getAttribute("id");
-//        qt_noop();
-//    }
-
-//    {
-//        auto torrents = Torrent().with("torrentFiles")->get();
-//        auto files = torrents[0].getRelation<TorrentPreviewableFile>("torrentFiles");
-//        for (const auto &file : files)
-//            qDebug() << file.getAttribute("filepath");
-//        qt_noop();
-//    }
-
     /* Model::remove() */
 //    {
 //        TorrentPreviewableFile a;
-//        auto files = a.query()->where("id", "=", 1006).get();
+//        auto files = a.query()->where("id", "=", 1005).get();
 //        auto torrent1 = files.first().getRelation<Torrent, Orm::One>("torrent");
 //        auto peer1 = torrent1->getRelation<TorrentPeer, Orm::One>("torrentPeer");
 //        auto file1 = files.first();
@@ -142,7 +129,7 @@ void TestOrm::testTinyOrm()
 
     /* Model::destroy() */
 //    {
-//        auto count = TorrentPreviewableFile::destroy({1007, 1008});
+//        auto count = TorrentPreviewableFile::destroy({1004, 1003});
 //        qDebug() << count;
 //        qt_noop();
 //    }
@@ -150,11 +137,11 @@ void TestOrm::testTinyOrm()
     /* Model::save() insert */
 //    {
 //        TorrentPreviewableFile torrentFiles;
-//        torrentFiles.setAttribute("torrent_id", 1);
-//        torrentFiles.setAttribute("file_index", 11);
-//        torrentFiles.setAttribute("filepath", "test1_file11.mkv");
-//        torrentFiles.setAttribute("size", 2048);
-//        torrentFiles.setAttribute("progress", 250);
+//        torrentFiles.setAttribute("torrent_id", 7);
+//        torrentFiles.setAttribute("file_index", 0);
+//        torrentFiles.setAttribute("filepath", "test7_file1003.mkv");
+//        torrentFiles.setAttribute("size", 1000);
+//        torrentFiles.setAttribute("progress", 50);
 //        auto result = torrentFiles.save();
 //        qt_noop();
 //    }
@@ -231,37 +218,218 @@ void TestOrm::testTinyOrm()
 //    }
 
     /* Model::firstOrNew() */
-    {
-        auto torrent = Torrent().firstOrNew(
-                           {{"id", 10}},
+//    {
+//        auto torrent = Torrent().firstOrNew(
+//                           {{"id", 10}},
 
-                           {{"name", "test10"},
-                            {"size", 20},
-                            {"progress", 800},
-                            {"id", 15}
-                           });
+//                           {{"name", "test10"},
+//                            {"size", 20},
+//                            {"progress", 800},
+//                            {"id", 15}
+//                           });
 
-        qt_noop();
-    }
+//        qt_noop();
+//    }
 
     /* Model::firstOrCreate() */
+//    {
+//        auto torrent = Torrent().firstOrCreate(
+//                           {{"name", "test10"}},
+
+//                           {{"size", 20},
+//                            {"progress", 800},
+//                            {"hash", "0679e3af2768cdf52ec84c1f320333f68401dc6e"},
+////                            {"id", 15},
+//                           });
+
+//        if (!torrent.exists)
+//            // TODO next throw exception really needed here silverqx
+//            qDebug() << "Torrent was not created successfuly, name :"
+//                     << torrent.getAttribute("name").toString();
+
+//        qt_noop();
+//    }
+
+    /* hash which manages insertion order */
+//    {
+//        QHash<QString *, std::reference_wrapper<QVariant>> hash;
+//        QVector<Orm::AttributeItem> vec;
+
+//        using namespace Orm;
+//        AttributeItem a {"a", "one"};
+//        AttributeItem b {"b", "two"};
+//        AttributeItem c {"c", "three"};
+//        AttributeItem d {"d", "four"};
+
+//        vec << a << b << c << d;
+//        hash.insert(&a.key, a.value);
+//        hash.insert(&b.key, b.value);
+//        hash.insert(&c.key, c.value);
+//        hash.insert(&d.key, d.value);
+////        hash.insert(&a.key, &a.value);
+////        hash.insert(&b.key, &b.value);
+////        hash.insert(&c.key, &c.value);
+////        hash.insert(&d.key, &d.value);
+
+//        qDebug() << "hash:";
+//        for (QVariant &val : hash) {
+//            qDebug() << val.toString();
+//        }
+//        qDebug() << "\nvector:";
+//        for (auto &val : vec) {
+//            qDebug() << val.value.toString();
+//        }
+//        qDebug() << "\nothers:";
+//        qDebug() << hash.find(&b.key).value().get().toString();
+////        qDebug() << hash[&b.key].get().toString();
+////        qDebug() << hash[&d.key]->toString();
+////        qDebug() << hash[&b.key]->toString();
+//        qt_noop();
+//    }
+
+    /* std::optional() with std::reference_wrapper() */
+//    {
+//        struct ToModify
+//        {
+//            QString name;
+//        };
+
+//        ToModify a {"first"};
+//        ToModify b {"second"};
+//        ToModify c {"third"};
+
+//        QHash<QString, std::optional<std::reference_wrapper<ToModify>>> hash
+//        {
+//            {"one", a},
+//            {"two", b},
+//            {"three", c},
+//        };
+
+//        ToModify &value = *hash.find("two").value();
+//        value.name = "xx";
+//        qDebug() << b.name;
+//        qDebug() << hash.find("two").value()->get().name;
+//        qt_noop();
+//    }
+
+    /* Model::push() */
+//    {
+//        Torrent t;
+//        auto torrent = t.find(2);
+//        // eager load
+//        auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+//        auto file = files.first();
+//        auto *fileProperty = file->getRelation<TorrentPreviewableFileProperty, Orm::One>("fileProperty");
+//        // lazy load
+////        auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+////        auto *file = files.first();
+////        auto *fileProperty = file->getRelationValue<TorrentPreviewableFileProperty, Orm::One>("fileProperty");
+
+//        auto torrentName      = torrent->getAttribute("name").toString();
+//        auto filepath         = file->getAttribute("filepath").toString();
+//        auto filePropertyName = fileProperty->getAttribute("name").toString();
+//        qDebug() << torrentName;
+//        qDebug() << filepath;
+//        qDebug() << filePropertyName;
+
+//        torrent->setAttribute("name", QVariant(torrentName + " x"));
+//        file->setAttribute("filepath", QVariant(filepath + ".xy"));
+//        fileProperty->setAttribute("name", QVariant(filePropertyName + " x"));
+
+//        const auto debugAttributes = [&torrent]
+//        {
+//            auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+//            auto file = files.first();
+//            auto *fileProperty = file->getRelation<TorrentPreviewableFileProperty, Orm::One>("fileProperty");
+//            qDebug() << torrent->getAttribute("name").toString();
+//            qDebug() << file->getAttribute("filepath").toString();
+//            qDebug() << fileProperty->getAttribute("name").toString();
+//        };
+
+//        debugAttributes();
+//        torrent->push();
+
+//        // Set it back, so I don't have to manually
+//        torrent->setAttribute("name", torrentName);
+//        file->setAttribute("filepath", filepath);
+//        fileProperty->setAttribute("name", filePropertyName);
+
+//        debugAttributes();
+//        torrent->push();
+
+//        qt_noop();
+//    }
+
+    /* eager/lazy load - getRelation(), getRelationValue() and with() */
     {
-        auto torrent = Torrent().firstOrCreate(
-                           {{"name", "test10"}},
+        Torrent t;
+        auto torrent = t.find(2);
 
-                           {{"size", 20},
-                            {"progress", 800},
-                            {"hash", "0679e3af2768cdf52ec84c1f320333f68401dc6e"},
-//                            {"id", 15},
-                           });
+        // eager load
+//        {
+//            qDebug() << "\neager load:";
+//            auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
 
-        if (!torrent.exists)
-            // TODO next throw exception really needed here silverqx
-            qDebug() << "Torrent was not created successfuly, name :"
-                     << torrent.getAttribute("name").toString();
+//            for (auto &file : files) {
+//                qDebug().nospace().noquote()
+//                        << "\nFile : "
+//                        << file->getAttribute("filepath").toString()
+//                        << "(" << file->getAttribute("id").toString() << ")";
+
+//                auto fileProperty = file->getRelation<TorrentPreviewableFileProperty, Orm::One>("fileProperty");
+
+//                qDebug().nospace().noquote()
+//                        << fileProperty->getAttribute("name").toString()
+//                        << "(" << fileProperty->getAttribute("id").toString() << ")";
+//                qt_noop();
+//            }
+//        }
+
+        // lazy load
+        {
+            qDebug() << "\nlazy load, !!comment out 'with' relation to prevent eager load:";
+            auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+
+            for (auto &file : files) {
+                qDebug().nospace().noquote()
+                        << "\nFile : "
+                        << file->getAttribute("filepath").toString()
+                        << "(" << file->getAttribute("id").toString() << ")";
+
+                auto fileProperty = file->getRelationValue<TorrentPreviewableFileProperty, Orm::One>("fileProperty");
+
+                qDebug().nospace().noquote()
+                        << fileProperty->getAttribute("name").toString()
+                        << "(" << fileProperty->getAttribute("id").toString() << ")";
+                qt_noop();
+            }
+        }
 
         qt_noop();
     }
+
+    /* Model::with() - One */
+//    {
+//        auto torrents = Torrent().with("torrentPeer")->get();
+//        auto peer = torrents[1].getRelation<TorrentPeer, Orm::One>("torrentPeer");
+//        qDebug() << peer->getAttribute("id");
+//        qt_noop();
+//    }
+//    {
+//        auto files = TorrentPreviewableFile().with("torrent")->get();
+//        auto torrent = files[1].getRelation<Torrent, Orm::One>("torrent");
+//        qDebug() << torrent->getAttribute("id");
+//        qt_noop();
+//    }
+
+    /* Model::with() - Many */
+//    {
+//        auto torrents = Torrent().with("torrentFiles")->get();
+//        auto files = torrents[1].getRelation<TorrentPreviewableFile>("torrentFiles");
+//        for (const auto &file : files)
+//            qDebug() << file->getAttribute("filepath");
+//        qt_noop();
+//    }
 
     qt_noop();
 }

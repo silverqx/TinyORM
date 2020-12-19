@@ -13,10 +13,14 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     class HasOne : public HasOneOrMany<Model, Related>, OneRelation
     {
+    protected:
+        HasOne(std::unique_ptr<Related> &&related, const Model &parent,
+               const QString &foreignKey, const QString &localKey);
+
     public:
         /*! Instantiate and initialize a new HasOne instance. */
         static std::unique_ptr<Relation<Model, Related>>
-        create(std::unique_ptr<Builder<Related>> &&query, Model &parent,
+        create(std::unique_ptr<Related> &&related, Model &parent,
                const QString &foreignKey, const QString &localKey);
 
         /*! Initialize the relation on a set of models. */
@@ -30,25 +34,21 @@ namespace Orm::Tiny::Relations
         /*! Get the results of the relationship. */
         std::variant<QVector<Related>, std::optional<Related>>
         getResults() const override;
-
-    protected:
-        HasOne(std::unique_ptr<Builder<Related>> &&query, const Model &parent,
-               const QString &foreignKey, const QString &localKey);
     };
 
     template<class Model, class Related>
-    HasOne<Model, Related>::HasOne(std::unique_ptr<Builder<Related>> &&query, const Model &parent,
+    HasOne<Model, Related>::HasOne(std::unique_ptr<Related> &&related, const Model &parent,
                                    const QString &foreignKey, const QString &localKey)
-        : HasOneOrMany<Model, Related>(std::move(query), parent, foreignKey, localKey)
+        : HasOneOrMany<Model, Related>(std::move(related), parent, foreignKey, localKey)
     {}
 
     template<class Model, class Related>
     std::unique_ptr<Relation<Model, Related>>
-    HasOne<Model, Related>::create(std::unique_ptr<Builder<Related>> &&query, Model &parent,
+    HasOne<Model, Related>::create(std::unique_ptr<Related> &&related, Model &parent,
                                    const QString &foreignKey, const QString &localKey)
     {
         auto instance = std::unique_ptr<HasOne<Model, Related>>(
-                    new HasOne(std::move(query), parent, foreignKey, localKey));
+                    new HasOne(std::move(related), parent, foreignKey, localKey));
 
         instance->init();
 
