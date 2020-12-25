@@ -18,8 +18,8 @@
 #include "orm/tiny/relations/hasmany.h"
 #include "orm/utils/attribute.h"
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm::Tiny
@@ -720,8 +720,8 @@ namespace Relations
     }
 
 } // namespace Orm::Tiny
-#ifdef MANGO_COMMON_NAMESPACE
-} // namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
 #endif // TINYBUILDER_H

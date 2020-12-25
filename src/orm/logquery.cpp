@@ -3,8 +3,8 @@
 #include <QDebug>
 #include <QtSql/QSqlQuery>
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 
@@ -48,6 +48,6 @@ void logExecutedQuery(const QSqlQuery &query)
                        << parseExecutedQuery(query);
 }
 
-#ifdef MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
 }
 #endif

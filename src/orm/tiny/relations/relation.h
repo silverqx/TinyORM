@@ -1,8 +1,8 @@
 #ifndef RELATION_H
 #define RELATION_H
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 
@@ -109,8 +109,8 @@ namespace Orm::Tiny::Relations
     }
 
 } // namespace Orm::Tiny::Relations
-#ifdef MANGO_COMMON_NAMESPACE
-} // namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
 #endif // RELATION_H

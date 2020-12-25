@@ -3,8 +3,8 @@
 
 #include "orm/query/querybuilder.h"
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm
@@ -36,8 +36,8 @@ namespace Orm::Query
     };
 
 } // namespace Orm::Query
-#ifdef MANGO_COMMON_NAMESPACE
-} // namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
 #endif // JOINCLAUSE_H

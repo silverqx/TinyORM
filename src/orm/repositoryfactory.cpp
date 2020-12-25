@@ -1,7 +1,7 @@
 #include "repositoryfactory.h"
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm
@@ -12,6 +12,6 @@ RepositoryFactory::RepositoryFactory(EntityManager &em)
 {}
 
 } // namespace Orm
-#ifdef MANGO_COMMON_NAMESPACE
-} // namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
 #endif

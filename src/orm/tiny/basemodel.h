@@ -19,8 +19,8 @@
 #include "orm/utils/string.h"
 #include "orm/utils/type.h"
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm
@@ -1471,8 +1471,8 @@ namespace Tiny
 
 } // namespace Orm::Tiny
 } // namespace Orm
-#ifdef MANGO_COMMON_NAMESPACE
-} // namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
 #endif // BASEMODEL_H

@@ -4,8 +4,8 @@
 
 #include "orm/query/joinclause.h"
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm
@@ -531,6 +531,6 @@ QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString
 }
 
 } // namespace Orm
-#ifdef MANGO_COMMON_NAMESPACE
-} // namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
 #endif

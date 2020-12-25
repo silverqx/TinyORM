@@ -3,8 +3,8 @@
 
 #include "orm/ormtypes.h"
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm::Utils::Attribute
@@ -16,8 +16,8 @@ namespace Orm::Utils::Attribute
     convertVectorToUpdateItem(const QVector<AttributeItem> &attributes);
 
 } // namespace Orm::Utils::Attribute
-#ifdef MANGO_COMMON_NAMESPACE
-} // namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
 #endif // ATTRIBUTE_H

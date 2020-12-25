@@ -3,8 +3,8 @@
 
 class QSqlQuery;
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 
@@ -27,7 +27,7 @@ QString parseExecutedQuery(const QSqlQuery &query);
 #  endif
 #endif
 
-#ifdef MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
 }
 #endif
 

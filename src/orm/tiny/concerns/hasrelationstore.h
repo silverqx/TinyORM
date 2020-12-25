@@ -3,8 +3,8 @@
 
 #include "orm/ormtypes.h"
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm::Tiny
@@ -146,8 +146,8 @@ namespace Concerns
 
 } // namespace Orm::Tiny::Concerns
 } // namespace Orm::Tiny
-#ifdef MANGO_COMMON_NAMESPACE
-} // namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
 #endif // HASRELATIONSTORE_H

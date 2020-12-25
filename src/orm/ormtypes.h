@@ -18,8 +18,8 @@ class TorrentPreviewableFileProperty;
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
 
-#ifdef MANGO_COMMON_NAMESPACE
-namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm
@@ -167,12 +167,12 @@ namespace Query
                                        std::optional<AllRelations>...>;
 
 } // namespace Orm
-#ifdef MANGO_COMMON_NAMESPACE
-} // namespace MANGO_COMMON_NAMESPACE
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#ifdef MANGO_COMMON_NAMESPACE
-Q_DECLARE_METATYPE(MANGO_COMMON_NAMESPACE::Orm::WhereConditionItem);
+#ifdef TINYORM_COMMON_NAMESPACE
+Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem);
 #else
 Q_DECLARE_METATYPE(Orm::WhereConditionItem);
 #endif
