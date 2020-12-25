@@ -5,8 +5,8 @@
 
 #include <optional>
 
-#include "orm/expression.h"
-#include "orm/ormtypes.h"
+#include "orm/expression.hpp"
+#include "orm/ormtypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

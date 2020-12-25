@@ -8,7 +8,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    // TODO rework saveing Expressions to the "BindingsMap m_bindings", see also todo at BindingsMap definition in ormtypes.h silverqx
+    // TODO rework saveing Expressions to the "BindingsMap m_bindings", see also todo at BindingsMap definition in ormtypes.hpp silverqx
     class Expression
     {
     public:

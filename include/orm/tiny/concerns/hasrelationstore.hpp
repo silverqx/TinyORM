@@ -1,7 +1,7 @@
 #ifndef HASRELATIONSTORE_H
 #define HASRELATIONSTORE_H
 
-#include "orm/ormtypes.h"
+#include "orm/ormtypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

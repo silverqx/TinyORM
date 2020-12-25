@@ -1,4 +1,4 @@
-#include "orm/databaseconnection.h"
+#include "orm/databaseconnection.hpp"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -7,7 +7,7 @@
 
 #include "mysql.h"
 
-#include "orm/logquery.h"
+#include "orm/logquery.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

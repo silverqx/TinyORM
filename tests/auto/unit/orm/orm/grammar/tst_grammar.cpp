@@ -1,6 +1,6 @@
 #include <QtTest>
 
-#include "orm/grammar.h"
+#include "orm/grammar.hpp"
 
 class tst_Grammar : public QObject
 {

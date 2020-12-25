@@ -1,10 +1,10 @@
 #ifndef TORRENTS_H
 #define TORRENTS_H
 
-#include "orm/tiny/basemodel.h"
+#include "orm/tiny/basemodel.hpp"
 
-#include "torrentpeer.h"
-#include "torrentpreviewablefile.h"
+#include "torrentpeer.hpp"
+#include "torrentpreviewablefile.hpp"
 
 /* This class serves as a showcase, so all possible features are defined / used. */
 

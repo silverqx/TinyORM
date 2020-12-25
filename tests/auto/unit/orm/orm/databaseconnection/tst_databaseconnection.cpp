@@ -1,6 +1,6 @@
 #include <QtTest>
 
-#include "orm/databaseconnection.h"
+#include "orm/databaseconnection.hpp"
 
 class tst_DatabaseConnection : public QObject
 {

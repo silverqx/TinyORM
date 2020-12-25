@@ -1,7 +1,7 @@
 #ifndef JOINCLAUSE_H
 #define JOINCLAUSE_H
 
-#include "orm/query/querybuilder.h"
+#include "orm/query/querybuilder.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

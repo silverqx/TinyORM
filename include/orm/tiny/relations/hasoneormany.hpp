@@ -4,7 +4,7 @@
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 
-#include "orm/tiny/relations/relation.h"
+#include "orm/tiny/relations/relation.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

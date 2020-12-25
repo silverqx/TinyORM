@@ -11,12 +11,12 @@
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/remove_if.hpp>
 
-#include "orm/databaseconnection.h"
-#include "orm/query/querybuilder.h"
-#include "orm/tiny/relations/relation.h"
-#include "orm/tiny/relations/belongsto.h"
-#include "orm/tiny/relations/hasmany.h"
-#include "orm/utils/attribute.h"
+#include "orm/databaseconnection.hpp"
+#include "orm/query/querybuilder.hpp"
+#include "orm/tiny/relations/relation.hpp"
+#include "orm/tiny/relations/belongsto.hpp"
+#include "orm/tiny/relations/hasmany.hpp"
+#include "orm/utils/attribute.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

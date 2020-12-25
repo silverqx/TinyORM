@@ -1,4 +1,4 @@
-#include "orm/entitymanager.h"
+#include "orm/entitymanager.hpp"
 
 #include <QtSql/QSqlQuery>
 
@@ -28,8 +28,8 @@ namespace Orm
     DatabaseConnection classes directly.
     EntityManager is also injected into a repository and a service
     classes constructors.
-    The circular dependency problem is solved by including entitymanager.h
-    in the baserepository.h file.
+    The circular dependency problem is solved by including entitymanager.hpp
+    in the baserepository.hpp file.
 */
 
 EntityManager::EntityManager()

@@ -1,8 +1,8 @@
-#include "orm/query/querybuilder.h"
+#include "orm/query/querybuilder.hpp"
 
-#include "orm/databaseconnection.h"
-#include "orm/ormerror.h"
-#include "orm/query/joinclause.h"
+#include "orm/databaseconnection.hpp"
+#include "orm/ormerror.hpp"
+#include "orm/query/joinclause.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

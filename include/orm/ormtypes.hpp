@@ -8,8 +8,8 @@
 #include <typeindex>
 #include <optional>
 
-#include "export.h"
-#include "orm/tiny/relations/relation.h"
+#include "export.hpp"
+#include "orm/tiny/relations/relation.hpp"
 
 class Torrent;
 class TorrentPreviewableFile;

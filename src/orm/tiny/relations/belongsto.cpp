@@ -1,4 +1,4 @@
-#include "orm/tiny/relations/belongsto.h"
+#include "orm/tiny/relations/belongsto.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

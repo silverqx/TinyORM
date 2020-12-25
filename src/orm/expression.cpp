@@ -1,4 +1,4 @@
-#include "orm/expression.h"
+#include "orm/expression.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

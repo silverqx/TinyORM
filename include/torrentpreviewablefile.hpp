@@ -3,10 +3,10 @@
 
 #include <QDebug>
 
-#include "orm/tiny/basemodel.h"
+#include "orm/tiny/basemodel.hpp"
 
-#include "torrent.h"
-#include "torrentpreviewablefileproperty.h"
+#include "torrent.hpp"
+#include "torrentpreviewablefileproperty.hpp"
 
 class TorrentPreviewableFile final : public Orm::Tiny::BaseModel<TorrentPreviewableFile, Torrent, TorrentPreviewableFileProperty>
 {

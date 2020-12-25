@@ -1,8 +1,8 @@
 #include <QtTest>
 
-#include "orm/databaseconnection.h"
-#include "orm/grammar.h"
-#include "orm/query/querybuilder.h"
+#include "orm/databaseconnection.hpp"
+#include "orm/grammar.hpp"
+#include "orm/query/querybuilder.hpp"
 
 class tst_QueryBuilder : public QObject
 {

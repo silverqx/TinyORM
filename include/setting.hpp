@@ -1,7 +1,7 @@
 #ifndef SETTING_H
 #define SETTING_H
 
-#include "orm/tiny/basemodel.h"
+#include "orm/tiny/basemodel.hpp"
 
 class Setting final : public Orm::Tiny::BaseModel<Setting>
 {

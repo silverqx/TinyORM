@@ -1,4 +1,4 @@
-#include "torrent.h"
+#include "torrent.hpp"
 
 Torrent::Torrent(const QVector<Orm::AttributeItem> &attributes)
     : BaseModel(attributes)

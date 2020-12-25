@@ -1,7 +1,7 @@
 #ifndef TESTORM_H
 #define TESTORM_H
 
-#include "orm/entitymanager.h"
+#include "orm/entitymanager.hpp"
 
 class TestOrm
 {

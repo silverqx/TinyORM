@@ -8,16 +8,16 @@
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
 
-#include "orm/databaseconnection.h"
-#include "orm/ormerror.h"
-#include "orm/query/querybuilder.h"
-#include "orm/tiny/concerns/hasrelationstore.h"
-#include "orm/tiny/relations/belongsto.h"
-#include "orm/tiny/relations/hasone.h"
-#include "orm/tiny/relations/hasmany.h"
-#include "orm/tiny/tinybuilder.h"
-#include "orm/utils/string.h"
-#include "orm/utils/type.h"
+#include "orm/databaseconnection.hpp"
+#include "orm/ormerror.hpp"
+#include "orm/query/querybuilder.hpp"
+#include "orm/tiny/concerns/hasrelationstore.hpp"
+#include "orm/tiny/relations/belongsto.hpp"
+#include "orm/tiny/relations/hasone.hpp"
+#include "orm/tiny/relations/hasmany.hpp"
+#include "orm/tiny/tinybuilder.hpp"
+#include "orm/utils/string.hpp"
+#include "orm/utils/type.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

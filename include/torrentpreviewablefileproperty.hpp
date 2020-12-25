@@ -1,9 +1,9 @@
 #ifndef TORRENTPREVIEWABLEFILEPROPERTY_H
 #define TORRENTPREVIEWABLEFILEPROPERTY_H
 
-#include "orm/tiny/basemodel.h"
+#include "orm/tiny/basemodel.hpp"
 
-#include "torrentpreviewablefile.h"
+#include "torrentpreviewablefile.hpp"
 
 class TorrentPreviewableFileProperty final : public Orm::Tiny::BaseModel<TorrentPreviewableFileProperty, TorrentPreviewableFile>
 {

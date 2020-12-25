@@ -1,8 +1,8 @@
-#include "orm/grammar.h"
+#include "orm/grammar.hpp"
 
 #include <QRegularExpression>
 
-#include "orm/query/joinclause.h"
+#include "orm/query/joinclause.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

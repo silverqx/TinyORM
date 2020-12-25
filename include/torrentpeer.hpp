@@ -1,9 +1,9 @@
 #ifndef TORRENTPEERS_H
 #define TORRENTPEERS_H
 
-#include "orm/tiny/basemodel.h"
+#include "orm/tiny/basemodel.hpp"
 
-#include "torrent.h"
+#include "torrent.hpp"
 
 class TorrentPeer final : public Orm::Tiny::BaseModel<TorrentPeer, Torrent>
 {

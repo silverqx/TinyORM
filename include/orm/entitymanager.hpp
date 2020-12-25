@@ -1,8 +1,8 @@
 #ifndef ENTITYMANAGER_H
 #define ENTITYMANAGER_H
 
-#include "orm/databaseconnection.h"
-#include "orm/repositoryfactory.h"
+#include "orm/databaseconnection.hpp"
+#include "orm/repositoryfactory.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

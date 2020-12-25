@@ -1,15 +1,15 @@
-#include "testorm.h"
+#include "testorm.hpp"
 
 #include <QDebug>
 
 #include <iostream>
 
 #include <optional>
-#include "setting.h"
-#include "torrent.h"
-#include "torrentpreviewablefile.h"
-#include "torrentpeer.h"
-#include <orm/ormtypes.h>
+#include "setting.hpp"
+#include "torrent.hpp"
+#include "torrentpreviewablefile.hpp"
+#include "torrentpeer.hpp"
+#include <orm/ormtypes.hpp>
 #include <range/v3/all.hpp>
 
 using namespace ranges;

@@ -1,4 +1,4 @@
-#include "orm/tiny/tinybuilder.h"
+#include "orm/tiny/tinybuilder.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
