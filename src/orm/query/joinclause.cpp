@@ -1,4 +1,4 @@
-#include "joinclause.h"
+#include "orm/query/joinclause.h"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

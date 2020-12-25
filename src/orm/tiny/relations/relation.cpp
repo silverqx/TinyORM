@@ -1,4 +1,4 @@
-#include "relation.h"
+#include "orm/tiny/relations/relation.h"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

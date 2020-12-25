@@ -1,4 +1,4 @@
-#include "attribute.h"
+#include "orm/utils/attribute.h"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

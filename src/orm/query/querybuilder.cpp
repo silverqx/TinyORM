@@ -1,4 +1,4 @@
-#include "querybuilder.h"
+#include "orm/query/querybuilder.h"
 
 #include "orm/databaseconnection.h"
 #include "orm/ormerror.h"

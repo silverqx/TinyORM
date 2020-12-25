@@ -1,4 +1,4 @@
-#include "hasattributes.h"
+#include "orm/tiny/concerns/hasattributes.h"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

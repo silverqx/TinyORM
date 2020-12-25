@@ -6,7 +6,8 @@ TARGET = TinyOrm
 
 # Configuration
 # ---
-include($$TINYORM_SOURCE_TREE/config.pri)
+
+include(../config.pri)
 
 # TinyOrm library specific configuration
 # ---
@@ -28,6 +29,7 @@ CONFIG(release, debug|release) {
 
 # TinyOrm defines
 # ---
+
 DEFINES += PROJECT_TINYORM
 # Log queries with time measurement
 DEFINES += TINYORM_DEBUG_SQL
@@ -37,6 +39,7 @@ DEFINES += TINYORM_BUILDING_SHARED
 
 # Dependencies include and library paths
 # ---
+
 win32-g++* {
 }
 else:win32-msvc* {
@@ -54,6 +57,7 @@ else:win32-msvc* {
 
 # File version and windows manifest
 # ---
+
 win32:VERSION = 0.1.0.0
 else:VERSION = 0.1.0
 
@@ -66,7 +70,7 @@ win32-msvc* {
     RC_LANG = 1033
 }
 
-# TinyOrm library source files
+# TinyOrm library header and source files
 # ---
 
 include(src.pri)

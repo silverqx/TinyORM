@@ -1,4 +1,4 @@
-#include "basemodel.h"
+#include "orm/tiny/basemodel.h"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

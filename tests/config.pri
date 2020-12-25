@@ -6,7 +6,7 @@ TEMPLATE = app
 # Common configuration
 # ---
 
-include($$TINYORM_SOURCE_TREE/config.pri)
+include(../config.pri)
 
 # Tests specific configuration
 # ---

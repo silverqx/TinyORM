@@ -17,7 +17,6 @@ namespace Orm::Tiny
 namespace Orm::Tiny::Relations
 {
 
-    // TODO now rename to BaseRelation, when staging area will be empty silverqx
     template<class Model, class Related>
     class Relation
     {

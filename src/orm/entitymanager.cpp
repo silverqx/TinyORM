@@ -1,4 +1,4 @@
-#include "entitymanager.h"
+#include "orm/entitymanager.h"
 
 #include <QtSql/QSqlQuery>
 

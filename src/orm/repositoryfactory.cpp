@@ -1,4 +1,4 @@
-#include "repositoryfactory.h"
+#include "orm/repositoryfactory.h"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
