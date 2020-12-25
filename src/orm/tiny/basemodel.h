@@ -442,7 +442,9 @@ namespace Tiny
 
     template<typename Model, typename ...AllRelations>
     BaseModel<Model, AllRelations...>::BaseModel(const QVector<AttributeItem> &attributes)
+#ifdef QT_DEBUG
         : m_table(&model().u_table)
+#endif
     {
         // Compile time check if a primary key type is supported by a QVariant
         qMetaTypeId<typename Model::KeyType>();

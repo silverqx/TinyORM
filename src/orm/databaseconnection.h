@@ -13,7 +13,7 @@ namespace MANGO_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class DatabaseConnection final
+    class SHAREDLIB_EXPORT DatabaseConnection final
     {
         Q_DISABLE_COPY(DatabaseConnection)
 

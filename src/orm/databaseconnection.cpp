@@ -265,7 +265,7 @@ DatabaseConnection::statement(const QString &queryString,
 {
     auto query = prepareQuery(queryString, bindings);
 
-#ifdef MANGO_DEBUG_SQL
+#ifdef TINYORM_DEBUG_SQL
     QElapsedTimer timer;
     timer.start();
 #endif
@@ -274,13 +274,13 @@ DatabaseConnection::statement(const QString &queryString,
     if (!ok) {
         qDebug() << "Statement in DatabaseConnection::statement() failed :"
                  << query.lastError().text();
-#ifdef MANGO_DEBUG_SQL
+#ifdef TINYORM_DEBUG_SQL
         logQuery(query, timer.elapsed());
 #else
         logQuery(query);
 #endif
     }
-#ifdef MANGO_DEBUG_SQL
+#ifdef TINYORM_DEBUG_SQL
     else
         logQuery(query, timer.elapsed());
 #endif
@@ -294,7 +294,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
 {
     auto query = prepareQuery(queryString, bindings);
 
-#ifdef MANGO_DEBUG_SQL
+#ifdef TINYORM_DEBUG_SQL
     QElapsedTimer timer;
     timer.start();
 #endif
@@ -304,13 +304,13 @@ DatabaseConnection::affectingStatement(const QString &queryString,
     if (!ok) {
         qDebug() << "Affecting statement in DatabaseConnection::affectingStatement() failed :"
                  << query.lastError().text();
-#ifdef MANGO_DEBUG_SQL
+#ifdef TINYORM_DEBUG_SQL
         logQuery(query, timer.elapsed());
 #else
         logQuery(query);
 #endif
     }
-#ifdef MANGO_DEBUG_SQL
+#ifdef TINYORM_DEBUG_SQL
     else
         logQuery(query, timer.elapsed());
 #endif

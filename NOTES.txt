@@ -62,3 +62,31 @@ struct RelationMethods
 
 tmp notes:
 ----------
+
+message(-------)
+message(XXX config.pri)
+message(PWD: $$PWD)
+message(OUT_PWD: $$OUT_PWD)
+message(_PRO_FILE_PWD_: $$_PRO_FILE_PWD_)
+message(INCLUDEPATH: $$INCLUDEPATH)
+message(-------)
+
+
+#include <QDebug>
+
+#include <qt_windows.h>
+
+#include "testorm.h"
+
+int main(int, char *[])
+{
+//    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleOutputCP(1250);
+
+    qDebug() << "";
+
+    TestOrm testOrm;
+    testOrm.run();
+
+    qDebug() << "\n";
+}

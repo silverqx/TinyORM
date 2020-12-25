@@ -29,6 +29,7 @@ SOURCES += \
     $$PWD/torrentpreviewablefileproperty.cpp \
 
 HEADERS += \
+    $$PWD/export.h \
     $$PWD/orm/databaseconnection.h \
     $$PWD/orm/entitymanager.h \
     $$PWD/orm/expression.h \
@@ -57,3 +58,6 @@ HEADERS += \
     $$PWD/torrentpeer.h \
     $$PWD/torrentpreviewablefile.h \
     $$PWD/torrentpreviewablefileproperty.h \
+
+SUBDIRS += \
+    $$PWD/src.pro

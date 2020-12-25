@@ -6,7 +6,9 @@
 #include <memory>
 #include <any>
 #include <typeindex>
+#include <optional>
 
+#include "export.h"
 #include "orm/tiny/relations/relation.h"
 
 class Torrent;

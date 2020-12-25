@@ -8,6 +8,7 @@
 #include "orm/expression.h"
 #include "orm/ormtypes.h"
 
+// TODO now rename mango to tinyorm silverqx
 #ifdef MANGO_COMMON_NAMESPACE
 namespace MANGO_COMMON_NAMESPACE
 {
@@ -24,7 +25,8 @@ namespace Orm::Query
 
     class JoinClause;
 
-    class Builder
+
+    class SHAREDLIB_EXPORT Builder
     {
     public:
         Builder(const DatabaseConnection &db, const Grammar &grammar);

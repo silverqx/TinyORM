@@ -10,7 +10,7 @@ namespace MANGO_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class Grammar
+    class SHAREDLIB_EXPORT Grammar
     {
     public:
         /*! Compile a select query into SQL. */
