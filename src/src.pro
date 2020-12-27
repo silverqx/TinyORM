@@ -52,7 +52,7 @@ else:win32-msvc* {
 
     LIBS += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.0/lib)
 
-    LIBS += libmysql.lib
+    LIBS += -llibmysql
 }
 
 # File version and windows manifest
@@ -63,12 +63,17 @@ else:VERSION = 0.1.0
 
 win32-msvc* {
     QMAKE_TARGET_PRODUCT = TinyOrm
-    QMAKE_TARGET_DESCRIPTION = TinyOrm user friendly ORM
+    QMAKE_TARGET_DESCRIPTION = TinyOrm user-friendly ORM
     QMAKE_TARGET_COMPANY = Crystal Studio
     QMAKE_TARGET_COPYRIGHT = Copyright (©) 2020 Crystal Studio
-#    RC_ICONS = images/qMedia.ico
+#    RC_ICONS = images/TinyOrm.ico
     RC_LANG = 1033
 }
+
+# Use Precompiled headers (PCH)
+# ---
+
+include(../include/pch.pri)
 
 # TinyOrm library header and source files
 # ---
@@ -79,6 +84,6 @@ include(src.pri)
 # ---
 
 release {
-    win32-msvc*: target.path = c:/optx64/$${TARGET}
+    win32-msvc*: target.path = C:/optx64/$${TARGET}
     !isEmpty(target.path): INSTALLS += target
 }

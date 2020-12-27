@@ -22,7 +22,6 @@ SOURCES += \
     $$PWD/orm/utils/attribute.cpp \
     $$PWD/orm/utils/string.cpp \
     $$PWD/setting.cpp \
-    $$PWD/testorm.cpp \
     $$PWD/torrent.cpp \
     $$PWD/torrentpeer.cpp \
     $$PWD/torrentpreviewablefile.cpp \

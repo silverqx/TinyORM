@@ -1,8 +1,10 @@
+#include <QCoreApplication>
 #include <QtTest>
 
 #include "orm/databaseconnection.hpp"
 #include "orm/grammar.hpp"
 #include "orm/query/querybuilder.hpp"
+#include "utils.hpp"
 
 class tst_QueryBuilder : public QObject
 {
@@ -31,18 +33,16 @@ tst_QueryBuilder::~tst_QueryBuilder()
 
 void tst_QueryBuilder::initTestCase()
 {
-
 }
 
 void tst_QueryBuilder::cleanupTestCase()
 {
-
 }
 
 void tst_QueryBuilder::test_case1()
 {
 }
 
-QTEST_APPLESS_MAIN(tst_QueryBuilder)
+QTEST_MAIN(tst_QueryBuilder)
 
 #include "tst_querybuilder.moc"

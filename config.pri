@@ -49,19 +49,3 @@ win32-msvc* {
     QMAKE_LFLAGS += /guard:cf
     QMAKE_LFLAGS_RELEASE += /OPT:REF /OPT:ICF=5
 }
-
-# TinyOrm library headers include path
-# ---
-
-INCLUDEPATH += $$quote($$PWD/include)
-
-# Use Precompiled headers (PCH)
-# ---
-
-PRECOMPILED_HEADER = $$quote($$PWD/include/pch.h)
-
-precompile_header:!isEmpty(PRECOMPILED_HEADER) {
-    DEFINES += USING_PCH
-}
-
-HEADERS += $$quote($$PWD/include/pch.h)

@@ -1,3 +1,5 @@
+INCLUDEPATH += $$PWD
+
 HEADERS += \
     $$PWD/export.hpp \
     $$PWD/orm/databaseconnection.hpp \
@@ -23,7 +25,6 @@ HEADERS += \
     $$PWD/orm/utils/string.hpp \
     $$PWD/orm/utils/type.hpp \
     $$PWD/setting.hpp \
-    $$PWD/testorm.hpp \
     $$PWD/torrent.hpp \
     $$PWD/torrentpeer.hpp \
     $$PWD/torrentpreviewablefile.hpp \

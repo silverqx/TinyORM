@@ -11,7 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class EntityManager final
+    class SHAREDLIB_EXPORT EntityManager final
     {
         Q_DISABLE_COPY(EntityManager)
 

@@ -13,6 +13,16 @@ include(../config.pri)
 
 CONFIG *= qt console testcase link_prl
 
+# Use TinyOrm's library precompiled headers (PCH)
+# ---
+
+include(../include/pch.pri)
+
+# TinyOrm library headers include path
+# ---
+
+include(../include/include.pri)
+
 # Link against TinyOrm library
 # ---
 
@@ -25,3 +35,5 @@ else:win32:CONFIG(debug, debug|release) {
 else:unix {
     LIBS += -L$$TINYORM_BUILD_TREE/src/ -lTinyOrm0
 }
+
+target.CONFIG += no_default_install
