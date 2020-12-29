@@ -1,3 +1,4 @@
+#include <QCoreApplication>
 #include <QtTest>
 
 #include "orm/grammar.hpp"
@@ -8,7 +9,7 @@ class tst_Grammar : public QObject
 
 public:
     tst_Grammar();
-    ~tst_Grammar();
+    ~tst_Grammar() = default;
 
 private slots:
     void initTestCase();
@@ -19,11 +20,6 @@ private slots:
 };
 
 tst_Grammar::tst_Grammar()
-{
-
-}
-
-tst_Grammar::~tst_Grammar()
 {
 
 }
@@ -42,6 +38,6 @@ void tst_Grammar::test_case1()
 {
 }
 
-QTEST_APPLESS_MAIN(tst_Grammar)
+QTEST_MAIN(tst_Grammar)
 
 #include "tst_grammar.moc"

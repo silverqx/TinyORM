@@ -1,8 +1,11 @@
+#include <QCoreApplication>
 #include <QtTest>
 
 #include "orm/databaseconnection.hpp"
 #include "orm/grammar.hpp"
 #include "orm/query/querybuilder.hpp"
+
+#include "database.hpp"
 
 class tst_QueryBuilder : public QObject
 {
@@ -10,7 +13,7 @@ class tst_QueryBuilder : public QObject
 
 public:
     tst_QueryBuilder();
-    ~tst_QueryBuilder();
+    ~tst_QueryBuilder() = default;
 
 private slots:
     void initTestCase();
@@ -19,17 +22,14 @@ private slots:
     void setDistinct();
     void setTable();
     void setFrom();
+
+private:
+    Orm::DatabaseConnection &m_db;
 };
 
 tst_QueryBuilder::tst_QueryBuilder()
-{
-
-}
-
-tst_QueryBuilder::~tst_QueryBuilder()
-{
-
-}
+    : m_db(Utils::Database::createConnection())
+{}
 
 void tst_QueryBuilder::initTestCase()
 {
@@ -43,8 +43,7 @@ void tst_QueryBuilder::cleanupTestCase()
 
 void tst_QueryBuilder::setDistinct()
 {
-    Orm::QueryBuilder builder(Orm::DatabaseConnection::instance(),
-                              Orm::Grammar());
+    Orm::QueryBuilder builder(m_db, Orm::Grammar());
 
     auto distinct = builder.getDistinct();
     QCOMPARE(distinct, false);
@@ -57,8 +56,7 @@ void tst_QueryBuilder::setDistinct()
 
 void tst_QueryBuilder::setTable()
 {
-    Orm::QueryBuilder builder(Orm::DatabaseConnection::instance(),
-                              Orm::Grammar());
+    Orm::QueryBuilder builder(m_db, Orm::Grammar());
 
     auto table = builder.getTable();
     auto tableFrom = builder.getFrom();
@@ -78,8 +76,7 @@ void tst_QueryBuilder::setTable()
 
 void tst_QueryBuilder::setFrom()
 {
-    Orm::QueryBuilder builder(Orm::DatabaseConnection::instance(),
-                              Orm::Grammar());
+    Orm::QueryBuilder builder(m_db, Orm::Grammar());
 
     auto table = builder.getTable();
     auto tableFrom = builder.getFrom();
@@ -97,6 +94,6 @@ void tst_QueryBuilder::setFrom()
     QCOMPARE(tableFrom, newTableName);
 }
 
-QTEST_APPLESS_MAIN(tst_QueryBuilder)
+QTEST_MAIN(tst_QueryBuilder)
 
 #include "tst_querybuilder.moc"

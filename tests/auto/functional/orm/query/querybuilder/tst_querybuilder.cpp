@@ -2,9 +2,8 @@
 #include <QtTest>
 
 #include "orm/databaseconnection.hpp"
-#include "orm/grammar.hpp"
-#include "orm/query/querybuilder.hpp"
-#include "utils.hpp"
+
+#include "database.hpp"
 
 class tst_QueryBuilder : public QObject
 {
@@ -12,21 +11,20 @@ class tst_QueryBuilder : public QObject
 
 public:
     tst_QueryBuilder();
-    ~tst_QueryBuilder();
+    ~tst_QueryBuilder() = default;
 
 private slots:
     void initTestCase();
     void cleanupTestCase();
 
     void test_case1();
+
+private:
+    Orm::DatabaseConnection &m_db;
 };
 
 tst_QueryBuilder::tst_QueryBuilder()
-{
-
-}
-
-tst_QueryBuilder::~tst_QueryBuilder()
+    : m_db(Utils::Database::createConnection())
 {
 
 }

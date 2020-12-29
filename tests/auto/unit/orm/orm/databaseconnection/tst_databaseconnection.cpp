@@ -1,3 +1,4 @@
+#include <QCoreApplication>
 #include <QtTest>
 
 #include "orm/databaseconnection.hpp"
@@ -43,6 +44,6 @@ void tst_DatabaseConnection::pingDatabase()
     QVERIFY2(result, "Ping database failed.");
 }
 
-QTEST_APPLESS_MAIN(tst_DatabaseConnection)
+QTEST_MAIN(tst_DatabaseConnection)
 
 #include "tst_databaseconnection.moc"
