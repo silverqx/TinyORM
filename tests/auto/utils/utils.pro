@@ -33,11 +33,6 @@ win32-msvc* {
     RC_LANG = 1033
 }
 
-# TinyOrm library header and source files
-# ---
-
-include(src/src.pri)
-
 # Use Precompiled headers (PCH)
 # ---
 
@@ -48,6 +43,29 @@ precompile_header:!isEmpty(PRECOMPILED_HEADER) {
 }
 
 HEADERS += $$quote($$PWD/src/pch.h)
+
+# TinyOrm library headers include path
+# ---
+
+include(../../../include/include.pri)
+
+# Link against TinyOrm library
+# ---
+
+win32:CONFIG(release, debug|release) {
+    LIBS += -L$$TINYORM_BUILD_TREE/src/release/ -lTinyOrm0
+}
+else:win32:CONFIG(debug, debug|release) {
+    LIBS += -L$$TINYORM_BUILD_TREE/src/debug/ -lTinyOrm0
+}
+else:unix {
+    LIBS += -L$$TINYORM_BUILD_TREE/src/ -lTinyOrm0
+}
+
+# Utils library header and source files
+# ---
+
+include(src/src.pri)
 
 # Default rules for deployment
 # ---

@@ -2,30 +2,29 @@
 
 #include "orm/databaseconnection.hpp"
 
+#include "database.hpp"
+
 class tst_DatabaseConnection : public QObject
 {
     Q_OBJECT
 
 public:
     tst_DatabaseConnection();
-    ~tst_DatabaseConnection();
+    ~tst_DatabaseConnection() = default;
 
 private slots:
     void initTestCase();
     void cleanupTestCase();
 
     void pingDatabase();
+
+private:
+    Orm::DatabaseConnection &m_db;
 };
 
 tst_DatabaseConnection::tst_DatabaseConnection()
-{
-
-}
-
-tst_DatabaseConnection::~tst_DatabaseConnection()
-{
-
-}
+    : m_db(Utils::Database::createConnection())
+{}
 
 void tst_DatabaseConnection::initTestCase()
 {
@@ -39,9 +38,7 @@ void tst_DatabaseConnection::cleanupTestCase()
 
 void tst_DatabaseConnection::pingDatabase()
 {
-    auto &conn = Orm::DatabaseConnection::instance();
-
-    const auto result = conn.pingDatabase();
+    const auto result = m_db.pingDatabase();
 
     QVERIFY2(result, "Ping database failed.");
 }

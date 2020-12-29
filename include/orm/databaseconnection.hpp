@@ -18,14 +18,25 @@ namespace Orm
         Q_DISABLE_COPY(DatabaseConnection)
 
     public:
+        /*! Create a database connection instance, factory method. */
+        static DatabaseConnection &
+        create(const QString &database = "", const QString tablePrefix = "",
+               const QVariantHash &config = {});
+        /*! Obtain a database connection instance, for now it's singleton. */
         static DatabaseConnection &instance();
         static void freeInstance();
 
         /*! Return underlying database connection. */
         static QSqlDatabase database();
 
+        // TODO now when empty staging area, rename to queryRaw() and query() silverqx
+        /*! Get a new raw query instance. */
         QSqlQuery query() const;
+        /*! Get a new query builder instance. */
         QSharedPointer<QueryBuilder> queryBuilder() const;
+        /*! Begin a fluent query against a database table. */
+        QSharedPointer<QueryBuilder> table(const QString &table) const;
+
         /*! Check database connection and show warnings when the state changed. */
         bool pingDatabase();
         bool transaction();
@@ -38,6 +49,10 @@ namespace Orm
         std::tuple<bool, QSqlQuery>
         select(const QString &queryString,
                const QVector<QVariant> &bindings = {}) const;
+        /*! Run a select statement and return a single result. */
+        std::tuple<bool, QSqlQuery>
+        selectOne(const QString &queryString,
+                  const QVector<QVariant> &bindings = {}) const;
         /*! Run an insert statement against the database. */
         std::tuple<bool, QSqlQuery>
         insert(const QString &queryString,
@@ -68,10 +83,19 @@ namespace Orm
         inline const QString getName() const
         { return CONNECTION_NAME; }
 
+    protected:
+        /*! The name of the connected database. */
+        const QString m_database;
+        /*! The table prefix for the connection. */
+        const QString m_tablePrefix {""};
+        /*! The database connection configuration options. */
+        const QVariantHash m_config;
+
     private:
         static DatabaseConnection *m_instance;
 
-        DatabaseConnection();
+        DatabaseConnection(const QString &database = "", const QString tablePrefix = "",
+                           const QVariantHash &config = {});
         ~DatabaseConnection() = default;
 
         static const char *CONNECTION_NAME;

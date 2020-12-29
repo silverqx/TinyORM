@@ -32,14 +32,24 @@ namespace Orm
     in the baserepository.hpp file.
 */
 
-EntityManager::EntityManager()
-    : m_db(DatabaseConnection::instance())
+EntityManager::EntityManager(const QVariantHash &config)
+    : m_db(createConnection(config))
+    , m_repositoryFactory(*this)
+{}
+
+EntityManager::EntityManager(DatabaseConnection &connection)
+    : m_db(connection)
     , m_repositoryFactory(*this)
 {}
 
 EntityManager::~EntityManager()
 {
     DatabaseConnection::freeInstance();
+}
+
+EntityManager EntityManager::create(const QVariantHash &config)
+{
+    return EntityManager(createConnection(config));
 }
 
 QSqlQuery EntityManager::query() const
@@ -80,6 +90,14 @@ bool EntityManager::savepoint(const QString &id)
 bool EntityManager::rollbackToSavepoint(const QString &id)
 {
     return m_db.rollbackToSavepoint(id);
+}
+
+DatabaseConnection &
+EntityManager::createConnection(const QVariantHash &config)
+{
+    return DatabaseConnection::create(config.find("database").value().toString(),
+                                      config.find("prefix").value().toString(),
+                                      config);
 }
 
 } // namespace Orm

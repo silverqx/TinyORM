@@ -4,6 +4,7 @@
 #include <QElapsedTimer>
 #include <QtSql/QSqlDriver>
 #include <QtSql/QSqlError>
+#include <QVersionNumber>
 
 #include "mysql.h"
 
@@ -52,32 +53,90 @@ namespace
 
 DatabaseConnection *DatabaseConnection::m_instance = nullptr;
 
-DatabaseConnection::DatabaseConnection()
+DatabaseConnection::DatabaseConnection(const QString &database, const QString tablePrefix,
+                                       const QVariantHash &config)
+    /* First we will setup the default properties. We keep track of the DB
+       name we are connected to since it is needed when some reflective
+       type commands are run such as checking whether a table exists. */
+    : m_database(database)
+    , m_tablePrefix(tablePrefix)
+    , m_config(config)
 {
     auto db = QSqlDatabase::addDatabase("QMYSQL", CONNECTION_NAME);
-    db.setHostName("127.0.0.1");
-//#ifdef QT_DEBUG
-    db.setDatabaseName("");
-//    db.setDatabaseName("");
-//#else
-//    db.setDatabaseName("");
-//#endif
-    db.setUserName("");
-    db.setPassword("");
+    db.setHostName(m_config.find("host").value().toString());
+    db.setDatabaseName(m_config.find("database").value().toString());
+    db.setUserName(m_config.find("username").value().toString());
+    db.setPassword(m_config.find("password").value().toString());
 
-    if (db.open())
+    if (m_config.contains("options"))
+        db.setConnectOptions(m_config.find("options").value().toString());
+
+    if (!db.open()) {
+        // TODO next solve how to solve this situation, how to inform end user, exception vs error code, ... silverqx
+        qDebug() << "Connect to DB failed :"
+                 << db.lastError().text();
         return;
+    }
 
-    // TODO next solve how to solve this situation, how to inform end user, exception vs error code, ... silverqx
-    qDebug() << "Connect to DB failed :"
-             << db.lastError().text();
+    // Set the connection character set and collation
+    if (config.contains("charset")) {
+        const auto collation = config.value("collation").toString();
+        const auto &collate = QStringLiteral(" collate '%1'").arg(collation);
+        select(QStringLiteral("set names '%1'%2")
+               .arg(config.find("charset").value().toString(),
+                    collate.isEmpty() ? "" : collate));
+    }
+
+    /* Next, we will check to see if a timezone has been specified in this config
+       and if it has we will issue a statement to modify the timezone with the
+       database. Setting this DB timezone is an optional configuration item. */
+    if (config.contains("timezone"))
+        select(QStringLiteral("set time_zone='%1'")
+               .arg(config.find("timezone").value().toString()));
+
+    // Set the modes for the connection.
+    if (config.contains("strict")
+        && config.find("strict").value().toBool()
+    ) {
+        // Obtain MySQL version
+        auto [ok, query] = selectOne("select version()");
+
+        if (ok) {
+            QString strictMode;
+
+            /* NO_AUTO_CREATE_USER was removed in 8.0.11 */
+            if (QVersionNumber::fromString(query.value(0).toString())
+                >= QVersionNumber(8, 0, 11)
+            )
+                strictMode =
+                        "set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,"
+                        "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
+                        "NO_ENGINE_SUBSTITUTION'";
+            else
+                strictMode =
+                        "set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,"
+                        "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
+                        "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'";
+
+            select(strictMode);
+        }
+    }
+    else
+        select("set session sql_mode='NO_ENGINE_SUBSTITUTION'");
+}
+
+DatabaseConnection &
+DatabaseConnection::create(const QString &database, const QString tablePrefix,
+                           const QVariantHash &config)
+{
+    if (!m_instance)
+        m_instance = new DatabaseConnection(database, tablePrefix, config);
+
+    return *m_instance;
 }
 
 DatabaseConnection &DatabaseConnection::instance()
 {
-    if (!m_instance)
-        m_instance = new DatabaseConnection();
-
     return *m_instance;
 }
 
@@ -98,6 +157,15 @@ QSqlQuery DatabaseConnection::query() const
 QSharedPointer<QueryBuilder> DatabaseConnection::queryBuilder() const
 {
     return QSharedPointer<QueryBuilder>::create(*this, m_grammar);
+}
+
+QSharedPointer<QueryBuilder> DatabaseConnection::table(const QString &table) const
+{
+    auto builder = QSharedPointer<QueryBuilder>::create(*this, m_grammar);
+
+    builder->from(table);
+
+    return builder;
 }
 
 QSqlDatabase DatabaseConnection::database()
@@ -236,6 +304,20 @@ DatabaseConnection::select(const QString &queryString,
                            const QVector<QVariant> &bindings) const
 {
     return statement(queryString, bindings);
+}
+
+std::tuple<bool, QSqlQuery>
+DatabaseConnection::selectOne(const QString &queryString,
+                              const QVector<QVariant> &bindings) const
+{
+    auto [ok, query] = statement(queryString, bindings);
+
+    if (!ok)
+        return {ok, query};
+
+    ok = query.first();
+
+    return {ok, query};
 }
 
 std::tuple<bool, QSqlQuery>

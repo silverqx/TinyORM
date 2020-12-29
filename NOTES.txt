@@ -60,6 +60,70 @@ struct RelationMethods
 };
 
 
+DatabaseConnection config:
+--------------------------
+
+QHash<QString, QVariant> config {
+//    {"driver",         "mysql"},
+//    {"url",            qEnvironmentVariable("DATABASE_URL")},
+    {"host",           qEnvironmentVariable("DB_HOST", "127.0.0.1")},
+    {"port",           qEnvironmentVariable("DB_PORT", "3306")},
+    {"database",       qEnvironmentVariable("DB_DATABASE", "")},
+    {"username",       qEnvironmentVariable("DB_USERNAME", "root")},
+    {"password",       qEnvironmentVariable("DB_PASSWORD", "")},
+//    {"unix_socket",    qEnvironmentVariable("DB_SOCKET", "")},
+    {"charset",        qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
+    {"collation",      qEnvironmentVariable("DB_COLLATION", "utf8mb4_unicode_ci")},
+//    {"prefix",         ""},
+//    {"prefix_indexes", true},
+    {"strict",         true},
+//    {"engine",         {}},
+    {"options",        ""},
+};
+
+
+DatabaseConnection debug code:
+------------------------------
+
+{
+    auto [ok, query] = select("select @@session.time_zone, @@global.time_zone");
+    while(query.next()) {
+        qDebug().nospace() << query.value(0).toString() << "\n"
+                 << query.value(1).toString();
+    }
+}
+
+{
+    auto [ok, query] = select("select @@session.character_set_client, @@session.character_set_connection, "
+            "@@session.character_set_results, @@session.collation_connection");
+            while(query.next()) {
+        qDebug().nospace() << query.value(0).toString() << "\n"
+                 << query.value(1).toString() << "\n"
+                 << query.value(2).toString() << "\n"
+                 << query.value(3).toString();
+    }
+}
+
+{
+    auto [ok, query] = select("select @@global.character_set_client, @@global.character_set_connection, "
+            "@@global.character_set_results, @@global.collation_connection");
+    while(query.next()) {
+        qDebug().nospace() << query.value(0).toString() << "\n"
+                 << query.value(1).toString() << "\n"
+                 << query.value(2).toString() << "\n"
+                 << query.value(3).toString();
+    }
+}
+
+{
+    auto [ok, query] = select("select @@global.sql_mode, @@session.sql_mode");
+            while(query.next()) {
+        qDebug().nospace() << query.value(0).toString() << "\n"
+         << query.value(1).toString();
+    }
+}
+
+
 tmp notes:
 ----------
 

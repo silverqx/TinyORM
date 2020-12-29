@@ -6,17 +6,17 @@
 /* Add C++ includes here */
 //#include <QCoreApplication>
 //#include <QDir>
-//#include <QHash>
+#include <QHash>
 //#include <QMap>
 //#include <QPointer>
 //#include <QRegularExpression>
-//#include <QSharedPointer>
+#include <QSharedPointer>
 //#include <QStringList>
 //#include <QTimer>
-//#include <QVariant>
-//#include <QVector>
+#include <QVariant>
+#include <QVector>
 
-//#include <array>
+#include <array>
 //#include <bitset>
 //#include <algorithm>
 //#include <cassert>
@@ -28,7 +28,7 @@
 //#include <cstdint>
 //#include <cstdlib>
 //#include <functional>
-//#include <initializer_list>
+#include <initializer_list>
 //#include <iterator>
 //#include <map>
 //#include <memory>
@@ -39,7 +39,7 @@
 //#include <span>
 //#include <string>
 //#include <thread>
-//#include <tuple>
+#include <tuple>
 //#include <type_traits>
 //#include <unordered_map>
 //#include <vector>
