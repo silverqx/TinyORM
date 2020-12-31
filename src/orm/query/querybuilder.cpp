@@ -178,6 +178,97 @@ std::tuple<bool, QSqlQuery> Builder::truncate() const
     return m_db.statement(m_grammar.compileTruncate(*this));
 }
 
+Builder &Builder::join(const QString &table, const QString &first,
+                       const QString &comparison, const QString &second,
+                       const QString &type, const bool where)
+{
+    const auto join = newJoinClause(*this, type, table);
+
+    enum struct JoinType { WHERE, ON };
+    const auto method = where ? JoinType::WHERE : JoinType::ON;
+    switch (method) {
+    case JoinType::WHERE:
+        join->where(first, comparison, second);
+        break;
+    case JoinType::ON:
+        join->on(first, comparison, second);
+        break;
+    }
+
+    m_joins.append(join);
+    addBinding(join->getBindings(), BindingType::JOIN);
+
+    return *this;
+}
+
+Builder &Builder::join(const QString &table, const std::function<void(JoinClause &)> &callback,
+                       const QString &type)
+{
+    const auto join = newJoinClause(*this, type, table);
+
+    std::invoke(callback, *join);
+
+    m_joins.append(join);
+    addBinding(join->getBindings(), BindingType::JOIN);
+
+    return *this;
+}
+
+Builder &Builder::joinWhere(const QString &table, const QString &first,
+                            const QString &comparison, const QString &second,
+                            const QString &type)
+{
+    return join(table, first, comparison, second, type, true);
+}
+
+Builder &Builder::leftJoin(const QString &table, const QString &first,
+                           const QString &comparison, const QString &second)
+{
+    return join(table, first, comparison, second, "left");
+}
+
+Builder &Builder::leftJoin(const QString &table,
+                           const std::function<void (JoinClause &)> &callback)
+{
+    return join(table, callback, "left");
+}
+
+Builder &Builder::leftJoinWhere(const QString &table, const QString &first,
+                                const QString &comparison, const QString &second)
+{
+    return join(table, first, comparison, second, "left");
+}
+
+Builder &Builder::rightJoin(const QString &table, const QString &first,
+                            const QString &comparison, const QString &second)
+{
+    return join(table, first, comparison, second, "right");
+}
+
+Builder &Builder::rightJoin(const QString &table,
+                            const std::function<void (JoinClause &)> &callback)
+{
+    return join(table, callback, "right");
+}
+
+Builder &Builder::rightJoinWhere(const QString &table, const QString &first,
+                                 const QString &comparison, const QString &second)
+{
+    return joinWhere(table, first, comparison, second, "right");
+}
+
+Builder &Builder::crossJoin(const QString &table, const QString &first,
+                            const QString &comparison, const QString &second)
+{
+    return join(table, first, comparison, second, "cross");
+}
+
+Builder &Builder::crossJoin(const QString &table,
+                            const std::function<void (JoinClause &)> &callback)
+{
+    return join(table, callback, "cross");
+}
+
 Builder &Builder::where(const QString &column, const QString &comparison,
                         const QVariant &value, const QString &condition)
 {
@@ -350,98 +441,6 @@ Builder &Builder::orHaving(const QString &column, const QString &comparison,
                            const QVariant &value)
 {
     return having(column, comparison, value, "or");
-}
-
-// TODO now reorder, after empty staging area, move all join() methods under truncated silverqx
-Builder &Builder::join(const QString &table, const QString &first,
-                       const QString &comparison, const QString &second,
-                       const QString &type, const bool where)
-{
-    const auto join = newJoinClause(*this, type, table);
-
-    enum struct JoinType { WHERE, ON };
-    const auto method = where ? JoinType::WHERE : JoinType::ON;
-    switch (method) {
-    case JoinType::WHERE:
-        join->where(first, comparison, second);
-        break;
-    case JoinType::ON:
-        join->on(first, comparison, second);
-        break;
-    }
-
-    m_joins.append(join);
-    addBinding(join->getBindings(), BindingType::JOIN);
-
-    return *this;
-}
-
-Builder &Builder::join(const QString &table, const std::function<void(JoinClause &)> &callback,
-                       const QString &type)
-{
-    const auto join = newJoinClause(*this, type, table);
-
-    std::invoke(callback, *join);
-
-    m_joins.append(join);
-    addBinding(join->getBindings(), BindingType::JOIN);
-
-    return *this;
-}
-
-Builder &Builder::joinWhere(const QString &table, const QString &first,
-                            const QString &comparison, const QString &second,
-                            const QString &type)
-{
-    return join(table, first, comparison, second, type, true);
-}
-
-Builder &Builder::leftJoin(const QString &table, const QString &first,
-                           const QString &comparison, const QString &second)
-{
-    return join(table, first, comparison, second, "left");
-}
-
-Builder &Builder::leftJoin(const QString &table,
-                           const std::function<void (JoinClause &)> &callback)
-{
-    return join(table, callback, "left");
-}
-
-Builder &Builder::leftJoinWhere(const QString &table, const QString &first,
-                                const QString &comparison, const QString &second)
-{
-    return join(table, first, comparison, second, "left");
-}
-
-Builder &Builder::rightJoin(const QString &table, const QString &first,
-                            const QString &comparison, const QString &second)
-{
-    return join(table, first, comparison, second, "right");
-}
-
-Builder &Builder::rightJoin(const QString &table,
-                            const std::function<void (JoinClause &)> &callback)
-{
-    return join(table, callback, "right");
-}
-
-Builder &Builder::rightJoinWhere(const QString &table, const QString &first,
-                                 const QString &comparison, const QString &second)
-{
-    return joinWhere(table, first, comparison, second, "right");
-}
-
-Builder &Builder::crossJoin(const QString &table, const QString &first,
-                            const QString &comparison, const QString &second)
-{
-    return join(table, first, comparison, second, "cross");
-}
-
-Builder &Builder::crossJoin(const QString &table,
-                            const std::function<void (JoinClause &)> &callback)
-{
-    return join(table, callback, "cross");
 }
 
 Builder &Builder::orderBy(const QString &column, const QString &direction)
