@@ -83,6 +83,10 @@ namespace Orm
         inline const QString getName() const
         { return CONNECTION_NAME; }
 
+        /*! Get the name of the connected database. */
+        inline const QString &getDatabaseName() const
+        { return m_database; }
+
     protected:
         /*! The name of the connected database. */
         const QString m_database;

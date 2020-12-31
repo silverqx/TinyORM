@@ -32,10 +32,25 @@ namespace Orm::Query
         // WARNING solver pure virtual dtor vs default silverqx
         virtual ~Builder() = default;
 
+        /*! Set the columns to be selected. */
+        Builder &select(const QStringList columns = {"*"});
+        /*! Set the column to be selected. */
+        inline Builder &select(const QString column)
+        { return select(QStringList(column)); }
+        /*! Add new select columns to the query. */
+        Builder &addSelect(const QStringList &columns);
+        /*! Add a new select column to the query. */
+        inline Builder &addSelect(const QString &column)
+        { return addSelect(QStringList(column)); }
+
+        /*! Force the query to only return distinct results. */
         inline Builder &distinct()
         { m_distinct = true; return *this; };
+
+        /*! Set the table which the query is targeting. */
         inline Builder &from(const QString &table)
         { m_from = table; return *this; }
+        /*! Set the table which the query is targeting. */
         inline Builder &table(const QString &table)
         { m_from = table; return *this; }
 
@@ -63,6 +78,7 @@ namespace Orm::Query
         /*! Insert new records into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVector<QVariantMap> &values) const;
+        /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVariantMap &values) const;
         // TODO postgres, support sequence, add sequence parameter silverqx
@@ -96,28 +112,38 @@ namespace Orm::Query
         Builder &join(const QString &table, const QString &first,
                       const QString &comparison, const QString &second,
                       const QString &type = "inner", bool where = false);
+        /*! Add an advanced join clause to the query. */
         Builder &join(const QString &table,
                       const std::function<void(JoinClause &)> &callback,
                       const QString &type = "inner");
-        Builder &leftJoin(const QString &table,
-                          const std::function<void(JoinClause &)> &callback);
-        Builder &rightJoin(const QString &table,
-                           const std::function<void(JoinClause &)> &callback);
-        Builder &crossJoin(const QString &table,
-                           const std::function<void(JoinClause &)> &callback);
+        /*! Add a "join where" clause to the query. */
         Builder &joinWhere(const QString &table, const QString &first,
                            const QString &comparison, const QString &second,
                            const QString &type = "inner");
+        /*! Add a left join to the query. */
         Builder &leftJoin(const QString &table, const QString &first,
                           const QString &comparison, const QString &second);
+        /*! Add an advanced left join to the query. */
+        Builder &leftJoin(const QString &table,
+                          const std::function<void(JoinClause &)> &callback);
+        /*! Add a "join where" clause to the query. */
         Builder &leftJoinWhere(const QString &table, const QString &first,
                                const QString &comparison, const QString &second);
+        /*! Add a right join to the query. */
         Builder &rightJoin(const QString &table, const QString &first,
                            const QString &comparison, const QString &second);
+        /*! Add an advanced right join to the query. */
+        Builder &rightJoin(const QString &table,
+                           const std::function<void(JoinClause &)> &callback);
+        /*! Add a "right join where" clause to the query. */
         Builder &rightJoinWhere(const QString &table, const QString &first,
                                 const QString &comparison, const QString &second);
+        /*! Add a "cross join" clause to the query. */
         Builder &crossJoin(const QString &table, const QString &first,
                            const QString &comparison, const QString &second);
+        /*! Add an advanced "cross join" clause to the query. */
+        Builder &crossJoin(const QString &table,
+                           const std::function<void(JoinClause &)> &callback);
 
         /*! Add a basic where clause to the query. */
         Builder &where(const QString &column, const QString &comparison,
@@ -229,36 +255,48 @@ namespace Orm::Query
         /*! Get a database connection. */
         inline const DatabaseConnection &getConnection() const
         { return m_db; }
+        /*! Get the query grammar instance. */
         inline const Grammar &getGrammar() const
         { return m_grammar; }
 
         /*! Get the current query value bindings as flattened QVector. */
         QVector<QVariant> getBindings() const;
+        /*! Get the raw map of bindings. */
         inline const BindingsMap &getRawBindings() const
         { return m_bindings; }
 
-        // TODO docs silverqx
+        /*! Check if the query returns distinct results. */
         inline bool getDistinct() const
         { return m_distinct; }
         // TODO check up all code and return references when appropriate silverqx
+        /*! Get the columns that should be returned. */
         inline const QStringList &getColumns() const
         { return m_columns; }
+        /*! Get the table associated with the query builder. */
         inline const QString &getFrom() const
         { return m_from; }
+        /*! Get the table associated with the query builder. */
         inline const QString &getTable() const
         { return m_from; }
+        /*! Get the table joins for the query. */
         inline const QVector<QSharedPointer<JoinClause>> &getJoins() const
         { return m_joins; }
+        /*! Get the where constraints for the query. */
         inline const QVector<WhereConditionItem> &getWheres() const
         { return m_wheres; }
+        /*! Get the groupings for the query. */
         inline const QStringList &getGroups() const
         { return m_groups; }
+        /*! Get the having constraints for the query. */
         inline const QVector<HavingConditionItem> &getHavings() const
         { return m_havings; }
+        /*! Get the orderings for the query. */
         inline const QVector<OrderByItem> &getOrders() const
         { return m_orders; }
+        /*! Get the maximum number of records to return. */
         inline int getLimit() const
         { return m_limit; }
+        /*! Get the number of records to skip. */
         inline int getOffset() const
         { return m_offset; }
 
@@ -271,11 +309,13 @@ namespace Orm::Query
         Expression raw(const QVariant &value) const;
 
     protected:
+        /*! Determine if the given operator is supported. */
         bool invalidOperator(const QString &comparison) const;
 
         /*! Add a binding to the query. */
         Builder &addBinding(const QVariant &binding,
                             BindingType type = BindingType::WHERE);
+        /*! Add bindings to the query. */
         Builder &addBinding(const QVector<QVariant> &bindings,
                             BindingType type = BindingType::WHERE);
         /*! Remove all of the expressions from a list of bindings. */
@@ -297,7 +337,11 @@ namespace Orm::Query
         Builder &addNestedWhereQuery(QSharedPointer<Builder> query,
                                      const QString &condition);
 
+        /*! Remove all existing columns and column bindings. */
+        Builder &clearColumns();
+
     private:
+        /*! Run the query as a "select" statement against the connection. */
         std::tuple<bool, QSqlQuery> runSelect() const;
 
         /*! All of the available clause operators. */
@@ -310,11 +354,13 @@ namespace Orm::Query
             "not similar to", "not ilike", "~~*", "!~~*",
         };
 
+        /*! The database connection instance. */
         const DatabaseConnection &m_db;
+        /*! The database query grammar instance. */
         const Grammar &m_grammar;
 
-        /*! Prepared statement bindings. Order is crucial here because of that
-            QMap with an enum struct is used. */
+        /*! The current query value bindings.
+            Order is crucial here because of that QMap with an enum struct is used. */
         BindingsMap m_bindings {
             {BindingType::SELECT,     {}},
             {BindingType::FROM,       {}},
@@ -327,15 +373,25 @@ namespace Orm::Query
             {BindingType::UNIONORDER, {}},
         };
 
+        /*! Indicates if the query returns distinct results. */
         bool m_distinct = false;
+        /*! The columns that should be returned. */
         QStringList m_columns {"*"};
+        /*! The table which the query is targeting. */
         QString m_from;
+        /*! The table joins for the query. */
         QVector<QSharedPointer<JoinClause>> m_joins;
+        /*! The where constraints for the query. */
         QVector<WhereConditionItem> m_wheres;
+        /*! The groupings for the query. */
         QStringList m_groups;
+        /*! The having constraints for the query. */
         QVector<HavingConditionItem> m_havings;
+        /*! The orderings for the query. */
         QVector<OrderByItem> m_orders;
+        /*! The maximum number of records to return. */
         int m_limit = -1;
+        /*! The number of records to skip. */
         int m_offset = -1;
     };
 

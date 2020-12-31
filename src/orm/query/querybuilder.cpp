@@ -1,5 +1,8 @@
 #include "orm/query/querybuilder.hpp"
 
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
+
 #include "orm/databaseconnection.hpp"
 #include "orm/ormerror.hpp"
 #include "orm/query/joinclause.hpp"
@@ -16,9 +19,30 @@ Builder::Builder(const DatabaseConnection &db, const Grammar &grammar)
     , m_grammar(grammar)
 {}
 
+Builder &Builder::select(const QStringList columns)
+{
+    clearColumns();
+
+    ranges::copy(columns, ranges::back_inserter(m_columns));
+
+    return *this;
+}
+
+Builder &Builder::addSelect(const QStringList &columns)
+{
+    if (!columns.isEmpty() && m_columns.size() == 1 && m_columns.at(0) == "*")
+        clearColumns();
+
+    ranges::copy(columns, ranges::back_inserter(m_columns));
+
+    return *this;
+}
+
 std::tuple<bool, QSqlQuery>
 Builder::get(const QStringList &columns)
 {
+    // BUG add onceWithColumns() to save ( not over-write ) m_columns silverqx
+    // columns isn't {"*"} and isn't empty
     if ((false == ((columns.size() == 1) && (columns.at(0) == "*")))
         && !columns.empty())
         m_columns = columns;
@@ -328,6 +352,7 @@ Builder &Builder::orHaving(const QString &column, const QString &comparison,
     return having(column, comparison, value, "or");
 }
 
+// TODO now reorder, after empty staging area, move all join() methods under truncated silverqx
 Builder &Builder::join(const QString &table, const QString &first,
                        const QString &comparison, const QString &second,
                        const QString &type, const bool where)
@@ -364,24 +389,6 @@ Builder &Builder::join(const QString &table, const std::function<void(JoinClause
     return *this;
 }
 
-Builder &Builder::leftJoin(const QString &table,
-                           const std::function<void (JoinClause &)> &callback)
-{
-    return join(table, callback, "left");
-}
-
-Builder &Builder::rightJoin(const QString &table,
-                            const std::function<void (JoinClause &)> &callback)
-{
-    return join(table, callback, "right");
-}
-
-Builder &Builder::crossJoin(const QString &table,
-                            const std::function<void (JoinClause &)> &callback)
-{
-    return join(table, callback, "cross");
-}
-
 Builder &Builder::joinWhere(const QString &table, const QString &first,
                             const QString &comparison, const QString &second,
                             const QString &type)
@@ -393,6 +400,12 @@ Builder &Builder::leftJoin(const QString &table, const QString &first,
                            const QString &comparison, const QString &second)
 {
     return join(table, first, comparison, second, "left");
+}
+
+Builder &Builder::leftJoin(const QString &table,
+                           const std::function<void (JoinClause &)> &callback)
+{
+    return join(table, callback, "left");
 }
 
 Builder &Builder::leftJoinWhere(const QString &table, const QString &first,
@@ -407,6 +420,12 @@ Builder &Builder::rightJoin(const QString &table, const QString &first,
     return join(table, first, comparison, second, "right");
 }
 
+Builder &Builder::rightJoin(const QString &table,
+                            const std::function<void (JoinClause &)> &callback)
+{
+    return join(table, callback, "right");
+}
+
 Builder &Builder::rightJoinWhere(const QString &table, const QString &first,
                                  const QString &comparison, const QString &second)
 {
@@ -417,6 +436,12 @@ Builder &Builder::crossJoin(const QString &table, const QString &first,
                             const QString &comparison, const QString &second)
 {
     return join(table, first, comparison, second, "cross");
+}
+
+Builder &Builder::crossJoin(const QString &table,
+                            const std::function<void (JoinClause &)> &callback)
+{
+    return join(table, callback, "cross");
 }
 
 Builder &Builder::orderBy(const QString &column, const QString &direction)
@@ -461,7 +486,10 @@ Builder &Builder::reorder(const QString &column, const QString &direction)
 Builder &Builder::limit(const int value)
 {
     Q_ASSERT(value >= 0);
-    m_limit = value;
+
+    if (value >= 0)
+        m_limit = value;
+
     return *this;
 }
 
@@ -473,7 +501,9 @@ Builder &Builder::take(const int value)
 Builder &Builder::offset(const int value)
 {
     Q_ASSERT(value >= 0);
+
     m_offset = std::max(0, value);
+
     return *this;
 }
 
@@ -606,6 +636,15 @@ Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> query,
 
     if (whereBindings.size() > 0)
         addBinding(whereBindings, BindingType::WHERE);
+
+    return *this;
+}
+
+Builder &Builder::clearColumns()
+{
+    m_columns.clear();
+
+    m_bindings[BindingType::SELECT].clear();
 
     return *this;
 }

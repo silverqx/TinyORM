@@ -2,6 +2,7 @@
 
 #include <QRegularExpression>
 
+#include "orm/databaseconnection.hpp"
 #include "orm/query/joinclause.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -185,7 +186,9 @@ QString Grammar::compileColumns(const QueryBuilder &query) const
     else
         select += "select ";
 
-    return select + columnize(query.getColumns(), query.getFrom() == "torrents");
+    return select + columnize(query.getColumns(),
+                              (query.getFrom() == "torrents")
+                              && (query.getConnection().getDatabaseName() == "q_media_test_orm"));
 }
 
 QString Grammar::compileFrom(const QueryBuilder &query) const
