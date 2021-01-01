@@ -1,10 +1,10 @@
-#include "orm/expression.hpp"
+#include "orm/query/expression.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Query
 {
 
 Expression::Expression(const QVariant &value)

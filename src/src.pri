@@ -3,10 +3,10 @@ include(../include/include.pri)
 SOURCES += \
     $$PWD/orm/databaseconnection.cpp \
     $$PWD/orm/entitymanager.cpp \
-    $$PWD/orm/expression.cpp \
     $$PWD/orm/grammar.cpp \
     $$PWD/orm/logquery.cpp \
     $$PWD/orm/ormtypes.cpp \
+    $$PWD/orm/query/expression.cpp \
     $$PWD/orm/query/joinclause.cpp \
     $$PWD/orm/query/querybuilder.cpp \
     $$PWD/orm/repositoryfactory.cpp \

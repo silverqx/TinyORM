@@ -5,7 +5,7 @@
 
 #include <optional>
 
-#include "orm/expression.hpp"
+#include "orm/query/expression.hpp"
 #include "orm/ormtypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

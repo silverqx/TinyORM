@@ -606,6 +606,7 @@ Builder::addArrayOfWheres(const QVector<WhereItem> &values, const QString &condi
 Builder &
 Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values, const QString &condition)
 {
+    // WARN condition also affects condition in QVector, I don't like it silverqx
     return where([&values, &condition](Builder &query)
     {
         for (const auto &where : values)

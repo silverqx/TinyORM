@@ -76,7 +76,7 @@ namespace Orm
                            const QVector<QVariant> &bindings = {}) const;
 
         /*! Get a new raw query expression. */
-        inline Expression raw(const QVariant &value) const
+        inline Query::Expression raw(const QVariant &value) const
         { return value; }
 
         /*! Get the database connection name. */

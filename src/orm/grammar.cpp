@@ -464,8 +464,8 @@ QString Grammar::parametrize(const Container &values) const
 QString Grammar::parameter(const QVariant &value) const
 {
     // TODO rethink expressions, how to work with them and pass them to the query builder 🤔 silverqx
-    return value.canConvert<Expression>()
-            ? value.value<Expression>().getValue().toString()
+    return value.canConvert<Query::Expression>()
+            ? value.value<Query::Expression>().getValue().toString()
             : QStringLiteral("?");
 }
 

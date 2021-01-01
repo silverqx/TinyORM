@@ -4,11 +4,11 @@ HEADERS += \
     $$PWD/export.hpp \
     $$PWD/orm/databaseconnection.hpp \
     $$PWD/orm/entitymanager.hpp \
-    $$PWD/orm/expression.hpp \
     $$PWD/orm/grammar.hpp \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/ormerror.hpp \
     $$PWD/orm/ormtypes.hpp \
+    $$PWD/orm/query/expression.hpp \
     $$PWD/orm/query/joinclause.hpp \
     $$PWD/orm/query/querybuilder.hpp \
     $$PWD/orm/repositoryfactory.hpp \

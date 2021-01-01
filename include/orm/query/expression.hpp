@@ -1,15 +1,17 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
+#include "export.hpp"
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Query
 {
 
     // TODO rework saveing Expressions to the "BindingsMap m_bindings", see also todo at BindingsMap definition in ormtypes.hpp silverqx
-    class Expression
+    class SHAREDLIB_EXPORT Expression
     {
     public:
         Expression() = default;
@@ -34,9 +36,9 @@ namespace Orm
 #endif
 
 #ifdef TINYORM_COMMON_NAMESPACE
-Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Expression);
+Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Query::Expression);
 #else
-Q_DECLARE_METATYPE(Orm::Expression);
+Q_DECLARE_METATYPE(Orm::Query::Expression);
 #endif
 
 #endif // EXPRESSION_H
