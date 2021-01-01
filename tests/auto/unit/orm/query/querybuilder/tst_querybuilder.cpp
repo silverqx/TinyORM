@@ -3,11 +3,14 @@
 
 #include "orm/databaseconnection.hpp"
 #include "orm/grammar.hpp"
+#include "orm/query/expression.hpp"
 #include "orm/query/querybuilder.hpp"
 
 #include "database.hpp"
 
 using namespace Orm;
+
+using Raw = Query::Expression;
 
 class tst_QueryBuilder : public QObject
 {
@@ -31,11 +34,32 @@ private slots:
 
     void orderBy() const;
     void latestOldest() const;
+
     void limitOffset() const;
     void takeSkip() const;
     void forPage() const;
 
     void basicWhere() const;
+    void whereWithVectorValue() const;
+
+    void basicOrWhere() const;
+    void orWhereWithVectorValue() const;
+
+    void whereColumn() const;
+    void orWhereColumn() const;
+    void whereColumnWithVectorValue() const;
+    void orWhereColumnWithVectorValue() const;
+
+    void basicWhereIn() const;
+    void basicWhereNotIn() const;
+    void emptyWhereIn() const;
+    void emptyNotWhereIn() const;
+    void rawWhereIn() const;
+
+    void basicWhereNull() const;
+    void basicWhereNotNull() const;
+    void whereNullWithVectorValue() const;
+    void whereNotNullWithVectorValue() const;
 
 private:
     inline QueryBuilder createQuery() const
@@ -248,13 +272,479 @@ void tst_QueryBuilder::forPage() const
 
 void tst_QueryBuilder::basicWhere() const
 {
-    auto builder = createQuery();
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", "=", 3);
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id = ?");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
 
-    builder.select("*").from("torrents").where("id", "=", 3);
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").whereEq("id", 3);
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id = ?");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").whereEq("id", 3)
+                .whereEq("name", "test3");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id = ? and name = ?");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant("test3")}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", "!=", 3);
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id != ?");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", "<>", 3);
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id <> ?");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", ">", 3);
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id > ?");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", ">", 3)
+                .where("name", "like", "test%");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id > ? and name like ?");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant("test%")}));
+    }
+}
+
+void tst_QueryBuilder::whereWithVectorValue() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where({{"id", 3}});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where (id = ?)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where({{"id", 3}, {"size", 10, ">"}});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where (id = ? and size > ?)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant(10)}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where({{"id", 3}, {"size", 10, ">"}})
+                .where({{"progress", 100, ">="}});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where (id = ? and size > ?) and (progress >= ?)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+    }
+}
+
+void tst_QueryBuilder::basicOrWhere() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", ">", 4)
+                .orWhere("progress", ">=", 300);
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id > ? or progress >= ?");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(4), QVariant(300)}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", ">", 4)
+                .orWhereEq("name", "test3");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id > ? or name = ?");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(4), QVariant("test3")}));
+    }
+}
+
+void tst_QueryBuilder::orWhereWithVectorValue() const
+{
+    auto builder = createQuery();
+    builder.select("*").from("torrents").where({{"id", 3}, {"size", 10, ">"}})
+            .orWhere({{"progress", 100, ">="}});
     QCOMPARE(builder.toSql(),
-             "select * from torrents where id = ?");
+             "select * from torrents where (id = ? and size > ?) or (progress >= ?)");
     QCOMPARE(builder.getBindings(),
-             QVector<QVariant> {QVariant(3)});
+             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+}
+
+void tst_QueryBuilder::whereColumn() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_previewable_files")
+                .whereColumn("filepath", "=", "note")
+                .whereColumn("size", ">=", "progress");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_previewable_files where filepath = note and size >= progress");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+}
+
+void tst_QueryBuilder::orWhereColumn() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_previewable_files")
+                .whereColumnEq("filepath", "note")
+                .orWhereColumnEq("size", "progress");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_previewable_files where filepath = note or size = progress");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_previewable_files")
+                .whereColumnEq("filepath", "note")
+                .orWhereColumn("size", ">", "progress");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_previewable_files where filepath = note or size > progress");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+}
+
+void tst_QueryBuilder::whereColumnWithVectorValue() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_previewable_files")
+                .whereColumn({{"filepath", "note"},
+                              {"size", "progress", ">"}});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_previewable_files where (filepath = note and size > progress)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_previewable_files")
+                .whereColumn({{"filepath", "note"},
+                              {"size", "progress", ">", "or"}});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_previewable_files where (filepath = note or size > progress)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+}
+
+void tst_QueryBuilder::orWhereColumnWithVectorValue() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_previewable_files").whereEq("id", 2)
+                .orWhereColumn({{"filepath", "note"},
+                                {"size", "progress", ">"}});
+        qDebug() << builder.toSql();
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_previewable_files "
+                 "where id = ? or (filepath = note or size > progress)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_previewable_files").whereEq("id", 2)
+                .orWhereColumn({{"filepath", "note"},
+                                {"size", "progress", ">", "and"}});
+        qDebug() << builder.toSql();
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_previewable_files "
+                 "where id = ? or (filepath = note and size > progress)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_previewable_files").whereEq("id", 2)
+                .orWhereColumn({{"filepath", "note"},
+                                {"size", "progress", ">", "or"}});
+        qDebug() << builder.toSql();
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_previewable_files "
+                 "where id = ? or (filepath = note or size > progress)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+}
+
+void tst_QueryBuilder::basicWhereIn() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").whereIn("id", {2, 3, 4});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id in (?, ?, ?)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", "=", 1)
+                .orWhereIn("id", {2, 3, 4});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id = ? or id in (?, ?, ?)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(1), QVariant(2), QVariant(3), QVariant(4)}));
+    }
+}
+
+void tst_QueryBuilder::basicWhereNotIn() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").whereNotIn("id", {2, 3, 4});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id not in (?, ?, ?)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", "=", 1)
+                .orWhereNotIn("id", {2, 3, 4});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id = ? or id not in (?, ?, ?)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(1), QVariant(2), QVariant(3), QVariant(4)}));
+    }
+}
+
+void tst_QueryBuilder::emptyWhereIn() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").whereIn("id", {});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where 0 = 1");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", "=", 1)
+                .orWhereIn("id", {});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id = ? or 0 = 1");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(1)}));
+    }
+}
+
+void tst_QueryBuilder::emptyNotWhereIn() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").whereNotIn("id", {});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where 1 = 1");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").where("id", "=", 1)
+                .orWhereNotIn("id", {});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id = ? or 1 = 1");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(1)}));
+    }
+}
+
+void tst_QueryBuilder::rawWhereIn() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").whereIn("id", {Raw(3)});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id in (3)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrents").whereEq("id", {2})
+                .orWhereIn("id", {Raw(3)});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrents where id = ? or id in (3)");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+}
+
+void tst_QueryBuilder::basicWhereNull() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereNull("seeds");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where seeds is null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereEq("id", 4)
+                .whereNull("seeds");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where id = ? and seeds is null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(4)}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereEq("id", 3)
+                .orWhereNull("seeds");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where id = ? or seeds is null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(3)}));
+    }
+}
+
+void tst_QueryBuilder::basicWhereNotNull() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereNotNull("seeds");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where seeds is not null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereEq("id", 4)
+                .whereNotNull("seeds");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where id = ? and seeds is not null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(4)}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereEq("id", 3)
+                .orWhereNotNull("seeds");
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where id = ? or seeds is not null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(3)}));
+    }
+}
+
+void tst_QueryBuilder::whereNullWithVectorValue() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereNull({"seeds", "total_seeds"});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where seeds is null and total_seeds is null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereEq("id", 4)
+                .whereNull({"seeds", "total_seeds"});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where id = ? and seeds is null and total_seeds is null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(4)}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereEq("id", 3)
+                .orWhereNull({"seeds", "total_seeds"});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where id = ? or seeds is null or total_seeds is null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(3)}));
+    }
+}
+
+void tst_QueryBuilder::whereNotNullWithVectorValue() const
+{
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereNotNull({"seeds", "total_seeds"});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where seeds is not null and total_seeds is not null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>());
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereEq("id", 4)
+                .whereNotNull({"seeds", "total_seeds"});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where id = ? and seeds is not null and total_seeds is not null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(4)}));
+    }
+
+    {
+        auto builder = createQuery();
+        builder.select("*").from("torrent_peers").whereEq("id", 3)
+                .orWhereNotNull({"seeds", "total_seeds"});
+        QCOMPARE(builder.toSql(),
+                 "select * from torrent_peers where id = ? or seeds is not null or total_seeds is not null");
+        QCOMPARE(builder.getBindings(),
+                 QVector<QVariant>({QVariant(3)}));
+    }
 }
 
 QTEST_MAIN(tst_QueryBuilder)

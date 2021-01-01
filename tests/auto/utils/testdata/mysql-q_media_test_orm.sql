@@ -83,7 +83,7 @@ CREATE TABLE `torrent_peers` (
   `id` bigint UNSIGNED NOT NULL,
   `torrent_id` bigint UNSIGNED NOT NULL,
   `seeds` int DEFAULT NULL,
-  `total_seeds` int NOT NULL,
+  `total_seeds` int DEFAULT NULL,
   `leechers` int NOT NULL,
   `total_leechers` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

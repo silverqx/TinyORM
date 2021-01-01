@@ -164,10 +164,18 @@ namespace Orm::Query
 
         /*! Add an array of basic where clauses to the query. */
         Builder &where(const QVector<WhereItem> &values, const QString &condition = "and");
+        /*! Add an array of basic "or where" clauses to the query. */
+        inline Builder &orWhere(const QVector<WhereItem> &values)
+        { return where(values, "or"); }
+
         /*! Add an array of where clauses comparing two columns to the query. */
         inline Builder &
         whereColumn(const QVector<WhereColumnItem> &values, const QString &condition = "and")
         { return addArrayOfWheres(values, condition); }
+        /*! Add an array of "or where" clauses comparing two columns to the query. */
+        inline Builder &
+        orWhereColumn(const QVector<WhereColumnItem> &values)
+        { return addArrayOfWheres(values, "or"); }
 
         /*! Add a "where" clause comparing two columns to the query. */
         Builder &whereColumn(const QString &first, const QString &comparison,
@@ -175,6 +183,13 @@ namespace Orm::Query
         /*! Add a "or where" clause comparing two columns to the query. */
         Builder &orWhereColumn(const QString &first, const QString &comparison,
                                const QString &second);
+        /*! Add an equal "where" clause comparing two columns to the query. */
+        inline Builder &whereColumnEq(const QString &first, const QString &second,
+                                      const QString &condition = "and")
+        { return whereColumn(first, "=", second, condition); }
+        /*! Add an equal "or where" clause comparing two columns to the query. */
+        inline Builder &orWhereColumnEq(const QString &first, const QString &second)
+        { return whereColumn(first, "=", second, "or"); }
 
         /*! Add a "where in" clause to the query. */
         Builder &whereIn(const QString &column, const QVector<QVariant> &values,
