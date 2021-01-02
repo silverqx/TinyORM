@@ -45,7 +45,7 @@ namespace Orm::Query
 
         /*! Force the query to only return distinct results. */
         inline Builder &distinct()
-        { m_distinct = true; return *this; };
+        { m_distinct = true; return *this; }
 
         /*! Set the table which the query is targeting. */
         inline Builder &from(const QString &table)
