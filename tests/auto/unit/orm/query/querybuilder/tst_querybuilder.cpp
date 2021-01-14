@@ -12,6 +12,7 @@ using namespace Orm;
 
 using Raw = Query::Expression;
 
+// TODO test exceptions in tests, I can not find exception message during debug and the same during normal test execution, in console is only "Caught unhandled exception" and that is all 😕 silverqx
 class tst_QueryBuilder : public QObject
 {
     Q_OBJECT
@@ -24,7 +25,6 @@ private slots:
     void initTestCase();
     void cleanupTestCase();
 
-    void table() const;
     void from() const;
 
     void select() const;
@@ -69,7 +69,7 @@ private:
 };
 
 tst_QueryBuilder::tst_QueryBuilder()
-    : m_db(Utils::Database::createConnection())
+    : m_db(TestUtils::Database::createConnection())
 {}
 
 void tst_QueryBuilder::initTestCase()
@@ -78,43 +78,16 @@ void tst_QueryBuilder::initTestCase()
 void tst_QueryBuilder::cleanupTestCase()
 {}
 
-void tst_QueryBuilder::table() const
-{
-    auto builder = createQuery();
-
-    const auto &tableEmpty = QStringLiteral("");
-    QCOMPARE(builder.getTable(), tableEmpty);
-    QCOMPARE(builder.getFrom(), tableEmpty);
-
-    const auto &tableTorrents = QStringLiteral("torrents");
-    builder.table(tableTorrents);
-
-    QCOMPARE(builder.getTable(), tableTorrents);
-    QCOMPARE(builder.getFrom(), tableTorrents);
-    QCOMPARE(builder.toSql(),
-             "select * from torrents");
-
-    const auto &tableTorrentPeers = QStringLiteral("torrent_peers");
-    builder.table(tableTorrentPeers);
-
-    QCOMPARE(builder.getTable(), tableTorrentPeers);
-    QCOMPARE(builder.getFrom(), tableTorrentPeers);
-    QCOMPARE(builder.toSql(),
-             "select * from torrent_peers");
-}
-
 void tst_QueryBuilder::from() const
 {
     auto builder = createQuery();
 
     const auto &tableEmpty = QStringLiteral("");
-    QCOMPARE(builder.getTable(), tableEmpty);
     QCOMPARE(builder.getFrom(), tableEmpty);
 
     const auto &tableTorrents = QStringLiteral("torrents");
     builder.from(tableTorrents);
 
-    QCOMPARE(builder.getTable(), tableTorrents);
     QCOMPARE(builder.getFrom(), tableTorrents);
     QCOMPARE(builder.toSql(),
              "select * from torrents");
@@ -122,7 +95,6 @@ void tst_QueryBuilder::from() const
     const auto &tableTorrentPeers = QStringLiteral("torrent_peers");
     builder.from(tableTorrentPeers);
 
-    QCOMPARE(builder.getTable(), tableTorrentPeers);
     QCOMPARE(builder.getFrom(), tableTorrentPeers);
     QCOMPARE(builder.toSql(),
              "select * from torrent_peers");
@@ -474,7 +446,6 @@ void tst_QueryBuilder::orWhereColumnWithVectorValue() const
         builder.select("*").from("torrent_previewable_files").whereEq("id", 2)
                 .orWhereColumn({{"filepath", "note"},
                                 {"size", "progress", ">"}});
-        qDebug() << builder.toSql();
         QCOMPARE(builder.toSql(),
                  "select * from torrent_previewable_files "
                  "where id = ? or (filepath = note or size > progress)");
@@ -487,7 +458,6 @@ void tst_QueryBuilder::orWhereColumnWithVectorValue() const
         builder.select("*").from("torrent_previewable_files").whereEq("id", 2)
                 .orWhereColumn({{"filepath", "note"},
                                 {"size", "progress", ">", "and"}});
-        qDebug() << builder.toSql();
         QCOMPARE(builder.toSql(),
                  "select * from torrent_previewable_files "
                  "where id = ? or (filepath = note and size > progress)");
@@ -500,7 +470,6 @@ void tst_QueryBuilder::orWhereColumnWithVectorValue() const
         builder.select("*").from("torrent_previewable_files").whereEq("id", 2)
                 .orWhereColumn({{"filepath", "note"},
                                 {"size", "progress", ">", "or"}});
-        qDebug() << builder.toSql();
         QCOMPARE(builder.toSql(),
                  "select * from torrent_previewable_files "
                  "where id = ? or (filepath = note or size > progress)");

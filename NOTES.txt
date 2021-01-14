@@ -134,3 +134,273 @@ message(OUT_PWD: $$OUT_PWD)
 message(_PRO_FILE_PWD_: $$_PRO_FILE_PWD_)
 message(INCLUDEPATH: $$INCLUDEPATH)
 message(-------)
+
+
+DatabaseConnection:
+---
+
+DatabaseConnection(const QString &database = "", const QString tablePrefix = "",
+                   const QVariantHash &config = {});
+
+DatabaseConnection::DatabaseConnection(const QString &database, const QString tablePrefix,
+                                       const QVariantHash &config)
+    /* First we will setup the default properties. We keep track of the DB
+       name we are connected to since it is needed when some reflective
+       type commands are run such as checking whether a table exists. */
+    : m_database(database)
+    , m_tablePrefix(tablePrefix)
+    , m_config(config)
+{
+//    auto db = QSqlDatabase::addDatabase("QMYSQL", CONNECTION_NAME);
+//    db.setHostName(m_config.find("host").value().toString());
+//    db.setDatabaseName(m_config.find("database").value().toString());
+//    db.setUserName(m_config.find("username").value().toString());
+//    db.setPassword(m_config.find("password").value().toString());
+
+//    if (m_config.contains("options"))
+//        db.setConnectOptions(m_config.find("options").value().toString());
+
+//    if (!db.open()) {
+//        // TODO next solve how to solve this situation, how to inform end user, exception vs error code, ... silverqx
+//        qDebug() << "Connect to DB failed :"
+//                 << db.lastError().text();
+//        return;
+//    }
+
+    // Set the connection character set and collation
+//    if (config.contains("charset")) {
+//        const auto collation = config.value("collation").toString();
+//        const auto &collate = QStringLiteral(" collate '%1'").arg(collation);
+//        select(QStringLiteral("set names '%1'%2")
+//               .arg(config.find("charset").value().toString(),
+//                    collate.isEmpty() ? "" : collate));
+//    }
+
+    /* Next, we will check to see if a timezone has been specified in this config
+       and if it has we will issue a statement to modify the timezone with the
+       database. Setting this DB timezone is an optional configuration item. */
+//    if (config.contains("timezone"))
+//        select(QStringLiteral("set time_zone='%1'")
+//               .arg(config.find("timezone").value().toString()));
+
+    // Set the modes for the connection.
+//    if (config.contains("strict")
+//        && config.find("strict").value().toBool()
+//    ) {
+//        // Obtain MySQL version
+//        auto [ok, query] = selectOne("select version()");
+
+//        if (ok) {
+//            QString strictMode;
+
+//            /* NO_AUTO_CREATE_USER was removed in 8.0.11 */
+//            if (QVersionNumber::fromString(query.value(0).toString())
+//                >= QVersionNumber(8, 0, 11)
+//            )
+//                strictMode =
+//                        "set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,"
+//                        "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
+//                        "NO_ENGINE_SUBSTITUTION'";
+//            else
+//                strictMode =
+//                        "set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,"
+//                        "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
+//                        "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'";
+
+//            select(strictMode);
+//        }
+//    }
+//    else
+//        select("set session sql_mode='NO_ENGINE_SUBSTITUTION'");
+}
+
+
+EntityManager.hpp:
+------------------
+
+#ifndef ENTITYMANAGER_H
+#define ENTITYMANAGER_H
+
+#include "orm/databaseconnection.hpp"
+#include "orm/repositoryfactory.hpp"
+
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
+{
+#endif
+namespace Orm
+{
+
+    /*! The EntityManager is the central access point to ORM functionality. */
+    class SHAREDLIB_EXPORT EntityManager final
+    {
+        Q_DISABLE_COPY(EntityManager)
+
+    public:
+        EntityManager(const QVariantHash &config);
+        EntityManager(DatabaseConnection &connection);
+        ~EntityManager();
+
+        /*! Factory method to create EntityManager instances. */
+        static EntityManager create(const QVariantHash &config);
+
+        /*! Gets the repository for an entity class. */
+        template<typename Repository>
+        QSharedPointer<Repository> getRepository() const;
+
+        /*! Create a new QSqlQuery. */
+        QSqlQuery query() const;
+        /*! Get a new query builder instance. */
+        QSharedPointer<QueryBuilder> queryBuilder() const;
+        /*! Check database connection and show warnings when the state changed. */
+        bool pingDatabase();
+        /*! Start a new database transaction. */
+        bool transaction();
+        /*! Commit the active database transaction. */
+        bool commit();
+        /*! Rollback the active database transaction. */
+        bool rollback();
+        /*! Start a new named transaction savepoint. */
+        bool savepoint(const QString &id);
+        /*! Rollback to a named transaction savepoint. */
+        bool rollbackToSavepoint(const QString &id);
+
+        /*! Get underlying database connection. */
+        inline DatabaseConnection &connection() const
+        { return m_db; }
+
+    protected:
+        /*! Factory method to create DatabaseConnection instances. */
+        static DatabaseConnection &
+        createConnection(const QVariantHash &config);
+
+    private:
+        /*! The database connection used by the EntityManager. */
+        DatabaseConnection &m_db;
+        /*! The repository factory used to create dynamic repositories. */
+        RepositoryFactory m_repositoryFactory;
+    };
+
+    template<typename Repository>
+    QSharedPointer<Repository> EntityManager::getRepository() const
+    {
+        return m_repositoryFactory.getRepository<Repository>();
+    }
+
+} // namespace Orm
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
+#endif
+
+#endif // ENTITYMANAGER_H
+
+
+EntityManager.cpp:
+------------------
+
+#include "orm/entitymanager.hpp"
+
+#include <QtSql/QSqlQuery>
+
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
+{
+#endif
+namespace Orm
+{
+
+/*!
+    \class EntityManager
+    \brief The EntityManager class manages repositories and a connection
+    to the database.
+
+    \ingroup database
+    \inmodule Export
+
+    EntityManager is the base class to work with the database, it creates
+    and manages repository classes by helping with the RepositoryFactory
+    class.
+    Creates the database connection which is represented by
+    DatabaseConnection class.
+    EntityManager should be used in controllers ( currently TorrentExporter
+    is like a controller class ), services, and repository classes to access
+    the database. There is no need to use the QSqlDatabase or the
+    DatabaseConnection classes directly.
+    EntityManager is also injected into a repository and a service
+    classes constructors.
+    The circular dependency problem is solved by including entitymanager.hpp
+    in the baserepository.hpp file.
+*/
+
+EntityManager::EntityManager(const QVariantHash &config)
+    : m_db(createConnection(config))
+    , m_repositoryFactory(*this)
+{}
+
+EntityManager::EntityManager(DatabaseConnection &connection)
+    : m_db(connection)
+    , m_repositoryFactory(*this)
+{}
+
+EntityManager::~EntityManager()
+{
+    DatabaseConnection::freeInstance();
+}
+
+EntityManager EntityManager::create(const QVariantHash &config)
+{
+    return EntityManager(createConnection(config));
+}
+
+QSqlQuery EntityManager::query() const
+{
+    return m_db.query();
+}
+
+QSharedPointer<QueryBuilder> EntityManager::queryBuilder() const
+{
+    return m_db.query();
+}
+
+bool EntityManager::pingDatabase()
+{
+    return m_db.pingDatabase();
+}
+
+bool EntityManager::transaction()
+{
+    return m_db.transaction();
+}
+
+bool EntityManager::commit()
+{
+    return m_db.commit();
+}
+
+bool EntityManager::rollback()
+{
+    return m_db.rollback();
+}
+
+bool EntityManager::savepoint(const QString &id)
+{
+    return m_db.savepoint(id);
+}
+
+bool EntityManager::rollbackToSavepoint(const QString &id)
+{
+    return m_db.rollbackToSavepoint(id);
+}
+
+DatabaseConnection &
+EntityManager::createConnection(const QVariantHash &config)
+{
+    return DatabaseConnection::create(config.find("database").value().toString(),
+                                      config.find("prefix").value().toString(),
+                                      config);
+}
+
+} // namespace Orm
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
+#endif

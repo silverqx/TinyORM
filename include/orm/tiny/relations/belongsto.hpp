@@ -63,7 +63,7 @@ namespace Orm::Tiny::Relations
         /*! The name of the relationship. */
         QString m_relationName;
         /*! The count of self joins. */
-        constexpr static int selfJoinCount = 0;
+        inline static int selfJoinCount = 0;
     };
 
     template<class Model, class Related>

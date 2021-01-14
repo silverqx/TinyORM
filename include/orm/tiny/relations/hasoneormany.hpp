@@ -57,7 +57,7 @@ namespace Orm::Tiny::Relations
         QString m_localKey;
         // TODO next use inline static (better constexpr?) when appropriate, check all the code silverqx
         /*! The count of self joins. */
-        constexpr static int selfJoinCount = 0;
+        inline static int selfJoinCount = 0;
     };
 
     template<class Model, class Related>

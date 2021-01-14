@@ -24,12 +24,13 @@ namespace Orm::Query
 
     class JoinClause;
 
-
     class SHAREDLIB_EXPORT Builder
     {
     public:
-        Builder(const DatabaseConnection &db, const Grammar &grammar);
-        // WARNING solver pure virtual dtor vs default silverqx
+        Builder(DatabaseConnection &db, const Grammar &grammar);
+        // WARNING solve pure virtual dtor vs default silverqx
+        /* Need to be the polymorphic type because of dynamic_cast<>
+           in Grammar::concatenateWhereClauses(). */
         virtual ~Builder() = default;
 
         /*! Set the columns to be selected. */
@@ -48,10 +49,7 @@ namespace Orm::Query
         { m_distinct = true; return *this; }
 
         /*! Set the table which the query is targeting. */
-        inline Builder &from(const QString &table)
-        { m_from = table; return *this; }
-        /*! Set the table which the query is targeting. */
-        inline Builder &table(const QString &table)
+        inline Builder &from(const QString &table, const QString & = "")
         { m_from = table; return *this; }
 
         /*! Execute the query as a "select" statement. */
@@ -68,35 +66,39 @@ namespace Orm::Query
 
         /*! Get the SQL representation of the query. */
         QString toSql() const;
+        // TODO next implement dd silverqx
+        /*! Die and dump the current SQL and bindings. */
+//        void dd() const
+//        { dd($this->toSql(), $this->getBindings()); }
 
         /*! Insert new records into the database. */
         std::tuple<bool, std::optional<QSqlQuery>>
-        insert(const QVariantMap &values) const;
+        insert(const QVariantMap &values);
         /*! Insert new records into the database. */
         std::tuple<bool, std::optional<QSqlQuery>>
-        insert(const QVector<QVariantMap> &values) const;
+        insert(const QVector<QVariantMap> &values);
         /*! Insert new records into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
-        insertOrIgnore(const QVector<QVariantMap> &values) const;
+        insertOrIgnore(const QVector<QVariantMap> &values);
         /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
-        insertOrIgnore(const QVariantMap &values) const;
+        insertOrIgnore(const QVariantMap &values);
         // TODO postgres, support sequence, add sequence parameter silverqx
         // TODO primarykey dilema, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
         /*! Insert a new record and get the value of the primary key. */
-        quint64 insertGetId(const QVariantMap &values) const;
+        quint64 insertGetId(const QVariantMap &values);
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
-        update(const QVector<UpdateItem> &values) const;
+        update(const QVector<UpdateItem> &values);
 
         /*! Delete records from the database. */
         inline std::tuple<int, QSqlQuery>
-        deleteRow() const
+        deleteRow()
         { return remove(); }
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery>
-        remove() const;
+        remove();
         /*! Delete records from the database. */
         inline std::tuple<int, QSqlQuery>
         deleteRow(const quint64 id)
@@ -106,7 +108,7 @@ namespace Orm::Query
         remove(const quint64 id);
 
         /*! Run a truncate statement on the table. */
-        std::tuple<bool, QSqlQuery> truncate() const;
+        std::tuple<bool, QSqlQuery> truncate();
 
         /*! Add a join clause to the query. */
         Builder &join(const QString &table, const QString &first,
@@ -260,15 +262,15 @@ namespace Orm::Query
         template<typename T> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         increment(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {}) const;
+                  const QVector<UpdateItem> &extra = {});
         /*! Decrement a column's value by a given amount. */
         template<typename T> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         decrement(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {}) const;
+                  const QVector<UpdateItem> &extra = {});
 
         /*! Get a database connection. */
-        inline const DatabaseConnection &getConnection() const
+        inline DatabaseConnection &getConnection() const
         { return m_db; }
         /*! Get the query grammar instance. */
         inline const Grammar &getGrammar() const
@@ -289,9 +291,6 @@ namespace Orm::Query
         { return m_columns; }
         /*! Get the table associated with the query builder. */
         inline const QString &getFrom() const
-        { return m_from; }
-        /*! Get the table associated with the query builder. */
-        inline const QString &getTable() const
         { return m_from; }
         /*! Get the table joins for the query. */
         inline const QVector<QSharedPointer<JoinClause>> &getJoins() const
@@ -369,8 +368,9 @@ namespace Orm::Query
             "not similar to", "not ilike", "~~*", "!~~*",
         };
 
+        // TODO next rename to connection silverqx
         /*! The database connection instance. */
-        const DatabaseConnection &m_db;
+        DatabaseConnection &m_db;
         /*! The database query grammar instance. */
         const Grammar &m_grammar;
 
@@ -413,7 +413,7 @@ namespace Orm::Query
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
     Builder::increment(const QString &column, const T amount,
-                       const QVector<UpdateItem> &extra) const
+                       const QVector<UpdateItem> &extra)
     {
         const auto &expression = QStringLiteral("%1 + %2").arg(column).arg(amount);
         QVector<UpdateItem> columns {{column, raw(expression)}};
@@ -424,7 +424,7 @@ namespace Orm::Query
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
     Builder::decrement(const QString &column, const T amount,
-                       const QVector<UpdateItem> &extra) const
+                       const QVector<UpdateItem> &extra)
     {
         const auto &expression = QStringLiteral("%1 - %2").arg(column).arg(amount);
         QVector<UpdateItem> columns {{column, raw(expression)}};

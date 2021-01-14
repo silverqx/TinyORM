@@ -2,16 +2,24 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/export.hpp \
+    $$PWD/orm/concerns/hasconnectionresolver.hpp \
+    $$PWD/orm/configuration.hpp \
+    $$PWD/orm/connectionresolverinterface.hpp \
+    $$PWD/orm/connectors/connectionfactory.hpp \
+    $$PWD/orm/connectors/connector.hpp \
+    $$PWD/orm/connectors/connectorinterface.hpp \
+    $$PWD/orm/connectors/mysqlconnector.hpp \
     $$PWD/orm/databaseconnection.hpp \
-    $$PWD/orm/entitymanager.hpp \
+    $$PWD/orm/databasemanager.hpp \
     $$PWD/orm/grammar.hpp \
     $$PWD/orm/logquery.hpp \
+    $$PWD/orm/mysqlconnection.hpp \
     $$PWD/orm/ormerror.hpp \
     $$PWD/orm/ormtypes.hpp \
     $$PWD/orm/query/expression.hpp \
     $$PWD/orm/query/joinclause.hpp \
     $$PWD/orm/query/querybuilder.hpp \
-    $$PWD/orm/repositoryfactory.hpp \
+    $$PWD/orm/support/configurationoptionsparser.hpp \
     $$PWD/orm/tiny/basemodel.hpp \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \
     $$PWD/orm/tiny/concerns/hasrelationstore.hpp \

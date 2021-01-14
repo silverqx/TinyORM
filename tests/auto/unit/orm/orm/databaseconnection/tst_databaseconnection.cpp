@@ -24,7 +24,7 @@ private:
 };
 
 tst_DatabaseConnection::tst_DatabaseConnection()
-    : m_db(Utils::Database::createConnection())
+    : m_db(TestUtils::Database::createConnection())
 {}
 
 void tst_DatabaseConnection::initTestCase()

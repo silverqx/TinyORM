@@ -1,7 +1,6 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-#include "orm/databaseconnection.hpp"
 #include "orm/grammar.hpp"
 #include "orm/query/querybuilder.hpp"
 
@@ -32,18 +31,14 @@ private:
 };
 
 tst_QueryBuilder::tst_QueryBuilder()
-    : m_db(Utils::Database::createConnection())
-{
-
-}
+    : m_db(TestUtils::Database::createConnection())
+{}
 
 void tst_QueryBuilder::initTestCase()
-{
-}
+{}
 
 void tst_QueryBuilder::cleanupTestCase()
-{
-}
+{}
 
 void tst_QueryBuilder::find() const
 {

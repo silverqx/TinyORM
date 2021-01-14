@@ -1,15 +1,18 @@
 #include "database.hpp"
 
-#include "orm/databaseconnection.hpp"
+#include "orm/databasemanager.hpp"
 
-using namespace Utils;
+using namespace TestUtils;
 
 Database::Database()
 {}
 
 Orm::DatabaseConnection &Database::createConnection()
 {
-    const QHash<QString, QVariant> config {
+    static Orm::DatabaseManager databaseManager;
+
+    static const QVariantHash config {
+        {"driver",    "QMYSQL"},
         {"host",      qEnvironmentVariable("DB_HOST", "127.0.0.1")},
         {"port",      qEnvironmentVariable("DB_PORT", "3306")},
         {"database",  qEnvironmentVariable("DB_DATABASE", "")},
@@ -19,10 +22,17 @@ Orm::DatabaseConnection &Database::createConnection()
         {"collation", qEnvironmentVariable("DB_COLLATION", "utf8mb4_unicode_ci")},
         {"prefix",    ""},
         {"strict",    true},
-        {"options",   ""},
+        {"options",   QVariantHash()},
+        // TODO future remove, when unit tested silverqx
+        // Example
+//        {"options",   "MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"},
+//        {"options",   QVariantHash {{"MYSQL_OPT_RECONNECT", 1},
+//                                    {"MYSQL_OPT_READ_TIMEOUT", 10}}},
     };
 
-    return Orm::DatabaseConnection::create(config.find("database").value().toString(),
-                                           config.find("prefix").value().toString(),
-                                           config);
+    static const auto &connectionName = QStringLiteral("tinyorm_mysql_tests");
+
+    return databaseManager
+            .addConnection(config, connectionName)
+            .connection(connectionName);
 }

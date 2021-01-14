@@ -14,7 +14,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
-Builder::Builder(const DatabaseConnection &db, const Grammar &grammar)
+Builder::Builder(DatabaseConnection &db, const Grammar &grammar)
     : m_db(db)
     , m_grammar(grammar)
 {}
@@ -81,7 +81,7 @@ QString Builder::toSql() const
 }
 
 std::tuple<bool, std::optional<QSqlQuery>>
-Builder::insert(const QVariantMap &values) const
+Builder::insert(const QVariantMap &values)
 {
     return insert(QVector<QVariantMap> {values});
 }
@@ -100,7 +100,7 @@ namespace
 }
 
 std::tuple<bool, std::optional<QSqlQuery>>
-Builder::insert(const QVector<QVariantMap> &values) const
+Builder::insert(const QVector<QVariantMap> &values)
 {
     /* Since every insert gets treated like a batch insert, we will make sure the
        bindings are structured in a way that is convenient when building these
@@ -120,7 +120,7 @@ Builder::insert(const QVector<QVariantMap> &values) const
 }
 
 std::tuple<int, std::optional<QSqlQuery>>
-Builder::insertOrIgnore(const QVector<QVariantMap> &values) const
+Builder::insertOrIgnore(const QVector<QVariantMap> &values)
 {
     if (values.isEmpty())
         return {0, std::nullopt};
@@ -130,12 +130,12 @@ Builder::insertOrIgnore(const QVector<QVariantMap> &values) const
 }
 
 std::tuple<int, std::optional<QSqlQuery>>
-Builder::insertOrIgnore(const QVariantMap &values) const
+Builder::insertOrIgnore(const QVariantMap &values)
 {
     return insertOrIgnore(QVector<QVariantMap> {values});
 }
 
-quint64 Builder::insertGetId(const QVariantMap &values) const
+quint64 Builder::insertGetId(const QVariantMap &values)
 {
     const QVector<QVariantMap> valuesVector {values};
 
@@ -150,14 +150,14 @@ quint64 Builder::insertGetId(const QVariantMap &values) const
 }
 
 std::tuple<int, QSqlQuery>
-Builder::update(const QVector<UpdateItem> &values) const
+Builder::update(const QVector<UpdateItem> &values)
 {
     return m_db.update(m_grammar.compileUpdate(*this, values),
                        cleanBindings(m_grammar.prepareBindingsForUpdate(getRawBindings(),
                                                                         values)));
 }
 
-std::tuple<int, QSqlQuery> Builder::remove() const
+std::tuple<int, QSqlQuery> Builder::remove()
 {
     return m_db.remove(m_grammar.compileDelete(*this),
                        cleanBindings(m_grammar.prepareBindingsForDelete(getRawBindings())));
@@ -173,7 +173,7 @@ std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
     return remove();
 }
 
-std::tuple<bool, QSqlQuery> Builder::truncate() const
+std::tuple<bool, QSqlQuery> Builder::truncate()
 {
     return m_db.statement(m_grammar.compileTruncate(*this));
 }

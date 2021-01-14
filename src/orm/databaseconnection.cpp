@@ -1,10 +1,8 @@
 #include "orm/databaseconnection.hpp"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QtSql/QSqlDriver>
 #include <QtSql/QSqlError>
-#include <QVersionNumber>
 
 #include "mysql.h"
 
@@ -17,8 +15,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-const char *DatabaseConnection::CONNECTION_NAME     = const_cast<char *>("crystal");
-const char *DatabaseConnection::SAVEPOINT_NAMESPACE = const_cast<char *>("export");
+const char *DatabaseConnection::SAVEPOINT_NAMESPACE = const_cast<char *>("tinyorm_savepoint");
 
 /*!
     \class DatabaseConnection
@@ -51,131 +48,36 @@ namespace
     };
 }
 
-DatabaseConnection *DatabaseConnection::m_instance = nullptr;
-
-DatabaseConnection::DatabaseConnection(const QString &database, const QString tablePrefix,
-                                       const QVariantHash &config)
-    /* First we will setup the default properties. We keep track of the DB
-       name we are connected to since it is needed when some reflective
-       type commands are run such as checking whether a table exists. */
-    : m_database(database)
+// TODO next rewrite DatabaseConnection to match Laravel's implementation 🤓😕 silverqx
+DatabaseConnection::DatabaseConnection(
+        const std::function<Connectors::ConnectionName ()> &connection,
+        const QString &database, const QString tablePrefix,
+        const QVariantHash &config
+)
+    : m_qtConnectionResolver(std::move(connection))
+    , m_database(database)
     , m_tablePrefix(tablePrefix)
     , m_config(config)
+{}
+
+QSharedPointer<QueryBuilder>
+DatabaseConnection::table(const QString &table, const QString &as)
 {
-    auto db = QSqlDatabase::addDatabase("QMYSQL", CONNECTION_NAME);
-    db.setHostName(m_config.find("host").value().toString());
-    db.setDatabaseName(m_config.find("database").value().toString());
-    db.setUserName(m_config.find("username").value().toString());
-    db.setPassword(m_config.find("password").value().toString());
+    auto builder = QSharedPointer<QueryBuilder>::create(*this, m_queryGrammar);
 
-    if (m_config.contains("options"))
-        db.setConnectOptions(m_config.find("options").value().toString());
-
-    if (!db.open()) {
-        // TODO next solve how to solve this situation, how to inform end user, exception vs error code, ... silverqx
-        qDebug() << "Connect to DB failed :"
-                 << db.lastError().text();
-        return;
-    }
-
-    // Set the connection character set and collation
-    if (config.contains("charset")) {
-        const auto collation = config.value("collation").toString();
-        const auto &collate = QStringLiteral(" collate '%1'").arg(collation);
-        select(QStringLiteral("set names '%1'%2")
-               .arg(config.find("charset").value().toString(),
-                    collate.isEmpty() ? "" : collate));
-    }
-
-    /* Next, we will check to see if a timezone has been specified in this config
-       and if it has we will issue a statement to modify the timezone with the
-       database. Setting this DB timezone is an optional configuration item. */
-    if (config.contains("timezone"))
-        select(QStringLiteral("set time_zone='%1'")
-               .arg(config.find("timezone").value().toString()));
-
-    // Set the modes for the connection.
-    if (config.contains("strict")
-        && config.find("strict").value().toBool()
-    ) {
-        // Obtain MySQL version
-        auto [ok, query] = selectOne("select version()");
-
-        if (ok) {
-            QString strictMode;
-
-            /* NO_AUTO_CREATE_USER was removed in 8.0.11 */
-            if (QVersionNumber::fromString(query.value(0).toString())
-                >= QVersionNumber(8, 0, 11)
-            )
-                strictMode =
-                        "set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,"
-                        "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
-                        "NO_ENGINE_SUBSTITUTION'";
-            else
-                strictMode =
-                        "set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,"
-                        "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
-                        "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'";
-
-            select(strictMode);
-        }
-    }
-    else
-        select("set session sql_mode='NO_ENGINE_SUBSTITUTION'");
-}
-
-DatabaseConnection &
-DatabaseConnection::create(const QString &database, const QString tablePrefix,
-                           const QVariantHash &config)
-{
-    if (!m_instance)
-        m_instance = new DatabaseConnection(database, tablePrefix, config);
-
-    return *m_instance;
-}
-
-DatabaseConnection &DatabaseConnection::instance()
-{
-    return *m_instance;
-}
-
-void DatabaseConnection::freeInstance()
-{
-    if (!m_instance)
-        return;
-
-    delete m_instance;
-    m_instance = nullptr;
-}
-
-QSqlQuery DatabaseConnection::query() const
-{
-    return QSqlQuery(database());
-}
-
-QSharedPointer<QueryBuilder> DatabaseConnection::queryBuilder() const
-{
-    return QSharedPointer<QueryBuilder>::create(*this, m_grammar);
-}
-
-QSharedPointer<QueryBuilder> DatabaseConnection::table(const QString &table) const
-{
-    auto builder = QSharedPointer<QueryBuilder>::create(*this, m_grammar);
-
-    builder->from(table);
+    builder->from(table, as);
 
     return builder;
 }
 
-QSqlDatabase DatabaseConnection::database()
+QSharedPointer<QueryBuilder> DatabaseConnection::query()
 {
-    return QSqlDatabase::database(CONNECTION_NAME);
+    return QSharedPointer<QueryBuilder>::create(*this, m_queryGrammar);
 }
 
 bool DatabaseConnection::pingDatabase()
 {
-    auto db = database();
+    auto db = getQtConnection();
 
     const auto getMysqlHandle = [&db]() -> MYSQL *
     {
@@ -228,7 +130,7 @@ bool DatabaseConnection::pingDatabase()
 bool DatabaseConnection::transaction()
 {
     Q_ASSERT(m_inTransaction == false);
-    const auto ok = database().transaction();
+    const auto ok = getQtConnection().transaction();
     if (!ok)
         return false;
     m_inTransaction = true;
@@ -238,7 +140,7 @@ bool DatabaseConnection::transaction()
 bool DatabaseConnection::commit()
 {
     Q_ASSERT(m_inTransaction);
-    const auto ok = database().commit();
+    const auto ok = getQtConnection().commit();
     if (!ok)
         return false;
 
@@ -249,7 +151,7 @@ bool DatabaseConnection::commit()
 bool DatabaseConnection::rollback()
 {
     Q_ASSERT(m_inTransaction);
-    const auto ok = database().rollback();
+    const auto ok = getQtConnection().rollback();
     if (!ok)
         return false;
 
@@ -261,7 +163,7 @@ bool DatabaseConnection::savepoint(const QString &id)
 {
     // TODO rewrite savepoint() and rollback() with a new m_db.statement() API silverqx
     Q_ASSERT(m_inTransaction);
-    auto savePoint = query();
+    auto savePoint = getQtQuery();
     const auto query = QStringLiteral("SAVEPOINT %1_%2").arg(SAVEPOINT_NAMESPACE, id);
     // Execute a savepoint query
     const auto ok = savePoint.exec(query);
@@ -281,7 +183,7 @@ bool DatabaseConnection::rollbackToSavepoint(const QString &id)
 {
     Q_ASSERT(m_inTransaction);
     Q_ASSERT(m_savepoints > 0);
-    auto rollbackToSavepoint = query();
+    auto rollbackToSavepoint = getQtQuery();
     const auto query = QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2")
                        .arg(SAVEPOINT_NAMESPACE, id);
     // Execute a rollback to savepoint query
@@ -301,49 +203,49 @@ bool DatabaseConnection::rollbackToSavepoint(const QString &id)
 
 std::tuple<bool, QSqlQuery>
 DatabaseConnection::select(const QString &queryString,
-                           const QVector<QVariant> &bindings) const
+                           const QVector<QVariant> &bindings)
 {
     return statement(queryString, bindings);
 }
 
 std::tuple<bool, QSqlQuery>
 DatabaseConnection::selectOne(const QString &queryString,
-                              const QVector<QVariant> &bindings) const
+                              const QVector<QVariant> &bindings)
 {
-    auto [ok, query] = statement(queryString, bindings);
+    auto [ok, qtQuery] = statement(queryString, bindings);
 
     if (!ok)
-        return {ok, query};
+        return {ok, qtQuery};
 
-    ok = query.first();
+    ok = qtQuery.first();
 
-    return {ok, query};
+    return {ok, qtQuery};
 }
 
 std::tuple<bool, QSqlQuery>
 DatabaseConnection::insert(const QString &queryString,
-                           const QVector<QVariant> &bindings) const
+                           const QVector<QVariant> &bindings)
 {
     return statement(queryString, bindings);
 }
 
 std::tuple<int, QSqlQuery>
 DatabaseConnection::update(const QString &queryString,
-                           const QVector<QVariant> &bindings) const
+                           const QVector<QVariant> &bindings)
 {
     return affectingStatement(queryString, bindings);
 }
 
 std::tuple<int, QSqlQuery>
 DatabaseConnection::remove(const QString &queryString,
-                           const QVector<QVariant> &bindings) const
+                           const QVector<QVariant> &bindings)
 {
     return affectingStatement(queryString, bindings);
 }
 
 std::tuple<bool, QSqlQuery>
 DatabaseConnection::statement(const QString &queryString,
-                              const QVector<QVariant> &bindings) const
+                              const QVector<QVariant> &bindings)
 {
     auto query = prepareQuery(queryString, bindings);
 
@@ -372,7 +274,7 @@ DatabaseConnection::statement(const QString &queryString,
 
 std::tuple<int, QSqlQuery>
 DatabaseConnection::affectingStatement(const QString &queryString,
-                                       const QVector<QVariant> &bindings) const
+                                       const QVector<QVariant> &bindings)
 {
     auto query = prepareQuery(queryString, bindings);
 
@@ -398,6 +300,42 @@ DatabaseConnection::affectingStatement(const QString &queryString,
 #endif
 
     return {query.numRowsAffected(), query};
+}
+
+QSqlDatabase DatabaseConnection::getQtConnection()
+{
+    if (!m_qtConnection) {
+        m_qtConnection = std::invoke(m_qtConnectionResolver);
+
+        /* This should never happen 🤔, do this check only when the QSqlDatabase
+           connection was resolved by connection resolver. */
+        if (!QSqlDatabase::contains(*m_qtConnection))
+            throw std::domain_error(
+                    "Connection '" + m_qtConnection->toStdString() + "' doesn't exist.");
+    }
+
+    // Return the connection from QSqlDatabase connection manager
+    return QSqlDatabase::database(*m_qtConnection);
+}
+
+QSqlDatabase DatabaseConnection::getRawQtConnection() const
+{
+    return QSqlDatabase::database(*m_qtConnection);
+}
+
+QSqlQuery DatabaseConnection::getQtQuery()
+{
+    return QSqlQuery(getQtConnection());
+}
+
+QVariant DatabaseConnection::getConfig(const QString &option) const
+{
+    return m_config.value(option);
+}
+
+QVariant DatabaseConnection::getConfig() const
+{
+    return m_config;
 }
 
 void DatabaseConnection::showDbDisconnected()
@@ -426,10 +364,10 @@ void DatabaseConnection::showDbConnected()
 }
 
 QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString,
-                                           const QVector<QVariant> &bindings) const
+                                           const QVector<QVariant> &bindings)
 {
     // Prepare query string
-    auto query = this->query();
+    auto query = getQtQuery();
     // TODO solve setForwardOnly() in DatabaseConnection class, again this problem 🤔 silverqx
 //    query.setForwardOnly(m_forwardOnly);
     query.prepare(queryString);

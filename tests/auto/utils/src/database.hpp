@@ -8,7 +8,7 @@ namespace Orm
     class DatabaseConnection;
 }
 
-namespace Utils
+namespace TestUtils
 {
 
     class UTILS_EXPORT Database

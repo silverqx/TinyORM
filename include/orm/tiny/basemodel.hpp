@@ -7,7 +7,8 @@
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
 
-#include "orm/databaseconnection.hpp"
+#include "orm/concerns/hasconnectionresolver.hpp"
+#include "orm/connectionresolverinterface.hpp"
 #include "orm/ormerror.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
@@ -38,7 +39,9 @@ namespace Tiny
     // TODO decide/unify when to use class/typename keywords for templates silverqx
     // TODO add concept, AllRelations can not contain type defined in "Model" parameter silverqx
     template<typename Model, typename ...AllRelations>
-    class BaseModel : public Concerns::HasRelationStore<Model, AllRelations...>
+    class BaseModel :
+            public Concerns::HasRelationStore<Model, AllRelations...>,
+            public Orm::Concerns::HasConnectionResolver
     {
     protected:
         BaseModel(const QVector<AttributeItem> &attributes = {});
@@ -149,7 +152,7 @@ namespace Tiny
         { return model().u_connection; }
         /*! Get the database connection for the model. */
         inline DatabaseConnection &getConnection() const
-        { return DatabaseConnection::instance(); }
+        { return m_resolver->connection(getConnectionName()); }
         /*! Set the connection associated with the model. */
         inline Model &setConnection(const QString &name)
         { model().u_connection = name; return model(); }
@@ -733,6 +736,7 @@ namespace Tiny
     BaseModel<Model, AllRelations...>::newModelQuery()
     {
         return newTinyBuilder(newBaseQueryBuilder());
+        // BUG next missing ->setModel($this), check ?? silverqx
     }
 
     template<typename Model, typename ...AllRelations>
@@ -777,7 +781,7 @@ namespace Tiny
     QSharedPointer<QueryBuilder>
     BaseModel<Model, AllRelations...>::newBaseQueryBuilder() const
     {
-        return getConnection().queryBuilder();
+        return getConnection().query();
     }
 
     template<typename Model, typename ...AllRelations>

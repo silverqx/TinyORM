@@ -54,7 +54,7 @@ QString Grammar::compileInsertOrIgnore(const QueryBuilder &query,
 
 QString Grammar::compileUpdate(const QueryBuilder &query, const QVector<UpdateItem> &values) const
 {
-    const auto table   = query.getTable();
+    const auto table   = query.getFrom();
     const auto columns = compileUpdateColumns(values);
     const auto wheres  = compileWheres(query);
 
@@ -118,7 +118,7 @@ QVector<QVariant> Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
 
 QString Grammar::compileDelete(const QueryBuilder &query) const
 {
-    const auto table  = query.getTable();
+    const auto table  = query.getFrom();
     const auto wheres = compileWheres(query);
 
     return query.getJoins().isEmpty() ? compileDeleteWithoutJoins(table, wheres)
@@ -484,7 +484,7 @@ QString Grammar::compileInsert(const QueryBuilder &query, const QVector<QVariant
 
     return QStringLiteral("insert%1 into %2 (%3) values %4").arg(
                 ignore ? QStringLiteral(" ignore") : QStringLiteral(""),
-                query.getTable(),
+                query.getFrom(),
                 // Columns are obtained only from a first QMap
                 columnize(values.at(0).keys()),
                 joinContainer(compileInsertToVector(values),
