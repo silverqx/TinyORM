@@ -27,7 +27,7 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
 {
     // This method is public, so I left this check here
     if (!config.contains("driver"))
-        throw std::invalid_argument("A 'driver' configuration parameter must be specified.");
+        throw std::domain_error("A 'driver' configuration parameter must be specified.");
 
     const auto driver = config["driver"].toString();
 
@@ -41,7 +41,7 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
 //        return std::make_unique<SqlServerConnector>();
     else
         // TODO now check all exception, if they have correct type silverqx
-        throw std::invalid_argument(
+        throw std::domain_error(
                 "Unsupported driver '" + driver.toStdString() + "'.");
 }
 
@@ -154,14 +154,14 @@ ConnectionFactory::createConnection(
 //    else if (driver == "SQLSRV")
 //        return std::make_unique<SqlServerConnection>(connection, database, prefix, config);
     else
-        throw std::invalid_argument(
+        throw std::domain_error(
                 "Unsupported driver '" + driver.toStdString() + "'.");
 }
 
 QStringList ConnectionFactory::parseHosts(const QVariantHash &config) const
 {
     if (!config.contains("host"))
-        throw std::invalid_argument("Database 'host' configuration parameter is required.");
+        throw std::domain_error("Database 'host' configuration parameter is required.");
 
     const auto hosts = config["host"].value<QStringList>();
 
@@ -174,7 +174,7 @@ void ConnectionFactory::validateHosts(const QStringList &hosts) const
 {
     for (const auto &host : hosts)
         if (host.isEmpty())
-            throw std::invalid_argument("Database 'host' configuration parameter "
+            throw std::domain_error("Database 'host' configuration parameter "
                                         "can not contain empty value.");
 }
 
