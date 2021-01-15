@@ -1,6 +1,8 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
+#include <QtSql/QSqlQuery>
+
 #include "export.hpp"
 #include "orm/configuration.hpp"
 #include "orm/connectionresolverinterface.hpp"
@@ -30,6 +32,23 @@ namespace Query
                 const QString &defaultConnection = QLatin1String(defaultConnectionName));
         virtual ~DatabaseManager();
 
+        /*! Factory method to create DatabaseManager instances. */
+        static DatabaseManager create(
+                const QVariantHash &config,
+                const QString &connection = QLatin1String(defaultConnectionName),
+                const QString &defaultConnection = QLatin1String(defaultConnectionName));
+
+        /* Proxy methods to the DatabaseConnection. */
+        /*! Begin a fluent query against a database table for the connection. */
+        QSharedPointer<QueryBuilder>
+        table(const QString &table, const QString &as = "", const QString &connection = "");
+
+        /*! Get a new query builder instance for the connection. */
+        QSharedPointer<QueryBuilder> query(const QString &connection = "");
+        /*! Get a new QSqlQuery instance for the connection. */
+        QSqlQuery qtQuery(const QString &connection = "");
+
+        /* DatabaseManager. */
         /*! Obtain a database connection instance, for now it's singleton. */
 //        static DatabaseManager *instance();
 
@@ -48,11 +67,12 @@ namespace Query
         /*! Set the default connection name. */
         void setDefaultConnection(const QString &defaultConnection) override;
 
-        /*! Begin a fluent query against a database table. */
-        QSharedPointer<QueryBuilder>
-        table(const QString &table, const QString &as = "", const QString &name = "");
-
     protected:
+        explicit DatabaseManager(
+                const QVariantHash &config,
+                const QString &name = QLatin1String(defaultConnectionName),
+                const QString &defaultConnection = QLatin1String(defaultConnectionName));
+
         /*! Parse the connection into an array of the name and read / write type. */
         const QString &parseConnectionName(const QString &name) const;
 
