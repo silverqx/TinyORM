@@ -4,7 +4,6 @@
 #include <range/v3/iterator/insert_iterators.hpp>
 
 #include "orm/databaseconnection.hpp"
-#include "orm/ormerror.hpp"
 #include "orm/query/joinclause.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

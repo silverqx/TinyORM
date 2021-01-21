@@ -4,6 +4,7 @@
 #include <QtSql/QSqlQuery>
 
 #include "orm/configuration.hpp"
+#include "orm/connectioninterface.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/connectors/connectionfactory.hpp"
 

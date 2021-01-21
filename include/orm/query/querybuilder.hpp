@@ -3,8 +3,6 @@
 
 #include <QtSql/QSqlQuery>
 
-#include <optional>
-
 #include "orm/query/expression.hpp"
 #include "orm/ormtypes.hpp"
 

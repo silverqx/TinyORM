@@ -1,14 +1,13 @@
 #ifndef CONNECTIONRESOLVERINTERFACE_H
 #define CONNECTIONRESOLVERINTERFACE_H
 
-#include "orm/connectioninterface.hpp"
-
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm
 {
+    class ConnectionInterface;
 
     class ConnectionResolverInterface
     {

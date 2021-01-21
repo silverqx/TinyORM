@@ -1,7 +1,6 @@
 #ifndef TINYBUILDER_H
 #define TINYBUILDER_H
 
-#include <QDebug>
 #include <QtSql/QSqlRecord>
 
 #include <any>
@@ -15,9 +14,6 @@
 
 #include "orm/databaseconnection.hpp"
 #include "orm/query/querybuilder.hpp"
-#include "orm/tiny/relations/relation.hpp"
-#include "orm/tiny/relations/belongsto.hpp"
-#include "orm/tiny/relations/hasmany.hpp"
 #include "orm/utils/attribute.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

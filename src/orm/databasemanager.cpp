@@ -1,7 +1,5 @@
 #include "orm/databasemanager.hpp"
 
-#include <stdexcept>
-
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/databaseconnection.hpp"
 

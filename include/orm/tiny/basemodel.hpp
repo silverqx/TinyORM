@@ -1,16 +1,10 @@
 #ifndef BASEMODEL_H
 #define BASEMODEL_H
 
-#include <QtSql/QSqlError>
-
-#include <range/v3/algorithm/contains.hpp>
-#include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
 
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
-#include "orm/ormerror.hpp"
-#include "orm/query/querybuilder.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
 #include "orm/tiny/relations/belongsto.hpp"
 #include "orm/tiny/relations/hasone.hpp"

@@ -1,8 +1,6 @@
 #ifndef ORMTYPES_H
 #define ORMTYPES_H
 
-// TODO now check all includes in whole tiny project silverqx
-#include "export.hpp"
 #include "orm/tiny/relations/relation.hpp"
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
