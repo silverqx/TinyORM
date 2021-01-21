@@ -1,12 +1,9 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include "utils_global.hpp"
+#include "orm/connectioninterface.hpp"
 
-namespace Orm
-{
-    class DatabaseConnection;
-}
+#include "utils_global.hpp"
 
 namespace TestUtils
 {
@@ -16,7 +13,7 @@ namespace TestUtils
     public:
         Database();
 
-        static Orm::DatabaseConnection &createConnection();
+        static Orm::ConnectionInterface &createConnection();
     };
 
 }

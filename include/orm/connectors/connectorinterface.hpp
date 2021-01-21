@@ -12,7 +12,7 @@ namespace Orm::Connectors
     class ConnectorInterface
     {
     public:
-        virtual ~ConnectorInterface() = default;
+        inline virtual ~ConnectorInterface() = default;
 
         /*! Establish a database connection. */
         virtual ConnectionName connect(const QVariantHash &config) const = 0;

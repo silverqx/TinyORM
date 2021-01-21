@@ -3,6 +3,8 @@
 
 #include <QtSql/QSqlDatabase>
 
+#include "orm/concerns/detectslostconnections.hpp"
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -10,10 +12,10 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Connectors
 {
 
-    class Connector
+    class Connector : public Concerns::DetectsLostConnections
     {
     public:
-        virtual ~Connector() = default;
+        inline virtual ~Connector() = default;
 
         /*! Create a new QSqlDatabase connection, factory method. */
         QSqlDatabase
@@ -32,6 +34,18 @@ namespace Orm::Connectors
         virtual void parseConfigOptions(QVariantHash &options) const = 0;
         /*! Get the QSqlDatabase connection options for the current connector. */
         virtual const QVariantHash &getConnectorOptions() const = 0;
+
+    protected:
+        /*! Add a database to the list of database connections using the driver type. */
+        QSqlDatabase
+        addQSqlDatabaseConnection(
+                const QString &name, const QVariantHash &config,
+                const QString &options) const;
+        /*! Handle an exception that occurred during connect execution. */
+        QSqlDatabase
+        tryAgainIfCausedByLostConnection(
+                const SqlError &e, const QString &name, const QVariantHash &config,
+                const QString &options) const;
     };
 
 } // namespace Orm::Connectors

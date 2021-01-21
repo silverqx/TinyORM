@@ -7,25 +7,23 @@
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
-{
-    class DatabaseConnection;
-    class Grammar;
-}
-
 namespace Orm::Query
 {
+
     class JoinClause final : public Builder
     {
     public:
         JoinClause(const Builder &query, const QString &type, const QString &table);
 
+        /*! Add an "on" clause to the join. */
         JoinClause &on(const QString &first, const QString &comparison,
                        const QString &second, const QString &condition = "and");
 
-        const QString &getType() const
+        /*! Get the type of join being performed. */
+        inline const QString &getType() const
         { return m_type; }
-        const QString &getTable() const
+        /*! Get the table the join clause is joining to. */
+        inline const QString &getTable() const
         { return m_table; }
 
     private:

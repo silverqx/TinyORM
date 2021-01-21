@@ -21,7 +21,6 @@ ConnectionFactory::make(QVariantHash &config, const QString &name) const
     return createSingleConnection(config);
 }
 
-// TODO now std::unique_ptr<Connector> vs std::unique_ptr<ConnectorInterface> silverqx
 std::unique_ptr<ConnectorInterface>
 ConnectionFactory::createConnector(const QVariantHash &config) const
 {
@@ -40,7 +39,6 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
 //    else if (driver == "SQLSRV")
 //        return std::make_unique<SqlServerConnector>();
     else
-        // TODO now check all exception, if they have correct type silverqx
         throw std::domain_error(
                 "Unsupported driver '" + driver.toStdString() + "'.");
 }
@@ -80,11 +78,8 @@ void ConnectionFactory::normalizeDriverName(QVariantHash &config) const
 std::unique_ptr<DatabaseConnection>
 ConnectionFactory::createSingleConnection(QVariantHash &config) const
 {
-    const auto qtConnectionResolver = createQSqlDatabaseResolver(config);
-
-    // TODO now decide how to handle undefined driver or database silverqx
     return createConnection(
-                config["driver"].toString(), qtConnectionResolver,
+                config["driver"].toString(), createQSqlDatabaseResolver(config),
                 config["database"].toString(), config["prefix"].toString(),
                 config);
 }
@@ -97,7 +92,6 @@ ConnectionFactory::createQSqlDatabaseResolver(QVariantHash &config) const
             : createQSqlDatabaseResolverWithoutHosts(config);
 }
 
-// TODO now const silverqx
 std::function<ConnectionName()>
 ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &config) const
 {
@@ -110,7 +104,9 @@ ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &confi
         std::exception lastException;
 
         // TODO future add support for multiple hosts and connect randomly to one of them, in this step have to take into account also the sticky config paramater silverqx
-        // TODO docs silverqx
+        /* This for statement do nothing for now, it purpose is to randomly
+           shuffle hosts and try to connect to them one be one, until the connection
+           will be successful. */
         for (const auto &host : hosts)
             try {
                 configCopy["host"] = host;

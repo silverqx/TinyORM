@@ -1,7 +1,6 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-#include "orm/databaseconnection.hpp"
 #include "orm/grammar.hpp"
 #include "orm/query/expression.hpp"
 #include "orm/query/querybuilder.hpp"
@@ -63,13 +62,13 @@ private slots:
 
 private:
     inline QueryBuilder createQuery() const
-    { return QueryBuilder(m_db, Grammar()); }
+    { return QueryBuilder(m_connection, Grammar()); }
 
-    DatabaseConnection &m_db;
+    ConnectionInterface &m_connection;
 };
 
 tst_QueryBuilder::tst_QueryBuilder()
-    : m_db(TestUtils::Database::createConnection())
+    : m_connection(TestUtils::Database::createConnection())
 {}
 
 void tst_QueryBuilder::initTestCase()

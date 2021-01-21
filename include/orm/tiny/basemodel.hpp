@@ -151,7 +151,7 @@ namespace Tiny
         inline const QString &getConnectionName() const
         { return model().u_connection; }
         /*! Get the database connection for the model. */
-        inline DatabaseConnection &getConnection() const
+        inline ConnectionInterface &getConnection() const
         { return m_resolver->connection(getConnectionName()); }
         /*! Set the connection associated with the model. */
         inline Model &setConnection(const QString &name)

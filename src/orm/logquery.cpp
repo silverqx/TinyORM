@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QtSql/QSqlQuery>
 
+// TODO not a good place for this file, move it to the utils or support silverqx
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {

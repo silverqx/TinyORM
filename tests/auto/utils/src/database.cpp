@@ -7,7 +7,7 @@ using namespace TestUtils;
 Database::Database()
 {}
 
-Orm::DatabaseConnection &Database::createConnection()
+Orm::ConnectionInterface &Database::createConnection()
 {
     static Orm::DatabaseManager databaseManager;
 

@@ -14,8 +14,8 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
-Builder::Builder(DatabaseConnection &db, const Grammar &grammar)
-    : m_db(db)
+Builder::Builder(ConnectionInterface &connection, const Grammar &grammar)
+    : m_connection(connection)
     , m_grammar(grammar)
 {}
 
@@ -115,7 +115,7 @@ Builder::insert(const QVector<QVariantMap> &values)
        so there are not any errors or problems when inserting these records. */
 
     // WARNING cleanBindings() is missing silverqx
-    return m_db.insert(m_grammar.compileInsert(*this, values),
+    return m_connection.insert(m_grammar.compileInsert(*this, values),
                        flatValuesForInsert(values));
 }
 
@@ -125,7 +125,7 @@ Builder::insertOrIgnore(const QVector<QVariantMap> &values)
     if (values.isEmpty())
         return {0, std::nullopt};
 
-    return m_db.affectingStatement(m_grammar.compileInsertOrIgnore(*this, values),
+    return m_connection.affectingStatement(m_grammar.compileInsertOrIgnore(*this, values),
                                    flatValuesForInsert(values));
 }
 
@@ -139,7 +139,7 @@ quint64 Builder::insertGetId(const QVariantMap &values)
 {
     const QVector<QVariantMap> valuesVector {values};
 
-    auto [ok, query] = m_db.insert(
+    auto [ok, query] = m_connection.insert(
             m_grammar.compileInsertGetId(*this, valuesVector),
             flatValuesForInsert(valuesVector));
 
@@ -152,14 +152,14 @@ quint64 Builder::insertGetId(const QVariantMap &values)
 std::tuple<int, QSqlQuery>
 Builder::update(const QVector<UpdateItem> &values)
 {
-    return m_db.update(m_grammar.compileUpdate(*this, values),
+    return m_connection.update(m_grammar.compileUpdate(*this, values),
                        cleanBindings(m_grammar.prepareBindingsForUpdate(getRawBindings(),
                                                                         values)));
 }
 
 std::tuple<int, QSqlQuery> Builder::remove()
 {
-    return m_db.remove(m_grammar.compileDelete(*this),
+    return m_connection.remove(m_grammar.compileDelete(*this),
                        cleanBindings(m_grammar.prepareBindingsForDelete(getRawBindings())));
 }
 
@@ -175,7 +175,7 @@ std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
 
 std::tuple<bool, QSqlQuery> Builder::truncate()
 {
-    return m_db.statement(m_grammar.compileTruncate(*this));
+    return m_connection.statement(m_grammar.compileTruncate(*this));
 }
 
 Builder &Builder::join(const QString &table, const QString &first,
@@ -532,7 +532,7 @@ QVector<QVariant> Builder::getBindings() const
 
 QSharedPointer<Builder> Builder::newQuery() const
 {
-    return QSharedPointer<Builder>::create(m_db, m_grammar);
+    return QSharedPointer<Builder>::create(m_connection, m_grammar);
 }
 
 QSharedPointer<Builder> Builder::forNestedWhere() const
@@ -545,7 +545,7 @@ QSharedPointer<Builder> Builder::forNestedWhere() const
 
 Expression Builder::raw(const QVariant &value) const
 {
-    return m_db.raw(value);
+    return m_connection.raw(value);
 }
 
 bool Builder::invalidOperator(const QString &comparison) const
@@ -651,7 +651,7 @@ Builder &Builder::clearColumns()
 
 std::tuple<bool, QSqlQuery> Builder::runSelect() const
 {
-    return m_db.select(toSql(), getBindings());
+    return m_connection.select(toSql(), getBindings());
 }
 
 } // namespace Orm

@@ -23,8 +23,10 @@ DatabaseManager::DatabaseManager(const QString &defaultConnection)
     // Set up the DatabaseManager as a connection resolver
     Concerns::HasConnectionResolver::setConnectionResolver(this);
 
-    // TODO now, prevent more instances??, or eg add allowMoreInstances data member to override this behavior (or allowMoreInstances compile directive?, in that case would be possible to use #ifdef for ::instance() static method 🤔) silverqx
-    //    m_instance = this;
+    setupDefaultReconnector();
+
+    // TODO prevent more instances??, or eg add allowMoreInstances data member to override this behavior (or allowMoreInstances compile directive?, in that case would be possible to use #ifdef for ::instance() static method 🤔) silverqx
+    m_instance = this;
 }
 
 DatabaseManager::DatabaseManager(const QVariantHash &config, const QString &name,
@@ -32,6 +34,16 @@ DatabaseManager::DatabaseManager(const QVariantHash &config, const QString &name
     : DatabaseManager(defaultConnection)
 {
     addConnection(config, name);
+}
+
+DatabaseManager &DatabaseManager::setupDefaultReconnector()
+{
+    m_reconnector = [this](const DatabaseConnection &connection)
+    {
+        reconnect(connection.getName());
+    };
+
+    return *this;
 }
 
 DatabaseManager
@@ -64,16 +76,16 @@ QSqlQuery DatabaseManager::qtQuery(const QString &connection)
     return this->connection(connection).getQtQuery();
 }
 
-//DatabaseManager *DatabaseManager::instance()
-//{
-//    // TODO now finish silverqx
-//    if (!m_instance)
-//        throw std::runtime_error("DatabaseManager xx");
+DatabaseManager *DatabaseManager::instance()
+{
+    if (!m_instance)
+        throw std::runtime_error(
+                "The DatabaseManager instance has not been created yet.");
 
-//    return m_instance;
-//}
+    return m_instance;
+}
 
-DatabaseConnection &DatabaseManager::connection(const QString &name)
+ConnectionInterface &DatabaseManager::connection(const QString &name)
 {
     const auto &connectionName = parseConnectionName(name);
 
@@ -91,6 +103,28 @@ DatabaseManager::addConnection(const QVariantHash &config, const QString &name)
     m_config.connections.insert(name, config);
 
     return *this;
+}
+
+ConnectionInterface &DatabaseManager::reconnect(QString name)
+{
+    if (name.isEmpty())
+        name = getDefaultConnection();
+
+    disconnect(name);
+
+    if (!m_connections.contains(name))
+        return connection(name);
+
+    return refreshPdoConnections(name);
+}
+
+void DatabaseManager::disconnect(QString name) const
+{
+    if (name.isEmpty())
+        name = getDefaultConnection();
+
+    if (m_connections.contains(name))
+        m_connections.find(name)->second->disconnect();
 }
 
 const QStringList DatabaseManager::supportedDrivers() const
@@ -112,6 +146,14 @@ void DatabaseManager::setDefaultConnection(const QString &defaultConnection)
     m_config.defaultConnection = defaultConnection;
 }
 
+DatabaseManager &
+DatabaseManager::setReconnector(const ReconnectorType &reconnector)
+{
+    m_reconnector = reconnector;
+
+    return *this;
+}
+
 const QString &
 DatabaseManager::parseConnectionName(const QString &name) const
 {
@@ -128,6 +170,8 @@ DatabaseManager::makeConnection(const QString &name)
     return m_factory.make(config, name);
 }
 
+/* Can not be const because I'm modifying the Configuration (QVariantHash)
+   in ConnectionFactory. */
 QVariantHash &
 DatabaseManager::configuration(QString name)
 {
@@ -150,8 +194,24 @@ DatabaseManager::configuration(QString name)
 std::unique_ptr<DatabaseConnection>
 DatabaseManager::configure(std::unique_ptr<DatabaseConnection> connection) const
 {
-    // TODO next add reconnector silverqx
+    /* Here we'll set a reconnector lambda. This reconnector can be any callable
+       so we will set a Closure to reconnect from this manager with the name of
+       the connection, which will allow us to reconnect from OUR connections. */
+    connection->setReconnector(m_reconnector);
+
     return connection;
+}
+
+DatabaseConnection &
+DatabaseManager::refreshPdoConnections(const QString &name)
+{
+    /* Make OUR new connection and copy the connection resolver from this new
+       connection to the current connection, this ensure that the connection
+       will be resolved/connected again lazily. */
+    auto fresh = makeConnection(name);
+
+    return m_connections[name]->setQtConnectionResolver(
+                fresh->getQtConnectionResolver());
 }
 
 } // namespace Orm

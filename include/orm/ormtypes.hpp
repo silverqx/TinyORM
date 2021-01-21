@@ -17,6 +17,9 @@ class TorrentPeer;
 class TorrentPreviewableFileProperty;
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
+/* 👆 I have good idea hot to do that, public types will be tinytypes.hpp and private will be
+   types.hpp, and divide it as most as possible when needed, so eg Reconnector type to
+   types/reconnectortype.hpp. */
 // TODO JSON_USE_IMPLICIT_CONVERSIONS=0 silverqx
 
 #ifdef TINYORM_COMMON_NAMESPACE

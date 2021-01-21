@@ -34,7 +34,7 @@ namespace Concerns
             BaseRelationStore(const RelationStoreType storeType);
 
         public:
-            virtual ~BaseRelationStore() = default;
+            inline virtual ~BaseRelationStore() = default;
 
             inline RelationStoreType getStoreType() const
             { return m_storeType; }

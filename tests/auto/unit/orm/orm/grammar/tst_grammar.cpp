@@ -20,23 +20,16 @@ private slots:
 };
 
 tst_Grammar::tst_Grammar()
-{
-
-}
+{}
 
 void tst_Grammar::initTestCase()
-{
-
-}
+{}
 
 void tst_Grammar::cleanupTestCase()
-{
-
-}
+{}
 
 void tst_Grammar::test_case1()
-{
-}
+{}
 
 QTEST_MAIN(tst_Grammar)
 

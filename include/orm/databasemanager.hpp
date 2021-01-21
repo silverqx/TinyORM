@@ -30,7 +30,7 @@ namespace Query
 
         explicit DatabaseManager(
                 const QString &defaultConnection = QLatin1String(defaultConnectionName));
-        virtual ~DatabaseManager();
+        inline virtual ~DatabaseManager();
 
         /*! Factory method to create DatabaseManager instances. */
         static DatabaseManager create(
@@ -50,14 +50,19 @@ namespace Query
 
         /* DatabaseManager. */
         /*! Obtain a database connection instance, for now it's singleton. */
-//        static DatabaseManager *instance();
+        static DatabaseManager *instance();
 
         /*! Get a database connection instance. */
-        DatabaseConnection &connection(const QString &name = "") override;
+        ConnectionInterface &connection(const QString &name = "") override;
         /*! Register a connection with the manager. */
         DatabaseManager &
         addConnection(const QVariantHash &config,
                       const QString &name = QLatin1String(defaultConnectionName));
+
+        /*! Reconnect to the given database. */
+        ConnectionInterface &reconnect(QString name = "");
+        /*! Disconnect from the given database. */
+        void disconnect(QString name = "") const;
 
         /*! Get all of the support drivers. */
         const QStringList supportedDrivers() const;
@@ -67,11 +72,20 @@ namespace Query
         /*! Set the default connection name. */
         void setDefaultConnection(const QString &defaultConnection) override;
 
+        // TODO duplicate, extract to some internal types silverqx
+        /*! Reconnector lambda type. */
+        using ReconnectorType = std::function<void(const DatabaseConnection &)>;
+        /*! Set the database reconnector callback. */
+        DatabaseManager &setReconnector(const ReconnectorType &reconnector);
+
     protected:
         explicit DatabaseManager(
                 const QVariantHash &config,
                 const QString &name = QLatin1String(defaultConnectionName),
                 const QString &defaultConnection = QLatin1String(defaultConnectionName));
+
+        /*! Setup the default database connection reconnector. */
+        DatabaseManager &setupDefaultReconnector();
 
         /*! Parse the connection into an array of the name and read / write type. */
         const QString &parseConnectionName(const QString &name) const;
@@ -87,6 +101,9 @@ namespace Query
         std::unique_ptr<DatabaseConnection>
         configure(std::unique_ptr<DatabaseConnection> connection) const;
 
+        /*! Refresh an underlying QSqlDatabase connection on a given connection. */
+        DatabaseConnection &refreshPdoConnections(const QString &name);
+
         /*! The database connection factory instance. */
         const Connectors::ConnectionFactory m_factory;
         /*! Database configuration. */
@@ -94,10 +111,11 @@ namespace Query
         /*! The active connection instances. */
         std::unordered_map<QString, std::unique_ptr<DatabaseConnection>> m_connections;
         /*! The callback to be executed to reconnect to a database. */
-//        callable m_reconnector;
+        ReconnectorType m_reconnector;
 
     private:
-//        inline static DatabaseManager *m_instance = nullptr;
+        /*! Database Manager instance. */
+        inline static DatabaseManager *m_instance = nullptr;
     };
 
 } // namespace Orm

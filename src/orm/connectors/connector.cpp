@@ -1,5 +1,6 @@
 #include "orm/connectors/connector.hpp"
 
+#include "orm/sqlerror.hpp"
 #include "orm/support/configurationoptionsparser.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -13,30 +14,30 @@ QSqlDatabase
 Connector::createConnection(const QString &name, const QVariantHash &config,
                             const QString &options) const
 {
-    return createQSqlDatabaseConnection(name, config, options);
+    // TODO test null username/password, debug driver code silverqx
+
+    try {
+        return createQSqlDatabaseConnection(name, config, options);
+    }  catch (const SqlError &e) {
+        return tryAgainIfCausedByLostConnection(e, name, config, options);
+    }
 }
 
 QSqlDatabase
 Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
                                         const QString &options) const
 {
-    auto db = QSqlDatabase::addDatabase(config["driver"].toString(), name);
+    /* If the Qt connection repository already contains this connection,
+       than obtain it, and if don't, add a database to the list of database
+       connections using the driver type. */
+    QSqlDatabase db = QSqlDatabase::contains(name)
+                      ? QSqlDatabase::database(name, false)
+                      : addQSqlDatabaseConnection(name, config, options);
 
-    db.setHostName(config["host"].toString());
-
-    if (config.contains("database"))
-        db.setDatabaseName(config["database"].toString());
-    if (config.contains("username"))
-        db.setUserName(config["username"].toString());
-    if (config.contains("password"))
-        db.setPassword(config["password"].toString());
-    if (config.contains("port"))
-        db.setPort(config["port"].toUInt());
-
-    db.setConnectOptions(options);
-
-    // TODO now handle db.open() error silverqx
-    db.open();
+    if (!db.open())
+        throw SqlError(QStringLiteral("Open databse connection in %1() failed.")
+                       .arg(__FUNCTION__),
+                       db.lastError());
 
     return db;
 }
@@ -51,6 +52,41 @@ QString Connector::getOptions(const QVariantHash &config) const
     // Validate, prepare, and merge connection options
     return Support::ConfigurationOptionsParser(*this)
             .parseConfiguration(config);
+}
+
+QSqlDatabase
+Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
+                                     const QString &options) const
+{
+    QSqlDatabase db;
+
+    db = QSqlDatabase::addDatabase(config["driver"].toString(), name);
+
+    db.setHostName(config["host"].toString());
+
+    if (config.contains("database"))
+        db.setDatabaseName(config["database"].toString());
+    if (config.contains("username"))
+        db.setUserName(config["username"].toString());
+    if (config.contains("password"))
+        db.setPassword(config["password"].toString());
+    if (config.contains("port"))
+        db.setPort(config["port"].toUInt());
+
+    db.setConnectOptions(options);
+
+    return db;
+}
+
+QSqlDatabase
+Connector::tryAgainIfCausedByLostConnection(
+        const SqlError &e, const QString &name, const QVariantHash &config,
+        const QString &options) const
+{
+    if (causedByLostConnection(e))
+        return createQSqlDatabaseConnection(name, config, options);
+
+    throw e;
 }
 
 } // namespace Orm::Connectors

@@ -1,22 +1,23 @@
 #ifndef CONNECTIONRESOLVERINTERFACE_H
 #define CONNECTIONRESOLVERINTERFACE_H
 
+#include "orm/connectioninterface.hpp"
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm
 {
-    class DatabaseConnection;
 
     class ConnectionResolverInterface
     {
     public:
         // TODO next virtual dtor in abstract class multi ingeritance silverqx
-        virtual ~ConnectionResolverInterface() = default;
+        inline virtual ~ConnectionResolverInterface() = default;
 
         /*! Get a database connection instance. */
-        virtual DatabaseConnection &connection(const QString &name = "") = 0;
+        virtual ConnectionInterface &connection(const QString &name = "") = 0;
 
         /*! Get the default connection name. */
         virtual const QString &getDefaultConnection() const = 0;

@@ -170,7 +170,7 @@ namespace Relations
         { return *m_query; }
 
         /*! Get a database connection. */
-        inline const DatabaseConnection &getConnection() const
+        inline const ConnectionInterface &getConnection() const
         { return m_query->getConnection(); }
 
         /*! Get a base query builder instance. */

@@ -2,8 +2,10 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/export.hpp \
+    $$PWD/orm/concerns/detectslostconnections.hpp \
     $$PWD/orm/concerns/hasconnectionresolver.hpp \
     $$PWD/orm/configuration.hpp \
+    $$PWD/orm/connectioninterface.hpp \
     $$PWD/orm/connectionresolverinterface.hpp \
     $$PWD/orm/connectors/connectionfactory.hpp \
     $$PWD/orm/connectors/connector.hpp \
@@ -19,6 +21,8 @@ HEADERS += \
     $$PWD/orm/query/expression.hpp \
     $$PWD/orm/query/joinclause.hpp \
     $$PWD/orm/query/querybuilder.hpp \
+    $$PWD/orm/queryerror.hpp \
+    $$PWD/orm/sqlerror.hpp \
     $$PWD/orm/support/configurationoptionsparser.hpp \
     $$PWD/orm/tiny/basemodel.hpp \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \

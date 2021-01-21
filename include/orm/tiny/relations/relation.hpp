@@ -24,7 +24,7 @@ namespace Orm::Tiny::Relations
         Relation(std::unique_ptr<Related> &&related, const Model &parent);
 
     public:
-        virtual ~Relation() = default;
+        inline virtual ~Relation() = default;
 
         /*! Set the base constraints on the relation query. */
         virtual void addConstraints() const = 0;

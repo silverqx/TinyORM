@@ -15,7 +15,7 @@ namespace TINYORM_COMMON_NAMESPACE
 
 namespace Orm
 {
-    class DatabaseConnection;
+    class ConnectionInterface;
     class Grammar;
 }
 
@@ -27,11 +27,11 @@ namespace Orm::Query
     class SHAREDLIB_EXPORT Builder
     {
     public:
-        Builder(DatabaseConnection &db, const Grammar &grammar);
+        Builder(ConnectionInterface &connection, const Grammar &grammar);
         // WARNING solve pure virtual dtor vs default silverqx
         /* Need to be the polymorphic type because of dynamic_cast<>
            in Grammar::concatenateWhereClauses(). */
-        virtual ~Builder() = default;
+        inline virtual ~Builder() = default;
 
         /*! Set the columns to be selected. */
         Builder &select(const QStringList columns = {"*"});
@@ -40,6 +40,7 @@ namespace Orm::Query
         { return select(QStringList(column)); }
         /*! Add new select columns to the query. */
         Builder &addSelect(const QStringList &columns);
+        // TODO future, when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
         /*! Add a new select column to the query. */
         inline Builder &addSelect(const QString &column)
         { return addSelect(QStringList(column)); }
@@ -270,8 +271,8 @@ namespace Orm::Query
                   const QVector<UpdateItem> &extra = {});
 
         /*! Get a database connection. */
-        inline DatabaseConnection &getConnection() const
-        { return m_db; }
+        inline ConnectionInterface &getConnection() const
+        { return m_connection; }
         /*! Get the query grammar instance. */
         inline const Grammar &getGrammar() const
         { return m_grammar; }
@@ -368,9 +369,8 @@ namespace Orm::Query
             "not similar to", "not ilike", "~~*", "!~~*",
         };
 
-        // TODO next rename to connection silverqx
         /*! The database connection instance. */
-        DatabaseConnection &m_db;
+        ConnectionInterface &m_connection;
         /*! The database query grammar instance. */
         const Grammar &m_grammar;
 

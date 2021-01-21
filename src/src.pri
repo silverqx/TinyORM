@@ -1,6 +1,7 @@
 include(../include/include.pri)
 
 SOURCES += \
+    $$PWD/orm/concerns/detectslostconnections.cpp \
     $$PWD/orm/concerns/hasconnectionresolver.cpp \
     $$PWD/orm/connectors/connectionfactory.cpp \
     $$PWD/orm/connectors/connector.cpp \
@@ -14,6 +15,8 @@ SOURCES += \
     $$PWD/orm/query/expression.cpp \
     $$PWD/orm/query/joinclause.cpp \
     $$PWD/orm/query/querybuilder.cpp \
+    $$PWD/orm/queryerror.cpp \
+    $$PWD/orm/sqlerror.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \
     $$PWD/orm/tiny/basemodel.cpp \
     $$PWD/orm/tiny/concerns/hasattributes.cpp \
