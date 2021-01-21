@@ -15,7 +15,8 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-const char *DatabaseConnection::SAVEPOINT_NAMESPACE = const_cast<char *>("tinyorm_savepoint");
+const char *DatabaseConnection::defaultConnectionName = const_cast<char *>("tinyorm_default");
+const char *DatabaseConnection::SAVEPOINT_NAMESPACE   = const_cast<char *>("tinyorm_savepoint");
 
 /*!
     \class DatabaseConnection

@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QtSql/QSqlRecord>
 
+#include <any>
+
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/move.hpp>

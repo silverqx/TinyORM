@@ -3,7 +3,6 @@
 
 #include <QtSql/QSqlQuery>
 
-#include "export.hpp"
 #include "orm/configuration.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/connectors/connectionfactory.hpp"
@@ -115,7 +114,7 @@ namespace Query
 
     private:
         /*! Database Manager instance. */
-        inline static DatabaseManager *m_instance = nullptr;
+        static DatabaseManager *m_instance;
     };
 
 } // namespace Orm

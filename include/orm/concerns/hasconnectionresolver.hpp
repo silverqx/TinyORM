@@ -1,6 +1,8 @@
 #ifndef HASCONNECTIONRESOLVER_H
 #define HASCONNECTIONRESOLVER_H
 
+#include "export.hpp"
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -12,7 +14,7 @@ namespace Orm
 namespace Concerns
 {
 
-    class HasConnectionResolver
+    class SHAREDLIB_EXPORT HasConnectionResolver
     {
     public:
         /*! Get the connection resolver instance. */
@@ -25,8 +27,9 @@ namespace Concerns
         static void unsetConnectionResolver();
 
     protected:
+        // WARNING if the m_resolver is inline static, that it is nullptr even after initialization from DatabaseManager ctor, examine why this happen and how it works silverqx
         /*! The connection resolver instance. */
-        inline static ConnectionResolverInterface *m_resolver = nullptr;
+        static ConnectionResolverInterface *m_resolver;
     };
 
 } // namespace Orm::Concerns

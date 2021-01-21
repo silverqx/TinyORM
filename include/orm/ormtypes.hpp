@@ -1,20 +1,9 @@
 #ifndef ORMTYPES_H
 #define ORMTYPES_H
 
-#include <QDebug>
-#include <QSharedPointer>
-#include <memory>
-#include <any>
-#include <typeindex>
-#include <optional>
-
+// TODO now check all includes in whole tiny project silverqx
 #include "export.hpp"
 #include "orm/tiny/relations/relation.hpp"
-
-class Torrent;
-class TorrentPreviewableFile;
-class TorrentPeer;
-class TorrentPreviewableFileProperty;
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
 /* 👆 I have good idea hot to do that, public types will be tinytypes.hpp and private will be

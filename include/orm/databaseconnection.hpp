@@ -1,6 +1,7 @@
 #ifndef DATABASECONNECTION_H
 #define DATABASECONNECTION_H
 
+#include <QDebug>
 #include <QElapsedTimer>
 #include <QtSql/QSqlDatabase>
 
@@ -23,7 +24,8 @@ namespace Orm
             public Concerns::DetectsLostConnections
     {
     public:
-        inline static const char *defaultConnectionName {const_cast<char *>("tinyorm_default")};
+        /*! Default connection name. */
+        static const char *defaultConnectionName;
 
         explicit DatabaseConnection(
                 const std::function<Connectors::ConnectionName()> &connection,

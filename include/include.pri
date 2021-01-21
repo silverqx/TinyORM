@@ -36,8 +36,3 @@ HEADERS += \
     $$PWD/orm/utils/attribute.hpp \
     $$PWD/orm/utils/string.hpp \
     $$PWD/orm/utils/type.hpp \
-    $$PWD/setting.hpp \
-    $$PWD/torrent.hpp \
-    $$PWD/torrentpeer.hpp \
-    $$PWD/torrentpreviewablefile.hpp \
-    $$PWD/torrentpreviewablefileproperty.hpp \

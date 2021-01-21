@@ -38,6 +38,8 @@ namespace Tiny
 
     // TODO decide/unify when to use class/typename keywords for templates silverqx
     // TODO add concept, AllRelations can not contain type defined in "Model" parameter silverqx
+    // TODO next test no relation behavior silverqx
+    // TODO now exceptions for model CRUD methods? silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
@@ -118,9 +120,9 @@ namespace Tiny
         /*! Destroy the models for the given IDs. */
         static std::size_t
         destroy(const QVector<QVariant> &ids);
-        static inline std::size_t
+        inline static std::size_t
         destroy(const QVariant id)
-        { return destroy({id}); }
+        { return destroy(QVector<QVariant> {id}); }
 
         /*! Get a new query builder for the model's table. */
         inline std::unique_ptr<TinyBuilder<Model>> newQuery()
@@ -270,6 +272,10 @@ namespace Tiny
         /*! Get a new query builder instance for the connection. */
         QSharedPointer<QueryBuilder> newBaseQueryBuilder() const;
 
+        /*! The visitor to obtain a type for Related template parameter. */
+        inline void relationVisitor(const QString &)
+        {}
+
         /*! On the base of type saved in the relation store decide, which action to call eager/push. */
         template<typename Related>
         void relationVisited();
@@ -367,6 +373,7 @@ namespace Tiny
         // TODO for std::any check, whether is appropriate to define template requirement std::is_nothrow_move_constructible ( to avoid dynamic allocations for small objects and how this internally works ) silverqx
         /*! Map of relation names to methods. */
         QHash<QString, std::any> u_relations;
+        // TODO detect (best at compile time) circular eager relation problem, the exception which happens during this problem is stackoverflow in QRegularExpression silverqx
         /*! The relations to eager load on every query. */
         QVector<WithItem> u_with;
         /*! The relationship counts that should be eager loaded on every query. */

@@ -10,9 +10,10 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Utils::Attribute
 {
     /*! Convert a AttributeItem QVector to the QVariantMap. */
-    QVariantMap convertVectorToMap(const QVector<AttributeItem> &attributes);
+    SHAREDLIB_EXPORT QVariantMap
+    convertVectorToMap(const QVector<AttributeItem> &attributes);
     /*! Convert a AttributeItem QVector to the UpdateItem QVector. */
-    QVector<UpdateItem>
+    SHAREDLIB_EXPORT QVector<UpdateItem>
     convertVectorToUpdateItem(const QVector<AttributeItem> &attributes);
 
 } // namespace Orm::Utils::Attribute

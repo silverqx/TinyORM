@@ -12,6 +12,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+DatabaseManager *DatabaseManager::m_instance = nullptr;
 const char *DatabaseManager::defaultConnectionName = const_cast<char *>("tinyorm_default");
 
 // TODO future add support for ::read and ::write db connections silverx
