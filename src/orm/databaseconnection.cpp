@@ -36,7 +36,6 @@ const char *DatabaseConnection::SAVEPOINT_NAMESPACE   = const_cast<char *>("tiny
     for savepoint. This makes it clear at a glance what is happening.
 */
 
-// TODO next rewrite DatabaseConnection to match Laravel's implementation 🤓😕 silverqx
 // TODO err, may be configurable exceptions by config or compiler directive? (completely disable exceptions by directive) silverqx
 DatabaseConnection::DatabaseConnection(
         const std::function<Connectors::ConnectionName ()> &connection,

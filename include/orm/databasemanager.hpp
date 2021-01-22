@@ -32,10 +32,14 @@ namespace Query
                 const QString &defaultConnection = QLatin1String(defaultConnectionName));
         inline virtual ~DatabaseManager();
 
-        /*! Factory method to create DatabaseManager instances. */
+        /*! Factory method to create DatabaseManager instance. */
         static DatabaseManager create(
                 const QVariantHash &config,
                 const QString &connection = QLatin1String(defaultConnectionName),
+                const QString &defaultConnection = QLatin1String(defaultConnectionName));
+        /*! Factory method to create DatabaseManager instance. */
+        static DatabaseManager create(
+                const ConfigurationsType &configs,
                 const QString &defaultConnection = QLatin1String(defaultConnectionName));
 
         /* Proxy methods to the DatabaseConnection. */
@@ -82,6 +86,9 @@ namespace Query
         explicit DatabaseManager(
                 const QVariantHash &config,
                 const QString &name = QLatin1String(defaultConnectionName),
+                const QString &defaultConnection = QLatin1String(defaultConnectionName));
+        explicit DatabaseManager(
+                const ConfigurationsType &configs,
                 const QString &defaultConnection = QLatin1String(defaultConnectionName));
 
         /*! Setup the default database connection reconnector. */

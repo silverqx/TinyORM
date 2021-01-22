@@ -35,6 +35,13 @@ DatabaseManager::DatabaseManager(const QVariantHash &config, const QString &name
     addConnection(config, name);
 }
 
+DatabaseManager::DatabaseManager(const ConfigurationsType &configs,
+                                 const QString &defaultConnection)
+    : DatabaseManager(defaultConnection)
+{
+    m_config.connections = configs;
+}
+
 DatabaseManager &DatabaseManager::setupDefaultReconnector()
 {
     m_reconnector = [this](const DatabaseConnection &connection)
@@ -50,6 +57,13 @@ DatabaseManager::create(const QVariantHash &config, const QString &connection,
                         const QString &defaultConnection)
 {
     return DatabaseManager(config, connection, defaultConnection);
+}
+
+DatabaseManager
+DatabaseManager::create(const ConfigurationsType &configs,
+                        const QString &defaultConnection)
+{
+    return DatabaseManager(configs, defaultConnection);
 }
 
 /* This is needed because of the std::unique_ptr is used in the m_connections

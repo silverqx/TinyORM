@@ -12,7 +12,7 @@ namespace Orm
     class ConnectionResolverInterface
     {
     public:
-        // TODO next virtual dtor in abstract class multi ingeritance silverqx
+        // TODO next virtual dtor in abstract class multi inheritance silverqx
         inline virtual ~ConnectionResolverInterface() = default;
 
         /*! Get a database connection instance. */
