@@ -61,43 +61,47 @@ namespace Tiny
         bool push();
 
         /*! Get the first record matching the attributes or instantiate it. */
-        inline Model
+        inline static Model
         firstOrNew(const QVector<WhereItem> &attributes = {},
                    const QVector<AttributeItem> &values = {})
-        { return newQuery()->firstOrNew(attributes, values); }
+        { return BaseModel<Model, AllRelations...>::query()
+                    ->firstOrNew(attributes, values); }
         /*! Get the first record matching the attributes or create it. */
-        inline Model
+        inline static Model
         firstOrCreate(const QVector<WhereItem> &attributes = {},
                       const QVector<AttributeItem> &values = {})
-        { return newQuery()->firstOrCreate(attributes, values); }
+        { return BaseModel<Model, AllRelations...>::query()
+                    ->firstOrCreate(attributes, values); }
 
         /*! Find a model by its primary key. */
-        inline std::optional<Model>
+        inline static std::optional<Model>
         find(const QVariant &id, const QStringList &columns = {"*"})
-        { return newQuery()->find(id, columns); }
+        { return BaseModel<Model, AllRelations...>::query()
+                    ->find(id, columns); }
+
         /*! Add a basic where clause to the query, and return the first result. */
-        inline std::optional<Model>
+        inline static std::optional<Model>
         firstWhere(const QString &column, const QString &comparison,
                    const QVariant &value, const QString &condition = "and")
         { return where(column, comparison, value, condition)->first(); }
         /*! Add a basic equal where clause to the query, and return the first result. */
-        inline std::optional<Model>
+        inline static std::optional<Model>
         firstWhereEq(const QString &column, const QVariant &value,
                      const QString &condition = "and")
         { return where(column, QStringLiteral("="), value, condition)->first(); }
 
         /*! Add a basic where clause to the query. */
-        std::unique_ptr<TinyBuilder<Model>>
+        static std::unique_ptr<TinyBuilder<Model>>
         where(const QString &column, const QString &comparison,
               const QVariant &value, const QString &condition = "and");
         /*! Add a basic equal where clause to the query. */
-        inline std::unique_ptr<TinyBuilder<Model>>
+        inline static std::unique_ptr<TinyBuilder<Model>>
         whereEq(const QString &column, const QVariant &value,
                 const QString &condition = "and")
         { return where(column, QStringLiteral("="), value, condition); }
 
         /*! Add an array of basic where clauses to the query. */
-        std::unique_ptr<TinyBuilder<Model>>
+        static std::unique_ptr<TinyBuilder<Model>>
         where(const QVector<WhereItem> &values, const QString &condition = "and");
 
         /*! Begin querying a model with eager loading. */
@@ -632,7 +636,7 @@ namespace Tiny
             const QString &column, const QString &comparison,
             const QVariant &value, const QString &condition)
     {
-        auto query = newQuery();
+        auto query = BaseModel<Model, AllRelations...>::query();
 
         query->where(column, comparison, value, condition);
 
@@ -644,7 +648,9 @@ namespace Tiny
     BaseModel<Model, AllRelations...>::where(const QVector<WhereItem> &values,
                                              const QString &condition)
     {
-        auto query = newQuery();
+        /* The parentheses in this query are ok:
+           select * from xyz where (id = ?) */
+        auto query = BaseModel<Model, AllRelations...>::query();
 
         query->where(values, condition);
 

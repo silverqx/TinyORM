@@ -1,6 +1,7 @@
 #ifndef ORMTYPES_H
 #define ORMTYPES_H
 
+#include "export.hpp"
 #include "orm/tiny/relations/relation.hpp"
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
@@ -108,13 +109,13 @@ namespace Query
         QVariant value;
     };
 
-    struct AttributeItem
+    struct SHAREDLIB_EXPORT AttributeItem
     {
         QString  key;
         QVariant value;
     };
 
-    struct WhereItem
+    struct SHAREDLIB_EXPORT WhereItem
     {
         QString  column;
         QVariant value;

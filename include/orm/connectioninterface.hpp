@@ -71,7 +71,6 @@ namespace Query
         update(const QString &queryString,
                const QVector<QVariant> &bindings = {}) = 0;
 
-        // TODO next think about to rename to destroy, look how this word is used in Eloquent silverqx
         /*! Run a delete statement against the database. */
         virtual std::tuple<int, QSqlQuery>
         remove(const QString &queryString,

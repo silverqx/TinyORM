@@ -315,7 +315,9 @@ Builder &Builder::where(const QVector<WhereItem> &values, const QString &conditi
 {
     /* If the column is an array, we will assume it is the QVector of WhereItem-s
        and can add them each as a where clause. We will maintain the boolean we
-       received when the method was called and pass it into the nested where. */
+       received when the method was called and pass it into the nested where.
+       The parentheses in this query are ok:
+       select * from xyz where (id = ?) */
     return addArrayOfWheres(values, condition);
 }
 
