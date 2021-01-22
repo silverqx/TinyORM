@@ -46,6 +46,7 @@ namespace Tiny
         /*! The "type" of the primary key ID. */
         using KeyType = quint64;
 
+        /* Methods that start QueryBuilder */
         // TODO inline static method vs constexpr static, check it silverqx
         /*! Begin querying the model. */
         inline static std::unique_ptr<TinyBuilder<Model>> query()
@@ -54,11 +55,6 @@ namespace Tiny
         /*! Get all of the models from the database. */
         inline static QVector<Model> all(const QStringList &columns = {"*"})
         { return query()->get(columns); }
-
-        /*! Save the model to the database. */
-        bool save();
-        /*! Save the model and all of its relationships. */
-        bool push();
 
         /*! Get the first record matching the attributes or instantiate it. */
         inline static Model
@@ -112,11 +108,6 @@ namespace Tiny
         with(const QString &relation)
         { return with(QVector<WithItem> {{relation}}); }
 
-        /*! Delete the model from the database. */
-        bool remove();
-        /*! Delete the model from the database. */
-        inline bool deleteModel()
-        { return remove(); }
         // TODO cpp check all int types and use std::size_t where appropriate silverqx
         // WARNING id should be Model::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
         /*! Destroy the models for the given IDs. */
@@ -125,6 +116,18 @@ namespace Tiny
         inline static std::size_t
         destroy(const QVariant id)
         { return destroy(QVector<QVariant> {id}); }
+
+        /* Operations on a model instance */
+        /*! Save the model to the database. */
+        bool save();
+        /*! Save the model and all of its relationships. */
+        bool push();
+
+        /*! Delete the model from the database. */
+        bool remove();
+        /*! Delete the model from the database. */
+        inline bool deleteModel()
+        { return remove(); }
 
         /*! Get a new query builder for the model's table. */
         inline std::unique_ptr<TinyBuilder<Model>> newQuery()
@@ -466,6 +469,69 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::where(
+            const QString &column, const QString &comparison,
+            const QVariant &value, const QString &condition)
+    {
+        auto query = BaseModel<Model, AllRelations...>::query();
+
+        query->where(column, comparison, value, condition);
+
+        return query;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::where(const QVector<WhereItem> &values,
+                                             const QString &condition)
+    {
+        /* The parentheses in this query are ok:
+           select * from xyz where (id = ?) */
+        auto query = BaseModel<Model, AllRelations...>::query();
+
+        query->where(values, condition);
+
+        return query;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::with(const QVector<WithItem> &relations)
+    {
+        auto builder = query();
+
+        builder->with(relations);
+
+        return builder;
+    }
+
+    // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
+    template<typename Model, typename ...AllRelations>
+    size_t
+    BaseModel<Model, AllRelations...>::destroy(const QVector<QVariant> &ids)
+    {
+        if (ids.isEmpty())
+            return 0;
+
+        /* We will actually pull the models from the database table and call delete on
+           each of them individually so that their events get fired properly with a
+           correct set of attributes in case the developers wants to check these. */
+        Model instance;
+        const auto &key = instance.getKeyName();
+
+        std::size_t count = 0;
+
+        // TODO diff call whereIn() on Model vs TinyBuilder silverqx
+        // Ownership of a unique_ptr()
+        for (auto &model : instance.newQuery()->whereIn(key, ids).get())
+            if (model.remove())
+                ++count;
+
+        return count;
+    }
+
+    template<typename Model, typename ...AllRelations>
     bool BaseModel<Model, AllRelations...>::save()
     {
 //        mergeAttributesFromClassCasts();
@@ -617,7 +683,8 @@ namespace Tiny
         // Pointers to visited member methods by storeType, yes yes c++ 😂
         // An order has to be the same as in enum struct RelationStoreType
         // TODO future should be QHash, for faster lookup, do benchmark, high chance that qvector has faster lookup than qhash silverqx
-        static const QVector<std::function<void(BaseModel<Model, AllRelations...> &)>> cached {
+        static const
+        QVector<std::function<void(BaseModel<Model, AllRelations...> &)>> cached {
             &BaseModel<Model, AllRelations...>::eagerVisited<Related>,
             &BaseModel<Model, AllRelations...>::pushVisited<Related>,
         };
@@ -628,44 +695,6 @@ namespace Tiny
         Q_ASSERT((0 <= type) && (type < size));
 
         return cached.at(type);
-    }
-
-    template<typename Model, typename ...AllRelations>
-    std::unique_ptr<TinyBuilder<Model>>
-    BaseModel<Model, AllRelations...>::where(
-            const QString &column, const QString &comparison,
-            const QVariant &value, const QString &condition)
-    {
-        auto query = BaseModel<Model, AllRelations...>::query();
-
-        query->where(column, comparison, value, condition);
-
-        return query;
-    }
-
-    template<typename Model, typename ...AllRelations>
-    std::unique_ptr<TinyBuilder<Model>>
-    BaseModel<Model, AllRelations...>::where(const QVector<WhereItem> &values,
-                                             const QString &condition)
-    {
-        /* The parentheses in this query are ok:
-           select * from xyz where (id = ?) */
-        auto query = BaseModel<Model, AllRelations...>::query();
-
-        query->where(values, condition);
-
-        return query;
-    }
-
-    template<typename Model, typename ...AllRelations>
-    std::unique_ptr<TinyBuilder<Model>>
-    BaseModel<Model, AllRelations...>::with(const QVector<WithItem> &relations)
-    {
-        auto builder = query();
-
-        builder->with(relations);
-
-        return builder;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -704,31 +733,6 @@ namespace Tiny
 //        $this->fireModelEvent('deleted', false);
 
         return true;
-    }
-
-    // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
-    template<typename Model, typename ...AllRelations>
-    size_t
-    BaseModel<Model, AllRelations...>::destroy(const QVector<QVariant> &ids)
-    {
-        if (ids.isEmpty())
-            return 0;
-
-        /* We will actually pull the models from the database table and call delete on
-           each of them individually so that their events get fired properly with a
-           correct set of attributes in case the developers wants to check these. */
-        Model instance;
-        const auto &key = instance.getKeyName();
-
-        std::size_t count = 0;
-
-        // TODO diff call whereIn() on Model vs TinyBuilder silverqx
-        // Ownership of a unique_ptr()
-        for (auto &model : instance.newQuery()->whereIn(key, ids).get())
-            if (model.remove())
-                ++count;
-
-        return count;
     }
 
     template<typename Model, typename ...AllRelations>
