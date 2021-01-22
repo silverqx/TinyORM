@@ -51,6 +51,10 @@ namespace Tiny
         inline static std::unique_ptr<TinyBuilder<Model>> query()
         { return Model().newQuery(); }
 
+        /*! Get all of the models from the database. */
+        inline static QVector<Model> all(const QStringList &columns = {"*"})
+        { return query()->get(columns); }
+
         /*! Save the model to the database. */
         bool save();
         /*! Save the model and all of its relationships. */
