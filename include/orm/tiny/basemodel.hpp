@@ -224,6 +224,9 @@ namespace Tiny
                  std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
         Related *
         getRelationValue(const QString &relation);
+        /*! Return an attribute by the given key. */
+        inline QVariant operator[](const QString &key) const
+        { return getAttribute(key); }
 
         /* HasRelationships */
         // TODO make getRelation() Container argument compatible with STL containers API silverqx
