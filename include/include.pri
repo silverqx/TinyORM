@@ -14,9 +14,11 @@ HEADERS += \
     $$PWD/orm/databaseconnection.hpp \
     $$PWD/orm/databasemanager.hpp \
     $$PWD/orm/grammar.hpp \
+    $$PWD/orm/invalidformaterror.hpp \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/mysqlconnection.hpp \
     $$PWD/orm/ormerror.hpp \
+    $$PWD/orm/ormlogicerror.hpp \
     $$PWD/orm/ormtypes.hpp \
     $$PWD/orm/query/expression.hpp \
     $$PWD/orm/query/joinclause.hpp \

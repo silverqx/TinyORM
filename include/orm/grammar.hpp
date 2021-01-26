@@ -38,6 +38,9 @@ namespace Orm
         /*! Compile a truncate table statement into SQL. */
         QString compileTruncate(const QueryBuilder &query) const;
 
+        /*! Get the format for database stored dates. */
+        const QString &getDateFormat() const;
+
     protected:
         // TODO methods below should be abstracted to DatabaseGrammar silverqx
         /*! Convert an array of column names into a delimited string. */

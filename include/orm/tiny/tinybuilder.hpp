@@ -7,6 +7,7 @@
 
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/algorithm/copy.hpp>
+#include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/algorithm/move.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
 #include <range/v3/range/conversion.hpp>
@@ -136,6 +137,11 @@ namespace Relations
         /*! Add a where clause on the primary key to the query. */
         Builder &whereKeyNot(const QVariant &id);
 
+        /*! Add an "order by" clause for a timestamp to the query. */
+        Builder &latest(const QString &column = "");
+        /*! Add an "order by" clause for a timestamp to the query. */
+        Builder &oldest(const QString &column = "");
+
         /*! Set the "limit" value of the query. */
         Builder &limit(int value);
         /*! Alias to set the "limit" value of the query. */
@@ -189,13 +195,15 @@ namespace Relations
         QVector<WithItem>
         relationsNestedUnder(const QString &topRelationName) const;
         /*! Determine if the relationship is nested. */
-        bool isNestedUnder(const QString &topRelation, const QString &nestedRelation) const;
+        bool isNestedUnder(const QString &topRelation,
+                           const QString &nestedRelation) const;
 
-        // TODO timestamps support silverqx
         /*! Add the "updated at" column to an array of values. */
         QVector<UpdateItem>
-        addUpdatedAtColumn(const QVector<UpdateItem> &values) const
-        { return values; }
+        addUpdatedAtColumn(QVector<UpdateItem> values) const;
+
+        /*! Get the name of the "created at" column. */
+        QString getCreatedAtColumnForLatestOldest(QString column) const;
 
         /*! The base query builder instance. */
         const QSharedPointer<QueryBuilder> m_query;
@@ -437,6 +445,38 @@ namespace Relations
     Builder<Model>::whereKeyNot(const QVariant &id)
     {
         return where(m_model.getQualifiedKeyName(), QStringLiteral("!="), id);
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::latest(const QString &column)
+    {
+        m_query->latest(getCreatedAtColumnForLatestOldest(column));
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::oldest(const QString &column)
+    {
+        m_query->oldest(getCreatedAtColumnForLatestOldest(column));
+        return *this;
+    }
+
+    template<typename Model>
+    QString
+    Builder<Model>::getCreatedAtColumnForLatestOldest(QString column) const
+    {
+        if (column.isEmpty()) {
+            if (const auto &createdAtColumn = m_model.getCreatedAtColumn();
+                createdAtColumn.isEmpty()
+            )
+                column = "created_at";
+            else
+                column = createdAtColumn;
+        }
+
+        return column;
     }
 
     template<typename Model>
@@ -689,6 +729,34 @@ namespace Relations
     {
         return nestedRelation.contains(QChar('.'))
                 && nestedRelation.startsWith(topRelation + QChar('.'));
+    }
+
+    template<typename Model>
+    QVector<UpdateItem>
+    Builder<Model>::addUpdatedAtColumn(QVector<UpdateItem> values) const
+    {
+        const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
+        const auto &qualifiedUpdatedAtColumn = m_model.getQualifiedUpdatedAtColumn();
+
+        if (!m_model.usesTimestamps() || updatedAtColumn.isEmpty())
+            return values;
+
+        const auto valuesUpdatedAtColumn =
+                ranges::find_if(values,
+                                [&updatedAtColumn](const auto &updateItem)
+        {
+            return updateItem.column == updatedAtColumn;
+        });
+
+        // Not found
+        if (valuesUpdatedAtColumn == ranges::end(values))
+            values.append({qualifiedUpdatedAtColumn,
+                           m_model.freshTimestampString()});
+        else
+            // Rename updated_at column to the qualified column
+            valuesUpdatedAtColumn->column = qualifiedUpdatedAtColumn;
+
+        return values;
     }
 
     template<typename Model>

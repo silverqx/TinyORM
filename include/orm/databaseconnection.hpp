@@ -128,7 +128,7 @@ namespace Orm
         inline const QString &getDatabaseName() const override
         { return m_database; }
         /*! Get the query grammar used by the connection. */
-        inline const Grammar &getQueryGrammar() const
+        inline const Grammar &getQueryGrammar() const override
         { return m_queryGrammar; }
 
         // TODO duplicate, extract to some internal types silverqx

@@ -9,9 +9,9 @@
 #include <QHash>
 //#include <QMap>
 //#include <QPointer>
-//#include <QRegularExpression>
+#include <QRegularExpression>
 #include <QSharedPointer>
-//#include <QStringList>
+#include <QStringList>
 //#include <QTimer>
 #include <QVariant>
 #include <QVector>

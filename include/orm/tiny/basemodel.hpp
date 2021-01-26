@@ -1,10 +1,13 @@
 #ifndef BASEMODEL_H
 #define BASEMODEL_H
 
+#include <QDateTime>
+
 #include <range/v3/view/transform.hpp>
 
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
+#include "orm/invalidformaterror.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
 #include "orm/tiny/relations/belongsto.hpp"
 #include "orm/tiny/relations/hasone.hpp"
@@ -99,6 +102,13 @@ namespace Tiny
         /*! Add an array of basic where clauses to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
         where(const QVector<WhereItem> &values, const QString &condition = "and");
+
+        /*! Add an "order by" clause for a timestamp to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        latest(QString column = "");
+        /*! Add an "order by" clause for a timestamp to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        oldest(QString column = "");
 
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Model>>
@@ -196,7 +206,7 @@ namespace Tiny
 
         /* HasAttributes */
         /*! Set a given attribute on the model. */
-        Model &setAttribute(const QString &key, const QVariant &value);
+        Model &setAttribute(const QString &key, QVariant value);
         /*! Set the array of model attributes. No checking is done. */
         Model &setRawAttributes(const QVector<AttributeItem> &attributes,
                                 bool sync = false);
@@ -227,6 +237,15 @@ namespace Tiny
         /*! Return an attribute by the given key. */
         inline QVariant operator[](const QString &key) const
         { return getAttribute(key); }
+
+        /*! Get the format for database stored dates. */
+        const QString &getDateFormat() const;
+        /*! Set the date format used by the model. */
+        Model &setDateFormat(const QString &format);
+        /*! Convert a DateTime to a storable string. */
+        QVariant fromDateTime(const QVariant &value) const;
+        /*! Convert a DateTime to a storable string. */
+        QString fromDateTime(const QDateTime &value) const;
 
         /* HasRelationships */
         // TODO make getRelation() Container argument compatible with STL containers API silverqx
@@ -269,6 +288,34 @@ namespace Tiny
         std::unique_ptr<Relations::Relation<Model, Related>>
         hasMany(QString foreignKey = "", QString localKey = "");
 
+        /* HasTimestamps */
+        /*! Update the model's update timestamp. */
+        bool touch();
+        /*! Update the creation and update timestamps. */
+        void updateTimestamps();
+        /*! Set the value of the "created at" attribute. */
+        Model &setCreatedAt(const QDateTime &value);
+        /*! Set the value of the "updated at" attribute. */
+        Model &setUpdatedAt(const QDateTime &value);
+        /*! Get a fresh timestamp for the model. */
+        inline QDateTime freshTimestamp() const
+        { return QDateTime::currentDateTime(); }
+        /*! Get a fresh timestamp for the model. */
+        QString freshTimestampString() const;
+        /*! Determine if the model uses timestamps. */
+        inline bool usesTimestamps() const
+        { return model().u_timestamps; }
+        /*! Get the name of the "created at" column. */
+        inline static const QString &getCreatedAtColumn()
+        { return Model::CREATED_AT; }
+        /*! Get the name of the "updated at" column. */
+        inline static const QString &getUpdatedAtColumn()
+        { return Model::UPDATED_AT; }
+        /*! Get the fully qualified "created at" column. */
+        QString getQualifiedCreatedAtColumn() const;
+        /*! Get the fully qualified "updated at" column. */
+        QString getQualifiedUpdatedAtColumn() const;
+
         /* Eager load from TinyBuilder */
         /*! Invoke Model::eagerVisitor() to define template argument Related for eagerLoaded relation. */
         void eagerLoadRelationVisitor(const WithItem &relation, TinyBuilder<Model> &builder,
@@ -306,6 +353,9 @@ namespace Tiny
         /*! Determine if the model or any of the given attribute(s) have been modified. */
         inline bool isDirty(const QVector<AttributeItem> &attributes = {}) const
         { return hasChanges(getDirty(), attributes); }
+        /*! Determine if the model or any of the given attribute(s) have been modified. */
+        inline bool isDirty(const QString &attribute) const
+        { return hasChanges(getDirty(), QVector<AttributeItem> {{attribute, {}}}); }
         /*! Determine if any of the given attributes were changed. */
         bool hasChanges(const QVector<AttributeItem> &changes,
                         const QVector<AttributeItem> &attributes = {}) const;
@@ -317,6 +367,11 @@ namespace Tiny
         { m_changes = std::move(getDirty()); return model(); }
         /*! Determine if the new and old values for a given key are equivalent. */
         bool originalIsEquivalent(const QString &key) const;
+
+        /*! Determine whether a value is Date / DateTime castable for inbound manipulation. */
+        bool isDateCastable(const QString &key) const;
+        /*! Return a timestamp as DateTime object. */
+        QDateTime asDateTime(const QVariant &value) const;
 
         /* HasRelationships */
         /*! Create a new model instance for a related model. */
@@ -395,10 +450,20 @@ namespace Tiny
         QVector<AttributeItem> m_original;
         /*! The changed model attributes. */
         QVector<AttributeItem> m_changes;
+        /*! The storage format of the model's date columns. */
+        QString u_dateFormat;
 
         /* HasRelationships */
         /*! The loaded relationships for the model. */
         QHash<QString, RelationsType<AllRelations...>> m_relations;
+
+        /* HasTimestamps */
+        /*! The name of the "created at" column. */
+        inline static const QString CREATED_AT = QStringLiteral("created_at");
+        /*! The name of the "updated at" column. */
+        inline static const QString UPDATED_AT = QStringLiteral("updated_at");
+        /*! Indicates if the model should be timestamped. */
+        bool u_timestamps = true;
 
     private:
         /* HasRelationships */
@@ -494,6 +559,28 @@ namespace Tiny
         auto query = BaseModel<Model, AllRelations...>::query();
 
         query->where(values, condition);
+
+        return query;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::latest(QString column)
+    {
+        auto query = BaseModel<Model, AllRelations...>::query();
+
+        query->latest(column);
+
+        return query;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::oldest(QString column)
+    {
+        auto query = BaseModel<Model, AllRelations...>::query();
+
+        query->oldest(column);
 
         return query;
     }
@@ -899,8 +986,9 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
-    bool BaseModel<Model, AllRelations...>::hasChanges(const QVector<AttributeItem> &changes,
-                                                       const QVector<AttributeItem> &attributes) const
+    bool BaseModel<Model, AllRelations...>::hasChanges(
+            const QVector<AttributeItem> &changes,
+            const QVector<AttributeItem> &attributes) const
     {
         /* If no specific attributes were provided, we will just see if the dirty array
            already contains any attributes. If it does we will just return that this
@@ -913,8 +1001,9 @@ namespace Tiny
            all of the attributes for the entire array we will return false at end. */
         for (const auto &attribute : attributes) {
             // TODO future hasOriginal() silverqx
-            const auto changesContainKey = ranges::contains(changes, true,
-                                                            [&attribute](const auto &changed)
+            const auto changesContainKey =
+                    ranges::contains(changes, true,
+                                     [&attribute](const auto &changed)
             {
                 return attribute.key == changed.key;
             });
@@ -964,6 +1053,66 @@ namespace Tiny
 //        return is_numeric($attribute) && is_numeric($original)
 //               && strcmp((string) $attribute, (string) $original) === 0;
         return false;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::isDateCastable(const QString &key) const
+    {
+        // TODO castable silverqx
+        /* I don't have support for castable attributes, this solution is temporary. */
+        static const QVector<QString> defaults {
+            getCreatedAtColumn(),
+            getUpdatedAtColumn(),
+        };
+
+        return defaults.contains(key);
+    }
+
+    // TODO would be good to make it the c++ way, make overload for every type, asDateTime() is protected, so I have full control over it, but I leave it for now, because there will be more methods which will use this method in the future, and it will be more clear later on silverqx
+    template<typename Model, typename ...AllRelations>
+    QDateTime
+    BaseModel<Model, AllRelations...>::asDateTime(const QVariant &value) const
+    {
+        /* If this value is already a QDateTime instance, we shall just return it as is.
+           This prevents us having to re-parse a QDateTime instance when we know
+           it already is one. */
+        if (
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            value.typeId() == QMetaType::value
+#else
+            value.userType() == QMetaType::QDateTime
+#endif
+        )
+            return value.value<QDateTime>();
+
+        // TODO next timestamps, add unix timestamp and simple date support silverqx
+        /* If this value is an integer, we will assume it is a UNIX timestamp's value
+           and format a Carbon object from this timestamp. This allows flexibility
+           when defining your date fields as they might be UNIX timestamps here. */
+//        if (is_numeric($value))
+//            return Date::createFromTimestamp($value);
+
+        /* If the value is in simply year, month, day format, we will instantiate the
+           Carbon instances from that format. Again, this provides for simple date
+           fields on the database, while still supporting Carbonized conversion. */
+//        if ($this->isStandardDateFormat($value))
+//            return Date::instance(Carbon::createFromFormat('Y-m-d', $value)->startOfDay());
+
+        const auto &format = getDateFormat();
+
+        /* Finally, we will just assume this date is in the format used by default on
+           the database connection and use that format to create the QDateTime object
+           that is returned back out to the developers after we convert it here. */
+        const auto date = QDateTime::fromString(value.value<QString>(), format);
+
+        if (date.isValid())
+            return date;
+
+        throw InvalidFormatError(
+                    QStringLiteral("Could not parse the datetime '%1' using "
+                                   "the given format '%2'.")
+                    // TODO next QVariant value<>() everywhere silverqx
+                    .arg(value.value<QString>(), format));
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1093,12 +1242,19 @@ namespace Tiny
 
     template<typename Model, typename ...AllRelations>
     Model &BaseModel<Model, AllRelations...>::setAttribute(
-            const QString &key, const QVariant &value)
+            const QString &key, QVariant value)
     {
+        /* If an attribute is listed as a "date", we'll convert it from a DateTime
+           instance into a form proper for storage on the database tables using
+           the connection grammar's date format. We will auto set the values. */
+        if (!value.isNull() && isDateCastable(key))
+            value = fromDateTime(value);
+
         // TODO mistake m_attributes/m_original 😭 silverqx
         // TODO extract to hasAttribute() silverqx
         const auto size = m_attributes.size();
 
+        // Search an attribute in the vector, omg
         int i;
         for (i = 0; i < size; ++i)
             if (m_attributes[i].key == key)
@@ -1197,6 +1353,7 @@ namespace Tiny
     template<typename Model, typename ...AllRelations>
     QVariant BaseModel<Model, AllRelations...>::getRawOriginal(const QString &key) const
     {
+        // BUG debug all ranges::find() vs ranges::find_if() silverqx
         const auto itOriginal = ranges::find(m_original, true,
                                               [&key](const auto &original)
         {
@@ -1218,6 +1375,44 @@ namespace Tiny
         Q_UNUSED(key)
 
         return value;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    const QString &
+    BaseModel<Model, AllRelations...>::getDateFormat() const
+    {
+        return u_dateFormat.isEmpty()
+                ? getConnection().getQueryGrammar().getDateFormat()
+                : u_dateFormat;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::setDateFormat(const QString &format)
+    {
+        model().u_dateFormat = format;
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant
+    BaseModel<Model, AllRelations...>::fromDateTime(const QVariant &value) const
+    {
+        if (value.isNull())
+            return value;
+
+        return asDateTime(value).toString(getDateFormat());
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QString
+    BaseModel<Model, AllRelations...>::fromDateTime(const QDateTime &value) const
+    {
+        if (value.isValid())
+            return value.toString(getDateFormat());
+
+        return {};
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1389,8 +1584,8 @@ namespace Tiny
         /* First we'll need to create a fresh query instance and touch the creation and
            update timestamps on this model, which are maintained by us for developer
            convenience. After, we will just continue saving these model instances. */
-//        if (usesTimestamps())
-//            updateTimestamps();
+        if (usesTimestamps())
+            updateTimestamps();
 
         /* If the model has an incrementing key, we can use the "insertGetId" method on
            the query builder, which will give us back the final inserted ID for this
@@ -1438,8 +1633,8 @@ namespace Tiny
         /* First we need to create a fresh query instance and touch the creation and
            update timestamp on the model which are maintained by us for developer
            convenience. Then we will just continue saving the model instances. */
-//        if (usesTimestamps())
-//            updateTimestamps();
+        if (usesTimestamps())
+            updateTimestamps();
 
         /* Once we have run the update operation, we will fire the "updated" event for
            this model instance. This will allow developers to hook into these after
@@ -1451,6 +1646,7 @@ namespace Tiny
             std::tie(std::ignore, sqlQuery) =
                     setKeysForSaveQuery(query).update(
                         Utils::Attribute::convertVectorToUpdateItem(dirty));
+
             // TODO next TinyBuilder return values dilema silverqx
             if (sqlQuery.lastError().isValid())
                 return false;
@@ -1468,6 +1664,7 @@ namespace Tiny
     {
 //        fireModelEvent('saved', false);
 
+        // TODO now, Touching Parent Timestamps silverqx
 //        if (isDirty() && ($options['touch'] ?? true))
 //            touchOwners();
 
@@ -1488,6 +1685,63 @@ namespace Tiny
             setAttribute(getKeyName(), id);
 
         return id;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::touch()
+    {
+        if (!usesTimestamps())
+            return false;
+
+        updateTimestamps();
+
+        return save();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::updateTimestamps()
+    {
+        const auto time = freshTimestamp();
+
+        const QString &updatedAtColumn = getUpdatedAtColumn();
+
+        if (!updatedAtColumn.isEmpty() && !isDirty(updatedAtColumn))
+            setUpdatedAt(time);
+
+        const QString &createdAtColumn = getCreatedAtColumn();
+
+        if (!exists && !createdAtColumn.isEmpty() && !isDirty(createdAtColumn))
+            setCreatedAt(time);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::setCreatedAt(const QDateTime &value)
+    {
+        return setAttribute(getCreatedAtColumn(), value);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::setUpdatedAt(const QDateTime &value)
+    {
+        return setAttribute(getUpdatedAtColumn(), value);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QString BaseModel<Model, AllRelations...>::freshTimestampString() const
+    {
+        return fromDateTime(freshTimestamp());
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QString BaseModel<Model, AllRelations...>::getQualifiedCreatedAtColumn() const
+    {
+        return qualifyColumn(getCreatedAtColumn());
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QString BaseModel<Model, AllRelations...>::getQualifiedUpdatedAtColumn() const
+    {
+        return qualifyColumn(getUpdatedAtColumn());
     }
 
 } // namespace Orm::Tiny

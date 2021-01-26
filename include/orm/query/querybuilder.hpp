@@ -291,6 +291,8 @@ namespace Orm::Query
         /*! Get the table associated with the query builder. */
         inline const QString &getFrom() const
         { return m_from; }
+        /*! Get the table associated with the query builder, without an alias. */
+        QString getFromWithoutAlias() const;
         /*! Get the table joins for the query. */
         inline const QVector<QSharedPointer<JoinClause>> &getJoins() const
         { return m_joins; }
@@ -413,7 +415,7 @@ namespace Orm::Query
     Builder::increment(const QString &column, const T amount,
                        const QVector<UpdateItem> &extra)
     {
-        const auto &expression = QStringLiteral("%1 + %2").arg(column).arg(amount);
+        const auto expression = QStringLiteral("%1 + %2").arg(column).arg(amount);
         QVector<UpdateItem> columns {{column, raw(expression)}};
         std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
         return update(columns);
@@ -424,7 +426,7 @@ namespace Orm::Query
     Builder::decrement(const QString &column, const T amount,
                        const QVector<UpdateItem> &extra)
     {
-        const auto &expression = QStringLiteral("%1 - %2").arg(column).arg(amount);
+        const auto expression = QStringLiteral("%1 - %2").arg(column).arg(amount);
         QVector<UpdateItem> columns {{column, raw(expression)}};
         std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
         return update(columns);

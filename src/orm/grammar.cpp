@@ -163,6 +163,13 @@ QString Grammar::compileTruncate(const QueryBuilder &query) const
     return QStringLiteral("truncate table %1").arg(query.getFrom());
 }
 
+const QString &Grammar::getDateFormat() const
+{
+    static const auto cachedFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
+
+    return cachedFormat;
+}
+
 Grammar::ComponentsVector
 Grammar::compileComponents(const QueryBuilder &query) const
 {

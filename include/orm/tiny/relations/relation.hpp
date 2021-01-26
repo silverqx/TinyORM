@@ -56,6 +56,22 @@ namespace Orm::Tiny::Relations
         Builder<Related> &getQuery()
         { return *m_query; }
 
+        /*! Get the parent model of the relation. */
+        const Model &getParent() const
+        { return m_parent; }
+        /*! Get the related model of the relation. */
+        const Related &getRelated() const
+        { return *m_related; }
+        /*! Get the name of the "created at" column. */
+        const QString &createdAt() const
+        { return m_parent.getCreatedAtColumn(); }
+        /*! Get the name of the "updated at" column. */
+        const QString &updatedAt() const
+        { return m_parent.getUpdatedAtColumn(); }
+        /*! Get the name of the related model's "updated at" column. */
+        const QString &relatedUpdatedAt() const
+        { return m_related->getUpdatedAtColumn(); }
+
     protected:
         /*! Initialize a Relation instance. */
         void init() const

@@ -10,6 +10,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+    // TODO next rename to OrmRuntimeError and create OrmLogicError and extend InvalidFormatError from OrmLogicError silverqx
     // TODO investigate and rework all orm exception classes silverqx
     class OrmError : public std::runtime_error
     {

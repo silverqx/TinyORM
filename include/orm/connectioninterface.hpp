@@ -12,6 +12,8 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+    class Grammar;
+
 namespace Query
 {
     class Builder;
@@ -104,6 +106,9 @@ namespace Query
 
         /*! Get the name of the connected database. */
         virtual const QString &getDatabaseName() const = 0;
+
+        /*! Get the query grammar used by the connection. */
+        virtual const Grammar &getQueryGrammar() const = 0;
     };
 
 } // namespace Orm

@@ -531,6 +531,13 @@ QVector<QVariant> Builder::getBindings() const
     return flattenBindings;
 }
 
+QString Builder::getFromWithoutAlias() const
+{
+    return m_from.split(QRegularExpression(
+                            QStringLiteral("\\s+as\\s+"),
+                            QRegularExpression::CaseInsensitiveOption)).first();
+}
+
 QSharedPointer<Builder> Builder::newQuery() const
 {
     return QSharedPointer<Builder>::create(m_connection, m_grammar);

@@ -30,7 +30,7 @@ Orm::ConnectionInterface &Database::createConnection()
 //                                    {"MYSQL_OPT_READ_TIMEOUT", 10}}},
     };
 
-    static const auto &connectionName = QStringLiteral("tinyorm_mysql_tests");
+    static const auto connectionName = QStringLiteral("tinyorm_mysql_tests");
 
     return databaseManager
             .addConnection(config, connectionName)

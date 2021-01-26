@@ -81,17 +81,17 @@ void tst_QueryBuilder::from() const
 {
     auto builder = createQuery();
 
-    const auto &tableEmpty = QStringLiteral("");
+    const auto tableEmpty = QStringLiteral("");
     QCOMPARE(builder.getFrom(), tableEmpty);
 
-    const auto &tableTorrents = QStringLiteral("torrents");
+    const auto tableTorrents = QStringLiteral("torrents");
     builder.from(tableTorrents);
 
     QCOMPARE(builder.getFrom(), tableTorrents);
     QCOMPARE(builder.toSql(),
              "select * from torrents");
 
-    const auto &tableTorrentPeers = QStringLiteral("torrent_peers");
+    const auto tableTorrentPeers = QStringLiteral("torrent_peers");
     builder.from(tableTorrentPeers);
 
     QCOMPARE(builder.getFrom(), tableTorrentPeers);

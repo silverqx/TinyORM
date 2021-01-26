@@ -21,7 +21,7 @@ namespace Orm::Utils::Type
 
         // This should never happen, but who knows 🤔
         Q_ASSERT_X(match.hasMatch(),
-                   "regex match", "Can not get class base name in getForeignKey().");
+                   "regex match", "Can not get the class base name in getForeignKey().");
 
         return match.captured();
     }
