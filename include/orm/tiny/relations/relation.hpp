@@ -1,20 +1,23 @@
 #ifndef RELATION_H
 #define RELATION_H
 
+#include <QtSql/QSqlQuery>
+
+#include "orm/ormtypes.hpp"
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-
 namespace Orm::Tiny
 {
     template<class Model>
     class Builder;
+
     template<class Model, typename ...AllRelations>
     class BaseModel;
-}
 
-namespace Orm::Tiny::Relations
+namespace Relations
 {
 
     template<class Model, class Related>
@@ -53,8 +56,11 @@ namespace Orm::Tiny::Relations
         { return m_query->get(columns); }
 
         /*! Get the underlying query for the relation. */
-        Builder<Related> &getQuery()
+        inline Builder<Related> &getQuery() const
         { return *m_query; }
+        /*! Get the base query builder driving the Eloquent builder. */
+        inline QueryBuilder &getBaseQuery() const
+        { return m_query->getQuery(); }
 
         /*! Get the parent model of the relation. */
         const Model &getParent() const
@@ -72,6 +78,12 @@ namespace Orm::Tiny::Relations
         const QString &relatedUpdatedAt() const
         { return m_related->getUpdatedAtColumn(); }
 
+        /*! Touch all of the related models for the relationship. */
+        void touch() const;
+        /*! Run a raw update against the base query. */
+        std::tuple<int, QSqlQuery>
+        rawUpdate(const QVector<UpdateItem> &values = {}) const;
+
     protected:
         /*! Initialize a Relation instance. */
         void init() const
@@ -86,6 +98,8 @@ namespace Orm::Tiny::Relations
         const Model m_parent;
         /*! The related model instance. */
         const std::unique_ptr<Related> m_related;
+        // TODO next 👆👇 the same for m_related silverqx
+        // TODO next reconsider unique_ptr here, shared pointer would be good to? I hit this when I implemented getBaseQuery(), or leave this unique and return shared pointer from getBaseQuery() silverqx
         /*! The Eloquent query builder instance. */
         std::unique_ptr<Builder<Related>> m_query;
         /*! Indicates if the relation is adding constraints. */
@@ -123,7 +137,26 @@ namespace Orm::Tiny::Relations
         return relation;
     }
 
+    template<class Model, class Related>
+    void Relation<Model, Related>::touch() const
+    {
+        const auto &model = getRelated();
+
+        if (!model.isIgnoringTouch())
+            rawUpdate({
+                {model.getUpdatedAtColumn(), model.freshTimestampString()}
+            });
+    }
+
+    template<class Model, class Related>
+    std::tuple<int, QSqlQuery>
+    Relation<Model, Related>::rawUpdate(const QVector<UpdateItem> &values) const
+    {
+        return m_query->update(values);
+    }
+
 } // namespace Orm::Tiny::Relations
+} // namespace Orm::Tiny
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif

@@ -11,8 +11,15 @@ namespace Orm::Tiny
 {
     template<typename Model>
     class Builder;
+
     template<typename Model>
     using TinyBuilder = Builder<Model>;
+
+    /*! The type in which are saved relationships. */
+    template<typename ...AllRelations>
+    using RelationsType = std::variant<std::monostate,
+                                       QVector<AllRelations>...,
+                                       std::optional<AllRelations>...>;
 
 namespace Concerns
 {
@@ -25,6 +32,7 @@ namespace Concerns
         {
             EAGER,
             PUSH,
+            TOUCH_OWNERS,
         };
 
         // TODO future try to rewrite this by templated class to avoid polymorfic class, like described here http://groups.di.unipi.it/~nids/docs/templates_vs_inheritance.html silverqx
@@ -44,7 +52,7 @@ namespace Concerns
             RelationStoreType m_storeType;
         };
 
-        /*! Helps to avoid passing variables to the Model::relationVisitor(). */
+        /*! The store for loading eager relations, helps to avoid passing variables to the Model::relationVisitor(). */
         class EagerRelationStore final : public BaseRelationStore
         {
             Q_DISABLE_COPY(EagerRelationStore)
@@ -60,7 +68,7 @@ namespace Concerns
             QVector<Model>           &models;
         };
 
-        /*! Helps to avoid passing variables to the Model::relationVisitor(). */
+        /*! The store for the Model push() method, helps to avoid passing variables to the Model::relationVisitor(). */
         class PushRelationStore final : public BaseRelationStore
         {
             Q_DISABLE_COPY(PushRelationStore)
@@ -74,11 +82,25 @@ namespace Concerns
             bool result = false;
         };
 
+        /*! The store for touching owner's timestamps, helps to avoid passing variables to the Model::relationVisitor(). */
+        class TouchOwnersRelationStore final : public BaseRelationStore
+        {
+            Q_DISABLE_COPY(TouchOwnersRelationStore)
+
+        public:
+            explicit TouchOwnersRelationStore(const QString &relation);
+
+            /*! Models to touch timestamps for, the reference to the relation in m_relations hash. */
+            const QString &relation;
+        };
+
         /*! Factory method to create eager store. */
         void createEagerStore(const WithItem &relation, Tiny::TinyBuilder<Model> &builder,
                               QVector<Model> &models);
         /*! Factory method to create push store. */
         void createPushStore(RelationsType<AllRelations...> &models);
+        /*! Factory method to create touch owners store. */
+        void createTouchOwnersStore(const QString &relation);
 
         /*! Releases the ownership and destroy all relation stores. */
         void resetRelationStore();
@@ -89,6 +111,8 @@ namespace Concerns
         std::shared_ptr<EagerRelationStore> m_eagerStore;
         /*! Store to save values to, before Model::relationVisitor() is called. */
         std::shared_ptr<PushRelationStore> m_pushStore;
+        /*! Store to save values to, before Model::relationVisitor() is called. */
+        std::shared_ptr<TouchOwnersRelationStore> m_touchOwnersStore;
     };
 
     template<typename Model, typename ...AllRelations>
@@ -113,12 +137,23 @@ namespace Concerns
     }
 
     template<typename Model, typename ...AllRelations>
+    void HasRelationStore<Model, AllRelations...>::createTouchOwnersStore(
+            const QString &relation)
+    {
+        Q_ASSERT(!m_relationStore && !m_touchOwnersStore);
+
+        m_relationStore = m_touchOwnersStore =
+                std::make_shared<TouchOwnersRelationStore>(relation);
+    }
+
+    template<typename Model, typename ...AllRelations>
     void HasRelationStore<Model, AllRelations...>::resetRelationStore()
     {
         /* Releases the ownership and destroy all relation stores. */
         m_relationStore.reset();
         m_eagerStore.reset();
         m_pushStore.reset();
+        m_touchOwnersStore.reset();
     }
 
     template<typename Model, typename ...AllRelations>
@@ -142,6 +177,13 @@ namespace Concerns
             RelationsType<AllRelations...> &models)
         : BaseRelationStore(RelationStoreType::PUSH)
         , models(models)
+    {}
+
+    template<typename Model, typename ...AllRelations>
+    HasRelationStore<Model, AllRelations...>::TouchOwnersRelationStore::TouchOwnersRelationStore(
+            const QString &relation)
+        : BaseRelationStore(RelationStoreType::TOUCH_OWNERS)
+        , relation(relation)
     {}
 
 } // namespace Orm::Tiny::Concerns

@@ -33,6 +33,10 @@ namespace Relations
     class Relation;
 }
 
+    /*! The type returned by Model's relation methods. */
+    template<typename Model, typename Related>
+    using RelationType = std::unique_ptr<Relations::Relation<Model, Related>>(Model::*)();
+
     template<typename Model>
     class Builder
     {

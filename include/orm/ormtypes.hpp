@@ -2,7 +2,6 @@
 #define ORMTYPES_H
 
 #include "export.hpp"
-#include "orm/tiny/relations/relation.hpp"
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
 /* 👆 I have good idea hot to do that, public types will be tinytypes.hpp and private will be
@@ -97,7 +96,7 @@ namespace Query
         QString direction {"asc"};
     };
 
-    struct UpdateItem
+    struct SHAREDLIB_EXPORT UpdateItem
     {
         QString  column;
         QVariant value;
@@ -148,15 +147,12 @@ namespace Query
     /*! Tag for BaseModel::getRelationshipFromMethod() to return QVector<Related> type ( 'Many' relation types ). */
     struct Many {};
 
-    /*! The type returned by Model's relation methods. */
-    template<typename Model, typename Related>
-    using RelationType = std::unique_ptr<Tiny::Relations::Relation<Model, Related>>(Model::*)();
-
-    /*! The type in which are saved relationships. */
-    template<typename ...AllRelations>
-    using RelationsType = std::variant<std::monostate,
-                                       QVector<AllRelations>...,
-                                       std::optional<AllRelations>...>;
+    /*! Options parameter type used in Model save() method. */
+    struct SHAREDLIB_EXPORT SaveOptions
+    {
+        /*! . */
+        bool touch = true;
+    };
 
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE

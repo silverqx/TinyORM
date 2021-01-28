@@ -129,7 +129,7 @@ namespace Tiny
 
         /* Operations on a model instance */
         /*! Save the model to the database. */
-        bool save();
+        bool save(const SaveOptions &options = {});
         /*! Save the model and all of its relationships. */
         bool push();
 
@@ -287,6 +287,11 @@ namespace Tiny
         template<typename Related>
         std::unique_ptr<Relations::Relation<Model, Related>>
         hasMany(QString foreignKey = "", QString localKey = "");
+        /*! Touch the owning relations of the model. */
+        void touchOwners();
+        /*! Get the relationships that are touched on save. */
+        inline const QStringList &getTouchedRelations() const
+        { return model().u_touches; }
 
         /* HasTimestamps */
         /*! Update the model's update timestamp. */
@@ -315,12 +320,15 @@ namespace Tiny
         QString getQualifiedCreatedAtColumn() const;
         /*! Get the fully qualified "updated at" column. */
         QString getQualifiedUpdatedAtColumn() const;
+        /*! Determine if the given model is ignoring touches. */
+        template<typename ClassToCheck = Model>
+        static bool isIgnoringTouch();
 
         /* Eager load from TinyBuilder */
         /*! Invoke Model::eagerVisitor() to define template argument Related for eagerLoaded relation. */
         void eagerLoadRelationVisitor(const WithItem &relation, TinyBuilder<Model> &builder,
                                       QVector<Model> &models);
-        /*! Get a relation method in the relations hash field defined in the current model instance. */
+        /*! Get a relation method in the relations hash data member, defined in the current model instance. */
         const std::any &getRelationMethod(const QString &relation) const;
 
     protected:
@@ -420,7 +428,7 @@ namespace Tiny
         /*! Perform a model insert operation. */
         bool performUpdate(TinyBuilder<Model> &query);
         /*! Perform any actions that are necessary after the model is saved. */
-        void finishSave(/*array $options*/);
+        void finishSave(const SaveOptions &options = {});
         // TODO primary key dilema, add support for Model::KeyType silverqx
         /*! Insert the given attributes and set the ID on the model. */
         quint64 insertAndSetId(const TinyBuilder<Model> &query,
@@ -456,6 +464,8 @@ namespace Tiny
         /* HasRelationships */
         /*! The loaded relationships for the model. */
         QHash<QString, RelationsType<AllRelations...>> m_relations;
+        /*! The relationships that should be touched on save. */
+        QStringList u_touches;
 
         /* HasTimestamps */
         /*! The name of the "created at" column. */
@@ -479,6 +489,8 @@ namespace Tiny
                  std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
         Related *
         getRelationFromHash(const QString &relation);
+        /*! Get a relation method in the u_relations hash data member, defined in the current model instance. */
+        const std::any &getRelationMethodRaw(const QString &relation) const;
 
         /* Eager loading and push */
         /*! Continue execution after a relation type was obtained ( by Related template parameter ). */
@@ -498,6 +510,10 @@ namespace Tiny
         template<typename Related, typename Tag,
                  std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
         void pushVisited();
+
+        /*! On the base of alternative held by m_relations decide, which touchOwnersVisited() to execute. */
+        template<typename Related>
+        void touchOwnersVisited();
 
         /* Shortcuts for types related to the Relation Store */
         /*! Eager relation store. */
@@ -622,7 +638,7 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
-    bool BaseModel<Model, AllRelations...>::save()
+    bool BaseModel<Model, AllRelations...>::save(const SaveOptions &options)
     {
 //        mergeAttributesFromClassCasts();
 
@@ -660,11 +676,12 @@ namespace Tiny
            that is done. We will call the "saved" method here to run any actions
            we need to happen after a model gets successfully saved right here. */
         if (saved)
-            finishSave(/*options*/);
+            finishSave(options);
 
         return saved;
     }
 
+    // TODO future support for SaveOptions parameter, Eloquent doesn't have this parameter, maybe there's a reason for that, but I didn't find anything on github issues silverqx
     template<typename Model, typename ...AllRelations>
     bool BaseModel<Model, AllRelations...>::push()
     {
@@ -680,11 +697,11 @@ namespace Tiny
         // TODO future Eloquent uses foreach (array_filter($models) as $model), check if relation can actually be null or empty silverqx
         auto itModels = m_relations.begin();
         while (itModels != m_relations.end()) {
-            auto &relation = itModels.key();
+            const auto &relation = itModels.key();
             auto &models = itModels.value();
 
             // TODO prod remove, I don't exactly know if this can really happen silverqx
-            auto variantIndex = models.index();
+            const auto variantIndex = models.index();
             Q_ASSERT(variantIndex > 0);
             if (variantIndex == 0)
                 continue;
@@ -756,6 +773,35 @@ namespace Tiny
 
     template<typename Model, typename ...AllRelations>
     template<typename Related>
+    void BaseModel<Model, AllRelations...>::touchOwnersVisited()
+    {
+        const auto &relationName = this->m_touchOwnersStore->relation;
+
+        // Pointer to a member function
+        auto relationMethod = std::any_cast<RelationType<Model, Related>>(
+                    model().u_relations[relationName]);
+        // Unique pointer to the relation
+        auto relation = std::invoke(relationMethod, model());
+
+        relation->touch();
+
+        // Many type relation
+        if (dynamic_cast<Relations::ManyRelation *>(relation.get()) != nullptr) {
+            for (auto *const relatedModel : getRelationValue<Related>(relationName))
+                // WARNING check and add note after, if many type relation QVector can contain nullptr silverqx
+                if (relatedModel)
+                    relatedModel->touchOwners();
+        }
+        // One type relation
+        else
+            if (auto *const relatedModel = getRelationValue<Related, One>(relationName);
+                relatedModel
+            )
+                relatedModel->touchOwners();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    template<typename Related>
     void BaseModel<Model, AllRelations...>::relationVisited()
     {
         const auto &method = getMethodForRelationVisited<Related>(
@@ -777,6 +823,7 @@ namespace Tiny
         QVector<std::function<void(BaseModel<Model, AllRelations...> &)>> cached {
             &BaseModel<Model, AllRelations...>::eagerVisited<Related>,
             &BaseModel<Model, AllRelations...>::pushVisited<Related>,
+            &BaseModel<Model, AllRelations...>::touchOwnersVisited<Related>,
         };
         static const auto size = cached.size();
 
@@ -1424,6 +1471,24 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::touchOwners()
+    {
+        for (const auto &relation : getTouchedRelations()) {
+            // Throw excpetion if a relation is not defined
+            validateUserRelation(relation);
+
+            // Save model/s to the store to avoid passing variables to the visitor
+            this->createTouchOwnersStore(relation);
+
+            // TODO next create wrapper method for this with better name, over time, it seems fine to me, only thing I see now is that it has the same name for all visitations, but that looks ok too, will see, but this todo can be removed, looks good to me silverqx
+            model().relationVisitor(relation);
+
+            // Release stored pointers to the relation store
+            this->resetRelationStore();
+        }
+    }
+
+    template<typename Model, typename ...AllRelations>
     template<typename Related>
     std::unique_ptr<Related>
     BaseModel<Model, AllRelations...>::newRelatedInstance() const
@@ -1469,9 +1534,9 @@ namespace Tiny
 
         const auto &primaryKey = instance->getKeyName();
 
-        /* If no foreign key was supplied, we can use a backtrace to guess the proper
-           foreign key name by using the name of the relationship function, which
-           when combined with an "_id" should conventionally match the columns. */
+        /* If no foreign key was supplied, we can guess the proper foreign key name
+           by using the snake case name of the relationship, which when combined
+           with an "_id" should conventionally match the columns. */
         if (foreignKey.isEmpty())
             foreignKey = Utils::String::toSnake(relation) + '_' + primaryKey;
 
@@ -1528,6 +1593,7 @@ namespace Tiny
         this->resetRelationStore();
     }
 
+    // TODO now unify getRelationXx() methods silverqx
     template<typename Model, typename ...AllRelations>
     const std::any &
     BaseModel<Model, AllRelations...>::getRelationMethod(const QString &relation) const
@@ -1535,7 +1601,7 @@ namespace Tiny
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation);
 
-        return model().u_relations.find(relation).value();
+        return getRelationMethodRaw(relation);
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1543,6 +1609,13 @@ namespace Tiny
     {
         if (!model().u_relations.contains(name))
             throw OrmError("Undefined relation key (in u_relations) : " + name);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    const std::any &
+    BaseModel<Model, AllRelations...>::getRelationMethodRaw(const QString &relation) const
+    {
+        return model().u_relations.find(relation).value();
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1660,13 +1733,12 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
-    void BaseModel<Model, AllRelations...>::finishSave()
+    void BaseModel<Model, AllRelations...>::finishSave(const SaveOptions &options)
     {
 //        fireModelEvent('saved', false);
 
-        // TODO now, Touching Parent Timestamps silverqx
-//        if (isDirty() && ($options['touch'] ?? true))
-//            touchOwners();
+        if (isDirty() && options.touch)
+            touchOwners();
 
         syncOriginal();
     }
@@ -1742,6 +1814,20 @@ namespace Tiny
     QString BaseModel<Model, AllRelations...>::getQualifiedUpdatedAtColumn() const
     {
         return qualifyColumn(getUpdatedAtColumn());
+    }
+
+    template<typename Model, typename ...AllRelations>
+    template<typename ClassToCheck>
+    bool BaseModel<Model, AllRelations...>::isIgnoringTouch()
+    {
+        if (!ClassToCheck().usesTimestamps()
+            || ClassToCheck::getUpdatedAtColumn().isEmpty()
+        )
+            return true;
+
+        // TODO future implement withoutTouching() and related data member $ignoreOnTouch silverqx
+
+        return false;
     }
 
 } // namespace Orm::Tiny
