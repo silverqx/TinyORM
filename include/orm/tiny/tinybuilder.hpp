@@ -54,7 +54,7 @@ namespace Relations
         find(const QVariant &id, const QStringList &columns = {"*"});
 
         /* BuildsQueries */
-        // TODO BuildsQueries contains duplicit methods in TinyBuilder and QueryBuilder, make it by multi inheritance, I discovered now, that TinyBuilder will return different types than QueryBuilder, look eg at first() or get(), but investigate if there are cases, when API is same and use multi inheritance patter for this methods silver
+        // TODO BuildsQueries contains duplicit methods in TinyBuilder and QueryBuilder, make it by multi inheritance, I discovered now, that TinyBuilder will return different types than QueryBuilder, look eg at first() or get(), but investigate if there are cases, when API is same and use multi inheritance pattern for this methods silver
         /*! Execute the query and get the first result. */
         std::optional<Model> first(const QStringList &columns = {"*"});
 
@@ -156,6 +156,17 @@ namespace Relations
         Builder &skip(int value);
         /*! Set the limit and offset for a given page. */
         Builder &forPage(int page, int perPage = 30);
+
+        /*! Increment a column's value by a given amount. */
+        template<typename T> requires std::is_arithmetic_v<T>
+        std::tuple<int, QSqlQuery>
+        increment(const QString &column, T amount = 1,
+                  const QVector<UpdateItem> &extra = {});
+        /*! Decrement a column's value by a given amount. */
+        template<typename T> requires std::is_arithmetic_v<T>
+        std::tuple<int, QSqlQuery>
+        decrement(const QString &column, T amount = 1,
+                  const QVector<UpdateItem> &extra = {});
 
         /*! Get the hydrated models without eager loading. */
         QVector<Model> getModels(const QStringList &columns = {"*"});
@@ -522,6 +533,26 @@ namespace Relations
     }
 
     template<typename Model>
+    template<typename T> requires std::is_arithmetic_v<T>
+    std::tuple<int, QSqlQuery>
+    Builder<Model>::increment(const QString &column, T amount,
+                              const QVector<UpdateItem> &extra)
+    {
+        return toBase().template increment<T>(column, amount,
+                                              addUpdatedAtColumn(extra));
+    }
+
+    template<typename Model>
+    template<typename T> requires std::is_arithmetic_v<T>
+    std::tuple<int, QSqlQuery>
+    Builder<Model>::decrement(const QString &column, T amount,
+                              const QVector<UpdateItem> &extra)
+    {
+        return toBase().template decrement<T>(column, amount,
+                                              addUpdatedAtColumn(extra));
+    }
+
+    template<typename Model>
     QVector<Model>
     Builder<Model>::getModels(const QStringList &columns)
     {
@@ -565,7 +596,7 @@ namespace Relations
                         relation->getEager(), relationItem.name);
     }
 
-    // TODO I suspect this code that it can fail, if the same Model/Related combination return different type it fail, I'm pretty sure about this, solution will be to add Orm::One/Many tag, which ensures new template instance silverqx
+    // TODO next I suspect this code that it can fail, if the same Model/Related combination return different type it fail, I'm pretty sure about this, solution will be to add Orm::One/Many tag, which ensures new template instance silverqx
     template<typename Model>
     template<typename Related>
     auto Builder<Model>::getRelation(const QString &name)
