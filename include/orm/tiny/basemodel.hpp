@@ -1378,8 +1378,8 @@ namespace Tiny
     QVariant BaseModel<Model, AllRelations...>::getAttributeFromArray(const QString &key) const
     {
         const auto &attributes = getAttributes();
-        const auto itAttribute = ranges::find(attributes, true,
-                                              [&key](const auto &attribute)
+        const auto itAttribute = ranges::find_if(attributes,
+                                                 [&key](const auto &attribute)
         {
             return attribute.key == key;
         });
@@ -1394,9 +1394,8 @@ namespace Tiny
     template<typename Model, typename ...AllRelations>
     QVariant BaseModel<Model, AllRelations...>::getRawOriginal(const QString &key) const
     {
-        // BUG debug all ranges::find() vs ranges::find_if() silverqx
-        const auto itOriginal = ranges::find(m_original, true,
-                                              [&key](const auto &original)
+        const auto itOriginal = ranges::find_if(m_original,
+                                                [&key](const auto &original)
         {
             return original.key == key;
         });
@@ -1635,8 +1634,8 @@ namespace Tiny
     QVariant BaseModel<Model, AllRelations...>::getKeyForSaveQuery() const
     {
         // TODO reason, why m_attributes and m_original should be QHash silverqx
-        const auto itOriginal = ranges::find(m_original, true,
-                                             [&key = getKeyName()](const auto &original)
+        const auto itOriginal = ranges::find_if(m_original,
+                                                [&key = getKeyName()](const auto &original)
         {
             return original.key == key;
         });
