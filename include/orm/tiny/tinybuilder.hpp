@@ -572,8 +572,8 @@ namespace Relations
     {
         // TODO docs add similar note for lazy load silverqx
         /* How this relation flow works:
-           m_model.getRelationMethod() obtains relation method by relation name,
-           these relation methods are defined on models, relation constraints
+           m_model.getRelationMethod<Related>() obtains relation method by relation
+           name, these relation methods are defined on models, relation constraints
            will be disabled for eager relations by Relation::noConstraints() method,
            these default constraints are only used for lazy loading, for eager
            constraints are used constraints, which are defined
@@ -596,7 +596,7 @@ namespace Relations
            The result is transformed into models and these models are hydrated.
            Hydrated models are saved to the BaseModel::m_relations data member. */
 
-        const auto &method = m_model.getRelationMethod(name);
+        auto method = m_model.template getRelationMethod<Related>(name);
 
         /* We want to run a relationship query without any constrains so that we will
            not have to remove these where clauses manually which gets really hacky
@@ -604,8 +604,7 @@ namespace Relations
         auto relation = Relations::Relation<Model, Related>::noConstraints(
                     [this, &method]
         {
-            return std::invoke(std::any_cast<RelationType<Model, Related>>(method),
-                               getModel().newInstance());
+            return std::invoke(method, getModel().newInstance());
         });
 
         const auto nested = relationsNestedUnder(name);

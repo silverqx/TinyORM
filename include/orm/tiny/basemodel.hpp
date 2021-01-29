@@ -329,7 +329,9 @@ namespace Tiny
         void eagerLoadRelationVisitor(const WithItem &relation, TinyBuilder<Model> &builder,
                                       QVector<Model> &models);
         /*! Get a relation method in the relations hash data member, defined in the current model instance. */
-        const std::any &getRelationMethod(const QString &relation) const;
+        template<typename Related>
+        RelationType<Model, Related>
+        getRelationMethod(const QString &relation) const;
 
     protected:
         /*! Get a new query builder instance for the connection. */
@@ -490,7 +492,9 @@ namespace Tiny
         Related *
         getRelationFromHash(const QString &relation);
         /*! Get a relation method in the u_relations hash data member, defined in the current model instance. */
-        const std::any &getRelationMethodRaw(const QString &relation) const;
+        template<typename Related>
+        RelationType<Model, Related>
+        getRelationMethodRaw(const QString &relation) const;
 
         /* Eager loading and push */
         /*! Continue execution after a relation type was obtained ( by Related template parameter ). */
@@ -777,12 +781,9 @@ namespace Tiny
     {
         const auto &relationName = this->m_touchOwnersStore->relation;
 
-        // Pointer to a member function
-        auto relationMethod = std::any_cast<RelationType<Model, Related>>(
-                    model().u_relations[relationName]);
         // Unique pointer to the relation
-        auto relation = std::invoke(relationMethod, model());
-
+        auto relation = std::invoke(getRelationMethodRaw<Related>(relationName),
+                                    model());
         relation->touch();
 
         // Many type relation
@@ -983,14 +984,9 @@ namespace Tiny
     BaseModel<Model, AllRelations...>::getRelationshipFromMethod(const QString &relation)
     {
         // Obtain related models
-        /* getRelationMethod() can't be used here, because logic is divided here,
-           u_relations.contains() check is in the getRelationValue() and obtaining relation
-           is in this method. */
         auto relatedModels = std::get<QVector<Related>>(
-                std::invoke(
-                    std::any_cast<RelationType<Model, Related>>(model().u_relations[relation]),
-                    model())
-                ->getResults());
+                std::invoke(getRelationMethodRaw<Related>(relation), model())
+                        ->getResults());
 
         setRelation(relation, relatedModels);
 //        setRelation(relation, std::move(relatedModel));
@@ -1006,10 +1002,8 @@ namespace Tiny
     {
         // Obtain related model
         auto relatedModel = std::get<std::optional<Related>>(
-                std::invoke(
-                    std::any_cast<RelationType<Model, Related>>(model().u_relations[relation]),
-                    model())
-                ->getResults());
+                std::invoke(getRelationMethodRaw<Related>(relation), model())
+                        ->getResults());
 
         setRelation(relation, relatedModel);
 //        setRelation(relation, std::move(relatedModel));
@@ -1593,15 +1587,15 @@ namespace Tiny
         this->resetRelationStore();
     }
 
-    // TODO now unify getRelationXx() methods silverqx
     template<typename Model, typename ...AllRelations>
-    const std::any &
+    template<typename Related>
+    RelationType<Model, Related>
     BaseModel<Model, AllRelations...>::getRelationMethod(const QString &relation) const
     {
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation);
 
-        return getRelationMethodRaw(relation);
+        return getRelationMethodRaw<Related>(relation);
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1612,10 +1606,12 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
-    const std::any &
+    template<typename Related>
+    RelationType<Model, Related>
     BaseModel<Model, AllRelations...>::getRelationMethodRaw(const QString &relation) const
     {
-        return model().u_relations.find(relation).value();
+        return std::any_cast<RelationType<Model, Related>>(
+                model().u_relations.find(relation).value());
     }
 
     template<typename Model, typename ...AllRelations>
