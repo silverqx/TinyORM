@@ -92,6 +92,7 @@ namespace
     };
 }
 
+// TODO tests for insert silverqx
 std::tuple<bool, std::optional<QSqlQuery>>
 Builder::insert(const QVector<QVariantMap> &values)
 {
@@ -107,9 +108,8 @@ Builder::insert(const QVector<QVariantMap> &values)
        in the same order for the record. We need to make sure this is the case
        so there are not any errors or problems when inserting these records. */
 
-    // WARNING cleanBindings() is missing silverqx
     return m_connection.insert(m_grammar.compileInsert(*this, values),
-                       flatValuesForInsert(values));
+                               cleanBindings(flatValuesForInsert(values)));
 }
 
 std::tuple<int, std::optional<QSqlQuery>>
@@ -118,8 +118,9 @@ Builder::insertOrIgnore(const QVector<QVariantMap> &values)
     if (values.isEmpty())
         return {0, std::nullopt};
 
-    return m_connection.affectingStatement(m_grammar.compileInsertOrIgnore(*this, values),
-                                   flatValuesForInsert(values));
+    return m_connection.affectingStatement(
+                m_grammar.compileInsertOrIgnore(*this, values),
+                cleanBindings(flatValuesForInsert(values)));
 }
 
 std::tuple<int, std::optional<QSqlQuery>>
@@ -134,7 +135,7 @@ quint64 Builder::insertGetId(const QVariantMap &values)
 
     auto [ok, query] = m_connection.insert(
             m_grammar.compileInsertGetId(*this, valuesVector),
-            flatValuesForInsert(valuesVector));
+            cleanBindings(flatValuesForInsert(valuesVector)));
 
     if (!ok)
         return 0;
@@ -145,15 +146,17 @@ quint64 Builder::insertGetId(const QVariantMap &values)
 std::tuple<int, QSqlQuery>
 Builder::update(const QVector<UpdateItem> &values)
 {
-    return m_connection.update(m_grammar.compileUpdate(*this, values),
-                       cleanBindings(m_grammar.prepareBindingsForUpdate(getRawBindings(),
-                                                                        values)));
+    return m_connection.update(
+                m_grammar.compileUpdate(*this, values),
+                cleanBindings(m_grammar.prepareBindingsForUpdate(getRawBindings(),
+                                                                 values)));
 }
 
 std::tuple<int, QSqlQuery> Builder::remove()
 {
-    return m_connection.remove(m_grammar.compileDelete(*this),
-                       cleanBindings(m_grammar.prepareBindingsForDelete(getRawBindings())));
+    return m_connection.remove(
+                m_grammar.compileDelete(*this),
+                cleanBindings(m_grammar.prepareBindingsForDelete(getRawBindings())));
 }
 
 std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
@@ -441,8 +444,10 @@ Builder &Builder::orHaving(const QString &column, const QString &comparison,
 Builder &Builder::orderBy(const QString &column, const QString &direction)
 {
     const auto &directionLower = direction.toLower();
+
     if ((directionLower != "asc") && (directionLower != "desc"))
-        throw OrmRuntimeError("Order direction must be \"asc\" or \"desc\", case is not important.");
+        throw OrmRuntimeError("Order direction must be \"asc\" or \"desc\", "
+                              "case is not important.");
 
     m_orders.append({column, directionLower});
 
@@ -467,13 +472,16 @@ Builder &Builder::oldest(const QString &column)
 Builder &Builder::reorder()
 {
     m_orders.clear();
+
     m_bindings.find(BindingType::ORDER)->clear();
+
     return *this;
 }
 
 Builder &Builder::reorder(const QString &column, const QString &direction)
 {
     reorder();
+
     return orderBy(column, direction);
 }
 
@@ -516,7 +524,7 @@ QVector<QVariant> Builder::getBindings() const
     QVector<QVariant> flattenBindings;
 
     std::for_each(m_bindings.cbegin(), m_bindings.cend(),
-        [&flattenBindings](const auto &bindings)
+                  [&flattenBindings](const auto &bindings)
     {
         for (const auto &binding : bindings)
             flattenBindings.append(binding);
@@ -540,6 +548,7 @@ QSharedPointer<Builder> Builder::newQuery() const
 QSharedPointer<Builder> Builder::forNestedWhere() const
 {
     const auto query = newQuery();
+
     query->from(m_from);
 
     return query;
@@ -553,7 +562,9 @@ Expression Builder::raw(const QVariant &value) const
 bool Builder::invalidOperator(const QString &comparison) const
 {
     const auto contains = m_operators.contains(comparison);
+
     Q_ASSERT(contains);
+
     return contains == false;
 }
 
@@ -561,7 +572,8 @@ Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
 {
     if (!m_bindings.contains(type))
         // TODO add hash to map BindingType to QString silverqx
-        throw OrmRuntimeError(QStringLiteral("Invalid binding type: %1").arg(static_cast<int>(type)));
+        throw OrmRuntimeError(QStringLiteral("Invalid binding type: %1")
+                              .arg(static_cast<int>(type)));
 
     m_bindings[type].append(binding);
 
@@ -573,7 +585,8 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
     // TODO duplicate check, unify silverqx
     if (!m_bindings.contains(type))
         // TODO add hash to map BindingType to QString silverqx
-        throw OrmRuntimeError(QStringLiteral("Invalid binding type: %1").arg(static_cast<int>(type)));
+        throw OrmRuntimeError(QStringLiteral("Invalid binding type: %1")
+                              .arg(static_cast<int>(type)));
 
     std::copy(bindings.cbegin(), bindings.cend(), std::back_inserter(m_bindings[type]));
 
@@ -584,9 +597,11 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
 QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings) const
 {
     // TODO investigate const, move, reserve() vs ctor(size), nice example of move semantics 😏 silverqx
+    // TODO future rewrite with ranges transform, for fun silverqx
     QVector<QVariant> cleanedBindings;
     cleanedBindings.reserve(bindings.size());
-    for (auto &binding : bindings)
+
+    for (const auto &binding : bindings)
         if (!binding.canConvert<Expression>())
             cleanedBindings.append(binding);
 
