@@ -842,7 +842,7 @@ namespace Tiny
 //        $this->mergeAttributesFromClassCasts();
 
         if (getKeyName().isEmpty())
-            throw OrmError("No primary key defined on model.");
+            throw OrmRuntimeError("No primary key defined on model.");
 
         /* If the model doesn't exist, there is nothing to delete so we'll just return
            immediately and not do anything else. Otherwise, we will continue with a
@@ -1196,7 +1196,7 @@ namespace Tiny
     {
         if (!relationLoaded(relation))
             // TODO create RelationError class silverqx
-            throw OrmError("Undefined relation key (in m_relations) : " + relation);
+            throw OrmRuntimeError("Undefined relation key (in m_relations) : " + relation);
 
         return getRelationFromHash<Related, Container>(relation);
     }
@@ -1209,7 +1209,7 @@ namespace Tiny
     {
         if (!relationLoaded(relation))
             // TODO create RelationError class silverqx
-            throw OrmError("Undefined relation key (in m_relations) : " + relation);
+            throw OrmRuntimeError("Undefined relation key (in m_relations) : " + relation);
 
         // TODO instantiate relation by name and check if is_base_of OneRelation/ManyRelation, to have nice exception message (in debug mode only), because is impossible to check this during compile time silverqx
 
@@ -1602,7 +1602,7 @@ namespace Tiny
     void BaseModel<Model, AllRelations...>::validateUserRelation(const QString &name) const
     {
         if (!model().u_relations.contains(name))
-            throw OrmError("Undefined relation key (in u_relations) : " + name);
+            throw OrmRuntimeError("Undefined relation key (in u_relations) : " + name);
     }
 
     template<typename Model, typename ...AllRelations>

@@ -1,5 +1,5 @@
-#ifndef ORMERROR_H
-#define ORMERROR_H
+#ifndef ORMRUNTIMEERROR_H
+#define ORMRUNTIMEERROR_H
 
 #include <stdexcept>
 
@@ -10,15 +10,14 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    // TODO next rename to OrmRuntimeError and create OrmLogicError and extend InvalidFormatError from OrmLogicError silverqx
     // TODO investigate and rework all orm exception classes silverqx
-    class OrmError : public std::runtime_error
+    class OrmRuntimeError : public std::runtime_error
     {
     public:
-        explicit inline OrmError(const char *message)
+        explicit inline OrmRuntimeError(const char *message)
             : std::runtime_error(message)
         {}
-        explicit inline OrmError(const QString &message)
+        explicit inline OrmRuntimeError(const QString &message)
             : std::runtime_error(message.toUtf8().constData())
         {}
 
@@ -36,4 +35,4 @@ namespace Orm
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // ORMERROR_H
+#endif // ORMRUNTIMEERROR_H

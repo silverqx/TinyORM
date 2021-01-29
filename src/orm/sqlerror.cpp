@@ -8,7 +8,7 @@ namespace Orm
 {
 
 SqlError::SqlError(const char *message, const QSqlError &error)
-    : OrmError(formatMessage(message, error))
+    : OrmRuntimeError(formatMessage(message, error))
     , m_sqlError(error)
 {}
 
@@ -17,7 +17,7 @@ SqlError::SqlError(const QString &message, const QSqlError &error)
 {}
 
 SqlError::SqlError(const QString &message, const QSqlError &error, const int)
-    : OrmError(message.toUtf8().constData())
+    : OrmRuntimeError(message.toUtf8().constData())
     , m_sqlError(error)
 {}
 
