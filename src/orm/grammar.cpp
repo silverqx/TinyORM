@@ -36,9 +36,25 @@ namespace
     };
 }
 
-QString Grammar::compileSelect(const QueryBuilder &query) const
+QString Grammar::compileSelect(QueryBuilder &query) const
 {
-    return joinContainer(compileComponents(query), QStringLiteral(" ")).trimmed();
+    /* If the query does not have any columns set, we'll set the columns to the
+       * character to just get all of the columns from the database. Then we
+       can build the query and concatenate all the pieces together as one. */
+    const auto original = query.getColumns();
+
+    if (original.isEmpty())
+        query.setColumns({"*"});
+
+    /* To compile the query, we'll spin through each component of the query and
+       see if that component exists. If it does we'll just call the compiler
+       function for the component which is responsible for making the SQL. */
+    const auto sql = joinContainer(compileComponents(query), QStringLiteral(" ")).trimmed();
+
+    // Restore original columns value
+    query.setColumns(original);
+
+    return sql;
 }
 
 QString Grammar::compileInsert(const QueryBuilder &query, const QVector<QVariantMap> &values) const
@@ -440,6 +456,7 @@ QString Grammar::columnize(const QStringList &columns) const
 
 QString Grammar::columnize(const QStringList &columns, const bool isTorrentsTable) const
 {
+    // BUG Qt and mysql json column silverqx
     /* Qt don't know how to iterate the result with json column, so I have to manually manage
        columns in the select clause. */
     if (isTorrentsTable && (columns.size() == 1) && (columns.at(0) == "*")) {

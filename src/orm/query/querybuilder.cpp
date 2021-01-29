@@ -29,9 +29,6 @@ Builder &Builder::select(const QStringList columns)
 
 Builder &Builder::addSelect(const QStringList &columns)
 {
-    if (!columns.isEmpty() && m_columns.size() == 1 && m_columns.at(0) == "*")
-        clearColumns();
-
     ranges::copy(columns, ranges::back_inserter(m_columns));
 
     return *this;
@@ -40,13 +37,10 @@ Builder &Builder::addSelect(const QStringList &columns)
 std::tuple<bool, QSqlQuery>
 Builder::get(const QStringList &columns)
 {
-    // BUG add onceWithColumns() to save ( not over-write ) m_columns silverqx
-    // columns isn't {"*"} and isn't empty
-    if ((false == ((columns.size() == 1) && (columns.at(0) == "*")))
-        && !columns.empty())
-        m_columns = columns;
-
-    return runSelect();
+    return onceWithColumns(columns, [this]
+    {
+        return runSelect();
+    });
 }
 
 std::tuple<bool, QSqlQuery> Builder::first(const QStringList &columns)
@@ -74,7 +68,7 @@ Builder::find(const QVariant &id, const QStringList &columns)
     return where("id", "=", id).first(columns);
 }
 
-QString Builder::toSql() const
+QString Builder::toSql()
 {
     return m_grammar.compileSelect(*this);
 }
@@ -657,7 +651,26 @@ Builder &Builder::clearColumns()
     return *this;
 }
 
-std::tuple<bool, QSqlQuery> Builder::runSelect() const
+std::tuple<bool, QSqlQuery>
+Builder::onceWithColumns(
+            const QStringList &columns,
+            const std::function<std::tuple<bool, QSqlQuery> ()> &callback)
+{
+    // Save orignal columns
+    const auto original = m_columns;
+
+    if (original.isEmpty())
+        m_columns = columns;
+
+    const auto result = std::invoke(callback);
+
+    // After running the callback, the columns are reset to the original value
+    m_columns = original;
+
+    return result;
+}
+
+std::tuple<bool, QSqlQuery> Builder::runSelect()
 {
     return m_connection.select(toSql(), getBindings());
 }

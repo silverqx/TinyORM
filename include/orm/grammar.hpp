@@ -15,7 +15,7 @@ namespace Orm
     {
     public:
         /*! Compile a select query into SQL. */
-        QString compileSelect(const QueryBuilder &query) const;
+        QString compileSelect(QueryBuilder &query) const;
         /*! Compile an insert statement into SQL. */
         QString compileInsert(const QueryBuilder &query, const QVector<QVariantMap> &values) const;
         /*! Compile an insert ignore statement into SQL. */

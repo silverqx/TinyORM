@@ -64,7 +64,7 @@ namespace Orm::Query
         find(const QVariant &id, const QStringList &columns = {"*"});
 
         /*! Get the SQL representation of the query. */
-        QString toSql() const;
+        QString toSql();
         // TODO next implement dd silverqx
         /*! Die and dump the current SQL and bindings. */
 //        void dd() const
@@ -288,6 +288,9 @@ namespace Orm::Query
         /*! Get the columns that should be returned. */
         inline const QStringList &getColumns() const
         { return m_columns; }
+        /*! Set the columns that should be returned. */
+        inline Builder &setColumns(const QStringList &columns)
+        { m_columns = columns; return *this; }
         /*! Get the table associated with the query builder. */
         inline const QString &getFrom() const
         { return m_from; }
@@ -354,10 +357,14 @@ namespace Orm::Query
 
         /*! Remove all existing columns and column bindings. */
         Builder &clearColumns();
+        /*! Execute the given callback while selecting the given columns. */
+        std::tuple<bool, QSqlQuery>
+        onceWithColumns(const QStringList &columns,
+                        const std::function<std::tuple<bool, QSqlQuery>()> &callback);
 
     private:
         /*! Run the query as a "select" statement against the connection. */
-        std::tuple<bool, QSqlQuery> runSelect() const;
+        std::tuple<bool, QSqlQuery> runSelect();
 
         /*! All of the available clause operators. */
         const QVector<QString> m_operators {
@@ -391,7 +398,7 @@ namespace Orm::Query
         /*! Indicates if the query returns distinct results. */
         bool m_distinct = false;
         /*! The columns that should be returned. */
-        QStringList m_columns {"*"};
+        QStringList m_columns;
         /*! The table which the query is targeting. */
         QString m_from;
         /*! The table joins for the query. */

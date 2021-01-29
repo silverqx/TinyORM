@@ -888,8 +888,9 @@ namespace Tiny
     std::unique_ptr<TinyBuilder<Model>>
     BaseModel<Model, AllRelations...>::newModelQuery()
     {
+        /* Model is passed to the TinyBuilder ctor, because of that setModel()
+           isn't used here. */
         return newTinyBuilder(newBaseQueryBuilder());
-        // BUG next missing ->setModel($this), check ?? silverqx
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1238,7 +1239,6 @@ namespace Tiny
         return model();
     }
 
-    // TODO next unify setRelation() methods silverqx
     template<typename Model, typename ...AllRelations>
     template<typename Related>
     Model &
