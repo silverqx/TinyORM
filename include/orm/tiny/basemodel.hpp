@@ -856,13 +856,12 @@ namespace Tiny
 //            return false;
 //        }
 
-        // TODO add support for model timestamps silverqx
         /* Here, we'll touch the owning models, verifying these timestamps get updated
            for the models. This will allow any caching to get broken on the parents
            by the timestamp. Then we will go ahead and delete the model instance. */
-//        $this->touchOwners();
+        touchOwners();
 
-        // TODO performDeleteOnModel() and return value, check logic here, eg what happens when no model is delete and combinations silverqx
+        // TODO now performDeleteOnModel() and return value, check logic here, eg what happens when no model is delete and combinations silverqx
         performDeleteOnModel();
 
         /* Once the model has been deleted, we will fire off the deleted event so that
