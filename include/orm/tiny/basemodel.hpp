@@ -1088,14 +1088,15 @@ namespace Tiny
         const auto attribute = getAttributeFromArray(key);
         const auto original = getRawOriginal(key);
 
+        // Takes into account also milliseconds for the QDateTime attribute
         if (attribute == original)
             return true;
         // TODO next solve how to work with null values and what to do with invalid/unknown values silverqx
         else if (!attribute.isValid() || attribute.isNull())
             return false;
-        // TODO now silverqx
-//        else if (isDateAttribute(key))
-//            return fromDateTime(attribute) == fromDateTime(original);
+        // This check ignores milliseconds in the QDateTime attribute
+        else if (isDateCastable(key))
+            return fromDateTime(attribute) == fromDateTime(original);
 //        else if (hasCast(key, ['object', 'collection']))
 //            return castAttribute(key, attribute) == castAttribute(key, original);
 //        else if (hasCast(key, ['real', 'float', 'double'])) {
@@ -1123,7 +1124,9 @@ namespace Tiny
             getUpdatedAtColumn(),
         };
 
-        return defaults.contains(key);
+        return defaults.contains(key)
+                // NOTE api different silverqx
+                || getAttribute(key).template canConvert<QDateTime>();
     }
 
     // TODO would be good to make it the c++ way, make overload for every type, asDateTime() is protected, so I have full control over it, but I leave it for now, because there will be more methods which will use this method in the future, and it will be more clear later on silverqx
