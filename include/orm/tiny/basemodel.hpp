@@ -110,6 +110,8 @@ namespace Tiny
         static std::unique_ptr<TinyBuilder<Model>>
         oldest(QString column = "");
 
+        // TODO next fuckin increment, finish later 👿 silverqx
+
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Model>>
         with(const QVector<WithItem> &relations);
@@ -848,7 +850,7 @@ namespace Tiny
            immediately and not do anything else. Otherwise, we will continue with a
            deletion process on the model, firing the proper events, and so forth. */
         if (!exists)
-            // TODO api different silverqx
+            // NOTE api different silverqx
             return false;
 
         // TODO future add support for model events silverqx
@@ -861,7 +863,8 @@ namespace Tiny
            by the timestamp. Then we will go ahead and delete the model instance. */
         touchOwners();
 
-        // TODO now performDeleteOnModel() and return value, check logic here, eg what happens when no model is delete and combinations silverqx
+        // TODO future performDeleteOnModel() and return value, check logic here, eg what happens when no model is delete and combinations silverqx
+        // TODO future inconsistent return values save(), update(), remove(), ... silverqx
         performDeleteOnModel();
 
         /* Once the model has been deleted, we will fire off the deleted event so that
@@ -888,13 +891,15 @@ namespace Tiny
     BaseModel<Model, AllRelations...>::newModelQuery()
     {
         /* Model is passed to the TinyBuilder ctor, because of that setModel()
-           isn't used here. */
+           isn't used here. Can't be const because of passed non-const model
+           to the TinyBuilder. */
         return newTinyBuilder(newBaseQueryBuilder());
     }
 
     template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
-    BaseModel<Model, AllRelations...>::newTinyBuilder(const QSharedPointer<QueryBuilder> query)
+    BaseModel<Model, AllRelations...>::newTinyBuilder(
+            const QSharedPointer<QueryBuilder> query)
     {
         return std::make_unique<TinyBuilder<Model>>(query, model());
     }
@@ -1361,8 +1366,9 @@ namespace Tiny
         )
             return getAttributeValue(key);
 
+        // NOTE api different silverqx
         return {};
-        // TODO Eloquent returns relation when didn't find attribute, decide how to solve this, or add NOTE about different api silverqx
+        // TODO Eloquent returns relation when didn't find attribute, decide how to solve this silverqx
 //        return $this->getRelationValue($key);
     }
 
@@ -1615,8 +1621,8 @@ namespace Tiny
     template<typename Model, typename ...AllRelations>
     void BaseModel<Model, AllRelations...>::performDeleteOnModel()
     {
-        // TODO ask eg on stackoverflow, if I have to save unique_ptr to local variable or pass it right away down silverqx
-        // Ownership of a unique_ptr()
+        /* Ownership of a unique_ptr(), if right passed down, then the
+           will be destroyed right after this command. */
         setKeysForSaveQuery(*newModelQuery()).remove();
 
         this->exists = false;
