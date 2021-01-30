@@ -30,17 +30,17 @@ namespace Query
 
         explicit DatabaseManager(
                 const QString &defaultConnection = QLatin1String(defaultConnectionName));
-        inline virtual ~DatabaseManager();
+        virtual ~DatabaseManager();
 
         /*! Factory method to create DatabaseManager instance. */
-        static DatabaseManager create(
-                const QVariantHash &config,
-                const QString &connection = QLatin1String(defaultConnectionName),
-                const QString &defaultConnection = QLatin1String(defaultConnectionName));
+        static std::unique_ptr<DatabaseManager>
+        create(const QVariantHash &config,
+               const QString &connection = QLatin1String(defaultConnectionName),
+               const QString &defaultConnection = QLatin1String(defaultConnectionName));
         /*! Factory method to create DatabaseManager instance. */
-        static DatabaseManager create(
-                const ConfigurationsType &configs,
-                const QString &defaultConnection = QLatin1String(defaultConnectionName));
+        static std::unique_ptr<DatabaseManager>
+        create(const ConfigurationsType &configs,
+               const QString &defaultConnection = QLatin1String(defaultConnectionName));
 
         /* Proxy methods to the DatabaseConnection. */
         /*! Begin a fluent query against a database table for the connection. */

@@ -241,7 +241,6 @@ namespace Orm
                     runQueryCallback<Result>(queryString, bindings, callback);
 
         }  catch (const QueryError &e) {
-            qDebug() << e.what();
             std::tie(ok, query) =
                     handleQueryException(e, queryString, bindings, callback);
         }

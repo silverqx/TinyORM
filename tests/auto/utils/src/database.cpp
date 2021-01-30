@@ -32,7 +32,7 @@ Orm::ConnectionInterface &Database::createConnection()
 
     static const auto connectionName = QStringLiteral("tinyorm_mysql_tests");
 
-    return databaseManager
-            .addConnection(config, connectionName)
-            .connection(connectionName);
+    static auto &connection = databaseManager.addConnection(config, connectionName)
+                                             .connection(connectionName);
+    return connection;
 }
