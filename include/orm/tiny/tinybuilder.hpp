@@ -596,7 +596,6 @@ namespace Relations
                         relation->getEager(), relationItem.name);
     }
 
-    // TODO next I suspect this code that it can fail, if the same Model/Related combination return different type it fail, I'm pretty sure about this, solution will be to add Orm::One/Many tag, which ensures new template instance silverqx
     template<typename Model>
     template<typename Related>
     auto Builder<Model>::getRelation(const QString &name)

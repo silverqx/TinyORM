@@ -108,6 +108,7 @@ namespace Query
         QVariant value;
     };
 
+    // TODO types, also divide types by namespace, eg AttributeItem is only used in the Orm::Tiny namespace, so an user can use 'using namespace Orm::Tiny' in model files, it is not possible now, because he has to use symbols from an Orm namespace too silverqx
     struct SHAREDLIB_EXPORT AttributeItem
     {
         QString  key;
@@ -132,6 +133,7 @@ namespace Query
         QString condition  {};
     };
 
+    // TODO types, belongs to Orm::Tiny namespace silverqx
     /*! Eager load relation item. */
     struct WithItem
     {
