@@ -37,6 +37,16 @@ namespace Tiny
     // TODO add concept, AllRelations can not contain type defined in "Model" parameter silverqx
     // TODO next test no relation behavior silverqx
     // TODO now exceptions for model CRUD methods? silverqx
+    // TODO model missing methods Model::create() silverqx
+    // TODO model missing methods Model::update() silverqx
+    // TODO model missing methods Model::isClean() silverqx
+    // TODO model missing methods Model::getOriginal() silverqx
+    // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
+    // TODO model missing methods Model::replicate() silverqx
+    // TODO model missing methods Comparing Models, Model::is() silverqx
+    // TODO model missing methods Model::findOrFail() silverqx
+    // TODO model missing methods Model::firstOrNew()/firstOrCreate() silverqx
+    // TODO model missing methods Model::updateOrCreate() silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
@@ -456,6 +466,7 @@ namespace Tiny
 
         /* HasAttributes */
         // TODO should be QHash, I choosen QVector, becuase I wanted to preserve attributes order, think about this, would be solution to use undered_map which preserves insert order? and do I really need to preserve insert order? 🤔, the same is true for m_original field silverqx
+        // TODO now should be u_attributes to support Default Attribute Values silverqx
         /*! The model's attributes. */
         QVector<AttributeItem> m_attributes;
         /*! The model attribute's original state. */
@@ -1082,7 +1093,8 @@ namespace Tiny
         // TODO next solve how to work with null values and what to do with invalid/unknown values silverqx
         else if (!attribute.isValid() || attribute.isNull())
             return false;
-//        else if (isDateAttribute(key)) {
+        // TODO now silverqx
+//        else if (isDateAttribute(key))
 //            return fromDateTime(attribute) == fromDateTime(original);
 //        else if (hasCast(key, ['object', 'collection']))
 //            return castAttribute(key, attribute) == castAttribute(key, original);
