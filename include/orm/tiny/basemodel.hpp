@@ -37,10 +37,7 @@ namespace Tiny
     // TODO add concept, AllRelations can not contain type defined in "Model" parameter silverqx
     // TODO next test no relation behavior silverqx
     // TODO now exceptions for model CRUD methods? silverqx
-    // TODO model missing methods Model::update() silverqx
-    // TODO model missing methods Model::isClean() silverqx
     // TODO model missing methods Model::getOriginal() silverqx
-    // TODO model missing methods Model::wasChanged() silverqx
     // TODO model missing methods Model::fresh()/refresh() silverqx
     // TODO model missing methods Model::addSelect() silverqx
     // TODO model missing methods Model::orderByDesc() silverqx
@@ -73,24 +70,25 @@ namespace Tiny
         inline static QVector<Model> all(const QStringList &columns = {"*"})
         { return query()->get(columns); }
 
+        /*! Find a model by its primary key. */
+        inline static std::optional<Model>
+        find(const QVariant &id, const QStringList &columns = {"*"})
+        { return query()->find(id, columns); }
+        /*! Find a model by its primary key or return fresh model instance. */
+        inline static Model
+        findOrNew(const QVariant &id, const QStringList &columns = {"*"})
+        { return query()->findOrNew(id, columns); }
+
         /*! Get the first record matching the attributes or instantiate it. */
         inline static Model
         firstOrNew(const QVector<WhereItem> &attributes = {},
                    const QVector<AttributeItem> &values = {})
-        { return BaseModel<Model, AllRelations...>::query()
-                    ->firstOrNew(attributes, values); }
+        { return query()->firstOrNew(attributes, values); }
         /*! Get the first record matching the attributes or create it. */
         inline static Model
         firstOrCreate(const QVector<WhereItem> &attributes = {},
                       const QVector<AttributeItem> &values = {})
-        { return BaseModel<Model, AllRelations...>::query()
-                    ->firstOrCreate(attributes, values); }
-
-        /*! Find a model by its primary key. */
-        inline static std::optional<Model>
-        find(const QVariant &id, const QStringList &columns = {"*"})
-        { return BaseModel<Model, AllRelations...>::query()
-                    ->find(id, columns); }
+        { return query()->firstOrCreate(attributes, values); }
 
         /*! Add a basic where clause to the query, and return the first result. */
         inline static std::optional<Model>
@@ -259,9 +257,34 @@ namespace Tiny
                  std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
         Related *
         getRelationValue(const QString &relation);
+
         /*! Return an attribute by the given key. */
         inline QVariant operator[](const QString &key) const
         { return getAttribute(key); }
+
+        /*! Get the attributes that have been changed since last sync. */
+        QVector<AttributeItem> getDirty() const;
+        /*! Determine if the model or any of the given attribute(s) have been modified. */
+        inline bool isDirty(const QStringList &attributes = {}) const
+        { return hasChanges(getDirty(), attributes); }
+        /*! Determine if the model or any of the given attribute(s) have been modified. */
+        inline bool isDirty(const QString &attribute) const
+        { return hasChanges(getDirty(), QStringList {attribute}); }
+        /*! Determine if the model and all the given attribute(s) have remained the same. */
+        inline bool isClean(const QStringList &attributes = {}) const
+        { return !isDirty(attributes); }
+        /*! Determine if the model and all the given attribute(s) have remained the same. */
+        inline bool isClean(const QString &attribute) const
+        { return !isDirty(attribute); }
+        /*! Get the attributes that were changed. */
+        inline const QVector<AttributeItem> &getChanges() const
+        { return m_changes; }
+        /*! Determine if the model and all the given attribute(s) have remained the same. */
+        inline bool wasChanged(const QStringList &attributes = {}) const
+        { return hasChanges(getChanges(), attributes); }
+        /*! Determine if the model and all the given attribute(s) have remained the same. */
+        inline bool wasChanged(const QString &attribute) const
+        { return hasChanges(getChanges(), QStringList {attribute}); }
 
         /*! Get the format for database stored dates. */
         const QString &getDateFormat() const;
@@ -383,20 +406,9 @@ namespace Tiny
         Related *
         getRelationshipFromMethod(const QString &relation);
 
-        /*! Get the attributes that have been changed since last sync. */
-        QVector<AttributeItem> getDirty() const;
-        /*! Determine if the model or any of the given attribute(s) have been modified. */
-        inline bool isDirty(const QVector<AttributeItem> &attributes = {}) const
-        { return hasChanges(getDirty(), attributes); }
-        /*! Determine if the model or any of the given attribute(s) have been modified. */
-        inline bool isDirty(const QString &attribute) const
-        { return hasChanges(getDirty(), QVector<AttributeItem> {{attribute, {}}}); }
         /*! Determine if any of the given attributes were changed. */
         bool hasChanges(const QVector<AttributeItem> &changes,
-                        const QVector<AttributeItem> &attributes = {}) const;
-        /*! Get the attributes that were changed. */
-        inline const QVector<AttributeItem> &getChanges() const
-        { return m_changes; }
+                        const QStringList &attributes = {}) const;
         /*! Sync the changed attributes. */
         inline Model &syncChanges()
         { m_changes = std::move(getDirty()); return model(); }
@@ -1070,7 +1082,7 @@ namespace Tiny
     template<typename Model, typename ...AllRelations>
     bool BaseModel<Model, AllRelations...>::hasChanges(
             const QVector<AttributeItem> &changes,
-            const QVector<AttributeItem> &attributes) const
+            const QStringList &attributes) const
     {
         /* If no specific attributes were provided, we will just see if the dirty array
            already contains any attributes. If it does we will just return that this
@@ -1087,7 +1099,7 @@ namespace Tiny
                     ranges::contains(changes, true,
                                      [&attribute](const auto &changed)
             {
-                return attribute.key == changed.key;
+                return attribute == changed.key;
             });
 
             if (changesContainKey)

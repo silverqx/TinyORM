@@ -59,6 +59,9 @@ namespace Relations
         std::optional<Model> first(const QStringList &columns = {"*"});
 
         /* Others */
+        /*! Find a model by its primary key or return fresh model instance. */
+        Model findOrNew(const QVariant &id, const QStringList &columns = {"*"});
+
         /*! Get the first record matching the attributes or instantiate it. */
         Model firstOrNew(const QVector<WhereItem> &attributes = {},
                          const QVector<AttributeItem> &values = {});
@@ -252,6 +255,7 @@ namespace Relations
                 .setConnection(m_query->getConnection().getName());
     }
 
+    // TODO now name QVector<Model> model collections by using, eg CollectionType silverqx
     template<typename Model>
     QVector<Model>
     Builder<Model>::get(const QStringList &columns)
@@ -292,6 +296,18 @@ namespace Relations
             return std::nullopt;
 
         return models.first();
+    }
+
+    template<typename Model>
+    Model Builder<Model>::findOrNew(const QVariant &id, const QStringList &columns)
+    {
+        auto model = find(id, columns);
+
+        // Found
+        if (model)
+            return *model;
+
+        return newModelInstance();
     }
 
     template<typename Model>
