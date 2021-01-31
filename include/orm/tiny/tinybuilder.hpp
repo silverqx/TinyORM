@@ -82,6 +82,8 @@ namespace Relations
         inline quint64 insertGetId(const QVector<AttributeItem> &attributes) const
         { return m_query->insertGetId(Utils::Attribute::convertVectorToMap(attributes)); }
 
+        /*! Save a new model and return the instance. */
+        Model create(const QVector<AttributeItem> &attributes);
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
         update(const QVector<UpdateItem> &values) const
@@ -333,6 +335,16 @@ namespace Relations
         ranges::move(eagerLoad, ranges::back_inserter(m_eagerLoad));
 
         return *this;
+    }
+
+    template<typename Model>
+    Model Builder<Model>::create(const QVector<AttributeItem> &attributes)
+    {
+        auto model = newModelInstance(attributes);
+
+        model.save();
+
+        return model;
     }
 
     template<typename Model>

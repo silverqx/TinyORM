@@ -37,14 +37,18 @@ namespace Tiny
     // TODO add concept, AllRelations can not contain type defined in "Model" parameter silverqx
     // TODO next test no relation behavior silverqx
     // TODO now exceptions for model CRUD methods? silverqx
-    // TODO model missing methods Model::create() silverqx
     // TODO model missing methods Model::update() silverqx
     // TODO model missing methods Model::isClean() silverqx
     // TODO model missing methods Model::getOriginal() silverqx
+    // TODO model missing methods Model::wasChanged() silverqx
+    // TODO model missing methods Model::fresh()/refresh() silverqx
+    // TODO model missing methods Model::addSelect() silverqx
+    // TODO model missing methods Model::orderByDesc() silverqx
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
     // TODO model missing methods Comparing Models, Model::is() silverqx
-    // TODO model missing methods Model::findOrFail() silverqx
+    // TODO model missing methods Model::first()/firstOr() silverqx
+    // TODO model missing methods Model::findOrFail()/firstOrFail() silverqx
     // TODO model missing methods Model::firstOrNew()/firstOrCreate() silverqx
     // TODO model missing methods Model::updateOrCreate() silverqx
     template<typename Model, typename ...AllRelations>
@@ -59,7 +63,7 @@ namespace Tiny
         /*! The "type" of the primary key ID. */
         using KeyType = quint64;
 
-        /* Methods that start QueryBuilder */
+        /* Methods that start TinyBuilder */
         // TODO inline static method vs constexpr static, check it silverqx
         /*! Begin querying the model. */
         inline static std::unique_ptr<TinyBuilder<Model>> query()
@@ -130,6 +134,11 @@ namespace Tiny
         with(const QString &relation)
         { return with(QVector<WithItem> {{relation}}); }
 
+        /*! Save a new model and return the instance. */
+        inline static Model
+        create(const QVector<AttributeItem> &attributes)
+        { return query()->create(attributes); }
+
         // TODO cpp check all int types and use std::size_t where appropriate silverqx
         // WARNING id should be Model::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
         /*! Destroy the models for the given IDs. */
@@ -144,6 +153,10 @@ namespace Tiny
         bool save(const SaveOptions &options = {});
         /*! Save the model and all of its relationships. */
         bool push();
+
+        /*! Update records in the database. */
+        bool update(const QVector<AttributeItem> &attributes,
+                    const SaveOptions &options = {});
 
         /*! Delete the model from the database. */
         bool remove();
@@ -466,7 +479,7 @@ namespace Tiny
 
         /* HasAttributes */
         // TODO should be QHash, I choosen QVector, becuase I wanted to preserve attributes order, think about this, would be solution to use undered_map which preserves insert order? and do I really need to preserve insert order? 🤔, the same is true for m_original field silverqx
-        // TODO now should be u_attributes to support Default Attribute Values silverqx
+        // TODO future Default Attribute Values, can not be u_attributes because of CRTP, The best I've come up with was BaseModel.init() and init default attrs. from there silverqx
         /*! The model's attributes. */
         QVector<AttributeItem> m_attributes;
         /*! The model attribute's original state. */
@@ -611,6 +624,7 @@ namespace Tiny
     std::unique_ptr<TinyBuilder<Model>>
     BaseModel<Model, AllRelations...>::oldest(QString column)
     {
+        // TODO now query to builder, like with() silverqx
         auto query = BaseModel<Model, AllRelations...>::query();
 
         query->oldest(column);
@@ -846,6 +860,17 @@ namespace Tiny
         Q_ASSERT((0 <= type) && (type < size));
 
         return cached.at(type);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::update(
+            const QVector<AttributeItem> &attributes,
+            const SaveOptions &options)
+    {
+        if (!exists)
+            return false;
+
+        return fill(attributes).save(options);
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1124,9 +1149,7 @@ namespace Tiny
             getUpdatedAtColumn(),
         };
 
-        return defaults.contains(key)
-                // NOTE api different silverqx
-                || getAttribute(key).template canConvert<QDateTime>();
+        return defaults.contains(key);
     }
 
     // TODO would be good to make it the c++ way, make overload for every type, asDateTime() is protected, so I have full control over it, but I leave it for now, because there will be more methods which will use this method in the future, and it will be more clear later on silverqx
@@ -1763,6 +1786,7 @@ namespace Tiny
             const TinyBuilder<Model> &query,
             const QVector<AttributeItem> &attributes)
     {
+        // TODO now insertGetId() and getKeyName() silverqx
 //        const auto &keyName = getKeyName();
 
         const auto id = query.insertGetId(attributes/*, keyName*/);
