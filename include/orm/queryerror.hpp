@@ -12,7 +12,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class QueryError : public SqlError
+    class SHAREDLIB_EXPORT QueryError : public SqlError
     {
     public:
         QueryError(const char *message, const QSqlQuery &query,

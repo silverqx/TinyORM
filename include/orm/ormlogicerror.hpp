@@ -3,6 +3,8 @@
 
 #include <stdexcept>
 
+#include "export.hpp"
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -10,7 +12,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class OrmLogicError : public std::logic_error
+    class SHAREDLIB_EXPORT OrmLogicError : public std::logic_error
     {
     public:
         explicit inline OrmLogicError(const char *message)

@@ -10,7 +10,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class InvalidFormatError : public OrmLogicError
+    class SHAREDLIB_EXPORT InvalidFormatError : public OrmLogicError
     {
     public:
         using OrmLogicError::OrmLogicError;

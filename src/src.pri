@@ -21,6 +21,7 @@ SOURCES += \
     $$PWD/orm/tiny/basemodel.cpp \
     $$PWD/orm/tiny/concerns/hasattributes.cpp \
     $$PWD/orm/tiny/concerns/hasrelationstore.cpp \
+    $$PWD/orm/tiny/modelnotfounderror.cpp \
     $$PWD/orm/tiny/relations/belongsto.cpp \
     $$PWD/orm/tiny/relations/hasmany.cpp \
     $$PWD/orm/tiny/relations/hasone.cpp \

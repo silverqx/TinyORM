@@ -14,7 +14,6 @@
 #include "orm/tiny/relations/hasmany.hpp"
 #include "orm/tiny/tinybuilder.hpp"
 #include "orm/utils/string.hpp"
-#include "orm/utils/type.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -44,9 +43,8 @@ namespace Tiny
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
     // TODO model missing methods Comparing Models, Model::is() silverqx
-    // TODO model missing methods Model::first()/firstOr() silverqx
+    // TODO model missing methods Model::firstOr() silverqx
     // TODO model missing methods Model::findOrFail()/firstOrFail() silverqx
-    // TODO model missing methods Model::firstOrNew()/firstOrCreate() silverqx
     // TODO model missing methods Model::updateOrCreate() silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
@@ -78,6 +76,10 @@ namespace Tiny
         inline static Model
         findOrNew(const QVariant &id, const QStringList &columns = {"*"})
         { return query()->findOrNew(id, columns); }
+        /*! Find a model by its primary key or throw an exception. */
+        inline static Model
+        findOrFail(const QVariant &id, const QStringList &columns = {"*"})
+        { return query()->findOrFail(id, columns); }
 
         /*! Get the first record matching the attributes or instantiate it. */
         inline static Model

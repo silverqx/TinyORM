@@ -8,6 +8,7 @@
 
 using namespace Orm;
 
+// TODO use QFINDTESTDATA() to load *.sql file? silverqx
 class tst_QueryBuilder : public QObject
 {
     Q_OBJECT

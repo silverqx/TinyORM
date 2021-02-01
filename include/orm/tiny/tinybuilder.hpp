@@ -15,7 +15,9 @@
 
 #include "orm/databaseconnection.hpp"
 #include "orm/query/querybuilder.hpp"
+#include "orm/tiny/modelnotfounderror.hpp"
 #include "orm/utils/attribute.hpp"
+#include "orm/utils/type.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -48,27 +50,24 @@ namespace Relations
 
         /*! Execute the query as a "select" statement. */
         QVector<Model> get(const QStringList &columns = {"*"});
+
         // NOTE Model::KeyType for id silverqx
         /*! Find a model by its primary key. */
         std::optional<Model>
         find(const QVariant &id, const QStringList &columns = {"*"});
-
-        /* BuildsQueries */
-        // TODO BuildsQueries contains duplicit methods in TinyBuilder and QueryBuilder, make it by multi inheritance, I discovered now, that TinyBuilder will return different types than QueryBuilder, look eg at first() or get(), but investigate if there are cases, when API is same and use multi inheritance pattern for this methods silver
-        /*! Execute the query and get the first result. */
-        std::optional<Model> first(const QStringList &columns = {"*"});
-
-        /* Others */
         /*! Find a model by its primary key or return fresh model instance. */
         Model findOrNew(const QVariant &id, const QStringList &columns = {"*"});
+        /*! Find a model by its primary key or throw an exception. */
+        Model findOrFail(const QVariant &id, const QStringList &columns = {"*"});
 
         /*! Get the first record matching the attributes or instantiate it. */
         Model firstOrNew(const QVector<WhereItem> &attributes = {},
                          const QVector<AttributeItem> &values = {});
-
         /*! Get the first record matching the attributes or create it. */
         Model firstOrCreate(const QVector<WhereItem> &attributes = {},
                             const QVector<AttributeItem> &values = {});
+        /*! Execute the query and get the first result or throw an exception. */
+        Model firstOrFail(const QStringList &columns = {"*"});
 
         /*! Set the relationships that should be eager loaded. */
         Builder &with(const QVector<WithItem> &relations);
@@ -101,6 +100,11 @@ namespace Relations
         inline std::tuple<int, QSqlQuery>
         deleteModels()
         { return remove(); }
+
+        /* BuildsQueries */
+        // TODO BuildsQueries contains duplicit methods in TinyBuilder and QueryBuilder, make it by multi inheritance, I discovered now, that TinyBuilder will return different types than QueryBuilder, look eg at first() or get(), but investigate if there are cases, when API is same and use multi inheritance pattern for this methods silver
+        /*! Execute the query and get the first result. */
+        std::optional<Model> first(const QStringList &columns = {"*"});
 
         /* Proxy methods to the QueryBuilder */
         /*! Add a basic where clause to the query. */
@@ -287,18 +291,6 @@ namespace Relations
     }
 
     template<typename Model>
-    std::optional<Model>
-    Builder<Model>::first(const QStringList &columns)
-    {
-        const auto models = take(1).get(columns);
-
-        if (models.isEmpty())
-            return std::nullopt;
-
-        return models.first();
-    }
-
-    template<typename Model>
     Model Builder<Model>::findOrNew(const QVariant &id, const QStringList &columns)
     {
         auto model = find(id, columns);
@@ -308,6 +300,18 @@ namespace Relations
             return *model;
 
         return newModelInstance();
+    }
+
+    template<typename Model>
+    Model Builder<Model>::findOrFail(const QVariant &id, const QStringList &columns)
+    {
+        auto model = find(id, columns);
+
+        // Found
+        if (model)
+            return *model;
+
+        throw ModelNotFoundError(Utils::Type::classPureBasename<Model>(), {id});
     }
 
     template<typename Model>
@@ -335,11 +339,23 @@ namespace Relations
         if (instance)
             return *instance;
 
-        auto newInstance = newModelInstance(joinAttributesForFirstOr(attributes,
-                                                                      values));
+        auto newInstance = newModelInstance(
+                               joinAttributesForFirstOr(attributes, values));
         newInstance.save();
 
         return newInstance;
+    }
+
+    template<typename Model>
+    Model Builder<Model>::firstOrFail(const QStringList &columns)
+    {
+        auto model = first(columns);
+
+        // Found
+        if (model)
+            return *model;
+
+        throw ModelNotFoundError(Utils::Type::classPureBasename<Model>());
     }
 
     template<typename Model>
@@ -361,6 +377,18 @@ namespace Relations
         model.save();
 
         return model;
+    }
+
+    template<typename Model>
+    std::optional<Model>
+    Builder<Model>::first(const QStringList &columns)
+    {
+        const auto models = take(1).get(columns);
+
+        if (models.isEmpty())
+            return std::nullopt;
+
+        return models.first();
     }
 
     template<typename Model>
