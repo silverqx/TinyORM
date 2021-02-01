@@ -602,11 +602,11 @@ namespace Tiny
             const QString &column, const QString &comparison,
             const QVariant &value, const QString &condition)
     {
-        auto query = BaseModel<Model, AllRelations...>::query();
+        auto builder = query();
 
-        query->where(column, comparison, value, condition);
+        builder->where(column, comparison, value, condition);
 
-        return query;
+        return builder;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -616,34 +616,33 @@ namespace Tiny
     {
         /* The parentheses in this query are ok:
            select * from xyz where (id = ?) */
-        auto query = BaseModel<Model, AllRelations...>::query();
+        auto builder = query();
 
-        query->where(values, condition);
+        builder->where(values, condition);
 
-        return query;
+        return builder;
     }
 
     template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
     BaseModel<Model, AllRelations...>::latest(QString column)
     {
-        auto query = BaseModel<Model, AllRelations...>::query();
+        auto builder = query();
 
-        query->latest(column);
+        builder->latest(column);
 
-        return query;
+        return builder;
     }
 
     template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
     BaseModel<Model, AllRelations...>::oldest(QString column)
     {
-        // TODO now query to builder, like with() silverqx
-        auto query = BaseModel<Model, AllRelations...>::query();
+        auto builder = query();
 
-        query->oldest(column);
+        builder->oldest(column);
 
-        return query;
+        return builder;
     }
 
     template<typename Model, typename ...AllRelations>
