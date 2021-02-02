@@ -37,20 +37,24 @@ namespace Tiny
     // TODO next test no relation behavior silverqx
     // TODO now exceptions for model CRUD methods? silverqx
     // TODO model missing methods Model::getOriginal() silverqx
-    // TODO model missing methods Model::fresh()/refresh() silverqx
     // TODO model missing methods Model::addSelect() silverqx
     // TODO model missing methods Model::orderByDesc() silverqx
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
     // TODO model missing methods Comparing Models, Model::is() silverqx
     // TODO model missing methods Model::firstOr() silverqx
-    // TODO model missing methods Model::findOrFail()/firstOrFail() silverqx
     // TODO model missing methods Model::updateOrCreate() silverqx
+    // TODO model missing methods Model::loadMissing() silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
             public Orm::Concerns::HasConnectionResolver
     {
+        // TODO future, try to solve problem to allow only relevant methods from TinyBuilder silverqx
+        /* Used by TinyBuilder::eagerLoadRelationVisitor()/getRelationMethod()
+           /getRawAttributes(). */
+        friend TinyBuilder<Model>;
+
     protected:
         BaseModel(const QVector<AttributeItem> &attributes = {});
 
@@ -134,6 +138,7 @@ namespace Tiny
         with(const QString &relation)
         { return with(QVector<WithItem> {{relation}}); }
 
+        /* Static operations on a model instance */
         /*! Save a new model and return the instance. */
         inline static Model
         create(const QVector<AttributeItem> &attributes)
@@ -164,6 +169,21 @@ namespace Tiny
         inline bool deleteModel()
         { return remove(); }
 
+        /*! Reload a fresh model instance from the database. */
+        std::optional<Model> fresh(const QVector<WithItem> &relations = {});
+        /*! Reload a fresh model instance from the database. */
+        inline std::optional<Model> fresh(const QString &relation)
+        { return fresh(QVector<WithItem> {{relation}}); }
+        /*! Reload the current model instance with fresh attributes from the database. */
+        Model &refresh();
+
+        /*! Eager load relations on the model. */
+        Model &load(const QVector<WithItem> &relations);
+        /*! Eager load relations on the model. */
+        inline Model &load(const QString &relation)
+        { return load(QVector<WithItem> {{relation}}); }
+
+        /* Instantiation related */
         /*! Get a new query builder for the model's table. */
         inline std::unique_ptr<TinyBuilder<Model>> newQuery()
         { return newQueryWithoutScopes(); }
@@ -171,6 +191,8 @@ namespace Tiny
         std::unique_ptr<TinyBuilder<Model>> newQueryWithoutScopes();
         /*! Get a new query builder that doesn't have any global scopes or eager loading. */
         std::unique_ptr<TinyBuilder<Model>> newModelQuery();
+        /*! Get a new query builder with no relationships loaded. */
+        std::unique_ptr<TinyBuilder<Model>> newQueryWithoutRelationships();
         /*! Create a new Tiny query builder for the model. */
         std::unique_ptr<TinyBuilder<Model>>
         newTinyBuilder(const QSharedPointer<QueryBuilder> query);
@@ -189,6 +211,7 @@ namespace Tiny
         inline const Model &model() const
         { return static_cast<const Model &>(*this); }
 
+        /* Getters/Setters */
         /*! Get the current connection name for the model. */
         inline const QString &getConnectionName() const
         { return model().u_connection; }
@@ -220,6 +243,7 @@ namespace Tiny
         inline Model &setIncrementing(const bool value)
         { model().u_incrementing = value; return model(); }
 
+        /* Others */
         /*! Qualify the given column name by the model's table. */
         QString qualifyColumn(const QString &column) const;
 
@@ -342,6 +366,14 @@ namespace Tiny
         /*! Get the relationships that are touched on save. */
         inline const QStringList &getTouchedRelations() const
         { return model().u_touches; }
+        /*! Get all the loaded relations for the instance. */
+        inline const QHash<QString, RelationsType<AllRelations...>> &
+        getRelations() const
+        { return m_relations; }
+        /*! Get all the loaded relations for the instance. */
+        inline QHash<QString, RelationsType<AllRelations...>> &
+        getRelations()
+        { return m_relations; }
 
         /* HasTimestamps */
         /*! Update the model's update timestamp. */
@@ -373,15 +405,6 @@ namespace Tiny
         /*! Determine if the given model is ignoring touches. */
         template<typename ClassToCheck = Model>
         static bool isIgnoringTouch();
-
-        /* Eager load from TinyBuilder */
-        /*! Invoke Model::eagerVisitor() to define template argument Related for eagerLoaded relation. */
-        void eagerLoadRelationVisitor(const WithItem &relation, TinyBuilder<Model> &builder,
-                                      QVector<Model> &models);
-        /*! Get a relation method in the relations hash data member, defined in the current model instance. */
-        template<typename Related>
-        RelationType<Model, Related>
-        getRelationMethod(const QString &relation) const;
 
     protected:
         /*! Get a new query builder instance for the connection. */
@@ -453,6 +476,12 @@ namespace Tiny
         /*! Guess the "belongs to" relationship name. */
         template<typename Related>
         QString guessBelongsToRelation() const;
+        /*! Set the entire relations array on the model. */
+        Model &setRelations(
+                QHash<QString, RelationsType<AllRelations...>> &relations);
+        /*! Set the entire relations array on the model. */
+        Model &setRelations(
+                QHash<QString, RelationsType<AllRelations...>> &&relations);
 
         /* Others */
         /*! Perform the actual delete query on this model instance. */
@@ -518,6 +547,20 @@ namespace Tiny
         bool u_timestamps = true;
 
     private:
+        /* Eager load from TinyBuilder */
+        /*! Invoke Model::eagerVisitor() to define template argument Related for eagerLoaded relation. */
+        void eagerLoadRelationVisitor(const WithItem &relation, TinyBuilder<Model> &builder,
+                                      QVector<Model> &models);
+        /*! Get a relation method in the relations hash data member, defined in the current model instance. */
+        template<typename Related>
+        RelationType<Model, Related>
+        getRelationMethod(const QString &relation) const;
+
+        /* HasAttributes */
+        /*! Get all of the current attributes on the model. */
+        inline const QVector<AttributeItem> &getRawAttributes() const
+        { return m_attributes; }
+
         /* HasRelationships */
         /*! Throw exception if a relation is not defined. */
         void validateUserRelation(const QString &name) const;
@@ -574,19 +617,10 @@ namespace Tiny
         template<typename Related>
         const std::function<void(BaseModel<Model, AllRelations...> &)> &
         getMethodForRelationVisited(RelationStoreType storeType) const;
-
-#ifdef QT_DEBUG
-        /*! The table associated with the model. */
-        [[maybe_unused]]
-        const QString *m_table;
-#endif
     };
 
     template<typename Model, typename ...AllRelations>
     BaseModel<Model, AllRelations...>::BaseModel(const QVector<AttributeItem> &attributes)
-#ifdef QT_DEBUG
-        : m_table(&model().u_table)
-#endif
     {
         // Compile time check if a primary key type is supported by a QVariant
         qMetaTypeId<typename Model::KeyType>();
@@ -925,6 +959,68 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    std::optional<Model>
+    BaseModel<Model, AllRelations...>::fresh(
+            const QVector<WithItem> &relations)
+    {
+        if (!exists)
+            return std::nullopt;
+
+        return setKeysForSaveQuery(*newQueryWithoutScopes())
+                .with(relations)
+                .first();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::refresh()
+    {
+        if (!exists)
+            return model();
+
+        setRawAttributes(setKeysForSaveQuery(*newQueryWithoutScopes())
+                         .firstOrFail().getRawAttributes());
+
+        // TODO future, ranges transformations silverqx
+        // Get all currently loaded relation names
+        QVector<WithItem> relations;
+        auto itKey = m_relations.keyBegin();
+        while (itKey != m_relations.keyEnd()) {
+            relations.append({*itKey});
+            ++itKey;
+        }
+        // And reload them again, refresh relations
+        load(relations);
+
+        syncOriginal();
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::load(
+            const QVector<WithItem> &relations)
+    {
+        auto builder = newQueryWithoutRelationships()->with(relations);
+
+        // TODO future, make possible to pass single model to eagerLoadRelations() and whole relation flow silverqx
+        /* I have to make a copy here of this, because of eagerLoadRelations(),
+           the solution would be to add a whole new chain for eager load relations,
+           which will be able to work only on one Model &, but it is around
+           refactoring of 10-15 methods, or add a variant which can process
+           QVector<std::reference_wrapper<Model>>.
+           For now, I have made a copy here and save it into the QVector and after
+           that move relations from this copy to the real instance. */
+        QVector<Model> models {model()};
+
+        builder.eagerLoadRelations(models);
+
+        setRelations(std::move(models.first().getRelations()));
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
     BaseModel<Model, AllRelations...>::newQueryWithoutScopes()
     {
@@ -943,6 +1039,13 @@ namespace Tiny
            isn't used here. Can't be const because of passed non-const model
            to the TinyBuilder. */
         return newTinyBuilder(newBaseQueryBuilder());
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::newQueryWithoutRelationships()
+    {
+        return newModelQuery();
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1625,6 +1728,26 @@ namespace Tiny
         relation[0] = relation[0].toLower();
 
         return relation;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::setRelations(
+            QHash<QString, RelationsType<AllRelations...>> &relations)
+    {
+        m_relations = relations;
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::setRelations(
+            QHash<QString, RelationsType<AllRelations...>> &&relations)
+    {
+        m_relations = std::move(relations);
+
+        return model();
     }
 
     template<typename Model, typename ...AllRelations>
