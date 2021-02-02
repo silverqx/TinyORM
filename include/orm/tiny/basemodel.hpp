@@ -41,9 +41,9 @@ namespace Tiny
     // TODO model missing methods Model::orderByDesc() silverqx
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
-    // TODO model missing methods Comparing Models, Model::is() silverqx
+    // TODO model missing methods Comparing Models silverqx
     // TODO model missing methods Model::firstOr() silverqx
-    // TODO model missing methods Model::updateOrCreate() silverqx
+    // TODO model missing methods Model::updateOrCreate()/updateOrInsert() silverqx
     // TODO model missing methods Model::loadMissing() silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
@@ -183,6 +183,15 @@ namespace Tiny
         inline Model &load(const QString &relation)
         { return load(QVector<WithItem> {{relation}}); }
 
+        /*! Determine if two models have the same ID and belong to the same table. */
+        bool is(const std::optional<Model> &model) const;
+        /*! Determine if two models are not the same. */
+        bool isNot(const std::optional<Model> &model) const
+        { return !is(model); }
+
+        /*! Fill the model with an array of attributes. */
+        Model &fill(const QVector<AttributeItem> &attributes);
+
         /* Instantiation related */
         /*! Get a new query builder for the model's table. */
         inline std::unique_ptr<TinyBuilder<Model>> newQuery()
@@ -246,9 +255,6 @@ namespace Tiny
         /* Others */
         /*! Qualify the given column name by the model's table. */
         QString qualifyColumn(const QString &column) const;
-
-        /*! Fill the model with an array of attributes. */
-        Model &fill(const QVector<AttributeItem> &attributes);
 
         /*! Indicates if the model exists. */
         bool exists = false;
@@ -1021,6 +1027,26 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::is(
+            const std::optional<Model> &model) const
+    {
+        return model
+                && getKey() == model->getKey()
+                && getTable() == model->getTable()
+                && getConnectionName() == model->getConnectionName();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::fill(const QVector<AttributeItem> &attributes)
+    {
+        for (const auto &attribute : attributes)
+            setAttribute(attribute.key, attribute.value);
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
     BaseModel<Model, AllRelations...>::newQueryWithoutScopes()
     {
@@ -1427,16 +1453,6 @@ namespace Tiny
             return column;
 
         return getTable() + '.' + column;
-    }
-
-    template<typename Model, typename ...AllRelations>
-    Model &
-    BaseModel<Model, AllRelations...>::fill(const QVector<AttributeItem> &attributes)
-    {
-        for (const auto &attribute : attributes)
-            setAttribute(attribute.key, attribute.value);
-
-        return model();
     }
 
     template<typename Model, typename ...AllRelations>
