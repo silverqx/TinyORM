@@ -25,9 +25,11 @@ private slots:
     void limit() const;
 
 private:
+    /*! Create QueryBuilder instance. */
     inline QueryBuilder createQuery() const
     { return QueryBuilder(m_connection, Grammar()); }
 
+    /*! The database connection instance. */
     ConnectionInterface &m_connection;
 };
 

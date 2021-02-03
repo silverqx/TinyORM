@@ -22,9 +22,8 @@ private slots:
     void cleanupTestCase();
 
     void remove() const;
-    void get() const;
     void all() const;
-    void get_AllColumns() const;
+    void all_Columns() const;
     void latest() const;
     void oldest() const;
     // TODO tests, where conditions, and orWhere ... silverqx
@@ -44,14 +43,9 @@ private slots:
     void firstOrNew_NotFound() const;
     void firstOrCreate_Found() const;
     void firstOrCreate_NotFound() const;
-    // TODO tests, move to TinyBuilder tests silverqx
-    void firstOrFail_Found() const;
-    void firstOrFail_NotFoundFailed() const;
 
 private:
-    inline QueryBuilder createQuery() const
-    { return QueryBuilder(m_connection, Grammar()); }
-
+    /*! The database connection instance. */
     ConnectionInterface &m_connection;
 };
 
@@ -86,20 +80,6 @@ void tst_BaseModel::remove() const
     }
 }
 
-void tst_BaseModel::get() const
-{
-    Torrent torrent;
-    auto torrents = torrent.query()->get();
-
-    QCOMPARE(torrents.size(), 6);
-    QCOMPARE(torrents.at(0).getAttribute("id"), QVariant(1));
-    QCOMPARE(torrents.at(0).getAttribute("name"), QVariant("test1"));
-    QCOMPARE(torrents.at(2).getAttribute("id"), QVariant(3));
-    QCOMPARE(torrents.at(2).getAttribute("name"), QVariant("test3"));
-
-    QCOMPARE(torrents.at(1).getAttributes().size(), 8);
-}
-
 void tst_BaseModel::all() const
 {
     auto torrents = Torrent::all();
@@ -111,14 +91,13 @@ void tst_BaseModel::all() const
     QCOMPARE(torrents.at(2).getAttribute("name"), QVariant("test3"));
 }
 
-void tst_BaseModel::get_AllColumns() const
+void tst_BaseModel::all_Columns() const
 {
     {
         auto torrents = Torrent::all();
 
         QCOMPARE(torrents.at(1).getAttributes().size(), 8);
     }
-
     {
         auto torrents = Torrent::all({"id", "name"});
 
@@ -126,17 +105,6 @@ void tst_BaseModel::get_AllColumns() const
         QCOMPARE(torrent2.getAttributes().size(), 2);
         QCOMPARE(torrent2.getAttributes().at(0).key, QString("id"));
         QCOMPARE(torrent2.getAttributes().at(1).key, QString("name"));
-    }
-
-    {
-        Torrent torrent;
-        auto torrents = torrent.query()->get({"id", "name", "size"});
-
-        const auto &torrent3 = torrents.at(1);
-        QCOMPARE(torrent3.getAttributes().size(), 3);
-        QCOMPARE(torrent3.getAttributes().at(0).key, QString("id"));
-        QCOMPARE(torrent3.getAttributes().at(1).key, QString("name"));
-        QCOMPARE(torrent3.getAttributes().at(2).key, QString("size"));
     }
 }
 
@@ -479,34 +447,6 @@ void tst_BaseModel::firstOrCreate_NotFound() const
     const auto result = torrent.remove();
     QVERIFY(result);
     QVERIFY(!torrent.exists);
-}
-
-void tst_BaseModel::firstOrFail_Found() const
-{
-    {
-        auto torrent = Torrent::whereEq("id", 3)->firstOrFail();
-
-        QVERIFY(torrent.exists);
-        QCOMPARE(torrent.getAttributes().size(), 8);
-        QCOMPARE(torrent["id"], QVariant(3));
-        QCOMPARE(torrent["name"], QVariant("test3"));
-    }
-    {
-        auto torrent = Torrent::whereEq("id", 3)->firstOrFail({"id", "name"});
-
-        QVERIFY(torrent.exists);
-        QCOMPARE(torrent.getAttributes().size(), 2);
-        QCOMPARE(torrent["id"], QVariant(3));
-        QCOMPARE(torrent["name"], QVariant("test3"));
-    }
-}
-
-void tst_BaseModel::firstOrFail_NotFoundFailed() const
-{
-    QVERIFY_EXCEPTION_THROWN(Torrent::whereEq("id", 999999)->firstOrFail(),
-                             ModelNotFoundError);
-    QVERIFY_EXCEPTION_THROWN(Torrent::whereEq("id", 999999)->firstOrFail({"id", "name"}),
-                             ModelNotFoundError);
 }
 
 QTEST_MAIN(tst_BaseModel)
