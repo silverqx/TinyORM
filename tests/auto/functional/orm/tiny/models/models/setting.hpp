@@ -11,15 +11,16 @@ public:
     explicit Setting(const QVector<Orm::AttributeItem> &attributes = {});
 
 private:
-    // TODO next test no relation behavior silverqx
-//    void eagerVisitor(const QString &)
-//    {}
-
     /*! The table associated with the model. */
     QString u_table {"settings"};
 
     /*! Indicates if the IDs are auto-incrementing. */
     bool u_incrementing = false;
+
+#ifdef PROJECT_TINYORM_TEST
+    /*! The connection name for the model. */
+    QString u_connection {"tinyorm_mysql_tests"};
+#endif
 };
 
 #endif // SETTING_H

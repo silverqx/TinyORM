@@ -50,8 +50,8 @@ void tst_QueryBuilder::find() const
     if (!ok)
         QFAIL("find() query failed.");
 
-    QCOMPARE(query.value("id").toULongLong(), 2);
-    QCOMPARE(query.value("name").toString(), QString("test2"));
+    QCOMPARE(query.value("id"), QVariant(2));
+    QCOMPARE(query.value("name"), QVariant("test2"));
 }
 
 void tst_QueryBuilder::limit() const

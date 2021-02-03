@@ -3,7 +3,7 @@
 
 #include "orm/tiny/basemodel.hpp"
 
-#include "torrent.hpp"
+#include "models/torrent.hpp"
 
 class TorrentPeer final : public Orm::Tiny::BaseModel<TorrentPeer, Torrent>
 {
@@ -40,6 +40,11 @@ private:
     QVector<Orm::WithItem> u_with {
 //        {"torrent"},
     };
+
+#ifdef PROJECT_TINYORM_TEST
+    /*! The connection name for the model. */
+    QString u_connection {"tinyorm_mysql_tests"};
+#endif
 };
 
 #endif // TORRENTPEERS_H

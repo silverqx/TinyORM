@@ -1,8 +1,8 @@
 #include "torrent.hpp"
 
-Torrent::Torrent(const QVector<Orm::AttributeItem> &attributes)
-    : BaseModel(attributes)
-{}
+//Torrent::Torrent(const QVector<Orm::AttributeItem> &attributes)
+//    : BaseModel(attributes)
+//{}
 
 //QDebug operator<<(QDebug debug, const Torrent &c)
 //{

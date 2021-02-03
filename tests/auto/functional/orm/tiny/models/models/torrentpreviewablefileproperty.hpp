@@ -3,7 +3,7 @@
 
 #include "orm/tiny/basemodel.hpp"
 
-#include "torrentpreviewablefile.hpp"
+#include "models/torrentpreviewablefile.hpp"
 
 class TorrentPreviewableFileProperty final : public Orm::Tiny::BaseModel<TorrentPreviewableFileProperty, TorrentPreviewableFile>
 {
@@ -17,7 +17,7 @@ public:
     Orm::Tiny::Relations::Relation<TorrentPreviewableFileProperty, TorrentPreviewableFile>>
     torrentFile()
     {
-        return belongsTo<TorrentPreviewableFile>();
+        return belongsTo<TorrentPreviewableFile>("previewable_file_id", {}, __func__);
     }
 
 private:
@@ -40,6 +40,17 @@ private:
     QVector<Orm::WithItem> u_with {
 //        {"torrentFile"},
     };
+
+#ifdef PROJECT_TINYORM_TEST
+    /*! The connection name for the model. */
+    QString u_connection {"tinyorm_mysql_tests"};
+#endif
+
+    /*! Indicates if the model should be timestamped. */
+    bool u_timestamps = false;
+
+    /*! All of the relationships to be touched. */
+    QStringList u_touches {"torrentFile"};
 };
 
 #endif // TORRENTPREVIEWABLEFILEPROPERTY_H

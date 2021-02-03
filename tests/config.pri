@@ -13,6 +13,11 @@ include(../config.pri)
 
 CONFIG *= qt console testcase link_prl
 
+# TinyOrm defines
+# ---
+
+DEFINES += PROJECT_TINYORM_TEST
+
 # Use TinyOrm's library precompiled headers (PCH)
 # ---
 

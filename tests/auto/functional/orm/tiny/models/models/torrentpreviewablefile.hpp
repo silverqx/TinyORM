@@ -1,12 +1,10 @@
 #ifndef TORRENTPREVIEWABLEFILES_H
 #define TORRENTPREVIEWABLEFILES_H
 
-#include <QDebug>
-
 #include "orm/tiny/basemodel.hpp"
 
-#include "torrent.hpp"
-#include "torrentpreviewablefileproperty.hpp"
+#include "models/torrent.hpp"
+#include "models/torrentpreviewablefileproperty.hpp"
 
 class TorrentPreviewableFile final : public Orm::Tiny::BaseModel<TorrentPreviewableFile, Torrent, TorrentPreviewableFileProperty>
 {
@@ -52,11 +50,18 @@ private:
 
     /*! The relations to eager load on every query. */
     QVector<Orm::WithItem> u_with {
-        // TODO detect (best at compile time) circular eager relation problem, exception during this problem is stackoverflow in QRegularExpression silverqx
 //        {"torrent"},
 //        {"torrent.torrentPeer"},
 //        {"fileProperty"},
     };
+
+#ifdef PROJECT_TINYORM_TEST
+    /*! The connection name for the model. */
+    QString u_connection {"tinyorm_mysql_tests"};
+#endif
+
+    /*! All of the relationships to be touched. */
+    QStringList u_touches {"torrent"};
 };
 
 #endif // TORRENTPREVIEWABLEFILES_H
