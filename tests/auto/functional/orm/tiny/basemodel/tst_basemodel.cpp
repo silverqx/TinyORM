@@ -22,6 +22,8 @@ private slots:
     void cleanupTestCase();
 
     void remove() const;
+    void destroy() const;
+    void destroyWithVector() const;
     void all() const;
     void all_Columns() const;
     void latest() const;
@@ -30,8 +32,8 @@ private slots:
     void where() const;
     void whereEq() const;
     void arrayOperator() const;
-    void vectorWhere() const;
-    void vectorWhere_Condition() const;
+    void whereWithVector() const;
+    void whereWithVector_Condition() const;
     void find() const;
     void findOrNew_Found() const;
     void findOrNew_NotFound() const;
@@ -63,6 +65,7 @@ void tst_BaseModel::remove() const
 {
     auto torrentFile = TorrentPreviewableFile::find(7);
 
+    QVERIFY(torrentFile);
     QVERIFY(torrentFile->exists);
 
     {
@@ -71,13 +74,81 @@ void tst_BaseModel::remove() const
         QVERIFY(result);
         QVERIFY(!torrentFile->exists);
     }
-    // Save it back to the database
+    // Save it back to the database, recreate them
     {
         const auto result = torrentFile->save();
 
         QVERIFY(result);
         QVERIFY(torrentFile->exists);
     }
+}
+
+void tst_BaseModel::destroy() const
+{
+    auto torrentFile = TorrentPreviewableFile::find(8);
+
+    QVERIFY(torrentFile);
+    QCOMPARE(torrentFile->getAttribute("id"), QVariant(8));
+    QVERIFY(torrentFile->exists);
+
+    // Delete record
+    auto count = TorrentPreviewableFile::destroy(8);
+    QCOMPARE(count, 1);
+
+    /* This is normal, Eloquent behaves the same way, there is no way
+       to set 'exists' to the false value in the torrentFiles vector
+       from the TinyORM. */
+    torrentFile->exists = false;
+
+    // Check if it was really deleted from the database
+    auto torrentFileCheck = TorrentPreviewableFile::find(8);
+    QVERIFY(!torrentFileCheck);
+
+    // Save it back to the database, recreate it
+    auto saveResult = torrentFile->save();
+
+    QVERIFY(saveResult);
+    QVERIFY(torrentFile->exists);
+}
+
+void tst_BaseModel::destroyWithVector() const
+{
+    auto torrentFiles =
+            TorrentPreviewableFile::where({{"id", 7, "="},
+                                           {"id", 8, "=", "or"}})->get();
+    auto &torrentFile7 = torrentFiles[0];
+    auto &torrentFile8 = torrentFiles[1];
+
+    QCOMPARE(torrentFiles.size(), 2);
+    QCOMPARE(torrentFile7.getAttribute("id"), QVariant(7));
+    QCOMPARE(torrentFile8.getAttribute("id"), QVariant(8));
+    QVERIFY(torrentFile7.exists);
+    QVERIFY(torrentFile8.exists);
+
+    // Delete both at once
+    auto count = TorrentPreviewableFile::destroy({7, 8});
+    QCOMPARE(count, 2);
+
+    /* This is normal, Eloquent behaves the same way, there is no way
+       to set 'exists' to the false value in the torrentFiles vector
+       from the TinyORM. */
+    torrentFile7.exists = false;
+    torrentFile8.exists = false;
+
+    // Check if they was really deleted from the database
+    auto torrentFilesCheck =
+            TorrentPreviewableFile::where({{"id", 7, "="},
+                                           {"id", 8, "=", "or"}})->get();
+    QCOMPARE(torrentFilesCheck.size(), 0);
+
+    // Save them back to the database, recreate them
+    auto saveResult7 = torrentFile7.save();
+    auto saveResult8 = torrentFile8.save();
+
+    QVERIFY(saveResult7);
+    QVERIFY(saveResult8);
+    QVERIFY(torrentFile7.exists);
+    QVERIFY(torrentFile8.exists);
 }
 
 void tst_BaseModel::all() const
@@ -192,7 +263,7 @@ void tst_BaseModel::arrayOperator() const
             QVariant(QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)));
 }
 
-void tst_BaseModel::vectorWhere() const
+void tst_BaseModel::whereWithVector() const
 {
     {
         auto torrent = Torrent::where({{"id", 3}})->first();
@@ -209,7 +280,7 @@ void tst_BaseModel::vectorWhere() const
     }
 }
 
-void tst_BaseModel::vectorWhere_Condition() const
+void tst_BaseModel::whereWithVector_Condition() const
 {
     {
         auto torrents = Torrent::where({{"size", 14}, {"progress", 400}})->get();
