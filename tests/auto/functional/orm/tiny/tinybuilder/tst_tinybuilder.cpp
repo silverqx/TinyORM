@@ -6,7 +6,7 @@
 #include "database.hpp"
 
 using namespace Orm;
-// TODO namespace silverqx
+// TODO tests, namespace silverqx
 using namespace Orm::Tiny;
 
 class tst_TinyBuilder : public QObject

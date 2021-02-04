@@ -1,12 +1,13 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include "models/setting.hpp"
 #include "models/torrent.hpp"
 
 #include "database.hpp"
 
 using namespace Orm;
-// TODO namespace silverqx
+// TODO tests, namespace silverqx
 using namespace Orm::Tiny;
 
 class tst_BaseModel : public QObject
@@ -21,6 +22,12 @@ private slots:
     void initTestCase();
     void cleanupTestCase();
 
+    void save_Insert() const;
+    void save_InsertWithDefaultValues() const;
+    void save_TableWithoutAutoincrementKey() const;
+    void save_UpdateSuccess() const;
+    void save_UpdateWithNullValue() const;
+    void save_UpdateFailed() const;
     void remove() const;
     void destroy() const;
     void destroyWithVector() const;
@@ -60,6 +67,214 @@ void tst_BaseModel::initTestCase()
 
 void tst_BaseModel::cleanupTestCase()
 {}
+
+void tst_BaseModel::save_Insert() const
+{
+    Torrent torrent;
+
+    auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
+    torrent.setAttribute("name", "test50")
+            .setAttribute("size", 50)
+            .setAttribute("progress", 50)
+            .setAttribute("added_on", addedOn)
+            .setAttribute("hash", "5079e3af2768cdf52ec84c1f320333f68401dc61");
+
+    QVERIFY(!torrent.exists);
+    const auto result = torrent.save();
+    QVERIFY(result);
+    QVERIFY(torrent.exists);
+
+    // Check attributes after save
+    QVERIFY(torrent.getAttribute("id").isValid());
+    QVERIFY(torrent.getAttribute("id").toULongLong() > 6);
+    QCOMPARE(torrent.getAttribute("name"), QVariant("test50"));
+    QCOMPARE(torrent.getAttribute("size"), QVariant(50));
+    QCOMPARE(torrent.getAttribute("progress"), QVariant(50));
+    QCOMPARE(torrent.getAttribute("added_on"),
+             QVariant(addedOn));
+    QCOMPARE(torrent.getAttribute("hash"),
+             QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
+    QVERIFY(torrent.getAttribute("created_at").isValid());
+    QVERIFY(torrent.getAttribute("updated_at").isValid());
+
+    // Get the fresh record from the database
+    auto torrentToVerify = Torrent::find(torrent.getAttribute("id"));
+    QVERIFY(torrentToVerify);
+    QVERIFY(torrentToVerify->exists);
+
+    // And check attributes again
+    QCOMPARE(torrentToVerify->getAttribute("id"), torrent.getAttribute("id"));
+    QCOMPARE(torrentToVerify->getAttribute("name"), QVariant("test50"));
+    QCOMPARE(torrentToVerify->getAttribute("size"), QVariant(50));
+    QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(50));
+    QCOMPARE(torrentToVerify->getAttribute("added_on"),
+             QVariant(addedOn));
+    QCOMPARE(torrentToVerify->getAttribute("hash"),
+             QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
+    QVERIFY(torrentToVerify->getAttribute("created_at").isValid());
+    QVERIFY(torrentToVerify->getAttribute("updated_at").isValid());
+
+    // Remove it
+    torrent.remove();
+    QVERIFY(!torrent.exists);
+}
+
+void tst_BaseModel::save_InsertWithDefaultValues() const
+{
+    Torrent torrent;
+
+    auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
+    torrent.setAttribute("name", "test51")
+            .setAttribute("added_on", addedOn)
+            .setAttribute("hash", "5179e3af2768cdf52ec84c1f320333f68401dc61");
+
+    QVERIFY(!torrent.exists);
+    const auto result = torrent.save();
+    QVERIFY(result);
+    QVERIFY(torrent.exists);
+
+    // Check attributes after save
+    QVERIFY(torrent.getAttribute("id").isValid());
+    QVERIFY(torrent.getAttribute("id").toULongLong() > 6);
+    QCOMPARE(torrent.getAttribute("name"), QVariant("test51"));
+    QCOMPARE(torrent.getAttribute("added_on"),
+             QVariant(addedOn));
+    QCOMPARE(torrent.getAttribute("hash"),
+             QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
+    QVERIFY(torrent.getAttribute("created_at").isValid());
+    QVERIFY(torrent.getAttribute("updated_at").isValid());
+
+    // Get the fresh record from the database
+    auto torrentToVerify = Torrent::find(torrent.getAttribute("id"));
+    QVERIFY(torrentToVerify);
+    QVERIFY(torrentToVerify->exists);
+
+    // And check attributes again
+    QVERIFY(torrentToVerify->getAttribute("id").isValid());
+    QVERIFY(torrentToVerify->getAttribute("id").toULongLong() > 6);
+    QCOMPARE(torrentToVerify->getAttribute("name"), QVariant("test51"));
+    QCOMPARE(torrentToVerify->getAttribute("size"), QVariant(0));
+    QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(0));
+    QCOMPARE(torrentToVerify->getAttribute("added_on"),
+             QVariant(addedOn));
+    QCOMPARE(torrentToVerify->getAttribute("hash"),
+             QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
+    QVERIFY(torrentToVerify->getAttribute("created_at").isValid());
+    QVERIFY(torrentToVerify->getAttribute("updated_at").isValid());
+
+    // Remove it
+    torrent.remove();
+    QVERIFY(!torrent.exists);
+}
+
+void tst_BaseModel::save_TableWithoutAutoincrementKey() const
+{
+    Setting setting;
+
+    setting.setAttribute("name", "setting1")
+            .setAttribute("value", "value1");
+
+    QVERIFY(!setting.exists);
+    const auto result = setting.save();
+    QVERIFY(result);
+    QVERIFY(setting.exists);
+
+    // Check attributes after save
+    QVERIFY(!setting.getAttribute("id").isValid());
+    QCOMPARE(setting.getAttribute("name"), QVariant("setting1"));
+    QCOMPARE(setting.getAttribute("value"), QVariant("value1"));
+    QVERIFY(setting.getAttribute("created_at").isValid());
+    QVERIFY(setting.getAttribute("updated_at").isValid());
+
+    // Get the fresh record from the database
+    auto settingToVerify = Setting::whereEq("name", "setting1")->first();
+    QVERIFY(settingToVerify);
+    QVERIFY(settingToVerify->exists);
+
+    // And check attributes again
+    QVERIFY(!settingToVerify->getAttribute("id").isValid());
+    QCOMPARE(settingToVerify->getAttribute("name"), QVariant("setting1"));
+    QCOMPARE(settingToVerify->getAttribute("value"), QVariant("value1"));
+    QVERIFY(settingToVerify->getAttribute("created_at").isValid());
+    QVERIFY(settingToVerify->getAttribute("updated_at").isValid());
+
+    // Remove it
+    int affected;
+    std::tie(affected, std::ignore) =
+            Setting::whereEq("name", "setting1")->remove();
+    QCOMPARE(affected, 1);
+}
+
+void tst_BaseModel::save_UpdateSuccess() const
+{
+    auto torrentFile = TorrentPreviewableFile::find(4);
+    QVERIFY(torrentFile);
+    QVERIFY(torrentFile->exists);
+    QCOMPARE(torrentFile->getAttribute("id"), QVariant(4));
+
+    torrentFile->setAttribute("filepath", "test3_file1-updated.mkv")
+            .setAttribute("size", 5570)
+            .setAttribute("progress", 860);
+
+    const auto result = torrentFile->save();
+    QVERIFY(result);
+    QVERIFY(torrentFile->exists);
+
+    // Check
+    auto torrentFileFresh = TorrentPreviewableFile::find(4);
+    QVERIFY(torrentFileFresh);
+    QVERIFY(torrentFileFresh->exists);
+    QCOMPARE(torrentFileFresh->getAttribute("filepath"),
+             QVariant("test3_file1-updated.mkv"));
+    QCOMPARE(torrentFileFresh->getAttribute("size"), QVariant(5570));
+    QCOMPARE(torrentFileFresh->getAttribute("progress"), QVariant(860));
+
+    // TODO tests, now remove
+    torrentFile->setAttribute("filepath", "test3_file1.mkv")
+            .setAttribute("size", 5568)
+            .setAttribute("progress", 870);
+    torrentFile->save();
+}
+
+void tst_BaseModel::save_UpdateWithNullValue() const
+{
+    auto peer = TorrentPeer::find(4);
+    QVERIFY(peer);
+    QVERIFY(peer->exists);
+
+    peer->setAttribute("total_seeds", QVariant(QVariant::Int));
+
+    peer->save();
+
+    // Verify after save
+    QVERIFY(peer->getAttribute("total_seeds").isValid());
+    QVERIFY(peer->getAttribute("total_seeds").isNull());
+    QCOMPARE(peer->getAttribute("total_seeds"), QVariant(QVariant::Int));
+
+    // Verify record from the database
+    auto peerVerify = TorrentPeer::find(4);
+    QVERIFY(peerVerify);
+    QVERIFY(peerVerify->exists);
+
+    QVERIFY(peerVerify->getAttribute("total_seeds").isValid());
+    QVERIFY(peerVerify->getAttribute("total_seeds").isNull());
+    QCOMPARE(peerVerify->getAttribute("total_seeds"), QVariant(QVariant::Int));
+
+    // TODO tests, remove silverqx
+    peer->setAttribute("total_seeds", 4);
+    peer->save();
+}
+
+void tst_BaseModel::save_UpdateFailed() const
+{
+    auto peer = TorrentPeer::find(3);
+    QVERIFY(peer);
+    QVERIFY(peer->exists);
+
+    peer->setAttribute("total_seeds_NON-EXISTENT", 15);
+
+    QVERIFY_EXCEPTION_THROWN(peer->save(), QueryError);
+}
 
 void tst_BaseModel::remove() const
 {

@@ -219,6 +219,12 @@ INSERT INTO `file_property_properties` (`id`, `file_property_id`, `name`, `value
 --
 
 --
+-- Indexes for table `settings`
+--
+ALTER TABLE `settings`
+  ADD UNIQUE KEY `settings_name_unique` (`name`);
+
+--
 -- Indexes for table `torrents`
 --
 ALTER TABLE `torrents`
