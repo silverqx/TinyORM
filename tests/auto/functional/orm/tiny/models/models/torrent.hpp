@@ -1,5 +1,5 @@
-#ifndef TORRENTS_H
-#define TORRENTS_H
+#ifndef TORRENT_H
+#define TORRENT_H
 
 #include "orm/tiny/basemodel.hpp"
 
@@ -10,7 +10,8 @@
 
 /* This class serves as a showcase, so all possible features are defined / used. */
 
-class Torrent final : public Orm::Tiny::BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer>
+class Torrent final :
+        public Orm::Tiny::BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer>
 {
 public:
     friend class BaseModel;
@@ -93,4 +94,4 @@ private:
 // TODO finish this, move to base class and test eg in qvector, qhash, etc silverqx
 //QDebug operator<<(QDebug debug, const Torrent &c);
 
-#endif // TORRENTS_H
+#endif // TORRENT_H

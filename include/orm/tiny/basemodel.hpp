@@ -1386,6 +1386,7 @@ namespace Tiny
         return getRelationFromHash<Related, Container>(relation);
     }
 
+    // TODO smart pointer for this relation stuffs? silverqx
     template<typename Model, typename ...AllRelations>
     template<typename Related, typename Tag,
              std::enable_if_t<std::is_same_v<Tag, One>, bool>>

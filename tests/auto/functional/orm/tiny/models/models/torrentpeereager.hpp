@@ -1,23 +1,24 @@
-#ifndef TORRENTPEER_H
-#define TORRENTPEER_H
+#ifndef TORRENTPEEREAGER_H
+#define TORRENTPEEREAGER_H
 
 #include "orm/tiny/basemodel.hpp"
 
-#include "models/torrent.hpp"
+#include "models/torrenteager.hpp"
 
-class TorrentPeer final : public Orm::Tiny::BaseModel<TorrentPeer, Torrent>
+class TorrentPeerEager final :
+        public Orm::Tiny::BaseModel<TorrentPeerEager, TorrentEager>
 {
 public:
     friend class BaseModel;
 
-    explicit TorrentPeer(const QVector<Orm::AttributeItem> &attributes = {});
+    using BaseModel::BaseModel;
 
     /*! Get the torrent that owns the torrent peer. */
     std::unique_ptr<
-    Orm::Tiny::Relations::Relation<TorrentPeer, Torrent>>
+    Orm::Tiny::Relations::Relation<TorrentPeerEager, TorrentEager>>
     torrent()
     {
-        return belongsTo<Torrent>();
+        return belongsTo<TorrentEager>({}, {}, __func__);
     }
 
 private:
@@ -25,7 +26,7 @@ private:
     void relationVisitor(const QString &relation)
     {
         if (relation == "torrent")
-            relationVisited<Torrent>();
+            relationVisited<TorrentEager>();
     }
 
     /*! The table associated with the model. */
@@ -33,12 +34,12 @@ private:
 
     /*! Map of relation names to methods. */
     QHash<QString, std::any> u_relations {
-        {"torrent", &TorrentPeer::torrent},
+        {"torrent", &TorrentPeerEager::torrent},
     };
 
     /*! The relations to eager load on every query. */
     QVector<Orm::WithItem> u_with {
-//        {"torrent"},
+        {"torrent"},
     };
 
 #ifdef PROJECT_TINYORM_TEST
@@ -47,4 +48,4 @@ private:
 #endif
 };
 
-#endif // TORRENTPEER_H
+#endif // TORRENTPEEREAGER_H

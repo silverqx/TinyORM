@@ -258,7 +258,11 @@ void tst_BaseModel::save_UpdateWithNullValue() const
 
     QVERIFY(peerVerify->getAttribute("total_seeds").isValid());
     QVERIFY(peerVerify->getAttribute("total_seeds").isNull());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QCOMPARE(peerVerify->getAttribute("total_seeds"), QVariant(QMetaType(QMetaType::Int)));
+#else
+    QCOMPARE(peerVerify->getAttribute("total_seeds"), QVariant(QVariant::Int));
+#endif
 
     // TODO tests, remove silverqx
     peer->setAttribute("total_seeds", 4);

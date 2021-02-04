@@ -1,12 +1,14 @@
-#ifndef TORRENTPREVIEWABLEFILES_H
-#define TORRENTPREVIEWABLEFILES_H
+#ifndef TORRENTPREVIEWABLEFILEEAGER_H
+#define TORRENTPREVIEWABLEFILEEAGER_H
 
 #include "orm/tiny/basemodel.hpp"
 
 #include "models/torrent.hpp"
 #include "models/torrentpreviewablefileproperty.hpp"
 
-class TorrentPreviewableFile final : public Orm::Tiny::BaseModel<TorrentPreviewableFile, Torrent, TorrentPreviewableFileProperty>
+class TorrentPreviewableFile final :
+        public Orm::Tiny::BaseModel<TorrentPreviewableFile, Torrent,
+                                    TorrentPreviewableFileProperty>
 {
 public:
     friend class BaseModel;
@@ -23,7 +25,8 @@ public:
 
     /*! Get the file property associated with the previewable file. */
     std::unique_ptr<
-    Orm::Tiny::Relations::Relation<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
+    Orm::Tiny::Relations::Relation<TorrentPreviewableFile,
+                                   TorrentPreviewableFileProperty>>
     fileProperty()
     {
         return hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
@@ -64,4 +67,4 @@ private:
     QStringList u_touches {"torrent"};
 };
 
-#endif // TORRENTPREVIEWABLEFILES_H
+#endif // TORRENTPREVIEWABLEFILEEAGER_H

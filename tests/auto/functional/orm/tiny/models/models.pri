@@ -14,8 +14,13 @@ SOURCES += \
 HEADERS += \
     $$PWD/models/filepropertyproperty.hpp \
     $$PWD/models/forwards.hpp \
+    $$PWD/models/forwardseager.hpp \
     $$PWD/models/setting.hpp \
     $$PWD/models/torrent.hpp \
+    $$PWD/models/torrenteager.hpp \
     $$PWD/models/torrentpeer.hpp \
+    $$PWD/models/torrentpeereager.hpp \
     $$PWD/models/torrentpreviewablefile.hpp \
+    $$PWD/models/torrentpreviewablefileeager.hpp \
     $$PWD/models/torrentpreviewablefileproperty.hpp \
+    $$PWD/models/torrentpreviewablefilepropertyeager.hpp \

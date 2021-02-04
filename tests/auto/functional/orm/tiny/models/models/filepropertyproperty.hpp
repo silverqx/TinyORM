@@ -1,11 +1,12 @@
-#ifndef FILEPROPERTYPROPERTIES_H
-#define FILEPROPERTYPROPERTIES_H
+#ifndef FILEPROPERTYPROPERTY_H
+#define FILEPROPERTYPROPERTY_H
 
 #include "orm/tiny/basemodel.hpp"
 
 #include "models/torrentpreviewablefileproperty.hpp"
 
-class FilePropertyProperty final : public Orm::Tiny::BaseModel<FilePropertyProperty, TorrentPreviewableFileProperty>
+class FilePropertyProperty final :
+        public Orm::Tiny::BaseModel<FilePropertyProperty, TorrentPreviewableFileProperty>
 {
 public:
     friend class BaseModel;
@@ -17,7 +18,8 @@ public:
     Orm::Tiny::Relations::Relation<FilePropertyProperty, TorrentPreviewableFileProperty>>
     fileProperty()
     {
-        return belongsTo<TorrentPreviewableFileProperty>("file_property_id", {}, __func__);
+        return belongsTo<TorrentPreviewableFileProperty>("file_property_id", {},
+                                                         __func__);
     }
 
 private:
@@ -50,4 +52,4 @@ private:
     QStringList u_touches {"fileProperty"};
 };
 
-#endif // FILEPROPERTYPROPERTIES_H
+#endif // FILEPROPERTYPROPERTY_H

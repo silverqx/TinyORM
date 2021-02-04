@@ -77,7 +77,7 @@ namespace Orm::Tiny::Relations
 
         const auto first = this->m_query->first();
 
-        return  first ? first : std::nullopt;
+        return first ? first : std::nullopt;
     }
 
 } // namespace Orm::Tiny::Relations
