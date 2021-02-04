@@ -1,7 +1,9 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include "models/torrent.hpp"
 #include "models/torrenteager.hpp"
+#include "models/torrentpeer.hpp"
 #include "models/torrentpeereager.hpp"
 
 #include "database.hpp"
@@ -24,6 +26,8 @@ private slots:
 
     void getRelation_EagerLoad_ManyAndOne() const;
     void getRelation_EagerLoad_BelongsTo() const;
+    void getRelation_LazyLoad_ManyAndOne() const;
+    void getRelation_LazyLoad_BelongsTo() const;
 
 private:
     /*! The database connection instance. */
@@ -47,7 +51,7 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_ManyAndOne() const
     QVERIFY(torrent->exists);
 
     // TorrentPreviewableFileEager has many relation
-    auto files = torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
+    const auto files = torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
     QCOMPARE(files.size(), 2);
     QCOMPARE(typeid (QVector<TorrentPreviewableFileEager *>), typeid (files));
 
@@ -68,6 +72,8 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_ManyAndOne() const
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
         QCOMPARE(typeid (TorrentPreviewableFilePropertyEager *), typeid (fileProperty));
+        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute("id")
+                                         .toULongLong()));
     }
 }
 
@@ -79,6 +85,52 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_BelongsTo() const
 
     // TorrentEager belongs to relation
     auto torrent = torrentPeer->getRelation<TorrentEager, One>("torrent");
+    QVERIFY(torrent);
+    QCOMPARE(torrent->getAttribute("id"), QVariant(2));
+}
+
+void tst_BaseModel_Relations::getRelation_LazyLoad_ManyAndOne() const
+{
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    // TorrentPreviewableFile has many relation
+    const auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<quint64> fileIds {2, 3};
+    // Expected file property IDs
+    QVector<quint64> filePropertyIds {1, 2};
+    for (const auto &file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+        QCOMPARE(file->getAttribute("torrent_id"), QVariant(2));
+        QVERIFY(fileIds.contains(file->getAttribute("id").toULongLong()));
+
+        /* TorrentPreviewableFileProperty has one relation, loaded by
+           dot notation in the u_with data member. */
+        auto fileProperty =
+                file->getRelationValue<TorrentPreviewableFileProperty, One>(
+                    "fileProperty");
+        QVERIFY(fileProperty);
+        QVERIFY(fileProperty->exists);
+        QCOMPARE(typeid (TorrentPreviewableFileProperty *), typeid (fileProperty));
+        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute("id")
+                                         .toULongLong()));
+    }
+}
+
+void tst_BaseModel_Relations::getRelation_LazyLoad_BelongsTo() const
+{
+    auto torrentPeer = TorrentPeer::find(2);
+    QVERIFY(torrentPeer);
+    QVERIFY(torrentPeer->exists);
+
+    // Torrent belongs to relation
+    auto torrent = torrentPeer->getRelationValue<Torrent, One>("torrent");
     QVERIFY(torrent);
     QCOMPARE(torrent->getAttribute("id"), QVariant(2));
 }

@@ -1,5 +1,5 @@
-#ifndef TORRENTPREVIEWABLEFILEEAGER_H
-#define TORRENTPREVIEWABLEFILEEAGER_H
+#ifndef TORRENTPREVIEWABLEFILE_H
+#define TORRENTPREVIEWABLEFILE_H
 
 #include "orm/tiny/basemodel.hpp"
 
@@ -67,4 +67,4 @@ private:
     QStringList u_touches {"torrent"};
 };
 
-#endif // TORRENTPREVIEWABLEFILEEAGER_H
+#endif // TORRENTPREVIEWABLEFILE_H
