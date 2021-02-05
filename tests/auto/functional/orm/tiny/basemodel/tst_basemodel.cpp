@@ -52,6 +52,8 @@ private slots:
     void firstOrNew_NotFound() const;
     void firstOrCreate_Found() const;
     void firstOrCreate_NotFound() const;
+    void isCleanAndIsDirty() const;
+    void wasChanged() const;
 
 private:
     /*! The database connection instance. */
@@ -737,6 +739,61 @@ void tst_BaseModel::firstOrCreate_NotFound() const
     const auto result = torrent.remove();
     QVERIFY(result);
     QVERIFY(!torrent.exists);
+}
+
+void tst_BaseModel::isCleanAndIsDirty() const
+{
+    auto torrent = Torrent::find(4);
+
+    QVERIFY(torrent->isClean());
+    QVERIFY(!torrent->isDirty());
+    QVERIFY(torrent->isClean("name"));
+    QVERIFY(!torrent->isDirty("name"));
+
+    torrent->setAttribute("name", "test4 dirty");
+
+    QVERIFY(!torrent->isClean());
+    QVERIFY(torrent->isDirty());
+    QVERIFY(!torrent->isClean("name"));
+    QVERIFY(torrent->isDirty("name"));
+    QVERIFY(torrent->isClean("size"));
+    QVERIFY(!torrent->isDirty("size"));
+
+    torrent->save();
+
+    QVERIFY(torrent->isClean());
+    QVERIFY(!torrent->isDirty());
+    QVERIFY(torrent->isClean("name"));
+    QVERIFY(!torrent->isDirty("name"));
+    QVERIFY(torrent->isClean("size"));
+    QVERIFY(!torrent->isDirty("size"));
+
+    // Restore the name
+    torrent->setAttribute("name", "test4");
+    torrent->save();
+}
+
+void tst_BaseModel::wasChanged() const
+{
+    auto torrent = Torrent::find(4);
+
+    QVERIFY(!torrent->wasChanged());
+    QVERIFY(!torrent->wasChanged("name"));
+
+    torrent->setAttribute("name", "test4 changed");
+
+    QVERIFY(!torrent->wasChanged());
+    QVERIFY(!torrent->wasChanged("name"));
+
+    torrent->save();
+
+    QVERIFY(torrent->wasChanged());
+    QVERIFY(torrent->wasChanged("name"));
+    QVERIFY(!torrent->wasChanged("size"));
+
+    // Restore the name
+    torrent->setAttribute("name", "test4");
+    torrent->save();
 }
 
 QTEST_MAIN(tst_BaseModel)
