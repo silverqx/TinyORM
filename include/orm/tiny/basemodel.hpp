@@ -184,9 +184,11 @@ namespace Tiny
         { return load(QVector<WithItem> {{relation}}); }
 
         /*! Determine if two models have the same ID and belong to the same table. */
-        bool is(const std::optional<Model> &model) const;
+        template<typename ModelToCompare>
+        bool is(const std::optional<ModelToCompare> &model) const;
         /*! Determine if two models are not the same. */
-        bool isNot(const std::optional<Model> &model) const
+        template<typename ModelToCompare>
+        bool isNot(const std::optional<ModelToCompare> &model) const
         { return !is(model); }
 
         /*! Fill the model with an array of attributes. */
@@ -1027,8 +1029,9 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    template<typename ModelToCompare>
     bool BaseModel<Model, AllRelations...>::is(
-            const std::optional<Model> &model) const
+            const std::optional<ModelToCompare> &model) const
     {
         return model
                 && getKey() == model->getKey()

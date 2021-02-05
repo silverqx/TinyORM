@@ -54,6 +54,8 @@ private slots:
     void firstOrCreate_NotFound() const;
     void isCleanAndIsDirty() const;
     void wasChanged() const;
+    void is() const;
+    void isNot() const;
 
 private:
     /*! The database connection instance. */
@@ -794,6 +796,32 @@ void tst_BaseModel::wasChanged() const
     // Restore the name
     torrent->setAttribute("name", "test4");
     torrent->save();
+}
+
+void tst_BaseModel::is() const
+{
+    auto torrent2_1 = Torrent::find(2);
+    auto torrent2_2 = Torrent::find(2);
+
+    // The same primary key, table name and connection name
+    QVERIFY(torrent2_1->is(torrent2_2));
+}
+
+void tst_BaseModel::isNot() const
+{
+    auto torrent2_1 = Torrent::find(2);
+    auto torrent2_2 = Torrent::find(2);
+    auto torrent3 = Torrent::find(3);
+    auto file4 = TorrentPreviewableFile::find(4);
+
+    // Different primary key
+    QVERIFY(torrent2_1->isNot(torrent3));
+    // Different table name
+    QVERIFY(torrent2_1->isNot(file4));
+
+    // Different connection name
+    torrent2_2->setConnection("crystal");
+    QVERIFY(torrent2_1->isNot(torrent2_2));
 }
 
 QTEST_MAIN(tst_BaseModel)
