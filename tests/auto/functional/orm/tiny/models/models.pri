@@ -18,6 +18,7 @@ HEADERS += \
     $$PWD/models/setting.hpp \
     $$PWD/models/torrent.hpp \
     $$PWD/models/torrenteager.hpp \
+#    $$PWD/models/torrenteager_failed.hpp \
     $$PWD/models/torrentpeer.hpp \
     $$PWD/models/torrentpeereager.hpp \
     $$PWD/models/torrentpreviewablefile.hpp \

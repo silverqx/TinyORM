@@ -9,6 +9,8 @@
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/invalidformaterror.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
+#include "orm/tiny/relationnotfounderror.hpp"
+#include "orm/tiny/relationnotloadederror.hpp"
 #include "orm/tiny/relations/belongsto.hpp"
 #include "orm/tiny/relations/hasone.hpp"
 #include "orm/tiny/relations/hasmany.hpp"
@@ -1383,8 +1385,8 @@ namespace Tiny
     BaseModel<Model, AllRelations...>::getRelation(const QString &relation)
     {
         if (!relationLoaded(relation))
-            // TODO create RelationError class silverqx
-            throw OrmRuntimeError("Undefined relation key (in m_relations) : " + relation);
+            throw RelationNotLoadedError(
+                    Orm::Utils::Type::classPureBasename<Model>(), relation);
 
         return getRelationFromHash<Related, Container>(relation);
     }
@@ -1397,8 +1399,8 @@ namespace Tiny
     BaseModel<Model, AllRelations...>::getRelation(const QString &relation)
     {
         if (!relationLoaded(relation))
-            // TODO create RelationError class silverqx
-            throw OrmRuntimeError("Undefined relation key (in m_relations) : " + relation);
+            throw RelationNotLoadedError(
+                    Orm::Utils::Type::classPureBasename<Model>(), relation);
 
         // TODO instantiate relation by name and check if is_base_of OneRelation/ManyRelation, to have nice exception message (in debug mode only), because is impossible to check this during compile time silverqx
 
@@ -1800,7 +1802,8 @@ namespace Tiny
     void BaseModel<Model, AllRelations...>::validateUserRelation(const QString &name) const
     {
         if (!model().u_relations.contains(name))
-            throw OrmRuntimeError("Undefined relation key (in u_relations) : " + name);
+            throw RelationNotFoundError(
+                    Orm::Utils::Type::classPureBasename<Model>(), name);
     }
 
     template<typename Model, typename ...AllRelations>

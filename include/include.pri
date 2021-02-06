@@ -30,6 +30,8 @@ HEADERS += \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \
     $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
     $$PWD/orm/tiny/modelnotfounderror.hpp \
+    $$PWD/orm/tiny/relationnotfounderror.hpp \
+    $$PWD/orm/tiny/relationnotloadederror.hpp \
     $$PWD/orm/tiny/relations/belongsto.hpp \
     $$PWD/orm/tiny/relations/hasmany.hpp \
     $$PWD/orm/tiny/relations/hasone.hpp \

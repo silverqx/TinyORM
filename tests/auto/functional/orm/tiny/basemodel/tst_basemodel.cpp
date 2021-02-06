@@ -28,32 +28,41 @@ private slots:
     void save_UpdateSuccess() const;
     void save_UpdateWithNullValue() const;
     void save_UpdateFailed() const;
+
     void remove() const;
     void destroy() const;
     void destroyWithVector() const;
+
     void all() const;
     void all_Columns() const;
+
     void latest() const;
     void oldest() const;
+
     // TODO tests, where conditions, and orWhere ... silverqx
     void where() const;
     void whereEq() const;
+    void where_WithVector() const;
+    void where_WithVector_Condition() const;
+
     void arrayOperator() const;
-    void whereWithVector() const;
-    void whereWithVector_Condition() const;
+
     void find() const;
     void findOrNew_Found() const;
     void findOrNew_NotFound() const;
     void findOrFail_Found() const;
     void findOrFail_NotFoundFailed() const;
+
     void firstWhere() const;
     void firstWhereEq() const;
     void firstOrNew_Found() const;
     void firstOrNew_NotFound() const;
     void firstOrCreate_Found() const;
     void firstOrCreate_NotFound() const;
+
     void isCleanAndIsDirty() const;
     void wasChanged() const;
+
     void is() const;
     void isNot() const;
 
@@ -279,7 +288,7 @@ void tst_BaseModel::save_UpdateFailed() const
     QVERIFY(peer);
     QVERIFY(peer->exists);
 
-    peer->setAttribute("total_seeds_NON-EXISTENT", 15);
+    peer->setAttribute("total_seeds-NON_EXISTENT", 15);
 
     QVERIFY_EXCEPTION_THROWN(peer->save(), QueryError);
 }
@@ -476,17 +485,7 @@ void tst_BaseModel::whereEq() const
     }
 }
 
-void tst_BaseModel::arrayOperator() const
-{
-    auto torrent = Torrent::where("id", "=", 2)->first();
-    QVERIFY(torrent);
-    QCOMPARE((*torrent)["id"], QVariant(2));
-    QCOMPARE((*torrent)["name"], QVariant("test2"));
-    QCOMPARE((*torrent)["added_on"],
-            QVariant(QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)));
-}
-
-void tst_BaseModel::whereWithVector() const
+void tst_BaseModel::where_WithVector() const
 {
     {
         auto torrent = Torrent::where({{"id", 3}})->first();
@@ -503,7 +502,7 @@ void tst_BaseModel::whereWithVector() const
     }
 }
 
-void tst_BaseModel::whereWithVector_Condition() const
+void tst_BaseModel::where_WithVector_Condition() const
 {
     {
         auto torrents = Torrent::where({{"size", 14}, {"progress", 400}})->get();
@@ -523,6 +522,16 @@ void tst_BaseModel::whereWithVector_Condition() const
         QCOMPARE(torrents.size(), 1);
         QCOMPARE(torrents.at(0).getAttribute("id"), QVariant(4));
     }
+}
+
+void tst_BaseModel::arrayOperator() const
+{
+    auto torrent = Torrent::where("id", "=", 2)->first();
+    QVERIFY(torrent);
+    QCOMPARE((*torrent)["id"], QVariant(2));
+    QCOMPARE((*torrent)["name"], QVariant("test2"));
+    QCOMPARE((*torrent)["added_on"],
+            QVariant(QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)));
 }
 
 void tst_BaseModel::find() const

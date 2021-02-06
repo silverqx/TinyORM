@@ -20,7 +20,7 @@ namespace Orm::Tiny
         explicit ModelNotFoundError(const QString &model,
                                     const QVector<QVariant> &ids = {});
 
-        /*! Get the affected Eloquent model IDs. */
+        /*! Get the affected Eloquent model. */
         inline const QString &getModel() const
         { return m_model; }
         /*! Get the affected Eloquent model IDs. */
@@ -28,7 +28,7 @@ namespace Orm::Tiny
         { return m_ids; }
 
     protected:
-        /*! Name of the affected Eloquent model.. */
+        /*! Name of the affected Eloquent model. */
         const QString m_model;
         /*! The affected model IDs. */
         const QVector<QVariant> m_ids;
