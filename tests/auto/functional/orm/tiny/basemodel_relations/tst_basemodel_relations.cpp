@@ -42,6 +42,8 @@ private slots:
     void with_Vector_MoreRelations() const;
     void with_NonExistentRelation_Failed() const;
 
+    void load() const;
+
 private:
     /*! The database connection instance. */
     ConnectionInterface &m_connection;
@@ -332,6 +334,49 @@ void tst_BaseModel_Relations::with_NonExistentRelation_Failed() const
 {
     QVERIFY_EXCEPTION_THROWN(Torrent::with("torrentFiles-NON_EXISTENT")->find(1),
                              RelationNotFoundError);
+}
+
+void tst_BaseModel_Relations::load() const
+{
+    auto torrent = Torrent::find(2);
+
+    QVERIFY(torrent->getRelations().isEmpty());
+
+    torrent->load({{"torrentFiles"}, {"torrentPeer"}});
+
+    const auto &relations = torrent->getRelations();
+    QVERIFY(relations.size() == 2);
+    QVERIFY(relations.contains("torrentFiles"));
+    QVERIFY(relations.contains("torrentPeer"));
+
+    // TorrentPeer has one relation
+    auto peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
+    QVERIFY(peer);
+    QVERIFY(peer->exists);
+    QCOMPARE(peer->getAttribute("torrent_id"), torrent->getAttribute("id"));
+    QCOMPARE(peer->getAttribute("id"), QVariant(2));
+    QCOMPARE(typeid (TorrentPeer *), typeid (peer));
+
+    // TorrentPreviewableFile has many relation
+    auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<quint64> fileIds {2, 3};
+    for (auto *file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
+        QVERIFY(fileIds.contains(file->getAttribute("id").toULongLong()));
+        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+
+        // No TorrentPreviewableFileProperty loaded
+        QVERIFY_EXCEPTION_THROWN(
+                    (file->getRelation<TorrentPreviewableFileProperty, One>(
+                         "fileProperty")),
+                    OrmRuntimeError);
+    }
 }
 
 QTEST_MAIN(tst_BaseModel_Relations)
