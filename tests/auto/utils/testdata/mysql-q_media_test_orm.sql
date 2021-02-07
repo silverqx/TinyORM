@@ -56,6 +56,7 @@ CREATE TABLE `torrents` (
   `progress` smallint UNSIGNED NOT NULL DEFAULT '0',
   `added_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hash` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `note` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -68,13 +69,13 @@ CREATE TABLE `torrents` (
 -- Dumping data for table `torrents`
 --
 
-INSERT INTO `torrents` (`id`, `name`, `size`, `progress`, `added_on`, `hash`, `created_at`, `updated_at`) VALUES
-(1, 'test1', 11, 100, '2020-08-01 20:11:10', '1579e3af2768cdf52ec84c1f320333f68401dc6e', '2021-01-01 14:51:23', '2021-01-01 17:46:31'),
-(2, 'test2', 12, 200, '2020-08-02 20:11:10', '2579e3af2768cdf52ec84c1f320333f68401dc6e', '2021-01-02 14:51:23', '2021-01-02 17:46:31'),
-(4, 'test4', 14, 400, '2020-08-04 20:11:10', '4579e3af2768cdf52ec84c1f320333f68401dc6e', '2021-01-03 14:51:23', '2021-01-03 17:46:31'),
-(3, 'test3', 13, 300, '2020-08-03 20:11:10', '3579e3af2768cdf52ec84c1f320333f68401dc6e', '2021-01-04 14:51:23', '2021-01-04 17:46:31'),
-(5, 'test5 no peers', 15, 500, '2020-08-05 20:11:10', '5579e3af2768cdf52ec84c1f320333f68401dc6e', '2021-01-05 14:51:23', '2021-01-05 17:46:31'),
-(6, 'test6 no files no peers', 16, 600, '2020-08-06 20:11:10', '6579e3af2768cdf52ec84c1f320333f68401dc6e', '2021-01-06 14:51:23', '2021-01-06 17:46:31');
+INSERT INTO `torrents` (`id`, `name`, `size`, `progress`, `added_on`, `hash`, `note`, `created_at`, `updated_at`) VALUES
+(1, 'test1', 11, 100, '2020-08-01 20:11:10', '1579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-01 14:51:23', '2021-01-01 17:46:31'),
+(2, 'test2', 12, 200, '2020-08-02 20:11:10', '2579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-02 14:51:23', '2021-01-02 17:46:31'),
+(3, 'test3', 13, 300, '2020-08-03 20:11:10', '3579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-04 14:51:23', '2021-01-04 17:46:31'),
+(4, 'test4', 14, 400, '2020-08-04 20:11:10', '4579e3af2768cdf52ec84c1f320333f68401dc6e', 'after update revert updated_at', '2021-01-03 14:51:23', '2021-01-03 17:46:31'),
+(5, 'test5', 15, 500, '2020-08-05 20:11:10', '5579e3af2768cdf52ec84c1f320333f68401dc6e', 'no peers', '2021-01-05 14:51:23', '2021-01-05 17:46:31'),
+(6, 'test6', 16, 600, '2020-08-06 20:11:10', '6579e3af2768cdf52ec84c1f320333f68401dc6e', 'no files no peers', '2021-01-06 14:51:23', '2021-01-06 17:46:31');
 
 -- --------------------------------------------------------
 
