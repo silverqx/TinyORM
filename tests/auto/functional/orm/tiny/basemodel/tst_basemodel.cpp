@@ -69,6 +69,13 @@ private slots:
     void fresh() const;
     void refresh_OnlyAttributes() const;
 
+    void create() const;
+    void create_Failed() const;
+    void update() const;
+    void update_NonExistent() const;
+    void update_Failed() const;
+    void update_SameValue() const;
+
 private:
     /*! The database connection instance. */
     ConnectionInterface &m_connection;
@@ -294,6 +301,8 @@ void tst_BaseModel::save_UpdateFailed() const
     peer->setAttribute("total_seeds-NON_EXISTENT", 15);
 
     QVERIFY_EXCEPTION_THROWN(peer->save(), QueryError);
+
+    QVERIFY(peer->exists);
 }
 
 void tst_BaseModel::remove() const
@@ -891,6 +900,124 @@ void tst_BaseModel::refresh_OnlyAttributes() const
         QCOMPARE(refreshedTorrent.getAttribute("id"), torrent->getAttribute("id"));
         QCOMPARE(refreshedTorrent.getAttribute("name"), original);
     }
+}
+
+void tst_BaseModel::create() const
+{
+    auto addedOn = QDateTime::fromString("2021-02-01 20:22:10", Qt::ISODate);
+
+    auto torrent = Torrent::create({
+        {"name",     "test100"},
+        {"size",     100},
+        {"progress", 333},
+        {"added_on", addedOn},
+        {"hash",     "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
+    });
+
+    QVERIFY(torrent.exists);
+    QVERIFY(torrent["id"].isValid());
+    QVERIFY(torrent["id"].toULongLong() > 6);
+    QCOMPARE(torrent["name"], QVariant("test100"));
+    QCOMPARE(torrent["size"], QVariant(100));
+    QCOMPARE(torrent["progress"], QVariant(333));
+    QCOMPARE(torrent["added_on"], QVariant(addedOn));
+    QCOMPARE(torrent["hash"], QVariant("1009e3af2768cdf52ec84c1f320333f68401dc6e"));
+
+    QVERIFY(!torrent.isDirty());
+    QVERIFY(!torrent.wasChanged());
+
+    torrent.setAttribute("name", "test100 create");
+    torrent.save();
+
+    QVERIFY(torrent.exists);
+    QCOMPARE(torrent["name"], QVariant("test100 create"));
+
+    QVERIFY(torrent.wasChanged());
+
+    torrent.remove();
+
+    QVERIFY(!torrent.exists);
+}
+
+void tst_BaseModel::create_Failed() const
+{
+    auto addedOn = QDateTime::fromString("2021-02-01 20:22:10", Qt::ISODate);
+
+    Torrent torrent;
+    QVERIFY_EXCEPTION_THROWN((torrent = Torrent::create({
+        {"name-NON_EXISTENT", "test100"},
+        {"size",              100},
+        {"progress",          333},
+        {"added_on",          addedOn},
+        {"hash",              "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
+    })), QueryError);
+
+    QVERIFY(!torrent.exists);
+    QVERIFY(torrent.getAttributes().isEmpty());
+}
+
+void tst_BaseModel::update() const
+{
+    auto torrent = Torrent::find(3);
+
+    auto progressOriginal = torrent->getAttribute("progress");
+
+    QVERIFY(torrent->exists);
+    QCOMPARE(progressOriginal, QVariant(300));
+
+    auto result = torrent->update({{"progress", 333}});
+
+    QVERIFY(result);
+    QCOMPARE(torrent->getAttribute("progress"), QVariant(333));
+
+    // Verify in the database
+    auto torrentVerify = Torrent::find(3);
+    QVERIFY(torrentVerify->exists);
+    QCOMPARE(torrentVerify->getAttribute("progress"), QVariant(333));
+
+    // Revert value back
+    auto resultRevert = torrent->update({{"progress", progressOriginal}});
+    QVERIFY(resultRevert);
+    QCOMPARE(torrent->getAttribute("progress"), progressOriginal);
+}
+
+void tst_BaseModel::update_NonExistent() const
+{
+    Torrent torrent;
+
+    auto result = torrent.update({{"progress", 333}});
+    QVERIFY(!result);
+}
+
+void tst_BaseModel::update_Failed() const
+{
+    auto torrent = Torrent::find(3);
+
+    QVERIFY(torrent->exists);
+
+    // NOTE api different, mass assignable is not implemented now, and because of that it throws, if the mass assignable was implemented, result would be true silverqx
+    QVERIFY_EXCEPTION_THROWN(
+                torrent->update({{"progress-NON_EXISTENT", 333}}),
+                QueryError);
+}
+
+void tst_BaseModel::update_SameValue() const
+{
+    auto torrent = Torrent::find(3);
+    QVERIFY(torrent->exists);
+
+    auto updatedAtColumn = torrent->getUpdatedAtColumn();
+    auto updatedAt = torrent->getAttribute(updatedAtColumn);
+
+    auto result = torrent->update({{"progress", 300}});
+
+    QVERIFY(result);
+    QVERIFY(!torrent->isDirty());
+    QVERIFY(!torrent->wasChanged());
+
+    auto torrentVerify = Torrent::find(3);
+    QVERIFY(torrentVerify->exists);
+    QCOMPARE(torrentVerify->getAttribute(updatedAtColumn), updatedAt);
 }
 
 QTEST_MAIN(tst_BaseModel)
