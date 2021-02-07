@@ -958,27 +958,48 @@ void tst_BaseModel::create_Failed() const
 
 void tst_BaseModel::update() const
 {
-    auto torrent = Torrent::find(3);
+    auto timeBeforeUpdate = QDateTime::currentDateTime();
+    // Reset milliseconds to 0
+    {
+        auto time = timeBeforeUpdate.time();
+        timeBeforeUpdate.setTime(QTime(time.hour(), time.minute(), time.second()));
+    }
+
+    auto torrent = Torrent::find(4);
+
+    auto &updatedAtColumn = torrent->getUpdatedAtColumn();
 
     auto progressOriginal = torrent->getAttribute("progress");
+    auto updatedAtOriginal = torrent->getAttribute(updatedAtColumn);
 
     QVERIFY(torrent->exists);
-    QCOMPARE(progressOriginal, QVariant(300));
+    QCOMPARE(progressOriginal, QVariant(400));
+    QCOMPARE(updatedAtOriginal,
+             QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
 
-    auto result = torrent->update({{"progress", 333}});
+    auto result = torrent->update({{"progress", 449}});
 
     QVERIFY(result);
-    QCOMPARE(torrent->getAttribute("progress"), QVariant(333));
+    QCOMPARE(torrent->getAttribute("progress"), QVariant(449));
+    QVERIFY(!torrent->isDirty());
+    QVERIFY(torrent->wasChanged());
 
-    // Verify in the database
-    auto torrentVerify = Torrent::find(3);
+    // Verify value in the database
+    auto torrentVerify = Torrent::find(4);
     QVERIFY(torrentVerify->exists);
-    QCOMPARE(torrentVerify->getAttribute("progress"), QVariant(333));
+    QCOMPARE(torrentVerify->getAttribute("progress"), QVariant(449));
+    QVERIFY(torrentVerify->getAttribute(updatedAtColumn).toDateTime()
+            >= timeBeforeUpdate);
 
     // Revert value back
-    auto resultRevert = torrent->update({{"progress", progressOriginal}});
+    auto resultRevert = torrent->update({{"progress", progressOriginal},
+                                         {updatedAtColumn, updatedAtOriginal}});
     QVERIFY(resultRevert);
     QCOMPARE(torrent->getAttribute("progress"), progressOriginal);
+    /* Needed to convert toDateTime() because BaseModel::update() set update_at
+       attribute as QString. */
+    QCOMPARE(torrent->getAttribute(updatedAtColumn).toDateTime(),
+             updatedAtOriginal.toDateTime());
 }
 
 void tst_BaseModel::update_NonExistent() const
@@ -1006,15 +1027,18 @@ void tst_BaseModel::update_SameValue() const
     auto torrent = Torrent::find(3);
     QVERIFY(torrent->exists);
 
-    auto updatedAtColumn = torrent->getUpdatedAtColumn();
+    auto &updatedAtColumn = torrent->getUpdatedAtColumn();
     auto updatedAt = torrent->getAttribute(updatedAtColumn);
 
+    /* Doesn't send update query to the database, this is different from
+       the TinyBuilder::update() method. */
     auto result = torrent->update({{"progress", 300}});
 
     QVERIFY(result);
     QVERIFY(!torrent->isDirty());
     QVERIFY(!torrent->wasChanged());
 
+    // Verify value in the database
     auto torrentVerify = Torrent::find(3);
     QVERIFY(torrentVerify->exists);
     QCOMPARE(torrentVerify->getAttribute(updatedAtColumn), updatedAt);

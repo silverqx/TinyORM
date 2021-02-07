@@ -29,6 +29,10 @@ private slots:
 
     void incrementAndDecrement() const;
 
+    void update() const;
+    void update_Failed() const;
+    void update_SameValue() const;
+
 private:
     /*! Create the TinyBuilder by template parameter. */
     template<typename Model>
@@ -104,11 +108,11 @@ void tst_TinyBuilder::firstOrFail_NotFoundFailed() const
 
 void tst_TinyBuilder::incrementAndDecrement() const
 {
-    auto beforeIncrement = QDateTime::currentDateTime();
+    auto timeBeforeIncrement = QDateTime::currentDateTime();
     // Reset milliseconds to 0
     {
-        auto time = beforeIncrement.time();
-        beforeIncrement.setTime(QTime(time.hour(), time.minute(), time.second()));
+        auto time = timeBeforeIncrement.time();
+        timeBeforeIncrement.setTime(QTime(time.hour(), time.minute(), time.second()));
     }
 
     auto torrent4_1 = Torrent::find(4);
@@ -123,7 +127,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QCOMPARE(sizeOriginal, QVariant(14));
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime::fromString("2021-01-03 18:46:31", Qt::ISODate)));
+             QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
 
     // Incremented
     Torrent::whereEq("id", 4)->increment("size", 2, {{"progress", 444}});
@@ -133,7 +137,8 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QVERIFY(torrent4_2->exists);
     QCOMPARE(torrent4_2->getAttribute("size"), QVariant(16));
     QCOMPARE(torrent4_2->getAttribute("progress"), QVariant(444));
-    QVERIFY(torrent4_2->getAttribute(updatedAtColumn).toDateTime() >= beforeIncrement);
+    QVERIFY(torrent4_2->getAttribute(updatedAtColumn).toDateTime()
+            >= timeBeforeIncrement);
 
     // Decremented and restore updated at column
     Torrent::whereEq("id", 4)->decrement("size", 2,
@@ -146,6 +151,89 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QCOMPARE(torrent4_3->getAttribute("size"), QVariant(14));
     QCOMPARE(torrent4_3->getAttribute("progress"), QVariant(400));
     QCOMPARE(torrent4_3->getAttribute(updatedAtColumn), updatedAtOriginal);
+}
+
+void tst_TinyBuilder::update() const
+{
+    auto timeBeforeUpdate = QDateTime::currentDateTime();
+    // Reset milliseconds to 0
+    {
+        auto time = timeBeforeUpdate.time();
+        timeBeforeUpdate.setTime(QTime(time.hour(), time.minute(), time.second()));
+    }
+
+    auto torrent = Torrent::find(4);
+
+    auto &updatedAtColumn = torrent->getUpdatedAtColumn();
+
+    auto progressOriginal = torrent->getAttribute("progress");
+    auto updatedAtOriginal = torrent->getAttribute(updatedAtColumn);
+
+    QVERIFY(torrent->exists);
+    QCOMPARE(progressOriginal, QVariant(400));
+    QCOMPARE(updatedAtOriginal,
+             QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
+
+    auto [affected, query] = Torrent::whereEq("id", 4)->update({{"progress", 447}});
+    QCOMPARE(affected, 1);
+    QVERIFY(query.isActive());
+
+    // Verify value in the database
+    auto torrentVerify = Torrent::find(4);
+    QVERIFY(torrentVerify->exists);
+    QCOMPARE(torrentVerify->getAttribute("progress"), QVariant(447));
+    QVERIFY(torrentVerify->getAttribute(updatedAtColumn).toDateTime()
+            >= timeBeforeUpdate);
+
+    // Revert value back
+    auto [affectedRevert, queryRevert] =
+            Torrent::whereEq("id", 4)->update({{"progress", progressOriginal},
+                                               {updatedAtColumn, updatedAtOriginal}});
+    QCOMPARE(affectedRevert, 1);
+    QVERIFY(queryRevert.isActive());
+    QCOMPARE(torrent->getAttribute("progress"), progressOriginal);
+    qDebug() << torrent->getAttribute(updatedAtColumn);
+    qDebug() << updatedAtOriginal;
+    /* Needed to convert toDateTime() because TinyBuilder::update() set update_at
+       attribute as QString. */
+    QCOMPARE(torrent->getAttribute(updatedAtColumn).toDateTime(),
+             updatedAtOriginal.toDateTime());
+}
+
+void tst_TinyBuilder::update_Failed() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+                Torrent::whereEq("id", 3)->update({{"progress-NON_EXISTENT", 333}}),
+                QueryError);
+}
+
+void tst_TinyBuilder::update_SameValue() const
+{
+    auto timeBeforeUpdate = QDateTime::currentDateTime();
+    // Reset milliseconds to 0
+    {
+        auto time = timeBeforeUpdate.time();
+        timeBeforeUpdate.setTime(QTime(time.hour(), time.minute(), time.second()));
+    }
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent->exists);
+
+    /* Send update query to the database, this is different from
+       the BaseModel::update() method. */
+    auto [affected, query] = Torrent::whereEq("id", 5)
+            ->update({{"progress", torrent->getAttribute("progress")}});
+
+    /* Don't exactly know what cause this, I think some sort of caching can
+       occure. */
+    QVERIFY(affected == 1 || affected == 0);
+    QVERIFY(query.isActive());
+
+    // Verify value in the database
+    auto torrentVerify = Torrent::find(5);
+    QVERIFY(torrentVerify->exists);
+    QVERIFY(torrentVerify->getAttribute(torrent->getUpdatedAtColumn()).toDateTime()
+            >= timeBeforeUpdate);
 }
 
 QTEST_MAIN(tst_TinyBuilder)
