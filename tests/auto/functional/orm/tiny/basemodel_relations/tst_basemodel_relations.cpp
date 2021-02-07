@@ -44,6 +44,7 @@ private slots:
     void with_NonExistentRelation_Failed() const;
 
     void load() const;
+    void load_Failed() const;
 
     void refresh_EagerLoad_OnlyRelations();
     void refresh_LazyLoad_OnlyRelations();
@@ -381,6 +382,17 @@ void tst_BaseModel_Relations::load() const
                          "fileProperty")),
                     OrmRuntimeError);
     }
+}
+
+void tst_BaseModel_Relations::load_Failed() const
+{
+    auto torrent = Torrent::find(2);
+
+    QVERIFY(torrent->getRelations().isEmpty());
+
+    QVERIFY_EXCEPTION_THROWN(torrent->load("torrentFiles-NON_EXISTENT"),
+                             RelationNotFoundError);
+    QVERIFY(torrent->getRelations().isEmpty());
 }
 
 void tst_BaseModel_Relations::refresh_EagerLoad_OnlyRelations()
