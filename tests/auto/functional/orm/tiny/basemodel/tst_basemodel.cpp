@@ -23,11 +23,11 @@ private slots:
     void cleanupTestCase();
 
     void save_Insert() const;
-    void save_InsertWithDefaultValues() const;
-    void save_TableWithoutAutoincrementKey() const;
-    void save_UpdateSuccess() const;
-    void save_UpdateWithNullValue() const;
-    void save_UpdateFailed() const;
+    void save_Insert_WithDefaultValues() const;
+    void save_Insert_TableWithoutAutoincrementKey() const;
+    void save_Update_Success() const;
+    void save_Update_WithNullValue() const;
+    void save_Update_Failed() const;
 
     void remove() const;
     void destroy() const;
@@ -71,6 +71,7 @@ private slots:
 
     void create() const;
     void create_Failed() const;
+
     void update() const;
     void update_NonExistent() const;
     void update_Failed() const;
@@ -142,7 +143,7 @@ void tst_BaseModel::save_Insert() const
     QVERIFY(!torrent.exists);
 }
 
-void tst_BaseModel::save_InsertWithDefaultValues() const
+void tst_BaseModel::save_Insert_WithDefaultValues() const
 {
     Torrent torrent;
 
@@ -190,7 +191,7 @@ void tst_BaseModel::save_InsertWithDefaultValues() const
     QVERIFY(!torrent.exists);
 }
 
-void tst_BaseModel::save_TableWithoutAutoincrementKey() const
+void tst_BaseModel::save_Insert_TableWithoutAutoincrementKey() const
 {
     Setting setting;
 
@@ -228,7 +229,7 @@ void tst_BaseModel::save_TableWithoutAutoincrementKey() const
     QCOMPARE(affected, 1);
 }
 
-void tst_BaseModel::save_UpdateSuccess() const
+void tst_BaseModel::save_Update_Success() const
 {
     auto torrentFile = TorrentPreviewableFile::find(4);
     QVERIFY(torrentFile);
@@ -259,7 +260,7 @@ void tst_BaseModel::save_UpdateSuccess() const
     torrentFile->save();
 }
 
-void tst_BaseModel::save_UpdateWithNullValue() const
+void tst_BaseModel::save_Update_WithNullValue() const
 {
     auto peer = TorrentPeer::find(4);
     QVERIFY(peer);
@@ -292,7 +293,7 @@ void tst_BaseModel::save_UpdateWithNullValue() const
     peer->save();
 }
 
-void tst_BaseModel::save_UpdateFailed() const
+void tst_BaseModel::save_Update_Failed() const
 {
     auto peer = TorrentPeer::find(3);
     QVERIFY(peer);
