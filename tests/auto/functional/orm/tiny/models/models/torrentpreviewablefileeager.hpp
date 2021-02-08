@@ -3,25 +3,16 @@
 
 #include "orm/tiny/basemodel.hpp"
 
-#include "models/torrenteager.hpp"
 #include "models/torrentpreviewablefilepropertyeager.hpp"
 
 class TorrentPreviewableFileEager final :
-        public Orm::Tiny::BaseModel<TorrentPreviewableFileEager, TorrentEager,
+        public Orm::Tiny::BaseModel<TorrentPreviewableFileEager,
                                     TorrentPreviewableFilePropertyEager>
 {
 public:
     friend class BaseModel;
 
     using BaseModel::BaseModel;
-
-    /*! Get the torrent that owns the previewable file. */
-    std::unique_ptr<
-    Orm::Tiny::Relations::Relation<TorrentPreviewableFileEager, TorrentEager>>
-    torrent()
-    {
-        return belongsTo<TorrentEager>({}, {}, __func__);
-    }
 
     /*! Get the file property associated with the previewable file. */
     std::unique_ptr<
@@ -36,9 +27,7 @@ private:
     /*! The visitor to obtain a type for Related template parameter. */
     void relationVisitor(const QString &relation)
     {
-        if (relation == "torrent")
-            relationVisited<TorrentEager>();
-        else if (relation == "fileProperty")
+        if (relation == "fileProperty")
             relationVisited<TorrentPreviewableFilePropertyEager>();
     }
 
@@ -47,8 +36,12 @@ private:
 
     /*! Map of relation names to methods. */
     QHash<QString, std::any> u_relations {
-        {"torrent",      &TorrentPreviewableFileEager::torrent},
         {"fileProperty", &TorrentPreviewableFileEager::fileProperty},
+    };
+
+    /*! The relations to eager load on every query. */
+    QVector<Orm::WithItem> u_with {
+        {"fileProperty"},
     };
 
 #ifdef PROJECT_TINYORM_TEST

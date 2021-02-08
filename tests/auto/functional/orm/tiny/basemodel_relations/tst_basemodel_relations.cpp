@@ -46,8 +46,12 @@ private slots:
     void load() const;
     void load_Failed() const;
 
-    void refresh_EagerLoad_OnlyRelations();
-    void refresh_LazyLoad_OnlyRelations();
+    void refresh_EagerLoad_OnlyRelations() const;
+    void refresh_LazyLoad_OnlyRelations() const;
+
+    void push_EagerLoad() const;
+    void push_LazyLoad() const;
+    // TODO tests, test all return paths for push() silverqx
 
 private:
     /*! The database connection instance. */
@@ -395,7 +399,7 @@ void tst_BaseModel_Relations::load_Failed() const
     QVERIFY(torrent->getRelations().isEmpty());
 }
 
-void tst_BaseModel_Relations::refresh_EagerLoad_OnlyRelations()
+void tst_BaseModel_Relations::refresh_EagerLoad_OnlyRelations() const
 {
     auto torrent = TorrentEager::find(3);
     QVERIFY(torrent);
@@ -465,7 +469,7 @@ void tst_BaseModel_Relations::refresh_EagerLoad_OnlyRelations()
     QVERIFY(seedsOriginal == seedsRefreshed);
 }
 
-void tst_BaseModel_Relations::refresh_LazyLoad_OnlyRelations()
+void tst_BaseModel_Relations::refresh_LazyLoad_OnlyRelations() const
 {
     auto torrent = Torrent::find(3);
     QVERIFY(torrent);
@@ -534,6 +538,148 @@ void tst_BaseModel_Relations::refresh_LazyLoad_OnlyRelations()
     auto seedsRefreshed = peerRefreshed->getAttribute("seeds");
     QVERIFY(filepathOriginal == filepathRefreshed);
     QVERIFY(seedsOriginal == seedsRefreshed);
+}
+
+void tst_BaseModel_Relations::push_EagerLoad() const
+{
+    auto torrent = TorrentEager::find(2);
+
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    /* Also contains torrentPeer relation, which is not needed for this test, but
+       I will not create the new eager model class. */
+    QCOMPARE(torrent->getRelations().size(), 2);
+
+    auto files = torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
+    /* Make a copy of a pointer, because first() returns reference,
+       reference to pointer is not needed. */
+    auto *file = files.first();
+    auto *fileProperty =
+            file->getRelation<TorrentPreviewableFilePropertyEager, One>("fileProperty");
+
+    QCOMPARE(files.size(), 2);
+    QVERIFY(file);
+    QVERIFY(file->exists);
+    QVERIFY(fileProperty);
+    QVERIFY(fileProperty->exists);
+
+    auto torrentNameOriginal = torrent->getAttribute("name");
+    auto fileFilepathOriginal = file->getAttribute("filepath");
+    auto propertyNameOriginal = fileProperty->getAttribute("name");
+
+    QCOMPARE(torrentNameOriginal, QVariant("test2"));
+    QCOMPARE(fileFilepathOriginal, QVariant("test2_file1.mkv"));
+    QCOMPARE(propertyNameOriginal, QVariant("test2_file1"));
+
+    // Modify values in relations
+    torrent->setAttribute("name", "test2 push");
+    file->setAttribute("filepath", "test2_file1-push.mkv");
+    fileProperty->setAttribute("name", "test2_file1 push");
+
+    QVERIFY(torrent->push());
+
+    // Verify saved values
+    auto torrentVerify = TorrentEager::find(2);
+
+    QVERIFY(torrentVerify);
+    QVERIFY(torrentVerify->exists);
+
+    QCOMPARE(torrent->getRelations().size(), 2);
+
+    auto filesVerify =
+            torrentVerify->getRelation<TorrentPreviewableFileEager>("torrentFiles");
+    auto *fileVerify = filesVerify.first();
+    auto *filePropertyVerify =
+            fileVerify->getRelation<TorrentPreviewableFilePropertyEager, One>(
+                "fileProperty");
+
+    QCOMPARE(filesVerify.size(), 2);
+    QVERIFY(fileVerify);
+    QVERIFY(fileVerify->exists);
+    QVERIFY(filePropertyVerify);
+    QVERIFY(filePropertyVerify->exists);
+
+    QCOMPARE(torrentVerify->getAttribute("name"), QVariant("test2 push"));
+    QCOMPARE(fileVerify->getAttribute("filepath"), QVariant("test2_file1-push.mkv"));
+    QCOMPARE(filePropertyVerify->getAttribute("name"), QVariant("test2_file1 push"));
+
+    // Revert values back
+    torrentVerify->setAttribute("name", "test2");
+    fileVerify->setAttribute("filepath", "test2_file1.mkv");
+    filePropertyVerify->setAttribute("name", "test2_file1");
+
+    torrentVerify->push();
+}
+
+void tst_BaseModel_Relations::push_LazyLoad() const
+{
+    auto torrent = Torrent::find(2);
+
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVERIFY(torrent->getRelations().isEmpty());
+
+    auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    /* Make a copy of a pointer, because first() returns reference,
+       reference to pointer is not needed. */
+    auto *file = files.first();
+    auto *fileProperty =
+            file->getRelationValue<TorrentPreviewableFileProperty, One>("fileProperty");
+
+    QCOMPARE(files.size(), 2);
+    QVERIFY(file);
+    QVERIFY(file->exists);
+    QVERIFY(fileProperty);
+    QVERIFY(fileProperty->exists);
+
+    auto torrentNameOriginal = torrent->getAttribute("name");
+    auto fileFilepathOriginal = file->getAttribute("filepath");
+    auto propertyNameOriginal = fileProperty->getAttribute("name");
+
+    QCOMPARE(torrentNameOriginal, QVariant("test2"));
+    QCOMPARE(fileFilepathOriginal, QVariant("test2_file1.mkv"));
+    QCOMPARE(propertyNameOriginal, QVariant("test2_file1"));
+
+    // Modify values in relations
+    torrent->setAttribute("name", "test2 push");
+    file->setAttribute("filepath", "test2_file1-push.mkv");
+    fileProperty->setAttribute("name", "test2_file1 push");
+
+    QVERIFY(torrent->push());
+
+    // Verify saved values
+    auto torrentVerify = Torrent::find(2);
+
+    QVERIFY(torrentVerify);
+    QVERIFY(torrentVerify->exists);
+
+    QVERIFY(torrentVerify->getRelations().isEmpty());
+
+    auto filesVerify =
+            torrentVerify->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    auto *fileVerify = filesVerify.first();
+    auto *filePropertyVerify =
+            fileVerify->getRelationValue<TorrentPreviewableFileProperty, One>(
+                "fileProperty");
+
+    QCOMPARE(filesVerify.size(), 2);
+    QVERIFY(fileVerify);
+    QVERIFY(fileVerify->exists);
+    QVERIFY(filePropertyVerify);
+    QVERIFY(filePropertyVerify->exists);
+
+    QCOMPARE(torrentVerify->getAttribute("name"), QVariant("test2 push"));
+    QCOMPARE(fileVerify->getAttribute("filepath"), QVariant("test2_file1-push.mkv"));
+    QCOMPARE(filePropertyVerify->getAttribute("name"), QVariant("test2_file1 push"));
+
+    // Revert values back
+    torrentVerify->setAttribute("name", "test2");
+    fileVerify->setAttribute("filepath", "test2_file1.mkv");
+    filePropertyVerify->setAttribute("name", "test2_file1");
+
+    torrentVerify->push();
 }
 
 QTEST_MAIN(tst_BaseModel_Relations)
