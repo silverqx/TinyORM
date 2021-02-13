@@ -13,22 +13,22 @@ include(../config.pri)
 
 CONFIG *= qt console testcase link_prl
 
-# TinyOrm defines
+# TinyORM defines
 # ---
 
 DEFINES += PROJECT_TINYORM_TEST
 
-# Use TinyOrm's library precompiled headers (PCH)
+# Use TinyORM's library precompiled headers (PCH)
 # ---
 
 include(../include/pch.pri)
 
-# TinyOrm library headers include path
+# TinyORM library headers include path
 # ---
 
 include(../include/include.pri)
 
-# Link against TinyOrm library
+# Link against TinyORM library
 # ---
 
 win32:CONFIG(release, debug|release) {

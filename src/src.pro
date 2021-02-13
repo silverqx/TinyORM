@@ -9,7 +9,7 @@ TARGET = TinyOrm
 
 include(../config.pri)
 
-# TinyOrm library specific configuration
+# TinyORM library specific configuration
 # ---
 
 CONFIG *= create_prl
@@ -27,7 +27,7 @@ CONFIG(release, debug|release) {
     DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
-# TinyOrm defines
+# TinyORM defines
 # ---
 
 DEFINES += PROJECT_TINYORM
@@ -62,8 +62,8 @@ win32:VERSION = 0.1.0.0
 else:VERSION = 0.1.0
 
 win32-msvc* {
-    QMAKE_TARGET_PRODUCT = TinyOrm
-    QMAKE_TARGET_DESCRIPTION = TinyOrm user-friendly ORM
+    QMAKE_TARGET_PRODUCT = TinyORM
+    QMAKE_TARGET_DESCRIPTION = TinyORM user-friendly ORM
     QMAKE_TARGET_COMPANY = Crystal Studio
     QMAKE_TARGET_COPYRIGHT = Copyright (©) 2020 Crystal Studio
 #    RC_ICONS = images/TinyOrm.ico
@@ -75,7 +75,7 @@ win32-msvc* {
 
 include(../include/pch.pri)
 
-# TinyOrm library header and source files
+# TinyORM library header and source files
 # ---
 
 include(src.pri)

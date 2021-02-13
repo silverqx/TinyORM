@@ -65,7 +65,7 @@ void MySqlConnector::parseConfigOptions(QVariantHash &options) const
         if (options.contains(key) && options[key] == value)
             throw std::domain_error(
                     "The connection option '" + value.toString().toStdString() +
-                    "' is not allowed in the TinyORM, TinyOrm uses its own "
+                    "' is not allowed in the TinyORM, TinyORM uses its own "
                     "reconnector.");
 
         ++itOption;

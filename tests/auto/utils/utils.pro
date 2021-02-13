@@ -26,7 +26,7 @@ else:VERSION = 0.1.0
 
 win32-msvc* {
     QMAKE_TARGET_PRODUCT = Utils
-    QMAKE_TARGET_DESCRIPTION = Utils library for TinyOrm tests
+    QMAKE_TARGET_DESCRIPTION = Utils library for TinyORM tests
     QMAKE_TARGET_COMPANY = Crystal Studio
     QMAKE_TARGET_COPYRIGHT = Copyright (©) 2020 Crystal Studio
 #    RC_ICONS = images/utils.ico
@@ -44,12 +44,12 @@ precompile_header:!isEmpty(PRECOMPILED_HEADER) {
 
 HEADERS += $$quote($$PWD/src/pch.h)
 
-# TinyOrm library headers include path
+# TinyORM library headers include path
 # ---
 
 include(../../../include/include.pri)
 
-# Link against TinyOrm library
+# Link against TinyORM library
 # ---
 
 win32:CONFIG(release, debug|release) {
