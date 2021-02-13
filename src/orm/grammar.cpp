@@ -451,6 +451,8 @@ QVector<QString> Grammar::compileInsertToVector(const QVector<QVariantMap> &valu
 
 QString Grammar::columnize(const QStringList &columns) const
 {
+    // TODO security, I'm not using wrap for columns (I'm not processing/quoting columns), Qt's mysql driver and mysql_stmt_prepare() don't quote columns, I will have to implement wrap logic for columns? silverqx
+    // TODO docs, after investigation of 👆, write paragraph into documentation, about DB::raw() for columns, https://laravel.com/docs/8.x/queries#raw-expressions silverqx
     return joinContainer(columns, QStringLiteral(", "));
 }
 

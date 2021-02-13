@@ -10,7 +10,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
-    class JoinClause final : public Builder
+    class SHAREDLIB_EXPORT JoinClause final : public Builder
     {
     public:
         JoinClause(const Builder &query, const QString &type, const QString &table);
@@ -18,6 +18,9 @@ namespace Orm::Query
         /*! Add an "on" clause to the join. */
         JoinClause &on(const QString &first, const QString &comparison,
                        const QString &second, const QString &condition = "and");
+        /*! Add an "or on" clause to the join. */
+        JoinClause &orOn(const QString &first, const QString &comparison,
+                         const QString &second);
 
         /*! Get the type of join being performed. */
         inline const QString &getType() const

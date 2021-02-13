@@ -1,17 +1,18 @@
 #include "database.hpp"
 
-#include "orm/databasemanager.hpp"
+#include "orm/db.hpp"
 
-using namespace TestUtils;
+namespace TestUtils
+{
 
 Database::Database()
 {}
 
 Orm::ConnectionInterface &Database::createConnection()
 {
-    static Orm::DatabaseManager databaseManager;
+    static const auto connectionName = QStringLiteral("tinyorm_mysql_tests");
 
-    static const QVariantHash config {
+    static auto manager = DB::create({
         {"driver",    "QMYSQL"},
         {"host",      qEnvironmentVariable("DB_HOST", "127.0.0.1")},
         {"port",      qEnvironmentVariable("DB_PORT", "3306")},
@@ -28,11 +29,11 @@ Orm::ConnectionInterface &Database::createConnection()
 //        {"options",   "MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"},
 //        {"options",   QVariantHash {{"MYSQL_OPT_RECONNECT", 1},
 //                                    {"MYSQL_OPT_READ_TIMEOUT", 10}}},
-    };
+    }, connectionName);
 
-    static const auto connectionName = QStringLiteral("tinyorm_mysql_tests");
+    static auto &connection = manager->connection(connectionName);
 
-    static auto &connection = databaseManager.addConnection(config, connectionName)
-                                             .connection(connectionName);
     return connection;
 }
+
+} // namespace TestUtils

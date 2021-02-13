@@ -7,6 +7,7 @@
 
 #include "orm/logquery.hpp"
 #include "orm/query/querybuilder.hpp"
+#include "orm/sqltransactionerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -67,10 +68,27 @@ bool DatabaseConnection::beginTransaction()
 {
     Q_ASSERT(m_inTransaction == false);
 
+    static const auto query = QStringLiteral("START TRANSACTION");
+
+#ifdef TINYORM_DEBUG_SQL
+    QElapsedTimer timer;
+    timer.start();
+#endif
+
     if (!getQtConnection().transaction())
-        return false;
+        throw SqlTransactionError(
+                QStringLiteral("Statement in %1() failed : %2").arg(__FUNCTION__, query),
+                getRawQtConnection().lastError());
 
     m_inTransaction = true;
+
+#ifdef TINYORM_DEBUG_SQL
+    // TODO multidriver, when will be added support for more drivers, than the Grammar will have to compile this silverqx
+    /* Once we have run the transaction query we will calculate the time
+       that it took to run and then log the query and execution time.
+       We'll log time in milliseconds. */
+    logTransactionQuery(query, timer.elapsed());
+#endif
 
     return true;
 }
@@ -79,10 +97,26 @@ bool DatabaseConnection::commit()
 {
     Q_ASSERT(m_inTransaction);
 
+    static const auto query = QStringLiteral("COMMIT");
+
+#ifdef TINYORM_DEBUG_SQL
+    QElapsedTimer timer;
+    timer.start();
+#endif
+
     if (!getQtConnection().commit())
-        return false;
+        throw SqlTransactionError(
+                QStringLiteral("Statement in %1() failed : %2").arg(__FUNCTION__, query),
+                getRawQtConnection().lastError());
 
     m_inTransaction = false;
+
+#ifdef TINYORM_DEBUG_SQL
+    /* Once we have run the transaction query we will calculate the time
+       that it took to run and then log the query and execution time.
+       We'll log time in milliseconds. */
+    logTransactionQuery(query, timer.elapsed());
+#endif
 
     return true;
 }
@@ -91,10 +125,26 @@ bool DatabaseConnection::rollBack()
 {
     Q_ASSERT(m_inTransaction);
 
+    static const auto query = QStringLiteral("ROLLBACK");
+
+#ifdef TINYORM_DEBUG_SQL
+    QElapsedTimer timer;
+    timer.start();
+#endif
+
     if (!getQtConnection().rollback())
-        return false;
+        throw SqlTransactionError(
+                QStringLiteral("Statement in %1() failed : %2").arg(__FUNCTION__, query),
+                getRawQtConnection().lastError());
 
     m_inTransaction = false;
+
+#ifdef TINYORM_DEBUG_SQL
+    /* Once we have run the transaction query we will calculate the time
+       that it took to run and then log the query and execution time.
+       We'll log time in milliseconds. */
+    logTransactionQuery(query, timer.elapsed());
+#endif
 
     return true;
 }
@@ -103,42 +153,75 @@ bool DatabaseConnection::savepoint(const QString &id)
 {
     // TODO rewrite savepoint() and rollBack() with a new m_connection.statement() API silverqx
     Q_ASSERT(m_inTransaction);
+
     auto savePoint = getQtQuery();
     const auto query = QStringLiteral("SAVEPOINT %1_%2").arg(SAVEPOINT_NAMESPACE, id);
+
+#ifdef TINYORM_DEBUG_SQL
+    QElapsedTimer timer;
+    timer.start();
+#endif
+
     // Execute a savepoint query
-    const auto ok = savePoint.exec(query);
-    Q_ASSERT_X(ok,
-               "DatabaseConnection::savepoint(QString &id)",
-               query.toUtf8().constData());
-    if (!ok) {
-        const auto savepointId = QStringLiteral("%1_%2").arg(SAVEPOINT_NAMESPACE, id);
-        qDebug() << "Savepoint" << savepointId << "failed :"
-                 << savePoint.lastError().text();
-    }
+    if (!savePoint.exec(query))
+        throw SqlTransactionError(
+                QStringLiteral("Statement in %1() failed : %2")
+                    .arg(__FUNCTION__, query),
+                savePoint.lastError());
+
     ++m_savepoints;
-    return ok;
+
+#ifdef TINYORM_DEBUG_SQL
+    /* Once we have run the transaction query we will calculate the time
+       that it took to run and then log the query and execution time.
+       We'll log time in milliseconds. */
+    logTransactionQuery(query, timer.elapsed());
+#endif
+
+    return true;
+}
+
+bool DatabaseConnection::savepoint(const size_t id)
+{
+    return savepoint(QString::number(id));
 }
 
 bool DatabaseConnection::rollbackToSavepoint(const QString &id)
 {
     Q_ASSERT(m_inTransaction);
     Q_ASSERT(m_savepoints > 0);
+
     auto rollbackToSavepoint = getQtQuery();
     const auto query = QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2")
                        .arg(SAVEPOINT_NAMESPACE, id);
+
+#ifdef TINYORM_DEBUG_SQL
+    QElapsedTimer timer;
+    timer.start();
+#endif
+
     // Execute a rollback to savepoint query
-    const auto ok = rollbackToSavepoint.exec(query);
-    Q_ASSERT_X(ok,
-               "DatabaseConnection::rollbackToSavepoint(QString &id)",
-               query.toUtf8().constData());
-    if (!ok) {
-        const auto savepointId = QStringLiteral("%1_%2").arg(SAVEPOINT_NAMESPACE, id);
-        qDebug() << "Rollback to Savepoint" << savepointId << "failed :"
-                 << rollbackToSavepoint.lastError().text();
-    }
+    if (!rollbackToSavepoint.exec(query))
+        throw SqlTransactionError(
+                QStringLiteral("Statement in %1() failed : %2")
+                    .arg(__FUNCTION__, query),
+                rollbackToSavepoint.lastError());
+
     m_savepoints = std::max<int>(0, m_savepoints - 1);
 
-    return ok;
+#ifdef TINYORM_DEBUG_SQL
+    /* Once we have run the transaction query we will calculate the time
+       that it took to run and then log the query and execution time.
+       We'll log time in milliseconds. */
+    logTransactionQuery(query, timer.elapsed());
+#endif
+
+    return true;
+}
+
+bool DatabaseConnection::rollbackToSavepoint(const size_t id)
+{
+    return rollbackToSavepoint(QString::number(id));
 }
 
 std::tuple<bool, QSqlQuery>
@@ -223,7 +306,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
     return run<int>(
                 queryString, bindings,
                 [this](const QString &queryString, const QVector<QVariant> &bindings)
-                -> std::tuple<bool, QSqlQuery>
+                -> std::tuple<int, QSqlQuery>
     {
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString);
@@ -326,6 +409,16 @@ void DatabaseConnection::logQuery(const QSqlQuery &query,
         << "Executed prepared query (" << (elapsed ? *elapsed : -1) << "ms, "
         << query.size() << " results, " << query.numRowsAffected()
         << " affected) : " << parseExecutedQuery(query);
+}
+
+void DatabaseConnection::logTransactionQuery(
+        const QString &query,
+        const std::optional<quint64> elapsed = std::nullopt) const
+{
+    // This is only internal method and logs the passed string
+    qDebug().nospace().noquote()
+        << "Executed transaction query (" << (elapsed ? *elapsed : -1) << "ms) : "
+        << query;
 }
 
 bool DatabaseConnection::pingDatabase()

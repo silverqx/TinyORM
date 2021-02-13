@@ -4,10 +4,10 @@
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Utils::String
 {
 
-QString Utils::String::toSnake(const QString &string)
+QString toSnake(const QString &string)
 {
     static const QRegularExpression regExp1 {"(.)([A-Z][a-z]+)"};
     static const QRegularExpression regExp2 {"([a-z0-9])([A-Z])"};

@@ -13,6 +13,7 @@ HEADERS += \
     $$PWD/orm/connectors/mysqlconnector.hpp \
     $$PWD/orm/databaseconnection.hpp \
     $$PWD/orm/databasemanager.hpp \
+    $$PWD/orm/db.hpp \
     $$PWD/orm/grammar.hpp \
     $$PWD/orm/invalidformaterror.hpp \
     $$PWD/orm/logquery.hpp \
@@ -25,6 +26,7 @@ HEADERS += \
     $$PWD/orm/query/querybuilder.hpp \
     $$PWD/orm/queryerror.hpp \
     $$PWD/orm/sqlerror.hpp \
+    $$PWD/orm/sqltransactionerror.hpp \
     $$PWD/orm/support/configurationoptionsparser.hpp \
     $$PWD/orm/tiny/basemodel.hpp \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \

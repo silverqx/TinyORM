@@ -47,6 +47,9 @@ namespace Tiny
     // TODO model missing methods Model::firstOr() silverqx
     // TODO model missing methods Model::updateOrCreate()/updateOrInsert() silverqx
     // TODO model missing methods Model::loadMissing() silverqx
+    // TODO model missing methods Model::whereExists() silverqx
+    // TODO model missing methods Model::whereBetween() silverqx
+    // TODO next Constraining Eager Loads silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
@@ -139,6 +142,13 @@ namespace Tiny
         inline static std::unique_ptr<TinyBuilder<Model>>
         with(const QString &relation)
         { return with(QVector<WithItem> {{relation}}); }
+        /*! Prevent the specified relations from being eager loaded. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        without(const QVector<QString> &relations);
+        /*! Prevent the specified relations from being eager loaded. */
+        inline static std::unique_ptr<TinyBuilder<Model>>
+        without(const QString &relation)
+        { return without(QVector<QString> {relation}); }
 
         /* Static operations on a model instance */
         /*! Save a new model and return the instance. */
@@ -516,9 +526,9 @@ namespace Tiny
 
         /*! The connection name for the model. */
         QString u_connection {""};
-        /*! Indicates if the IDs are auto-incrementing. */
+        /*! Indicates if the model's ID is auto-incrementing. */
         bool u_incrementing = true;
-        /*! The primary key for the model. */
+        /*! The primary key associated with the table. */
         QString u_primaryKey {"id"};
 
         // TODO for std::any check, whether is appropriate to define template requirement std::is_nothrow_move_constructible ( to avoid dynamic allocations for small objects and how this internally works ) silverqx
@@ -696,6 +706,17 @@ namespace Tiny
         auto builder = query();
 
         builder->with(relations);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::without(const QVector<QString> &relations)
+    {
+        auto builder = query();
+
+        builder->without(relations);
 
         return builder;
     }
@@ -1316,7 +1337,7 @@ namespace Tiny
         )
             return value.value<QDateTime>();
 
-        // TODO next timestamps, add unix timestamp and simple date support silverqx
+        // TODO next timestamps, add unix timestamp by QDateTime::fromMSecsSinceEpoch() and simple date support silverqx
         /* If this value is an integer, we will assume it is a UNIX timestamp's value
            and format a Carbon object from this timestamp. This allows flexibility
            when defining your date fields as they might be UNIX timestamps here. */

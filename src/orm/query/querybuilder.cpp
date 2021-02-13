@@ -253,6 +253,8 @@ Builder &Builder::rightJoinWhere(const QString &table, const QString &first,
     return joinWhere(table, first, comparison, second, "right");
 }
 
+// TODO docs missing example, because of different api silverqx
+// NOTE api different silverqx
 Builder &Builder::crossJoin(const QString &table, const QString &first,
                             const QString &comparison, const QString &second)
 {
@@ -423,6 +425,11 @@ Builder &Builder::groupBy(const QStringList &groups)
     return *this;
 }
 
+Builder &Builder::groupBy(const QString &group)
+{
+    return groupBy(QStringList {group});
+}
+
 Builder &Builder::having(const QString &column, const QString &comparison,
                          const QVariant &value, const QString &condition)
 {
@@ -461,6 +468,9 @@ Builder &Builder::orderByDesc(const QString &column)
 
 Builder &Builder::latest(const QString &column)
 {
+    /* Default value "created_at" is ok, because we are in the QueryBuilder,
+       in the BaseModel/TinyBuilder is this default argument processed by
+       the TinyBuilder::getCreatedAtColumnForLatestOldest() method. */
     return orderBy(column, "desc");
 }
 

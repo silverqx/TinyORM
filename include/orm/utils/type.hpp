@@ -26,6 +26,13 @@ namespace Orm::Utils::Type
         return match.captured();
     }
 
+    /*! Class name without a namespace and template parameters. */
+    template<typename Type>
+    inline QString classPureBasename(const Type &type)
+    {
+        return classPureBasename<decltype (type)>();
+    }
+
 } // namespace Orm::Utils::Type
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE

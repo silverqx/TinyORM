@@ -8,10 +8,14 @@
 #include "models/torrentpeer.hpp"
 #include "models/torrentpreviewablefile.hpp"
 
+using Orm::Tiny::BaseModel;
+using Orm::Tiny::Relations::Relation;
+using Orm::WithItem;
+
 /* This class serves as a showcase, so all possible features are defined / used. */
 
 class Torrent final :
-        public Orm::Tiny::BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer>
+        public BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer>
 {
 public:
     friend class BaseModel;
@@ -23,8 +27,7 @@ public:
 //    explicit Torrent(const QVector<Orm::AttributeItem> &attributes = {});
 
     /*! Get the previewable files associated with the torrent. */
-    std::unique_ptr<
-    Orm::Tiny::Relations::Relation<Torrent, TorrentPreviewableFile>>
+    std::unique_ptr<Relation<Torrent, TorrentPreviewableFile>>
     torrentFiles()
     {
         return hasMany<TorrentPreviewableFile>();
@@ -32,8 +35,7 @@ public:
     }
 
     /*! Get the torrent peer associated with the torrent. */
-    std::unique_ptr<
-    Orm::Tiny::Relations::Relation<Torrent, TorrentPeer>>
+    std::unique_ptr<Relation<Torrent, TorrentPeer>>
     torrentPeer()
     {
         return hasOne<TorrentPeer>();
@@ -42,9 +44,9 @@ public:
 
 private:
     /*! The name of the "created at" column. */
-    inline static const QString &CREATED_AT = QStringLiteral("created_at");
+    inline static const QString CREATED_AT = QStringLiteral("created_at");
     /*! The name of the "updated at" column. */
-    inline static const QString &UPDATED_AT = QStringLiteral("updated_at");
+    inline static const QString UPDATED_AT = QStringLiteral("updated_at");
 
     /*! The visitor to obtain a type for Related template parameter. */
     void relationVisitor(const QString &relation)
@@ -58,9 +60,9 @@ private:
     /*! The table associated with the model. */
     QString u_table {"torrents"};
 
-    /*! Indicates if the IDs are auto-incrementing. */
+    /*! Indicates if the model's ID is auto-incrementing. */
 //    bool u_incrementing = true;
-    /*! The primary key for the model. */
+    /*! The primary key associated with the table. */
 //    QString u_primaryKey {"id"};
 
     /*! Map of relation names to methods. */

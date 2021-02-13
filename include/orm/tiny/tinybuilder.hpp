@@ -73,7 +73,12 @@ namespace Relations
         Builder &with(const QVector<WithItem> &relations);
         /*! Set the relationships that should be eager loaded. */
         inline Builder &with(const QString &relation)
-        { return with({relation}); }
+        { return with(QVector<WithItem> {{relation}}); }
+        /*! Prevent the specified relations from being eager loaded. */
+        Builder &without(const QVector<QString> &relations);
+        /*! Prevent the specified relations from being eager loaded. */
+        inline Builder &without(const QString &relation)
+        { return without(QVector<QString> {relation}); }
 
         /*! Insert new records into the database. */
         inline std::tuple<bool, std::optional<QSqlQuery>>
@@ -110,6 +115,19 @@ namespace Relations
         /*! Add a basic where clause to the query. */
         Builder &where(const QString &column, const QString &comparison,
                        const QVariant &value, const QString &condition = "and");
+        /*! Add an "or where" clause to the query. */
+        Builder &orWhere(const QString &column, const QString &comparison,
+                         const QVariant &value);
+        /*! Add a basic equal where clause to the query. */
+        Builder &whereEq(const QString &column, const QVariant &value,
+                         const QString &condition = "and");
+        /*! Add an equal "or where" clause to the query. */
+        Builder &orWhereEq(const QString &column, const QVariant &value);
+        /*! Add a nested where clause to the query. */
+        Builder &where(const std::function<void(Builder &)> &callback,
+                       const QString &condition = "and");
+        /*! Add a nested "or where" clause to the query. */
+        Builder &orWhere(const std::function<void(Builder &)> &callback);
 
         /*! Add an array of basic where clauses to the query. */
         Builder &where(const QVector<WhereItem> &values, const QString &condition = "and");
@@ -150,10 +168,18 @@ namespace Relations
         /*! Add a where clause on the primary key to the query. */
         Builder &whereKeyNot(const QVariant &id);
 
+        /*! Add an "order by" clause to the query. */
+        Builder &orderBy(const QString &column, const QString &direction = "asc");
+        /*! Add a descending "order by" clause to the query. */
+        Builder &orderByDesc(const QString &column);
         /*! Add an "order by" clause for a timestamp to the query. */
         Builder &latest(const QString &column = "");
         /*! Add an "order by" clause for a timestamp to the query. */
         Builder &oldest(const QString &column = "");
+        /*! Remove all existing orders. */
+        Builder &reorder();
+        /*! Remove all existing orders and optionally add a new order. */
+        Builder &reorder(const QString &column, const QString &direction = "asc");
 
         /*! Set the "limit" value of the query. */
         Builder &limit(int value);
@@ -370,6 +396,22 @@ namespace Relations
     }
 
     template<typename Model>
+    Builder<Model> &
+    Builder<Model>::without(const QVector<QString> &relations)
+    {
+        // Remove relations in the "relations" vector from m_eagerLoad vector
+        using namespace ranges;
+        m_eagerLoad = m_eagerLoad | views::remove_if(
+                          [&relations](const WithItem &with)
+        {
+            return relations.contains(with.name);
+        })
+                | ranges::to<QVector<WithItem>>();
+
+        return *this;
+    }
+
+    template<typename Model>
     Model Builder<Model>::create(const QVector<AttributeItem> &attributes)
     {
         auto model = newModelInstance(attributes);
@@ -397,6 +439,49 @@ namespace Relations
                           const QVariant &value, const QString &condition)
     {
         m_query->where(column, comparison, value, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::orWhere(const QString &column, const QString &comparison,
+                            const QVariant &value)
+    {
+        m_query->orWhere(column, comparison, value);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereEq(const QString &column, const QVariant &value,
+                            const QString &condition)
+    {
+        m_query->whereEq(column, value, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::orWhereEq(const QString &column, const QVariant &value)
+    {
+        m_query->orWhereEq(column, value);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::where(const std::function<void(Builder &)> &callback,
+                          const QString &condition)
+    {
+        m_query->where(callback, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::orWhere(const std::function<void(Builder &)> &callback)
+    {
+        m_query->orWhere(callback);
         return *this;
     }
 
@@ -520,6 +605,21 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
+    Builder<Model>::orderBy(const QString &column, const QString &direction)
+    {
+        m_query->orderBy(column, direction);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::orderByDesc(const QString &column)
+    {
+        m_query->orderByDesc(column);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
     Builder<Model>::latest(const QString &column)
     {
         m_query->latest(getCreatedAtColumnForLatestOldest(column));
@@ -531,6 +631,21 @@ namespace Relations
     Builder<Model>::oldest(const QString &column)
     {
         m_query->oldest(getCreatedAtColumnForLatestOldest(column));
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::reorder()
+    {
+        m_query->reorder();
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::reorder(const QString &column, const QString &direction)
+    {
+        m_query->reorder(column, direction);
         return *this;
     }
 
@@ -738,6 +853,7 @@ namespace Relations
             const auto emptyConstraints = !relation.constraints;
             const auto isSelectConstraint = relation.name.contains(QChar(':'));
 
+            // TODO next Eager Loading Specific Columns silverqx
             /* Select columns constraints are only allowed, when relation.constraints
                is nullptr. */
             if (isSelectConstraint)

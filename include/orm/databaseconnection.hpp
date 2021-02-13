@@ -44,6 +44,7 @@ namespace Orm
         inline Query::Expression raw(const QVariant &value) const override
         { return value; }
 
+        // TODO next transaction method with callback silverqx
         /*! Start a new database transaction. */
         bool beginTransaction() override;
         /*! Commit the active database transaction. */
@@ -51,9 +52,13 @@ namespace Orm
         /*! Rollback the active database transaction. */
         bool rollBack() override;
         /*! Start a new named transaction savepoint. */
-        bool savepoint(const QString &id);
+        bool savepoint(const QString &id) override;
+        /*! Start a new named transaction savepoint. */
+        bool savepoint(size_t id) override;
         /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(const QString &id);
+        bool rollbackToSavepoint(const QString &id) override;
+        /*! Rollback to a named transaction savepoint. */
+        bool rollbackToSavepoint(size_t id) override;
         /*! Get the number of active transactions. */
         inline uint transactionLevel() const override
         { return m_savepoints; }
@@ -109,7 +114,7 @@ namespace Orm
         /*! Bind values to their parameters in the given statement. */
         void bindValues(QSqlQuery &query,
                         const QVector<QVariant> &bindings) const;
-        /*! Log a query in the connection's query log. */
+        /*! Log a query into the connection's query log. */
         void logQuery(const QSqlQuery &query,
                       const std::optional<quint64> elapsed) const;
 
@@ -204,6 +209,9 @@ namespace Orm
         void logDisconnected();
         /*! Log database connected, examined during MySQL ping. */
         void logConnected();
+        /*! Log a transaction query into the connection's query log. */
+        void logTransactionQuery(const QString &query,
+                                 const std::optional<quint64> elapsed) const;
 
         /*! The flag for the database was disconnected. */
         bool m_disconnectedLogged = false;
@@ -225,7 +233,7 @@ namespace Orm
     {
         reconnectIfMissingConnection();
 
-        Result ok;
+        Result result;
         QSqlQuery query;
 
 #ifdef TINYORM_DEBUG_SQL
@@ -237,11 +245,11 @@ namespace Orm
            caused by a connection that has been lost. If that is the cause, we'll try
            to re-establish connection and re-run the query with a fresh connection. */
         try {
-            std::tie(ok, query) =
+            std::tie(result, query) =
                     runQueryCallback<Result>(queryString, bindings, callback);
 
         }  catch (const QueryError &e) {
-            std::tie(ok, query) =
+            std::tie(result, query) =
                     handleQueryException(e, queryString, bindings, callback);
         }
 
@@ -252,7 +260,7 @@ namespace Orm
         logQuery(query, timer.elapsed());
 #endif
 
-        return {ok, query};
+        return {result, query};
     }
 
     template<typename Result>
@@ -261,15 +269,15 @@ namespace Orm
             const QString &queryString, const QVector<QVariant> &bindings,
             const RunCallback<Result> &callback) const
     {
-        Result ok;
+        Result result;
         QSqlQuery query;
 
         /* To execute the statement, we'll simply call the callback, which will actually
            run the SQL against the QSqlDatabase connection. Then we can calculate the time
            it took to execute and log the query SQL, bindings and time in our memory. */
-        std::tie(ok, query) = std::invoke(callback, queryString, bindings);
+        std::tie(result, query) = std::invoke(callback, queryString, bindings);
 
-        return {ok, query};
+        return {result, query};
     }
 
     template<typename Result>

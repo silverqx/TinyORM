@@ -22,6 +22,9 @@ namespace Orm::Query
 
     class JoinClause;
 
+    // TODO add support for subqueries, first in where() silverqx
+    // TODO add inRandomOrder() silverqx
+    // TODO now docs and all code rewrite by eg "using Orm::DatabaseManager" silverqx
     class SHAREDLIB_EXPORT Builder
     {
     public:
@@ -225,6 +228,8 @@ namespace Orm::Query
 
         /*! Add a "group by" clause to the query. */
         Builder &groupBy(const QStringList &groups);
+        /*! Add a "group by" clause to the query. */
+        Builder &groupBy(const QString &group);
 
         /*! Add a "having" clause to the query. */
         Builder &having(const QString &column, const QString &comparison,

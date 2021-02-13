@@ -47,6 +47,18 @@ namespace Query
         /*! Rollback the active database transaction. */
         virtual bool rollBack() = 0;
 
+        /*! Start a new named transaction savepoint. */
+        virtual bool savepoint(const QString &id) = 0;
+
+        /*! Start a new named transaction savepoint. */
+        virtual bool savepoint(size_t id) = 0;
+
+        /*! Rollback to a named transaction savepoint. */
+        virtual bool rollbackToSavepoint(const QString &id) = 0;
+
+        /*! Rollback to a named transaction savepoint. */
+        virtual bool rollbackToSavepoint(size_t id) = 0;
+
         /*! Get the number of active transactions. */
         virtual uint transactionLevel() const = 0;
 

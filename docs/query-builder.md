@@ -1,0 +1,494 @@
+# Database: Query Builder
+
+- [Introduction](#introduction)
+- [Running Database Queries](#running-database-queries)
+- [Select Statements](#select-statements)
+- [Raw Expressions](#raw-expressions)
+- [Joins](#joins)
+- [Basic Where Clauses](#basic-where-clauses)
+    - [Where Clauses](#where-clauses)
+    - [Or Where Clauses](#or-where-clauses)
+    - [Additional Where Clauses](#additional-where-clauses)
+    - [Logical Grouping](#logical-grouping)
+- [Ordering, Grouping, Limit & Offset](#ordering-grouping-limit-and-offset)
+    - [Ordering](#ordering)
+    - [Grouping](#grouping)
+    - [Limit & Offset](#limit-and-offset)
+- [Insert Statements](#insert-statements)
+- [Update Statements](#update-statements)
+    - [Increment & Decrement](#increment-and-decrement)
+- [Delete Statements](#delete-statements)
+
+<a name="introduction"></a>
+## Introduction
+
+TinyORM's database query builder provides a convenient, fluent interface to creating and running database queries. It can be used to perform most database operations in your application.
+
+The TinyORM query builder uses `QSqlQuery` parameter binding to protect your application against SQL injection attacks. There is no need to clean or sanitize strings passed to the query builder as query bindings.
+
+> {note} QSqlQuery does not support binding column names. Therefore, you should never allow user input, to dictate the column names referenced by your queries, including "order by" columns.
+
+<a name="running-database-queries"></a>
+## Running Database Queries
+
+<a name="retrieving-all-rows-from-a-table"></a>
+#### Retrieving All Rows From A Table
+
+You may use the `table` method provided by the `Orm::DatabaseManager`, or the type alias `DB` to begin a query. The `table` method returns a fluent query builder instance for the given table, allowing you to chain more constraints onto the query and then finally retrieve the results of the query using the `get` method:
+
+    #include "orm/databasemanager.hpp"
+
+    // Log a list of all of the application's users
+    auto [ok, query] = DB::table("users")->get();
+
+    while (query.next())
+        qDebug() << "id :" << query.value("id").toULongLong() << ";"
+                 << "name :" << query.value("name").toString();
+
+The `get` method returns a `std::tuple<bool, QSqlQuery>` containing the results of the query where each result can be accessed by `QSqlQuery::next` method, look into the `QSqlQuery` documentation how to obtain results from the "query". You may access each column's value by `QSqlQuery::value` method. The first `bool` return value is the value returned from `QSqlQuery::exec` method:
+
+    #include "QDebug"
+
+    #include "orm/databasemanager.hpp"
+
+    auto [ok, users] = DB::table("users")->get();
+
+    while(users.next())
+        qDebug() << users.value("name").toString();
+
+<a name="retrieving-a-single-row-column-from-a-table"></a>
+#### Retrieving A Single Row / Column From A Table
+
+If you just need to retrieve a single row from a database table, you may use the `QueryBuilder::first` method. This method will return a `QSqlQuery` object, on which was internally called `QSqlQuery::first` method. This method retrieves the first record in the result, if available, and positions the query on the retrieved record:
+
+    auto [ok, user] = DB::table("users")->whereEq("name", "John").first();
+
+    user.value("email").toString();
+
+If you don't need an entire row, you may extract a single value from a record using the `value` method. This method will return the value of the column directly as `QVariant`:
+
+    auto email = DB::table("users")->whereEq("name", "John").value("email").toString();
+
+To retrieve a single row by its `id` column value, use the `find` method. This method retrieves the first record in the result, if available, and positions the query on the retrieved record:
+
+    auto user = DB::table("users")->find(3);
+
+    user.value("email").toString();
+
+<a name="select-statements"></a>
+## Select Statements
+
+<a name="specifying-a-select-clause"></a>
+#### Specifying A Select Clause
+
+You may not always want to select all columns from a database table. Using the `select` method, you can specify a custom "select" clause for the query:
+
+    #include "orm/databasemanager.hpp"
+
+    auto [ok, users] = DB::table("users")
+                            ->select({"name", "email as user_email"})
+                            .get();
+
+The `distinct` method allows you to force the query to return distinct results:
+
+    auto [ok, users] = DB::table("users")->distinct().get();
+
+If you already have a query builder instance and you wish to add a column to its existing select clause, you may use the `addSelect` method:
+
+    auto query = DB::table("users")->select("name");
+
+    auto [ok, users] = query.addSelect("age").get();
+
+<a name="raw-expressions"></a>
+## Raw Expressions
+
+Sometimes you may need to insert an arbitrary string into a query. To create a raw string expression, you may use the `raw` method provided by the `DB` facade:
+
+    auto [ok, users] = DB::table("users")
+                         ->select(DB::raw("count(*) as user_count, status"))
+                         .where("status", "<>", 1)
+                         .groupBy("status")
+                         .get();
+
+> {note} Raw statements will be injected into the query as strings, so you should be extremely careful to avoid creating SQL injection vulnerabilities.
+
+<a name="raw-methods"></a>
+### Raw Methods
+
+Instead of using the `DB::raw` method, you may also use the following methods to insert a raw expression into various parts of your query. **Remember, Laravel can not guarantee that any query using raw expressions is protected against SQL injection vulnerabilities.**
+
+<a name="joins"></a>
+## Joins
+
+<a name="inner-join-clause"></a>
+#### Inner Join Clause
+
+The query builder may also be used to add join clauses to your queries. To perform a basic "inner join", you may use the `join` method on a query builder instance. The first argument passed to the `join` method is the name of the table you need to join to, while the remaining arguments specify the column constraints for the join. You may even join multiple tables in a single query:
+
+    #include "orm/databasemanager.hpp"
+
+    auto [ok, users] = DB::table("users")
+                        ->join("contacts", "users.id", "=", "contacts.user_id")
+                        .join("orders", "users.id", "=", "orders.user_id")
+                        .select({"users.*", "contacts.phone", "orders.price"})
+                        .get();
+
+<a name="left-join-right-join-clause"></a>
+#### Left Join / Right Join Clause
+
+If you would like to perform a "left join" or "right join" instead of an "inner join", use the `leftJoin` or `rightJoin` methods. These methods have the same signature as the `join` method:
+
+    auto [ok, users] = DB::table("users")
+                            ->leftJoin("posts", "users.id", "=", "posts.user_id")
+                            .get();
+
+    auto [ok, users] = DB::table("users")
+                            ->rightJoin("posts", "users.id", "=", "posts.user_id")
+                            .get();
+
+<a name="advanced-join-clauses"></a>
+#### Advanced Join Clauses
+
+You may also specify more advanced join clauses. To get started, pass a closure as the second argument to the `join` method. The closure will receive a `Orm::Query::JoinClause` instance which allows you to specify constraints on the "join" clause:
+
+    #include "orm/databasemanager.hpp"
+    #include <orm/query/joinclause.hpp>
+
+    DB::table("users")
+        ->join("contacts", [](auto &join)
+        {
+            join.on("users.id", "=", "contacts.user_id")
+                .orOn(...);
+        })
+        .get();
+
+If you would like to use a "where" clause on your joins, you may use the `where` and `orWhere` methods provided by the `JoinClause` instance. Instead of comparing two columns, these methods will compare the column against a value:
+
+    DB::table("users")
+        ->join("contacts", [](auto &join)
+        {
+            join.on("users.id", "=", "contacts.user_id")
+                .where("contacts.user_id", ">", 5);
+        })
+        ->get();
+
+<a name="basic-where-clauses"></a>
+## Basic Where Clauses
+
+<a name="where-clauses"></a>
+### Where Clauses
+
+You may use the query builder's `where` method to add "where" clauses to the query. The most basic call to the `where` method requires three arguments. The first argument is the name of the column. The second argument is an operator, which can be any of the database's supported operators. The third argument is the value to compare against the column's value.
+
+For example, the following query retrieves users where the value of the `votes` column is equal to `100` and the value of the `age` column is greater than `35`:
+
+    auto [ok, users] = DB::table("users")
+                        ->where("votes", "=", 100)
+                        .where("age", ">", 35)
+                        .get();
+
+For convenience, if you want to verify that a column is `=` to a given value, you may call `whereEq` method. Similar `XxxEq` methods are also defined for other commands:
+
+    auto [ok, users] = DB::table("users")->whereEq("votes", 100)->get();
+
+As previously mentioned, you may use any operator that is supported by your database system:
+
+    auto [ok, users] = DB::table("users")
+                        ->where("votes", ">=", 100)
+                        .get();
+
+    auto [ok, users] = DB::table("users")
+                        ->where("votes", "<>", 100)
+                        .get();
+
+    auto [ok, users] = DB::table("users")
+                        ->where("name", "like", "T%")
+                        .get();
+
+You may also pass a `QVector<WhereItem>` of conditions to the `where` function. Each `WhereItem` structure should contain the four arguments typically passed to the `where` method:
+
+    auto [ok, users] = DB::table("users")
+                        ->where({
+                            {"status", 1}, // "=" by default
+                            {"subscribed", 1, "<>"},
+                        }).get();
+
+<a name="or-where-clauses"></a>
+### Or Where Clauses
+
+When chaining together calls to the query builder's `where` method, the "where" clauses will be joined together using the `and` operator. However, you may use the `orWhere` or `orWhereEq` method to join a clause to the query using the `or` operator. The `orWhere` method accepts the same arguments as the `where` method:
+
+    auto [ok, users] = DB::table("users")
+                        ->where("votes", ">", 100)
+                        .orWhere("name", "=", "John")
+                        .orWhereEq("name", "Jack")
+                        .get();
+
+If you need to group an "or" condition within parentheses, you may pass a closure as the first argument to the `orWhere` method:
+
+    auto [ok, users] = DB::table("users")
+                        ->where("votes", ">", 100)
+                        .orWhere([](auto &query) {
+                            query.whereEq("name", "Abigail")
+                                .where("votes", ">", 50);
+                        })
+                        .get();
+
+The example above will produce the following SQL:
+
+```sql
+select * from users where votes > 100 or (name = 'Abigail' and votes > 50)
+```
+
+<a name="additional-where-clauses"></a>
+### Additional Where Clauses
+
+**whereIn / whereNotIn / orWhereIn / orWhereNotIn**
+
+The `whereIn` method verifies that a given column's value is contained within the given `QVector<QVariant>`:
+
+    auto [ok, users] = DB::table("users")
+                        ->whereIn("id", {1, 2, 3})
+                        .get();
+
+The `whereNotIn` method verifies that the given column's value is not contained in the given `QVector<QVariant>`:
+
+    auto [ok, users] = DB::table("users")
+                        ->whereNotIn("id", {1, 2, 3})
+                        .get();
+
+**whereNull / whereNotNull / orWhereNull / orWhereNotNull**
+
+The `whereNull` method verifies that the value of the given column is `NULL`:
+
+    auto [ok, users] = DB::table("users")
+                        ->whereNull("updated_at")
+                        .get();
+
+The `whereNotNull` method verifies that the column's value is not `NULL`:
+
+    auto [ok, users] = DB::table("users")
+                        ->whereNotNull("updated_at")
+                        .get();
+
+**whereColumn / orWhereColumn**
+
+The `whereColumnEq` method may be used to verify that two columns are equal:
+
+    auto [ok, users] = DB::table("users")
+                        ->whereColumnEq("first_name", "last_name")
+                        .get();
+
+You may also pass a comparison operator to the `whereColumn` method:
+
+    auto [ok, users] = DB::table("users")
+                        ->whereColumn("updated_at", ">", "created_at")
+                        .get();
+
+You may also pass a `QVector<WhereColumnItem>` of column comparisons to the `whereColumn` method. These conditions will be joined using the `and` operator:
+
+    auto [ok, users] = DB::table("users")
+                        ->whereColumn({
+                            {"first_name", "last_name"},
+                            {"updated_at", "created_at", ">"},
+                        }).get();
+
+The comparison operator can also be overridden by the fourth argument in the `WhereColumnItem` structure:
+
+    auto [ok, users] = DB::table("users")
+                        ->whereColumn({
+                            {"first_name", "last_name"},
+                            {"updated_at", "created_at", ">", "or"},
+                        }).get();
+
+Or by the second `whereColumn` argument:
+
+    auto [ok, users] = DB::table("users")
+                        ->whereColumn({
+                            {"first_name", "last_name"},
+                            {"updated_at", "created_at", ">"},
+                        }, "or")
+                        .get();
+
+<a name="logical-grouping"></a>
+### Logical Grouping
+
+Sometimes you may need to group several "where" clauses within parentheses in order to achieve your query's desired logical grouping. In fact, you should generally always group calls to the `orWhere` method in parentheses in order to avoid unexpected query behavior. To accomplish this, you may pass a closure to the `where` method:
+
+    auto [ok, users] = DB::table("users")
+                       ->where("name", "=", "John")
+                       .where([](auto &query) {
+                           query.where("votes", ">", 100)
+                               .orWhere("title", "=", "Admin");
+                       })
+                       .get();
+
+As you can see, passing a closure into the `where` method instructs the query builder to begin a constraint group. The closure will receive a query builder instance which you can use to set the constraints that should be contained within the parenthesis group. The example above will produce the following SQL:
+
+```sql
+select * from users where name = 'John' and (votes > 100 or title = 'Admin')
+```
+
+<a name="ordering-grouping-limit-and-offset"></a>
+## Ordering, Grouping, Limit & Offset
+
+<a name="ordering"></a>
+### Ordering
+
+<a name="orderby"></a>
+#### The `orderBy` Method
+
+The `orderBy` method allows you to sort the results of the query by a given column. The first argument accepted by the `orderBy` method should be the column you wish to sort by, while the second argument determines the direction of the sort and may be either `asc` or `desc`:
+
+    auto [ok, users] = DB::table("users")
+                        ->orderBy("name", "desc")
+                        .get();
+
+To sort by multiple columns, you may simply invoke `orderBy` as many times as necessary:
+
+    auto [ok, users] = DB::table("users")
+                        ->orderBy("name", "desc")
+                        .orderBy("email", "asc")
+                        .get();
+
+<a name="latest-oldest"></a>
+#### The `latest` & `oldest` Methods
+
+The `latest` and `oldest` methods allow you to easily order results by date. By default, the result will be ordered by the table's `created_at` column. Or, you may pass the column name that you wish to sort by:
+
+    auto [ok, users] = DB::table("users")
+                        ->latest()
+                        .first();
+
+<a name="removing-existing-orderings"></a>
+#### Removing Existing Orderings
+
+The `reorder` method removes all of the "order by" clauses that have previously been applied to the query:
+
+    auto query = DB::table("users")->orderBy("name");
+
+    auto [ok, unorderedUsers] = query.reorder().get();
+
+You may pass a column and direction when calling the `reorder` method in order to remove all existing "order by "clauses" and apply an entirely new order to the query:
+
+    auto query = DB::table("users")->orderBy("name");
+
+    auto [ok, usersOrderedByEmail] = query.reorder("email", "desc").get();
+
+<a name="grouping"></a>
+### Grouping
+
+<a name="groupby-having"></a>
+#### The `groupBy` & `having` Methods
+
+As you might expect, the `groupBy` and `having` methods may be used to group the query results. The `having` method's signature is similar to that of the `where` method:
+
+    auto [ok, users] = DB::table("users")
+                    ->groupBy("account_id")
+                    .having("account_id", ">", 100)
+                    .get();
+
+You may pass multiple items to the `groupBy` method to group by multiple columns:
+
+    auto [ok, users] = DB::table("users")
+                    ->groupBy({"first_name", "status"})
+                    .having("account_id", ">", 100)
+                    .get();
+
+<a name="limit-and-offset"></a>
+### Limit & Offset
+
+<a name="skip-take"></a>
+#### The `skip` & `take` Methods
+
+You may use the `skip` and `take` methods to limit the number of results returned from the query or to skip a given number of results in the query:
+
+    auto [ok, users] = DB::table("users")->skip(10).take(5).get();
+
+Alternatively, you may use the `limit` and `offset` methods. These methods are functionally equivalent to the `take` and `skip` methods, respectively:
+
+    auto [ok, users] = DB::table("users")
+                    ->offset(10)
+                    .limit(5)
+                    .get();
+
+<a name="insert-statements"></a>
+## Insert Statements
+
+The query builder also provides an `insert` method that may be used to insert records into the database table. The `insert` method accepts the `QVariantMap` of column names and values:
+
+    DB::table("users")->insert({
+        {"email", "kayla@example.com"},
+        {"votes", 0},
+    });
+
+You may insert several records at once by passing `QVector<QVariantMap>`. Each QVariantMap represents a record that should be inserted into the table:
+
+    DB::table("users")->insert({
+        {{"email", "picard@example.com"}, {"votes", 0}},
+        {{"email", "janeway@example.com"}, {"votes", 0}},
+    });
+
+The `insertOrIgnore` method will ignore duplicate record errors while inserting records into the database:
+
+    DB::table("users")->insertOrIgnore({
+        {{"id", 1}, {"email", "sisko@example.com"}},
+        {{"id", 2}, {"email", "archer@example.com"}},
+    });
+
+<a name="auto-incrementing-ids"></a>
+#### Auto-Incrementing IDs
+
+If the table has an auto-incrementing id, use the `insertGetId` method to insert a record and then retrieve the ID:
+
+    auto id = DB::table("users")->insertGetId({
+        {"email", "john@example.com"},
+        {"votes", 0},
+    });
+
+<a name="update-statements"></a>
+## Update Statements
+
+In addition to inserting records into the database, the query builder can also update existing records using the `update` method. The `update` method, accepts `QVector<UpdateItem>` of column and value pairs, indicating the columns to be updated. You may constrain the `update` query using `where` clauses:
+
+    auto [affected, query] = DB::table("users")
+                              ->whereEq("id", 1)
+                              .update({{"votes", 1}});
+
+<a name="increment-and-decrement"></a>
+### Increment & Decrement
+
+The query builder also provides convenient methods for incrementing or decrementing the value of a given column. Both of these methods accept at least one argument: the column to modify. A second argument may be provided to specify the amount by which the column should be incremented or decremented:
+
+    DB::table("users")->increment<int>("votes");
+
+    DB::table("users")->increment("votes", 5);
+
+    DB::table("users")->decrement<int>("votes");
+
+    DB::table("users")->decrement("votes", 5.2); // float or double type
+
+You may also specify additional columns to update during the operation as `QVector<UpdateItem>`:
+
+    DB::table("users")->increment("votes", 1, {{"name", "John"}});
+
+You should constrain `increment`, `decrement` by `where` to update only specific record in the database, otherwise a column in all records will be modified.
+
+    DB::table("users")->whereEq("id", 1).increment("votes", 5);
+
+<a name="delete-statements"></a>
+## Delete Statements
+
+The query builder's `remove`, or an alias `deleteRow` method may be used to delete records from the table. You may constrain `delete` statements by adding "where" clauses before calling the `delete` method:
+
+    DB::table("users")->remove();
+
+    DB::table("users")->where("votes", ">", 100).remove();
+
+You may also pass record `id` to the `remove` method as the first argument, it is a shortcut method, which internally calls `where`:
+
+    DB::table("users")->remove(2);
+
+If you wish to truncate an entire table, which will remove all records from the table and reset the auto-incrementing ID to zero, you may use the `truncate` method:
+
+    DB::table("users")->truncate();

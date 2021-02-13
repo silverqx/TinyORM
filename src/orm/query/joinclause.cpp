@@ -31,6 +31,14 @@ JoinClause &JoinClause::on(const QString &first, const QString &comparison,
     return *this;
 }
 
+// TODO api different silverqx
+JoinClause &
+JoinClause::orOn(const QString &first, const QString &comparison,
+                 const QString &second)
+{
+    return on(first, comparison, second, "or");
+}
+
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE

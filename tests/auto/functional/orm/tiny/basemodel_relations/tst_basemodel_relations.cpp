@@ -10,9 +10,14 @@
 
 #include "database.hpp"
 
-using namespace Orm;
 // TODO tests, namespace silverqx
-using namespace Orm::Tiny;
+//using namespace Orm::Tiny;
+
+using Orm::ConnectionInterface;
+using Orm::One;
+using Orm::OrmRuntimeError;
+using Orm::Tiny::RelationNotFoundError;
+using Orm::Tiny::RelationNotLoadedError;
 
 class tst_BaseModel_Relations : public QObject
 {
@@ -42,6 +47,10 @@ private slots:
     void with_NestedRelations() const;
     void with_Vector_MoreRelations() const;
     void with_NonExistentRelation_Failed() const;
+
+    void without() const;
+    void without_NestedRelations() const;
+    void without_Vector_MoreRelations() const;
 
     void load() const;
     void load_Failed() const;
@@ -343,6 +352,39 @@ void tst_BaseModel_Relations::with_NonExistentRelation_Failed() const
 {
     QVERIFY_EXCEPTION_THROWN(Torrent::with("torrentFiles-NON_EXISTENT")->find(1),
                              RelationNotFoundError);
+}
+
+void tst_BaseModel_Relations::without() const
+{
+    auto torrent = TorrentEager::without("torrentPeer")->find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto &relations = torrent->getRelations();
+    QVERIFY(!relations.contains("torrentPeer"));
+    QVERIFY(relations.contains("torrentFiles"));
+    QCOMPARE(relations.size(), 1);
+}
+
+void tst_BaseModel_Relations::without_NestedRelations() const
+{
+    auto torrent = TorrentEager::without("torrentFiles")->find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto &relations = torrent->getRelations();
+    QVERIFY(!relations.contains("torrentFiles"));
+    QVERIFY(relations.contains("torrentPeer"));
+    QCOMPARE(relations.size(), 1);
+}
+
+void tst_BaseModel_Relations::without_Vector_MoreRelations() const
+{
+    auto torrent = TorrentEager::without({"torrentPeer", "torrentFiles"})->find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVERIFY(torrent->getRelations().isEmpty());
 }
 
 void tst_BaseModel_Relations::load() const

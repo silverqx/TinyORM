@@ -20,6 +20,7 @@ namespace Orm::Tiny
 namespace Relations
 {
 
+    // TODO next proxy all TinyBuilder methods aaaa 😑 silverqx
     template<class Model, class Related>
     class Relation
     {
@@ -84,6 +85,41 @@ namespace Relations
         std::tuple<int, QSqlQuery>
         rawUpdate(const QVector<UpdateItem> &values = {}) const;
 
+        /* TinyBuilder proxy methods */
+        /*! Add a basic where clause to the query. */
+        inline Builder<Related> &
+        where(const QString &column, const QString &comparison,
+              const QVariant &value, const QString &condition = "and")
+        { return m_query->where(column, comparison, value, condition); }
+        /*! Add an "or where" clause to the query. */
+        inline Builder<Related> &
+        orWhere(const QString &column, const QString &comparison,
+                const QVariant &value)
+        { return m_query->orWhere(column, comparison, value); }
+        /*! Add a basic equal where clause to the query. */
+        inline Builder<Related> &
+        whereEq(const QString &column, const QVariant &value,
+                const QString &condition = "and")
+        { return m_query->whereEq(column, value, condition); }
+        /*! Add an equal "or where" clause to the query. */
+        inline Builder<Related> &
+        orWhereEq(const QString &column, const QVariant &value)
+        { return m_query->orWhereEq(column, value); }
+        /*! Add a nested where clause to the query. */
+        inline Builder<Related> &
+        where(const std::function<void(Builder<Related> &)> &callback,
+              const QString &condition = "and")
+        { return m_query->where(callback, condition); }
+        /*! Add a nested "or where" clause to the query. */
+        inline Builder<Related> &
+        orWhere(const std::function<void(Builder<Related> &)> &callback)
+        { return m_query->orWhere(callback); }
+
+        /*! Add an array of basic where clauses to the query. */
+        inline Builder<Related> &
+        where(const QVector<WhereItem> &values, const QString &condition = "and")
+        { return m_query->where(values, condition); }
+
     protected:
         /*! Initialize a Relation instance. */
         void init() const
@@ -100,6 +136,7 @@ namespace Relations
         const std::unique_ptr<Related> m_related;
         // TODO next 👆👇 the same for m_related silverqx
         // TODO next reconsider unique_ptr here, shared pointer would be good to? I hit this when I implemented getBaseQuery(), or leave this unique and return shared pointer from getBaseQuery() silverqx
+        // TODO next would be good to use TinyBuilder alias instead of Builder silverqx
         /*! The Eloquent query builder instance. */
         std::unique_ptr<Builder<Related>> m_query;
         /*! Indicates if the relation is adding constraints. */

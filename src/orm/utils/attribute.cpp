@@ -4,11 +4,11 @@
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Utils::Attribute
 {
 
 QVariantMap
-Utils::Attribute::convertVectorToMap(const QVector<AttributeItem> &attributes)
+convertVectorToMap(const QVector<AttributeItem> &attributes)
 {
     // TODO mistake m_attributes/m_original 😭 silverqx
     QVariantMap values;
@@ -19,7 +19,7 @@ Utils::Attribute::convertVectorToMap(const QVector<AttributeItem> &attributes)
 }
 
 QVector<UpdateItem>
-Utils::Attribute::convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
+convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
 {
     QVector<UpdateItem> values;
     for (const auto &attribute : attributes)

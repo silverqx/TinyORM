@@ -5,6 +5,13 @@ Todos to check in TinyOrm:
    when incrementing == true, but all other insert methods don't, it's big inconsistency, unify it
 
 
+Documentation TinyOrm Todos:
+----------------------------
+
+ - add note about overriding 'condition' in vector where in ### Where Clauses
+ - how to refer NULL in docs, for now I leave it NULL
+
+
 TODOs which look bad in code:
 -----------------------------
 
@@ -20,6 +27,25 @@ void deleteModel()
 
     return toBase().deleteRow();
 }
+
+
+Todo categories:
+----------------
+
+ - api different     : different api than Laravel's Eloquent
+ - docs              : document code or update markdown documentation
+ - duplicate         : duplicate code
+ - future            : task which has lower priority, because still much to do
+ - multidriver       : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
+ - now               : do it before commit
+ - next              : next thing in the row to do after commit
+ - perf              : performance
+ - postgres          : specific to PostgreSQL server
+ - primarykey dilema : different types for primary keys
+ - production        : check before deploy to production
+ - security          : self explaining
+ - test              : tasks in auto tests
+ - types             : juggling with c++ types
 
 
 IsModel:

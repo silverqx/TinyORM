@@ -8,6 +8,7 @@ SOURCES += \
     $$PWD/orm/connectors/mysqlconnector.cpp \
     $$PWD/orm/databaseconnection.cpp \
     $$PWD/orm/databasemanager.cpp \
+    $$PWD/orm/db.cpp \
     $$PWD/orm/grammar.cpp \
     $$PWD/orm/logquery.cpp \
     $$PWD/orm/mysqlconnection.cpp \

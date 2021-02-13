@@ -22,37 +22,76 @@ namespace Query
 
     class SHAREDLIB_EXPORT DatabaseManager final : public ConnectionResolverInterface
     {
+        friend class DB;
+
         Q_DISABLE_COPY(DatabaseManager)
 
     public:
-        /*! Default connection name. */
-        static const char *defaultConnectionName;
-
-        explicit DatabaseManager(
-                const QString &defaultConnection = QLatin1String(defaultConnectionName));
         virtual ~DatabaseManager();
 
-        /*! Factory method to create DatabaseManager instance. */
+        /*! Factory method to create DatabaseManager instance and register a new connection as default connection at once. */
         static std::unique_ptr<DatabaseManager>
         create(const QVariantHash &config,
-               const QString &connection = QLatin1String(defaultConnectionName),
-               const QString &defaultConnection = QLatin1String(defaultConnectionName));
-        /*! Factory method to create DatabaseManager instance. */
+               const QString &connection = QLatin1String(defaultConnectionName));
+        /*! Factory method to create DatabaseManager instance and set connections at once. */
         static std::unique_ptr<DatabaseManager>
         create(const ConfigurationsType &configs,
                const QString &defaultConnection = QLatin1String(defaultConnectionName));
 
-        /* Proxy methods to the DatabaseConnection. */
+        /* Proxy methods to the DatabaseConnection */
         /*! Begin a fluent query against a database table for the connection. */
         QSharedPointer<QueryBuilder>
-        table(const QString &table, const QString &as = "", const QString &connection = "");
+        table(const QString &table, const QString &as = "",
+              const QString &connection = "");
 
         /*! Get a new query builder instance for the connection. */
         QSharedPointer<QueryBuilder> query(const QString &connection = "");
         /*! Get a new QSqlQuery instance for the connection. */
         QSqlQuery qtQuery(const QString &connection = "");
 
-        /* DatabaseManager. */
+        /*! Create a new raw query expression. */
+        inline Query::Expression raw(const QVariant &value)
+        { return value; }
+
+        // TODO next add support for named bindings, Using Named Bindings silverqx
+        /*! Run a select statement against the database. */
+        std::tuple<bool, QSqlQuery>
+        select(const QString &query, const QVector<QVariant> &bindings = {});
+        /*! Run a select statement and return a single result. */
+        std::tuple<bool, QSqlQuery>
+        selectOne(const QString &query, const QVector<QVariant> &bindings = {});
+        /*! Run an insert statement against the database. */
+        std::tuple<bool, QSqlQuery>
+        insert(const QString &query, const QVector<QVariant> &bindings = {});
+        /*! Run an update statement against the database. */
+        std::tuple<int, QSqlQuery>
+        update(const QString &query, const QVector<QVariant> &bindings = {});
+        /*! Run a delete statement against the database. */
+        std::tuple<int, QSqlQuery>
+        remove(const QString &query, const QVector<QVariant> &bindings = {});
+        /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
+        std::tuple<bool, QSqlQuery>
+        statement(const QString &query,
+                  const QVector<QVariant> &bindings = {});
+
+        /*! Start a new database transaction. */
+        bool beginTransaction();
+        /*! Commit the active database transaction. */
+        bool commit();
+        /*! Rollback the active database transaction. */
+        bool rollBack();
+        /*! Start a new named transaction savepoint. */
+        bool savepoint(const QString &id);
+        /*! Start a new named transaction savepoint. */
+        bool savepoint(size_t id);
+        /*! Rollback to a named transaction savepoint. */
+        bool rollbackToSavepoint(const QString &id);
+        /*! Rollback to a named transaction savepoint. */
+        bool rollbackToSavepoint(size_t id);
+        /*! Get the number of active transactions. */
+        uint transactionLevel();
+
+        /* DatabaseManager */
         /*! Obtain a database connection instance, for now it's singleton. */
         static DatabaseManager *instance();
 
@@ -83,6 +122,12 @@ namespace Query
         DatabaseManager &setReconnector(const ReconnectorType &reconnector);
 
     protected:
+        /*! Default connection name. */
+        static const char *defaultConnectionName;
+
+        explicit DatabaseManager(
+                const QString &defaultConnection = QLatin1String(defaultConnectionName));
+
         explicit DatabaseManager(
                 const QVariantHash &config,
                 const QString &name = QLatin1String(defaultConnectionName),

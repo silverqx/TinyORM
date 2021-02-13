@@ -14,7 +14,7 @@ private:
     /*! The table associated with the model. */
     QString u_table {"settings"};
 
-    /*! Indicates if the IDs are auto-incrementing. */
+    /*! Indicates if the model's ID is auto-incrementing. */
     bool u_incrementing = false;
 
 #ifdef PROJECT_TINYORM_TEST
