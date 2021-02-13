@@ -1,3 +1,3 @@
-# TinyOrm
+# TinyORM
 
-TinyOrm is ORM heavily inspired by Laravel Eloquent ORM, currently in development and may be stays forever 🙂.
+TinyORM is a modern ORM library heavily inspired by Laravel's Eloquent ORM that makes interacting with a database extremely simple.
