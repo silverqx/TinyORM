@@ -1,3 +1,4 @@
+<a name="top"></a>
 # TinyORM: Relationships
 
 - [Introduction](#introduction)
@@ -5,14 +6,10 @@
     - [One To One](#one-to-one)
     - [One To Many](#one-to-many)
     - [One To Many (Inverse) / Belongs To](#one-to-many-inverse)
-- [Many To Many Relationships](#many-to-many)
-    - [Retrieving Intermediate Table Columns](#retrieving-intermediate-table-columns)
-    - [Filtering Queries Via Intermediate Table Columns](#filtering-queries-via-intermediate-table-columns)
-    - [Defining Custom Intermediate Table Models](#defining-custom-intermediate-table-models)
+- [~~Many To Many Relationships~~](#many-to-many) *coming soon*
 - [Querying Relations](#querying-relations)
     - [Relationship Methods Vs. Dynamic Properties](#relationship-methods-vs-dynamic-properties)
 - [Eager Loading](#eager-loading)
-    - [Constraining Eager Loads](#constraining-eager-loads)
     - [Lazy Eager Loading](#lazy-eager-loading)
 - [Inserting & Updating Related Models](#inserting-and-updating-related-models)
 - [Touching Parent Timestamps](#touching-parent-timestamps)
@@ -24,12 +21,12 @@ Database tables are often related to one another. For example, a blog post may h
 
 - [One To One](#one-to-one)
 - [One To Many](#one-to-many)
-- [~~Many To Many~~](#many-to-many) (implemented soon)
+- [~~Many To Many~~](#many-to-many) *coming soon*
 
 <a name="defining-relationships"></a>
 ## Defining Relationships
 
-TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful [query builders](query-builder.md), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
+TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful [query builders](query-builder.md#top), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
 
     user->posts()->where("active", 1).get();
 
@@ -335,7 +332,7 @@ It will be implemented soon.
 <a name="querying-relations"></a>
 ## Querying Relations
 
-Since all TinyORM relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing a query to load the related models. In addition, all types of TinyORM relationships also serve as [query builders](query-builder.md), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL query against your database.
+Since all TinyORM relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing a query to load the related models. In addition, all types of TinyORM relationships also serve as [query builders](query-builder.md#top), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL query against your database.
 
 For example, imagine a blog application in which a `User` model has many associated `Post` models:
 
@@ -380,7 +377,7 @@ You may query the `posts` relationship and add additional constraints to the rel
 
     user->posts()->whereEq("active", 1).get();
 
-You are able to use any of the Laravel [query builder's](query-builder.md) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
+You are able to use any of the Laravel [query builder's](query-builder.md#top) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
 
 So far, not all query builder methods are proxied on the relation base class, only basic `where` methods are proxied.
 

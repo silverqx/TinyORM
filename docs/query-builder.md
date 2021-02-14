@@ -1,3 +1,4 @@
+<a name="top"></a>
 # Database: Query Builder
 
 - [Introduction](#introduction)

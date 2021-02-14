@@ -6,8 +6,8 @@ TinyORM is a modern ORM library heavily inspired by Laravel's Eloquent ORM that 
 
 Whole library is documented as markdown documents:
 
-- [Documentation: Index](/docs/README.md)
-- [Database: Getting Started](/docs/database.md)
-- [Database: Query Builder](/docs/query-builder.md)
-- [TinyORM: Getting Started](/docs/tinyorm.md)
-- [TinyORM: Relationships](/docs/tinyorm-relationships.md)
+- [Documentation: Index](/docs/README.md#top)
+- [Database: Getting Started](/docs/database.md#top)
+- [Database: Query Builder](/docs/query-builder.md#top)
+- [TinyORM: Getting Started](/docs/tinyorm.md#top)
+- [TinyORM: Relationships](/docs/tinyorm-relationships.md#top)
