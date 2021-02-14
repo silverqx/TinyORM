@@ -8,7 +8,6 @@ Todos to check in TinyOrm:
 Documentation TinyOrm Todos:
 ----------------------------
 
- - add note about overriding 'condition' in vector where in ### Where Clauses
  - how to refer NULL in docs, for now I leave it NULL
 
 

@@ -40,6 +40,7 @@ namespace Orm
         /*! Get a new query builder instance. */
         QSharedPointer<QueryBuilder> query() override;
 
+        // TODO now Raw Expressions fuckup🤔 silverqx
         /*! Get a new raw query expression. */
         inline Query::Expression raw(const QVariant &value) const override
         { return value; }

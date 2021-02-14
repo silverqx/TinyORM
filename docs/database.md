@@ -24,7 +24,7 @@ TinyORM internally uses `QtSql` module, you can look for [supported databases](h
 
 You can create and configure new database connection by `create` method provided by `DB` facade:
 
-    #include "orm/db.hpp"
+    #include <orm/db.hpp>
 
     auto manager = DB::create({
         {"driver",    "QMYSQL"},
@@ -61,9 +61,9 @@ The first argument passed to the `select` method is the SQL query, while the sec
 
 The `select` method returns a `std::tuple<bool, QSqlQuery>` containing the results of the query, where each result can be accessed by `QSqlQuery::next` method. Look into the `QSqlQuery` documentation on how to obtain results from the "query". You may access each column's value by `QSqlQuery::value` method. The first `bool` return value is the value returned from `QSqlQuery::exec` method:
 
-    #include "QDebug"
+    #include <QDebug>
 
-    #include "orm/db.hpp"
+    #include <orm/db.hpp>
 
     auto [ok, users] = DB::select("select * from users");
 
@@ -77,7 +77,7 @@ To execute an `insert` statement, you may use the `insert` method on the `DB` fa
 
     #include <QDebug>
 
-    #include "orm/db.hpp"
+    #include <orm/db.hpp>
 
     auto [ok, query] = DB::insert("insert into users (id, name) values (?, ?)", {1, "Marc"});
 
@@ -91,7 +91,7 @@ The `update` method should be used to update existing records in the database. T
 
     #include <QDateTime>
 
-    #include "orm/db.hpp"
+    #include <orm/db.hpp>
 
     auto [affected, query] = DB::update(
         "update users set updated_at = ? where name = ?",
@@ -106,7 +106,7 @@ The `update` method should be used to update existing records in the database. T
 
 The `remove` method should be used to delete records from the database. Like `update`, the number of affected rows and `QSqlQuery` will be returned by the method as `std::tuple<int, QSqlQuery>`:
 
-    #include "orm/db.hpp"
+    #include <orm/db.hpp>
 
     auto [affected, query] = DB::remove("delete from users");
 
@@ -133,7 +133,7 @@ Please refer to the MySQL manual for [a list of all statements](https://dev.mysq
 
 You can configure multiple database connections at once during `DatabaseManager` instantiation using the `DB::create` overload, where the first argument is a hash of multiple connections and is of type `QHash<QString, QVariantHash>` and the second argument is the name of the default connection:
 
-    #include "orm/db.hpp"
+    #include <orm/db.hpp>
 
     auto manager = DB::create({
         {"mysql", {
@@ -164,7 +164,7 @@ You can configure multiple database connections at once during `DatabaseManager`
 
 If your application needs to use multiple connections, you may access each connection via the `connection` method provided by the `DB` facade. The connection name passed to the `connection` method should correspond to one of the connections key listed in your configuration:
 
-    #include "orm/db.hpp"
+    #include <orm/db.hpp>
 
     auto [ok, query] = DB::connection("mysql_test").select(...);
 
@@ -184,7 +184,7 @@ Or you can use the shortcut method `qtQuery` provided by the `DB` facade:
 
 If you would like to begin a transaction manually and have complete control over rollbacks and commits, you may use the `beginTransaction` method provided by the `DB` facade:
 
-    #include "orm/db.hpp"
+    #include <orm/db.hpp>
 
     DB::beginTransaction();
 
