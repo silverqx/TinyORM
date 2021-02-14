@@ -200,4 +200,4 @@ All transaction methods accept a connection name as the optional argument:
 
     DB::beginTransaction("mysql_test");
 
-> {tip} The `DB` facade's transaction methods control the transactions for both the [query builder](query-builder) and [TinyORM](tinyorm).
+> {tip} The `DB` facade's transaction methods control the transactions for both the [query builder](query-builder.md) and [TinyORM](tinyorm.md).

@@ -29,7 +29,7 @@ Database tables are often related to one another. For example, a blog post may h
 <a name="defining-relationships"></a>
 ## Defining Relationships
 
-TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful [query builders](query-builder), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
+TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful [query builders](query-builder.md), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
 
     user->posts()->where("active", 1).get();
 
@@ -335,7 +335,7 @@ It will be implemented soon.
 <a name="querying-relations"></a>
 ## Querying Relations
 
-Since all TinyORM relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing a query to load the related models. In addition, all types of TinyORM relationships also serve as [query builders](query-builder), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL query against your database.
+Since all TinyORM relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing a query to load the related models. In addition, all types of TinyORM relationships also serve as [query builders](query-builder.md), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL query against your database.
 
 For example, imagine a blog application in which a `User` model has many associated `Post` models:
 
@@ -380,7 +380,7 @@ You may query the `posts` relationship and add additional constraints to the rel
 
     user->posts()->whereEq("active", 1).get();
 
-You are able to use any of the Laravel [query builder's](query-builder) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
+You are able to use any of the Laravel [query builder's](query-builder.md) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
 
 So far, not all query builder methods are proxied on the relation base class, only basic `where` methods are proxied.
 
@@ -402,7 +402,7 @@ from posts
 where user_id = ? and active = 1 or votes >= 100
 ```
 
-In most situations, you should use [logical groups](query-builder#logical-grouping) to group the conditional checks between parentheses:
+In most situations, you should use [logical groups](query-builder.md#logical-grouping) to group the conditional checks between parentheses:
 
     user->posts()
         ->where([](auto &query) {

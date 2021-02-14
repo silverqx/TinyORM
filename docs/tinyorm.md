@@ -20,7 +20,7 @@
 
 TinyORM is an object-relational mapper (ORM) that makes it enjoyable to interact with your database. When using TinyORM, each database table has a corresponding "Model" that is used to interact with that table. In addition to retrieving records from the database table, TinyORM models allow you to insert, update, and delete records from the table as well.
 
-> {tip} Before getting started, be sure to configure a database connection in your application. For more information on configuring your database, check out [the database configuration documentation](database#configuration).
+> {tip} Before getting started, be sure to configure a database connection in your application. For more information on configuring your database, check out [the database configuration documentation](database.md#configuration).
 
 <a name="tinyorm-model-conventions"></a>
 ## TinyORM Model Conventions
@@ -175,7 +175,7 @@ By default, all TinyOrm models will use the default database connection that is 
 <a name="retrieving-models"></a>
 ## Retrieving Models
 
-Once you have created a model and its associated database table, you are ready to start retrieving data from your database. You can think of each TinyOrm model as a powerful [query builder](/docs/{{version}}/query-builder) allowing you to fluently query the database table associated with the model. The model's `all` method will retrieve all of the records from the model's associated database table:
+Once you have created a model and its associated database table, you are ready to start retrieving data from your database. You can think of each TinyOrm model as a powerful [query builder](query-builder.md) allowing you to fluently query the database table associated with the model. The model's `all` method will retrieve all of the records from the model's associated database table:
 
     #include <QDebug>
 
@@ -187,14 +187,14 @@ Once you have created a model and its associated database table, you are ready t
 <a name="building-queries"></a>
 #### Building Queries
 
-The TinyOrm `all` method will return all of the results in the model's table. However, since each TinyOrm model serves as a [query builder](/docs/{{version}}/query-builder), you may add additional constraints to queries and then invoke the `get` method to retrieve the results:
+The TinyOrm `all` method will return all of the results in the model's table. However, since each TinyOrm model serves as a [query builder](query-builder.md), you may add additional constraints to queries and then invoke the `get` method to retrieve the results:
 
     auto flights = Flight::whereEq("active", 1)
                ->orderBy("name")
                .take(10)
                .get();
 
-> {tip} Since TinyOrm models are query builders, you should review all of the methods provided by TinyORM's [query builder](/docs/{{version}}/query-builder). You may use any of these methods when writing your TinyOrm queries.
+> {tip} Since TinyOrm models are query builders, you should review all of the methods provided by TinyORM's [query builder](query-builder.md). You may use any of these methods when writing your TinyOrm queries.
 
 > {note} All the static methods defined on the `Orm::Tiny::BaseModel<Model, AllRelations...>` class, which start building queries like `where`, `latest`, `oldest`, `with`, ... return `std::unique_ptr<TinyBuilder<Model>>`, `TinyBuilder = Orm::Tiny::Builder` and `Model` template argument is queried model class.
 
