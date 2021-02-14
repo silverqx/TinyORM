@@ -9,7 +9,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Almost every modern application interacts with a database. TinyORM makes interacting with a database extremely simple using raw SQL, a [fluent query builder](query-builder), and the [TinyORM](tinyorm). Currently, TinyORM provides first-party support for one database:
+Almost every modern application interacts with a database. TinyORM makes interacting with a database extremely simple using raw SQL, a [fluent query builder](query-builder.md), and the [TinyORM](tinyorm.md). Currently, TinyORM provides first-party support for one database:
 
 <div class="content-list" markdown="1">
 - MySQL or MariaDB 5.0+ ([Version Policy](https://en.wikipedia.org/wiki/MySQL#Release_history))

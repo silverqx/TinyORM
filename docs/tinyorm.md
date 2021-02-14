@@ -196,7 +196,7 @@ The TinyOrm `all` method will return all of the results in the model's table. Ho
 
 > {tip} Since TinyOrm models are query builders, you should review all of the methods provided by TinyORM's [query builder](/docs/{{version}}/query-builder). You may use any of these methods when writing your TinyOrm queries.
 
-> {note} All the static methods defined on the `Orm::Tiny::BaseModel` class, which start building queries like `where`, `latest`, `oldest`, `with`, ... return `std::unique_ptr<TinyBuilder<Model>>`, `TinyBuilder = Orm::Tiny::Builder` and `Model` template argument is queried model class.
+> {note} All the static methods defined on the `Orm::Tiny::BaseModel<Model, AllRelations...>` class, which start building queries like `where`, `latest`, `oldest`, `with`, ... return `std::unique_ptr<TinyBuilder<Model>>`, `TinyBuilder = Orm::Tiny::Builder` and `Model` template argument is queried model class.
 
 <a name="refreshing-models"></a>
 #### Refreshing Models
@@ -229,7 +229,7 @@ As we have seen, TinyORM methods like `all` and `get` retrieve multiple records 
     for (const auto &flight : Flight::all())
         qDebug() << flight["name"].toString();
 
-> {note} `all` method is defined on the `Orm::Tiny::BaseModel<Model>` class and `get` method is defined on the `Orm::Tiny::Builder`, may be also referred as `TinyBuilder`, it extends `Orm::Query::Builder` alias `QueryBuilder`.
+> {note} `all` method is defined on the `Orm::Tiny::BaseModel<Model, AllRelations...>` class and `get` method is defined on the `Orm::Tiny::Builder`, may be also referred as `TinyBuilder`, it extends `Orm::Query::Builder` alias `QueryBuilder`.
 
 <a name="retrieving-single-models"></a>
 ## Retrieving Single Models

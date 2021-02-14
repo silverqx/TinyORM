@@ -135,6 +135,7 @@ namespace Tiny
 
         // TODO next fuckin increment, finish later 👿 silverqx
 
+        // TODO now add with/load QStringList overload too, update "Eager Loading Multiple Relationships" docs silverqx
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Model>>
         with(const QVector<WithItem> &relations);

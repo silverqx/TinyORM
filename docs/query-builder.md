@@ -19,6 +19,7 @@
 - [Update Statements](#update-statements)
     - [Increment & Decrement](#increment-and-decrement)
 - [Delete Statements](#delete-statements)
+    - [Truncate Statement](#truncate-statement)
 
 <a name="introduction"></a>
 ## Introduction
@@ -522,6 +523,9 @@ The query builder's `remove`, or an alias `deleteRow` method may be used to dele
 You may also pass record `id` to the `remove` method as the first argument, it is the shortcut method, which internally calls `where`:
 
     DB::table("users")->remove(2);
+
+<a name="truncate-statement"></a>
+### Truncate Statement
 
 If you wish to truncate an entire table, which will remove all records from the table and reset the auto-incrementing ID to zero, you may use the `truncate` method:
 
