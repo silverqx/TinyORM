@@ -12,9 +12,14 @@ SOURCES += \
     $$PWD/models/torrentpreviewablefileproperty.cpp \
 
 HEADERS += \
+    $$PWD/models/book.hpp \
+    $$PWD/models/comment.hpp \
     $$PWD/models/filepropertyproperty.hpp \
+    $$PWD/models/flight.hpp \
     $$PWD/models/forwards.hpp \
     $$PWD/models/forwardseager.hpp \
+    $$PWD/models/phone.hpp \
+    $$PWD/models/post.hpp \
     $$PWD/models/setting.hpp \
     $$PWD/models/torrent.hpp \
     $$PWD/models/torrenteager.hpp \
@@ -26,3 +31,4 @@ HEADERS += \
     $$PWD/models/torrentpreviewablefileeager.hpp \
     $$PWD/models/torrentpreviewablefileproperty.hpp \
     $$PWD/models/torrentpreviewablefilepropertyeager.hpp \
+    $$PWD/models/user.hpp

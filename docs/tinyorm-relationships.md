@@ -8,7 +8,7 @@
     - [One To Many (Inverse) / Belongs To](#one-to-many-inverse)
 - [~~Many To Many Relationships~~](#many-to-many) *coming soon*
 - [Querying Relations](#querying-relations)
-    - [Relationship Methods Vs. Dynamic Properties](#relationship-methods-vs-dynamic-properties)
+    - [Relationship Methods](#relationship-methods)
 - [Eager Loading](#eager-loading)
     - [Lazy Eager Loading](#lazy-eager-loading)
 - [Inserting & Updating Related Models](#inserting-and-updating-related-models)
@@ -28,7 +28,7 @@ Database tables are often related to one another. For example, a blog post may h
 
 TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful [query builders](query-builder.md#top), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
 
-    user->posts()->where("active", 1).get();
+    user->posts()->whereEq("active", 1).get();
 
 But, before diving too deep into using relationships, let's learn how to define each type of relationship supported by TinyORM.
 
@@ -216,7 +216,7 @@ Remember, TinyORM will automatically determine the proper foreign key column for
 
 Once the relationship method has been defined, we can access the `QVector<Related *>` of related comments by BaseModel's `getRelationValue<Related, Container = QVector>` method:
 
-    #include "models/post.hpp";
+    #include "models/post.hpp"
 
     auto comments = Post::find(1)->getRelationValue<Comment>("comments");
 
@@ -384,7 +384,7 @@ So far, not all query builder methods are proxied on the relation base class, on
 <a name="chaining-orwhere-clauses-after-relationships"></a>
 #### Chaining `orWhere` Clauses After Relationships
 
-As demonstrated in the example above, you are free to add additional constraints to relationships when querying them. However, use caution when chaining `orWhere` clauses onto a relationship, as the `orWhere` clauses will be logically grouped at the same level as the relationship constraint:
+As demonstrated in the example above, you are free to add additional constraints to relationships when querying them. However, be careful when chaining `orWhere` clauses onto a relationship, as the `orWhere` clauses will be logically grouped at the same level as the relationship constraint:
 
     user->posts()
         ->whereEq("active", 1)
@@ -416,20 +416,42 @@ from posts
 where user_id = ? and (active = 1 or votes >= 100)
 ```
 
-<a name="relationship-methods-vs-dynamic-properties"></a>
-### Relationship Methods Vs. Dynamic Properties
+<a name="relationship-methods"></a>
+### Relationship Methods
 
-If you do not need to add additional constraints to an TinyORM relationship query, you may access the relationship as if it were a property. For example, continuing to use our `User` and `Post` example models, we may access all of a user's posts like so:
+If you do not need to add additional constraints to an TinyORM relationship query, you may access the relationship directly. For example, continuing to use our `User` and `Post` example models, we may access all of a user's posts like so:
 
-    use App\Models\User;
+    #include "models/user.hpp"
 
-    $user = User::find(1);
+    auto user = User::find(1);
 
-    foreach ($user->posts as $post) {
+    for (auto *post : user->getRelationValue<Post>("posts")) {
         //
     }
 
-Dynamic relationship properties perform "lazy loading", meaning they will only load their relationship data when you actually access them. Because of this, developers often use [eager loading](#eager-loading) to pre-load relationships they know will be accessed after loading the model. Eager loading provides a significant reduction in SQL queries that must be executed to load a model's relations.
+The `getRelationValue<Related>` method performs "lazy loading", meaning they will only load their relationship data when you actually access them. Because of this, developers often use [eager loading](#eager-loading) to pre-load relationships they know will be accessed after loading the model. Eager loading provides a significant reduction in SQL queries that must be executed to load a model's relations.
+
+To access eager loaded relationship use BaseModel's `getRelation<Related>` method:
+
+    auto user = User::find(1);
+
+    for (auto *post : user->getRelation<Post>("posts")) {
+        //
+    }
+
+As described above TinyORM offers two methods to access relationships; `getRelation` and `getRelationValue`.
+
+The `getRelation` method is for "eager loaded" relations, when the relationship is not loaded, it throws the exception `RelationNotLoadedError`. The `getRelationValue` is for "lazy loading", when the relationship is not loaded, it will load it.
+
+Both methods have two overloads, the `getRelation<Related, Container = QVector>` overload is for obtaining many type relationships:
+
+    auto posts = User::find(1)->getRelation<Post>("posts");
+
+The `getRelation<Related, Tag>` overload is for obtaining "one" type relationships:
+
+    auto user = Post::find(1)->getRelation<User, Orm::One>("user");
+
+The same is true for the `getRelationValue` method.
 
 <a name="eager-loading"></a>
 ## Eager Loading
@@ -475,7 +497,7 @@ Now, let's retrieve all books and their authors:
 
     auto books = Book::all();
 
-    for (const auto &book : books)
+    for (auto &book : books)
         qDebug() << book.getRelationValue<Author, Orm::One>("author")
                         ->getAttribute("name").toString();
 
@@ -485,7 +507,7 @@ Thankfully, we can use eager loading to reduce this operation to just two querie
 
     auto books = Book::with("author")->get();
 
-    for (const auto &book : books)
+    for (auto &book : books)
         qDebug() << book.getRelation<Author, Orm::One>("author")
                         ->getAttribute("name").toString();
 
@@ -571,7 +593,7 @@ Sometimes you may need to eager load a relationship after the parent model has a
 
 You may load more relationships at once, to do so, just pass a `QVector<Orm::WithItem>` of relationships to the `load` method:
 
-    book->load({{"author"}, {"publisher"}});
+    Book::find(1)->load({{"author"}, {"publisher"}});
 
 > {note} So far, this only works on models, not on containers returned from BaseModel's `get` or `all` methods.
 
@@ -585,10 +607,10 @@ If you would like to `save` your model and all of its associated relationships, 
 
     auto post = Post::find(1);
 
-    post->getRelationValue("comments").at(0)->setAttribute("message", "Message");
+    post->getRelationValue<Comment>("comments").at(0)->setAttribute("message", "Message");
 
-    post->getRelationValue("comments").first()
-        .getRelationValue("author")->setAttribute("name", "Author Name");
+    post->getRelationValue<Comment>("comments").first()
+        ->getRelationValue<User, Orm::One>("author")->setAttribute("name", "Author Name");
 
     post->push();
 

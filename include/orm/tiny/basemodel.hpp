@@ -198,12 +198,14 @@ namespace Tiny
         /*! Reload the current model instance with fresh attributes from the database. */
         Model &refresh();
 
+        // TODO future LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
         /*! Eager load relations on the model. */
         Model &load(const QVector<WithItem> &relations);
         /*! Eager load relations on the model. */
         inline Model &load(const QString &relation)
         { return load(QVector<WithItem> {{relation}}); }
 
+        // TODO add clean Model overloads silverqx
         /*! Determine if two models have the same ID and belong to the same table. */
         template<typename ModelToCompare>
         bool is(const std::optional<ModelToCompare> &model) const;

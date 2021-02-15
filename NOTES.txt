@@ -9,9 +9,6 @@ Documentation TinyOrm Todos:
 ----------------------------
 
  - how to refer NULL in docs, for now I leave it NULL
- - to revisit again:
-    - Querying Relations
-    - Relationship Methods Vs. Dynamic Properties
 
 
 TODOs which look bad in code:
