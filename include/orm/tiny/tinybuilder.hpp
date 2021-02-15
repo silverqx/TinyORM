@@ -69,6 +69,9 @@ namespace Relations
         /*! Execute the query and get the first result or throw an exception. */
         Model firstOrFail(const QStringList &columns = {"*"});
 
+        /*! Get a single column's value from the first result of a query. */
+        QVariant value(const QString &column);
+
         /*! Set the relationships that should be eager loaded. */
         Builder &with(const QVector<WithItem> &relations);
         /*! Set the relationships that should be eager loaded. */
@@ -387,6 +390,18 @@ namespace Relations
             return *model;
 
         throw ModelNotFoundError(Utils::Type::classPureBasename<Model>());
+    }
+
+    // TODO dilema raw expression silverqx
+    template<typename Model>
+    QVariant Builder<Model>::value(const QString &column)
+    {
+        auto model = first({column});
+
+        if (!model)
+            return {};
+
+        return model->getAttribute(column.mid(column.lastIndexOf(QChar('.')) + 1));
     }
 
     template<typename Model>

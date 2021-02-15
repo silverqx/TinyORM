@@ -24,6 +24,9 @@ private slots:
     void get() const;
     void get_Columns() const;
 
+    void value() const;
+    void value_ModelNotFound() const;
+
     void firstOrFail_Found() const;
     void firstOrFail_NotFoundFailed() const;
 
@@ -76,6 +79,21 @@ void tst_TinyBuilder::get_Columns() const
     QCOMPARE(torrent3.getAttributes().at(0).key, QString("id"));
     QCOMPARE(torrent3.getAttributes().at(1).key, QString("name"));
     QCOMPARE(torrent3.getAttributes().at(2).key, QString("size"));
+}
+
+void tst_TinyBuilder::value() const
+{
+    auto value = Torrent::whereEq("id", 2)->value("name");
+
+    QCOMPARE(value, QVariant("test2"));
+}
+
+void tst_TinyBuilder::value_ModelNotFound() const
+{
+    auto value = Torrent::whereEq("id", 999999)->value("name");
+
+    QVERIFY(!value.isValid());
+    QVERIFY(value.isNull());
 }
 
 void tst_TinyBuilder::firstOrFail_Found() const

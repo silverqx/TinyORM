@@ -33,6 +33,7 @@ Todo categories:
 
  - api different     : different api than Laravel's Eloquent
  - docs              : document code or update markdown documentation
+ - dilema            : some sort of a fuckup
  - duplicate         : duplicate code
  - future            : task which has lower priority, because still much to do
  - multidriver       : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
