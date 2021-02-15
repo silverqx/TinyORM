@@ -62,6 +62,9 @@ private slots:
     void push_LazyLoad() const;
     // TODO tests, test all return paths for push() silverqx
 
+    void where_WithCallback() const;
+    void orWhere_WithCallback() const;
+
 private:
     /*! The database connection instance. */
     ConnectionInterface &m_connection;
@@ -719,6 +722,49 @@ void tst_BaseModel_Relations::push_LazyLoad() const
     filePropertyVerify->setAttribute("name", "test2_file1");
 
     torrentVerify->push();
+}
+
+void tst_BaseModel_Relations::where_WithCallback() const
+{
+    auto files = Torrent::find(5)->torrentFiles()
+                 ->where([](auto &query)
+    {
+        return query.whereEq("id", 6)
+                .orWhereEq("file_index", 2);
+    })
+                 .get();
+
+    QCOMPARE(files.size(), 2);
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {6, 8};
+    for (auto &file : files) {
+        QVERIFY(file.exists);
+        QVERIFY(fileIds.contains(file["id"]));
+        QCOMPARE(typeid (TorrentPreviewableFile), typeid (file));
+    }
+}
+
+void tst_BaseModel_Relations::orWhere_WithCallback() const
+{
+    auto files = Torrent::find(5)->torrentFiles()
+                 ->where("progress", ">", 990)
+                 .orWhere([](auto &query)
+    {
+        return query.whereEq("id", 8)
+                .whereEq("file_index", 2);
+    })
+                 .get();
+
+    QCOMPARE(files.size(), 2);
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {6, 8};
+    for (auto &file : files) {
+        QVERIFY(file.exists);
+        QVERIFY(fileIds.contains(file["id"]));
+        QCOMPARE(typeid (TorrentPreviewableFile), typeid (file));
+    }
 }
 
 QTEST_MAIN(tst_BaseModel_Relations)
