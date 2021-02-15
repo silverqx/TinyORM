@@ -3,6 +3,7 @@
 
 - [Introduction](#introduction)
 - [Defining Relationships](#defining-relationships)
+    - [Common Rules](#common-rules)
     - [One To One](#one-to-one)
     - [One To Many](#one-to-many)
     - [One To Many (Inverse) / Belongs To](#one-to-many-inverse)
@@ -31,6 +32,59 @@ TinyORM relationships are defined as methods on your TinyORM model classes. Sinc
     user->posts()->whereEq("active", 1).get();
 
 But, before diving too deep into using relationships, let's learn how to define each type of relationship supported by TinyORM.
+
+<a name="common-rules"></a>
+### Common Rules
+
+Before you start defining relationship methods, you have to declare a model class, let's examine following model class with a "one" type relation:
+
+    #ifndef USER_H
+    #define USER_H
+
+    #include <orm/tiny/basemodel.hpp>
+
+    #include "models/phone.hpp"
+
+    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Relations::Relation;
+
+    class User final : public BaseModel<User, Phone>
+    {
+    public:
+        friend class BaseModel;
+
+        using BaseModel::BaseModel;
+
+        /*! Get the phone associated with the user. */
+        std::unique_ptr<Relation<User, Phone>>
+        phone()
+        {
+            return hasOne<Phone>();
+        }
+
+    private:
+        /*! The visitor to obtain a type for Related template parameter. */
+        void relationVisitor(const QString &relation)
+        {
+            if (relation == "phone")
+                relationVisited<Phone>();
+        }
+
+        /*! Map of relation names to methods. */
+        QHash<QString, std::any> u_relations {
+            {"phone", &User::phone},
+        };
+    };
+
+    #endif // USER_H
+
+First, you have to extend the `BaseModel<Model, AllRelations...>`, it is a common class for all models, the first template parameter is the type-id of the defined model itself, this patter is called a [Curiously recurring template pattern](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) pattern.
+
+However, the second parameter is more interesting, here you have to provide a type-id of all related models. The TinyORM needs these types to store relationships in the hash.
+
+Next, you have to define the `relationVisitor` method, which maps a relation name to a related model's type-id. Last but not least, you have to define the `u_relations` hash, which maps a relation name to the relationship method.
+
+> {note} You may omit the `friend class BaseModel` declaration and define all the private data and function members as public.
 
 <a name="one-to-one"></a>
 ### One To One
