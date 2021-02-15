@@ -121,6 +121,13 @@ namespace Tiny
         whereEq(const QString &column, const QVariant &value,
                 const QString &condition = "and")
         { return where(column, QStringLiteral("="), value, condition); }
+        /*! Add a nested where clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        where(const std::function<void(TinyBuilder<Model> &)> &callback,
+              const QString &condition = "and");
+        /*! Add a nested "or where" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhere(const std::function<void(TinyBuilder<Model> &)> &callback);
 
         /*! Add an array of basic where clauses to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
@@ -135,7 +142,7 @@ namespace Tiny
 
         // TODO next fuckin increment, finish later 👿 silverqx
 
-        // TODO now add with/load QStringList overload too, update "Eager Loading Multiple Relationships" docs silverqx
+        // TODO future problem with QStringList overload, its ambiguou, solve it somehow silverqx
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Model>>
         with(const QVector<WithItem> &relations);
@@ -143,6 +150,7 @@ namespace Tiny
         inline static std::unique_ptr<TinyBuilder<Model>>
         with(const QString &relation)
         { return with(QVector<WithItem> {{relation}}); }
+
         /*! Prevent the specified relations from being eager loaded. */
         static std::unique_ptr<TinyBuilder<Model>>
         without(const QVector<QString> &relations);
@@ -660,6 +668,31 @@ namespace Tiny
         auto builder = query();
 
         builder->where(column, comparison, value, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::where(
+            const std::function<void(TinyBuilder<Model> &)> &callback,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->where(callback, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhere(
+            const std::function<void(TinyBuilder<Model> &)> &callback)
+    {
+        auto builder = query();
+
+        builder->orWhere(callback);
 
         return builder;
     }

@@ -222,6 +222,11 @@ namespace Relations
         /*! Get the underlying query builder instance. */
         inline QueryBuilder &getQuery() const
         { return *m_query; }
+        // TODO now fix revisit silverqx
+        /*! Get the underlying query builder instance as a QSharedPointer. */
+        inline const QSharedPointer<QueryBuilder> &
+        getQuerySharedPointer() const
+        { return m_query; }
 
         /*! Get a database connection. */
         inline const ConnectionInterface &getConnection() const
@@ -473,7 +478,13 @@ namespace Relations
     Builder<Model>::where(const std::function<void(Builder &)> &callback,
                           const QString &condition)
     {
-        m_query->where(callback, condition);
+        // Ownership of a unique_ptr()
+        auto query = m_model.newQueryWithoutRelationships();
+
+        std::invoke(callback, *query);
+
+        m_query->addNestedWhereQuery(query->getQuerySharedPointer(), condition);
+
         return *this;
     }
 
@@ -481,8 +492,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::orWhere(const std::function<void(Builder &)> &callback)
     {
-        m_query->orWhere(callback);
-        return *this;
+        return where(callback, "or");
     }
 
     template<typename Model>

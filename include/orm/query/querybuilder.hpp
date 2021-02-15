@@ -331,6 +331,10 @@ namespace Orm::Query
         /*! Create a raw database expression. */
         Expression raw(const QVariant &value) const;
 
+        /*! Add another query builder as a nested where to the query builder. */
+        Builder &addNestedWhereQuery(const QSharedPointer<Builder> &query,
+                                     const QString &condition);
+
     protected:
         /*! Determine if the given operator is supported. */
         bool invalidOperator(const QString &comparison) const;
@@ -355,10 +359,6 @@ namespace Orm::Query
         /*! Get a new join clause. */
         QSharedPointer<JoinClause>
         newJoinClause(const Builder &query, const QString &type, const QString &table) const;
-
-        /*! Add another query builder as a nested where to the query builder. */
-        Builder &addNestedWhereQuery(QSharedPointer<Builder> query,
-                                     const QString &condition);
 
         /*! Remove all existing columns and column bindings. */
         Builder &clearColumns();

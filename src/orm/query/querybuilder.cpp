@@ -300,6 +300,7 @@ Builder &Builder::where(const std::function<void(Builder &)> &callback,
                         const QString &condition)
 {
     const auto query = forNestedWhere();
+
     std::invoke(callback, *query);
 
     return addNestedWhereQuery(query, condition);
@@ -550,6 +551,7 @@ QString Builder::getFromWithoutAlias() const
                             QRegularExpression::CaseInsensitiveOption)).first();
 }
 
+// TODO next revisit QSharedPointer silverqx
 QSharedPointer<Builder> Builder::newQuery() const
 {
     return QSharedPointer<Builder>::create(m_connection, m_grammar);
@@ -567,6 +569,25 @@ QSharedPointer<Builder> Builder::forNestedWhere() const
 Expression Builder::raw(const QVariant &value) const
 {
     return m_connection.raw(value);
+}
+
+// TODO now, (still need to be revisited) it can be reference, shared owner will be callee, and copy will be made during m_wheres.append() silverqx
+Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> &query,
+                                      const QString &condition)
+{
+    if (!(query->m_wheres.size() > 0))
+        return *this;
+
+    m_wheres.append({.condition = condition, .type = WhereType::NESTED,
+                     .nestedQuery = query});
+
+    const auto &whereBindings =
+            query->getRawBindings().find(BindingType::WHERE).value();
+
+    if (whereBindings.size() > 0)
+        addBinding(whereBindings, BindingType::WHERE);
+
+    return *this;
 }
 
 bool Builder::invalidOperator(const QString &comparison) const
@@ -647,24 +668,6 @@ QSharedPointer<JoinClause>
 Builder::newJoinClause(const Builder &query, const QString &type, const QString &table) const
 {
     return QSharedPointer<JoinClause>::create(query, type, table);
-}
-
-Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> query,
-                                      const QString &condition)
-{
-    if (!(query->m_wheres.size() > 0))
-        return *this;
-
-    m_wheres.append({.condition = condition, .type = WhereType::NESTED,
-                     .nestedQuery = query});
-
-    const auto &whereBindings =
-            query->getRawBindings().find(BindingType::WHERE).value();
-
-    if (whereBindings.size() > 0)
-        addBinding(whereBindings, BindingType::WHERE);
-
-    return *this;
 }
 
 Builder &Builder::clearColumns()

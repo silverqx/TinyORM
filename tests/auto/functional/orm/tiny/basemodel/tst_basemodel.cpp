@@ -44,6 +44,8 @@ private slots:
     void whereEq() const;
     void where_WithVector() const;
     void where_WithVector_Condition() const;
+    void where_WithCallback() const;
+    void orWhere_WithCallback() const;
 
     void arrayOperator() const;
 
@@ -534,6 +536,49 @@ void tst_BaseModel::where_WithVector_Condition() const
                         .get();
         QCOMPARE(torrents.size(), 1);
         QCOMPARE(torrents.at(0).getAttribute("id"), QVariant(4));
+    }
+}
+
+void tst_BaseModel::where_WithCallback() const
+{
+    auto files = Torrent::find(5)->torrentFiles()
+                 ->where([](auto &query)
+    {
+        return query.whereEq("id", 6)
+                .orWhereEq("file_index", 2);
+    })
+                 .get();
+
+    QCOMPARE(files.size(), 2);
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {6, 8};
+    for (auto &file : files) {
+        QVERIFY(file.exists);
+        QVERIFY(fileIds.contains(file["id"]));
+        QCOMPARE(typeid (TorrentPreviewableFile), typeid (file));
+    }
+}
+
+void tst_BaseModel::orWhere_WithCallback() const
+{
+    auto files = Torrent::find(5)->torrentFiles()
+                 ->where("progress", ">", 990)
+                 .orWhere([](auto &query)
+    {
+        return query.whereEq("id", 8)
+                .whereEq("file_index", 2);
+    })
+                 .get();
+
+    QCOMPARE(files.size(), 2);
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {6, 8};
+    for (auto &file : files) {
+        QVERIFY(file.exists);
+        QVERIFY(fileIds.contains(file["id"]));
+        QCOMPARE(typeid (TorrentPreviewableFile), typeid (file));
     }
 }
 

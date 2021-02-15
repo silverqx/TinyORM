@@ -152,7 +152,7 @@ namespace Query
     /*! Options parameter type used in Model save() method. */
     struct SHAREDLIB_EXPORT SaveOptions
     {
-        /*! . */
+        /*! Indicates if timestamps of parent models should be touched. */
         bool touch = true;
     };
 

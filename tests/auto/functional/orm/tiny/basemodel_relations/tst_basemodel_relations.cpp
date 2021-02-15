@@ -89,14 +89,14 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_ManyAndOne() const
     QCOMPARE(typeid (QVector<TorrentPreviewableFileEager *>), typeid (files));
 
     // Expected file IDs
-    QVector<quint64> fileIds {2, 3};
+    QVector<QVariant> fileIds {2, 3};
     // Expected file property IDs
-    QVector<quint64> filePropertyIds {1, 2};
+    QVector<QVariant> filePropertyIds {1, 2};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
-        QVERIFY(fileIds.contains(file->getAttribute("id").toULongLong()));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
         QCOMPARE(typeid (TorrentPreviewableFileEager *), typeid (file));
 
         /* TorrentPreviewableFilePropertyEager has one relation, loaded by
@@ -107,8 +107,7 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_ManyAndOne() const
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
         QCOMPARE(typeid (TorrentPreviewableFilePropertyEager *), typeid (fileProperty));
-        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute("id")
-                                         .toULongLong()));
+        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute("id")));
         QCOMPARE(fileProperty->getAttribute("previewable_file_id"),
                  file->getAttribute("id"));
     }
@@ -168,14 +167,14 @@ void tst_BaseModel_Relations::getRelationValue_LazyLoad_ManyAndOne() const
     QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
-    QVector<quint64> fileIds {2, 3};
+    QVector<QVariant> fileIds {2, 3};
     // Expected file property IDs
-    QVector<quint64> filePropertyIds {1, 2};
+    QVector<QVariant> filePropertyIds {1, 2};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
-        QVERIFY(fileIds.contains(file->getAttribute("id").toULongLong()));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
         /* TorrentPreviewableFileProperty has one relation, loaded by
@@ -186,8 +185,7 @@ void tst_BaseModel_Relations::getRelationValue_LazyLoad_ManyAndOne() const
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
         QCOMPARE(typeid (TorrentPreviewableFileProperty *), typeid (fileProperty));
-        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute("id")
-                                         .toULongLong()));
+        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute("id")));
         QCOMPARE(fileProperty->getAttribute("previewable_file_id"),
                  file->getAttribute("id"));
     }
@@ -252,12 +250,12 @@ void tst_BaseModel_Relations::with_HasMany() const
     QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
-    QVector<quint64> fileIds {2, 3};
+    QVector<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
-        QVERIFY(fileIds.contains(file->getAttribute("id").toULongLong()));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
     }
 }
@@ -288,14 +286,14 @@ void tst_BaseModel_Relations::with_NestedRelations() const
     QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
-    QVector<quint64> fileIds {2, 3};
+    QVector<QVariant> fileIds {2, 3};
     // Expected file property IDs
-    QVector<quint64> filePropertyIds {1, 2};
+    QVector<QVariant> filePropertyIds {1, 2};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
-        QVERIFY(fileIds.contains(file->getAttribute("id").toULongLong()));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
         /* TorrentPreviewableFileProperty has one relation, loaded by
@@ -306,8 +304,7 @@ void tst_BaseModel_Relations::with_NestedRelations() const
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
         QCOMPARE(typeid (TorrentPreviewableFileProperty *), typeid (fileProperty));
-        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute("id")
-                                         .toULongLong()));
+        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute("id")));
         QCOMPARE(fileProperty->getAttribute("previewable_file_id"),
                  file->getAttribute("id"));
     }
@@ -332,12 +329,12 @@ void tst_BaseModel_Relations::with_Vector_MoreRelations() const
     QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
-    QVector<quint64> fileIds {2, 3};
+    QVector<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
-        QVERIFY(fileIds.contains(file->getAttribute("id").toULongLong()));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
         // No TorrentPreviewableFileProperty loaded
@@ -414,12 +411,12 @@ void tst_BaseModel_Relations::load() const
     QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
-    QVector<quint64> fileIds {2, 3};
+    QVector<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
-        QVERIFY(fileIds.contains(file->getAttribute("id").toULongLong()));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
         // No TorrentPreviewableFileProperty loaded

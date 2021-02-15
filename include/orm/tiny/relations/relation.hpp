@@ -105,7 +105,6 @@ namespace Relations
         inline Builder<Related> &
         orWhereEq(const QString &column, const QVariant &value)
         { return m_query->orWhereEq(column, value); }
-        // BUG where callback on Relation doesn't work silverqx
         /*! Add a nested where clause to the query. */
         inline Builder<Related> &
         where(const std::function<void(Builder<Related> &)> &callback,

@@ -60,6 +60,18 @@ struct IsModel
 class BaseModel : public IsModel
 
 
+Ranges transform:
+-----------------
+
+const auto relationToWithItem = [](const auto &relation) -> WithItem
+{
+    return WithItem {relation};
+};
+
+builder->with(relations | ranges::views::transform(relationToWithItem)
+                        | ranges::to<QVector<WithItem>>());
+
+
 Relation store:
 ---------------
 
