@@ -13,6 +13,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Relations
 {
 
+    // TODO add create, createMany, save, findOrNew, firstOrNew, firstOrCreate and updateOrCreate silverqx
     template<class Model, class Related>
     class HasOneOrMany : public Relation<Model, Related>
     {

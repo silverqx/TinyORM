@@ -1,5 +1,5 @@
 Todos to check in TinyOrm:
--------------------------
+--------------------------
 
  - QueryBuilder::insertGetId() allows insert with empty attributes, also Model::performInsert() 
    when incrementing == true, but all other insert methods don't, it's big inconsistency, unify it
