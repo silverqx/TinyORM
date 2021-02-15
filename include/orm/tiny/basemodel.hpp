@@ -257,8 +257,7 @@ namespace Tiny
         inline Model &setTable(const QString &value)
         { model().u_table = value; return model(); }
         /*! Get the table associated with the model. */
-        inline const QString &getTable() const
-        { return model().u_table; }
+        QString getTable() const;
         /*! Get the primary key for the model. */
         inline const QString &getKeyName() const
         { return model().u_primaryKey; }
@@ -533,6 +532,8 @@ namespace Tiny
         quint64 insertAndSetId(const TinyBuilder<Model> &query,
                                const QVector<AttributeItem> &attributes);
 
+        /*! The table associated with the model. */
+        QString u_table {""};
         /*! The connection name for the model. */
         QString u_connection {""};
         /*! Indicates if the model's ID is auto-incrementing. */
@@ -1171,6 +1172,19 @@ namespace Tiny
         model.setTable(getTable());
 
         return model;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QString BaseModel<Model, AllRelations...>::getTable() const
+    {
+        const auto &table = model().u_table;
+
+        // Get pluralized snake-case table name
+        if (table.isEmpty())
+            return Utils::String::toSnake(Utils::Type::classPureBasename<Model>())
+                    + QChar('s');
+
+        return table;
     }
 
     template<typename Model, typename ...AllRelations>
