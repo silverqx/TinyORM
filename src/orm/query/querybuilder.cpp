@@ -18,22 +18,6 @@ Builder::Builder(ConnectionInterface &connection, const Grammar &grammar)
     , m_grammar(grammar)
 {}
 
-Builder &Builder::select(const QStringList columns)
-{
-    clearColumns();
-
-    ranges::copy(columns, ranges::back_inserter(m_columns));
-
-    return *this;
-}
-
-Builder &Builder::addSelect(const QStringList &columns)
-{
-    ranges::copy(columns, ranges::back_inserter(m_columns));
-
-    return *this;
-}
-
 std::tuple<bool, QSqlQuery>
 Builder::get(const QStringList &columns)
 {
@@ -152,11 +136,21 @@ Builder::update(const QVector<UpdateItem> &values)
                                                                  values)));
 }
 
+std::tuple<int, QSqlQuery> Builder::deleteRow()
+{
+    return remove();
+}
+
 std::tuple<int, QSqlQuery> Builder::remove()
 {
     return m_connection.remove(
-                m_grammar.compileDelete(*this),
-                cleanBindings(m_grammar.prepareBindingsForDelete(getRawBindings())));
+            m_grammar.compileDelete(*this),
+            cleanBindings(m_grammar.prepareBindingsForDelete(getRawBindings())));
+}
+
+std::tuple<int, QSqlQuery> Builder::deleteRow(const quint64 id)
+{
+    return remove(id);
 }
 
 std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
@@ -172,6 +166,46 @@ std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
 std::tuple<bool, QSqlQuery> Builder::truncate()
 {
     return m_connection.statement(m_grammar.compileTruncate(*this));
+}
+
+Builder &Builder::select(const QStringList columns)
+{
+    clearColumns();
+
+    ranges::copy(columns, ranges::back_inserter(m_columns));
+
+    return *this;
+}
+
+Builder &Builder::select(const QString column)
+{
+    return select(QStringList(column));
+}
+
+Builder &Builder::addSelect(const QStringList &columns)
+{
+    ranges::copy(columns, ranges::back_inserter(m_columns));
+
+    return *this;
+}
+
+Builder &Builder::addSelect(const QString &column)
+{
+    return addSelect(QStringList(column));
+}
+
+Builder &Builder::distinct()
+{
+    m_distinct = true;
+
+    return *this;
+}
+
+Builder &Builder::from(const QString &table, const QString &)
+{
+    m_from = table;
+
+    return *this;
 }
 
 Builder &Builder::join(const QString &table, const QString &first,
@@ -321,6 +355,22 @@ Builder &Builder::where(const QVector<WhereItem> &values, const QString &conditi
     return addArrayOfWheres(values, condition);
 }
 
+Builder &Builder::orWhere(const QVector<WhereItem> &values)
+{
+    return where(values, "or");
+}
+
+Builder &Builder::whereColumn(const QVector<WhereColumnItem> &values,
+                              const QString &condition)
+{
+    return addArrayOfWheres(values, condition);
+}
+
+Builder &Builder::orWhereColumn(const QVector<WhereColumnItem> &values)
+{
+    return addArrayOfWheres(values, "or");
+}
+
 Builder &Builder::whereColumn(const QString &first, const QString &comparison,
                               const QString &second, const QString &condition)
 {
@@ -336,6 +386,17 @@ Builder &Builder::orWhereColumn(const QString &first, const QString &comparison,
                                 const QString &second)
 {
     return whereColumn(first, comparison, second, "or");
+}
+
+Builder &Builder::whereColumnEq(const QString &first, const QString &second,
+                                const QString &condition)
+{
+    return whereColumn(first, "=", second, condition);
+}
+
+Builder &Builder::orWhereColumnEq(const QString &first, const QString &second)
+{
+    return whereColumn(first, "=", second, "or");
 }
 
 Builder &Builder::whereIn(const QString &column, const QVector<QVariant> &values,

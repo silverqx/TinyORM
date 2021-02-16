@@ -34,26 +34,6 @@ namespace Orm::Query
            in Grammar::concatenateWhereClauses(). */
         inline virtual ~Builder() = default;
 
-        /*! Set the columns to be selected. */
-        Builder &select(const QStringList columns = {"*"});
-        /*! Set the column to be selected. */
-        inline Builder &select(const QString column)
-        { return select(QStringList(column)); }
-        /*! Add new select columns to the query. */
-        Builder &addSelect(const QStringList &columns);
-        // TODO future, when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
-        /*! Add a new select column to the query. */
-        inline Builder &addSelect(const QString &column)
-        { return addSelect(QStringList(column)); }
-
-        /*! Force the query to only return distinct results. */
-        inline Builder &distinct()
-        { m_distinct = true; return *this; }
-
-        /*! Set the table which the query is targeting. */
-        inline Builder &from(const QString &table, const QString & = "")
-        { m_from = table; return *this; }
-
         /*! Execute the query as a "select" statement. */
         std::tuple<bool, QSqlQuery>
         get(const QStringList &columns = {"*"});
@@ -95,22 +75,32 @@ namespace Orm::Query
         update(const QVector<UpdateItem> &values);
 
         /*! Delete records from the database. */
-        inline std::tuple<int, QSqlQuery>
-        deleteRow()
-        { return remove(); }
+        std::tuple<int, QSqlQuery> deleteRow();
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery>
-        remove();
+        std::tuple<int, QSqlQuery> remove();
         /*! Delete records from the database. */
-        inline std::tuple<int, QSqlQuery>
-        deleteRow(const quint64 id)
-        { return remove(id); }
+        std::tuple<int, QSqlQuery> deleteRow(const quint64 id);
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery>
-        remove(const quint64 id);
+        std::tuple<int, QSqlQuery> remove(const quint64 id);
 
         /*! Run a truncate statement on the table. */
         std::tuple<bool, QSqlQuery> truncate();
+
+        /*! Set the columns to be selected. */
+        Builder &select(const QStringList columns = {"*"});
+        /*! Set the column to be selected. */
+        Builder &select(const QString column);
+        /*! Add new select columns to the query. */
+        Builder &addSelect(const QStringList &columns);
+        // TODO future, when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
+        /*! Add a new select column to the query. */
+        Builder &addSelect(const QString &column);
+
+        /*! Force the query to only return distinct results. */
+        Builder &distinct();
+
+        /*! Set the table which the query is targeting. */
+        Builder &from(const QString &table, const QString & = "");
 
         /*! Add a join clause to the query. */
         Builder &join(const QString &table, const QString &first,
@@ -169,17 +159,13 @@ namespace Orm::Query
         /*! Add an array of basic where clauses to the query. */
         Builder &where(const QVector<WhereItem> &values, const QString &condition = "and");
         /*! Add an array of basic "or where" clauses to the query. */
-        inline Builder &orWhere(const QVector<WhereItem> &values)
-        { return where(values, "or"); }
+        Builder &orWhere(const QVector<WhereItem> &values);
 
         /*! Add an array of where clauses comparing two columns to the query. */
-        inline Builder &
-        whereColumn(const QVector<WhereColumnItem> &values, const QString &condition = "and")
-        { return addArrayOfWheres(values, condition); }
+        Builder &whereColumn(const QVector<WhereColumnItem> &values,
+                             const QString &condition = "and");
         /*! Add an array of "or where" clauses comparing two columns to the query. */
-        inline Builder &
-        orWhereColumn(const QVector<WhereColumnItem> &values)
-        { return addArrayOfWheres(values, "or"); }
+        Builder &orWhereColumn(const QVector<WhereColumnItem> &values);
 
         /*! Add a "where" clause comparing two columns to the query. */
         Builder &whereColumn(const QString &first, const QString &comparison,
@@ -188,12 +174,10 @@ namespace Orm::Query
         Builder &orWhereColumn(const QString &first, const QString &comparison,
                                const QString &second);
         /*! Add an equal "where" clause comparing two columns to the query. */
-        inline Builder &whereColumnEq(const QString &first, const QString &second,
-                                      const QString &condition = "and")
-        { return whereColumn(first, "=", second, condition); }
+        Builder &whereColumnEq(const QString &first, const QString &second,
+                               const QString &condition = "and");
         /*! Add an equal "or where" clause comparing two columns to the query. */
-        inline Builder &orWhereColumnEq(const QString &first, const QString &second)
-        { return whereColumn(first, "=", second, "or"); }
+        Builder &orWhereColumnEq(const QString &first, const QString &second);
 
         /*! Add a "where in" clause to the query. */
         Builder &whereIn(const QString &column, const QVector<QVariant> &values,
@@ -358,7 +342,8 @@ namespace Orm::Query
 
         /*! Get a new join clause. */
         QSharedPointer<JoinClause>
-        newJoinClause(const Builder &query, const QString &type, const QString &table) const;
+        newJoinClause(const Builder &query, const QString &type,
+                      const QString &table) const;
 
         /*! Remove all existing columns and column bindings. */
         Builder &clearColumns();

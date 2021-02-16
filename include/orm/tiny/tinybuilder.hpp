@@ -45,9 +45,6 @@ namespace Relations
     public:
         Builder(const QSharedPointer<QueryBuilder> query, Model &model);
 
-        /*! Create a new instance of the model being queried. */
-        Model newModelInstance(const QVector<AttributeItem> &attributes = {});
-
         /*! Execute the query as a "select" statement. */
         QVector<Model> get(const QStringList &columns = {"*"});
 
@@ -75,39 +72,14 @@ namespace Relations
         /*! Set the relationships that should be eager loaded. */
         Builder &with(const QVector<WithItem> &relations);
         /*! Set the relationships that should be eager loaded. */
-        inline Builder &with(const QString &relation)
-        { return with(QVector<WithItem> {{relation}}); }
+        Builder &with(const QString &relation);
         /*! Prevent the specified relations from being eager loaded. */
         Builder &without(const QVector<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
-        inline Builder &without(const QString &relation)
-        { return without(QVector<QString> {relation}); }
-
-        /*! Insert new records into the database. */
-        inline std::tuple<bool, std::optional<QSqlQuery>>
-        insert(const QVector<AttributeItem> &attributes) const
-        { return m_query->insert(Utils::Attribute::convertVectorToMap(attributes)); }
-        // TODO primarykey dilema, Model::KeyType vs QVariant silverqx
-        /*! Insert a new record and get the value of the primary key. */
-        inline quint64 insertGetId(const QVector<AttributeItem> &attributes) const
-        { return m_query->insertGetId(Utils::Attribute::convertVectorToMap(attributes)); }
+        Builder &without(const QString &relation);
 
         /*! Save a new model and return the instance. */
         Model create(const QVector<AttributeItem> &attributes);
-        /*! Update records in the database. */
-        std::tuple<int, QSqlQuery>
-        update(const QVector<UpdateItem> &values) const
-        { return toBase().update(addUpdatedAtColumn(values)); }
-
-        // TODO future add onDelete (and similar) callback feature silverqx
-        /*! Delete records from the database. */
-        inline std::tuple<int, QSqlQuery>
-        remove()
-        { return toBase().deleteRow(); }
-        /*! Delete records from the database. */
-        inline std::tuple<int, QSqlQuery>
-        deleteModels()
-        { return remove(); }
 
         /* BuildsQueries */
         // TODO BuildsQueries contains duplicit methods in TinyBuilder and QueryBuilder, make it by multi inheritance, I discovered now, that TinyBuilder will return different types than QueryBuilder, look eg at first() or get(), but investigate if there are cases, when API is same and use multi inheritance pattern for this methods silver
@@ -115,6 +87,23 @@ namespace Relations
         std::optional<Model> first(const QStringList &columns = {"*"});
 
         /* Proxy methods to the QueryBuilder */
+        /*! Insert new records into the database. */
+        std::tuple<bool, std::optional<QSqlQuery>>
+        insert(const QVector<AttributeItem> &attributes) const;
+        // TODO primarykey dilema, Model::KeyType vs QVariant silverqx
+        /*! Insert a new record and get the value of the primary key. */
+        quint64 insertGetId(const QVector<AttributeItem> &attributes) const;
+
+        /*! Update records in the database. */
+        std::tuple<int, QSqlQuery>
+        update(const QVector<UpdateItem> &values) const;
+
+        // TODO future add onDelete (and similar) callback feature silverqx
+        /*! Delete records from the database. */
+        std::tuple<int, QSqlQuery> remove();
+        /*! Delete records from the database. */
+        std::tuple<int, QSqlQuery> deleteModels();
+
         /*! Add a basic where clause to the query. */
         Builder &where(const QString &column, const QString &comparison,
                        const QVariant &value, const QString &condition = "and");
@@ -133,7 +122,8 @@ namespace Relations
         Builder &orWhere(const std::function<void(Builder &)> &callback);
 
         /*! Add an array of basic where clauses to the query. */
-        Builder &where(const QVector<WhereItem> &values, const QString &condition = "and");
+        Builder &where(const QVector<WhereItem> &values,
+                       const QString &condition = "and");
 
         /*! Add a "where null" clause to the query. */
         Builder &whereNull(const QStringList &columns = {"*"},
@@ -165,11 +155,6 @@ namespace Relations
                             const QString &condition = "and");
         /*! Add an "or where not in" clause to the query. */
         Builder &orWhereNotIn(const QString &column, const QVector<QVariant> &values);
-
-        /*! Add a where clause on the primary key to the query. */
-        Builder &whereKey(const QVariant &id);
-        /*! Add a where clause on the primary key to the query. */
-        Builder &whereKeyNot(const QVariant &id);
 
         /*! Add an "order by" clause to the query. */
         Builder &orderBy(const QString &column, const QString &direction = "asc");
@@ -205,6 +190,15 @@ namespace Relations
         std::tuple<int, QSqlQuery>
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});
+
+        /* TinyBuilder methods */
+        /*! Add a where clause on the primary key to the query. */
+        Builder &whereKey(const QVariant &id);
+        /*! Add a where clause on the primary key to the query. */
+        Builder &whereKeyNot(const QVariant &id);
+
+        /*! Create a new instance of the model being queried. */
+        Model newModelInstance(const QVector<AttributeItem> &attributes = {});
 
         /*! Get the hydrated models without eager loading. */
         QVector<Model> getModels(const QStringList &columns = {"*"});
@@ -284,13 +278,6 @@ namespace Relations
         , m_model(model)
     {
         m_query->from(m_model.getTable());
-    }
-
-    template<typename Model>
-    Model Builder<Model>::newModelInstance(const QVector<AttributeItem> &attributes)
-    {
-        return m_model.newInstance(attributes)
-                .setConnection(m_query->getConnection().getName());
     }
 
     // TODO now name QVector<Model> model collections by using, eg CollectionType silverqx
@@ -417,6 +404,13 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
+    Builder<Model>::with(const QString &relation)
+    {
+        return with(QVector<WithItem> {{relation}});
+    }
+
+    template<typename Model>
+    Builder<Model> &
     Builder<Model>::without(const QVector<QString> &relations)
     {
         // Remove relations in the "relations" vector from m_eagerLoad vector
@@ -429,6 +423,13 @@ namespace Relations
                 | ranges::to<QVector<WithItem>>();
 
         return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::without(const QString &relation)
+    {
+        return without(QVector<QString> {relation});
     }
 
     template<typename Model>
@@ -454,11 +455,44 @@ namespace Relations
     }
 
     template<typename Model>
+    std::tuple<bool, std::optional<QSqlQuery>>
+    Builder<Model>::insert(const QVector<AttributeItem> &attributes) const
+    {
+        return toBase().insert(Utils::Attribute::convertVectorToMap(attributes));
+    }
+
+    template<typename Model>
+    quint64
+    Builder<Model>::insertGetId(const QVector<AttributeItem> &attributes) const
+    {
+        return toBase().insertGetId(Utils::Attribute::convertVectorToMap(attributes));
+    }
+
+    template<typename Model>
+    std::tuple<int, QSqlQuery>
+    Builder<Model>::update(const QVector<UpdateItem> &values) const
+    {
+        return toBase().update(addUpdatedAtColumn(values));
+    }
+
+    template<typename Model>
+    std::tuple<int, QSqlQuery> Builder<Model>::remove()
+    {
+        return toBase().deleteRow();
+    }
+
+    template<typename Model>
+    std::tuple<int, QSqlQuery> Builder<Model>::deleteModels()
+    {
+        return remove();
+    }
+
+    template<typename Model>
     Builder<Model> &
     Builder<Model>::where(const QString &column, const QString &comparison,
                           const QVariant &value, const QString &condition)
     {
-        m_query->where(column, comparison, value, condition);
+        toBase().where(column, comparison, value, condition);
         return *this;
     }
 
@@ -467,7 +501,7 @@ namespace Relations
     Builder<Model>::orWhere(const QString &column, const QString &comparison,
                             const QVariant &value)
     {
-        m_query->orWhere(column, comparison, value);
+        toBase().orWhere(column, comparison, value);
         return *this;
     }
 
@@ -476,7 +510,7 @@ namespace Relations
     Builder<Model>::whereEq(const QString &column, const QVariant &value,
                             const QString &condition)
     {
-        m_query->whereEq(column, value, condition);
+        toBase().whereEq(column, value, condition);
         return *this;
     }
 
@@ -484,7 +518,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::orWhereEq(const QString &column, const QVariant &value)
     {
-        m_query->orWhereEq(column, value);
+        toBase().orWhereEq(column, value);
         return *this;
     }
 
@@ -498,7 +532,7 @@ namespace Relations
 
         std::invoke(callback, *query);
 
-        m_query->addNestedWhereQuery(query->getQuerySharedPointer(), condition);
+        toBase().addNestedWhereQuery(query->getQuerySharedPointer(), condition);
 
         return *this;
     }
@@ -514,7 +548,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::where(const QVector<WhereItem> &values, const QString &condition)
     {
-        m_query->where(values, condition);
+        toBase().where(values, condition);
         return *this;
     }
 
@@ -523,7 +557,7 @@ namespace Relations
     Builder<Model>::whereNull(const QStringList &columns, const QString &condition,
                               const bool nope)
     {
-        m_query->whereNull(columns, condition, nope);
+        toBase().whereNull(columns, condition, nope);
         return *this;
     }
 
@@ -539,7 +573,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::orWhereNull(const QStringList &columns)
     {
-        m_query->orWhereNull(columns);
+        toBase().orWhereNull(columns);
         return *this;
     }
 
@@ -554,7 +588,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::whereNotNull(const QStringList &columns, const QString &condition)
     {
-        m_query->whereNotNull(columns, condition);
+        toBase().whereNotNull(columns, condition);
         return *this;
     }
 
@@ -569,7 +603,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::orWhereNotNull(const QStringList &columns)
     {
-        m_query->orWhereNotNull(columns);
+        toBase().orWhereNotNull(columns);
         return *this;
     }
 
@@ -585,7 +619,7 @@ namespace Relations
     Builder<Model>::whereIn(const QString &column, const QVector<QVariant> &values,
                             const QString &condition, bool nope)
     {
-        m_query->whereIn(column, values, condition, nope);
+        toBase().whereIn(column, values, condition, nope);
         return *this;
     }
 
@@ -593,7 +627,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::orWhereIn(const QString &column, const QVector<QVariant> &values)
     {
-        m_query->orWhereIn(column, values);
+        toBase().orWhereIn(column, values);
         return *this;
     }
 
@@ -602,7 +636,7 @@ namespace Relations
     Builder<Model>::whereNotIn(const QString &column, const QVector<QVariant> &values,
                                const QString &condition)
     {
-        m_query->whereNotIn(column, values, condition);
+        toBase().whereNotIn(column, values, condition);
         return *this;
     }
 
@@ -610,36 +644,22 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::orWhereNotIn(const QString &column, const QVector<QVariant> &values)
     {
-        m_query->orWhereNotIn(column, values);
+        toBase().orWhereNotIn(column, values);
         return *this;
-    }
-
-    template<typename Model>
-    Builder<Model> &
-    Builder<Model>::whereKey(const QVariant &id)
-    {
-        return where(m_model.getQualifiedKeyName(), QStringLiteral("="), id);
-    }
-
-    template<typename Model>
-    Builder<Model> &
-    Builder<Model>::whereKeyNot(const QVariant &id)
-    {
-        return where(m_model.getQualifiedKeyName(), QStringLiteral("!="), id);
     }
 
     template<typename Model>
     Builder<Model> &
     Builder<Model>::orderBy(const QString &column, const QString &direction)
     {
-        m_query->orderBy(column, direction);
+        toBase().orderBy(column, direction);
         return *this;
     }
 
     template<typename Model>
     Builder<Model> &Builder<Model>::orderByDesc(const QString &column)
     {
-        m_query->orderByDesc(column);
+        toBase().orderByDesc(column);
         return *this;
     }
 
@@ -647,7 +667,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::latest(const QString &column)
     {
-        m_query->latest(getCreatedAtColumnForLatestOldest(column));
+        toBase().latest(getCreatedAtColumnForLatestOldest(column));
         return *this;
     }
 
@@ -655,14 +675,14 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::oldest(const QString &column)
     {
-        m_query->oldest(getCreatedAtColumnForLatestOldest(column));
+        toBase().oldest(getCreatedAtColumnForLatestOldest(column));
         return *this;
     }
 
     template<typename Model>
     Builder<Model> &Builder<Model>::reorder()
     {
-        m_query->reorder();
+        toBase().reorder();
         return *this;
     }
 
@@ -670,7 +690,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::reorder(const QString &column, const QString &direction)
     {
-        m_query->reorder(column, direction);
+        toBase().reorder(column, direction);
         return *this;
     }
 
@@ -694,7 +714,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::limit(const int value)
     {
-        m_query->limit(value);
+        toBase().limit(value);
         return *this;
     }
 
@@ -709,7 +729,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::offset(const int value)
     {
-        m_query->offset(value);
+        toBase().offset(value);
         return *this;
     }
 
@@ -724,7 +744,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::forPage(const int page, const int perPage)
     {
-        m_query->forPage(page, perPage);
+        toBase().forPage(page, perPage);
         return *this;
     }
 
@@ -746,6 +766,27 @@ namespace Relations
     {
         return toBase().template decrement<T>(column, amount,
                                               addUpdatedAtColumn(extra));
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereKey(const QVariant &id)
+    {
+        return where(m_model.getQualifiedKeyName(), QStringLiteral("="), id);
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereKeyNot(const QVariant &id)
+    {
+        return where(m_model.getQualifiedKeyName(), QStringLiteral("!="), id);
+    }
+
+    template<typename Model>
+    Model Builder<Model>::newModelInstance(const QVector<AttributeItem> &attributes)
+    {
+        return m_model.newInstance(attributes)
+                .setConnection(m_query->getConnection().getName());
     }
 
     template<typename Model>
