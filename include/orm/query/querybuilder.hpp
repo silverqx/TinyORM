@@ -53,6 +53,7 @@ namespace Orm::Query
 //        void dd() const
 //        { dd($this->toSql(), $this->getBindings()); }
 
+        /* Insert, Update, Delete */
         /*! Insert new records into the database. */
         std::tuple<bool, std::optional<QSqlQuery>>
         insert(const QVariantMap &values);
@@ -66,7 +67,7 @@ namespace Orm::Query
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVariantMap &values);
         // TODO postgres, support sequence, add sequence parameter silverqx
-        // TODO primarykey dilema, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
+        // TODO dilema primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVariantMap &values);
 
@@ -86,6 +87,7 @@ namespace Orm::Query
         /*! Run a truncate statement on the table. */
         std::tuple<bool, QSqlQuery> truncate();
 
+        /* Select */
         /*! Set the columns to be selected. */
         Builder &select(const QStringList columns = {"*"});
         /*! Set the column to be selected. */
@@ -157,7 +159,8 @@ namespace Orm::Query
         Builder &orWhere(const std::function<void(Builder &)> &callback);
 
         /*! Add an array of basic where clauses to the query. */
-        Builder &where(const QVector<WhereItem> &values, const QString &condition = "and");
+        Builder &where(const QVector<WhereItem> &values,
+                       const QString &condition = "and");
         /*! Add an array of basic "or where" clauses to the query. */
         Builder &orWhere(const QVector<WhereItem> &values);
 
@@ -257,6 +260,7 @@ namespace Orm::Query
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});
 
+        /* Getters / Setters */
         /*! Get a database connection. */
         inline ConnectionInterface &getConnection() const
         { return m_connection; }
@@ -307,6 +311,7 @@ namespace Orm::Query
         inline int getOffset() const
         { return m_offset; }
 
+        /* Other methods */
         /*! Get a new instance of the query builder. */
         QSharedPointer<Builder> newQuery() const;
         /*! Create a new query instance for nested where condition. */

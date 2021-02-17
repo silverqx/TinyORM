@@ -67,60 +67,162 @@ namespace Tiny
         /*! The "type" of the primary key ID. */
         using KeyType = quint64;
 
-        /* Methods that start TinyBuilder */
-        // TODO inline static method vs constexpr static, check it silverqx
+        /* Static operations on a model instance */
         /*! Begin querying the model. */
-        inline static std::unique_ptr<TinyBuilder<Model>> query()
-        { return Model().newQuery(); }
+        static std::unique_ptr<TinyBuilder<Model>> query();
 
+        /* TinyBuilder proxy methods */
         /*! Get all of the models from the database. */
-        inline static QVector<Model> all(const QStringList &columns = {"*"})
-        { return query()->get(columns); }
+        static QVector<Model> all(const QStringList &columns = {"*"});
 
         /*! Find a model by its primary key. */
-        inline static std::optional<Model>
-        find(const QVariant &id, const QStringList &columns = {"*"})
-        { return query()->find(id, columns); }
+        static std::optional<Model>
+        find(const QVariant &id, const QStringList &columns = {"*"});
         /*! Find a model by its primary key or return fresh model instance. */
-        inline static Model
-        findOrNew(const QVariant &id, const QStringList &columns = {"*"})
-        { return query()->findOrNew(id, columns); }
+        static Model
+        findOrNew(const QVariant &id, const QStringList &columns = {"*"});
         /*! Find a model by its primary key or throw an exception. */
-        inline static Model
-        findOrFail(const QVariant &id, const QStringList &columns = {"*"})
-        { return query()->findOrFail(id, columns); }
+        static Model
+        findOrFail(const QVariant &id, const QStringList &columns = {"*"});
 
         /*! Get the first record matching the attributes or instantiate it. */
-        inline static Model
+        static Model
         firstOrNew(const QVector<WhereItem> &attributes = {},
-                   const QVector<AttributeItem> &values = {})
-        { return query()->firstOrNew(attributes, values); }
+                   const QVector<AttributeItem> &values = {});
         /*! Get the first record matching the attributes or create it. */
-        inline static Model
+        static Model
         firstOrCreate(const QVector<WhereItem> &attributes = {},
-                      const QVector<AttributeItem> &values = {})
-        { return query()->firstOrCreate(attributes, values); }
+                      const QVector<AttributeItem> &values = {});
+        /*! Execute the query and get the first result or throw an exception. */
+        static Model firstOrFail(const QStringList &columns = {"*"});
 
         /*! Add a basic where clause to the query, and return the first result. */
-        inline static std::optional<Model>
+        static std::optional<Model>
         firstWhere(const QString &column, const QString &comparison,
-                   const QVariant &value, const QString &condition = "and")
-        { return where(column, comparison, value, condition)->first(); }
+                   const QVariant &value, const QString &condition = "and");
         /*! Add a basic equal where clause to the query, and return the first result. */
-        inline static std::optional<Model>
+        static std::optional<Model>
         firstWhereEq(const QString &column, const QVariant &value,
-                     const QString &condition = "and")
-        { return where(column, QStringLiteral("="), value, condition)->first(); }
+                     const QString &condition = "and");
+
+        /*! Get a single column's value from the first result of a query. */
+        static QVariant value(const QString &column);
+
+        /*! Begin querying a model with eager loading. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        with(const QVector<WithItem> &relations);
+        /*! Begin querying a model with eager loading. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        with(const QString &relation);
+
+        /*! Prevent the specified relations from being eager loaded. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        without(const QVector<QString> &relations);
+        /*! Prevent the specified relations from being eager loaded. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        without(const QString &relation);
+
+        /*! Save a new model and return the instance. */
+        static Model create(const QVector<AttributeItem> &attributes);
+
+        /* Proxy to TinyBuilder -> BuildsQueries */
+        /*! Execute the query and get the first result. */
+        static std::optional<Model> first(const QStringList &columns = {"*"});
+
+        /* Proxy to TinyBuilder -> QueryBuilder */
+        /* Insert, Update, Delete */
+        /*! Insert new records into the database. */
+        static std::tuple<bool, std::optional<QSqlQuery>>
+        insert(const QVector<AttributeItem> &attributes);
+        /*! Insert a new record and get the value of the primary key. */
+        static quint64
+        insertGetId(const QVector<AttributeItem> &attributes);
+
+        /*! Destroy the models for the given IDs. */
+        static std::size_t destroy(const QVector<QVariant> &ids);
+        /*! Destroy the model by the given ID. */
+        static std::size_t destroy(QVariant id);
+
+        /*! Run a truncate statement on the table. */
+        static std::tuple<bool, QSqlQuery> truncate();
+
+        /* Select */
+        /*! Set the columns to be selected. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        select(const QStringList columns = {"*"});
+        /*! Set the column to be selected. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        select(const QString column);
+        /*! Add new select columns to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        addSelect(const QStringList &columns);
+        /*! Add a new select column to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        addSelect(const QString &column);
+
+        /*! Force the query to only return distinct results. */
+        static std::unique_ptr<TinyBuilder<Model>> distinct();
+
+        /*! Add a join clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        join(const QString &table, const QString &first, const QString &comparison,
+             const QString &second, const QString &type = "inner", bool where = false);
+        /*! Add an advanced join clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        join(const QString &table, const std::function<void(JoinClause &)> &callback,
+             const QString &type = "inner");
+        /*! Add a "join where" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        joinWhere(const QString &table, const QString &first, const QString &comparison,
+                  const QString &second, const QString &type = "inner");
+        /*! Add a left join to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        leftJoin(const QString &table, const QString &first,
+                 const QString &comparison, const QString &second);
+        /*! Add an advanced left join to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        leftJoin(const QString &table,
+                 const std::function<void(JoinClause &)> &callback);
+        /*! Add a "join where" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        leftJoinWhere(const QString &table, const QString &first,
+                      const QString &comparison, const QString &second);
+        /*! Add a right join to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        rightJoin(const QString &table, const QString &first,
+                  const QString &comparison, const QString &second);
+        /*! Add an advanced right join to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        rightJoin(const QString &table,
+                  const std::function<void(JoinClause &)> &callback);
+        /*! Add a "right join where" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        rightJoinWhere(const QString &table, const QString &first,
+                       const QString &comparison, const QString &second);
+        /*! Add a "cross join" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        crossJoin(const QString &table, const QString &first,
+                  const QString &comparison, const QString &second);
+        /*! Add an advanced "cross join" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        crossJoin(const QString &table,
+                  const std::function<void(JoinClause &)> &callback);
 
         /*! Add a basic where clause to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
         where(const QString &column, const QString &comparison,
               const QVariant &value, const QString &condition = "and");
+        /*! Add an "or where" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhere(const QString &column, const QString &comparison,
+                const QVariant &value);
         /*! Add a basic equal where clause to the query. */
-        inline static std::unique_ptr<TinyBuilder<Model>>
+        static std::unique_ptr<TinyBuilder<Model>>
         whereEq(const QString &column, const QVariant &value,
-                const QString &condition = "and")
-        { return where(column, QStringLiteral("="), value, condition); }
+                const QString &condition = "and");
+        /*! Add an equal "or where" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhereEq(const QString &column, const QVariant &value);
         /*! Add a nested where clause to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
         where(const std::function<void(TinyBuilder<Model> &)> &callback,
@@ -132,6 +234,99 @@ namespace Tiny
         /*! Add an array of basic where clauses to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
         where(const QVector<WhereItem> &values, const QString &condition = "and");
+        /*! Add an array of basic "or where" clauses to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhere(const QVector<WhereItem> &values);
+
+        /*! Add an array of where clauses comparing two columns to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        whereColumn(const QVector<WhereColumnItem> &values,
+                    const QString &condition = "and");
+        /*! Add an array of "or where" clauses comparing two columns to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhereColumn(const QVector<WhereColumnItem> &values);
+
+        /*! Add a "where" clause comparing two columns to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        whereColumn(const QString &first, const QString &comparison,
+                    const QString &second, const QString &condition = "and");
+        /*! Add a "or where" clause comparing two columns to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhereColumn(const QString &first, const QString &comparison,
+                      const QString &second);
+        /*! Add an equal "where" clause comparing two columns to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        whereColumnEq(const QString &first, const QString &second,
+                      const QString &condition = "and");
+        /*! Add an equal "or where" clause comparing two columns to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhereColumnEq(const QString &first, const QString &second);
+
+        /*! Add a "where in" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        whereIn(const QString &column, const QVector<QVariant> &values,
+                const QString &condition = "and", bool nope = false);
+        /*! Add an "or where in" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhereIn(const QString &column, const QVector<QVariant> &values);
+        /*! Add a "where not in" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        whereNotIn(const QString &column, const QVector<QVariant> &values,
+                   const QString &condition = "and");
+        /*! Add an "or where not in" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhereNotIn(const QString &column, const QVector<QVariant> &values);
+
+        /*! Add a "where null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        whereNull(const QStringList &columns = {"*"},
+                  const QString &condition = "and", bool nope = false);
+        /*! Add a "where null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        whereNull(const QString &column, const QString &condition = "and",
+                  bool nope = false);
+        /*! Add an "or where null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhereNull(const QStringList &columns = {"*"});
+        /*! Add an "or where null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhereNull(const QString &column);
+        /*! Add a "where not null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        whereNotNull(const QStringList &columns = {"*"},
+                     const QString &condition = "and");
+        /*! Add a "where not null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        whereNotNull(const QString &column, const QString &condition = "and");
+        /*! Add an "or where not null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhereNotNull(const QStringList &columns = {"*"});
+        /*! Add an "or where not null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orWhereNotNull(const QString &column);
+
+        /*! Add a "group by" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        groupBy(const QStringList &groups);
+        /*! Add a "group by" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        groupBy(const QString &group);
+
+        /*! Add a "having" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        having(const QString &column, const QString &comparison,
+               const QVariant &value, const QString &condition = "and");
+        /*! Add an "or having" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orHaving(const QString &column, const QString &comparison,
+                 const QVariant &value);
+
+        /*! Add an "order by" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orderBy(const QString &column, const QString &direction = "asc");
+        /*! Add a descending "order by" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        orderByDesc(const QString &column);
 
         /*! Add an "order by" clause for a timestamp to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
@@ -139,40 +334,38 @@ namespace Tiny
         /*! Add an "order by" clause for a timestamp to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
         oldest(QString column = "");
+        /*! Remove all existing orders. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        reorder();
+        /*! Remove all existing orders and optionally add a new order. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        reorder(const QString &column, const QString &direction = "asc");
+
+        /*! Set the "limit" value of the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        limit(int value);
+        /*! Alias to set the "limit" value of the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        take(int value);
+        /*! Set the "offset" value of the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        offset(int value);
+        /*! Alias to set the "offset" value of the query. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        skip(int value);
+        /*! Set the limit and offset for a given page. */
+        static std::unique_ptr<TinyBuilder<Model>>
+        forPage(int page, int perPage = 30);
 
         // TODO next fuckin increment, finish later 👿 silverqx
 
-        // TODO future problem with QStringList overload, its ambiguou, solve it somehow silverqx
-        /*! Begin querying a model with eager loading. */
+        /* TODO now TinyBuilder methods */
+        /*! Add a where clause on the primary key to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
-        with(const QVector<WithItem> &relations);
-        /*! Begin querying a model with eager loading. */
-        inline static std::unique_ptr<TinyBuilder<Model>>
-        with(const QString &relation)
-        { return with(QVector<WithItem> {{relation}}); }
-
-        /*! Prevent the specified relations from being eager loaded. */
+        whereKey(const QVariant &id);
+        /*! Add a where clause on the primary key to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
-        without(const QVector<QString> &relations);
-        /*! Prevent the specified relations from being eager loaded. */
-        inline static std::unique_ptr<TinyBuilder<Model>>
-        without(const QString &relation)
-        { return without(QVector<QString> {relation}); }
-
-        /* Static operations on a model instance */
-        /*! Save a new model and return the instance. */
-        inline static Model
-        create(const QVector<AttributeItem> &attributes)
-        { return query()->create(attributes); }
-
-        // TODO cpp check all int types and use std::size_t where appropriate silverqx
-        // WARNING id should be Model::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
-        /*! Destroy the models for the given IDs. */
-        static std::size_t
-        destroy(const QVector<QVariant> &ids);
-        inline static std::size_t
-        destroy(const QVariant id)
-        { return destroy(QVector<QVariant> {id}); }
+        whereKeyNot(const QVariant &id);
 
         /* Operations on a model instance */
         /*! Save the model to the database. */
@@ -187,43 +380,38 @@ namespace Tiny
         /*! Delete the model from the database. */
         bool remove();
         /*! Delete the model from the database. */
-        inline bool deleteModel()
-        { return remove(); }
+        bool deleteModel();
 
         /*! Reload a fresh model instance from the database. */
         std::optional<Model> fresh(const QVector<WithItem> &relations = {});
         /*! Reload a fresh model instance from the database. */
-        inline std::optional<Model> fresh(const QString &relation)
-        { return fresh(QVector<WithItem> {{relation}}); }
+        std::optional<Model> fresh(const QString &relation);
         /*! Reload the current model instance with fresh attributes from the database. */
         Model &refresh();
 
-        // TODO future LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
         /*! Eager load relations on the model. */
         Model &load(const QVector<WithItem> &relations);
         /*! Eager load relations on the model. */
-        inline Model &load(const QString &relation)
-        { return load(QVector<WithItem> {{relation}}); }
+        Model &load(const QString &relation);
 
-        // TODO add clean Model overloads silverqx
         /*! Determine if two models have the same ID and belong to the same table. */
         template<typename ModelToCompare>
         bool is(const std::optional<ModelToCompare> &model) const;
         /*! Determine if two models are not the same. */
         template<typename ModelToCompare>
-        bool isNot(const std::optional<ModelToCompare> &model) const
-        { return !is(model); }
+        bool isNot(const std::optional<ModelToCompare> &model) const;
 
         /*! Fill the model with an array of attributes. */
         Model &fill(const QVector<AttributeItem> &attributes);
 
-        /* Instantiation related */
+        /* Model Instance methods */
         /*! Get a new query builder for the model's table. */
         inline std::unique_ptr<TinyBuilder<Model>> newQuery()
         { return newQueryWithoutScopes(); }
         /*! Get a new query builder that doesn't have any global scopes. */
         std::unique_ptr<TinyBuilder<Model>> newQueryWithoutScopes();
-        /*! Get a new query builder that doesn't have any global scopes or eager loading. */
+        /*! Get a new query builder that doesn't have any global scopes or
+            eager loading. */
         std::unique_ptr<TinyBuilder<Model>> newModelQuery();
         /*! Get a new query builder with no relationships loaded. */
         std::unique_ptr<TinyBuilder<Model>> newQueryWithoutRelationships();
@@ -238,7 +426,7 @@ namespace Tiny
         Model newInstance(const QVector<AttributeItem> &attributes = {},
                           bool exists = false);
 
-        /*! Static cast this to a child's instance type instance (CRTP). */
+        /*! Static cast this to a child's instance type (CRTP). */
         inline Model &model()
         { return static_cast<Model &>(*this); }
         /*! Static cast this to a child's instance type (CRTP), const version. */
@@ -303,6 +491,7 @@ namespace Tiny
         QVariant getRawOriginal(const QString &key) const;
         /*! Transform a raw model value using mutators, casts, etc. */
         QVariant transformModelValue(const QString &key, const QVariant &value) const;
+
         /*! Get a relationship for Many types relation. */
         template<typename Related,
                  template<typename> typename Container = QVector>
@@ -320,25 +509,32 @@ namespace Tiny
 
         /*! Get the attributes that have been changed since last sync. */
         QVector<AttributeItem> getDirty() const;
-        /*! Determine if the model or any of the given attribute(s) have been modified. */
+        /*! Determine if the model or any of the given attribute(s) have
+            been modified. */
         inline bool isDirty(const QStringList &attributes = {}) const
         { return hasChanges(getDirty(), attributes); }
-        /*! Determine if the model or any of the given attribute(s) have been modified. */
+        /*! Determine if the model or any of the given attribute(s) have
+            been modified. */
         inline bool isDirty(const QString &attribute) const
         { return hasChanges(getDirty(), QStringList {attribute}); }
-        /*! Determine if the model and all the given attribute(s) have remained the same. */
+        /*! Determine if the model and all the given attribute(s) have
+            remained the same. */
         inline bool isClean(const QStringList &attributes = {}) const
         { return !isDirty(attributes); }
-        /*! Determine if the model and all the given attribute(s) have remained the same. */
+        /*! Determine if the model and all the given attribute(s) have
+            remained the same. */
         inline bool isClean(const QString &attribute) const
         { return !isDirty(attribute); }
+
         /*! Get the attributes that were changed. */
         inline const QVector<AttributeItem> &getChanges() const
         { return m_changes; }
-        /*! Determine if the model and all the given attribute(s) have remained the same. */
+        /*! Determine if the model and all the given attribute(s) have
+            remained the same. */
         inline bool wasChanged(const QStringList &attributes = {}) const
         { return hasChanges(getChanges(), attributes); }
-        /*! Determine if the model and all the given attribute(s) have remained the same. */
+        /*! Determine if the model and all the given attribute(s) have
+            remained the same. */
         inline bool wasChanged(const QString &attribute) const
         { return hasChanges(getChanges(), QStringList {attribute}); }
 
@@ -352,22 +548,22 @@ namespace Tiny
         QString fromDateTime(const QDateTime &value) const;
 
         /* HasRelationships */
-        // TODO make getRelation() Container argument compatible with STL containers API silverqx
         /*! Get a specified relationship. */
         template<typename Related,
                  template<typename> typename Container = QVector>
         Container<Related *> getRelation(const QString &relation);
-        /*! Get a specified relationship as Related type, for use with HasOne and BelongsTo relation types. */
+        /*! Get a specified relationship as Related type, for use with HasOne and
+            BelongsTo relation types. */
         template<typename Related, typename Tag,
                  std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
         Related *getRelation(const QString &relation);
+
         /*! Determine if the given relation is loaded. */
-        inline bool relationLoaded(const QString &relation) const
-        { return m_relations.contains(relation); };
+        bool relationLoaded(const QString &relation) const;
+
         /*! Set the given relationship on the model. */
         template<typename Related>
         Model &setRelation(const QString &relation, const QVector<Related> &models);
-        // TODO perf, debug setRelation() and use move when possible silverqx
         /*! Set the given relationship on the model. */
         template<typename Related>
         Model &setRelation(const QString &relation, QVector<Related> &&models);
@@ -377,8 +573,10 @@ namespace Tiny
         /*! Set the given relationship on the model. */
         template<typename Related>
         Model &setRelation(const QString &relation, std::optional<Related> &&model);
+
         /*! Get the default foreign key name for the model. */
         QString getForeignKey() const;
+
         /*! Define a one-to-one relationship. */
         template<typename Related>
         std::unique_ptr<Relations::Relation<Model, Related>>
@@ -391,11 +589,14 @@ namespace Tiny
         template<typename Related>
         std::unique_ptr<Relations::Relation<Model, Related>>
         hasMany(QString foreignKey = "", QString localKey = "");
+
         /*! Touch the owning relations of the model. */
         void touchOwners();
+
         /*! Get the relationships that are touched on save. */
         inline const QStringList &getTouchedRelations() const
         { return model().u_touches; }
+
         /*! Get all the loaded relations for the instance. */
         inline const QHash<QString, RelationsType<AllRelations...>> &
         getRelations() const
@@ -410,28 +611,34 @@ namespace Tiny
         bool touch();
         /*! Update the creation and update timestamps. */
         void updateTimestamps();
+
         /*! Set the value of the "created at" attribute. */
         Model &setCreatedAt(const QDateTime &value);
         /*! Set the value of the "updated at" attribute. */
         Model &setUpdatedAt(const QDateTime &value);
+
         /*! Get a fresh timestamp for the model. */
         inline QDateTime freshTimestamp() const
         { return QDateTime::currentDateTime(); }
         /*! Get a fresh timestamp for the model. */
         QString freshTimestampString() const;
+
         /*! Determine if the model uses timestamps. */
         inline bool usesTimestamps() const
         { return model().u_timestamps; }
+
         /*! Get the name of the "created at" column. */
         inline static const QString &getCreatedAtColumn()
         { return Model::CREATED_AT; }
         /*! Get the name of the "updated at" column. */
         inline static const QString &getUpdatedAtColumn()
         { return Model::UPDATED_AT; }
+
         /*! Get the fully qualified "created at" column. */
         QString getQualifiedCreatedAtColumn() const;
         /*! Get the fully qualified "updated at" column. */
         QString getQualifiedUpdatedAtColumn() const;
+
         /*! Determine if the given model is ignoring touches. */
         template<typename ClassToCheck = Model>
         static bool isIgnoringTouch();
@@ -444,7 +651,8 @@ namespace Tiny
         inline void relationVisitor(const QString &)
         {}
 
-        /*! On the base of type saved in the relation store decide, which action to call eager/push. */
+        /*! On the base of a type saved in the relation store decide, which action
+            to call eager/push. */
         template<typename Related>
         void relationVisited();
 
@@ -467,10 +675,12 @@ namespace Tiny
         /*! Sync the changed attributes. */
         inline Model &syncChanges()
         { m_changes = std::move(getDirty()); return model(); }
+
         /*! Determine if the new and old values for a given key are equivalent. */
         bool originalIsEquivalent(const QString &key) const;
 
-        /*! Determine whether a value is Date / DateTime castable for inbound manipulation. */
+        /*! Determine whether a value is Date / DateTime castable for inbound
+            manipulation. */
         bool isDateCastable(const QString &key) const;
         /*! Return a timestamp as DateTime object. */
         QDateTime asDateTime(const QVariant &value) const;
@@ -478,8 +688,8 @@ namespace Tiny
         /* HasRelationships */
         /*! Create a new model instance for a related model. */
         template<typename Related>
-        std::unique_ptr<Related>
-        newRelatedInstance() const;
+        std::unique_ptr<Related> newRelatedInstance() const;
+
         // TODO can be unified to a one templated method by relation type silverqx
         /*! Instantiate a new HasOne relationship. */
         template<typename Related>
@@ -503,9 +713,11 @@ namespace Tiny
                    const QString &foreignKey, const QString &localKey) const
         { return Relations::HasMany<Model, Related>::create(
                         std::move(related), parent, foreignKey, localKey); }
+
         /*! Guess the "belongs to" relationship name. */
         template<typename Related>
         QString guessBelongsToRelation() const;
+
         /*! Set the entire relations array on the model. */
         Model &setRelations(
                 QHash<QString, RelationsType<AllRelations...>> &relations);
@@ -529,7 +741,7 @@ namespace Tiny
         bool performUpdate(TinyBuilder<Model> &query);
         /*! Perform any actions that are necessary after the model is saved. */
         void finishSave(const SaveOptions &options = {});
-        // TODO primary key dilema, add support for Model::KeyType silverqx
+
         /*! Insert the given attributes and set the ID on the model. */
         quint64 insertAndSetId(const TinyBuilder<Model> &query,
                                const QVector<AttributeItem> &attributes);
@@ -580,10 +792,13 @@ namespace Tiny
 
     private:
         /* Eager load from TinyBuilder */
-        /*! Invoke Model::eagerVisitor() to define template argument Related for eagerLoaded relation. */
-        void eagerLoadRelationVisitor(const WithItem &relation, TinyBuilder<Model> &builder,
-                                      QVector<Model> &models);
-        /*! Get a relation method in the relations hash data member, defined in the current model instance. */
+        /*! Invoke Model::eagerVisitor() to define template argument Related
+            for eagerLoaded relation. */
+        void eagerLoadRelationVisitor(
+                const WithItem &relation, TinyBuilder<Model> &builder,
+                QVector<Model> &models);
+        /*! Get a relation method in the relations hash data member, defined
+            in the current model instance. */
         template<typename Related>
         RelationType<Model, Related>
         getRelationMethod(const QString &relation) const;
@@ -596,29 +811,36 @@ namespace Tiny
         /* HasRelationships */
         /*! Throw exception if a relation is not defined. */
         void validateUserRelation(const QString &name) const;
-        /*! Obtain related models from "relationships" data member hash without any checks. */
+
+        /*! Obtain related models from "relationships" data member hash
+            without any checks. */
         template<class Related,
                  template<typename> typename Container = QVector>
         Container<Related *>
         getRelationFromHash(const QString &relation);
-        /*! Obtain related models from "relationships" data member hash without any checks. */
+        /*! Obtain related models from "relationships" data member hash
+            without any checks. */
         template<class Related, typename Tag,
                  std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
         Related *
         getRelationFromHash(const QString &relation);
-        /*! Get a relation method in the u_relations hash data member, defined in the current model instance. */
+
+        /*! Get a relation method in the u_relations hash data member,
+            defined in the current model instance. */
         template<typename Related>
         RelationType<Model, Related>
         getRelationMethodRaw(const QString &relation) const;
 
         /* Eager loading and push */
-        /*! Continue execution after a relation type was obtained ( by Related template parameter ). */
+        /*! Continue execution after a relation type was obtained ( by
+            Related template parameter ). */
         template<typename Related>
         inline void eagerVisited() const
         { this->m_eagerStore->builder.template eagerLoadRelation<Related>(
                         this->m_eagerStore->models, this->m_eagerStore->relation); }
 
-        /*! On the base of alternative held by m_relations decide, which pushVisitied() to execute. */
+        /*! On the base of alternative held by m_relations decide, which
+            pushVisitied() to execute. */
         template<typename Related>
         void pushVisited();
         /*! Push for Many relation types. */
@@ -630,22 +852,27 @@ namespace Tiny
                  std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
         void pushVisited();
 
-        /*! On the base of alternative held by m_relations decide, which touchOwnersVisited() to execute. */
+        /*! On the base of alternative held by m_relations decide, which
+            touchOwnersVisited() to execute. */
         template<typename Related>
         void touchOwnersVisited();
 
         /* Shortcuts for types related to the Relation Store */
         /*! Eager relation store. */
         using EagerRelationStore =
-            typename Concerns::HasRelationStore<Model, AllRelations...>::EagerRelationStore;
+            typename Concerns::HasRelationStore<Model, AllRelations...>
+                             ::EagerRelationStore;
         /*! Push relation store. */
         using PushRelationStore  =
-            typename Concerns::HasRelationStore<Model, AllRelations...>::PushRelationStore;
+            typename Concerns::HasRelationStore<Model, AllRelations...>
+                             ::PushRelationStore;
         /*! Relation store type enum struct. */
         using RelationStoreType  =
-            typename Concerns::HasRelationStore<Model, AllRelations...>::RelationStoreType;
+            typename Concerns::HasRelationStore<Model, AllRelations...>
+                             ::RelationStoreType;
 
-        /*! Obtain a pointer to member function from relation store, after relation was visited. */
+        /*! Obtain a pointer to member function from relation store, after
+            relation was visited. */
         template<typename Related>
         const std::function<void(BaseModel<Model, AllRelations...> &)> &
         getMethodForRelationVisited(RelationStoreType storeType) const;
@@ -664,6 +891,396 @@ namespace Tiny
 
     template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::query()
+    {
+        return Model().newQuery();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVector<Model>
+    BaseModel<Model, AllRelations...>::all(const QStringList &columns)
+    {
+        return query()->get(columns);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::optional<Model>
+    BaseModel<Model, AllRelations...>::find(const QVariant &id,
+                                            const QStringList &columns)
+    {
+        return query()->find(id, columns);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model
+    BaseModel<Model, AllRelations...>::findOrNew(const QVariant &id,
+                                                 const QStringList &columns)
+    {
+        return query()->findOrNew(id, columns);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model
+    BaseModel<Model, AllRelations...>::findOrFail(const QVariant &id,
+                                                  const QStringList &columns)
+    {
+        return query()->findOrFail(id, columns);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model
+    BaseModel<Model, AllRelations...>::firstOrNew(
+            const QVector<WhereItem> &attributes,
+            const QVector<AttributeItem> &values)
+    {
+        return query()->firstOrNew(attributes, values);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model
+    BaseModel<Model, AllRelations...>::firstOrCreate(
+            const QVector<WhereItem> &attributes,
+            const QVector<AttributeItem> &values)
+    {
+        return query()->firstOrCreate(attributes, values);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model
+    BaseModel<Model, AllRelations...>::firstOrFail(const QStringList &columns)
+    {
+        return query()->firstOrFail(columns);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::optional<Model>
+    BaseModel<Model, AllRelations...>::firstWhere(
+            const QString &column, const QString &comparison,
+            const QVariant &value, const QString &condition)
+    {
+        return where(column, comparison, value, condition)->first();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::optional<Model>
+    BaseModel<Model, AllRelations...>::firstWhereEq(
+            const QString &column, const QVariant &value, const QString &condition)
+    {
+        return where(column, QStringLiteral("="), value, condition)->first();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant BaseModel<Model, AllRelations...>::value(const QString &column)
+    {
+        return query()->value(column);
+    }
+
+    // TODO future problem with QStringList overload, its ambiguou, solve it somehow silverqx
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::with(const QVector<WithItem> &relations)
+    {
+        auto builder = query();
+
+        builder->with(relations);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::with(const QString &relation)
+    {
+        return with(QVector<WithItem> {{relation}});
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::without(const QVector<QString> &relations)
+    {
+        auto builder = query();
+
+        builder->without(relations);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::without(const QString &relation)
+    {
+        return without(QVector<QString> {relation});
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model
+    BaseModel<Model, AllRelations...>::create(const QVector<AttributeItem> &attributes)
+    {
+        return query()->create(attributes);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::optional<Model>
+    BaseModel<Model, AllRelations...>::first(const QStringList &columns)
+    {
+        return query()->first(columns);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::tuple<bool, std::optional<QSqlQuery>>
+    BaseModel<Model, AllRelations...>::insert(
+            const QVector<AttributeItem> &attributes)
+    {
+        return query()->insert(attributes);
+    }
+
+    // TODO dilema primarykey, Model::KeyType vs QVariant silverqx
+    template<typename Model, typename ...AllRelations>
+    quint64
+    BaseModel<Model, AllRelations...>::insertGetId(
+            const QVector<AttributeItem> &attributes)
+    {
+        return query()->insertGetId(attributes);
+    }
+
+    // TODO cpp check all int types and use std::size_t where appropriate silverqx
+    // WARNING id should be Model::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
+    // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
+    template<typename Model, typename ...AllRelations>
+    size_t
+    BaseModel<Model, AllRelations...>::destroy(const QVector<QVariant> &ids)
+    {
+        if (ids.isEmpty())
+            return 0;
+
+        /* We will actually pull the models from the database table and call delete on
+           each of them individually so that their events get fired properly with a
+           correct set of attributes in case the developers wants to check these. */
+        Model instance;
+        const auto &key = instance.getKeyName();
+
+        std::size_t count = 0;
+
+        // TODO diff call whereIn() on Model vs TinyBuilder silverqx
+        // Ownership of a unique_ptr()
+        for (auto &model : instance.newQuery()->whereIn(key, ids).get())
+            if (model.remove())
+                ++count;
+
+        return count;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    size_t
+    BaseModel<Model, AllRelations...>::destroy(const QVariant id)
+    {
+        return destroy(QVector<QVariant> {id});
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::tuple<bool, QSqlQuery>
+    BaseModel<Model, AllRelations...>::truncate()
+    {
+        return query()->truncate();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::select(const QStringList columns)
+    {
+        auto builder = query();
+
+        builder->select(columns);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::select(const QString column)
+    {
+        auto builder = query();
+
+        builder->select(column);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::addSelect(const QStringList &columns)
+    {
+        auto builder = query();
+
+        builder->addSelect(columns);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::addSelect(const QString &column)
+    {
+        auto builder = query();
+
+        builder->addSelect(column);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::distinct()
+    {
+        auto builder = query();
+
+        builder->distinct();
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::join(
+            const QString &table, const QString &first,  const QString &comparison,
+            const QString &second, const QString &type, const bool where)
+    {
+        auto builder = query();
+
+        builder->join(table, first, comparison, second, type, where);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::join(
+            const QString &table, const std::function<void(JoinClause &)> &callback,
+            const QString &type)
+    {
+        auto builder = query();
+
+        builder->join(table, callback, type);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::joinWhere(
+            const QString &table, const QString &first, const QString &comparison,
+            const QString &second, const QString &type)
+    {
+        auto builder = query();
+
+        builder->joinWhere(table, first, comparison, second, type);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::leftJoin(
+            const QString &table, const QString &first,
+            const QString &comparison, const QString &second)
+    {
+        auto builder = query();
+
+        builder->leftJoin(table, first, comparison, second);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::leftJoin(
+            const QString &table, const std::function<void(JoinClause &)> &callback)
+    {
+        auto builder = query();
+
+        builder->leftJoin(table, callback);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::leftJoinWhere(
+            const QString &table, const QString &first,
+            const QString &comparison, const QString &second)
+    {
+        auto builder = query();
+
+        builder->leftJoinWhere(table, first, comparison, second);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::rightJoin(
+            const QString &table, const QString &first,
+            const QString &comparison, const QString &second)
+    {
+        auto builder = query();
+
+        builder->rightJoin(table, first, comparison, second);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::rightJoin(
+            const QString &table, const std::function<void(JoinClause &)> &callback)
+    {
+        auto builder = query();
+
+        builder->rightJoin(table, callback);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::rightJoinWhere(
+            const QString &table, const QString &first,
+            const QString &comparison, const QString &second)
+    {
+        auto builder = query();
+
+        builder->rightJoinWhere(table, first, comparison, second);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::crossJoin(
+            const QString &table, const QString &first,
+            const QString &comparison, const QString &second)
+    {
+        auto builder = query();
+
+        builder->crossJoin(table, first, comparison, second);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::crossJoin(
+            const QString &table, const std::function<void(JoinClause &)> &callback)
+    {
+        auto builder = query();
+
+        builder->crossJoin(table, callback);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
     BaseModel<Model, AllRelations...>::where(
             const QString &column, const QString &comparison,
             const QVariant &value, const QString &condition)
@@ -671,6 +1288,42 @@ namespace Tiny
         auto builder = query();
 
         builder->where(column, comparison, value, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhere(
+            const QString &column, const QString &comparison, const QVariant &value)
+    {
+        auto builder = query();
+
+        builder->orWhere(column, comparison, value);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereEq(
+            const QString &column, const QVariant &value, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereEq(column, value, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhereEq(
+            const QString &column, const QVariant &value)
+    {
+        auto builder = query();
+
+        builder->orWhereEq(column, value);
 
         return builder;
     }
@@ -716,6 +1369,302 @@ namespace Tiny
 
     template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhere(const QVector<WhereItem> &values)
+    {
+        auto builder = query();
+
+        builder->orWhere(values);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereColumn(
+            const QVector<WhereColumnItem> &values, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereColumn(values, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhereColumn(
+            const QVector<WhereColumnItem> &values)
+    {
+        auto builder = query();
+
+        builder->orWhereColumn(values);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereColumn(
+            const QString &first, const QString &comparison,
+            const QString &second, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereColumn(first, comparison, second, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhereColumn(
+            const QString &first, const QString &comparison, const QString &second)
+    {
+        auto builder = query();
+
+        builder->orWhereColumn(first, comparison, second);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereColumnEq(
+            const QString &first, const QString &second, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereColumnEq(first, second, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhereColumnEq(
+            const QString &first, const QString &second)
+    {
+        auto builder = query();
+
+        builder->orWhereColumnEq(first, second);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereIn(
+            const QString &column, const QVector<QVariant> &values,
+            const QString &condition, const bool nope)
+    {
+        auto builder = query();
+
+        builder->whereIn(column, values, condition, nope);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhereIn(
+            const QString &column, const QVector<QVariant> &values)
+    {
+        auto builder = query();
+
+        builder->orWhereIn(column, values);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereNotIn(
+            const QString &column, const QVector<QVariant> &values,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereNotIn(column, values, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhereNotIn(
+            const QString &column, const QVector<QVariant> &values)
+    {
+        auto builder = query();
+
+        builder->orWhereNotIn(column, values);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereNull(
+            const QStringList &columns, const QString &condition, const bool nope)
+    {
+        auto builder = query();
+
+        builder->whereNull(columns, condition, nope);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereNull(
+            const QString &column, const QString &condition, const bool nope)
+    {
+        auto builder = query();
+
+        builder->whereNull(column, condition, nope);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhereNull(const QStringList &columns)
+    {
+        auto builder = query();
+
+        builder->orWhereNull(columns);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhereNull(const QString &column)
+    {
+        auto builder = query();
+
+        builder->orWhereNull(column);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereNotNull(
+            const QStringList &columns, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereNotNull(columns, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereNotNull(
+            const QString &column, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereNotNull(column, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhereNotNull(const QStringList &columns)
+    {
+        auto builder = query();
+
+        builder->orWhereNotNull(columns);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orWhereNotNull(const QString &column)
+    {
+        auto builder = query();
+
+        builder->orWhereNotNull(column);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::groupBy(const QStringList &groups)
+    {
+        auto builder = query();
+
+        builder->groupBy(groups);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::groupBy(const QString &group)
+    {
+        auto builder = query();
+
+        builder->groupBy(group);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::having(
+            const QString &column, const QString &comparison,
+            const QVariant &value, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->having(column, comparison, value, condition);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orHaving(
+            const QString &column, const QString &comparison, const QVariant &value)
+    {
+        auto builder = query();
+
+        builder->orHaving(column, comparison, value);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orderBy(const QString &column,
+                                               const QString &direction)
+    {
+        auto builder = query();
+
+        builder->groorderByupBy(column, direction);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::orderByDesc(const QString &column)
+    {
+        auto builder = query();
+
+        builder->orderByDesc(column);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
     BaseModel<Model, AllRelations...>::latest(QString column)
     {
         auto builder = query();
@@ -738,55 +1687,108 @@ namespace Tiny
 
     template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
-    BaseModel<Model, AllRelations...>::with(const QVector<WithItem> &relations)
+    BaseModel<Model, AllRelations...>::reorder()
     {
         auto builder = query();
 
-        builder->with(relations);
+        builder->reorder();
 
         return builder;
     }
 
     template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
-    BaseModel<Model, AllRelations...>::without(const QVector<QString> &relations)
+    BaseModel<Model, AllRelations...>::reorder(const QString &column,
+                                               const QString &direction)
     {
         auto builder = query();
 
-        builder->without(relations);
+        builder->reorder(column, direction);
 
         return builder;
     }
 
-    // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
     template<typename Model, typename ...AllRelations>
-    size_t
-    BaseModel<Model, AllRelations...>::destroy(const QVector<QVariant> &ids)
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::limit(const int value)
     {
-        if (ids.isEmpty())
-            return 0;
+        auto builder = query();
 
-        /* We will actually pull the models from the database table and call delete on
-           each of them individually so that their events get fired properly with a
-           correct set of attributes in case the developers wants to check these. */
-        Model instance;
-        const auto &key = instance.getKeyName();
+        builder->limit(value);
 
-        std::size_t count = 0;
+        return builder;
+    }
 
-        // TODO diff call whereIn() on Model vs TinyBuilder silverqx
-        // Ownership of a unique_ptr()
-        for (auto &model : instance.newQuery()->whereIn(key, ids).get())
-            if (model.remove())
-                ++count;
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::take(const int value)
+    {
+        auto builder = query();
 
-        return count;
+        builder->take(value);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::offset(const int value)
+    {
+        auto builder = query();
+
+        builder->offset(value);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::skip(const int value)
+    {
+        auto builder = query();
+
+        builder->skip(value);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::forPage(const int page, const int perPage)
+    {
+        auto builder = query();
+
+        builder->forPage(page, perPage);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereKey(const QVariant &id)
+    {
+        auto builder = query();
+
+        builder->whereKey(id);
+
+        return builder;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::whereKeyNot(const QVariant &id)
+    {
+        auto builder = query();
+
+        builder->whereKeyNot(id);
+
+        return builder;
     }
 
     template<typename Model, typename ...AllRelations>
     bool BaseModel<Model, AllRelations...>::save(const SaveOptions &options)
     {
-//        mergeAttributesFromClassCasts();
+        //        mergeAttributesFromClassCasts();
 
         // Ownership of a unique_ptr()
         auto query = newModelQuery();
@@ -1027,6 +2029,12 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::deleteModel()
+    {
+        return remove();
+    }
+
+    template<typename Model, typename ...AllRelations>
     std::optional<Model>
     BaseModel<Model, AllRelations...>::fresh(
             const QVector<WithItem> &relations)
@@ -1037,6 +2045,13 @@ namespace Tiny
         return setKeysForSaveQuery(*newQueryWithoutScopes())
                 .with(relations)
                 .first();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::optional<Model>
+    BaseModel<Model, AllRelations...>::fresh(const QString &relation)
+    {
+        return fresh(QVector<WithItem> {{relation}});
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1064,6 +2079,7 @@ namespace Tiny
         return model();
     }
 
+    // TODO future LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
     template<typename Model, typename ...AllRelations>
     Model &
     BaseModel<Model, AllRelations...>::load(
@@ -1089,6 +2105,13 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::load(const QString &relation)
+    {
+        return load(QVector<WithItem> {{relation}});
+    }
+
+    // TODO add clean Model overloads, I don't remember what it exactly mean or better why should I need Model overloads silverqx
+    template<typename Model, typename ...AllRelations>
     template<typename ModelToCompare>
     bool BaseModel<Model, AllRelations...>::is(
             const std::optional<ModelToCompare> &model) const
@@ -1097,6 +2120,14 @@ namespace Tiny
                 && getKey() == model->getKey()
                 && getTable() == model->getTable()
                 && getConnectionName() == model->getConnectionName();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    template<typename ModelToCompare>
+    bool BaseModel<Model, AllRelations...>::isNot(
+            const std::optional<ModelToCompare> &model) const
+    {
+        return !is(model);
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1147,8 +2178,9 @@ namespace Tiny
 
     template<typename Model, typename ...AllRelations>
     Model
-    BaseModel<Model, AllRelations...>::newFromBuilder(const QVector<AttributeItem> &attributes,
-                                                      const std::optional<QString> connection)
+    BaseModel<Model, AllRelations...>::newFromBuilder(
+            const QVector<AttributeItem> &attributes,
+            const std::optional<QString> connection)
     {
         auto model = newInstance({}, true);
 
@@ -1161,8 +2193,8 @@ namespace Tiny
 
     template<typename Model, typename ...AllRelations>
     Model
-    BaseModel<Model, AllRelations...>::newInstance(const QVector<AttributeItem> &attributes,
-                                                   const bool exists)
+    BaseModel<Model, AllRelations...>::newInstance(
+            const QVector<AttributeItem> &attributes, const bool exists)
     {
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
@@ -1316,7 +2348,8 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
-    bool BaseModel<Model, AllRelations...>::originalIsEquivalent(const QString &key) const
+    bool
+    BaseModel<Model, AllRelations...>::originalIsEquivalent(const QString &key) const
     {
         // TODO future hasOriginal() silverqx
         const auto originalContainKey = ranges::contains(m_original, true,
@@ -1448,6 +2481,7 @@ namespace Tiny
         return relatedModel ? &*relatedModel : nullptr;
     }
 
+    // TODO make getRelation() Container argument compatible with STL containers API silverqx
     // TODO solve different behavior like Eloquent getRelation() silverqx
     // TODO next many relation compiles with Orm::One and exception during runtime occures, solve this during compile, One relation only with Orm::One and many relation type only with Container version silverqx
     template<typename Model, typename ...AllRelations>
@@ -1478,6 +2512,7 @@ namespace Tiny
         return getRelationFromHash<Related, One>(relation);
     }
 
+    // TODO perf, debug setRelation() and use move when possible silverqx
     template<typename Model, typename ...AllRelations>
     template<typename Related>
     Model &
@@ -1620,14 +2655,16 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
-    QVariant BaseModel<Model, AllRelations...>::getAttributeValue(const QString &key) const
+    QVariant
+    BaseModel<Model, AllRelations...>::getAttributeValue(const QString &key) const
     {
         return transformModelValue(key, getAttributeFromArray(key));
     }
 
     // TODO candidate for optional const reference, to be able return null value and use reference at the same time silverqx
     template<typename Model, typename ...AllRelations>
-    QVariant BaseModel<Model, AllRelations...>::getAttributeFromArray(const QString &key) const
+    QVariant
+    BaseModel<Model, AllRelations...>::getAttributeFromArray(const QString &key) const
     {
         const auto &attributes = getAttributes();
         const auto itAttribute = ranges::find_if(attributes,
@@ -1708,10 +2745,18 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    bool
+    BaseModel<Model, AllRelations...>::relationLoaded(const QString &relation) const
+    {
+        return m_relations.contains(relation);
+    }
+
+    template<typename Model, typename ...AllRelations>
     QString BaseModel<Model, AllRelations...>::getForeignKey() const
     {
         return QStringLiteral("%1_%2").arg(
-                    Utils::String::toSnake(Utils::Type::classPureBasename<decltype (model())>()),
+                    Utils::String::toSnake(
+                        Utils::Type::classPureBasename<decltype (model())>()),
                     getKeyName());
     }
 
@@ -1845,7 +2890,8 @@ namespace Tiny
 
     template<typename Model, typename ...AllRelations>
     void BaseModel<Model, AllRelations...>::eagerLoadRelationVisitor(
-            const WithItem &relation, TinyBuilder<Model> &builder, QVector<Model> &models)
+            const WithItem &relation, TinyBuilder<Model> &builder,
+            QVector<Model> &models)
     {
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation.name);
@@ -1870,7 +2916,8 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
-    void BaseModel<Model, AllRelations...>::validateUserRelation(const QString &name) const
+    void
+    BaseModel<Model, AllRelations...>::validateUserRelation(const QString &name) const
     {
         if (!model().u_relations.contains(name))
             throw RelationNotFoundError(
@@ -1880,7 +2927,8 @@ namespace Tiny
     template<typename Model, typename ...AllRelations>
     template<typename Related>
     RelationType<Model, Related>
-    BaseModel<Model, AllRelations...>::getRelationMethodRaw(const QString &relation) const
+    BaseModel<Model, AllRelations...>::getRelationMethodRaw(
+            const QString &relation) const
     {
         return std::any_cast<RelationType<Model, Related>>(
                 model().u_relations.find(relation).value());
@@ -1907,8 +2955,9 @@ namespace Tiny
     QVariant BaseModel<Model, AllRelations...>::getKeyForSaveQuery() const
     {
         // TODO reason, why m_attributes and m_original should be QHash silverqx
-        const auto itOriginal = ranges::find_if(m_original,
-                                                [&key = getKeyName()](const auto &original)
+        const auto itOriginal = ranges::find_if(
+                                    m_original,
+                                    [&key = getKeyName()](const auto &original)
         {
             return original.key == key;
         });
@@ -1917,7 +2966,8 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
-    bool BaseModel<Model, AllRelations...>::performInsert(const TinyBuilder<Model> &query)
+    bool BaseModel<Model, AllRelations...>::performInsert(
+            const TinyBuilder<Model> &query)
     {
 //        if (!fireModelEvent("creating"))
 //            return false;
@@ -1946,8 +2996,8 @@ namespace Tiny
                 return true;
             else {
                 bool ok;
-                std::tie(ok, std::ignore) = query.insert(attributes);;
-                // TODO next TinyBuilder return values dilema silverqx
+                std::tie(ok, std::ignore) = query.insert(attributes);
+                // TODO dilema next return values on TinyBuilder silverqx
                 if (!ok)
                     return false;
             }
@@ -1988,7 +3038,7 @@ namespace Tiny
                     setKeysForSaveQuery(query).update(
                         Utils::Attribute::convertVectorToUpdateItem(dirty));
 
-            // TODO next TinyBuilder return values dilema silverqx
+            // TODO dilema next return values on TinyBuilder silverqx
             if (sqlQuery.lastError().isValid())
                 return false;
 
@@ -2011,6 +3061,7 @@ namespace Tiny
         syncOriginal();
     }
 
+    // TODO dilema primarykey, add support for Model::KeyType silverqx
     template<typename Model, typename ...AllRelations>
     quint64 BaseModel<Model, AllRelations...>::insertAndSetId(
             const TinyBuilder<Model> &query,

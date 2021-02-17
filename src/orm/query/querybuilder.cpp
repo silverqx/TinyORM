@@ -258,7 +258,7 @@ Builder &Builder::leftJoin(const QString &table, const QString &first,
 }
 
 Builder &Builder::leftJoin(const QString &table,
-                           const std::function<void (JoinClause &)> &callback)
+                           const std::function<void(JoinClause &)> &callback)
 {
     return join(table, callback, "left");
 }
@@ -276,7 +276,7 @@ Builder &Builder::rightJoin(const QString &table, const QString &first,
 }
 
 Builder &Builder::rightJoin(const QString &table,
-                            const std::function<void (JoinClause &)> &callback)
+                            const std::function<void(JoinClause &)> &callback)
 {
     return join(table, callback, "right");
 }
@@ -296,7 +296,7 @@ Builder &Builder::crossJoin(const QString &table, const QString &first,
 }
 
 Builder &Builder::crossJoin(const QString &table,
-                            const std::function<void (JoinClause &)> &callback)
+                            const std::function<void(JoinClause &)> &callback)
 {
     return join(table, callback, "cross");
 }
@@ -340,7 +340,7 @@ Builder &Builder::where(const std::function<void(Builder &)> &callback,
     return addNestedWhereQuery(query, condition);
 }
 
-Builder &Builder::orWhere(const std::function<void (Builder &)> &callback)
+Builder &Builder::orWhere(const std::function<void(Builder &)> &callback)
 {
     return where(callback, "or");
 }
@@ -743,7 +743,7 @@ Builder &Builder::clearColumns()
 std::tuple<bool, QSqlQuery>
 Builder::onceWithColumns(
             const QStringList &columns,
-            const std::function<std::tuple<bool, QSqlQuery> ()> &callback)
+            const std::function<std::tuple<bool, QSqlQuery>()> &callback)
 {
     // Save orignal columns
     const auto original = m_columns;

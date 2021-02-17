@@ -39,6 +39,8 @@ namespace Relations
     template<typename Model, typename Related>
     using RelationType = std::unique_ptr<Relations::Relation<Model, Related>>(Model::*)();
 
+    using JoinClause = Orm::Query::JoinClause;
+
     template<typename Model>
     class Builder
     {
@@ -66,6 +68,15 @@ namespace Relations
         /*! Execute the query and get the first result or throw an exception. */
         Model firstOrFail(const QStringList &columns = {"*"});
 
+        /*! Add a basic where clause to the query, and return the first result. */
+        std::optional<Model>
+        firstWhere(const QString &column, const QString &comparison,
+                   const QVariant &value, const QString &condition = "and");
+        /*! Add a basic where clause to the query, and return the first result. */
+        std::optional<Model>
+        firstWhereEq(const QString &column, const QVariant &value,
+                     const QString &condition = "and");
+
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const QString &column);
 
@@ -87,10 +98,10 @@ namespace Relations
         std::optional<Model> first(const QStringList &columns = {"*"});
 
         /* Proxy methods to the QueryBuilder */
+        /* Insert, Update, Delete */
         /*! Insert new records into the database. */
         std::tuple<bool, std::optional<QSqlQuery>>
         insert(const QVector<AttributeItem> &attributes) const;
-        // TODO primarykey dilema, Model::KeyType vs QVariant silverqx
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVector<AttributeItem> &attributes) const;
 
@@ -98,11 +109,63 @@ namespace Relations
         std::tuple<int, QSqlQuery>
         update(const QVector<UpdateItem> &values) const;
 
-        // TODO future add onDelete (and similar) callback feature silverqx
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery> remove();
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery> deleteModels();
+
+        /*! Run a truncate statement on the table. */
+        std::tuple<bool, QSqlQuery> truncate();
+
+        /* Select */
+        /*! Set the columns to be selected. */
+        Builder &select(const QStringList columns = {"*"});
+        /*! Set the column to be selected. */
+        Builder &select(const QString column);
+        /*! Add new select columns to the query. */
+        Builder &addSelect(const QStringList &columns);
+        /*! Add a new select column to the query. */
+        Builder &addSelect(const QString &column);
+
+        /*! Force the query to only return distinct results. */
+        Builder &distinct();
+
+        /*! Add a join clause to the query. */
+        Builder &join(const QString &table, const QString &first,
+                      const QString &comparison, const QString &second,
+                      const QString &type = "inner", bool where = false);
+        /*! Add an advanced join clause to the query. */
+        Builder &join(const QString &table,
+                      const std::function<void(JoinClause &)> &callback,
+                      const QString &type = "inner");
+        /*! Add a "join where" clause to the query. */
+        Builder &joinWhere(const QString &table, const QString &first,
+                           const QString &comparison, const QString &second,
+                           const QString &type = "inner");
+        /*! Add a left join to the query. */
+        Builder &leftJoin(const QString &table, const QString &first,
+                          const QString &comparison, const QString &second);
+        /*! Add an advanced left join to the query. */
+        Builder &leftJoin(const QString &table,
+                          const std::function<void(JoinClause &)> &callback);
+        /*! Add a "join where" clause to the query. */
+        Builder &leftJoinWhere(const QString &table, const QString &first,
+                               const QString &comparison, const QString &second);
+        /*! Add a right join to the query. */
+        Builder &rightJoin(const QString &table, const QString &first,
+                           const QString &comparison, const QString &second);
+        /*! Add an advanced right join to the query. */
+        Builder &rightJoin(const QString &table,
+                           const std::function<void(JoinClause &)> &callback);
+        /*! Add a "right join where" clause to the query. */
+        Builder &rightJoinWhere(const QString &table, const QString &first,
+                                const QString &comparison, const QString &second);
+        /*! Add a "cross join" clause to the query. */
+        Builder &crossJoin(const QString &table, const QString &first,
+                           const QString &comparison, const QString &second);
+        /*! Add an advanced "cross join" clause to the query. */
+        Builder &crossJoin(const QString &table,
+                           const std::function<void(JoinClause &)> &callback);
 
         /*! Add a basic where clause to the query. */
         Builder &where(const QString &column, const QString &comparison,
@@ -124,6 +187,37 @@ namespace Relations
         /*! Add an array of basic where clauses to the query. */
         Builder &where(const QVector<WhereItem> &values,
                        const QString &condition = "and");
+        /*! Add an array of basic "or where" clauses to the query. */
+        Builder &orWhere(const QVector<WhereItem> &values);
+
+        /*! Add an array of where clauses comparing two columns to the query. */
+        Builder &whereColumn(const QVector<WhereColumnItem> &values,
+                             const QString &condition = "and");
+        /*! Add an array of "or where" clauses comparing two columns to the query. */
+        Builder &orWhereColumn(const QVector<WhereColumnItem> &values);
+
+        /*! Add a "where" clause comparing two columns to the query. */
+        Builder &whereColumn(const QString &first, const QString &comparison,
+                             const QString &second, const QString &condition = "and");
+        /*! Add a "or where" clause comparing two columns to the query. */
+        Builder &orWhereColumn(const QString &first, const QString &comparison,
+                               const QString &second);
+        /*! Add an equal "where" clause comparing two columns to the query. */
+        Builder &whereColumnEq(const QString &first, const QString &second,
+                               const QString &condition = "and");
+        /*! Add an equal "or where" clause comparing two columns to the query. */
+        Builder &orWhereColumnEq(const QString &first, const QString &second);
+
+        /*! Add a "where in" clause to the query. */
+        Builder &whereIn(const QString &column, const QVector<QVariant> &values,
+                         const QString &condition = "and", bool nope = false);
+        /*! Add an "or where in" clause to the query. */
+        Builder &orWhereIn(const QString &column, const QVector<QVariant> &values);
+        /*! Add a "where not in" clause to the query. */
+        Builder &whereNotIn(const QString &column, const QVector<QVariant> &values,
+                            const QString &condition = "and");
+        /*! Add an "or where not in" clause to the query. */
+        Builder &orWhereNotIn(const QString &column, const QVector<QVariant> &values);
 
         /*! Add a "where null" clause to the query. */
         Builder &whereNull(const QStringList &columns = {"*"},
@@ -145,16 +239,17 @@ namespace Relations
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const QString &column);
 
-        /*! Add a "where in" clause to the query. */
-        Builder &whereIn(const QString &column, const QVector<QVariant> &values,
-                         const QString &condition = "and", bool nope = false);
-        /*! Add an "or where in" clause to the query. */
-        Builder &orWhereIn(const QString &column, const QVector<QVariant> &values);
-        /*! Add a "where not in" clause to the query. */
-        Builder &whereNotIn(const QString &column, const QVector<QVariant> &values,
-                            const QString &condition = "and");
-        /*! Add an "or where not in" clause to the query. */
-        Builder &orWhereNotIn(const QString &column, const QVector<QVariant> &values);
+        /*! Add a "group by" clause to the query. */
+        Builder &groupBy(const QStringList &groups);
+        /*! Add a "group by" clause to the query. */
+        Builder &groupBy(const QString &group);
+
+        /*! Add a "having" clause to the query. */
+        Builder &having(const QString &column, const QString &comparison,
+                        const QVariant &value, const QString &condition = "and");
+        /*! Add an "or having" clause to the query. */
+        Builder &orHaving(const QString &column, const QString &comparison,
+                          const QVariant &value);
 
         /*! Add an "order by" clause to the query. */
         Builder &orderBy(const QString &column, const QString &direction = "asc");
@@ -379,6 +474,22 @@ namespace Relations
         throw ModelNotFoundError(Utils::Type::classPureBasename<Model>());
     }
 
+    template<typename Model>
+    std::optional<Model>
+    Builder<Model>::firstWhere(const QString &column, const QString &comparison,
+                               const QVariant &value, const QString &condition)
+    {
+        return where(column, comparison, value, condition).first();
+    }
+
+    template<typename Model>
+    std::optional<Model>
+    Builder<Model>::firstWhereEq(const QString &column, const QVariant &value,
+                                 const QString &condition)
+    {
+        return where(column, QStringLiteral("="), value, condition).first();
+    }
+
     // TODO dilema raw expression silverqx
     template<typename Model>
     QVariant Builder<Model>::value(const QString &column)
@@ -461,6 +572,7 @@ namespace Relations
         return toBase().insert(Utils::Attribute::convertVectorToMap(attributes));
     }
 
+    // TODO dilema primarykey, Model::KeyType vs QVariant silverqx
     template<typename Model>
     quint64
     Builder<Model>::insertGetId(const QVector<AttributeItem> &attributes) const
@@ -475,6 +587,7 @@ namespace Relations
         return toBase().update(addUpdatedAtColumn(values));
     }
 
+    // TODO future add onDelete (and similar) callback feature silverqx
     template<typename Model>
     std::tuple<int, QSqlQuery> Builder<Model>::remove()
     {
@@ -485,6 +598,149 @@ namespace Relations
     std::tuple<int, QSqlQuery> Builder<Model>::deleteModels()
     {
         return remove();
+    }
+
+    template<typename Model>
+    std::tuple<bool, QSqlQuery> Builder<Model>::truncate()
+    {
+        return toBase().truncate();
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::select(const QStringList columns)
+    {
+        toBase().select(columns);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::select(const QString column)
+    {
+        toBase().select(column);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::addSelect(const QStringList &columns)
+    {
+        toBase().addSelect(columns);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::addSelect(const QString &column)
+    {
+        toBase().addSelect(column);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::distinct()
+    {
+        toBase().distinct();
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::join(const QString &table, const QString &first,
+                         const QString &comparison, const QString &second,
+                         const QString &type, const bool where)
+    {
+        toBase().join(table, first, comparison, second, type, where);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::join(const QString &table,
+                         const std::function<void(JoinClause &)> &callback,
+                         const QString &type)
+    {
+        toBase().join(table, callback, type);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::joinWhere(const QString &table, const QString &first,
+                              const QString &comparison, const QString &second,
+                              const QString &type)
+    {
+        toBase().joinWhere(table, first, comparison, second, type);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::leftJoin(const QString &table, const QString &first,
+                             const QString &comparison, const QString &second)
+    {
+        toBase().leftJoin(table, first, comparison, second);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::leftJoin(const QString &table,
+                             const std::function<void(JoinClause &)> &callback)
+    {
+        toBase().leftJoin(table, callback);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::leftJoinWhere(const QString &table, const QString &first,
+                                  const QString &comparison, const QString &second)
+    {
+        toBase().leftJoinWhere(table, first, comparison, second);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::rightJoin(const QString &table, const QString &first,
+                              const QString &comparison, const QString &second)
+    {
+        toBase().rightJoin(table, first, comparison, second);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::rightJoin(const QString &table,
+                              const std::function<void(JoinClause &)> &callback)
+    {
+        toBase().rightJoin(table, callback);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::rightJoinWhere(const QString &table, const QString &first,
+                                   const QString &comparison, const QString &second)
+    {
+        toBase().rightJoinWhere(table, first, comparison, second);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::crossJoin(const QString &table, const QString &first,
+                              const QString &comparison, const QString &second)
+    {
+        toBase().crossJoin(table, first, comparison, second);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::crossJoin(const QString &table,
+                              const std::function<void(JoinClause &)> &callback)
+    {
+        toBase().crossJoin(table, callback);
+        return *this;
     }
 
     template<typename Model>
@@ -553,71 +809,68 @@ namespace Relations
     }
 
     template<typename Model>
-    Builder<Model> &
-    Builder<Model>::whereNull(const QStringList &columns, const QString &condition,
-                              const bool nope)
+    Builder<Model> &Builder<Model>::orWhere(const QVector<WhereItem> &values)
     {
-        toBase().whereNull(columns, condition, nope);
+        toBase().orWhere(values);
         return *this;
     }
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereNull(const QString &column, const QString &condition,
-                              const bool nope)
+    Builder<Model>::whereColumn(const QVector<WhereColumnItem> &values,
+                                const QString &condition)
     {
-        return whereNull(QStringList(column), condition, nope);
-    }
-
-    template<typename Model>
-    Builder<Model> &
-    Builder<Model>::orWhereNull(const QStringList &columns)
-    {
-        toBase().orWhereNull(columns);
+        toBase().whereColumn(values, condition);
         return *this;
     }
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::orWhereNull(const QString &column)
+    Builder<Model>::orWhereColumn(const QVector<WhereColumnItem> &values)
     {
-        return orWhereNull(QStringList(column));
-    }
-
-    template<typename Model>
-    Builder<Model> &
-    Builder<Model>::whereNotNull(const QStringList &columns, const QString &condition)
-    {
-        toBase().whereNotNull(columns, condition);
+        toBase().orWhereColumn(values);
         return *this;
     }
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereNotNull(const QString &column, const QString &condition)
+    Builder<Model>::whereColumn(const QString &first, const QString &comparison,
+                                const QString &second, const QString &condition)
     {
-        return whereNotNull(QStringList(column), condition);
-    }
-
-    template<typename Model>
-    Builder<Model> &
-    Builder<Model>::orWhereNotNull(const QStringList &columns)
-    {
-        toBase().orWhereNotNull(columns);
+        toBase().whereColumn(first, comparison, second, condition);
         return *this;
     }
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::orWhereNotNull(const QString &column)
+    Builder<Model>::orWhereColumn(const QString &first, const QString &comparison,
+                                  const QString &second)
     {
-        return orWhereNotNull(QStringList(column));
+        toBase().orWhereColumn(first, comparison, second);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereColumnEq(const QString &first, const QString &second,
+                                  const QString &condition)
+    {
+        toBase().whereColumnEq(first, second, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::orWhereColumnEq(const QString &first, const QString &second)
+    {
+        toBase().orWhereColumnEq(first, second);
+        return *this;
     }
 
     template<typename Model>
     Builder<Model> &
     Builder<Model>::whereIn(const QString &column, const QVector<QVariant> &values,
-                            const QString &condition, bool nope)
+                            const QString &condition, const bool nope)
     {
         toBase().whereIn(column, values, condition, nope);
         return *this;
@@ -645,6 +898,100 @@ namespace Relations
     Builder<Model>::orWhereNotIn(const QString &column, const QVector<QVariant> &values)
     {
         toBase().orWhereNotIn(column, values);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereNull(const QStringList &columns, const QString &condition,
+                              bool nope)
+    {
+        toBase().whereNull(columns, condition, nope);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereNull(const QString &column, const QString &condition,
+                              const bool nope)
+    {
+        toBase().whereNull(column, condition, nope);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::orWhereNull(const QStringList &columns)
+    {
+        toBase().orWhereNull(columns);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::orWhereNull(const QString &column)
+    {
+        toBase().orWhereNull(column);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereNotNull(const QStringList &columns, const QString &condition)
+    {
+        toBase().whereNotNull(columns, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereNotNull(const QString &column, const QString &condition)
+    {
+        toBase().whereNotNull(column, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::orWhereNotNull(const QStringList &columns)
+    {
+        toBase().orWhereNotNull(columns);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::orWhereNotNull(const QString &column)
+    {
+        toBase().orWhereNotNull(column);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::groupBy(const QStringList &groups)
+    {
+        toBase().groupBy(groups);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::groupBy(const QString &group)
+    {
+        toBase().groupBy(group);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::having(const QString &column, const QString &comparison,
+                           const QVariant &value, const QString &condition)
+    {
+        toBase().having(column, comparison, value, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::orHaving(const QString &column, const QString &comparison,
+                             const QVariant &value)
+    {
+        toBase().orHaving(column, comparison, value);
         return *this;
     }
 
@@ -751,7 +1098,7 @@ namespace Relations
     template<typename Model>
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
-    Builder<Model>::increment(const QString &column, T amount,
+    Builder<Model>::increment(const QString &column, const T amount,
                               const QVector<UpdateItem> &extra)
     {
         return toBase().template increment<T>(column, amount,
@@ -761,7 +1108,7 @@ namespace Relations
     template<typename Model>
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
-    Builder<Model>::decrement(const QString &column, T amount,
+    Builder<Model>::decrement(const QString &column, const T amount,
                               const QVector<UpdateItem> &extra)
     {
         return toBase().template decrement<T>(column, amount,
