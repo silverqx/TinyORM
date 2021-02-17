@@ -278,7 +278,7 @@ Once the relationship method has been defined, we can access the `QVector<Relate
         //
     }
 
-Since all relationships also serve as query builders, you may add further constraints to the relationship query by calling the `comments` method and continuing to chain conditions onto the query, only simple `where` methods are proxied now:
+Since all relationships also serve as [query builders](query-builder.md#top), you may add further constraints to the relationship query by calling the `comments` method and continuing to chain conditions onto the query, all the `TinyBuilder` methods which are related to building queries are proxied:
 
     auto comment = Post::find(1)->comments()
                         ->whereEq("title", "foo")
@@ -433,7 +433,7 @@ You may query the `posts` relationship and add additional constraints to the rel
 
 You are able to use any of the Laravel [query builder's](query-builder.md#top) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
 
-So far, not all query builder methods are proxied on the relation base class, only basic `where` methods are proxied.
+> {note} All the `TinyBuilder` methods which are related to building queries are proxied on the `Relation` base class.
 
 <a name="chaining-orwhere-clauses-after-relationships"></a>
 #### Chaining `orWhere` Clauses After Relationships
