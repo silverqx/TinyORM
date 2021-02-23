@@ -112,7 +112,7 @@ private:
 //        {"torrentFiles"},
 //        {"torrentPeer"},
 //        {"torrentFiles.fileProperty"},
-//        {"tags"},
+        {"tags"},
     };
 
     /*! The connection name for the model. */

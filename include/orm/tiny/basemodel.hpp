@@ -1990,7 +1990,7 @@ namespace Relations {
     template<typename Related>
     void BaseModel<Model, AllRelations...>::isPivotModelRelationVisited()
     {
-        if (std::is_base_of_v<Relations::IsPivotModel, Related>)
+        if constexpr (std::is_base_of_v<Relations::IsPivotModel, Related>)
             this->m_isPivotModelStore->result = true;
         else
             this->m_isPivotModelStore->result = false;
@@ -2184,7 +2184,6 @@ namespace Relations {
 
         builder.eagerLoadRelations(models);
 
-        // BUG invalidates pivot relations, or relations which will not be loaded silverqx
         setRelations(std::move(models.first().getRelations()));
 
         return model();
