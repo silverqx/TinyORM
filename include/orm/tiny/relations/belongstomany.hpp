@@ -105,7 +105,6 @@ namespace Orm::Tiny::Relations
         /*! Get the name of the "updated at" column. */
         const QString &updatedAt() const;
 
-
         /* InteractsWithPivotTable */
         /*! Set the columns on the pivot table to retrieve. */
         BelongsToMany &withPivot(const QStringList &columns);

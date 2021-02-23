@@ -1075,7 +1075,7 @@ namespace Relations {
         return query()->insert(attributes);
     }
 
-    // TODO dilema primarykey, Model::KeyType vs QVariant silverqx
+    // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<typename Model, typename ...AllRelations>
     quint64
     BaseModel<Model, AllRelations...>::insertGetId(
@@ -3200,7 +3200,7 @@ namespace Relations {
             else {
                 bool ok;
                 std::tie(ok, std::ignore) = query.insert(attributes);
-                // TODO dilema next return values on TinyBuilder silverqx
+                // TODO dilemma next return values on TinyBuilder silverqx
                 if (!ok)
                     return false;
             }
@@ -3241,7 +3241,7 @@ namespace Relations {
                     setKeysForSaveQuery(query).update(
                         Utils::Attribute::convertVectorToUpdateItem(dirty));
 
-            // TODO dilema next return values on TinyBuilder silverqx
+            // TODO dilemma next return values on TinyBuilder silverqx
             if (sqlQuery.lastError().isValid())
                 return false;
 
@@ -3264,7 +3264,7 @@ namespace Relations {
         syncOriginal();
     }
 
-    // TODO dilema primarykey, add support for Model::KeyType silverqx
+    // TODO dilemma primarykey, add support for Model::KeyType silverqx
     template<typename Model, typename ...AllRelations>
     quint64 BaseModel<Model, AllRelations...>::insertAndSetId(
             const TinyBuilder<Model> &query,

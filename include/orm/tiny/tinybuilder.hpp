@@ -490,7 +490,7 @@ namespace Relations
         return where(column, QStringLiteral("="), value, condition).first();
     }
 
-    // TODO dilema raw expression silverqx
+    // TODO dilemma raw expression silverqx
     template<typename Model>
     QVariant Builder<Model>::value(const QString &column)
     {
@@ -572,7 +572,7 @@ namespace Relations
         return toBase().insert(Utils::Attribute::convertVectorToMap(attributes));
     }
 
-    // TODO dilema primarykey, Model::KeyType vs QVariant silverqx
+    // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<typename Model>
     quint64
     Builder<Model>::insertGetId(const QVector<AttributeItem> &attributes) const
