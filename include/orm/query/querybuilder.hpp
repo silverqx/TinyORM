@@ -67,7 +67,7 @@ namespace Orm::Query
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVariantMap &values);
         // TODO postgres, support sequence, add sequence parameter silverqx
-        // TODO dilema primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
+        // TODO dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVariantMap &values);
 

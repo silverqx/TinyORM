@@ -35,7 +35,7 @@ Common:
 
  - api different     : different api than Laravel's Eloquent
  - docs              : document code or update markdown documentation
- - dilema            : some sort of a fuckup
+ - dilemma           : some sort of a fuckup
  - duplicate         : duplicate code
  - future            : task which has lower priority, because still much to do
  - mistake           : bad decision during prototyping 😭
