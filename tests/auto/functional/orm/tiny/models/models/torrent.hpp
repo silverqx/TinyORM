@@ -56,7 +56,7 @@ public:
 //        auto relation = belongsToMany<Tag>();
 //        dynamic_cast<BelongsToMany<Torrent, Tag/*, Pivot*/> &>(*relation)
 //                .as("tagged")
-//                .withPivot({"active"})
+//                .withPivot("active")
 //                .withTimestamps();
 
         // Ownership of a unique_ptr()
@@ -64,7 +64,7 @@ public:
         auto relation = belongsToMany<Tag, Tagged>();
         dynamic_cast<BelongsToMany<Torrent, Tag, Tagged> &>(*relation)
                 .as("tagged")
-                .withPivot({"active"})
+                .withPivot("active")
                 .withTimestamps(/*"created_at_custom", "updated_at_custom"*/);
 
         return relation;

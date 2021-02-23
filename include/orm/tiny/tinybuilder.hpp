@@ -1150,9 +1150,10 @@ namespace Relations
             return;
 
         for (const auto &relation : qAsConst(m_eagerLoad))
-            /* For nested eager loads we'll skip loading them here and they will be set as an
-               eager load on the query to retrieve the relation so that they will be eager
-               loaded on that query, because that is where they get hydrated as models. */
+            /* For nested eager loads we'll skip loading them here and they will be set
+               as an eager load on the query to retrieve the relation so that they will
+               be eager loaded on that query, because that is where they get hydrated
+               as models. */
             if (!relation.name.contains(QChar('.')))
                 m_model.eagerLoadRelationVisitor(relation, *this, models);
     }

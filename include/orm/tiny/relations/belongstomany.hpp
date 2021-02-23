@@ -109,10 +109,9 @@ namespace Orm::Tiny::Relations
         /* InteractsWithPivotTable */
         /*! Set the columns on the pivot table to retrieve. */
         BelongsToMany &withPivot(const QStringList &columns);
-        // TODO dilema, ambiguous QString vs QStringList silverqx
-//        /*! Set the columns on the pivot table to retrieve. */
-//        inline BelongsToMany &withPivot(const QString &column)
-//        { return withPivot(QStringList {column}); }
+        /*! Set the columns on the pivot table to retrieve. */
+        inline BelongsToMany &withPivot(const QString &column)
+        { return withPivot(QStringList {column}); }
 
         /*! Determine whether the given column is defined as a pivot column. */
         inline bool hasPivotColumn(const QString &column) const
