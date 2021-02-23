@@ -11,9 +11,9 @@ class TorrentPreviewableFile final :
                                     TorrentPreviewableFileProperty>
 {
 public:
-    friend class BaseModel;
+    friend BaseModel;
 
-    explicit TorrentPreviewableFile(const QVector<Orm::AttributeItem> &attributes = {});
+    using BaseModel::BaseModel;
 
     /*! Get the torrent that owns the previewable file. */
     std::unique_ptr<
@@ -36,7 +36,7 @@ private:
     /*! The visitor to obtain a type for Related template parameter. */
     void relationVisitor(const QString &relation)
     {
-        if (relation == "torrent")
+        if (relation      == "torrent")
             relationVisited<Torrent>();
         else if (relation == "fileProperty")
             relationVisited<TorrentPreviewableFileProperty>();

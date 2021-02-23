@@ -13,7 +13,7 @@ class TorrentEager final :
                                     TorrentPeerEager_NoRelations>
 {
 public:
-    friend class BaseModel;
+    friend BaseModel;
 
     using BaseModel::BaseModel;
 

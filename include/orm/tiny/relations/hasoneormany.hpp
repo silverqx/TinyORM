@@ -1,9 +1,6 @@
 #ifndef HASONEORMANY_H
 #define HASONEORMANY_H
 
-#include <range/v3/action/sort.hpp>
-#include <range/v3/action/unique.hpp>
-
 #include "orm/tiny/relations/relation.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -33,16 +30,13 @@ namespace Orm::Tiny::Relations
         { return this->m_parent.getAttribute(m_localKey); }
 
     protected:
-        /*! Get all of the primary keys for an array of models. */
-        QVector<QVariant>
-        getKeys(const QVector<Model> &models, const QString &key = "") const;
         /*! Match the eagerly loaded results to their many parents. */
-        template<typename RelationValue>
+        template<typename RelationType>
         void matchOneOrMany(QVector<Model> &models, QVector<Related> &results,
                             const QString &relation) const;
         /*! Build model dictionary keyed by the relation's foreign key. */
-        template<typename HashValue>
-        QHash<typename Model::KeyType, HashValue>
+        template<typename RelationType>
+        QHash<typename Model::KeyType, RelationType>
         buildDictionary(QVector<Related> &results) const;
         /*! Get the plain foreign key. */
         QString getForeignKeyName() const;
@@ -62,9 +56,10 @@ namespace Orm::Tiny::Relations
     };
 
     template<class Model, class Related>
-    HasOneOrMany<Model, Related>::HasOneOrMany(std::unique_ptr<Related> &&related,
-                                               const Model &parent,
-                                               const QString &foreignKey, const QString &localKey)
+    HasOneOrMany<Model, Related>::HasOneOrMany(
+            std::unique_ptr<Related> &&related, const Model &parent,
+            const QString &foreignKey, const QString &localKey
+    )
         : Relation<Model, Related>(std::move(related), parent)
         , m_foreignKey(foreignKey)
         , m_localKey(localKey)
@@ -82,33 +77,20 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    void HasOneOrMany<Model, Related>::addEagerConstraints(const QVector<Model> &models) const
+    void
+    HasOneOrMany<Model, Related>::addEagerConstraints(const QVector<Model> &models) const
     {
-        this->m_query->getQuery().whereIn(m_foreignKey, getKeys(models, m_localKey));
+        this->m_query->getQuery().whereIn(m_foreignKey,
+                                          this->getKeys(models, m_localKey));
     }
 
     template<class Model, class Related>
-    QVector<QVariant>
-    HasOneOrMany<Model, Related>::getKeys(const QVector<Model> &models, const QString &key) const
-    {
-        QVector<QVariant> keys;
-
-        for (const auto &model : models)
-            keys.append(key.isEmpty() ? model.getKey()
-                                      : model.getAttribute(key));
-
-        using namespace ranges;
-        return keys |= actions::sort(less {}, &QVariant::value<typename Model::KeyType>)
-                       | actions::unique;
-    }
-
-    template<class Model, class Related>
-    template<typename RelationValue>
+    template<typename RelationType>
     void HasOneOrMany<Model, Related>::matchOneOrMany(
             QVector<Model> &models, QVector<Related> &results,
             const QString &relation) const
     {
-        auto dictionary = buildDictionary<RelationValue>(results);
+        auto dictionary = buildDictionary<RelationType>(results);
 
         /* Once we have the dictionary we can simply spin through the parent models to
            link them up with their children using the keyed dictionary to make the
@@ -125,17 +107,18 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    template<typename RelationValue>
-    QHash<typename Model::KeyType, RelationValue>
+    template<typename RelationType>
+    QHash<typename Model::KeyType, RelationType>
     HasOneOrMany<Model, Related>::buildDictionary(QVector<Related> &results) const
     {
-        QHash<typename Model::KeyType, RelationValue> dictionary;
+        QHash<typename Model::KeyType, RelationType> dictionary;
 
+        // BUG dictionary.insert how is possible that it moves if qhash doesn't have move insert, but the same code doesn't move in the belongsTo::buildDictionary, may be because of 'if constexpr'? silverqx
         for (auto &result : results)
             if constexpr (
                 const auto &foreign = result.getAttribute(getForeignKeyName())
                                       .template value<typename Model::KeyType>();
-                std::is_same_v<RelationValue, QVector<Related>>
+                std::is_same_v<RelationType, QVector<Related>>
             )
                 dictionary[foreign].append(std::move(result));
             else

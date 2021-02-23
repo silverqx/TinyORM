@@ -31,21 +31,30 @@ void deleteModel()
 Todo categories:
 ----------------
 
+Common:
+
  - api different     : different api than Laravel's Eloquent
  - docs              : document code or update markdown documentation
  - dilema            : some sort of a fuckup
  - duplicate         : duplicate code
  - future            : task which has lower priority, because still much to do
- - multidriver       : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
+ - mistake           : bad decision during prototyping 😭
+ - mystery           : don't know why that stuff is happening, find out what's up
  - now               : do it before commit
  - next              : next thing in the row to do after commit
  - perf              : performance
- - postgres          : specific to PostgreSQL server
- - primarykey dilema : different types for primary keys
  - production        : check before deploy to production
  - security          : self explaining
  - test              : tasks in auto tests
  - types             : juggling with c++ types
+
+Features related/to implement:
+
+ - guarded           : related to the mass assignable feature
+ - multidriver       : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
+ - postgres          : specific to PostgreSQL server
+ - primarykey dilema : different types for primary keys
+ - scopes            : query scopes
 
 
 IsModel:

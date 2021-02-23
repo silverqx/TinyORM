@@ -115,6 +115,8 @@ namespace Query
         QVariant value;
     };
 
+    SHAREDLIB_EXPORT bool operator==(const AttributeItem &lhs, const AttributeItem &rhs);
+
     struct SHAREDLIB_EXPORT WhereItem
     {
         QString  column;

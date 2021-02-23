@@ -33,6 +33,7 @@ namespace Concerns
             EAGER,
             PUSH,
             TOUCH_OWNERS,
+            IS_PIVOT_MODEL,
         };
 
         // TODO future try to rewrite this by templated class to avoid polymorfic class, like described here http://groups.di.unipi.it/~nids/docs/templates_vs_inheritance.html silverqx
@@ -52,7 +53,8 @@ namespace Concerns
             RelationStoreType m_storeType;
         };
 
-        /*! The store for loading eager relations, helps to avoid passing variables to the Model::relationVisitor(). */
+        /*! The store for loading eager relations, helps to avoid passing variables
+            to the Model::relationVisitor(). */
         class EagerRelationStore final : public BaseRelationStore
         {
             Q_DISABLE_COPY(EagerRelationStore)
@@ -68,7 +70,8 @@ namespace Concerns
             QVector<Model>           &models;
         };
 
-        /*! The store for the Model push() method, helps to avoid passing variables to the Model::relationVisitor(). */
+        /*! The store for the Model push() method, helps to avoid passing variables
+            to the Model::relationVisitor(). */
         class PushRelationStore final : public BaseRelationStore
         {
             Q_DISABLE_COPY(PushRelationStore)
@@ -82,7 +85,8 @@ namespace Concerns
             bool result = false;
         };
 
-        /*! The store for touching owner's timestamps, helps to avoid passing variables to the Model::relationVisitor(). */
+        /*! The store for touching owner's timestamps, helps to avoid passing variables
+            to the Model::relationVisitor(). */
         class TouchOwnersRelationStore final : public BaseRelationStore
         {
             Q_DISABLE_COPY(TouchOwnersRelationStore)
@@ -90,8 +94,22 @@ namespace Concerns
         public:
             explicit TouchOwnersRelationStore(const QString &relation);
 
-            /*! Models to touch timestamps for, the reference to the relation in m_relations hash. */
+            /*! Models to touch timestamps for, the reference to the relation
+                in the m_relations hash. */
             const QString &relation;
+        };
+
+        /*! The store to determine if the relation stores the pivot model, the result
+            can be obtained by result data member. */
+        class IsPivotModelRelationStore final : public BaseRelationStore
+        {
+            Q_DISABLE_COPY(IsPivotModelRelationStore)
+
+        public:
+            IsPivotModelRelationStore();
+
+            /*! The result of a push. */
+            bool result = false;
         };
 
         /*! Factory method to create eager store. */
@@ -101,6 +119,8 @@ namespace Concerns
         void createPushStore(RelationsType<AllRelations...> &models);
         /*! Factory method to create touch owners store. */
         void createTouchOwnersStore(const QString &relation);
+        /*! Factory method to create 'is pivot model' store. */
+        void createIsPivotModelStore();
 
         /*! Releases the ownership and destroy all relation stores. */
         void resetRelationStore();
@@ -113,6 +133,8 @@ namespace Concerns
         std::shared_ptr<PushRelationStore> m_pushStore;
         /*! Store to save values to, before Model::relationVisitor() is called. */
         std::shared_ptr<TouchOwnersRelationStore> m_touchOwnersStore;
+        /*! Store to obtain result, after the Model::relationVisitor() is called. */
+        std::shared_ptr<IsPivotModelRelationStore> m_isPivotModelStore;
     };
 
     template<typename Model, typename ...AllRelations>
@@ -147,6 +169,15 @@ namespace Concerns
     }
 
     template<typename Model, typename ...AllRelations>
+    void HasRelationStore<Model, AllRelations...>::createIsPivotModelStore()
+    {
+        Q_ASSERT(!m_relationStore && !m_isPivotModelStore);
+
+        m_relationStore = m_isPivotModelStore =
+                std::make_shared<IsPivotModelRelationStore>();
+    }
+
+    template<typename Model, typename ...AllRelations>
     void HasRelationStore<Model, AllRelations...>::resetRelationStore()
     {
         /* Releases the ownership and destroy all relation stores. */
@@ -154,6 +185,7 @@ namespace Concerns
         m_eagerStore.reset();
         m_pushStore.reset();
         m_touchOwnersStore.reset();
+        m_isPivotModelStore.reset();
     }
 
     template<typename Model, typename ...AllRelations>
@@ -180,10 +212,17 @@ namespace Concerns
     {}
 
     template<typename Model, typename ...AllRelations>
-    HasRelationStore<Model, AllRelations...>::TouchOwnersRelationStore::TouchOwnersRelationStore(
+    HasRelationStore<Model, AllRelations...>::TouchOwnersRelationStore
+                                            ::TouchOwnersRelationStore(
             const QString &relation)
         : BaseRelationStore(RelationStoreType::TOUCH_OWNERS)
         , relation(relation)
+    {}
+
+    template<typename Model, typename ...AllRelations>
+    HasRelationStore<Model, AllRelations...>::IsPivotModelRelationStore
+                                            ::IsPivotModelRelationStore()
+        : BaseRelationStore(RelationStoreType::IS_PIVOT_MODEL)
     {}
 
 } // namespace Orm::Tiny::Concerns

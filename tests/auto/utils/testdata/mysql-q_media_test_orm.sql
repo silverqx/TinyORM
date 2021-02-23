@@ -189,12 +189,12 @@ INSERT INTO `torrent_previewable_file_properties` (`id`, `previewable_file_id`, 
 
 DROP TABLE IF EXISTS `file_property_properties`;
 CREATE TABLE `file_property_properties` (
-`id` bigint UNSIGNED NOT NULL,
-`file_property_id` bigint UNSIGNED NOT NULL,
-`name` varchar(255) NOT NULL,
-`value` bigint UNSIGNED NOT NULL,
-`created_at` timestamp NULL DEFAULT NULL,
-`updated_at` timestamp NULL DEFAULT NULL
+  `id` bigint UNSIGNED NOT NULL,
+  `file_property_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `value` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -214,6 +214,101 @@ INSERT INTO `file_property_properties` (`id`, `file_property_id`, `name`, `value
 (4, 3, 'test3_file1_property2', 4, '2021-01-04 14:51:23', '2021-01-04 17:46:31'),
 (5, 4, 'test4_file1_property1', 5, '2021-01-05 14:51:23', '2021-01-05 17:46:31'),
 (6, 5, 'test5_file1_property1', 6, '2021-01-06 14:51:23', '2021-01-06 17:46:31');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `torrent_tags`
+--
+
+DROP TABLE IF EXISTS `torrent_tags`;
+CREATE TABLE `torrent_tags` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `torrent_tags`:
+--
+
+--
+-- Dumping data for table `torrent_tags`
+--
+
+INSERT INTO `torrent_tags` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'tag1', '2021-01-11 11:51:28', '2021-01-11 23:47:11'),
+(2, 'tag2', '2021-01-12 11:51:28', '2021-01-12 23:47:11'),
+(3, 'tag3', '2021-01-13 11:51:28', '2021-01-13 23:47:11'),
+(4, 'tag4', '2021-01-14 11:51:28', '2021-01-14 23:47:11');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tag_torrent`
+--
+
+DROP TABLE IF EXISTS `tag_torrent`;
+CREATE TABLE `tag_torrent` (
+  `torrent_id` bigint UNSIGNED NOT NULL,
+  `tag_id` bigint UNSIGNED NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `tag_torrent`:
+--   `torrent_id`
+--       `torrents` -> `id`
+--   `tag_id`
+--       `torrent_tags` -> `id`
+--
+
+--
+-- Dumping data for table `tag_torrent`
+--
+
+INSERT INTO `tag_torrent` (`torrent_id`, `tag_id`, `active`, `created_at`, `updated_at`) VALUES
+(2, 1, 1, '2021-02-21 17:31:58', '2021-02-21 18:49:22'),
+(2, 2, 1, '2021-02-22 17:31:58', '2021-02-22 18:49:22'),
+(2, 3, 0, '2021-02-23 17:31:58', '2021-02-23 18:49:22'),
+(2, 4, 1, '2021-02-24 17:31:58', '2021-02-24 18:49:22'),
+(3, 2, 1, '2021-02-24 17:31:58', '2021-02-24 18:49:22'),
+(3, 4, 1, '2021-02-24 17:31:58', '2021-02-24 18:49:22');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tag_properties`
+--
+
+DROP TABLE IF EXISTS `tag_properties`;
+CREATE TABLE `tag_properties` (
+  `id` bigint UNSIGNED NOT NULL,
+  `tag_id` bigint UNSIGNED NOT NULL,
+  `color` varchar(255) NOT NULL,
+  `position` int UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `tag_properties`:
+--   `tag_id`
+--       `torrent_tags` -> `id`
+--
+
+--
+-- Dumping data for table `tag_properties`
+--
+
+INSERT INTO `tag_properties` (`id`, `tag_id`, `color`, `position`, `created_at`, `updated_at`) VALUES
+(1, 1, 'white', 0, '2021-02-11 12:41:28', '2021-02-11 22:17:11'),
+(2, 2, 'blue', 1, '2021-02-12 12:41:28', '2021-02-12 22:17:11'),
+(3, 3, 'red', 2, '2021-02-13 12:41:28', '2021-02-13 22:17:11'),
+(4, 4, 'orange', 3, '2021-02-14 12:41:28', '2021-02-14 22:17:11');
 
 --
 -- Indexes for dumped tables
@@ -259,9 +354,31 @@ ALTER TABLE `torrent_previewable_file_properties`
 -- Indexes for table `file_property_properties`
 --
 ALTER TABLE `file_property_properties`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `file_property_properties_name_unique` (`name`) USING BTREE,
-ADD KEY `file_property_properties_file_property_id_foreign` (`file_property_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `file_property_properties_name_unique` (`name`) USING BTREE,
+  ADD KEY `file_property_properties_file_property_id_foreign` (`file_property_id`);
+
+--
+-- Indexes for table `torrent_tags`
+--
+ALTER TABLE `torrent_tags`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `torrent_tags_name_unique` (`name`);
+
+--
+-- Indexes for table `tag_torrent`
+--
+ALTER TABLE `tag_torrent`
+  ADD PRIMARY KEY (`torrent_id`, `tag_id`),
+  ADD KEY `tag_torrent_tag_id_foreign` (`tag_id`);
+
+--
+-- Indexes for table `tag_properties`
+--
+ALTER TABLE `tag_properties`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `tag_properties_position_unique` (`position`),
+  ADD KEY `torrent_tags_tag_id_foreign` (`tag_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -295,7 +412,19 @@ ALTER TABLE `torrent_previewable_file_properties`
 -- AUTO_INCREMENT for table `file_property_properties`
 --
 ALTER TABLE `file_property_properties`
-MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `torrent_tags`
+--
+ALTER TABLE `torrent_tags`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `tag_properties`
+--
+ALTER TABLE `tag_properties`
+MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
@@ -323,7 +452,20 @@ ALTER TABLE `torrent_previewable_file_properties`
 -- Constraints for table `file_property_properties`
 --
 ALTER TABLE `file_property_properties`
-ADD CONSTRAINT `file_property_properties_file_property_id_foreign` FOREIGN KEY (`file_property_id`) REFERENCES `torrent_previewable_file_properties` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `file_property_properties_file_property_id_foreign` FOREIGN KEY (`file_property_id`) REFERENCES `torrent_previewable_file_properties` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `tag_torrent`
+--
+ALTER TABLE `tag_torrent`
+  ADD CONSTRAINT `tag_torrent_torrent_id_foreign` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `tag_torrent_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `torrent_tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `tag_properties`
+--
+ALTER TABLE `tag_properties`
+  ADD CONSTRAINT `torrent_tags_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `torrent_tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;

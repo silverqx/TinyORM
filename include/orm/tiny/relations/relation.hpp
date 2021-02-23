@@ -3,6 +3,9 @@
 
 #include <QtSql/QSqlQuery>
 
+#include <range/v3/action/sort.hpp>
+#include <range/v3/action/unique.hpp>
+
 #include "orm/ormtypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -62,7 +65,7 @@ namespace Relations
         inline QVector<Related> getEager() const
         { return get(); }
         /*! Execute the query as a "select" statement. */
-        inline QVector<Related> get(const QStringList columns = {"*"}) const
+        virtual inline QVector<Related> get(const QStringList &columns = {"*"}) const
         { return m_query->get(columns); }
 
         /* Getters / Setters */
@@ -133,11 +136,11 @@ namespace Relations
         /*! Save a new model and return the instance. */
         Model create(const QVector<AttributeItem> &attributes);
 
-        /* Proxy to TinyBuilder -> BuildsQueries */
+        /* Proxies to TinyBuilder -> BuildsQueries */
         /*! Execute the query and get the first result. */
         std::optional<Model> first(const QStringList &columns = {"*"});
 
-        /* Proxy to TinyBuilder -> QueryBuilder */
+        /* Proxies to TinyBuilder -> QueryBuilder */
         /* Insert, Update, Delete */
         /*! Insert new records into the database. */
         std::tuple<bool, std::optional<QSqlQuery>>
@@ -349,6 +352,10 @@ namespace Relations
         inline void init() const
         { addConstraints(); }
 
+        /*! Get all of the primary keys for an array of models. */
+        QVector<QVariant>
+        getKeys(const QVector<Model> &models, const QString &key = "") const;
+
         /* Much safer to make a copy here than save references, original objects get
            out of scope, because they are defined in member function blocks.
            This is true for all constructor parameters counting ctor parameters in
@@ -367,10 +374,16 @@ namespace Relations
         static bool constraints;
     };
 
+    /*! The tag for one type relation. */
     class OneRelation
     {};
 
+    /*! The tag for many type relation. */
     class ManyRelation
+    {};
+
+    /*! The tag for the relation which contains pivot table, like many-to-many. */
+    class PivotRelation
     {};
 
     template<class Model, class Related>
@@ -1029,6 +1042,23 @@ namespace Relations
     Relation<Model, Related>::whereKeyNot(const QVariant &id)
     {
         return m_query->whereKeyNot(id);
+    }
+
+    template<class Model, class Related>
+    QVector<QVariant>
+    Relation<Model, Related>::getKeys(const QVector<Model> &models,
+                                      const QString &key) const
+    {
+        QVector<QVariant> keys;
+
+        // BUG what if key is empty/null/invalid, looks orig. implementation, there is used "->values()->unique(null, true)" silverqx
+        for (const auto &model : models)
+            keys.append(key.isEmpty() ? model.getKey()
+                                      : model.getAttribute(key));
+
+        using namespace ranges;
+        return keys |= actions::sort(less {}, &QVariant::value<typename Model::KeyType>)
+                       | actions::unique;
     }
 
 } // namespace Orm::Tiny::Relations

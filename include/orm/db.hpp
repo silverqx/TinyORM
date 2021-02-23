@@ -14,6 +14,7 @@ namespace Orm
     class SHAREDLIB_EXPORT DB final
     {
         Q_DISABLE_COPY(DB)
+
         /*! Prohibited DB's constructor. */
         DB() = default;
         /*! Prohibited DB's destructor. */

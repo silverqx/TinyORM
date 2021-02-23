@@ -9,9 +9,9 @@ class FilePropertyProperty final :
         public Orm::Tiny::BaseModel<FilePropertyProperty, TorrentPreviewableFileProperty>
 {
 public:
-    friend class BaseModel;
+    friend BaseModel;
 
-    explicit FilePropertyProperty(const QVector<Orm::AttributeItem> &attributes = {});
+    using BaseModel::BaseModel;
 
     /*! Get the previewable file that owns the file property. */
     std::unique_ptr<

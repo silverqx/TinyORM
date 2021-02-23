@@ -2,6 +2,9 @@
 #define FORWARDS_H
 
 class FilePropertyProperty;
+class Tag;
+class Tagged;
+class TagProperty;
 class Torrent;
 class TorrentPreviewableFile;
 class TorrentPeer;

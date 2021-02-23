@@ -51,7 +51,7 @@ Before you start defining relationship methods, you have to declare a model clas
     class User final : public BaseModel<User, Phone>
     {
     public:
-        friend class BaseModel;
+        friend BaseModel;
 
         using BaseModel::BaseModel;
 
@@ -84,7 +84,7 @@ However, the second parameter is more interesting, here you have to provide a ty
 
 Next, you have to define the `relationVisitor` method, which maps a relation name to a related model's type-id. Last but not least, you have to define the `u_relations` hash, which maps a relation name to the relationship method.
 
-> {note} You may omit the `friend class BaseModel` declaration and define all the private data and function members as public.
+> {note} You may omit the `friend BaseModel` declaration and define all the private data and function members as public.
 
 <a name="one-to-one"></a>
 ### One To One
@@ -104,7 +104,7 @@ A one-to-one relationship is a very basic type of database relationship. For exa
     class User final : public BaseModel<User, Phone>
     {
     public:
-        friend class BaseModel;
+        friend BaseModel;
 
         using BaseModel::BaseModel;
 
@@ -161,7 +161,7 @@ So, we can access the `Phone` model from our `User` model. Next, let's define a 
     class Phone final : public BaseModel<Phone, User>
     {
     public:
-        friend class BaseModel;
+        friend BaseModel;
 
         using BaseModel::BaseModel;
 
@@ -239,7 +239,7 @@ A one-to-many relationship is used to define relationships where a single model 
     class Post final : public BaseModel<Post, Comment>
     {
     public:
-        friend class BaseModel;
+        friend BaseModel;
 
         using BaseModel::BaseModel;
 
@@ -308,7 +308,7 @@ Now that we can access all of a post's comments, let's define a relationship to 
     class Comment final : public BaseModel<Comment, Post>
     {
     public:
-        friend class BaseModel;
+        friend BaseModel;
 
         using BaseModel::BaseModel;
 
@@ -398,7 +398,7 @@ For example, imagine a blog application in which a `User` model has many associa
     class User final : public BaseModel<User, Post>
     {
     public:
-        friend class BaseModel;
+        friend BaseModel;
 
         using BaseModel::BaseModel;
 
@@ -518,7 +518,7 @@ When accessing TinyORM relationships by BaseModel's `getRelationValue` method, t
     class Book final : public BaseModel<Book, Author>
     {
     public:
-        friend class BaseModel;
+        friend BaseModel;
 
         using BaseModel::BaseModel;
 
@@ -599,7 +599,7 @@ Sometimes you might want to always load some relationships when retrieving a mod
     class Book final : public BaseModel<Book, Author>
     {
     public:
-        friend class BaseModel;
+        friend BaseModel;
 
         using BaseModel::BaseModel;
 
@@ -678,7 +678,7 @@ For example, when a `Comment` model is updated, you may want to automatically "t
     class Comment final : public BaseModel<Comment, Post>
     {
     public:
-        friend class BaseModel;
+        friend BaseModel;
 
         using BaseModel::BaseModel;
 

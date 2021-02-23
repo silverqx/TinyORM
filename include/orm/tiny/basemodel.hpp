@@ -12,6 +12,7 @@
 #include "orm/tiny/relationnotfounderror.hpp"
 #include "orm/tiny/relationnotloadederror.hpp"
 #include "orm/tiny/relations/belongsto.hpp"
+#include "orm/tiny/relations/belongstomany.hpp"
 #include "orm/tiny/relations/hasone.hpp"
 #include "orm/tiny/relations/hasmany.hpp"
 #include "orm/tiny/tinybuilder.hpp"
@@ -32,6 +33,10 @@ namespace Query
 
 namespace Tiny
 {
+namespace Relations {
+    class IsPivotModel;
+}
+
     using QueryBuilder = Query::Builder;
 
     // TODO decide/unify when to use class/typename keywords for templates silverqx
@@ -50,6 +55,10 @@ namespace Tiny
     // TODO model missing methods Model::whereExists() silverqx
     // TODO model missing methods Model::whereBetween() silverqx
     // TODO next Constraining Eager Loads silverqx
+    // TODO perf add pragma once to every header file silverqx
+    // TODO future try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
+    // TODO future include every stl dependency in header files silverqx
+    // TODO mystery, extern explicit instantiate BaseModel<Pivot> and BasePivot<Pivot> and don't include pivot.hpp at the end of the basemodel.hpp header file, I don't even know if this is possible silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
@@ -125,11 +134,11 @@ namespace Tiny
         /*! Save a new model and return the instance. */
         static Model create(const QVector<AttributeItem> &attributes);
 
-        /* Proxy to TinyBuilder -> BuildsQueries */
+        /* Proxies to TinyBuilder -> BuildsQueries */
         /*! Execute the query and get the first result. */
         static std::optional<Model> first(const QStringList &columns = {"*"});
 
-        /* Proxy to TinyBuilder -> QueryBuilder */
+        /* Proxies to TinyBuilder -> QueryBuilder */
         /* Insert, Update, Delete */
         /*! Insert new records into the database. */
         static std::tuple<bool, std::optional<QSqlQuery>>
@@ -359,7 +368,7 @@ namespace Tiny
 
         // TODO next fuckin increment, finish later 👿 silverqx
 
-        /* TODO now TinyBuilder methods */
+        /* Proxies to TinyBuilder */
         /*! Add a where clause on the primary key to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
         whereKey(const QVariant &id);
@@ -403,6 +412,8 @@ namespace Tiny
 
         /*! Fill the model with an array of attributes. */
         Model &fill(const QVector<AttributeItem> &attributes);
+        /*! Fill the model with an array of attributes. Force mass assignment. */
+        Model &forceFill(const QVector<AttributeItem> &attributes);
 
         /* Model Instance methods */
         /*! Get a new query builder for the model's table. */
@@ -425,6 +436,10 @@ namespace Tiny
         /*! Create a new instance of the given model. */
         Model newInstance(const QVector<AttributeItem> &attributes = {},
                           bool exists = false);
+        /*! Create a new pivot model instance. */
+        template<typename PivotType = Relations::Pivot, typename Parent>
+        PivotType newPivot(const Parent &parent, const QVector<AttributeItem> &attributes,
+                           const QString &table, bool exists) const;
 
         /*! Static cast this to a child's instance type (CRTP). */
         inline Model &model()
@@ -433,7 +448,7 @@ namespace Tiny
         inline const Model &model() const
         { return static_cast<const Model &>(*this); }
 
-        /* Getters/Setters */
+        /* Getters / Setters */
         /*! Get the current connection name for the model. */
         inline const QString &getConnectionName() const
         { return model().u_connection; }
@@ -491,6 +506,10 @@ namespace Tiny
         QVariant getRawOriginal(const QString &key) const;
         /*! Transform a raw model value using mutators, casts, etc. */
         QVariant transformModelValue(const QString &key, const QVariant &value) const;
+        /*! Unset an attribute on the model, returns the number of attributes removed. */
+        Model &unsetAttribute(const AttributeItem &value);
+        /*! Unset an attribute on the model. */
+        Model &unsetAttribute(const QString &key);
 
         /*! Get a relationship for Many types relation. */
         template<typename Related,
@@ -589,6 +608,12 @@ namespace Tiny
         template<typename Related>
         std::unique_ptr<Relations::Relation<Model, Related>>
         hasMany(QString foreignKey = "", QString localKey = "");
+        /*! Define a many-to-many relationship. */
+        template<typename Related, typename PivotType = Relations::Pivot>
+        std::unique_ptr<Relations::Relation<Model, Related>>
+        belongsToMany(QString table = "", QString foreignPivotKey = "",
+                      QString relatedPivotKey = "", QString parentKey = "",
+                      QString relatedKey = "", QString relation = "");
 
         /*! Touch the owning relations of the model. */
         void touchOwners();
@@ -626,6 +651,7 @@ namespace Tiny
         /*! Determine if the model uses timestamps. */
         inline bool usesTimestamps() const
         { return model().u_timestamps; }
+        Model &setUseTimestamps(bool value);
 
         /*! Get the name of the "created at" column. */
         inline static const QString &getCreatedAtColumn()
@@ -713,10 +739,26 @@ namespace Tiny
                    const QString &foreignKey, const QString &localKey) const
         { return Relations::HasMany<Model, Related>::create(
                         std::move(related), parent, foreignKey, localKey); }
+        /*! Instantiate a new BelongsToMany relationship. */
+        template<typename Related, typename PivotType>
+        inline std::unique_ptr<Relations::Relation<Model, Related>>
+        newBelongsToMany(std::unique_ptr<Related> &&related, Model &parent,
+                         const QString &table, const QString &foreignPivotKey,
+                         const QString &relatedPivotKey, const QString &parentKey,
+                         const QString &relatedKey, const QString &relation) const
+        { return Relations::BelongsToMany<Model, Related, PivotType>::create(
+                        std::move(related), parent, table, foreignPivotKey,
+                        relatedPivotKey, parentKey, relatedKey, relation); }
 
         /*! Guess the "belongs to" relationship name. */
         template<typename Related>
         QString guessBelongsToRelation() const;
+        /*! Guess the "belongs to many" relationship name. */
+        template<typename Related>
+        QString guessBelongsToManyRelation() const;
+        /*! Get the joining table name for a many-to-many relation. */
+        template<typename Related>
+        QString pivotTableName() const;
 
         /*! Set the entire relations array on the model. */
         Model &setRelations(
@@ -857,15 +899,14 @@ namespace Tiny
         template<typename Related>
         void touchOwnersVisited();
 
+        /*! Decide, if the Related model passed as the template parameter is
+            the pivot model. */
+        template<typename Related>
+        void isPivotModelRelationVisited();
+        /*! Obtain all loaded relation names except pivot relations. */
+        QVector<WithItem> getLoadedRelationsWithoutPivot();
+
         /* Shortcuts for types related to the Relation Store */
-        /*! Eager relation store. */
-        using EagerRelationStore =
-            typename Concerns::HasRelationStore<Model, AllRelations...>
-                             ::EagerRelationStore;
-        /*! Push relation store. */
-        using PushRelationStore  =
-            typename Concerns::HasRelationStore<Model, AllRelations...>
-                             ::PushRelationStore;
         /*! Relation store type enum struct. */
         using RelationStoreType  =
             typename Concerns::HasRelationStore<Model, AllRelations...>
@@ -1647,7 +1688,7 @@ namespace Tiny
     {
         auto builder = query();
 
-        builder->groorderByupBy(column, direction);
+        builder->orderBy(column, direction);
 
         return builder;
     }
@@ -1947,6 +1988,16 @@ namespace Tiny
 
     template<typename Model, typename ...AllRelations>
     template<typename Related>
+    void BaseModel<Model, AllRelations...>::isPivotModelRelationVisited()
+    {
+        if (std::is_base_of_v<Relations::IsPivotModel, Related>)
+            this->m_isPivotModelStore->result = true;
+        else
+            this->m_isPivotModelStore->result = false;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    template<typename Related>
     void BaseModel<Model, AllRelations...>::relationVisited()
     {
         const auto &method = getMethodForRelationVisited<Related>(
@@ -1969,6 +2020,7 @@ namespace Tiny
             &BaseModel<Model, AllRelations...>::eagerVisited<Related>,
             &BaseModel<Model, AllRelations...>::pushVisited<Related>,
             &BaseModel<Model, AllRelations...>::touchOwnersVisited<Related>,
+            &BaseModel<Model, AllRelations...>::isPivotModelRelationVisited<Related>,
         };
         static const auto size = cached.size();
 
@@ -2063,20 +2115,53 @@ namespace Tiny
         setRawAttributes(setKeysForSaveQuery(*newQueryWithoutScopes())
                          .firstOrFail().getRawAttributes());
 
-        // TODO future, ranges transformations silverqx
-        // Get all currently loaded relation names
-        QVector<WithItem> relations;
-        auto itKey = m_relations.keyBegin();
-        while (itKey != m_relations.keyEnd()) {
-            relations.append({*itKey});
-            ++itKey;
-        }
         // And reload them again, refresh relations
-        load(relations);
+        load(getLoadedRelationsWithoutPivot());
 
         syncOriginal();
 
         return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVector<WithItem>
+    BaseModel<Model, AllRelations...>::getLoadedRelationsWithoutPivot()
+    {
+        // TODO future, ranges transformations silverqx
+        QVector<WithItem> relations;
+
+        // Current model contains pivot relation alternative in m_relations std::variant
+        auto hasPivotRelation = std::disjunction_v<std::is_base_of<
+                                Relations::IsPivotModel, AllRelations>...>;
+
+        /* Get all currently loaded relation names except pivot relations. We need
+           to check for the pivot models, but only if the std::variant which holds
+           relations also holds a pivot model alternative, otherwise it is useless. */
+        auto itKey = m_relations.keyBegin();
+        while (itKey != m_relations.keyEnd()) {
+            if (hasPivotRelation) {
+                this->createIsPivotModelStore();
+
+                // TODO next create wrapper method for this with better name silverqx
+                model().relationVisitor(*itKey);
+
+                bool isPivotModel = this->m_isPivotModelStore->result;
+
+                // Release stored pointers to the relation store
+                this->resetRelationStore();
+
+                // Skip pivot relations
+                if (isPivotModel) {
+                    ++itKey;
+                    continue;
+                }
+            }
+
+            relations.append({*itKey});
+            ++itKey;
+        }
+
+        return relations;
     }
 
     // TODO future LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
@@ -2099,6 +2184,7 @@ namespace Tiny
 
         builder.eagerLoadRelations(models);
 
+        // BUG invalidates pivot relations, or relations which will not be loaded silverqx
         setRelations(std::move(models.first().getRelations()));
 
         return model();
@@ -2134,10 +2220,19 @@ namespace Tiny
     Model &
     BaseModel<Model, AllRelations...>::fill(const QVector<AttributeItem> &attributes)
     {
+        // TODO guarded silverqx
         for (const auto &attribute : attributes)
             setAttribute(attribute.key, attribute.value);
 
         return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::forceFill(const QVector<AttributeItem> &attributes)
+    {
+        // TODO guarded silverqx
+        return fill(attributes);
     }
 
     template<typename Model, typename ...AllRelations>
@@ -2206,6 +2301,21 @@ namespace Tiny
         model.setTable(getTable());
 
         return model;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    template<typename PivotType, typename Parent>
+    PivotType
+    BaseModel<Model, AllRelations...>::newPivot(
+            const Parent &parent, const QVector<AttributeItem> &attributes,
+            const QString &table, const bool exists) const
+    {
+        if constexpr (std::is_same_v<PivotType, Relations::Pivot>)
+            return PivotType::template fromAttributes<Parent>(
+                        parent, attributes, table, exists);
+        else
+            return PivotType::template fromRawAttributes<Parent>(
+                        parent, attributes, table, exists);
     }
 
     template<typename Model, typename ...AllRelations>
@@ -2707,6 +2817,28 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::unsetAttribute(const AttributeItem &value)
+    {
+        // TODO mistake m_attributes should never have duplicit keys silverqx
+        m_attributes.removeAll(value);
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::unsetAttribute(const QString &key)
+    {
+        // TODO mistake m_attributes should never have duplicit keys silverqx
+        QMutableVectorIterator<AttributeItem> it(m_attributes);
+        while (it.hasNext())
+            if (it.next().key == key)
+                it.remove();
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
     const QString &
     BaseModel<Model, AllRelations...>::getDateFormat() const
     {
@@ -2816,7 +2948,7 @@ namespace Tiny
     {
         /* If no relation name was given, we will use the Related class type to extract
            the name and use that as the relationship name as most of the time this
-           will be what we desire to use for the relationships. */
+           will be what we desire to use for the belongsTo relationships. */
         if (relation.isEmpty())
             relation = guessBelongsToRelation<Related>();
 
@@ -2830,9 +2962,9 @@ namespace Tiny
         if (foreignKey.isEmpty())
             foreignKey = Utils::String::toSnake(relation) + '_' + primaryKey;
 
-        /* Once we have the foreign key names, we'll just create a new Eloquent query
-           for the related models and returns the relationship instance which will
-           actually be responsible for retrieving and hydrating every relations. */
+        /* Once we have the foreign key names, we return the relationship instance,
+           which will actually be responsible for retrieving and hydrating every
+           relations. */
         if (ownerKey.isEmpty())
             ownerKey = primaryKey;
 
@@ -2858,6 +2990,48 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    template<typename Related, typename PivotType>
+    std::unique_ptr<Relations::Relation<Model, Related>>
+    BaseModel<Model, AllRelations...>::belongsToMany(
+            QString table, QString foreignPivotKey, QString relatedPivotKey,
+            QString parentKey, QString relatedKey, QString relation)
+    {
+        /* If no relation name was given, we will use the Related class type to extract
+           the name, suffix it with 's' and use that as the relationship name, as most
+           of the time this will be what we desire to use for the belongsToMany
+           relationships. */
+        if (relation.isEmpty())
+            relation = guessBelongsToManyRelation<Related>();
+
+        /* First, we'll need to determine the foreign key and "other key"
+           for the relationship. Once we have determined the keys, we'll make
+           the relationship instance we need for this. */
+        auto instance = newRelatedInstance<Related>();
+
+        if (foreignPivotKey.isEmpty())
+            foreignPivotKey = getForeignKey();
+
+        if (relatedPivotKey.isEmpty())
+            relatedPivotKey = instance->getForeignKey();
+
+        /* If no table name was provided, we can guess it by concatenating the two
+           models using underscores in alphabetical order. The two model names
+           are transformed to snake case from their default CamelCase also. */
+        if (table.isEmpty())
+            table = pivotTableName<Related>();
+
+        if (parentKey.isEmpty())
+            parentKey = getKeyName();
+
+        if (relatedKey.isEmpty())
+            relatedKey = instance->getKeyName();
+
+        return newBelongsToMany<Related, PivotType>(
+                    std::move(instance), model(), table, foreignPivotKey,
+                    relatedPivotKey, parentKey, relatedKey, relation);
+    }
+
+    template<typename Model, typename ...AllRelations>
     template<typename Related>
     QString BaseModel<Model, AllRelations...>::guessBelongsToRelation() const
     {
@@ -2866,6 +3040,35 @@ namespace Tiny
         relation[0] = relation[0].toLower();
 
         return relation;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    template<typename Related>
+    QString BaseModel<Model, AllRelations...>::guessBelongsToManyRelation() const
+    {
+        return guessBelongsToRelation<Related>() + QChar('s');
+    }
+
+    template<typename Model, typename ...AllRelations>
+    template<typename Related>
+    QString BaseModel<Model, AllRelations...>::pivotTableName() const
+    {
+        /* The joining table name, by convention, is simply the snake cased, models
+           sorted alphabetically and concatenated with an underscore, so we can
+           just sort the models and join them together to get the table name. */
+        QStringList segments {
+            // The table name of the current model instance
+            Utils::Type::classPureBasename(model()),
+            // The table name of the related model instance
+            Utils::Type::classPureBasename<Related>(),
+        };
+
+        /* Now that we have the model names in the vector, we can just sort them and
+           use the join function to join them together with an underscore,
+           which is typically used by convention within the database system. */
+        segments.sort(Qt::CaseInsensitive);
+
+        return segments.join(QChar('_')).toLower();
     }
 
     template<typename Model, typename ...AllRelations>
@@ -3125,6 +3328,14 @@ namespace Tiny
     }
 
     template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::setUseTimestamps(const bool value)
+    {
+        model().u_timestamps = value;
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
     QString BaseModel<Model, AllRelations...>::getQualifiedCreatedAtColumn() const
     {
         return qualifyColumn(getCreatedAtColumn());
@@ -3155,5 +3366,7 @@ namespace Tiny
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
+
+#include "orm/tiny/relations/pivot.hpp"
 
 #endif // BASEMODEL_H

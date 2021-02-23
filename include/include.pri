@@ -34,10 +34,13 @@ HEADERS += \
     $$PWD/orm/tiny/modelnotfounderror.hpp \
     $$PWD/orm/tiny/relationnotfounderror.hpp \
     $$PWD/orm/tiny/relationnotloadederror.hpp \
+    $$PWD/orm/tiny/relations/basepivot.hpp \
     $$PWD/orm/tiny/relations/belongsto.hpp \
+    $$PWD/orm/tiny/relations/belongstomany.hpp \
     $$PWD/orm/tiny/relations/hasmany.hpp \
     $$PWD/orm/tiny/relations/hasone.hpp \
     $$PWD/orm/tiny/relations/hasoneormany.hpp \
+    $$PWD/orm/tiny/relations/pivot.hpp \
     $$PWD/orm/tiny/relations/relation.hpp \
     $$PWD/orm/tiny/tinybuilder.hpp \
     $$PWD/orm/utils/attribute.hpp \

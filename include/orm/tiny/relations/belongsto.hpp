@@ -23,7 +23,7 @@ namespace Orm::Tiny::Relations
                   const QString &relationName);
 
     public:
-        /*! Instantiate and initialize a new HasOne instance. */
+        /*! Instantiate and initialize a new BelongsTo instance. */
         static std::unique_ptr<Relation<Model, Related>>
         create(std::unique_ptr<Related> &&related,
                Model &child, const QString &foreignKey,
@@ -66,9 +66,11 @@ namespace Orm::Tiny::Relations
     };
 
     template<class Model, class Related>
-    BelongsTo<Model, Related>::BelongsTo(std::unique_ptr<Related> &&related,
-                                         const Model &child, const QString &foreignKey,
-                                         const QString &ownerKey, const QString &relationName)
+    BelongsTo<Model, Related>::BelongsTo(
+            std::unique_ptr<Related> &&related, const Model &child,
+            const QString &foreignKey, const QString &ownerKey,
+            const QString &relationName
+    )
         : Relation<Model, Related>(std::move(related), child)
         /* In the underlying base relationship class, this variable is referred to as
            the "parent" since most relationships are not inversed. But, since this
@@ -110,7 +112,8 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    void BelongsTo<Model, Related>::addEagerConstraints(const QVector<Model> &models) const
+    void
+    BelongsTo<Model, Related>::addEagerConstraints(const QVector<Model> &models) const
     {
         /* We'll grab the primary key name of the related models since it could be set to
            a non-standard name and not "id". We will then construct the constraint for
@@ -143,14 +146,14 @@ namespace Orm::Tiny::Relations
         /* Once we have the dictionary constructed, we can loop through all the parents
            and match back onto their children using these keys of the dictionary and
            the primary key of the children to map them onto the correct instances. */
-        for (auto &model : models) {
-            const auto foreign = model.getAttribute(m_foreignKey)
-                                 .template value<typename Model::KeyType>();
-
-            if (dictionary.contains(foreign))
+        for (auto &model : models)
+            if (const auto foreign = model.getAttribute(m_foreignKey)
+                .template value<typename Model::KeyType>();
+                dictionary.contains(foreign)
+            )
                 model.setRelation(relation,
-                                  std::optional<Related>(dictionary.find(foreign).value()));
-        }
+                                  std::optional<Related>(
+                                      dictionary.find(foreign).value()));
     }
 
     template<class Model, class Related>
@@ -163,6 +166,8 @@ namespace Orm::Tiny::Relations
         for (const auto &result : results)
             dictionary.insert(result.getAttribute(m_ownerKey)
                               .template value<typename Model::KeyType>(),
+                              // BUG test silverqx
+                              // QHash doesn't have the move type insert method
                               result);
 
         return dictionary;

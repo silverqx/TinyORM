@@ -11,7 +11,7 @@ class TorrentEager_Failed final :
         public Orm::Tiny::BaseModel<TorrentEager_Failed, TorrentPreviewableFileEager>
 {
 public:
-    friend class BaseModel;
+    friend BaseModel;
 
     using BaseModel::BaseModel;
 

@@ -21,6 +21,11 @@ WhereItem::operator AttributeItem() const
     return {column, value};
 }
 
+bool operator==(const AttributeItem &lhs, const AttributeItem &rhs)
+{
+    return lhs.key == rhs.key && lhs.value == rhs.value;
+}
+
 //bool operator==(const WithItem &lhs, const WithItem &rhs)
 //{
 //    return (lhs.name == rhs.name);

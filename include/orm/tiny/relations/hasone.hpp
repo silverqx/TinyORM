@@ -26,10 +26,12 @@ namespace Orm::Tiny::Relations
         /*! Initialize the relation on a set of models. */
         QVector<Model> &
         initRelation(QVector<Model> &models, const QString &relation) const override;
+
         /*! Match the eagerly loaded results to their parents. */
-        inline void
-        match(QVector<Model> &models, QVector<Related> results, const QString &relation) const override
-        { this->template matchOneOrMany<std::optional<Related>>(models, results, relation); }
+        inline void match(QVector<Model> &models, QVector<Related> results,
+                          const QString &relation) const override
+        { this->template matchOneOrMany<std::optional<Related>>(models, results,
+                                                                relation); }
 
         /*! Get the results of the relationship. */
         std::variant<QVector<Related>, std::optional<Related>>

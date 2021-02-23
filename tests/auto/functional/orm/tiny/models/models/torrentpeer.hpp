@@ -8,9 +8,9 @@
 class TorrentPeer final : public Orm::Tiny::BaseModel<TorrentPeer, Torrent>
 {
 public:
-    friend class BaseModel;
+    friend BaseModel;
 
-    explicit TorrentPeer(const QVector<Orm::AttributeItem> &attributes = {});
+    using BaseModel::BaseModel;
 
     /*! Get the torrent that owns the torrent peer. */
     std::unique_ptr<

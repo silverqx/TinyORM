@@ -10,10 +10,9 @@ class TorrentPreviewableFileProperty final :
                                     TorrentPreviewableFile>
 {
 public:
-    friend class BaseModel;
+    friend BaseModel;
 
-    explicit TorrentPreviewableFileProperty(
-            const QVector<Orm::AttributeItem> &attributes = {});
+    using BaseModel::BaseModel;
 
     /*! Get the previewable file that owns the file property. */
     std::unique_ptr<

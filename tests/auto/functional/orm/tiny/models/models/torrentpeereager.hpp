@@ -9,7 +9,7 @@ class TorrentPeerEager final :
         public Orm::Tiny::BaseModel<TorrentPeerEager, TorrentEager>
 {
 public:
-    friend class BaseModel;
+    friend BaseModel;
 
     using BaseModel::BaseModel;
 

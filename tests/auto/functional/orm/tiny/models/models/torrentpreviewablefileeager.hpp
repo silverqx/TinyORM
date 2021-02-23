@@ -10,7 +10,7 @@ class TorrentPreviewableFileEager final :
                                     TorrentPreviewableFilePropertyEager>
 {
 public:
-    friend class BaseModel;
+    friend BaseModel;
 
     using BaseModel::BaseModel;
 

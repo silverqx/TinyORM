@@ -5,21 +5,26 @@
 
 #include "models/forwards.hpp"
 
+#include "models/tag.hpp"
+#include "models/tagged.hpp"
 #include "models/torrentpeer.hpp"
 #include "models/torrentpreviewablefile.hpp"
 
 // TODO now rewrite all with this 'using Xyz::Abc' style silverqx
 using Orm::Tiny::BaseModel;
+using Orm::Tiny::Relations::BelongsToMany;
+using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
 /* This class serves as a showcase, so all possible features are defined / used. */
 
 class Torrent final :
-        public BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer>
+        public BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Pivot>
+//        public BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Tagged>
 {
 public:
-    friend class BaseModel;
+    friend BaseModel;
 
     /*! The "type" of the primary key ID. */
     using KeyType = quint64;
@@ -43,6 +48,30 @@ public:
 //        return hasOne<TorrentPeer>("torrent_id", "id");
     }
 
+    /*! Get tags that belong to the torrent. */
+    std::unique_ptr<Relation<Torrent, Tag>>
+    tags()
+    {
+        // Ownership of a unique_ptr()
+//        auto relation = belongsToMany<Tag>();
+//        dynamic_cast<BelongsToMany<Torrent, Tag/*, Pivot*/> &>(*relation)
+//                .as("tagged")
+//                .withPivot({"active"})
+//                .withTimestamps();
+
+        // Ownership of a unique_ptr()
+        // Custom 'Tagged' pivot model ✨
+        auto relation = belongsToMany<Tag, Tagged>();
+        dynamic_cast<BelongsToMany<Torrent, Tag, Tagged> &>(*relation)
+                .as("tagged")
+                .withPivot({"active"})
+                .withTimestamps(/*"created_at_custom", "updated_at_custom"*/);
+
+        return relation;
+//        return belongsToMany<Tag>("tag_torrent", "torrent_id", "tag_id", "id", "id",
+//                                  "tags");
+    }
+
 private:
     /*! The name of the "created at" column. */
     inline static const QString CREATED_AT = QStringLiteral("created_at");
@@ -52,10 +81,15 @@ private:
     /*! The visitor to obtain a type for Related template parameter. */
     void relationVisitor(const QString &relation)
     {
-        if (relation == "torrentFiles")
+        if (relation      == "torrentFiles")
             relationVisited<TorrentPreviewableFile>();
         else if (relation == "torrentPeer")
             relationVisited<TorrentPeer>();
+        else if (relation == "tags")
+            relationVisited<Tag>();
+        else if (relation == "pivot") // Pivot
+//            relationVisited<Tagged>();
+            relationVisited<Pivot>();
     }
 
     /*! The table associated with the model. */
@@ -70,13 +104,15 @@ private:
     QHash<QString, std::any> u_relations {
         {"torrentFiles", &Torrent::torrentFiles},
         {"torrentPeer",  &Torrent::torrentPeer},
+        {"tags",         &Torrent::tags},
     };
 
     /*! The relations to eager load on every query. */
-    QVector<Orm::WithItem> u_with {
+    QVector<WithItem> u_with {
 //        {"torrentFiles"},
 //        {"torrentPeer"},
 //        {"torrentFiles.fileProperty"},
+//        {"tags"},
     };
 
     /*! The connection name for the model. */

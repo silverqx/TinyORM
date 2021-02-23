@@ -7,7 +7,7 @@ class TorrentPreviewableFilePropertyEager final :
         public Orm::Tiny::BaseModel<TorrentPreviewableFilePropertyEager>
 {
 public:
-    friend class BaseModel;
+    friend BaseModel;
 
     using BaseModel::BaseModel;
 

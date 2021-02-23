@@ -1,9 +1,11 @@
-#ifndef SETTING_H
-#define SETTING_H
+#ifndef TAGPROPERTY_H
+#define TAGPROPERTY_H
 
 #include "orm/tiny/basemodel.hpp"
 
-class Setting final : public Orm::Tiny::BaseModel<Setting>
+using Orm::Tiny::BaseModel;
+
+class TagProperty final : public BaseModel<TagProperty>
 {
 public:
     friend BaseModel;
@@ -12,10 +14,7 @@ public:
 
 private:
     /*! The table associated with the model. */
-    QString u_table {"settings"};
-
-    /*! Indicates if the model's ID is auto-incrementing. */
-    bool u_incrementing = false;
+    QString u_table {"tag_properties"};
 
 #ifdef PROJECT_TINYORM_TEST
     /*! The connection name for the model. */
@@ -23,4 +22,4 @@ private:
 #endif
 };
 
-#endif // SETTING_H
+#endif // TAGPROPERTY_H

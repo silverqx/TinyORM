@@ -20,16 +20,9 @@ SOURCES += \
     $$PWD/orm/sqlerror.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \
     $$PWD/orm/tiny/basemodel.cpp \
-    $$PWD/orm/tiny/concerns/hasattributes.cpp \
-    $$PWD/orm/tiny/concerns/hasrelationstore.cpp \
     $$PWD/orm/tiny/modelnotfounderror.cpp \
     $$PWD/orm/tiny/relationnotfounderror.cpp \
     $$PWD/orm/tiny/relationnotloadederror.cpp \
-    $$PWD/orm/tiny/relations/belongsto.cpp \
-    $$PWD/orm/tiny/relations/hasmany.cpp \
-    $$PWD/orm/tiny/relations/hasone.cpp \
-    $$PWD/orm/tiny/relations/hasoneormany.cpp \
     $$PWD/orm/tiny/relations/relation.cpp \
-    $$PWD/orm/tiny/tinybuilder.cpp\
     $$PWD/orm/utils/attribute.cpp \
     $$PWD/orm/utils/string.cpp \
