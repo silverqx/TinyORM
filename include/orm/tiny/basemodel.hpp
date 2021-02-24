@@ -917,11 +917,13 @@ namespace Relations {
         /*! Create push store and call push for every model. */
         bool pushWithVisitor(const QString &relation,
                              RelationsType<AllRelations...> &models);
-
         /*! Replace relations in the m_relation. */
         void replaceRelations(
                 std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
                 const QVector<WithItem> &onlyRelations);
+
+        /*! Create 'touch owners relation store' and touch all related models. */
+        void touchOwnersWithVisitor(const QString &relation);
 
         /* Shortcuts for types related to the Relation Store */
         /*! Relation store type enum struct. */
@@ -2214,6 +2216,23 @@ namespace Relations {
         }
     }
 
+    template<typename Model, typename ...AllRelations>
+    void
+    BaseModel<Model, AllRelations...>::touchOwnersWithVisitor(const QString &relation)
+    {
+        // Throw excpetion if a relation is not defined
+        validateUserRelation(relation);
+
+        // Save model/s to the store to avoid passing variables to the visitor
+        this->createTouchOwnersStore(relation);
+
+        // TODO next create wrapper method for this with better name, over time, it seems fine to me, only thing I see now is that it has the same name for all visitations, but that looks ok too, will see, but this todo can be removed, looks good to me silverqx
+        model().relationVisitor(relation);
+
+        // Release stored pointers to the relation store
+        this->resetRelationStore();
+    }
+
     // TODO future LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
     template<typename Model, typename ...AllRelations>
     Model &
@@ -2949,19 +2968,8 @@ namespace Relations {
     template<typename Model, typename ...AllRelations>
     void BaseModel<Model, AllRelations...>::touchOwners()
     {
-        for (const auto &relation : getTouchedRelations()) {
-            // Throw excpetion if a relation is not defined
-            validateUserRelation(relation);
-
-            // Save model/s to the store to avoid passing variables to the visitor
-            this->createTouchOwnersStore(relation);
-
-            // TODO next create wrapper method for this with better name, over time, it seems fine to me, only thing I see now is that it has the same name for all visitations, but that looks ok too, will see, but this todo can be removed, looks good to me silverqx
-            model().relationVisitor(relation);
-
-            // Release stored pointers to the relation store
-            this->resetRelationStore();
-        }
+        for (const auto &relation : getTouchedRelations())
+            touchOwnersWithVisitor(relation);
     }
 
     template<typename Model, typename ...AllRelations>
