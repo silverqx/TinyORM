@@ -623,13 +623,16 @@ namespace Relations {
         { return model().u_touches; }
 
         /*! Get all the loaded relations for the instance. */
-        inline const QHash<QString, RelationsType<AllRelations...>> &
+        inline const std::unordered_map<QString, RelationsType<AllRelations...>> &
         getRelations() const
         { return m_relations; }
         /*! Get all the loaded relations for the instance. */
-        inline QHash<QString, RelationsType<AllRelations...>> &
+        inline std::unordered_map<QString, RelationsType<AllRelations...>> &
         getRelations()
         { return m_relations; }
+
+        /*! Unset all the loaded relations for the instance. */
+        Model &unsetRelations();
 
         /* HasTimestamps */
         /*! Update the model's update timestamp. */
@@ -762,10 +765,11 @@ namespace Relations {
 
         /*! Set the entire relations array on the model. */
         Model &setRelations(
-                QHash<QString, RelationsType<AllRelations...>> &relations);
+                const std::unordered_map<QString,
+                                         RelationsType<AllRelations...>> &relations);
         /*! Set the entire relations array on the model. */
         Model &setRelations(
-                QHash<QString, RelationsType<AllRelations...>> &&relations);
+                std::unordered_map<QString, RelationsType<AllRelations...>> &&relations);
 
         /* Others */
         /*! Perform the actual delete query on this model instance. */
@@ -820,7 +824,7 @@ namespace Relations {
 
         /* HasRelationships */
         /*! The loaded relationships for the model. */
-        QHash<QString, RelationsType<AllRelations...>> m_relations;
+        std::unordered_map<QString, RelationsType<AllRelations...>> m_relations;
         /*! The relationships that should be touched on save. */
         QStringList u_touches;
 
@@ -899,12 +903,25 @@ namespace Relations {
         template<typename Related>
         void touchOwnersVisited();
 
+        /* Others */
         /*! Decide, if the Related model passed as the template parameter is
             the pivot model. */
         template<typename Related>
         void isPivotModelRelationVisited();
         /*! Obtain all loaded relation names except pivot relations. */
         QVector<WithItem> getLoadedRelationsWithoutPivot();
+        /*! Create 'is pivot model relation store' and by an obtained Related
+            template argument checks, if the model is a pivot model. */
+        bool isPivotModelWithVisitor(const QString &relation);
+
+        /*! Create push store and call push for every model. */
+        bool pushWithVisitor(const QString &relation,
+                             RelationsType<AllRelations...> &models);
+
+        /*! Replace relations in the m_relation. */
+        void replaceRelations(
+                std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
+                const QVector<WithItem> &onlyRelations);
 
         /* Shortcuts for types related to the Relation Store */
         /*! Relation store type enum struct. */
@@ -1877,45 +1894,17 @@ namespace Relations {
         if (!save())
             return false;
 
-        if (!(m_relations.size() > 0))
+        if (m_relations.empty())
             return true;
 
         /* To sync all of the relationships to the database, we will simply spin through
            the relationships and save each model via this "push" method, which allows
            us to recurse into all of these nested relations for the model instance. */
-        // TODO future Eloquent uses foreach (array_filter($models) as $model), check if relation can actually be null or empty silverqx
-        auto itModels = m_relations.begin();
-        while (itModels != m_relations.end()) {
-            const auto &relation = itModels.key();
-            auto &models = itModels.value();
-
-            // TODO prod remove, I don't exactly know if this can really happen silverqx
-            const auto variantIndex = models.index();
-            Q_ASSERT(variantIndex > 0);
-            if (variantIndex == 0)
-                continue;
-
-            // Throw excpetion if a relation is not defined
-            validateUserRelation(relation);
-
-            // Save model/s to the store to avoid passing variables to the visitor
-            this->createPushStore(models);
-
-            // TODO next create wrapper method for this with better name silverqx
-            model().relationVisitor(relation);
-
-            bool pushResult = this->m_pushStore->result;
-
-            // Release stored pointers to the relation store
-            this->resetRelationStore();
-
+        for (auto &[relation, models] : m_relations)
             /* Following Eloquent API, if any push failed, quit, remaining push-es
                will not be processed. */
-            if (!pushResult)
+            if (!pushWithVisitor(relation, models))
                 return false;
-
-            ++itModels;
-        }
 
         return true;
     }
@@ -1954,8 +1943,11 @@ namespace Relations {
         auto &model = std::get<std::optional<Related>>(this->m_pushStore->models);
         // TODO prod remove, this assert is only to catch the case, when std::optional() is empty, because I don't know if this can actually happen? silverqx
         Q_ASSERT(!!model);
-        if (!model)
+        // Skip a null model, consider it as success
+        if (!model) {
+            this->m_pushStore->result = true;
             return;
+        }
 
         this->m_pushStore->result = model->push();
     }
@@ -2127,41 +2119,99 @@ namespace Relations {
     QVector<WithItem>
     BaseModel<Model, AllRelations...>::getLoadedRelationsWithoutPivot()
     {
-        // TODO future, ranges transformations silverqx
         QVector<WithItem> relations;
 
-        // Current model contains pivot relation alternative in m_relations std::variant
+        /* Current model (this) contains a pivot relation alternative
+           in the m_relations std::variant. */
         auto hasPivotRelation = std::disjunction_v<std::is_base_of<
                                 Relations::IsPivotModel, AllRelations>...>;
 
         /* Get all currently loaded relation names except pivot relations. We need
            to check for the pivot models, but only if the std::variant which holds
            relations also holds a pivot model alternative, otherwise it is useless. */
-        auto itKey = m_relations.keyBegin();
-        while (itKey != m_relations.keyEnd()) {
-            if (hasPivotRelation) {
-                this->createIsPivotModelStore();
+        for (const auto &relation : m_relations) {
+            const auto &relationName = relation.first;
 
-                // TODO next create wrapper method for this with better name silverqx
-                model().relationVisitor(*itKey);
-
-                bool isPivotModel = this->m_isPivotModelStore->result;
-
-                // Release stored pointers to the relation store
-                this->resetRelationStore();
-
+            if (hasPivotRelation)
                 // Skip pivot relations
-                if (isPivotModel) {
-                    ++itKey;
+                if (isPivotModelWithVisitor(relationName))
                     continue;
-                }
-            }
 
-            relations.append({*itKey});
-            ++itKey;
+            relations.append({relationName});
         }
 
         return relations;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool
+    BaseModel<Model, AllRelations...>::isPivotModelWithVisitor(const QString &relation)
+    {
+        this->createIsPivotModelStore();
+
+        // TODO next create wrapper method for this with better name silverqx
+        model().relationVisitor(relation);
+
+        bool isPivotModel = this->m_isPivotModelStore->result;
+
+        // Release stored pointers to the relation store
+        this->resetRelationStore();
+
+        return isPivotModel;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::pushWithVisitor(
+            const QString &relation, RelationsType<AllRelations...> &models)
+    {
+        // TODO prod remove, I don't exactly know if this can really happen silverqx
+        /* Check for empty variant, the std::monostate is at zero index and
+           consider it as success to continue 'pushing'. */
+        const auto variantIndex = models.index();
+        Q_ASSERT(variantIndex > 0);
+        if (variantIndex == 0)
+            return true;
+
+        // Throw excpetion if a relation is not defined
+        validateUserRelation(relation);
+
+        // Save model/s to the store to avoid passing variables to the visitor
+        this->createPushStore(models);
+
+        // TODO next create wrapper method for this with better name silverqx
+        model().relationVisitor(relation);
+
+        bool pushResult = this->m_pushStore->result;
+
+        // Release stored pointers to the relation store
+        this->resetRelationStore();
+
+        return pushResult;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::replaceRelations(
+            std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
+            const QVector<WithItem> &onlyRelations)
+    {
+        /* Replace only relations which was passed to this method, leave other
+           relations untouched. */
+        for (auto itRelation = relations.begin(); itRelation != relations.end();
+             ++itRelation)
+        {
+            const auto &key = itRelation->first;
+
+            const auto relationsContainKey =
+                    ranges::contains(onlyRelations, true, [&key](const auto &relation)
+            {
+                return relation.name == key;
+            });
+
+            if (!relationsContainKey)
+                continue;
+
+            m_relations[key] = std::move(itRelation->second);
+        }
     }
 
     // TODO future LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
@@ -2184,7 +2234,12 @@ namespace Relations {
 
         builder.eagerLoadRelations(models);
 
-        setRelations(std::move(models.first().getRelations()));
+        /* Replace only relations which was passed to this method, leave other
+           relations untouched.
+           They do not need to be removed before 'eagerLoadRelations(models)'
+           call, because only the relations passed to the 'with' at the beginning
+           will be loaded anyway. */
+        replaceRelations(models.first().getRelations(), relations);
 
         return model();
     }
@@ -2569,7 +2624,7 @@ namespace Relations {
            so a user can directly modify these models and push or save them
            afterward. */
         using namespace ranges;
-        return std::get<QVector<Related>>(m_relations.find(relation).value())
+        return std::get<QVector<Related>>(m_relations.find(relation)->second)
                 | views::transform([](Related &model) -> Related * { return &model; })
                 | ranges::to<Container<Related *>>();
     }
@@ -2585,7 +2640,7 @@ namespace Relations {
            model and push or save it afterward. */
 
         auto &relatedModel =
-                std::get<std::optional<Related>>(m_relations.find(relation).value());
+                std::get<std::optional<Related>>(m_relations.find(relation)->second);
 
         return relatedModel ? &*relatedModel : nullptr;
     }
@@ -2628,7 +2683,7 @@ namespace Relations {
     BaseModel<Model, AllRelations...>::setRelation(const QString &relation,
                                                    const QVector<Related> &models)
     {
-        m_relations.insert(relation, models);
+        m_relations[relation] = models;
 
         return model();
     }
@@ -2639,7 +2694,7 @@ namespace Relations {
     BaseModel<Model, AllRelations...>::setRelation(const QString &relation,
                                                    QVector<Related> &&models)
     {
-        m_relations.insert(relation, std::move(models));
+        m_relations[relation] = std::move(models);
 
         return model();
     }
@@ -2650,7 +2705,7 @@ namespace Relations {
     BaseModel<Model, AllRelations...>::setRelation(const QString &relation,
                                                    const std::optional<Related> &model)
     {
-        m_relations.insert(relation, model);
+        m_relations[relation] = model;
 
         return this->model();
     }
@@ -2661,7 +2716,7 @@ namespace Relations {
     BaseModel<Model, AllRelations...>::setRelation(const QString &relation,
                                                    std::optional<Related> &&model)
     {
-        m_relations.insert(relation, std::move(model));
+        m_relations[relation] = std::move(model);
 
         return this->model();
     }
@@ -2910,6 +2965,14 @@ namespace Relations {
     }
 
     template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::unsetRelations()
+    {
+        m_relations.clear();
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
     template<typename Related>
     std::unique_ptr<Related>
     BaseModel<Model, AllRelations...>::newRelatedInstance() const
@@ -3073,7 +3136,7 @@ namespace Relations {
     template<typename Model, typename ...AllRelations>
     Model &
     BaseModel<Model, AllRelations...>::setRelations(
-            QHash<QString, RelationsType<AllRelations...>> &relations)
+            const std::unordered_map<QString, RelationsType<AllRelations...>> &relations)
     {
         m_relations = relations;
 
@@ -3083,7 +3146,7 @@ namespace Relations {
     template<typename Model, typename ...AllRelations>
     Model &
     BaseModel<Model, AllRelations...>::setRelations(
-            QHash<QString, RelationsType<AllRelations...>> &&relations)
+            std::unordered_map<QString, RelationsType<AllRelations...>> &&relations)
     {
         m_relations = std::move(relations);
 

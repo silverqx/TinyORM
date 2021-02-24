@@ -384,14 +384,14 @@ void tst_BaseModel_Relations::without_Vector_MoreRelations() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVERIFY(torrent->getRelations().isEmpty());
+    QVERIFY(torrent->getRelations().empty());
 }
 
 void tst_BaseModel_Relations::load() const
 {
     auto torrent = Torrent::find(2);
 
-    QVERIFY(torrent->getRelations().isEmpty());
+    QVERIFY(torrent->getRelations().empty());
 
     torrent->load({{"torrentFiles"}, {"torrentPeer"}});
 
@@ -434,11 +434,11 @@ void tst_BaseModel_Relations::load_Failed() const
 {
     auto torrent = Torrent::find(2);
 
-    QVERIFY(torrent->getRelations().isEmpty());
+    QVERIFY(torrent->getRelations().empty());
 
     QVERIFY_EXCEPTION_THROWN(torrent->load("torrentFiles-NON_EXISTENT"),
                              RelationNotFoundError);
-    QVERIFY(torrent->getRelations().isEmpty());
+    QVERIFY(torrent->getRelations().empty());
 }
 
 void tst_BaseModel_Relations::refresh_EagerLoad_OnlyRelations() const
@@ -478,27 +478,28 @@ void tst_BaseModel_Relations::refresh_EagerLoad_OnlyRelations() const
 
     // Memory address of the key and value for the relation
     uintptr_t relationFilesKeyOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles").key());
+            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first);
     uintptr_t relationFilesValueOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles").value());
+            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second);
     uintptr_t relationPeerKeyOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer").key());
+            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first);
     uintptr_t relationPeerValueOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer").value());
+            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second);
 
     torrent->refresh();
 
     QVERIFY(relations.size() == 2);
-    /* Values in the QHash container can't be the same, because they were
-       moved from the Model copy in the Model::load() method. */
+    /* Values in the std::unordered_map container has to be the same, because
+       only loaded relations will be replaced with std::move directly
+       to the relation std::variant reference in the Model::load() method. */
     QVERIFY(relationFilesKeyOriginal
-            != reinterpret_cast<uintptr_t>(&relations.find("torrentFiles").key()));
+            == reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first));
     QVERIFY(relationFilesValueOriginal
-            != reinterpret_cast<uintptr_t>(&relations.find("torrentFiles").value()));
+            == reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second));
     QVERIFY(relationPeerKeyOriginal
-            != reinterpret_cast<uintptr_t>(&relations.find("torrentPeer").key()));
+            == reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first));
     QVERIFY(relationPeerValueOriginal
-            != reinterpret_cast<uintptr_t>(&relations.find("torrentPeer").value()));
+            == reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second));
 
     // Validate refreshed attributes in relations
     auto filesRefreshed =
@@ -518,7 +519,7 @@ void tst_BaseModel_Relations::refresh_LazyLoad_OnlyRelations() const
     QVERIFY(torrent->exists);
 
     auto &relations = torrent->getRelations();
-    QVERIFY(relations.isEmpty());
+    QVERIFY(relations.empty());
 
     // Validate original attribute values in relations
     auto filesOriginal =
@@ -549,27 +550,28 @@ void tst_BaseModel_Relations::refresh_LazyLoad_OnlyRelations() const
 
     // Memory address of the key and value for the relation
     uintptr_t relationFilesKeyOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles").key());
+            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first);
     uintptr_t relationFilesValueOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles").value());
+            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second);
     uintptr_t relationPeerKeyOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer").key());
+            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first);
     uintptr_t relationPeerValueOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer").value());
+            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second);
 
     torrent->refresh();
 
     QVERIFY(relations.size() == 2);
-    /* Values in the QHash container can't be the same, because they were
-       moved from the Model copy in the Model::load() method. */
+    /* Values in the std::unordered_map container has to be the same, because
+       only loaded relations will be replaced with std::move directly
+       to the relation std::variant reference in the Model::load() method. */
     QVERIFY(relationFilesKeyOriginal
-            != reinterpret_cast<uintptr_t>(&relations.find("torrentFiles").key()));
+            == reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first));
     QVERIFY(relationFilesValueOriginal
-            != reinterpret_cast<uintptr_t>(&relations.find("torrentFiles").value()));
+            == reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second));
     QVERIFY(relationPeerKeyOriginal
-            != reinterpret_cast<uintptr_t>(&relations.find("torrentPeer").key()));
+            == reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first));
     QVERIFY(relationPeerValueOriginal
-            != reinterpret_cast<uintptr_t>(&relations.find("torrentPeer").value()));
+            == reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second));
 
     // Validate refreshed attributes in relations
     auto filesRefreshed =
@@ -661,7 +663,7 @@ void tst_BaseModel_Relations::push_LazyLoad() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVERIFY(torrent->getRelations().isEmpty());
+    QVERIFY(torrent->getRelations().empty());
 
     auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     /* Make a copy of a pointer, because first() returns reference,
@@ -697,7 +699,7 @@ void tst_BaseModel_Relations::push_LazyLoad() const
     QVERIFY(torrentVerify);
     QVERIFY(torrentVerify->exists);
 
-    QVERIFY(torrentVerify->getRelations().isEmpty());
+    QVERIFY(torrentVerify->getRelations().empty());
 
     auto filesVerify =
             torrentVerify->getRelationValue<TorrentPreviewableFile>("torrentFiles");
