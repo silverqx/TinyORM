@@ -10,11 +10,10 @@
 class TorrentEager_Failed final :
         public Orm::Tiny::BaseModel<TorrentEager_Failed, TorrentPreviewableFileEager>
 {
-public:
     friend BaseModel;
-
     using BaseModel::BaseModel;
 
+public:
     /*! Get the previewable files associated with the torrent. */
     std::unique_ptr<
     Orm::Tiny::Relations::Relation<TorrentEager_Failed, TorrentPreviewableFileEager>>

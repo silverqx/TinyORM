@@ -7,12 +7,9 @@ using Orm::Tiny::BaseModel;
 
 class TagProperty final : public BaseModel<TagProperty>
 {
-public:
     friend BaseModel;
-
     using BaseModel::BaseModel;
 
-private:
     /*! The table associated with the model. */
     QString u_table {"tag_properties"};
 

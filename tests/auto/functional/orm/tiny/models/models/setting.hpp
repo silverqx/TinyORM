@@ -5,9 +5,7 @@
 
 class Setting final : public Orm::Tiny::BaseModel<Setting>
 {
-public:
     friend BaseModel;
-
     using BaseModel::BaseModel;
 
 private:

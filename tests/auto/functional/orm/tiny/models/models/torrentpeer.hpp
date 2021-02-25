@@ -7,11 +7,10 @@
 
 class TorrentPeer final : public Orm::Tiny::BaseModel<TorrentPeer, Torrent>
 {
-public:
     friend BaseModel;
-
     using BaseModel::BaseModel;
 
+public:
     /*! Get the torrent that owns the torrent peer. */
     std::unique_ptr<
     Orm::Tiny::Relations::Relation<TorrentPeer, Torrent>>

@@ -16,11 +16,10 @@ using Orm::WithItem;
 class Tag final : public Orm::Tiny::BaseModel<Tag, Torrent, TagProperty, Tagged>
 //class Tag final : public BaseModel<Tag, Torrent, TagProperty, Pivot>
 {
-public:
     friend BaseModel;
-
     using BaseModel::BaseModel;
 
+public:
     /*! Get torrents that belong to the tag. */
     std::unique_ptr<Relation<Tag, Torrent>>
     torrents()

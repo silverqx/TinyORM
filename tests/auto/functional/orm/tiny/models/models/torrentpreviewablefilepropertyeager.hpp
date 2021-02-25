@@ -6,12 +6,9 @@
 class TorrentPreviewableFilePropertyEager final :
         public Orm::Tiny::BaseModel<TorrentPreviewableFilePropertyEager>
 {
-public:
     friend BaseModel;
-
     using BaseModel::BaseModel;
 
-private:
     /*! The table associated with the model. */
     QString u_table {"torrent_previewable_file_properties"};
 

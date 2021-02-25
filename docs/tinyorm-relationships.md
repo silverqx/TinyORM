@@ -50,11 +50,10 @@ Before you start defining relationship methods, you have to declare a model clas
 
     class User final : public BaseModel<User, Phone>
     {
-    public:
         friend BaseModel;
-
         using BaseModel::BaseModel;
 
+    public:
         /*! Get the phone associated with the user. */
         std::unique_ptr<Relation<User, Phone>>
         phone()
@@ -103,11 +102,10 @@ A one-to-one relationship is a very basic type of database relationship. For exa
 
     class User final : public BaseModel<User, Phone>
     {
-    public:
         friend BaseModel;
-
         using BaseModel::BaseModel;
 
+    public:
         /*! Get the phone associated with the user. */
         std::unique_ptr<Relation<User, Phone>>
         phone()
@@ -160,11 +158,10 @@ So, we can access the `Phone` model from our `User` model. Next, let's define a 
 
     class Phone final : public BaseModel<Phone, User>
     {
-    public:
         friend BaseModel;
-
         using BaseModel::BaseModel;
 
+    public:
         /*! Get the user that owns the phone. */
         std::unique_ptr<Relation<Phone, User>>
         user()
@@ -238,11 +235,10 @@ A one-to-many relationship is used to define relationships where a single model 
 
     class Post final : public BaseModel<Post, Comment>
     {
-    public:
         friend BaseModel;
-
         using BaseModel::BaseModel;
 
+    public:
         /*! Get the comments for the blog post. */
         std::unique_ptr<Relation<Post, Comment>>
         comments()
@@ -307,11 +303,10 @@ Now that we can access all of a post's comments, let's define a relationship to 
 
     class Comment final : public BaseModel<Comment, Post>
     {
-    public:
         friend BaseModel;
-
         using BaseModel::BaseModel;
 
+    public:
         /*! Get the post that owns the comment. */
         std::unique_ptr<Relation<Comment, Post>>
         post()
@@ -397,11 +392,10 @@ For example, imagine a blog application in which a `User` model has many associa
 
     class User final : public BaseModel<User, Post>
     {
-    public:
         friend BaseModel;
-
         using BaseModel::BaseModel;
 
+    public:
         /*! Get all of the posts for the user. */
         std::unique_ptr<Relation<User, Post>>
         posts()
@@ -517,11 +511,10 @@ When accessing TinyORM relationships by BaseModel's `getRelationValue` method, t
 
     class Book final : public BaseModel<Book, Author>
     {
-    public:
         friend BaseModel;
-
         using BaseModel::BaseModel;
 
+    public:
         /*! Get the author that wrote the book. */
         std::unique_ptr<Relation<Book, Author>>
         author()
@@ -598,11 +591,10 @@ Sometimes you might want to always load some relationships when retrieving a mod
 
     class Book final : public BaseModel<Book, Author>
     {
-    public:
         friend BaseModel;
-
         using BaseModel::BaseModel;
 
+    public:
         /*! Get the author that wrote the book. */
         std::unique_ptr<Relation<Book, Author>>
         author()
@@ -677,11 +669,10 @@ For example, when a `Comment` model is updated, you may want to automatically "t
 
     class Comment final : public BaseModel<Comment, Post>
     {
-    public:
         friend BaseModel;
-
         using BaseModel::BaseModel;
 
+    public:
         /*! Get the post that owns the comment. */
         std::unique_ptr<Relation<Comment, Post>>
         post()

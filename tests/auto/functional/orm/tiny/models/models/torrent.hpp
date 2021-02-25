@@ -23,13 +23,13 @@ class Torrent final :
         public BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Pivot>
 //        public BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Tagged>
 {
-public:
     friend BaseModel;
+    using BaseModel::BaseModel;
 
+public:
     /*! The "type" of the primary key ID. */
     using KeyType = quint64;
 
-    using BaseModel::BaseModel;
 //    explicit Torrent(const QVector<Orm::AttributeItem> &attributes = {});
 
     /*! Get the previewable files associated with the torrent. */

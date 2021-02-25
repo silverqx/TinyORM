@@ -9,11 +9,10 @@ class TorrentPreviewableFileProperty final :
         public Orm::Tiny::BaseModel<TorrentPreviewableFileProperty,
                                     TorrentPreviewableFile>
 {
-public:
     friend BaseModel;
-
     using BaseModel::BaseModel;
 
+public:
     /*! Get the previewable file that owns the file property. */
     std::unique_ptr<
     Orm::Tiny::Relations::Relation<TorrentPreviewableFileProperty,
