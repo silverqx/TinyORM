@@ -21,13 +21,13 @@ private slots:
     void initTestCase();
     void cleanupTestCase();
 
-    void save() const;
-    void save_WithRValue() const;
-    void save_Failed() const;
+    void save_OnHasOneOrMany() const;
+    void save_OnHasOneOrMany_WithRValue() const;
+    void save_OnHasOneOrMany_Failed() const;
 
-    void saveMany() const;
-    void saveMany_WithRValue() const;
-    void saveMany_Failed() const;
+    void saveMany_OnHasOneOrMany() const;
+    void saveMany_OnHasOneOrMany_WithRValue() const;
+    void saveMany_OnHasOneOrMany_Failed() const;
 
 private:
     /*! The database connection instance. */
@@ -44,7 +44,7 @@ void tst_Relations_Inserting_Updating::initTestCase()
 void tst_Relations_Inserting_Updating::cleanupTestCase()
 {}
 
-void tst_Relations_Inserting_Updating::save() const
+void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
 {
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
@@ -84,7 +84,7 @@ void tst_Relations_Inserting_Updating::save() const
     QVERIFY(!file.exists);
 }
 
-void tst_Relations_Inserting_Updating::save_WithRValue() const
+void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
 {
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
@@ -117,7 +117,7 @@ void tst_Relations_Inserting_Updating::save_WithRValue() const
     QVERIFY(!file.exists);
 }
 
-void tst_Relations_Inserting_Updating::save_Failed() const
+void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_Failed() const
 {
     auto torrent = Torrent::find(1);
     QVERIFY(torrent);
@@ -139,7 +139,7 @@ void tst_Relations_Inserting_Updating::save_Failed() const
     QCOMPARE(file["torrent_id"], QVariant(1));
 }
 
-void tst_Relations_Inserting_Updating::saveMany() const
+void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
 {
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
@@ -207,7 +207,7 @@ void tst_Relations_Inserting_Updating::saveMany() const
     QVERIFY(!savedFile2.exists);
 }
 
-void tst_Relations_Inserting_Updating::saveMany_WithRValue() const
+void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() const
 {
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
@@ -262,7 +262,7 @@ void tst_Relations_Inserting_Updating::saveMany_WithRValue() const
     QVERIFY(!savedFile2.exists);
 }
 
-void tst_Relations_Inserting_Updating::saveMany_Failed() const
+void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_Failed() const
 {
     auto torrent = Torrent::find(1);
     QVERIFY(torrent);
