@@ -40,6 +40,17 @@ namespace Orm::Tiny::Relations
         /*! Attach a collection of models to the parent instance. */
         QVector<Related> saveMany(QVector<Related> &&models) const override;
 
+        /*! Create a new instance of the related model. */
+        Related create(const QVector<AttributeItem> &attributes = {}) const override;
+        /*! Create a new instance of the related model. */
+        Related create(QVector<AttributeItem> &&attributes = {}) const override;
+        /*! Create a Collection of new instances of the related model. */
+        QVector<Related>
+        createMany(const QVector<QVector<AttributeItem>> &records) const override;
+        /*! Create a Collection of new instances of the related model. */
+        QVector<Related>
+        createMany(QVector<QVector<AttributeItem>> &&records) const override;
+
     protected:
         /*! Match the eagerly loaded results to their many parents. */
         template<typename RelationType>
@@ -144,6 +155,58 @@ namespace Orm::Tiny::Relations
             save(model);
 
         return models;
+    }
+
+    template<class Model, class Related>
+    Related HasOneOrMany<Model, Related>::create(
+            const QVector<AttributeItem> &attributes) const
+    {
+        auto instance = this->m_related->newInstance(attributes);
+
+        setForeignAttributesForCreate(instance);
+
+        instance.save();
+
+        return instance;
+    }
+
+    template<class Model, class Related>
+    Related HasOneOrMany<Model, Related>::create(
+            QVector<AttributeItem> &&attributes) const
+    {
+        auto instance = this->m_related->newInstance(std::move(attributes));
+
+        setForeignAttributesForCreate(instance);
+
+        instance.save();
+
+        return instance;
+    }
+
+    template<class Model, class Related>
+    QVector<Related>
+    HasOneOrMany<Model, Related>::createMany(
+            const QVector<QVector<AttributeItem>> &records) const
+    {
+        QVector<Related> instances;
+
+        for (auto &record : records)
+            instances << create(record);
+
+        return instances;
+    }
+
+    template<class Model, class Related>
+    QVector<Related>
+    HasOneOrMany<Model, Related>::createMany(
+            QVector<QVector<AttributeItem>> &&records) const
+    {
+        QVector<Related> instances;
+
+        for (auto &&record : records)
+            instances << create(std::move(record));
+
+        return instances;
     }
 
     template<class Model, class Related>

@@ -104,7 +104,7 @@ namespace Relations
         std::optional<Related>
         find(const QVariant &id, const QStringList &columns = {"*"});
         /*! Find a model by its primary key or return fresh model instance. */
-        Related findOrNew(const QVariant &id, const QStringList &columns = {"*"});
+        Related findOrNew(const QVariant &id, const QStringList &columns = {"*"}) const;
         /*! Find a model by its primary key or throw an exception. */
         Related findOrFail(const QVariant &id, const QStringList &columns = {"*"});
 
@@ -138,8 +138,11 @@ namespace Relations
         /*! Prevent the specified relations from being eager loaded. */
         Builder<Related> &without(const QString &relation);
 
+        // BUG all this can be const? omg 😅
         /*! Save a new model and return the instance. */
-        Related create(const QVector<AttributeItem> &attributes);
+        virtual Related create(const QVector<AttributeItem> &attributes) const;
+        /*! Save a new model and return the instance. */
+        virtual Related create(QVector<AttributeItem> &&attributes) const;
 
         /* Proxies to TinyBuilder -> BuildsQueries */
         /*! Execute the query and get the first result. */
@@ -370,6 +373,17 @@ namespace Relations
         { throw OrmLogicError("The 'saveMany' method is not implemented for this "
                               "relation type."); }
 
+        /*! Create a Collection of new instances of the related model. */
+        inline virtual QVector<Related>
+        createMany(const QVector<QVector<AttributeItem>> &) const
+        { throw OrmLogicError("The 'createMany' method is not implemented for this "
+                              "relation type."); }
+        /*! Create a Collection of new instances of the related model. */
+        inline virtual QVector<Related>
+        createMany(QVector<QVector<AttributeItem>> &&) const
+        { throw OrmLogicError("The 'createMany' method is not implemented for this "
+                              "relation type."); }
+
     protected:
         /*! Initialize a Relation instance. */
         inline void init() const
@@ -461,7 +475,8 @@ namespace Relations
 
     template<class Model, class Related>
     Related
-    Relation<Model, Related>::findOrNew(const QVariant &id, const QStringList &columns)
+    Relation<Model, Related>::findOrNew(const QVariant &id,
+                                        const QStringList &columns) const
     {
         return m_query->findOrNew(id, columns);
     }
@@ -547,9 +562,16 @@ namespace Relations
 
     template<class Model, class Related>
     Related
-    Relation<Model, Related>::create(const QVector<AttributeItem> &attributes)
+    Relation<Model, Related>::create(const QVector<AttributeItem> &attributes) const
     {
         return m_query->create(attributes);
+    }
+
+    template<class Model, class Related>
+    Related
+    Relation<Model, Related>::create(QVector<AttributeItem> &&attributes) const
+    {
+        return m_query->create(std::move(attributes));
     }
 
     template<class Model, class Related>

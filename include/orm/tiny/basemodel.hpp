@@ -449,7 +449,12 @@ namespace Relations {
         Model newFromBuilder(const QVector<AttributeItem> &attributes = {},
                              const std::optional<QString> connection = std::nullopt);
         /*! Create a new instance of the given model. */
-        Model newInstance(const QVector<AttributeItem> &attributes = {},
+        inline Model newInstance() { return newInstance({}); }
+        /*! Create a new instance of the given model. */
+        Model newInstance(const QVector<AttributeItem> &attributes,
+                          bool exists = false);
+        /*! Create a new instance of the given model. */
+        Model newInstance(QVector<AttributeItem> &&attributes,
                           bool exists = false);
         /*! Create a new pivot model instance. */
         template<typename PivotType = Relations::Pivot, typename Parent>
@@ -2417,6 +2422,23 @@ namespace Relations {
            instances of this current model. It is particularly useful during the
            hydration of new objects via the Eloquent query builder instances. */
         Model model(attributes);
+
+        model.exists = exists;
+        model.setConnection(getConnectionName());
+        model.setTable(getTable());
+
+        return model;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model
+    BaseModel<Model, AllRelations...>::newInstance(
+            QVector<AttributeItem> &&attributes, const bool exists)
+    {
+        /* This method just provides a convenient way for us to generate fresh model
+           instances of this current model. It is particularly useful during the
+           hydration of new objects via the Eloquent query builder instances. */
+        Model model(std::move(attributes));
 
         model.exists = exists;
         model.setConnection(getConnectionName());
