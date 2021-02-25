@@ -101,26 +101,30 @@ namespace Relations
         rawUpdate(const QVector<UpdateItem> &values = {}) const;
 
         /* TinyBuilder proxy methods */
-        std::optional<Model>
+        std::optional<Related>
         find(const QVariant &id, const QStringList &columns = {"*"});
         /*! Find a model by its primary key or return fresh model instance. */
-        Model findOrNew(const QVariant &id, const QStringList &columns = {"*"});
+        Related findOrNew(const QVariant &id, const QStringList &columns = {"*"});
         /*! Find a model by its primary key or throw an exception. */
-        Model findOrFail(const QVariant &id, const QStringList &columns = {"*"});
+        Related findOrFail(const QVariant &id, const QStringList &columns = {"*"});
 
         /*! Get the first record matching the attributes or instantiate it. */
-        Model firstOrNew(const QVector<WhereItem> &attributes = {},
+        Related firstOrNew(const QVector<WhereItem> &attributes = {},
                          const QVector<AttributeItem> &values = {});
         /*! Get the first record matching the attributes or create it. */
-        Model firstOrCreate(const QVector<WhereItem> &attributes = {},
+        Related firstOrCreate(const QVector<WhereItem> &attributes = {},
                             const QVector<AttributeItem> &values = {});
         /*! Execute the query and get the first result or throw an exception. */
-        Model firstOrFail(const QStringList &columns = {"*"});
+        Related firstOrFail(const QStringList &columns = {"*"});
 
         /*! Add a basic where clause to the query, and return the first result. */
-        std::optional<Model>
+        std::optional<Related>
         firstWhere(const QString &column, const QString &comparison,
                    const QVariant &value, const QString &condition = "and");
+        /*! Add a basic where clause to the query, and return the first result. */
+        std::optional<Related>
+        firstWhereEq(const QString &column, const QVariant &value,
+                     const QString &condition = "and");
 
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const QString &column);
@@ -135,7 +139,7 @@ namespace Relations
         Builder<Related> &without(const QString &relation);
 
         /*! Save a new model and return the instance. */
-        Model create(const QVector<AttributeItem> &attributes);
+        Related create(const QVector<AttributeItem> &attributes);
 
         /* Proxies to TinyBuilder -> BuildsQueries */
         /*! Execute the query and get the first result. */
@@ -449,28 +453,28 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    std::optional<Model>
+    std::optional<Related>
     Relation<Model, Related>::find(const QVariant &id, const QStringList &columns)
     {
         return m_query->find(id, columns);
     }
 
     template<class Model, class Related>
-    Model
+    Related
     Relation<Model, Related>::findOrNew(const QVariant &id, const QStringList &columns)
     {
         return m_query->findOrNew(id, columns);
     }
 
     template<class Model, class Related>
-    Model
+    Related
     Relation<Model, Related>::findOrFail(const QVariant &id, const QStringList &columns)
     {
         return m_query->findOrFail(id, columns);
     }
 
     template<class Model, class Related>
-    Model
+    Related
     Relation<Model, Related>::firstOrNew(const QVector<WhereItem> &attributes,
                                          const QVector<AttributeItem> &values)
     {
@@ -478,7 +482,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    Model
+    Related
     Relation<Model, Related>::firstOrCreate(const QVector<WhereItem> &attributes,
                                             const QVector<AttributeItem> &values)
     {
@@ -486,17 +490,25 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    Model Relation<Model, Related>::firstOrFail(const QStringList &columns)
+    Related Relation<Model, Related>::firstOrFail(const QStringList &columns)
     {
         return m_query->firstOrFail(columns);
     }
 
     template<class Model, class Related>
-    std::optional<Model>
+    std::optional<Related>
     Relation<Model, Related>::firstWhere(const QString &column, const QString &comparison,
                                          const QVariant &value, const QString &condition)
     {
         return m_query->firstWhere(column, comparison, value, condition);
+    }
+
+    template<class Model, class Related>
+    std::optional<Related>
+    Relation<Model, Related>::firstWhereEq(const QString &column, const QVariant &value,
+                                           const QString &condition)
+    {
+        return m_query->firstWhereEq(column, value, condition);
     }
 
     template<class Model, class Related>
@@ -534,7 +546,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    Model
+    Related
     Relation<Model, Related>::create(const QVector<AttributeItem> &attributes)
     {
         return m_query->create(attributes);
