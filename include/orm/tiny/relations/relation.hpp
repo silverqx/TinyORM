@@ -6,6 +6,7 @@
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 
+#include "orm/ormlogicerror.hpp"
 #include "orm/ormtypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -346,6 +347,16 @@ namespace Relations
         Builder<Related> &whereKey(const QVariant &id);
         /*! Add a where clause on the primary key to the query. */
         Builder<Related> &whereKeyNot(const QVariant &id);
+
+        /* Inserting operations on relation */
+        /*! Attach a model instance to the parent model. */
+        virtual inline bool save(Related &) const
+        { throw OrmLogicError("The 'save' method is not implemented for this "
+                              "relation type."); }
+        /*! Attach a collection of models to the parent instance. */
+        virtual inline QVector<Related> &saveMany(QVector<Related> &) const
+        { throw OrmLogicError("The 'saveMany' method is not implemented for this "
+                              "relation type."); }
 
     protected:
         /*! Initialize a Relation instance. */

@@ -81,7 +81,7 @@ void tst_QueryBuilder::from() const
 {
     auto builder = createQuery();
 
-    const auto tableEmpty = QStringLiteral("");
+    const auto tableEmpty = QString("");
     QCOMPARE(builder.getFrom(), tableEmpty);
 
     const auto tableTorrents = QStringLiteral("torrents");

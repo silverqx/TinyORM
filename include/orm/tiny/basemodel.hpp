@@ -59,6 +59,7 @@ namespace Relations {
     // TODO future try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
     // TODO future include every stl dependency in header files silverqx
     // TODO mystery, extern explicit instantiate BaseModel<Pivot> and BasePivot<Pivot> and don't include pivot.hpp at the end of the basemodel.hpp header file, I don't even know if this is possible silverqx
+    // TODO next BaseModel std::initializer_list ctor, after that I can create move methods for  Relation::saveMany/save and pass initializers to them silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
@@ -69,12 +70,12 @@ namespace Relations {
            /getRawAttributes(). */
         friend TinyBuilder<Model>;
 
-    protected:
-        BaseModel(const QVector<AttributeItem> &attributes = {});
 
     public:
         /*! The "type" of the primary key ID. */
         using KeyType = quint64;
+
+        BaseModel(const QVector<AttributeItem> &attributes = {});
 
         /* Static operations on a model instance */
         /*! Begin querying the model. */

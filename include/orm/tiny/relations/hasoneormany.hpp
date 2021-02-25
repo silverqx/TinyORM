@@ -25,9 +25,16 @@ namespace Orm::Tiny::Relations
 
         /*! Set the constraints for an eager load of the relation. */
         void addEagerConstraints(const QVector<Model> &models) const override;
+
+        /* Getters / Setters */
         /*! Get the key value of the parent's local key. */
-        QVariant getParentKey() const
-        { return this->m_parent.getAttribute(m_localKey); }
+        QVariant getParentKey() const;
+
+        /* Inserting operations on relation */
+        /*! Attach a model instance to the parent model. */
+        bool save(Related &model) const override;
+        /*! Attach a collection of models to the parent instance. */
+        QVector<Related> &saveMany(QVector<Related> &models) const override;
 
     protected:
         /*! Match the eagerly loaded results to their many parents. */
@@ -38,11 +45,17 @@ namespace Orm::Tiny::Relations
         template<typename RelationType>
         QHash<typename Model::KeyType, RelationType>
         buildDictionary(QVector<Related> &results) const;
+
+        /* Getters / Setters */
         /*! Get the plain foreign key. */
         QString getForeignKeyName() const;
         /*! Get the foreign key for the relationship. */
         inline const QString &getQualifiedForeignKeyName() const
         { return m_foreignKey; }
+
+        /* Inserting operations on relation */
+        /*! Set the foreign ID for creating a related model. */
+        void setForeignAttributesForCreate(Related &model) const;
 
         /* Much safer to make a copy here than save references, original objects get
            out of scope, because they are defined in member function blocks. */
@@ -82,6 +95,31 @@ namespace Orm::Tiny::Relations
     {
         this->m_query->getQuery().whereIn(m_foreignKey,
                                           this->getKeys(models, m_localKey));
+    }
+
+    template<class Model, class Related>
+    QVariant HasOneOrMany<Model, Related>::getParentKey() const
+    {
+        return this->m_parent.getAttribute(m_localKey);
+    }
+
+    // NOTE api different silverqx
+    template<class Model, class Related>
+    bool HasOneOrMany<Model, Related>::save(Related &model) const
+    {
+        setForeignAttributesForCreate(model);
+
+        return model.save();
+    }
+
+    template<class Model, class Related>
+    QVector<Related> &
+    HasOneOrMany<Model, Related>::saveMany(QVector<Related> &models) const
+    {
+        for (auto &model : models)
+            save(model);
+
+        return models;
     }
 
     template<class Model, class Related>
@@ -133,6 +171,13 @@ namespace Orm::Tiny::Relations
         const auto segments = getQualifiedForeignKeyName().split(QChar('.'));
 
         return segments.last();
+    }
+
+    template<class Model, class Related>
+    void
+    HasOneOrMany<Model, Related>::setForeignAttributesForCreate(Related &model) const
+    {
+        model.setAttribute(getForeignKeyName(), getParentKey());
     }
 
 } // namespace Orm::Tiny::Relations

@@ -500,7 +500,7 @@ QString Grammar::removeLeadingBoolean(QString statement) const
     return statement.replace(
                 QRegularExpression(QStringLiteral("^(and |or )"),
                                    QRegularExpression::CaseInsensitiveOption),
-                QStringLiteral(""));
+                "");
 }
 
 QString Grammar::compileInsert(const QueryBuilder &query, const QVector<QVariantMap> &values,
@@ -509,7 +509,7 @@ QString Grammar::compileInsert(const QueryBuilder &query, const QVector<QVariant
     Q_ASSERT(values.size() > 0);
 
     return QStringLiteral("insert%1 into %2 (%3) values %4").arg(
-                ignore ? QStringLiteral(" ignore") : QStringLiteral(""),
+                ignore ? QStringLiteral(" ignore") : "",
                 query.getFrom(),
                 // Columns are obtained only from a first QMap
                 columnize(values.at(0).keys()),

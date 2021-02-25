@@ -52,10 +52,10 @@ ConnectionFactory::parseConfig(QVariantHash &config, const QString &name) const
     normalizeDriverName(config);
 
     if (!config.contains("database"))
-        config.insert("database", QStringLiteral(""));
+        config.insert("database", QString(""));
 
     if (!config.contains("prefix"))
-        config.insert("prefix", QStringLiteral(""));
+        config.insert("prefix", QString(""));
 
     if (!config.contains("options"))
         config.insert("options", QVariantHash());
@@ -66,7 +66,7 @@ ConnectionFactory::parseConfig(QVariantHash &config, const QString &name) const
 void ConnectionFactory::normalizeDriverName(QVariantHash &config) const
 {
     if (!config.contains("driver"))
-        config.insert("driver", QStringLiteral(""));
+        config.insert("driver", QString(""));
 
     else {
         auto &driver = config["driver"];
