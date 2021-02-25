@@ -20,8 +20,8 @@ namespace Orm::Tiny::Relations
     public:
         /*! Instantiate and initialize a new HasOne instance. */
         static std::unique_ptr<Relation<Model, Related>>
-        create(std::unique_ptr<Related> &&related, Model &parent,
-               const QString &foreignKey, const QString &localKey);
+        instance(std::unique_ptr<Related> &&related, Model &parent,
+                 const QString &foreignKey, const QString &localKey);
 
         /*! Initialize the relation on a set of models. */
         QVector<Model> &
@@ -46,7 +46,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     std::unique_ptr<Relation<Model, Related>>
-    HasOne<Model, Related>::create(std::unique_ptr<Related> &&related, Model &parent,
+    HasOne<Model, Related>::instance(std::unique_ptr<Related> &&related, Model &parent,
                                    const QString &foreignKey, const QString &localKey)
     {
         auto instance = std::unique_ptr<HasOne<Model, Related>>(

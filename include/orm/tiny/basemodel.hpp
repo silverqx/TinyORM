@@ -740,7 +740,7 @@ namespace Relations {
         inline std::unique_ptr<Relations::Relation<Model, Related>>
         newHasOne(std::unique_ptr<Related> &&related, Model &parent,
                   const QString &foreignKey, const QString &localKey) const
-        { return Relations::HasOne<Model, Related>::create(
+        { return Relations::HasOne<Model, Related>::instance(
                         std::move(related), parent, foreignKey, localKey); }
         /*! Instantiate a new BelongsTo relationship. */
         template<typename Related>
@@ -748,14 +748,14 @@ namespace Relations {
         newBelongsTo(std::unique_ptr<Related> &&related,
                      Model &child, const QString &foreignKey,
                      const QString &ownerKey, const QString &relation) const
-        { return Relations::BelongsTo<Model, Related>::create(
+        { return Relations::BelongsTo<Model, Related>::instance(
                         std::move(related), child, foreignKey, ownerKey, relation); }
         /*! Instantiate a new HasMany relationship. */
         template<typename Related>
         inline std::unique_ptr<Relations::Relation<Model, Related>>
         newHasMany(std::unique_ptr<Related> &&related, Model &parent,
                    const QString &foreignKey, const QString &localKey) const
-        { return Relations::HasMany<Model, Related>::create(
+        { return Relations::HasMany<Model, Related>::instance(
                         std::move(related), parent, foreignKey, localKey); }
         /*! Instantiate a new BelongsToMany relationship. */
         template<typename Related, typename PivotType>
@@ -764,7 +764,7 @@ namespace Relations {
                          const QString &table, const QString &foreignPivotKey,
                          const QString &relatedPivotKey, const QString &parentKey,
                          const QString &relatedKey, const QString &relation) const
-        { return Relations::BelongsToMany<Model, Related, PivotType>::create(
+        { return Relations::BelongsToMany<Model, Related, PivotType>::instance(
                         std::move(related), parent, table, foreignPivotKey,
                         relatedPivotKey, parentKey, relatedKey, relation); }
 

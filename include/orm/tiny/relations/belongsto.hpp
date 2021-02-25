@@ -25,9 +25,9 @@ namespace Orm::Tiny::Relations
     public:
         /*! Instantiate and initialize a new BelongsTo instance. */
         static std::unique_ptr<Relation<Model, Related>>
-        create(std::unique_ptr<Related> &&related,
-               Model &child, const QString &foreignKey,
-               const QString &ownerKey, const QString &relation);
+        instance(std::unique_ptr<Related> &&related,
+                 Model &child, const QString &foreignKey,
+                 const QString &ownerKey, const QString &relation);
 
         /*! Set the base constraints on the relation query. */
         void addConstraints() const override;
@@ -83,7 +83,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     std::unique_ptr<Relation<Model, Related>>
-    BelongsTo<Model, Related>::create(std::unique_ptr<Related> &&related,
+    BelongsTo<Model, Related>::instance(std::unique_ptr<Related> &&related,
                                       Model &child, const QString &foreignKey,
                                       const QString &ownerKey, const QString &relation)
     {

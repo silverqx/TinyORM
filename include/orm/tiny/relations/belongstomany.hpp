@@ -31,10 +31,10 @@ namespace Orm::Tiny::Relations
     public:
         /*! Instantiate and initialize a new BelongsToMany instance. */
         static std::unique_ptr<Relation<Model, Related>>
-        create(std::unique_ptr<Related> &&related, Model &parent,
-               const QString &table = "", const QString &foreignPivotKey = "",
-               const QString &relatedPivotKey = "", const QString &parentKey = "",
-               const QString &relatedKey = "", const QString &relation = "");
+        instance(std::unique_ptr<Related> &&related, Model &parent,
+                 const QString &table = "", const QString &foreignPivotKey = "",
+                 const QString &relatedPivotKey = "", const QString &parentKey = "",
+                 const QString &relatedKey = "", const QString &relation = "");
 
         /*! Set the base constraints on the relation query. */
         void addConstraints() const override;
@@ -189,7 +189,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     std::unique_ptr<Relation<Model, Related>>
-    BelongsToMany<Model, Related, PivotType>::create(
+    BelongsToMany<Model, Related, PivotType>::instance(
             std::unique_ptr<Related> &&related, Model &parent,
             const QString &table, const QString &foreignPivotKey,
             const QString &relatedPivotKey, const QString &parentKey,
