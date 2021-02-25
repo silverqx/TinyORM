@@ -32,9 +32,13 @@ namespace Orm::Tiny::Relations
 
         /* Inserting operations on relation */
         /*! Attach a model instance to the parent model. */
-        bool save(Related &model) const override;
+        std::tuple<bool, Related &> save(Related &model) const override;
+        /*! Attach a model instance to the parent model. */
+        std::tuple<bool, Related> save(Related &&model) const override;
         /*! Attach a collection of models to the parent instance. */
         QVector<Related> &saveMany(QVector<Related> &models) const override;
+        /*! Attach a collection of models to the parent instance. */
+        QVector<Related> saveMany(QVector<Related> &&models) const override;
 
     protected:
         /*! Match the eagerly loaded results to their many parents. */
@@ -105,16 +109,36 @@ namespace Orm::Tiny::Relations
 
     // NOTE api different silverqx
     template<class Model, class Related>
-    bool HasOneOrMany<Model, Related>::save(Related &model) const
+    std::tuple<bool, Related &>
+    HasOneOrMany<Model, Related>::save(Related &model) const
     {
         setForeignAttributesForCreate(model);
 
-        return model.save();
+        return {model.save(), model};
+    }
+
+    template<class Model, class Related>
+    std::tuple<bool, Related>
+    HasOneOrMany<Model, Related>::save(Related &&model) const
+    {
+        setForeignAttributesForCreate(model);
+
+        return {model.save(), model};
     }
 
     template<class Model, class Related>
     QVector<Related> &
     HasOneOrMany<Model, Related>::saveMany(QVector<Related> &models) const
+    {
+        for (auto &model : models)
+            save(model);
+
+        return models;
+    }
+
+    template<class Model, class Related>
+    QVector<Related>
+    HasOneOrMany<Model, Related>::saveMany(QVector<Related> &&models) const
     {
         for (auto &model : models)
             save(model);

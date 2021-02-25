@@ -33,38 +33,79 @@ Todo categories:
 
 Common:
 
- - api different     : different api than Laravel's Eloquent
- - docs              : document code or update markdown documentation
- - dilemma           : some sort of a fuckup
- - duplicate         : duplicate code
- - future            : task which has lower priority, because still much to do
- - mistake           : bad decision during prototyping 😭
- - mystery           : don't know why that stuff is happening, find out what's up
- - now               : do it before commit
- - next              : next thing in the row to do after commit
- - perf              : performance
- - production        : check before deploy to production
- - security          : self explaining
- - test              : tasks in auto tests
- - types             : juggling with c++ types
+ - api different      : different api than Laravel's Eloquent
+ - docs               : document code or update markdown documentation
+ - dilemma            : some sort of a fuckup
+ - duplicate          : duplicate code
+ - future             : task which has lower priority, because still much to do
+ - mistake            : bad decision during prototyping 😭
+ - mystery            : don't know why that stuff is happening, find out what's up
+ - now                : do it before commit
+ - next               : next thing in the row to do after commit
+ - perf               : performance
+ - production         : check before deploy to production
+ - security           : self explaining
+ - test               : tasks in auto tests
+ - types              : juggling with c++ types
 
 Features related/to implement:
 
- - guarded           : related to the mass assignable feature
- - multidriver       : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
- - postgres          : specific to PostgreSQL server
- - primarykey dilema : different types for primary keys
- - scopes            : query scopes
+ - default attributes : Default Attribute Values
+ - guarded            : related to the mass assignable feature
+ - multidriver        : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
+ - postgres           : specific to PostgreSQL server
+ - primarykey dilema  : different types for primary keys
+ - scopes             : query scopes
 
 
-IsModel:
---------
+constructor copy/move snippet:
+------------------------------
 
-/*! Helper class to simply check whether a model is model, eg by std::is_base_of<>. */
-struct IsModel
-{};
+Torrent(const Torrent &torrent)
+    : BaseModel(torrent)
+{
+    qDebug() << "Torrent copy ctor";
+}
+Torrent &operator=(const Torrent &torrent)
+{
+    BaseModel::operator=(torrent);
+    qDebug() << "Torrent copy assign";
+    return *this;
+}
+Torrent(Torrent &&torrent)
+    : BaseModel(std::move(torrent))
+{
+    qDebug() << "Torrent move ctor";
+}
+Torrent &operator=(Torrent &&torrent)
+{
+    BaseModel::operator=(std::move(torrent));
+    qDebug() << "Torrent move assign";
+    return *this;
+}
 
-class BaseModel : public IsModel
+
+conversions:
+------------
+
+Makes possible to assign QVector<AttributeItem> to the Model, 
+or implicitly converts a QVector<AttributeItem> to Model:
+
+BaseModel(const QVector<AttributeItem> &attributes);
+BaseModel(QVector<AttributeItem> &&attributes);
+
+--
+Allows initialize the Model with QVector<AttributeItem>:
+
+BaseModel(std::initializer_list<AttributeItem> attributes)
+    : BaseModel(QVector<AttributeItem> {attributes.begin(), attributes.end()})
+{}
+
+--
+Makes possible to assign the Model to the QVector<AttributeItem>, 
+or converts the Model to the QVector<AttributeItem>:
+
+operator QVector<AttributeItem>() const;
 
 
 Ranges transform:
@@ -77,34 +118,6 @@ const auto relationToWithItem = [](const auto &relation) -> WithItem
 
 builder->with(relations | ranges::views::transform(relationToWithItem)
                         | ranges::to<QVector<WithItem>>());
-
-
-Relation store:
----------------
-
-template<typename Model, typename ...AllRelations>
-template<typename Related>
-void BaseModel<Model, AllRelations...>::relationVisited()
-{
-    if (dynamic_cast<PushStore *>(m_relationStore) == nullptr)
-        eagerVisited<Related>();
-    else
-        pushVisited<Related>();
-}
-
-
-Fuckin relationVisited() in u_relations data member:
------------------------------------------------------
-
-std::invoke(model().u_relations.find(relation.name).value().visitor);
-
-struct RelationMethods
-{
-    std::any method;
-    // This only works for eager load, but doesn't for push silverqx
-    std::function<void()> visitor;
-//    std::any visitor;
-};
 
 
 DatabaseConnection config:
@@ -386,85 +399,6 @@ If you have defined a many-to-many relationship that uses a custom pivot model, 
      * @var bool
      */
     public $incrementing = true;
-
-
-DatabaseConnection:
----
-
-DatabaseConnection(const QString &database = "", const QString tablePrefix = "",
-                   const QVariantHash &config = {});
-
-DatabaseConnection::DatabaseConnection(const QString &database, const QString tablePrefix,
-                                       const QVariantHash &config)
-    /* First we will setup the default properties. We keep track of the DB
-       name we are connected to since it is needed when some reflective
-       type commands are run such as checking whether a table exists. */
-    : m_database(database)
-    , m_tablePrefix(tablePrefix)
-    , m_config(config)
-{
-//    auto db = QSqlDatabase::addDatabase("QMYSQL", CONNECTION_NAME);
-//    db.setHostName(m_config.find("host").value().toString());
-//    db.setDatabaseName(m_config.find("database").value().toString());
-//    db.setUserName(m_config.find("username").value().toString());
-//    db.setPassword(m_config.find("password").value().toString());
-
-//    if (m_config.contains("options"))
-//        db.setConnectOptions(m_config.find("options").value().toString());
-
-//    if (!db.open()) {
-//        // TODO next solve how to solve this situation, how to inform end user, exception vs error code, ... silverqx
-//        qDebug() << "Connect to DB failed :"
-//                 << db.lastError().text();
-//        return;
-//    }
-
-    // Set the connection character set and collation
-//    if (config.contains("charset")) {
-//        const auto collation = config.value("collation").toString();
-//        const auto &collate = QStringLiteral(" collate '%1'").arg(collation);
-//        select(QStringLiteral("set names '%1'%2")
-//               .arg(config.find("charset").value().toString(),
-//                    collate.isEmpty() ? "" : collate));
-//    }
-
-    /* Next, we will check to see if a timezone has been specified in this config
-       and if it has we will issue a statement to modify the timezone with the
-       database. Setting this DB timezone is an optional configuration item. */
-//    if (config.contains("timezone"))
-//        select(QStringLiteral("set time_zone='%1'")
-//               .arg(config.find("timezone").value().toString()));
-
-    // Set the modes for the connection.
-//    if (config.contains("strict")
-//        && config.find("strict").value().toBool()
-//    ) {
-//        // Obtain MySQL version
-//        auto [ok, query] = selectOne("select version()");
-
-//        if (ok) {
-//            QString strictMode;
-
-//            /* NO_AUTO_CREATE_USER was removed in 8.0.11 */
-//            if (QVersionNumber::fromString(query.value(0).toString())
-//                >= QVersionNumber(8, 0, 11)
-//            )
-//                strictMode =
-//                        "set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,"
-//                        "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
-//                        "NO_ENGINE_SUBSTITUTION'";
-//            else
-//                strictMode =
-//                        "set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,"
-//                        "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
-//                        "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'";
-
-//            select(strictMode);
-//        }
-//    }
-//    else
-//        select("set session sql_mode='NO_ENGINE_SUBSTITUTION'");
-}
 
 
 EntityManager.hpp:

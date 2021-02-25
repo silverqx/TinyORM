@@ -75,7 +75,19 @@ namespace Relations {
         /*! The "type" of the primary key ID. */
         using KeyType = quint64;
 
-        BaseModel(const QVector<AttributeItem> &attributes = {});
+        /*! Create a new TinORM model instance. */
+        BaseModel();
+
+        /*! Create a new TinORM model instance from attributes
+            (converting constructor). */
+        BaseModel(const QVector<AttributeItem> &attributes);
+        /*! Create a new TinORM model instance from attributes
+            (converting constructor). */
+        BaseModel(QVector<AttributeItem> &&attributes);
+
+        /*! Create a new TinORM model instance from attributes
+            (list initialization). */
+        BaseModel(std::initializer_list<AttributeItem> attributes);
 
         /* Static operations on a model instance */
         /*! Begin querying the model. */
@@ -413,6 +425,8 @@ namespace Relations {
 
         /*! Fill the model with an array of attributes. */
         Model &fill(const QVector<AttributeItem> &attributes);
+        /*! Fill the model with an array of attributes. */
+        Model &fill(QVector<AttributeItem> &&attributes);
         /*! Fill the model with an array of attributes. Force mass assignment. */
         Model &forceFill(const QVector<AttributeItem> &attributes);
 
@@ -940,15 +954,38 @@ namespace Relations {
     };
 
     template<typename Model, typename ...AllRelations>
-    BaseModel<Model, AllRelations...>::BaseModel(const QVector<AttributeItem> &attributes)
+    BaseModel<Model, AllRelations...>::BaseModel()
     {
         // Compile time check if a primary key type is supported by a QVariant
         qMetaTypeId<typename Model::KeyType>();
 
+        // TODO default attributes, update comment when done silverqx
+        /* It is taken into account only when attributes are initialized
+           in the derived model class, but Default attributes are not yet
+           implemented, but I'll keep it active anyway. */
         syncOriginal();
+    }
 
+    template<typename Model, typename ...AllRelations>
+    BaseModel<Model, AllRelations...>::BaseModel(const QVector<AttributeItem> &attributes)
+        : BaseModel()
+    {
         fill(attributes);
     }
+
+    template<typename Model, typename ...AllRelations>
+    BaseModel<Model, AllRelations...>::BaseModel(QVector<AttributeItem> &&attributes)
+        : BaseModel()
+    {
+        fill(std::move(attributes));
+    }
+
+    template<typename Model, typename ...AllRelations>
+    BaseModel<Model, AllRelations...>::BaseModel(
+            std::initializer_list<AttributeItem> attributes
+    )
+        : BaseModel(QVector<AttributeItem>(attributes.begin(), attributes.end()))
+    {}
 
     template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
@@ -2297,6 +2334,17 @@ namespace Relations {
         // TODO guarded silverqx
         for (const auto &attribute : attributes)
             setAttribute(attribute.key, attribute.value);
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::fill(QVector<AttributeItem> &&attributes)
+    {
+        // TODO guarded silverqx
+        for (auto &attribute : attributes)
+            setAttribute(std::move(attribute.key), std::move(attribute.value));
 
         return model();
     }

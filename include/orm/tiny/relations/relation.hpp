@@ -66,7 +66,7 @@ namespace Relations
         inline QVector<Related> getEager() const
         { return get(); }
         /*! Execute the query as a "select" statement. */
-        virtual inline QVector<Related> get(const QStringList &columns = {"*"}) const
+        inline virtual QVector<Related> get(const QStringList &columns = {"*"}) const
         { return m_query->get(columns); }
 
         /* Getters / Setters */
@@ -350,11 +350,19 @@ namespace Relations
 
         /* Inserting operations on relation */
         /*! Attach a model instance to the parent model. */
-        virtual inline bool save(Related &) const
+        inline virtual std::tuple<bool, Related &> save(Related &) const
+        { throw OrmLogicError("The 'save' method is not implemented for this "
+                              "relation type."); }
+        /*! Attach a model instance to the parent model. */
+        inline virtual std::tuple<bool, Related> save(Related &&) const
         { throw OrmLogicError("The 'save' method is not implemented for this "
                               "relation type."); }
         /*! Attach a collection of models to the parent instance. */
-        virtual inline QVector<Related> &saveMany(QVector<Related> &) const
+        inline virtual QVector<Related> &saveMany(QVector<Related> &) const
+        { throw OrmLogicError("The 'saveMany' method is not implemented for this "
+                              "relation type."); }
+        /*! Attach a collection of models to the parent instance. */
+        inline virtual QVector<Related> saveMany(QVector<Related> &&) const
         { throw OrmLogicError("The 'saveMany' method is not implemented for this "
                               "relation type."); }
 
