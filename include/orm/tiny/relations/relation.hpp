@@ -102,43 +102,42 @@ namespace Relations
 
         /* TinyBuilder proxy methods */
         std::optional<Related>
-        find(const QVariant &id, const QStringList &columns = {"*"});
+        find(const QVariant &id, const QStringList &columns = {"*"}) const;
         /*! Find a model by its primary key or return fresh model instance. */
         Related findOrNew(const QVariant &id, const QStringList &columns = {"*"}) const;
         /*! Find a model by its primary key or throw an exception. */
-        Related findOrFail(const QVariant &id, const QStringList &columns = {"*"});
+        Related findOrFail(const QVariant &id, const QStringList &columns = {"*"}) const;
 
         /*! Get the first record matching the attributes or instantiate it. */
         Related firstOrNew(const QVector<WhereItem> &attributes = {},
-                         const QVector<AttributeItem> &values = {});
+                         const QVector<AttributeItem> &values = {}) const;
         /*! Get the first record matching the attributes or create it. */
         Related firstOrCreate(const QVector<WhereItem> &attributes = {},
-                            const QVector<AttributeItem> &values = {});
+                            const QVector<AttributeItem> &values = {}) const;
         /*! Execute the query and get the first result or throw an exception. */
-        Related firstOrFail(const QStringList &columns = {"*"});
+        Related firstOrFail(const QStringList &columns = {"*"}) const;
 
         /*! Add a basic where clause to the query, and return the first result. */
         std::optional<Related>
         firstWhere(const QString &column, const QString &comparison,
-                   const QVariant &value, const QString &condition = "and");
+                   const QVariant &value, const QString &condition = "and") const;
         /*! Add a basic where clause to the query, and return the first result. */
         std::optional<Related>
         firstWhereEq(const QString &column, const QVariant &value,
-                     const QString &condition = "and");
+                     const QString &condition = "and") const;
 
         /*! Get a single column's value from the first result of a query. */
-        QVariant value(const QString &column);
+        QVariant value(const QString &column) const;
 
         /*! Set the relationships that should be eager loaded. */
-        Builder<Related> &with(const QVector<WithItem> &relations);
+        Builder<Related> &with(const QVector<WithItem> &relations) const;
         /*! Set the relationships that should be eager loaded. */
-        Builder<Related> &with(const QString &relation);
+        Builder<Related> &with(const QString &relation) const;
         /*! Prevent the specified relations from being eager loaded. */
-        Builder<Related> &without(const QVector<QString> &relations);
+        Builder<Related> &without(const QVector<QString> &relations) const;
         /*! Prevent the specified relations from being eager loaded. */
-        Builder<Related> &without(const QString &relation);
+        Builder<Related> &without(const QString &relation) const;
 
-        // BUG all this can be const? omg 😅
         /*! Save a new model and return the instance. */
         virtual Related create(const QVector<AttributeItem> &attributes) const;
         /*! Save a new model and return the instance. */
@@ -146,7 +145,7 @@ namespace Relations
 
         /* Proxies to TinyBuilder -> BuildsQueries */
         /*! Execute the query and get the first result. */
-        std::optional<Model> first(const QStringList &columns = {"*"});
+        std::optional<Model> first(const QStringList &columns = {"*"}) const;
 
         /* Proxies to TinyBuilder -> QueryBuilder */
         /* Insert, Update, Delete */
@@ -161,199 +160,208 @@ namespace Relations
         update(const QVector<UpdateItem> &values) const;
 
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> remove();
+        std::tuple<int, QSqlQuery> remove() const;
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> deleteModels();
+        std::tuple<int, QSqlQuery> deleteModels() const;
 
         /*! Run a truncate statement on the table. */
-        std::tuple<bool, QSqlQuery> truncate();
+        std::tuple<bool, QSqlQuery> truncate() const;
 
         /* Select */
         /*! Set the columns to be selected. */
-        Builder<Related> &select(const QStringList columns = {"*"});
+        Builder<Related> &select(const QStringList columns = {"*"}) const;
         /*! Set the column to be selected. */
-        Builder<Related> &select(const QString column);
+        Builder<Related> &select(const QString column) const;
         /*! Add new select columns to the query. */
-        Builder<Related> &addSelect(const QStringList &columns);
+        Builder<Related> &addSelect(const QStringList &columns) const;
         /*! Add a new select column to the query. */
-        Builder<Related> &addSelect(const QString &column);
+        Builder<Related> &addSelect(const QString &column) const;
 
         /*! Force the query to only return distinct results. */
-        Builder<Related> &distinct();
+        Builder<Related> &distinct() const;
 
         /*! Add a join clause to the query. */
         Builder<Related> &join(const QString &table, const QString &first,
                                const QString &comparison, const QString &second,
-                               const QString &type = "inner", bool where = false);
+                               const QString &type = "inner", bool where = false) const;
         /*! Add an advanced join clause to the query. */
         Builder<Related> &join(const QString &table,
                                const std::function<void(JoinClause &)> &callback,
-                               const QString &type = "inner");
+                               const QString &type = "inner") const;
         /*! Add a "join where" clause to the query. */
         Builder<Related> &joinWhere(const QString &table, const QString &first,
                                     const QString &comparison, const QString &second,
-                                    const QString &type = "inner");
+                                    const QString &type = "inner") const;
         /*! Add a left join to the query. */
-        Builder<Related> &leftJoin(const QString &table, const QString &first,
-                                   const QString &comparison, const QString &second);
+        Builder<Related> &leftJoin(
+                const QString &table, const QString &first,
+                const QString &comparison, const QString &second) const;
         /*! Add an advanced left join to the query. */
-        Builder<Related> &leftJoin(const QString &table,
-                                   const std::function<void(JoinClause &)> &callback);
+        Builder<Related> &leftJoin(
+                const QString &table,
+                const std::function<void(JoinClause &)> &callback) const;
         /*! Add a "join where" clause to the query. */
         Builder<Related> &leftJoinWhere(const QString &table, const QString &first,
                                         const QString &comparison,
-                                        const QString &second);
+                                        const QString &second) const;
         /*! Add a right join to the query. */
-        Builder<Related> &rightJoin(const QString &table, const QString &first,
-                                    const QString &comparison, const QString &second);
+        Builder<Related> &rightJoin(
+                const QString &table, const QString &first,
+                const QString &comparison, const QString &second) const;
         /*! Add an advanced right join to the query. */
-        Builder<Related> &rightJoin(const QString &table,
-                                    const std::function<void(JoinClause &)> &callback);
+        Builder<Related> &rightJoin(
+                const QString &table,
+                const std::function<void(JoinClause &)> &callback) const;
         /*! Add a "right join where" clause to the query. */
         Builder<Related> &rightJoinWhere(const QString &table, const QString &first,
                                          const QString &comparison,
-                                         const QString &second);
+                                         const QString &second) const;
         /*! Add a "cross join" clause to the query. */
-        Builder<Related> &crossJoin(const QString &table, const QString &first,
-                                    const QString &comparison, const QString &second);
+        Builder<Related> &crossJoin(
+                const QString &table, const QString &first,
+                const QString &comparison, const QString &second) const;
         /*! Add an advanced "cross join" clause to the query. */
-        Builder<Related> &crossJoin(const QString &table,
-                                    const std::function<void(JoinClause &)> &callback);
+        Builder<Related> &crossJoin(
+                const QString &table,
+                const std::function<void(JoinClause &)> &callback) const;
 
         /*! Add a basic where clause to the query. */
-        Builder<Related> &where(const QString &column, const QString &comparison,
-                                const QVariant &value, const QString &condition = "and");
+        Builder<Related> &where(
+                const QString &column, const QString &comparison,
+                const QVariant &value, const QString &condition = "and") const;
         /*! Add an "or where" clause to the query. */
         Builder<Related> &orWhere(const QString &column, const QString &comparison,
-                                  const QVariant &value);
+                                  const QVariant &value) const;
         /*! Add a basic equal where clause to the query. */
         Builder<Related> &whereEq(const QString &column, const QVariant &value,
-                                  const QString &condition = "and");
+                                  const QString &condition = "and") const;
         /*! Add an equal "or where" clause to the query. */
-        Builder<Related> &orWhereEq(const QString &column, const QVariant &value);
+        Builder<Related> &orWhereEq(const QString &column, const QVariant &value) const;
         /*! Add a nested where clause to the query. */
         Builder<Related> &where(const std::function<void(Builder<Related> &)> &callback,
-                                const QString &condition = "and");
+                                const QString &condition = "and") const;
         /*! Add a nested "or where" clause to the query. */
         Builder<Related> &orWhere(
-                const std::function<void(Builder<Related> &)> &callback);
+                const std::function<void(Builder<Related> &)> &callback) const;
 
         /*! Add an array of basic where clauses to the query. */
         Builder<Related> &where(const QVector<WhereItem> &values,
-                                const QString &condition = "and");
+                                const QString &condition = "and") const;
         /*! Add an array of basic "or where" clauses to the query. */
-        Builder<Related> &orWhere(const QVector<WhereItem> &values);
+        Builder<Related> &orWhere(const QVector<WhereItem> &values) const;
 
         /*! Add an array of where clauses comparing two columns to the query. */
         Builder<Related> &whereColumn(const QVector<WhereColumnItem> &values,
-                                      const QString &condition = "and");
+                                      const QString &condition = "and") const;
         /*! Add an array of "or where" clauses comparing two columns to the query. */
-        Builder<Related> &orWhereColumn(const QVector<WhereColumnItem> &values);
+        Builder<Related> &orWhereColumn(const QVector<WhereColumnItem> &values) const;
 
         /*! Add a "where" clause comparing two columns to the query. */
         Builder<Related> &whereColumn(const QString &first, const QString &comparison,
                                       const QString &second,
-                                      const QString &condition = "and");
+                                      const QString &condition = "and") const;
         /*! Add a "or where" clause comparing two columns to the query. */
         Builder<Related> &orWhereColumn(const QString &first, const QString &comparison,
-                                        const QString &second);
+                                        const QString &second) const;
         /*! Add an equal "where" clause comparing two columns to the query. */
         Builder<Related> &whereColumnEq(const QString &first, const QString &second,
-                                        const QString &condition = "and");
+                                        const QString &condition = "and") const;
         /*! Add an equal "or where" clause comparing two columns to the query. */
-        Builder<Related> &orWhereColumnEq(const QString &first, const QString &second);
+        Builder<Related> &orWhereColumnEq(const QString &first,
+                                          const QString &second) const;
 
         /*! Add a "where in" clause to the query. */
-        Builder<Related> &whereIn(const QString &column, const QVector<QVariant> &values,
-                                  const QString &condition = "and", bool nope = false);
+        Builder<Related> &whereIn(
+                const QString &column, const QVector<QVariant> &values,
+                const QString &condition = "and", bool nope = false) const;
         /*! Add an "or where in" clause to the query. */
         Builder<Related> &orWhereIn(const QString &column,
-                                    const QVector<QVariant> &values);
+                                    const QVector<QVariant> &values) const;
         /*! Add a "where not in" clause to the query. */
         Builder<Related> &whereNotIn(const QString &column,
                                      const QVector<QVariant> &values,
-                                     const QString &condition = "and");
+                                     const QString &condition = "and") const;
         /*! Add an "or where not in" clause to the query. */
         Builder<Related> &orWhereNotIn(const QString &column,
-                                       const QVector<QVariant> &values);
+                                       const QVector<QVariant> &values) const;
 
         /*! Add a "where null" clause to the query. */
         Builder<Related> &whereNull(const QStringList &columns = {"*"},
                                     const QString &condition = "and",
-                                    bool nope = false);
+                                    bool nope = false) const;
         /*! Add a "where null" clause to the query. */
         Builder<Related> &whereNull(const QString &column,
                                     const QString &condition = "and",
-                                    bool nope = false);
+                                    bool nope = false) const;
         /*! Add an "or where null" clause to the query. */
-        Builder<Related> &orWhereNull(const QStringList &columns = {"*"});
+        Builder<Related> &orWhereNull(const QStringList &columns = {"*"}) const;
         /*! Add an "or where null" clause to the query. */
-        Builder<Related> &orWhereNull(const QString &column);
+        Builder<Related> &orWhereNull(const QString &column) const;
         /*! Add a "where not null" clause to the query. */
         Builder<Related> &whereNotNull(const QStringList &columns = {"*"},
-                                       const QString &condition = "and");
+                                       const QString &condition = "and") const;
         /*! Add a "where not null" clause to the query. */
         Builder<Related> &whereNotNull(const QString &column,
-                                       const QString &condition = "and");
+                                       const QString &condition = "and") const;
         /*! Add an "or where not null" clause to the query. */
-        Builder<Related> &orWhereNotNull(const QStringList &columns = {"*"});
+        Builder<Related> &orWhereNotNull(const QStringList &columns = {"*"}) const;
         /*! Add an "or where not null" clause to the query. */
-        Builder<Related> &orWhereNotNull(const QString &column);
+        Builder<Related> &orWhereNotNull(const QString &column) const;
 
         /*! Add a "group by" clause to the query. */
-        Builder<Related> &groupBy(const QStringList &groups);
+        Builder<Related> &groupBy(const QStringList &groups) const;
         /*! Add a "group by" clause to the query. */
-        Builder<Related> &groupBy(const QString &group);
+        Builder<Related> &groupBy(const QString &group) const;
 
         /*! Add a "having" clause to the query. */
         Builder<Related> &having(const QString &column, const QString &comparison,
                                  const QVariant &value,
-                                 const QString &condition = "and");
+                                 const QString &condition = "and") const;
         /*! Add an "or having" clause to the query. */
         Builder<Related> &orHaving(const QString &column, const QString &comparison,
-                                   const QVariant &value);
+                                   const QVariant &value) const;
 
         /*! Add an "order by" clause to the query. */
         Builder<Related> &orderBy(const QString &column,
-                                  const QString &direction = "asc");
+                                  const QString &direction = "asc") const;
         /*! Add a descending "order by" clause to the query. */
-        Builder<Related> &orderByDesc(const QString &column);
+        Builder<Related> &orderByDesc(const QString &column) const;
         /*! Add an "order by" clause for a timestamp to the query. */
-        Builder<Related> &latest(const QString &column = "");
+        Builder<Related> &latest(const QString &column = "") const;
         /*! Add an "order by" clause for a timestamp to the query. */
-        Builder<Related> &oldest(const QString &column = "");
+        Builder<Related> &oldest(const QString &column = "") const;
         /*! Remove all existing orders. */
-        Builder<Related> &reorder();
+        Builder<Related> &reorder() const;
         /*! Remove all existing orders and optionally add a new order. */
         Builder<Related> &reorder(const QString &column,
-                                  const QString &direction = "asc");
+                                  const QString &direction = "asc") const;
 
         /*! Set the "limit" value of the query. */
-        Builder<Related> &limit(int value);
+        Builder<Related> &limit(int value) const;
         /*! Alias to set the "limit" value of the query. */
-        Builder<Related> &take(int value);
+        Builder<Related> &take(int value) const;
         /*! Set the "offset" value of the query. */
-        Builder<Related> &offset(int value);
+        Builder<Related> &offset(int value) const;
         /*! Alias to set the "offset" value of the query. */
-        Builder<Related> &skip(int value);
+        Builder<Related> &skip(int value) const;
         /*! Set the limit and offset for a given page. */
-        Builder<Related> &forPage(int page, int perPage = 30);
+        Builder<Related> &forPage(int page, int perPage = 30) const;
 
         /*! Increment a column's value by a given amount. */
         template<typename T> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         increment(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {});
+                  const QVector<UpdateItem> &extra = {}) const;
         /*! Decrement a column's value by a given amount. */
         template<typename T> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         decrement(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {});
+                  const QVector<UpdateItem> &extra = {}) const;
 
         /*! Add a where clause on the primary key to the query. */
-        Builder<Related> &whereKey(const QVariant &id);
+        Builder<Related> &whereKey(const QVariant &id) const;
         /*! Add a where clause on the primary key to the query. */
-        Builder<Related> &whereKeyNot(const QVariant &id);
+        Builder<Related> &whereKeyNot(const QVariant &id) const;
 
         /* Inserting operations on relation */
         /*! Attach a model instance to the parent model. */
@@ -468,7 +476,7 @@ namespace Relations
 
     template<class Model, class Related>
     std::optional<Related>
-    Relation<Model, Related>::find(const QVariant &id, const QStringList &columns)
+    Relation<Model, Related>::find(const QVariant &id, const QStringList &columns) const
     {
         return m_query->find(id, columns);
     }
@@ -483,7 +491,8 @@ namespace Relations
 
     template<class Model, class Related>
     Related
-    Relation<Model, Related>::findOrFail(const QVariant &id, const QStringList &columns)
+    Relation<Model, Related>::findOrFail(const QVariant &id,
+                                         const QStringList &columns) const
     {
         return m_query->findOrFail(id, columns);
     }
@@ -491,7 +500,7 @@ namespace Relations
     template<class Model, class Related>
     Related
     Relation<Model, Related>::firstOrNew(const QVector<WhereItem> &attributes,
-                                         const QVector<AttributeItem> &values)
+                                         const QVector<AttributeItem> &values) const
     {
         return m_query->firstOrNew(attributes, values);
     }
@@ -499,21 +508,22 @@ namespace Relations
     template<class Model, class Related>
     Related
     Relation<Model, Related>::firstOrCreate(const QVector<WhereItem> &attributes,
-                                            const QVector<AttributeItem> &values)
+                                            const QVector<AttributeItem> &values) const
     {
         return m_query->firstOrCreate(attributes, values);
     }
 
     template<class Model, class Related>
-    Related Relation<Model, Related>::firstOrFail(const QStringList &columns)
+    Related Relation<Model, Related>::firstOrFail(const QStringList &columns) const
     {
         return m_query->firstOrFail(columns);
     }
 
     template<class Model, class Related>
     std::optional<Related>
-    Relation<Model, Related>::firstWhere(const QString &column, const QString &comparison,
-                                         const QVariant &value, const QString &condition)
+    Relation<Model, Related>::firstWhere(
+            const QString &column, const QString &comparison,
+            const QVariant &value, const QString &condition) const
     {
         return m_query->firstWhere(column, comparison, value, condition);
     }
@@ -521,41 +531,41 @@ namespace Relations
     template<class Model, class Related>
     std::optional<Related>
     Relation<Model, Related>::firstWhereEq(const QString &column, const QVariant &value,
-                                           const QString &condition)
+                                           const QString &condition) const
     {
         return m_query->firstWhereEq(column, value, condition);
     }
 
     template<class Model, class Related>
-    QVariant Relation<Model, Related>::value(const QString &column)
+    QVariant Relation<Model, Related>::value(const QString &column) const
     {
         return m_query->value(column);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::with(const QVector<WithItem> &relations)
+    Relation<Model, Related>::with(const QVector<WithItem> &relations) const
     {
         return m_query->with(relations);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::with(const QString &relation)
+    Relation<Model, Related>::with(const QString &relation) const
     {
         return m_query->with(relation);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::without(const QVector<QString> &relations)
+    Relation<Model, Related>::without(const QVector<QString> &relations) const
     {
         return m_query->without(relations);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::without(const QString &relation)
+    Relation<Model, Related>::without(const QString &relation) const
     {
         return m_query->without(relation);
     }
@@ -576,7 +586,7 @@ namespace Relations
 
     template<class Model, class Related>
     std::optional<Model>
-    Relation<Model, Related>::first(const QStringList &columns)
+    Relation<Model, Related>::first(const QStringList &columns) const
     {
         return m_query->first(columns);
     }
@@ -605,55 +615,55 @@ namespace Relations
 
     template<class Model, class Related>
     std::tuple<int, QSqlQuery>
-    Relation<Model, Related>::remove()
+    Relation<Model, Related>::remove() const
     {
         return m_query->remove();
     }
 
     template<class Model, class Related>
     std::tuple<int, QSqlQuery>
-    Relation<Model, Related>::deleteModels()
+    Relation<Model, Related>::deleteModels() const
     {
         return m_query->deleteModels();
     }
 
     template<class Model, class Related>
     std::tuple<bool, QSqlQuery>
-    Relation<Model, Related>::truncate()
+    Relation<Model, Related>::truncate() const
     {
         return m_query->truncate();
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::select(const QStringList columns)
+    Relation<Model, Related>::select(const QStringList columns) const
     {
         return m_query->select(columns);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::select(const QString column)
+    Relation<Model, Related>::select(const QString column) const
     {
         return m_query->select(column);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::addSelect(const QStringList &columns)
+    Relation<Model, Related>::addSelect(const QStringList &columns) const
     {
         return m_query->addSelect(columns);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::addSelect(const QString &column)
+    Relation<Model, Related>::addSelect(const QString &column) const
     {
         return m_query->addSelect(column);
     }
 
     template<class Model, class Related>
-    Builder<Related> &Relation<Model, Related>::distinct()
+    Builder<Related> &Relation<Model, Related>::distinct() const
     {
         return m_query->distinct();
     }
@@ -662,7 +672,7 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::join(const QString &table, const QString &first,
                                    const QString &comparison, const QString &second,
-                                   const QString &type, const bool where)
+                                   const QString &type, const bool where) const
     {
         return m_query->join(table, first, comparison, second, type, where);
     }
@@ -671,7 +681,7 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::join(const QString &table,
                                    const std::function<void (JoinClause &)> &callback,
-                                   const QString &type)
+                                   const QString &type) const
     {
         return m_query->join(table, callback, type);
     }
@@ -680,15 +690,16 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::joinWhere(const QString &table, const QString &first,
                                         const QString &comparison, const QString &second,
-                                        const QString &type)
+                                        const QString &type) const
     {
         return m_query->joinWhere(table, first, comparison, second, type);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::leftJoin(const QString &table, const QString &first,
-                                       const QString &comparison, const QString &second)
+    Relation<Model, Related>::leftJoin(
+            const QString &table, const QString &first,
+            const QString &comparison, const QString &second) const
     {
         return m_query->leftJoin(table, first, comparison, second);
     }
@@ -697,7 +708,7 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::leftJoin(
             const QString &table,
-            const std::function<void (JoinClause &)> &callback)
+            const std::function<void (JoinClause &)> &callback) const
     {
         return m_query->leftJoin(table, callback);
     }
@@ -706,15 +717,16 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::leftJoinWhere(
             const QString &table, const QString &first,
-            const QString &comparison, const QString &second)
+            const QString &comparison, const QString &second) const
     {
         return m_query->leftJoinWhere(table, first, comparison, second);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::rightJoin(const QString &table, const QString &first,
-                                        const QString &comparison, const QString &second)
+    Relation<Model, Related>::rightJoin(
+            const QString &table, const QString &first,
+            const QString &comparison, const QString &second) const
     {
         return m_query->rightJoin(table, first, comparison, second);
     }
@@ -723,7 +735,7 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::rightJoin(
             const QString &table,
-            const std::function<void (JoinClause &)> &callback)
+            const std::function<void (JoinClause &)> &callback) const
     {
         return m_query->rightJoin(table, callback);
     }
@@ -732,15 +744,16 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::rightJoinWhere(
             const QString &table, const QString &first,
-            const QString &comparison, const QString &second)
+            const QString &comparison, const QString &second) const
     {
         return m_query->rightJoinWhere(table, first, comparison, second);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::crossJoin(const QString &table, const QString &first,
-                                        const QString &comparison, const QString &second)
+    Relation<Model, Related>::crossJoin(
+            const QString &table, const QString &first,
+            const QString &comparison, const QString &second) const
     {
         return m_query->crossJoin(table, first, comparison, second);
     }
@@ -749,7 +762,7 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::crossJoin(
             const QString &table,
-            const std::function<void (JoinClause &)> &callback)
+            const std::function<void (JoinClause &)> &callback) const
     {
         return m_query->crossJoin(table, callback);
     }
@@ -757,7 +770,7 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::where(const QString &column, const QString &comparison,
-                                    const QVariant &value, const QString &condition)
+                                    const QVariant &value, const QString &condition) const
     {
         return m_query->where(column, comparison, value, condition);
     }
@@ -765,7 +778,7 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::orWhere(const QString &column, const QString &comparison,
-                                      const QVariant &value)
+                                      const QVariant &value) const
     {
         return m_query->orWhere(column, comparison, value);
     }
@@ -773,14 +786,15 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::whereEq(const QString &column, const QVariant &value,
-                                      const QString &condition)
+                                      const QString &condition) const
     {
         return m_query->whereEq(column, value, condition);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::orWhereEq(const QString &column, const QVariant &value)
+    Relation<Model, Related>::orWhereEq(const QString &column,
+                                        const QVariant &value) const
     {
         return m_query->orWhereEq(column, value);
     }
@@ -789,7 +803,7 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::where(
             const std::function<void(Builder<Related> &)> &callback,
-            const QString &condition)
+            const QString &condition) const
     {
         return m_query->where(callback, condition);
     }
@@ -797,7 +811,7 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::orWhere(
-            const std::function<void(Builder<Related> &)> &callback)
+            const std::function<void(Builder<Related> &)> &callback) const
     {
         return m_query->orWhere(callback);
     }
@@ -805,14 +819,14 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::where(const QVector<WhereItem> &values,
-                                    const QString &condition)
+                                    const QString &condition) const
     {
         return m_query->where(values, condition);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::orWhere(const QVector<WhereItem> &values)
+    Relation<Model, Related>::orWhere(const QVector<WhereItem> &values) const
     {
         return m_query->orWhere(values);
     }
@@ -820,14 +834,14 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::whereColumn(
-            const QVector<WhereColumnItem> &values, const QString &condition)
+            const QVector<WhereColumnItem> &values, const QString &condition) const
     {
         return m_query->whereColumn(values, condition);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::orWhereColumn(const QVector<WhereColumnItem> &values)
+    Relation<Model, Related>::orWhereColumn(const QVector<WhereColumnItem> &values) const
     {
         return m_query->orWhereColumn(values);
     }
@@ -836,7 +850,7 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::whereColumn(
             const QString &first, const QString &comparison,
-            const QString &second, const QString &condition)
+            const QString &second, const QString &condition) const
     {
         return m_query->whereColumn(first, comparison, second, condition);
     }
@@ -844,7 +858,7 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::orWhereColumn(
-            const QString &first, const QString &comparison, const QString &second)
+            const QString &first, const QString &comparison, const QString &second) const
     {
         return m_query->orWhereColumn(first, comparison, second);
     }
@@ -852,14 +866,15 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::whereColumnEq(
-            const QString &first, const QString &second, const QString &condition)
+            const QString &first, const QString &second, const QString &condition) const
     {
         return m_query->whereColumnEq(first, second, condition);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::orWhereColumnEq(const QString &first, const QString &second)
+    Relation<Model, Related>::orWhereColumnEq(const QString &first,
+                                              const QString &second) const
     {
         return m_query->orWhereColumnEq(first, second);
     }
@@ -868,7 +883,7 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::whereIn(
             const QString &column, const QVector<QVariant> &values,
-            const QString &condition, const bool nope)
+            const QString &condition, const bool nope) const
     {
         return m_query->whereIn(column, values, condition, nope);
     }
@@ -876,7 +891,7 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::orWhereIn(const QString &column,
-                                        const QVector<QVariant> &values)
+                                        const QVector<QVariant> &values) const
     {
         return m_query->orWhereIn(column, values);
     }
@@ -885,7 +900,7 @@ namespace Relations
     Builder<Related> &
     Relation<Model, Related>::whereNotIn(
             const QString &column, const QVector<QVariant> &values,
-            const QString &condition)
+            const QString &condition) const
     {
         return m_query->whereNotIn(column, values, condition);
     }
@@ -893,7 +908,7 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::orWhereNotIn(const QString &column,
-                                           const QVector<QVariant> &values)
+                                           const QVector<QVariant> &values) const
     {
         return m_query->orWhereNotIn(column, values);
     }
@@ -901,7 +916,7 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::whereNull(
-            const QStringList &columns, const QString &condition, const bool nope)
+            const QStringList &columns, const QString &condition, const bool nope) const
     {
         return m_query->whereNull(columns, condition, nope);
     }
@@ -909,21 +924,21 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::whereNull(
-            const QString &column, const QString &condition, const bool nope)
+            const QString &column, const QString &condition, const bool nope) const
     {
         return m_query->whereNull(column, condition, nope);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::orWhereNull(const QStringList &columns)
+    Relation<Model, Related>::orWhereNull(const QStringList &columns) const
     {
         return m_query->orWhereNull(columns);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::orWhereNull(const QString &column)
+    Relation<Model, Related>::orWhereNull(const QString &column) const
     {
         return m_query->orWhereNull(column);
     }
@@ -931,7 +946,7 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::whereNotNull(const QStringList &columns,
-                                           const QString &condition)
+                                           const QString &condition) const
     {
         return m_query->whereNotNull(columns, condition);
     }
@@ -939,43 +954,44 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::whereNotNull(const QString &column,
-                                           const QString &condition)
+                                           const QString &condition) const
     {
         return m_query->whereNotNull(column, condition);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::orWhereNotNull(const QStringList &columns)
+    Relation<Model, Related>::orWhereNotNull(const QStringList &columns) const
     {
         return m_query->orWhereNotNull(columns);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::orWhereNotNull(const QString &column)
+    Relation<Model, Related>::orWhereNotNull(const QString &column) const
     {
         return m_query->orWhereNotNull(column);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::groupBy(const QStringList &groups)
+    Relation<Model, Related>::groupBy(const QStringList &groups) const
     {
         return m_query->groupBy(groups);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::groupBy(const QString &group)
+    Relation<Model, Related>::groupBy(const QString &group) const
     {
         return m_query->groupBy(group);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::having(const QString &column, const QString &comparison,
-                                     const QVariant &value, const QString &condition)
+    Relation<Model, Related>::having(
+            const QString &column, const QString &comparison,
+            const QVariant &value, const QString &condition) const
     {
         return m_query->having(column, comparison, value, condition);
     }
@@ -983,84 +999,86 @@ namespace Relations
     template<class Model, class Related>
     Builder<Related> &
     Relation<Model, Related>::orHaving(const QString &column, const QString &comparison,
-                                       const QVariant &value)
+                                       const QVariant &value) const
     {
         return m_query->orHaving(column, comparison, value);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::orderBy(const QString &column, const QString &direction)
+    Relation<Model, Related>::orderBy(const QString &column,
+                                      const QString &direction) const
     {
         return m_query->orderBy(column, direction);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::orderByDesc(const QString &column)
+    Relation<Model, Related>::orderByDesc(const QString &column) const
     {
         return m_query->orderByDesc(column);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::latest(const QString &column)
+    Relation<Model, Related>::latest(const QString &column) const
     {
         return m_query->latest(column);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::oldest(const QString &column)
+    Relation<Model, Related>::oldest(const QString &column) const
     {
         return m_query->oldest(column);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::reorder()
+    Relation<Model, Related>::reorder() const
     {
         return m_query->reorder();
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::reorder(const QString &column, const QString &direction)
+    Relation<Model, Related>::reorder(const QString &column,
+                                      const QString &direction) const
     {
         return m_query->reorder(column, direction);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::limit(const int value)
+    Relation<Model, Related>::limit(const int value) const
     {
         return m_query->limit(value);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::take(const int value)
+    Relation<Model, Related>::take(const int value) const
     {
         return m_query->take(value);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::offset(const int value)
+    Relation<Model, Related>::offset(const int value) const
     {
         return m_query->offset(value);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::skip(const int value)
+    Relation<Model, Related>::skip(const int value) const
     {
         return m_query->skip(value);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::forPage(const int page, const int perPage)
+    Relation<Model, Related>::forPage(const int page, const int perPage) const
     {
         return m_query->forPage(page, perPage);
     }
@@ -1069,7 +1087,7 @@ namespace Relations
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
     Relation<Model, Related>::increment(const QString &column, const T amount,
-                                        const QVector<UpdateItem> &extra)
+                                        const QVector<UpdateItem> &extra) const
     {
         return m_query->increment(column, amount, extra);
     }
@@ -1078,21 +1096,21 @@ namespace Relations
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
     Relation<Model, Related>::decrement(const QString &column, const T amount,
-                                        const QVector<UpdateItem> &extra)
+                                        const QVector<UpdateItem> &extra) const
     {
         return m_query->decrement(column, amount, extra);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::whereKey(const QVariant &id)
+    Relation<Model, Related>::whereKey(const QVariant &id) const
     {
         return m_query->whereKey(id);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::whereKeyNot(const QVariant &id)
+    Relation<Model, Related>::whereKeyNot(const QVariant &id) const
     {
         return m_query->whereKeyNot(id);
     }
