@@ -60,6 +60,7 @@ namespace Relations {
     // TODO future include every stl dependency in header files silverqx
     // TODO mystery, extern explicit instantiate BaseModel<Pivot> and BasePivot<Pivot> and don't include pivot.hpp at the end of the basemodel.hpp header file, I don't even know if this is possible silverqx
     // TODO next BaseModel std::initializer_list ctor, after that I can create move methods for  Relation::saveMany/save and pass initializers to them silverqx
+    // TODO logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
@@ -657,6 +658,9 @@ namespace Relations {
 
         /*! Unset all the loaded relations for the instance. */
         Model &unsetRelations();
+        /*! Unset a loaded relationship. */
+        Model &unsetRelation(const QString &relation);
+
 
         /* HasTimestamps */
         /*! Update the model's update timestamp. */
@@ -2832,6 +2836,7 @@ namespace Relations {
         return getTable() + '.' + column;
     }
 
+    // TODO move, add rvalue version, for key parameter too silverqx
     template<typename Model, typename ...AllRelations>
     Model &BaseModel<Model, AllRelations...>::setAttribute(
             const QString &key, QVariant value)
@@ -3058,6 +3063,14 @@ namespace Relations {
     Model &BaseModel<Model, AllRelations...>::unsetRelations()
     {
         m_relations.clear();
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::unsetRelation(const QString &relation)
+    {
+        m_relations.erase(relation);
 
         return model();
     }

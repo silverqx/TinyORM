@@ -32,6 +32,7 @@ public:
 
 //    explicit Torrent(const QVector<Orm::AttributeItem> &attributes = {});
 
+    // TODO desirable, would be amazing to return derived relation type, like HasMany, I will have to solve this somehow silverqx
     /*! Get the previewable files associated with the torrent. */
     std::unique_ptr<Relation<Torrent, TorrentPreviewableFile>>
     torrentFiles()

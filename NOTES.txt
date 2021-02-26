@@ -35,10 +35,12 @@ Common:
 
  - api different      : different api than Laravel's Eloquent
  - docs               : document code or update markdown documentation
+ - desirable          : feature which is extremely wanted
  - dilemma            : some sort of a fuckup
  - duplicate          : duplicate code
  - future             : task which has lower priority, because still much to do
  - mistake            : bad decision during prototyping 😭
+ - move               : c++ move semantics
  - mystery            : don't know why that stuff is happening, find out what's up
  - now                : do it before commit
  - next               : next thing in the row to do after commit
@@ -52,9 +54,11 @@ Features related/to implement:
 
  - default attributes : Default Attribute Values
  - guarded            : related to the mass assignable feature
+ - logging            : logging related
  - multidriver        : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
  - postgres           : specific to PostgreSQL server
  - primarykey dilema  : different types for primary keys
+ - relations          : relations related 🤓
  - scopes             : query scopes
 
 

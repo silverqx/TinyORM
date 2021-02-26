@@ -37,7 +37,7 @@ namespace Relations
     class Relation
     {
     protected:
-        Relation(std::unique_ptr<Related> &&related, const Model &parent);
+        Relation(std::unique_ptr<Related> &&related, Model &parent);
 
     public:
         inline virtual ~Relation() = default;
@@ -366,7 +366,7 @@ namespace Relations
         /*! Add a where clause on the primary key to the query. */
         Builder<Related> &whereKeyNot(const QVariant &id) const;
 
-        /* Inserting operations on relation */
+        /* Inserting operations on the relationship */
         /*! Attach a model instance to the parent model. */
         inline virtual std::tuple<bool, Related &> save(Related &) const
         { throw OrmLogicError("The 'save' method is not implemented for this "
@@ -395,6 +395,23 @@ namespace Relations
         { throw OrmLogicError("The 'createMany' method is not implemented for this "
                               "relation type."); }
 
+        /* Updating relationship */
+        /*! Associate the model instance to the given parent. */
+        inline virtual Model &associate(const Related &) const
+        { throw OrmLogicError("The 'associate' method is not implemented for this "
+                              "relation type."); }
+        /*! Associate the model instance to the given parent. */
+        inline virtual Model &associate(const QVariant &) const
+        { throw OrmLogicError("The 'associate' method is not implemented for this "
+                              "relation type."); }
+        /*! Dissociate previously associated model from the given parent. */
+        inline virtual Model &dissociate() const
+        { throw OrmLogicError("The 'dissociate' or an alias 'disassociate' method "
+                              "is not implemented for this relation type."); }
+        /*! Alias of "dissociate" method. */
+        inline virtual Model &disassociate() const
+        { return dissociate(); }
+
     protected:
         /*! Initialize a Relation instance. */
         inline void init() const
@@ -410,7 +427,7 @@ namespace Relations
            derived classes, like m_parent, m_child, m_related, m_ownerKey,
            m_foreignKey, ... */
         /*! The parent model instance. */
-        const Model m_parent;
+        Model &m_parent;
         /*! The related model instance. */
         const std::unique_ptr<Related> m_related;
         // TODO next 👆👇 the same for m_related silverqx
@@ -438,8 +455,7 @@ namespace Relations
     bool Relation<Model, Related>::constraints = true;
 
     template<class Model, class Related>
-    Relation<Model, Related>::Relation(std::unique_ptr<Related> &&related,
-                                       const Model &parent)
+    Relation<Model, Related>::Relation(std::unique_ptr<Related> &&related, Model &parent)
         : m_parent(parent)
         , m_related(std::move(related))
         , m_query(m_related->newQuery())

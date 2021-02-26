@@ -15,8 +15,7 @@ namespace Orm::Tiny::Relations
     class HasOneOrMany : public Relation<Model, Related>
     {
     protected:
-        HasOneOrMany(std::unique_ptr<Related> &&related,
-                     const Model &parent,
+        HasOneOrMany(std::unique_ptr<Related> &&related, Model &parent,
                      const QString &foreignKey, const QString &localKey);
 
     public:
@@ -30,7 +29,7 @@ namespace Orm::Tiny::Relations
         /*! Get the key value of the parent's local key. */
         QVariant getParentKey() const;
 
-        /* Inserting operations on relation */
+        /* Inserting operations on the relationship */
         /*! Attach a model instance to the parent model. */
         std::tuple<bool, Related &> save(Related &model) const override;
         /*! Attach a model instance to the parent model. */
@@ -68,7 +67,7 @@ namespace Orm::Tiny::Relations
         inline const QString &getQualifiedForeignKeyName() const
         { return m_foreignKey; }
 
-        /* Inserting operations on relation */
+        /* Inserting operations on the relationship */
         /*! Set the foreign ID for creating a related model. */
         void setForeignAttributesForCreate(Related &model) const;
 
@@ -85,7 +84,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     HasOneOrMany<Model, Related>::HasOneOrMany(
-            std::unique_ptr<Related> &&related, const Model &parent,
+            std::unique_ptr<Related> &&related, Model &parent,
             const QString &foreignKey, const QString &localKey
     )
         : Relation<Model, Related>(std::move(related), parent)

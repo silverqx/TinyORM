@@ -18,7 +18,7 @@ namespace Orm::Tiny::Relations
     class BelongsTo : public Relation<Model, Related>, public OneRelation
     {
     protected:
-        BelongsTo(std::unique_ptr<Related> &&related, const Model &child,
+        BelongsTo(std::unique_ptr<Related> &&related, Model &child,
                   const QString &foreignKey, const QString &ownerKey,
                   const QString &relationName);
 
@@ -29,6 +29,15 @@ namespace Orm::Tiny::Relations
                  Model &child, const QString &foreignKey,
                  const QString &ownerKey, const QString &relation);
 
+        /* Updating relationship */
+        /*! Associate the model instance to the given parent. */
+        Model &associate(const Related &model) const override;
+        /*! Associate the model instance to the given parent. */
+        Model &associate(const QVariant &id) const override;
+        /*! Dissociate previously associated model from the given parent. */
+        Model &dissociate() const override;
+
+        /* Basic operations */
         /*! Set the base constraints on the relation query. */
         void addConstraints() const override;
 
@@ -54,7 +63,7 @@ namespace Orm::Tiny::Relations
         buildDictionary(const QVector<Related> &results) const;
 
         /*! The child model instance of the relation. */
-        const Model m_child;
+        Model &m_child;
         /*! The foreign key of the parent model. */
         QString m_foreignKey;
         /*! The associated key on the parent model. */
@@ -67,7 +76,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     BelongsTo<Model, Related>::BelongsTo(
-            std::unique_ptr<Related> &&related, const Model &child,
+            std::unique_ptr<Related> &&related, Model &child,
             const QString &foreignKey, const QString &ownerKey,
             const QString &relationName
     )
@@ -75,7 +84,7 @@ namespace Orm::Tiny::Relations
         /* In the underlying base relationship class, this variable is referred to as
            the "parent" since most relationships are not inversed. But, since this
            one is we will create a "child" variable for much better readability. */
-        , m_child(child)
+        , m_child(this->m_parent)
         , m_foreignKey(foreignKey)
         , m_ownerKey(ownerKey)
         , m_relationName(relationName)
@@ -94,6 +103,40 @@ namespace Orm::Tiny::Relations
         instance->init();
 
         return instance;
+    }
+
+    template<class Model, class Related>
+    Model &BelongsTo<Model, Related>::associate(const Related &model) const
+    {
+        m_child.setAttribute(m_foreignKey,
+                             model.getAttribute(m_ownerKey));
+
+        m_child.template setRelation<Related>(m_relationName, model);
+
+        return m_child;
+    }
+
+    // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
+    template<class Model, class Related>
+    Model &BelongsTo<Model, Related>::associate(const QVariant &id) const
+    {
+        m_child.setAttribute(m_foreignKey, id);
+
+        // TODO relations, check if relation is loaded and if has the same id, if so, then don't unset relation silverqx
+        m_child.unsetRelation(m_relationName);
+
+        return m_child;
+    }
+
+    template<class Model, class Related>
+    Model &BelongsTo<Model, Related>::dissociate() const
+    {
+        // TODO test Model::save with null key silverqx
+        // TODO dilemma primarykey, Model::KeyType vs QVariant, set to null, will be different for Qt5 (QVariant(QVariant::Type(qMetaTypeId<Model::KeyType>()))) and Qt6 (QVariant(QMetaType(qMetaTypeId<Model::KeyType>())))) ; ALSO current problem is, that I check that foreignKey !isValid || isNull, but when QVariant with type (Model::KeyType) and also with null is created by the above commands, then it is still null (isNull == true), but is considered as !!VALID!! (isValid == true) silverqx
+        m_child.setAttribute(m_foreignKey, {});
+
+        // TODO test operations that are related on the BaseModel::m_relation data member how they behave, when m_relations value contains the std::nullopt value silverqx
+        return m_child.template setRelation<Related>(m_relationName, std::nullopt);
     }
 
     template<class Model, class Related>

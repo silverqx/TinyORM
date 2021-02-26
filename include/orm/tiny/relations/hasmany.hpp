@@ -14,8 +14,7 @@ namespace Orm::Tiny::Relations
     class HasMany : public HasOneOrMany<Model, Related>, public ManyRelation
     {
     protected:
-        HasMany(std::unique_ptr<Related> &&related,
-                const Model &parent,
+        HasMany(std::unique_ptr<Related> &&related, Model &parent,
                 const QString &foreignKey, const QString &localKey);
 
     public:
@@ -39,8 +38,7 @@ namespace Orm::Tiny::Relations
     };
 
     template<class Model, class Related>
-    HasMany<Model, Related>::HasMany(std::unique_ptr<Related> &&related,
-                                     const Model &parent,
+    HasMany<Model, Related>::HasMany(std::unique_ptr<Related> &&related, Model &parent,
                                      const QString &foreignKey, const QString &localKey)
         : HasOneOrMany<Model, Related>(std::move(related), parent, foreignKey, localKey)
     {}
