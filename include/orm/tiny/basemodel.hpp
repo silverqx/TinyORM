@@ -160,6 +160,10 @@ namespace Relations {
         static quint64
         insertGetId(const QVector<AttributeItem> &attributes);
 
+        /*! Create or update a record matching the attributes, and fill it with values. */
+        Model updateOrCreate(const QVector<WhereItem> &attributes,
+                             const QVector<AttributeItem> &values = {});
+
         /*! Destroy the models for the given IDs. */
         static std::size_t destroy(const QVector<QVariant> &ids);
         /*! Destroy the model by the given ID. */
@@ -1144,6 +1148,13 @@ namespace Relations {
             const QVector<AttributeItem> &attributes)
     {
         return query()->insertGetId(attributes);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model BaseModel<Model, AllRelations...>::updateOrCreate(
+            const QVector<WhereItem> &attributes, const QVector<AttributeItem> &values)
+    {
+        return query()->updateOrCreate(attributes, values);
     }
 
     // TODO cpp check all int types and use std::size_t where appropriate silverqx

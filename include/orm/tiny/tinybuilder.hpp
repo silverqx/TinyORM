@@ -110,6 +110,9 @@ namespace Relations
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
         update(const QVector<UpdateItem> &values) const;
+        /*! Create or update a record matching the attributes, and fill it with values. */
+        Model updateOrCreate(const QVector<WhereItem> &attributes,
+                             const QVector<AttributeItem> &values = {});
 
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery> remove();
@@ -597,6 +600,17 @@ namespace Relations
     Builder<Model>::update(const QVector<UpdateItem> &values) const
     {
         return toBase().update(addUpdatedAtColumn(values));
+    }
+
+    template<typename Model>
+    Model Builder<Model>::updateOrCreate(const QVector<WhereItem> &attributes,
+                                         const QVector<AttributeItem> &values)
+    {
+        auto instance = firstOrNew(attributes);
+
+        instance.fill(values).save();
+
+        return instance;
     }
 
     // TODO future add onDelete (and similar) callback feature silverqx

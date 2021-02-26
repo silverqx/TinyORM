@@ -158,6 +158,9 @@ namespace Relations
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
         update(const QVector<UpdateItem> &values) const;
+        /*! Create or update a record matching the attributes, and fill it with values. */
+        Related updateOrCreate(const QVector<WhereItem> &attributes,
+                               const QVector<AttributeItem> &values = {}) const;
 
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery> remove() const;
@@ -611,6 +614,14 @@ namespace Relations
     Relation<Model, Related>::update(const QVector<UpdateItem> &values) const
     {
         return m_query->update(values);
+    }
+
+    template<class Model, class Related>
+    Related
+    Relation<Model, Related>::updateOrCreate(const QVector<WhereItem> &attributes,
+                                             const QVector<AttributeItem> &values) const
+    {
+        return m_query->updateOrCreate(attributes, values);
     }
 
     template<class Model, class Related>
