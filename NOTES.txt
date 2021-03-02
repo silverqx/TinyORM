@@ -56,6 +56,7 @@ Common:
 Features related/to implement:
 
  - default attributes : Default Attribute Values
+ - events             : event system
  - guarded            : related to the mass assignable feature
  - logging            : logging related
  - multidriver        : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
@@ -64,6 +65,12 @@ Features related/to implement:
  - primarykey dilema  : different types for primary keys
  - relations          : relations related 🤓
  - scopes             : query scopes
+
+
+Versions info:
+--------------
+
+ - based on Laravel v8.26.1
 
 
 constructor copy/move snippet:

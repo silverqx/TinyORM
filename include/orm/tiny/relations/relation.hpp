@@ -441,6 +441,25 @@ namespace Relations
         { throw OrmLogicError("The 'attach' method is not implemented for this "
                               "relation type."); }
 
+        // TODO next add relation name to the exception message silverqx
+        /*! Detach models from the relationship. */
+        virtual int detach(const QVector<QVariant> &, bool = true) const
+        { throw OrmLogicError("The 'detach' method is not implemented for this "
+                              "relation type."); }
+        /*! Detach models from the relationship. */
+        virtual int detach(const QVector<std::reference_wrapper<Related>> &,
+                           bool = true) const
+        { throw OrmLogicError("The 'detach' method is not implemented for this "
+                              "relation type."); }
+        /*! Detach model from the relationship. */
+        virtual int detach(const QVariant &, bool = true) const
+        { throw OrmLogicError("The 'detach' method is not implemented for this "
+                              "relation type."); }
+        /*! Detach model from the relationship. */
+        virtual int detach(const Related &, bool = true) const
+        { throw OrmLogicError("The 'detach' method is not implemented for this "
+                              "relation type."); }
+
     protected:
         /*! Initialize a Relation instance. */
         inline void init() const

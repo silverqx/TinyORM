@@ -406,7 +406,7 @@ namespace Relations {
 
         /*! Delete the model from the database. */
         bool remove();
-        /*! Delete the model from the database. */
+        /*! Delete the model from the database (alias). */
         bool deleteModel();
 
         /*! Reload a fresh model instance from the database. */
@@ -527,10 +527,16 @@ namespace Relations {
         QVariant getAttributeValue(const QString &key) const;
         /*! Get an attribute from the $attributes array. */
         QVariant getAttributeFromArray(const QString &key) const;
+        /*! Get the model's original attribute value (transformed). */
+        QVariant getOriginal(const QString &key,
+                             const QVariant &defaultValue = {}) const;
+        /*! Get the model's original attribute values (transformed). */
+        QVector<AttributeItem> getOriginals() const;
+        /*! Get the model's raw original attribute value. */
+        QVariant getRawOriginal(const QString &key,
+                                const QVariant &defaultValue = {}) const;
         /*! Get the model's raw original attribute values. */
-        QVariant getRawOriginal(const QString &key) const;
-        /*! Transform a raw model value using mutators, casts, etc. */
-        QVariant transformModelValue(const QString &key, const QVariant &value) const;
+        inline const QVector<AttributeItem> &getRawOriginals() const;
         /*! Unset an attribute on the model, returns the number of attributes removed. */
         Model &unsetAttribute(const AttributeItem &value);
         /*! Unset an attribute on the model. */
@@ -716,6 +722,12 @@ namespace Relations {
         void relationVisited();
 
         /* HasAttributes */
+        /*! Transform a raw model value using mutators, casts, etc. */
+        QVariant transformModelValue(const QString &key, const QVariant &value) const;
+        /*! Get the model's original attribute values. */
+        QVariant getOriginalWithoutRewindingModel(
+                const QString &key, const QVariant &defaultValue = {}) const;
+
         /*! Get a relationship value from a method. */
         // TODO I think this can be merged to one template method, I want to preserve Orm::One/Many tags and use std::enable_if to switch types by Orm::One/Many tag 🤔 silverqx
         template<class Related,
@@ -2952,8 +2964,37 @@ namespace Relations {
         return itAttribute->value;
     }
 
+    // NOTE api different silverqx
     template<typename Model, typename ...AllRelations>
-    QVariant BaseModel<Model, AllRelations...>::getRawOriginal(const QString &key) const
+    QVariant
+    BaseModel<Model, AllRelations...>::getOriginal(
+            const QString &key, const QVariant &defaultValue) const
+    {
+        return Model().setRawAttributes(m_original, true)
+                .getOriginalWithoutRewindingModel(key, defaultValue);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVector<AttributeItem>
+    BaseModel<Model, AllRelations...>::getOriginals() const
+    {
+        QVector<AttributeItem> originals;
+        originals.reserve(m_original.size());
+
+        for (const auto &original : m_original) {
+            const auto &key = original.key;
+
+            originals.append({key, transformModelValue(key, original.value)});
+        }
+
+        return originals;
+    }
+
+    // NOTE api different silverqx
+    template<typename Model, typename ...AllRelations>
+    QVariant
+    BaseModel<Model, AllRelations...>::getRawOriginal(
+            const QString &key, const QVariant &defaultValue) const
     {
         const auto itOriginal = ranges::find_if(m_original,
                                                 [&key](const auto &original)
@@ -2961,21 +3002,18 @@ namespace Relations {
             return original.key == key;
         });
 
-        // Not found
+        // Not found, return the default value
         if (itOriginal == ranges::end(m_original))
-            return {};
+            return defaultValue;
 
         return itOriginal->value;
     }
 
     template<typename Model, typename ...AllRelations>
-    QVariant BaseModel<Model, AllRelations...>::transformModelValue(
-            const QString &key,
-            const QVariant &value) const
+    const QVector<AttributeItem> &
+    BaseModel<Model, AllRelations...>::getRawOriginals() const
     {
-        Q_UNUSED(key)
-
-        return value;
+        return m_original;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -3036,6 +3074,36 @@ namespace Relations {
             return value.toString(getDateFormat());
 
         return {};
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant BaseModel<Model, AllRelations...>::transformModelValue(
+            const QString &key,
+            const QVariant &value) const
+    {
+        Q_UNUSED(key)
+
+        // CUR cast QDateTime values silverqx
+
+        return value;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant
+    BaseModel<Model, AllRelations...>::getOriginalWithoutRewindingModel(
+            const QString &key, const QVariant &defaultValue) const
+    {
+        const auto itOriginal = ranges::find_if(m_original,
+                                                [&key](const auto &original)
+        {
+            return original.key == key;
+        });
+
+        // Not found, return the default value
+        if (itOriginal == ranges::end(m_original))
+            return defaultValue;
+
+        return transformModelValue(key, itOriginal->value);
     }
 
     template<typename Model, typename ...AllRelations>
