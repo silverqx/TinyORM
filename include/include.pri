@@ -18,6 +18,7 @@ HEADERS += \
     $$PWD/orm/invalidformaterror.hpp \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/mysqlconnection.hpp \
+    $$PWD/orm/ormdomainerror.hpp \
     $$PWD/orm/ormlogicerror.hpp \
     $$PWD/orm/ormruntimeerror.hpp \
     $$PWD/orm/ormtypes.hpp \

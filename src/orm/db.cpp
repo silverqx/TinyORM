@@ -1,5 +1,7 @@
 #include "orm/db.hpp"
 
+#include <QSharedPointer>
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -53,6 +55,11 @@ void DB::disconnect(QString name)
 const QStringList DB::supportedDrivers()
 {
     return manager().supportedDrivers();
+}
+
+QStringList DB::connectionNames()
+{
+    return manager().connectionNames();
 }
 
 const QString &DB::getDefaultConnection()
@@ -163,6 +170,126 @@ bool DB::rollbackToSavepoint(const size_t id, const QString &connection)
 uint DB::transactionLevel(const QString &connection)
 {
     return manager().connection(connection).transactionLevel();
+}
+
+bool DB::countingElapsed(const QString &connection)
+{
+    return manager().connection(connection).countingElapsed();
+}
+
+DatabaseConnection &DB::enableElapsedCounter(const QString &connection)
+{
+    return manager().connection(connection).enableElapsedCounter();
+}
+
+DatabaseConnection &DB::disableElapsedCounter(const QString &connection)
+{
+    return manager().connection(connection).disableElapsedCounter();
+}
+
+qint64 DB::getElapsedCounter(const QString &connection)
+{
+    return manager().connection(connection).getElapsedCounter();
+}
+
+qint64 DB::takeElapsedCounter(const QString &connection)
+{
+    return manager().connection(connection).takeElapsedCounter();
+}
+
+DatabaseConnection &DB::resetElapsedCounter(const QString &connection)
+{
+    return manager().connection(connection).resetElapsedCounter();
+}
+
+bool DB::anyCountingElapsed()
+{
+    return manager().anyCountingElapsed();
+}
+
+void DB::enableAllElapsedCounters()
+{
+    return manager().enableAllElapsedCounters();
+}
+
+void DB::disableAllElapsedCounters()
+{
+    return manager().disableAllElapsedCounters();
+}
+
+qint64 DB::getAllElapsedCounters()
+{
+    return manager().getAllElapsedCounters();
+}
+
+qint64 DB::takeAllElapsedCounters()
+{
+    return manager().takeAllElapsedCounters();
+}
+
+void DB::resetAllElapsedCounters()
+{
+    return manager().resetAllElapsedCounters();
+}
+
+bool DB::countingStatements(const QString &connection)
+{
+    return manager().connection(connection).countingStatements();
+}
+
+DatabaseConnection &DB::enableStatementsCounter(const QString &connection)
+{
+    return manager().connection(connection).enableStatementsCounter();
+}
+
+DatabaseConnection &DB::disableStatementsCounter(const QString &connection)
+{
+    return manager().connection(connection).disableStatementsCounter();
+}
+
+const StatementsCounter &DB::getStatementsCounter(const QString &connection)
+{
+    return manager().connection(connection).getStatementsCounter();
+}
+
+StatementsCounter DB::takeStatementsCounter(const QString &connection)
+{
+    return manager().connection(connection).takeStatementsCounter();
+}
+
+DatabaseConnection &DB::resetStatementsCounter(const QString &connection)
+{
+    return manager().connection(connection).resetStatementsCounter();
+}
+
+bool DB::anyCountingStatements()
+{
+    return manager().anyCountingStatements();
+}
+
+void DB::enableAllStatementCounters()
+{
+    return manager().enableAllStatementCounters();
+}
+
+void DB::disableAllStatementCounters()
+{
+    return manager().disableAllStatementCounters();
+}
+
+StatementsCounter DB::getAllStatementCounters()
+{
+    return manager().getAllStatementCounters();
+}
+
+StatementsCounter DB::takeAllStatementCounters()
+{
+    return manager().takeAllStatementCounters();
+}
+
+void DB::resetAllStatementCounters()
+{
+    return manager().resetAllStatementCounters();
 }
 
 } // namespace Orm

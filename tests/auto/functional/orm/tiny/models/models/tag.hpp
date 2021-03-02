@@ -71,6 +71,9 @@ private:
     /*! The connection name for the model. */
     QString u_connection {"tinyorm_mysql_tests"};
 #endif
+
+    /*! All of the relationships to be touched. */
+    QStringList u_touches {"torrents"};
 };
 
 #endif // TAG_H

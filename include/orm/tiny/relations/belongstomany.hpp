@@ -1,12 +1,17 @@
 #ifndef BELONGSTOMANY_H
 #define BELONGSTOMANY_H
 
-#include <range/v3/algorithm/copy.hpp>
+#include <QDateTime>
+
+#include <range/v3/algorithm/copy_if.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
 
+#include "orm/ormdomainerror.hpp"
 #include "orm/tiny/relations/relation.hpp"
+#include "orm/utils/attribute.hpp"
+#include "orm/utils/type.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -104,6 +109,11 @@ namespace Orm::Tiny::Relations
         const QString &createdAt() const;
         /*! Get the name of the "updated at" column. */
         const QString &updatedAt() const;
+        /*! If we're touching the parent model, touch. */
+        void touchIfTouching() const;
+        /*! Touch all of the related models for the relationship.
+            E.g.: Touch all roles associated with this user. */
+        void touch() const override;
 
         /* InteractsWithPivotTable */
         /*! Set the columns on the pivot table to retrieve. */
@@ -121,6 +131,33 @@ namespace Orm::Tiny::Relations
         /*! Create a new pivot model instance. */
         PivotType newPivot(const QVector<AttributeItem> &attributes = {},
                            bool exists = false) const;
+
+        /*! Create a new query builder for the pivot table. */
+        QSharedPointer<QueryBuilder> newPivotQuery() const;
+        /*! Get a new plain query builder for the pivot table. */
+        QSharedPointer<QueryBuilder> newPivotStatement() const;
+
+        /*! Attach models to the parent. */
+        void attach(const QVector<QVariant> &ids,
+                    const QVector<AttributeItem> &attributes = {},
+                    bool touch = true) const override;
+        /*! Attach models to the parent. */
+        inline void
+        attach(const QVector<std::reference_wrapper<Related>> &models,
+               const QVector<AttributeItem> &attributes = {},
+               bool touch = true) const override;
+        /*! Attach a model to the parent. */
+        inline void
+        attach(const QVariant &id, const QVector<AttributeItem> &attributes = {},
+               bool touch = true) const override;
+        /*! Attach a model to the parent. */
+        inline void
+        attach(const Related &model, const QVector<AttributeItem> &attributes = {},
+               bool touch = true) const override;
+
+        /* Others */
+        /*! Get all of the IDs for the related models. */
+        QVector<QVariant> allRelatedIds() const;
 
     protected:
         /*! Set the join clause for the relation query. */
@@ -145,6 +182,30 @@ namespace Orm::Tiny::Relations
         /*! Get the pivot attributes from a model. */
         QVector<AttributeItem> migratePivotAttributes(Related &model) const;
 
+        /*! Attach a model to the parent using a custom class. */
+        void attachUsingCustomClass(const QVector<QVariant> &ids,
+                                    const QVector<AttributeItem> &attributes) const;
+        /*! Create an array of records to insert into the pivot table. */
+        QVector<QVector<AttributeItem>>
+        formatAttachRecords(const QVector<QVariant> &ids,
+                            const QVector<AttributeItem> &attributes) const;
+        /*! Create a full attachment record payload. */
+        QVector<AttributeItem>
+        formatAttachRecord(const QVariant &id, const QVector<AttributeItem> &attributes,
+                           bool hasTimestamps) const;
+        /*! Create a new pivot attachment record. */
+        QVector<AttributeItem>
+        baseAttachRecord(const QVariant &id, bool timed) const;
+        /*! Set the creation and update timestamps on an attach record. */
+        QVector<AttributeItem> &
+        addTimestampsToAttachment(QVector<AttributeItem> &record,
+                                  bool exists = false) const;
+
+        /*! Determine if we should touch the parent on sync. */
+        bool touchingParent() const;
+        /*! Attempt to guess the name of the inverse of the relation. */
+        QString guessInverseRelation() const;
+
         /*! The intermediate table for the relation. */
         QString m_table;
         /*! The foreign key of the parent model. */
@@ -160,6 +221,7 @@ namespace Orm::Tiny::Relations
 
         /*! The name of the accessor to use for the "pivot" relationship. */
         QString m_accessor = QStringLiteral("pivot");
+        // BUG should be QSet, duplicates are not allowed, check all the containers 😭 and use proper containers where I did mistake, from the point of view of duplicates silverqx
         /*! The pivot table columns to retrieve. */
         QStringList m_pivotColumns;
 
@@ -169,6 +231,17 @@ namespace Orm::Tiny::Relations
         QString m_pivotCreatedAt;
         /*! The custom pivot table column for the updated_at timestamp. */
         QString m_pivotUpdatedAt;
+
+    private:
+        /*! Throw domain exception, when a user tries to override ID key
+            on the pivot table. */
+        void validateAttachAttribute(const AttributeItem &attribute,
+                                     const QVariant &id) const;
+        /*! Throw domain exception, when a user tries to override ID key
+            on the pivot table.  */
+        template<typename KeyType>
+        void throwOverwritingKeyError(const QString &key, const QVariant &original,
+                                      const QVariant &overwrite) const;
     };
 
     template<class Model, class Related, class PivotType>
@@ -397,12 +470,49 @@ namespace Orm::Tiny::Relations
         return m_pivotUpdatedAt;
     }
 
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::touchIfTouching() const
+    {
+        // BUG circular dependency when both models (Model and Related) has set up u_touches silverqx
+        if (touchingParent())
+            this->m_parent.touch();
+
+        if (this->m_parent.touches(m_relationName))
+            touch();
+    }
+
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::touch() const
+    {
+        const auto &related = this->m_related;
+
+        const auto &key = related->getKeyName();
+
+        const QVector<UpdateItem> record {
+            {related->getUpdatedAtColumn(), related->freshTimestampString()},
+        };
+
+        const auto ids = allRelatedIds();
+
+        /* If we actually have IDs for the relation, we will run the query to update all
+           the related model's timestamps, to make sure these all reflect the changes
+           to the parent models. This will help us keep any caching synced up here. */
+        if (!ids.isEmpty())
+            related->newQueryWithoutRelationships()
+                ->whereIn(key, ids)
+                .update(record);
+    }
+
     // TODO perf for all similar methods make rvalue variants, or what if all this methods would be rvalue only, so if it is possible then move and if not then copy silverqx
     template<class Model, class Related, class PivotType>
     BelongsToMany<Model, Related, PivotType> &
     BelongsToMany<Model, Related, PivotType>::withPivot(const QStringList &columns)
     {
-        ranges::copy(columns, ranges::back_inserter(m_pivotColumns));
+        ranges::copy_if(columns, ranges::back_inserter(m_pivotColumns),
+                        [this](const auto &column)
+        {
+            return !m_pivotColumns.contains(column);
+        });
 
         return *this;
     }
@@ -422,6 +532,102 @@ namespace Orm::Tiny::Relations
                     this->m_parent, attributes, m_table, exists)
 
                 .setPivotKeys(m_foreignPivotKey, m_relatedPivotKey);
+    }
+
+    template<class Model, class Related, class PivotType>
+    QSharedPointer<QueryBuilder>
+    BelongsToMany<Model, Related, PivotType>::newPivotQuery() const
+    {
+        // Ownership of the QSharedPointer<QueryBuilder>
+        auto query = newPivotStatement();
+
+        // TODO relations, add support for BelongsToMany::where/whereIn/whereNull silverqx
+//        for (auto &[column, value, comparison, condition] : m_pivotWheres)
+//            query->where(column, value, comparison, condition);
+
+//        for (auto &[column, values, condition, nope] : m_pivotWhereIns)
+//            query->whereIn(column, values, condition, nope);
+
+//        for (auto &[😭, condition, nope] : m_pivotWhereNulls)
+//            query->whereNull(columns, condition, nope);
+
+        query->whereEq(m_foreignPivotKey, this->m_parent[m_parentKey]);
+
+        return query;
+    }
+
+    template<class Model, class Related, class PivotType>
+    QSharedPointer<QueryBuilder>
+    BelongsToMany<Model, Related, PivotType>::newPivotStatement() const
+    {
+        auto query = this->m_query->getQuery().newQuery();
+
+        query->from(m_table);
+
+        return query;
+    }
+
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::attach(
+            const QVector<QVariant> &ids, const QVector<AttributeItem> &attributes,
+            const bool touch) const
+    {
+        if constexpr (std::is_same_v<PivotType, Pivot>)
+            /* Here we will insert the attachment records into the pivot table. Once
+               we have inserted the records, we will touch the relationships if
+               necessary and the function will return. */
+            newPivotStatement()->insert(Utils::Attribute::convertVectorsToMaps(
+                                            formatAttachRecords(ids, attributes)));
+        else
+            attachUsingCustomClass(ids, attributes);
+
+        if (touch)
+            touchIfTouching();
+    }
+
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::attach(
+            const QVector<std::reference_wrapper<Related>> &models,
+            const QVector<AttributeItem> &attributes, const bool touch) const
+    {
+        QVector<QVariant> ids;
+        ids.reserve(models.size());
+
+        for (const auto &model : models)
+            ids << model.get().getAttribute(m_relatedKey);
+
+        attach(ids, attributes, touch);
+    }
+
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::attach(
+            const QVariant &id, const QVector<AttributeItem> &attributes,
+            const bool touch) const
+    {
+        attach(QVector {id}, attributes, touch);
+    }
+
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::attach(
+            const Related &model, const QVector<AttributeItem> &attributes,
+            const bool touch) const
+    {
+        attach(QVector {model.getAttribute(m_relatedKey)}, attributes, touch);
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<QVariant>
+    BelongsToMany<Model, Related, PivotType>::allRelatedIds() const
+    {
+        QVector<QVariant> ids;
+
+        // Ownership of the QSharedPointer<QueryBuilder>
+        auto [ok, query] = newPivotQuery()->get({m_relatedPivotKey});
+
+        while (query.next())
+            ids << query.value(m_relatedPivotKey);
+
+        return ids;
     }
 
     template<class Model, class Related, class PivotType>
@@ -523,6 +729,143 @@ namespace Orm::Tiny::Relations
             }
 
         return values;
+    }
+
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::attachUsingCustomClass(
+            const QVector<QVariant> &ids,
+            const QVector<AttributeItem> &attributes) const
+    {
+        for (const auto &record : formatAttachRecords(ids, attributes))
+            newPivot(record).save();
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<QVector<AttributeItem>>
+    BelongsToMany<Model, Related, PivotType>::formatAttachRecords(
+            const QVector<QVariant> &ids,
+            const QVector<AttributeItem> &attributes) const
+    {
+        QVector<QVector<AttributeItem>> records;
+
+        auto hasTimestamps = hasPivotColumn(createdAt()) ||
+                             hasPivotColumn(updatedAt());
+
+        /* To create the attachment records, we will simply spin through the IDs given
+           and create a new record to insert for each ID with extra attributes to be
+           placed in other columns. */
+        for (const auto &id : ids)
+            records << formatAttachRecord(id, attributes, hasTimestamps);
+
+        return records;
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<AttributeItem>
+    BelongsToMany<Model, Related, PivotType>::formatAttachRecord(
+            const QVariant &id, const QVector<AttributeItem> &attributes,
+            const bool hasTimestamps) const
+    {
+        auto baseAttributes = baseAttachRecord(id, hasTimestamps);
+
+        for (const auto &attribute : attributes) {
+            // NOTE api different silverqx
+            validateAttachAttribute(attribute, id);
+
+            baseAttributes << attribute;
+        }
+
+        return baseAttributes;
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<AttributeItem>
+    BelongsToMany<Model, Related, PivotType>::baseAttachRecord(
+            const QVariant &id, const bool timed) const
+    {
+        QVector<AttributeItem> record;
+
+        record.append({m_relatedPivotKey, id});
+        record.append({m_foreignPivotKey, this->m_parent[m_parentKey]});
+
+        /* If the record needs to have creation and update timestamps, we will make
+           them by calling the parent model's "freshTimestamp" method, which will
+           provide us with a fresh timestamp in this model's preferred format. */
+        if (timed)
+            addTimestampsToAttachment(record);
+
+        // TODO pivot, withPivotValues silverqx
+//        for (auto &[column, value] as m_pivotValues)
+//            record.append(column, value);
+
+        return record;
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<AttributeItem> &
+    BelongsToMany<Model, Related, PivotType>::addTimestampsToAttachment(
+            QVector<AttributeItem> &record, const bool exists) const
+    {
+        QVariant fresh = this->m_parent.freshTimestamp();
+
+        // If custom pivot is used
+        if constexpr (!std::is_same_v<PivotType, Pivot>)
+            fresh = fresh.toDateTime().toString(PivotType().getDateFormat());
+
+        if (!exists && hasPivotColumn(createdAt()))
+            record.append({createdAt(), fresh});
+
+        if (hasPivotColumn(updatedAt()))
+            record.append({updatedAt(), fresh});
+
+        return record;
+    }
+
+    template<class Model, class Related, class PivotType>
+    bool BelongsToMany<Model, Related, PivotType>::touchingParent() const
+    {
+        return this->m_related->touches(guessInverseRelation());
+    }
+
+    template<class Model, class Related, class PivotType>
+    QString BelongsToMany<Model, Related, PivotType>::guessInverseRelation() const
+    {
+        // TODO relations, add parent touches (eg parentTouchesName) to the BaseModel::belongsToMany factory method silverqx
+        auto relation = Utils::Type::classPureBasename<Model>();
+
+        relation[0] = relation[0].toLower();
+
+        return relation + QChar('s');
+    }
+
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::validateAttachAttribute(
+            const AttributeItem &attribute, const QVariant &id) const
+    {
+        // Don't overwrite ID keys, throw domain exception
+        if (attribute.key == m_foreignPivotKey)
+            throwOverwritingKeyError<Model::KeyType>(attribute.key,
+                                                     this->m_parent[m_parentKey],
+                                                     attribute.value);
+        else if (attribute.key == m_relatedPivotKey)
+            throwOverwritingKeyError<Related::KeyType>(attribute.key, id,
+                                                       attribute.value);
+    }
+
+    template<class Model, class Related, class PivotType>
+    template<typename KeyType>
+    void BelongsToMany<Model, Related, PivotType>::throwOverwritingKeyError(
+            const QString &key, const QVariant &original,
+            const QVariant &overwrite) const
+    {
+        static const auto overwriteMessage =
+                QStringLiteral("You can not overwrite '%1' ID key; "
+                               "original value : %2, your value : %3.");
+
+        throw OrmDomainError(overwriteMessage.arg(
+                                 qualifyPivotColumn(key),
+                                 QString::number(original.value<KeyType>()),
+                                 QString::number(overwrite.value<KeyType>())));
     }
 
 } // namespace Orm::Tiny::Relations

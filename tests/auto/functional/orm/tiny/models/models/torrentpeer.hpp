@@ -11,6 +11,7 @@ class TorrentPeer final : public Orm::Tiny::BaseModel<TorrentPeer, Torrent>
     using BaseModel::BaseModel;
 
 public:
+    // CUR unify model classes look, using and similar silverqx
     /*! Get the torrent that owns the torrent peer. */
     std::unique_ptr<
     Orm::Tiny::Relations::Relation<TorrentPeer, Torrent>>

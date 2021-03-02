@@ -5,6 +5,8 @@
 #include <QElapsedTimer>
 #include <QtSql/QSqlDatabase>
 
+#include <optional>
+
 #include "orm/concerns/detectslostconnections.hpp"
 #include "orm/connectioninterface.hpp"
 #include "orm/connectors/connectorinterface.hpp"
@@ -117,7 +119,8 @@ namespace Orm
                         const QVector<QVariant> &bindings) const;
         /*! Log a query into the connection's query log. */
         void logQuery(const QSqlQuery &query,
-                      const std::optional<quint64> elapsed) const;
+                      // CUR elapsed should be qint64 silverqx
+                      const std::optional<quint64> &elapsed);
 
         /*! Check database connection and show warnings when the state changed. */
         bool pingDatabase() override;
@@ -148,6 +151,34 @@ namespace Orm
         /*! Get the configuration for the current connection. */
         QVariant getConfig() const;
 
+        /* Queries execution time counter */
+        /*! Determine whether we're counting queries execution time. */
+        bool countingElapsed() const override;
+        /*! Enable counting queries execution time on the current connection. */
+        DatabaseConnection &enableElapsedCounter() override;
+        /*! Disable counting queries execution time on the current connection. */
+        DatabaseConnection &disableElapsedCounter() override;
+        /*! Obtain queries execution time. */
+        qint64 getElapsedCounter() const override;
+        /*! Obtain and reset queries execution time. */
+        qint64 takeElapsedCounter() override;
+        /*! Reset queries execution time. */
+        DatabaseConnection &resetElapsedCounter() override;
+
+        /* Queries executed counter */
+        /*! Determine whether we're counting the number of executed queries. */
+        bool countingStatements() const override;
+        /*! Enable counting the number of executed queries on the current connection. */
+        DatabaseConnection &enableStatementsCounter() override;
+        /*! Disable counting the number of executed queries on the current connection. */
+        DatabaseConnection &disableStatementsCounter() override;
+        /*! Obtain the number of executed queries. */
+        const StatementsCounter &getStatementsCounter() const override;
+        /*! Obtain and reset the number of executed queries. */
+        StatementsCounter takeStatementsCounter() override;
+        /*! Reset the number of executed queries. */
+        DatabaseConnection &resetStatementsCounter() override;
+
     protected:
         /*! Callback type used in the run() methods. */
         template<typename Result>
@@ -158,7 +189,7 @@ namespace Orm
         template<typename Result>
         std::tuple<Result, QSqlQuery>
         run(const QString &queryString, const QVector<QVariant> &bindings,
-            const RunCallback<Result> &callback) const;
+            const RunCallback<Result> &callback);
         /*! Run a SQL statement. */
         template<typename Result>
         std::tuple<Result, QSqlQuery>
@@ -184,6 +215,18 @@ namespace Orm
         const QVariantHash m_config;
         /*! The reconnector instance for the connection. */
         ReconnectorType m_reconnector;
+
+        /* Queries execution time counter */
+        /*! Indicates whether queries elapsed time are being counted. */
+        bool m_countingElapsed = false;
+        /*! Queries elpased time counter. */
+        qint64 m_elapsedCounter = -1;
+
+        /* Queries executed counter */
+        /*! Indicates whether executed queries are being counted. */
+        bool m_countingStatements = false;
+        /*! Counts executed statements on current connection. */
+        StatementsCounter m_statementsCounter;
 
     private:
         /*! Namespace prefix for MySQL savepoints. */
@@ -212,7 +255,10 @@ namespace Orm
         void logConnected();
         /*! Log a transaction query into the connection's query log. */
         void logTransactionQuery(const QString &query,
-                                 const std::optional<quint64> elapsed) const;
+                                 const std::optional<quint64> elapsed);
+        /*! Count transactional queries execution time and statements counter. */
+        std::optional<quint64>
+        hitTransactionalCounters(const QElapsedTimer &timer);
 
         /*! The flag for the database was disconnected. */
         bool m_disconnectedLogged = false;
@@ -224,23 +270,31 @@ namespace Orm
         uint m_savepoints = 0;
         /*! The query grammar implementation. */
         Grammar m_queryGrammar;
+
+#ifdef TINYORM_DEBUG_SQL
+        /*! Indicates whether logging of sql queries is enabled. */
+        const bool m_debugSql = true;
+#else
+        /*! Indicates whether logging of sql queries is enabled. */
+        const bool m_debugSql = false;
+#endif
+
     };
 
     template<typename Result>
     std::tuple<Result, QSqlQuery>
     DatabaseConnection::run(
             const QString &queryString, const QVector<QVariant> &bindings,
-            const RunCallback<Result> &callback) const
+            const RunCallback<Result> &callback)
     {
         reconnectIfMissingConnection();
 
         Result result;
         QSqlQuery query;
 
-#ifdef TINYORM_DEBUG_SQL
         QElapsedTimer timer;
-        timer.start();
-#endif
+        if (m_debugSql || m_countingElapsed)
+            timer.start();
 
         /* Here we will run this query. If an exception occurs we'll determine if it was
            caused by a connection that has been lost. If that is the cause, we'll try
@@ -254,11 +308,19 @@ namespace Orm
                     handleQueryException(e, queryString, bindings, callback);
         }
 
+        std::optional<quint64> elapsed;
+        if (m_debugSql || m_countingElapsed)
+            elapsed = timer.elapsed();
+
+        // Queries execution time counter
+        if (m_countingElapsed)
+            m_elapsedCounter += *elapsed;
+
 #ifdef TINYORM_DEBUG_SQL
         /* Once we have run the query we will calculate the time that it took
            to run and then log the query, bindings, and execution time. We'll
            log time in milliseconds. */
-        logQuery(query, timer.elapsed());
+        logQuery(query, elapsed);
 #endif
 
         return {result, query};

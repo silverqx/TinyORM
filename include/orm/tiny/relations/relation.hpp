@@ -3,6 +3,8 @@
 
 #include <QtSql/QSqlQuery>
 
+#include <optional>
+
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 
@@ -95,7 +97,7 @@ namespace Relations
 
         /* Others */
         /*! Touch all of the related models for the relationship. */
-        void touch() const;
+        virtual void touch() const;
         /*! Run a raw update against the base query. */
         std::tuple<int, QSqlQuery>
         rawUpdate(const QVector<UpdateItem> &values = {}) const;
@@ -367,6 +369,7 @@ namespace Relations
         Builder<Related> &whereKeyNot(const QVariant &id) const;
 
         /* Inserting operations on the relationship */
+        // TODO check, would be possible to disable this by SFINAE by current class type? eg std::enable_if this is ManyRelation or PivotRelation; and if yes, then it's a good idea do it this way? silverqx
         /*! Attach a model instance to the parent model. */
         inline virtual std::tuple<bool, Related &> save(Related &) const
         { throw OrmLogicError("The 'save' method is not implemented for this "
@@ -411,6 +414,32 @@ namespace Relations
         /*! Alias of "dissociate" method. */
         inline virtual Model &disassociate() const
         { return dissociate(); }
+
+        /* Many-To-Many */
+        /*! Attach models to the parent. */
+        virtual void attach(const QVector<QVariant> &,
+                            const QVector<AttributeItem> & = {},
+                            bool = true) const
+        { throw OrmLogicError("The 'attach' method is not implemented for this "
+                              "relation type."); }
+        /*! Attach models to the parent. */
+        virtual void attach(const QVector<std::reference_wrapper<Related>> &,
+                            const QVector<AttributeItem> & = {},
+                            bool = true) const
+        { throw OrmLogicError("The 'attach' method is not implemented for this "
+                              "relation type."); }
+        /*! Attach a model to the parent. */
+        virtual void attach(const QVariant &,
+                            const QVector<AttributeItem> & = {},
+                            bool = true) const
+        { throw OrmLogicError("The 'attach' method is not implemented for this "
+                              "relation type."); }
+        /*! Attach a model to the parent. */
+        virtual void attach(const Related &,
+                            const QVector<AttributeItem> & = {},
+                            bool = true) const
+        { throw OrmLogicError("The 'attach' method is not implemented for this "
+                              "relation type."); }
 
     protected:
         /*! Initialize a Relation instance. */

@@ -2,6 +2,7 @@
 #define CONNECTOR_HPP
 
 #include <QtSql/QSqlDatabase>
+#include <QVariantHash>
 
 #include "orm/concerns/detectslostconnections.hpp"
 

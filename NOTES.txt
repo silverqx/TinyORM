@@ -34,6 +34,7 @@ Todo categories:
 Common:
 
  - api different      : different api than Laravel's Eloquent
+ - check              : something to find out 🤔
  - docs               : document code or update markdown documentation
  - desirable          : feature which is extremely wanted
  - dilemma            : some sort of a fuckup
@@ -44,8 +45,10 @@ Common:
  - mystery            : don't know why that stuff is happening, find out what's up
  - now                : do it before commit
  - next               : next thing in the row to do after commit
+ - overflow           : add check code, eg when size_t to int coversion
  - perf               : performance
  - production         : check before deploy to production
+ - reliability        : make things more robust and reliable
  - security           : self explaining
  - test               : tasks in auto tests
  - types              : juggling with c++ types
@@ -56,6 +59,7 @@ Features related/to implement:
  - guarded            : related to the mass assignable feature
  - logging            : logging related
  - multidriver        : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
+ - pivot              : pivot table in the many-to-many relationship
  - postgres           : specific to PostgreSQL server
  - primarykey dilema  : different types for primary keys
  - relations          : relations related 🤓

@@ -5,6 +5,7 @@
 #if defined __cplusplus
 /* Add C++ includes here */
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QDir>
 #include <QHash>
 #include <QMap>

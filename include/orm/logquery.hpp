@@ -1,6 +1,8 @@
 #ifndef LOGQUERY_H
 #define LOGQUERY_H
 
+#include <QString>
+
 class QSqlQuery;
 
 #ifdef TINYORM_COMMON_NAMESPACE

@@ -1,6 +1,8 @@
 #ifndef MODELNOTFOUNDERROR_H
 #define MODELNOTFOUNDERROR_H
 
+#include <QVariant>
+
 #include "orm/ormruntimeerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

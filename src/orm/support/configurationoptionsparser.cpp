@@ -1,5 +1,7 @@
 #include "orm/support/configurationoptionsparser.hpp"
 
+#include <stdexcept>
+
 #include "orm/connectors/connector.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

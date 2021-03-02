@@ -1,6 +1,10 @@
 #ifndef ORMTYPES_H
 #define ORMTYPES_H
 
+#include <QSharedPointer>
+#include <QVariant>
+#include <QVector>
+
 #include "export.hpp"
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
@@ -109,6 +113,7 @@ namespace Query
     };
 
     // TODO types, also divide types by namespace, eg AttributeItem is only used in the Orm::Tiny namespace, so an user can use 'using namespace Orm::Tiny' in model files, it is not possible now, because he has to use symbols from an Orm namespace too silverqx
+    // TODO pretty print in the debugger silverqx
     struct SHAREDLIB_EXPORT AttributeItem
     {
         QString  key;

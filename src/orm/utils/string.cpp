@@ -1,5 +1,7 @@
 #include "orm/utils/string.hpp"
 
+#include <QRegularExpression>
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {

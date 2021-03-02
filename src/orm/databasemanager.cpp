@@ -57,6 +57,7 @@ DatabaseManager &DatabaseManager::setupDefaultReconnector()
     return *this;
 }
 
+// TODO add 'createLazy = true' paramater, add support to create eager connection silverqx
 std::unique_ptr<DatabaseManager>
 DatabaseManager::create(const QVariantHash &config, const QString &connection)
 {
@@ -206,7 +207,7 @@ ConnectionInterface &DatabaseManager::reconnect(QString name)
     if (!m_connections.contains(name))
         return connection(name);
 
-    return refreshPdoConnections(name);
+    return refreshQtConnections(name);
 }
 
 void DatabaseManager::disconnect(QString name) const
@@ -218,12 +219,24 @@ void DatabaseManager::disconnect(QString name) const
         m_connections.find(name)->second->disconnect();
 }
 
-const QStringList DatabaseManager::supportedDrivers() const
+QStringList DatabaseManager::supportedDrivers() const
 {
     // TODO future add method to not only supported drivers, but also check if driver is available/loadable by qsqldatabase silverqx
     // aaaaaaaaaaaaaachjo 🤔😁
     return {"mysql"};
     //    return {"mysql", "pgsql", "sqlite", "sqlsrv"};
+}
+
+QStringList DatabaseManager::connectionNames() const
+{
+    QStringList names;
+    // TODO overflow, add check code https://stackoverflow.com/questions/22184403/how-to-cast-the-size-t-to-double-or-int-c/22184657#22184657 silverqx
+    names.reserve(static_cast<int>(m_connections.size()));
+
+    for (auto &connection : m_connections)
+        names << connection.first;
+
+    return names;
 }
 
 const QString &
@@ -243,6 +256,230 @@ DatabaseManager::setReconnector(const ReconnectorType &reconnector)
     m_reconnector = reconnector;
 
     return *this;
+}
+
+bool DatabaseManager::countingElapsed(const QString &connection)
+{
+    return this->connection(connection).countingElapsed();
+}
+
+DatabaseConnection &DatabaseManager::enableElapsedCounter(const QString &connection)
+{
+    return this->connection(connection).enableElapsedCounter();
+}
+
+DatabaseConnection &DatabaseManager::disableElapsedCounter(const QString &connection)
+{
+    return this->connection(connection).disableElapsedCounter();
+}
+
+qint64 DatabaseManager::getElapsedCounter(const QString &connection)
+{
+    return this->connection(connection).getElapsedCounter();
+}
+
+qint64 DatabaseManager::takeElapsedCounter(const QString &connection)
+{
+    return this->connection(connection).takeElapsedCounter();
+}
+
+DatabaseConnection &DatabaseManager::resetElapsedCounter(const QString &connection)
+{
+    return this->connection(connection).resetElapsedCounter();
+}
+
+bool DatabaseManager::anyCountingElapsed()
+{
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections)
+        if (connection(connectionName).countingElapsed())
+            return true;
+
+    return false;
+}
+
+void DatabaseManager::enableAllElapsedCounters()
+{
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections)
+        connection(connectionName).enableElapsedCounter();
+}
+
+void DatabaseManager::disableAllElapsedCounters()
+{
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections)
+        connection(connectionName).disableElapsedCounter();
+}
+
+qint64 DatabaseManager::getAllElapsedCounters()
+{
+    if (!anyCountingElapsed())
+        return -1;
+
+    qint64 elapsed = 0;
+
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections) {
+        const auto &connection = this->connection(connectionName);
+
+        if (connection.countingElapsed())
+            elapsed += connection.getElapsedCounter();
+    }
+
+    return elapsed;
+}
+
+qint64 DatabaseManager::takeAllElapsedCounters()
+{
+    if (!anyCountingElapsed())
+        return -1;
+
+    qint64 elapsed = 0;
+
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections) {
+        auto &connection = this->connection(connectionName);
+
+        if (connection.countingElapsed())
+            elapsed += connection.takeElapsedCounter();
+    }
+
+    return elapsed;
+}
+
+void DatabaseManager::resetAllElapsedCounters()
+{
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections) {
+        auto &connection = this->connection(connectionName);
+
+        if (connection.countingElapsed())
+            connection.resetElapsedCounter();
+    }
+}
+
+bool DatabaseManager::countingStatements(const QString &connection)
+{
+    return this->connection(connection).countingStatements();
+}
+
+DatabaseConnection &DatabaseManager::enableStatementsCounter(const QString &connection)
+{
+    return this->connection(connection).enableStatementsCounter();
+}
+
+DatabaseConnection &DatabaseManager::disableStatementsCounter(const QString &connection)
+{
+    return this->connection(connection).disableStatementsCounter();
+}
+
+const StatementsCounter &DatabaseManager::getStatementsCounter(const QString &connection)
+{
+    return this->connection(connection).getStatementsCounter();
+}
+
+StatementsCounter DatabaseManager::takeStatementsCounter(const QString &connection)
+{
+    return this->connection(connection).takeStatementsCounter();
+}
+
+DatabaseConnection &DatabaseManager::resetStatementsCounter(const QString &connection)
+{
+    return this->connection(connection).resetStatementsCounter();
+}
+
+bool DatabaseManager::anyCountingStatements()
+{
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections)
+        if (connection(connectionName).countingStatements())
+            return true;
+
+    return false;
+}
+
+void DatabaseManager::enableAllStatementCounters()
+{
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections)
+        connection(connectionName).enableStatementsCounter();
+}
+
+void DatabaseManager::disableAllStatementCounters()
+{
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections)
+        connection(connectionName).disableStatementsCounter();
+}
+
+StatementsCounter DatabaseManager::getAllStatementCounters()
+{
+    StatementsCounter counter;
+
+    if (!anyCountingStatements())
+        return counter;
+
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections) {
+        const auto &connection = this->connection(connectionName);
+
+        if (connection.countingStatements()) {
+            const auto &counter_ = connection.getStatementsCounter();
+
+            counter.normal        += counter_.normal;
+            counter.affecting     += counter_.affecting;
+            counter.transactional += counter_.transactional;
+        }
+    }
+
+    return counter;
+}
+
+StatementsCounter DatabaseManager::takeAllStatementCounters()
+{
+    StatementsCounter counter;
+
+    if (!anyCountingStatements())
+        return counter;
+
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections) {
+        auto &connection = this->connection(connectionName);
+
+        if (connection.countingElapsed()) {
+            const auto counter_ = connection.takeStatementsCounter();
+
+            counter.normal        += counter_.normal;
+            counter.affecting     += counter_.affecting;
+            counter.transactional += counter_.transactional;
+        }
+    }
+
+    return counter;
+}
+
+void DatabaseManager::resetAllStatementCounters()
+{
+    const auto connections = connectionNames();
+
+    for (const auto &connectionName : connections) {
+        auto &connection = this->connection(connectionName);
+
+        if (connection.countingElapsed())
+            connection.resetStatementsCounter();
+    }
 }
 
 const QString &
@@ -294,7 +531,7 @@ DatabaseManager::configure(std::unique_ptr<DatabaseConnection> connection) const
 }
 
 DatabaseConnection &
-DatabaseManager::refreshPdoConnections(const QString &name)
+DatabaseManager::refreshQtConnections(const QString &name)
 {
     /* Make OUR new connection and copy the connection resolver from this new
        connection to the current connection, this ensure that the connection

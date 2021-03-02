@@ -1,6 +1,8 @@
 #ifndef QUERYERROR_H
 #define QUERYERROR_H
 
+#include <QVariant>
+
 #include "orm/sqlerror.hpp"
 
 class QSqlQuery;

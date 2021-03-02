@@ -11,21 +11,36 @@ QVariantMap
 convertVectorToMap(const QVector<AttributeItem> &attributes)
 {
     // TODO mistake m_attributes/m_original 😭 silverqx
-    QVariantMap values;
-    for (const auto &attribute : attributes)
-        values.insert(attribute.key, attribute.value);
+    QVariantMap result;
 
-    return values;
+    for (const auto &attribute : attributes)
+        result.insert(attribute.key, attribute.value);
+
+    return result;
+}
+
+QVector<QVariantMap>
+convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attributesVector)
+{
+    const auto size = attributesVector.size();
+    QVector<QVariantMap> result(size);
+
+    for (int i = 0; i < size; ++i)
+        for (const auto &attribute : attributesVector[i])
+            result[i][attribute.key] = attribute.value;
+
+    return result;
 }
 
 QVector<UpdateItem>
 convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
 {
-    QVector<UpdateItem> values;
-    for (const auto &attribute : attributes)
-        values.append({attribute.key, attribute.value});
+    QVector<UpdateItem> result;
 
-    return values;
+    for (const auto &attribute : attributes)
+        result.append({attribute.key, attribute.value});
+
+    return result;
 }
 
 } // namespace Orm

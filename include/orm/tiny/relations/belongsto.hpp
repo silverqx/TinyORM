@@ -111,6 +111,7 @@ namespace Orm::Tiny::Relations
         m_child.setAttribute(m_foreignKey,
                              model.getAttribute(m_ownerKey));
 
+        // CUR docs info in the belongsTo about where the 'relationName' is used silverqx
         m_child.template setRelation<Related>(m_relationName, model);
 
         return m_child;

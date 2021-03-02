@@ -1,5 +1,7 @@
 #include "orm/query/querybuilder.hpp"
 
+#include <QRegularExpression>
+
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
 
@@ -612,7 +614,7 @@ QString Builder::getFromWithoutAlias() const
                             QRegularExpression::CaseInsensitiveOption)).first();
 }
 
-// TODO next revisit QSharedPointer silverqx
+// TODO next revisit QSharedPointer, after few weeks I'm pretty sure that this can/should be std::unique_pre, like in the TinyBuilder, I need to check if more instances need to save this pointer at once, if don't then I have to change it silverqx
 QSharedPointer<Builder> Builder::newQuery() const
 {
     return QSharedPointer<Builder>::create(m_connection, m_grammar);

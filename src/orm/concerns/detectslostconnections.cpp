@@ -1,5 +1,7 @@
 #include "orm/concerns/detectslostconnections.hpp"
 
+#include <QVector>
+
 #include "orm/sqlerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

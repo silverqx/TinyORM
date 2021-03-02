@@ -1,6 +1,8 @@
 #ifndef UTILS_STRING_H
 #define UTILS_STRING_H
 
+#include <QString>
+
 #include "export.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

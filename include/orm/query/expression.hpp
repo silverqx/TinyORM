@@ -1,6 +1,9 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
+#include <QVariant>
+#include <QVector>
+
 #include "export.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

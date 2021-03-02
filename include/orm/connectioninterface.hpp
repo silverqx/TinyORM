@@ -12,7 +12,18 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+    class DatabaseConnection;
     class Grammar;
+    /*! Counts executed statements in a current connection. */
+    struct StatementsCounter
+    {
+        /*! Normal select statements. */
+        int normal = -1;
+        /*! Affecting statements (UPDATE, INSERT, DELETE). */
+        int affecting = -1;
+        /*! Transactional statements (START TRANSACTION, ROLLBACK, COMMIT, SAVEPOINT). */
+        int transactional = -1;
+    };
 
 namespace Query
 {
@@ -121,6 +132,34 @@ namespace Query
 
         /*! Get the query grammar used by the connection. */
         virtual const Grammar &getQueryGrammar() const = 0;
+
+        /* Queries execution time counter */
+        /*! Determine whether we're counting queries execution time. */
+        virtual bool countingElapsed() const = 0;
+        /*! Enable counting queries execution time on the current connection. */
+        virtual DatabaseConnection &enableElapsedCounter() = 0;
+        /*! Disable counting queries execution time on the current connection. */
+        virtual DatabaseConnection &disableElapsedCounter() = 0;
+        /*! Obtain queries execution time. */
+        virtual qint64 getElapsedCounter() const = 0;
+        /*! Obtain and reset queries execution time. */
+        virtual qint64 takeElapsedCounter() = 0;
+        /*! Reset queries execution time. */
+        virtual DatabaseConnection &resetElapsedCounter() = 0;
+
+        /* Queries executed counter */
+        /*! Determine whether we're counting the number of executed queries. */
+        virtual bool countingStatements() const = 0;
+        /*! Enable counting the number of executed queries on the current connection. */
+        virtual DatabaseConnection &enableStatementsCounter() = 0;
+        /*! Disable counting the number of executed queries on the current connection. */
+        virtual DatabaseConnection &disableStatementsCounter() = 0;
+        /*! Obtain the number of executed queries. */
+        virtual const StatementsCounter &getStatementsCounter() const = 0;
+        /*! Obtain and reset the number of executed queries. */
+        virtual StatementsCounter takeStatementsCounter() = 0;
+        /*! Reset the number of executed queries. */
+        virtual DatabaseConnection &resetStatementsCounter() = 0;
     };
 
 } // namespace Orm

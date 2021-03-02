@@ -646,6 +646,9 @@ namespace Relations {
         /*! Get the relationships that are touched on save. */
         inline const QStringList &getTouchedRelations() const
         { return model().u_touches; }
+        /*! Determine if the model touches a given relation. */
+        inline bool touches(const QString &relation) const
+        { return getTouchedRelations().contains(relation); }
 
         /*! Get all the loaded relations for the instance. */
         inline const std::unordered_map<QString, RelationsType<AllRelations...>> &
@@ -660,7 +663,6 @@ namespace Relations {
         Model &unsetRelations();
         /*! Unset a loaded relationship. */
         Model &unsetRelation(const QString &relation);
-
 
         /* HasTimestamps */
         /*! Update the model's update timestamp. */
@@ -3002,9 +3004,9 @@ namespace Relations {
     const QString &
     BaseModel<Model, AllRelations...>::getDateFormat() const
     {
-        return u_dateFormat.isEmpty()
+        return model().u_dateFormat.isEmpty()
                 ? getConnection().getQueryGrammar().getDateFormat()
-                : u_dateFormat;
+                : model().u_dateFormat;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -3200,6 +3202,7 @@ namespace Relations {
     template<typename Related>
     QString BaseModel<Model, AllRelations...>::guessBelongsToRelation() const
     {
+        // TODO reliability, also add Utils::String::studly silverqx
         auto relation = Utils::Type::classPureBasename<Related>();
 
         relation[0] = relation[0].toLower();

@@ -3,6 +3,8 @@
 #include <QtSql/QSqlQuery>
 #include <QVersionNumber>
 
+#include <stdexcept>
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {

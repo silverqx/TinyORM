@@ -1,6 +1,8 @@
 #ifndef ORMRUNTIMEERROR_H
 #define ORMRUNTIMEERROR_H
 
+#include <QString>
+
 #include <stdexcept>
 
 #include "export.hpp"

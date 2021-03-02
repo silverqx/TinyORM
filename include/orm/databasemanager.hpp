@@ -108,7 +108,9 @@ namespace Query
         void disconnect(QString name = "") const;
 
         /*! Get all of the support drivers. */
-        const QStringList supportedDrivers() const;
+        QStringList supportedDrivers() const;
+        /*! Returns a list containing the names of all connections. */
+        QStringList connectionNames() const;
 
         /*! Get the default connection name. */
         const QString &getDefaultConnection() const override;
@@ -120,6 +122,66 @@ namespace Query
         using ReconnectorType = std::function<void(const DatabaseConnection &)>;
         /*! Set the database reconnector callback. */
         DatabaseManager &setReconnector(const ReconnectorType &reconnector);
+
+        /* Queries execution time counter */
+        /*! Determine whether we're counting queries execution time. */
+        bool countingElapsed(const QString &connection = "");
+        /*! Enable counting queries execution time on the current connection. */
+        DatabaseConnection &enableElapsedCounter(const QString &connection = "");
+        /*! Disable counting queries execution time on the current connection. */
+        DatabaseConnection &disableElapsedCounter(const QString &connection = "");
+        /*! Obtain queries execution time. */
+        qint64 getElapsedCounter(const QString &connection = "");
+        /*! Obtain and reset queries execution time. */
+        qint64 takeElapsedCounter(const QString &connection = "");
+        /*! Reset queries execution time. */
+        DatabaseConnection &resetElapsedCounter(const QString &connection = "");
+
+        /*! Determine whether any connection is counting queries execution time. */
+        bool anyCountingElapsed();
+        /*! Enable counting queries execution time on all connections. */
+        void enableAllElapsedCounters();
+        /*! Disable counting queries execution time on all connections. */
+        void disableAllElapsedCounters();
+        /*! Obtain queries execution time from all connections. */
+        qint64 getAllElapsedCounters();
+        /*! Obtain and reset queries execution time on all active connections. */
+        qint64 takeAllElapsedCounters();
+        /*! Reset queries execution time on all active connections. */
+        void resetAllElapsedCounters();
+
+        /* Queries executed counter */
+        /*! Determine whether we're counting the number of executed queries. */
+        bool countingStatements(const QString &connection = "");
+        /*! Enable counting the number of executed queries on the current connection. */
+        DatabaseConnection &
+        enableStatementsCounter(const QString &connection = "");
+        /*! Disable counting the number of executed queries on the current connection. */
+        DatabaseConnection &
+        disableStatementsCounter(const QString &connection = "");
+        /*! Obtain the number of executed queries. */
+        const StatementsCounter &
+        getStatementsCounter(const QString &connection = "");
+        /*! Obtain and reset the number of executed queries. */
+        StatementsCounter
+        takeStatementsCounter(const QString &connection = "");
+        /*! Reset the number of executed queries. */
+        DatabaseConnection &
+        resetStatementsCounter(const QString &connection = "");
+
+        /*! Determine whether any connection is counting the number of executed
+            queries. */
+        bool anyCountingStatements();
+        /*! Enable counting the number of executed queries on all connections. */
+        void enableAllStatementCounters();
+        /*! Disable counting the number of executed queries on all connections. */
+        void disableAllStatementCounters();
+        /*! Obtain the number of executed queries on all active connections. */
+        StatementsCounter getAllStatementCounters();
+        /*! Obtain and reset the number of executed queries on all active connections. */
+        StatementsCounter takeAllStatementCounters();
+        /*! Reset the number of executed queries on all active connections. */
+        void resetAllStatementCounters();
 
     protected:
         /*! Default connection name. */
@@ -154,7 +216,7 @@ namespace Query
         configure(std::unique_ptr<DatabaseConnection> connection) const;
 
         /*! Refresh an underlying QSqlDatabase connection on a given connection. */
-        DatabaseConnection &refreshPdoConnections(const QString &name);
+        DatabaseConnection &refreshQtConnections(const QString &name);
 
         /*! The database connection factory instance. */
         const Connectors::ConnectionFactory m_factory;

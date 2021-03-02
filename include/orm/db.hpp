@@ -56,6 +56,8 @@ namespace Orm
 
         /*! Get all of the support drivers. */
         static const QStringList supportedDrivers();
+        /*! Returns a list containing the names of all connections. */
+        static QStringList connectionNames();
 
         /*! Get the default connection name. */
         static const QString &getDefaultConnection();
@@ -119,6 +121,73 @@ namespace Orm
                                         const QString &connection = "");
         /*! Get the number of active transactions. */
         static uint transactionLevel(const QString &connection = "");
+
+        /* Queries execution time counter */
+        /*! Determine whether we're counting queries execution time. */
+        static bool
+        countingElapsed(const QString &connection = "");
+        /*! Enable counting queries elapsed time on the current connection. */
+        static DatabaseConnection &
+        enableElapsedCounter(const QString &connection = "");
+        /*! Disable counting queries elapsed time on the current connection. */
+        static DatabaseConnection &
+        disableElapsedCounter(const QString &connection = "");
+        /*! Obtain queries elapsed time. */
+        static qint64
+        getElapsedCounter(const QString &connection = "");
+        /*! Obtain and reset queries elapsed time. */
+        static qint64
+        takeElapsedCounter(const QString &connection = "");
+        /*! Reset queries elapsed time. */
+        static DatabaseConnection &
+        resetElapsedCounter(const QString &connection = "");
+
+        /*! Determine whether any connection is counting queries execution time. */
+        static bool anyCountingElapsed();
+        /*! Enable counting queries execution time on all connections. */
+        static void enableAllElapsedCounters();
+        /*! Disable counting queries execution time on all connections. */
+        static void disableAllElapsedCounters();
+        /*! Obtain queries execution time from all connections. */
+        static qint64 getAllElapsedCounters();
+        /*! Obtain and reset queries execution time on all active connections. */
+        static qint64 takeAllElapsedCounters();
+        /*! Reset queries execution time on all active connections. */
+        static void resetAllElapsedCounters();
+
+        /* Queries executed counter */
+        /*! Determine whether we're counting the number of executed queries. */
+        static bool
+        countingStatements(const QString &connection = "");
+        /*! Enable counting the number of executed queries on the current connection. */
+        static DatabaseConnection &
+        enableStatementsCounter(const QString &connection = "");
+        /*! Disable counting the number of executed queries on the current connection. */
+        static DatabaseConnection &
+        disableStatementsCounter(const QString &connection = "");
+        /*! Obtain the number of executed queries. */
+        static const StatementsCounter &
+        getStatementsCounter(const QString &connection = "");
+        /*! Obtain and reset the number of executed queries. */
+        static StatementsCounter
+        takeStatementsCounter(const QString &connection = "");
+        /*! Reset the number of executed queries. */
+        static DatabaseConnection &
+        resetStatementsCounter(const QString &connection = "");
+
+        /*! Determine whether any connection is counting the number of executed
+            queries. */
+        static bool anyCountingStatements();
+        /*! Enable counting the number of executed queries on all connections. */
+        static void enableAllStatementCounters();
+        /*! Disable counting the number of executed queries on all connections. */
+        static void disableAllStatementCounters();
+        /*! Obtain the number of executed queries on all active connections. */
+        static StatementsCounter getAllStatementCounters();
+        /*! Obtain and reset the number of executed queries on all active connections. */
+        static StatementsCounter takeAllStatementCounters();
+        /*! Reset the number of executed queries on all active connections. */
+        static void resetAllStatementCounters();
     };
 
 } // namespace Orm
