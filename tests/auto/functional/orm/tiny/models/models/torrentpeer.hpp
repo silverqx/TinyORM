@@ -5,16 +5,14 @@
 
 #include "models/torrent.hpp"
 
-class TorrentPeer final : public Orm::Tiny::BaseModel<TorrentPeer, Torrent>
+class TorrentPeer final : public BaseModel<TorrentPeer, Torrent>
 {
     friend BaseModel;
     using BaseModel::BaseModel;
 
 public:
-    // CUR unify model classes look, using and similar silverqx
     /*! Get the torrent that owns the torrent peer. */
-    std::unique_ptr<
-    Orm::Tiny::Relations::Relation<TorrentPeer, Torrent>>
+    std::unique_ptr<Relation<TorrentPeer, Torrent>>
     torrent()
     {
         return belongsTo<Torrent>();
@@ -37,7 +35,7 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<Orm::WithItem> u_with {
+    QVector<WithItem> u_with {
 //        {"torrent"},
     };
 

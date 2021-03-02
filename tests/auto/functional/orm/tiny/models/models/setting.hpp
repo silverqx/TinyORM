@@ -3,7 +3,9 @@
 
 #include "orm/tiny/basemodel.hpp"
 
-class Setting final : public Orm::Tiny::BaseModel<Setting>
+using Orm::Tiny::BaseModel;
+
+class Setting final : public BaseModel<Setting>
 {
     friend BaseModel;
     using BaseModel::BaseModel;

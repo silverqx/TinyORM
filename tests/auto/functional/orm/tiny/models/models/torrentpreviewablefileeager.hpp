@@ -5,18 +5,20 @@
 
 #include "models/torrentpreviewablefilepropertyeager.hpp"
 
+using Orm::Tiny::BaseModel;
+using Orm::Tiny::Relations::Relation;
+using Orm::WithItem;
+
 class TorrentPreviewableFileEager final :
-        public Orm::Tiny::BaseModel<TorrentPreviewableFileEager,
-                                    TorrentPreviewableFilePropertyEager>
+        public BaseModel<TorrentPreviewableFileEager, TorrentPreviewableFilePropertyEager>
 {
     friend BaseModel;
     using BaseModel::BaseModel;
 
 public:
     /*! Get the file property associated with the previewable file. */
-    std::unique_ptr<
-    Orm::Tiny::Relations::Relation<TorrentPreviewableFileEager,
-                                   TorrentPreviewableFilePropertyEager>>
+    std::unique_ptr<Relation<TorrentPreviewableFileEager,
+                    TorrentPreviewableFilePropertyEager>>
     fileProperty()
     {
         return hasOne<TorrentPreviewableFilePropertyEager>("previewable_file_id");
@@ -39,7 +41,7 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<Orm::WithItem> u_with {
+    QVector<WithItem> u_with {
         {"fileProperty"},
     };
 

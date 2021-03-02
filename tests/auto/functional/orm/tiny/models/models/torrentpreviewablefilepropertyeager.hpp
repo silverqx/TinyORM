@@ -3,8 +3,10 @@
 
 #include "orm/tiny/basemodel.hpp"
 
+using Orm::Tiny::BaseModel;
+
 class TorrentPreviewableFilePropertyEager final :
-        public Orm::Tiny::BaseModel<TorrentPreviewableFilePropertyEager>
+        public BaseModel<TorrentPreviewableFilePropertyEager>
 {
     friend BaseModel;
     using BaseModel::BaseModel;

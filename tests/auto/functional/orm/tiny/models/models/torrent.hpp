@@ -30,7 +30,7 @@ public:
     /*! The "type" of the primary key ID. */
     using KeyType = quint64;
 
-//    explicit Torrent(const QVector<Orm::AttributeItem> &attributes = {});
+//    explicit Torrent(const QVector<AttributeItem> &attributes = {});
 
     // TODO desirable, would be amazing to return derived relation type, like HasMany, I will have to solve this somehow silverqx
     /*! Get the previewable files associated with the torrent. */

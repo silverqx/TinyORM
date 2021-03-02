@@ -8,25 +8,27 @@
 #include "models/torrentpeereager_norelations.hpp"
 #include "models/torrentpreviewablefileeager.hpp"
 
+using Orm::Tiny::BaseModel;
+using Orm::Tiny::Relations::Relation;
+using Orm::WithItem;
+
 class TorrentEager final :
-        public Orm::Tiny::BaseModel<TorrentEager, TorrentPreviewableFileEager,
-                                    TorrentPeerEager_NoRelations>
+        public BaseModel<TorrentEager, TorrentPreviewableFileEager,
+                         TorrentPeerEager_NoRelations>
 {
     friend BaseModel;
     using BaseModel::BaseModel;
 
 public:
     /*! Get the previewable files associated with the torrent. */
-    std::unique_ptr<
-    Orm::Tiny::Relations::Relation<TorrentEager, TorrentPreviewableFileEager>>
+    std::unique_ptr<Relation<TorrentEager, TorrentPreviewableFileEager>>
     torrentFiles()
     {
         return hasMany<TorrentPreviewableFileEager>("torrent_id");
     }
 
     /*! Get the torrent peer associated with the torrent. */
-    std::unique_ptr<
-    Orm::Tiny::Relations::Relation<TorrentEager, TorrentPeerEager_NoRelations>>
+    std::unique_ptr<Relation<TorrentEager, TorrentPeerEager_NoRelations>>
     torrentPeer()
     {
         return hasOne<TorrentPeerEager_NoRelations>("torrent_id");
@@ -52,7 +54,7 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<Orm::WithItem> u_with {
+    QVector<WithItem> u_with {
         {"torrentFiles.fileProperty"},
         {"torrentPeer"},
     };

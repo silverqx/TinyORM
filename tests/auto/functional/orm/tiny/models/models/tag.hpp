@@ -13,7 +13,7 @@ using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
-class Tag final : public Orm::Tiny::BaseModel<Tag, Torrent, TagProperty, Tagged>
+class Tag final : public BaseModel<Tag, Torrent, TagProperty, Tagged>
 //class Tag final : public BaseModel<Tag, Torrent, TagProperty, Pivot>
 {
     friend BaseModel;

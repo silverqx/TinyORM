@@ -3,8 +3,9 @@
 
 #include "orm/tiny/basemodel.hpp"
 
-class TorrentPeerEager_NoRelations final :
-        public Orm::Tiny::BaseModel<TorrentPeerEager_NoRelations>
+using Orm::Tiny::BaseModel;
+
+class TorrentPeerEager_NoRelations final : public BaseModel<TorrentPeerEager_NoRelations>
 {
     friend BaseModel;
     using BaseModel::BaseModel;
