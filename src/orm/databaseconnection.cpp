@@ -422,9 +422,8 @@ void DatabaseConnection::bindValues(QSqlQuery &query,
     }
 }
 
-void DatabaseConnection::logQuery(
-        const QSqlQuery &query,
-        const std::optional<quint64> &elapsed = std::nullopt)
+void DatabaseConnection::logQuery(const QSqlQuery &query,
+        const std::optional<qint64> &elapsed = std::nullopt)
 {
     qDebug().nospace().noquote()
         << "Executed prepared query (" << (elapsed ? *elapsed : -1) << "ms, "
@@ -434,7 +433,7 @@ void DatabaseConnection::logQuery(
 
 void DatabaseConnection::logTransactionQuery(
         const QString &query,
-        const std::optional<quint64> elapsed = std::nullopt)
+        const std::optional<qint64> &elapsed = std::nullopt)
 {
     // This is only internal method and logs the passed string
     qDebug().nospace().noquote()
@@ -442,11 +441,11 @@ void DatabaseConnection::logTransactionQuery(
         << query;
 }
 
-std::optional<quint64>
+std::optional<qint64>
 DatabaseConnection::hitTransactionalCounters(const QElapsedTimer &timer)
 {
     /* This function was extracted to prevent duplicit code only. */
-    std::optional<quint64> elapsed;
+    std::optional<qint64> elapsed;
 
     if (m_debugSql || m_countingElapsed)
         elapsed = timer.elapsed();

@@ -71,7 +71,6 @@ namespace Relations {
            /getRawAttributes(). */
         friend TinyBuilder<Model>;
 
-
     public:
         /*! The "type" of the primary key ID. */
         using KeyType = quint64;
@@ -3083,7 +3082,10 @@ namespace Relations {
     {
         Q_UNUSED(key)
 
-        // CUR cast QDateTime values silverqx
+        /* QVariant already contains QDateTime values, because Qt's MySQL driver
+           returns QDateTime when the value from the database is datetime,
+           the same is true for all other types, Qt's driver detects it and
+           creates QVariant with proper types. */
 
         return value;
     }

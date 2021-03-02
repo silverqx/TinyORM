@@ -256,7 +256,7 @@ namespace Orm::Tiny::Relations
                                      const QVariant &id) const;
         /*! Throw domain exception, when a user tries to override ID key
             on the pivot table.  */
-        template<typename KeyType>
+        template<typename KeyType = typename BaseModel<Model>::KeyType>
         void throwOverwritingKeyError(const QString &key, const QVariant &original,
                                       const QVariant &overwrite) const;
     };
@@ -945,12 +945,13 @@ namespace Orm::Tiny::Relations
     {
         // Don't overwrite ID keys, throw domain exception
         if (attribute.key == m_foreignPivotKey)
-            throwOverwritingKeyError<Model::KeyType>(attribute.key,
-                                                     this->m_parent[m_parentKey],
-                                                     attribute.value);
+            // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
+            throwOverwritingKeyError/*<Model::KeyType>*/(attribute.key,
+                                                         this->m_parent[m_parentKey],
+                                                         attribute.value);
         else if (attribute.key == m_relatedPivotKey)
-            throwOverwritingKeyError<Related::KeyType>(attribute.key, id,
-                                                       attribute.value);
+            throwOverwritingKeyError/*<Related::KeyType>*/(attribute.key, id,
+                                                           attribute.value);
     }
 
     template<class Model, class Related, class PivotType>

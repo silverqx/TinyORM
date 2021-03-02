@@ -119,8 +119,7 @@ namespace Orm
                         const QVector<QVariant> &bindings) const;
         /*! Log a query into the connection's query log. */
         void logQuery(const QSqlQuery &query,
-                      // CUR elapsed should be qint64 silverqx
-                      const std::optional<quint64> &elapsed);
+                      const std::optional<qint64> &elapsed);
 
         /*! Check database connection and show warnings when the state changed. */
         bool pingDatabase() override;
@@ -255,9 +254,9 @@ namespace Orm
         void logConnected();
         /*! Log a transaction query into the connection's query log. */
         void logTransactionQuery(const QString &query,
-                                 const std::optional<quint64> elapsed);
+                                 const std::optional<qint64> &elapsed);
         /*! Count transactional queries execution time and statements counter. */
-        std::optional<quint64>
+        std::optional<qint64>
         hitTransactionalCounters(const QElapsedTimer &timer);
 
         /*! The flag for the database was disconnected. */
@@ -308,7 +307,7 @@ namespace Orm
                     handleQueryException(e, queryString, bindings, callback);
         }
 
-        std::optional<quint64> elapsed;
+        std::optional<qint64> elapsed;
         if (m_debugSql || m_countingElapsed)
             elapsed = timer.elapsed();
 
