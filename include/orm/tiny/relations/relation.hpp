@@ -440,6 +440,12 @@ namespace Relations
                             bool = true) const
         { throw OrmLogicError("The 'attach' method is not implemented for this "
                               "relation type."); }
+        /*! Attach models to the parent. */
+        virtual void attach(const std::map<typename BaseModel<Related>::KeyType,
+                                           QVector<AttributeItem>> &,
+                            bool = true) const
+        { throw OrmLogicError("The 'attach' method is not implemented for this "
+                              "relation type."); }
 
         // TODO next add relation name to the exception message silverqx
         /*! Detach models from the relationship. */

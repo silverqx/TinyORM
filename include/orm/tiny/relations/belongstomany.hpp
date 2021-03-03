@@ -154,6 +154,11 @@ namespace Orm::Tiny::Relations
         inline void
         attach(const Related &model, const QVector<AttributeItem> &attributes = {},
                bool touch = true) const override;
+        /*! Attach models to the parent. */
+        void
+        attach(const std::map<typename BaseModel<Related>::KeyType,
+                              QVector<AttributeItem>> &idsWithAttributes,
+               bool touch = true) const override;
 
         /*! Detach models from the relationship. */
         int detach(const QVector<QVariant> &ids, bool touch = true) const override;
@@ -203,6 +208,15 @@ namespace Orm::Tiny::Relations
         QVector<AttributeItem>
         formatAttachRecord(const QVariant &id, const QVector<AttributeItem> &attributes,
                            bool hasTimestamps) const;
+        /*! Attach a model to the parent using a custom class. */
+        void attachUsingCustomClass(
+                const std::map<typename BaseModel<Related>::KeyType,
+                               QVector<AttributeItem>> &idsWithAttributes) const;
+        /*! Create an array of records to insert into the pivot table. */
+        QVector<QVector<AttributeItem>>
+        formatAttachRecords(
+                const std::map<typename BaseModel<Related>::KeyType,
+                               QVector<AttributeItem>> &idsWithAttributes) const;
         /*! Create a new pivot attachment record. */
         QVector<AttributeItem>
         baseAttachRecord(const QVariant &id, bool timed) const;
@@ -627,6 +641,26 @@ namespace Orm::Tiny::Relations
         attach(QVector {model.getAttribute(m_relatedKey)}, attributes, touch);
     }
 
+    // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::attach(
+            const std::map<typename BaseModel<Related>::KeyType,
+                           QVector<AttributeItem>> &idsWithAttributes,
+            const bool touch) const
+    {
+        if constexpr (std::is_same_v<PivotType, Pivot>)
+            /* Here we will insert the attachment records into the pivot table. Once
+               we have inserted the records, we will touch the relationships if
+               necessary and the function will return. */
+            newPivotStatement()->insert(Utils::Attribute::convertVectorsToMaps(
+                                            formatAttachRecords(idsWithAttributes)));
+        else
+            attachUsingCustomClass(idsWithAttributes);
+
+        if (touch)
+            touchIfTouching();
+    }
+
     template<class Model, class Related, class PivotType>
     int BelongsToMany<Model, Related, PivotType>::detach(
             const QVector<QVariant> &ids, const bool touch) const
@@ -820,8 +854,8 @@ namespace Orm::Tiny::Relations
     {
         QVector<QVector<AttributeItem>> records;
 
-        auto hasTimestamps = hasPivotColumn(createdAt()) ||
-                             hasPivotColumn(updatedAt());
+        const auto hasTimestamps = hasPivotColumn(createdAt()) ||
+                                   hasPivotColumn(updatedAt());
 
         /* To create the attachment records, we will simply spin through the IDs given
            and create a new record to insert for each ID with extra attributes to be
@@ -848,6 +882,35 @@ namespace Orm::Tiny::Relations
         }
 
         return baseAttributes;
+    }
+
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::attachUsingCustomClass(
+            const std::map<typename BaseModel<Related>::KeyType,
+                           QVector<AttributeItem>> &idsWithAttributes) const
+    {
+        for (const auto &record : formatAttachRecords(idsWithAttributes))
+            newPivot(record).save();
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<QVector<AttributeItem>>
+    BelongsToMany<Model, Related, PivotType>::formatAttachRecords(
+            const std::map<typename BaseModel<Related>::KeyType,
+                           QVector<AttributeItem>> &idsWithAttributes) const
+    {
+        QVector<QVector<AttributeItem>> records;
+
+        const auto hasTimestamps = hasPivotColumn(createdAt()) ||
+                                   hasPivotColumn(updatedAt());
+
+        /* To create the attachment records, we will simply spin through the IDs given
+           and create a new record to insert for each ID with extra attributes to be
+           placed in other columns. */
+        for (const auto &[id, attributes] : idsWithAttributes)
+            records << formatAttachRecord(id, attributes, hasTimestamps);
+
+        return records;
     }
 
     template<class Model, class Related, class PivotType>
