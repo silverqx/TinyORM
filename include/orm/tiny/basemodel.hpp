@@ -73,7 +73,7 @@ namespace Relations {
 
     public:
         /*! The "type" of the primary key ID. */
-        using KeyType = DefaultKeyType;
+        using KeyType = quint64;
 
         /*! Create a new TinORM model instance. */
         BaseModel();

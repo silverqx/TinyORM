@@ -167,17 +167,13 @@ namespace Query
         bool touch = true;
     };
 
-    // CUR find all quint64 and use DefaultKeyType where appropriate silverqx
-    /*! Default primary key type in TinyORM models. */
-    using DefaultKeyType = quint64;
-
     class SHAREDLIB_EXPORT SyncChanges final : public std::map<QString, QVector<QVariant>>
     {
     public:
         SyncChanges();
 
         /*! Merge changes into the current instance. */
-        template<typename KeyType = DefaultKeyType>
+        template<typename KeyType>
         SyncChanges &merge(SyncChanges &&changes);
         /*! Determine if the given key is supported. */
         bool supportedKey(const QString &key) const;

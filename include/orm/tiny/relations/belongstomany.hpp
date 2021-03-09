@@ -761,7 +761,7 @@ namespace Orm::Tiny::Relations
     {
         const auto castKey = [this](const auto &id)
         {
-            return this->castKey<typename BaseModel<Related>::KeyType>(id);
+            return this->castKey<typename Related::KeyType>(id);
         };
         SyncChanges changes;
 
@@ -790,7 +790,7 @@ namespace Orm::Tiny::Relations
         /* Now we are finally ready to attach the new records. Note that we'll disable
            touching until after the entire operation is complete so we don't fire a
            ton of touch operations until we are totally done syncing the records. */
-        changes.merge<typename BaseModel<Related>::KeyType>(
+        changes.merge<typename Related::KeyType>(
                     attachNew(idsWithAttributes, current, false));
 
         /* Once we have finished attaching or detaching the records, we will see if we
@@ -1256,7 +1256,7 @@ namespace Orm::Tiny::Relations
         std::map<typename BaseModel<Related>::KeyType, QVector<AttributeItem>> records;
 
         for (const auto &id : ids)
-            records.emplace(castKey<typename BaseModel<Related>::KeyType>(id),
+            records.emplace(castKey<typename Related::KeyType>(id),
                             QVector<AttributeItem>());
 
         return records;
