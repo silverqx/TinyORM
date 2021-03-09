@@ -35,6 +35,11 @@ namespace Orm::Tiny::Relations
         /*! Get the results of the relationship. */
         std::variant<QVector<Related>, std::optional<Related>>
         getResults() const override;
+
+    protected:
+        /*! The textual representation of the Relation type. */
+        inline QString relationTypeName() const override
+        { return "HasMany"; };
     };
 
     template<class Model, class Related>

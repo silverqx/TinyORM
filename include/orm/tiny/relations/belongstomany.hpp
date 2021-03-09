@@ -307,6 +307,10 @@ namespace Orm::Tiny::Relations
         QVector<QVariant>
         getRelatedIds(QVector<PivotType> &&pivots) const;
 
+        /*! The textual representation of the Relation type. */
+        inline QString relationTypeName() const override
+        { return "BelongsToMany"; };
+
         /*! The intermediate table for the relation. */
         QString m_table;
         /*! The foreign key of the parent model. */
@@ -604,7 +608,6 @@ namespace Orm::Tiny::Relations
                 .update(record);
     }
 
-    // TODO perf for all similar methods make rvalue variants, or what if all this methods would be rvalue only, so if it is possible then move and if not then copy silverqx
     template<class Model, class Related, class PivotType>
     BelongsToMany<Model, Related, PivotType> &
     BelongsToMany<Model, Related, PivotType>::withPivot(const QStringList &columns)

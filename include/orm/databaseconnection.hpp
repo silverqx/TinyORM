@@ -20,7 +20,6 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    // TODO now SHAREDLIB_EXPORT and Q_DISABLE_COPY silverqx
     class SHAREDLIB_EXPORT DatabaseConnection :
             public ConnectionInterface,
             public Concerns::DetectsLostConnections
@@ -42,7 +41,7 @@ namespace Orm
         /*! Get a new query builder instance. */
         QSharedPointer<QueryBuilder> query() override;
 
-        // TODO now Raw Expressions fuckup🤔 silverqx
+        // TODO dilemma Raw Expressions fuckup🤔 silverqx
         /*! Get a new raw query expression. */
         inline Query::Expression raw(const QVariant &value) const override
         { return value; }

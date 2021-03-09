@@ -62,6 +62,10 @@ namespace Orm::Tiny::Relations
         QHash<typename Model::KeyType, Related>
         buildDictionary(const QVector<Related> &results) const;
 
+        /*! The textual representation of the Relation type. */
+        inline QString relationTypeName() const override
+        { return "BelongsTo"; };
+
         /*! The child model instance of the relation. */
         Model &m_child;
         /*! The foreign key of the parent model. */

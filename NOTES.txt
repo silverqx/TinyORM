@@ -50,6 +50,7 @@ Common:
  - production         : check before deploy to production
  - reliability        : make things more robust and reliable
  - security           : self explaining
+ - study              : don't know how something works, need to check up
  - test               : tasks in auto tests
  - types              : juggling with c++ types
 

@@ -77,7 +77,6 @@ namespace Orm::Tiny::Relations
         QString m_foreignKey;
         /*! The local key of the parent model. */
         QString m_localKey;
-        // TODO next use inline static (better constexpr?) when appropriate, check all the code silverqx
         /*! The count of self joins. */
         inline static int selfJoinCount = 0;
     };
