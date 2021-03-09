@@ -185,7 +185,7 @@ namespace Orm::Tiny::Relations
         /* First we will get to build a dictionary of the child models by their primary
            key of the relationship, then we can easily match the children back onto
            the parents using that dictionary and the primary key of the children. */
-        const auto dictionary = buildDictionary(results);
+        auto dictionary = buildDictionary(results);
 
         /* Once we have the dictionary constructed, we can loop through all the parents
            and match back onto their children using these keys of the dictionary and
@@ -197,7 +197,7 @@ namespace Orm::Tiny::Relations
             )
                 model.setRelation(relation,
                                   std::optional<Related>(
-                                      dictionary.find(foreign).value()));
+                                      std::move(dictionary.find(foreign).value())));
     }
 
     template<class Model, class Related>

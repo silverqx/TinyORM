@@ -42,7 +42,6 @@ namespace Relations {
     // TODO decide/unify when to use class/typename keywords for templates silverqx
     // TODO add concept, AllRelations can not contain type defined in "Model" parameter silverqx
     // TODO next test no relation behavior silverqx
-    // TODO now exceptions for model CRUD methods? silverqx
     // TODO model missing methods Model::getOriginal() silverqx
     // TODO model missing methods Model::addSelect() silverqx
     // TODO model missing methods Model::orderByDesc() silverqx
@@ -1180,7 +1179,7 @@ namespace Relations {
     }
 
     // TODO cpp check all int types and use std::size_t where appropriate silverqx
-    // WARNING id should be Model::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
+    // TODO dilemma primarykey, id should be Model::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
     // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
     template<typename Model, typename ...AllRelations>
     size_t
@@ -2566,8 +2565,7 @@ namespace Relations {
                 std::invoke(getRelationMethodRaw<Related>(relation), model())
                         ->getResults());
 
-        setRelation(relation, relatedModels);
-//        setRelation(relation, std::move(relatedModel));
+        setRelation(relation, std::move(relatedModels));
 
         return getRelationFromHash<Related, Container>(relation);
     }
@@ -2583,8 +2581,7 @@ namespace Relations {
                 std::invoke(getRelationMethodRaw<Related>(relation), model())
                         ->getResults());
 
-        setRelation(relation, relatedModel);
-//        setRelation(relation, std::move(relatedModel));
+        setRelation(relation, std::move(relatedModel));
 
         return getRelationFromHash<Related, One>(relation);
     }
@@ -2799,7 +2796,6 @@ namespace Relations {
         return getRelationFromHash<Related, One>(relation);
     }
 
-    // TODO perf, debug setRelation() and use move when possible silverqx
     template<typename Model, typename ...AllRelations>
     template<typename Related>
     Model &
@@ -3401,7 +3397,7 @@ namespace Relations {
     template<typename Model, typename ...AllRelations>
     QVariant BaseModel<Model, AllRelations...>::getKeyForSaveQuery() const
     {
-        // TODO reason, why m_attributes and m_original should be QHash silverqx
+        // TODO reason, why m_attributes and m_original should be QMap/std::map silverqx
         const auto itOriginal = ranges::find_if(
                                     m_original,
                                     [&key = getKeyName()](const auto &original)
@@ -3528,7 +3524,7 @@ namespace Relations {
             const TinyBuilder<Model> &query,
             const QVector<AttributeItem> &attributes)
     {
-        // TODO now insertGetId() and getKeyName() silverqx
+        // TODO postgres, insertGetId() and getKeyName() for sequence parameter silverqx
 //        const auto &keyName = getKeyName();
 
         const auto id = query.insertGetId(attributes/*, keyName*/);

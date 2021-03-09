@@ -10,7 +10,6 @@
 #include "models/torrentpeer.hpp"
 #include "models/torrentpreviewablefile.hpp"
 
-// TODO now rewrite all with this 'using Xyz::Abc' style silverqx
 using Orm::Tiny::BaseModel;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;

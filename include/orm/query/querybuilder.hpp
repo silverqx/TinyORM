@@ -26,7 +26,6 @@ namespace Orm::Query
 
     // TODO add support for subqueries, first in where() silverqx
     // TODO add inRandomOrder() silverqx
-    // TODO now docs and all code rewrite by eg "using Orm::DatabaseManager" silverqx
     class SHAREDLIB_EXPORT Builder
     {
     public:
