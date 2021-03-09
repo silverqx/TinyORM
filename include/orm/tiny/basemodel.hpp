@@ -42,14 +42,11 @@ namespace Relations {
     // TODO decide/unify when to use class/typename keywords for templates silverqx
     // TODO add concept, AllRelations can not contain type defined in "Model" parameter silverqx
     // TODO next test no relation behavior silverqx
-    // TODO model missing methods Model::getOriginal() silverqx
-    // TODO model missing methods Model::addSelect() silverqx
-    // TODO model missing methods Model::orderByDesc() silverqx
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
     // TODO model missing methods Comparing Models silverqx
     // TODO model missing methods Model::firstOr() silverqx
-    // TODO model missing methods Model::updateOrCreate()/updateOrInsert() silverqx
+    // TODO model missing methods Model::updateOrInsert() silverqx
     // TODO model missing methods Model::loadMissing() silverqx
     // TODO model missing methods Model::whereExists() silverqx
     // TODO model missing methods Model::whereBetween() silverqx
@@ -57,15 +54,13 @@ namespace Relations {
     // TODO perf add pragma once to every header file silverqx
     // TODO future try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
     // TODO future include every stl dependency in header files silverqx
-    // TODO mystery, extern explicit instantiate BaseModel<Pivot> and BasePivot<Pivot> and don't include pivot.hpp at the end of the basemodel.hpp header file, I don't even know if this is possible silverqx
-    // TODO next BaseModel std::initializer_list ctor, after that I can create move methods for  Relation::saveMany/save and pass initializers to them silverqx
     // TODO logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
             public Orm::Concerns::HasConnectionResolver
     {
-        // TODO future, try to solve problem to allow only relevant methods from TinyBuilder silverqx
+        // TODO future, try to solve problem with forward declarations for friend methods, to allow only relevant methods from TinyBuilder silverqx
         /* Used by TinyBuilder::eagerLoadRelationVisitor()/getRelationMethod()
            /getRawAttributes(). */
         friend TinyBuilder<Model>;
@@ -857,7 +852,7 @@ namespace Relations {
 
         /* HasAttributes */
         // TODO should be QHash, I choosen QVector, becuase I wanted to preserve attributes order, think about this, would be solution to use undered_map which preserves insert order? and do I really need to preserve insert order? 🤔, the same is true for m_original field silverqx
-        // TODO future Default Attribute Values, can not be u_attributes because of CRTP, The best I've come up with was BaseModel.init() and init default attrs. from there silverqx
+        // TODO future Default Attribute Values, can not be u_attributes because of CRTP, because BaseModel is initialized first and u_attributes are uninitialized, the best I've come up with was BaseModel.init() and init default attrs. from there silverqx
         /*! The model's attributes. */
         QVector<AttributeItem> m_attributes;
         /*! The model attribute's original state. */
@@ -1103,7 +1098,7 @@ namespace Relations {
         return query()->value(column);
     }
 
-    // TODO future problem with QStringList overload, its ambiguou, solve it somehow silverqx
+    // TODO now problem with QStringList overload, its ambiguou, I think I need only QStringList, because is implicitly convertible to QString silverqx
     template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
     BaseModel<Model, AllRelations...>::with(const QVector<WithItem> &relations)
@@ -1196,9 +1191,8 @@ namespace Relations {
 
         std::size_t count = 0;
 
-        // TODO diff call whereIn() on Model vs TinyBuilder silverqx
         // Ownership of a unique_ptr()
-        for (auto &model : instance.newQuery()->whereIn(key, ids).get())
+        for (auto &model : instance.whereIn(key, ids)->get())
             if (model.remove())
                 ++count;
 
@@ -2316,7 +2310,7 @@ namespace Relations {
     {
         auto builder = newQueryWithoutRelationships()->with(relations);
 
-        // TODO future, make possible to pass single model to eagerLoadRelations() and whole relation flow silverqx
+        // TODO future, make possible to pass single model to eagerLoadRelations() and whole relation flow, I indicative counted how many methods would have to rewrite and it is around 12 methods silverqx
         /* I have to make a copy here of this, because of eagerLoadRelations(),
            the solution would be to add a whole new chain for eager load relations,
            which will be able to work only on one Model &, but it is around
@@ -3621,6 +3615,7 @@ namespace Relations {
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
+// TODO study, find out how to avoid pivot include at the end of BaseModel's header file silverqx
 #include "orm/tiny/relations/pivot.hpp"
 
 #endif // BASEMODEL_H

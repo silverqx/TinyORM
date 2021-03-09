@@ -14,7 +14,6 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    // TODO investigate and rework all orm exception classes silverqx
     class SHAREDLIB_EXPORT OrmRuntimeError : public std::runtime_error
     {
     public:
