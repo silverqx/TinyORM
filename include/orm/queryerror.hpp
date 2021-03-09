@@ -18,9 +18,9 @@ namespace Orm
     {
     public:
         QueryError(const char *message, const QSqlQuery &query,
-                   const QVector<QVariant> &bindings);
+                   const QVector<QVariant> &bindings = {});
         QueryError(const QString &message, const QSqlQuery &query,
-                   const QVector<QVariant> &bindings);
+                   const QVector<QVariant> &bindings = {});
 
         /*! Get the SQL for the query. */
         const QString &getSql() const;

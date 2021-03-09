@@ -22,6 +22,14 @@ QString toSnake(const QString &string)
     return result.toLower();
 }
 
+QString singular(const QString &string)
+{
+    if (!string.endsWith(QChar('s')))
+        return string;
+
+    return string.chopped(1);
+}
+
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE

@@ -42,10 +42,28 @@ namespace Orm::Tiny::Relations
         /*! Determine if the pivot model or given attributes has timestamp attributes. */
         bool hasTimestampAttributes() const;
 
+        /* Hide methods from a BaseModel<PivotModel> */
+        /* Different implementation than the BaseModel and instead of make them virtual
+           I used the CRTP pattern in the BaseModel to properly call them, I can not use
+           virtual here, because of the Virtual Friend Function Idiom, it would
+           be very disarranged. */
         /*! Delete the pivot model record from the database. */
-        int remove();
+        bool remove();
         /*! Delete the pivot model record from the database (alias). */
-        inline int deleteModel() { return remove(); }
+        inline bool deleteModel() { return this->model().remove(); }
+
+        /*! Set the keys for a save update query. */
+        TinyBuilder<PivotModel> &
+        setKeysForSaveQuery(TinyBuilder<PivotModel> &query);
+        /*! Set the keys for a select query. */
+        TinyBuilder<PivotModel> &
+        setKeysForSelectQuery(TinyBuilder<PivotModel> &query);
+
+        /*! Get the table associated with the model. */
+        QString getTable() const;
+        /*! Get the foreign key column name. */
+        inline QString getForeignKey() const
+        { return m_foreignKey; }
 
         // TODO fuckup, timestamps in pivot, I will solve it when I will have to use timestamps in the code, anyway may be I will not need it, because I can pass to the method right away what I will need silverqx
         /*! The parent model of the relationship. */
@@ -143,8 +161,9 @@ namespace Orm::Tiny::Relations
         return hasTimestampAttributes(this->m_attributes);
     }
 
+    // NOTE api different silverqx
     template<typename PivotModel>
-    int BasePivot<PivotModel>::remove()
+    bool BasePivot<PivotModel>::remove()
     {
         // TODO mistake m_attributes/m_original 😭 silverqx
         const auto attributesContainsKey =
@@ -158,16 +177,16 @@ namespace Orm::Tiny::Relations
            BaseModel's 'remove' method, otherwise we have to build a query with
            the help of QueryBuilder's 'where' method. */
         if (attributesContainsKey)
-            return static_cast<bool>(BaseModel<PivotModel>::remove());
+            return BaseModel<PivotModel>::remove();
 
         // TODO events silverqx
 //        if (fireModelEvent("deleting") == false)
-//            return 0;
+//            return false;
 
         this->touchOwners();
 
         // Ownership of a unique_ptr()
-        int affected;
+        int affected = 0;
         std::tie(affected, std::ignore) = getDeleteQuery()->remove();
 
         this->exists = false;
@@ -175,7 +194,52 @@ namespace Orm::Tiny::Relations
         // TODO events silverqx
 //        fireModelEvent("deleted", false);
 
-        return affected;
+        return affected > 0 ? true : false;
+    }
+
+    template<typename PivotModel>
+    TinyBuilder<PivotModel> &
+    BasePivot<PivotModel>::setKeysForSaveQuery(TinyBuilder<PivotModel> &query)
+    {
+        return this->model().setKeysForSelectQuery(query);
+    }
+
+    template<typename PivotModel>
+    TinyBuilder<PivotModel> &
+    BasePivot<PivotModel>::setKeysForSelectQuery(TinyBuilder<PivotModel> &query)
+    {
+        const auto containsKey =
+                ranges::contains(this->m_attributes, true,
+                                 [&key = this->getKeyName()]
+                                 (const auto &attribute)
+        {
+            // TODO now isset also check for NULL, so I have to check for QVariant::isNull/isValid too silverqx
+            return attribute.key == key;
+        });
+
+        if (containsKey)
+            return BaseModel<PivotModel>::setKeysForSelectQuery(query);
+
+        query.whereEq(m_foreignKey,
+                      this->getOriginal(m_foreignKey, this->getAttribute(m_foreignKey)));
+
+        return query.whereEq(m_relatedKey,
+                             this->getOriginal(m_relatedKey,
+                                               this->getAttribute(m_relatedKey)));
+    }
+
+    template<typename PivotModel>
+    QString BasePivot<PivotModel>::getTable() const
+    {
+        const auto &table = this->model().u_table;
+
+        // Get singularizes snake-case table name
+        if (table.isEmpty())
+            return Utils::String::singular(
+                        Utils::String::toSnake(
+                            Utils::Type::classPureBasename<PivotModel>()));
+
+        return table;
     }
 
     template<typename PivotModel>

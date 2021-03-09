@@ -417,53 +417,65 @@ namespace Relations
 
         /* Many-To-Many */
         /*! Attach models to the parent. */
-        virtual void attach(const QVector<QVariant> &,
-                            const QVector<AttributeItem> & = {},
-                            bool = true) const
+        inline virtual void attach(const QVector<QVariant> &,
+                                   const QVector<AttributeItem> & = {},
+                                   bool = true) const
         { throw OrmLogicError("The 'attach' method is not implemented for this "
                               "relation type."); }
         /*! Attach models to the parent. */
-        virtual void attach(const QVector<std::reference_wrapper<Related>> &,
-                            const QVector<AttributeItem> & = {},
-                            bool = true) const
+        inline virtual void attach(const QVector<std::reference_wrapper<Related>> &,
+                                   const QVector<AttributeItem> & = {},
+                                   bool = true) const
         { throw OrmLogicError("The 'attach' method is not implemented for this "
                               "relation type."); }
         /*! Attach a model to the parent. */
-        virtual void attach(const QVariant &,
-                            const QVector<AttributeItem> & = {},
-                            bool = true) const
+        inline virtual void attach(const QVariant &,
+                                   const QVector<AttributeItem> & = {},
+                                   bool = true) const
         { throw OrmLogicError("The 'attach' method is not implemented for this "
                               "relation type."); }
         /*! Attach a model to the parent. */
-        virtual void attach(const Related &,
-                            const QVector<AttributeItem> & = {},
-                            bool = true) const
+        inline virtual void attach(const Related &,
+                                   const QVector<AttributeItem> & = {},
+                                   bool = true) const
         { throw OrmLogicError("The 'attach' method is not implemented for this "
                               "relation type."); }
         /*! Attach models to the parent. */
-        virtual void attach(const std::map<typename BaseModel<Related>::KeyType,
-                                           QVector<AttributeItem>> &,
-                            bool = true) const
+        inline virtual void attach(const std::map<typename BaseModel<Related>::KeyType,
+                                                  QVector<AttributeItem>> &,
+                                   bool = true) const
         { throw OrmLogicError("The 'attach' method is not implemented for this "
                               "relation type."); }
 
         // TODO next add relation name to the exception message silverqx
         /*! Detach models from the relationship. */
-        virtual int detach(const QVector<QVariant> &, bool = true) const
+        inline virtual int detach(const QVector<QVariant> &, bool = true) const
         { throw OrmLogicError("The 'detach' method is not implemented for this "
                               "relation type."); }
         /*! Detach models from the relationship. */
-        virtual int detach(const QVector<std::reference_wrapper<Related>> &,
-                           bool = true) const
+        inline virtual int detach(const QVector<std::reference_wrapper<Related>> &,
+                                  bool = true) const
         { throw OrmLogicError("The 'detach' method is not implemented for this "
                               "relation type."); }
         /*! Detach model from the relationship. */
-        virtual int detach(const QVariant &, bool = true) const
+        inline virtual int detach(const QVariant &, bool = true) const
         { throw OrmLogicError("The 'detach' method is not implemented for this "
                               "relation type."); }
         /*! Detach model from the relationship. */
-        virtual int detach(const Related &, bool = true) const
+        inline virtual int detach(const Related &, bool = true) const
         { throw OrmLogicError("The 'detach' method is not implemented for this "
+                              "relation type."); }
+
+        /*! Sync the intermediate tables with a list of IDs or collection of models. */
+        inline virtual SyncChanges sync(
+                const std::map<typename BaseModel<Related>::KeyType,
+                               QVector<AttributeItem>> &,
+                bool = true) const
+        { throw OrmLogicError("The 'sync' method is not implemented for this "
+                              "relation type."); }
+        /*! Sync the intermediate tables with a list of IDs or collection of models. */
+        inline virtual SyncChanges sync(const QVector<QVariant> &, bool = true) const
+        { throw OrmLogicError("The 'sync' method is not implemented for this "
                               "relation type."); }
 
     protected:

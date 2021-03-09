@@ -26,6 +26,20 @@ bool operator==(const AttributeItem &lhs, const AttributeItem &rhs)
     return lhs.key == rhs.key && lhs.value == rhs.value;
 }
 
+Orm::AttributeItem::operator UpdateItem() const
+{
+    return {key, value};
+}
+
+SyncChanges::SyncChanges()
+    : map {{"attached", {}}, {"detached", {}}, {"updated", {}}}
+{}
+
+bool SyncChanges::supportedKey(const QString &key) const
+{
+    return SyncKeys.contains(key);
+}
+
 //bool operator==(const WithItem &lhs, const WithItem &rhs)
 //{
 //    return (lhs.name == rhs.name);

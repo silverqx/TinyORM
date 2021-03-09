@@ -295,6 +295,7 @@ DatabaseConnection::statement(const QString &queryString,
 
         bindValues(query, prepareBindings(bindings));
 
+        // TODO dilemma, return ok 😭 silverqx
         if (const auto ok = query.exec(); ok) {
             // Query statements counter
             if (m_countingStatements)

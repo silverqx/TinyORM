@@ -73,7 +73,7 @@ namespace Relations {
 
     public:
         /*! The "type" of the primary key ID. */
-        using KeyType = quint64;
+        using KeyType = DefaultKeyType;
 
         /*! Create a new TinORM model instance. */
         BaseModel();
@@ -821,6 +821,11 @@ namespace Relations {
         setKeysForSaveQuery(TinyBuilder<Model> &query);
         /*! Get the primary key value for a save query. */
         QVariant getKeyForSaveQuery() const;
+        /*! Set the keys for a select query. */
+        TinyBuilder<Model> &
+        setKeysForSelectQuery(TinyBuilder<Model> &query);
+        /*! Get the primary key value for a select query. */
+        inline QVariant getKeyForSelectQuery() const;
 
         /*! Perform a model insert operation. */
         bool performInsert(const TinyBuilder<Model> &query);
@@ -2148,7 +2153,7 @@ namespace Relations {
     template<typename Model, typename ...AllRelations>
     bool BaseModel<Model, AllRelations...>::deleteModel()
     {
-        return remove();
+        return model().remove();
     }
 
     template<typename Model, typename ...AllRelations>
@@ -2159,7 +2164,7 @@ namespace Relations {
         if (!exists)
             return std::nullopt;
 
-        return setKeysForSaveQuery(*newQueryWithoutScopes())
+        return model().setKeysForSelectQuery(*newQueryWithoutScopes())
                 .with(relations)
                 .first();
     }
@@ -2177,7 +2182,7 @@ namespace Relations {
         if (!exists)
             return model();
 
-        setRawAttributes(setKeysForSaveQuery(*newQueryWithoutScopes())
+        setRawAttributes(model().setKeysForSelectQuery(*newQueryWithoutScopes())
                          .firstOrFail().getRawAttributes());
 
         // And reload them again, refresh relations
@@ -2348,7 +2353,7 @@ namespace Relations {
     {
         return model
                 && getKey() == model->getKey()
-                && getTable() == model->getTable()
+                && this->model().getTable() == model->getTable()
                 && getConnectionName() == model->getConnectionName();
     }
 
@@ -2453,7 +2458,7 @@ namespace Relations {
 
         model.exists = exists;
         model.setConnection(getConnectionName());
-        model.setTable(getTable());
+        model.setTable(this->model().getTable());
 
         return model;
     }
@@ -2470,7 +2475,7 @@ namespace Relations {
 
         model.exists = exists;
         model.setConnection(getConnectionName());
-        model.setTable(getTable());
+        model.setTable(this->model().getTable());
 
         return model;
     }
@@ -2846,7 +2851,7 @@ namespace Relations {
         if (column.contains('.'))
             return column;
 
-        return getTable() + '.' + column;
+        return model().getTable() + '.' + column;
     }
 
     // TODO move, add rvalue version, for key parameter too silverqx
@@ -2915,6 +2920,7 @@ namespace Relations {
         if (key.isEmpty() || key.isNull())
             return {};
 
+        // TODO duplicate hasAttribute silverqx
         const auto containsKey = ranges::contains(m_attributes, true,
                                                   [&key](const auto &attribute)
         {
@@ -3168,7 +3174,7 @@ namespace Relations {
         auto instance = newRelatedInstance<Related>();
 
         if (foreignKey.isEmpty())
-            foreignKey = getForeignKey();
+            foreignKey = model().getForeignKey();
 
         if (localKey.isEmpty())
             localKey = getKeyName();
@@ -3217,7 +3223,7 @@ namespace Relations {
         auto instance = newRelatedInstance<Related>();
 
         if (foreignKey.isEmpty())
-            foreignKey = getForeignKey();
+            foreignKey = model().getForeignKey();
 
         if (localKey.isEmpty())
             localKey = getKeyName();
@@ -3246,7 +3252,7 @@ namespace Relations {
         auto instance = newRelatedInstance<Related>();
 
         if (foreignPivotKey.isEmpty())
-            foreignPivotKey = getForeignKey();
+            foreignPivotKey = model().getForeignKey();
 
         if (relatedPivotKey.isEmpty())
             relatedPivotKey = instance->getForeignKey();
@@ -3380,7 +3386,7 @@ namespace Relations {
     {
         /* Ownership of a unique_ptr(), if right passed down, then the
            will be destroyed right after this command. */
-        setKeysForSaveQuery(*newModelQuery()).remove();
+        model().setKeysForSaveQuery(*newModelQuery()).remove();
 
         this->exists = false;
     }
@@ -3404,6 +3410,20 @@ namespace Relations {
         });
 
         return itOriginal != ranges::end(m_original) ? itOriginal->value : getKey();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    TinyBuilder<Model> &
+    BaseModel<Model, AllRelations...>::setKeysForSelectQuery(TinyBuilder<Model> &query)
+    {
+        return query.where(getKeyName(), QStringLiteral("="), getKeyForSelectQuery());
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant BaseModel<Model, AllRelations...>::getKeyForSelectQuery() const
+    {
+        // Currently is the implementation exactly the same, so I can call it
+        return getKeyForSaveQuery();
     }
 
     template<typename Model, typename ...AllRelations>
@@ -3476,7 +3496,7 @@ namespace Relations {
         if (!dirty.isEmpty()) {
             QSqlQuery sqlQuery;
             std::tie(std::ignore, sqlQuery) =
-                    setKeysForSaveQuery(query).update(
+                    model().setKeysForSaveQuery(query).update(
                         Utils::Attribute::convertVectorToUpdateItem(dirty));
 
             // TODO dilemma next return values on TinyBuilder silverqx

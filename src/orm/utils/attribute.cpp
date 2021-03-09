@@ -36,9 +36,23 @@ QVector<UpdateItem>
 convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
 {
     QVector<UpdateItem> result;
+    result.reserve(attributes.size());
 
     for (const auto &attribute : attributes)
         result.append({attribute.key, attribute.value});
+
+    return result;
+}
+
+QVector<UpdateItem>
+convertVectorToUpdateItem(QVector<AttributeItem> &&attributes)
+{
+    QVector<UpdateItem> result;
+    result.reserve(attributes.size());
+
+    for (auto &&attribute : attributes)
+        result.append({std::move(attribute.key),
+                       std::move(attribute.value)});
 
     return result;
 }

@@ -1,4 +1,4 @@
-# Configuration
+# Common Configuration ( also for tests )
 # ---
 
 CONFIG *= c++2a strict_c++ silent warn_on
@@ -49,4 +49,14 @@ win32-msvc* {
     QMAKE_CXXFLAGS_DEBUG += -bigobj
     QMAKE_LFLAGS += /guard:cf
     QMAKE_LFLAGS_RELEASE += /OPT:REF /OPT:ICF=5
+}
+
+# Dependencies include and library paths
+# ---
+
+win32-g++* {
+}
+else:win32-msvc* {
+    # range-v3
+    INCLUDEPATH += $$quote(E:/c/qMedia/vcpkg/installed/x64-windows/include)
 }

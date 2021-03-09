@@ -5,6 +5,8 @@
 #include <QVariant>
 #include <QVector>
 
+#include <range/v3/algorithm/unique.hpp>
+
 #include "export.hpp"
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
@@ -87,10 +89,10 @@ namespace Query
 
     class AssignmentList final : public QVector<AssignmentListItem>
     {
-    public:
-        // Inherit all base class constructors, wow 😲✨
+        // Inherit all the base class constructors, wow 😲✨
         using QVector<AssignmentListItem>::QVector;
 
+    public:
         AssignmentList(const QVariantHash &variantHash);
     };
 
@@ -118,6 +120,8 @@ namespace Query
     {
         QString  key;
         QVariant value;
+
+        operator UpdateItem() const;
     };
 
     SHAREDLIB_EXPORT bool operator==(const AttributeItem &lhs, const AttributeItem &rhs);
@@ -162,6 +166,76 @@ namespace Query
         /*! Indicates if timestamps of parent models should be touched. */
         bool touch = true;
     };
+
+    // CUR find all quint64 and use DefaultKeyType where appropriate silverqx
+    /*! Default primary key type in TinyORM models. */
+    using DefaultKeyType = quint64;
+
+    class SHAREDLIB_EXPORT SyncChanges final : public std::map<QString, QVector<QVariant>>
+    {
+    public:
+        SyncChanges();
+
+        /*! Merge changes into the current instance. */
+        template<typename KeyType = DefaultKeyType>
+        SyncChanges &merge(SyncChanges &&changes);
+        /*! Determine if the given key is supported. */
+        bool supportedKey(const QString &key) const;
+
+    protected:
+        /*! Cast the given key to primary key type. */
+        template<typename T>
+        inline T castKey(const QVariant &key) const { return key.value<T>(); }
+
+    private:
+        /*! All of the supported keys. */
+        inline static QVector<QString> SyncKeys {"attached", "detached", "updated"};
+    };
+
+    template<typename KeyType>
+    SyncChanges &SyncChanges::merge(SyncChanges &&changes)
+    {
+        for (auto &&[key, values] : changes) {
+            {
+                auto &currentValues = (*this)[key];
+
+                // If the current key value is empty, then simply move a new values
+                if (supportedKey(key) && currentValues.isEmpty()) {
+                    if (!values.isEmpty())
+                        (*this)[key] = std::move(values);
+
+                    continue;
+                }
+            }
+
+            // Otherwise merge values
+            const auto castKey = [this](const auto &id)
+            {
+                return this->castKey<KeyType>(id);
+            };
+
+            /* First we need to make a copy and then sort both values, vectors
+               have to be sorted before the merge. */
+            auto currentValues = (*this)[key];
+            std::ranges::sort(currentValues, {}, castKey);
+            std::ranges::sort(values, {}, castKey);
+
+            // Then merge two vectors
+            QVector<QVariant> merged;
+            merged.reserve(currentValues.size() + values.size());
+            std::ranges::merge(currentValues, values, std::back_inserter(merged),
+                               {}, castKey, castKey);
+
+            // Remove duplicates
+            // TODO bug in std::ranges::unique, when container contains only one element silverqx
+            auto it = ranges::unique(merged, {}, castKey);
+            merged.erase(it, ranges::end(merged));
+
+            (*this)[key].swap(merged);
+        }
+
+        return *this;
+    }
 
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE

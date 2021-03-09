@@ -20,6 +20,9 @@ namespace Orm::Utils::Attribute
     /*! Convert a AttributeItem QVector to UpdateItem QVector. */
     SHAREDLIB_EXPORT QVector<UpdateItem>
     convertVectorToUpdateItem(const QVector<AttributeItem> &attributes);
+    /*! Convert a AttributeItem QVector to UpdateItem QVector. */
+    SHAREDLIB_EXPORT QVector<UpdateItem>
+    convertVectorToUpdateItem(QVector<AttributeItem> &&attributes);
 
 } // namespace Orm::Utils::Attribute
 #ifdef TINYORM_COMMON_NAMESPACE
