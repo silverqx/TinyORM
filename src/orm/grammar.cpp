@@ -98,6 +98,7 @@ namespace
         return cleanBindingsFlatten;
     };
 
+    // TODO revisit, is merge really needed, because this is not merge fuckin silverqx
     /*! Merge a 'from' vector into a 'to' vector. */
     const auto mergeVector = [](auto &to, const auto &from)
     {
@@ -119,6 +120,7 @@ QVector<QVariant> Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
 {
     QVector<QVariant> preparedBindings;
 
+    // TODO I don't know why I'm using mergeVector here, when the preparedBindings can be initialized by ctor, revisit all this code, because it is the one of the first code I wrote and I'm much better in c++ now silverqx
     // Merge join bindings from bindings map
     mergeVector(preparedBindings, bindings.find(BindingType::JOIN).value());
     // Merge update values bindings
@@ -149,7 +151,8 @@ namespace
         QVector<BindingType> bindingsToReject {BindingType::SELECT};
         QVector<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
 
-        for (auto itBindingVector = bindings.constBegin(); itBindingVector != bindings.constEnd();
+        for (auto itBindingVector = bindings.constBegin();
+             itBindingVector != bindings.constEnd();
              ++itBindingVector)
         {
             if (bindingsToReject.contains(itBindingVector.key()))
