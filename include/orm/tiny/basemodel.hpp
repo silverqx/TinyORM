@@ -40,7 +40,7 @@ namespace Relations {
     using QueryBuilder = Query::Builder;
 
     // TODO decide/unify when to use class/typename keywords for templates silverqx
-    // TODO add concept, AllRelations can not contain type defined in "Model" parameter silverqx
+    // TODO concept, AllRelations can not contain type defined in "Model" parameter silverqx
     // TODO next test no relation behavior silverqx
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
@@ -754,7 +754,6 @@ namespace Relations {
         template<typename Related>
         std::unique_ptr<Related> newRelatedInstance() const;
 
-        // TODO can be unified to a one templated method by relation type silverqx
         /*! Instantiate a new HasOne relationship. */
         template<typename Related>
         inline std::unique_ptr<Relations::Relation<Model, Related>>

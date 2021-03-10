@@ -46,7 +46,7 @@ namespace Orm
         /*! Convert an array of column names into a delimited string. */
         QString columnize(const QStringList &columns) const;
         QString columnize(const QStringList &columns, bool isTorrentsTable) const;
-        // TODO add template constraint to QVariantMap and QVector<QVariant> for now silverqx
+        // TODO concept, template constraint to QVariantMap and QVector<QVariant> for now silverqx
         /*! Create query parameter place-holders for an array. */
         template<typename Container>
         QString parametrize(const Container &values) const;

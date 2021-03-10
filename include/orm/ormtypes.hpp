@@ -154,10 +154,12 @@ namespace Query
 
 //    bool operator==(const WithItem &lhs, const WithItem &rhs);
 
-    /*! Tag for BaseModel::getRelation() family methods to return Related type directly ( not container type ). */
-    struct One {};
-    // TODO Many internal type only for now silverqx
-    /*! Tag for BaseModel::getRelationshipFromMethod() to return QVector<Related> type ( 'Many' relation types ). */
+    /*! Tag for BaseModel::getRelation() family methods to return Related type
+        directly ( not container type ). */
+    struct SHAREDLIB_EXPORT One {};
+    /*! Tag for BaseModel::getRelationshipFromMethod() to return QVector<Related>
+        type ( 'Many' relation types ), only internal type for now, used as the template
+        tag in the BaseModel::pushVisited. */
     struct Many {};
 
     /*! Options parameter type used in Model save() method. */
@@ -223,7 +225,7 @@ namespace Query
                                {}, castKey, castKey);
 
             // Remove duplicates
-            // TODO bug in std::ranges::unique, when container contains only one element silverqx
+            // BUG in std::ranges::unique, when container contains only one element silverqx
             auto it = ranges::unique(merged, {}, castKey);
             merged.erase(it, ranges::end(merged));
 

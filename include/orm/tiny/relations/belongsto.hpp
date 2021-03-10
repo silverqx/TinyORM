@@ -13,7 +13,6 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Relations
 {
 
-    // TODO add associate/disassociate silverqx
     template<class Model, class Related>
     class BelongsTo : public Relation<Model, Related>, public OneRelation
     {
@@ -234,8 +233,7 @@ namespace Orm::Tiny::Relations
         // TODO add support for getDefaultFor() silverqx
         const auto first = this->m_query->first();
 
-        // TODO check if I can return reference silverqx
-        return  first ? first : std::nullopt;
+        return first ? first : std::nullopt;
     }
 
     template<class Model, class Related>

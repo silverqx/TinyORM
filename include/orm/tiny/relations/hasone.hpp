@@ -82,6 +82,7 @@ namespace Orm::Tiny::Relations
         )
             return std::nullopt;
 
+        // NRVO should kick in, I leave it const
         const auto first = this->m_query->first();
 
         return first ? first : std::nullopt;

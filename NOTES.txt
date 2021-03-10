@@ -35,6 +35,7 @@ Common:
 
  - api different      : different api than Laravel's Eloquent
  - check              : something to find out 🤔
+ - concept            : add concept or constraint
  - docs               : document code or update markdown documentation
  - desirable          : feature which is extremely wanted
  - dilemma            : some sort of a fuckup

@@ -50,7 +50,7 @@ namespace Relations
         /*! Execute the query as a "select" statement. */
         QVector<Model> get(const QStringList &columns = {"*"});
 
-        // NOTE Model::KeyType for id silverqx
+        // TODO dilmma primarykey, Model::KeyType for id silverqx
         /*! Find a model by its primary key. */
         std::optional<Model>
         find(const QVariant &id, const QStringList &columns = {"*"});
