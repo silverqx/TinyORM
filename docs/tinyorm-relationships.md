@@ -7,7 +7,9 @@
     - [One To One](#one-to-one)
     - [One To Many](#one-to-many)
     - [One To Many (Inverse) / Belongs To](#one-to-many-inverse)
-- [~~Many To Many Relationships~~](#many-to-many) *coming soon*
+- [Many To Many Relationships](#many-to-many)
+    - [Retrieving Intermediate Table Columns](#retrieving-intermediate-table-columns)
+    - [Defining Custom Intermediate Table Models](#defining-custom-intermediate-table-models)
 - [Querying Relations](#querying-relations)
     - [Relationship Methods](#relationship-methods)
 - [Eager Loading](#eager-loading)
@@ -376,7 +378,355 @@ The third `belongsTo` parameter is the relation name, if you pass it, the foreig
 <a name="many-to-many"></a>
 ## Many To Many Relationships
 
-It will be implemented soon.
+Many-to-many relations are slightly more complicated than `hasOne` and `hasMany` relationships. An example of a many-to-many relationship is a user that has many roles and those roles are also shared by other users in the application. For example, a user may be assigned the role of "Author" and "Editor"; however, those roles may also be assigned to other users as well. So, a user has many roles and a role has many users.
+
+<a name="many-to-many-table-structure"></a>
+#### Table Structure
+
+To define this relationship, three database tables are needed: `users`, `roles`, and `role_user`. The `role_user` table is derived from the alphabetical order of the related model names and contains `user_id` and `role_id` columns. This table is used as an intermediate table linking the users and roles.
+
+Remember, since a role can belong to many users, we cannot simply place a `user_id` column on the `roles` table. This would mean that a role could only belong to a single user. In order to provide support for roles being assigned to multiple users, the `role_user` table is needed. We can summarize the relationship's table structure like so:
+
+    users
+        id - integer
+        name - string
+
+    roles
+        id - integer
+        name - string
+
+    role_user
+        user_id - integer
+        role_id - integer
+
+<a name="many-to-many-model-structure"></a>
+#### Model Structure
+
+Many-to-many relationships are defined by writing a method that returns the result of the `belongsToMany` method. The `belongsToMany` method is provided by the `Orm::Tiny::BaseModel<Model, AllRelations...>` base class that is used by all of your application's TinyORM models. For example, let's define a `roles` method on our `User` model. The first argument passed to this method is the name of the related model class:
+
+    #ifndef USER_H
+    #define USER_H
+
+    #include <orm/tiny/basemodel.hpp>
+
+    #include "models/role.hpp"
+
+    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Relations::Pivot;
+    using Orm::Tiny::Relations::Relation;
+
+    class User final : public BaseModel<User, Role, Pivot>
+    {
+        friend BaseModel;
+        using BaseModel::BaseModel;
+
+    public:
+        /*! The roles that belong to the user. */
+        std::unique_ptr<Relation<User, Role>>
+        roles()
+        {
+            return belongsToMany<Role>();
+        }
+
+    private:
+        /*! The visitor to obtain a type for Related template parameter. */
+        void relationVisitor(const QString &relation)
+        {
+            if (relation == "roles")
+                relationVisited<Role>();
+            else if (relation == "pivot") // Pivot
+                relationVisited<Pivot>();
+        }
+
+        /*! Map of relation names to methods. */
+        QHash<QString, std::any> u_relations {
+            {"roles", &User::roles},
+        };
+    };
+
+    #endif // USER_H
+
+Once the relationship is defined, you may access the user's roles as the `QVector<Related *>`  by BaseModel's `getRelationValue<Related, Container = QVector>` method:
+
+    #include <QDebug>
+
+    #include "models/user.hpp"
+
+    auto user = User::find(1);
+
+    for (auto *role : user->getRelationValue<Role>("roles"))
+        qDebug() << role->getAttribute("id").toULongLong();
+
+Since all relationships also serve as query builders, you may add further constraints to the relationship query by calling the `roles` method and continuing to chain conditions onto the query:
+
+    auto roles = User::find(1)->roles()->orderBy("name").get();
+
+To determine the table name of the relationship's intermediate table, TinyORM will join the two related model names in alphabetical order. However, you are free to override this convention. You may do so by passing a first argument to the `belongsToMany` method:
+
+    return belongsToMany<Role>("role_user");
+
+In addition to customizing the name of the intermediate table, you may also customize the column names of the keys on the table by passing additional arguments to the `belongsToMany` method. The second argument is the foreign key name of the model on which you are defining the relationship, while the third argument is the foreign key name of the model that you are joining to:
+
+    return belongsToMany<Role>("role_user", "user_id", "role_id");
+
+<a name="many-to-many-defining-the-inverse-of-the-relationship"></a>
+#### Defining The Inverse Of The Relationship
+
+To define the "inverse" of a many-to-many relationship, you should define a method on the related model which also returns the result of the `belongsToMany` method. To complete our user / role example, let's define the `users` method on the `Role` model:
+
+    #ifndef ROLE_H
+    #define ROLE_H
+
+    #include <orm/tiny/basemodel.hpp>
+
+    class User; // Forward declaration to avoid cyclic dependency
+
+    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Relations::Pivot;
+    using Orm::Tiny::Relations::Relation;
+
+    class Role final : public BaseModel<Role, User, Pivot>
+    {
+        friend BaseModel;
+        using BaseModel::BaseModel;
+
+    public:
+        /*! The users that belong to the role. */
+        std::unique_ptr<Relation<Role, User>>
+        users()
+        {
+            return belongsToMany<User>();
+        }
+
+    private:
+        /*! The visitor to obtain a type for Related template parameter. */
+        void relationVisitor(const QString &relation)
+        {
+            if (relation == "users")
+                relationVisited<User>();
+            else if (relation == "pivot") // Pivot
+                relationVisited<Pivot>();
+        }
+
+        /*! Map of relation names to methods. */
+        QHash<QString, std::any> u_relations {
+            {"users", &Role::users},
+        };
+    };
+
+    #endif // ROLE_H
+
+As you can see, the relationship is defined exactly the same as its `User` model counterpart with the exception of referencing the `User` model. Since we're reusing the `belongsToMany` method, all of the usual table and key customization options are available when defining the "inverse" of many-to-many relationships.
+
+<a name="retrieving-intermediate-table-columns"></a>
+### Retrieving Intermediate Table Columns
+
+As you have already learned, working with many-to-many relations requires the presence of an intermediate table. TinyORM provides some very helpful ways of interacting with this table. For example, let's assume our `User` model has many `Role` models that it is related to. After accessing this relationship, we may access the intermediate table using the `pivot` attribute on the models:
+
+    #include <QDebug>
+
+    #include "models/user.hpp"
+
+    using Orm::Tiny::Relations::Pivot;
+
+    auto user = User::find(1);
+
+    for (auto *role : user->getRelationValue<Role>("roles"))
+        qDebug() << role->getRelation<Pivot, Orm::One>("pivot")
+                        ->getAttribute("created_at");
+
+Notice that each `Role` model we retrieve has automatically assigned a `pivot` relationship. This relation contains a model representing the intermediate table and it is an instance of the `Orm::Tiny::Relations::Pivot` model class.
+
+By default, only the model keys will be present on the `pivot` model. If your intermediate table contains extra attributes, you must specify them when defining the relationship:
+
+    using Orm::Tiny::Relations::BelongsToMany;
+
+    // Ownership of a unique_ptr()
+    auto relation = belongsToMany<Role>();
+    dynamic_cast<BelongsToMany<User, Role> &>(*relation)
+            .withPivot({"active", "created_by"});
+
+    return relation;
+
+If you would like your intermediate table to have `created_at` and `updated_at` timestamps that are automatically maintained by TinyORM, call the `withTimestamps` method when defining the relationship:
+
+    using Orm::Tiny::Relations::BelongsToMany;
+
+    // Ownership of a unique_ptr()
+    auto relation = belongsToMany<Role>();
+    dynamic_cast<BelongsToMany<User, Role> &>(*relation)
+            .withTimestamps();
+
+    return relation;
+
+> {note} Intermediate tables that utilize TinyORM's automatically maintained timestamps are required to have both `created_at` and `updated_at` timestamp columns.
+
+<a name="customizing-the-pivot-relation-name"></a>
+#### Customizing The `pivot` Relation Name
+
+As noted previously, attributes from the intermediate table may be accessed on models via the `pivot` relation name. However, you are free to customize the name of this relation to better reflect its purpose within your application.
+
+For example, if your application contains users that may subscribe to podcasts, you likely have a many-to-many relationship between users and podcasts. If this is the case, you may wish to rename your intermediate table relation name to `subscription` instead of `pivot`. This can be done using the `as` method when defining the relationship:
+
+    using Orm::Tiny::Relations::BelongsToMany;
+
+    // Ownership of a unique_ptr()
+    auto relation = belongsToMany<Podcast>();
+    dynamic_cast<BelongsToMany<User, Podcast> &>(*relation)
+            .as("subscription")
+            .withTimestamps();
+
+    return relation;
+
+Once the custom intermediate table relation name has been specified, you may access the intermediate table data using the customized name:
+
+    #include <QDebug>
+
+    #include "models/user.hpp"
+
+    using Orm::Tiny::Relations::Pivot;
+
+    auto users = User::with("podcasts")->get();
+
+    for (auto &user : users)
+        for (auto *podcast : user.getRelation<Podcast>("podcasts"))
+            qDebug() << podcast->getRelation<Pivot, Orm::One>("subscription")
+                               ->getAttribute("created_at");
+
+<a name="defining-custom-intermediate-table-models"></a>
+### Defining Custom Intermediate Table Models
+
+If you would like to define a custom model to represent the intermediate table of your many-to-many relationship, you may pass the custom pivot type as a second template argument to the `belongsToMany<Related, PivotType = Pivot>` method when defining the relationship. Custom pivot models give you the opportunity to define additional methods on the pivot model.
+
+Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePivot<PivotModel>` class. For example, we may define a `User` model which uses a custom `RoleUser` pivot model:
+
+    #ifndef USER_H
+    #define USER_H
+
+    #include <orm/tiny/basemodel.hpp>
+
+    #include "models/role.hpp"
+
+    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Relations::Pivot;
+    using Orm::Tiny::Relations::Relation;
+
+    class User final : public BaseModel<User, Role, Pivot>
+    {
+        friend BaseModel;
+        using BaseModel::BaseModel;
+
+    public:
+        /*! The roles that belong to the user. */
+        std::unique_ptr<Relation<User, Role>>
+        roles()
+        {
+            return belongsToMany<Role, RoleUser>();
+        }
+
+    private:
+        /*! The visitor to obtain a type for Related template parameter. */
+        void relationVisitor(const QString &relation)
+        {
+            if (relation == "roles")
+                relationVisited<Role>();
+            else if (relation == "pivot") // Pivot
+                relationVisited<Pivot>();
+        }
+
+        /*! Map of relation names to methods. */
+        QHash<QString, std::any> u_relations {
+            {"roles", &User::roles},
+        };
+    };
+
+    #endif // USER_H
+
+When defining the `RoleUser` model, you should extend the `Orm::Tiny::Relations::BasePivot<PivotModel>` class:
+
+    #ifndef ROLEUSER_H
+    #define ROLEUSER_H
+
+    #include "orm/tiny/relations/basepivot.hpp"
+
+    using Orm::Tiny::Relations::BasePivot;
+
+    class RoleUser final : public BasePivot<RoleUser>
+    {
+        friend BaseModel;
+        friend BasePivot;
+
+        using BasePivot::BasePivot;
+    };
+
+    #endif // ROLEUSER_H
+
+You have to pass a custom pivot type to the `AllRelations` template parameter pack on `BaseModel<Model, ...AllRelations>` so that the `BaseModel` knows how to generate a `std::variant`, which holds all the relations and also add a new mapping from the relation name to the custom pivot model type-id, this is  described in more detail in the [Common Rules](#common-rules):
+
+    #ifndef ROLE_H
+    #define ROLE_H
+
+    #include <orm/tiny/basemodel.hpp>
+
+    class User; // Forward declaration to avoid cyclic dependency
+
+    #include "models/roleuser.hpp"
+
+    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Relations::Pivot;
+    using Orm::Tiny::Relations::Relation;
+
+    class Role final : public BaseModel<Role, User, RoleUser>
+    {
+        friend BaseModel;
+        using BaseModel::BaseModel;
+
+    public:
+        /*! The users that belong to the role. */
+        std::unique_ptr<Relation<Role, User>>
+        users()
+        {
+            return belongsToMany<User>();
+        }
+
+    private:
+        /*! The visitor to obtain a type for Related template parameter. */
+        void relationVisitor(const QString &relation)
+        {
+            if (relation == "users")
+                relationVisited<User>();
+            else if (relation == "pivot") // Pivot
+                relationVisited<RoleUser>();
+        }
+
+        /*! Map of relation names to methods. */
+        QHash<QString, std::any> u_relations {
+            {"users", &Role::users},
+        };
+    };
+
+    #endif // ROLE_H
+
+Once the custom pivot model `RoleUser` has been defined, `getRelation` or `getRelationValue` method returns proper pivot type:
+
+    #include <QDebug>
+
+    #include "models/user.hpp"
+
+    auto users = User::with("roles")->get();
+
+    for (auto &user : users)
+        for (auto *role : user.getRelation<Role>("roles"))
+            qDebug() << role->getRelation<RoleUser, Orm::One>("pivot")
+                            ->getAttribute("created_at");
+
+<a name="custom-pivot-models-and-incrementing-ids"></a>
+#### Custom Pivot Models And Incrementing IDs
+
+If you have defined a many-to-many relationship that uses a custom pivot model, and that pivot model has an auto-incrementing primary key, you should ensure your custom pivot model class defines an `u_incrementing` data member that is set to `true`.
+
+    /*! Indicates if the IDs are auto-incrementing. */
+    bool u_incrementing = true;
 
 <a name="querying-relations"></a>
 ## Querying Relations
