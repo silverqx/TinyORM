@@ -43,15 +43,18 @@ namespace Orm::Tiny::Relations
     };
 
     template<class Model, class Related>
-    HasMany<Model, Related>::HasMany(std::unique_ptr<Related> &&related, Model &parent,
-                                     const QString &foreignKey, const QString &localKey)
+    HasMany<Model, Related>::HasMany(
+            std::unique_ptr<Related> &&related, Model &parent,
+            const QString &foreignKey, const QString &localKey
+    )
         : HasOneOrMany<Model, Related>(std::move(related), parent, foreignKey, localKey)
     {}
 
     template<class Model, class Related>
     std::unique_ptr<Relation<Model, Related>>
-    HasMany<Model, Related>::instance(std::unique_ptr<Related> &&related, Model &parent,
-                                    const QString &foreignKey, const QString &localKey)
+    HasMany<Model, Related>::instance(
+            std::unique_ptr<Related> &&related, Model &parent,
+            const QString &foreignKey, const QString &localKey)
     {
         // Relations have private ctors, std::make_unique() can't be used
         auto instance = std::unique_ptr<HasMany<Model, Related>>(

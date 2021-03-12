@@ -471,11 +471,10 @@ namespace Relations
         /*! The textual representation of the Relation type. */
         virtual QString relationTypeName() const = 0;
 
-        /* Much safer to make a copy here than save references, original objects get
-           out of scope, because they are defined in member function blocks.
-           This is true for all constructor parameters counting ctor parameters in
-           derived classes, like m_parent, m_child, m_related, m_ownerKey,
-           m_foreignKey, ... */
+        /* During eager load, we secure m_parent not to become a dangling reference in
+           TinyBuilder::eagerLoadRelation() by help of the dummyModel local variable.
+           During lazy loads, m_parent refers to the model that initiated the lazy
+           load. */
         /*! The parent model instance. */
         Model &m_parent;
         /*! The related model instance. */

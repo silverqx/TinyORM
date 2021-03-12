@@ -95,9 +95,9 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     std::unique_ptr<Relation<Model, Related>>
-    BelongsTo<Model, Related>::instance(std::unique_ptr<Related> &&related,
-                                      Model &child, const QString &foreignKey,
-                                      const QString &ownerKey, const QString &relation)
+    BelongsTo<Model, Related>::instance(
+            std::unique_ptr<Related> &&related, Model &child,
+            const QString &foreignKey, const QString &ownerKey, const QString &relation)
     {
         auto instance = std::unique_ptr<BelongsTo<Model, Related>>(
                     new BelongsTo(std::move(related), child, foreignKey,

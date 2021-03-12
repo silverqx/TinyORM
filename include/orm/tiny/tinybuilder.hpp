@@ -309,7 +309,7 @@ namespace Relations
         void eagerLoadRelation(QVector<Model> &models, const WithItem &relationItem);
         /*! Get the relation instance for the given relation name. */
         template<typename Related>
-        auto getRelation(const QString &name);
+        auto getRelation(const QString &name, Model &dummyModel);
         /*! Create a collection of models from QSqlQuery. */
         QVector<Model> hydrate(QSqlQuery result);
 
@@ -1189,10 +1189,17 @@ namespace Relations
     void Builder<Model>::eagerLoadRelation(QVector<Model> &models,
                                            const WithItem &relationItem)
     {
+        /*! Helping model for eager loads, because Relation::m_parent has to be
+            reference, this dummy model prevents dangling reference, have to secure
+            that the model passed to the relation method called inside getRelation()
+            will live long enough not to become a dangling reference.
+            Look at Relation::m_parent for additional info. */
+        auto dummyModel = getModel().newInstance();
+
         /* First we will "back up" the existing where conditions on the query so we can
            add our eager constraints. Then we will merge the wheres that were on the
            query back to it in order that any where conditions might be specified. */
-        auto relation = getRelation<Related>(relationItem.name);
+        auto relation = getRelation<Related>(relationItem.name, dummyModel);
 
         relation->addEagerConstraints(models);
 
@@ -1209,7 +1216,7 @@ namespace Relations
 
     template<typename Model>
     template<typename Related>
-    auto Builder<Model>::getRelation(const QString &name)
+    auto Builder<Model>::getRelation(const QString &name, Model &dummyModel)
     {
         // TODO docs add similar note for lazy load silverqx
         /* How this relation flow works:
@@ -1243,9 +1250,9 @@ namespace Relations
            not have to remove these where clauses manually which gets really hacky
            and error prone. We don't want constraints because we add eager ones. */
         auto relation = Relations::Relation<Model, Related>::noConstraints(
-                    [this, &method]
+                    [this, &method, &dummyModel]
         {
-            return std::invoke(method, getModel().newInstance());
+            return std::invoke(method, dummyModel);
         });
 
         const auto nested = relationsNestedUnder(name);

@@ -44,15 +44,18 @@ namespace Orm::Tiny::Relations
     };
 
     template<class Model, class Related>
-    HasOne<Model, Related>::HasOne(std::unique_ptr<Related> &&related, Model &parent,
-                                   const QString &foreignKey, const QString &localKey)
+    HasOne<Model, Related>::HasOne(
+            std::unique_ptr<Related> &&related, Model &parent,
+            const QString &foreignKey, const QString &localKey
+    )
         : HasOneOrMany<Model, Related>(std::move(related), parent, foreignKey, localKey)
     {}
 
     template<class Model, class Related>
     std::unique_ptr<Relation<Model, Related>>
-    HasOne<Model, Related>::instance(std::unique_ptr<Related> &&related, Model &parent,
-                                   const QString &foreignKey, const QString &localKey)
+    HasOne<Model, Related>::instance(
+            std::unique_ptr<Related> &&related, Model &parent,
+            const QString &foreignKey, const QString &localKey)
     {
         auto instance = std::unique_ptr<HasOne<Model, Related>>(
                     new HasOne(std::move(related), parent, foreignKey, localKey));
@@ -64,7 +67,8 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     QVector<Model> &
-    HasOne<Model, Related>::initRelation(QVector<Model> &models, const QString &relation) const
+    HasOne<Model, Related>::initRelation(QVector<Model> &models,
+                                         const QString &relation) const
     {
         for (auto &model : models)
             model.template setRelation<Related>(relation, std::nullopt);

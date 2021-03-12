@@ -454,6 +454,7 @@ namespace Relations {
         /*! Create a new instance of the given model. */
         Model newInstance(QVector<AttributeItem> &&attributes,
                           bool exists = false);
+
         /*! Create a new pivot model instance. */
         template<typename PivotType = Relations::Pivot, typename Parent>
         PivotType newPivot(const Parent &parent, const QVector<AttributeItem> &attributes,
@@ -538,7 +539,7 @@ namespace Relations {
         /*! Get a relationship for Many types relation. */
         template<typename Related,
                  template<typename> typename Container = QVector>
-        Container<Related *>
+        const Container<Related *>
         getRelationValue(const QString &relation);
         /*! Get a relationship for a One type relation. */
         template<typename Related, typename Tag,
@@ -594,7 +595,8 @@ namespace Relations {
         /*! Get a specified relationship. */
         template<typename Related,
                  template<typename> typename Container = QVector>
-        Container<Related *> getRelation(const QString &relation);
+        const Container<Related *>
+        getRelation(const QString &relation);
         /*! Get a specified relationship as Related type, for use with HasOne and
             BelongsTo relation types. */
         template<typename Related, typename Tag,
@@ -2509,7 +2511,7 @@ namespace Relations {
 
     template<typename Model, typename ...AllRelations>
     template<typename Related, template<typename> typename Container>
-    Container<Related *>
+    const Container<Related *>
     BaseModel<Model, AllRelations...>::getRelationValue(const QString &relation)
     {
         /*! If the key already exists in the relationships array, it just means the
@@ -2761,9 +2763,10 @@ namespace Relations {
     // TODO make getRelation() Container argument compatible with STL containers API silverqx
     // TODO solve different behavior like Eloquent getRelation() silverqx
     // TODO next many relation compiles with Orm::One and exception during runtime occures, solve this during compile, One relation only with Orm::One and many relation type only with Container version silverqx
+    // Return const value to prevent clazy warning about detaching container
     template<typename Model, typename ...AllRelations>
     template<typename Related, template<typename> typename Container>
-    Container<Related *>
+    const Container<Related *>
     BaseModel<Model, AllRelations...>::getRelation(const QString &relation)
     {
         if (!relationLoaded(relation))
