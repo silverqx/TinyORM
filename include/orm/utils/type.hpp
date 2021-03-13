@@ -21,7 +21,8 @@ namespace Orm::Utils::Type
 
         // This should never happen, but who knows 🤔
         Q_ASSERT_X(match.hasMatch(),
-                   "regex match", "Can not get the class base name in getForeignKey().");
+                   "regex match", "Can not get the class base name in "
+                                  "Utils::Type::classPureBasename().");
 
         return match.captured();
     }
@@ -30,7 +31,20 @@ namespace Orm::Utils::Type
     template<typename Type>
     inline QString classPureBasename(const Type &type)
     {
-        return classPureBasename<decltype (type)>();
+        /* If you want to obtain a name for the polymorphic type, take care to pass
+            a glvalue as the 'type' argument, the 'this' pointer is a prvalue! */
+        QRegularExpression re(
+                    QStringLiteral("(?:(?<=^struct )\\w+|(?<=^class )\\w+|(?<=::)\\w+)"
+                                   "(?=<.*>| |$)"));
+
+        const auto match = re.match(typeid (type).name());
+
+        // This should never happen, but who knows 🤔
+        Q_ASSERT_X(match.hasMatch(),
+                   "regex match", "Can not get the class base name in "
+                                  "Utils::Type::classPureBasename().");
+
+        return match.captured();
     }
 
 } // namespace Orm::Utils::Type

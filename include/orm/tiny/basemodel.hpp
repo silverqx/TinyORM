@@ -3118,7 +3118,7 @@ namespace Relations {
     {
         return QStringLiteral("%1_%2").arg(
                     Utils::String::toSnake(
-                        Utils::Type::classPureBasename<decltype (model())>()),
+                        Utils::Type::classPureBasename<Model>()),
                     getKeyName());
     }
 
@@ -3294,7 +3294,7 @@ namespace Relations {
            just sort the models and join them together to get the table name. */
         QStringList segments {
             // The table name of the current model instance
-            Utils::Type::classPureBasename(model()),
+            Utils::Type::classPureBasename<Model>(),
             // The table name of the related model instance
             Utils::Type::classPureBasename<Related>(),
         };
