@@ -310,6 +310,87 @@ INSERT INTO `tag_properties` (`id`, `tag_id`, `color`, `position`, `created_at`,
 (3, 3, 'red', 2, '2021-02-13 12:41:28', '2021-02-13 22:17:11'),
 (4, 4, 'orange', 3, '2021-02-14 12:41:28', '2021-02-14 22:17:11');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `users`:
+--
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `name`) VALUES
+(1, 'andrej'),
+(2, 'silver'),
+(3, 'peter');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `roles`
+--
+
+DROP TABLE IF EXISTS `roles`;
+CREATE TABLE `roles` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `roles`:
+--
+
+--
+-- Dumping data for table `roles`
+--
+
+INSERT INTO `roles` (`id`, `name`) VALUES
+(1, 'role one'),
+(2, 'role two'),
+(3, 'role three');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `role_user`
+--
+
+DROP TABLE IF EXISTS `role_user`;
+CREATE TABLE `role_user` (
+  `role_id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `role_user`:
+--   `role_id`
+--       `roles` -> `id`
+--   `user_id`
+--       `users` -> `id`
+--
+
+--
+-- Dumping data for table `role_user`
+--
+
+INSERT INTO `role_user` (`role_id`, `user_id`, `active`) VALUES
+(1, 1, 1),
+(2, 1, 0),
+(3, 1, 1),
+(2, 2, 1);
+
 --
 -- Indexes for dumped tables
 --
@@ -381,6 +462,27 @@ ALTER TABLE `tag_properties`
   ADD KEY `torrent_tags_tag_id_foreign` (`tag_id`);
 
 --
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `users_name_unique` (`name`);
+
+--
+-- Indexes for table `roles`
+--
+ALTER TABLE `roles`
+ADD PRIMARY KEY (`id`),
+ADD UNIQUE KEY `roles_name_unique` (`name`);
+
+--
+-- Indexes for table `role_user`
+--
+ALTER TABLE `role_user`
+  ADD PRIMARY KEY (`role_id`, `user_id`),
+  ADD KEY `role_user_role_id_foreign` (`role_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -424,7 +526,19 @@ ALTER TABLE `torrent_tags`
 -- AUTO_INCREMENT for table `tag_properties`
 --
 ALTER TABLE `tag_properties`
-MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -466,6 +580,13 @@ ALTER TABLE `tag_torrent`
 --
 ALTER TABLE `tag_properties`
   ADD CONSTRAINT `torrent_tags_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `torrent_tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `role_user`
+--
+ALTER TABLE `role_user`
+  ADD CONSTRAINT `role_user_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `role_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
