@@ -147,6 +147,7 @@ namespace Orm::Tiny::Relations
     bool BasePivot<PivotModel>::hasTimestampAttributes(
             const QVector<AttributeItem> &attributes) const
     {
+        // TODO mistake m_attributes/m_original 😭 silverqx
         return ranges::contains(attributes, true,
                                 [&createdAtColumn = this->getCreatedAtColumn()]
                                 (const auto &attribute)
