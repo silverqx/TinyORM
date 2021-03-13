@@ -12,7 +12,6 @@ using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 
 class Role final : public BaseModel<Role, User, RoleUser>
-//class Role final : public BaseModel<Role, User, Pivot>
 {
     friend BaseModel;
     using BaseModel::BaseModel;
@@ -31,9 +30,8 @@ private:
     {
         if (relation == "users")
             relationVisited<User>();
-        else if (relation == "pivot") // Pivot
+        else if (relation == "subscription") // Pivot
             relationVisited<RoleUser>();
-//            relationVisited<Pivot>();
     }
 
     /*! Map of relation names to methods. */

@@ -28,7 +28,6 @@ public:
         auto relation = belongsToMany<Torrent, Pivot>();
         dynamic_cast<BelongsToMany<Tag, Torrent, Pivot> &>(*relation)
 //                .as("tagged")
-                .as("subscription")
                 .withPivot("active")
                 .withTimestamps();
 

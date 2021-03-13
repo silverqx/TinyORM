@@ -6,6 +6,7 @@
 #include "models/role.hpp"
 
 using Orm::Tiny::BaseModel;
+using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 
@@ -19,18 +20,13 @@ public:
     std::unique_ptr<Relation<User, Role>>
     roles()
     {
-        using Orm::Tiny::Relations::BelongsToMany;
-
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<Role, RoleUser>();
         dynamic_cast<BelongsToMany<User, Role, RoleUser> &>(*relation)
-//                .as("subscription")
+                .as("subscription")
                 .withPivot("active");
-//                .withTimestamps();
 
         return relation;
-//        return belongsToMany<Role>();
-//        return belongsToMany<Role, RoleUser>();
     }
 
 private:
