@@ -21,7 +21,12 @@ public:
     std::unique_ptr<Relation<Role, User>>
     users()
     {
-        return belongsToMany<User>();
+        // Ownership of a unique_ptr()
+        auto relation = belongsToMany<User>();
+        dynamic_cast<BelongsToMany<Role, User> &>(*relation)
+                .withPivot("active");
+
+        return relation;
     }
 
 private:
