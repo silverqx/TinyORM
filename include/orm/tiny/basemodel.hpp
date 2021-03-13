@@ -51,7 +51,7 @@ namespace Relations {
     // TODO model missing methods Model::whereExists() silverqx
     // TODO model missing methods Model::whereBetween() silverqx
     // TODO next Constraining Eager Loads silverqx
-    // TODO perf add pragma once to every header file silverqx
+    // TODO perf add pragma once to every header file, have branch pragma-once, but I can't get rid of the clang warning -Wpragma-once-outside-header in every file, I tried everything 😞 silverqx
     // TODO future try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
     // TODO future include every stl dependency in header files silverqx
     // TODO logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
