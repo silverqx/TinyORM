@@ -25,5 +25,4 @@ namespace Concerns
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-
 #endif // DETECTSLOSTCONNECTIONS_HPP

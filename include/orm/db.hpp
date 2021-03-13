@@ -198,5 +198,4 @@ using DB = Orm::DB;
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-
 #endif // DB_HPP
