@@ -1190,9 +1190,10 @@ namespace Relations
                                            const WithItem &relationItem)
     {
         /*! Helping model for eager loads, because Relation::m_parent has to be
-            reference, this dummy model prevents dangling reference, have to secure
+            reference, this dummy model prevents dangling reference, we have to secure
             that the model passed to the relation method called inside getRelation()
-            will live long enough not to become a dangling reference.
+            will live long enough, to not become a dangling reference.
+            Have to exists, until the 'relation->match()' is processed in this method.
             Look at Relation::m_parent for additional info. */
         auto dummyModel = getModel().newInstance();
 

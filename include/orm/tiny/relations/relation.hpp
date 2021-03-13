@@ -471,10 +471,10 @@ namespace Relations
         /*! The textual representation of the Relation type. */
         virtual QString relationTypeName() const = 0;
 
-        /* During eager load, we secure m_parent not to become a dangling reference in
+        /* During eager load, we secure m_parent to not become a dangling reference in
            TinyBuilder::eagerLoadRelation() by help of the dummyModel local variable.
-           During lazy loads, m_parent refers to the model that initiated the lazy
-           load. */
+           It has to be the reference, because eg BelongsTo::associate() directly
+           modifies attributes of m_parent. */
         /*! The parent model instance. */
         Model &m_parent;
         /*! The related model instance. */

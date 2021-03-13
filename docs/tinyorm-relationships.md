@@ -661,7 +661,7 @@ When defining the `RoleUser` model, you should extend the `Orm::Tiny::Relations:
 
     #endif // ROLEUSER_H
 
-You have to pass a custom pivot type to the `AllRelations` template parameter pack on `BaseModel<Model, ...AllRelations>` so that the `BaseModel` knows how to generate a `std::variant`, which holds all the relations and also add a new mapping from the relation name to the custom pivot model type-id, this is  described in more detail in the [Common Rules](#common-rules):
+You have to pass a custom pivot type to the `AllRelations` template parameter pack on `BaseModel<Model, ...AllRelations>` so that the `BaseModel` knows how to generate a `std::variant`, which holds all the relations and also you have to add a new mapping from the relation name to the custom pivot model type-id, this is  described in more detail in the [Common Rules](#common-rules):
 
     #ifndef ROLE_H
     #define ROLE_H
