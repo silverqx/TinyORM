@@ -49,7 +49,8 @@ QString Grammar::compileSelect(QueryBuilder &query) const
     /* To compile the query, we'll spin through each component of the query and
        see if that component exists. If it does we'll just call the compiler
        function for the component which is responsible for making the SQL. */
-    const auto sql = joinContainer(compileComponents(query), QStringLiteral(" ")).trimmed();
+    const auto sql = joinContainer(compileComponents(query),
+                                   QStringLiteral(" ")).trimmed();
 
     // Restore original columns value
     query.setColumns(original);
@@ -57,7 +58,8 @@ QString Grammar::compileSelect(QueryBuilder &query) const
     return sql;
 }
 
-QString Grammar::compileInsert(const QueryBuilder &query, const QVector<QVariantMap> &values) const
+QString Grammar::compileInsert(const QueryBuilder &query,
+                               const QVector<QVariantMap> &values) const
 {
     return compileInsert(query, values, false);
 }
@@ -68,14 +70,16 @@ QString Grammar::compileInsertOrIgnore(const QueryBuilder &query,
     return compileInsert(query, values, true);
 }
 
-QString Grammar::compileUpdate(const QueryBuilder &query, const QVector<UpdateItem> &values) const
+QString Grammar::compileUpdate(const QueryBuilder &query,
+                               const QVector<UpdateItem> &values) const
 {
     const auto table   = query.getFrom();
     const auto columns = compileUpdateColumns(values);
     const auto wheres  = compileWheres(query);
 
-    return query.getJoins().isEmpty() ? compileUpdateWithoutJoins(table, columns, wheres)
-                                      : compileUpdateWithJoins(query, table, columns, wheres);
+    return query.getJoins().isEmpty()
+            ? compileUpdateWithoutJoins(table, columns, wheres)
+            : compileUpdateWithJoins(query, table, columns, wheres);
 }
 
 namespace
@@ -86,8 +90,8 @@ namespace
         QVector<BindingType> bindingsToReject {BindingType::SELECT, BindingType::JOIN};
         QVector<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
 
-        for (auto itBindingVector = bindings.constBegin(); itBindingVector != bindings.constEnd();
-             ++itBindingVector)
+        for (auto itBindingVector = bindings.constBegin();
+             itBindingVector != bindings.constEnd(); ++itBindingVector)
         {
             if (bindingsToReject.contains(itBindingVector.key()))
                 continue;
@@ -115,8 +119,9 @@ namespace
     };
 }
 
-QVector<QVariant> Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
-                                                    const QVector<UpdateItem> &values) const
+QVector<QVariant>
+Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
+                                  const QVector<UpdateItem> &values) const
 {
     QVector<QVariant> preparedBindings;
 
@@ -189,10 +194,10 @@ const QString &Grammar::getDateFormat() const
     return cachedFormat;
 }
 
-Grammar::ComponentsVector
+Grammar::SelectComponentsVector
 Grammar::compileComponents(const QueryBuilder &query) const
 {
-    ComponentsVector sql;
+    SelectComponentsVector sql;
 
     const auto &compileMap = getCompileMap();
     for (const auto &component : compileMap)
@@ -212,9 +217,10 @@ QString Grammar::compileColumns(const QueryBuilder &query) const
     else
         select += "select ";
 
-    return select + columnize(query.getColumns(),
-                              (query.getFrom() == "torrents")
-                              && (query.getConnection().getDatabaseName() == "q_media_test_orm"));
+    return select + columnize(
+                query.getColumns(),
+                (query.getFrom() == "torrents")
+                && (query.getConnection().getDatabaseName() == "q_media_test_orm"));
 }
 
 QString Grammar::compileFrom(const QueryBuilder &query) const
@@ -254,7 +260,8 @@ QVector<QString> Grammar::compileWheresToVector(const QueryBuilder &query) const
     return compiledWheres;
 }
 
-QString Grammar::concatenateWhereClauses(const QueryBuilder &query, const QVector<QString> &sql) const
+QString Grammar::concatenateWhereClauses(const QueryBuilder &query,
+                                         const QVector<QString> &sql) const
 {
     // Is query instance of JoinClause?
     const auto conjunction = dynamic_cast<const JoinClause *>(&query) == nullptr
@@ -278,7 +285,8 @@ QString Grammar::compileHavings(const QueryBuilder &query) const
         compiledHavings << compileHaving(having);
 
     return QStringLiteral("having %1").arg(
-                removeLeadingBoolean(joinContainer(compiledHavings, QStringLiteral(" "))));
+                removeLeadingBoolean(joinContainer(compiledHavings,
+                                                   QStringLiteral(" "))));
 }
 
 QString Grammar::compileHaving(const HavingConditionItem &having) const
@@ -292,7 +300,7 @@ QString Grammar::compileHaving(const HavingConditionItem &having) const
     }
 }
 
-const QMap<Grammar::ComponentType, Grammar::ComponentValue> &
+const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
 Grammar::getCompileMap() const
 {
     using std::placeholders::_1;
@@ -303,25 +311,25 @@ Grammar::getCompileMap() const
     };
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
-    static const QMap<ComponentType, ComponentValue> cached {
+    static const QMap<SelectComponentType, SelectComponentValue> cached {
 //        {ComponentType::AGGREGATE, {}},
-        {ComponentType::COLUMNS,   {getBind(&Grammar::compileColumns),
+        {SelectComponentType::COLUMNS,   {getBind(&Grammar::compileColumns),
                         [](const auto &query) { return !query.getColumns().isEmpty(); }}},
-        {ComponentType::FROM,      {getBind(&Grammar::compileFrom),
+        {SelectComponentType::FROM,      {getBind(&Grammar::compileFrom),
                         [](const auto &query) { return !query.getFrom().isEmpty(); }}},
-        {ComponentType::JOINS,     {getBind(&Grammar::compileJoins),
+        {SelectComponentType::JOINS,     {getBind(&Grammar::compileJoins),
                         [](const auto &query) { return !query.getJoins().isEmpty(); }}},
-        {ComponentType::WHERES,    {getBind(&Grammar::compileWheres),
+        {SelectComponentType::WHERES,    {getBind(&Grammar::compileWheres),
                         [](const auto &query) { return !query.getWheres().isEmpty(); }}},
-        {ComponentType::GROUPS,    {getBind(&Grammar::compileGroups),
+        {SelectComponentType::GROUPS,    {getBind(&Grammar::compileGroups),
                         [](const auto &query) { return !query.getGroups().isEmpty(); }}},
-        {ComponentType::HAVINGS,   {getBind(&Grammar::compileHavings),
+        {SelectComponentType::HAVINGS,   {getBind(&Grammar::compileHavings),
                         [](const auto &query) { return !query.getHavings().isEmpty(); }}},
-        {ComponentType::ORDERS,    {getBind(&Grammar::compileOrders),
+        {SelectComponentType::ORDERS,    {getBind(&Grammar::compileOrders),
                         [](const auto &query) { return !query.getOrders().isEmpty(); }}},
-        {ComponentType::LIMIT,     {getBind(&Grammar::compileLimit),
+        {SelectComponentType::LIMIT,     {getBind(&Grammar::compileLimit),
                         [](const auto &query) { return query.getLimit() > -1; }}},
-        {ComponentType::OFFSET,    {getBind(&Grammar::compileOffset),
+        {SelectComponentType::OFFSET,    {getBind(&Grammar::compileOffset),
                         [](const auto &query) { return query.getOffset() > -1; }}},
 //        {ComponentType::LOCK,      {}},
     };
@@ -439,7 +447,8 @@ QString Grammar::compileOffset(const QueryBuilder &query) const
     return QStringLiteral("offset %1").arg(query.getOffset());
 }
 
-QVector<QString> Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
+QVector<QString>
+Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
 {
     /* We need to build a list of parameter place-holders of values that are bound
        to the query. Each insert should have the exact same amount of parameter
@@ -506,8 +515,9 @@ QString Grammar::removeLeadingBoolean(QString statement) const
                 "");
 }
 
-QString Grammar::compileInsert(const QueryBuilder &query, const QVector<QVariantMap> &values,
-                               const bool ignore) const
+QString
+Grammar::compileInsert(const QueryBuilder &query, const QVector<QVariantMap> &values,
+                       const bool ignore) const
 {
     Q_ASSERT(values.size() > 0);
 
@@ -537,15 +547,17 @@ QString Grammar::compileUpdateWithoutJoins(const QString &table, const QString &
     return QStringLiteral("update %1 set %2 %3").arg(table, columns, wheres);
 }
 
-QString Grammar::compileUpdateWithJoins(const QueryBuilder &query, const QString &table,
-                                        const QString &columns, const QString &wheres) const
+QString
+Grammar::compileUpdateWithJoins(const QueryBuilder &query, const QString &table,
+                                const QString &columns, const QString &wheres) const
 {
     const auto joins = compileJoins(query);
 
     return QStringLiteral("update %1 %2 set %3 %4").arg(table, joins, columns, wheres);
 }
 
-QString Grammar::compileDeleteWithoutJoins(const QString &table, const QString &wheres) const
+QString
+Grammar::compileDeleteWithoutJoins(const QString &table, const QString &wheres) const
 {
     return QStringLiteral("delete from %1 %2").arg(table, wheres);
 }
