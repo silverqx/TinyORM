@@ -32,13 +32,19 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error) con
 
     result += QStringLiteral("\nQSqlError(") + error.nativeErrorCode();
 
+    QStringList errorText;
+
     if (const auto driverText = error.driverText();
-        !driverText.isEmpty())
-        result += QStringLiteral(", ") + driverText;
+        !driverText.isEmpty()
+    )
+        errorText << driverText;
 
     if (const auto databaseText = error.databaseText();
-        !databaseText.isEmpty())
-        result += QStringLiteral(", ") + databaseText;
+        !databaseText.isEmpty()
+    )
+        errorText << databaseText;
+
+    result += errorText.join(QStringLiteral(", "));
 
     result += QChar(')');
 
