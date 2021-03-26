@@ -10,7 +10,7 @@
 #include <range/v3/view/set_algorithm.hpp>
 #include <range/v3/view/transform.hpp>
 
-#include "orm/ormdomainerror.hpp"
+#include "orm/domainerror.hpp"
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/utils/attribute.hpp"
 #include "orm/utils/type.hpp"
@@ -1403,10 +1403,10 @@ namespace Orm::Tiny::Relations
                 QStringLiteral("You can not overwrite '%1' ID key; "
                                "original value : %2, your value : %3.");
 
-        throw OrmDomainError(overwriteMessage.arg(
-                                 qualifyPivotColumn(key),
-                                 QString::number(original.value<KeyType>()),
-                                 QString::number(overwrite.value<KeyType>())));
+        throw DomainError(overwriteMessage.arg(
+                              qualifyPivotColumn(key),
+                              QString::number(original.value<KeyType>()),
+                              QString::number(overwrite.value<KeyType>())));
     }
 
 } // namespace Orm::Tiny::Relations

@@ -1,5 +1,5 @@
-#ifndef ORMLOGICERROR_H
-#define ORMLOGICERROR_H
+#ifndef LOGICERROR_H
+#define LOGICERROR_H
 
 #include <stdexcept>
 
@@ -12,13 +12,13 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class SHAREDLIB_EXPORT OrmLogicError : public std::logic_error
+    class SHAREDLIB_EXPORT LogicError : public std::logic_error
     {
     public:
-        explicit inline OrmLogicError(const char *message)
+        explicit inline LogicError(const char *message)
             : std::logic_error(message)
         {}
-        explicit inline OrmLogicError(const QString &message)
+        explicit inline LogicError(const QString &message)
             : std::logic_error(message.toUtf8().constData())
         {}
 
@@ -36,4 +36,4 @@ namespace Orm
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // ORMLOGICERROR_H
+#endif // LOGICERROR_H

@@ -15,13 +15,12 @@ HEADERS += \
     $$PWD/orm/databaseconnection.hpp \
     $$PWD/orm/databasemanager.hpp \
     $$PWD/orm/db.hpp \
+    $$PWD/orm/domainerror.hpp \
+    $$PWD/orm/invalidargumenterror.hpp \
     $$PWD/orm/invalidformaterror.hpp \
+    $$PWD/orm/logicerror.hpp \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/mysqlconnection.hpp \
-    $$PWD/orm/ormdomainerror.hpp \
-    $$PWD/orm/orminvalidargumenterror.hpp \
-    $$PWD/orm/ormlogicerror.hpp \
-    $$PWD/orm/ormruntimeerror.hpp \
     $$PWD/orm/ormtypes.hpp \
     $$PWD/orm/query/expression.hpp \
     $$PWD/orm/query/grammars/grammar.hpp \
@@ -30,6 +29,7 @@ HEADERS += \
     $$PWD/orm/query/joinclause.hpp \
     $$PWD/orm/query/querybuilder.hpp \
     $$PWD/orm/queryerror.hpp \
+    $$PWD/orm/runtimeerror.hpp \
     $$PWD/orm/sqlerror.hpp \
     $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/sqltransactionerror.hpp \

@@ -1,10 +1,10 @@
-#ifndef ORMDOMAINERROR_H
-#define ORMDOMAINERROR_H
+#ifndef INVALIDARGUMENTERROR_H
+#define INVALIDARGUMENTERROR_H
 
 #include <stdexcept>
 
 #include "export.hpp"
-#include "orm/ormlogicerror.hpp"
+#include "orm/logicerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -13,9 +13,9 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class SHAREDLIB_EXPORT OrmDomainError : public OrmLogicError
+    class SHAREDLIB_EXPORT InvalidArgumentError : public LogicError
     {
-        using OrmLogicError::OrmLogicError;
+        using LogicError::LogicError;
     };
 
 } // namespace Orm
@@ -23,4 +23,4 @@ namespace Orm
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // ORMDOMAINERROR_H
+#endif // INVALIDARGUMENTERROR_H

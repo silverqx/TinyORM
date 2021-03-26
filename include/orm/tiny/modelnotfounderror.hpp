@@ -3,7 +3,7 @@
 
 #include <QVariant>
 
-#include "orm/ormruntimeerror.hpp"
+#include "orm/runtimeerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -12,7 +12,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny
 {
 
-    class SHAREDLIB_EXPORT ModelNotFoundError : public OrmRuntimeError
+    class SHAREDLIB_EXPORT ModelNotFoundError : public RuntimeError
     {
     public:
         // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx

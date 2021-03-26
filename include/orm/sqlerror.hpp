@@ -3,7 +3,7 @@
 
 #include <QtSql/QSqlError>
 
-#include "orm/ormruntimeerror.hpp"
+#include "orm/runtimeerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -12,7 +12,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class SHAREDLIB_EXPORT SqlError : public OrmRuntimeError
+    class SHAREDLIB_EXPORT SqlError : public RuntimeError
     {
     public:
         SqlError(const char *message, const QSqlError &error);

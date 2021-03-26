@@ -9,7 +9,7 @@ namespace Orm::Tiny
 
 RelationNotLoadedError::RelationNotLoadedError(const QString &model,
                                                const QString &relation)
-    : OrmRuntimeError(formatMessage(model, relation))
+    : RuntimeError(formatMessage(model, relation))
     , m_model(model)
     , m_relation(relation)
 {}

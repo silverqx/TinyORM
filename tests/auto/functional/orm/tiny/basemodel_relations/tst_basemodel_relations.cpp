@@ -11,7 +11,7 @@
 #include "database.hpp"
 
 using Orm::One;
-using Orm::OrmRuntimeError;
+using Orm::RuntimeError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::RelationNotFoundError;
 using Orm::Tiny::RelationNotLoadedError;
@@ -383,7 +383,7 @@ void tst_BaseModel_Relations::with_Vector_MoreRelations() const
         QVERIFY_EXCEPTION_THROWN(
                     (file->getRelation<TorrentPreviewableFileProperty, One>(
                          "fileProperty")),
-                    OrmRuntimeError);
+                    RuntimeError);
     }
 }
 
@@ -485,7 +485,7 @@ void tst_BaseModel_Relations::load() const
         QVERIFY_EXCEPTION_THROWN(
                     (file->getRelation<TorrentPreviewableFileProperty, One>(
                          "fileProperty")),
-                    OrmRuntimeError);
+                    RuntimeError);
     }
 }
 

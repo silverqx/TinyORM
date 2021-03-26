@@ -8,7 +8,7 @@
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 
-#include "orm/ormlogicerror.hpp"
+#include "orm/logicerror.hpp"
 #include "orm/ormtypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -371,39 +371,39 @@ namespace Relations
         // TODO study, would be possible to disable this by SFINAE by current class type? eg std::enable_if this is ManyRelation or PivotRelation; and if yes, then it's a good idea do it this way? silverqx
         /*! Attach a model instance to the parent model. */
         inline virtual std::tuple<bool, Related &> save(Related &) const
-        { throw OrmLogicError(methodNotImplementedMessage("save")); }
+        { throw LogicError(methodNotImplementedMessage("save")); }
         /*! Attach a model instance to the parent model. */
         inline virtual std::tuple<bool, Related> save(Related &&) const
-        { throw OrmLogicError(methodNotImplementedMessage("save")); }
+        { throw LogicError(methodNotImplementedMessage("save")); }
         /*! Attach a collection of models to the parent instance. */
         inline virtual QVector<Related> &saveMany(QVector<Related> &) const
-        { throw OrmLogicError(methodNotImplementedMessage("saveMany")); }
+        { throw LogicError(methodNotImplementedMessage("saveMany")); }
         /*! Attach a collection of models to the parent instance. */
         inline virtual QVector<Related> saveMany(QVector<Related> &&) const
-        { throw OrmLogicError(methodNotImplementedMessage("saveMany")); }
+        { throw LogicError(methodNotImplementedMessage("saveMany")); }
 
         /*! Create a Collection of new instances of the related model. */
         inline virtual QVector<Related>
         createMany(const QVector<QVector<AttributeItem>> &) const
-        { throw OrmLogicError(methodNotImplementedMessage("createMany")); }
+        { throw LogicError(methodNotImplementedMessage("createMany")); }
         /*! Create a Collection of new instances of the related model. */
         inline virtual QVector<Related>
         createMany(QVector<QVector<AttributeItem>> &&) const
-        { throw OrmLogicError(methodNotImplementedMessage("createMany")); }
+        { throw LogicError(methodNotImplementedMessage("createMany")); }
 
         /* Updating relationship */
         /*! Associate the model instance to the given parent. */
         inline virtual Model &associate(const Related &) const
-        { throw OrmLogicError(methodNotImplementedMessage("associate")); }
+        { throw LogicError(methodNotImplementedMessage("associate")); }
         /*! Associate the model instance to the given parent. */
         inline virtual Model &associate(const QVariant &) const
-        { throw OrmLogicError(methodNotImplementedMessage("associate")); }
+        { throw LogicError(methodNotImplementedMessage("associate")); }
         /*! Dissociate previously associated model from the given parent. */
         inline virtual Model &dissociate() const
-        { throw OrmLogicError(QStringLiteral(
-                                  "The 'dissociate' or an alias 'disassociate' method "
-                                  "is not implemented for the '%1' relation type.")
-                              .arg(relationTypeName())); }
+        { throw LogicError(QStringLiteral(
+                               "The 'dissociate' or an alias 'disassociate' method "
+                               "is not implemented for the '%1' relation type.")
+                           .arg(relationTypeName())); }
         /*! Alias of "dissociate" method. */
         inline virtual Model &disassociate() const
         { return dissociate(); }
@@ -413,51 +413,51 @@ namespace Relations
         inline virtual void attach(const QVector<QVariant> &,
                                    const QVector<AttributeItem> & = {},
                                    bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("attach")); }
+        { throw LogicError(methodNotImplementedMessage("attach")); }
         /*! Attach models to the parent. */
         inline virtual void attach(const QVector<std::reference_wrapper<Related>> &,
                                    const QVector<AttributeItem> & = {},
                                    bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("attach")); }
+        { throw LogicError(methodNotImplementedMessage("attach")); }
         /*! Attach a model to the parent. */
         inline virtual void attach(const QVariant &,
                                    const QVector<AttributeItem> & = {},
                                    bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("attach")); }
+        { throw LogicError(methodNotImplementedMessage("attach")); }
         /*! Attach a model to the parent. */
         inline virtual void attach(const Related &,
                                    const QVector<AttributeItem> & = {},
                                    bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("attach")); }
+        { throw LogicError(methodNotImplementedMessage("attach")); }
         /*! Attach models to the parent. */
         inline virtual void attach(const std::map<typename BaseModel<Related>::KeyType,
                                                   QVector<AttributeItem>> &,
                                    bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("attach")); }
+        { throw LogicError(methodNotImplementedMessage("attach")); }
 
         /*! Detach models from the relationship. */
         inline virtual int detach(const QVector<QVariant> &, bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("detach")); }
+        { throw LogicError(methodNotImplementedMessage("detach")); }
         /*! Detach models from the relationship. */
         inline virtual int detach(const QVector<std::reference_wrapper<Related>> &,
                                   bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("detach")); }
+        { throw LogicError(methodNotImplementedMessage("detach")); }
         /*! Detach model from the relationship. */
         inline virtual int detach(const QVariant &, bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("detach")); }
+        { throw LogicError(methodNotImplementedMessage("detach")); }
         /*! Detach model from the relationship. */
         inline virtual int detach(const Related &, bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("detach")); }
+        { throw LogicError(methodNotImplementedMessage("detach")); }
 
         /*! Sync the intermediate tables with a list of IDs or collection of models. */
         inline virtual SyncChanges sync(
                 const std::map<typename BaseModel<Related>::KeyType,
                                QVector<AttributeItem>> &,
                 bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("sync")); }
+        { throw LogicError(methodNotImplementedMessage("sync")); }
         /*! Sync the intermediate tables with a list of IDs or collection of models. */
         inline virtual SyncChanges sync(const QVector<QVariant> &, bool = true) const
-        { throw OrmLogicError(methodNotImplementedMessage("sync")); }
+        { throw LogicError(methodNotImplementedMessage("sync")); }
 
     protected:
         /*! Initialize a Relation instance. */
@@ -486,7 +486,7 @@ namespace Relations
         static bool constraints;
 
     private:
-        /*! Throw an OrmLogicError, when a user tries to call an unimplemented method. */
+        /*! Message for LogicError, when a user tries to call an unimplemented method. */
         inline QString methodNotImplementedMessage(const QString &method) const
         { return QStringLiteral("The '%1' method is not implemented "
                                 "for the '%2' relation type.")

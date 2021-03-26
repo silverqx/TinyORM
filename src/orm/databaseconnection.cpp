@@ -493,7 +493,7 @@ DatabaseConnection::hitTransactionalCounters(const QElapsedTimer &timer)
 
 bool DatabaseConnection::pingDatabase()
 {
-    throw OrmRuntimeError(
+    throw RuntimeError(
                 QStringLiteral("The '%1' database driver doesn't support ping command.")
                 .arg(driverName()));
 }

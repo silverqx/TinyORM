@@ -2,7 +2,7 @@
 
 #include <QtSql/QSqlQuery>
 
-#include "orm/orminvalidargumenterror.hpp"
+#include "orm/invalidargumenterror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -84,8 +84,7 @@ void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const
         checkDatabaseExists = config["check_database_exists"].value<bool>();
 
     if (checkDatabaseExists && !QFile::exists(path))
-        // CUR rename all exception classes to Orm::InvalidArgumentError silverqx
-        throw OrmInvalidArgumentError(
+        throw InvalidArgumentError(
                 QStringLiteral("SQLite Database file '%1' does not exist.").arg(path));
 }
 

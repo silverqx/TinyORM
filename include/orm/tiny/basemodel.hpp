@@ -2140,7 +2140,7 @@ namespace Relations {
 //        $this->mergeAttributesFromClassCasts();
 
         if (getKeyName().isEmpty())
-            throw OrmRuntimeError("No primary key defined on model.");
+            throw RuntimeError("No primary key defined on model.");
 
         /* If the model doesn't exist, there is nothing to delete so we'll just return
            immediately and not do anything else. Otherwise, we will continue with a

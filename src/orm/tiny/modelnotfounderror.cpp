@@ -9,7 +9,7 @@ namespace Orm::Tiny
 
 ModelNotFoundError::ModelNotFoundError(const char *model,
                                        const QVector<QVariant> &ids)
-    : OrmRuntimeError(formatMessage(model, ids))
+    : RuntimeError(formatMessage(model, ids))
     , m_model(model)
     , m_ids(ids)
 {}

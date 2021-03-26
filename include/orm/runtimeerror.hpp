@@ -1,5 +1,5 @@
-#ifndef ORMRUNTIMEERROR_H
-#define ORMRUNTIMEERROR_H
+#ifndef RUNTIMEERROR_H
+#define RUNTIMEERROR_H
 
 #include <QString>
 
@@ -14,13 +14,13 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class SHAREDLIB_EXPORT OrmRuntimeError : public std::runtime_error
+    class SHAREDLIB_EXPORT RuntimeError : public std::runtime_error
     {
     public:
-        explicit inline OrmRuntimeError(const char *message)
+        explicit inline RuntimeError(const char *message)
             : std::runtime_error(message)
         {}
-        explicit inline OrmRuntimeError(const QString &message)
+        explicit inline RuntimeError(const QString &message)
             : std::runtime_error(message.toUtf8().constData())
         {}
 
@@ -38,4 +38,4 @@ namespace Orm
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // ORMRUNTIMEERROR_H
+#endif // RUNTIMEERROR_H

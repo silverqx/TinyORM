@@ -74,8 +74,8 @@ QString Grammar::compileInsert(const QueryBuilder &query,
 QString Grammar::compileInsertOrIgnore(const QueryBuilder &,
                                        const QVector<QVariantMap> &) const
 {
-    throw OrmRuntimeError("This database engine does not support inserting while "
-                          "ignoring errors.");
+    throw RuntimeError("This database engine does not support inserting while "
+                       "ignoring errors.");
 }
 
 QString Grammar::compileUpdate(QueryBuilder &query,

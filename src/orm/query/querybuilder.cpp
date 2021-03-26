@@ -519,8 +519,8 @@ Builder &Builder::orderBy(const QString &column, const QString &direction)
     const auto &directionLower = direction.toLower();
 
     if ((directionLower != "asc") && (directionLower != "desc"))
-        throw OrmRuntimeError("Order direction must be \"asc\" or \"desc\", "
-                              "case is not important.");
+        throw RuntimeError("Order direction must be \"asc\" or \"desc\", "
+                           "case is not important.");
 
     m_orders.append({column, directionLower});
 
@@ -667,8 +667,8 @@ Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
 {
     if (!m_bindings.contains(type))
         // TODO add hash to map BindingType to QString silverqx
-        throw OrmRuntimeError(QStringLiteral("Invalid binding type: %1")
-                              .arg(static_cast<int>(type)));
+        throw RuntimeError(QStringLiteral("Invalid binding type: %1")
+                           .arg(static_cast<int>(type)));
 
     m_bindings[type].append(binding);
 
@@ -680,8 +680,8 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
     // TODO duplicate check, unify silverqx
     if (!m_bindings.contains(type))
         // TODO add hash to map BindingType to QString silverqx
-        throw OrmRuntimeError(QStringLiteral("Invalid binding type: %1")
-                              .arg(static_cast<int>(type)));
+        throw RuntimeError(QStringLiteral("Invalid binding type: %1")
+                           .arg(static_cast<int>(type)));
 
     std::copy(bindings.cbegin(), bindings.cend(), std::back_inserter(m_bindings[type]));
 

@@ -1,6 +1,9 @@
-#ifndef INVALIDFORMATERROR_H
-#define INVALIDFORMATERROR_H
+#ifndef DOMAINERROR_H
+#define DOMAINERROR_H
 
+#include <stdexcept>
+
+#include "export.hpp"
 #include "orm/logicerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -10,9 +13,8 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class SHAREDLIB_EXPORT InvalidFormatError : public LogicError
+    class SHAREDLIB_EXPORT DomainError : public LogicError
     {
-    public:
         using LogicError::LogicError;
     };
 
@@ -21,4 +23,4 @@ namespace Orm
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // INVALIDFORMATERROR_H
+#endif // DOMAINERROR_H

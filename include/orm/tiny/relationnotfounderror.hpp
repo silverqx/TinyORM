@@ -1,7 +1,7 @@
 #ifndef RELATIONNOTFOUNDERROR_H
 #define RELATIONNOTFOUNDERROR_H
 
-#include "orm/ormruntimeerror.hpp"
+#include "orm/runtimeerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -12,7 +12,7 @@ namespace Orm::Tiny
 
     /*! Check whether the relation was defined in the u_relation data member, called
         from BaseModel::validateUserRelation(). */
-    class SHAREDLIB_EXPORT RelationNotFoundError : public OrmRuntimeError
+    class SHAREDLIB_EXPORT RelationNotFoundError : public RuntimeError
     {
     public:
         RelationNotFoundError(const QString &model, const QString &relation);
