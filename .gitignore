@@ -74,3 +74,6 @@ Thumbs.db
 *.dll
 *.exe
 
+# Test's Database
+**/tests/**/testdata/vendor/
+**/tests/**/testdata/dotenv.ps1

@@ -1,5 +1,5 @@
-#ifndef MYSQLCONNECTION_HPP
-#define MYSQLCONNECTION_HPP
+#ifndef SQLITECONNECTION_HPP
+#define SQLITECONNECTION_HPP
 
 #include "orm/databaseconnection.hpp"
 
@@ -10,23 +10,17 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    class SHAREDLIB_EXPORT MySqlConnection final : public DatabaseConnection
+    class SHAREDLIB_EXPORT SQLiteConnection final : public DatabaseConnection
     {
     public:
-        MySqlConnection(
+        SQLiteConnection(
                 const std::function<Connectors::ConnectionName()> &connection,
                 const QString &database = "", const QString tablePrefix = "",
                 const QVariantHash &config = {});
-        inline virtual ~MySqlConnection() = default;
+        inline virtual ~SQLiteConnection() = default;
 
         /*! Get the default query grammar instance. */
         std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const override;
-
-        /*! Determine if the connected database is a MariaDB database. */
-        inline bool isMaria();
-
-        /*! Check database connection and show warnings when the state changed. */
-        bool pingDatabase() override;
     };
 
 } // namespace Orm
@@ -34,4 +28,4 @@ namespace Orm
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // MYSQLCONNECTION_HPP
+#endif // SQLITECONNECTION_HPP

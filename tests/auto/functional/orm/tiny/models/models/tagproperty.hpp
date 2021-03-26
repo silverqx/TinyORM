@@ -12,11 +12,6 @@ class TagProperty final : public BaseModel<TagProperty>
 
     /*! The table associated with the model. */
     QString u_table {"tag_properties"};
-
-#ifdef PROJECT_TINYORM_TEST
-    /*! The connection name for the model. */
-    QString u_connection {"tinyorm_mysql_tests"};
-#endif
 };
 
 #endif // TAGPROPERTY_H

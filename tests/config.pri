@@ -18,6 +18,9 @@ CONFIG *= qt console testcase link_prl
 
 DEFINES += PROJECT_TINYORM_TEST
 
+# Enable code needed by tests, eg connection overriding in the BaseModel
+DEFINES += TINYORM_TESTS_CODE
+
 # Use TinyORM's library precompiled headers (PCH)
 # ---
 

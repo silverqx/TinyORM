@@ -1,26 +1,24 @@
 #include <QCoreApplication>
+#include <QtSql/QSqlDriver>
 #include <QtTest>
+
+#include "orm/db.hpp"
 
 #include "models/setting.hpp"
 #include "models/torrent.hpp"
 
 #include "database.hpp"
 
-using namespace Orm;
-// TODO tests, namespace silverqx
-using namespace Orm::Tiny;
+using Orm::QueryError;
+using Orm::Tiny::ConnectionOverride;
+using Orm::Tiny::ModelNotFoundError;
 
 class tst_BaseModel : public QObject
 {
     Q_OBJECT
 
-public:
-    tst_BaseModel();
-    ~tst_BaseModel() = default;
-
 private slots:
-    void initTestCase();
-    void cleanupTestCase();
+    void initTestCase_data() const;
 
     void save_Insert() const;
     void save_Insert_WithDefaultValues() const;
@@ -77,23 +75,24 @@ private slots:
     void update_Failed() const;
     void update_SameValue() const;
 
-private:
-    /*! The database connection instance. */
-    ConnectionInterface &m_connection;
+    void truncate() const;
 };
 
-tst_BaseModel::tst_BaseModel()
-    : m_connection(TestUtils::Database::createConnection())
-{}
+void tst_BaseModel::initTestCase_data() const
+{
+    QTest::addColumn<QString>("connection");
 
-void tst_BaseModel::initTestCase()
-{}
-
-void tst_BaseModel::cleanupTestCase()
-{}
+    // Run all tests for all supported database connections
+    for (const auto &connection : TestUtils::Database::createConnections())
+        QTest::newRow(connection.toUtf8().constData()) << connection;
+}
 
 void tst_BaseModel::save_Insert() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     Torrent torrent;
 
     auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
@@ -145,6 +144,10 @@ void tst_BaseModel::save_Insert() const
 
 void tst_BaseModel::save_Insert_WithDefaultValues() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     Torrent torrent;
 
     auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
@@ -193,6 +196,10 @@ void tst_BaseModel::save_Insert_WithDefaultValues() const
 
 void tst_BaseModel::save_Insert_TableWithoutAutoincrementKey() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     Setting setting;
 
     setting.setAttribute("name", "setting1")
@@ -231,6 +238,10 @@ void tst_BaseModel::save_Insert_TableWithoutAutoincrementKey() const
 
 void tst_BaseModel::save_Update_Success() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrentFile = TorrentPreviewableFile::find(4);
     QVERIFY(torrentFile);
     QVERIFY(torrentFile->exists);
@@ -253,7 +264,7 @@ void tst_BaseModel::save_Update_Success() const
     QCOMPARE(torrentFileFresh->getAttribute("size"), QVariant(5570));
     QCOMPARE(torrentFileFresh->getAttribute("progress"), QVariant(860));
 
-    // TODO tests, now remove
+    // Revert
     torrentFile->setAttribute("filepath", "test3_file1.mkv")
             .setAttribute("size", 5568)
             .setAttribute("progress", 870);
@@ -262,9 +273,14 @@ void tst_BaseModel::save_Update_Success() const
 
 void tst_BaseModel::save_Update_WithNullValue() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto peer = TorrentPeer::find(4);
     QVERIFY(peer);
     QVERIFY(peer->exists);
+    QCOMPARE(peer->getAttribute("total_seeds"), QVariant(4));
 
     peer->setAttribute("total_seeds", QVariant());
 
@@ -282,19 +298,28 @@ void tst_BaseModel::save_Update_WithNullValue() const
 
     QVERIFY(peerVerify->getAttribute("total_seeds").isValid());
     QVERIFY(peerVerify->getAttribute("total_seeds").isNull());
+    /* SQLite doesn't return correct underlying type in the QVariant for null values
+       like MySQL driver does, skip this compare for the SQLite database. */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QCOMPARE(peerVerify->getAttribute("total_seeds"), QVariant(QMetaType(QMetaType::Int)));
+    if (DB::connection(connection).driverName() != "QSQLITE")
+        QCOMPARE(peerVerify->getAttribute("total_seeds"),
+                 QVariant(QMetaType(QMetaType::Int)));
 #else
-    QCOMPARE(peerVerify->getAttribute("total_seeds"), QVariant(QVariant::Int));
+    if (DB::connection(connection).driverName() != "QSQLITE")
+        QCOMPARE(peerVerify->getAttribute("total_seeds"), QVariant(QVariant::Int));
 #endif
 
-    // TODO tests, remove silverqx
+    // Revert
     peer->setAttribute("total_seeds", 4);
     peer->save();
 }
 
 void tst_BaseModel::save_Update_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto peer = TorrentPeer::find(3);
     QVERIFY(peer);
     QVERIFY(peer->exists);
@@ -308,6 +333,10 @@ void tst_BaseModel::save_Update_Failed() const
 
 void tst_BaseModel::remove() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrentFile = TorrentPreviewableFile::find(7);
 
     QVERIFY(torrentFile);
@@ -330,6 +359,10 @@ void tst_BaseModel::remove() const
 
 void tst_BaseModel::destroy() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrentFile = TorrentPreviewableFile::find(8);
 
     QVERIFY(torrentFile);
@@ -358,6 +391,10 @@ void tst_BaseModel::destroy() const
 
 void tst_BaseModel::destroyWithVector() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrentFiles =
             TorrentPreviewableFile::where({{"id", 7, "="},
                                            {"id", 8, "=", "or"}})->get();
@@ -398,6 +435,10 @@ void tst_BaseModel::destroyWithVector() const
 
 void tst_BaseModel::all() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrents = Torrent::all();
 
     QCOMPARE(torrents.size(), 6);
@@ -409,6 +450,10 @@ void tst_BaseModel::all() const
 
 void tst_BaseModel::all_Columns() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrents = Torrent::all();
 
@@ -426,6 +471,10 @@ void tst_BaseModel::all_Columns() const
 
 void tst_BaseModel::latest() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrents = Torrent::latest()->get();
     const auto createdAtColumn = Torrent::getCreatedAtColumn();
 
@@ -442,6 +491,10 @@ void tst_BaseModel::latest() const
 
 void tst_BaseModel::oldest() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrents = Torrent::oldest()->get();
     const auto createdAtColumn = Torrent::getCreatedAtColumn();
 
@@ -458,6 +511,10 @@ void tst_BaseModel::oldest() const
 
 void tst_BaseModel::where() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrent = Torrent::where("id", "=", 3)->first();
         QVERIFY(torrent);
@@ -475,6 +532,10 @@ void tst_BaseModel::where() const
 
 void tst_BaseModel::whereEq() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     // number
     {
         auto torrent = Torrent::whereEq("id", 3)->first();
@@ -489,6 +550,10 @@ void tst_BaseModel::whereEq() const
     }
     // QDateTime
     {
+        // CUR tests, sqlite datetime silverqx
+        if (DB::connection(connection).driverName() == "QSQLITE")
+            return;
+
         auto torrent = Torrent::whereEq(
                            "added_on",
                            QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate))
@@ -500,6 +565,10 @@ void tst_BaseModel::whereEq() const
 
 void tst_BaseModel::where_WithVector() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrent = Torrent::where({{"id", 3}})->first();
         QVERIFY(torrent);
@@ -517,6 +586,10 @@ void tst_BaseModel::where_WithVector() const
 
 void tst_BaseModel::where_WithVector_Condition() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrents = Torrent::where({{"size", 14}, {"progress", 400}})->get();
         QCOMPARE(torrents.size(), 1);
@@ -539,16 +612,29 @@ void tst_BaseModel::where_WithVector_Condition() const
 
 void tst_BaseModel::arrayOperator() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::where("id", "=", 2)->first();
     QVERIFY(torrent);
     QCOMPARE((*torrent)["id"], QVariant(2));
     QCOMPARE((*torrent)["name"], QVariant("test2"));
+
+    // CUR tests, sqlite datetime silverqx
+    if (DB::connection(connection).driverName() == "QSQLITE")
+        return;
+
     QCOMPARE((*torrent)["added_on"],
             QVariant(QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)));
 }
 
 void tst_BaseModel::find() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(3);
     QVERIFY(torrent);
     QCOMPARE(torrent->getAttribute("id"), QVariant(3));
@@ -556,6 +642,10 @@ void tst_BaseModel::find() const
 
 void tst_BaseModel::findOrNew_Found() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrent = Torrent::findOrNew(3);
 
@@ -576,6 +666,10 @@ void tst_BaseModel::findOrNew_Found() const
 
 void tst_BaseModel::findOrNew_NotFound() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrent = Torrent::findOrNew(999999);
 
@@ -596,6 +690,10 @@ void tst_BaseModel::findOrNew_NotFound() const
 
 void tst_BaseModel::findOrFail_Found() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrent = Torrent::findOrFail(3);
 
@@ -616,6 +714,10 @@ void tst_BaseModel::findOrFail_Found() const
 
 void tst_BaseModel::findOrFail_NotFoundFailed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     QVERIFY_EXCEPTION_THROWN(Torrent::findOrFail(999999),
                              ModelNotFoundError);
     QVERIFY_EXCEPTION_THROWN(Torrent::findOrFail(999999, {"id", "name"}),
@@ -624,6 +726,10 @@ void tst_BaseModel::findOrFail_NotFoundFailed() const
 
 void tst_BaseModel::firstWhere() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrentFile3 = TorrentPreviewableFile::firstWhere("id", "=", 3);
 
@@ -642,6 +748,10 @@ void tst_BaseModel::firstWhere() const
 
 void tst_BaseModel::firstWhereEq() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrentFile3 = TorrentPreviewableFile::firstWhereEq("id", 3);
 
     QVERIFY(torrentFile3->exists);
@@ -651,6 +761,10 @@ void tst_BaseModel::firstWhereEq() const
 
 void tst_BaseModel::firstOrNew_Found() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrent = Torrent::firstOrNew({{"id", 3}});
 
@@ -680,6 +794,10 @@ void tst_BaseModel::firstOrNew_Found() const
 
 void tst_BaseModel::firstOrNew_NotFound() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrent = Torrent::firstOrNew({{"id", 100}});
 
@@ -707,6 +825,10 @@ void tst_BaseModel::firstOrNew_NotFound() const
 
 void tst_BaseModel::firstOrCreate_Found() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrent = Torrent::firstOrCreate({{"id", 3}});
 
@@ -740,6 +862,10 @@ void tst_BaseModel::firstOrCreate_Found() const
 
 void tst_BaseModel::firstOrCreate_NotFound() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     const auto addedOn = QDateTime::currentDateTime();
 
     auto torrent = Torrent::firstOrCreate(
@@ -767,6 +893,10 @@ void tst_BaseModel::firstOrCreate_NotFound() const
 
 void tst_BaseModel::isCleanAndIsDirty() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(3);
 
     QVERIFY(torrent->isClean());
@@ -799,6 +929,10 @@ void tst_BaseModel::isCleanAndIsDirty() const
 
 void tst_BaseModel::wasChanged() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(3);
 
     QVERIFY(!torrent->wasChanged());
@@ -822,6 +956,10 @@ void tst_BaseModel::wasChanged() const
 
 void tst_BaseModel::is() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent2_1 = Torrent::find(2);
     auto torrent2_2 = Torrent::find(2);
 
@@ -831,6 +969,10 @@ void tst_BaseModel::is() const
 
 void tst_BaseModel::isNot() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent2_1 = Torrent::find(2);
     auto torrent2_2 = Torrent::find(2);
     auto torrent3 = Torrent::find(3);
@@ -842,12 +984,19 @@ void tst_BaseModel::isNot() const
     QVERIFY(torrent2_1->isNot(file4));
 
     // Different connection name
-    torrent2_2->setConnection("crystal");
+    torrent2_2->setConnection("dummy_connection");
+    /* Disable connection override, so isNot() can pickup a connection from the model
+       itself and not overriden connection. */
+    ConnectionOverride::connection = "";
     QVERIFY(torrent2_1->isNot(torrent2_2));
 }
 
 void tst_BaseModel::fresh() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     // Doesn't exist
     {
         Torrent torrent;
@@ -875,6 +1024,10 @@ void tst_BaseModel::fresh() const
 
 void tst_BaseModel::refresh_OnlyAttributes() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     // Doens't exist
     {
         Torrent torrent;
@@ -905,6 +1058,10 @@ void tst_BaseModel::refresh_OnlyAttributes() const
 
 void tst_BaseModel::create() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto addedOn = QDateTime::fromString("2021-02-01 20:22:10", Qt::ISODate);
 
     auto torrent = Torrent::create({
@@ -942,6 +1099,10 @@ void tst_BaseModel::create() const
 
 void tst_BaseModel::create_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto addedOn = QDateTime::fromString("2021-02-01 20:22:10", Qt::ISODate);
 
     Torrent torrent;
@@ -959,6 +1120,14 @@ void tst_BaseModel::create_Failed() const
 
 void tst_BaseModel::update() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // CUR tests, sqlite datetime silverqx
+    if (DB::connection(connection).driverName() == "QSQLITE")
+        QSKIP("QSQLITE doesn't return QDateTime QVariant, but QString.", );
+
     auto timeBeforeUpdate = QDateTime::currentDateTime();
     // Reset milliseconds to 0
     {
@@ -1005,6 +1174,10 @@ void tst_BaseModel::update() const
 
 void tst_BaseModel::update_NonExistent() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     Torrent torrent;
 
     auto result = torrent.update({{"progress", 333}});
@@ -1013,6 +1186,10 @@ void tst_BaseModel::update_NonExistent() const
 
 void tst_BaseModel::update_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(3);
 
     QVERIFY(torrent->exists);
@@ -1025,6 +1202,10 @@ void tst_BaseModel::update_Failed() const
 
 void tst_BaseModel::update_SameValue() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(3);
     QVERIFY(torrent->exists);
 
@@ -1043,6 +1224,35 @@ void tst_BaseModel::update_SameValue() const
     auto torrentVerify = Torrent::find(3);
     QVERIFY(torrentVerify->exists);
     QCOMPARE(torrentVerify->getAttribute(updatedAtColumn), updatedAt);
+}
+
+void tst_BaseModel::truncate() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Setting setting;
+    setting.setAttribute("name", "truncate");
+    setting.setAttribute("value", "yes");
+
+    QVERIFY(!setting.exists);
+    const auto result = setting.save();
+    QVERIFY(result);
+    QVERIFY(setting.exists);
+
+    // Get the fresh record from the database
+    auto settingToVerify = Setting::whereEq("name", "truncate")->first();
+    QVERIFY(settingToVerify);
+    QVERIFY(settingToVerify->exists);
+
+    // And check attributes
+    QCOMPARE(settingToVerify->getAttribute("name"), QVariant("truncate"));
+    QCOMPARE(settingToVerify->getAttribute("value"), QVariant("yes"));
+
+    Setting::truncate();
+
+    QCOMPARE(Setting::all().size(), 0);
 }
 
 QTEST_MAIN(tst_BaseModel)

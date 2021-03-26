@@ -16,20 +16,24 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
     class ConnectionInterface;
-    class Grammar;
 }
 
 namespace Orm::Query
 {
-
     class JoinClause;
+
+namespace Grammars
+{
+    class Grammar;
+}
+    using QueryGrammar = Query::Grammars::Grammar;
 
     // TODO add support for subqueries, first in where() silverqx
     // TODO add inRandomOrder() silverqx
     class SHAREDLIB_EXPORT Builder
     {
     public:
-        Builder(ConnectionInterface &connection, const Grammar &grammar);
+        Builder(ConnectionInterface &connection, const QueryGrammar &grammar);
         // WARNING solve pure virtual dtor vs default silverqx
         /* Need to be the polymorphic type because of dynamic_cast<>
            in Grammar::concatenateWhereClauses(). */
@@ -86,7 +90,7 @@ namespace Orm::Query
         std::tuple<int, QSqlQuery> remove(const quint64 id);
 
         /*! Run a truncate statement on the table. */
-        std::tuple<bool, QSqlQuery> truncate();
+        void truncate();
 
         /* Select */
         /*! Set the columns to be selected. */
@@ -266,7 +270,7 @@ namespace Orm::Query
         inline ConnectionInterface &getConnection() const
         { return m_connection; }
         /*! Get the query grammar instance. */
-        inline const Grammar &getGrammar() const
+        inline const QueryGrammar &getGrammar() const
         { return m_grammar; }
 
         /*! Get the current query value bindings as flattened QVector. */
@@ -375,7 +379,7 @@ namespace Orm::Query
         /*! The database connection instance. */
         ConnectionInterface &m_connection;
         /*! The database query grammar instance. */
-        const Grammar &m_grammar;
+        const QueryGrammar &m_grammar;
 
         /*! The current query value bindings.
             Order is crucial here because of that QMap with an enum struct is used. */
@@ -407,6 +411,7 @@ namespace Orm::Query
         QVector<HavingConditionItem> m_havings;
         /*! The orderings for the query. */
         QVector<OrderByItem> m_orders;
+        // BUG I think that limit can be also negative silverqx
         /*! The maximum number of records to return. */
         int m_limit = -1;
         /*! The number of records to skip. */

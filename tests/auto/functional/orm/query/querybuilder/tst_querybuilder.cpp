@@ -1,53 +1,47 @@
 #include <QCoreApplication>
+#include <QtSql/QSqlDriver>
 #include <QtTest>
 
-#include "orm/grammar.hpp"
+#include "orm/db.hpp"
 #include "orm/query/querybuilder.hpp"
 
 #include "database.hpp"
 
-using namespace Orm;
+using QueryBuilder = Orm::Query::Builder;
 
-// TODO use QFINDTESTDATA() to load *.sql file? silverqx
 class tst_QueryBuilder : public QObject
 {
     Q_OBJECT
 
-public:
-    tst_QueryBuilder();
-    ~tst_QueryBuilder() = default;
-
 private slots:
-    void initTestCase();
-    void cleanupTestCase();
+    void initTestCase_data() const;
 
     void find() const;
     void limit() const;
 
 private:
-    /*! Create QueryBuilder instance. */
-    inline QueryBuilder createQuery() const
-    { return QueryBuilder(m_connection, Grammar()); }
-
-    /*! The database connection instance. */
-    ConnectionInterface &m_connection;
+    /*! Create QueryBuilder instance for the given connection. */
+    inline QSharedPointer<QueryBuilder>
+    createQuery(const QString &connection) const
+    { return DB::connection(connection).query(); }
 };
 
-tst_QueryBuilder::tst_QueryBuilder()
-    : m_connection(TestUtils::Database::createConnection())
-{}
+void tst_QueryBuilder::initTestCase_data() const
+{
+    QTest::addColumn<QString>("connection");
 
-void tst_QueryBuilder::initTestCase()
-{}
-
-void tst_QueryBuilder::cleanupTestCase()
-{}
+    // Run all tests for all supported database connections
+    for (const auto &connection : TestUtils::Database::createConnections())
+        QTest::newRow(connection.toUtf8().constData()) << connection;
+}
 
 void tst_QueryBuilder::find() const
 {
-    auto builder = createQuery();
+    QFETCH_GLOBAL(QString, connection);
 
-    auto [ok, query] = builder.from("torrents").find(2);
+    auto builder = createQuery(connection);
+
+    auto [ok, query] = builder->from("torrents").find(2);
 
     if (!ok)
         QFAIL("find() query failed.");
@@ -58,10 +52,20 @@ void tst_QueryBuilder::find() const
 
 void tst_QueryBuilder::limit() const
 {
-    auto builder = createQuery();
+    QFETCH_GLOBAL(QString, connection);
+
+    if (const auto qtConnection = QSqlDatabase::database(connection);
+        !qtConnection.driver()->hasFeature(QSqlDriver::QuerySize)
+    )
+        // ", " to prevent warning about variadic macro
+        QSKIP(QStringLiteral("'%1' driver doesn't support reporting the size "
+                             "of a query.")
+              .arg(qtConnection.driverName()).toUtf8().constData(), );
+
+    auto builder = createQuery(connection);
 
     {
-        auto [ok, query] = builder.from("torrents").limit(1).get({"id"});
+        auto [ok, query] = builder->from("torrents").limit(1).get({"id"});
 
         if (!ok)
             QFAIL("limit(1) query failed.");
@@ -70,7 +74,7 @@ void tst_QueryBuilder::limit() const
     }
 
     {
-        auto [ok, query] = builder.from("torrents").limit(3).get({"id"});
+        auto [ok, query] = builder->from("torrents").limit(3).get({"id"});
 
         if (!ok)
             QFAIL("limit(3) query failed.");
@@ -79,7 +83,7 @@ void tst_QueryBuilder::limit() const
     }
 
     {
-        auto [ok, query] = builder.from("torrents").limit(4).get({"id"});
+        auto [ok, query] = builder->from("torrents").limit(4).get({"id"});
 
         if (!ok)
             QFAIL("limit(4) query failed.");

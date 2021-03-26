@@ -19,7 +19,8 @@ namespace Orm::Connectors
 
         /*! Get the QSqlDatabase connection options for the current connector. */
         const QVariantHash &getConnectorOptions() const override;
-        /*! Parse connection options. */
+        /*! Parse and validate QSqlDatabase connection options, called from
+            the ConfigurationOptionsParser. */
         void parseConfigOptions(QVariantHash &options) const override;
 
     protected:

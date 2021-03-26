@@ -115,12 +115,13 @@ private:
 //        {"tags"},
     };
 
+#ifdef PROJECT_TINYORM_PLAYGROUND
     /*! The connection name for the model. */
-#ifdef PROJECT_TINYORM_TEST
-    QString u_connection {"tinyorm_mysql_tests"};
-#else
-    QString u_connection {"crystal"};
+    QString u_connection {"mysql_alt"};
 #endif
+
+    /*! The connection name for the model. */
+//    QString u_connection {"sqlite"};
 
     /*! Indicates if the model should be timestamped. */
 //    bool u_timestamps = true;

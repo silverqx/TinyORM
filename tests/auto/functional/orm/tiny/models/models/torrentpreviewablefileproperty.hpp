@@ -40,11 +40,6 @@ private:
 //        {"torrentFile"},
     };
 
-#ifdef PROJECT_TINYORM_TEST
-    /*! The connection name for the model. */
-    QString u_connection {"tinyorm_mysql_tests"};
-#endif
-
     /*! Indicates if the model should be timestamped. */
     bool u_timestamps = false;
 

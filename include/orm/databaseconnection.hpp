@@ -10,7 +10,7 @@
 #include "orm/concerns/detectslostconnections.hpp"
 #include "orm/connectioninterface.hpp"
 #include "orm/connectors/connectorinterface.hpp"
-#include "orm/grammar.hpp"
+#include "orm/query/grammars/grammar.hpp"
 #include "orm/queryerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -112,7 +112,7 @@ namespace Orm
 
         /*! Prepare the query bindings for execution. */
         QVector<QVariant>
-        prepareBindings(const QVector<QVariant> &bindings) const override;
+        prepareBindings(QVector<QVariant> bindings) const override;
         /*! Bind values to their parameters in the given statement. */
         void bindValues(QSqlQuery &query,
                         const QVector<QVariant> &bindings) const;
@@ -128,15 +128,21 @@ namespace Orm
         /*! Disconnect from the underlying PDO connection. */
         void disconnect();
 
+        /*! Get the default query grammar instance. */
+        virtual std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const = 0;
+
         /*! Get the database connection name. */
         inline const QString getName() const override
         { return getConfig("name").toString(); }
         /*! Get the name of the connected database. */
         inline const QString &getDatabaseName() const override
         { return m_database; }
+        /*! Set the query grammar to the default implementation. */
+        inline void useDefaultQueryGrammar() override
+        { m_queryGrammar = getDefaultQueryGrammar(); }
         /*! Get the query grammar used by the connection. */
-        inline const Grammar &getQueryGrammar() const override
-        { return m_queryGrammar; }
+        inline const QueryGrammar &getQueryGrammar() const override
+        { return *m_queryGrammar; }
 
         // TODO duplicate, extract to some internal types silverqx
         /*! Reconnector lambda type. */
@@ -147,7 +153,7 @@ namespace Orm
         /*! Get an option from the configuration options. */
         QVariant getConfig(const QString &option) const;
         /*! Get the configuration for the current connection. */
-        QVariant getConfig() const;
+        const QVariantHash &getConfig() const;
 
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */
@@ -177,6 +183,9 @@ namespace Orm
         /*! Reset the number of executed queries. */
         DatabaseConnection &resetStatementsCounter() override;
 
+        /*! Return the connection's driver name. */
+        QString driverName() override;
+
     protected:
         /*! Callback type used in the run() methods. */
         template<typename Result>
@@ -201,12 +210,18 @@ namespace Orm
         /*! Reset in transaction state and savepoints. */
         DatabaseConnection &resetTransactions();
 
+        /*! Log database disconnected, examined during MySQL ping. */
+        void logDisconnected();
+        /*! Log database connected, examined during MySQL ping. */
+        void logConnected();
+
         /*! The active QSqlDatabase connection name. */
         std::optional<Connectors::ConnectionName> m_qtConnection;
         /*! The QSqlDatabase connection resolver. */
         std::function<Connectors::ConnectionName()> m_qtConnectionResolver;
         /*! The name of the connected database. */
         const QString m_database;
+        // TODO feature, table prefix silverqx
         /*! The table prefix for the connection. */
         const QString m_tablePrefix {""};
         /*! The database connection configuration options. */
@@ -247,10 +262,6 @@ namespace Orm
                 const QVector<QVariant> &bindings,
                 const RunCallback<Result> &callback) const;
 
-        /*! Log database disconnected, examined during MySQL ping. */
-        void logDisconnected();
-        /*! Log database connected, examined during MySQL ping. */
-        void logConnected();
         /*! Log a transaction query into the connection's query log. */
         void logTransactionQuery(const QString &query,
                                  const std::optional<qint64> &elapsed);
@@ -267,7 +278,7 @@ namespace Orm
         /*! Active savepoints counter. */
         uint m_savepoints = 0;
         /*! The query grammar implementation. */
-        Grammar m_queryGrammar;
+        std::unique_ptr<QueryGrammar> m_queryGrammar;
 
 #ifdef TINYORM_DEBUG_SQL
         /*! Indicates whether logging of sql queries is enabled. */
@@ -276,7 +287,6 @@ namespace Orm
         /*! Indicates whether logging of sql queries is enabled. */
         const bool m_debugSql = false;
 #endif
-
     };
 
     template<typename Result>

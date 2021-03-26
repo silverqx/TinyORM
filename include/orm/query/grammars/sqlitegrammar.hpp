@@ -1,0 +1,57 @@
+#ifndef SQLITEGRAMMAR_H
+#define SQLITEGRAMMAR_H
+
+#include "orm/query/grammars/grammar.hpp"
+
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
+{
+#endif
+namespace Orm::Query::Grammars
+{
+
+    class SHAREDLIB_EXPORT SQLiteGrammar : public Grammar
+    {
+
+    public:
+        /*! Compile an insert ignore statement into SQL. */
+        QString compileInsertOrIgnore(const QueryBuilder &query,
+                                      const QVector<QVariantMap> &values) const override;
+
+        /*! Compile an update statement into SQL. */
+        QString compileUpdate(QueryBuilder &query,
+                              const QVector<UpdateItem> &values) const override;
+
+        /*! Compile a delete statement into SQL. */
+        QString compileDelete(QueryBuilder &query) const override;
+
+        /*! Compile a truncate table statement into SQL. Returns a map of
+            the query string and bindings. */
+        std::unordered_map<QString, QVector<QVariant>>
+        compileTruncate(const QueryBuilder &query) const override;
+
+        /*! Get the grammar specific operators. */
+        const QVector<QString> &getOperators() const override;
+
+    protected:
+        /*! Compile the columns for an update statement. */
+        QString compileUpdateColumns(const QVector<UpdateItem> &values) const override;
+
+    private:
+        /*! Compile an update statement with joins or limit into SQL. */
+        QString compileUpdateWithJoinsOrLimit(QueryBuilder &query,
+                                              const QVector<UpdateItem> &values) const;
+
+        /*! Compile a delete statement with joins or limit into SQL. */
+        QString compileDeleteWithJoinsOrLimit(QueryBuilder &query) const;
+
+        /*! The grammar specific operators. */
+        const QVector<QString> m_operators {"sounds like"};
+    };
+
+} // namespace Orm
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
+#endif
+
+#endif // SQLITEGRAMMAR_H

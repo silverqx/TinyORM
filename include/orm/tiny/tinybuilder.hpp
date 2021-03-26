@@ -120,7 +120,7 @@ namespace Relations
         std::tuple<int, QSqlQuery> deleteModels();
 
         /*! Run a truncate statement on the table. */
-        std::tuple<bool, QSqlQuery> truncate();
+        void truncate();
 
         /* Select */
         /*! Set the columns to be selected. */
@@ -627,9 +627,9 @@ namespace Relations
     }
 
     template<typename Model>
-    std::tuple<bool, QSqlQuery> Builder<Model>::truncate()
+    void Builder<Model>::truncate()
     {
-        return toBase().truncate();
+        toBase().truncate();
     }
 
     template<typename Model>

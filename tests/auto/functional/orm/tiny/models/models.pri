@@ -10,6 +10,8 @@ HEADERS += \
     $$PWD/models/filepropertyproperty.hpp \
     $$PWD/models/forwards.hpp \
     $$PWD/models/forwardseager.hpp \
+    $$PWD/models/role.hpp \
+    $$PWD/models/roleuser.hpp \
     $$PWD/models/setting.hpp \
     $$PWD/models/tag.hpp \
     $$PWD/models/tagged.hpp \
@@ -24,3 +26,4 @@ HEADERS += \
     $$PWD/models/torrentpreviewablefileeager.hpp \
     $$PWD/models/torrentpreviewablefileproperty.hpp \
     $$PWD/models/torrentpreviewablefilepropertyeager.hpp \
+    $$PWD/models/user.hpp \

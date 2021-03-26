@@ -15,7 +15,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
-Builder::Builder(ConnectionInterface &connection, const Grammar &grammar)
+Builder::Builder(ConnectionInterface &connection, const QueryGrammar &grammar)
     : m_connection(connection)
     , m_grammar(grammar)
 {}
@@ -165,9 +165,10 @@ std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
     return remove();
 }
 
-std::tuple<bool, QSqlQuery> Builder::truncate()
+void Builder::truncate()
 {
-    return m_connection.statement(m_grammar.compileTruncate(*this));
+    for (const auto &[sql, bindings] : m_grammar.compileTruncate(*this))
+        m_connection.statement(sql, bindings);
 }
 
 Builder &Builder::select(const QStringList columns)
@@ -222,6 +223,7 @@ Builder &Builder::join(const QString &table, const QString &first,
     case JoinType::WHERE:
         join->where(first, comparison, second);
         break;
+
     case JoinType::ON:
         join->on(first, comparison, second);
         break;
@@ -655,11 +657,10 @@ Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> &query,
 
 bool Builder::invalidOperator(const QString &comparison) const
 {
-    const auto contains = m_operators.contains(comparison);
+    const auto comparison_ = comparison.toLower();
 
-    Q_ASSERT(contains);
-
-    return contains == false;
+    return !m_operators.contains(comparison_) &&
+            !m_grammar.getOperators().contains(comparison_);
 }
 
 Builder &Builder::addBinding(const QVariant &binding, const BindingType type)

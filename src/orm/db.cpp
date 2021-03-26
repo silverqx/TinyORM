@@ -62,6 +62,11 @@ QStringList DB::connectionNames()
     return manager().connectionNames();
 }
 
+QStringList DB::openedConnectionNames()
+{
+    return manager().openedConnectionNames();
+}
+
 const QString &DB::getDefaultConnection()
 {
     return manager().getDefaultConnection();
@@ -232,6 +237,31 @@ void DB::resetAllElapsedCounters()
     return manager().resetAllElapsedCounters();
 }
 
+void DB::enableElapsedCounters(const QStringList &connections)
+{
+    manager().enableElapsedCounters(connections);
+}
+
+void DB::disableElapsedCounters(const QStringList &connections)
+{
+    manager().disableElapsedCounters(connections);
+}
+
+qint64 DB::getElapsedCounters(const QStringList &connections)
+{
+    return manager().getElapsedCounters(connections);
+}
+
+qint64 DB::takeElapsedCounters(const QStringList &connections)
+{
+    return manager().takeElapsedCounters(connections);
+}
+
+void DB::resetElapsedCounters(const QStringList &connections)
+{
+    manager().resetElapsedCounters(connections);
+}
+
 bool DB::countingStatements(const QString &connection)
 {
     return manager().connection(connection).countingStatements();
@@ -290,6 +320,31 @@ StatementsCounter DB::takeAllStatementCounters()
 void DB::resetAllStatementCounters()
 {
     return manager().resetAllStatementCounters();
+}
+
+void DB::enableStatementCounters(const QStringList &connections)
+{
+    manager().enableStatementCounters(connections);
+}
+
+void DB::disableStatementCounters(const QStringList &connections)
+{
+    manager().disableStatementCounters(connections);
+}
+
+StatementsCounter DB::getStatementCounters(const QStringList &connections)
+{
+    return manager().getStatementCounters(connections);
+}
+
+StatementsCounter DB::takeStatementCounters(const QStringList &connections)
+{
+    return manager().takeStatementCounters(connections);
+}
+
+void DB::resetStatementCounters(const QStringList &connections)
+{
+    manager().resetStatementCounters(connections);
 }
 
 } // namespace Orm

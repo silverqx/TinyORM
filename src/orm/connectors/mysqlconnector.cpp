@@ -3,8 +3,6 @@
 #include <QtSql/QSqlQuery>
 #include <QVersionNumber>
 
-#include <stdexcept>
-
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -19,7 +17,7 @@ MySqlConnector::connect(const QVariantHash &config) const
 
     /* We need to grab the QSqlDatabse options that should be used while making
        the brand new connection instance. The QSqlDatabase options control various
-       aspects of the connection's behavior, and can be override by the developers. */
+       aspects of the connection's behavior, and can be overridden by the developers. */
     const auto options = getOptions(config);
 
     // Create and open new database connection
@@ -142,8 +140,9 @@ void MySqlConnector::setModes(const QSqlDatabase &connection,
             }
         }
         else {
-            QSqlQuery query(QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'"),
-                            connection);
+            QSqlQuery query(
+                        QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'"),
+                        connection);
             query.exec();
         }
     }

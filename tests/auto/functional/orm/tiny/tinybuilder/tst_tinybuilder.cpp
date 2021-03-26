@@ -1,25 +1,25 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include "orm/db.hpp"
+
 #include "models/torrent.hpp"
 
 #include "database.hpp"
 
-using namespace Orm;
-// TODO tests, namespace silverqx
-using namespace Orm::Tiny;
+using Orm::QueryError;
+using Orm::Tiny::ConnectionOverride;
+using Orm::Tiny::ModelNotFoundError;
+
+template<typename Model>
+using TinyBuilder = Orm::Tiny::Builder<Model>;
 
 class tst_TinyBuilder : public QObject
 {
     Q_OBJECT
 
-public:
-    tst_TinyBuilder();
-    ~tst_TinyBuilder() = default;
-
 private slots:
-    void initTestCase();
-    void cleanupTestCase();
+    void initTestCase_data() const;
 
     void get() const;
     void get_Columns() const;
@@ -42,23 +42,23 @@ private:
     inline static std::unique_ptr<TinyBuilder<Model>>
     createQuery()
     { return Model().query(); }
-
-    /*! The database connection instance. */
-    ConnectionInterface &m_connection;
 };
 
-tst_TinyBuilder::tst_TinyBuilder()
-    : m_connection(TestUtils::Database::createConnection())
-{}
+void tst_TinyBuilder::initTestCase_data() const
+{
+    QTest::addColumn<QString>("connection");
 
-void tst_TinyBuilder::initTestCase()
-{}
-
-void tst_TinyBuilder::cleanupTestCase()
-{}
+    // Run all tests for all supported database connections
+    for (const auto &connection : TestUtils::Database::createConnections())
+        QTest::newRow(connection.toUtf8().constData()) << connection;
+}
 
 void tst_TinyBuilder::get() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrents = createQuery<Torrent>()->get();
 
     QCOMPARE(torrents.size(), 6);
@@ -72,17 +72,25 @@ void tst_TinyBuilder::get() const
 
 void tst_TinyBuilder::get_Columns() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrents = createQuery<Torrent>()->get({"id", "name", "size"});
 
-    const auto &torrent3 = torrents.at(1);
-    QCOMPARE(torrent3.getAttributes().size(), 3);
-    QCOMPARE(torrent3.getAttributes().at(0).key, QString("id"));
-    QCOMPARE(torrent3.getAttributes().at(1).key, QString("name"));
-    QCOMPARE(torrent3.getAttributes().at(2).key, QString("size"));
+    const auto &torrent = torrents.at(1);
+    QCOMPARE(torrent.getAttributes().size(), 3);
+    QCOMPARE(torrent.getAttributes().at(0).key, QString("id"));
+    QCOMPARE(torrent.getAttributes().at(1).key, QString("name"));
+    QCOMPARE(torrent.getAttributes().at(2).key, QString("size"));
 }
 
 void tst_TinyBuilder::value() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto value = Torrent::whereEq("id", 2)->value("name");
 
     QCOMPARE(value, QVariant("test2"));
@@ -90,6 +98,10 @@ void tst_TinyBuilder::value() const
 
 void tst_TinyBuilder::value_ModelNotFound() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto value = Torrent::whereEq("id", 999999)->value("name");
 
     QVERIFY(!value.isValid());
@@ -98,6 +110,10 @@ void tst_TinyBuilder::value_ModelNotFound() const
 
 void tst_TinyBuilder::firstOrFail_Found() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     {
         auto torrent = Torrent::whereEq("id", 3)->firstOrFail();
 
@@ -118,6 +134,10 @@ void tst_TinyBuilder::firstOrFail_Found() const
 
 void tst_TinyBuilder::firstOrFail_NotFoundFailed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     QVERIFY_EXCEPTION_THROWN(Torrent::whereEq("id", 999999)->firstOrFail(),
                              ModelNotFoundError);
     QVERIFY_EXCEPTION_THROWN(Torrent::whereEq("id", 999999)->firstOrFail({"id", "name"}),
@@ -126,6 +146,14 @@ void tst_TinyBuilder::firstOrFail_NotFoundFailed() const
 
 void tst_TinyBuilder::incrementAndDecrement() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // CUR tests, sqlite datetime silverqx
+    if (DB::connection(connection).driverName() == "QSQLITE")
+        QSKIP("QSQLITE doesn't return QDateTime QVariant, but QString.", );
+
     auto timeBeforeIncrement = QDateTime::currentDateTime();
     // Reset milliseconds to 0
     {
@@ -173,6 +201,14 @@ void tst_TinyBuilder::incrementAndDecrement() const
 
 void tst_TinyBuilder::update() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // CUR tests, sqlite datetime silverqx
+    if (DB::connection(connection).driverName() == "QSQLITE")
+        QSKIP("QSQLITE doesn't return QDateTime QVariant, but QString.", );
+
     auto timeBeforeUpdate = QDateTime::currentDateTime();
     // Reset milliseconds to 0
     {
@@ -220,6 +256,10 @@ void tst_TinyBuilder::update() const
 
 void tst_TinyBuilder::update_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     QVERIFY_EXCEPTION_THROWN(
                 Torrent::whereEq("id", 3)->update({{"progress-NON_EXISTENT", 333}}),
                 QueryError);
@@ -227,6 +267,10 @@ void tst_TinyBuilder::update_Failed() const
 
 void tst_TinyBuilder::update_SameValue() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto timeBeforeUpdate = QDateTime::currentDateTime();
     // Reset milliseconds to 0
     {

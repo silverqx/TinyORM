@@ -45,11 +45,6 @@ private:
     QVector<WithItem> u_with {
         {"torrentFiles-NON_EXISTENT"},
     };
-
-    /*! The connection name for the model. */
-#ifdef PROJECT_TINYORM_TEST
-    QString u_connection {"tinyorm_mysql_tests"};
-#endif
 };
 
 #endif // TORRENTEAGER_FAILED_H

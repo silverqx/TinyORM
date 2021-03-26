@@ -1,11 +1,7 @@
 #include "orm/databaseconnection.hpp"
 
-#include <QtSql/QSqlDriver>
-#include <QtSql/QSqlError>
-
-#include "mysql.h"
-
 #include "orm/logquery.hpp"
+#include "orm/query/grammars/grammar.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/sqltransactionerror.hpp"
 
@@ -16,8 +12,10 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-const char *DatabaseConnection::defaultConnectionName = const_cast<char *>("tinyorm_default");
-const char *DatabaseConnection::SAVEPOINT_NAMESPACE   = const_cast<char *>("tinyorm_savepoint");
+const char *
+DatabaseConnection::defaultConnectionName = const_cast<char *>("tinyorm_default");
+const char *
+DatabaseConnection::SAVEPOINT_NAMESPACE   = const_cast<char *>("tinyorm_savepoint");
 
 /*!
     \class DatabaseConnection
@@ -52,7 +50,7 @@ DatabaseConnection::DatabaseConnection(
 QSharedPointer<QueryBuilder>
 DatabaseConnection::table(const QString &table, const QString &as)
 {
-    auto builder = QSharedPointer<QueryBuilder>::create(*this, m_queryGrammar);
+    auto builder = QSharedPointer<QueryBuilder>::create(*this, *m_queryGrammar);
 
     builder->from(table, as);
 
@@ -61,7 +59,7 @@ DatabaseConnection::table(const QString &table, const QString &as)
 
 QSharedPointer<QueryBuilder> DatabaseConnection::query()
 {
-    return QSharedPointer<QueryBuilder>::create(*this, m_queryGrammar);
+    return QSharedPointer<QueryBuilder>::create(*this, *m_queryGrammar);
 }
 
 bool DatabaseConnection::beginTransaction()
@@ -404,11 +402,42 @@ QSqlQuery DatabaseConnection::getQtQuery()
 
 // TODO perf, modify bindings directly and return reference, debug impact silverqx
 QVector<QVariant>
-DatabaseConnection::prepareBindings(const QVector<QVariant> &bindings) const
+DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
 {
 //    const auto &grammar = getQueryGrammar();
 
-    // TODO future, here will be implemented datetime values silverqx
+    for (auto &binding : bindings) {
+        // Nothing to convert
+        if (!binding.isValid() || binding.isNull())
+            continue;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        switch (binding.typeId()) {
+#else
+        switch (binding.userType()) {
+#endif
+        /* We need to transform all instances of DateTimeInterface into the actual
+           date string. Each query grammar maintains its own date string format
+           so we'll just ask the grammar for the format to get from the date. */
+        // CUR solve this datetime problem silverqx
+//        case QMetaType::QTime:
+//        case QMetaType::QDate:
+//        case QMetaType::QDateTime:
+////        if ($value instanceof DateTimeInterface) {
+////            $bindings[$key] = $value->format($grammar->getDateFormat());
+//            break;
+
+        /* Even if eg. the MySQL driver handles this internally, I will do it this way
+           to be consistent across all supported databases. */
+        case QMetaType::Bool:
+            binding.convert(QMetaType::Int);
+            break;
+
+        default:
+            break;
+        }
+    }
+
     return bindings;
 }
 
@@ -463,60 +492,9 @@ DatabaseConnection::hitTransactionalCounters(const QElapsedTimer &timer)
 
 bool DatabaseConnection::pingDatabase()
 {
-    auto qtConnection = getQtConnection();
-
-    const auto getMysqlHandle = [&qtConnection]() -> MYSQL *
-    {
-        if (auto driverHandle = qtConnection.driver()->handle();
-            qstrcmp(driverHandle.typeName(), "MYSQL*") == 0
-        )
-            return *static_cast<MYSQL **>(driverHandle.data());
-
-        return nullptr;
-    };
-
-    const auto mysqlPing = [getMysqlHandle]() -> bool
-    {
-        auto mysqlHandle = getMysqlHandle();
-        if (mysqlHandle == nullptr)
-            return false;
-
-        const auto ping = mysql_ping(mysqlHandle);
-        const auto errNo = mysql_errno(mysqlHandle);
-
-        /* So strange logic, because I want interpret CR_COMMANDS_OUT_OF_SYNC errno as
-           successful ping. */
-        if (ping != 0 && errNo == CR_COMMANDS_OUT_OF_SYNC) {
-            // TODO log to file, how often this happen silverqx
-            qWarning("mysql_ping() returned : CR_COMMANDS_OUT_OF_SYNC(%ud)", errNo);
-            return true;
-        }
-        else if (ping == 0)
-            return true;
-        else if (ping != 0)
-            return false;
-        else {
-            qWarning() << "Unknown behavior during mysql_ping(), this should never happen :/";
-            return false;
-        }
-    };
-
-    if (qtConnection.isOpen() && mysqlPing()) {
-        logConnected();
-        return true;
-    }
-
-    // The database connection was lost
-    logDisconnected();
-
-    // Database connection have to be closed manually
-    // isOpen() check is called in MySQL driver
-    qtConnection.close();
-
-    // Reset in transaction state and the savepoints counter
-    resetTransactions();
-
-    return false;
+    throw OrmRuntimeError(
+                QStringLiteral("The '%1' database driver doesn't support ping command.")
+                .arg(driverName()));
 }
 
 void DatabaseConnection::reconnect() const
@@ -554,7 +532,8 @@ QVariant DatabaseConnection::getConfig(const QString &option) const
     return m_config.value(option);
 }
 
-QVariant DatabaseConnection::getConfig() const
+const QVariantHash &
+DatabaseConnection::getConfig() const
 {
     return m_config;
 }
@@ -659,6 +638,11 @@ DatabaseConnection &DatabaseConnection::resetStatementsCounter()
     return *this;
 }
 
+QString DatabaseConnection::driverName()
+{
+    return getQtConnection().driverName();
+}
+
 void DatabaseConnection::reconnectIfMissingConnection() const
 {
     if (!m_qtConnectionResolver) {
@@ -675,19 +659,6 @@ DatabaseConnection &DatabaseConnection::resetTransactions()
     m_inTransaction = false;
 
     return *this;
-}
-
-QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
-{
-    // Prepare query string
-    auto query = getQtQuery();
-
-    // TODO solve setForwardOnly() in DatabaseConnection class, again this problem 🤔 silverqx
-//    query.setForwardOnly(m_forwardOnly);
-
-    query.prepare(queryString);
-
-    return query;
 }
 
 void DatabaseConnection::logDisconnected()
@@ -713,6 +684,19 @@ void DatabaseConnection::logConnected()
     m_disconnectedLogged = false;
 
     qInfo() << "Database connected";
+}
+
+QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
+{
+    // Prepare query string
+    auto query = getQtQuery();
+
+    // TODO solve setForwardOnly() in DatabaseConnection class, again this problem 🤔 silverqx
+//    query.setForwardOnly(m_forwardOnly);
+
+    query.prepare(queryString);
+
+    return query;
 }
 
 } // namespace Orm

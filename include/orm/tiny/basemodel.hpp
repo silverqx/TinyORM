@@ -39,6 +39,16 @@ namespace Relations {
 
     using QueryBuilder = Query::Builder;
 
+#ifdef TINYORM_TESTS_CODE
+    /*! Used by tests to override connection in the BaseModel. */
+    struct ConnectionOverride
+    {
+        /*! The connection to use in the BaseModel, this data member is picked up
+            in the BaseModel::getConnectionName(). */
+        inline static QString connection = "";
+    };
+#endif
+
     // TODO decide/unify when to use class/typename keywords for templates silverqx
     // TODO concept, AllRelations can not contain type defined in "Model" parameter silverqx
     // TODO next test no relation behavior silverqx
@@ -86,6 +96,8 @@ namespace Relations {
         /* Static operations on a model instance */
         /*! Begin querying the model. */
         static std::unique_ptr<TinyBuilder<Model>> query();
+        /*! Begin querying the model on a given connection. */
+        static std::unique_ptr<TinyBuilder<Model>> on(const QString &connection = "");
 
         /* TinyBuilder proxy methods */
         /*! Get all of the models from the database. */
@@ -164,7 +176,7 @@ namespace Relations {
         static std::size_t destroy(QVariant id);
 
         /*! Run a truncate statement on the table. */
-        static std::tuple<bool, QSqlQuery> truncate();
+        static void truncate();
 
         /* Select */
         /*! Set the columns to be selected. */
@@ -469,8 +481,7 @@ namespace Relations {
 
         /* Getters / Setters */
         /*! Get the current connection name for the model. */
-        inline const QString &getConnectionName() const
-        { return model().u_connection; }
+        const QString &getConnectionName() const;
         /*! Get the database connection for the model. */
         inline ConnectionInterface &getConnection() const
         { return m_resolver->connection(getConnectionName()); }
@@ -856,7 +867,9 @@ namespace Relations {
         // TODO future Default Attribute Values, can not be u_attributes because of CRTP, because BaseModel is initialized first and u_attributes are uninitialized, the best I've come up with was BaseModel.init() and init default attrs. from there silverqx
         /*! The model's attributes. */
         QVector<AttributeItem> m_attributes;
-        /*! The model attribute's original state. */
+        /*! The model attribute's original state.
+            On the model from many-to-many relation also contains all pivot values,
+            that is normal. */
         QVector<AttributeItem> m_original;
         /*! The changed model attributes. */
         QVector<AttributeItem> m_changes;
@@ -1018,6 +1031,21 @@ namespace Relations {
     BaseModel<Model, AllRelations...>::query()
     {
         return Model().newQuery();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    std::unique_ptr<TinyBuilder<Model>>
+    BaseModel<Model, AllRelations...>::on(const QString &connection)
+    {
+        /* First we will just create a fresh instance of this model, and then we can
+           set the connection on the model so that it is used for the queries we
+           execute, as well as being set on every relation we retrieve without
+           a custom connection name. */
+        Model instance;
+
+        instance.setConnection(connection);
+
+        return instance.newQuery();
     }
 
     template<typename Model, typename ...AllRelations>
@@ -1208,10 +1236,9 @@ namespace Relations {
     }
 
     template<typename Model, typename ...AllRelations>
-    std::tuple<bool, QSqlQuery>
-    BaseModel<Model, AllRelations...>::truncate()
+    void BaseModel<Model, AllRelations...>::truncate()
     {
-        return query()->truncate();
+        query()->truncate();
     }
 
     template<typename Model, typename ...AllRelations>
@@ -2487,6 +2514,21 @@ namespace Relations {
         else
             return PivotType::template fromRawAttributes<Parent>(
                         parent, attributes, table, exists);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    const QString &
+    BaseModel<Model, AllRelations...>::getConnectionName() const
+    {
+#ifdef TINYORM_TESTS_CODE
+        // Used from tests to override connection
+        if (const auto &connection = ConnectionOverride::connection;
+            !connection.isEmpty()
+        )
+            return connection;
+#endif
+
+        return model().u_connection;
     }
 
     template<typename Model, typename ...AllRelations>

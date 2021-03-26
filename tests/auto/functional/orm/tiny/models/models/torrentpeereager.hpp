@@ -38,11 +38,6 @@ private:
     QVector<WithItem> u_with {
         {"torrent"},
     };
-
-#ifdef PROJECT_TINYORM_TEST
-    /*! The connection name for the model. */
-    QString u_connection {"tinyorm_mysql_tests"};
-#endif
 };
 
 #endif // TORRENTPEEREAGER_H

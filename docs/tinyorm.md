@@ -165,6 +165,10 @@ By default, all TinyOrm models will use the default database connection that is 
         QString u_connection {"sqlite"};
     };
 
+In special cases, when you want to query the database through a different connection, you can use `BaseModel::on` method, which takes the connection name as the first argument:
+
+    auto user = User::on("sqlite")->find(1);
+
 <a name="retrieving-models"></a>
 ## Retrieving Models
 

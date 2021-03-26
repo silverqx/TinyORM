@@ -12,11 +12,6 @@ class TorrentPeerEager_NoRelations final : public BaseModel<TorrentPeerEager_NoR
 
     /*! The table associated with the model. */
     QString u_table {"torrent_peers"};
-
-#ifdef PROJECT_TINYORM_TEST
-    /*! The connection name for the model. */
-    QString u_connection {"tinyorm_mysql_tests"};
-#endif
 };
 
 #endif // TORRENTPEEREAGER_NORELATIONS_H

@@ -73,3 +73,37 @@ include(src/src.pri)
 release {
     target.CONFIG += no_default_install
 }
+
+# Create the SQLite database
+# ---
+
+build_tests {
+    # Default SQLite test database, can be overriden by DB_SQLITE_DATABASE env. variable
+    TINYORM_SQLITE_DATABASE = $$quote($$TINYORM_BUILD_TREE/tests/q_tinyorm_test_1.sqlite3)
+
+    sqlitedatabase.target = sqlitedatabase
+    sqlitedatabase.dbname = $$TINYORM_SQLITE_DATABASE
+    sqlitedatabase.commands = touch $$sqlitedatabase.dbname
+    sqlitedatabase.depends = sqlitedatabase_message
+
+    sqlitedatabase_message.commands = @echo Creating SQLite database at $$sqlitedatabase.dbname
+
+    QMAKE_EXTRA_TARGETS += sqlitedatabase sqlitedatabase_message
+
+    !exists($$TINYORM_SQLITE_DATABASE) {
+        POST_TARGETDEPS += sqlitedatabase
+    }
+
+    # Set path to the SQLite database
+    # ---
+    contains(TEMPLATE, vc.*): DEFINES += TINYORM_SQLITE_DATABASE=\"$$TINYORM_SQLITE_DATABASE\"
+    else: DEFINES += TINYORM_SQLITE_DATABASE=$$shell_quote(\"$$TINYORM_SQLITE_DATABASE\")
+}
+
+# Clean the SQLite database
+# ---
+
+build_tests {
+    QMAKE_CLEAN = $$TINYORM_SQLITE_DATABASE
+    QMAKE_DISTCLEAN = $$TINYORM_SQLITE_DATABASE
+}

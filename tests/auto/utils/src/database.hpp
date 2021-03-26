@@ -10,10 +10,11 @@ namespace TestUtils
 
     class UTILS_EXPORT Database
     {
-    public:
-        Database();
+        Q_DISABLE_COPY(Database)
 
-        static Orm::ConnectionInterface &createConnection();
+    public:
+        /*! Create all database connections which will be tested. */
+        static const QStringList &createConnections();
     };
 
 }

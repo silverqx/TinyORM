@@ -58,6 +58,8 @@ namespace Orm
         static const QStringList supportedDrivers();
         /*! Returns a list containing the names of all connections. */
         static QStringList connectionNames();
+        /*! Returns a list containing the names of opened connections. */
+        static QStringList openedConnectionNames();
 
         /*! Get the default connection name. */
         static const QString &getDefaultConnection();
@@ -155,6 +157,17 @@ namespace Orm
         /*! Reset queries execution time on all active connections. */
         static void resetAllElapsedCounters();
 
+        /*! Enable counting queries execution time on given connections. */
+        static void enableElapsedCounters(const QStringList &connections);
+        /*! Disable counting queries execution time on given connections. */
+        static void disableElapsedCounters(const QStringList &connections);
+        /*! Obtain queries execution time from given connections. */
+        static qint64 getElapsedCounters(const QStringList &connections);
+        /*! Obtain and reset queries execution time on given connections. */
+        static qint64 takeElapsedCounters(const QStringList &connections);
+        /*! Reset queries execution time on given connections. */
+        static void resetElapsedCounters(const QStringList &connections);
+
         /* Queries executed counter */
         /*! Determine whether we're counting the number of executed queries. */
         static bool
@@ -188,6 +201,17 @@ namespace Orm
         static StatementsCounter takeAllStatementCounters();
         /*! Reset the number of executed queries on all active connections. */
         static void resetAllStatementCounters();
+
+        /*! Enable counting the number of executed queries on given connections. */
+        static void enableStatementCounters(const QStringList &connections);
+        /*! Disable counting the number of executed queries on given connections. */
+        static void disableStatementCounters(const QStringList &connections);
+        /*! Obtain the number of executed queries on given connections. */
+        static StatementsCounter getStatementCounters(const QStringList &connections);
+        /*! Obtain and reset the number of executed queries on given connections. */
+        static StatementsCounter takeStatementCounters(const QStringList &connections);
+        /*! Reset the number of executed queries on given connections. */
+        static void resetStatementCounters(const QStringList &connections);
     };
 
 } // namespace Orm

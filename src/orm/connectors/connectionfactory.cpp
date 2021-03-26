@@ -1,7 +1,9 @@
 #include "orm/connectors/connectionfactory.hpp"
 
 #include "orm/connectors/mysqlconnector.hpp"
+#include "orm/connectors/sqliteconnector.hpp"
 #include "orm/mysqlconnection.hpp"
+#include "orm/sqliteconnection.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -34,8 +36,8 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
         return std::make_unique<MySqlConnector>();
 //    else if (driver == "QPSQL")
 //        return std::make_unique<PostgresConnector>();
-//    else if (driver == "QSQLITE")
-//        return std::make_unique<SQLiteConnector>();
+    else if (driver == "QSQLITE")
+        return std::make_unique<SQLiteConnector>();
 //    else if (driver == "SQLSRV")
 //        return std::make_unique<SqlServerConnector>();
     else
@@ -124,14 +126,13 @@ ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &confi
 }
 
 std::function<ConnectionName()>
-ConnectionFactory::createQSqlDatabaseResolverWithoutHosts(const QVariantHash &) const
+ConnectionFactory::createQSqlDatabaseResolverWithoutHosts(
+        const QVariantHash &config) const
 {
-    throw std::domain_error(
-                "createQSqlDatabaseResolverWithoutHosts() not yet implemented.");
-
-//    return function () use ($config) {
-//        return $this->createConnector($config)->connect($config);
-//    };
+    return [this, &config]() -> ConnectionName
+    {
+        return createConnector(config)->connect(config);
+    };
 }
 
 std::unique_ptr<DatabaseConnection>
@@ -145,8 +146,8 @@ ConnectionFactory::createConnection(
         return std::make_unique<MySqlConnection>(connection, database, prefix, config);
 //    else if (driver == "QPSQL")
 //        return std::make_unique<PostgresConnection>(connection, database, prefix, config);
-//    else if (driver == "QSQLITE")
-//        return std::make_unique<SQLiteConnection>(connection, database, prefix, config);
+    else if (driver == "QSQLITE")
+        return std::make_unique<SQLiteConnection>(connection, database, prefix, config);
 //    else if (driver == "SQLSRV")
 //        return std::make_unique<SqlServerConnection>(connection, database, prefix, config);
     else
@@ -157,6 +158,7 @@ ConnectionFactory::createConnection(
 QStringList ConnectionFactory::parseHosts(const QVariantHash &config) const
 {
     if (!config.contains("host"))
+        // TODO now unify exception, std::domain_error is for user code, create own exceptions and use InvalidArgumentError, or runtime/logic error silverqx
         throw std::domain_error("Database 'host' configuration parameter is required.");
 
     const auto hosts = config["host"].value<QStringList>();

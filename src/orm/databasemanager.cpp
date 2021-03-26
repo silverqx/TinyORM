@@ -223,11 +223,16 @@ QStringList DatabaseManager::supportedDrivers() const
 {
     // TODO future add method to not only supported drivers, but also check if driver is available/loadable by qsqldatabase silverqx
     // aaaaaaaaaaaaaachjo 🤔😁
-    return {"mysql"};
+    return {"mysql", "sqlite"};
     //    return {"mysql", "pgsql", "sqlite", "sqlsrv"};
 }
 
 QStringList DatabaseManager::connectionNames() const
+{
+    return m_config.connections.keys();
+}
+
+QStringList DatabaseManager::openedConnectionNames() const
 {
     QStringList names;
     // TODO overflow, add check code https://stackoverflow.com/questions/22184403/how-to-cast-the-size-t-to-double-or-int-c/22184657#22184657 silverqx
@@ -290,7 +295,7 @@ DatabaseConnection &DatabaseManager::resetElapsedCounter(const QString &connecti
 
 bool DatabaseManager::anyCountingElapsed()
 {
-    const auto connections = connectionNames();
+    const auto connections = openedConnectionNames();
 
     for (const auto &connectionName : connections)
         if (connection(connectionName).countingElapsed())
@@ -301,28 +306,47 @@ bool DatabaseManager::anyCountingElapsed()
 
 void DatabaseManager::enableAllElapsedCounters()
 {
-    const auto connections = connectionNames();
-
-    for (const auto &connectionName : connections)
-        connection(connectionName).enableElapsedCounter();
+    enableElapsedCounters(openedConnectionNames());
 }
 
 void DatabaseManager::disableAllElapsedCounters()
 {
-    const auto connections = connectionNames();
+    disableElapsedCounters(openedConnectionNames());
+}
 
+qint64 DatabaseManager::getAllElapsedCounters()
+{
+    return getElapsedCounters(openedConnectionNames());
+}
+
+qint64 DatabaseManager::takeAllElapsedCounters()
+{
+    return takeElapsedCounters(openedConnectionNames());
+}
+
+void DatabaseManager::resetAllElapsedCounters()
+{
+    resetElapsedCounters(openedConnectionNames());
+}
+
+void DatabaseManager::enableElapsedCounters(const QStringList &connections)
+{
+    for (const auto &connectionName : connections)
+        connection(connectionName).enableElapsedCounter();
+}
+
+void DatabaseManager::disableElapsedCounters(const QStringList &connections)
+{
     for (const auto &connectionName : connections)
         connection(connectionName).disableElapsedCounter();
 }
 
-qint64 DatabaseManager::getAllElapsedCounters()
+qint64 DatabaseManager::getElapsedCounters(const QStringList &connections)
 {
     if (!anyCountingElapsed())
         return -1;
 
     qint64 elapsed = 0;
-
-    const auto connections = connectionNames();
 
     for (const auto &connectionName : connections) {
         const auto &connection = this->connection(connectionName);
@@ -334,14 +358,12 @@ qint64 DatabaseManager::getAllElapsedCounters()
     return elapsed;
 }
 
-qint64 DatabaseManager::takeAllElapsedCounters()
+qint64 DatabaseManager::takeElapsedCounters(const QStringList &connections)
 {
     if (!anyCountingElapsed())
         return -1;
 
     qint64 elapsed = 0;
-
-    const auto connections = connectionNames();
 
     for (const auto &connectionName : connections) {
         auto &connection = this->connection(connectionName);
@@ -353,10 +375,8 @@ qint64 DatabaseManager::takeAllElapsedCounters()
     return elapsed;
 }
 
-void DatabaseManager::resetAllElapsedCounters()
+void DatabaseManager::resetElapsedCounters(const QStringList &connections)
 {
-    const auto connections = connectionNames();
-
     for (const auto &connectionName : connections) {
         auto &connection = this->connection(connectionName);
 
@@ -397,7 +417,7 @@ DatabaseConnection &DatabaseManager::resetStatementsCounter(const QString &conne
 
 bool DatabaseManager::anyCountingStatements()
 {
-    const auto connections = connectionNames();
+    const auto connections = openedConnectionNames();
 
     for (const auto &connectionName : connections)
         if (connection(connectionName).countingStatements())
@@ -408,28 +428,47 @@ bool DatabaseManager::anyCountingStatements()
 
 void DatabaseManager::enableAllStatementCounters()
 {
-    const auto connections = connectionNames();
-
-    for (const auto &connectionName : connections)
-        connection(connectionName).enableStatementsCounter();
+    enableStatementCounters(openedConnectionNames());
 }
 
 void DatabaseManager::disableAllStatementCounters()
 {
-    const auto connections = connectionNames();
+    disableStatementCounters(openedConnectionNames());
+}
 
+StatementsCounter DatabaseManager::getAllStatementCounters()
+{
+    return getStatementCounters(openedConnectionNames());
+}
+
+StatementsCounter DatabaseManager::takeAllStatementCounters()
+{
+    return takeStatementCounters(openedConnectionNames());
+}
+
+void DatabaseManager::resetAllStatementCounters()
+{
+    resetStatementCounters(openedConnectionNames());
+}
+
+void DatabaseManager::enableStatementCounters(const QStringList &connections)
+{
+    for (const auto &connectionName : connections)
+        connection(connectionName).enableStatementsCounter();
+}
+
+void DatabaseManager::disableStatementCounters(const QStringList &connections)
+{
     for (const auto &connectionName : connections)
         connection(connectionName).disableStatementsCounter();
 }
 
-StatementsCounter DatabaseManager::getAllStatementCounters()
+StatementsCounter DatabaseManager::getStatementCounters(const QStringList &connections)
 {
     StatementsCounter counter;
 
     if (!anyCountingStatements())
         return counter;
-
-    const auto connections = connectionNames();
 
     for (const auto &connectionName : connections) {
         const auto &connection = this->connection(connectionName);
@@ -446,14 +485,12 @@ StatementsCounter DatabaseManager::getAllStatementCounters()
     return counter;
 }
 
-StatementsCounter DatabaseManager::takeAllStatementCounters()
+StatementsCounter DatabaseManager::takeStatementCounters(const QStringList &connections)
 {
     StatementsCounter counter;
 
     if (!anyCountingStatements())
         return counter;
-
-    const auto connections = connectionNames();
 
     for (const auto &connectionName : connections) {
         auto &connection = this->connection(connectionName);
@@ -470,10 +507,8 @@ StatementsCounter DatabaseManager::takeAllStatementCounters()
     return counter;
 }
 
-void DatabaseManager::resetAllStatementCounters()
+void DatabaseManager::resetStatementCounters(const QStringList &connections)
 {
-    const auto connections = connectionNames();
-
     for (const auto &connectionName : connections) {
         auto &connection = this->connection(connectionName);
 

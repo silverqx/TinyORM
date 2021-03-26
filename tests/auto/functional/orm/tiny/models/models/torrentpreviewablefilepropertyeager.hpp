@@ -14,11 +14,6 @@ class TorrentPreviewableFilePropertyEager final :
     /*! The table associated with the model. */
     QString u_table {"torrent_previewable_file_properties"};
 
-#ifdef PROJECT_TINYORM_TEST
-    /*! The connection name for the model. */
-    QString u_connection {"tinyorm_mysql_tests"};
-#endif
-
     /*! Indicates if the model should be timestamped. */
     bool u_timestamps = false;
 };

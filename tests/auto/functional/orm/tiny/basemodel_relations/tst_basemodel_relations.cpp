@@ -10,12 +10,9 @@
 
 #include "database.hpp"
 
-// TODO tests, namespace silverqx
-//using namespace Orm::Tiny;
-
-using Orm::ConnectionInterface;
 using Orm::One;
 using Orm::OrmRuntimeError;
+using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::RelationNotFoundError;
 using Orm::Tiny::RelationNotLoadedError;
 
@@ -23,13 +20,8 @@ class tst_BaseModel_Relations : public QObject
 {
     Q_OBJECT
 
-public:
-    tst_BaseModel_Relations();
-    ~tst_BaseModel_Relations() = default;
-
 private slots:
-    void initTestCase();
-    void cleanupTestCase();
+    void initTestCase_data() const;
 
     void getRelation_EagerLoad_ManyAndOne() const;
     void getRelation_EagerLoad_BelongsTo() const;
@@ -64,24 +56,23 @@ private slots:
 
     void where_WithCallback() const;
     void orWhere_WithCallback() const;
-
-private:
-    /*! The database connection instance. */
-    ConnectionInterface &m_connection;
 };
 
-tst_BaseModel_Relations::tst_BaseModel_Relations()
-    : m_connection(TestUtils::Database::createConnection())
-{}
+void tst_BaseModel_Relations::initTestCase_data() const
+{
+    QTest::addColumn<QString>("connection");
 
-void tst_BaseModel_Relations::initTestCase()
-{}
-
-void tst_BaseModel_Relations::cleanupTestCase()
-{}
+    // Run all tests for all supported database connections
+    for (const auto &connection : TestUtils::Database::createConnections())
+        QTest::newRow(connection.toUtf8().constData()) << connection;
+}
 
 void tst_BaseModel_Relations::getRelation_EagerLoad_ManyAndOne() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = TorrentEager::find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -118,6 +109,10 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_ManyAndOne() const
 
 void tst_BaseModel_Relations::getRelation_EagerLoad_BelongsTo() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrentPeer = TorrentPeerEager::find(2);
     QVERIFY(torrentPeer);
     QVERIFY(torrentPeer->exists);
@@ -132,6 +127,10 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_BelongsTo() const
 
 void tst_BaseModel_Relations::getRelation_EagerLoad_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     Torrent torrent;
 
     // Many relation
@@ -154,12 +153,20 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_Failed() const
 
 void tst_BaseModel_Relations::EagerLoad_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     QVERIFY_EXCEPTION_THROWN(TorrentEager_Failed::find(1),
                              RelationNotFoundError);
 }
 
 void tst_BaseModel_Relations::getRelationValue_LazyLoad_ManyAndOne() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -196,6 +203,10 @@ void tst_BaseModel_Relations::getRelationValue_LazyLoad_ManyAndOne() const
 
 void tst_BaseModel_Relations::getRelationValue_LazyLoad_BelongsTo() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrentPeer = TorrentPeer::find(2);
     QVERIFY(torrentPeer);
     QVERIFY(torrentPeer->exists);
@@ -210,6 +221,10 @@ void tst_BaseModel_Relations::getRelationValue_LazyLoad_BelongsTo() const
 
 void tst_BaseModel_Relations::getRelationValue_LazyLoad_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     // Many relation
     QCOMPARE((Torrent().getRelationValue<TorrentPreviewableFile>("notExists")),
              QVector<TorrentPreviewableFile *>());
@@ -223,6 +238,10 @@ void tst_BaseModel_Relations::getRelationValue_LazyLoad_Failed() const
 
 void tst_BaseModel_Relations::u_with_Empty() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     Torrent torrent;
 
     QCOMPARE(torrent.getRelations().size(), 0);
@@ -230,6 +249,10 @@ void tst_BaseModel_Relations::u_with_Empty() const
 
 void tst_BaseModel_Relations::with_HasOne() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::with("torrentPeer")->find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -244,6 +267,10 @@ void tst_BaseModel_Relations::with_HasOne() const
 
 void tst_BaseModel_Relations::with_HasMany() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::with("torrentFiles")->find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -265,6 +292,10 @@ void tst_BaseModel_Relations::with_HasMany() const
 
 void tst_BaseModel_Relations::with_BelongsTo() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto fileProperty = TorrentPreviewableFileProperty::with("torrentFile")->find(2);
     QVERIFY(fileProperty);
     QVERIFY(fileProperty->exists);
@@ -279,6 +310,10 @@ void tst_BaseModel_Relations::with_BelongsTo() const
 
 void tst_BaseModel_Relations::with_NestedRelations() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::with("torrentFiles.fileProperty")->find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -315,6 +350,10 @@ void tst_BaseModel_Relations::with_NestedRelations() const
 
 void tst_BaseModel_Relations::with_Vector_MoreRelations() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::with({{"torrentFiles"}, {"torrentPeer"}})->find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -350,12 +389,20 @@ void tst_BaseModel_Relations::with_Vector_MoreRelations() const
 
 void tst_BaseModel_Relations::with_NonExistentRelation_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     QVERIFY_EXCEPTION_THROWN(Torrent::with("torrentFiles-NON_EXISTENT")->find(1),
                              RelationNotFoundError);
 }
 
 void tst_BaseModel_Relations::without() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = TorrentEager::without("torrentPeer")->find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -368,6 +415,10 @@ void tst_BaseModel_Relations::without() const
 
 void tst_BaseModel_Relations::without_NestedRelations() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = TorrentEager::without("torrentFiles")->find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -380,6 +431,10 @@ void tst_BaseModel_Relations::without_NestedRelations() const
 
 void tst_BaseModel_Relations::without_Vector_MoreRelations() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = TorrentEager::without({"torrentPeer", "torrentFiles"})->find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -389,6 +444,10 @@ void tst_BaseModel_Relations::without_Vector_MoreRelations() const
 
 void tst_BaseModel_Relations::load() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(2);
 
     QVERIFY(torrent->getRelations().empty());
@@ -432,6 +491,10 @@ void tst_BaseModel_Relations::load() const
 
 void tst_BaseModel_Relations::load_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(2);
 
     QVERIFY(torrent->getRelations().empty());
@@ -443,6 +506,10 @@ void tst_BaseModel_Relations::load_Failed() const
 
 void tst_BaseModel_Relations::refresh_EagerLoad_OnlyRelations() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = TorrentEager::find(3);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -514,6 +581,10 @@ void tst_BaseModel_Relations::refresh_EagerLoad_OnlyRelations() const
 
 void tst_BaseModel_Relations::refresh_LazyLoad_OnlyRelations() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(3);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -586,6 +657,10 @@ void tst_BaseModel_Relations::refresh_LazyLoad_OnlyRelations() const
 
 void tst_BaseModel_Relations::push_EagerLoad() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = TorrentEager::find(2);
 
     QVERIFY(torrent);
@@ -658,6 +733,10 @@ void tst_BaseModel_Relations::push_EagerLoad() const
 
 void tst_BaseModel_Relations::push_LazyLoad() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(2);
 
     QVERIFY(torrent);
@@ -728,6 +807,10 @@ void tst_BaseModel_Relations::push_LazyLoad() const
 
 void tst_BaseModel_Relations::where_WithCallback() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto files = Torrent::find(5)->torrentFiles()
                  ->where([](auto &query)
     {
@@ -749,6 +832,10 @@ void tst_BaseModel_Relations::where_WithCallback() const
 
 void tst_BaseModel_Relations::orWhere_WithCallback() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto files = Torrent::find(5)->torrentFiles()
                  ->where("progress", ">", 990)
                  .orWhere([](auto &query)

@@ -13,7 +13,18 @@ namespace Orm
 {
 
     class DatabaseConnection;
+namespace Query
+{
+    class Builder;
+
+namespace Grammars
+{
     class Grammar;
+}
+}
+    using QueryBuilder = Query::Builder;
+    using QueryGrammar = Query::Grammars::Grammar;
+
     /*! Counts executed statements in a current connection. */
     struct StatementsCounter
     {
@@ -24,12 +35,6 @@ namespace Orm
         /*! Transactional statements (START TRANSACTION, ROLLBACK, COMMIT, SAVEPOINT). */
         int transactional = -1;
     };
-
-namespace Query
-{
-    class Builder;
-}
-    using QueryBuilder = Query::Builder;
 
     class ConnectionInterface
     {
@@ -116,7 +121,7 @@ namespace Query
 
         /*! Prepare the query bindings for execution. */
         virtual QVector<QVariant>
-        prepareBindings(const QVector<QVariant> &bindings) const = 0;
+        prepareBindings(QVector<QVariant> bindings) const = 0;
 
         /*! Check database connection and show warnings when the state changed. */
         virtual bool pingDatabase() = 0;
@@ -130,8 +135,11 @@ namespace Query
         /*! Get the name of the connected database. */
         virtual const QString &getDatabaseName() const = 0;
 
+        /*! Set the query grammar to the default implementation. */
+        virtual void useDefaultQueryGrammar() = 0;
+
         /*! Get the query grammar used by the connection. */
-        virtual const Grammar &getQueryGrammar() const = 0;
+        virtual const QueryGrammar &getQueryGrammar() const = 0;
 
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */
@@ -160,6 +168,9 @@ namespace Query
         virtual StatementsCounter takeStatementsCounter() = 0;
         /*! Reset the number of executed queries. */
         virtual DatabaseConnection &resetStatementsCounter() = 0;
+
+        /*! Return the connection's driver name. */
+        virtual QString driverName() = 0;
     };
 
 } // namespace Orm

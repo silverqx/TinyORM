@@ -1,4 +1,4 @@
-#include "orm/grammar.hpp"
+#include "orm/query/grammars/grammar.hpp"
 
 #include <QRegularExpression>
 
@@ -9,10 +9,8 @@
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Query::Grammars
 {
-
-using JoinClause = Query::JoinClause;
 
 namespace
 {
@@ -61,16 +59,26 @@ QString Grammar::compileSelect(QueryBuilder &query) const
 QString Grammar::compileInsert(const QueryBuilder &query,
                                const QVector<QVariantMap> &values) const
 {
-    return compileInsert(query, values, false);
+    // TODO feature, insert with empty values, this code will never be triggered, because check in the QueryBuilder::insert, even all other code works correctly and support empty values silverqx
+    if (values.isEmpty())
+        return QStringLiteral("insert into %1 default values").arg(query.getFrom());
+
+    return QStringLiteral("insert into %1 (%2) values %3").arg(
+                query.getFrom(),
+                // Columns are obtained only from a first QMap
+                columnize(values.at(0).keys()),
+                joinContainer(compileInsertToVector(values),
+                              QStringLiteral(", ")));
 }
 
-QString Grammar::compileInsertOrIgnore(const QueryBuilder &query,
-                                       const QVector<QVariantMap> &values) const
+QString Grammar::compileInsertOrIgnore(const QueryBuilder &,
+                                       const QVector<QVariantMap> &) const
 {
-    return compileInsert(query, values, true);
+    throw OrmRuntimeError("This database engine does not support inserting while "
+                          "ignoring errors.");
 }
 
-QString Grammar::compileUpdate(const QueryBuilder &query,
+QString Grammar::compileUpdate(QueryBuilder &query,
                                const QVector<UpdateItem> &values) const
 {
     const auto table   = query.getFrom();
@@ -78,7 +86,7 @@ QString Grammar::compileUpdate(const QueryBuilder &query,
     const auto wheres  = compileWheres(query);
 
     return query.getJoins().isEmpty()
-            ? compileUpdateWithoutJoins(table, columns, wheres)
+            ? compileUpdateWithoutJoins(query, table, columns, wheres)
             : compileUpdateWithJoins(query, table, columns, wheres);
 }
 
@@ -139,12 +147,12 @@ Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
     return preparedBindings;
 }
 
-QString Grammar::compileDelete(const QueryBuilder &query) const
+QString Grammar::compileDelete(QueryBuilder &query) const
 {
     const auto table  = query.getFrom();
     const auto wheres = compileWheres(query);
 
-    return query.getJoins().isEmpty() ? compileDeleteWithoutJoins(table, wheres)
+    return query.getJoins().isEmpty() ? compileDeleteWithoutJoins(query, table, wheres)
                                       : compileDeleteWithJoins(query, table, wheres);
 }
 
@@ -182,9 +190,10 @@ QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings)
     return preparedBindings;
 }
 
-QString Grammar::compileTruncate(const QueryBuilder &query) const
+std::unordered_map<QString, QVector<QVariant>>
+Grammar::compileTruncate(const QueryBuilder &query) const
 {
-    return QStringLiteral("truncate table %1").arg(query.getFrom());
+    return {{QStringLiteral("truncate table %1").arg(query.getFrom()), {}}};
 }
 
 const QString &Grammar::getDateFormat() const
@@ -192,6 +201,52 @@ const QString &Grammar::getDateFormat() const
     static const auto cachedFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
 
     return cachedFormat;
+}
+
+const QVector<QString> &Grammar::getOperators() const
+{
+    /* I make it this way, I don't declare it as pure virtual intentionally, this give
+       me oportunity to instantiate the Grammar class eg. in tests. */
+    static const QVector<QString> cachedOperators;
+
+    return cachedOperators;
+}
+
+QString Grammar::compileOrders(const QueryBuilder &query) const
+{
+    return QStringLiteral("order by %1").arg(
+                joinContainer(compileOrdersToVector(query), QStringLiteral(", ")));
+}
+
+QString Grammar::compileLimit(const QueryBuilder &query) const
+{
+    return QStringLiteral("limit %1").arg(query.getLimit());
+}
+
+QString Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
+{
+    QVector<QString> compiledAssignments;
+    for (const auto &assignment : values)
+        compiledAssignments << QStringLiteral("%1 = %2").arg(
+                                   assignment.column,
+                                   parameter(assignment.value));
+
+    // CUR change to QStringList::join() silverqx
+    return joinContainer(compiledAssignments, QStringLiteral(", "));
+}
+
+QString
+Grammar::compileUpdateWithoutJoins(const QueryBuilder &, const QString &table,
+                                   const QString &columns, const QString &wheres) const
+{
+    return QStringLiteral("update %1 set %2 %3").arg(table, columns, wheres);
+}
+
+QString
+Grammar::compileDeleteWithoutJoins(const QueryBuilder &, const QString &table,
+                                   const QString &wheres) const
+{
+    return QStringLiteral("delete from %1 %2").arg(table, wheres);
 }
 
 Grammar::SelectComponentsVector
@@ -359,6 +414,7 @@ Grammar::getWhereMethod(const WhereType whereType) const
         getBind(&Grammar::whereNull),
         getBind(&Grammar::whereNotNull),
     };
+
     static const auto size = cached.size();
 
     // Check if whereType is in the range, just for sure 😏
@@ -422,24 +478,15 @@ QString Grammar::whereNotNull(const WhereConditionItem &where) const
     return QStringLiteral("%1 is not null").arg(where.column);
 }
 
-QString Grammar::compileOrders(const QueryBuilder &query) const
-{
-    return QStringLiteral("order by %1").arg(
-                joinContainer(compileOrdersToVector(query), QStringLiteral(", ")));
-}
-
 QVector<QString> Grammar::compileOrdersToVector(const QueryBuilder &query) const
 {
     QVector<QString> compiledOrders;
+
     for (const auto &order : query.getOrders())
         compiledOrders << QStringLiteral("%1 %2")
                           .arg(order.column, order.direction.toLower());
-    return compiledOrders;
-}
 
-QString Grammar::compileLimit(const QueryBuilder &query) const
-{
-    return QStringLiteral("limit %1").arg(query.getLimit());
+    return compiledOrders;
 }
 
 QString Grammar::compileOffset(const QueryBuilder &query) const
@@ -454,12 +501,33 @@ Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
        to the query. Each insert should have the exact same amount of parameter
        bindings so we will loop through the record and parameterize them all. */
     QVector<QString> compiledParameters;
+
     for (const auto &valuesMap : values)
         compiledParameters << QStringLiteral("(%1)").arg(parametrize(valuesMap));
 
     return compiledParameters;
 }
 
+QString
+Grammar::compileUpdateWithJoins(const QueryBuilder &query, const QString &table,
+                                const QString &columns, const QString &wheres) const
+{
+    const auto joins = compileJoins(query);
+
+    return QStringLiteral("update %1 %2 set %3 %4").arg(table, joins, columns, wheres);
+}
+
+QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString &table,
+                                        const QString &wheres) const
+{
+    const auto alias = getAliasFromFrom(table);
+
+    const auto joins = compileJoins(query);
+
+    /* Alias has to be after the delete keyword and aliased table definition after the
+       from keyword. */
+    return QStringLiteral("delete %1 from %2 %3 %4").arg(alias, table, joins, wheres);
+}
 
 QString Grammar::columnize(const QStringList &columns) const
 {
@@ -479,9 +547,7 @@ QString Grammar::columnize(const QStringList &columns, const bool isTorrentsTabl
 //            "total_leechers, remaining, added_on, hash, status, "
 //            "movie_detail_index, savepath"
 //        };
-        static const QString cached {
-            "id, name, size, progress, added_on, hash"
-        };
+        static const QString cached {"id, name, size, progress, added_on, hash"};
         return cached;
     }
 
@@ -492,6 +558,7 @@ template<typename Container>
 QString Grammar::parametrize(const Container &values) const
 {
     QVector<QString> compiledParameters;
+
     for (const auto &value : values)
         compiledParameters << parameter(value);
 
@@ -515,63 +582,14 @@ QString Grammar::removeLeadingBoolean(QString statement) const
                 "");
 }
 
-QString
-Grammar::compileInsert(const QueryBuilder &query, const QVector<QVariantMap> &values,
-                       const bool ignore) const
+QString Grammar::getAliasFromFrom(const QString &from) const
 {
-    Q_ASSERT(values.size() > 0);
-
-    return QStringLiteral("insert%1 into %2 (%3) values %4").arg(
-                ignore ? QStringLiteral(" ignore") : "",
-                query.getFrom(),
-                // Columns are obtained only from a first QMap
-                columnize(values.at(0).keys()),
-                joinContainer(compileInsertToVector(values),
-                              QStringLiteral(", ")));
+    return from.split(QStringLiteral(" as ")).last().trimmed();
 }
 
-QString Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
+QString Grammar::unqualifyColumn(const QString &column) const
 {
-    QVector<QString> compiledAssignments;
-    for (const auto &assignment : values)
-        compiledAssignments << QStringLiteral("%1 = %2").arg(
-                                   assignment.column,
-                                   parameter(assignment.value));
-
-    return joinContainer(compiledAssignments, QStringLiteral(", "));
-}
-
-QString Grammar::compileUpdateWithoutJoins(const QString &table, const QString &columns,
-                                           const QString &wheres) const
-{
-    return QStringLiteral("update %1 set %2 %3").arg(table, columns, wheres);
-}
-
-QString
-Grammar::compileUpdateWithJoins(const QueryBuilder &query, const QString &table,
-                                const QString &columns, const QString &wheres) const
-{
-    const auto joins = compileJoins(query);
-
-    return QStringLiteral("update %1 %2 set %3 %4").arg(table, joins, columns, wheres);
-}
-
-QString
-Grammar::compileDeleteWithoutJoins(const QString &table, const QString &wheres) const
-{
-    return QStringLiteral("delete from %1 %2").arg(table, wheres);
-}
-
-QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString &table,
-                                        const QString &wheres) const
-{
-    const auto alias = table.split(QStringLiteral(" as ")).last().trimmed();
-
-    const auto joins = compileJoins(query);
-
-    /* Alias has to be after the delete keyword and aliased table definition after the
-       from keyword. */
-    return QStringLiteral("delete %1 from %2 %3 %4").arg(alias, table, joins, wheres);
+    return column.split(QChar('.')).last().trimmed();
 }
 
 } // namespace Orm

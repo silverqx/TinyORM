@@ -48,7 +48,10 @@ QString Connector::getOptions(const QVariantHash &config) const
        any default connection options which are common for all drivers, instead
        every driver has it's own connection options.
        So I have divided it into two options, one are config options which are
-       defined by the user and others are connector options. */
+       defined by the user and others are connector options.
+       Options defined by a user are in the config's 'options' parameter and
+       connector options are defined in the connector itself as 'm_options'
+       data member. */
     // Validate, prepare, and merge connection options
     return Support::ConfigurationOptionsParser(*this)
             .parseConfiguration(config);
@@ -60,18 +63,19 @@ Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &co
 {
     QSqlDatabase db;
 
-    db = QSqlDatabase::addDatabase(config["driver"].toString(), name);
+    // TODO now change all QVariant conversions to value<>() silverqx
+    db = QSqlDatabase::addDatabase(config["driver"].value<QString>(), name);
 
-    db.setHostName(config["host"].toString());
+    db.setHostName(config["host"].value<QString>());
 
     if (config.contains("database"))
-        db.setDatabaseName(config["database"].toString());
+        db.setDatabaseName(config["database"].value<QString>());
     if (config.contains("username"))
-        db.setUserName(config["username"].toString());
+        db.setUserName(config["username"].value<QString>());
     if (config.contains("password"))
-        db.setPassword(config["password"].toString());
+        db.setPassword(config["password"].value<QString>());
     if (config.contains("port"))
-        db.setPort(config["port"].toUInt());
+        db.setPort(config["port"].value<uint>());
 
     db.setConnectOptions(options);
 

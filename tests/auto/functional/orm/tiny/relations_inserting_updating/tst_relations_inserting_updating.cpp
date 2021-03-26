@@ -7,20 +7,15 @@
 #include "database.hpp"
 
 using Orm::AttributeItem;
-using Orm::ConnectionInterface;
 using Orm::QueryError;
+using Orm::Tiny::ConnectionOverride;
 
 class tst_Relations_Inserting_Updating : public QObject
 {
     Q_OBJECT
 
-public:
-    tst_Relations_Inserting_Updating();
-    ~tst_Relations_Inserting_Updating() = default;
-
 private slots:
-    void initTestCase();
-    void cleanupTestCase();
+    void initTestCase_data() const;
 
     void save_OnHasOneOrMany() const;
     void save_OnHasOneOrMany_WithRValue() const;
@@ -39,24 +34,23 @@ private slots:
     void createMany_OnHasOneOrMany_WithRValue() const;
     void createMany_OnHasOneOrMany_Failed() const;
     void createMany_OnHasOneOrMany_WithRValue_Failed() const;
-
-private:
-    /*! The database connection instance. */
-    ConnectionInterface &m_connection;
 };
 
-tst_Relations_Inserting_Updating::tst_Relations_Inserting_Updating()
-    : m_connection(TestUtils::Database::createConnection())
-{}
+void tst_Relations_Inserting_Updating::initTestCase_data() const
+{
+    QTest::addColumn<QString>("connection");
 
-void tst_Relations_Inserting_Updating::initTestCase()
-{}
-
-void tst_Relations_Inserting_Updating::cleanupTestCase()
-{}
+    // Run all tests for all supported database connections
+    for (const auto &connection : TestUtils::Database::createConnections())
+        QTest::newRow(connection.toUtf8().constData()) << connection;
+}
 
 void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -97,6 +91,10 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
 
 void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -130,6 +128,10 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
 
 void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(1);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -152,6 +154,10 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_Failed() const
 
 void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -220,6 +226,10 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
 
 void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -275,6 +285,10 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() cons
 
 void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(1);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -300,6 +314,10 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_Failed() const
 
 void tst_Relations_Inserting_Updating::create_OnHasOneOrMany() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -334,6 +352,10 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany() const
 
 void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -366,6 +388,10 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue() const
 
 void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(1);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -387,6 +413,10 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_Failed() const
 
 void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(1);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -407,6 +437,10 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue_Failed()
 
 void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -470,6 +504,10 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
 
 void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(5);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -525,6 +563,10 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() co
 
 void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(1);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -554,6 +596,10 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_Failed() const
 void
 tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue_Failed() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
     auto torrent = Torrent::find(1);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);

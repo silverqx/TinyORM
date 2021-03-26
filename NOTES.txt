@@ -40,13 +40,14 @@ Common:
  - desirable          : feature which is extremely wanted
  - dilemma            : some sort of a fuckup
  - duplicate          : duplicate code
+ - feature            : some feature to implement, perpend before feature described below
  - future             : task which has lower priority, because still much to do
  - mistake            : bad decision during prototyping 😭
  - move               : c++ move semantics
  - mystery            : don't know why that stuff is happening, find out what's up
  - now                : do it before commit
  - next               : next thing in the row to do after commit
- - overflow           : add check code, eg when size_t to int coversion
+ - overflow           : add check code, eg when size_t to int conversion
  - perf               : performance
  - production         : check before deploy to production
  - reliability        : make things more robust and reliable
@@ -67,12 +68,21 @@ Features related/to implement:
  - primarykey dilema  : different types for primary keys
  - relations          : relations related 🤓
  - scopes             : query scopes
+ - table prefix       : table prefix in the query grammar
 
 
 Versions info:
 --------------
 
  - based on Laravel v8.26.1
+
+
+Maintenance:
+------------
+
+ - from time to time try:
+   - compile without PCH
+   - compile with Qt6, I have still problem with clazy
 
 
 constructor copy/move snippet:
@@ -143,19 +153,32 @@ DatabaseConnection config:
 QHash<QString, QVariant> config {
 //    {"driver",         "mysql"},
 //    {"url",            qEnvironmentVariable("DATABASE_URL")},
-    {"host",           qEnvironmentVariable("DB_HOST", "127.0.0.1")},
-    {"port",           qEnvironmentVariable("DB_PORT", "3306")},
-    {"database",       qEnvironmentVariable("DB_DATABASE", "")},
-    {"username",       qEnvironmentVariable("DB_USERNAME", "root")},
-    {"password",       qEnvironmentVariable("DB_PASSWORD", "")},
-//    {"unix_socket",    qEnvironmentVariable("DB_SOCKET", "")},
-    {"charset",        qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
-    {"collation",      qEnvironmentVariable("DB_COLLATION", "utf8mb4_unicode_ci")},
+//    {"url",            qEnvironmentVariable("MYSQL_DATABASE_URL")},
+    {"host",           qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+    {"port",           qEnvironmentVariable("DB_MYSQL_PORT", "3306")},
+    {"database",       qEnvironmentVariable("DB_MYSQL_DATABASE", "")},
+    {"username",       qEnvironmentVariable("DB_MYSQL_USERNAME", "root")},
+    {"password",       qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
+//    {"unix_socket",    qEnvironmentVariable("DB_MYSQL_SOCKET", "")},
+    {"charset",        qEnvironmentVariable("DB_MYSQL_CHARSET", "utf8mb4")},
+    {"collation",      qEnvironmentVariable("DB_MYSQL_COLLATION", "utf8mb4_unicode_ci")},
+//    {"collation",      qEnvironmentVariable("DB_MYSQL_COLLATION", "utf8mb4_0900_ai_ci")},
+//    {"timezone",  "+00:00"},
 //    {"prefix",         ""},
 //    {"prefix_indexes", true},
     {"strict",         true},
 //    {"engine",         {}},
     {"options",        ""},
+};
+
+QHash<QString, QVariant> config {
+    {"driver",    "QSQLITE"},
+    {"database",  qEnvironmentVariable("DB_SQLITE_DATABASE", "")},
+    {"prefix",    ""},
+    {"options",   QVariantHash()},
+    {"foreign_key_constraints", qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS",
+                                                     "true")},
+    {"check_database_exists",   true},
 };
 
 

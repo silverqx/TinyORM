@@ -24,7 +24,8 @@ ConfigurationOptionsParser::parseConfiguration(const QVariantHash &config) const
     // Validate options type in the connection configuration
     validateConfigOptions(configOptions);
 
-    // Prepare options for prepareConfigOptions() function, convert to QVariantHash if needed
+    /* Prepare options for prepareConfigOptions() function, convert to QVariantHash
+       if needed. */
     QVariantHash preparedConfigOptions = prepareConfigOptions(configOptions);
 
     // Parse config connection options, driver specific validation/modification

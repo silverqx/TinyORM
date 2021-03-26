@@ -70,12 +70,12 @@ CREATE TABLE `torrents` (
 --
 
 INSERT INTO `torrents` (`id`, `name`, `size`, `progress`, `added_on`, `hash`, `note`, `created_at`, `updated_at`) VALUES
-(1, 'test1', 11, 100, '2020-08-01 20:11:10', '1579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-01 14:51:23', '2021-01-01 17:46:31'),
-(2, 'test2', 12, 200, '2020-08-02 20:11:10', '2579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-02 14:51:23', '2021-01-02 17:46:31'),
-(3, 'test3', 13, 300, '2020-08-03 20:11:10', '3579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-03 14:51:23', '2021-01-03 17:46:31'),
-(4, 'test4', 14, 400, '2020-08-04 20:11:10', '4579e3af2768cdf52ec84c1f320333f68401dc6e', 'after update revert updated_at', '2021-01-04 14:51:23', '2021-01-04 17:46:31'),
-(5, 'test5', 15, 500, '2020-08-05 20:11:10', '5579e3af2768cdf52ec84c1f320333f68401dc6e', 'no peers', '2021-01-05 14:51:23', '2021-01-05 17:46:31'),
-(6, 'test6', 16, 600, '2020-08-06 20:11:10', '6579e3af2768cdf52ec84c1f320333f68401dc6e', 'no files no peers', '2021-01-06 14:51:23', '2021-01-06 17:46:31');
+(1, 'test1', 11, 100, '2020-08-01 20:11:10', '1579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-01 14:51:23', '2021-01-01 18:46:31'),
+(2, 'test2', 12, 200, '2020-08-02 20:11:10', '2579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-02 14:51:23', '2021-01-02 18:46:31'),
+(3, 'test3', 13, 300, '2020-08-03 20:11:10', '3579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-03 14:51:23', '2021-01-03 18:46:31'),
+(4, 'test4', 14, 400, '2020-08-04 20:11:10', '4579e3af2768cdf52ec84c1f320333f68401dc6e', 'after update revert updated_at', '2021-01-04 14:51:23', '2021-01-04 18:46:31'),
+(5, 'test5', 15, 500, '2020-08-05 20:11:10', '5579e3af2768cdf52ec84c1f320333f68401dc6e', 'no peers', '2021-01-05 14:51:23', '2021-01-05 18:46:31'),
+(6, 'test6', 16, 600, '2020-08-06 20:11:10', '6579e3af2768cdf52ec84c1f320333f68401dc6e', 'no files no peers', '2021-01-06 14:51:23', '2021-01-06 18:46:31');
 
 -- --------------------------------------------------------
 
@@ -406,7 +406,7 @@ ALTER TABLE `settings`
 --
 ALTER TABLE `torrents`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `torrents_name_index` (`name`);
+  ADD KEY `torrents_name_unique` (`name`);
 
 --
 -- Indexes for table `torrent_peers`
@@ -480,7 +480,7 @@ ADD UNIQUE KEY `roles_name_unique` (`name`);
 --
 ALTER TABLE `role_user`
   ADD PRIMARY KEY (`role_id`, `user_id`),
-  ADD KEY `role_user_role_id_foreign` (`role_id`);
+  ADD KEY `role_user_user_id_foreign` (`user_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -579,7 +579,7 @@ ALTER TABLE `tag_torrent`
 -- Constraints for table `tag_properties`
 --
 ALTER TABLE `tag_properties`
-  ADD CONSTRAINT `torrent_tags_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `torrent_tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `tag_properties_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `torrent_tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `role_user`

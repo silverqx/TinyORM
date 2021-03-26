@@ -11,22 +11,27 @@ HEADERS += \
     $$PWD/orm/connectors/connector.hpp \
     $$PWD/orm/connectors/connectorinterface.hpp \
     $$PWD/orm/connectors/mysqlconnector.hpp \
+    $$PWD/orm/connectors/sqliteconnector.hpp \
     $$PWD/orm/databaseconnection.hpp \
     $$PWD/orm/databasemanager.hpp \
     $$PWD/orm/db.hpp \
-    $$PWD/orm/grammar.hpp \
     $$PWD/orm/invalidformaterror.hpp \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/mysqlconnection.hpp \
     $$PWD/orm/ormdomainerror.hpp \
+    $$PWD/orm/orminvalidargumenterror.hpp \
     $$PWD/orm/ormlogicerror.hpp \
     $$PWD/orm/ormruntimeerror.hpp \
     $$PWD/orm/ormtypes.hpp \
     $$PWD/orm/query/expression.hpp \
+    $$PWD/orm/query/grammars/grammar.hpp \
+    $$PWD/orm/query/grammars/mysqlgrammar.hpp \
+    $$PWD/orm/query/grammars/sqlitegrammar.hpp \
     $$PWD/orm/query/joinclause.hpp \
     $$PWD/orm/query/querybuilder.hpp \
     $$PWD/orm/queryerror.hpp \
     $$PWD/orm/sqlerror.hpp \
+    $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/sqltransactionerror.hpp \
     $$PWD/orm/support/configurationoptionsparser.hpp \
     $$PWD/orm/tiny/basemodel.hpp \
