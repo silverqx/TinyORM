@@ -84,6 +84,7 @@ void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const
         checkDatabaseExists = config["check_database_exists"].value<bool>();
 
     if (checkDatabaseExists && !QFile::exists(path))
+        // CUR rename all exception classes to Orm::InvalidArgumentError silverqx
         throw OrmInvalidArgumentError(
                 QStringLiteral("SQLite Database file '%1' does not exist.").arg(path));
 }

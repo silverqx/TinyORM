@@ -20,6 +20,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+    // CUR add close and removeDatabase silverqx
     class SHAREDLIB_EXPORT DatabaseConnection :
             public ConnectionInterface,
             public Concerns::DetectsLostConnections
@@ -221,6 +222,7 @@ namespace Orm
         std::function<Connectors::ConnectionName()> m_qtConnectionResolver;
         /*! The name of the connected database. */
         const QString m_database;
+        // CUR change all todo tasks for features to the format below silverqx
         // TODO feature, table prefix silverqx
         /*! The table prefix for the connection. */
         const QString m_tablePrefix {""};

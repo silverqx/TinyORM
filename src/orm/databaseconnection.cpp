@@ -346,6 +346,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
     });
 }
 
+// CUR solve this, public api so it can not be like this, add reconnectIfMissing or better exception silverqx
 QSqlDatabase DatabaseConnection::getQtConnection()
 {
     if (!m_qtConnection) {
