@@ -447,7 +447,7 @@ QString Grammar::whereColumn(const WhereConditionItem &where) const
        second column. */
     return QStringLiteral("%1 %2 %3").arg(where.column,
                                           where.comparison,
-                                          where.value.toString());
+                                          where.value.value<QString>());
 }
 
 QString Grammar::whereIn(const WhereConditionItem &where) const
@@ -570,7 +570,7 @@ QString Grammar::parameter(const QVariant &value) const
 {
     // TODO rethink expressions, how to work with them and pass them to the query builder 🤔 silverqx
     return value.canConvert<Query::Expression>()
-            ? value.value<Query::Expression>().getValue().toString()
+            ? value.value<Query::Expression>().getValue().value<QString>()
             : QStringLiteral("?");
 }
 

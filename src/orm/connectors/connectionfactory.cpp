@@ -30,7 +30,7 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
     if (!config.contains("driver"))
         throw std::domain_error("A 'driver' configuration parameter must be specified.");
 
-    const auto driver = config["driver"].toString();
+    const auto driver = config["driver"].value<QString>();
 
     if (driver == "QMYSQL")
         return std::make_unique<MySqlConnector>();
@@ -73,7 +73,7 @@ void ConnectionFactory::normalizeDriverName(QVariantHash &config) const
     else {
         auto &driver = config["driver"];
 
-        driver = driver.toString().toUpper();
+        driver = driver.value<QString>().toUpper();
     }
 }
 
@@ -81,8 +81,8 @@ std::unique_ptr<DatabaseConnection>
 ConnectionFactory::createSingleConnection(QVariantHash &config) const
 {
     return createConnection(
-                config["driver"].toString(), createQSqlDatabaseResolver(config),
-                config["database"].toString(), config["prefix"].toString(),
+                config["driver"].value<QString>(), createQSqlDatabaseResolver(config),
+                config["database"].value<QString>(), config["prefix"].value<QString>(),
                 config);
 }
 

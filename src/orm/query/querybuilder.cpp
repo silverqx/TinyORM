@@ -126,7 +126,7 @@ quint64 Builder::insertGetId(const QVariantMap &values)
     if (!ok)
         return 0;
 
-    return query.lastInsertId().toULongLong();
+    return query.lastInsertId().value<quint64>();
 }
 
 std::tuple<int, QSqlQuery>

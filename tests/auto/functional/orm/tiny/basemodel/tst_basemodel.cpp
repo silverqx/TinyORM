@@ -107,7 +107,7 @@ void tst_BaseModel::save_Insert() const
 
     // Check attributes after save
     QVERIFY(torrent.getAttribute("id").isValid());
-    QVERIFY(torrent.getAttribute("id").toULongLong() > 6);
+    QVERIFY(torrent.getAttribute("id").value<quint64>() > 6);
     QCOMPARE(torrent.getAttribute("name"), QVariant("test50"));
     QCOMPARE(torrent.getAttribute("size"), QVariant(50));
     QCOMPARE(torrent.getAttribute("progress"), QVariant(50));
@@ -160,7 +160,7 @@ void tst_BaseModel::save_Insert_WithDefaultValues() const
 
     // Check attributes after save
     QVERIFY(torrent.getAttribute("id").isValid());
-    QVERIFY(torrent.getAttribute("id").toULongLong() > 6);
+    QVERIFY(torrent.getAttribute("id").value<quint64>() > 6);
     QCOMPARE(torrent.getAttribute("name"), QVariant("test51"));
     QCOMPARE(torrent.getAttribute("added_on"),
              QVariant(addedOn));
@@ -176,7 +176,7 @@ void tst_BaseModel::save_Insert_WithDefaultValues() const
 
     // And check attributes again
     QVERIFY(torrentToVerify->getAttribute("id").isValid());
-    QVERIFY(torrentToVerify->getAttribute("id").toULongLong() > 6);
+    QVERIFY(torrentToVerify->getAttribute("id").value<quint64>() > 6);
     QCOMPARE(torrentToVerify->getAttribute("name"), QVariant("test51"));
     QCOMPARE(torrentToVerify->getAttribute("size"), QVariant(0));
     QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(0));

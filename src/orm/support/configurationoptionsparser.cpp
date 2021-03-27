@@ -63,8 +63,8 @@ ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options) const
         return options.value<QVariantHash>();
 
     // Convert to the QVariantHash
-    const auto list = options.toString().split(QChar(';'),
-                                               Qt::SkipEmptyParts);
+    const auto list = options.value<QString>().split(QChar(';'),
+                                                     Qt::SkipEmptyParts);
     QVariantHash preparedOptions;
 
     for (const auto &value : list) {
@@ -112,7 +112,7 @@ QString ConfigurationOptionsParser::joinOptions(const QVariantHash &options) con
         const auto &value = itOption.value();
 
         joined << QStringLiteral("%1=%2").arg(key,
-                                              value.toString());
+                                              value.value<QString>());
         ++itOption;
     }
 

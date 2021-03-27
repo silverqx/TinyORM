@@ -34,8 +34,8 @@ QString parseExecutedQuery(const QSqlQuery &query)
 #else
             boundValue = (boundValueRaw.userType() == QMetaType::QString)
 #endif
-                         ? QStringLiteral("\"%1\"").arg(boundValueRaw.toString())
-                         : boundValueRaw.toString();
+                         ? QStringLiteral("\"%1\"").arg(boundValueRaw.value<QString>())
+                         : boundValueRaw.value<QString>();
 
         executedQuery.replace(executedQuery.indexOf('?'), 1, boundValue);
     }

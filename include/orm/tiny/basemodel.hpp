@@ -2809,7 +2809,6 @@ namespace Relations {
         throw InvalidFormatError(
                     QStringLiteral("Could not parse the datetime '%1' using "
                                    "the given format '%2'.")
-                    // TODO next QVariant value<>() everywhere silverqx
                     .arg(value.value<QString>(), format));
     }
 

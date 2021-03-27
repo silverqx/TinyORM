@@ -63,7 +63,6 @@ Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &co
 {
     QSqlDatabase db;
 
-    // TODO now change all QVariant conversions to value<>() silverqx
     db = QSqlDatabase::addDatabase(config["driver"].value<QString>(), name);
 
     db.setHostName(config["host"].value<QString>());

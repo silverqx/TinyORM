@@ -13,7 +13,7 @@ namespace Orm::Connectors
 ConnectionName
 MySqlConnector::connect(const QVariantHash &config) const
 {
-    const auto name = config["name"].toString();
+    const auto name = config["name"].value<QString>();
 
     /* We need to grab the QSqlDatabse options that should be used while making
        the brand new connection instance. The QSqlDatabase options control various
@@ -64,7 +64,7 @@ void MySqlConnector::parseConfigOptions(QVariantHash &options) const
 
         if (options.contains(key) && options[key] == value)
             throw std::domain_error(
-                    "The connection option '" + value.toString().toStdString() +
+                    "The connection option '" + value.value<QString>().toStdString() +
                     "' is not allowed in the TinyORM, TinyORM uses its own "
                     "reconnector.");
 
@@ -129,7 +129,7 @@ void MySqlConnector::setModes(const QSqlDatabase &connection,
 
     else if (config.contains("strict")) {
 
-        if (config["strict"].toBool()) {
+        if (config["strict"].value<bool>()) {
 
             const auto strictModeString = strictMode(connection, config);
 
@@ -171,8 +171,8 @@ QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
     QString version;
 
     // Get the MySQL version from the configuration if it was defined
-    if (config.contains("version") && !config["version"].toString().isEmpty())
-        version = config["version"].toString();
+    if (config.contains("version") && !config["version"].value<QString>().isEmpty())
+        version = config["version"].value<QString>();
 
     // Obtain the MySQL version from the database
     else {
@@ -185,7 +185,7 @@ QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
         if (!query.first())
             return "";
 
-        version = query.value(0).toString();
+        version = query.value(0).value<QString>();
     }
 
     return version;

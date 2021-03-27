@@ -134,7 +134,7 @@ namespace Orm
 
         /*! Get the database connection name. */
         inline const QString getName() const override
-        { return getConfig("name").toString(); }
+        { return getConfig("name").value<QString>(); }
         /*! Get the name of the connected database. */
         inline const QString &getDatabaseName() const override
         { return m_database; }
