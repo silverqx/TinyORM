@@ -1,14 +1,30 @@
 #include "database.hpp"
 
 #include "orm/db.hpp"
+#include "orm/logicerror.hpp"
+
+using Orm::ConfigurationsType;
+using Orm::LogicError;
 
 namespace TestUtils
 {
 
-const QStringList &Database::createConnections()
+const QStringList &Database::createConnections(const QStringList &connections)
 {
     // Ownership of a unique_ptr()
-    static const auto manager = DB::create({
+    /* The default connection is empty for tests, there is no default connection
+       because it can produce hard to find bugs, I have to be explicit about
+       the connection which will be used. */
+    static const auto manager = DB::create(getConfigurations(connections), "");
+
+    static const auto cachedConnectionNames = manager->connectionNames();
+
+    return cachedConnectionNames;
+}
+
+const ConfigurationsType &Database::getConfigurations(const QStringList &connections)
+{
+    static auto configurations = ConfigurationsType {
         {"tinyorm_mysql_tests", {
             {"driver",    "QMYSQL"},
             {"host",      qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
@@ -39,15 +55,27 @@ const QStringList &Database::createConnections()
                                                               "true")},
              {"check_database_exists",   true},
         }},
-    },
-        /* The default connection is empty for tests, there is no default connection
-           because it can produce hard to find bugs, I have to be explicit about
-           the connection which will be used. */
-        "");
+    };
 
-    static const auto cachedConnectionNames = manager->connectionNames();
+    // When connections variable is empty, then return all configurations
+    if (connections.isEmpty())
+        return configurations;
 
-    return cachedConnectionNames;
+    // Throw if the connection is not defined
+    for (const auto &connection : connections)
+        if (!configurations.contains(connection))
+            throw LogicError(
+                    QStringLiteral("Connection '%1' doesn't exist.").arg(connection));
+
+    // Remove unwanted connection configurations
+    auto it = configurations.begin();
+    while (it != configurations.end())
+        if (!connections.contains(it.key()))
+            it = configurations.erase(it);
+        else
+            ++it;
+
+    return configurations;
 }
 
 } // namespace TestUtils
