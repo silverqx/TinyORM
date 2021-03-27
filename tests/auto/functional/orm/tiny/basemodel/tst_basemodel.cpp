@@ -43,7 +43,9 @@ private slots:
     void where_WithVector() const;
     void where_WithVector_Condition() const;
 
-    void arrayOperator() const;
+    void subscriptOperator() const;
+    void subscriptOperator_OnLhs() const;
+    void subscriptOperator_OnLhs_AssignAttributeReference() const;
 
     void find() const;
     void findOrNew_Found() const;
@@ -610,14 +612,15 @@ void tst_BaseModel::where_WithVector_Condition() const
     }
 }
 
-void tst_BaseModel::arrayOperator() const
+void tst_BaseModel::subscriptOperator() const
 {
     QFETCH_GLOBAL(QString, connection);
 
     ConnectionOverride::connection = connection;
 
-    auto torrent = Torrent::where("id", "=", 2)->first();
-    QVERIFY(torrent);
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent->exists);
+
     QCOMPARE((*torrent)["id"], QVariant(2));
     QCOMPARE((*torrent)["name"], QVariant("test2"));
 
@@ -627,6 +630,64 @@ void tst_BaseModel::arrayOperator() const
 
     QCOMPARE((*torrent)["added_on"],
             QVariant(QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)));
+}
+
+void tst_BaseModel::subscriptOperator_OnLhs() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent->exists);
+
+    QCOMPARE(torrent->getAttribute("id"), QVariant(2));
+    QCOMPARE(torrent->getAttribute("name"), QVariant("test2"));
+    QCOMPARE(torrent->getAttribute("size"), QVariant(12));
+
+    const auto name = "test2 operator[]";
+    const auto size = 112;
+    (*torrent)["name"] = name;
+    (*torrent)["size"] = size;
+
+    QCOMPARE(torrent->getAttribute("name"), QVariant(name));
+    QCOMPARE(torrent->getAttribute("size"), QVariant(size));
+}
+
+void tst_BaseModel::subscriptOperator_OnLhs_AssignAttributeReference() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent2 = Torrent::find(2);
+    QVERIFY(torrent2->exists);
+
+    QCOMPARE(torrent2->getAttribute("id"), QVariant(2));
+    QCOMPARE(torrent2->getAttribute("name"), QVariant("test2"));
+
+    auto attributeReference = (*torrent2)["name"];
+
+    // Fetch fresh torrent to assign an attribute reference to its 'name' attribute
+    auto torrent3 = Torrent::find(3);
+    QVERIFY(torrent3->exists);
+
+    QCOMPARE(torrent3->getAttribute("id"), QVariant(3));
+    QCOMPARE(torrent3->getAttribute("name"), QVariant("test3"));
+
+    (*torrent3)["name"] = attributeReference;
+
+    QCOMPARE(torrent3->getAttribute("name"), torrent2->getAttribute("name"));
+
+    // Some more testing
+    const auto name = "test2 operator[]";
+
+    attributeReference = name;
+    (*torrent3)["name"] = attributeReference;
+
+    const auto torrent2Name = torrent2->getAttribute("name");
+    QCOMPARE(torrent2Name, QVariant(name));
+    QCOMPARE(torrent3->getAttribute("name"), torrent2Name);
 }
 
 void tst_BaseModel::find() const
@@ -1073,8 +1134,8 @@ void tst_BaseModel::create() const
     });
 
     QVERIFY(torrent.exists);
-    QVERIFY(torrent["id"].isValid());
-    QVERIFY(torrent["id"].toULongLong() > 6);
+    QVERIFY(torrent["id"]->isValid());
+    QVERIFY(torrent["id"]->value<quint64>() > 6);
     QCOMPARE(torrent["name"], QVariant("test100"));
     QCOMPARE(torrent["size"], QVariant(100));
     QCOMPARE(torrent["progress"], QVariant(333));

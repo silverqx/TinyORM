@@ -67,8 +67,8 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
     auto [savedResult, fileRef] = torrent->torrentFiles()->save(file);
     QVERIFY(savedResult);
     QVERIFY(file.exists);
-    QVERIFY(file["id"].isValid());
-    QVERIFY(file["id"].toULongLong() > 8);
+    QVERIFY(file["id"]->isValid());
+    QVERIFY(file["id"]->value<quint64>() > 8);
 
     // save method have to return the same model as a reference
     QVERIFY(reinterpret_cast<uintptr_t>(&file)
@@ -108,8 +108,8 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
     });
     QVERIFY(savedResult);
     QVERIFY(file.exists);
-    QVERIFY(file["id"].isValid());
-    QVERIFY(file["id"].toULongLong() > 8);
+    QVERIFY(file["id"]->isValid());
+    QVERIFY(file["id"]->value<quint64>() > 8);
 
     // Obtain file and verify saved values
     auto fileVerify = TorrentPreviewableFile::find(file["id"]);
@@ -148,7 +148,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_Failed() const
     QVERIFY_EXCEPTION_THROWN(torrent->torrentFiles()->save(file),
                              QueryError);
     QVERIFY(!file.exists);
-    QVERIFY(!file["id"].isValid());
+    QVERIFY(!file["id"]->isValid());
     QCOMPARE(file["torrent_id"], QVariant(1));
 }
 
@@ -188,10 +188,10 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
     auto &savedFile2 = savedFiles[1];
     QVERIFY(savedFile1.exists);
     QVERIFY(savedFile2.exists);
-    QVERIFY(savedFile1["id"].isValid());
-    QVERIFY(savedFile2["id"].isValid());
-    QVERIFY(savedFile1["id"].toULongLong() > 8);
-    QVERIFY(savedFile2["id"].toULongLong() > 9);
+    QVERIFY(savedFile1["id"]->isValid());
+    QVERIFY(savedFile2["id"]->isValid());
+    QVERIFY(savedFile1["id"]->value<quint64>() > 8);
+    QVERIFY(savedFile2["id"]->value<quint64>() > 9);
 
     // saveMany() have to return reference to the same 'models' vector
     QVERIFY(reinterpret_cast<uintptr_t>(&filesToSave[0])
@@ -253,10 +253,10 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() cons
     auto &savedFile2 = savedFiles[1];
     QVERIFY(savedFile1.exists);
     QVERIFY(savedFile2.exists);
-    QVERIFY(savedFile1["id"].isValid());
-    QVERIFY(savedFile2["id"].isValid());
-    QVERIFY(savedFile1["id"].toULongLong() > 8);
-    QVERIFY(savedFile2["id"].toULongLong() > 9);
+    QVERIFY(savedFile1["id"]->isValid());
+    QVERIFY(savedFile2["id"]->isValid());
+    QVERIFY(savedFile1["id"]->value<quint64>() > 8);
+    QVERIFY(savedFile2["id"]->value<quint64>() > 9);
 
     // Obtain files and verify saved values
     auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);
@@ -332,8 +332,8 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany() const
 
     auto file = torrent->torrentFiles()->create(fileAttribtues);
     QVERIFY(file.exists);
-    QVERIFY(file["id"].isValid());
-    QVERIFY(file["id"].toULongLong() > 8);
+    QVERIFY(file["id"]->isValid());
+    QVERIFY(file["id"]->value<quint64>() > 8);
 
     // Obtain file and verify saved values
     auto fileVerify = TorrentPreviewableFile::find(file["id"]);
@@ -368,8 +368,8 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue() const
         {"note", "relation's save"},
     });
     QVERIFY(file.exists);
-    QVERIFY(file["id"].isValid());
-    QVERIFY(file["id"].toULongLong() > 8);
+    QVERIFY(file["id"]->isValid());
+    QVERIFY(file["id"]->value<quint64>() > 8);
 
     // Obtain file and verify saved values
     auto fileVerify = TorrentPreviewableFile::find(file["id"]);
@@ -472,10 +472,10 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
     auto &savedFile2 = savedFiles[1];
     QVERIFY(savedFile1.exists);
     QVERIFY(savedFile2.exists);
-    QVERIFY(savedFile1["id"].isValid());
-    QVERIFY(savedFile2["id"].isValid());
-    QVERIFY(savedFile1["id"].toULongLong() > 8);
-    QVERIFY(savedFile2["id"].toULongLong() > 9);
+    QVERIFY(savedFile1["id"]->isValid());
+    QVERIFY(savedFile2["id"]->isValid());
+    QVERIFY(savedFile1["id"]->value<quint64>() > 8);
+    QVERIFY(savedFile2["id"]->value<quint64>() > 9);
 
     // Obtain files and verify saved values
     auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);
@@ -531,10 +531,10 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() co
     auto &savedFile2 = savedFiles[1];
     QVERIFY(savedFile1.exists);
     QVERIFY(savedFile2.exists);
-    QVERIFY(savedFile1["id"].isValid());
-    QVERIFY(savedFile2["id"].isValid());
-    QVERIFY(savedFile1["id"].toULongLong() > 8);
-    QVERIFY(savedFile2["id"].toULongLong() > 9);
+    QVERIFY(savedFile1["id"]->isValid());
+    QVERIFY(savedFile2["id"]->isValid());
+    QVERIFY(savedFile1["id"]->value<quint64>() > 8);
+    QVERIFY(savedFile2["id"]->value<quint64>() > 9);
 
     // Obtain files and verify saved values
     auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);

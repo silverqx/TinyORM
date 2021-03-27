@@ -558,10 +558,6 @@ namespace Relations {
         Related *
         getRelationValue(const QString &relation);
 
-        /*! Return an attribute by the given key. */
-        inline QVariant operator[](const QString &key) const
-        { return getAttribute(key); }
-
         /*! Get the attributes that have been changed since last sync. */
         QVector<AttributeItem> getDirty() const;
         /*! Determine if the model or any of the given attribute(s) have
@@ -601,6 +597,52 @@ namespace Relations {
         QVariant fromDateTime(const QVariant &value) const;
         /*! Convert a DateTime to a storable string. */
         QString fromDateTime(const QDateTime &value) const;
+
+        /*! Proxy for an attribute element used in the operator[] &. */
+        class AttributeReference
+        {
+            friend BaseModel<Model, AllRelations...>;
+
+        public:
+            /*! Assign a value of the QVariant to the referenced attribute. */
+            const AttributeReference &operator=(const QVariant &value) const;
+            /*! Assign a value of another attribute reference to the referenced
+                attribute. */
+            const AttributeReference &
+            operator=(const AttributeReference &attributeReference) const;
+
+            /*! Accesses the contained value, only const member functions. */
+            inline const QVariant *operator->() const;
+            /*! Accesses the contained value. */
+            inline QVariant value() const;
+            /*! Accesses the contained value. */
+            inline QVariant operator*() const;
+            /*! Converting operator to the QVariant type. */
+            inline operator QVariant() const;
+
+        private:
+            /*! AttributeReference's private constructor. */
+            AttributeReference(BaseModel<Model, AllRelations...> &model,
+                               const QString &attribute);
+
+            /*! The model on which is an attribute set. */
+            BaseModel<Model, AllRelations...> &m_model;
+            /*! Attribute key name. */
+            const QString m_attribute;
+            /*! The temporary cache used during operator->() call, to be able
+                to return the QVariant *. */
+            mutable QVariant m_attributeCache;
+        };
+
+        /*! Return modifiable attribute reference, can be used on the left-hand side
+            of an assignment operator. */
+        inline AttributeReference operator[](const QString &attribute) &;
+        /*! Return an attribute by the given key. */
+        inline QVariant operator[](const QString &attribute) const &;
+        /*! Return an attribute by the given key. */
+        inline QVariant operator[](const QString &attribute) &&;
+        /*! Return an attribute by the given key. */
+        inline QVariant operator[](const QString &attribute) const &&;
 
         /* HasRelationships */
         /*! Get a specified relationship. */
@@ -3113,6 +3155,96 @@ namespace Relations {
             return value.toString(getDateFormat());
 
         return {};
+    }
+
+    /* BaseModel::AttributeReference - begin */
+
+    template<typename Model, typename ...AllRelations>
+    BaseModel<Model, AllRelations...>::AttributeReference::AttributeReference(
+            BaseModel<Model, AllRelations...> &model, const QString &attribute
+    )
+        : m_model(model)
+        , m_attribute(attribute)
+    {}
+
+    template<typename Model, typename ...AllRelations>
+    const typename BaseModel<Model, AllRelations...>::AttributeReference &
+    BaseModel<Model, AllRelations...>::AttributeReference::operator=(
+            const QVariant &value) const
+    {
+        m_model.setAttribute(m_attribute, value);
+
+        return *this;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    const typename BaseModel<Model, AllRelations...>::AttributeReference &
+    BaseModel<Model, AllRelations...>::AttributeReference::operator=(
+            const AttributeReference &attributeReference) const
+    {
+        m_model.setAttribute(m_attribute, attributeReference.value());
+
+        return *this;
+    }
+
+
+    template<typename Model, typename ...AllRelations>
+    const QVariant *
+    BaseModel<Model, AllRelations...>::AttributeReference::operator->() const
+    {
+        m_attributeCache = value();
+
+        return &m_attributeCache;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant
+    BaseModel<Model, AllRelations...>::AttributeReference::value() const
+    {
+        return m_model.getAttribute(m_attribute);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant
+    BaseModel<Model, AllRelations...>::AttributeReference::operator*() const
+    {
+        return value();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    BaseModel<Model, AllRelations...>::AttributeReference::operator QVariant() const
+    {
+        return value();
+    }
+
+    /* BaseModel::AttributeReference - end */
+
+    template<typename Model, typename ...AllRelations>
+    typename BaseModel<Model, AllRelations...>::AttributeReference
+    BaseModel<Model, AllRelations...>::operator[](const QString &attribute) &
+    {
+        return AttributeReference(*this, attribute);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant
+    BaseModel<Model, AllRelations...>::operator[](const QString &attribute) const &
+    {
+        return getAttribute(attribute);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant
+    BaseModel<Model, AllRelations...>::operator[](const QString &attribute) &&
+    {
+        return getAttribute(attribute);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVariant
+    BaseModel<Model, AllRelations...>::operator[](const QString &attribute) const &&
+    {
+        return getAttribute(attribute);
     }
 
     template<typename Model, typename ...AllRelations>
