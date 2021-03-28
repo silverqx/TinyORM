@@ -2758,7 +2758,7 @@ namespace Relations {
     {
         // TODO castable silverqx
         /* I don't have support for castable attributes, this solution is temporary. */
-        static const QVector<QString> defaults {
+        const QVector<QString> defaults {
             getCreatedAtColumn(),
             getUpdatedAtColumn(),
         };
