@@ -15,7 +15,7 @@ namespace Orm::Tiny
     class SHAREDLIB_EXPORT ModelNotFoundError : public RuntimeError
     {
     public:
-        // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
+        // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
         // TODO perf add overload ctor for QVector<quint64>, better QVector<Model::KeyType> silverqx
         explicit ModelNotFoundError(const char *model,
                                     const QVector<QVariant> &ids = {});

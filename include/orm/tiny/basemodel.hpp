@@ -60,11 +60,11 @@ namespace Relations {
     // TODO model missing methods Model::loadMissing() silverqx
     // TODO model missing methods Model::whereExists() silverqx
     // TODO model missing methods Model::whereBetween() silverqx
-    // TODO next Constraining Eager Loads silverqx
+    // FEATURE next Constraining Eager Loads silverqx
     // TODO perf add pragma once to every header file, have branch pragma-once, but I can't get rid of the clang warning -Wpragma-once-outside-header in every file, I tried everything 😞 silverqx
     // TODO future try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
     // TODO future include every stl dependency in header files silverqx
-    // TODO logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
+    // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
@@ -1228,7 +1228,7 @@ namespace Relations {
         return query()->insert(attributes);
     }
 
-    // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
+    // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<typename Model, typename ...AllRelations>
     quint64
     BaseModel<Model, AllRelations...>::insertGetId(
@@ -1245,7 +1245,7 @@ namespace Relations {
     }
 
     // TODO cpp check all int types and use std::size_t where appropriate silverqx
-    // TODO dilemma primarykey, id should be Model::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
+    // FEATURE dilemma primarykey, id should be Model::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
     // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
     template<typename Model, typename ...AllRelations>
     size_t
@@ -2432,7 +2432,7 @@ namespace Relations {
     Model &
     BaseModel<Model, AllRelations...>::fill(const QVector<AttributeItem> &attributes)
     {
-        // TODO guarded silverqx
+        // FEATURE guarded silverqx
         for (const auto &attribute : attributes)
             setAttribute(attribute.key, attribute.value);
 
@@ -2443,7 +2443,7 @@ namespace Relations {
     Model &
     BaseModel<Model, AllRelations...>::fill(QVector<AttributeItem> &&attributes)
     {
-        // TODO guarded silverqx
+        // FEATURE guarded silverqx
         for (auto &attribute : attributes)
             setAttribute(std::move(attribute.key), std::move(attribute.value));
 
@@ -2454,7 +2454,7 @@ namespace Relations {
     Model &
     BaseModel<Model, AllRelations...>::forceFill(const QVector<AttributeItem> &attributes)
     {
-        // TODO guarded silverqx
+        // FEATURE guarded silverqx
         return fill(attributes);
     }
 
@@ -3687,13 +3687,13 @@ namespace Relations {
         syncOriginal();
     }
 
-    // TODO dilemma primarykey, add support for Model::KeyType silverqx
+    // FEATURE dilemma primarykey, add support for Model::KeyType silverqx
     template<typename Model, typename ...AllRelations>
     quint64 BaseModel<Model, AllRelations...>::insertAndSetId(
             const TinyBuilder<Model> &query,
             const QVector<AttributeItem> &attributes)
     {
-        // TODO postgres, insertGetId() and getKeyName() for sequence parameter silverqx
+        // FEATURE postgres, insertGetId() and getKeyName() for sequence parameter silverqx
 //        const auto &keyName = getKeyName();
 
         const auto id = query.insertGetId(attributes/*, keyName*/);

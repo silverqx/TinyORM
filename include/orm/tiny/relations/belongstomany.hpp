@@ -475,7 +475,7 @@ namespace Orm::Tiny::Relations
         /* First we'll add the proper select columns onto the query so it is run with
            the proper columns. Then, we will get the results and hydrate out pivot
            models with the result of those columns as a separate model relation. */
-        // TODO scopes silverqx
+        // FEATURE scopes silverqx
 //        $builder = $this->query->applyScopes();
 
         auto l_columns = this->m_query->getQuery().getColumns().isEmpty()
@@ -645,7 +645,7 @@ namespace Orm::Tiny::Relations
         // Ownership of the QSharedPointer<QueryBuilder>
         auto query = newPivotStatement();
 
-        // TODO relations, add support for BelongsToMany::where/whereIn/whereNull silverqx
+        // FEATURE relations, add support for BelongsToMany::where/whereIn/whereNull silverqx
 //        for (auto &[column, value, comparison, condition] : m_pivotWheres)
 //            query->where(column, value, comparison, condition);
 
@@ -735,7 +735,7 @@ namespace Orm::Tiny::Relations
         attach(QVector {model.getAttribute(m_relatedKey)}, attributes, touch);
     }
 
-    // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
+    // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<class Model, class Related, class PivotType>
     void BelongsToMany<Model, Related, PivotType>::attach(
             const std::map<typename BaseModel<Related>::KeyType,
@@ -1109,7 +1109,7 @@ namespace Orm::Tiny::Relations
         if (timed)
             addTimestampsToAttachment(record);
 
-        // TODO pivot, withPivotValues silverqx
+        // FEATURE pivot, withPivotValues silverqx
 //        for (auto &[column, value] as m_pivotValues)
 //            record.append(column, value);
 
@@ -1255,7 +1255,7 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType>::recordsFromIds(
                 const QVector<QVariant> &ids) const
     {
-        // TODO dilemma primarykey, when I solve this dilema, then add using for ModelKeyType and RelatedKeyType silverqx
+        // FEATURE dilemma primarykey, when I solve this dilema, then add using for ModelKeyType and RelatedKeyType silverqx
         std::map<typename BaseModel<Related>::KeyType, QVector<AttributeItem>> records;
 
         for (const auto &id : ids)
@@ -1313,7 +1313,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     QString BelongsToMany<Model, Related, PivotType>::guessInverseRelation() const
     {
-        // TODO relations, add parent touches (eg parentTouchesName) to the BaseModel::belongsToMany factory method silverqx
+        // FEATURE relations, add parent touches (eg parentTouchesName) to the BaseModel::belongsToMany factory method silverqx
         auto relation = Utils::Type::classPureBasename<Model>();
 
         relation[0] = relation[0].toLower();
@@ -1384,7 +1384,7 @@ namespace Orm::Tiny::Relations
     {
         // Don't overwrite ID keys, throw domain exception
         if (attribute.key == m_foreignPivotKey)
-            // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
+            // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
             throwOverwritingKeyError/*<Model::KeyType>*/(attribute.key,
                                                          this->m_parent[m_parentKey],
                                                          attribute.value);

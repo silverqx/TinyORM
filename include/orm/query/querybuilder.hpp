@@ -28,7 +28,7 @@ namespace Grammars
 }
     using QueryGrammar = Query::Grammars::Grammar;
 
-    // TODO add support for subqueries, first in where() silverqx
+    // FEATURE subqueries, add support for subqueries, first in where() silverqx
     // TODO add inRandomOrder() silverqx
     class SHAREDLIB_EXPORT Builder
     {
@@ -71,8 +71,8 @@ namespace Grammars
         /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVariantMap &values);
-        // TODO postgres, support sequence, add sequence parameter silverqx
-        // TODO dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
+        // FEATURE postgres, support sequence, add sequence parameter silverqx
+        // FEATURE dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVariantMap &values);
 

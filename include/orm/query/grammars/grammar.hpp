@@ -27,7 +27,7 @@ namespace Orm::Query::Grammars
         virtual QString
         compileInsertOrIgnore(const QueryBuilder &query,
                               const QVector<QVariantMap> &values) const;
-        // TODO postgres, sequence silverqx
+        // FEATURE postgres, sequence silverqx
         /*! Compile an insert and get ID statement into SQL. */
         inline QString
         compileInsertGetId(const QueryBuilder &query,

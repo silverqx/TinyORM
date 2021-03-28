@@ -76,7 +76,7 @@ namespace Orm::Tiny::Relations
 
         /*! Indicates if the ID is auto-incrementing. */
         bool u_incrementing = false;
-        // TODO guarded silverqx
+        // FEATURE guarded silverqx
         /*! The attributes that aren't mass assignable. */
 //        QStringList u_guarded;
 
@@ -180,7 +180,7 @@ namespace Orm::Tiny::Relations
         if (attributesContainsKey)
             return BaseModel<PivotModel>::remove();
 
-        // TODO events silverqx
+        // FEATURE events silverqx
 //        if (fireModelEvent("deleting") == false)
 //            return false;
 
@@ -192,7 +192,7 @@ namespace Orm::Tiny::Relations
 
         this->exists = false;
 
-        // TODO events silverqx
+        // FEATURE events silverqx
 //        fireModelEvent("deleted", false);
 
         return affected > 0 ? true : false;

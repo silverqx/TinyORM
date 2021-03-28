@@ -31,7 +31,7 @@ JoinClause &JoinClause::on(const QString &first, const QString &comparison,
     return *this;
 }
 
-// TODO api different silverqx
+// NOTE api different silverqx
 JoinClause &
 JoinClause::orOn(const QString &first, const QString &comparison,
                  const QString &second)

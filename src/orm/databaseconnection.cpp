@@ -83,7 +83,6 @@ bool DatabaseConnection::beginTransaction()
     const auto elapsed = hitTransactionalCounters(timer);
 
 #ifdef TINYORM_DEBUG_SQL
-    // TODO multidriver, when will be added support for more drivers, than the Grammar will have to compile this silverqx
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */

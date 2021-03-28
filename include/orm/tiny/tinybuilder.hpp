@@ -50,7 +50,7 @@ namespace Relations
         /*! Execute the query as a "select" statement. */
         QVector<Model> get(const QStringList &columns = {"*"});
 
-        // TODO dilmma primarykey, Model::KeyType for id silverqx
+        // FEATURE dilemma primarykey, Model::KeyType for id silverqx
         /*! Find a model by its primary key. */
         std::optional<Model>
         find(const QVariant &id, const QStringList &columns = {"*"});
@@ -587,7 +587,7 @@ namespace Relations
         return toBase().insert(Utils::Attribute::convertVectorToMap(attributes));
     }
 
-    // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
+    // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<typename Model>
     quint64
     Builder<Model>::insertGetId(const QVector<AttributeItem> &attributes) const
@@ -1301,7 +1301,7 @@ namespace Relations
             const auto emptyConstraints = !relation.constraints;
             const auto isSelectConstraint = relation.name.contains(QChar(':'));
 
-            // TODO next Eager Loading Specific Columns silverqx
+            // FEATURE next Eager Loading Specific Columns silverqx
             /* Select columns constraints are only allowed, when relation.constraints
                is nullptr. */
             if (isSelectConstraint)

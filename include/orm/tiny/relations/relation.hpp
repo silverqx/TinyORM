@@ -671,7 +671,7 @@ namespace Relations
         return m_query->insert(attributes);
     }
 
-    // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
+    // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<class Model, class Related>
     quint64
     Relation<Model, Related>::insertGetId(const QVector<AttributeItem> &attributes) const

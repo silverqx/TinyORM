@@ -120,13 +120,13 @@ namespace Orm::Tiny::Relations
         return m_child;
     }
 
-    // TODO dilemma primarykey, Model::KeyType vs QVariant silverqx
+    // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<class Model, class Related>
     Model &BelongsTo<Model, Related>::associate(const QVariant &id) const
     {
         m_child.setAttribute(m_foreignKey, id);
 
-        // TODO relations, check if relation is loaded and if has the same id, if so, then don't unset relation silverqx
+        // FEATURE relations, check if relation is loaded and if has the same id, if so, then don't unset relation silverqx
         m_child.unsetRelation(m_relationName);
 
         return m_child;
@@ -136,7 +136,7 @@ namespace Orm::Tiny::Relations
     Model &BelongsTo<Model, Related>::dissociate() const
     {
         // TODO test Model::save with null key silverqx
-        // TODO dilemma primarykey, Model::KeyType vs QVariant, set to null, will be different for Qt5 (QVariant(QVariant::Type(qMetaTypeId<Model::KeyType>()))) and Qt6 (QVariant(QMetaType(qMetaTypeId<Model::KeyType>())))) ; ALSO current problem is, that I check that foreignKey !isValid || isNull, but when QVariant with type (Model::KeyType) and also with null is created by the above commands, then it is still null (isNull == true), but is considered as !!VALID!! (isValid == true) silverqx
+        // FEATURE dilemma primarykey, Model::KeyType vs QVariant, set to null, will be different for Qt5 (QVariant(QVariant::Type(qMetaTypeId<Model::KeyType>()))) and Qt6 (QVariant(QMetaType(qMetaTypeId<Model::KeyType>())))) ; ALSO current problem is, that I check that foreignKey !isValid || isNull, but when QVariant with type (Model::KeyType) and also with null is created by the above commands, then it is still null (isNull == true), but is considered as !!VALID!! (isValid == true) silverqx
         m_child.setAttribute(m_foreignKey, {});
 
         // TODO test operations that are related on the BaseModel::m_relation data member how they behave, when m_relations value contains the std::nullopt value silverqx

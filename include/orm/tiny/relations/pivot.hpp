@@ -21,7 +21,7 @@ namespace Orm::Tiny::Relations
     protected:
         /*! Indicates if the ID is auto-incrementing. */
         bool u_incrementing = false;
-        // TODO guarded silverqx
+        // FEATURE guarded silverqx
         /*! The attributes that aren't mass assignable. */
 //        QStringList u_guarded;
     };

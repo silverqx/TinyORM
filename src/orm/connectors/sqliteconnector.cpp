@@ -65,7 +65,7 @@ void SQLiteConnector::configureForeignKeyConstraints(
             config["foreign_key_constraints"].value<bool>() ? "ON" : "OFF";
 
     QSqlQuery query(connection);
-    // TODO feature, schema builder, foreign key constraints silverqx
+    // FEATURE schema builder, foreign key constraints silverqx
     query.prepare(QStringLiteral("PRAGMA foreign_keys = ?;"));
     query.addBindValue(foreignKeyConstraints);
 

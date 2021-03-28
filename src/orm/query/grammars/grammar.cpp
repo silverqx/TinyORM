@@ -59,7 +59,7 @@ QString Grammar::compileSelect(QueryBuilder &query) const
 QString Grammar::compileInsert(const QueryBuilder &query,
                                const QVector<QVariantMap> &values) const
 {
-    // TODO feature, insert with empty values, this code will never be triggered, because check in the QueryBuilder::insert, even all other code works correctly and support empty values silverqx
+    // FEATURE insert with empty values, this code will never be triggered, because check in the QueryBuilder::insert, even all other code works correctly and support empty values silverqx
     if (values.isEmpty())
         return QStringLiteral("insert into %1 default values").arg(query.getFrom());
 
@@ -531,7 +531,7 @@ QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString
 
 QString Grammar::columnize(const QStringList &columns) const
 {
-    // TODO security, I'm not using wrap for columns (I'm not processing/quoting columns), Qt's mysql driver and mysql_stmt_prepare() don't quote columns, I will have to implement wrap logic for columns? silverqx
+    // TODO security, I'm not using wrap for columns (I'm not processing/quoting columns), Qt's mysql driver and mysql_stmt_prepare() don't quote columns, I will have to implement wrap logic for columns, YES I DO 😈 silverqx
     // TODO docs, after investigation of 👆, write paragraph into documentation, about DB::raw() for columns, https://laravel.com/docs/8.x/queries#raw-expressions silverqx
     return joinContainer(columns, QStringLiteral(", "));
 }

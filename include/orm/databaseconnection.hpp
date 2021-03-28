@@ -42,7 +42,7 @@ namespace Orm
         /*! Get a new query builder instance. */
         QSharedPointer<QueryBuilder> query() override;
 
-        // TODO dilemma Raw Expressions fuckup🤔 silverqx
+        // FEATURE dilemma Raw Expressions fuckup🤔 silverqx
         /*! Get a new raw query expression. */
         inline Query::Expression raw(const QVariant &value) const override
         { return value; }
@@ -222,8 +222,7 @@ namespace Orm
         std::function<Connectors::ConnectionName()> m_qtConnectionResolver;
         /*! The name of the connected database. */
         const QString m_database;
-        // CUR change all todo tasks for features to the format below silverqx
-        // TODO feature, table prefix silverqx
+        // FEATURE table prefix silverqx
         /*! The table prefix for the connection. */
         const QString m_tablePrefix {""};
         /*! The database connection configuration options. */
