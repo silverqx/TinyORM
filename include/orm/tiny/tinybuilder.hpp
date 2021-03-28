@@ -377,6 +377,7 @@ namespace Relations
         : m_query(query)
         , m_model(model)
     {
+        // FEATURE table prefix, check for 'as'? silverqx
         m_query->from(m_model.getTable());
     }
 

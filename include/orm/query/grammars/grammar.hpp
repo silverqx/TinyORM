@@ -1,20 +1,25 @@
 #ifndef GRAMMAR_H
 #define GRAMMAR_H
 
-#include "export.hpp"
-#include "orm/ormtypes.hpp"
+#include "orm/basegrammar.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Query::Grammars
+namespace Orm::Query
 {
 
-    class SHAREDLIB_EXPORT Grammar
+    class Expression;
+
+namespace Grammars
+{
+    class SHAREDLIB_EXPORT Grammar : public BaseGrammar
     {
+        Q_DISABLE_COPY(Grammar)
+
     public:
-        virtual ~Grammar() = default;
+        Grammar() = default;
 
         /*! Compile a select query into SQL. */
         QString compileSelect(QueryBuilder &query) const;
@@ -53,52 +58,10 @@ namespace Orm::Query::Grammars
         virtual std::unordered_map<QString, QVector<QVariant>>
         compileTruncate(const QueryBuilder &query) const;
 
-        /*! Get the format for database stored dates. */
-        const QString &getDateFormat() const;
-
         /*! Get the grammar specific operators. */
         virtual const QVector<QString> &getOperators() const;
 
     protected:
-        /*! Compile the "order by" portions of the query. */
-        QString compileOrders(const QueryBuilder &query) const;
-        /*! Compile the "limit" portions of the query. */
-        QString compileLimit(const QueryBuilder &query) const;
-
-        /*! Compile the columns for an update statement. */
-        virtual QString
-        compileUpdateColumns(const QVector<UpdateItem> &values) const;
-        /*! Compile an update statement without joins into SQL. */
-        virtual QString
-        compileUpdateWithoutJoins(const QueryBuilder &query, const QString &table,
-                                  const QString &columns, const QString &wheres) const;
-
-        /*! Compile a delete statement without joins into SQL. */
-        virtual QString
-        compileDeleteWithoutJoins(const QueryBuilder &query, const QString &table,
-                                  const QString &wheres) const;
-
-        // TODO methods below should be abstracted to DatabaseGrammar silverqx
-        /*! Convert an array of column names into a delimited string. */
-        QString columnize(const QStringList &columns) const;
-        /*! Convert an array of column names into a delimited string. */
-        QString columnize(const QStringList &columns, bool isTorrentsTable) const;
-        // TODO concept, template constraint to QVariantMap and QVector<QVariant> for now silverqx
-        /*! Create query parameter place-holders for an array. */
-        template<typename Container>
-        QString parametrize(const Container &values) const;
-        /*! Get the appropriate query parameter place-holder for a value. */
-        QString parameter(const QVariant &value) const;
-
-        /*! Remove the leading boolean from a statement. */
-        QString removeLeadingBoolean(QString statement) const;
-
-        /*! Get an alias from the 'from' clause. */
-        QString getAliasFromFrom(const QString &from) const;
-        /*! Get the column name without the table name, a string after last dot. */
-        QString unqualifyColumn(const QString &column) const;
-
-    private:
         /*! The components necessary for a select clause. */
         using SelectComponentsVector = QVector<QString>;
         /*! Select component types. */
@@ -125,6 +88,13 @@ namespace Orm::Query::Grammars
             std::function<bool(const QueryBuilder &)> isset;
         };
 
+        /*! Map the ComponentType to a Grammar::compileXx() methods. */
+        virtual const QMap<SelectComponentType, SelectComponentValue> &
+        getCompileMap() const = 0;
+        /*! Map the WhereType to a Grammar::whereXx() methods. */
+        virtual const std::function<QString(const WhereConditionItem &)> &
+        getWhereMethod(WhereType whereType) const = 0;
+
         /*! Compile the components necessary for a select clause. */
         SelectComponentsVector compileComponents(const QueryBuilder &query) const;
 
@@ -148,13 +118,6 @@ namespace Orm::Query::Grammars
         /*! Compile a single having clause. */
         QString compileHaving(const HavingConditionItem &having) const;
 
-        /*! Map the ComponentType to a Grammar::compileXx() methods. */
-        const QMap<SelectComponentType, SelectComponentValue> &
-        getCompileMap() const;
-        /*! Map the WhereType to a Grammar::whereXx() methods. */
-        const std::function<QString(const WhereConditionItem &)> &
-        getWhereMethod(WhereType whereType) const;
-
         /*! Compile a basic where clause. */
         QString whereBasic(const WhereConditionItem &where) const;
         /*! Compile a nested where clause. */
@@ -170,8 +133,12 @@ namespace Orm::Query::Grammars
         /*! Compile a "where not null" clause. */
         QString whereNotNull(const WhereConditionItem &where) const;
 
+        /*! Compile the "order by" portions of the query. */
+        QString compileOrders(const QueryBuilder &query) const;
         /*! Compile the query orders to the vector. */
         QVector<QString> compileOrdersToVector(const QueryBuilder &query) const;
+        /*! Compile the "limit" portions of the query. */
+        QString compileLimit(const QueryBuilder &query) const;
         /*! Compile the "offset" portions of the query. */
         QString compileOffset(const QueryBuilder &query) const;
 
@@ -179,17 +146,33 @@ namespace Orm::Query::Grammars
         QVector<QString>
         compileInsertToVector(const QVector<QVariantMap> &values) const;
 
+        /*! Compile the columns for an update statement. */
+        virtual QString
+        compileUpdateColumns(const QVector<UpdateItem> &values) const;
+        /*! Compile an update statement without joins into SQL. */
+        virtual QString
+        compileUpdateWithoutJoins(const QueryBuilder &query, const QString &table,
+                                  const QString &columns, const QString &wheres) const;
         /*! Compile an update statement with joins into SQL. */
         QString
         compileUpdateWithJoins(const QueryBuilder &query, const QString &table,
                                const QString &columns, const QString &wheres) const;
 
+        /*! Compile a delete statement without joins into SQL. */
+        virtual QString
+        compileDeleteWithoutJoins(const QueryBuilder &query, const QString &table,
+                                  const QString &wheres) const;
         /*! Compile a delete statement with joins into SQL. */
-        QString compileDeleteWithJoins(const QueryBuilder &query, const QString &table,
-                                       const QString &wheres) const;
+        QString
+        compileDeleteWithJoins(const QueryBuilder &query, const QString &table,
+                               const QString &wheres) const;
+
+        /*! Remove the leading boolean from a statement. */
+        QString removeLeadingBoolean(QString statement) const;
     };
 
-} // namespace Orm
+} // namespace Orm::Query::Grammars
+} // namespace Orm::Query
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif

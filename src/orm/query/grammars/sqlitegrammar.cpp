@@ -36,7 +36,7 @@ QString SQLiteGrammar::compileDelete(QueryBuilder &query) const
 std::unordered_map<QString, QVector<QVariant>>
 SQLiteGrammar::compileTruncate(const QueryBuilder &query) const
 {
-    const auto &table = query.getFrom();
+    const auto table = wrapTable(query.getFrom());
 
     return {
         {"delete from sqlite_sequence where name = ?", {table}},
@@ -67,11 +67,78 @@ QString SQLiteGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) c
     return compiledAssignments.join(", ");
 }
 
+const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
+SQLiteGrammar::getCompileMap() const
+{
+    using std::placeholders::_1;
+    // Needed, because some compileXx() methods are overloaded
+    const auto getBind = [this](const auto &&func)
+    {
+        return std::bind(std::forward<decltype (func)>(func), this, _1);
+    };
+
+    // Pointers to a where member methods by whereType, yes yes c++ 😂
+    static const QMap<SelectComponentType, SelectComponentValue> cached {
+//        {ComponentType::AGGREGATE, {}},
+        {SelectComponentType::COLUMNS,   {getBind(&SQLiteGrammar::compileColumns),
+                        [](const auto &query) { return !query.getColumns().isEmpty(); }}},
+        {SelectComponentType::FROM,      {getBind(&SQLiteGrammar::compileFrom),
+                        [](const auto &query) { return !query.getFrom().isEmpty(); }}},
+        {SelectComponentType::JOINS,     {getBind(&SQLiteGrammar::compileJoins),
+                        [](const auto &query) { return !query.getJoins().isEmpty(); }}},
+        {SelectComponentType::WHERES,    {getBind(&SQLiteGrammar::compileWheres),
+                        [](const auto &query) { return !query.getWheres().isEmpty(); }}},
+        {SelectComponentType::GROUPS,    {getBind(&SQLiteGrammar::compileGroups),
+                        [](const auto &query) { return !query.getGroups().isEmpty(); }}},
+        {SelectComponentType::HAVINGS,   {getBind(&SQLiteGrammar::compileHavings),
+                        [](const auto &query) { return !query.getHavings().isEmpty(); }}},
+        {SelectComponentType::ORDERS,    {getBind(&SQLiteGrammar::compileOrders),
+                        [](const auto &query) { return !query.getOrders().isEmpty(); }}},
+        {SelectComponentType::LIMIT,     {getBind(&SQLiteGrammar::compileLimit),
+                        [](const auto &query) { return query.getLimit() > -1; }}},
+        {SelectComponentType::OFFSET,    {getBind(&SQLiteGrammar::compileOffset),
+                        [](const auto &query) { return query.getOffset() > -1; }}},
+//        {ComponentType::LOCK,      {}},
+    };
+
+    return cached;
+}
+
+const std::function<QString(const WhereConditionItem &)> &
+SQLiteGrammar::getWhereMethod(const WhereType whereType) const
+{
+    using std::placeholders::_1;
+    const auto getBind = [this](const auto &&func)
+    {
+        return std::bind(std::forward<decltype (func)>(func), this, _1);
+    };
+
+    // Pointers to a where member methods by whereType, yes yes c++ 😂
+    // An order has to be the same as in enum struct WhereType
+    static const QVector<std::function<QString(const WhereConditionItem &)>> cached {
+        getBind(&SQLiteGrammar::whereBasic),
+        getBind(&SQLiteGrammar::whereNested),
+        getBind(&SQLiteGrammar::whereColumn),
+        getBind(&SQLiteGrammar::whereIn),
+        getBind(&SQLiteGrammar::whereNotIn),
+        getBind(&SQLiteGrammar::whereNull),
+        getBind(&SQLiteGrammar::whereNotNull),
+    };
+
+    static const auto size = cached.size();
+
+    // Check if whereType is in the range, just for sure 😏
+    const auto type = static_cast<int>(whereType);
+    Q_ASSERT((0 <= type) && (type < size));
+
+    return cached.at(type);
+}
+
 QString
 SQLiteGrammar::compileUpdateWithJoinsOrLimit(QueryBuilder &query,
                                              const QVector<UpdateItem> &values) const
 {
-    const auto &table = query.getFrom();
+    const auto table = wrapTable(query.getFrom());
 
     const auto columns = compileUpdateColumns(values);
 
@@ -85,7 +152,7 @@ SQLiteGrammar::compileUpdateWithJoinsOrLimit(QueryBuilder &query,
 
 QString SQLiteGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) const
 {
-    const auto &table = query.getFrom();
+    const auto table = wrapTable(query.getFrom());
 
     const auto alias = getAliasFromFrom(table);
 

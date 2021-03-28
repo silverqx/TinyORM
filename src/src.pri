@@ -1,6 +1,7 @@
 include(../include/include.pri)
 
 SOURCES += \
+    $$PWD/orm/basegrammar.cpp \
     $$PWD/orm/concerns/detectslostconnections.cpp \
     $$PWD/orm/concerns/hasconnectionresolver.cpp \
     $$PWD/orm/connectors/connectionfactory.cpp \

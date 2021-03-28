@@ -2,6 +2,7 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/export.hpp \
+    $$PWD/orm/basegrammar.hpp \
     $$PWD/orm/concerns/detectslostconnections.hpp \
     $$PWD/orm/concerns/hasconnectionresolver.hpp \
     $$PWD/orm/configuration.hpp \

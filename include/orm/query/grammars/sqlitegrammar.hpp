@@ -12,8 +12,11 @@ namespace Orm::Query::Grammars
 
     class SHAREDLIB_EXPORT SQLiteGrammar : public Grammar
     {
+        Q_DISABLE_COPY(SQLiteGrammar)
 
     public:
+        SQLiteGrammar() = default;
+
         /*! Compile an insert ignore statement into SQL. */
         QString compileInsertOrIgnore(const QueryBuilder &query,
                                       const QVector<QVariantMap> &values) const override;
@@ -36,6 +39,13 @@ namespace Orm::Query::Grammars
     protected:
         /*! Compile the columns for an update statement. */
         QString compileUpdateColumns(const QVector<UpdateItem> &values) const override;
+
+        /*! Map the ComponentType to a Grammar::compileXx() methods. */
+        const QMap<SelectComponentType, SelectComponentValue> &
+        getCompileMap() const override;
+        /*! Map the WhereType to a Grammar::whereXx() methods. */
+        const std::function<QString(const WhereConditionItem &)> &
+        getWhereMethod(WhereType whereType) const override;
 
     private:
         /*! Compile an update statement with joins or limit into SQL. */

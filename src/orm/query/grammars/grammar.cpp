@@ -3,12 +3,18 @@
 #include <QRegularExpression>
 
 #include "orm/databaseconnection.hpp"
+#include "orm/query/expression.hpp"
 #include "orm/query/joinclause.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
+
+/* Explicit instantiation declarations ensure to skip the implicit instantiation step. */
+extern template QString Orm::BaseGrammar::parametrize(const QVector<QVariant> &) const;
+extern template QString Orm::BaseGrammar::parametrize(const QVariantMap &) const;
+
 namespace Orm::Query::Grammars
 {
 
@@ -59,12 +65,14 @@ QString Grammar::compileSelect(QueryBuilder &query) const
 QString Grammar::compileInsert(const QueryBuilder &query,
                                const QVector<QVariantMap> &values) const
 {
+    const auto table = wrapTable(query.getFrom());
+
     // FEATURE insert with empty values, this code will never be triggered, because check in the QueryBuilder::insert, even all other code works correctly and support empty values silverqx
     if (values.isEmpty())
-        return QStringLiteral("insert into %1 default values").arg(query.getFrom());
+        return QStringLiteral("insert into %1 default values").arg(table);
 
     return QStringLiteral("insert into %1 (%2) values %3").arg(
-                query.getFrom(),
+                table,
                 // Columns are obtained only from a first QMap
                 columnize(values.at(0).keys()),
                 joinContainer(compileInsertToVector(values),
@@ -81,7 +89,7 @@ QString Grammar::compileInsertOrIgnore(const QueryBuilder &,
 QString Grammar::compileUpdate(QueryBuilder &query,
                                const QVector<UpdateItem> &values) const
 {
-    const auto table   = query.getFrom();
+    const auto table   = wrapTable(query.getFrom());
     const auto columns = compileUpdateColumns(values);
     const auto wheres  = compileWheres(query);
 
@@ -149,7 +157,7 @@ Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
 
 QString Grammar::compileDelete(QueryBuilder &query) const
 {
-    const auto table  = query.getFrom();
+    const auto table  = wrapTable(query.getFrom());
     const auto wheres = compileWheres(query);
 
     return query.getJoins().isEmpty() ? compileDeleteWithoutJoins(query, table, wheres)
@@ -193,14 +201,7 @@ QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings)
 std::unordered_map<QString, QVector<QVariant>>
 Grammar::compileTruncate(const QueryBuilder &query) const
 {
-    return {{QStringLiteral("truncate table %1").arg(query.getFrom()), {}}};
-}
-
-const QString &Grammar::getDateFormat() const
-{
-    static const auto cachedFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
-
-    return cachedFormat;
+    return {{QStringLiteral("truncate table %1").arg(wrapTable(query.getFrom())), {}}};
 }
 
 const QVector<QString> &Grammar::getOperators() const
@@ -210,43 +211,6 @@ const QVector<QString> &Grammar::getOperators() const
     static const QVector<QString> cachedOperators;
 
     return cachedOperators;
-}
-
-QString Grammar::compileOrders(const QueryBuilder &query) const
-{
-    return QStringLiteral("order by %1").arg(
-                joinContainer(compileOrdersToVector(query), QStringLiteral(", ")));
-}
-
-QString Grammar::compileLimit(const QueryBuilder &query) const
-{
-    return QStringLiteral("limit %1").arg(query.getLimit());
-}
-
-QString Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
-{
-    QVector<QString> compiledAssignments;
-    for (const auto &assignment : values)
-        compiledAssignments << QStringLiteral("%1 = %2").arg(
-                                   assignment.column,
-                                   parameter(assignment.value));
-
-    // CUR change to QStringList::join() silverqx
-    return joinContainer(compiledAssignments, QStringLiteral(", "));
-}
-
-QString
-Grammar::compileUpdateWithoutJoins(const QueryBuilder &, const QString &table,
-                                   const QString &columns, const QString &wheres) const
-{
-    return QStringLiteral("update %1 set %2 %3").arg(table, columns, wheres);
-}
-
-QString
-Grammar::compileDeleteWithoutJoins(const QueryBuilder &, const QString &table,
-                                   const QString &wheres) const
-{
-    return QStringLiteral("delete from %1 %2").arg(table, wheres);
 }
 
 Grammar::SelectComponentsVector
@@ -280,18 +244,17 @@ QString Grammar::compileColumns(const QueryBuilder &query) const
 
 QString Grammar::compileFrom(const QueryBuilder &query) const
 {
-    return QStringLiteral("from %1").arg(query.getFrom());
+    return QStringLiteral("from %1").arg(wrapTable(query.getFrom()));
 }
 
 QString Grammar::compileJoins(const QueryBuilder &query) const
 {
     QVector<QString> sql;
-    for (const auto &join : query.getJoins()) {
-        sql << QStringLiteral("%1 join %2 %3").arg(
-                   join->getType(),
-                   join->getTable(),
-                   compileWheres(*join));
-    }
+
+    for (const auto &join : query.getJoins())
+        sql << QStringLiteral("%1 join %2 %3").arg(join->getType(),
+                                                   wrapTable(join->getTable()),
+                                                   compileWheres(*join));
 
     return joinContainer(sql, QStringLiteral(" "));
 }
@@ -355,75 +318,6 @@ QString Grammar::compileHaving(const HavingConditionItem &having) const
     }
 }
 
-const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
-Grammar::getCompileMap() const
-{
-    using std::placeholders::_1;
-    // Needed, because some compileXx() methods are overloaded
-    const auto getBind = [this](const auto &&func)
-    {
-        return std::bind(std::forward<decltype (func)>(func), this, _1);
-    };
-
-    // Pointers to a where member methods by whereType, yes yes c++ 😂
-    static const QMap<SelectComponentType, SelectComponentValue> cached {
-//        {ComponentType::AGGREGATE, {}},
-        {SelectComponentType::COLUMNS,   {getBind(&Grammar::compileColumns),
-                        [](const auto &query) { return !query.getColumns().isEmpty(); }}},
-        {SelectComponentType::FROM,      {getBind(&Grammar::compileFrom),
-                        [](const auto &query) { return !query.getFrom().isEmpty(); }}},
-        {SelectComponentType::JOINS,     {getBind(&Grammar::compileJoins),
-                        [](const auto &query) { return !query.getJoins().isEmpty(); }}},
-        {SelectComponentType::WHERES,    {getBind(&Grammar::compileWheres),
-                        [](const auto &query) { return !query.getWheres().isEmpty(); }}},
-        {SelectComponentType::GROUPS,    {getBind(&Grammar::compileGroups),
-                        [](const auto &query) { return !query.getGroups().isEmpty(); }}},
-        {SelectComponentType::HAVINGS,   {getBind(&Grammar::compileHavings),
-                        [](const auto &query) { return !query.getHavings().isEmpty(); }}},
-        {SelectComponentType::ORDERS,    {getBind(&Grammar::compileOrders),
-                        [](const auto &query) { return !query.getOrders().isEmpty(); }}},
-        {SelectComponentType::LIMIT,     {getBind(&Grammar::compileLimit),
-                        [](const auto &query) { return query.getLimit() > -1; }}},
-        {SelectComponentType::OFFSET,    {getBind(&Grammar::compileOffset),
-                        [](const auto &query) { return query.getOffset() > -1; }}},
-//        {ComponentType::LOCK,      {}},
-    };
-
-    // TODO correct way to return const & for cached (static) local variable for QHash/QMap, check all 👿🤔 silverqx
-    return cached;
-}
-
-const std::function<QString(const WhereConditionItem &)> &
-Grammar::getWhereMethod(const WhereType whereType) const
-{
-    using std::placeholders::_1;
-    const auto getBind = [this](const auto &&func)
-    {
-        return std::bind(std::forward<decltype (func)>(func), this, _1);
-    };
-
-    // Pointers to a where member methods by whereType, yes yes c++ 😂
-    // An order has to be the same as in enum struct WhereType
-    // TODO future, QHash would has faster lookup, I should choose QHash silverx
-    static const QVector<std::function<QString(const WhereConditionItem &)>> cached {
-        getBind(&Grammar::whereBasic),
-        getBind(&Grammar::whereNested),
-        getBind(&Grammar::whereColumn),
-        getBind(&Grammar::whereIn),
-        getBind(&Grammar::whereNotIn),
-        getBind(&Grammar::whereNull),
-        getBind(&Grammar::whereNotNull),
-    };
-
-    static const auto size = cached.size();
-
-    // Check if whereType is in the range, just for sure 😏
-    const auto type = static_cast<int>(whereType);
-    Q_ASSERT((0 <= type) && (type < size));
-
-    return cached.at(type);
-}
-
 QString Grammar::whereBasic(const WhereConditionItem &where) const
 {
     return QStringLiteral("%1 %2 ?").arg(where.column,
@@ -478,6 +372,12 @@ QString Grammar::whereNotNull(const WhereConditionItem &where) const
     return QStringLiteral("%1 is not null").arg(where.column);
 }
 
+QString Grammar::compileOrders(const QueryBuilder &query) const
+{
+    return QStringLiteral("order by %1").arg(
+                joinContainer(compileOrdersToVector(query), QStringLiteral(", ")));
+}
+
 QVector<QString> Grammar::compileOrdersToVector(const QueryBuilder &query) const
 {
     QVector<QString> compiledOrders;
@@ -487,6 +387,11 @@ QVector<QString> Grammar::compileOrdersToVector(const QueryBuilder &query) const
                           .arg(order.column, order.direction.toLower());
 
     return compiledOrders;
+}
+
+QString Grammar::compileLimit(const QueryBuilder &query) const
+{
+    return QStringLiteral("limit %1").arg(query.getLimit());
 }
 
 QString Grammar::compileOffset(const QueryBuilder &query) const
@@ -508,6 +413,25 @@ Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
     return compiledParameters;
 }
 
+QString Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
+{
+    QVector<QString> compiledAssignments;
+    for (const auto &assignment : values)
+        compiledAssignments << QStringLiteral("%1 = %2").arg(
+                                   assignment.column,
+                                   parameter(assignment.value));
+
+    // CUR change to QStringList::join() silverqx
+    return joinContainer(compiledAssignments, QStringLiteral(", "));
+}
+
+QString
+Grammar::compileUpdateWithoutJoins(const QueryBuilder &, const QString &table,
+                                   const QString &columns, const QString &wheres) const
+{
+    return QStringLiteral("update %1 set %2 %3").arg(table, columns, wheres);
+}
+
 QString
 Grammar::compileUpdateWithJoins(const QueryBuilder &query, const QString &table,
                                 const QString &columns, const QString &wheres) const
@@ -515,6 +439,13 @@ Grammar::compileUpdateWithJoins(const QueryBuilder &query, const QString &table,
     const auto joins = compileJoins(query);
 
     return QStringLiteral("update %1 %2 set %3 %4").arg(table, joins, columns, wheres);
+}
+
+QString
+Grammar::compileDeleteWithoutJoins(const QueryBuilder &, const QString &table,
+                                   const QString &wheres) const
+{
+    return QStringLiteral("delete from %1 %2").arg(table, wheres);
 }
 
 QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString &table,
@@ -529,51 +460,6 @@ QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString
     return QStringLiteral("delete %1 from %2 %3 %4").arg(alias, table, joins, wheres);
 }
 
-QString Grammar::columnize(const QStringList &columns) const
-{
-    // TODO security, I'm not using wrap for columns (I'm not processing/quoting columns), Qt's mysql driver and mysql_stmt_prepare() don't quote columns, I will have to implement wrap logic for columns, YES I DO 😈 silverqx
-    // TODO docs, after investigation of 👆, write paragraph into documentation, about DB::raw() for columns, https://laravel.com/docs/8.x/queries#raw-expressions silverqx
-    return joinContainer(columns, QStringLiteral(", "));
-}
-
-QString Grammar::columnize(const QStringList &columns, const bool isTorrentsTable) const
-{
-    // BUG Qt and mysql json column silverqx
-    /* Qt don't know how to iterate the result with json column, so I have to manually manage
-       columns in the select clause. */
-    if (isTorrentsTable && (columns.size() == 1) && (columns.at(0) == "*")) {
-//        static const QString cached {
-//            "id, name, progress, eta, size, seeds, total_seeds, leechers, "
-//            "total_leechers, remaining, added_on, hash, status, "
-//            "movie_detail_index, savepath"
-//        };
-        static const QString cached {"id, name, size, progress, added_on, hash"};
-        return cached;
-    }
-
-    return columnize(columns);
-}
-
-template<typename Container>
-QString Grammar::parametrize(const Container &values) const
-{
-    QVector<QString> compiledParameters;
-
-    for (const auto &value : values)
-        compiledParameters << parameter(value);
-
-    // TODO move all common QStringLiteral() to the common file silverqx
-    return joinContainer(compiledParameters, QStringLiteral(", "));
-}
-
-QString Grammar::parameter(const QVariant &value) const
-{
-    // TODO rethink expressions, how to work with them and pass them to the query builder 🤔 silverqx
-    return value.canConvert<Query::Expression>()
-            ? value.value<Query::Expression>().getValue().value<QString>()
-            : QStringLiteral("?");
-}
-
 QString Grammar::removeLeadingBoolean(QString statement) const
 {
     return statement.replace(
@@ -582,17 +468,7 @@ QString Grammar::removeLeadingBoolean(QString statement) const
                 "");
 }
 
-QString Grammar::getAliasFromFrom(const QString &from) const
-{
-    return from.split(QStringLiteral(" as ")).last().trimmed();
-}
-
-QString Grammar::unqualifyColumn(const QString &column) const
-{
-    return column.split(QChar('.')).last().trimmed();
-}
-
-} // namespace Orm
+} // namespace Orm::Query::Grammars
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif

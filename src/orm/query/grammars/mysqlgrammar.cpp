@@ -68,6 +68,85 @@ MySqlGrammar::compileDeleteWithoutJoins(const QueryBuilder &query, const QString
     return sql;
 }
 
+QString MySqlGrammar::wrapValue(QString value) const
+{
+    if (value == QChar('*'))
+        return value;
+
+    return '`' + value.replace(QChar('`'), QStringLiteral("``")) + '`';
+}
+
+const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
+MySqlGrammar::getCompileMap() const
+{
+    using std::placeholders::_1;
+    // Needed, because some compileXx() methods are overloaded
+    const auto getBind = [this](const auto &&func)
+    {
+        return std::bind(std::forward<decltype (func)>(func), this, _1);
+    };
+
+    // BUG static silverqx
+    // CUR now verify if this static variables in polymorphic classes exists anywhere else silverqx
+    // Pointers to a where member methods by whereType, yes yes c++ 😂
+    static const QMap<SelectComponentType, SelectComponentValue> cached {
+//        {ComponentType::AGGREGATE, {}},
+        {SelectComponentType::COLUMNS,   {getBind(&MySqlGrammar::compileColumns),
+                        [](const auto &query) { return !query.getColumns().isEmpty(); }}},
+        {SelectComponentType::FROM,      {getBind(&MySqlGrammar::compileFrom),
+                        [](const auto &query) { return !query.getFrom().isEmpty(); }}},
+        {SelectComponentType::JOINS,     {getBind(&MySqlGrammar::compileJoins),
+                        [](const auto &query) { return !query.getJoins().isEmpty(); }}},
+        {SelectComponentType::WHERES,    {getBind(&MySqlGrammar::compileWheres),
+                        [](const auto &query) { return !query.getWheres().isEmpty(); }}},
+        {SelectComponentType::GROUPS,    {getBind(&MySqlGrammar::compileGroups),
+                        [](const auto &query) { return !query.getGroups().isEmpty(); }}},
+        {SelectComponentType::HAVINGS,   {getBind(&MySqlGrammar::compileHavings),
+                        [](const auto &query) { return !query.getHavings().isEmpty(); }}},
+        {SelectComponentType::ORDERS,    {getBind(&MySqlGrammar::compileOrders),
+                        [](const auto &query) { return !query.getOrders().isEmpty(); }}},
+        {SelectComponentType::LIMIT,     {getBind(&MySqlGrammar::compileLimit),
+                        [](const auto &query) { return query.getLimit() > -1; }}},
+        {SelectComponentType::OFFSET,    {getBind(&MySqlGrammar::compileOffset),
+                        [](const auto &query) { return query.getOffset() > -1; }}},
+//        {ComponentType::LOCK,      {}},
+    };
+
+    // TODO correct way to return const & for cached (static) local variable for QHash/QMap, check all 👿🤔 silverqx
+    return cached;
+}
+
+const std::function<QString(const WhereConditionItem &)> &
+MySqlGrammar::getWhereMethod(const WhereType whereType) const
+{
+    using std::placeholders::_1;
+    const auto getBind = [this](const auto &&func)
+    {
+        return std::bind(std::forward<decltype (func)>(func), this, _1);
+    };
+
+    // Pointers to a where member methods by whereType, yes yes c++ 😂
+    // An order has to be the same as in enum struct WhereType
+    // TODO future, QHash would has faster lookup, I should choose QHash, fix also another Grammars silverx
+    static const QVector<std::function<QString(const WhereConditionItem &)>> cached {
+        getBind(&MySqlGrammar::whereBasic),
+        getBind(&MySqlGrammar::whereNested),
+        getBind(&MySqlGrammar::whereColumn),
+        getBind(&MySqlGrammar::whereIn),
+        getBind(&MySqlGrammar::whereNotIn),
+        getBind(&MySqlGrammar::whereNull),
+        getBind(&MySqlGrammar::whereNotNull),
+    };
+
+    static const auto size = cached.size();
+
+    // Check if whereType is in the range, just for sure 😏
+    const auto type = static_cast<int>(whereType);
+    Q_ASSERT((0 <= type) && (type < size));
+
+    return cached.at(type);
+}
+
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
