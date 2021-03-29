@@ -2757,6 +2757,7 @@ namespace Relations {
     bool BaseModel<Model, AllRelations...>::isDateCastable(const QString &key) const
     {
         // TODO castable silverqx
+        // BUG anyway test static silverqx
         /* I don't have support for castable attributes, this solution is temporary. */
         const QVector<QString> defaults {
             getCreatedAtColumn(),
