@@ -86,8 +86,6 @@ MySqlGrammar::getCompileMap() const
         return std::bind(std::forward<decltype (func)>(func), this, _1);
     };
 
-    // BUG static silverqx
-    // CUR now verify if this static variables in polymorphic classes exists anywhere else silverqx
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     static const QMap<SelectComponentType, SelectComponentValue> cached {
 //        {ComponentType::AGGREGATE, {}},

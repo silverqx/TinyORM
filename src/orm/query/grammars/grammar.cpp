@@ -206,7 +206,7 @@ Grammar::compileTruncate(const QueryBuilder &query) const
 
 const QVector<QString> &Grammar::getOperators() const
 {
-    /* I make it this way, I don't declare it as pure virtual intentionally, this give
+    /* I make it this way, I don't declare it as pure virtual intentionally, this gives
        me oportunity to instantiate the Grammar class eg. in tests. */
     static const QVector<QString> cachedOperators;
 

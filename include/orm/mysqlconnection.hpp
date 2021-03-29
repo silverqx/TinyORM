@@ -27,6 +27,10 @@ namespace Orm
 
         /*! Check database connection and show warnings when the state changed. */
         bool pingDatabase() override;
+
+    protected:
+        /*! If the connected database is a MariaDB database. */
+        std::optional<bool> m_isMaria;
     };
 
 } // namespace Orm
