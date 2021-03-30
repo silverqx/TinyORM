@@ -5,6 +5,7 @@
 
 #include <optional>
 
+#include "orm/query/grammars/grammar.hpp"
 #include "orm/query/expression.hpp"
 #include "orm/ormtypes.hpp"
 
@@ -22,10 +23,7 @@ namespace Orm::Query
 {
     class JoinClause;
 
-namespace Grammars
-{
-    class Grammar;
-}
+    // CUR move inside class aliases like this silverqx
     using QueryGrammar = Query::Grammars::Grammar;
 
     // FEATURE subqueries, add support for subqueries, first in where() silverqx
@@ -292,8 +290,6 @@ namespace Grammars
         /*! Get the table associated with the query builder. */
         inline const QString &getFrom() const
         { return m_from; }
-        /*! Get the table associated with the query builder, without an alias. */
-        QString getFromWithoutAlias() const;
         /*! Get the table joins for the query. */
         inline const QVector<QSharedPointer<JoinClause>> &getJoins() const
         { return m_joins; }
@@ -423,9 +419,12 @@ namespace Grammars
     Builder::increment(const QString &column, const T amount,
                        const QVector<UpdateItem> &extra)
     {
-        const auto expression = QStringLiteral("%1 + %2").arg(column).arg(amount);
+        const auto expression = QStringLiteral("%1 + %2").arg(m_grammar.wrap(column))
+                                .arg(amount);
+
         QVector<UpdateItem> columns {{column, raw(expression)}};
         std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
+
         return update(columns);
     }
 
@@ -434,9 +433,12 @@ namespace Grammars
     Builder::decrement(const QString &column, const T amount,
                        const QVector<UpdateItem> &extra)
     {
-        const auto expression = QStringLiteral("%1 - %2").arg(column).arg(amount);
+        const auto expression = QStringLiteral("%1 - %2").arg(m_grammar.wrap(column))
+                                .arg(amount);
+
         QVector<UpdateItem> columns {{column, raw(expression)}};
         std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
+
         return update(columns);
     }
 

@@ -61,7 +61,7 @@ QString SQLiteGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) c
 
     for (const auto &assignment : values)
         compiledAssignments << QStringLiteral("%1 = %2").arg(
-                                   unqualifyColumn(assignment.column),
+                                   wrap(unqualifyColumn(assignment.column)),
                                    parameter(assignment.value));
 
     return compiledAssignments.join(", ");
@@ -138,7 +138,9 @@ QString
 SQLiteGrammar::compileUpdateWithJoinsOrLimit(QueryBuilder &query,
                                              const QVector<UpdateItem> &values) const
 {
-    const auto table = wrapTable(query.getFrom());
+    const auto &table = query.getFrom();
+
+    const auto tableWrapped = wrapTable(table);
 
     const auto columns = compileUpdateColumns(values);
 
@@ -147,19 +149,21 @@ SQLiteGrammar::compileUpdateWithJoinsOrLimit(QueryBuilder &query,
     const auto selectSql = compileSelect(query.select(alias + ".rowid"));
 
     return QStringLiteral("update %1 set %2 where %3 in (%4)")
-            .arg(table, columns, "rowid", selectSql);
+            .arg(tableWrapped, columns, wrap(QStringLiteral("rowid")), selectSql);
 }
 
 QString SQLiteGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) const
 {
-    const auto table = wrapTable(query.getFrom());
+    const auto &table = query.getFrom();
+
+    const auto tableWrapped = wrapTable(table);
 
     const auto alias = getAliasFromFrom(table);
 
     const auto selectSql = compileSelect(query.select(alias + ".rowid"));
 
     return QStringLiteral("delete from %1 where %2 in (%3)")
-            .arg(table, "rowid", selectSql);
+            .arg(tableWrapped, wrap(QStringLiteral("rowid")), selectSql);
 }
 
 } // namespace Orm

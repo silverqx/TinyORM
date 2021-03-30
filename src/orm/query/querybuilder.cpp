@@ -159,7 +159,8 @@ std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
 {
     /* If an ID is passed to the method, we will set the where clause to check the
        ID to let developers to simply and quickly remove a single row from this
-       database without manually specifying the "where" clauses on the query. */
+       database without manually specifying the "where" clauses on the query.
+       m_from will be wrapped in the Grammar. */
     where(m_from + ".id", "=", id, "and");
 
     return remove();
@@ -173,6 +174,7 @@ void Builder::truncate()
 
 Builder &Builder::select(const QStringList columns)
 {
+    // FEATURE expression, add Query::Expression overload, find all occurences of Illuminate\Database\Query\Expression in the Eloquent and add support to TinyORM, I will need to add overloads for some methods, for columns and also for values silverqx
     clearColumns();
 
     ranges::copy(columns, ranges::back_inserter(m_columns));
@@ -607,13 +609,6 @@ QVector<QVariant> Builder::getBindings() const
     });
 
     return flattenBindings;
-}
-
-QString Builder::getFromWithoutAlias() const
-{
-    return m_from.split(QRegularExpression(
-                            QStringLiteral("\\s+as\\s+"),
-                            QRegularExpression::CaseInsensitiveOption)).first();
 }
 
 // TODO next revisit QSharedPointer, after few weeks I'm pretty sure that this can/should be std::unique_pre, like in the TinyBuilder, I need to check if more instances need to save this pointer at once, if don't then I have to change it silverqx

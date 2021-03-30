@@ -9,10 +9,6 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-/* Explicit instantiation definitions */
-template QString BaseGrammar::parametrize(const QVector<QVariant> &) const;
-template QString BaseGrammar::parametrize(const QVariantMap &) const;
-
 const QString &BaseGrammar::getDateFormat() const
 {
     static const auto cachedFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
@@ -53,6 +49,7 @@ QString BaseGrammar::wrapTable(const Expression &table) const
     return getValue(table).value<QString>();
 }
 
+// FEATURE expression, this api (method overloads) which takes Expression as parameter looks strange and inconsistent because wrap() takes QString/Expression, wrapTable() the same, instead getValue() takes QVariant/Expression and parameter takes QVariant only, this is a consequence of that columns are always passed as QString (Expression overload are not never called), but values are passed as QVariant and CAN CONTAIN QVariant(Expression), so investigate in the future and it is also related to the another feature todo, which propose to add Expression overloads for methods in the query builder silverqx
 bool BaseGrammar::isExpression(const QVariant &value) const
 {
     return value.canConvert<Expression>();
@@ -68,11 +65,9 @@ QVariant BaseGrammar::getValue(const Expression &expression) const
     return expression.getValue();
 }
 
-QString BaseGrammar::columnize(const QStringList &columns) const
+QString BaseGrammar::columnize(QStringList columns) const
 {
-    // CUR now wrap columns silverqx
-    // TODO docs, DB::raw() for columns, https://laravel.com/docs/8.x/queries#raw-expressions silverqx
-    return columns.join(QStringLiteral(", "));
+    return wrapArray(columns).join(QStringLiteral(", "));
 }
 
 QString BaseGrammar::columnize(const QStringList &columns, const bool isTorrentsTable) const
@@ -81,28 +76,19 @@ QString BaseGrammar::columnize(const QStringList &columns, const bool isTorrents
     /* Qt don't know how to iterate the result with json column, so I have to manually manage
        columns in the select clause. */
     if (isTorrentsTable && (columns.size() == 1) && (columns.at(0) == "*")) {
-//        static const QString cached {
+//        static const QString cached = wrapArray({
 //            "id, name, progress, eta, size, seeds, total_seeds, leechers, "
 //            "total_leechers, remaining, added_on, hash, status, "
 //            "movie_detail_index, savepath"
-//        };
-        static const QString cached {"id, name, size, progress, added_on, hash"};
+//        }).join(QStringLiteral(", "));
+        static const QString cached =
+                wrapArray(QStringList {"id, name, size, progress, added_on, hash"})
+                .join(QStringLiteral(", "));
+
         return cached;
     }
 
     return columnize(columns);
-}
-
-template<typename Container>
-QString BaseGrammar::parametrize(const Container &values) const
-{
-    QStringList compiledParameters;
-
-    for (const auto &value : values)
-        compiledParameters << parameter(value);
-
-    // TODO move all common QStringLiteral() to the common file as global constants silverqx
-    return compiledParameters.join(QStringLiteral(", "));
 }
 
 QString BaseGrammar::parameter(const QVariant &value) const
@@ -173,12 +159,20 @@ QStringList BaseGrammar::getSegmentsFromFrom(const QString &from) const
     return segments;
 }
 
+QString BaseGrammar::getFromWithoutAlias(const QString &from) const
+{
+    // Prevent clazy warning
+    const auto segments = getSegmentsFromFrom(from);
+
+    return segments.first();
+}
+
 QString BaseGrammar::getAliasFromFrom(const QString &from) const
 {
     // Prevent clazy warning
     const auto segments = getSegmentsFromFrom(from);
 
-    return segments.last().trimmed();
+    return segments.last();
 }
 
 QString BaseGrammar::unqualifyColumn(const QString &column) const

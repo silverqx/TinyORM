@@ -11,10 +11,6 @@ namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 
-/* Explicit instantiation declarations ensure to skip the implicit instantiation step. */
-extern template QString Orm::BaseGrammar::parametrize(const QVector<QVariant> &) const;
-extern template QString Orm::BaseGrammar::parametrize(const QVariantMap &) const;
-
 namespace Orm::Query::Grammars
 {
 
@@ -236,10 +232,13 @@ QString Grammar::compileColumns(const QueryBuilder &query) const
     else
         select += "select ";
 
-    return select + columnize(
-                query.getColumns(),
-                (query.getFrom() == "torrents")
-                && (query.getConnection().getDatabaseName() == "q_media_test_orm"));
+    // BUG Qt and mysql json column silverqx
+    // Contains json column
+    const auto isTorrentsTable =
+            (query.getFrom() == "torrents")
+            && (query.getConnection().getDatabaseName() == "q_media_test_orm");
+
+    return select + columnize(query.getColumns(), isTorrentsTable);
 }
 
 QString Grammar::compileFrom(const QueryBuilder &query) const
@@ -262,6 +261,7 @@ QString Grammar::compileJoins(const QueryBuilder &query) const
 QString Grammar::compileWheres(const QueryBuilder &query) const
 {
     const auto sql = compileWheresToVector(query);
+
     if (sql.size() > 0)
         return concatenateWhereClauses(query, sql);
 
@@ -271,17 +271,19 @@ QString Grammar::compileWheres(const QueryBuilder &query) const
 QVector<QString> Grammar::compileWheresToVector(const QueryBuilder &query) const
 {
     QVector<QString> compiledWheres;
+
     for (const auto &where : query.getWheres())
         compiledWheres << QStringLiteral("%1 %2")
                           .arg(where.condition,
                                std::invoke(getWhereMethod(where.type), where));
+
     return compiledWheres;
 }
 
 QString Grammar::concatenateWhereClauses(const QueryBuilder &query,
                                          const QVector<QString> &sql) const
 {
-    // Is query instance of JoinClause?
+    // Is it a query instance of the JoinClause?
     const auto conjunction = dynamic_cast<const JoinClause *>(&query) == nullptr
                              ? QStringLiteral("where")
                              : QStringLiteral("on");
@@ -299,6 +301,7 @@ QString Grammar::compileGroups(const QueryBuilder &query) const
 QString Grammar::compileHavings(const QueryBuilder &query) const
 {
     QVector<QString> compiledHavings;
+
     for (const auto &having : query.getHavings())
         compiledHavings << compileHaving(having);
 
@@ -311,16 +314,18 @@ QString Grammar::compileHaving(const HavingConditionItem &having) const
 {
     switch (having.type) {
     case HavingType::BASIC:
-        return QStringLiteral("%1 %2 %3 ?").arg(having.condition, having.column,
+        return QStringLiteral("%1 %2 %3 ?").arg(having.condition, wrap(having.column),
                                                 having.comparison);
     default:
-        return {};
+        throw RuntimeError(QStringLiteral("Unknown HavingType (%1).")
+                           .arg(static_cast<int>(having.type)));
     }
 }
 
 QString Grammar::whereBasic(const WhereConditionItem &where) const
 {
-    return QStringLiteral("%1 %2 ?").arg(where.column,
+    // BUG whereBasic look Eloquent silverqx
+    return QStringLiteral("%1 %2 ?").arg(wrap(where.column),
                                          where.comparison);
 }
 
@@ -339,9 +344,10 @@ QString Grammar::whereColumn(const WhereConditionItem &where) const
 {
     /* In this where type where.column contains first column and where,value contains
        second column. */
-    return QStringLiteral("%1 %2 %3").arg(where.column,
+    return QStringLiteral("%1 %2 %3").arg(wrap(where.column),
                                           where.comparison,
-                                          where.value.value<QString>());
+                                          // TODO add data member to the WhereConditionItem for second column silverqx
+                                          wrap(where.value.value<QString>()));
 }
 
 QString Grammar::whereIn(const WhereConditionItem &where) const
@@ -349,7 +355,7 @@ QString Grammar::whereIn(const WhereConditionItem &where) const
     if (where.values.isEmpty())
         return QStringLiteral("0 = 1");
 
-    return QStringLiteral("%1 in (%2)").arg(where.column,
+    return QStringLiteral("%1 in (%2)").arg(wrap(where.column),
                                             parametrize(where.values));
 }
 
@@ -358,18 +364,18 @@ QString Grammar::whereNotIn(const WhereConditionItem &where) const
     if (where.values.isEmpty())
         return QStringLiteral("1 = 1");
 
-    return QStringLiteral("%1 not in (%2)").arg(where.column,
+    return QStringLiteral("%1 not in (%2)").arg(wrap(where.column),
                                                 parametrize(where.values));
 }
 
 QString Grammar::whereNull(const WhereConditionItem &where) const
 {
-    return QStringLiteral("%1 is null").arg(where.column);
+    return QStringLiteral("%1 is null").arg(wrap(where.column));
 }
 
 QString Grammar::whereNotNull(const WhereConditionItem &where) const
 {
-    return QStringLiteral("%1 is not null").arg(where.column);
+    return QStringLiteral("%1 is not null").arg(wrap(where.column));
 }
 
 QString Grammar::compileOrders(const QueryBuilder &query) const
@@ -384,7 +390,7 @@ QVector<QString> Grammar::compileOrdersToVector(const QueryBuilder &query) const
 
     for (const auto &order : query.getOrders())
         compiledOrders << QStringLiteral("%1 %2")
-                          .arg(order.column, order.direction.toLower());
+                          .arg(wrap(order.column), order.direction.toLower());
 
     return compiledOrders;
 }
@@ -413,12 +419,14 @@ Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
     return compiledParameters;
 }
 
-QString Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
+QString
+Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
 {
     QVector<QString> compiledAssignments;
+
     for (const auto &assignment : values)
         compiledAssignments << QStringLiteral("%1 = %2").arg(
-                                   assignment.column,
+                                   wrap(assignment.column),
                                    parameter(assignment.value));
 
     // CUR change to QStringList::join() silverqx
@@ -429,6 +437,7 @@ QString
 Grammar::compileUpdateWithoutJoins(const QueryBuilder &, const QString &table,
                                    const QString &columns, const QString &wheres) const
 {
+    // The table argument is already wrapped
     return QStringLiteral("update %1 set %2 %3").arg(table, columns, wheres);
 }
 
@@ -438,6 +447,7 @@ Grammar::compileUpdateWithJoins(const QueryBuilder &query, const QString &table,
 {
     const auto joins = compileJoins(query);
 
+    // The table argument is already wrapped
     return QStringLiteral("update %1 %2 set %3 %4").arg(table, joins, columns, wheres);
 }
 
@@ -445,6 +455,7 @@ QString
 Grammar::compileDeleteWithoutJoins(const QueryBuilder &, const QString &table,
                                    const QString &wheres) const
 {
+    // The table argument is already wrapped
     return QStringLiteral("delete from %1 %2").arg(table, wheres);
 }
 

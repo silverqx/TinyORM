@@ -98,7 +98,7 @@ void tst_SQLite_QueryBuilder::select() const
 
     builder->select({"id", "name"});
     QCOMPARE(builder->toSql(),
-             "select id, name from \"torrents\"");
+             "select \"id\", \"name\" from \"torrents\"");
 
     builder->select();
     QCOMPARE(builder->toSql(),
@@ -106,7 +106,7 @@ void tst_SQLite_QueryBuilder::select() const
 
     builder->select("id");
     QCOMPARE(builder->toSql(),
-             "select id from \"torrents\"");
+             "select \"id\" from \"torrents\"");
 }
 
 void tst_SQLite_QueryBuilder::addSelect() const
@@ -117,15 +117,15 @@ void tst_SQLite_QueryBuilder::addSelect() const
 
     builder->addSelect({"id", "name"});
     QCOMPARE(builder->toSql(),
-             "select id, name from \"torrents\"");
+             "select \"id\", \"name\" from \"torrents\"");
 
     builder->addSelect("size");
     QCOMPARE(builder->toSql(),
-             "select id, name, size from \"torrents\"");
+             "select \"id\", \"name\", \"size\" from \"torrents\"");
 
     builder->addSelect("*");
     QCOMPARE(builder->toSql(),
-             "select id, name, size, * from \"torrents\"");
+             "select \"id\", \"name\", \"size\", * from \"torrents\"");
 }
 
 void tst_SQLite_QueryBuilder::distinct() const
@@ -145,7 +145,7 @@ void tst_SQLite_QueryBuilder::distinct() const
 
     builder->select({"name", "size"});
     QCOMPARE(builder->toSql(),
-             "select distinct name, size from \"torrents\"");
+             "select distinct \"name\", \"size\" from \"torrents\"");
 }
 
 void tst_SQLite_QueryBuilder::orderBy() const
@@ -156,20 +156,20 @@ void tst_SQLite_QueryBuilder::orderBy() const
 
     builder->orderBy("name", "asc");
     QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by name asc");
+             "select * from \"torrents\" order by \"name\" asc");
 
     builder->orderBy("id", "desc");
     QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by name asc, id desc");
+             "select * from \"torrents\" order by \"name\" asc, \"id\" desc");
 
     builder->reorder()
             .orderByDesc("name");
     QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by name desc");
+             "select * from \"torrents\" order by \"name\" desc");
 
     builder->reorder("id", "asc");
     QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by id asc");
+             "select * from \"torrents\" order by \"id\" asc");
 }
 
 void tst_SQLite_QueryBuilder::latestOldest() const
@@ -180,11 +180,11 @@ void tst_SQLite_QueryBuilder::latestOldest() const
 
     builder->latest("name");
     QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by name desc");
+             "select * from \"torrents\" order by \"name\" desc");
 
     builder->reorder().oldest("name");
     QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by name asc");
+             "select * from \"torrents\" order by \"name\" asc");
 }
 
 void tst_SQLite_QueryBuilder::limitOffset() const
@@ -239,7 +239,7 @@ void tst_SQLite_QueryBuilder::basicWhere() const
 
         builder->select("*").from("torrents").where("id", "=", 3);
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id = ?");
+                 "select * from \"torrents\" where \"id\" = ?");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant> {QVariant(3)});
     }
@@ -249,7 +249,7 @@ void tst_SQLite_QueryBuilder::basicWhere() const
 
         builder->select("*").from("torrents").whereEq("id", 3);
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id = ?");
+                 "select * from \"torrents\" where \"id\" = ?");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant> {QVariant(3)});
     }
@@ -260,7 +260,7 @@ void tst_SQLite_QueryBuilder::basicWhere() const
         builder->select("*").from("torrents").whereEq("id", 3)
                 .whereEq("name", "test3");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id = ? and name = ?");
+                 "select * from \"torrents\" where \"id\" = ? and \"name\" = ?");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3), QVariant("test3")}));
     }
@@ -270,7 +270,7 @@ void tst_SQLite_QueryBuilder::basicWhere() const
 
         builder->select("*").from("torrents").where("id", "!=", 3);
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id != ?");
+                 "select * from \"torrents\" where \"id\" != ?");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant> {QVariant(3)});
     }
@@ -280,7 +280,7 @@ void tst_SQLite_QueryBuilder::basicWhere() const
 
         builder->select("*").from("torrents").where("id", "<>", 3);
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id <> ?");
+                 "select * from \"torrents\" where \"id\" <> ?");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant> {QVariant(3)});
     }
@@ -290,7 +290,7 @@ void tst_SQLite_QueryBuilder::basicWhere() const
 
         builder->select("*").from("torrents").where("id", ">", 3);
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id > ?");
+                 "select * from \"torrents\" where \"id\" > ?");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant> {QVariant(3)});
     }
@@ -301,7 +301,7 @@ void tst_SQLite_QueryBuilder::basicWhere() const
         builder->select("*").from("torrents").where("id", ">", 3)
                 .where("name", "like", "test%");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id > ? and name like ?");
+                 "select * from \"torrents\" where \"id\" > ? and \"name\" like ?");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3), QVariant("test%")}));
     }
@@ -314,7 +314,7 @@ void tst_SQLite_QueryBuilder::whereWithVectorValue() const
 
         builder->select("*").from("torrents").where({{"id", 3}});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where (id = ?)");
+                 "select * from \"torrents\" where (\"id\" = ?)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant> {QVariant(3)});
     }
@@ -324,7 +324,7 @@ void tst_SQLite_QueryBuilder::whereWithVectorValue() const
 
         builder->select("*").from("torrents").where({{"id", 3}, {"size", 10, ">"}});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where (id = ? and size > ?)");
+                 "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3), QVariant(10)}));
     }
@@ -335,8 +335,8 @@ void tst_SQLite_QueryBuilder::whereWithVectorValue() const
         builder->select("*").from("torrents").where({{"id", 3}, {"size", 10, ">"}})
                 .where({{"progress", 100, ">="}});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where (id = ? and size > ?) "
-                 "and (progress >= ?)");
+                 "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?) "
+                 "and (\"progress\" >= ?)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
     }
@@ -350,7 +350,7 @@ void tst_SQLite_QueryBuilder::basicOrWhere() const
         builder->select("*").from("torrents").where("id", ">", 4)
                 .orWhere("progress", ">=", 300);
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id > ? or progress >= ?");
+                 "select * from \"torrents\" where \"id\" > ? or \"progress\" >= ?");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(4), QVariant(300)}));
     }
@@ -361,7 +361,7 @@ void tst_SQLite_QueryBuilder::basicOrWhere() const
         builder->select("*").from("torrents").where("id", ">", 4)
                 .orWhereEq("name", "test3");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id > ? or name = ?");
+                 "select * from \"torrents\" where \"id\" > ? or \"name\" = ?");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(4), QVariant("test3")}));
     }
@@ -374,7 +374,8 @@ void tst_SQLite_QueryBuilder::orWhereWithVectorValue() const
     builder->select("*").from("torrents").where({{"id", 3}, {"size", 10, ">"}})
             .orWhere({{"progress", 100, ">="}});
     QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" where (id = ? and size > ?) or (progress >= ?)");
+             "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?) or "
+             "(\"progress\" >= ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
 }
@@ -387,8 +388,8 @@ void tst_SQLite_QueryBuilder::whereColumn() const
             .whereColumn("filepath", "=", "note")
             .whereColumn("size", ">=", "progress");
     QCOMPARE(builder->toSql(),
-             "select * from \"torrent_previewable_files\" where filepath = note "
-             "and size >= progress");
+             "select * from \"torrent_previewable_files\" where \"filepath\" = \"note\" "
+             "and \"size\" >= \"progress\"");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>());
 }
@@ -402,8 +403,8 @@ void tst_SQLite_QueryBuilder::orWhereColumn() const
                 .whereColumnEq("filepath", "note")
                 .orWhereColumnEq("size", "progress");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_previewable_files\" where filepath = note "
-                 "or size = progress");
+                 "select * from \"torrent_previewable_files\" where \"filepath\" = \"note\" "
+                 "or \"size\" = \"progress\"");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>());
     }
@@ -415,8 +416,8 @@ void tst_SQLite_QueryBuilder::orWhereColumn() const
                 .whereColumnEq("filepath", "note")
                 .orWhereColumn("size", ">", "progress");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_previewable_files\" where filepath = note "
-                 "or size > progress");
+                 "select * from \"torrent_previewable_files\" where \"filepath\" = \"note\" "
+                 "or \"size\" > \"progress\"");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>());
     }
@@ -431,8 +432,8 @@ void tst_SQLite_QueryBuilder::whereColumnWithVectorValue() const
                 .whereColumn({{"filepath", "note"},
                               {"size", "progress", ">"}});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_previewable_files\" where (filepath = note "
-                 "and size > progress)");
+                 "select * from \"torrent_previewable_files\" where (\"filepath\" = \"note\" "
+                 "and \"size\" > \"progress\")");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>());
     }
@@ -444,8 +445,8 @@ void tst_SQLite_QueryBuilder::whereColumnWithVectorValue() const
                 .whereColumn({{"filepath", "note"},
                               {"size", "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_previewable_files\" where (filepath = note "
-                 "or size > progress)");
+                 "select * from \"torrent_previewable_files\" where (\"filepath\" = \"note\" "
+                 "or \"size\" > \"progress\")");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>());
     }
@@ -461,7 +462,7 @@ void tst_SQLite_QueryBuilder::orWhereColumnWithVectorValue() const
                                 {"size", "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
-                 "where id = ? or (filepath = note or size > progress)");
+                 "where \"id\" = ? or (\"filepath\" = \"note\" or \"size\" > \"progress\")");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(2)}));
     }
@@ -474,7 +475,7 @@ void tst_SQLite_QueryBuilder::orWhereColumnWithVectorValue() const
                                 {"size", "progress", ">", "and"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
-                 "where id = ? or (filepath = note and size > progress)");
+                 "where \"id\" = ? or (\"filepath\" = \"note\" and \"size\" > \"progress\")");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(2)}));
     }
@@ -487,7 +488,7 @@ void tst_SQLite_QueryBuilder::orWhereColumnWithVectorValue() const
                                 {"size", "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
-                 "where id = ? or (filepath = note or size > progress)");
+                 "where \"id\" = ? or (\"filepath\" = \"note\" or \"size\" > \"progress\")");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(2)}));
     }
@@ -500,7 +501,7 @@ void tst_SQLite_QueryBuilder::basicWhereIn() const
 
         builder->select("*").from("torrents").whereIn("id", {2, 3, 4});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id in (?, ?, ?)");
+                 "select * from \"torrents\" where \"id\" in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
     }
@@ -511,7 +512,7 @@ void tst_SQLite_QueryBuilder::basicWhereIn() const
         builder->select("*").from("torrents").where("id", "=", 1)
                 .orWhereIn("id", {2, 3, 4});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id = ? or id in (?, ?, ?)");
+                 "select * from \"torrents\" where \"id\" = ? or \"id\" in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(1), QVariant(2), QVariant(3), QVariant(4)}));
     }
@@ -524,7 +525,7 @@ void tst_SQLite_QueryBuilder::basicWhereNotIn() const
 
         builder->select("*").from("torrents").whereNotIn("id", {2, 3, 4});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id not in (?, ?, ?)");
+                 "select * from \"torrents\" where \"id\" not in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
     }
@@ -535,7 +536,7 @@ void tst_SQLite_QueryBuilder::basicWhereNotIn() const
         builder->select("*").from("torrents").where("id", "=", 1)
                 .orWhereNotIn("id", {2, 3, 4});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id = ? or id not in (?, ?, ?)");
+                 "select * from \"torrents\" where \"id\" = ? or \"id\" not in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(1), QVariant(2), QVariant(3), QVariant(4)}));
     }
@@ -559,7 +560,7 @@ void tst_SQLite_QueryBuilder::emptyWhereIn() const
         builder->select("*").from("torrents").where("id", "=", 1)
                 .orWhereIn("id", {});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id = ? or 0 = 1");
+                 "select * from \"torrents\" where \"id\" = ? or 0 = 1");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(1)}));
     }
@@ -583,7 +584,7 @@ void tst_SQLite_QueryBuilder::emptyNotWhereIn() const
         builder->select("*").from("torrents").where("id", "=", 1)
                 .orWhereNotIn("id", {});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id = ? or 1 = 1");
+                 "select * from \"torrents\" where \"id\" = ? or 1 = 1");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(1)}));
     }
@@ -596,7 +597,7 @@ void tst_SQLite_QueryBuilder::rawWhereIn() const
 
         builder->select("*").from("torrents").whereIn("id", {Raw(3)});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id in (3)");
+                 "select * from \"torrents\" where \"id\" in (3)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>());
     }
@@ -607,7 +608,7 @@ void tst_SQLite_QueryBuilder::rawWhereIn() const
         builder->select("*").from("torrents").whereEq("id", {2})
                 .orWhereIn("id", {Raw(3)});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrents\" where id = ? or id in (3)");
+                 "select * from \"torrents\" where \"id\" = ? or \"id\" in (3)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(2)}));
     }
@@ -620,7 +621,7 @@ void tst_SQLite_QueryBuilder::basicWhereNull() const
 
         builder->select("*").from("torrent_peers").whereNull("seeds");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where seeds is null");
+                 "select * from \"torrent_peers\" where \"seeds\" is null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>());
     }
@@ -631,7 +632,7 @@ void tst_SQLite_QueryBuilder::basicWhereNull() const
         builder->select("*").from("torrent_peers").whereEq("id", 4)
                 .whereNull("seeds");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where id = ? and seeds is null");
+                 "select * from \"torrent_peers\" where \"id\" = ? and \"seeds\" is null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(4)}));
     }
@@ -642,7 +643,7 @@ void tst_SQLite_QueryBuilder::basicWhereNull() const
         builder->select("*").from("torrent_peers").whereEq("id", 3)
                 .orWhereNull("seeds");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where id = ? or seeds is null");
+                 "select * from \"torrent_peers\" where \"id\" = ? or \"seeds\" is null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3)}));
     }
@@ -655,7 +656,7 @@ void tst_SQLite_QueryBuilder::basicWhereNotNull() const
 
         builder->select("*").from("torrent_peers").whereNotNull("seeds");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where seeds is not null");
+                 "select * from \"torrent_peers\" where \"seeds\" is not null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>());
     }
@@ -666,7 +667,7 @@ void tst_SQLite_QueryBuilder::basicWhereNotNull() const
         builder->select("*").from("torrent_peers").whereEq("id", 4)
                 .whereNotNull("seeds");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where id = ? and seeds is not null");
+                 "select * from \"torrent_peers\" where \"id\" = ? and \"seeds\" is not null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(4)}));
     }
@@ -677,7 +678,7 @@ void tst_SQLite_QueryBuilder::basicWhereNotNull() const
         builder->select("*").from("torrent_peers").whereEq("id", 3)
                 .orWhereNotNull("seeds");
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where id = ? or seeds is not null");
+                 "select * from \"torrent_peers\" where \"id\" = ? or \"seeds\" is not null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3)}));
     }
@@ -690,8 +691,8 @@ void tst_SQLite_QueryBuilder::whereNullWithVectorValue() const
 
         builder->select("*").from("torrent_peers").whereNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where seeds is null "
-                 "and total_seeds is null");
+                 "select * from \"torrent_peers\" where \"seeds\" is null "
+                 "and \"total_seeds\" is null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>());
     }
@@ -702,8 +703,8 @@ void tst_SQLite_QueryBuilder::whereNullWithVectorValue() const
         builder->select("*").from("torrent_peers").whereEq("id", 4)
                 .whereNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where id = ? and seeds is null "
-                 "and total_seeds is null");
+                 "select * from \"torrent_peers\" where \"id\" = ? and \"seeds\" is null "
+                 "and \"total_seeds\" is null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(4)}));
     }
@@ -714,8 +715,8 @@ void tst_SQLite_QueryBuilder::whereNullWithVectorValue() const
         builder->select("*").from("torrent_peers").whereEq("id", 3)
                 .orWhereNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where id = ? or seeds is null "
-                 "or total_seeds is null");
+                 "select * from \"torrent_peers\" where \"id\" = ? or \"seeds\" is null "
+                 "or \"total_seeds\" is null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3)}));
     }
@@ -728,8 +729,8 @@ void tst_SQLite_QueryBuilder::whereNotNullWithVectorValue() const
 
         builder->select("*").from("torrent_peers").whereNotNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where seeds is not null "
-                 "and total_seeds is not null");
+                 "select * from \"torrent_peers\" where \"seeds\" is not null "
+                 "and \"total_seeds\" is not null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>());
     }
@@ -740,8 +741,8 @@ void tst_SQLite_QueryBuilder::whereNotNullWithVectorValue() const
         builder->select("*").from("torrent_peers").whereEq("id", 4)
                 .whereNotNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where id = ? and seeds is not null "
-                 "and total_seeds is not null");
+                 "select * from \"torrent_peers\" where \"id\" = ? and \"seeds\" is not null "
+                 "and \"total_seeds\" is not null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(4)}));
     }
@@ -752,8 +753,8 @@ void tst_SQLite_QueryBuilder::whereNotNullWithVectorValue() const
         builder->select("*").from("torrent_peers").whereEq("id", 3)
                 .orWhereNotNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
-                 "select * from \"torrent_peers\" where id = ? or seeds is not null "
-                 "or total_seeds is not null");
+                 "select * from \"torrent_peers\" where \"id\" = ? or \"seeds\" is not null "
+                 "or \"total_seeds\" is not null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3)}));
     }

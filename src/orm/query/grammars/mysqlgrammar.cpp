@@ -37,6 +37,7 @@ MySqlGrammar::compileUpdateWithoutJoins(
         const QueryBuilder &query, const QString &table,
         const QString &columns, const QString &wheres) const
 {
+    // The table argument is already wrapped
     auto sql = Grammar::compileUpdateWithoutJoins(query, table, columns, wheres);
 
     /* When using MySQL, udpate statements may contain order by statements and limits
@@ -54,6 +55,7 @@ QString
 MySqlGrammar::compileDeleteWithoutJoins(const QueryBuilder &query, const QString &table,
                                         const QString &wheres) const
 {
+    // The table argument is already wrapped
     auto sql = Grammar::compileDeleteWithoutJoins(query, table, wheres);
 
     /* When using MySQL, delete statements may contain order by statements and limits

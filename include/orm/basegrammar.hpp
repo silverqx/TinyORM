@@ -15,6 +15,17 @@ namespace Query
     class Expression;
 }
 
+    /*! QString container concept (QStringList or QVector<QString>). */
+    template<typename T>
+    concept QStringContainer = std::is_same_v<T, QStringList> ||
+                               std::is_same_v<T, QVector<QString>>;
+
+    /*! Concept for container passed to the parametrize() method (QVariantMap
+        or QVector<QString>). */
+    template<typename T>
+    concept Parametrize = std::is_same_v<T, QVariantMap> ||
+                                   std::is_same_v<T, QVector<QVariant>>;
+
     class SHAREDLIB_EXPORT BaseGrammar
     {
         Q_DISABLE_COPY(BaseGrammar)
@@ -38,6 +49,10 @@ namespace Query
         /*! Wrap a table in keyword identifiers. */
         virtual QString wrapTable(const Expression &table) const;
 
+        /*! Wrap an array of values. */
+        template<typename T> requires QStringContainer<T>
+        T wrapArray(T values) const;
+
         /*! Determine if the given value is a raw expression. */
         bool isExpression(const QVariant &value) const;
         /*! Get the value of a raw expression. */
@@ -47,12 +62,12 @@ namespace Query
 
     protected:
         /*! Convert an array of column names into a delimited string. */
-        QString columnize(const QStringList &columns) const;
+        QString columnize(QStringList columns) const;
         /*! Convert an array of column names into a delimited string. */
         QString columnize(const QStringList &columns, bool isTorrentsTable) const;
         // TODO concept, template constraint to QVariantMap and QVector<QVariant> for now silverqx
         /*! Create query parameter place-holders for an array. */
-        template<typename Container>
+        template<typename Container> requires Parametrize<Container>
         QString parametrize(const Container &values) const;
         /*! Get the appropriate query parameter place-holder for a value. */
         QString parameter(const QVariant &value) const;
@@ -73,6 +88,8 @@ namespace Query
 
         /*! Get individual segments from the 'from' clause. */
         QStringList getSegmentsFromFrom(const QString &from) const;
+        /*! Get the table name without an alias. */
+        QString getFromWithoutAlias(const QString &from) const;
         /*! Get an alias from the 'from' clause. */
         QString getAliasFromFrom(const QString &from) const;
         /*! Get the column name without the table name, a string after last dot. */
@@ -81,6 +98,27 @@ namespace Query
         /*! The grammar table prefix. */
         QString m_tablePrefix = "";
     };
+
+    template<typename T> requires QStringContainer<T>
+    T BaseGrammar::wrapArray(T values) const
+    {
+        for (auto &value : values)
+            value = wrap(value);
+
+        return values;
+    }
+
+    template<typename Container> requires Parametrize<Container>
+    QString BaseGrammar::parametrize(const Container &values) const
+    {
+        QStringList compiledParameters;
+
+        for (const auto &value : values)
+            compiledParameters << parameter(value);
+
+        // TODO move all common QStringLiteral() to the common file as global constants silverqx
+        return compiledParameters.join(QStringLiteral(", "));
+    }
 
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE

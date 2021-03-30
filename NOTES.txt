@@ -59,6 +59,7 @@ Common:
 Features related/to implement:
 
  - default attributes : Default Attribute Values
+ - expression         : DB::raw() support in the query builder
  - events             : event system
  - guarded            : related to the mass assignable feature
  - json columns       : JSON support
