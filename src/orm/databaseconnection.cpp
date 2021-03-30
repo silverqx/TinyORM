@@ -468,11 +468,13 @@ void DatabaseConnection::logTransactionQuery(
         const QString &query,
         const std::optional<qint64> &elapsed = std::nullopt)
 {
+    const auto connectionName = getName();
+
     // This is only internal method and logs the passed string
     qDebug().nospace().noquote()
         << "Executed transaction query (" << (elapsed ? *elapsed : -1) << "ms"
         // Connection name
-        << (m_qtConnection ? QStringLiteral(", %1").arg(*m_qtConnection) : "")
+        << (!connectionName.isEmpty() ? QStringLiteral(", %1").arg(connectionName) : "")
         << ") : " << query;
 }
 
