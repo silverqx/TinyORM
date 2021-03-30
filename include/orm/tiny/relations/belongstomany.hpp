@@ -1399,7 +1399,7 @@ namespace Orm::Tiny::Relations
             const QString &key, const QVariant &original,
             const QVariant &overwrite) const
     {
-        const auto overwriteMessage =
+        static const auto overwriteMessage =
                 QStringLiteral("You can not overwrite '%1' ID key; "
                                "original value : %2, your value : %3.");
 

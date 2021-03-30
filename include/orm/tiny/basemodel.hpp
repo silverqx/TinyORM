@@ -2758,9 +2758,9 @@ namespace Relations {
     {
         // TODO castable silverqx
         /* I don't have support for castable attributes, this solution is temporary. */
-        /* I don't make it static for better reliability, so the user will be able
-           to define more models in one translation unit. */
-        const QVector<QString> defaults {
+        /* Fuckin static, it works like is described here:
+           https://stackoverflow.com/questions/2737013/static-variables-in-static-method-in-base-class-and-inheritance. */
+        static const QVector<QString> defaults {
             getCreatedAtColumn(),
             getUpdatedAtColumn(),
         };
