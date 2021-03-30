@@ -458,7 +458,10 @@ void DatabaseConnection::logQuery(const QSqlQuery &query,
     qDebug().nospace().noquote()
         << "Executed prepared query (" << (elapsed ? *elapsed : -1) << "ms, "
         << query.size() << " results, " << query.numRowsAffected()
-        << " affected) : " << parseExecutedQuery(query);
+        << " affected"
+        // Connection name
+        << (m_qtConnection ? QStringLiteral(", %1").arg(*m_qtConnection) : "")
+        << ") : " << parseExecutedQuery(query);;
 }
 
 void DatabaseConnection::logTransactionQuery(
@@ -467,8 +470,10 @@ void DatabaseConnection::logTransactionQuery(
 {
     // This is only internal method and logs the passed string
     qDebug().nospace().noquote()
-        << "Executed transaction query (" << (elapsed ? *elapsed : -1) << "ms) : "
-        << query;
+        << "Executed transaction query (" << (elapsed ? *elapsed : -1) << "ms"
+        // Connection name
+        << (m_qtConnection ? QStringLiteral(", %1").arg(*m_qtConnection) : "")
+        << ") : " << query;
 }
 
 std::optional<qint64>
