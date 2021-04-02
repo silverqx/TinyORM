@@ -514,9 +514,6 @@ void DatabaseConnection::reconnect() const
 
 void DatabaseConnection::disconnect()
 {
-    m_qtConnection.reset();
-    m_qtConnectionResolver = nullptr;
-
     /* Closes the database connection, freeing any resources acquired,
        and invalidating any existing QSqlQuery objects that are used
        with the database.
@@ -524,6 +521,9 @@ void DatabaseConnection::disconnect()
        from QSqlDatabase connection repository, so they can be reused, it's
        better for performance. */
     getRawQtConnection().close();
+
+    m_qtConnection.reset();
+    m_qtConnectionResolver = nullptr;
 }
 
 DatabaseConnection &

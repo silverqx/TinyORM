@@ -126,7 +126,7 @@ namespace Orm
 
         /*! Reconnect to the database. */
         void reconnect() const;
-        /*! Disconnect from the underlying PDO connection. */
+        /*! Disconnect from the underlying Qt's connection. */
         void disconnect();
 
         /*! Get the default query grammar instance. */
