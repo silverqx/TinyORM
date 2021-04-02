@@ -1,6 +1,4 @@
-# This file is used to ignore files which are generated
-# ----------------------------------------------------------------------------
-
+# Common generated files
 *~
 *.autosave
 *.a
@@ -70,10 +68,12 @@ Thumbs.db
 .idea/
 
 # Binaries
-# --------
 *.dll
 *.exe
 
 # Test's Database
 **/tests/**/testdata/vendor/
 **/tests/**/testdata/dotenv.ps1
+
+# others
+/todos.csv
