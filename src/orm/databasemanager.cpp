@@ -197,6 +197,41 @@ DatabaseManager::addConnection(const QVariantHash &config, const QString &name)
     return *this;
 }
 
+bool DatabaseManager::removeConnection(QString name)
+{
+    if (name.isEmpty())
+        name = getDefaultConnection();
+
+    // Connection with this name doesn't exist
+    if (!connectionNames().contains(name))
+        return false;
+
+    // Not connected
+    if (!m_connections.contains(name)) {
+        m_config.connections.remove(name);
+        return true;
+    }
+
+    // Disconnect first to be nice 😁 and safe 😂
+    m_connections.find(name)->second->disconnect();
+
+    /* If connection was not removed, return false and don't remove Qt's database
+       connection and also don't remove connection configuration. */
+    if (m_connections.erase(name) == 0)
+        return false;
+
+    // Remove Qt's database connection
+    QSqlDatabase::removeDatabase(name);
+    // Also remove configuration
+    m_config.connections.remove(name);
+
+    // If connection was the default connection, then reset default connection
+    if (m_config.defaultConnection == name)
+        setDefaultConnection("");
+
+    return true;
+}
+
 ConnectionInterface &DatabaseManager::reconnect(QString name)
 {
     if (name.isEmpty())

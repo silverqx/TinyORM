@@ -20,7 +20,6 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    // CUR add close and removeDatabase silverqx
     class SHAREDLIB_EXPORT DatabaseConnection :
             public ConnectionInterface,
             public Concerns::DetectsLostConnections

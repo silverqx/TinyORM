@@ -102,6 +102,8 @@ namespace Query
         DatabaseManager &
         addConnection(const QVariantHash &config,
                       const QString &name = QLatin1String(defaultConnectionName));
+        /*! Remove the given connection from the manager. */
+        bool removeConnection(QString name = "");
 
         /*! Reconnect to the given database. */
         ConnectionInterface &reconnect(QString name = "");

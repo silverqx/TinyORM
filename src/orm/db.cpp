@@ -42,6 +42,11 @@ DB::addConnection(const QVariantHash &config, const QString &name)
     return manager().addConnection(config, name);
 }
 
+bool DB::removeConnection(QString name)
+{
+    return manager().removeConnection(name);
+}
+
 ConnectionInterface &DB::reconnect(QString name)
 {
     return manager().reconnect(name);

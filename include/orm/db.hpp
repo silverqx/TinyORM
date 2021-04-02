@@ -50,6 +50,8 @@ namespace Orm
         addConnection(const QVariantHash &config,
                       const QString &name =
                        QLatin1String(DatabaseManager::defaultConnectionName));
+        /*! Remove the given connection from the manager. */
+        static bool removeConnection(QString name = "");
 
         /*! Reconnect to the given database. */
         static ConnectionInterface &reconnect(QString name = "");

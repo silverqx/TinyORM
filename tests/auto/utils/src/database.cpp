@@ -48,12 +48,12 @@ Database::getConfigurations(const QStringList &connections)
         }},
 
         {"tinyorm_sqlite_tests", {
-             {"driver",    "QSQLITE"},
-             {"database",  qEnvironmentVariable("DB_SQLITE_DATABASE",
-                                                TINYORM_SQLITE_DATABASE)},
-             {"foreign_key_constraints", qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS",
-                                                              "true")},
-             {"check_database_exists",   true},
+            {"driver",    "QSQLITE"},
+            {"database",  qEnvironmentVariable("DB_SQLITE_DATABASE",
+                                               TINYORM_SQLITE_DATABASE)},
+            {"foreign_key_constraints", qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS",
+                                                             "true")},
+            {"check_database_exists",   true},
         }},
     };
 
