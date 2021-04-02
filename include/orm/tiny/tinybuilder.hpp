@@ -26,24 +26,17 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny
 {
 
-    template<typename Model, typename ...AllRelations>
-    class BaseModel;
-
 namespace Relations
 {
     template<class Model, class Related>
     class Relation;
 }
 
-    /*! The type returned by Model's relation methods. */
-    template<typename Model, typename Related>
-    using RelationType = std::unique_ptr<Relations::Relation<Model, Related>>(Model::*)();
-
-    using JoinClause = Orm::Query::JoinClause;
-
     template<typename Model>
     class Builder
     {
+        using JoinClause = Orm::Query::JoinClause;
+
     public:
         Builder(const QSharedPointer<QueryBuilder> query, Model &model);
 

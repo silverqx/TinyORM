@@ -18,13 +18,14 @@ namespace Query
 {
     class Builder;
 }
-    using QueryBuilder = Query::Builder;
 
     class SHAREDLIB_EXPORT DatabaseManager final : public ConnectionResolverInterface
     {
+        Q_DISABLE_COPY(DatabaseManager)
+
         friend class DB;
 
-        Q_DISABLE_COPY(DatabaseManager)
+        using ConfigurationsType = Orm::Configuration::ConfigurationsType;
 
     public:
         virtual ~DatabaseManager();

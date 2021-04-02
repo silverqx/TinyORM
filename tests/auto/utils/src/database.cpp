@@ -3,7 +3,6 @@
 #include "orm/db.hpp"
 #include "orm/logicerror.hpp"
 
-using Orm::ConfigurationsType;
 using Orm::LogicError;
 
 namespace TestUtils
@@ -22,7 +21,8 @@ const QStringList &Database::createConnections(const QStringList &connections)
     return cachedConnectionNames;
 }
 
-const ConfigurationsType &Database::getConfigurations(const QStringList &connections)
+const Database::ConfigurationsType &
+Database::getConfigurations(const QStringList &connections)
 {
     static auto configurations = ConfigurationsType {
         {"tinyorm_mysql_tests", {

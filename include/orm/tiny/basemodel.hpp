@@ -38,8 +38,6 @@ namespace Relations {
     class IsPivotModel;
 }
 
-    using QueryBuilder = Query::Builder;
-
 #ifdef TINYORM_TESTS_CODE
     /*! Used by tests to override connection in the BaseModel. */
     struct ConnectionOverride
@@ -74,6 +72,13 @@ namespace Relations {
         // TODO future, try to solve problem with forward declarations for friend methods, to allow only relevant methods from TinyBuilder silverqx
         /* Used by TinyBuilder::eagerLoadRelationVisitor()/getRelationMethod(). */
         friend TinyBuilder<Model>;
+
+        using JoinClause = Orm::Query::JoinClause;
+
+        /*! The type returned by Model's relation methods. */
+        template<typename Related>
+        using RelationType =
+                std::unique_ptr<Relations::Relation<Model, Related>>(Model::*)();
 
     public:
         /*! The "type" of the primary key ID. */
@@ -952,7 +957,7 @@ namespace Relations {
         /*! Get a relation method in the relations hash data member, defined
             in the current model instance. */
         template<typename Related>
-        RelationType<Model, Related>
+        BaseModel::template RelationType<Related>
         getRelationMethod(const QString &relation) const;
 
         /* HasAttributes */
@@ -991,7 +996,7 @@ namespace Relations {
         /*! Get a relation method in the u_relations hash data member,
             defined in the current model instance. */
         template<typename Related>
-        RelationType<Model, Related>
+        BaseModel::template RelationType<Related>
         getRelationMethodRaw(const QString &relation) const;
 
         /* Eager loading and push */
@@ -3613,7 +3618,7 @@ namespace Relations {
 
     template<typename Model, typename ...AllRelations>
     template<typename Related>
-    RelationType<Model, Related>
+    typename BaseModel<Model, AllRelations...>::template RelationType<Related>
     BaseModel<Model, AllRelations...>::getRelationMethod(const QString &relation) const
     {
         // Throw excpetion if a relation is not defined
@@ -3680,11 +3685,11 @@ namespace Relations {
 
     template<typename Model, typename ...AllRelations>
     template<typename Related>
-    RelationType<Model, Related>
+    typename BaseModel<Model, AllRelations...>::template RelationType<Related>
     BaseModel<Model, AllRelations...>::getRelationMethodRaw(
             const QString &relation) const
     {
-        return std::any_cast<RelationType<Model, Related>>(
+        return std::any_cast<RelationType<Related>>(
                 model().u_relations.find(relation).value());
     }
 

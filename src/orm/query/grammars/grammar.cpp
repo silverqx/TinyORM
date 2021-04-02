@@ -3,7 +3,6 @@
 #include <QRegularExpression>
 
 #include "orm/databaseconnection.hpp"
-#include "orm/query/expression.hpp"
 #include "orm/query/joinclause.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

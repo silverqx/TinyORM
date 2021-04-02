@@ -7,13 +7,9 @@
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Query
+namespace Orm::Query::Grammars
 {
 
-    class Expression;
-
-namespace Grammars
-{
     class SHAREDLIB_EXPORT Grammar : public BaseGrammar
     {
         Q_DISABLE_COPY(Grammar)
@@ -172,7 +168,6 @@ namespace Grammars
     };
 
 } // namespace Orm::Query::Grammars
-} // namespace Orm::Query
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif

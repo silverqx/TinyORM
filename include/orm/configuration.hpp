@@ -10,10 +10,10 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    using ConfigurationsType = QHash<QString, QVariantHash>;
-
     struct Configuration
     {
+        using ConfigurationsType = QHash<QString, QVariantHash>;
+
         /*! Default Database Connection Name. */
         QString defaultConnection;
 

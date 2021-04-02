@@ -15,6 +15,8 @@ namespace Orm
     {
         Q_DISABLE_COPY(DB)
 
+        using ConfigurationsType = Orm::Configuration::ConfigurationsType;
+
         /*! Prohibited DB's constructor. */
         DB() = default;
         /*! Prohibited DB's destructor. */

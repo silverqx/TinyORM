@@ -30,7 +30,6 @@ namespace Query
     {
         Q_DISABLE_COPY(BaseGrammar)
 
-        // TODO study, using in headers move to classes silverqx
         using Expression = Query::Expression;
 
     public:

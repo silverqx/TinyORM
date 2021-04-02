@@ -32,11 +32,11 @@ namespace Tiny
 namespace Relations
 {
 
-    using JoinClause = Orm::Query::JoinClause;
-
     template<class Model, class Related>
     class Relation
     {
+        using JoinClause = Orm::Query::JoinClause;
+
     protected:
         Relation(std::unique_ptr<Related> &&related, Model &parent);
 

@@ -13,6 +13,8 @@ namespace TestUtils
     {
         Q_DISABLE_COPY(Database)
 
+        using ConfigurationsType = Orm::Configuration::ConfigurationsType;
+
     public:
         /*! Create all database connections which will be tested. */
         static const QStringList &
@@ -23,7 +25,7 @@ namespace TestUtils
 
     private:
         /*! Obtain configurations for the given connection names. */
-        static const Orm::ConfigurationsType &
+        static const ConfigurationsType &
         getConfigurations(const QStringList &connections = {});
     };
 

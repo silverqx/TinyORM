@@ -16,20 +16,18 @@ namespace TINYORM_COMMON_NAMESPACE
 
 namespace Orm
 {
-    class ConnectionInterface;
-}
 
-namespace Orm::Query
+    class ConnectionInterface;
+namespace Query
 {
     class JoinClause;
-
-    // CUR move inside class aliases like this silverqx
-    using QueryGrammar = Query::Grammars::Grammar;
 
     // FEATURE subqueries, add support for subqueries, first in where() silverqx
     // TODO add inRandomOrder() silverqx
     class SHAREDLIB_EXPORT Builder
     {
+        using QueryGrammar = Query::Grammars::Grammar;
+
     public:
         Builder(ConnectionInterface &connection, const QueryGrammar &grammar);
         // WARNING solve pure virtual dtor vs default silverqx
@@ -443,6 +441,7 @@ namespace Orm::Query
     }
 
 } // namespace Orm::Query
+} // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
