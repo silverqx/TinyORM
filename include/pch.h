@@ -4,12 +4,9 @@
 
 #if defined __cplusplus
 /* Add C++ includes here */
-#include <QCoreApplication>
 #include <QDateTime>
-#include <QDir>
 #include <QHash>
 #include <QMap>
-#include <QPointer>
 #include <QRegularExpression>
 #include <QSharedPointer>
 #include <QStringList>

@@ -6,14 +6,11 @@
 /* Add C++ includes here */
 //#include <QCoreApplication>
 #include <QDateTime>
-//#include <QDir>
 #include <QHash>
-//#include <QMap>
-//#include <QPointer>
+#include <QMap>
 #include <QRegularExpression>
 #include <QSharedPointer>
 #include <QStringList>
-//#include <QTimer>
 #include <QVariant>
 #include <QVector>
 
@@ -21,19 +18,19 @@
 //#include <bitset>
 //#include <algorithm>
 //#include <cassert>
-//#include <cfloat>
-//#include <cmath>
-//#include <complex>
+#include <cfloat>
+#include <cmath>
+#include <complex>
 //#include <condition_variable>
-//#include <cstddef>
-//#include <cstdint>
-//#include <cstdlib>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
 //#include <functional>
 #include <initializer_list>
 //#include <iterator>
 //#include <map>
-//#include <memory>
-//#include <mutex>
+#include <memory>
+#include <mutex>
 //#include <numeric>
 //#include <optional>
 //#include <set>

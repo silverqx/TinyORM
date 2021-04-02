@@ -1,5 +1,6 @@
 #include "orm/connectors/sqliteconnector.hpp"
 
+#include <QFile>
 #include <QtSql/QSqlQuery>
 
 #include "orm/invalidargumenterror.hpp"

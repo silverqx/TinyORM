@@ -78,6 +78,7 @@ win32-msvc* {
 # Use Precompiled headers (PCH)
 # ---
 
+# TODO add possibility to control PCH by qmake CONFIG variable silverqx
 include(../include/pch.pri)
 
 # TinyORM library header and source files

@@ -1,5 +1,7 @@
 #include "orm/databaseconnection.hpp"
 
+#include <QDateTime>
+
 #include "orm/logquery.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/query/querybuilder.hpp"

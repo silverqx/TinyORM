@@ -1,5 +1,7 @@
 #include "orm/sqlerror.hpp"
 
+#include <QStringList>
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
