@@ -17,6 +17,7 @@ private slots:
     void initTestCase();
 
     void from() const;
+    void from_TableWrappingQuotationMarks() const;
 
     void select() const;
     void addSelect() const;
@@ -87,6 +88,55 @@ void tst_SQLite_QueryBuilder::from() const
     QCOMPARE(builder->getFrom(), tableTorrentPeers);
     QCOMPARE(builder->toSql(),
              "select * from \"torrent_peers\"");
+}
+
+void tst_SQLite_QueryBuilder::from_TableWrappingQuotationMarks() const
+{
+    auto builder = createQuery(m_connection);
+
+    {
+        const auto table = QStringLiteral("some`table");
+        builder->from(table);
+
+        QCOMPARE(builder->getFrom(), table);
+        QCOMPARE(builder->toSql(),
+                 "select * from \"some`table\"");
+    }
+    // Protects quotation marks
+    {
+        const auto table = QStringLiteral("some\"table");
+        builder->from(table);
+
+        QCOMPARE(builder->getFrom(), table);
+        QCOMPARE(builder->toSql(),
+                 "select * from \"some\"\"table\"");
+    }
+    {
+        const auto table = QStringLiteral("some'table");
+        builder->from(table);
+
+        QCOMPARE(builder->getFrom(), table);
+        QCOMPARE(builder->toSql(),
+                 "select * from \"some'table\"");
+    }
+    // Wrapping as whole constant
+    {
+        const auto table = QStringLiteral("baz");
+        builder->select("x.y as foo.bar").from(table);
+
+        QCOMPARE(builder->getFrom(), table);
+        QCOMPARE(builder->toSql(),
+                 "select \"x\".\"y\" as \"foo.bar\" from \"baz\"");
+    }
+    // Wrapping with space in database name
+    {
+        const auto table = QStringLiteral("baz");
+        builder->select("w x.y.z as foo.bar").from(table);
+
+        QCOMPARE(builder->getFrom(), table);
+        QCOMPARE(builder->toSql(),
+                 "select \"w x\".\"y\".\"z\" as \"foo.bar\" from \"baz\"");
+    }
 }
 
 void tst_SQLite_QueryBuilder::select() const
