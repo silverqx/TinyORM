@@ -12,11 +12,11 @@ namespace Orm::Tiny::Relations
 
     class SHAREDLIB_EXPORT Pivot : public BasePivot<Pivot>
     {
-    public:
-        friend BaseModel;
-        friend BasePivot;
+        // TODO study, or stackoverflow friend X vs friend X<Pivot>, if template parameter deduced or all BaseXyz template instances are friends? silverqx
+        friend BaseModel<Pivot>;
+        friend BasePivot<Pivot>;
 
-        using BasePivot::BasePivot;
+        using BasePivot<Pivot>::BasePivot;
 
     protected:
         /*! Indicates if the ID is auto-incrementing. */

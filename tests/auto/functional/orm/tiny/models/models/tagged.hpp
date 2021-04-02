@@ -7,10 +7,10 @@ using Orm::Tiny::Relations::BasePivot;
 
 class Tagged final : public BasePivot<Tagged>
 {
-    friend BaseModel;
-    friend BasePivot;
+    friend BaseModel<Tagged>;
+    friend BasePivot<Tagged>;
 
-    using BasePivot::BasePivot;
+    using BasePivot<Tagged>::BasePivot;
 
     // TODO add belongsToMany overload, which will not take table argument and obtains a table name from Model::getTable, Eloquent is doing this in the BelongsToMany::resolveTableName() method silverqx
     /*! Indicates if the ID is auto-incrementing. */
