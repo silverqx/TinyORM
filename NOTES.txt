@@ -88,10 +88,14 @@ Maintenance:
    - compile with Qt6, I have still problem with clazy
 
 
-Export todos to csv:
+Powershell commands:
 --------------------
 
+ - export todos to csv:
 Get-ChildItem -Path *.cpp,*.hpp -Recurse | sls -Pattern ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE) ' -CaseSensitive | % { $_.Line = $_.Line.Trim().TrimStart('// '); return  $_; } | select Line,LineNumber,Path | Export-Csv todos.csv -Delimiter ';' -NoTypeInformation
+
+ - filter out executed queries:
+Get-Content .\tmp.sql | sls -Pattern '^(Executed prepared query)' | Set-Content executed_queries.sql
 
 
 constructor copy/move snippet:
