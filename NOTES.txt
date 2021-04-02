@@ -58,6 +58,7 @@ Common:
 
 Features related/to implement:
 
+ - castable           : attributes casting
  - default attributes : Default Attribute Values
  - expression         : DB::raw() support in the query builder
  - events             : event system
@@ -85,6 +86,12 @@ Maintenance:
  - from time to time try:
    - compile without PCH
    - compile with Qt6, I have still problem with clazy
+
+
+Export todos to csv:
+--------------------
+
+Get-ChildItem -Path *.cpp,*.hpp -Recurse | sls -Pattern ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE) ' -CaseSensitive | % { $_.Line = $_.Line.Trim().TrimStart('// '); return  $_; } | select Line,LineNumber,Path | Export-Csv todos.csv -Delimiter ';' -NoTypeInformation
 
 
 constructor copy/move snippet:

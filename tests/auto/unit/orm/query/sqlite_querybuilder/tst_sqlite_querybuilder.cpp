@@ -16,7 +16,6 @@ class tst_SQLite_QueryBuilder : public QObject
 private slots:
     void initTestCase();
 
-    // CUR tests testBasicTableWrappingProtectsQuotationMarks, testAliasWrappingAsWholeConstant, testAliasWrappingWithSpacesInDatabaseName silverqx
     void from() const;
 
     void select() const;

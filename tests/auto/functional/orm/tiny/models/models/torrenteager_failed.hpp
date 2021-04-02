@@ -45,6 +45,9 @@ private:
     QVector<WithItem> u_with {
         {"torrentFiles-NON_EXISTENT"},
     };
+
+    /*! The attributes that should be mutated to dates. @deprecated */
+    inline static QStringList u_dates {"added_on"};
 };
 
 #endif // TORRENTEAGER_FAILED_H

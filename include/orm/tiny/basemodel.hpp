@@ -7,6 +7,7 @@
 
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
+#include "orm/invalidargumenterror.hpp"
 #include "orm/invalidformaterror.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
 #include "orm/tiny/relationnotfounderror.hpp"
@@ -71,8 +72,7 @@ namespace Relations {
             public Orm::Concerns::HasConnectionResolver
     {
         // TODO future, try to solve problem with forward declarations for friend methods, to allow only relevant methods from TinyBuilder silverqx
-        /* Used by TinyBuilder::eagerLoadRelationVisitor()/getRelationMethod()
-           /getRawAttributes(). */
+        /* Used by TinyBuilder::eagerLoadRelationVisitor()/getRelationMethod(). */
         friend TinyBuilder<Model>;
 
     public:
@@ -94,6 +94,11 @@ namespace Relations {
         BaseModel(std::initializer_list<AttributeItem> attributes);
 
         /* Static operations on a model instance */
+        /*! Create a new TinyORM model instance with given attributes. */
+        inline static Model instance(const QVector<AttributeItem> &attributes);
+        /*! Create a new TinyORM model instance with given attributes. */
+        inline static Model instance(QVector<AttributeItem> &&attributes);
+
         /*! Begin querying the model. */
         static std::unique_ptr<TinyBuilder<Model>> query();
         /*! Begin querying the model on a given connection. */
@@ -597,6 +602,8 @@ namespace Relations {
         QVariant fromDateTime(const QVariant &value) const;
         /*! Convert a DateTime to a storable string. */
         QString fromDateTime(const QDateTime &value) const;
+        /*! Get the attributes that should be converted to dates. */
+        const QStringList &getDates() const;
 
         /*! Proxy for an attribute element used in the operator[] &. */
         class AttributeReference
@@ -798,11 +805,12 @@ namespace Relations {
         /*! Determine if the new and old values for a given key are equivalent. */
         bool originalIsEquivalent(const QString &key) const;
 
-        /*! Determine whether a value is Date / DateTime castable for inbound
-            manipulation. */
-        bool isDateCastable(const QString &key) const;
+        /*! Determine if the given attribute is a date. */
+        bool isDateAttribute(const QString &key) const;
         /*! Return a timestamp as DateTime object. */
         QDateTime asDateTime(const QVariant &value) const;
+        /*! Obtain timestamp column names. */
+        const QStringList &timestampColumnNames() const;
 
         /* HasRelationships */
         /*! Create a new model instance for a related model. */
@@ -916,7 +924,9 @@ namespace Relations {
         /*! The changed model attributes. */
         QVector<AttributeItem> m_changes;
         /*! The storage format of the model's date columns. */
-        QString u_dateFormat;
+        inline static QString u_dateFormat {""};
+        /*! The attributes that should be mutated to dates. @deprecated */
+        inline static QStringList u_dates {};
 
         /* HasRelationships */
         /*! The loaded relationships for the model. */
@@ -949,6 +959,17 @@ namespace Relations {
         /*! Get all of the current attributes on the model. */
         inline const QVector<AttributeItem> &getRawAttributes() const
         { return m_attributes; }
+
+        /*! Throw InvalidArgumentError if attributes passed to the constructor contain
+            some value, which will cause access of some data member in a derived
+            instance. */
+        inline void
+        throwIfCRTPctorProblem(const QVector<AttributeItem> &attributes) const;
+        /*! The QDateTime attribute detected, causes CRTP ctor problem. */
+        void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes) const;
+
+        /*! Get the attributes that should be converted to dates. */
+        QStringList getDatesInternal() const;
 
         /* HasRelationships */
         /*! Throw exception if a relation is not defined. */
@@ -1051,6 +1072,8 @@ namespace Relations {
     BaseModel<Model, AllRelations...>::BaseModel(const QVector<AttributeItem> &attributes)
         : BaseModel()
     {
+        throwIfCRTPctorProblem(attributes);
+
         fill(attributes);
     }
 
@@ -1058,6 +1081,8 @@ namespace Relations {
     BaseModel<Model, AllRelations...>::BaseModel(QVector<AttributeItem> &&attributes)
         : BaseModel()
     {
+        throwIfCRTPctorProblem(attributes);
+
         fill(std::move(attributes));
     }
 
@@ -1067,6 +1092,28 @@ namespace Relations {
     )
         : BaseModel(QVector<AttributeItem>(attributes.begin(), attributes.end()))
     {}
+
+    template<typename Model, typename ...AllRelations>
+    Model
+    BaseModel<Model, AllRelations...>::instance(const QVector<AttributeItem> &attributes)
+    {
+        Model model;
+
+        model.fill(attributes);
+
+        return model;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model
+    BaseModel<Model, AllRelations...>::instance(QVector<AttributeItem> &&attributes)
+    {
+        Model model;
+
+        model.fill(std::move(attributes));
+
+        return model;
+    }
 
     template<typename Model, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Model>>
@@ -1987,7 +2034,7 @@ namespace Relations {
     template<typename Model, typename ...AllRelations>
     bool BaseModel<Model, AllRelations...>::save(const SaveOptions &options)
     {
-        //        mergeAttributesFromClassCasts();
+//        mergeAttributesFromClassCasts();
 
         // Ownership of a unique_ptr()
         auto query = newModelQuery();
@@ -2178,8 +2225,8 @@ namespace Relations {
     template<typename Model, typename ...AllRelations>
     bool BaseModel<Model, AllRelations...>::remove()
     {
-        // TODO future add support for attributes casting silverqx
-//        $this->mergeAttributesFromClassCasts();
+        // FEATURE castable silverqx
+//        mergeAttributesFromClassCasts();
 
         if (getKeyName().isEmpty())
             throw RuntimeError("No primary key defined on model.");
@@ -2517,10 +2564,16 @@ namespace Relations {
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
            hydration of new objects via the Eloquent query builder instances. */
-        Model model(attributes);
+        Model model;
+
+        /* setAttribute() can call getDateFormat() inside and it tries to obtain
+           the date format from grammar which is obtained from the connection, so
+           the connection have to be set before fill(). */
+        model.setConnection(getConnectionName());
+
+        model.fill(attributes);
 
         model.exists = exists;
-        model.setConnection(getConnectionName());
         model.setTable(this->model().getTable());
 
         return model;
@@ -2534,10 +2587,16 @@ namespace Relations {
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
            hydration of new objects via the Eloquent query builder instances. */
-        Model model(std::move(attributes));
+        Model model;
+
+        /* setAttribute() can call getDateFormat() inside and it tries to obtain
+           the date format from grammar which is obtained from the connection, so
+           the connection have to be set before fill(). */
+        model.setConnection(getConnectionName());
+
+        model.fill(std::move(attributes));
 
         model.exists = exists;
-        model.setConnection(getConnectionName());
         model.setTable(this->model().getTable());
 
         return model;
@@ -2734,7 +2793,7 @@ namespace Relations {
         else if (!attribute.isValid() || attribute.isNull())
             return false;
         // This check ignores milliseconds in the QDateTime attribute
-        else if (isDateCastable(key))
+        else if (isDateAttribute(key))
             return fromDateTime(attribute) == fromDateTime(original);
 //        else if (hasCast(key, ['object', 'collection']))
 //            return castAttribute(key, attribute) == castAttribute(key, original);
@@ -2750,22 +2809,16 @@ namespace Relations {
 
 //        return is_numeric($attribute) && is_numeric($original)
 //               && strcmp((string) $attribute, (string) $original) === 0;
+
         return false;
     }
 
     template<typename Model, typename ...AllRelations>
-    bool BaseModel<Model, AllRelations...>::isDateCastable(const QString &key) const
+    bool BaseModel<Model, AllRelations...>::isDateAttribute(const QString &key) const
     {
-        // TODO castable silverqx
+        // FEATURE castable silverqx
         /* I don't have support for castable attributes, this solution is temporary. */
-        /* Fuckin static, it works like is described here:
-           https://stackoverflow.com/questions/2737013/static-variables-in-static-method-in-base-class-and-inheritance. */
-        static const QVector<QString> defaults {
-            getCreatedAtColumn(),
-            getUpdatedAtColumn(),
-        };
-
-        return defaults.contains(key);
+        return getDates().contains(key);
     }
 
     // TODO would be good to make it the c++ way, make overload for every type, asDateTime() is protected, so I have full control over it, but I leave it for now, because there will be more methods which will use this method in the future, and it will be more clear later on silverqx
@@ -2785,33 +2838,44 @@ namespace Relations {
         )
             return value.value<QDateTime>();
 
-        // TODO next timestamps, add unix timestamp by QDateTime::fromMSecsSinceEpoch() and simple date support silverqx
         /* If this value is an integer, we will assume it is a UNIX timestamp's value
            and format a Carbon object from this timestamp. This allows flexibility
            when defining your date fields as they might be UNIX timestamps here. */
-//        if (is_numeric($value))
-//            return Date::createFromTimestamp($value);
-
-        /* If the value is in simply year, month, day format, we will instantiate the
-           Carbon instances from that format. Again, this provides for simple date
-           fields on the database, while still supporting Carbonized conversion. */
-//        if ($this->isStandardDateFormat($value))
-//            return Date::instance(Carbon::createFromFormat('Y-m-d', $value)->startOfDay());
+        if (value.canConvert<qint64>() &&
+            QRegularExpression(QStringLiteral("^\\d{1,20}$"))
+            .match(value.value<QString>()).hasMatch()
+        )
+            // TODO switch ms accuracy? For the u_dateFormat too? silverqx
+            return QDateTime::fromSecsSinceEpoch(value.value<qint64>());
 
         const auto &format = getDateFormat();
 
         /* Finally, we will just assume this date is in the format used by default on
            the database connection and use that format to create the QDateTime object
            that is returned back out to the developers after we convert it here. */
-        const auto date = QDateTime::fromString(value.value<QString>(), format);
-
-        if (date.isValid())
+        if (const auto date = QDateTime::fromString(value.value<QString>(), format);
+            date.isValid()
+        )
             return date;
 
         throw InvalidFormatError(
                     QStringLiteral("Could not parse the datetime '%1' using "
                                    "the given format '%2'.")
                     .arg(value.value<QString>(), format));
+    }
+
+    template<typename Model, typename ...AllRelations>
+    const QStringList &
+    BaseModel<Model, AllRelations...>::timestampColumnNames() const
+    {
+        /* Fuckin static, it works like is described here:
+           https://stackoverflow.com/questions/2737013/static-variables-in-static-method-in-base-class-and-inheritance. */
+        static const QStringList cached {
+            getCreatedAtColumn(),
+            getUpdatedAtColumn(),
+        };
+
+        return cached;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -2939,7 +3003,13 @@ namespace Relations {
         /* If an attribute is listed as a "date", we'll convert it from a DateTime
            instance into a form proper for storage on the database tables using
            the connection grammar's date format. We will auto set the values. */
-        if (!value.isNull() && isDateCastable(key))
+        if (value.isValid() && !value.isNull() && (isDateAttribute(key) ||
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            value.typeId() == QMetaType::QDateTime
+#else
+            value.userType() == QMetaType::QDateTime
+#endif
+        ))
             value = fromDateTime(value);
 
         // TODO mistake m_attributes/m_original 😭 silverqx
@@ -2987,7 +3057,10 @@ namespace Relations {
     const QVector<AttributeItem> &
     BaseModel<Model, AllRelations...>::getAttributes() const
     {
-        /*mergeAttributesFromClassCasts();*/
+        // FEATURE castable silverqx
+//        mergeAttributesFromClassCasts();
+
+        // TODO attributes, getAttributes() doesn't apply transformModelValue() on attributes, worth considering to make getRawAttributes() to return raw and getAttributes() to return transformed values, after this changes would be this api different than Eloquent silverqx
         return m_attributes;
     }
 
@@ -3124,16 +3197,16 @@ namespace Relations {
     const QString &
     BaseModel<Model, AllRelations...>::getDateFormat() const
     {
-        return model().u_dateFormat.isEmpty()
+        return Model::u_dateFormat.isEmpty()
                 ? getConnection().getQueryGrammar().getDateFormat()
-                : model().u_dateFormat;
+                : Model::u_dateFormat;
     }
 
     template<typename Model, typename ...AllRelations>
     Model &
     BaseModel<Model, AllRelations...>::setDateFormat(const QString &format)
     {
-        model().u_dateFormat = format;
+        Model::u_dateFormat = format;
 
         return model();
     }
@@ -3156,6 +3229,15 @@ namespace Relations {
             return value.toString(getDateFormat());
 
         return {};
+    }
+
+    template<typename Model, typename ...AllRelations>
+    const QStringList &
+    BaseModel<Model, AllRelations...>::getDates() const
+    {
+        static const QStringList &dates = getDatesInternal();
+
+        return dates;
     }
 
     /* BaseModel::AttributeReference - begin */
@@ -3253,12 +3335,23 @@ namespace Relations {
             const QString &key,
             const QVariant &value) const
     {
-        Q_UNUSED(key)
+        /* Qt's SQLite driver doesn't apply any logic on the returned types, it returns
+           them without type detection, and it is logical, because SQLite only supports
+           numeric and string types, it doesn't distinguish datetime type or any other
+           types.
+           Qt's MySql driver behaves differently, QVariant already contains the QDateTime
+           values, because Qt's MySQL driver returns QDateTime when the value from
+           the database is datetime, the same is true for all other types, Qt's driver
+           detects it and creates QVariant with proper types. */
 
-        /* QVariant already contains QDateTime values, because Qt's MySQL driver
-           returns QDateTime when the value from the database is datetime,
-           the same is true for all other types, Qt's driver detects it and
-           creates QVariant with proper types. */
+        if (!value.isValid() || value.isNull())
+            return value;
+
+        /* If the attribute is listed as a date, we will convert it to a QDateTime
+           instance on retrieval, which makes it quite convenient to work with
+           date fields without having to create a mutator for each property. */
+        if (getDates().contains(key))
+            return asDateTime(value);
 
         return value;
     }
@@ -3527,6 +3620,53 @@ namespace Relations {
         validateUserRelation(relation);
 
         return getRelationMethodRaw<Related>(relation);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::throwIfCRTPctorProblem(
+            const QVector<AttributeItem> &attributes) const
+    {
+        throwIfQDateTimeAttribute(attributes);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::throwIfQDateTimeAttribute(
+            const QVector<AttributeItem> &attributes) const
+    {
+        static const QString message = QStringLiteral(
+            "Attributes passed to the '%1' model's constructor can't contain the "
+            "QDateTime attribute, to create a '%1' model instance with attributes "
+            "that contain the QDateTime attribute use %1::instance() "
+            "method instead.");
+
+        for (const auto &attribute : attributes)
+            if (const auto &value = attribute.value;
+                value.isValid() && !value.isNull() &&
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                value.typeId() == QMetaType::QDateTime
+#else
+                value.userType() == QMetaType::QDateTime
+#endif
+            )
+                throw InvalidArgumentError(
+                        message.arg(Utils::Type::classPureBasename<Model>()));
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QStringList
+    BaseModel<Model, AllRelations...>::getDatesInternal() const
+    {
+        if (!usesTimestamps())
+            return Model::u_dates;
+
+        // It can be static, doesn't matter anyway
+        static const QStringList &defaults = timestampColumnNames();
+
+        auto dates = Model::u_dates + defaults;
+
+        dates.removeDuplicates();
+
+        return dates;
     }
 
     template<typename Model, typename ...AllRelations>

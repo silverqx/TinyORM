@@ -125,8 +125,13 @@ private:
 
     /*! Indicates if the model should be timestamped. */
 //    bool u_timestamps = true;
+
     /*! The storage format of the model's date columns. */
-//    QString u_dateFormat {"yyyy-MM-dd HH:mm:ss"};
+//    inline static QString u_dateFormat {"yyyy-MM-dd HH:mm:ss"};
+
+    /*! The attributes that should be mutated to dates. @deprecated */
+    inline static QStringList u_dates {"added_on"};
+
     /*! All of the relationships to be touched. */
 //    QStringList u_touches {"tags"};
 //    QStringList u_touches {"relation_name"};

@@ -419,13 +419,11 @@ DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
         /* We need to transform all instances of DateTimeInterface into the actual
            date string. Each query grammar maintains its own date string format
            so we'll just ask the grammar for the format to get from the date. */
-        // CUR solve this datetime problem silverqx
-//        case QMetaType::QTime:
-//        case QMetaType::QDate:
-//        case QMetaType::QDateTime:
-////        if ($value instanceof DateTimeInterface) {
-////            $bindings[$key] = $value->format($grammar->getDateFormat());
-//            break;
+        case QMetaType::QDate:
+        case QMetaType::QDateTime:
+            binding = binding.value<QDateTime>()
+                      .toString(m_queryGrammar->getDateFormat());
+            break;
 
         /* Even if eg. the MySQL driver handles this internally, I will do it this way
            to be consistent across all supported databases. */

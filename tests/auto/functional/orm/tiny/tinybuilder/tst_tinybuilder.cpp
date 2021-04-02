@@ -150,10 +150,6 @@ void tst_TinyBuilder::incrementAndDecrement() const
 
     ConnectionOverride::connection = connection;
 
-    // CUR tests, sqlite datetime silverqx
-    if (DB::connection(connection).driverName() == "QSQLITE")
-        QSKIP("QSQLITE doesn't return QDateTime QVariant, but QString.", );
-
     auto timeBeforeIncrement = QDateTime::currentDateTime();
     // Reset milliseconds to 0
     {
@@ -204,10 +200,6 @@ void tst_TinyBuilder::update() const
     QFETCH_GLOBAL(QString, connection);
 
     ConnectionOverride::connection = connection;
-
-    // CUR tests, sqlite datetime silverqx
-    if (DB::connection(connection).driverName() == "QSQLITE")
-        QSKIP("QSQLITE doesn't return QDateTime QVariant, but QString.", );
 
     auto timeBeforeUpdate = QDateTime::currentDateTime();
     // Reset milliseconds to 0

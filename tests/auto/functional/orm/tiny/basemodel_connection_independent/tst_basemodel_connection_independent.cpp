@@ -40,10 +40,6 @@ void tst_BaseModel_Connection_Independent::subscriptOperator() const
     QCOMPARE((*torrent)["id"], QVariant(2));
     QCOMPARE((*torrent)["name"], QVariant("test2"));
 
-    // CUR tests, sqlite datetime silverqx
-    if (DB::connection(m_connection).driverName() == "QSQLITE")
-        return;
-
     QCOMPARE((*torrent)["added_on"],
             QVariant(QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)));
 }

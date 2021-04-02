@@ -93,7 +93,7 @@ void tst_BaseModel::save_Insert() const
 
     Torrent torrent;
 
-    auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
+    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
     torrent.setAttribute("name", "test50")
             .setAttribute("size", 50)
             .setAttribute("progress", 50)
@@ -111,8 +111,7 @@ void tst_BaseModel::save_Insert() const
     QCOMPARE(torrent.getAttribute("name"), QVariant("test50"));
     QCOMPARE(torrent.getAttribute("size"), QVariant(50));
     QCOMPARE(torrent.getAttribute("progress"), QVariant(50));
-    QCOMPARE(torrent.getAttribute("added_on"),
-             QVariant(addedOn));
+    QCOMPARE(torrent.getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrent.getAttribute("hash"),
              QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrent.getAttribute("created_at").isValid());
@@ -128,8 +127,7 @@ void tst_BaseModel::save_Insert() const
     QCOMPARE(torrentToVerify->getAttribute("name"), QVariant("test50"));
     QCOMPARE(torrentToVerify->getAttribute("size"), QVariant(50));
     QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(50));
-    QCOMPARE(torrentToVerify->getAttribute("added_on"),
-             QVariant(addedOn));
+    QCOMPARE(torrentToVerify->getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrentToVerify->getAttribute("hash"),
              QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrentToVerify->getAttribute("created_at").isValid());
@@ -148,7 +146,7 @@ void tst_BaseModel::save_Insert_WithDefaultValues() const
 
     Torrent torrent;
 
-    auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
+    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
     torrent.setAttribute("name", "test51")
             .setAttribute("added_on", addedOn)
             .setAttribute("hash", "5179e3af2768cdf52ec84c1f320333f68401dc61");
@@ -162,8 +160,7 @@ void tst_BaseModel::save_Insert_WithDefaultValues() const
     QVERIFY(torrent.getAttribute("id").isValid());
     QVERIFY(torrent.getAttribute("id").value<quint64>() > 6);
     QCOMPARE(torrent.getAttribute("name"), QVariant("test51"));
-    QCOMPARE(torrent.getAttribute("added_on"),
-             QVariant(addedOn));
+    QCOMPARE(torrent.getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrent.getAttribute("hash"),
              QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrent.getAttribute("created_at").isValid());
@@ -180,8 +177,7 @@ void tst_BaseModel::save_Insert_WithDefaultValues() const
     QCOMPARE(torrentToVerify->getAttribute("name"), QVariant("test51"));
     QCOMPARE(torrentToVerify->getAttribute("size"), QVariant(0));
     QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(0));
-    QCOMPARE(torrentToVerify->getAttribute("added_on"),
-             QVariant(addedOn));
+    QCOMPARE(torrentToVerify->getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrentToVerify->getAttribute("hash"),
              QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrentToVerify->getAttribute("created_at").isValid());
@@ -548,10 +544,6 @@ void tst_BaseModel::whereEq() const
     }
     // QDateTime
     {
-        // CUR tests, sqlite datetime silverqx
-        if (DB::connection(connection).driverName() == "QSQLITE")
-            return;
-
         auto torrent = Torrent::whereEq(
                            "added_on",
                            QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate))
@@ -845,7 +837,7 @@ void tst_BaseModel::firstOrCreate_NotFound() const
 
     ConnectionOverride::connection = connection;
 
-    const auto addedOn = QDateTime::currentDateTime();
+    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
 
     auto torrent = Torrent::firstOrCreate(
                        {{"id", 100}},
@@ -1041,7 +1033,7 @@ void tst_BaseModel::create() const
 
     ConnectionOverride::connection = connection;
 
-    auto addedOn = QDateTime::fromString("2021-02-01 20:22:10", Qt::ISODate);
+    const auto addedOn = QDateTime::fromString("2021-02-01 20:22:10", Qt::ISODate);
 
     auto torrent = Torrent::create({
         {"name",     "test100"},
@@ -1082,7 +1074,7 @@ void tst_BaseModel::create_Failed() const
 
     ConnectionOverride::connection = connection;
 
-    auto addedOn = QDateTime::fromString("2021-02-01 20:22:10", Qt::ISODate);
+    const auto addedOn = QDateTime::fromString("2021-02-01 20:22:10", Qt::ISODate);
 
     Torrent torrent;
     QVERIFY_EXCEPTION_THROWN((torrent = Torrent::create({
@@ -1102,10 +1094,6 @@ void tst_BaseModel::update() const
     QFETCH_GLOBAL(QString, connection);
 
     ConnectionOverride::connection = connection;
-
-    // CUR tests, sqlite datetime silverqx
-    if (DB::connection(connection).driverName() == "QSQLITE")
-        QSKIP("QSQLITE doesn't return QDateTime QVariant, but QString.", );
 
     auto timeBeforeUpdate = QDateTime::currentDateTime();
     // Reset milliseconds to 0

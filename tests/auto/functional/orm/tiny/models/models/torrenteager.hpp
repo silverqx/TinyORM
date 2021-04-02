@@ -58,6 +58,9 @@ private:
         {"torrentFiles.fileProperty"},
         {"torrentPeer"},
     };
+
+    /*! The attributes that should be mutated to dates. @deprecated */
+    inline static QStringList u_dates {"added_on"};
 };
 
 #endif // TORRENTEAGER_H
