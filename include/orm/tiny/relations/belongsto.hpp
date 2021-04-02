@@ -135,11 +135,11 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     Model &BelongsTo<Model, Related>::dissociate() const
     {
-        // TODO test Model::save with null key silverqx
+        // TEST Model::save with null key silverqx
         // FEATURE dilemma primarykey, Model::KeyType vs QVariant, set to null, will be different for Qt5 (QVariant(QVariant::Type(qMetaTypeId<Model::KeyType>()))) and Qt6 (QVariant(QMetaType(qMetaTypeId<Model::KeyType>())))) ; ALSO current problem is, that I check that foreignKey !isValid || isNull, but when QVariant with type (Model::KeyType) and also with null is created by the above commands, then it is still null (isNull == true), but is considered as !!VALID!! (isValid == true) silverqx
         m_child.setAttribute(m_foreignKey, {});
 
-        // TODO test operations that are related on the BaseModel::m_relation data member how they behave, when m_relations value contains the std::nullopt value silverqx
+        // TEST operations that are related on the BaseModel::m_relation data member how they behave, when m_relations value contains the std::nullopt value silverqx
         return m_child.template setRelation<Related>(m_relationName, std::nullopt);
     }
 

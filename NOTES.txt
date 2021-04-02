@@ -40,7 +40,6 @@ Common:
  - desirable          : feature which is extremely wanted
  - dilemma            : some sort of a fuckup
  - duplicate          : duplicate code
- - feature            : some feature to implement, perpend before feature described below
  - future             : task which has lower priority, because still much to do
  - mistake            : bad decision during prototyping 😭
  - move               : c++ move semantics
@@ -53,7 +52,6 @@ Common:
  - reliability        : make things more robust and reliable
  - security           : self explaining
  - study              : don't know how something works, need to check up
- - test               : tasks in auto tests
  - types              : juggling with c++ types
 
 Features related/to implement:
@@ -92,7 +90,7 @@ Powershell commands:
 --------------------
 
  - export todos to csv:
-Get-ChildItem -Path *.cpp,*.hpp -Recurse | sls -Pattern ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE) ' -CaseSensitive | % { $_.Line = $_.Line.Trim().TrimStart('// '); return  $_; } | select Line,LineNumber,Path | Export-Csv todos.csv -Delimiter ';' -NoTypeInformation
+Get-ChildItem -Path *.cpp,*.hpp -Recurse | sls -Pattern ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST) ' -CaseSensitive | % { $_.Line = $_.Line.Trim().TrimStart('// '); return  $_; } | select Line,LineNumber,Path | Export-Csv todos.csv -Delimiter ';' -NoTypeInformation
 
  - filter out executed queries:
 Get-Content .\tmp.sql | sls -Pattern '^(Executed prepared query)' | Set-Content executed_queries.sql

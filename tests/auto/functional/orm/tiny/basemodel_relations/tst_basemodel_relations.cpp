@@ -52,7 +52,7 @@ private slots:
 
     void push_EagerLoad() const;
     void push_LazyLoad() const;
-    // TODO tests, test all return paths for push() silverqx
+    // TEST test all return paths for push() silverqx
 
     void where_WithCallback() const;
     void orWhere_WithCallback() const;

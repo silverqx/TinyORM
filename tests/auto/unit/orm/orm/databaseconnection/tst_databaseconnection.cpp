@@ -8,7 +8,7 @@
 
 using Orm::MySqlConnection;
 
-// TODO test exceptions in tests, qt doesn't care about exceptions, totally ignore it, so when the exception is thrown, I didn't get any exception message or something similar, nothing 👿, try to solve it somehow 🤔 silverqx
+// TEST exceptions in tests, qt doesn't care about exceptions, totally ignore it, so when the exception is thrown, I didn't get any exception message or something similar, nothing 👿, try to solve it somehow 🤔 silverqx
 class tst_DatabaseConnection : public QObject
 {
     Q_OBJECT

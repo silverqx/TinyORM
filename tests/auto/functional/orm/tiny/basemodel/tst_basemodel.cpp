@@ -37,7 +37,7 @@ private slots:
     void latest() const;
     void oldest() const;
 
-    // TODO tests, where conditions, and orWhere ... silverqx
+    // TEST where conditions, and orWhere ... silverqx
     void where() const;
     void whereEq() const;
     void where_WithVector() const;
@@ -1225,3 +1225,5 @@ void tst_BaseModel::truncate() const
 QTEST_MAIN(tst_BaseModel)
 
 #include "tst_basemodel.moc"
+
+// TEST tests looks at commit history for inspiration for new tests silverqx

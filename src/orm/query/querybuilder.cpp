@@ -78,7 +78,7 @@ namespace
     };
 }
 
-// TODO tests for insert silverqx
+// TEST for insert silverqx
 std::tuple<bool, std::optional<QSqlQuery>>
 Builder::insert(const QVector<QVariantMap> &values)
 {

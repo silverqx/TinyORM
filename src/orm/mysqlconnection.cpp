@@ -33,7 +33,7 @@ std::unique_ptr<QueryGrammar> MySqlConnection::getDefaultQueryGrammar() const
 
 bool MySqlConnection::isMaria()
 {
-    // TODO tests, now add MariaDB tests, install mariadb add connection and run all the tests against mariadb too silverqx
+    // TEST now add MariaDB tests, install mariadb add connection and run all the tests against mariadb too silverqx
     if (!m_isMaria)
         m_isMaria = std::get<1>(selectOne("select version()")).value(0)
                     .value<QString>().contains("MariaDB");

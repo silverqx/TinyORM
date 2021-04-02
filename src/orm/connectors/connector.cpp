@@ -14,7 +14,7 @@ QSqlDatabase
 Connector::createConnection(const QString &name, const QVariantHash &config,
                             const QString &options) const
 {
-    // TODO test null username/password, debug driver code silverqx
+    // TEST null username/password, debug driver code silverqx
 
     try {
         return createQSqlDatabaseConnection(name, config, options);
