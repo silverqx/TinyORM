@@ -353,6 +353,7 @@ QSqlDatabase DatabaseConnection::getQtConnection()
         // This should never happen 🤔
         Q_ASSERT(m_qtConnectionResolver);
 
+        // Reconnect if missing
         m_qtConnection = std::invoke(m_qtConnectionResolver);
 
         /* This should never happen 🤔, do this check only when the QSqlDatabase
