@@ -1,5 +1,7 @@
 #include "orm/utils/attribute.hpp"
 
+#include <unordered_set>
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -10,7 +12,6 @@ namespace Orm::Utils::Attribute
 QVariantMap
 convertVectorToMap(const QVector<AttributeItem> &attributes)
 {
-    // TODO mistake m_attributes/m_original 😭 silverqx
     QVariantMap result;
 
     for (const auto &attribute : attributes)
@@ -55,6 +56,31 @@ convertVectorToUpdateItem(QVector<AttributeItem> &&attributes)
                        std::move(attribute.value)});
 
     return result;
+}
+
+QVector<AttributeItem>
+removeDuplicitKeys(const QVector<AttributeItem> &attributes)
+{
+    const auto size = attributes.size();
+    std::unordered_set<QString> added(size);
+    QVector<AttributeItem> dedupedAttributes;
+    dedupedAttributes.reserve(size);
+
+    // If I want to leave only the last duplicate, I have to loop in the reverse order
+    for (auto i = size - 1; i > -1; --i) {
+        const auto &attribute = attributes.at(i);
+        const auto &key = attribute.key;
+
+        // If duplicit key then skip
+        if (added.contains(key))
+            continue;
+
+        added.emplace(key);
+        dedupedAttributes.append(attribute);
+    }
+
+    // Reverse order
+    return QVector<AttributeItem>(dedupedAttributes.crbegin(), dedupedAttributes.crend());
 }
 
 } // namespace Orm

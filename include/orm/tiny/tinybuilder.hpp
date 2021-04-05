@@ -6,7 +6,6 @@
 #include <any>
 
 #include <range/v3/algorithm/contains.hpp>
-#include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/algorithm/move.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
@@ -1411,9 +1410,9 @@ namespace Relations
     Builder<Model>::joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
                                              const QVector<AttributeItem> &values)
     {
-        // Convert attributes to the QVector<AttributeItem>, so they can be
-        QVector<AttributeItem> attributesConverted;
-        ranges::copy(attributes, ranges::back_inserter(attributesConverted));
+        // Convert attributes to the QVector<AttributeItem>, so they can be joined
+        QVector<AttributeItem> attributesConverted(attributes.cbegin(),
+                                                   attributes.cend());
 
         // Attributes which already exist in 'attributes' will be removed from 'values'
         using namespace ranges;

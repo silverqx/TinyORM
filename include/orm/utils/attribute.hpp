@@ -24,6 +24,10 @@ namespace Orm::Utils::Attribute
     SHAREDLIB_EXPORT QVector<UpdateItem>
     convertVectorToUpdateItem(QVector<AttributeItem> &&attributes);
 
+    /*! Remove attributes which have duplicite keys and leave only the last one. */
+    SHAREDLIB_EXPORT QVector<AttributeItem>
+    removeDuplicitKeys(const QVector<AttributeItem> &attributes);
+
 } // namespace Orm::Utils::Attribute
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE

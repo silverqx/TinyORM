@@ -3,8 +3,6 @@
 
 #include <QDateTime>
 
-#include <range/v3/view/transform.hpp>
-
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/invalidargumenterror.hpp"
@@ -534,23 +532,27 @@ namespace Relations {
                                 bool sync = false);
         /*! Sync the original attributes with the current. */
         Model &syncOriginal();
-        /*! Get all of the current attributes on the model. */
-        const QVector<AttributeItem> &getAttributes() const;
+        /*! Get all of the current attributes on the model (insert order). */
+        inline const QVector<AttributeItem> &getAttributes() const;
+        /*! Get all of the current attributes on the model (for fast lookup). */
+        inline const std::unordered_map<QString, int> &getAttributesHash() const;
         /*! Get an attribute from the model. */
         QVariant getAttribute(const QString &key) const;
         /*! Get a plain attribute (not a relationship). */
         QVariant getAttributeValue(const QString &key) const;
-        /*! Get an attribute from the $attributes array. */
+        /*! Get an attribute from the m_attributes vector. */
         QVariant getAttributeFromArray(const QString &key) const;
         /*! Get the model's original attribute value (transformed). */
         QVariant getOriginal(const QString &key,
                              const QVariant &defaultValue = {}) const;
-        /*! Get the model's original attribute values (transformed). */
+        /*! Get the model's original attribute values (transformed and insert order). */
         QVector<AttributeItem> getOriginals() const;
+        /*! Get the model's original attributes hash (for fast lookup). */
+        inline const std::unordered_map<QString, int> &getOriginalsHash() const;
         /*! Get the model's raw original attribute value. */
         QVariant getRawOriginal(const QString &key,
                                 const QVariant &defaultValue = {}) const;
-        /*! Get the model's raw original attribute values. */
+        /*! Get the model's raw original attribute values (insert order). */
         inline const QVector<AttributeItem> &getRawOriginals() const;
         /*! Unset an attribute on the model, returns the number of attributes removed. */
         Model &unsetAttribute(const AttributeItem &value);
@@ -568,16 +570,20 @@ namespace Relations {
         Related *
         getRelationValue(const QString &relation);
 
-        /*! Get the attributes that have been changed since last sync. */
+        /*! Get the attributes that have been changed since last sync
+            (insert order). */
         QVector<AttributeItem> getDirty() const;
+        /*! Get the attributes that have been changed since last sync
+            (for fast lookup). */
+        std::unordered_map<QString, int> getDirtyHash() const;
         /*! Determine if the model or any of the given attribute(s) have
             been modified. */
         inline bool isDirty(const QStringList &attributes = {}) const
-        { return hasChanges(getDirty(), attributes); }
+        { return hasChanges(getDirtyHash(), attributes); }
         /*! Determine if the model or any of the given attribute(s) have
             been modified. */
         inline bool isDirty(const QString &attribute) const
-        { return hasChanges(getDirty(), QStringList {attribute}); }
+        { return hasChanges(getDirtyHash(), QStringList {attribute}); }
         /*! Determine if the model and all the given attribute(s) have
             remained the same. */
         inline bool isClean(const QStringList &attributes = {}) const
@@ -587,17 +593,20 @@ namespace Relations {
         inline bool isClean(const QString &attribute) const
         { return !isDirty(attribute); }
 
-        /*! Get the attributes that were changed. */
+        /*! Get the attributes that were changed (insert order). */
         inline const QVector<AttributeItem> &getChanges() const
         { return m_changes; }
+        /*! Get the attributes that were changed (for fast lookup). */
+        inline const std::unordered_map<QString, int> &getChangesHash() const
+        { return m_changesHash; }
         /*! Determine if the model and all the given attribute(s) have
             remained the same. */
         inline bool wasChanged(const QStringList &attributes = {}) const
-        { return hasChanges(getChanges(), attributes); }
+        { return hasChanges(getChangesHash(), attributes); }
         /*! Determine if the model and all the given attribute(s) have
             remained the same. */
         inline bool wasChanged(const QString &attribute) const
-        { return hasChanges(getChanges(), QStringList {attribute}); }
+        { return hasChanges(getChangesHash(), QStringList {attribute}); }
 
         /*! Get the format for database stored dates. */
         const QString &getDateFormat() const;
@@ -801,11 +810,10 @@ namespace Relations {
         getRelationshipFromMethod(const QString &relation);
 
         /*! Determine if any of the given attributes were changed. */
-        bool hasChanges(const QVector<AttributeItem> &changes,
+        bool hasChanges(const std::unordered_map<QString, int> &changes,
                         const QStringList &attributes = {}) const;
         /*! Sync the changed attributes. */
-        inline Model &syncChanges()
-        { m_changes = std::move(getDirty()); return model(); }
+        Model &syncChanges();
 
         /*! Determine if the new and old values for a given key are equivalent. */
         bool originalIsEquivalent(const QString &key) const;
@@ -816,6 +824,12 @@ namespace Relations {
         QDateTime asDateTime(const QVariant &value) const;
         /*! Obtain timestamp column names. */
         const QStringList &timestampColumnNames() const;
+
+        /*! Rehash attribute positions from the given index. */
+        void rehashAttributePositions(
+                const QVector<AttributeItem> &attributes,
+                std::unordered_map<QString, int> &attributesHash,
+                int from = 0);
 
         /* HasRelationships */
         /*! Create a new model instance for a related model. */
@@ -920,14 +934,24 @@ namespace Relations {
         /* HasAttributes */
         // TODO should be QHash, I choosen QVector, becuase I wanted to preserve attributes order, think about this, would be solution to use undered_map which preserves insert order? and do I really need to preserve insert order? 🤔, the same is true for m_original field silverqx
         // TODO future Default Attribute Values, can not be u_attributes because of CRTP, because BaseModel is initialized first and u_attributes are uninitialized, the best I've come up with was BaseModel.init() and init default attrs. from there silverqx
-        /*! The model's attributes. */
+        /*! The model's attributes (insert order). */
         QVector<AttributeItem> m_attributes;
-        /*! The model attribute's original state.
+        /*! The model attribute's original state (insert order).
             On the model from many-to-many relation also contains all pivot values,
-            that is normal. */
+            that is normal (insert order). */
         QVector<AttributeItem> m_original;
-        /*! The changed model attributes. */
+        /*! The changed model attributes (insert order). */
         QVector<AttributeItem> m_changes;
+
+        /* Don't want to use std::reference_wrapper to attributes, because if a copy
+           of the model is made, all references would be invalidated. */
+        /*! The model's attributes hash (for fast lookup). */
+        std::unordered_map<QString, int> m_attributesHash;
+        /*! The model attribute's original state (for fast lookup). */
+        std::unordered_map<QString, int> m_originalHash;
+        /*! The changed model attributes (for fast lookup). */
+        std::unordered_map<QString, int> m_changesHash;
+
         /*! The storage format of the model's date columns. */
         inline static QString u_dateFormat {""};
         /*! The attributes that should be mutated to dates. @deprecated */
@@ -2745,8 +2769,24 @@ namespace Relations {
     }
 
     template<typename Model, typename ...AllRelations>
+    std::unordered_map<QString, int>
+    BaseModel<Model, AllRelations...>::getDirtyHash() const
+    {
+        const auto size = m_attributes.size();
+        std::unordered_map<QString, int> dirtyHash(size);
+
+        for (auto i = 0; i < size; ++i)
+            if (const auto &key = m_attributes.at(i).key;
+                !originalIsEquivalent(key)
+            )
+                dirtyHash.emplace(m_attributes.at(i).key, i);
+
+        return dirtyHash;
+    }
+
+    template<typename Model, typename ...AllRelations>
     bool BaseModel<Model, AllRelations...>::hasChanges(
-            const QVector<AttributeItem> &changes,
+            const std::unordered_map<QString, int> &changes,
             const QStringList &attributes) const
     {
         /* If no specific attributes were provided, we will just see if the dirty array
@@ -2758,34 +2798,28 @@ namespace Relations {
         /* Here we will spin through every attribute and see if this is in the array of
            dirty attributes. If it is, we will return true and if we make it through
            all of the attributes for the entire array we will return false at end. */
-        for (const auto &attribute : attributes) {
-            // TODO future hasOriginal() silverqx
-            const auto changesContainKey =
-                    ranges::contains(changes, true,
-                                     [&attribute](const auto &changed)
-            {
-                return attribute == changed.key;
-            });
-
-            if (changesContainKey)
+        for (const auto &attribute : attributes)
+            if (changes.contains(attribute))
                 return true;
-        }
 
         return false;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::syncChanges()
+    {
+        m_changes = getDirty();
+
+        rehashAttributePositions(m_changes, m_changesHash);
+
+        return model();
     }
 
     template<typename Model, typename ...AllRelations>
     bool
     BaseModel<Model, AllRelations...>::originalIsEquivalent(const QString &key) const
     {
-        // TODO future hasOriginal() silverqx
-        const auto originalContainKey = ranges::contains(m_original, true,
-                                                         [&key](const auto &original)
-        {
-            return original.key == key;
-        });
-
-        if (!originalContainKey)
+        if (!m_originalHash.contains(key))
             return false;
 
         const auto attribute = getAttributeFromArray(key);
@@ -2881,6 +2915,20 @@ namespace Relations {
         };
 
         return cached;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::rehashAttributePositions(
+            const QVector<AttributeItem> &attributes,
+            std::unordered_map<QString, int> &attributesHash,
+            const int from)
+    {
+        /* This member function is universal and can be used for m_attributes,
+           m_changes and m_original and it associated unordered_maps m_attributesHash,
+           m_changesHash and m_originalHash. */
+        for (auto i = from; i < attributes.size(); ++i)
+            // 'i' is the position
+            attributesHash[attributes.at(i).key] = i;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -3017,21 +3065,19 @@ namespace Relations {
         ))
             value = fromDateTime(value);
 
-        // TODO mistake m_attributes/m_original 😭 silverqx
-        // TODO extract to hasAttribute() silverqx
-        const auto size = m_attributes.size();
+        // Found
+        if (const auto attribute = m_attributesHash.find(key);
+            attribute != m_attributesHash.end()
+        )
+            m_attributes[attribute->second].value.swap(value);
 
-        // Search an attribute in the vector, omg
-        int i;
-        for (i = 0; i < size; ++i)
-            if (m_attributes[i].key == key)
-                break;
+        // Not Found
+        else {
+            auto position = m_attributes.size();
 
-        // Not found
-        if (i == size)
             m_attributes.append({key, value});
-        else
-            m_attributes[i] = {key, value};
+            m_attributesHash.emplace(key, position);
+        }
 
         return model();
     }
@@ -3042,7 +3088,14 @@ namespace Relations {
             const QVector<AttributeItem> &attributes,
             const bool sync)
     {
-        m_attributes = attributes;
+        m_attributes.reserve(attributes.size());
+        m_attributes = Utils::Attribute::removeDuplicitKeys(attributes);
+
+        // Build attributes hash
+        m_attributesHash.clear();
+        m_attributesHash.reserve(m_attributes.size());
+
+        rehashAttributePositions(m_attributes, m_attributesHash);
 
         if (sync)
             syncOriginal();
@@ -3054,6 +3107,8 @@ namespace Relations {
     Model &BaseModel<Model, AllRelations...>::syncOriginal()
     {
         m_original = getAttributes();
+
+        rehashAttributePositions(m_original, m_originalHash);
 
         return model();
     }
@@ -3070,22 +3125,25 @@ namespace Relations {
     }
 
     template<typename Model, typename ...AllRelations>
+    const std::unordered_map<QString, int> &
+    BaseModel<Model, AllRelations...>::getAttributesHash() const
+    {
+        // FEATURE castable silverqx
+//        mergeAttributesFromClassCasts();
+
+        return m_attributesHash;
+    }
+
+    template<typename Model, typename ...AllRelations>
     QVariant BaseModel<Model, AllRelations...>::getAttribute(const QString &key) const
     {
         if (key.isEmpty() || key.isNull())
             return {};
 
-        // TODO duplicate hasAttribute silverqx
-        const auto containsKey = ranges::contains(m_attributes, true,
-                                                  [&key](const auto &attribute)
-        {
-            return attribute.key == key;
-        });
-
         /* If the attribute exists in the attribute array or has a "get" mutator we will
            get the attribute's value. Otherwise, we will proceed as if the developers
            are asking for a relationship's value. This covers both types of values. */
-        if (containsKey
+        if (m_attributesHash.contains(key)
 //            || array_key_exists($key, $this->casts)
 //            || hasGetMutator(key)
 //            || isClassCastable(key)
@@ -3110,18 +3168,11 @@ namespace Relations {
     QVariant
     BaseModel<Model, AllRelations...>::getAttributeFromArray(const QString &key) const
     {
-        const auto &attributes = getAttributes();
-        const auto itAttribute = ranges::find_if(attributes,
-                                                 [&key](const auto &attribute)
-        {
-            return attribute.key == key;
-        });
-
         // Not found
-        if (itAttribute == ranges::end(attributes))
+        if (!m_attributesHash.contains(key))
             return {};
 
-        return itAttribute->value;
+        return m_attributes.at(m_attributesHash.at(key)).value;
     }
 
     // NOTE api different silverqx
@@ -3150,23 +3201,25 @@ namespace Relations {
         return originals;
     }
 
+    template<typename Model, typename ...AllRelations>
+    const std::unordered_map<QString, int> &
+    BaseModel<Model, AllRelations...>::getOriginalsHash() const
+    {
+        return m_originalHash;
+    }
+
     // NOTE api different silverqx
     template<typename Model, typename ...AllRelations>
     QVariant
     BaseModel<Model, AllRelations...>::getRawOriginal(
             const QString &key, const QVariant &defaultValue) const
     {
-        const auto itOriginal = ranges::find_if(m_original,
-                                                [&key](const auto &original)
-        {
-            return original.key == key;
-        });
+        // Found
+        if (m_originalHash.contains(key))
+            return m_original.at(m_originalHash.at(key)).value;
 
         // Not found, return the default value
-        if (itOriginal == ranges::end(m_original))
-            return defaultValue;
-
-        return itOriginal->value;
+        return defaultValue;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -3180,8 +3233,20 @@ namespace Relations {
     Model &
     BaseModel<Model, AllRelations...>::unsetAttribute(const AttributeItem &value)
     {
-        // TODO mistake m_attributes should never have duplicit keys silverqx
-        m_attributes.removeAll(value);
+        const auto &key = value.key;
+
+        // Not found
+        if (!m_attributesHash.contains(key))
+            return model();
+
+        const auto position = m_attributesHash.at(key);
+
+        // TODO future, all the operations on this containers should be synchronized silverqx
+        m_attributes.removeAt(position);
+        m_attributesHash.erase(key);
+
+        // Rehash attributes, but only attributes which were shifted
+        rehashAttributePositions(m_attributes, m_attributesHash, position);
 
         return model();
     }
@@ -3189,11 +3254,17 @@ namespace Relations {
     template<typename Model, typename ...AllRelations>
     Model &BaseModel<Model, AllRelations...>::unsetAttribute(const QString &key)
     {
-        // TODO mistake m_attributes should never have duplicit keys silverqx
-        QMutableVectorIterator<AttributeItem> it(m_attributes);
-        while (it.hasNext())
-            if (it.next().key == key)
-                it.remove();
+        // Not found
+        if (!m_attributesHash.contains(key))
+            return model();
+
+        const auto position = m_attributesHash.at(key);
+
+        m_attributes.removeAt(position);
+        m_attributesHash.erase(key);
+
+        // Rehash attributes, but only attributes which were shifted
+        rehashAttributePositions(m_attributes, m_attributesHash, position);
 
         return model();
     }
@@ -3366,17 +3437,12 @@ namespace Relations {
     BaseModel<Model, AllRelations...>::getOriginalWithoutRewindingModel(
             const QString &key, const QVariant &defaultValue) const
     {
-        const auto itOriginal = ranges::find_if(m_original,
-                                                [&key](const auto &original)
-        {
-            return original.key == key;
-        });
+        // Found
+        if (m_originalHash.contains(key))
+            return transformModelValue(key, m_original.at(m_originalHash.at(key)).value);
 
         // Not found, return the default value
-        if (itOriginal == ranges::end(m_original))
-            return defaultValue;
-
-        return transformModelValue(key, itOriginal->value);
+        return defaultValue;
     }
 
     template<typename Model, typename ...AllRelations>
@@ -3713,15 +3779,14 @@ namespace Relations {
     template<typename Model, typename ...AllRelations>
     QVariant BaseModel<Model, AllRelations...>::getKeyForSaveQuery() const
     {
-        // TODO reason, why m_attributes and m_original should be QMap/std::map silverqx
-        const auto itOriginal = ranges::find_if(
-                                    m_original,
-                                    [&key = getKeyName()](const auto &original)
-        {
-            return original.key == key;
-        });
+        // Found
+        if (const auto keyName = getKeyName();
+            m_originalHash.contains(keyName)
+        )
+            return m_original.at(m_originalHash.at(keyName)).value;
 
-        return itOriginal != ranges::end(m_original) ? itOriginal->value : getKey();
+        // Not found, return the primary key value
+        return getKey();
     }
 
     template<typename Model, typename ...AllRelations>

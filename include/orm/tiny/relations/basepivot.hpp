@@ -147,13 +147,13 @@ namespace Orm::Tiny::Relations
     bool BasePivot<PivotModel>::hasTimestampAttributes(
             const QVector<AttributeItem> &attributes) const
     {
-        // TODO mistake m_attributes/m_original 😭 silverqx
-        return ranges::contains(attributes, true,
-                                [&createdAtColumn = this->getCreatedAtColumn()]
-                                (const auto &attribute)
-       {
-           return attribute.key == createdAtColumn;
-       });;
+        const auto &createdAtColumn = this->getCreatedAtColumn();
+
+        for (const auto &attribute : attributes)
+            if (attribute.key == createdAtColumn)
+                return true;
+
+        return false;
     }
 
     template<typename PivotModel>
@@ -166,18 +166,10 @@ namespace Orm::Tiny::Relations
     template<typename PivotModel>
     bool BasePivot<PivotModel>::remove()
     {
-        // TODO mistake m_attributes/m_original 😭 silverqx
-        const auto attributesContainsKey =
-                ranges::contains(this->m_attributes, true,
-                                 [&key = this->getKeyName()](const auto &attribute)
-        {
-            return attribute.key == key;
-        });
-
         /* If a primary key is defined on the current Pivot model, we can use
            BaseModel's 'remove' method, otherwise we have to build a query with
            the help of QueryBuilder's 'where' method. */
-        if (attributesContainsKey)
+        if (this->m_attributesHash.contains(this->getKeyName()))
             return BaseModel<PivotModel>::remove();
 
         // FEATURE events silverqx
@@ -209,16 +201,8 @@ namespace Orm::Tiny::Relations
     TinyBuilder<PivotModel> &
     BasePivot<PivotModel>::setKeysForSelectQuery(TinyBuilder<PivotModel> &query)
     {
-        const auto containsKey =
-                ranges::contains(this->m_attributes, true,
-                                 [&key = this->getKeyName()]
-                                 (const auto &attribute)
-        {
-            // TODO now isset also check for NULL, so I have to check for QVariant::isNull/isValid too silverqx
-            return attribute.key == key;
-        });
-
-        if (containsKey)
+        // TODO now isset also check for NULL, so I have to check for QVariant::isNull/isValid too silverqx
+        if (this->m_attributesHash.contains(this->getKeyName()))
             return BaseModel<PivotModel>::setKeysForSelectQuery(query);
 
         query.whereEq(m_foreignKey,
