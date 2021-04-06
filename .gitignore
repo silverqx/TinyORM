@@ -76,4 +76,6 @@ Thumbs.db
 **/tests/**/testdata/dotenv.ps1
 
 # others
+~$*.xlsx
 /todos.csv
+/todos.xlsx
