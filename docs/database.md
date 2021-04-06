@@ -14,6 +14,7 @@ Almost every modern application interacts with a database. TinyORM makes interac
 
 <div class="content-list" markdown="1">
 - MySQL or MariaDB 5.0+ ([Version Policy](https://en.wikipedia.org/wiki/MySQL#Release_history))
+- SQLite 3.8.8+
 </div>
 
 TinyORM internally uses `QtSql` module, you can look for [supported databases](https://doc.qt.io/qt-5/sql-driver.html#supported-databases).
@@ -27,6 +28,7 @@ You can create and configure new database connection by `create` method provided
 
     #include <orm/db.hpp>
 
+    // Ownership of a unique_ptr()
     auto manager = DB::create({
         {"driver",    "QMYSQL"},
         {"host",      qEnvironmentVariable("DB_HOST", "127.0.0.1")},
@@ -36,6 +38,7 @@ You can create and configure new database connection by `create` method provided
         {"password",  qEnvironmentVariable("DB_PASSWORD", "")},
         {"charset",   qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
         {"collation", qEnvironmentVariable("DB_COLLATION", "utf8mb4_0900_ai_ci")},
+        {"timezone",  "+00:00"},
         {"strict",    true},
         {"options",   QVariantHash()},
     });
@@ -45,6 +48,25 @@ The first argument is configuration hash which is of type `QVariantHash` and the
 You may also configure connection options by `options` key as `QVariantHash` or `QString`, you can pass any [connection options](https://doc.qt.io/qt-5/qsqldatabase.html#setConnectOptions) supported by `QSqlDatabase`.
 
 > {note} A database connection is resolved lazily, which means that the connection configuration is only saved after the `DB::create` method call. The connection will be resolved after you run some query or you can create it using the `DB::connection` method.
+
+<a name="sqlite-configuration"></a>
+#### SQLite Configuration
+
+SQLite databases are contained within a single file on your filesystem. You can create a new SQLite database using the `touch` command in your terminal: `touch database.sqlite`. After the database has been created, you may configure SQLite database connection:
+
+    #include <orm/db.hpp>
+
+    // Ownership of a unique_ptr()
+    auto manager = DB::create({
+        {"driver",    "QSQLITE"},
+        {"database",  qEnvironmentVariable("DB_DATABASE", "/absolute/path/to/database.sqlite")},
+        {"foreign_key_constraints", qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
+        {"check_database_exists",   true},
+    });
+
+The `database` configuration value is the absolute path to the database. To enable foreign key constraints for SQLite connections, you should set the `foreign_key_constraints` configuration value to `true`, if this configuration value is not set, then the default of the SQLite driver will be used.
+
+If the `check_database_exists` configuration value is set to the `true` value, then the database connection throws an `Orm::InvalidArgumentError` exception, when the SQLite database file doesn't exist. If it is set to the `false` value and the SQLite database file doesn't exist, then it will be created for you by SQLite driver. The default value is `true`.
 
 <a name="running-sql-queries"></a>
 ## Running SQL Queries
@@ -136,30 +158,25 @@ You can configure multiple database connections at once during `DatabaseManager`
 
     #include <orm/db.hpp>
 
+    // Ownership of a unique_ptr()
     auto manager = DB::create({
         {"mysql", {
             {"driver",    "QMYSQL"},
-            {"host",      qEnvironmentVariable("DB_HOST", "127.0.0.1")},
-            {"port",      qEnvironmentVariable("DB_PORT", "3306")},
-            {"database",  qEnvironmentVariable("DB_DATABASE", "")},
-            {"username",  qEnvironmentVariable("DB_USERNAME", "root")},
-            {"password",  qEnvironmentVariable("DB_PASSWORD", "")},
-            {"charset",   qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
-            {"collation", qEnvironmentVariable("DB_COLLATION", "utf8mb4_0900_ai_ci")},
+            {"host",      qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+            {"port",      qEnvironmentVariable("DB_MYSQL_PORT", "3306")},
+            {"database",  qEnvironmentVariable("DB_MYSQL_DATABASE", "")},
+            {"username",  qEnvironmentVariable("DB_MYSQL_USERNAME", "root")},
+            {"password",  qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
+            {"charset",   qEnvironmentVariable("DB_MYSQL_CHARSET", "utf8mb4")},
+            {"collation", qEnvironmentVariable("DB_MYSQL_COLLATION", "utf8mb4_0900_ai_ci")},
             {"strict",    true},
             {"options",   QVariantHash()},
         }},
-        {"mysql_test", {
-            {"driver",    "QMYSQL"},
-            {"host",      qEnvironmentVariable("DB_HOST", "127.0.0.1")},
-            {"port",      qEnvironmentVariable("DB_PORT", "3306")},
-            {"database",  qEnvironmentVariable("DB_DATABASE", "")},
-            {"username",  qEnvironmentVariable("DB_USERNAME", "root")},
-            {"password",  qEnvironmentVariable("DB_PASSWORD", "")},
-            {"charset",   qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
-            {"collation", qEnvironmentVariable("DB_COLLATION", "utf8mb4_0900_ai_ci")},
-            {"strict",    true},
-            {"options",   QVariantHash()},
+        {"sqlite", {
+            {"driver",    "QSQLITE"},
+            {"database",  qEnvironmentVariable("DB_SQLITE_DATABASE", "")},
+            {"foreign_key_constraints", qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS", "true")},
+            {"check_database_exists",   true},
         }},
     }, "mysql");
 
