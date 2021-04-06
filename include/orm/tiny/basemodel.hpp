@@ -932,8 +932,8 @@ namespace Relations {
 //        QVector<WithItem> u_withCount;
 
         /* HasAttributes */
-        // TODO should be QHash, I choosen QVector, becuase I wanted to preserve attributes order, think about this, would be solution to use undered_map which preserves insert order? and do I really need to preserve insert order? 🤔, the same is true for m_original field silverqx
-        // TODO future Default Attribute Values, can not be u_attributes because of CRTP, because BaseModel is initialized first and u_attributes are uninitialized, the best I've come up with was BaseModel.init() and init default attrs. from there silverqx
+        /*! The model's default values for attributes. */
+        inline static const QVector<AttributeItem> u_attributes;
         /*! The model's attributes (insert order). */
         QVector<AttributeItem> m_attributes;
         /*! The model attribute's original state (insert order).
@@ -1090,10 +1090,9 @@ namespace Relations {
         // Compile time check if a primary key type is supported by a QVariant
         qMetaTypeId<typename Model::KeyType>();
 
-        // TODO default attributes, update comment when done silverqx
-        /* It is taken into account only when attributes are initialized
-           in the derived model class, but Default attributes are not yet
-           implemented, but I'll keep it active anyway. */
+        // Default Attribute Values
+        fill(Model::u_attributes);
+
         syncOriginal();
     }
 

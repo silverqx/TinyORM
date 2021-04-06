@@ -8,6 +8,7 @@
 #include "models/torrentpeereager_norelations.hpp"
 #include "models/torrentpreviewablefileeager.hpp"
 
+using Orm::AttributeItem;
 using Orm::Tiny::BaseModel;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
@@ -57,6 +58,13 @@ private:
     QVector<WithItem> u_with {
         {"torrentFiles.fileProperty"},
         {"torrentPeer"},
+    };
+
+    /*! The model's default values for attributes. */
+    inline static const QVector<AttributeItem> u_attributes {
+        {"size",     0},
+        {"progress", 0},
+        {"added_on", QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)},
     };
 
     /*! The attributes that should be mutated to dates. @deprecated */

@@ -5,6 +5,7 @@
 #include "orm/db.hpp"
 
 #include "models/torrent.hpp"
+#include "models/torrenteager.hpp"
 
 #include "database.hpp"
 
@@ -20,6 +21,8 @@ private slots:
     void subscriptOperator() const;
     void subscriptOperator_OnLhs() const;
     void subscriptOperator_OnLhs_AssignAttributeReference() const;
+
+    void defaultAttributeValues() const;
 
 private:
     /*! Connection name used in this test case. */
@@ -93,6 +96,56 @@ void tst_BaseModel_Connection_Independent
     const auto torrent2Name = torrent2->getAttribute("name");
     QCOMPARE(torrent2Name, QVariant(name));
     QCOMPARE(torrent3->getAttribute("name"), torrent2Name);
+}
+
+void tst_BaseModel_Connection_Independent::defaultAttributeValues() const
+{
+    {
+        TorrentEager torrent;
+
+        QVERIFY(!torrent.exists);
+        QCOMPARE(torrent["size"], QVariant(0));
+        QCOMPARE(torrent["progress"], QVariant(0));
+        QCOMPARE(torrent["added_on"],
+                QVariant(QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)));
+        QCOMPARE(torrent.getAttributes().size(), 3);
+    }
+    {
+        const auto name = "test22";
+        const auto note = "Torrent::instance()";
+
+        auto torrent = TorrentEager::instance({
+            {"name", name},
+            {"note", note},
+        });
+
+        QVERIFY(!torrent.exists);
+        QCOMPARE(torrent["size"], QVariant(0));
+        QCOMPARE(torrent["progress"], QVariant(0));
+        QCOMPARE(torrent["added_on"],
+                QVariant(QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)));
+        QCOMPARE(torrent["name"], QVariant(name));
+        QCOMPARE(torrent["note"], QVariant(note));
+        QCOMPARE(torrent.getAttributes().size(), 5);
+    }
+    {
+        const auto name = "test22";
+        const auto note = "Torrent::instance()";
+
+        TorrentEager torrent {
+            {"name", name},
+            {"note", note},
+        };
+
+        QVERIFY(!torrent.exists);
+        QCOMPARE(torrent["size"], QVariant(0));
+        QCOMPARE(torrent["progress"], QVariant(0));
+        QCOMPARE(torrent["added_on"],
+                QVariant(QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)));
+        QCOMPARE(torrent["name"], QVariant(name));
+        QCOMPARE(torrent["note"], QVariant(note));
+        QCOMPARE(torrent.getAttributes().size(), 5);
+    }
 }
 
 QTEST_MAIN(tst_BaseModel_Connection_Independent)

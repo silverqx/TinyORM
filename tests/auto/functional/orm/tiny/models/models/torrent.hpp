@@ -10,6 +10,7 @@
 #include "models/torrentpeer.hpp"
 #include "models/torrentpreviewablefile.hpp"
 
+//using Orm::AttributeItem;
 using Orm::Tiny::BaseModel;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;
@@ -122,6 +123,13 @@ private:
 
     /*! The connection name for the model. */
 //    QString u_connection {"sqlite"};
+
+    /*! The model's default values for attributes. */
+//    inline static const QVector<AttributeItem> u_attributes {
+//        {"size",     0},
+//        {"progress", 0},
+//        {"added_on", QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)},
+//    };
 
     /*! Indicates if the model should be timestamped. */
 //    bool u_timestamps = true;
