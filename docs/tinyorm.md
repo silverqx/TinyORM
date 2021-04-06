@@ -34,7 +34,9 @@ Let's examine a basic model class and discuss some of TinyORM's key conventions:
 
     #include <orm/tiny/basemodel.hpp>
 
-    class Flight final : public Orm::Tiny::BaseModel<Flight>
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
     {
         friend BaseModel;
 
@@ -52,7 +54,9 @@ If your model's corresponding database table does not fit this convention, you m
 
     #include <orm/tiny/basemodel.hpp>
 
-    class Flight final : public Orm::Tiny::BaseModel<Flight>
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
     {
         friend BaseModel;
         using BaseModel::BaseModel;
@@ -69,7 +73,9 @@ TinyORM will also assume that each model's corresponding database table has a pr
 
     #include <orm/tiny/basemodel.hpp>
 
-    class Flight final : public Orm::Tiny::BaseModel<Flight>
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
     {
         friend BaseModel;
         using BaseModel::BaseModel;
@@ -83,7 +89,9 @@ In addition, TinyORM assumes that the primary key is an incrementing integer val
 
     #include <orm/tiny/basemodel.hpp>
 
-    class Flight final : public Orm::Tiny::BaseModel<Flight>
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
     {
         friend BaseModel;
         using BaseModel::BaseModel;
@@ -107,7 +115,9 @@ By default, TinyOrm expects `created_at` and `updated_at` columns to exist on yo
 
     #include <orm/tiny/basemodel.hpp>
 
-    class Flight final : public Orm::Tiny::BaseModel<Flight>
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
     {
         friend BaseModel;
         using BaseModel::BaseModel;
@@ -121,7 +131,9 @@ If you need to customize the format of your model's timestamps, set the private 
 
     #include <orm/tiny/basemodel.hpp>
 
-    class Flight final : public Orm::Tiny::BaseModel<Flight>
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
     {
         friend BaseModel;
         using BaseModel::BaseModel;
@@ -135,7 +147,9 @@ If you need to customize the names of the columns used to store the timestamps, 
 
     #include <orm/tiny/basemodel.hpp>
 
-    class Flight final : public Orm::Tiny::BaseModel<Flight>
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
     {
         friend BaseModel;
         using BaseModel::BaseModel;
@@ -156,7 +170,9 @@ By default, all TinyOrm models will use the default database connection that is 
 
     #include <orm/tiny/basemodel.hpp>
 
-    class Flight final : public Orm::Tiny::BaseModel<Flight>
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
     {
         friend BaseModel;
         using BaseModel::BaseModel;
