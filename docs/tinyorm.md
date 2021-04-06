@@ -7,6 +7,7 @@
     - [Primary Keys](#primary-keys)
     - [Timestamps](#timestamps)
     - [Database Connections](#database-connections)
+    - [Default Attribute Values](#default-attribute-values)
 - [Retrieving Models](#retrieving-models)
     - [Containers](#containers)
 - [Retrieving Single Models](#retrieving-single-models)
@@ -168,6 +169,32 @@ By default, all TinyOrm models will use the default database connection that is 
 In special cases, when you want to query the database through a different connection, you can use `BaseModel::on` method, which takes the connection name as the first argument:
 
     auto user = User::on("sqlite")->find(1);
+
+<a name="default-attribute-values"></a>
+## Default Attribute Values
+
+By default, a newly instantiated model instance will not contain any attribute values. If you would like to define the default values for some of your model's attributes, you may define an `u_attributes` data member on your model, it has to be **static** and can be **const**:
+
+    #include <QDateTime>
+
+    #include <orm/tiny/basemodel.hpp>
+
+    using Orm::AttributeItem;
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
+    {
+        friend BaseModel;
+        using BaseModel::BaseModel;
+
+    private:
+        /*! The model's default values for attributes. */
+        inline static const QVector<AttributeItem> u_attributes {
+            {"delayed",  false},
+            {"progress", 0},
+            {"added_on", QDateTime::currentDateTime()},
+        };
+    };
 
 <a name="retrieving-models"></a>
 ## Retrieving Models
