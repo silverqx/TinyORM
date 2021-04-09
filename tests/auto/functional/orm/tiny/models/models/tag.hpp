@@ -67,6 +67,11 @@ private:
         {"tagProperty"},
     };
 
+    /*! The attributes that are mass assignable. */
+    inline static QStringList u_fillable {
+        "name",
+    };
+
     /*! All of the relationships to be touched. */
     QStringList u_touches {"torrents"};
 };

@@ -53,6 +53,15 @@ private:
 //        {"fileProperty"},
     };
 
+    /*! The attributes that are mass assignable. */
+    inline static QStringList u_fillable {
+        "file_index",
+        "filepath",
+        "size",
+        "progress",
+        "note",
+    };
+
     /*! All of the relationships to be touched. */
     QStringList u_touches {"torrent"};
 };

@@ -4,6 +4,7 @@
 
 #include "orm/db.hpp"
 
+#include "models/massassignmentmodels.hpp"
 #include "models/setting.hpp"
 #include "models/torrent.hpp"
 
@@ -69,11 +70,13 @@ private slots:
     void create_Failed() const;
 
     void update() const;
-    void update_NonExistent() const;
-    void update_Failed() const;
+    void update_OnNonExistentModel() const;
+    void update_NonExistentAttribute() const;
     void update_SameValue() const;
 
     void truncate() const;
+
+    void massAssignment_NotGuardableColumn() const;
 };
 
 void tst_BaseModel::initTestCase_data() const
@@ -1139,7 +1142,7 @@ void tst_BaseModel::update() const
              updatedAtOriginal.toDateTime());
 }
 
-void tst_BaseModel::update_NonExistent() const
+void tst_BaseModel::update_OnNonExistentModel() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1147,11 +1150,12 @@ void tst_BaseModel::update_NonExistent() const
 
     Torrent torrent;
 
-    auto result = torrent.update({{"progress", 333}});
-    QVERIFY(!result);
+    QVERIFY(!torrent.exists);
+
+    QVERIFY(!torrent.update({{"progress", 333}}));
 }
 
-void tst_BaseModel::update_Failed() const
+void tst_BaseModel::update_NonExistentAttribute() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1161,10 +1165,9 @@ void tst_BaseModel::update_Failed() const
 
     QVERIFY(torrent->exists);
 
-    // NOTE api different, mass assignable is not implemented now, and because of that it throws, if the mass assignable was implemented, result would be true silverqx
-    QVERIFY_EXCEPTION_THROWN(
-                torrent->update({{"progress-NON_EXISTENT", 333}}),
-                QueryError);
+    /* Zero attributes will be changed because torrent.isDirty() == false and
+       Torrent::save() returns true in this case. */
+    QVERIFY(torrent->update({{"progress-NON_EXISTENT", 333}}));
 }
 
 void tst_BaseModel::update_SameValue() const
@@ -1220,6 +1223,21 @@ void tst_BaseModel::truncate() const
     Setting::truncate();
 
     QCOMPARE(Setting::all().size(), 0);
+}
+
+void tst_BaseModel::massAssignment_NotGuardableColumn() const
+{
+    /* This test has to be here because it internally calls columns listing against
+       database, so it is connection-dependent. */
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Torrent_GuardedAttribute torrent;
+
+    torrent.fill({{"dummy-NON_EXISTENT", "foo"}});
+
+    QCOMPARE(torrent.getAttributes().size(), 0);
 }
 
 QTEST_MAIN(tst_BaseModel)

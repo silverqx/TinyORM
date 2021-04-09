@@ -19,8 +19,17 @@ SOURCES += \
     $$PWD/orm/query/grammars/mysqlgrammar.cpp \
     $$PWD/orm/query/grammars/sqlitegrammar.cpp \
     $$PWD/orm/query/joinclause.cpp \
+    $$PWD/orm/query/processors/mysqlprocessor.cpp \
+    $$PWD/orm/query/processors/processor.cpp \
+    $$PWD/orm/query/processors/sqliteprocessor.cpp \
     $$PWD/orm/query/querybuilder.cpp \
     $$PWD/orm/queryerror.cpp \
+    $$PWD/orm/schema/builder.cpp \
+    $$PWD/orm/schema/grammars/grammar.cpp \
+    $$PWD/orm/schema/grammars/mysqlgrammar.cpp \
+    $$PWD/orm/schema/grammars/sqlitegrammar.cpp \
+    $$PWD/orm/schema/mysqlbuilder.cpp \
+    $$PWD/orm/schema/sqlitebuilder.cpp \
     $$PWD/orm/sqlerror.cpp \
     $$PWD/orm/sqliteconnection.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \

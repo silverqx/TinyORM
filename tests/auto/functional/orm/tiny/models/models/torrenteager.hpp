@@ -67,6 +67,16 @@ private:
         {"added_on", QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)},
     };
 
+    /*! The attributes that are mass assignable. */
+    inline static QStringList u_fillable {
+        "name",
+        "size",
+        "progress",
+        "added_on",
+        "hash",
+        "note",
+    };
+
     /*! The attributes that should be mutated to dates. @deprecated */
     inline static QStringList u_dates {"added_on"};
 };

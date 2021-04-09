@@ -28,9 +28,18 @@ HEADERS += \
     $$PWD/orm/query/grammars/mysqlgrammar.hpp \
     $$PWD/orm/query/grammars/sqlitegrammar.hpp \
     $$PWD/orm/query/joinclause.hpp \
+    $$PWD/orm/query/processors/mysqlprocessor.hpp \
+    $$PWD/orm/query/processors/processor.hpp \
+    $$PWD/orm/query/processors/sqliteprocessor.hpp \
     $$PWD/orm/query/querybuilder.hpp \
     $$PWD/orm/queryerror.hpp \
     $$PWD/orm/runtimeerror.hpp \
+    $$PWD/orm/schema/builder.hpp \
+    $$PWD/orm/schema/grammars/grammar.hpp \
+    $$PWD/orm/schema/grammars/mysqlgrammar.hpp \
+    $$PWD/orm/schema/grammars/sqlitegrammar.hpp \
+    $$PWD/orm/schema/mysqlbuilder.hpp \
+    $$PWD/orm/schema/sqlitebuilder.hpp \
     $$PWD/orm/sqlerror.hpp \
     $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/sqltransactionerror.hpp \
@@ -38,6 +47,7 @@ HEADERS += \
     $$PWD/orm/tiny/basemodel.hpp \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \
     $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
+    $$PWD/orm/tiny/massassignmenterror.hpp \
     $$PWD/orm/tiny/modelnotfounderror.hpp \
     $$PWD/orm/tiny/relationnotfounderror.hpp \
     $$PWD/orm/tiny/relationnotloadederror.hpp \

@@ -15,6 +15,7 @@
 - [Inserting & Updating Models](#inserting-and-updating-models)
     - [Inserts](#inserts)
     - [Updates](#updates)
+    - [Mass Assignment](#mass-assignment)
 - [Comparing Models](#comparing-models)
 
 <a name="introduction"></a>
@@ -355,6 +356,8 @@ Alternatively, you may use the `create` method to "save" a new model using a sin
         {"name", "London to Paris"},
     });
 
+However, before using the `create` method, you will need to specify either a `u_fillable` or `u_guarded` static data member on your model class. These static data members are required because all Eloquent models are protected against mass assignment vulnerabilities by default. To learn more about mass assignment, please consult the [mass assignment documentation](#mass-assignment).
+
 <a name="updates"></a>
 ### Updates
 
@@ -426,6 +429,66 @@ The `wasChanged` method determines if any attributes were changed after the mode
     user.wasChanged(); // true
     user.wasChanged("title"); // true
     user.wasChanged("first_name"); // false
+
+<a name="mass-assignment"></a>
+### Mass Assignment
+
+You may use the `create` method to "save" a new model using a single c++ statement. The inserted model instance will be returned to you by the method:
+
+    #include "models/flight.hpp"
+
+    auto flight = Flight::create({
+        {"name", "London to Paris"},
+    });
+
+However, before using the `create` method, you will need to specify either a `u_fillable` or `u_guarded` static data member on your model class. These data members are required because all TinyORM models are protected against mass assignment vulnerabilities by default.
+
+A mass assignment vulnerability occurs when a user passes an unexpected HTTP request field and that field changes a column in your database that you did not expect. For example, a malicious user might send an `is_admin` parameter through an HTTP request, which is then passed to your model's `create` method, allowing the user to escalate themselves to an administrator.
+
+So, to get started, you should define which model attributes you want to make mass assignable. You may do this using the `u_fillable` static data member on the model. For example, let's make the `name` attribute of our `Flight` model mass assignable:
+
+    #include <orm/tiny/basemodel.hpp>
+
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
+    {
+        friend BaseModel;
+
+        using BaseModel::BaseModel;
+
+        /*! The attributes that are mass assignable. */
+        inline static QStringList u_fillable {
+            "name",
+        };
+    };
+
+Once you have specified which attributes are mass assignable, you may use the `create` method to insert a new record in the database. The `create` method returns the newly created model instance:
+
+    auto flight = Flight::create({{"name", "London to Paris"}});
+
+If you already have a model instance, you may use the `fill` method to populate it with the vector of attributes:
+
+    flight.fill({{"name", "Amsterdam to Frankfurt"}});
+
+<a name="allowing-mass-assignment"></a>
+#### Allowing Mass Assignment
+
+If you would like to make all of your attributes mass assignable, you may define your model's `u_guarded` static data member as an empty vector. If you choose to unguard your model, you should take special care to always hand-craft the vectors passed to TinyORM's `fill`, `create`, and `update` methods:
+
+    #include <orm/tiny/basemodel.hpp>
+
+    using Orm::Tiny::BaseModel;
+
+    class Flight final : public BaseModel<Flight>
+    {
+        friend BaseModel;
+
+        using BaseModel::BaseModel;
+
+        /*! The attributes that aren't mass assignable. */
+        inline static QStringList u_guarded {};
+    };
 
 <a name="comparing-models"></a>
 ## Comparing Models

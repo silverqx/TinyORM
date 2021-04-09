@@ -13,6 +13,7 @@ namespace Orm
 {
 
     class DatabaseConnection;
+
 namespace Query
 {
     class Builder;
@@ -21,9 +22,26 @@ namespace Grammars
 {
     class Grammar;
 }
+namespace Processors
+{
+    class Processor;
 }
-    using QueryBuilder = Query::Builder;
-    using QueryGrammar = Query::Grammars::Grammar;
+} // Orm::Query
+
+namespace Schema
+{
+    class Builder;
+namespace Grammars
+{
+    class Grammar;
+}
+} // Orm::Schema
+
+    using QueryBuilder   = Query::Builder;
+    using QueryGrammar   = Query::Grammars::Grammar;
+    using QueryProcessor = Query::Processors::Processor;
+    using SchemaBuilder  = Schema::Builder;
+    using SchemaGrammar  = Schema::Grammars::Grammar;
 
     /*! Counts executed statements in a current connection. */
     struct StatementsCounter
@@ -88,6 +106,11 @@ namespace Grammars
         select(const QString &queryString,
                const QVector<QVariant> &bindings = {}) = 0;
 
+        /*! Run a select statement against the database. */
+        virtual std::tuple<bool, QSqlQuery>
+        selectFromWriteConnection(const QString &queryString,
+                                  const QVector<QVariant> &bindings = {}) = 0;
+
         /*! Run a select statement against the database and returns a generator. */
 //        public function cursor($query, $bindings = [], $useReadPdo = true);
 
@@ -126,6 +149,7 @@ namespace Grammars
         /*! Check database connection and show warnings when the state changed. */
         virtual bool pingDatabase() = 0;
 
+        // FEATURE pretend, implement dry run mode silverqx
         /*! Execute the given callback in "dry run" mode. */
 //        public function pretend(Closure $callback);
 
@@ -137,9 +161,21 @@ namespace Grammars
 
         /*! Set the query grammar to the default implementation. */
         virtual void useDefaultQueryGrammar() = 0;
-
         /*! Get the query grammar used by the connection. */
         virtual const QueryGrammar &getQueryGrammar() const = 0;
+
+        /*! Set the schema grammar to the default implementation. */
+        virtual void useDefaultSchemaGrammar() = 0;
+        /*! Get the schema grammar used by the connection. */
+        virtual const SchemaGrammar &getSchemaGrammar() const = 0;
+
+        /*! Get a schema builder instance for the connection. */
+        virtual std::unique_ptr<SchemaBuilder> getSchemaBuilder() = 0;
+
+        /*! Set the query post processor to the default implementation. */
+        virtual void useDefaultPostProcessor() = 0;
+        /*! Get the query post processor used by the connection. */
+        virtual const QueryProcessor &getPostProcessor() const = 0;
 
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */

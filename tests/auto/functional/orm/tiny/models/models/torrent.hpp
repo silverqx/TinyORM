@@ -131,6 +131,23 @@ private:
 //        {"added_on", QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)},
 //    };
 
+    /*! The attributes that are mass assignable. */
+    inline static QStringList u_fillable {
+        "id",
+        "name",
+        "size",
+        "progress",
+        "added_on",
+        "hash",
+        "note",
+        "updated_at",
+    };
+
+    /*! The attributes that aren't mass assignable. */
+//    inline static QStringList u_guarded {
+//        "password",
+//    };
+
     /*! Indicates if the model should be timestamped. */
 //    bool u_timestamps = true;
 

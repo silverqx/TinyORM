@@ -12,7 +12,7 @@ include(../config.pri)
 # TinyORM library specific configuration
 # ---
 
-CONFIG *= create_prl
+CONFIG *= create_prl object_parallel_to_source
 #CONFIG *= create_libtool create_pc
 
 # Some info output

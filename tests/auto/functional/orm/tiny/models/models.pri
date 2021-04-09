@@ -10,6 +10,7 @@ HEADERS += \
     $$PWD/models/filepropertyproperty.hpp \
     $$PWD/models/forwards.hpp \
     $$PWD/models/forwardseager.hpp \
+    $$PWD/models/massassignmentmodels.hpp \
     $$PWD/models/role.hpp \
     $$PWD/models/roleuser.hpp \
     $$PWD/models/setting.hpp \

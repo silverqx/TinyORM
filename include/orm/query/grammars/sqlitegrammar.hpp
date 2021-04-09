@@ -59,7 +59,7 @@ namespace Orm::Query::Grammars
         const QVector<QString> m_operators {"sounds like"};
     };
 
-} // namespace Orm
+} // namespace Orm::Query::Grammars
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif

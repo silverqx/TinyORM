@@ -9,7 +9,6 @@
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-
 namespace Orm::Query::Grammars
 {
 

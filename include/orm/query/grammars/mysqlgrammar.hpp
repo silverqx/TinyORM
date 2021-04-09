@@ -50,7 +50,7 @@ namespace Orm::Query::Grammars
         getWhereMethod(WhereType whereType) const override;
     };
 
-} // namespace Orm
+} // namespace Orm::Query::Grammars
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif

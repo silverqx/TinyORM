@@ -58,20 +58,21 @@ Common:
 
 Features related/to implement:
 
- - castable           : attributes casting
- - default attributes : Default Attribute Values
- - expression         : DB::raw() support in the query builder
- - events             : event system
- - guarded            : related to the mass assignable feature
- - json columns       : JSON support
- - logging            : logging related
- - multidriver        : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
- - pivot              : pivot table in the many-to-many relationship
- - postgres           : specific to PostgreSQL server
- - dilemma primarykey : different types for primary keys
- - relations          : relations related 🤓
- - scopes             : query scopes
- - table prefix       : table prefix in the query grammar
+ - castable              : attributes casting
+ - default attributes    : Default Attribute Values
+ - dilemma primarykey    : different types for primary keys
+ - expression            : DB::raw() support in the query builder
+ - events                : event system
+ - guarded               : related to the mass assignable feature
+ - json columns          : JSON support
+ - logging               : logging related
+ - multidriver           : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
+ - pivot                 : pivot table in the many-to-many relationship
+ - postgres              : specific to PostgreSQL server
+ - read/write connection : read/write connection
+ - relations             : relations related 🤓
+ - scopes                : query scopes
+ - table prefix          : table prefix in the query grammar
 
 
 Versions info:

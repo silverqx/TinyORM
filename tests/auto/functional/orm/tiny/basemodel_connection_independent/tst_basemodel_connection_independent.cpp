@@ -4,12 +4,14 @@
 
 #include "orm/db.hpp"
 
+#include "models/massassignmentmodels.hpp"
 #include "models/torrent.hpp"
 #include "models/torrenteager.hpp"
 
 #include "database.hpp"
 
 using Orm::Tiny::ConnectionOverride;
+using Orm::Tiny::MassAssignmentError;
 
 class tst_BaseModel_Connection_Independent : public QObject
 {
@@ -23,6 +25,18 @@ private slots:
     void subscriptOperator_OnLhs_AssignAttributeReference() const;
 
     void defaultAttributeValues() const;
+
+    void massAssignment_Fillable() const;
+    void massAssignment_Guarded() const;
+    void massAssignment_GuardedAll_NonExistentAttribute() const;
+    void massAssignment_GuardedDisabled_ExistentAttribute() const;
+    void massAssignment_GuardedDisabled_NonExistentAttribute() const;
+    void massAssignment_TotallyGuarded_Exception() const;
+    void massAssignment_CantMassFillAttributesWithTableNamesWhenUsingGuarded() const;
+
+    void massAssignment_forceFill_OnTotallyGuardedModel() const;
+    void massAssignment_forceFill_OnGuardedAttribute() const;
+    void massAssignment_forceFill_NonExistentAttribute() const;
 
 private:
     /*! Connection name used in this test case. */
@@ -146,6 +160,122 @@ void tst_BaseModel_Connection_Independent::defaultAttributeValues() const
         QCOMPARE(torrent["note"], QVariant(note));
         QCOMPARE(torrent.getAttributes().size(), 5);
     }
+}
+
+void tst_BaseModel_Connection_Independent::massAssignment_Fillable() const
+{
+    Torrent torrent;
+
+    torrent.fill({{"name", "test150"}, {"size", 10}});
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent["name"], QVariant("test150"));
+    QCOMPARE(torrent["size"], QVariant(10));
+    QCOMPARE(torrent.getAttributes().size(), 2);
+}
+
+void tst_BaseModel_Connection_Independent::massAssignment_Guarded() const
+{
+    Torrent_GuardedAttribute torrent;
+
+    torrent.fill({{"created_at", QDateTime::currentDateTime()}});
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent.getAttributes().size(), 0);
+}
+
+void tst_BaseModel_Connection_Independent
+     ::massAssignment_GuardedAll_NonExistentAttribute() const
+{
+    Torrent torrent;
+
+    torrent.fill({{"dummy-NON_EXISTENT", "foo"}});
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent.getAttributes().size(), 0);
+}
+
+void tst_BaseModel_Connection_Independent
+     ::massAssignment_GuardedDisabled_ExistentAttribute() const
+{
+    Torrent_AllowedMassAssignment torrent;
+
+    torrent.fill({{"dummy-NON_EXISTENT", "foo"}});
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent["dummy-NON_EXISTENT"], QVariant("foo"));
+    QCOMPARE(torrent.getAttributes().size(), 1);
+}
+
+void tst_BaseModel_Connection_Independent
+     ::massAssignment_GuardedDisabled_NonExistentAttribute() const
+{
+    Torrent_AllowedMassAssignment torrent;
+
+    torrent.fill({{"dummy-NON_EXISTENT", "foo"}});
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent["dummy-NON_EXISTENT"], QVariant("foo"));
+    QCOMPARE(torrent.getAttributes().size(), 1);
+}
+
+void
+tst_BaseModel_Connection_Independent::massAssignment_TotallyGuarded_Exception() const
+{
+    Torrent_TotallyGuarded torrent;
+
+    QVERIFY(!torrent.exists);
+    QVERIFY_EXCEPTION_THROWN(torrent.fill({{"name", "test150"}}),
+                             MassAssignmentError);
+}
+
+void tst_BaseModel_Connection_Independent
+     ::massAssignment_CantMassFillAttributesWithTableNamesWhenUsingGuarded() const
+{
+    Torrent torrent;
+
+    torrent.fill({{"foo.bar", 123}});
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent.getAttributes().size(), 0);
+}
+
+void tst_BaseModel_Connection_Independent
+     ::massAssignment_forceFill_OnTotallyGuardedModel() const
+{
+    Torrent_TotallyGuarded torrent;
+    torrent.forceFill({{"name", "foo"}, {"size", 12}, {"progress", 20}});
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent["name"], QVariant("foo"));
+    QCOMPARE(torrent["size"], QVariant(12));
+    QCOMPARE(torrent["progress"], QVariant(20));
+    QCOMPARE(torrent.getAttributes().size(), 3);
+}
+
+void tst_BaseModel_Connection_Independent
+     ::massAssignment_forceFill_OnGuardedAttribute() const
+{
+    Torrent_GuardedAttribute torrent;
+
+    const auto createdAt = QDateTime::fromString("2021-02-02 10:11:12", Qt::ISODate);
+
+    torrent.forceFill({{"created_at", createdAt}});
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent["created_at"], QVariant(createdAt));
+    QCOMPARE(torrent.getAttributes().size(), 1);
+}
+
+void tst_BaseModel_Connection_Independent
+     ::massAssignment_forceFill_NonExistentAttribute() const
+{
+    Torrent_TotallyGuarded torrent;
+    torrent.forceFill({{"dummy-NON_EXISTENT", "foo"}});
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent["dummy-NON_EXISTENT"], QVariant("foo"));
+    QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
 QTEST_MAIN(tst_BaseModel_Connection_Independent)

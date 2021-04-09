@@ -3,7 +3,6 @@
 #include <QDateTime>
 
 #include "orm/logquery.hpp"
-#include "orm/query/grammars/grammar.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/sqltransactionerror.hpp"
 
@@ -243,6 +242,15 @@ DatabaseConnection::select(const QString &queryString,
        ::read ::write connections and sticky connection
        (recordsHaveBeenModified()). */
     return statement(queryString, bindings);
+}
+
+std::tuple<bool, QSqlQuery>
+DatabaseConnection::selectFromWriteConnection(const QString &queryString,
+                                              const QVector<QVariant> &bindings)
+{
+    // This member function is used from the schema builders/post-processors only
+    // FEATURE read/write connection silverqx
+    return select(queryString, bindings/*, false*/);
 }
 
 std::tuple<bool, QSqlQuery>
@@ -525,6 +533,44 @@ void DatabaseConnection::disconnect()
     m_qtConnectionResolver = nullptr;
 }
 
+void DatabaseConnection::useDefaultQueryGrammar()
+{
+    m_queryGrammar = getDefaultQueryGrammar();
+}
+
+const QueryGrammar &DatabaseConnection::getQueryGrammar() const
+{
+    return *m_queryGrammar;
+}
+
+void DatabaseConnection::useDefaultSchemaGrammar()
+{
+    m_schemaGrammar = getDefaultSchemaGrammar();
+}
+
+const SchemaGrammar &DatabaseConnection::getSchemaGrammar() const
+{
+    return *m_schemaGrammar;
+}
+
+std::unique_ptr<SchemaBuilder> DatabaseConnection::getSchemaBuilder()
+{
+    if (!m_schemaGrammar)
+        useDefaultSchemaGrammar();
+
+    return std::make_unique<SchemaBuilder>(*this);
+}
+
+void DatabaseConnection::useDefaultPostProcessor()
+{
+    m_postProcessor = getDefaultPostProcessor();
+}
+
+const QueryProcessor &DatabaseConnection::getPostProcessor() const
+{
+    return *m_postProcessor;
+}
+
 DatabaseConnection &
 DatabaseConnection::setReconnector(const ReconnectorType &reconnector)
 {
@@ -647,6 +693,11 @@ DatabaseConnection &DatabaseConnection::resetStatementsCounter()
 QString DatabaseConnection::driverName()
 {
     return getQtConnection().driverName();
+}
+
+std::unique_ptr<QueryProcessor> DatabaseConnection::getDefaultPostProcessor() const
+{
+    return std::make_unique<QueryProcessor>();
 }
 
 void DatabaseConnection::reconnectIfMissingConnection() const

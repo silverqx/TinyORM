@@ -19,8 +19,16 @@ namespace Orm
                 const QVariantHash &config = {});
         inline virtual ~SQLiteConnection() = default;
 
+        /*! Get a schema builder instance for the connection. */
+        std::unique_ptr<SchemaBuilder> getSchemaBuilder() override;
+
+    protected:
         /*! Get the default query grammar instance. */
         std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const override;
+        /*! Get the default schema grammar instance. */
+        std::unique_ptr<SchemaGrammar> getDefaultSchemaGrammar() const override;
+        /*! Get the default post processor instance. */
+        std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const override;
     };
 
 } // namespace Orm

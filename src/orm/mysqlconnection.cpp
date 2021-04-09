@@ -5,6 +5,9 @@
 #include "mysql.h"
 
 #include "orm/query/grammars/mysqlgrammar.hpp"
+#include "orm/query/processors/mysqlprocessor.hpp"
+#include "orm/schema/grammars/mysqlgrammar.hpp"
+#include "orm/schema/mysqlbuilder.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -24,11 +27,16 @@ MySqlConnection::MySqlConnection(
        of the database abstraction, so we initialize it to the default value
        while starting. */
     useDefaultQueryGrammar();
+
+    useDefaultPostProcessor();
 }
 
-std::unique_ptr<QueryGrammar> MySqlConnection::getDefaultQueryGrammar() const
+std::unique_ptr<SchemaBuilder> MySqlConnection::getSchemaBuilder()
 {
-    return std::make_unique<Query::Grammars::MySqlGrammar>();
+    if (!m_schemaGrammar)
+        useDefaultSchemaGrammar();
+
+    return std::make_unique<Schema::MySqlBuilder>(*this);
 }
 
 bool MySqlConnection::isMaria()
@@ -98,6 +106,23 @@ bool MySqlConnection::pingDatabase()
     resetTransactions();
 
     return false;
+}
+
+std::unique_ptr<QueryGrammar> MySqlConnection::getDefaultQueryGrammar() const
+{
+    // FEATURE table prefix silverqx
+    return std::make_unique<Query::Grammars::MySqlGrammar>();
+}
+
+std::unique_ptr<SchemaGrammar> MySqlConnection::getDefaultSchemaGrammar() const
+{
+    // FEATURE table prefix silverqx
+    return std::make_unique<Schema::Grammars::MySqlGrammar>();
+}
+
+std::unique_ptr<QueryProcessor> MySqlConnection::getDefaultPostProcessor() const
+{
+    return std::make_unique<Query::Processors::MySqlProcessor>();
 }
 
 } // namespace Orm

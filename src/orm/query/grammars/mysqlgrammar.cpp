@@ -147,7 +147,7 @@ MySqlGrammar::getWhereMethod(const WhereType whereType) const
     return cached.at(type);
 }
 
-} // namespace Orm
+} // namespace Orm::Query::Grammars
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif

@@ -166,7 +166,7 @@ QString SQLiteGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) const
             .arg(tableWrapped, wrap(QStringLiteral("rowid")), selectSql);
 }
 
-} // namespace Orm
+} // namespace Orm::Query::Grammars
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif

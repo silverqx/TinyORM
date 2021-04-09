@@ -8,6 +8,7 @@
 #include "orm/invalidargumenterror.hpp"
 #include "orm/invalidformaterror.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
+#include "orm/tiny/massassignmenterror.hpp"
 #include "orm/tiny/relationnotfounderror.hpp"
 #include "orm/tiny/relationnotloadederror.hpp"
 #include "orm/tiny/relations/belongsto.hpp"
@@ -62,6 +63,9 @@ namespace Relations {
     // TODO future try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
     // TODO future include every stl dependency in header files silverqx
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
+    // CUR what about to name it Model instead silverqx
+    // CUR docs compare docs, missing The `create` Method in tinyorm relations silverqx
+    // CUR the same file names after object_parallel_to_source, decide if I leave it as is or I rename them like Eloquent names them silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
@@ -777,6 +781,46 @@ namespace Relations {
         template<typename ClassToCheck = Model>
         static bool isIgnoringTouch();
 
+        /* GuardsAttributes */
+        /*! Get the fillable attributes for the model. */
+        inline const QStringList &getFillable() const;
+        /*! Set the fillable attributes for the model. */
+        Model &fillable(const QStringList &fillable);
+        /*! Set the fillable attributes for the model. */
+        Model &fillable(QStringList &&fillable);
+        /*! Merge new fillable attributes with existing fillable attributes
+            on the model. */
+        Model &mergeFillable(const QStringList &fillable);
+        Model &mergeFillable(QStringList &&fillable);
+
+        /*! Get the guarded attributes for the model. */
+        const QStringList &getGuarded() const;
+        /*! Set the guarded attributes for the model. */
+        Model &guard(const QStringList &guarded);
+        /*! Set the guarded attributes for the model. */
+        Model &guard(QStringList &&guarded);
+        /*! Merge new guarded attributes with existing guarded attributes
+            on the model. */
+        Model &mergeGuarded(const QStringList &guarded);
+        Model &mergeGuarded(QStringList &&guarded);
+
+        /*! Disable all mass assignable restrictions. */
+        static void unguard(bool state = true);
+        /*! Enable the mass assignment restrictions. */
+        static void reguard();
+        /*! Determine if the current state is "unguarded". */
+        inline static bool isUnguarded();
+        /*! Run the given callable while being unguarded. */
+        static void unguarded(const std::function<void()> &callback);
+
+        /*! Determine if the given attribute may be mass assigned. */
+        bool isFillable(const QString &key) const;
+        /*! Determine if the given key is guarded. */
+        bool isGuarded(const QString &key) const;
+
+        /*! Determine if the model is totally guarded. */
+        bool totallyGuarded() const;
+
     protected:
         /*! Get a new query builder instance for the connection. */
         QSharedPointer<QueryBuilder> newBaseQueryBuilder() const;
@@ -887,6 +931,17 @@ namespace Relations {
         Model &setRelations(
                 std::unordered_map<QString, RelationsType<AllRelations...>> &&relations);
 
+        /* GuardsAttributes */
+        /*! Determine if the given column is a valid, guardable column. */
+        bool isGuardableColumn(const QString &key) const;
+        /*! Th key for guardable columns hash cache. */
+        QString getKeyForGuardableHash() const;
+        /*! Get the fillable attributes of a given array. */
+        QVector<AttributeItem>
+        fillableFromArray(const QVector<AttributeItem> &attributes) const;
+        QVector<AttributeItem>
+        fillableFromArray(QVector<AttributeItem> &&attributes) const;
+
         /* Others */
         /*! Perform the actual delete query on this model instance. */
         void performDeleteOnModel();
@@ -933,7 +988,7 @@ namespace Relations {
 
         /* HasAttributes */
         /*! The model's default values for attributes. */
-        inline static const QVector<AttributeItem> u_attributes;
+        inline static const QVector<AttributeItem> u_attributes {};
         /*! The model's attributes (insert order). */
         QVector<AttributeItem> m_attributes;
         /*! The model attribute's original state (insert order).
@@ -970,6 +1025,16 @@ namespace Relations {
         inline static const QString UPDATED_AT = QStringLiteral("updated_at");
         /*! Indicates if the model should be timestamped. */
         bool u_timestamps = true;
+
+        /* GuardsAttributes */
+        /*! The attributes that are mass assignable. */
+        inline static QStringList u_fillable {};
+        /*! The attributes that aren't mass assignable. */
+        inline static QStringList u_guarded {"*"};
+        /*! Indicates if all mass assignment is enabled. */
+        inline static bool m_unguarded = false;
+        /*! The actual columns that exist on the database and can be guarded. */
+        inline static QHash<QString, QStringList> m_guardableColumns {};
 
     private:
         /* Eager load from TinyBuilder */
@@ -2507,9 +2572,22 @@ namespace Relations {
     Model &
     BaseModel<Model, AllRelations...>::fill(const QVector<AttributeItem> &attributes)
     {
-        // FEATURE guarded silverqx
-        for (const auto &attribute : attributes)
-            setAttribute(attribute.key, attribute.value);
+        const auto totallyGuarded = this->totallyGuarded();
+
+        for (auto &attribute : fillableFromArray(attributes))
+            /* The developers may choose to place some attributes in the "fillable" vector
+               which means only those attributes may be set through mass assignment to
+               the model, and all others will just get ignored for security reasons. */
+            if (auto &key = attribute.key;
+                isFillable(key)
+            )
+                setAttribute(key, std::move(attribute.value));
+
+            else if (totallyGuarded)
+                throw MassAssignmentError(
+                        QStringLiteral("Add '%1' to u_fillable data member to allow "
+                                       "mass assignment on '%2'.")
+                        .arg(key, Utils::Type::classPureBasename<Model>()));
 
         return model();
     }
@@ -2518,19 +2596,38 @@ namespace Relations {
     Model &
     BaseModel<Model, AllRelations...>::fill(QVector<AttributeItem> &&attributes)
     {
-        // FEATURE guarded silverqx
-        for (auto &attribute : attributes)
-            setAttribute(std::move(attribute.key), std::move(attribute.value));
+        const auto totallyGuarded = this->totallyGuarded();
+
+        for (auto &attribute : fillableFromArray(std::move(attributes))) {
+            /* The developers may choose to place some attributes in the "fillable" vector
+               which means only those attributes may be set through mass assignment to
+               the model, and all others will just get ignored for security reasons. */
+            if (auto &key = attribute.key;
+                isFillable(key)
+            )
+                setAttribute(key, std::move(attribute.value));
+
+            else if (totallyGuarded)
+                throw MassAssignmentError(
+                        QStringLiteral("Add '%1' to u_fillable data member to allow "
+                                       "mass assignment on '%2'.")
+                        .arg(key, Utils::Type::classPureBasename<Model>()));
+        }
 
         return model();
     }
 
     template<typename Model, typename ...AllRelations>
     Model &
-    BaseModel<Model, AllRelations...>::forceFill(const QVector<AttributeItem> &attributes)
+    BaseModel<Model, AllRelations...>::forceFill(
+            const QVector<AttributeItem> &attributes)
     {
-        // FEATURE guarded silverqx
-        return fill(attributes);
+        unguarded([this, &attributes]
+        {
+            fill(attributes);
+        });
+
+        return model();
     }
 
     template<typename Model, typename ...AllRelations>
@@ -3665,6 +3762,69 @@ namespace Relations {
         return model();
     }
 
+    /* GuardsAttributes */
+
+    template<typename Model, typename ...AllRelations>
+    bool
+    BaseModel<Model, AllRelations...>::isGuardableColumn(const QString &key) const
+    {
+        // NOTE api different, Eloquent caches it only by the model name silverqx
+        // Cache columns by the connection and model name
+        const auto guardableKey = getKeyForGuardableHash();
+
+        if (!m_guardableColumns.contains(guardableKey))
+            m_guardableColumns[guardableKey] = getConnection()
+                                          .getSchemaBuilder()
+                                          ->getColumnListing(getTable());
+
+        return m_guardableColumns[guardableKey].contains(key);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QString BaseModel<Model, AllRelations...>::getKeyForGuardableHash() const
+    {
+        return QStringLiteral("%1-%2").arg(getConnectionName(),
+                                           Utils::Type::classPureBasename<Model>());
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVector<AttributeItem>
+    BaseModel<Model, AllRelations...>::fillableFromArray(
+            const QVector<AttributeItem> &attributes) const
+    {
+        const auto &fillable = getFillable();
+
+        if (fillable.isEmpty() || m_unguarded)
+            return attributes;
+
+        QVector<AttributeItem> result;
+
+        for (const auto &attribute : attributes)
+            if (fillable.contains(attribute.key))
+                result.append(attribute);
+
+        return result;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    QVector<AttributeItem>
+    BaseModel<Model, AllRelations...>::fillableFromArray(
+            QVector<AttributeItem> &&attributes) const
+    {
+        const auto &fillable = getFillable();
+
+        if (fillable.isEmpty() || m_unguarded)
+            return std::move(attributes);
+
+        QVector<AttributeItem> result;
+
+        for (auto &attribute : attributes)
+            if (fillable.contains(attribute.key))
+                result.append(std::move(attribute));
+
+        return result;
+    }
+
     template<typename Model, typename ...AllRelations>
     void BaseModel<Model, AllRelations...>::eagerLoadRelationVisitor(
             const WithItem &relation, TinyBuilder<Model> &builder,
@@ -3993,6 +4153,199 @@ namespace Relations {
         // TODO future implement withoutTouching() and related data member $ignoreOnTouch silverqx
 
         return false;
+    }
+
+    /* GuardsAttributes */
+
+    /* These methods may look a little strange because they are non-static, but it is
+       intentional because I want to preserve the same API as Eloquent and return
+       a Model &, but because of the CRTP pattern and the need of calling fill() method
+       from the Model::ctor all of the u_xx mass asignment related data members have
+       to be static. ✌ */
+
+    template<typename Model, typename ...AllRelations>
+    const QStringList &
+    BaseModel<Model, AllRelations...>::getFillable() const
+    {
+        return Model::u_fillable;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::fillable(const QStringList &fillable)
+    {
+        Model::u_fillable = fillable;
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::fillable(QStringList &&fillable)
+    {
+        Model::u_fillable = std::move(fillable);
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::mergeFillable(const QStringList &fillable)
+    {
+        auto &fillable_ = Model::u_fillable;
+
+        for (const auto &value : fillable)
+            if (!fillable_.contains(value))
+                fillable_.append(value);
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::mergeFillable(QStringList &&fillable)
+    {
+        auto &fillable_ = Model::u_fillable;
+
+        for (auto &value : fillable)
+            if (!fillable_.contains(value))
+                fillable_.append(std::move(value));
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    const QStringList &BaseModel<Model, AllRelations...>::getGuarded() const
+    {
+        return Model::u_guarded;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::guard(const QStringList &guarded)
+    {
+        Model::u_guarded = guarded;
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::guard(QStringList &&guarded)
+    {
+        Model::u_guarded = std::move(guarded);
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &
+    BaseModel<Model, AllRelations...>::mergeGuarded(const QStringList &guarded)
+    {
+        auto &guarded_ = Model::u_guarded;
+
+        for (const auto &value : guarded)
+            if (!guarded_.contains(value))
+                guarded_.append(value);
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    Model &BaseModel<Model, AllRelations...>::mergeGuarded(QStringList &&guarded)
+    {
+        auto &guarded_ = Model::u_guarded;
+
+        for (auto &value : guarded)
+            if (!guarded_.contains(value))
+                guarded_.append(std::move(value));
+
+        return model();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::unguard(const bool state)
+    {
+        // NOTE api different, Eloquent use late static binding for unguarded silverqx
+        m_unguarded = state;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::reguard()
+    {
+        m_unguarded = false;
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::isUnguarded()
+    {
+        return m_unguarded;
+    }
+
+    // NOTE api different, Eloquent returns whatever callback returns silverqx
+    template<typename Model, typename ...AllRelations>
+    void BaseModel<Model, AllRelations...>::unguarded(
+            const std::function<void()> &callback)
+    {
+        if (m_unguarded)
+            return std::invoke(callback);
+
+        unguard();
+
+        try {
+            std::invoke(callback);
+        } catch (...) {
+        }
+
+        reguard();
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::isFillable(const QString &key) const
+    {
+        if (m_unguarded)
+            return true;
+
+        const auto &fillable = getFillable();
+
+        /* If the key is in the "fillable" vector, we can of course assume that it's
+           a fillable attribute. Otherwise, we will check the guarded vector when
+           we need to determine if the attribute is black-listed on the model. */
+        if (fillable.contains(key))
+            return true;
+
+        /* If the attribute is explicitly listed in the "guarded" array then we can
+           return false immediately. This means this attribute is definitely not
+           fillable and there is no point in going any further in this method. */
+        if (isGuarded(key))
+            return false;
+
+        return fillable.isEmpty()
+                // Don't allow mass filling with table names
+                && !key.contains(QChar('.'));
+                // NOTE api different, isFillable() !key.startsWith(), what is this good for? silverqx
+//                && !key.startsWith(QChar('_'));
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::isGuarded(const QString &key) const
+    {
+        const auto &guarded = getGuarded();
+
+        if (guarded.isEmpty())
+            return false;
+
+        return guarded == QStringList {"*"}
+                // NOTE api different, Eloquent uses CaseInsensitive compare, silverqx
+                || guarded.contains(key)
+                /* Not a VALID guardable column is guarded, so it is not possible to fill
+                   a column that is not in the database. */
+                || !isGuardableColumn(key);
+    }
+
+    template<typename Model, typename ...AllRelations>
+    bool BaseModel<Model, AllRelations...>::totallyGuarded() const
+    {
+        return getFillable().isEmpty() && getGuarded() == QStringList {"*"};
     }
 
 } // namespace Orm::Tiny

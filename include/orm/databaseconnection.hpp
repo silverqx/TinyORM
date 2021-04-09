@@ -11,7 +11,10 @@
 #include "orm/connectioninterface.hpp"
 #include "orm/connectors/connectorinterface.hpp"
 #include "orm/query/grammars/grammar.hpp"
+#include "orm/query/processors/processor.hpp"
 #include "orm/queryerror.hpp"
+#include "orm/schema/builder.hpp"
+#include "orm/schema/grammars/grammar.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -69,6 +72,10 @@ namespace Orm
         std::tuple<bool, QSqlQuery>
         select(const QString &queryString,
                const QVector<QVariant> &bindings = {}) override;
+        /*! Run a select statement against the database. */
+        std::tuple<bool, QSqlQuery>
+        selectFromWriteConnection(const QString &queryString,
+                                  const QVector<QVariant> &bindings = {}) override;
         /*! Run a select statement and return a single result. */
         std::tuple<bool, QSqlQuery>
         selectOne(const QString &queryString,
@@ -128,21 +135,30 @@ namespace Orm
         /*! Disconnect from the underlying Qt's connection. */
         void disconnect();
 
-        /*! Get the default query grammar instance. */
-        virtual std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const = 0;
-
         /*! Get the database connection name. */
         inline const QString getName() const override
         { return getConfig("name").value<QString>(); }
         /*! Get the name of the connected database. */
         inline const QString &getDatabaseName() const override
         { return m_database; }
+
         /*! Set the query grammar to the default implementation. */
-        inline void useDefaultQueryGrammar() override
-        { m_queryGrammar = getDefaultQueryGrammar(); }
+        inline void useDefaultQueryGrammar() override;
         /*! Get the query grammar used by the connection. */
-        inline const QueryGrammar &getQueryGrammar() const override
-        { return *m_queryGrammar; }
+        inline const QueryGrammar &getQueryGrammar() const override;
+
+        /*! Set the schema grammar to the default implementation. */
+        inline void useDefaultSchemaGrammar() override;
+        /*! Get the schema grammar used by the connection. */
+        inline const SchemaGrammar &getSchemaGrammar() const override;
+
+        /*! Get a schema builder instance for the connection. */
+        std::unique_ptr<SchemaBuilder> getSchemaBuilder() override;
+
+        /*! Set the query post processor to the default implementation. */
+        inline void useDefaultPostProcessor() override;
+        /*! Get the query post processor used by the connection. */
+        inline const QueryProcessor &getPostProcessor() const override;
 
         // TODO duplicate, extract to some internal types silverqx
         /*! Reconnector lambda type. */
@@ -187,6 +203,14 @@ namespace Orm
         QString driverName() override;
 
     protected:
+        // NOTE api different, getDefaultQueryGrammar() can not be non-pure because it contains pure virtual member function silverqx
+        /*! Get the default query grammar instance. */
+        virtual std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const = 0;
+        /*! Get the default schema grammar instance. */
+        virtual std::unique_ptr<SchemaGrammar> getDefaultSchemaGrammar() const = 0;
+        /*! Get the default post processor instance. */
+        virtual std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const;
+
         /*! Callback type used in the run() methods. */
         template<typename Result>
         using RunCallback = std::function<std::tuple<Result, QSqlQuery>
@@ -228,6 +252,13 @@ namespace Orm
         const QVariantHash m_config;
         /*! The reconnector instance for the connection. */
         ReconnectorType m_reconnector;
+
+        /*! The query grammar implementation. */
+        std::unique_ptr<QueryGrammar> m_queryGrammar;
+        /*! The schema grammar implementation. */
+        std::unique_ptr<SchemaGrammar> m_schemaGrammar;
+        /*! The query post processor implementation. */
+        std::unique_ptr<QueryProcessor> m_postProcessor;
 
         /* Queries execution time counter */
         /*! Indicates whether queries elapsed time are being counted. */
@@ -277,8 +308,6 @@ namespace Orm
         bool m_inTransaction = false;
         /*! Active savepoints counter. */
         uint m_savepoints = 0;
-        /*! The query grammar implementation. */
-        std::unique_ptr<QueryGrammar> m_queryGrammar;
 
 #ifdef TINYORM_DEBUG_SQL
         /*! Indicates whether logging of sql queries is enabled. */
