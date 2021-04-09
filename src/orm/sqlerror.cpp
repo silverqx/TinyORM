@@ -32,9 +32,14 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error) con
 {
     QString result(message);
 
-    result += QStringLiteral("\nQSqlError(") + error.nativeErrorCode();
+    result += QStringLiteral("\nQSqlError(");
 
     QStringList errorText;
+
+    if (const auto nativeErrorCode = error.nativeErrorCode();
+        !nativeErrorCode.isEmpty()
+    )
+        errorText << nativeErrorCode;
 
     if (const auto driverText = error.driverText();
         !driverText.isEmpty()
