@@ -302,7 +302,7 @@ namespace Relations
         /*! Get the relation instance for the given relation name. */
         template<typename Related>
         auto getRelation(const QString &name, Model &dummyModel);
-        /*! Create a collection of models from QSqlQuery. */
+        /*! Create a vector of models from QSqlQuery. */
         QVector<Model> hydrate(QSqlQuery result);
 
         /*! Get the model instance being queried. */

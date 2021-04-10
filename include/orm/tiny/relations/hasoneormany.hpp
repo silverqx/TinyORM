@@ -34,19 +34,19 @@ namespace Orm::Tiny::Relations
         std::tuple<bool, Related &> save(Related &model) const override;
         /*! Attach a model instance to the parent model. */
         std::tuple<bool, Related> save(Related &&model) const override;
-        /*! Attach a collection of models to the parent instance. */
+        /*! Attach a vector of models to the parent instance. */
         QVector<Related> &saveMany(QVector<Related> &models) const override;
-        /*! Attach a collection of models to the parent instance. */
+        /*! Attach a vector of models to the parent instance. */
         QVector<Related> saveMany(QVector<Related> &&models) const override;
 
         /*! Create a new instance of the related model. */
         Related create(const QVector<AttributeItem> &attributes = {}) const override;
         /*! Create a new instance of the related model. */
         Related create(QVector<AttributeItem> &&attributes = {}) const override;
-        /*! Create a Collection of new instances of the related model. */
+        /*! Create a vector of new instances of the related model. */
         QVector<Related>
         createMany(const QVector<QVector<AttributeItem>> &records) const override;
-        /*! Create a Collection of new instances of the related model. */
+        /*! Create a vector of new instances of the related model. */
         QVector<Related>
         createMany(QVector<QVector<AttributeItem>> &&records) const override;
 
