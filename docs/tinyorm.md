@@ -16,6 +16,8 @@
     - [Inserts](#inserts)
     - [Updates](#updates)
     - [Mass Assignment](#mass-assignment)
+- [Deleting Models](#deleting-models)
+    - [Truncate Table](#truncate-table)
 - [Comparing Models](#comparing-models)
 
 <a name="introduction"></a>
@@ -489,6 +491,42 @@ If you would like to make all of your attributes mass assignable, you may define
         /*! The attributes that aren't mass assignable. */
         inline static QStringList u_guarded {};
     };
+
+<a name="deleting-models"></a>
+## Deleting Models
+
+To delete a model, you may call the `remove`, or an alias `deleteRow` method on the model instance:
+
+    #include "models/flight.hpp"
+
+    auto flight = Flight::find(1);
+
+    flight->remove();
+
+<a name="deleting-an-existing-model-by-its-primary-key"></a>
+#### Deleting An Existing Model By Its Primary Key
+
+In the example above, we are retrieving the model from the database before calling the `remove` method. However, if you know the primary key of the model, you may delete the model without explicitly retrieving it by calling the `destroy` method.  In addition to accepting the single primary key, the `destroy` method can accept multiple primary keys:
+
+    Flight::destroy(1);
+
+    Flight::destroy({1, 2, 3});
+
+> {note} The `destroy` method loads models from the database and calls the `remove` method on each model individually, the reason for this is future compatibility with events.
+
+<a name="deleting-models-using-queries"></a>
+#### Deleting Models Using Queries
+
+Of course, you may build an Eloquent query to delete all models matching your query's criteria. In this example, we will delete all flights that are marked as inactive:
+
+    auto deletedRows = Flight::whereEq("active", 0)->remove();
+
+<a name="truncate-table"></a>
+### Truncate Table
+
+You may call the `truncate` method to delete all of the model's associated database records. The `truncate` operation will also reset any auto-incrementing IDs on the model's associated table:
+
+    Flight::truncate();
 
 <a name="comparing-models"></a>
 ## Comparing Models

@@ -15,6 +15,10 @@
 - [Eager Loading](#eager-loading)
     - [Lazy Eager Loading](#lazy-eager-loading)
 - [Inserting & Updating Related Models](#inserting-and-updating-related-models)
+    - [The `save` Method](#the-save-method)
+    - [The `create` Method](#the-create-method)
+    - [Belongs To Relationships](#updating-belongs-to-relationships)
+    - [Many To Many Relationships](#updating-many-to-many-relationships)
 - [Touching Parent Timestamps](#touching-parent-timestamps)
 
 <a name="introduction"></a>
@@ -79,7 +83,7 @@ Before you start defining relationship methods, you have to declare a model clas
 
     #endif // USER_H
 
-First, you have to extend the `BaseModel<Model, AllRelations...>`, it is a common class for all models, the first template parameter is the type-id of the defined model itself, this patter is called a [Curiously recurring template pattern](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) pattern.
+First, you have to extend the `BaseModel<Model, AllRelations...>`, it is a common class for all models, the first template parameter is the type-id of the defined model itself, this pattern is called a [Curiously recurring template pattern](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) pattern.
 
 However, the second parameter is more interesting, here you have to provide a type-id of all related models. The TinyORM needs these types to store relationships in the hash.
 
@@ -996,6 +1000,40 @@ You may load more relationships at once, to do so, just pass a `QVector<Orm::Wit
 <a name="inserting-and-updating-related-models"></a>
 ## Inserting & Updating Related Models
 
+<a name="the-save-method"></a>
+### The `save` Method
+
+TinyORM provides convenient methods for adding new models to relationships. For example, perhaps you need to add a new comment to a post. Instead of manually setting the `post_id` attribute on the `Comment` model you may insert the comment using the relationship's `save` method:
+
+    #include "models/comment.hpp"
+    #include "models/post.hpp"
+
+    Comment comment({{"message", "A new comment."}});
+
+    auto post = Post::find(1);
+
+    post->comments()->save(comment);
+
+Note that we did not access the `comments` relationship with the `getRelation` or `getRelationValue` method. Instead, we called the `comments` method to obtain an instance of the relationship. The `save` method will automatically add the appropriate `post_id` value to the new `Comment` model.
+
+If you need to save multiple related models, you may use the `saveMany` method:
+
+    auto post = Post::find(1);
+
+    post->comments()->saveMany({
+        {{"message", "A new comment."}},
+        {{'message", "Another new comment."}},
+    });
+
+The `save` and `saveMany` methods will not add the new models to any in-memory relationships that are already loaded onto the parent model. If you plan on accessing the relationship after using the `save` or `saveMany` methods, you may wish to use the `refresh` method to reload the model and its relationships:
+
+    post->comments()->save(comment);
+
+    post->refresh();
+
+    // All comments, including the newly saved comment...
+    post->getRelation<Comment>("comments");
+
 <a name="the-push-method"></a>
 #### Recursively Saving Models & Relationships
 
@@ -1009,6 +1047,131 @@ If you would like to `save` your model and all of its associated relationships, 
         ->getRelationValue<User, Orm::One>("author")->setAttribute("name", "Author Name");
 
     post->push();
+
+<a name="the-create-method"></a>
+### The `create` Method
+
+In addition to the `save` and `saveMany` methods, you may also use the `create` method, which accepts a vector of attributes, creates a model, and inserts it into the database. The difference between `save` and `create` is that `save` accepts a full TinyORM model instance while `create` accepts a `QVector<Orm::AttributeItem>`. The newly created model will be returned by the `create` method:
+
+    #include "models/post.hpp"
+
+    auto post = Post::find(1);
+
+    auto comment = post->comments()->create({
+        {"message", "A new comment."},
+    });
+
+You may use the `createMany` method to create multiple related models:
+
+    auto post = Post::find(1);
+
+    auto comments = post->comments()->createMany({
+        {{"message", "A new comment."}, {"is_published", true}},
+        {{"message", "Another new comment."}, {"is_published", false}},
+    });
+
+You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate`, and `updateOrCreate` methods to [create and update models on relationships](tinyorm.md#retrieving-or-creating-models).
+
+> {tip} Before using the `create` method, be sure to review the [mass assignment](tinyorm.md#mass-assignment) documentation.
+
+<a name="updating-belongs-to-relationships"></a>
+### Belongs To Relationships
+
+If you would like to assign a child model to a new parent model, you may use the `associate` method. In this example, the `User` model defines a `belongsTo` relationship to the `Account` model. The `associate` method will set the foreign key on the child model:
+
+    #include "models/user.hpp"
+
+    User user {{"name", "Mike"}};
+
+    auto account = Account::find(10);
+
+    user.account()->associate(*account);
+
+    user.save();
+
+To remove a parent model from a child model, you may use the `dissociate` method. This method will set the relationship's foreign key to `null`:
+
+    user.account()->dissociate();
+
+    user.save();
+
+<a name="updating-many-to-many-relationships"></a>
+### Many To Many Relationships
+
+<a name="attaching-detaching"></a>
+#### Attaching / Detaching
+
+TinyORM also provides methods to make working with many-to-many relationships more convenient. For example, let's imagine a user can have many roles and a role can have many users. You may use the `attach` method to attach a role to a user by inserting a record in the relationship's intermediate table:
+
+    #include "models/user.hpp"
+
+    auto user = User::find(1);
+
+    user->roles()->attach(roleId);
+
+When attaching a relationship to a model, you may also pass a vector of additional data to be inserted into the intermediate table:
+
+    const auto expires = true;
+
+    user->roles()->attach(roleId, {{"expires", expires}});
+
+Sometimes it may be necessary to remove a role from a user. To remove a many-to-many relationship record, use the `detach` method. The `detach` method will delete the appropriate record out of the intermediate table; however, both models will remain in the database:
+
+    // Detach a single role from the user...
+    user->roles()->detach(roleId);
+
+    // Detach all roles from the user...
+    user->roles()->detach();
+
+For convenience, `attach` and `detach` also accept vectors of IDs or Model instances as input:
+
+    auto user = User::find(1);
+
+    user->roles()->detach({1, 2, 3});
+
+    Role role1({{"name", "Role 1"}});
+    role1.save();
+    Role role2({{"name", "Role 2"}});
+    role2.save();
+
+    user->roles()->attach({{role1}, {role2}});
+
+The `attach` method also accepts `std::map` as input, so you can pass different attributes for each model you are attaching:
+
+    user->roles()->attach({
+        {1, {{"expires", true},  {"is_active", false}}},
+        {2, {{"expires", false}, {"is_active", true}}},
+    });
+
+<a name="syncing-associations"></a>
+#### Syncing Associations
+
+You may also use the `sync` method to construct many-to-many associations. The `sync` method accepts a vector of IDs to place on the intermediate table. Any IDs that are not in the given vector will be removed from the intermediate table. So, after this operation is complete, only the IDs in the given vector will exist in the intermediate table:
+
+    user->roles()->sync({1, 2, 3});
+
+You may also pass additional intermediate table values with the IDs:
+
+    user->roles()->sync({
+        {1, {{"expires", true}}},
+        {2, {}},
+        {3, {}},
+    });
+
+If you do not want to detach existing IDs that are missing from the given vector, you may use the `syncWithoutDetaching` method:
+
+    user->roles()->syncWithoutDetaching({1, 2, 3});
+
+<a name="updating-a-record-on-the-intermediate-table"></a>
+#### Updating A Record On The Intermediate Table
+
+If you need to update an existing row in your relationship's intermediate table, you may use the `updateExistingPivot` method. This method accepts the intermediate record foreign key and the vector of attributes to update:
+
+    auto user = User::find(1);
+
+    user->roles()->updateExistingPivot(roleId, {
+        {"active", false},
+    });
 
 <a name="touching-parent-timestamps"></a>
 ## Touching Parent Timestamps

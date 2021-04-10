@@ -19,7 +19,7 @@ Almost every modern application interacts with a database. TinyORM makes interac
 
 TinyORM internally uses `QtSql` module, you can look for [supported databases](https://doc.qt.io/qt-5/sql-driver.html#supported-databases).
 
-> {note} TinyORM's code is ready and designed to simply add support for the following databases PostgreSQL, SQLite and SQL Server.
+> {note} TinyORM's code is ready and designed to simply add support for the following databases PostgreSQL and SQL Server.
 
 <a name="configuration"></a>
 ### Configuration
