@@ -193,7 +193,7 @@ namespace Orm::Tiny::Relations
         /*! Update an existing pivot record on the table. */
         int updateExistingPivot(const QVariant &id,
                                 QVector<AttributeItem> attributes,
-                                bool touch = true) const;
+                                bool touch = true) const override;
 
         /*! Detach models from the relationship. */
         int detach(const QVector<QVariant> &ids, bool touch = true) const override;

@@ -471,6 +471,11 @@ namespace Relations
         inline virtual SyncChanges syncWithoutDetaching(const QVector<QVariant> &) const
         { throw LogicError(methodNotImplementedMessage("syncWithoutDetaching")); }
 
+        /*! Update an existing pivot record on the table. */
+        inline virtual int updateExistingPivot(
+                const QVariant &, QVector<AttributeItem>, bool = true) const
+        { throw LogicError(methodNotImplementedMessage("updateExistingPivot")); }
+
     protected:
         /*! Initialize a Relation instance. */
         inline void init() const
