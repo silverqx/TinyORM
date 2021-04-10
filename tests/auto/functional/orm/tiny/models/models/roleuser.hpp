@@ -11,6 +11,11 @@ class RoleUser final : public BasePivot<RoleUser>
     friend BasePivot<RoleUser>;
 
     using BasePivot<RoleUser>::BasePivot;
+
+    /*! The attributes that are mass assignable. */
+    inline static QStringList u_fillable {
+        "active",
+    };
 };
 
 #endif // ROLEUSER_H

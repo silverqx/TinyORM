@@ -44,6 +44,15 @@ private:
     QVector<WithItem> u_with {
         {"fileProperty"},
     };
+
+    /*! The attributes that are mass assignable. */
+    inline static QStringList u_fillable {
+        "file_index",
+        "filepath",
+        "size",
+        "progress",
+        "note",
+    };
 };
 
 #endif // TORRENTPREVIEWABLEFILEEAGER_H

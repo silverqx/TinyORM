@@ -43,6 +43,11 @@ private:
     QHash<QString, std::any> u_relations {
         {"users", &Role::users},
     };
+
+    /*! The attributes that are mass assignable. */
+    inline static QStringList u_fillable {
+        "name",
+    };
 };
 
 #endif // ROLE_H
