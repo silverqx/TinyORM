@@ -175,13 +175,20 @@ namespace Orm::Tiny::Relations
                                    QVector<AttributeItem>> &idsWithAttributes,
                     bool touch = true) const override;
 
-        /*! Sync the intermediate tables with a list of IDs or collection of models. */
+        /*! Sync the intermediate tables with a list of IDs. */
         SyncChanges sync(const std::map<typename BaseModel<Related>::KeyType,
                                         QVector<AttributeItem>> &idsWithAttributes,
                          bool detaching = true) const override;
-        /*! Sync the intermediate tables with a list of IDs or collection of models. */
+        /*! Sync the intermediate tables with a vector of IDs. */
         SyncChanges sync(const QVector<QVariant> &ids,
                          bool detaching = true) const override;
+
+        /*! Sync the intermediate tables with a vector of IDs without detaching. */
+        SyncChanges syncWithoutDetaching(
+                const std::map<typename BaseModel<Related>::KeyType,
+                               QVector<AttributeItem>> &idsWithAttributes) const override;
+        /*! Sync the intermediate tables with a vector of IDs without detaching. */
+        SyncChanges syncWithoutDetaching(const QVector<QVariant> &ids) const override;
 
         /*! Update an existing pivot record on the table. */
         int updateExistingPivot(const QVariant &id,
@@ -814,6 +821,21 @@ namespace Orm::Tiny::Relations
             const QVector<QVariant> &ids, const bool detaching) const
     {
         return sync(recordsFromIds(ids), detaching);
+    }
+
+    template<class Model, class Related, class PivotType>
+    SyncChanges BelongsToMany<Model, Related, PivotType>::syncWithoutDetaching(
+            const std::map<typename BaseModel<Related>::KeyType,
+                           QVector<AttributeItem>> &idsWithAttributes) const
+    {
+        return sync(idsWithAttributes, false);
+    }
+
+    template<class Model, class Related, class PivotType>
+    SyncChanges BelongsToMany<Model, Related, PivotType>::syncWithoutDetaching(
+            const QVector<QVariant> &ids) const
+    {
+        return sync(ids, false);
     }
 
     template<class Model, class Related, class PivotType>

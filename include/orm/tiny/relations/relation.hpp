@@ -375,18 +375,18 @@ namespace Relations
         /*! Attach a model instance to the parent model. */
         inline virtual std::tuple<bool, Related> save(Related &&) const
         { throw LogicError(methodNotImplementedMessage("save")); }
-        /*! Attach a collection of models to the parent instance. */
+        /*! Attach a vector of models to the parent instance. */
         inline virtual QVector<Related> &saveMany(QVector<Related> &) const
         { throw LogicError(methodNotImplementedMessage("saveMany")); }
-        /*! Attach a collection of models to the parent instance. */
+        /*! Attach a vector of models to the parent instance. */
         inline virtual QVector<Related> saveMany(QVector<Related> &&) const
         { throw LogicError(methodNotImplementedMessage("saveMany")); }
 
-        /*! Create a Collection of new instances of the related model. */
+        /*! Create a vector of new instances of the related model. */
         inline virtual QVector<Related>
         createMany(const QVector<QVector<AttributeItem>> &) const
         { throw LogicError(methodNotImplementedMessage("createMany")); }
-        /*! Create a Collection of new instances of the related model. */
+        /*! Create a vector of new instances of the related model. */
         inline virtual QVector<Related>
         createMany(QVector<QVector<AttributeItem>> &&) const
         { throw LogicError(methodNotImplementedMessage("createMany")); }
@@ -452,15 +452,24 @@ namespace Relations
         inline virtual int detach(const Related &, bool = true) const
         { throw LogicError(methodNotImplementedMessage("detach")); }
 
-        /*! Sync the intermediate tables with a list of IDs or collection of models. */
+        /*! Sync the intermediate tables with a list of IDs. */
         inline virtual SyncChanges sync(
                 const std::map<typename BaseModel<Related>::KeyType,
                                QVector<AttributeItem>> &,
                 bool = true) const
         { throw LogicError(methodNotImplementedMessage("sync")); }
-        /*! Sync the intermediate tables with a list of IDs or collection of models. */
+        /*! Sync the intermediate tables with a vector of IDs. */
         inline virtual SyncChanges sync(const QVector<QVariant> &, bool = true) const
         { throw LogicError(methodNotImplementedMessage("sync")); }
+
+        /*! Sync the intermediate tables with a vector of IDs without detaching. */
+        inline virtual SyncChanges syncWithoutDetaching(
+                const std::map<typename BaseModel<Related>::KeyType,
+                               QVector<AttributeItem>> &) const
+        { throw LogicError(methodNotImplementedMessage("syncWithoutDetaching")); }
+        /*! Sync the intermediate tables with a vector of IDs without detaching. */
+        inline virtual SyncChanges syncWithoutDetaching(const QVector<QVariant> &) const
+        { throw LogicError(methodNotImplementedMessage("syncWithoutDetaching")); }
 
     protected:
         /*! Initialize a Relation instance. */
