@@ -191,6 +191,8 @@ namespace Orm::Tiny::Relations
         /*! Detach models from the relationship. */
         int detach(const QVector<QVariant> &ids, bool touch = true) const override;
         /*! Detach models from the relationship. */
+        int detach(bool touch = true) const override;
+        /*! Detach models from the relationship. */
         int detach(const QVector<std::reference_wrapper<Related>> &models,
                    bool touch = true) const override;
         /*! Detach model from the relationship. */
@@ -294,6 +296,8 @@ namespace Orm::Tiny::Relations
         /*! Attempt to guess the name of the inverse of the relation. */
         QString guessInverseRelation() const;
 
+        /*! Detach models from the relationship. */
+        int detach(bool detachAll, const QVector<QVariant> &ids, bool touch) const;
         /*! Detach models from the relationship using a custom class. */
         int detachUsingCustomClass(const QVector<QVariant> &ids) const;
 
@@ -845,38 +849,13 @@ namespace Orm::Tiny::Relations
     int BelongsToMany<Model, Related, PivotType>::detach(
             const QVector<QVariant> &ids, const bool touch) const
     {
-        int affected = 0;
+        return detach(false, ids, touch);
+    }
 
-        if (!std::is_same_v<PivotType, Pivot>
-            && !ids.isEmpty()
-//            && m_pivotWheres.isEmpty()
-//            && m_pivotWhereIns.isEmpty()
-//            && m_pivotWhereNulls.isEmpty()
-        )
-            affected = detachUsingCustomClass(ids);
-        else {
-            // Ownership of the QSharedPointer<QueryBuilder>
-            auto query = newPivotQuery();
-
-            /* If associated IDs were passed to the method we will only delete those
-               associations, otherwise all of the association ties will be broken.
-               We'll return the numbers of affected rows when we do the deletes. */
-            // Nothing to delete/detach
-            if (ids.isEmpty())
-                return 0;
-
-            query->whereIn(m_relatedPivotKey, ids);
-
-            /* Once we have all of the conditions set on the statement, we are ready
-               to run the delete on the pivot table. Then, if the touch parameter
-               is true, we will go ahead and touch all related models to sync. */
-            std::tie(affected, std::ignore) = query->remove();
-        }
-
-        if (touch)
-            touchIfTouching();
-
-        return affected;
+    template<class Model, class Related, class PivotType>
+    int BelongsToMany<Model, Related, PivotType>::detach(const bool touch) const
+    {
+        return detach(true, {}, touch);
     }
 
     template<class Model, class Related, class PivotType>
@@ -1319,6 +1298,48 @@ namespace Orm::Tiny::Relations
         relation[0] = relation[0].toLower();
 
         return relation + QChar('s');
+    }
+
+    template<class Model, class Related, class PivotType>
+    int BelongsToMany<Model, Related, PivotType>::detach(
+                const bool detachAll, const QVector<QVariant> &ids,
+                const bool touch) const
+    {
+        int affected = 0;
+
+        if (!std::is_same_v<PivotType, Pivot>
+            && !detachAll && !ids.isEmpty()
+//            && m_pivotWheres.isEmpty()
+//            && m_pivotWhereIns.isEmpty()
+//            && m_pivotWhereNulls.isEmpty()
+        )
+            affected = detachUsingCustomClass(ids);
+
+        else {
+            // Ownership of the QSharedPointer<QueryBuilder>
+            auto query = newPivotQuery();
+
+            /* If associated IDs were passed to the method we will only delete those
+               associations, otherwise all of the association ties will be broken.
+               We'll return the numbers of affected rows when we do the deletes. */
+            if (!detachAll) {
+                // Nothing to delete/detach
+                if (ids.isEmpty())
+                    return 0;
+
+                query->whereIn(m_relatedPivotKey, ids);
+            }
+
+            /* Once we have all of the conditions set on the statement, we are ready
+               to run the delete on the pivot table. Then, if the touch parameter
+               is true, we will go ahead and touch all related models to sync. */
+            std::tie(affected, std::ignore) = query->remove();
+        }
+
+        if (touch)
+            touchIfTouching();
+
+        return affected;
     }
 
     template<class Model, class Related, class PivotType>

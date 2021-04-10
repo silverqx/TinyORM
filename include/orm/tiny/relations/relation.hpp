@@ -439,6 +439,9 @@ namespace Relations
         inline virtual int detach(const QVector<QVariant> &, bool = true) const
         { throw LogicError(methodNotImplementedMessage("detach")); }
         /*! Detach models from the relationship. */
+        inline virtual int detach(bool = true) const
+        { throw LogicError(methodNotImplementedMessage("detach")); }
+        /*! Detach models from the relationship. */
         inline virtual int detach(const QVector<std::reference_wrapper<Related>> &,
                                   bool = true) const
         { throw LogicError(methodNotImplementedMessage("detach")); }
