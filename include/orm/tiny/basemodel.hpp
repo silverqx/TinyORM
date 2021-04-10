@@ -66,6 +66,9 @@ namespace Relations {
     // CUR what about to name it Model instead silverqx
     // CUR docs compare docs, missing The `create` Method in tinyorm relations silverqx
     // CUR the same file names after object_parallel_to_source, decide if I leave it as is or I rename them like Eloquent names them silverqx
+    // CUR return ok vs exceptions in DatabaseConnection silverqx
+    // CUR docs associate/dissociate example is bad, user and account, change it silverqx
+    // CUR docs search for word 'array' and change it to 'vector' silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
@@ -1007,6 +1010,7 @@ namespace Relations {
         /*! The changed model attributes (for fast lookup). */
         std::unordered_map<QString, int> m_changesHash;
 
+        // TODO add support for 'U' like in PHP to support unix timestamp, I will have to manually check if u_dateFormat contains 'U' and use QDateTime::fromSecsSinceEpoch() silverqx
         /*! The storage format of the model's date columns. */
         inline static QString u_dateFormat {""};
         /*! The attributes that should be mutated to dates. @deprecated */
@@ -3794,6 +3798,7 @@ namespace Relations {
     {
         const auto &fillable = getFillable();
 
+        // CUR test in phpstorm silverqx
         if (fillable.isEmpty() || m_unguarded)
             return attributes;
 
