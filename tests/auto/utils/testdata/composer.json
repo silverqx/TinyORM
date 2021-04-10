@@ -1,5 +1,15 @@
 {
+    "name": "silverqx/tinyorm-testdata",
+    "type": "project",
+    "description": "Create and seed databases for TinyORM tests.",
+    "keywords": [
+        "database",
+        "seed"
+    ],
+    "license": "MIT",
     "require": {
+        "php": "^8.0",
+        "ext-pdo": "*",
         "illuminate/database": "^8.33"
     }
 }

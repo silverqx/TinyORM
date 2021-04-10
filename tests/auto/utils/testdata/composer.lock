@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a863f178b953497129b7de11f5c3ebdc",
+    "content-hash": "3fabf98d43b049bc1f899f75f61d627b",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -256,16 +256,16 @@
         },
         {
             "name": "illuminate/database",
-            "version": "v8.33.0",
+            "version": "v8.36.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/database.git",
-                "reference": "324924c914466424127d53c64ad297f04ef17aec"
+                "reference": "41d31456142be497c4e6abd40b674be0162934b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/database/zipball/324924c914466424127d53c64ad297f04ef17aec",
-                "reference": "324924c914466424127d53c64ad297f04ef17aec",
+                "url": "https://api.github.com/repos/illuminate/database/zipball/41d31456142be497c4e6abd40b674be0162934b1",
+                "reference": "41d31456142be497c4e6abd40b674be0162934b1",
                 "shasum": ""
             },
             "require": {
@@ -320,7 +320,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-03-10T15:18:48+00:00"
+            "time": "2021-04-06T19:21:01+00:00"
         },
         {
             "name": "illuminate/macroable",
@@ -1625,7 +1625,10 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^8.0",
+        "ext-pdo": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"
 }
