@@ -71,6 +71,7 @@ Features related/to implement:
  - postgres              : specific to PostgreSQL server
  - read/write connection : read/write connection
  - relations             : relations related 🤓
+ - savepoints            : database savepoints
  - scopes                : query scopes
  - table prefix          : table prefix in the query grammar
 

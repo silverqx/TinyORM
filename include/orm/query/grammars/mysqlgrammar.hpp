@@ -24,6 +24,9 @@ namespace Orm::Query::Grammars
         QString compileInsertOrIgnore(const QueryBuilder &query,
                                       const QVector<QVariantMap> &values) const override;
 
+        /*! Compile the lock into SQL. */
+        QString compileLock(const QueryBuilder &query) const override;
+
         /*! Get the grammar specific operators. */
         const QVector<QString> &getOperators() const override;
 

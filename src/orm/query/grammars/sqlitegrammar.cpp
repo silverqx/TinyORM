@@ -44,6 +44,11 @@ SQLiteGrammar::compileTruncate(const QueryBuilder &query) const
     };
 }
 
+QString SQLiteGrammar::compileLock(const QueryBuilder &) const
+{
+    return "";
+}
+
 const QVector<QString> &SQLiteGrammar::getOperators() const
 {
     static const QVector<QString> cachedOperators {
@@ -98,7 +103,8 @@ SQLiteGrammar::getCompileMap() const
                         [](const auto &query) { return query.getLimit() > -1; }}},
         {SelectComponentType::OFFSET,    {getBind(&SQLiteGrammar::compileOffset),
                         [](const auto &query) { return query.getOffset() > -1; }}},
-//        {ComponentType::LOCK,      {}},
+        {SelectComponentType::LOCK,      {getBind(&SQLiteGrammar::compileLock),
+                        [](const auto &query) { return query.getLock().index() != 0; }}},
     };
 
     return cached;

@@ -403,6 +403,16 @@ QString Grammar::compileOffset(const QueryBuilder &query) const
     return QStringLiteral("offset %1").arg(query.getOffset());
 }
 
+QString Grammar::compileLock(const QueryBuilder &query) const
+{
+    const auto &lock = query.getLock();
+
+    if (std::holds_alternative<QString>(lock))
+        return std::get<QString>(lock);
+
+    return "";
+}
+
 QVector<QString>
 Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
 {

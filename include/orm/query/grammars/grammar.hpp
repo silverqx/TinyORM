@@ -10,6 +10,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query::Grammars
 {
 
+    // FEATURE savepoints in grammar silverqx
     class SHAREDLIB_EXPORT Grammar : public BaseGrammar
     {
         Q_DISABLE_COPY(Grammar)
@@ -137,6 +138,9 @@ namespace Orm::Query::Grammars
         QString compileLimit(const QueryBuilder &query) const;
         /*! Compile the "offset" portions of the query. */
         QString compileOffset(const QueryBuilder &query) const;
+
+        /*! Compile the lock into SQL. */
+        virtual QString compileLock(const QueryBuilder &query) const;
 
         /*! Compile a insert values lists. */
         QVector<QString>

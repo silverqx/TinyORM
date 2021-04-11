@@ -261,6 +261,19 @@ namespace Query
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});
 
+        /*! Lock the selected rows in the table for updating. */
+        Builder &lockForUpdate();
+        /*! Share lock the selected rows in the table. */
+        Builder &sharedLock();
+        /*! Lock the selected rows in the table. */
+        Builder &lock(const bool &value = true);
+        /*! Lock the selected rows in the table. */
+        Builder &lock(const char *value);
+        /*! Lock the selected rows in the table. */
+        Builder &lock(const QString &value);
+        /*! Lock the selected rows in the table. */
+        Builder &lock(QString &&value);
+
         /* Getters / Setters */
         /*! Get a database connection. */
         inline ConnectionInterface &getConnection() const
@@ -309,6 +322,9 @@ namespace Query
         /*! Get the number of records to skip. */
         inline int getOffset() const
         { return m_offset; }
+        /*! Get the row locking. */
+        inline const std::variant<std::monostate, bool, QString> &getLock() const
+        { return m_lock; }
 
         /* Other methods */
         /*! Get a new instance of the query builder. */
@@ -338,7 +354,8 @@ namespace Query
 
         /*! Add an array of basic where clauses to the query. */
         Builder &
-        addArrayOfWheres(const QVector<WhereItem> &values, const QString &condition = "and");
+        addArrayOfWheres(const QVector<WhereItem> &values,
+                         const QString &condition = "and");
         /*! Add an array of where clauses comparing two columns to the query. */
         Builder &
         addArrayOfWheres(const QVector<WhereColumnItem> &values,
@@ -410,6 +427,8 @@ namespace Query
         int m_limit = -1;
         /*! The number of records to skip. */
         int m_offset = -1;
+        /*! Indicates whether row locking is being used. */
+        std::variant<std::monostate, bool, QString> m_lock;
     };
 
     template<typename T> requires std::is_arithmetic_v<T>

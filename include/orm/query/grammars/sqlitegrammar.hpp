@@ -33,6 +33,9 @@ namespace Orm::Query::Grammars
         std::unordered_map<QString, QVector<QVariant>>
         compileTruncate(const QueryBuilder &query) const override;
 
+        /*! Compile the lock into SQL. */
+        QString compileLock(const QueryBuilder &query) const override;
+
         /*! Get the grammar specific operators. */
         const QVector<QString> &getOperators() const override;
 

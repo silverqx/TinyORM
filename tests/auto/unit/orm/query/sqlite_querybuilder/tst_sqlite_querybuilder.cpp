@@ -53,6 +53,8 @@ private slots:
     void whereNullWithVectorValue() const;
     void whereNotNullWithVectorValue() const;
 
+    void lock() const;
+
 private:
     /*! Create QueryBuilder instance for the given connection. */
     inline QSharedPointer<QueryBuilder>
@@ -806,6 +808,58 @@ void tst_SQLite_QueryBuilder::whereNotNullWithVectorValue() const
                  "or \"total_seeds\" is not null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3)}));
+    }
+}
+
+void tst_SQLite_QueryBuilder::lock() const
+{
+    // lock for update
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->select("*").from("torrent_peers").whereEq("id", 4).lock();
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrent_peers\" where \"id\" = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(4)}));
+    }
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->select("*").from("torrent_peers").whereEq("id", 4).lockForUpdate();
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrent_peers\" where \"id\" = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(4)}));
+    }
+    // shared lock
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->select("*").from("torrent_peers").whereEq("id", 4).lock(false);
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrent_peers\" where \"id\" = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(4)}));
+    }
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->select("*").from("torrent_peers").whereEq("id", 4).sharedLock();
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrent_peers\" where \"id\" = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(4)}));
+    }
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->select("*").from("torrent_peers").whereEq("id", 4)
+                .lock("lock in share mode");
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrent_peers\" where \"id\" = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(4)}));
     }
 }
 

@@ -25,6 +25,16 @@ QString MySqlGrammar::compileInsertOrIgnore(const QueryBuilder &query,
     return compileInsert(query, values).replace(0, 6, QStringLiteral("insert ignore"));
 }
 
+QString MySqlGrammar::compileLock(const QueryBuilder &query) const
+{
+    const auto &lock = query.getLock();
+
+    if (!std::holds_alternative<QString>(lock))
+        return std::get<bool>(lock) ? "for update" : "lock in share mode";
+
+    return std::get<QString>(lock);
+}
+
 const QVector<QString> &MySqlGrammar::getOperators() const
 {
     static const QVector<QString> cachedOperators {"sounds like"};
@@ -105,11 +115,13 @@ MySqlGrammar::getCompileMap() const
                         [](const auto &query) { return !query.getHavings().isEmpty(); }}},
         {SelectComponentType::ORDERS,    {getBind(&MySqlGrammar::compileOrders),
                         [](const auto &query) { return !query.getOrders().isEmpty(); }}},
+        // BUG I think that limit can be also negative silverqx
         {SelectComponentType::LIMIT,     {getBind(&MySqlGrammar::compileLimit),
                         [](const auto &query) { return query.getLimit() > -1; }}},
         {SelectComponentType::OFFSET,    {getBind(&MySqlGrammar::compileOffset),
                         [](const auto &query) { return query.getOffset() > -1; }}},
-//        {ComponentType::LOCK,      {}},
+        {SelectComponentType::LOCK,      {getBind(&MySqlGrammar::compileLock),
+                        [](const auto &query) { return query.getLock().index() != 0; }}},
     };
 
     // TODO correct way to return const & for cached (static) local variable for QHash/QMap, check all 👿🤔 silverqx

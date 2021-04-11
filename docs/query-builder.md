@@ -21,6 +21,7 @@
     - [Increment & Decrement](#increment-and-decrement)
 - [Delete Statements](#delete-statements)
     - [Truncate Statement](#truncate-statement)
+- [Pessimistic Locking](#pessimistic-locking)
 
 <a name="introduction"></a>
 ## Introduction
@@ -531,3 +532,20 @@ You may also pass record `id` to the `remove` method as the first argument, it i
 If you wish to truncate an entire table, which will remove all records from the table and reset the auto-incrementing ID to zero, you may use the `truncate` method:
 
     DB::table("users")->truncate();
+
+<a name="pessimistic-locking"></a>
+## Pessimistic Locking
+
+The query builder also includes a few functions to help you achieve "pessimistic locking" when executing your `select` statements. To execute a statement with a "shared lock", you may call the `sharedLock` method. A shared lock prevents the selected rows from being modified until your transaction is committed:
+
+    DB::table("users")
+            ->where("votes", ">", 100)
+            .sharedLock()
+            .get();
+
+Alternatively, you may use the `lockForUpdate` method. A "for update" lock prevents the selected records from being modified or from being selected with another shared lock:
+
+    DB::table("users")
+            ->where("votes", ">", 100)
+            .lockForUpdate()
+            .get();

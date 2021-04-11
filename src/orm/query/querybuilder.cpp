@@ -597,6 +597,51 @@ Builder &Builder::forPage(const int page, const int perPage)
     return offset((page - 1) * perPage).limit(perPage);
 }
 
+Builder &Builder::lockForUpdate()
+{
+    return lock(true);
+}
+
+Builder &Builder::sharedLock()
+{
+    return lock(false);
+}
+
+Builder &Builder::lock(const bool &value)
+{
+    m_lock = value;
+
+    // FEATURE read/write connection silverqx
+//    if (! is_null($this->lock))
+//        useWritePdo();
+
+    return *this;
+}
+
+Builder &Builder::lock(const char *value)
+{
+    /* I need this overload because if I pass 'char *' string to the lock(), the compiler
+       selects lock(bool) overload, this behavior is described here:
+       https://stackoverflow.com/questions/14770252/string-literal-matches-bool-overload-instead-of-stdstring */
+    m_lock = QString(value);
+
+    return *this;
+}
+
+Builder &Builder::lock(const QString &value)
+{
+    m_lock = value;
+
+    return *this;
+}
+
+Builder &Builder::lock(QString &&value)
+{
+    m_lock = std::move(value);
+
+    return *this;
+}
+
 QVector<QVariant> Builder::getBindings() const
 {
     QVector<QVariant> flattenBindings;
