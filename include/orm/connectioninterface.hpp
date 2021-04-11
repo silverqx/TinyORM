@@ -30,18 +30,18 @@ namespace Processors
 
 namespace Schema
 {
-    class Builder;
+    class SchemaBuilder;
 namespace Grammars
 {
-    class Grammar;
+    class SchemaGrammar;
 }
 } // Orm::Schema
 
     using QueryBuilder   = Query::Builder;
     using QueryGrammar   = Query::Grammars::Grammar;
     using QueryProcessor = Query::Processors::Processor;
-    using SchemaBuilder  = Schema::Builder;
-    using SchemaGrammar  = Schema::Grammars::Grammar;
+    using SchemaBuilder  = Schema::SchemaBuilder;
+    using SchemaGrammar  = Schema::Grammars::SchemaGrammar;
 
     /*! Counts executed statements in a current connection. */
     struct StatementsCounter

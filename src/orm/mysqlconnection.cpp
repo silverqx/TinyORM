@@ -6,8 +6,8 @@
 
 #include "orm/query/grammars/mysqlgrammar.hpp"
 #include "orm/query/processors/mysqlprocessor.hpp"
-#include "orm/schema/grammars/mysqlgrammar.hpp"
-#include "orm/schema/mysqlbuilder.hpp"
+#include "orm/schema/grammars/mysqlschemagrammar.hpp"
+#include "orm/schema/mysqlschemabuilder.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -36,7 +36,7 @@ std::unique_ptr<SchemaBuilder> MySqlConnection::getSchemaBuilder()
     if (!m_schemaGrammar)
         useDefaultSchemaGrammar();
 
-    return std::make_unique<Schema::MySqlBuilder>(*this);
+    return std::make_unique<Schema::MySqlSchemaBuilder>(*this);
 }
 
 bool MySqlConnection::isMaria()
@@ -117,7 +117,7 @@ std::unique_ptr<QueryGrammar> MySqlConnection::getDefaultQueryGrammar() const
 std::unique_ptr<SchemaGrammar> MySqlConnection::getDefaultSchemaGrammar() const
 {
     // FEATURE table prefix silverqx
-    return std::make_unique<Schema::Grammars::MySqlGrammar>();
+    return std::make_unique<Schema::Grammars::MySqlSchemaGrammar>();
 }
 
 std::unique_ptr<QueryProcessor> MySqlConnection::getDefaultPostProcessor() const

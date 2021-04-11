@@ -1,4 +1,4 @@
-#include "orm/schema/grammars/sqlitegrammar.hpp"
+#include "orm/schema/grammars/sqliteschemagrammar.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -7,7 +7,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Schema::Grammars
 {
 
-QString SQLiteGrammar::compileColumnListing(const QString &table) const
+QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const
 {
     auto table_ = table;
 

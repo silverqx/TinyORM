@@ -2,8 +2,8 @@
 
 #include "orm/query/grammars/sqlitegrammar.hpp"
 #include "orm/query/processors/sqliteprocessor.hpp"
-#include "orm/schema/grammars/sqlitegrammar.hpp"
-#include "orm/schema/sqlitebuilder.hpp"
+#include "orm/schema/grammars/sqliteschemagrammar.hpp"
+#include "orm/schema/sqliteschemabuilder.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -32,7 +32,7 @@ std::unique_ptr<SchemaBuilder> SQLiteConnection::getSchemaBuilder()
     if (!m_schemaGrammar)
         useDefaultSchemaGrammar();
 
-    return std::make_unique<Schema::SQLiteBuilder>(*this);
+    return std::make_unique<Schema::SQLiteSchemaBuilder>(*this);
 }
 
 std::unique_ptr<QueryGrammar> SQLiteConnection::getDefaultQueryGrammar() const
@@ -44,7 +44,7 @@ std::unique_ptr<QueryGrammar> SQLiteConnection::getDefaultQueryGrammar() const
 std::unique_ptr<SchemaGrammar> SQLiteConnection::getDefaultSchemaGrammar() const
 {
     // FEATURE table prefix silverqx
-    return std::make_unique<Schema::Grammars::SQLiteGrammar>();
+    return std::make_unique<Schema::Grammars::SQLiteSchemaGrammar>();
 }
 
 std::unique_ptr<QueryProcessor> SQLiteConnection::getDefaultPostProcessor() const

@@ -1,7 +1,7 @@
-#ifndef MYSQLBUILDER_H
-#define MYSQLBUILDER_H
+#ifndef MYSQLSCHEMABUILDER_H
+#define MYSQLSCHEMABUILDER_H
 
-#include "orm/schema/builder.hpp"
+#include "orm/schema/schemabuilder.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -10,12 +10,12 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Schema
 {
 
-    class SHAREDLIB_EXPORT MySqlBuilder : public Builder
+    class SHAREDLIB_EXPORT MySqlSchemaBuilder : public SchemaBuilder
     {
-        Q_DISABLE_COPY(MySqlBuilder)
+        Q_DISABLE_COPY(MySqlSchemaBuilder)
 
     public:
-        using Builder::Builder;
+        using SchemaBuilder::SchemaBuilder;
 
         /*! Get the column listing for a given table. */
         QStringList getColumnListing(const QString &table) const override;
@@ -26,4 +26,4 @@ namespace Orm::Schema
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // MYSQLBUILDER_H
+#endif // MYSQLSCHEMABUILDER_H

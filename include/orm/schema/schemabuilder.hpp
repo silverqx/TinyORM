@@ -15,21 +15,21 @@ namespace Schema
 {
 namespace Grammars
 {
-    class Grammar;
+    class SchemaGrammar;
 }
 
-    class SHAREDLIB_EXPORT Builder
+    class SHAREDLIB_EXPORT SchemaBuilder
     {
-        Q_DISABLE_COPY(Builder)
+        Q_DISABLE_COPY(SchemaBuilder)
 
     public:
-        explicit Builder(DatabaseConnection &connection);
+        explicit SchemaBuilder(DatabaseConnection &connection);
 
         /*! Get the column listing for a given table. */
         virtual QStringList getColumnListing(const QString &table) const;
 
     protected:
-        using SchemaGrammar = Grammars::Grammar;
+        using SchemaGrammar = Grammars::SchemaGrammar;
 
         /*! The database connection instance. */
         DatabaseConnection &m_connection;

@@ -1,4 +1,4 @@
-#include "orm/schema/builder.hpp"
+#include "orm/schema/schemabuilder.hpp"
 
 #include "orm/databaseconnection.hpp"
 
@@ -9,12 +9,12 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Schema
 {
 
-Builder::Builder(DatabaseConnection &connection)
+SchemaBuilder::SchemaBuilder(DatabaseConnection &connection)
     : m_connection(connection)
     , m_grammar(connection.getSchemaGrammar())
 {}
 
-QStringList Builder::getColumnListing(const QString &table) const
+QStringList SchemaBuilder::getColumnListing(const QString &table) const
 {
     // FEATURE table prefix silverqx
     auto [ok, query] = m_connection.selectFromWriteConnection(

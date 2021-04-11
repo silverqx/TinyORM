@@ -13,8 +13,8 @@
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/query/processors/processor.hpp"
 #include "orm/queryerror.hpp"
-#include "orm/schema/builder.hpp"
-#include "orm/schema/grammars/grammar.hpp"
+#include "orm/schema/schemabuilder.hpp"
+#include "orm/schema/grammars/schemagrammar.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

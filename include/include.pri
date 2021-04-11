@@ -34,12 +34,12 @@ HEADERS += \
     $$PWD/orm/query/querybuilder.hpp \
     $$PWD/orm/queryerror.hpp \
     $$PWD/orm/runtimeerror.hpp \
-    $$PWD/orm/schema/builder.hpp \
-    $$PWD/orm/schema/grammars/grammar.hpp \
-    $$PWD/orm/schema/grammars/mysqlgrammar.hpp \
-    $$PWD/orm/schema/grammars/sqlitegrammar.hpp \
-    $$PWD/orm/schema/mysqlbuilder.hpp \
-    $$PWD/orm/schema/sqlitebuilder.hpp \
+    $$PWD/orm/schema/grammars/mysqlschemagrammar.hpp \
+    $$PWD/orm/schema/grammars/schemagrammar.hpp \
+    $$PWD/orm/schema/grammars/sqliteschemagrammar.hpp \
+    $$PWD/orm/schema/mysqlschemabuilder.hpp \
+    $$PWD/orm/schema/schemabuilder.hpp \
+    $$PWD/orm/schema/sqliteschemabuilder.hpp \
     $$PWD/orm/sqlerror.hpp \
     $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/sqltransactionerror.hpp \

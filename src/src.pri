@@ -24,12 +24,12 @@ SOURCES += \
     $$PWD/orm/query/processors/sqliteprocessor.cpp \
     $$PWD/orm/query/querybuilder.cpp \
     $$PWD/orm/queryerror.cpp \
-    $$PWD/orm/schema/builder.cpp \
-    $$PWD/orm/schema/grammars/grammar.cpp \
-    $$PWD/orm/schema/grammars/mysqlgrammar.cpp \
-    $$PWD/orm/schema/grammars/sqlitegrammar.cpp \
-    $$PWD/orm/schema/mysqlbuilder.cpp \
-    $$PWD/orm/schema/sqlitebuilder.cpp \
+    $$PWD/orm/schema/grammars/mysqlschemagrammar.cpp \
+    $$PWD/orm/schema/grammars/schemagrammar.cpp \
+    $$PWD/orm/schema/grammars/sqliteschemagrammar.cpp \
+    $$PWD/orm/schema/mysqlschemabuilder.cpp \
+    $$PWD/orm/schema/schemabuilder.cpp \
+    $$PWD/orm/schema/sqliteschemabuilder.cpp \
     $$PWD/orm/sqlerror.cpp \
     $$PWD/orm/sqliteconnection.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \

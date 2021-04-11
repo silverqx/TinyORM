@@ -1,4 +1,4 @@
-#include "orm/schema/grammars/mysqlgrammar.hpp"
+#include "orm/schema/grammars/mysqlschemagrammar.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -7,7 +7,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Schema::Grammars
 {
 
-QString MySqlGrammar::compileColumnListing(const QString &) const
+QString MySqlSchemaGrammar::compileColumnListing(const QString &) const
 {
     return "select `column_name` from `information_schema`.`columns` "
            "where `table_schema` = ? and `table_name` = ?";
