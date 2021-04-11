@@ -64,8 +64,6 @@ namespace Relations {
     // TODO future include every stl dependency in header files silverqx
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     // CUR what about to name it Model instead silverqx
-    // CUR docs compare docs, missing The `create` Method in tinyorm relations silverqx
-    // CUR the same file names after object_parallel_to_source, decide if I leave it as is or I rename them like Eloquent names them silverqx
     // CUR return ok vs exceptions in DatabaseConnection silverqx
     // CUR docs associate/dissociate example is bad, user and account, change it silverqx
     // CUR docs search for word 'array' and change it to 'vector' silverqx
