@@ -40,7 +40,7 @@ exists(../../conf.pri) {
     include(../../conf.pri)
 }
 else {
-    error( "'conf.pri' for 'tests/auto/utils' library does not exist. See an example configuration in 'tests/conf.pri.example'." )
+    error( "'tests/conf.pri' for 'tests/auto/utils' library does not exist. See an example configuration in 'tests/conf.pri.example'." )
 }
 
 # Use Precompiled headers (PCH)

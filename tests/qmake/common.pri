@@ -6,7 +6,7 @@ TEMPLATE = app
 # Common configuration
 # ---
 
-include(../qmake/common.pri)
+include(../../qmake/common.pri)
 
 # Tests specific configuration
 # ---
@@ -24,22 +24,22 @@ DEFINES += TINYORM_TESTS_CODE
 # User Configuration
 # ---
 
-exists(conf.pri) {
-    include(conf.pri)
+exists(../conf.pri) {
+    include(../conf.pri)
 }
 else {
-    error( "'conf.pri' for 'tests' project does not exist. See an example configuration in 'tests/conf.pri.example'." )
+    error( "'tests/conf.pri' for 'tests' project does not exist. See an example configuration in 'tests/conf.pri.example'." )
 }
 
 # Use TinyORM's library precompiled headers (PCH)
 # ---
 
-include(../include/pch.pri)
+include(../../include/pch.pri)
 
 # TinyORM library headers include path
 # ---
 
-include(../include/include.pri)
+include(../../include/include.pri)
 
 # Link against TinyORM library
 # ---
