@@ -4,10 +4,10 @@ QT -= gui
 TEMPLATE = lib
 TARGET = TinyOrm
 
-# Configuration
+# Common Configuration
 # ---
 
-include(../config.pri)
+include(../qmake/common.pri)
 
 # TinyORM library specific configuration
 # ---
@@ -42,24 +42,6 @@ build_tests {
     DEFINES += TINYORM_TESTS_CODE
 }
 
-# Dependencies include and library paths
-# ---
-
-win32-g++* {
-}
-else:win32-msvc* {
-    # MySQL C library is used by ORM and it uses mysql_ping()
-    INCLUDEPATH += $$quote(C:/Program Files/MySQL/MySQL Server 8.0/include)
-    # range-v3
-    INCLUDEPATH += $$quote(E:/c/qMedia/vcpkg/installed/x64-windows/include)
-    # boost
-#    INCLUDEPATH += $$quote(E:/c_libs/boost/boost_latest)
-
-    LIBS += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.0/lib)
-
-    LIBS += -llibmysql
-}
-
 # File version and windows manifest
 # ---
 
@@ -73,6 +55,16 @@ win32-msvc* {
     QMAKE_TARGET_COPYRIGHT = Copyright (©) 2020 Crystal Studio
 #    RC_ICONS = images/TinyOrm.ico
     RC_LANG = 1033
+}
+
+# User Configuration
+# ---
+
+exists(../conf.pri) {
+    include(../conf.pri)
+}
+else {
+    error( "'conf.pri' for 'src' project does not exist. See an example configuration in 'conf.pri.example'." )
 }
 
 # Use Precompiled headers (PCH)

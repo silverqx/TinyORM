@@ -25,38 +25,8 @@ DEFINES += QT_NO_CAST_FROM_BYTEARRAY
 DEFINES += QT_USE_QSTRINGBUILDER
 DEFINES += QT_STRICT_ITERATORS
 
-# WinApi
+# Platform specific configuration
 # ---
-
-# Windows 10 1903 "19H1" - 0x0A000007
-DEFINES += NTDDI_VERSION=0x0A000007
-# Windows 10 - 0x0A00
-DEFINES += _WIN32_WINNT=0x0A00
-DEFINES += _WIN32_IE=0x0A00
-DEFINES += UNICODE
-DEFINES += _UNICODE
-DEFINES += WIN32
-DEFINES += _WIN32
-DEFINES += WIN32_LEAN_AND_MEAN
-DEFINES += NOMINMAX
-
-# Compilers
-# ---
-
-win32-msvc* {
-    # I don't use -MP flag, because using jom
-    QMAKE_CXXFLAGS += -guard:cf -permissive- -Zc:ternary
-    QMAKE_CXXFLAGS_DEBUG += -bigobj
-    QMAKE_LFLAGS += /guard:cf
-    QMAKE_LFLAGS_RELEASE += /OPT:REF /OPT:ICF=5
-}
-
-# Dependencies include and library paths
-# ---
-
-win32-g++* {
-}
-else:win32-msvc* {
-    # range-v3
-    INCLUDEPATH += $$quote(E:/c/qMedia/vcpkg/installed/x64-windows/include)
-}
+win32: include(winconf.pri)
+macx: include(macxconf.pri)
+unix:!macx: include(unixconf.pri)

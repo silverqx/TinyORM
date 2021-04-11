@@ -10,7 +10,7 @@ CONFIG *= qt link_prl tinyorm_utils
 # Common configuration
 # ---
 
-include(../../../config.pri)
+include(../../../qmake/common.pri)
 
 # Utils library defines
 # ---
@@ -31,6 +31,16 @@ win32-msvc* {
     QMAKE_TARGET_COPYRIGHT = Copyright (©) 2020 Crystal Studio
 #    RC_ICONS = images/utils.ico
     RC_LANG = 1033
+}
+
+# User Configuration
+# ---
+
+exists(../../conf.pri) {
+    include(../../conf.pri)
+}
+else {
+    error( "'conf.pri' for 'tests/auto/utils' library does not exist. See an example configuration in 'tests/conf.pri.example'." )
 }
 
 # Use Precompiled headers (PCH)

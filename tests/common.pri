@@ -6,7 +6,7 @@ TEMPLATE = app
 # Common configuration
 # ---
 
-include(../config.pri)
+include(../qmake/common.pri)
 
 # Tests specific configuration
 # ---
@@ -20,6 +20,16 @@ DEFINES += PROJECT_TINYORM_TEST
 
 # Enable code needed by tests, eg connection overriding in the BaseModel
 DEFINES += TINYORM_TESTS_CODE
+
+# User Configuration
+# ---
+
+exists(conf.pri) {
+    include(conf.pri)
+}
+else {
+    error( "'conf.pri' for 'tests' project does not exist. See an example configuration in 'tests/conf.pri.example'." )
+}
 
 # Use TinyORM's library precompiled headers (PCH)
 # ---
