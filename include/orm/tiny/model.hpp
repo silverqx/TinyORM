@@ -3794,7 +3794,6 @@ namespace Relations {
     {
         const auto &fillable = getFillable();
 
-        // CUR test in phpstorm silverqx
         if (fillable.isEmpty() || m_unguarded)
             return attributes;
 

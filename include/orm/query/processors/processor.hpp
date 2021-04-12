@@ -12,7 +12,6 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query::Processors
 {
 
-    // CUR implement missing methods silverqx
     class SHAREDLIB_EXPORT Processor
     {
         Q_DISABLE_COPY(Processor)

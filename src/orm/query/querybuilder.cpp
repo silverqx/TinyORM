@@ -120,9 +120,11 @@ quint64 Builder::insertGetId(const QVariantMap &values)
             m_grammar.compileInsertGetId(*this, valuesVector),
             cleanBindings(flatValuesForInsert(valuesVector)));
 
+    // TODO dilemma, return ok 😭 silverqx
     if (!ok)
         return 0;
 
+    // FEATURE dilemma primarykey, Model::KeyType vs QVariant, Processor::processInsertGetId() silverqx
     return query.lastInsertId().value<quint64>();
 }
 
