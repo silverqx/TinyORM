@@ -1,7 +1,7 @@
 #ifndef ROLE_H
 #define ROLE_H
 
-#include <orm/tiny/basemodel.hpp>
+#include <orm/tiny/model.hpp>
 
 class User; // Forward declaration to avoid cyclic dependency
 

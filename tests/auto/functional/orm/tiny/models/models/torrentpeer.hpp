@@ -1,7 +1,7 @@
 #ifndef TORRENTPEER_H
 #define TORRENTPEER_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 #include "models/torrent.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef TORRENTPREVIEWABLEFILEPROPERTYEAGER_H
 #define TORRENTPREVIEWABLEFILEPROPERTYEAGER_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 using Orm::Tiny::Model;
 

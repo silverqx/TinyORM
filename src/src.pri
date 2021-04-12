@@ -33,7 +33,7 @@ SOURCES += \
     $$PWD/orm/sqlerror.cpp \
     $$PWD/orm/sqliteconnection.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \
-    $$PWD/orm/tiny/basemodel.cpp \
+    $$PWD/orm/tiny/model.cpp \
     $$PWD/orm/tiny/modelnotfounderror.cpp \
     $$PWD/orm/tiny/relationnotfounderror.cpp \
     $$PWD/orm/tiny/relationnotloadederror.cpp \

@@ -1,7 +1,7 @@
 #ifndef TORRENT_H
 #define TORRENT_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 #include "models/forwards.hpp"
 

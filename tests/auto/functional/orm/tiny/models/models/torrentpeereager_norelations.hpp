@@ -1,7 +1,7 @@
 #ifndef TORRENTPEEREAGER_NORELATIONS_H
 #define TORRENTPEEREAGER_NORELATIONS_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 using Orm::Tiny::Model;
 

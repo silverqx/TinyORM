@@ -1,7 +1,7 @@
 #ifndef TORRENTPREVIEWABLEFILE_H
 #define TORRENTPREVIEWABLEFILE_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 #include "models/torrent.hpp"
 #include "models/torrentpreviewablefileproperty.hpp"

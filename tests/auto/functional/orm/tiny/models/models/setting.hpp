@@ -1,7 +1,7 @@
 #ifndef SETTING_H
 #define SETTING_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 using Orm::Tiny::Model;
 

@@ -1,7 +1,7 @@
 #ifndef MASSASSIGNMENTMODELS_HPP
 #define MASSASSIGNMENTMODELS_HPP
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 using Orm::Tiny::Model;
 

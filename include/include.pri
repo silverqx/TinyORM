@@ -44,10 +44,10 @@ HEADERS += \
     $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/sqltransactionerror.hpp \
     $$PWD/orm/support/configurationoptionsparser.hpp \
-    $$PWD/orm/tiny/basemodel.hpp \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \
     $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
     $$PWD/orm/tiny/massassignmenterror.hpp \
+    $$PWD/orm/tiny/model.hpp \
     $$PWD/orm/tiny/modelnotfounderror.hpp \
     $$PWD/orm/tiny/relationnotfounderror.hpp \
     $$PWD/orm/tiny/relationnotloadederror.hpp \

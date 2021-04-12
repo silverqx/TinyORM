@@ -1,7 +1,7 @@
 #ifndef TORRENTPEEREAGER_H
 #define TORRENTPEEREAGER_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 #include "models/torrenteager.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef FILEPROPERTYPROPERTY_H
 #define FILEPROPERTYPROPERTY_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 #include "models/torrentpreviewablefileproperty.hpp"
 

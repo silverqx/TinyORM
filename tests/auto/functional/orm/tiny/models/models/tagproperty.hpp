@@ -1,7 +1,7 @@
 #ifndef TAGPROPERTY_H
 #define TAGPROPERTY_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 using Orm::Tiny::Model;
 

@@ -1,5 +1,5 @@
-#ifndef BASEMODEL_H
-#define BASEMODEL_H
+#ifndef MODEL_H
+#define MODEL_H
 
 #include <QDateTime>
 
@@ -4358,4 +4358,4 @@ namespace Relations {
 // TODO study, find out how to avoid pivot include at the end of BaseModel's header file silverqx
 #include "orm/tiny/relations/pivot.hpp"
 
-#endif // BASEMODEL_H
+#endif // MODEL_H

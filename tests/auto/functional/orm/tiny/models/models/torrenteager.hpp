@@ -1,7 +1,7 @@
 #ifndef TORRENTEAGER_H
 #define TORRENTEAGER_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 #include "models/forwardseager.hpp"
 

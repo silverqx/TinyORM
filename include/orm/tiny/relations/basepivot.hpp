@@ -1,7 +1,7 @@
 #ifndef BASEPIVOT_HPP
 #define BASEPIVOT_HPP
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

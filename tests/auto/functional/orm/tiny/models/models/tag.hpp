@@ -1,7 +1,7 @@
 #ifndef TAG_H
 #define TAG_H
 
-#include "orm/tiny/basemodel.hpp"
+#include "orm/tiny/model.hpp"
 
 #include "models/tagged.hpp"
 #include "models/tagproperty.hpp"

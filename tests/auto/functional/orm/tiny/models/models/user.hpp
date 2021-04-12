@@ -1,7 +1,7 @@
 #ifndef USER_H
 #define USER_H
 
-#include <orm/tiny/basemodel.hpp>
+#include <orm/tiny/model.hpp>
 
 #include "models/role.hpp"
 
