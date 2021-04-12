@@ -37,13 +37,13 @@ Let's examine a basic model class and discuss some of TinyORM's key conventions:
 
     #include <orm/tiny/basemodel.hpp>
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
+        friend Model;
 
-        using BaseModel::BaseModel;
+        using Model::Model;
     };
 
     #endif // FLIGHT_H
@@ -57,12 +57,12 @@ If your model's corresponding database table does not fit this convention, you m
 
     #include <orm/tiny/basemodel.hpp>
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     private:
         /*! The table associated with the model. */
@@ -76,12 +76,12 @@ TinyORM will also assume that each model's corresponding database table has a pr
 
     #include <orm/tiny/basemodel.hpp>
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     private:
         /*! The primary key associated with the table. */
@@ -92,12 +92,12 @@ In addition, TinyORM assumes that the primary key is an incrementing integer val
 
     #include <orm/tiny/basemodel.hpp>
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     private:
         /*! Indicates if the model's ID is auto-incrementing. */
@@ -118,12 +118,12 @@ By default, TinyOrm expects `created_at` and `updated_at` columns to exist on yo
 
     #include <orm/tiny/basemodel.hpp>
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     private:
         /*! Indicates if the model should be timestamped. */
@@ -134,12 +134,12 @@ If you need to customize the format of your model's timestamps, set the private 
 
     #include <orm/tiny/basemodel.hpp>
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     private:
         /*! The storage format of the model's date columns. */
@@ -150,12 +150,12 @@ If you need to customize the names of the columns used to store the timestamps, 
 
     #include <orm/tiny/basemodel.hpp>
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     private:
         /*! The name of the "created at" column. */
@@ -173,19 +173,19 @@ By default, all TinyOrm models will use the default database connection that is 
 
     #include <orm/tiny/basemodel.hpp>
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     private:
         /*! The database connection that should be used by the model. */
         QString u_connection {"sqlite"};
     };
 
-In special cases, when you want to query the database through a different connection, you can use `BaseModel::on` method, which takes the connection name as the first argument:
+In special cases, when you want to query the database through a different connection, you can use `Model::on` method, which takes the connection name as the first argument:
 
     auto user = User::on("sqlite")->find(1);
 
@@ -199,12 +199,12 @@ By default, a newly instantiated model instance will not contain any attribute v
     #include <orm/tiny/basemodel.hpp>
 
     using Orm::AttributeItem;
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     private:
         /*! The model's default values for attributes. */
@@ -239,7 +239,7 @@ The TinyOrm `all` method will return all of the results in the model's table. Ho
 
 > {tip} Since TinyOrm models are query builders, you should review all of the methods provided by TinyORM's [query builder](query-builder.md#top). You may use any of these methods when writing your TinyOrm queries.
 
-> {note} All the static methods defined on the `Orm::Tiny::BaseModel<Model, AllRelations...>` class, which start building queries like `where`, `latest`, `oldest`, `with`, ... return `std::unique_ptr<TinyBuilder<Model>>`, `TinyBuilder = Orm::Tiny::Builder` and `Model` template argument is queried model class.
+> {note} All the static methods defined on the `Orm::Tiny::Model<Derived, AllRelations...>` class, which start building queries like `where`, `latest`, `oldest`, `with`, ... return `std::unique_ptr<TinyBuilder<Model>>`, `TinyBuilder = Orm::Tiny::Builder` and `Model` template argument is queried model class.
 
 <a name="refreshing-models"></a>
 #### Refreshing Models
@@ -272,7 +272,7 @@ As we have seen, TinyORM methods like `all` and `get` retrieve multiple records 
     for (const auto &flight : Flight::all())
         qDebug() << flight["name"].toString();
 
-> {note} `all` method is defined on the `Orm::Tiny::BaseModel<Model, AllRelations...>` class and `get` method is defined on the `Orm::Tiny::Builder`, may be also referred as `TinyBuilder`, it extends `Orm::Query::Builder` alias `QueryBuilder`.
+> {note} `all` method is defined on the `Orm::Tiny::Model<Derived, AllRelations...>` class and `get` method is defined on the `Orm::Tiny::Builder`, may be also referred as `TinyBuilder`, it extends `Orm::Query::Builder` alias `QueryBuilder`.
 
 <a name="retrieving-single-models"></a>
 ## Retrieving Single Models
@@ -451,13 +451,13 @@ So, to get started, you should define which model attributes you want to make ma
 
     #include <orm/tiny/basemodel.hpp>
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
+        friend Model;
 
-        using BaseModel::BaseModel;
+        using Model::Model;
 
         /*! The attributes that are mass assignable. */
         inline static QStringList u_fillable {
@@ -480,13 +480,13 @@ If you would like to make all of your attributes mass assignable, you may define
 
     #include <orm/tiny/basemodel.hpp>
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
 
-    class Flight final : public BaseModel<Flight>
+    class Flight final : public Model<Flight>
     {
-        friend BaseModel;
+        friend Model;
 
-        using BaseModel::BaseModel;
+        using Model::Model;
 
         /*! The attributes that aren't mass assignable. */
         inline static QStringList u_guarded {};

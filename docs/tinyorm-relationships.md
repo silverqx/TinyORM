@@ -51,13 +51,13 @@ Before you start defining relationship methods, you have to declare a model clas
 
     #include "models/phone.hpp"
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Relation;
 
-    class User final : public BaseModel<User, Phone>
+    class User final : public Model<User, Phone>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! Get the phone associated with the user. */
@@ -83,18 +83,18 @@ Before you start defining relationship methods, you have to declare a model clas
 
     #endif // USER_H
 
-First, you have to extend the `BaseModel<Model, AllRelations...>`, it is a common class for all models, the first template parameter is the type-id of the defined model itself, this pattern is called a [Curiously recurring template pattern](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) pattern.
+First, you have to extend the `Model<Derived, AllRelations...>`, it is a common class for all models, the first template parameter is the type-id of the defined model itself, this pattern is called a [Curiously recurring template pattern](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) pattern.
 
 However, the second parameter is more interesting, here you have to provide a type-id of all related models. The TinyORM needs these types to store relationships in the hash.
 
 Next, you have to define the `relationVisitor` method, which maps a relation name to a related model's type-id. Last but not least, you have to define the `u_relations` hash, which maps a relation name to the relationship method.
 
-> {note} You may omit the `friend BaseModel` declaration and define all the private data and function members as public.
+> {note} You may omit the `friend Model` declaration and define all the private data and function members as public.
 
 <a name="one-to-one"></a>
 ### One To One
 
-A one-to-one relationship is a very basic type of database relationship. For example, a `User` model might be associated with one `Phone` model. To define this relationship, we will place a `phone` method on the `User` model. The `phone` method should call the `hasOne` method and return its result. The `hasOne<Related>` method is available to your model via the model's `Orm::Tiny::BaseModel<Model, AllRelations...>` base class:
+A one-to-one relationship is a very basic type of database relationship. For example, a `User` model might be associated with one `Phone` model. To define this relationship, we will place a `phone` method on the `User` model. The `phone` method should call the `hasOne` method and return its result. The `hasOne<Related>` method is available to your model via the model's `Orm::Tiny::Model<Derived, AllRelations...>` base class:
 
     #ifndef USER_H
     #define USER_H
@@ -103,13 +103,13 @@ A one-to-one relationship is a very basic type of database relationship. For exa
 
     #include "models/phone.hpp"
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Relation;
 
-    class User final : public BaseModel<User, Phone>
+    class User final : public Model<User, Phone>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! Get the phone associated with the user. */
@@ -135,7 +135,7 @@ A one-to-one relationship is a very basic type of database relationship. For exa
 
     #endif // USER_H
 
-The `Related` template argument provided to the `hasOne<Related>` method is the type-id of the related model class. Once the relationship is defined, we may retrieve the related record using BaseModel's `getRelationValue<Related, Tag>` method:
+The `Related` template argument provided to the `hasOne<Related>` method is the type-id of the related model class. Once the relationship is defined, we may retrieve the related record using Model's `getRelationValue<Related, Tag>` method:
 
     auto phone = User::find(1)->getRelationValue<Phone, Orm::One>("phone");
 
@@ -159,13 +159,13 @@ So, we can access the `Phone` model from our `User` model. Next, let's define a 
 
     #include "models/user.hpp"
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Relation;
 
-    class Phone final : public BaseModel<Phone, User>
+    class Phone final : public Model<Phone, User>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! Get the user that owns the phone. */
@@ -236,13 +236,13 @@ A one-to-many relationship is used to define relationships where a single model 
 
     #include "models/comment.hpp"
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Relation;
 
-    class Post final : public BaseModel<Post, Comment>
+    class Post final : public Model<Post, Comment>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! Get the comments for the blog post. */
@@ -270,7 +270,7 @@ A one-to-many relationship is used to define relationships where a single model 
 
 Remember, TinyORM will automatically determine the proper foreign key column for the `Comment` model. By convention, TinyORM will take the "snake case" name of the parent model and suffix it with `_id`. So, in this example, TinyORM will assume the foreign key column on the `Comment` model is `post_id`.
 
-Once the relationship method has been defined, we can access the `QVector<Related *>` of related comments by BaseModel's `getRelationValue<Related, Container = QVector>` method:
+Once the relationship method has been defined, we can access the `QVector<Related *>` of related comments by Model's `getRelationValue<Related, Container = QVector>` method:
 
     #include "models/post.hpp"
 
@@ -304,13 +304,13 @@ Now that we can access all of a post's comments, let's define a relationship to 
 
     #include "models/post.hpp"
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Relation;
 
-    class Comment final : public BaseModel<Comment, Post>
+    class Comment final : public Model<Comment, Post>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! Get the post that owns the comment. */
@@ -336,7 +336,7 @@ Now that we can access all of a post's comments, let's define a relationship to 
 
     #endif // COMMENT_H
 
-Once the relationship has been defined, we can retrieve a comment's parent post by BaseModel's `getRelationValue<Related, Tag>` method:
+Once the relationship has been defined, we can retrieve a comment's parent post by Model's `getRelationValue<Related, Tag>` method:
 
     #include "models/comment.hpp"
 
@@ -406,7 +406,7 @@ Remember, since a role can belong to many users, we cannot simply place a `user_
 <a name="many-to-many-model-structure"></a>
 #### Model Structure
 
-Many-to-many relationships are defined by writing a method that returns the result of the `belongsToMany` method. The `belongsToMany` method is provided by the `Orm::Tiny::BaseModel<Model, AllRelations...>` base class that is used by all of your application's TinyORM models. For example, let's define a `roles` method on our `User` model. The first argument passed to this method is the name of the related model class:
+Many-to-many relationships are defined by writing a method that returns the result of the `belongsToMany` method. The `belongsToMany` method is provided by the `Orm::Tiny::Model<Derived, AllRelations...>` base class that is used by all of your application's TinyORM models. For example, let's define a `roles` method on our `User` model. The first argument passed to this method is the name of the related model class:
 
     #ifndef USER_H
     #define USER_H
@@ -415,14 +415,14 @@ Many-to-many relationships are defined by writing a method that returns the resu
 
     #include "models/role.hpp"
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Pivot;
     using Orm::Tiny::Relations::Relation;
 
-    class User final : public BaseModel<User, Role, Pivot>
+    class User final : public Model<User, Role, Pivot>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! The roles that belong to the user. */
@@ -450,7 +450,7 @@ Many-to-many relationships are defined by writing a method that returns the resu
 
     #endif // USER_H
 
-Once the relationship is defined, you may access the user's roles as the `QVector<Related *>`  by BaseModel's `getRelationValue<Related, Container = QVector>` method:
+Once the relationship is defined, you may access the user's roles as the `QVector<Related *>`  by Model's `getRelationValue<Related, Container = QVector>` method:
 
     #include <QDebug>
 
@@ -485,14 +485,14 @@ To define the "inverse" of a many-to-many relationship, you should define a meth
 
     class User; // Forward declaration to avoid cyclic dependency
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Pivot;
     using Orm::Tiny::Relations::Relation;
 
-    class Role final : public BaseModel<Role, User, Pivot>
+    class Role final : public Model<Role, User, Pivot>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! The users that belong to the role. */
@@ -611,14 +611,14 @@ Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePi
 
     #include "models/role.hpp"
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Pivot;
     using Orm::Tiny::Relations::Relation;
 
-    class User final : public BaseModel<User, Role, Pivot>
+    class User final : public Model<User, Role, Pivot>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! The roles that belong to the user. */
@@ -657,7 +657,7 @@ When defining the `RoleUser` model, you should extend the `Orm::Tiny::Relations:
 
     class RoleUser final : public BasePivot<RoleUser>
     {
-        friend BaseModel;
+        friend Model;
         friend BasePivot;
 
         using BasePivot::BasePivot;
@@ -665,7 +665,7 @@ When defining the `RoleUser` model, you should extend the `Orm::Tiny::Relations:
 
     #endif // ROLEUSER_H
 
-You have to pass a custom pivot type to the `AllRelations` template parameter pack on `BaseModel<Model, ...AllRelations>` so that the `BaseModel` knows how to generate a `std::variant`, which holds all the relations and also you have to add a new mapping from the relation name to the custom pivot model type-id, this is  described in more detail in the [Common Rules](#common-rules):
+You have to pass a custom pivot type to the `AllRelations` template parameter pack on `Model<Derived, AllRelations...>` so that the `Model` knows how to generate a `std::variant`, which holds all the relations and also you have to add a new mapping from the relation name to the custom pivot model type-id, this is  described in more detail in the [Common Rules](#common-rules):
 
     #ifndef ROLE_H
     #define ROLE_H
@@ -676,14 +676,14 @@ You have to pass a custom pivot type to the `AllRelations` template parameter pa
 
     #include "models/roleuser.hpp"
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Pivot;
     using Orm::Tiny::Relations::Relation;
 
-    class Role final : public BaseModel<Role, User, RoleUser>
+    class Role final : public Model<Role, User, RoleUser>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! The users that belong to the role. */
@@ -741,13 +741,13 @@ For example, imagine a blog application in which a `User` model has many associa
 
     #include "models/post.hpp"
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Relation;
 
-    class User final : public BaseModel<User, Post>
+    class User final : public Model<User, Post>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! Get all of the posts for the user. */
@@ -833,7 +833,7 @@ If you do not need to add additional constraints to an TinyORM relationship quer
 
 The `getRelationValue<Related>` method performs "lazy loading", meaning they will only load their relationship data when you actually access them. Because of this, developers often use [eager loading](#eager-loading) to pre-load relationships they know will be accessed after loading the model. Eager loading provides a significant reduction in SQL queries that must be executed to load a model's relations.
 
-To access eager loaded relationship use BaseModel's `getRelation<Related>` method:
+To access eager loaded relationship use Model's `getRelation<Related>` method:
 
     auto user = User::find(1);
 
@@ -858,15 +858,15 @@ The same is true for the `getRelationValue` method.
 <a name="eager-loading"></a>
 ## Eager Loading
 
-When accessing TinyORM relationships by BaseModel's `getRelationValue` method, the related models are "lazy loaded". This means the relationship data is not actually loaded until you first access them. However, TinyORM can "eager load" relationships at the time you query the parent model. Eager loading alleviates the "N + 1" query problem. To illustrate the N + 1 query problem, consider a `Book` model that "belongs to" to an `Author` model:
+When accessing TinyORM relationships by Model's `getRelationValue` method, the related models are "lazy loaded". This means the relationship data is not actually loaded until you first access them. However, TinyORM can "eager load" relationships at the time you query the parent model. Eager loading alleviates the "N + 1" query problem. To illustrate the N + 1 query problem, consider a `Book` model that "belongs to" to an `Author` model:
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Relation;
 
-    class Book final : public BaseModel<Book, Author>
+    class Book final : public Model<Book, Author>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! Get the author that wrote the book. */
@@ -939,14 +939,14 @@ To eager a relationship's relationships, you may use "dot" syntax. For example, 
 
 Sometimes you might want to always load some relationships when retrieving a model. To accomplish this, you may define a `u_with` data member on the model:
 
-    using Orm::Tiny::BaseModel;
+    using Orm::Tiny::Model;
     using Orm::Tiny::Relations::Relation;
     using Orm::WithItem;
 
-    class Book final : public BaseModel<Book, Author>
+    class Book final : public Model<Book, Author>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! Get the author that wrote the book. */
@@ -995,7 +995,7 @@ You may load more relationships at once, to do so, just pass a `QVector<Orm::Wit
 
     Book::find(1)->load({{"author"}, {"publisher"}});
 
-> {note} So far, this only works on models, not on containers returned from BaseModel's `get` or `all` methods.
+> {note} So far, this only works on models, not on containers returned from Model's `get` or `all` methods.
 
 <a name="inserting-and-updating-related-models"></a>
 ## Inserting & Updating Related Models
@@ -1180,10 +1180,10 @@ When a model defines a `belongsTo` relationship to another model, such as a `Com
 
 For example, when a `Comment` model is updated, you may want to automatically "touch" the `updated_at` timestamp of the owning `Post` so that it is set to the current date and time. To accomplish this, you may add a `u_touches` data member to your child model containing the names of the relationships that should have their `updated_at` timestamps updated when the child model is updated:
 
-    class Comment final : public BaseModel<Comment, Post>
+    class Comment final : public Model<Comment, Post>
     {
-        friend BaseModel;
-        using BaseModel::BaseModel;
+        friend Model;
+        using Model::Model;
 
     public:
         /*! Get the post that owns the comment. */
