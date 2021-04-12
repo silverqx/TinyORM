@@ -16,7 +16,7 @@ using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::RelationNotFoundError;
 using Orm::Tiny::RelationNotLoadedError;
 
-class tst_BaseModel_Relations : public QObject
+class tst_Model_Relations : public QObject
 {
     Q_OBJECT
 
@@ -58,7 +58,7 @@ private slots:
     void orWhere_WithCallback() const;
 };
 
-void tst_BaseModel_Relations::initTestCase_data() const
+void tst_Model_Relations::initTestCase_data() const
 {
     QTest::addColumn<QString>("connection");
 
@@ -67,7 +67,7 @@ void tst_BaseModel_Relations::initTestCase_data() const
         QTest::newRow(connection.toUtf8().constData()) << connection;
 }
 
-void tst_BaseModel_Relations::getRelation_EagerLoad_ManyAndOne() const
+void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -107,7 +107,7 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_ManyAndOne() const
     }
 }
 
-void tst_BaseModel_Relations::getRelation_EagerLoad_BelongsTo() const
+void tst_Model_Relations::getRelation_EagerLoad_BelongsTo() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -125,7 +125,7 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_BelongsTo() const
     QCOMPARE(typeid (TorrentEager *), typeid (torrent));
 }
 
-void tst_BaseModel_Relations::getRelation_EagerLoad_Failed() const
+void tst_Model_Relations::getRelation_EagerLoad_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -151,7 +151,7 @@ void tst_BaseModel_Relations::getRelation_EagerLoad_Failed() const
                 RelationNotLoadedError);
 }
 
-void tst_BaseModel_Relations::EagerLoad_Failed() const
+void tst_Model_Relations::EagerLoad_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -161,7 +161,7 @@ void tst_BaseModel_Relations::EagerLoad_Failed() const
                              RelationNotFoundError);
 }
 
-void tst_BaseModel_Relations::getRelationValue_LazyLoad_ManyAndOne() const
+void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -201,7 +201,7 @@ void tst_BaseModel_Relations::getRelationValue_LazyLoad_ManyAndOne() const
     }
 }
 
-void tst_BaseModel_Relations::getRelationValue_LazyLoad_BelongsTo() const
+void tst_Model_Relations::getRelationValue_LazyLoad_BelongsTo() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -219,7 +219,7 @@ void tst_BaseModel_Relations::getRelationValue_LazyLoad_BelongsTo() const
     QCOMPARE(typeid (Torrent *), typeid (torrent));
 }
 
-void tst_BaseModel_Relations::getRelationValue_LazyLoad_Failed() const
+void tst_Model_Relations::getRelationValue_LazyLoad_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -236,7 +236,7 @@ void tst_BaseModel_Relations::getRelationValue_LazyLoad_Failed() const
              QVector<TorrentPeer *>());
 }
 
-void tst_BaseModel_Relations::u_with_Empty() const
+void tst_Model_Relations::u_with_Empty() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -247,7 +247,7 @@ void tst_BaseModel_Relations::u_with_Empty() const
     QCOMPARE(torrent.getRelations().size(), 0);
 }
 
-void tst_BaseModel_Relations::with_HasOne() const
+void tst_Model_Relations::with_HasOne() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -265,7 +265,7 @@ void tst_BaseModel_Relations::with_HasOne() const
     QCOMPARE(typeid (TorrentPeer *), typeid (peer));
 }
 
-void tst_BaseModel_Relations::with_HasMany() const
+void tst_Model_Relations::with_HasMany() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -290,7 +290,7 @@ void tst_BaseModel_Relations::with_HasMany() const
     }
 }
 
-void tst_BaseModel_Relations::with_BelongsTo() const
+void tst_Model_Relations::with_BelongsTo() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -308,7 +308,7 @@ void tst_BaseModel_Relations::with_BelongsTo() const
     QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 }
 
-void tst_BaseModel_Relations::with_NestedRelations() const
+void tst_Model_Relations::with_NestedRelations() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -348,7 +348,7 @@ void tst_BaseModel_Relations::with_NestedRelations() const
     }
 }
 
-void tst_BaseModel_Relations::with_Vector_MoreRelations() const
+void tst_Model_Relations::with_Vector_MoreRelations() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -387,7 +387,7 @@ void tst_BaseModel_Relations::with_Vector_MoreRelations() const
     }
 }
 
-void tst_BaseModel_Relations::with_NonExistentRelation_Failed() const
+void tst_Model_Relations::with_NonExistentRelation_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -397,7 +397,7 @@ void tst_BaseModel_Relations::with_NonExistentRelation_Failed() const
                              RelationNotFoundError);
 }
 
-void tst_BaseModel_Relations::without() const
+void tst_Model_Relations::without() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -413,7 +413,7 @@ void tst_BaseModel_Relations::without() const
     QCOMPARE(relations.size(), 1);
 }
 
-void tst_BaseModel_Relations::without_NestedRelations() const
+void tst_Model_Relations::without_NestedRelations() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -429,7 +429,7 @@ void tst_BaseModel_Relations::without_NestedRelations() const
     QCOMPARE(relations.size(), 1);
 }
 
-void tst_BaseModel_Relations::without_Vector_MoreRelations() const
+void tst_Model_Relations::without_Vector_MoreRelations() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -442,7 +442,7 @@ void tst_BaseModel_Relations::without_Vector_MoreRelations() const
     QVERIFY(torrent->getRelations().empty());
 }
 
-void tst_BaseModel_Relations::load() const
+void tst_Model_Relations::load() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -489,7 +489,7 @@ void tst_BaseModel_Relations::load() const
     }
 }
 
-void tst_BaseModel_Relations::load_Failed() const
+void tst_Model_Relations::load_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -504,7 +504,7 @@ void tst_BaseModel_Relations::load_Failed() const
     QVERIFY(torrent->getRelations().empty());
 }
 
-void tst_BaseModel_Relations::refresh_EagerLoad_OnlyRelations() const
+void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -579,7 +579,7 @@ void tst_BaseModel_Relations::refresh_EagerLoad_OnlyRelations() const
     QVERIFY(seedsOriginal == seedsRefreshed);
 }
 
-void tst_BaseModel_Relations::refresh_LazyLoad_OnlyRelations() const
+void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -655,7 +655,7 @@ void tst_BaseModel_Relations::refresh_LazyLoad_OnlyRelations() const
     QVERIFY(seedsOriginal == seedsRefreshed);
 }
 
-void tst_BaseModel_Relations::push_EagerLoad() const
+void tst_Model_Relations::push_EagerLoad() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -731,7 +731,7 @@ void tst_BaseModel_Relations::push_EagerLoad() const
     torrentVerify->push();
 }
 
-void tst_BaseModel_Relations::push_LazyLoad() const
+void tst_Model_Relations::push_LazyLoad() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -805,7 +805,7 @@ void tst_BaseModel_Relations::push_LazyLoad() const
     torrentVerify->push();
 }
 
-void tst_BaseModel_Relations::where_WithCallback() const
+void tst_Model_Relations::where_WithCallback() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -830,7 +830,7 @@ void tst_BaseModel_Relations::where_WithCallback() const
     }
 }
 
-void tst_BaseModel_Relations::orWhere_WithCallback() const
+void tst_Model_Relations::orWhere_WithCallback() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -856,6 +856,6 @@ void tst_BaseModel_Relations::orWhere_WithCallback() const
     }
 }
 
-QTEST_MAIN(tst_BaseModel_Relations)
+QTEST_MAIN(tst_Model_Relations)
 
 #include "tst_model_relations.moc"

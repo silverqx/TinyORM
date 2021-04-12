@@ -13,7 +13,7 @@
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::MassAssignmentError;
 
-class tst_BaseModel_Connection_Independent : public QObject
+class tst_Model_Connection_Independent : public QObject
 {
     Q_OBJECT
 
@@ -43,13 +43,13 @@ private:
     QString m_connection;
 };
 
-void tst_BaseModel_Connection_Independent::initTestCase()
+void tst_Model_Connection_Independent::initTestCase()
 {
     ConnectionOverride::connection = m_connection =
             TestUtils::Database::createConnection("tinyorm_mysql_tests");
 }
 
-void tst_BaseModel_Connection_Independent::subscriptOperator() const
+void tst_Model_Connection_Independent::subscriptOperator() const
 {
     auto torrent = Torrent::find(2);
     QVERIFY(torrent->exists);
@@ -61,7 +61,7 @@ void tst_BaseModel_Connection_Independent::subscriptOperator() const
             QVariant(QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)));
 }
 
-void tst_BaseModel_Connection_Independent::subscriptOperator_OnLhs() const
+void tst_Model_Connection_Independent::subscriptOperator_OnLhs() const
 {
     auto torrent = Torrent::find(2);
     QVERIFY(torrent->exists);
@@ -79,7 +79,7 @@ void tst_BaseModel_Connection_Independent::subscriptOperator_OnLhs() const
     QCOMPARE(torrent->getAttribute("size"), QVariant(size));
 }
 
-void tst_BaseModel_Connection_Independent
+void tst_Model_Connection_Independent
         ::subscriptOperator_OnLhs_AssignAttributeReference() const
 {
     auto torrent2 = Torrent::find(2);
@@ -112,7 +112,7 @@ void tst_BaseModel_Connection_Independent
     QCOMPARE(torrent3->getAttribute("name"), torrent2Name);
 }
 
-void tst_BaseModel_Connection_Independent::defaultAttributeValues() const
+void tst_Model_Connection_Independent::defaultAttributeValues() const
 {
     {
         TorrentEager torrent;
@@ -162,7 +162,7 @@ void tst_BaseModel_Connection_Independent::defaultAttributeValues() const
     }
 }
 
-void tst_BaseModel_Connection_Independent::massAssignment_Fillable() const
+void tst_Model_Connection_Independent::massAssignment_Fillable() const
 {
     Torrent torrent;
 
@@ -174,7 +174,7 @@ void tst_BaseModel_Connection_Independent::massAssignment_Fillable() const
     QCOMPARE(torrent.getAttributes().size(), 2);
 }
 
-void tst_BaseModel_Connection_Independent::massAssignment_Guarded() const
+void tst_Model_Connection_Independent::massAssignment_Guarded() const
 {
     Torrent_GuardedAttribute torrent;
 
@@ -184,7 +184,7 @@ void tst_BaseModel_Connection_Independent::massAssignment_Guarded() const
     QCOMPARE(torrent.getAttributes().size(), 0);
 }
 
-void tst_BaseModel_Connection_Independent
+void tst_Model_Connection_Independent
      ::massAssignment_GuardedAll_NonExistentAttribute() const
 {
     Torrent torrent;
@@ -195,7 +195,7 @@ void tst_BaseModel_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 0);
 }
 
-void tst_BaseModel_Connection_Independent
+void tst_Model_Connection_Independent
      ::massAssignment_GuardedDisabled_ExistentAttribute() const
 {
     Torrent_AllowedMassAssignment torrent;
@@ -207,7 +207,7 @@ void tst_BaseModel_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
-void tst_BaseModel_Connection_Independent
+void tst_Model_Connection_Independent
      ::massAssignment_GuardedDisabled_NonExistentAttribute() const
 {
     Torrent_AllowedMassAssignment torrent;
@@ -220,7 +220,7 @@ void tst_BaseModel_Connection_Independent
 }
 
 void
-tst_BaseModel_Connection_Independent::massAssignment_TotallyGuarded_Exception() const
+tst_Model_Connection_Independent::massAssignment_TotallyGuarded_Exception() const
 {
     Torrent_TotallyGuarded torrent;
 
@@ -229,7 +229,7 @@ tst_BaseModel_Connection_Independent::massAssignment_TotallyGuarded_Exception() 
                              MassAssignmentError);
 }
 
-void tst_BaseModel_Connection_Independent
+void tst_Model_Connection_Independent
      ::massAssignment_CantMassFillAttributesWithTableNamesWhenUsingGuarded() const
 {
     Torrent torrent;
@@ -240,7 +240,7 @@ void tst_BaseModel_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 0);
 }
 
-void tst_BaseModel_Connection_Independent
+void tst_Model_Connection_Independent
      ::massAssignment_forceFill_OnTotallyGuardedModel() const
 {
     Torrent_TotallyGuarded torrent;
@@ -253,7 +253,7 @@ void tst_BaseModel_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 3);
 }
 
-void tst_BaseModel_Connection_Independent
+void tst_Model_Connection_Independent
      ::massAssignment_forceFill_OnGuardedAttribute() const
 {
     Torrent_GuardedAttribute torrent;
@@ -267,7 +267,7 @@ void tst_BaseModel_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
-void tst_BaseModel_Connection_Independent
+void tst_Model_Connection_Independent
      ::massAssignment_forceFill_NonExistentAttribute() const
 {
     Torrent_TotallyGuarded torrent;
@@ -278,6 +278,6 @@ void tst_BaseModel_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
-QTEST_MAIN(tst_BaseModel_Connection_Independent)
+QTEST_MAIN(tst_Model_Connection_Independent)
 
 #include "tst_model_connection_independent.moc"

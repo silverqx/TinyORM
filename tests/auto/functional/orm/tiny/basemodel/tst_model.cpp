@@ -14,7 +14,7 @@ using Orm::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::ModelNotFoundError;
 
-class tst_BaseModel : public QObject
+class tst_Model : public QObject
 {
     Q_OBJECT
 
@@ -79,7 +79,7 @@ private slots:
     void massAssignment_NotGuardableColumn() const;
 };
 
-void tst_BaseModel::initTestCase_data() const
+void tst_Model::initTestCase_data() const
 {
     QTest::addColumn<QString>("connection");
 
@@ -88,7 +88,7 @@ void tst_BaseModel::initTestCase_data() const
         QTest::newRow(connection.toUtf8().constData()) << connection;
 }
 
-void tst_BaseModel::save_Insert() const
+void tst_Model::save_Insert() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -141,7 +141,7 @@ void tst_BaseModel::save_Insert() const
     QVERIFY(!torrent.exists);
 }
 
-void tst_BaseModel::save_Insert_WithDefaultValues() const
+void tst_Model::save_Insert_WithDefaultValues() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -191,7 +191,7 @@ void tst_BaseModel::save_Insert_WithDefaultValues() const
     QVERIFY(!torrent.exists);
 }
 
-void tst_BaseModel::save_Insert_TableWithoutAutoincrementKey() const
+void tst_Model::save_Insert_TableWithoutAutoincrementKey() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -233,7 +233,7 @@ void tst_BaseModel::save_Insert_TableWithoutAutoincrementKey() const
     QCOMPARE(affected, 1);
 }
 
-void tst_BaseModel::save_Update_Success() const
+void tst_Model::save_Update_Success() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -268,7 +268,7 @@ void tst_BaseModel::save_Update_Success() const
     torrentFile->save();
 }
 
-void tst_BaseModel::save_Update_WithNullValue() const
+void tst_Model::save_Update_WithNullValue() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -311,7 +311,7 @@ void tst_BaseModel::save_Update_WithNullValue() const
     peer->save();
 }
 
-void tst_BaseModel::save_Update_Failed() const
+void tst_Model::save_Update_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -328,7 +328,7 @@ void tst_BaseModel::save_Update_Failed() const
     QVERIFY(peer->exists);
 }
 
-void tst_BaseModel::remove() const
+void tst_Model::remove() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -354,7 +354,7 @@ void tst_BaseModel::remove() const
     }
 }
 
-void tst_BaseModel::destroy() const
+void tst_Model::destroy() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -386,7 +386,7 @@ void tst_BaseModel::destroy() const
     QVERIFY(torrentFile->exists);
 }
 
-void tst_BaseModel::destroyWithVector() const
+void tst_Model::destroyWithVector() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -430,7 +430,7 @@ void tst_BaseModel::destroyWithVector() const
     QVERIFY(torrentFile8.exists);
 }
 
-void tst_BaseModel::all() const
+void tst_Model::all() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -445,7 +445,7 @@ void tst_BaseModel::all() const
     QCOMPARE(torrents.at(2).getAttribute("name"), QVariant("test3"));
 }
 
-void tst_BaseModel::all_Columns() const
+void tst_Model::all_Columns() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -466,7 +466,7 @@ void tst_BaseModel::all_Columns() const
     }
 }
 
-void tst_BaseModel::latest() const
+void tst_Model::latest() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -486,7 +486,7 @@ void tst_BaseModel::latest() const
     }
 }
 
-void tst_BaseModel::oldest() const
+void tst_Model::oldest() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -506,7 +506,7 @@ void tst_BaseModel::oldest() const
     }
 }
 
-void tst_BaseModel::where() const
+void tst_Model::where() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -527,7 +527,7 @@ void tst_BaseModel::where() const
     }
 }
 
-void tst_BaseModel::whereEq() const
+void tst_Model::whereEq() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -556,7 +556,7 @@ void tst_BaseModel::whereEq() const
     }
 }
 
-void tst_BaseModel::where_WithVector() const
+void tst_Model::where_WithVector() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -577,7 +577,7 @@ void tst_BaseModel::where_WithVector() const
     }
 }
 
-void tst_BaseModel::where_WithVector_Condition() const
+void tst_Model::where_WithVector_Condition() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -603,7 +603,7 @@ void tst_BaseModel::where_WithVector_Condition() const
     }
 }
 
-void tst_BaseModel::find() const
+void tst_Model::find() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -614,7 +614,7 @@ void tst_BaseModel::find() const
     QCOMPARE(torrent->getAttribute("id"), QVariant(3));
 }
 
-void tst_BaseModel::findOrNew_Found() const
+void tst_Model::findOrNew_Found() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -638,7 +638,7 @@ void tst_BaseModel::findOrNew_Found() const
     }
 }
 
-void tst_BaseModel::findOrNew_NotFound() const
+void tst_Model::findOrNew_NotFound() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -662,7 +662,7 @@ void tst_BaseModel::findOrNew_NotFound() const
     }
 }
 
-void tst_BaseModel::findOrFail_Found() const
+void tst_Model::findOrFail_Found() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -686,7 +686,7 @@ void tst_BaseModel::findOrFail_Found() const
     }
 }
 
-void tst_BaseModel::findOrFail_NotFoundFailed() const
+void tst_Model::findOrFail_NotFoundFailed() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -698,7 +698,7 @@ void tst_BaseModel::findOrFail_NotFoundFailed() const
                              ModelNotFoundError);
 }
 
-void tst_BaseModel::firstWhere() const
+void tst_Model::firstWhere() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -720,7 +720,7 @@ void tst_BaseModel::firstWhere() const
     }
 }
 
-void tst_BaseModel::firstWhereEq() const
+void tst_Model::firstWhereEq() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -733,7 +733,7 @@ void tst_BaseModel::firstWhereEq() const
     QCOMPARE((*torrentFile3)["filepath"], QVariant("test2_file2.mkv"));
 }
 
-void tst_BaseModel::firstOrNew_Found() const
+void tst_Model::firstOrNew_Found() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -766,7 +766,7 @@ void tst_BaseModel::firstOrNew_Found() const
     }
 }
 
-void tst_BaseModel::firstOrNew_NotFound() const
+void tst_Model::firstOrNew_NotFound() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -797,7 +797,7 @@ void tst_BaseModel::firstOrNew_NotFound() const
     }
 }
 
-void tst_BaseModel::firstOrCreate_Found() const
+void tst_Model::firstOrCreate_Found() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -834,7 +834,7 @@ void tst_BaseModel::firstOrCreate_Found() const
     }
 }
 
-void tst_BaseModel::firstOrCreate_NotFound() const
+void tst_Model::firstOrCreate_NotFound() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -865,7 +865,7 @@ void tst_BaseModel::firstOrCreate_NotFound() const
     QVERIFY(!torrent.exists);
 }
 
-void tst_BaseModel::isCleanAndIsDirty() const
+void tst_Model::isCleanAndIsDirty() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -901,7 +901,7 @@ void tst_BaseModel::isCleanAndIsDirty() const
     torrent->save();
 }
 
-void tst_BaseModel::wasChanged() const
+void tst_Model::wasChanged() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -928,7 +928,7 @@ void tst_BaseModel::wasChanged() const
     torrent->save();
 }
 
-void tst_BaseModel::is() const
+void tst_Model::is() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -941,7 +941,7 @@ void tst_BaseModel::is() const
     QVERIFY(torrent2_1->is(torrent2_2));
 }
 
-void tst_BaseModel::isNot() const
+void tst_Model::isNot() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -965,7 +965,7 @@ void tst_BaseModel::isNot() const
     QVERIFY(torrent2_1->isNot(torrent2_2));
 }
 
-void tst_BaseModel::fresh() const
+void tst_Model::fresh() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -996,7 +996,7 @@ void tst_BaseModel::fresh() const
     }
 }
 
-void tst_BaseModel::refresh_OnlyAttributes() const
+void tst_Model::refresh_OnlyAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1030,7 +1030,7 @@ void tst_BaseModel::refresh_OnlyAttributes() const
     }
 }
 
-void tst_BaseModel::create() const
+void tst_Model::create() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1071,7 +1071,7 @@ void tst_BaseModel::create() const
     QVERIFY(!torrent.exists);
 }
 
-void tst_BaseModel::create_Failed() const
+void tst_Model::create_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1092,7 +1092,7 @@ void tst_BaseModel::create_Failed() const
     QVERIFY(torrent.getAttributes().isEmpty());
 }
 
-void tst_BaseModel::update() const
+void tst_Model::update() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1142,7 +1142,7 @@ void tst_BaseModel::update() const
              updatedAtOriginal.toDateTime());
 }
 
-void tst_BaseModel::update_OnNonExistentModel() const
+void tst_Model::update_OnNonExistentModel() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1155,7 +1155,7 @@ void tst_BaseModel::update_OnNonExistentModel() const
     QVERIFY(!torrent.update({{"progress", 333}}));
 }
 
-void tst_BaseModel::update_NonExistentAttribute() const
+void tst_Model::update_NonExistentAttribute() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1170,7 +1170,7 @@ void tst_BaseModel::update_NonExistentAttribute() const
     QVERIFY(torrent->update({{"progress-NON_EXISTENT", 333}}));
 }
 
-void tst_BaseModel::update_SameValue() const
+void tst_Model::update_SameValue() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1196,7 +1196,7 @@ void tst_BaseModel::update_SameValue() const
     QCOMPARE(torrentVerify->getAttribute(updatedAtColumn), updatedAt);
 }
 
-void tst_BaseModel::truncate() const
+void tst_Model::truncate() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1225,7 +1225,7 @@ void tst_BaseModel::truncate() const
     QCOMPARE(Setting::all().size(), 0);
 }
 
-void tst_BaseModel::massAssignment_NotGuardableColumn() const
+void tst_Model::massAssignment_NotGuardableColumn() const
 {
     /* This test has to be here because it internally calls columns listing against
        database, so it is connection-dependent. */
@@ -1240,7 +1240,7 @@ void tst_BaseModel::massAssignment_NotGuardableColumn() const
     QCOMPARE(torrent.getAttributes().size(), 0);
 }
 
-QTEST_MAIN(tst_BaseModel)
+QTEST_MAIN(tst_Model)
 
 #include "tst_model.moc"
 
