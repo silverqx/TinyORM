@@ -64,7 +64,6 @@ namespace Relations {
     // TODO future include every stl dependency in header files silverqx
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     // CUR return ok vs exceptions in DatabaseConnection silverqx
-    // CUR docs associate/dissociate example is bad, user and account, change it silverqx
     template<typename Derived, typename ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
