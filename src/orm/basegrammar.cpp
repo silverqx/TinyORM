@@ -67,7 +67,7 @@ QVariant BaseGrammar::getValue(const Expression &expression) const
 
 QString BaseGrammar::columnize(QStringList columns) const
 {
-    return wrapArray(columns).join(QStringLiteral(", "));
+    return wrapArray(columns).join(", ");
 }
 
 QString BaseGrammar::columnize(const QStringList &columns, const bool isTorrentsTable) const
@@ -80,10 +80,10 @@ QString BaseGrammar::columnize(const QStringList &columns, const bool isTorrents
 //            "id, name, progress, eta, size, seeds, total_seeds, leechers, "
 //            "total_leechers, remaining, added_on, hash, status, "
 //            "movie_detail_index, savepath"
-//        }).join(QStringLiteral(", "));
+//        }).join(", ");
         static const QString cached =
                 wrapArray(QStringList {"id, name, size, progress, added_on, hash"})
-                .join(QStringLiteral(", "));
+                .join(", ");
 
         return cached;
     }

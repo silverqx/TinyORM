@@ -116,7 +116,7 @@ namespace Query
             compiledParameters << parameter(value);
 
         // TODO move all common QStringLiteral() to the common file as global constants silverqx
-        return compiledParameters.join(QStringLiteral(", "));
+        return compiledParameters.join(", ");
     }
 
 } // namespace Orm

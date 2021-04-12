@@ -59,8 +59,6 @@ namespace Orm::Query::Grammars
         virtual const QVector<QString> &getOperators() const;
 
     protected:
-        /*! The components necessary for a select clause. */
-        using SelectComponentsVector = QVector<QString>;
         /*! Select component types. */
         enum struct SelectComponentType
         {
@@ -93,7 +91,7 @@ namespace Orm::Query::Grammars
         getWhereMethod(WhereType whereType) const = 0;
 
         /*! Compile the components necessary for a select clause. */
-        SelectComponentsVector compileComponents(const QueryBuilder &query) const;
+        QStringList compileComponents(const QueryBuilder &query) const;
 
         /*! Compile the "select *" portion of the query. */
         QString compileColumns(const QueryBuilder &query) const;
@@ -104,10 +102,10 @@ namespace Orm::Query::Grammars
         /*! Compile the "where" portions of the query. */
         QString compileWheres(const QueryBuilder &query) const;
         /*! Get the vector of all the where clauses for the query. */
-        QVector<QString> compileWheresToVector(const QueryBuilder &query) const;
+        QStringList compileWheresToVector(const QueryBuilder &query) const;
         /*! Format the where clause statements into one string. */
         QString concatenateWhereClauses(const QueryBuilder &query,
-                                        const QVector<QString> &sql) const;
+                                        const QStringList &sql) const;
         /*! Compile the "group by" portions of the query. */
         QString compileGroups(const QueryBuilder &query) const;
         /*! Compile the "having" portions of the query. */
@@ -133,7 +131,7 @@ namespace Orm::Query::Grammars
         /*! Compile the "order by" portions of the query. */
         QString compileOrders(const QueryBuilder &query) const;
         /*! Compile the query orders to the vector. */
-        QVector<QString> compileOrdersToVector(const QueryBuilder &query) const;
+        QStringList compileOrdersToVector(const QueryBuilder &query) const;
         /*! Compile the "limit" portions of the query. */
         QString compileLimit(const QueryBuilder &query) const;
         /*! Compile the "offset" portions of the query. */
@@ -143,8 +141,7 @@ namespace Orm::Query::Grammars
         virtual QString compileLock(const QueryBuilder &query) const;
 
         /*! Compile a insert values lists. */
-        QVector<QString>
-        compileInsertToVector(const QVector<QVariantMap> &values) const;
+        QStringList compileInsertToVector(const QVector<QVariantMap> &values) const;
 
         /*! Compile the columns for an update statement. */
         virtual QString
@@ -167,6 +164,8 @@ namespace Orm::Query::Grammars
         compileDeleteWithJoins(const QueryBuilder &query, const QString &table,
                                const QString &wheres) const;
 
+        /*! Concatenate an array of segments, removing empties. */
+        QString concatenate(const QStringList &segments) const;
         /*! Remove the leading boolean from a statement. */
         QString removeLeadingBoolean(QString statement) const;
     };
