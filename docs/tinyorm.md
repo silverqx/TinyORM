@@ -35,7 +35,7 @@ Let's examine a basic model class and discuss some of TinyORM's key conventions:
     #ifndef FLIGHT_H
     #define FLIGHT_H
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
 
@@ -55,7 +55,7 @@ After glancing at the example above, you may have noticed that we did not tell T
 
 If your model's corresponding database table does not fit this convention, you may manually specify the model's table name by defining the private `u_table` data member on the model:
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
 
@@ -74,7 +74,7 @@ If your model's corresponding database table does not fit this convention, you m
 
 TinyORM will also assume that each model's corresponding database table has a primary key column named `id`. If necessary, you may define a private `u_primaryKey` data member on your model to specify a different column that serves as your model's primary key:
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
 
@@ -90,7 +90,7 @@ TinyORM will also assume that each model's corresponding database table has a pr
 
 In addition, TinyORM assumes that the primary key is an incrementing integer value. If you wish to use a non-incrementing or a non-numeric primary key you must define a private `u_incrementing` data member on your model that is set to `false`:
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
 
@@ -116,7 +116,7 @@ TinyOrm requires each model to have at least one uniquely identifying "ID" that 
 
 By default, TinyOrm expects `created_at` and `updated_at` columns to exist on your model's corresponding database table.  TinyOrm will automatically set these column's values when models are created or updated. If you do not want these columns to be automatically managed by TinyOrm, you should define a private `u_timestamps` data member on your model with a value of `false`:
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
 
@@ -132,7 +132,7 @@ By default, TinyOrm expects `created_at` and `updated_at` columns to exist on yo
 
 If you need to customize the format of your model's timestamps, set the private `u_dateFormat` data member on your model. This data member determines how date attributes are stored in the database, supported formats are described in the `QDateTime` documentation:
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
 
@@ -148,7 +148,7 @@ If you need to customize the format of your model's timestamps, set the private 
 
 If you need to customize the names of the columns used to store the timestamps, you may define `CREATED_AT` and `UPDATED_AT` private static constants on your model:
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
 
@@ -171,7 +171,7 @@ If you need to customize the names of the columns used to store the timestamps, 
 
 By default, all TinyOrm models will use the default database connection that is configured for your application. If you would like to specify a different connection that should be used when interacting with a particular model, you should define a `u_connection` private data member on the model:
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
 
@@ -196,7 +196,7 @@ By default, a newly instantiated model instance will not contain any attribute v
 
     #include <QDateTime>
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::AttributeItem;
     using Orm::Tiny::Model;
@@ -449,7 +449,7 @@ A mass assignment vulnerability occurs when a user passes an unexpected HTTP req
 
 So, to get started, you should define which model attributes you want to make mass assignable. You may do this using the `u_fillable` static data member on the model. For example, let's make the `name` attribute of our `Flight` model mass assignable:
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
 
@@ -478,7 +478,7 @@ If you already have a model instance, you may use the `fill` method to populate 
 
 If you would like to make all of your attributes mass assignable, you may define your model's `u_guarded` static data member as an empty vector. If you choose to unguard your model, you should take special care to always hand-craft the vectors passed to TinyORM's `fill`, `create`, and `update` methods:
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
 

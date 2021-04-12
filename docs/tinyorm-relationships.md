@@ -47,7 +47,7 @@ Before you start defining relationship methods, you have to declare a model clas
     #ifndef USER_H
     #define USER_H
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     #include "models/phone.hpp"
 
@@ -99,7 +99,7 @@ A one-to-one relationship is a very basic type of database relationship. For exa
     #ifndef USER_H
     #define USER_H
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     #include "models/phone.hpp"
 
@@ -155,7 +155,7 @@ So, we can access the `Phone` model from our `User` model. Next, let's define a 
     #ifndef PHONE_H
     #define PHONE_H
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     #include "models/user.hpp"
 
@@ -232,7 +232,7 @@ A one-to-many relationship is used to define relationships where a single model 
     #ifndef POST_H
     #define POST_H
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     #include "models/comment.hpp"
 
@@ -300,7 +300,7 @@ Now that we can access all of a post's comments, let's define a relationship to 
     #ifndef COMMENT_H
     #define COMMENT_H
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     #include "models/post.hpp"
 
@@ -411,7 +411,7 @@ Many-to-many relationships are defined by writing a method that returns the resu
     #ifndef USER_H
     #define USER_H
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     #include "models/role.hpp"
 
@@ -481,7 +481,7 @@ To define the "inverse" of a many-to-many relationship, you should define a meth
     #ifndef ROLE_H
     #define ROLE_H
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     class User; // Forward declaration to avoid cyclic dependency
 
@@ -607,7 +607,7 @@ Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePi
     #ifndef USER_H
     #define USER_H
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     #include "models/role.hpp"
 
@@ -670,7 +670,7 @@ You have to pass a custom pivot type to the `AllRelations` template parameter pa
     #ifndef ROLE_H
     #define ROLE_H
 
-    #include <orm/tiny/basemodel.hpp>
+    #include <orm/tiny/model.hpp>
 
     class User; // Forward declaration to avoid cyclic dependency
 
