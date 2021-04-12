@@ -280,4 +280,4 @@ void tst_BaseModel_Connection_Independent
 
 QTEST_MAIN(tst_BaseModel_Connection_Independent)
 
-#include "tst_basemodel_connection_independent.moc"
+#include "tst_model_connection_independent.moc"

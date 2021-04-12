@@ -1242,6 +1242,6 @@ void tst_BaseModel::massAssignment_NotGuardableColumn() const
 
 QTEST_MAIN(tst_BaseModel)
 
-#include "tst_basemodel.moc"
+#include "tst_model.moc"
 
 // TEST tests looks at commit history for inspiration for new tests silverqx

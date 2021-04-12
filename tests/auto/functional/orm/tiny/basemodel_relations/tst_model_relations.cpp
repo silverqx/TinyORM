@@ -858,4 +858,4 @@ void tst_BaseModel_Relations::orWhere_WithCallback() const
 
 QTEST_MAIN(tst_BaseModel_Relations)
 
-#include "tst_basemodel_relations.moc"
+#include "tst_model_relations.moc"
