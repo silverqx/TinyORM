@@ -3,12 +3,12 @@
 
 #include "orm/tiny/basemodel.hpp"
 
-using Orm::Tiny::BaseModel;
+using Orm::Tiny::Model;
 
-class Setting final : public BaseModel<Setting>
+class Setting final : public Model<Setting>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
 private:
     /*! The table associated with the model. */

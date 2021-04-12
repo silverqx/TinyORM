@@ -7,7 +7,7 @@ using Orm::Tiny::Relations::BasePivot;
 
 class Tagged final : public BasePivot<Tagged>
 {
-    friend BaseModel<Tagged>;
+    friend Model<Tagged>;
     friend BasePivot<Tagged>;
 
     using BasePivot<Tagged>::BasePivot;

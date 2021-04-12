@@ -7,15 +7,15 @@
 
 #include "models/torrentpreviewablefileeager.hpp"
 
-using Orm::Tiny::BaseModel;
+using Orm::Tiny::Model;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
 class TorrentEager_Failed final :
-        public BaseModel<TorrentEager_Failed, TorrentPreviewableFileEager>
+        public Model<TorrentEager_Failed, TorrentPreviewableFileEager>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
 public:
     /*! Get the previewable files associated with the torrent. */

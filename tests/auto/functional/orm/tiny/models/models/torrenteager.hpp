@@ -9,16 +9,16 @@
 #include "models/torrentpreviewablefileeager.hpp"
 
 using Orm::AttributeItem;
-using Orm::Tiny::BaseModel;
+using Orm::Tiny::Model;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
 class TorrentEager final :
-        public BaseModel<TorrentEager, TorrentPreviewableFileEager,
+        public Model<TorrentEager, TorrentPreviewableFileEager,
                          TorrentPeerEager_NoRelations>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
 public:
     /*! Get the previewable files associated with the torrent. */

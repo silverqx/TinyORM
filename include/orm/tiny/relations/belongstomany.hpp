@@ -37,6 +37,9 @@ namespace Orm::Tiny::Relations
             public ManyRelation,
             public PivotRelation
     {
+        template<typename Derived>
+        using BaseModel = Orm::Tiny::Model<Derived>;
+
     protected:
         BelongsToMany(std::unique_ptr<Related> &&related, Model &parent,
                       const QString &table = "", const QString &foreignPivotKey = "",
@@ -1252,7 +1255,8 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    std::map<typename BaseModel<Related>::KeyType, QVector<AttributeItem>>
+    std::map<typename BelongsToMany<Model, Related, PivotType>
+            ::template BaseModel<Related>::KeyType, QVector<AttributeItem>>
     BelongsToMany<Model, Related, PivotType>::recordsFromIds(
                 const QVector<QVariant> &ids) const
     {

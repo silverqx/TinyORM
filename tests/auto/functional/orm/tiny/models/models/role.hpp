@@ -7,14 +7,14 @@ class User; // Forward declaration to avoid cyclic dependency
 
 #include "models/roleuser.hpp"
 
-using Orm::Tiny::BaseModel;
+using Orm::Tiny::Model;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 
-class Role final : public BaseModel<Role, User, RoleUser>
+class Role final : public Model<Role, User, RoleUser>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
 public:
     /*! The users that belong to the role. */

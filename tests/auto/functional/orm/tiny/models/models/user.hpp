@@ -5,15 +5,15 @@
 
 #include "models/role.hpp"
 
-using Orm::Tiny::BaseModel;
+using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 
-class User final : public BaseModel<User, Role, Pivot>
+class User final : public Model<User, Role, Pivot>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
 public:
     /*! The roles that belong to the user. */

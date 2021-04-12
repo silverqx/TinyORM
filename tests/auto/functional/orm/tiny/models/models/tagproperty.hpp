@@ -3,12 +3,12 @@
 
 #include "orm/tiny/basemodel.hpp"
 
-using Orm::Tiny::BaseModel;
+using Orm::Tiny::Model;
 
-class TagProperty final : public BaseModel<TagProperty>
+class TagProperty final : public Model<TagProperty>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
     /*! The table associated with the model. */
     QString u_table {"tag_properties"};

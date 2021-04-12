@@ -7,17 +7,17 @@
 #include "models/tagproperty.hpp"
 #include "models/torrent.hpp"
 
-using Orm::Tiny::BaseModel;
+using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
-class Tag final : public BaseModel<Tag, Torrent, TagProperty, Tagged>
-//class Tag final : public BaseModel<Tag, Torrent, TagProperty, Pivot>
+class Tag final : public Model<Tag, Torrent, TagProperty, Tagged>
+//class Tag final : public Model<Tag, Torrent, TagProperty, Pivot>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
 public:
     /*! Get torrents that belong to the tag. */

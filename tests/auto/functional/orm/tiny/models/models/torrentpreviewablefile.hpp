@@ -7,10 +7,10 @@
 #include "models/torrentpreviewablefileproperty.hpp"
 
 class TorrentPreviewableFile final :
-        public BaseModel<TorrentPreviewableFile, Torrent, TorrentPreviewableFileProperty>
+        public Model<TorrentPreviewableFile, Torrent, TorrentPreviewableFileProperty>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
 public:
     /*! Get the torrent that owns the previewable file. */

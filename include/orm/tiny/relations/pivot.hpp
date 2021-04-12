@@ -13,7 +13,7 @@ namespace Orm::Tiny::Relations
     class SHAREDLIB_EXPORT Pivot : public BasePivot<Pivot>
     {
         // TODO study, or stackoverflow friend X vs friend X<Pivot>, if template parameter deduced or all BaseXyz template instances are friends? silverqx
-        friend BaseModel<Pivot>;
+        friend Model<Pivot>;
         friend BasePivot<Pivot>;
 
         using BasePivot<Pivot>::BasePivot;

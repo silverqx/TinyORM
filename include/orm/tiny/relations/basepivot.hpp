@@ -16,12 +16,12 @@ namespace Orm::Tiny::Relations
 
     /*! Base class for Pivot models. */
     template<typename PivotModel>
-    class BasePivot : public BaseModel<PivotModel>, public IsPivotModel
+    class BasePivot : public Model<PivotModel>, public IsPivotModel
     {
     public:
-        friend BaseModel<PivotModel>;
+        friend Model<PivotModel>;
 
-        using BaseModel<PivotModel>::BaseModel;
+        using Model<PivotModel>::Model;
 
         /* AsPivot */
         /*! Create a new pivot model instance. */
@@ -170,7 +170,7 @@ namespace Orm::Tiny::Relations
            BaseModel's 'remove' method, otherwise we have to build a query with
            the help of QueryBuilder's 'where' method. */
         if (this->m_attributesHash.contains(this->getKeyName()))
-            return BaseModel<PivotModel>::remove();
+            return Model<PivotModel>::remove();
 
         // FEATURE events silverqx
 //        if (fireModelEvent("deleting") == false)
@@ -203,7 +203,7 @@ namespace Orm::Tiny::Relations
     {
         // TODO now isset also check for NULL, so I have to check for QVariant::isNull/isValid too silverqx
         if (this->m_attributesHash.contains(this->getKeyName()))
-            return BaseModel<PivotModel>::setKeysForSelectQuery(query);
+            return Model<PivotModel>::setKeysForSelectQuery(query);
 
         query.whereEq(m_foreignKey,
                       this->getOriginal(m_foreignKey, this->getAttribute(m_foreignKey)));

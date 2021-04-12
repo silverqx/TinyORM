@@ -3,21 +3,21 @@
 
 #include "orm/tiny/basemodel.hpp"
 
-using Orm::Tiny::BaseModel;
+using Orm::Tiny::Model;
 
-class Torrent_TotallyGuarded final : public BaseModel<Torrent_TotallyGuarded>
+class Torrent_TotallyGuarded final : public Model<Torrent_TotallyGuarded>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
     /*! The table associated with the model. */
     QString u_table {"torrents"};
 };
 
-class Torrent_GuardedAttribute final : public BaseModel<Torrent_GuardedAttribute>
+class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
     /*! The table associated with the model. */
     QString u_table {"torrents"};
@@ -40,10 +40,10 @@ class Torrent_GuardedAttribute final : public BaseModel<Torrent_GuardedAttribute
 };
 
 class Torrent_AllowedMassAssignment final :
-        public BaseModel<Torrent_AllowedMassAssignment>
+        public Model<Torrent_AllowedMassAssignment>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
     /*! The table associated with the model. */
     QString u_table {"torrents"};

@@ -5,10 +5,10 @@
 
 #include "models/torrent.hpp"
 
-class TorrentPeer final : public BaseModel<TorrentPeer, Torrent>
+class TorrentPeer final : public Model<TorrentPeer, Torrent>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
 public:
     /*! Get the torrent that owns the torrent peer. */

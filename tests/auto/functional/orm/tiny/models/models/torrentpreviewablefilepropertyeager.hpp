@@ -3,13 +3,13 @@
 
 #include "orm/tiny/basemodel.hpp"
 
-using Orm::Tiny::BaseModel;
+using Orm::Tiny::Model;
 
 class TorrentPreviewableFilePropertyEager final :
-        public BaseModel<TorrentPreviewableFilePropertyEager>
+        public Model<TorrentPreviewableFilePropertyEager>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
     /*! The table associated with the model. */
     QString u_table {"torrent_previewable_file_properties"};

@@ -11,7 +11,7 @@
 #include "models/torrentpreviewablefile.hpp"
 
 //using Orm::AttributeItem;
-using Orm::Tiny::BaseModel;
+using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
@@ -20,11 +20,11 @@ using Orm::WithItem;
 /* This class serves as a showcase, so all possible features are defined / used. */
 
 class Torrent final :
-        public BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Pivot>
-//        public BaseModel<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Tagged>
+        public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Pivot>
+//        public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Tagged>
 {
-    friend BaseModel;
-    using BaseModel::BaseModel;
+    friend Model;
+    using Model::Model;
 
 public:
     /*! The "type" of the primary key ID. */

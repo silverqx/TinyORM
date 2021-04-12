@@ -26,8 +26,8 @@ namespace Tiny
     template<class Model>
     class Builder;
 
-    template<class Model, typename ...AllRelations>
-    class BaseModel;
+    template<typename Derived, typename ...AllRelations>
+    class Model;
 
 namespace Relations
 {
@@ -35,6 +35,8 @@ namespace Relations
     template<class Model, class Related>
     class Relation
     {
+        template<typename Derived>
+        using BaseModel  = Orm::Tiny::Model<Derived>;
         using JoinClause = Orm::Query::JoinClause;
 
     protected:

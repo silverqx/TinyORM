@@ -7,7 +7,7 @@ using Orm::Tiny::Relations::BasePivot;
 
 class RoleUser final : public BasePivot<RoleUser>
 {
-    friend BaseModel<RoleUser>;
+    friend Model<RoleUser>;
     friend BasePivot<RoleUser>;
 
     using BasePivot<RoleUser>::BasePivot;
