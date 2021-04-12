@@ -1,8 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-    basemodel \
-    basemodel_connection_independent \
-    basemodel_relations \
+    model \
+    model_connection_independent \
+    model_relations \
     relations_inserting_updating \
     tinybuilder \

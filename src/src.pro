@@ -37,7 +37,7 @@ DEFINES += TINYORM_DEBUG_SQL
 # Build as shared library
 DEFINES += TINYORM_BUILDING_SHARED
 
-# Enable code needed by tests, eg connection overriding in the BaseModel
+# Enable code needed by tests, eg connection overriding in the Model
 build_tests {
     DEFINES += TINYORM_TESTS_CODE
 }

@@ -18,7 +18,7 @@ CONFIG *= qt console testcase link_prl
 
 DEFINES += PROJECT_TINYORM_TEST
 
-# Enable code needed by tests, eg connection overriding in the BaseModel
+# Enable code needed by tests, eg connection overriding in the Model
 DEFINES += TINYORM_TESTS_CODE
 
 # User Configuration
