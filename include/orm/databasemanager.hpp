@@ -228,7 +228,7 @@ namespace Query
         /*! Setup the default database connection reconnector. */
         DatabaseManager &setupDefaultReconnector();
 
-        /*! Parse the connection into an array of the name and read / write type. */
+        /*! Parse the connection into the string of the name and read / write type. */
         const QString &parseConnectionName(const QString &name) const;
 
         /*! Make the database connection instance. */

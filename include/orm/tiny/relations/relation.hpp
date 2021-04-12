@@ -248,16 +248,16 @@ namespace Relations
         Builder<Related> &orWhere(
                 const std::function<void(Builder<Related> &)> &callback) const;
 
-        /*! Add an array of basic where clauses to the query. */
+        /*! Add a vector of basic where clauses to the query. */
         Builder<Related> &where(const QVector<WhereItem> &values,
                                 const QString &condition = "and") const;
-        /*! Add an array of basic "or where" clauses to the query. */
+        /*! Add a vector of basic "or where" clauses to the query. */
         Builder<Related> &orWhere(const QVector<WhereItem> &values) const;
 
-        /*! Add an array of where clauses comparing two columns to the query. */
+        /*! Add a vector of where clauses comparing two columns to the query. */
         Builder<Related> &whereColumn(const QVector<WhereColumnItem> &values,
                                       const QString &condition = "and") const;
-        /*! Add an array of "or where" clauses comparing two columns to the query. */
+        /*! Add a vector of "or where" clauses comparing two columns to the query. */
         Builder<Related> &orWhereColumn(const QVector<WhereColumnItem> &values) const;
 
         /*! Add a "where" clause comparing two columns to the query. */
@@ -481,7 +481,7 @@ namespace Relations
         inline void init() const
         { addConstraints(); }
 
-        /*! Get all of the primary keys for an array of models. */
+        /*! Get all of the primary keys for the vector of models. */
         QVector<QVariant>
         getKeys(const QVector<Model> &models, const QString &key = "") const;
 

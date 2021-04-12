@@ -66,7 +66,6 @@ namespace Relations {
     // CUR what about to name it Model instead silverqx
     // CUR return ok vs exceptions in DatabaseConnection silverqx
     // CUR docs associate/dissociate example is bad, user and account, change it silverqx
-    // CUR docs search for word 'array' and change it to 'vector' silverqx
     template<typename Model, typename ...AllRelations>
     class BaseModel :
             public Concerns::HasRelationStore<Model, AllRelations...>,
@@ -276,18 +275,18 @@ namespace Relations {
         static std::unique_ptr<TinyBuilder<Model>>
         orWhere(const std::function<void(TinyBuilder<Model> &)> &callback);
 
-        /*! Add an array of basic where clauses to the query. */
+        /*! Add a vector of basic where clauses to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
         where(const QVector<WhereItem> &values, const QString &condition = "and");
-        /*! Add an array of basic "or where" clauses to the query. */
+        /*! Add a vector of basic "or where" clauses to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
         orWhere(const QVector<WhereItem> &values);
 
-        /*! Add an array of where clauses comparing two columns to the query. */
+        /*! Add a vector of where clauses comparing two columns to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
         whereColumn(const QVector<WhereColumnItem> &values,
                     const QString &condition = "and");
-        /*! Add an array of "or where" clauses comparing two columns to the query. */
+        /*! Add a vector of "or where" clauses comparing two columns to the query. */
         static std::unique_ptr<TinyBuilder<Model>>
         orWhereColumn(const QVector<WhereColumnItem> &values);
 
@@ -446,11 +445,11 @@ namespace Relations {
         template<typename ModelToCompare>
         bool isNot(const std::optional<ModelToCompare> &model) const;
 
-        /*! Fill the model with an array of attributes. */
+        /*! Fill the model with a vector of attributes. */
         Model &fill(const QVector<AttributeItem> &attributes);
-        /*! Fill the model with an array of attributes. */
+        /*! Fill the model with a vector of attributes. */
         Model &fill(QVector<AttributeItem> &&attributes);
-        /*! Fill the model with an array of attributes. Force mass assignment. */
+        /*! Fill the model with a vector of attributes. Force mass assignment. */
         Model &forceFill(const QVector<AttributeItem> &attributes);
 
         /* Model Instance methods */
@@ -532,7 +531,7 @@ namespace Relations {
         /* HasAttributes */
         /*! Set a given attribute on the model. */
         Model &setAttribute(const QString &key, QVariant value);
-        /*! Set the array of model attributes. No checking is done. */
+        /*! Set a vector of model attributes. No checking is done. */
         Model &setRawAttributes(const QVector<AttributeItem> &attributes,
                                 bool sync = false);
         /*! Sync the original attributes with the current. */
@@ -924,11 +923,11 @@ namespace Relations {
         template<typename Related>
         QString pivotTableName() const;
 
-        /*! Set the entire relations array on the model. */
+        /*! Set the entire relations hash on the model. */
         Model &setRelations(
                 const std::unordered_map<QString,
                                          RelationsType<AllRelations...>> &relations);
-        /*! Set the entire relations array on the model. */
+        /*! Set the entire relations hash on the model. */
         Model &setRelations(
                 std::unordered_map<QString, RelationsType<AllRelations...>> &&relations);
 
@@ -937,7 +936,7 @@ namespace Relations {
         bool isGuardableColumn(const QString &key) const;
         /*! Th key for guardable columns hash cache. */
         QString getKeyForGuardableHash() const;
-        /*! Get the fillable attributes of a given array. */
+        /*! Get the fillable attributes of a given vector. */
         QVector<AttributeItem>
         fillableFromArray(const QVector<AttributeItem> &attributes) const;
         QVector<AttributeItem>
@@ -2784,7 +2783,7 @@ namespace Relations {
     const Container<Related *>
     BaseModel<Model, AllRelations...>::getRelationValue(const QString &relation)
     {
-        /*! If the key already exists in the relationships array, it just means the
+        /*! If the key already exists in the relationships hash, it just means the
             relationship has already been loaded, so we'll just return it out of
             here because there is no need to query within the relations twice. */
         if (relationLoaded(relation))
@@ -2805,7 +2804,7 @@ namespace Relations {
     Related *
     BaseModel<Model, AllRelations...>::getRelationValue(const QString &relation)
     {
-        /*! If the key already exists in the relationships array, it just means the
+        /*! If the key already exists in the relationships hash, it just means the
             relationship has already been loaded, so we'll just return it out of
             here because there is no need to query within the relations twice. */
         if (relationLoaded(relation))
@@ -2887,15 +2886,15 @@ namespace Relations {
             const std::unordered_map<QString, int> &changes,
             const QStringList &attributes) const
     {
-        /* If no specific attributes were provided, we will just see if the dirty array
+        /* If no specific attributes were provided, we will just see if the dirty hash
            already contains any attributes. If it does we will just return that this
            count is greater than zero. Else, we need to check specific attributes. */
         if (attributes.isEmpty())
             return changes.size() > 0;
 
-        /* Here we will spin through every attribute and see if this is in the array of
+        /* Here we will spin through every attribute and see if this is in the hash of
            dirty attributes. If it is, we will return true and if we make it through
-           all of the attributes for the entire array we will return false at end. */
+           all of the attributes for the entire vector we will return false at end. */
         for (const auto &attribute : attributes)
             if (changes.contains(attribute))
                 return true;
@@ -3238,7 +3237,7 @@ namespace Relations {
         if (key.isEmpty() || key.isNull())
             return {};
 
-        /* If the attribute exists in the attribute array or has a "get" mutator we will
+        /* If the attribute exists in the attribute hash or has a "get" mutator we will
            get the attribute's value. Otherwise, we will proceed as if the developers
            are asking for a relationship's value. This covers both types of values. */
         if (m_attributesHash.contains(key)
@@ -3989,7 +3988,7 @@ namespace Relations {
         }
 
         /* If the table isn't incrementing we'll simply insert these attributes as they
-           are. These attribute arrays must contain an "id" column previously placed
+           are. These attribute vectors must contain an "id" column previously placed
            there by the developer as the manually determined key for these models. */
         else
             if (attributes.isEmpty())
@@ -4316,7 +4315,7 @@ namespace Relations {
         if (fillable.contains(key))
             return true;
 
-        /* If the attribute is explicitly listed in the "guarded" array then we can
+        /* If the attribute is explicitly listed in the "guarded" vector then we can
            return false immediately. This means this attribute is definitely not
            fillable and there is no point in going any further in this method. */
         if (isGuarded(key))

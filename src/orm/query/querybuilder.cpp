@@ -82,9 +82,6 @@ namespace
 std::tuple<bool, std::optional<QSqlQuery>>
 Builder::insert(const QVector<QVariantMap> &values)
 {
-    /* Since every insert gets treated like a batch insert, we will make sure the
-       bindings are structured in a way that is convenient when building these
-       inserts statements by verifying these elements are actually an array. */
     if (values.isEmpty())
         return {true, std::nullopt};
 
@@ -353,9 +350,8 @@ Builder &Builder::orWhere(const std::function<void(Builder &)> &callback)
 
 Builder &Builder::where(const QVector<WhereItem> &values, const QString &condition)
 {
-    /* If the column is an array, we will assume it is the QVector of WhereItem-s
-       and can add them each as a where clause. We will maintain the boolean we
-       received when the method was called and pass it into the nested where.
+    /* We will maintain the boolean we received when the method was called and pass it
+       into the nested where.
        The parentheses in this query are ok:
        select * from xyz where (id = ?) */
     return addArrayOfWheres(values, condition);

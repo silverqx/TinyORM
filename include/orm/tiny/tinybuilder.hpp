@@ -181,16 +181,16 @@ namespace Relations
         /*! Add a nested "or where" clause to the query. */
         Builder &orWhere(const std::function<void(Builder &)> &callback);
 
-        /*! Add an array of basic where clauses to the query. */
+        /*! Add a vector of basic where clauses to the query. */
         Builder &where(const QVector<WhereItem> &values,
                        const QString &condition = "and");
-        /*! Add an array of basic "or where" clauses to the query. */
+        /*! Add a vector of basic "or where" clauses to the query. */
         Builder &orWhere(const QVector<WhereItem> &values);
 
-        /*! Add an array of where clauses comparing two columns to the query. */
+        /*! Add a vector of where clauses comparing two columns to the query. */
         Builder &whereColumn(const QVector<WhereColumnItem> &values,
                              const QString &condition = "and");
-        /*! Add an array of "or where" clauses comparing two columns to the query. */
+        /*! Add a vector of "or where" clauses comparing two columns to the query. */
         Builder &orWhereColumn(const QVector<WhereColumnItem> &values);
 
         /*! Add a "where" clause comparing two columns to the query. */
@@ -342,7 +342,7 @@ namespace Relations
         bool isNestedUnder(const QString &topRelation,
                            const QString &nestedRelation) const;
 
-        /*! Add the "updated at" column to an array of values. */
+        /*! Add the "updated at" column to the vector of values. */
         QVector<UpdateItem>
         addUpdatedAtColumn(QVector<UpdateItem> values) const;
 
@@ -1202,7 +1202,7 @@ namespace Relations
 //        std::invoke(relationItem.constraints);
 
         /* Once we have the results, we just match those back up to their parent models
-           using the relationship instance. Then we just return the finished arrays
+           using the relationship instance. Then we just return the finished vectors
            of models which have been eagerly hydrated and are readied for return. */
         relation->match(relation->initRelation(models, relationItem.name),
                         relation->getEager(), relationItem.name);
@@ -1305,7 +1305,7 @@ namespace Relations
 
             /* We need to separate out any nested includes, which allows the developers
                to load deep relationships using "dots" without stating each level of
-               the relationship with its own key in the array of eager-load names. */
+               the relationship with its own key in the vector of eager-load names. */
             addNestedWiths(relation.name, results);
 
             results.append(relation);
@@ -1331,7 +1331,7 @@ namespace Relations
     {
         QStringList progress;
 
-        /* If the relation has already been set on the result array, we will not set it
+        /* If the relation has already been set on the result vector, we will not set it
            again, since that would override any constraints that were already placed
            on the relationships. We will only set the ones that are not specified. */
         // Prevent container detach
@@ -1360,7 +1360,7 @@ namespace Relations
 
         /* We are basically looking for any relationships that are nested deeper than
            the given top-level relationship. We will just check for any relations
-           that start with the given top relations and adds them to our arrays. */
+           that start with the given top relations and adds them to our vectors. */
         for (const auto &relation : m_eagerLoad)
             if (isNestedUnder(topRelationName, relation.name))
                 nested.append({relation.name.mid(topRelationName.size() + 1),

@@ -60,12 +60,12 @@ namespace Query
         QVariant getValue(const Expression &expression) const;
 
     protected:
-        /*! Convert an array of column names into a delimited string. */
+        /*! Convert the vector of column names into a delimited string. */
         QString columnize(QStringList columns) const;
-        /*! Convert an array of column names into a delimited string. */
+        /*! Convert the vector of column names into a delimited string. */
         QString columnize(const QStringList &columns, bool isTorrentsTable) const;
         // TODO concept, template constraint to QVariantMap and QVector<QVariant> for now silverqx
-        /*! Create query parameter place-holders for an array. */
+        /*! Create query parameter place-holders for the vector. */
         template<typename Container> requires Parametrize<Container>
         QString parametrize(const Container &values) const;
         /*! Get the appropriate query parameter place-holder for a value. */

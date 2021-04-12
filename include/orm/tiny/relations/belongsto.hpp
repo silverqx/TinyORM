@@ -53,7 +53,7 @@ namespace Orm::Tiny::Relations
         getResults() const override;
 
     protected:
-        /*! Gather the keys from an array of related models. */
+        /*! Gather the keys from a vector of related models. */
         QVector<QVariant> getEagerModelKeys(const QVector<Model> &models) const;
         /*! Get the default value for this relation. */
         Model &getDefaultFor(Model &parent) const;
@@ -243,7 +243,7 @@ namespace Orm::Tiny::Relations
         QVector<QVariant> keys;
 
         /* First we need to gather all of the keys from the parent models so we know what
-           to query for via the eager loading query. We will add them to an array then
+           to query for via the eager loading query. We will add them to the vector then
            execute a "where in" statement to gather up all of those related records. */
         for (const auto &model : models) {
             const auto &value = model.getAttribute(m_foreignKey);

@@ -16,7 +16,7 @@ namespace Orm::Tiny
     public:
         /*! Set a given attribute on the model. */
         Model &setAttribute(const QString &key, const QVariant &value);
-        /*! Set the array of model attributes. No checking is done. */
+        /*! Set the vector of model attributes. No checking is done. */
 //        Model &setRawAttributes(const QVector<AttributeItem> &attributes,
 //                                bool sync = false);
         /*! Get all of the current attributes on the model. */

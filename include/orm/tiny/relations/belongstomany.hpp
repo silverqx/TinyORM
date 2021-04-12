@@ -238,7 +238,7 @@ namespace Orm::Tiny::Relations
         /*! Attach a model to the parent using a custom class. */
         void attachUsingCustomClass(const QVector<QVariant> &ids,
                                     const QVector<AttributeItem> &attributes) const;
-        /*! Create an array of records to insert into the pivot table. */
+        /*! Create the vector of records to insert into the pivot table. */
         QVector<QVector<AttributeItem>>
         formatAttachRecords(const QVector<QVariant> &ids,
                             const QVector<AttributeItem> &attributes) const;
@@ -250,7 +250,7 @@ namespace Orm::Tiny::Relations
         void attachUsingCustomClass(
                 const std::map<typename BaseModel<Related>::KeyType,
                                QVector<AttributeItem>> &idsWithAttributes) const;
-        /*! Create an array of records to insert into the pivot table. */
+        /*! Create the vector of records to insert into the pivot table. */
         QVector<QVector<AttributeItem>>
         formatAttachRecords(
                 const std::map<typename BaseModel<Related>::KeyType,
@@ -781,7 +781,7 @@ namespace Orm::Tiny::Relations
 
         /* First we need to attach any of the associated models that are not currently
            in this joining table. We'll spin through the given IDs, checking to see
-           if they exist in the array of current ones, and if not we will insert. */
+           if they exist in the vector of current ones, and if not we will insert. */
         auto current = getRelatedIds(getCurrentlyAttachedPivots());
 
         // Compute different keys, these keys will be detached
@@ -793,8 +793,8 @@ namespace Orm::Tiny::Relations
                       | ranges::to<QVector<QVariant>>();
 
         /* Next, we will take the differences of the currents and given IDs and detach
-           all of the entities that exist in the "current" array but are not in the
-           array of the new IDs given to the method which will complete the sync. */
+           all of the entities that exist in the "current" vector but are not in the
+           vector of the new IDs given to the method which will complete the sync. */
         if (detaching && !detach.isEmpty()) {
             this->detach(detach);
 

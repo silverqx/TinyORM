@@ -159,16 +159,16 @@ namespace Query
         /*! Add a nested "or where" clause to the query. */
         Builder &orWhere(const std::function<void(Builder &)> &callback);
 
-        /*! Add an array of basic where clauses to the query. */
+        /*! Add a vector of basic where clauses to the query. */
         Builder &where(const QVector<WhereItem> &values,
                        const QString &condition = "and");
-        /*! Add an array of basic "or where" clauses to the query. */
+        /*! Add a vector of basic "or where" clauses to the query. */
         Builder &orWhere(const QVector<WhereItem> &values);
 
-        /*! Add an array of where clauses comparing two columns to the query. */
+        /*! Add a vector of where clauses comparing two columns to the query. */
         Builder &whereColumn(const QVector<WhereColumnItem> &values,
                              const QString &condition = "and");
-        /*! Add an array of "or where" clauses comparing two columns to the query. */
+        /*! Add a vector of "or where" clauses comparing two columns to the query. */
         Builder &orWhereColumn(const QVector<WhereColumnItem> &values);
 
         /*! Add a "where" clause comparing two columns to the query. */
@@ -352,11 +352,11 @@ namespace Query
         /*! Remove all of the expressions from a list of bindings. */
         QVector<QVariant> cleanBindings(const QVector<QVariant> &bindings) const;
 
-        /*! Add an array of basic where clauses to the query. */
+        /*! Add a vector of basic where clauses to the query. */
         Builder &
         addArrayOfWheres(const QVector<WhereItem> &values,
                          const QString &condition = "and");
-        /*! Add an array of where clauses comparing two columns to the query. */
+        /*! Add a vector of where clauses comparing two columns to the query. */
         Builder &
         addArrayOfWheres(const QVector<WhereColumnItem> &values,
                          const QString &condition = "and");

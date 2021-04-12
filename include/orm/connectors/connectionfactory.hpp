@@ -42,7 +42,7 @@ namespace Connectors
         createQSqlDatabaseResolver(QVariantHash &config) const;
 
         /*! Create a new Closure that resolves to a QSqlDatabase instance ( only
-            a connection name returned ) with a specific host or an array of hosts. */
+            a connection name returned ) with a specific host or a vector of hosts. */
         std::function<ConnectionName()>
         createQSqlDatabaseResolverWithHosts(const QVariantHash &config) const;
         /*! Create a new Closure that resolves to a QSqlDatabase instance
