@@ -11,7 +11,7 @@ namespace Orm::Tiny
 {
 
     /*! Check whether the relation was defined in the u_relation data member, called
-        from BaseModel::validateUserRelation(). */
+        from Model::validateUserRelation(). */
     class SHAREDLIB_EXPORT RelationNotFoundError : public RuntimeError
     {
     public:

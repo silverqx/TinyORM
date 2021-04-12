@@ -154,12 +154,12 @@ namespace Query
 
 //    bool operator==(const WithItem &lhs, const WithItem &rhs);
 
-    /*! Tag for BaseModel::getRelation() family methods to return Related type
+    /*! Tag for Model::getRelation() family methods to return Related type
         directly ( not container type ). */
     struct SHAREDLIB_EXPORT One {};
-    /*! Tag for BaseModel::getRelationshipFromMethod() to return QVector<Related>
+    /*! Tag for Model::getRelationshipFromMethod() to return QVector<Related>
         type ( 'Many' relation types ), only internal type for now, used as the template
-        tag in the BaseModel::pushVisited. */
+        tag in the Model::pushVisited. */
     struct Many {};
 
     /*! Options parameter type used in Model save() method. */

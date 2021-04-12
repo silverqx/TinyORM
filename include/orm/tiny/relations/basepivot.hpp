@@ -42,9 +42,9 @@ namespace Orm::Tiny::Relations
         /*! Determine if the pivot model or given attributes has timestamp attributes. */
         bool hasTimestampAttributes() const;
 
-        /* Hide methods from a BaseModel<PivotModel> */
-        /* Different implementation than the BaseModel and instead of make them virtual
-           I used the CRTP pattern in the BaseModel to properly call them, I can not use
+        /* Hide methods from a Model<PivotModel> */
+        /* Different implementation than the Model and instead of make them virtual
+           I used the CRTP pattern in the Model to properly call them, I can not use
            virtual here, because of the Virtual Friend Function Idiom, it would
            be very disarranged. */
         /*! Delete the pivot model record from the database. */
@@ -167,7 +167,7 @@ namespace Orm::Tiny::Relations
     bool BasePivot<PivotModel>::remove()
     {
         /* If a primary key is defined on the current Pivot model, we can use
-           BaseModel's 'remove' method, otherwise we have to build a query with
+           Model's 'remove' method, otherwise we have to build a query with
            the help of QueryBuilder's 'where' method. */
         if (this->m_attributesHash.contains(this->getKeyName()))
             return Model<PivotModel>::remove();

@@ -10,7 +10,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny
 {
 
-    /*! Called from BaseModel::getRelation(), when the relation was not loaded. */
+    /*! Called from Model::getRelation(), when the relation was not loaded. */
     class SHAREDLIB_EXPORT RelationNotLoadedError : public RuntimeError
     {
     public:

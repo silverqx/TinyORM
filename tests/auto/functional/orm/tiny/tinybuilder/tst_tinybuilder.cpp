@@ -274,7 +274,7 @@ void tst_TinyBuilder::update_SameValue() const
     QVERIFY(torrent->exists);
 
     /* Send update query to the database, this is different from
-       the BaseModel::update() method. */
+       the Model::update() method. */
     auto [affected, query] = Torrent::whereEq("id", 5)
             ->update({{"progress", torrent->getAttribute("progress")}});
 

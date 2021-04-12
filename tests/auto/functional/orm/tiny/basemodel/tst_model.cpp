@@ -1136,7 +1136,7 @@ void tst_Model::update() const
                                          {updatedAtColumn, updatedAtOriginal}});
     QVERIFY(resultRevert);
     QCOMPARE(torrent->getAttribute("progress"), progressOriginal);
-    /* Needed to convert toDateTime() because BaseModel::update() set update_at
+    /* Needed to convert toDateTime() because Model::update() set update_at
        attribute as QString. */
     QCOMPARE(torrent->getAttribute(updatedAtColumn).toDateTime(),
              updatedAtOriginal.toDateTime());

@@ -533,7 +533,7 @@ Builder &Builder::orderByDesc(const QString &column)
 Builder &Builder::latest(const QString &column)
 {
     /* Default value "created_at" is ok, because we are in the QueryBuilder,
-       in the BaseModel/TinyBuilder is this default argument processed by
+       in the Model/TinyBuilder is this default argument processed by
        the TinyBuilder::getCreatedAtColumnForLatestOldest() method. */
     return orderBy(column, "desc");
 }

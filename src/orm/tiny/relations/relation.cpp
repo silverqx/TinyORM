@@ -7,7 +7,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Relations
 {
 
-    // TODO mystery, when I delete this file I get linker unresolved symbol error for LogicError, the same happens with basemodel.cpp and InvalidFormatError silverqx
+    // TODO mystery, when I delete this file I get linker unresolved symbol error for LogicError, the same happens with model.cpp and InvalidFormatError silverqx
 
 } // namespace Orm::Tiny::Relations
 #ifdef TINYORM_COMMON_NAMESPACE

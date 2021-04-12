@@ -38,11 +38,11 @@ namespace Relations {
 }
 
 #ifdef TINYORM_TESTS_CODE
-    /*! Used by tests to override connection in the BaseModel. */
+    /*! Used by tests to override connection in the Model. */
     struct ConnectionOverride
     {
-        /*! The connection to use in the BaseModel, this data member is picked up
-            in the BaseModel::getConnectionName(). */
+        /*! The connection to use in the Model, this data member is picked up
+            in the Model::getConnectionName(). */
         inline static QString connection = "";
     };
 #endif
@@ -3412,7 +3412,7 @@ namespace Relations {
         return dates;
     }
 
-    /* BaseModel::AttributeReference - begin */
+    /* Model::AttributeReference - begin */
 
     template<typename Derived, typename ...AllRelations>
     Model<Derived, AllRelations...>::AttributeReference::AttributeReference(
@@ -3472,7 +3472,7 @@ namespace Relations {
         return value();
     }
 
-    /* BaseModel::AttributeReference - end */
+    /* Model::AttributeReference - end */
 
     template<typename Derived, typename ...AllRelations>
     typename Model<Derived, AllRelations...>::AttributeReference
@@ -4355,7 +4355,7 @@ namespace Relations {
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-// TODO study, find out how to avoid pivot include at the end of BaseModel's header file silverqx
+// TODO study, find out how to avoid pivot include at the end of Model's header file silverqx
 #include "orm/tiny/relations/pivot.hpp"
 
 #endif // MODEL_H

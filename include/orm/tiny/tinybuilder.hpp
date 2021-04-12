@@ -1236,7 +1236,7 @@ namespace Relations
            Then eager constraints are applied to this newly created TinyBuilder and
            the result is returned back to the initial model.
            The result is transformed into models and these models are hydrated.
-           Hydrated models are saved to the BaseModel::m_relations data member. */
+           Hydrated models are saved to the Model::m_relations data member. */
 
         auto method = m_model.template getRelationMethod<Related>(name);
 
