@@ -1,8 +1,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <QDateTime>
-
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/invalidargumenterror.hpp"
@@ -68,7 +66,6 @@ namespace Relations {
     // TODO QueryBuilder::updateOrInsert() silverqx
     // CUR code coverage silverqx
     // CUR null foreign keys tests, null relations, default models silverqx
-    // CUR whitespaces after Derived silverqx
     template<typename Derived, typename ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -472,15 +469,15 @@ namespace Relations {
 
         /*! Create a new model instance that is existing. */
         Derived newFromBuilder(const QVector<AttributeItem> &attributes = {},
-                             const std::optional<QString> connection = std::nullopt);
+                               const std::optional<QString> connection = std::nullopt);
         /*! Create a new instance of the given model. */
         inline Derived newInstance() { return newInstance({}); }
         /*! Create a new instance of the given model. */
         Derived newInstance(const QVector<AttributeItem> &attributes,
-                          bool exists = false);
+                            bool exists = false);
         /*! Create a new instance of the given model. */
         Derived newInstance(QVector<AttributeItem> &&attributes,
-                          bool exists = false);
+                            bool exists = false);
 
         /*! Create a new pivot model instance. */
         template<typename PivotType = Relations::Pivot, typename Parent>
@@ -536,7 +533,7 @@ namespace Relations {
         Derived &setAttribute(const QString &key, QVariant value);
         /*! Set a vector of model attributes. No checking is done. */
         Derived &setRawAttributes(const QVector<AttributeItem> &attributes,
-                                bool sync = false);
+                                  bool sync = false);
         /*! Sync the original attributes with the current. */
         Derived &syncOriginal();
         /*! Get all of the current attributes on the model (insert order). */
@@ -1252,7 +1249,7 @@ namespace Relations {
     template<typename Derived, typename ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::findOrNew(const QVariant &id,
-                                                 const QStringList &columns)
+                                               const QStringList &columns)
     {
         return query()->findOrNew(id, columns);
     }
@@ -1260,7 +1257,7 @@ namespace Relations {
     template<typename Derived, typename ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::findOrFail(const QVariant &id,
-                                                  const QStringList &columns)
+                                                const QStringList &columns)
     {
         return query()->findOrFail(id, columns);
     }
@@ -1986,7 +1983,7 @@ namespace Relations {
     template<typename Derived, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orderBy(const QString &column,
-                                               const QString &direction)
+                                             const QString &direction)
     {
         auto builder = query();
 
@@ -2042,7 +2039,7 @@ namespace Relations {
     template<typename Derived, typename ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::reorder(const QString &column,
-                                               const QString &direction)
+                                             const QString &direction)
     {
         auto builder = query();
 
@@ -3096,7 +3093,7 @@ namespace Relations {
     template<typename Related>
     Derived &
     Model<Derived, AllRelations...>::setRelation(const QString &relation,
-                                                   const QVector<Related> &models)
+                                                 const QVector<Related> &models)
     {
         m_relations[relation] = models;
 
@@ -3107,7 +3104,7 @@ namespace Relations {
     template<typename Related>
     Derived &
     Model<Derived, AllRelations...>::setRelation(const QString &relation,
-                                                   QVector<Related> &&models)
+                                                 QVector<Related> &&models)
     {
         m_relations[relation] = std::move(models);
 
@@ -3118,7 +3115,7 @@ namespace Relations {
     template<typename Related>
     Derived &
     Model<Derived, AllRelations...>::setRelation(const QString &relation,
-                                                   const std::optional<Related> &model)
+                                                 const std::optional<Related> &model)
     {
         m_relations[relation] = model;
 
@@ -3129,7 +3126,7 @@ namespace Relations {
     template<typename Related>
     Derived &
     Model<Derived, AllRelations...>::setRelation(const QString &relation,
-                                                   std::optional<Related> &&model)
+                                                 std::optional<Related> &&model)
     {
         m_relations[relation] = std::move(model);
 
@@ -3616,7 +3613,7 @@ namespace Relations {
     template<typename Related>
     std::unique_ptr<Relations::Relation<Derived, Related>>
     Model<Derived, AllRelations...>::belongsTo(QString foreignKey, QString ownerKey,
-                                                 QString relation)
+                                               QString relation)
     {
         /* If no relation name was given, we will use the Related class type to extract
            the name and use that as the relationship name as most of the time this
