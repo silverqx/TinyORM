@@ -58,6 +58,8 @@ namespace Relations {
     // TODO model missing methods Model::whereBetween() silverqx
     // TODO model missing methods Model::exists()/notExists() silverqx
     // TODO model missing methods Model::saveOrFail() silverqx
+    // TODO model missing methods EloquentCollection::toQuery() silverqx
+    // FEATURE EloquentCollection, solve how to implement, also look at Eloquent's Custom Collections silverqx
     // FEATURE next Constraining Eager Loads silverqx
     // TODO perf add pragma once to every header file, have branch pragma-once, but I can't get rid of the clang warning -Wpragma-once-outside-header in every file, I tried everything 😞 silverqx
     // TODO future try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
@@ -65,7 +67,6 @@ namespace Relations {
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     // TODO QueryBuilder::updateOrInsert() silverqx
     // CUR code coverage silverqx
-    // CUR null foreign keys tests, null relations, default models silverqx
     template<typename Derived, typename ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,

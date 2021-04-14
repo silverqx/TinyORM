@@ -70,6 +70,7 @@ namespace Orm::Tiny::Relations
     HasOne<Model, Related>::initRelation(QVector<Model> &models,
                                          const QString &relation) const
     {
+        // FEATURE default models, add support for default models (trait SupportsDefaultModels) silverqx
         for (auto &model : models)
             model.template setRelation<Related>(relation, std::nullopt);
 

@@ -230,7 +230,7 @@ namespace Orm::Tiny::Relations
         )
             return std::nullopt;
 
-        // TODO add support for getDefaultFor() silverqx
+        // FEATURE default models, add support for default models (trait SupportsDefaultModels), getDefaultFor() will be used in the initRelation()/getResults() methods and will be implemented in the one type relations only, so in HasOne and BelongsTo silverqx
         const auto first = this->m_query->first();
 
         return first ? first : std::nullopt;

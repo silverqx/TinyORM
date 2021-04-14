@@ -73,9 +73,6 @@ namespace Orm::Tiny::Relations
         for (auto &model : models)
             model.template setRelation<Related>(relation, QVector<Related>());
 
-        // FEATURE default models, add support for default models (trait SupportsDefaultModels) silverqx
-//        model.setRelation(relation, getDefaultFor(model));
-
         return models;
     }
 
