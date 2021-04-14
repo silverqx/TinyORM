@@ -912,7 +912,7 @@ namespace Orm::Tiny::Relations
         QVector<QVariant> ids;
 
         // Ownership of the QSharedPointer<QueryBuilder>
-        auto [ok, query] = newPivotQuery()->get({m_relatedPivotKey});
+        auto query = newPivotQuery()->get({m_relatedPivotKey});
 
         while (query.next())
             ids << query.value(m_relatedPivotKey);
@@ -1146,7 +1146,7 @@ namespace Orm::Tiny::Relations
     QVector<PivotType>
     BelongsToMany<Model, Related, PivotType>::getCurrentlyAttachedPivots() const
     {
-        auto [ok, query] = newPivotQuery()->get();
+        auto query = newPivotQuery()->get();
 
         QVector<PivotType> pivots;
 
@@ -1163,11 +1163,7 @@ namespace Orm::Tiny::Relations
     std::optional<PivotType>
     BelongsToMany<Model, Related, PivotType>::getAttachedPivot(const QVariant &id) const
     {
-        auto [hasFirst, query] = newPivotStatementForId(id)->first();
-
-        // Query result was empty, QSqlQuery::first returned false
-        if (!hasFirst)
-            return std::nullopt;
+        auto query = newPivotStatementForId(id)->first();
 
         return PivotType::fromRawAttributes(
             this->m_parent,

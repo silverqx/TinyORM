@@ -69,19 +69,19 @@ namespace Orm
         { return m_savepoints; }
 
         /*! Run a select statement against the database. */
-        std::tuple<bool, QSqlQuery>
+        QSqlQuery
         select(const QString &queryString,
                const QVector<QVariant> &bindings = {}) override;
         /*! Run a select statement against the database. */
-        std::tuple<bool, QSqlQuery>
+        QSqlQuery
         selectFromWriteConnection(const QString &queryString,
                                   const QVector<QVariant> &bindings = {}) override;
         /*! Run a select statement and return a single result. */
-        std::tuple<bool, QSqlQuery>
+        QSqlQuery
         selectOne(const QString &queryString,
                   const QVector<QVariant> &bindings = {}) override;
         /*! Run an insert statement against the database. */
-        std::tuple<bool, QSqlQuery>
+        QSqlQuery
         insert(const QString &queryString,
                const QVector<QVariant> &bindings = {}) override;
         /*! Run an update statement against the database. */
@@ -94,9 +94,8 @@ namespace Orm
                const QVector<QVariant> &bindings = {}) override;
 
         /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
-        std::tuple<bool, QSqlQuery>
-        statement(const QString &queryString,
-                  const QVector<QVariant> &bindings = {}) override;
+        QSqlQuery statement(const QString &queryString,
+                            const QVector<QVariant> &bindings = {}) override;
         /*! Run an SQL statement and get the number of rows affected. */
         std::tuple<int, QSqlQuery>
         affectingStatement(const QString &queryString,
@@ -123,9 +122,16 @@ namespace Orm
         /*! Bind values to their parameters in the given statement. */
         void bindValues(QSqlQuery &query,
                         const QVector<QVariant> &bindings) const;
+
         /*! Log a query into the connection's query log. */
         void logQuery(const QSqlQuery &query,
-                      const std::optional<qint64> &elapsed);
+                      const std::optional<qint64> &elapsed) const;
+        /*! Log a query into the connection's query log. */
+        inline void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
+                             const std::optional<qint64> &elapsed) const;
+        /*! Log a transaction query into the connection's query log. */
+        void logTransactionQuery(const QString &query,
+                                 const std::optional<qint64> &elapsed);
 
         /*! Check database connection and show warnings when the state changed. */
         bool pingDatabase() override;
@@ -211,22 +217,21 @@ namespace Orm
         /*! Get the default post processor instance. */
         virtual std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const;
 
-        /*! Callback type used in the run() methods. */
-        template<typename Result>
-        using RunCallback = std::function<std::tuple<Result, QSqlQuery>
-                                          (const QString &, const QVector<QVariant> &)>;
+        /*! Callback type used in the run() method. */
+        template<typename Return>
+        using RunCallback =
+                std::function<Return(const QString &, const QVector<QVariant> &)>;
 
         /*! Run a SQL statement and log its execution context. */
-        template<typename Result>
-        std::tuple<Result, QSqlQuery>
-        run(const QString &queryString, const QVector<QVariant> &bindings,
-            const RunCallback<Result> &callback);
-        /*! Run a SQL statement. */
-        template<typename Result>
-        std::tuple<Result, QSqlQuery>
-        runQueryCallback(
+        template<typename Return>
+        Return run(
                 const QString &queryString, const QVector<QVariant> &bindings,
-                const RunCallback<Result> &callback) const;
+                const RunCallback<Return> &callback);
+        /*! Run a SQL statement. */
+        template<typename Return>
+        Return runQueryCallback(
+                const QString &queryString, const QVector<QVariant> &bindings,
+                const RunCallback<Return> &callback) const;
 
         /*! Reconnect to the database if a PDO connection is missing. */
         void reconnectIfMissingConnection() const;
@@ -278,24 +283,20 @@ namespace Orm
 
         /*! Prepare an SQL statement and return the query object. */
         QSqlQuery prepareQuery(const QString &queryString);
-        /*! Handle a query exception. */
-        template<typename Result>
-        std::tuple<Result, QSqlQuery>
-        handleQueryException(
-                const QueryError &e, const QString &queryString,
-                const QVector<QVariant> &bindings,
-                const RunCallback<Result> &callback) const;
-        /*! Handle a query exception that occurred during query execution. */
-        template<typename Result>
-        std::tuple<Result, QSqlQuery>
-        tryAgainIfCausedByLostConnection(
-                const QueryError &e, const QString &queryString,
-                const QVector<QVariant> &bindings,
-                const RunCallback<Result> &callback) const;
 
-        /*! Log a transaction query into the connection's query log. */
-        void logTransactionQuery(const QString &query,
-                                 const std::optional<qint64> &elapsed);
+        /*! Handle a query exception. */
+        template<typename Return>
+        Return handleQueryException(
+                const QueryError &e, const QString &queryString,
+                const QVector<QVariant> &bindings,
+                const RunCallback<Return> &callback) const;
+        /*! Handle a query exception that occurred during query execution. */
+        template<typename Return>
+        Return tryAgainIfCausedByLostConnection(
+                const QueryError &e, const QString &queryString,
+                const QVector<QVariant> &bindings,
+                const RunCallback<Return> &callback) const;
+
         /*! Count transactional queries execution time and statements counter. */
         std::optional<qint64>
         hitTransactionalCounters(const QElapsedTimer &timer);
@@ -318,35 +319,35 @@ namespace Orm
 #endif
     };
 
-    template<typename Result>
-    std::tuple<Result, QSqlQuery>
+    template<typename Return>
+    Return
     DatabaseConnection::run(
             const QString &queryString, const QVector<QVariant> &bindings,
-            const RunCallback<Result> &callback)
+            const RunCallback<Return> &callback)
     {
         reconnectIfMissingConnection();
 
-        Result result;
-        QSqlQuery query;
+        // Elapsed timer needed
+        const auto elapsedTimer = m_debugSql || m_countingElapsed;
 
         QElapsedTimer timer;
-        if (m_debugSql || m_countingElapsed)
+        if (elapsedTimer)
             timer.start();
+
+        Return result;
 
         /* Here we will run this query. If an exception occurs we'll determine if it was
            caused by a connection that has been lost. If that is the cause, we'll try
            to re-establish connection and re-run the query with a fresh connection. */
         try {
-            std::tie(result, query) =
-                    runQueryCallback<Result>(queryString, bindings, callback);
+            result = runQueryCallback(queryString, bindings, callback);
 
         }  catch (const QueryError &e) {
-            std::tie(result, query) =
-                    handleQueryException(e, queryString, bindings, callback);
+            result = handleQueryException(e, queryString, bindings, callback);
         }
 
         std::optional<qint64> elapsed;
-        if (m_debugSql || m_countingElapsed)
+        if (elapsedTimer)
             elapsed = timer.elapsed();
 
         // Queries execution time counter
@@ -357,35 +358,30 @@ namespace Orm
         /* Once we have run the query we will calculate the time that it took
            to run and then log the query, bindings, and execution time. We'll
            log time in milliseconds. */
-        logQuery(query, elapsed);
+        logQuery(result, elapsed);
 #endif
 
-        return {result, query};
+        return result;
     }
 
-    template<typename Result>
-    std::tuple<Result, QSqlQuery>
+    template<typename Return>
+    Return
     DatabaseConnection::runQueryCallback(
             const QString &queryString, const QVector<QVariant> &bindings,
-            const RunCallback<Result> &callback) const
+            const RunCallback<Return> &callback) const
     {
-        Result result;
-        QSqlQuery query;
-
         /* To execute the statement, we'll simply call the callback, which will actually
            run the SQL against the QSqlDatabase connection. Then we can calculate the time
            it took to execute and log the query SQL, bindings and time in our memory. */
-        std::tie(result, query) = std::invoke(callback, queryString, bindings);
-
-        return {result, query};
+        return std::invoke(callback, queryString, bindings);
     }
 
-    template<typename Result>
-    std::tuple<Result, QSqlQuery>
+    template<typename Return>
+    Return
     DatabaseConnection::handleQueryException(
             const QueryError &e, const QString &queryString,
             const QVector<QVariant> &bindings,
-            const RunCallback<Result> &callback) const
+            const RunCallback<Return> &callback) const
     {
         // TODO next debug Eloquent $this->transactions >= 1 silverqx
         if (m_inTransaction)
@@ -394,12 +390,12 @@ namespace Orm
         return tryAgainIfCausedByLostConnection(e, queryString, bindings, callback);
     }
 
-    template<typename Result>
-    std::tuple<Result, QSqlQuery>
+    template<typename Return>
+    Return
     DatabaseConnection::tryAgainIfCausedByLostConnection(
             const QueryError &e, const QString &queryString,
             const QVector<QVariant> &bindings,
-            const RunCallback<Result> &callback) const
+            const RunCallback<Return> &callback) const
     {
         if (causedByLostConnection(e)) {
             reconnect();

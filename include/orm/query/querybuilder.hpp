@@ -36,16 +36,13 @@ namespace Query
         inline virtual ~Builder() = default;
 
         /*! Execute the query as a "select" statement. */
-        std::tuple<bool, QSqlQuery>
-        get(const QStringList &columns = {"*"});
+        QSqlQuery get(const QStringList &columns = {"*"});
         /*! Execute the query and get the first result. */
-        std::tuple<bool, QSqlQuery>
-        first(const QStringList &columns = {"*"});
+        QSqlQuery first(const QStringList &columns = {"*"});
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const QString &column);
         /*! Execute a query for a single record by ID. */
-        std::tuple<bool, QSqlQuery>
-        find(const QVariant &id, const QStringList &columns = {"*"});
+        QSqlQuery find(const QVariant &id, const QStringList &columns = {"*"});
 
         /*! Get the SQL representation of the query. */
         QString toSql();
@@ -56,10 +53,10 @@ namespace Query
 
         /* Insert, Update, Delete */
         /*! Insert new records into the database. */
-        std::tuple<bool, std::optional<QSqlQuery>>
+        std::optional<QSqlQuery>
         insert(const QVariantMap &values);
         /*! Insert new records into the database. */
-        std::tuple<bool, std::optional<QSqlQuery>>
+        std::optional<QSqlQuery>
         insert(const QVector<QVariantMap> &values);
         /*! Insert new records into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
@@ -369,13 +366,13 @@ namespace Query
         /*! Remove all existing columns and column bindings. */
         Builder &clearColumns();
         /*! Execute the given callback while selecting the given columns. */
-        std::tuple<bool, QSqlQuery>
+        QSqlQuery
         onceWithColumns(const QStringList &columns,
-                        const std::function<std::tuple<bool, QSqlQuery>()> &callback);
+                        const std::function<QSqlQuery()> &callback);
 
     private:
         /*! Run the query as a "select" statement against the connection. */
-        std::tuple<bool, QSqlQuery> runSelect();
+        QSqlQuery runSelect();
 
         /*! All of the available clause operators. */
         const QVector<QString> m_operators {

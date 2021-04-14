@@ -97,17 +97,17 @@ namespace Grammars
         virtual uint transactionLevel() const = 0;
 
         /*! Run a select statement and return a single result. */
-        virtual std::tuple<bool, QSqlQuery>
+        virtual QSqlQuery
         selectOne(const QString &queryString,
                   const QVector<QVariant> &bindings = {}) = 0;
 
         /*! Run a select statement against the database. */
-        virtual std::tuple<bool, QSqlQuery>
+        virtual QSqlQuery
         select(const QString &queryString,
                const QVector<QVariant> &bindings = {}) = 0;
 
         /*! Run a select statement against the database. */
-        virtual std::tuple<bool, QSqlQuery>
+        virtual QSqlQuery
         selectFromWriteConnection(const QString &queryString,
                                   const QVector<QVariant> &bindings = {}) = 0;
 
@@ -115,7 +115,7 @@ namespace Grammars
 //        public function cursor($query, $bindings = [], $useReadPdo = true);
 
         /*! Run an insert statement against the database. */
-        virtual std::tuple<bool, QSqlQuery>
+        virtual QSqlQuery
         insert(const QString &queryString,
                const QVector<QVariant> &bindings = {}) = 0;
 
@@ -130,7 +130,7 @@ namespace Grammars
                const QVector<QVariant> &bindings = {}) = 0;
 
         /*! Execute an SQL statement and return the boolean result. */
-        virtual std::tuple<bool, QSqlQuery>
+        virtual QSqlQuery
         statement(const QString &queryString,
                   const QVector<QVariant> &bindings = {}) = 0;
 

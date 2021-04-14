@@ -14,7 +14,7 @@ QStringList MySqlSchemaBuilder::getColumnListing(const QString &table) const
     // FEATURE table prefix silverqx
 //    const auto table_ = m_connection.getTablePrefix() + table;
 
-    auto [ok, query] = m_connection.select(m_grammar.compileColumnListing(), {
+    auto query = m_connection.select(m_grammar.compileColumnListing(), {
         m_connection.getDatabaseName(), table
     });
 

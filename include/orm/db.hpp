@@ -90,13 +90,13 @@ namespace Orm
         { return value; }
 
         /*! Run a select statement against the database. */
-        static std::tuple<bool, QSqlQuery>
+        static QSqlQuery
         select(const QString &query, const QVector<QVariant> &bindings = {});
         /*! Run a select statement and return a single result. */
-        static std::tuple<bool, QSqlQuery>
+        static QSqlQuery
         selectOne(const QString &query, const QVector<QVariant> &bindings = {});
         /*! Run an insert statement against the database. */
-        static std::tuple<bool, QSqlQuery>
+        static QSqlQuery
         insert(const QString &query, const QVector<QVariant> &bindings = {});
         /*! Run an update statement against the database. */
         static std::tuple<int, QSqlQuery>
@@ -105,7 +105,7 @@ namespace Orm
         static std::tuple<int, QSqlQuery>
         remove(const QString &query, const QVector<QVariant> &bindings = {});
         /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
-        static std::tuple<bool, QSqlQuery>
+        static QSqlQuery
         statement(const QString &query,
                   const QVector<QVariant> &bindings = {});
 

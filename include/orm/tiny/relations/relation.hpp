@@ -153,7 +153,7 @@ namespace Relations
         /* Proxies to TinyBuilder -> QueryBuilder */
         /* Insert, Update, Delete */
         /*! Insert new records into the database. */
-        std::tuple<bool, std::optional<QSqlQuery>>
+        std::optional<QSqlQuery>
         insert(const QVector<AttributeItem> &attributes) const;
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVector<AttributeItem> &attributes) const;
@@ -563,6 +563,7 @@ namespace Relations
     std::tuple<int, QSqlQuery>
     Relation<Model, Related>::rawUpdate(const QVector<UpdateItem> &values) const
     {
+        // FEATURE scopes silverqx
         return m_query->update(values);
     }
 
@@ -684,7 +685,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    std::tuple<bool, std::optional<QSqlQuery>>
+    std::optional<QSqlQuery>
     Relation<Model, Related>::insert(const QVector<AttributeItem> &attributes) const
     {
         return m_query->insert(attributes);

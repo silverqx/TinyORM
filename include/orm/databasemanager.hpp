@@ -56,13 +56,13 @@ namespace Query
 
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
-        std::tuple<bool, QSqlQuery>
+        QSqlQuery
         select(const QString &query, const QVector<QVariant> &bindings = {});
         /*! Run a select statement and return a single result. */
-        std::tuple<bool, QSqlQuery>
+        QSqlQuery
         selectOne(const QString &query, const QVector<QVariant> &bindings = {});
         /*! Run an insert statement against the database. */
-        std::tuple<bool, QSqlQuery>
+        QSqlQuery
         insert(const QString &query, const QVector<QVariant> &bindings = {});
         /*! Run an update statement against the database. */
         std::tuple<int, QSqlQuery>
@@ -71,7 +71,7 @@ namespace Query
         std::tuple<int, QSqlQuery>
         remove(const QString &query, const QVector<QVariant> &bindings = {});
         /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
-        std::tuple<bool, QSqlQuery>
+        QSqlQuery
         statement(const QString &query,
                   const QVector<QVariant> &bindings = {});
 

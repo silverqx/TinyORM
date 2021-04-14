@@ -20,7 +20,7 @@ Builder::Builder(ConnectionInterface &connection, const QueryGrammar &grammar)
     , m_grammar(grammar)
 {}
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 Builder::get(const QStringList &columns)
 {
     return onceWithColumns(columns, [this]
@@ -29,26 +29,21 @@ Builder::get(const QStringList &columns)
     });
 }
 
-std::tuple<bool, QSqlQuery> Builder::first(const QStringList &columns)
+QSqlQuery Builder::first(const QStringList &columns)
 {
-    auto [ok, query] = take(1).get(columns);
+    auto query = take(1).get(columns);
 
-    if (!ok || !query.isSelect() || !query.isActive())
-        return {false, query};
+    query.first();
 
-    return {query.first(), query};
+    return query;
 }
 
 QVariant Builder::value(const QString &column)
 {
-    auto [firstOk, query] = first({column});
-    if (!firstOk)
-        return {};
-
-    return query.value(column);
+    return first({column}).value(column);
 }
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 Builder::find(const QVariant &id, const QStringList &columns)
 {
     return where("id", "=", id).first(columns);
@@ -59,7 +54,7 @@ QString Builder::toSql()
     return m_grammar.compileSelect(*this);
 }
 
-std::tuple<bool, std::optional<QSqlQuery>>
+std::optional<QSqlQuery>
 Builder::insert(const QVariantMap &values)
 {
     return insert(QVector<QVariantMap> {values});
@@ -79,11 +74,11 @@ namespace
 }
 
 // TEST for insert silverqx
-std::tuple<bool, std::optional<QSqlQuery>>
+std::optional<QSqlQuery>
 Builder::insert(const QVector<QVariantMap> &values)
 {
     if (values.isEmpty())
-        return {true, std::nullopt};
+        return std::nullopt;
 
     /* The logic described below is guaranteed by QVariantMap, keys are ordered
        by default.
@@ -116,13 +111,8 @@ quint64 Builder::insertGetId(const QVariantMap &values)
 {
     const QVector<QVariantMap> valuesVector {values};
 
-    auto [ok, query] = m_connection.insert(
-            m_grammar.compileInsertGetId(*this, valuesVector),
-            cleanBindings(flatValuesForInsert(valuesVector)));
-
-    // TODO dilemma, return ok 😭 silverqx
-    if (!ok)
-        return 0;
+    auto query = m_connection.insert(m_grammar.compileInsertGetId(*this, valuesVector),
+                                     cleanBindings(flatValuesForInsert(valuesVector)));
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant, Processor::processInsertGetId() silverqx
     return query.lastInsertId().value<quint64>();
@@ -781,10 +771,10 @@ Builder &Builder::clearColumns()
     return *this;
 }
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 Builder::onceWithColumns(
             const QStringList &columns,
-            const std::function<std::tuple<bool, QSqlQuery>()> &callback)
+            const std::function<QSqlQuery()> &callback)
 {
     // Save orignal columns
     const auto original = m_columns;
@@ -800,7 +790,7 @@ Builder::onceWithColumns(
     return result;
 }
 
-std::tuple<bool, QSqlQuery> Builder::runSelect()
+QSqlQuery Builder::runSelect()
 {
     return m_connection.select(toSql(), getBindings());
 }

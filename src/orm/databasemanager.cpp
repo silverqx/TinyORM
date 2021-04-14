@@ -91,19 +91,19 @@ QSqlQuery DatabaseManager::qtQuery(const QString &connection)
     return this->connection(connection).getQtQuery();
 }
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 DatabaseManager::select(const QString &query, const QVector<QVariant> &bindings)
 {
     return connection().select(query, bindings);
 }
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 DatabaseManager::selectOne(const QString &query, const QVector<QVariant> &bindings)
 {
     return connection().selectOne(query, bindings);
 }
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 DatabaseManager::insert(const QString &query, const QVector<QVariant> &bindings)
 {
     return connection().insert(query, bindings);
@@ -121,7 +121,7 @@ DatabaseManager::remove(const QString &query, const QVector<QVariant> &bindings)
     return connection().remove(query, bindings);
 }
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 DatabaseManager::statement(const QString &query, const QVector<QVariant> &bindings)
 {
     return connection().statement(query, bindings);

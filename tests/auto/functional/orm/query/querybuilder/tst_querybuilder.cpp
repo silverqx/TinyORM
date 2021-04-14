@@ -41,10 +41,7 @@ void tst_QueryBuilder::find() const
 
     auto builder = createQuery(connection);
 
-    auto [ok, query] = builder->from("torrents").find(2);
-
-    if (!ok)
-        QFAIL("find() query failed.");
+    auto query = builder->from("torrents").find(2);
 
     QCOMPARE(query.value("id"), QVariant(2));
     QCOMPARE(query.value("name"), QVariant("test2"));
@@ -65,28 +62,19 @@ void tst_QueryBuilder::limit() const
     auto builder = createQuery(connection);
 
     {
-        auto [ok, query] = builder->from("torrents").limit(1).get({"id"});
-
-        if (!ok)
-            QFAIL("limit(1) query failed.");
+        auto query = builder->from("torrents").limit(1).get({"id"});
 
         QCOMPARE(query.size(), 1);
     }
 
     {
-        auto [ok, query] = builder->from("torrents").limit(3).get({"id"});
-
-        if (!ok)
-            QFAIL("limit(3) query failed.");
+        auto query = builder->from("torrents").limit(3).get({"id"});
 
         QCOMPARE(query.size(), 3);
     }
 
     {
-        auto [ok, query] = builder->from("torrents").limit(4).get({"id"});
-
-        if (!ok)
-            QFAIL("limit(4) query failed.");
+        auto query = builder->from("torrents").limit(4).get({"id"});
 
         QCOMPARE(query.size(), 4);
     }

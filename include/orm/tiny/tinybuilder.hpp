@@ -94,7 +94,7 @@ namespace Relations
         /* Proxy methods to the QueryBuilder */
         /* Insert, Update, Delete */
         /*! Insert new records into the database. */
-        std::tuple<bool, std::optional<QSqlQuery>>
+        std::optional<QSqlQuery>
         insert(const QVector<AttributeItem> &attributes) const;
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVector<AttributeItem> &attributes) const;
@@ -574,7 +574,7 @@ namespace Relations
     }
 
     template<typename Model>
-    std::tuple<bool, std::optional<QSqlQuery>>
+    std::optional<QSqlQuery>
     Builder<Model>::insert(const QVector<AttributeItem> &attributes) const
     {
         return toBase().insert(Utils::Attribute::convertVectorToMap(attributes));
@@ -1159,7 +1159,7 @@ namespace Relations
     QVector<Model>
     Builder<Model>::getModels(const QStringList &columns)
     {
-        return hydrate(std::get<1>(m_query->get(columns)));
+        return hydrate(m_query->get(columns));
     }
 
     template<typename Model>

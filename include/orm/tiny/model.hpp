@@ -58,12 +58,17 @@ namespace Relations {
     // TODO model missing methods Model::loadMissing() silverqx
     // TODO model missing methods Model::whereExists() silverqx
     // TODO model missing methods Model::whereBetween() silverqx
+    // TODO model missing methods Model::exists()/notExists() silverqx
+    // TODO model missing methods Model::saveOrFail() silverqx
     // FEATURE next Constraining Eager Loads silverqx
     // TODO perf add pragma once to every header file, have branch pragma-once, but I can't get rid of the clang warning -Wpragma-once-outside-header in every file, I tried everything 😞 silverqx
     // TODO future try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
     // TODO future include every stl dependency in header files silverqx
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
-    // CUR return ok vs exceptions in DatabaseConnection silverqx
+    // TODO QueryBuilder::updateOrInsert() silverqx
+    // CUR code coverage silverqx
+    // CUR null foreign keys tests, null relations, default models silverqx
+    // CUR whitespaces after Derived silverqx
     template<typename Derived, typename ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -170,7 +175,7 @@ namespace Relations {
         /* Proxies to TinyBuilder -> QueryBuilder */
         /* Insert, Update, Delete */
         /*! Insert new records into the database. */
-        static std::tuple<bool, std::optional<QSqlQuery>>
+        static std::optional<QSqlQuery>
         insert(const QVector<AttributeItem> &attributes);
         /*! Insert a new record and get the value of the primary key. */
         static quint64
@@ -178,7 +183,7 @@ namespace Relations {
 
         /*! Create or update a record matching the attributes, and fill it with values. */
         Derived updateOrCreate(const QVector<WhereItem> &attributes,
-                             const QVector<AttributeItem> &values = {});
+                               const QVector<AttributeItem> &values = {});
 
         /*! Destroy the models for the given IDs. */
         static std::size_t destroy(const QVector<QVariant> &ids);
@@ -1360,7 +1365,7 @@ namespace Relations {
     }
 
     template<typename Derived, typename ...AllRelations>
-    std::tuple<bool, std::optional<QSqlQuery>>
+    std::optional<QSqlQuery>
     Model<Derived, AllRelations...>::insert(
             const QVector<AttributeItem> &attributes)
     {
@@ -1377,7 +1382,8 @@ namespace Relations {
     }
 
     template<typename Derived, typename ...AllRelations>
-    Derived Model<Derived, AllRelations...>::updateOrCreate(
+    Derived
+    Model<Derived, AllRelations...>::updateOrCreate(
             const QVector<WhereItem> &attributes, const QVector<AttributeItem> &values)
     {
         return query()->updateOrCreate(attributes, values);
@@ -1397,12 +1403,11 @@ namespace Relations {
            each of them individually so that their events get fired properly with a
            correct set of attributes in case the developers wants to check these. */
         Derived instance;
-        const auto &key = instance.getKeyName();
 
         std::size_t count = 0;
 
         // Ownership of a unique_ptr()
-        for (auto &model : instance.whereIn(key, ids)->get())
+        for (auto &model : instance.whereIn(instance.getKeyName(), ids)->get())
             if (model.remove())
                 ++count;
 
@@ -2174,14 +2179,12 @@ namespace Relations {
         if (!save())
             return false;
 
-        if (m_relations.empty())
-            return true;
-
         /* To sync all of the relationships to the database, we will simply spin through
            the relationships and save each model via this "push" method, which allows
            us to recurse into all of these nested relations for the model instance. */
         for (auto &[relation, models] : m_relations)
-            /* Following Eloquent API, if any push failed, quit, remaining push-es
+            // TODO future, Eloquent uses array_filter on models, investigate when this happens, null value (model) in many relations? silverqx
+            /* Following Eloquent API, if any push failed, then quit, remaining push-es
                will not be processed. */
             if (!pushWithVisitor(relation, models))
                 return false;
@@ -3979,10 +3982,8 @@ namespace Relations {
            table from the database. Not all tables have to be incrementing though. */
         const auto &attributes = getAttributes();
 
-        if (getIncrementing()) {
-            if (insertAndSetId(query, attributes) == 0)
-                return false;
-        }
+        if (getIncrementing())
+            insertAndSetId(query, attributes);
 
         /* If the table isn't incrementing we'll simply insert these attributes as they
            are. These attribute vectors must contain an "id" column previously placed
@@ -3990,13 +3991,8 @@ namespace Relations {
         else
             if (attributes.isEmpty())
                 return true;
-            else {
-                bool ok;
-                std::tie(ok, std::ignore) = query.insert(attributes);
-                // TODO dilemma next return values on TinyBuilder silverqx
-                if (!ok)
-                    return false;
-            }
+            else
+                query.insert(attributes);
 
         /* We will go ahead and set the exists property to true, so that it is set when
            the created event is fired, just in case the developer tries to update it
@@ -4029,14 +4025,8 @@ namespace Relations {
         const auto dirty = getDirty();
 
         if (!dirty.isEmpty()) {
-            QSqlQuery sqlQuery;
-            std::tie(std::ignore, sqlQuery) =
-                    model().setKeysForSaveQuery(query).update(
+            model().setKeysForSaveQuery(query).update(
                         Utils::Attribute::convertVectorToUpdateItem(dirty));
-
-            // TODO dilemma next return values on TinyBuilder silverqx
-            if (sqlQuery.lastError().isValid())
-                return false;
 
             syncChanges();
 
@@ -4072,6 +4062,8 @@ namespace Relations {
         if (id != 0)
             setAttribute(getKeyName(), id);
 
+        /* QSqlQuery returns an invalid QVariant if can't obtain last inserted id,
+           which is converted to 0. */
         return id;
     }
 

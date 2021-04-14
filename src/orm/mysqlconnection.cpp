@@ -43,8 +43,8 @@ bool MySqlConnection::isMaria()
 {
     // TEST now add MariaDB tests, install mariadb add connection and run all the tests against mariadb too silverqx
     if (!m_isMaria)
-        m_isMaria = std::get<1>(selectOne("select version()")).value(0)
-                    .value<QString>().contains("MariaDB");
+        m_isMaria = selectOne("select version()").value(0).value<QString>()
+                    .contains("MariaDB");
 
     return *m_isMaria;
 }

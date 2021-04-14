@@ -232,7 +232,7 @@ bool DatabaseConnection::rollbackToSavepoint(const size_t id)
     return rollbackToSavepoint(QString::number(id));
 }
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 DatabaseConnection::select(const QString &queryString,
                            const QVector<QVariant> &bindings)
 {
@@ -244,7 +244,7 @@ DatabaseConnection::select(const QString &queryString,
     return statement(queryString, bindings);
 }
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 DatabaseConnection::selectFromWriteConnection(const QString &queryString,
                                               const QVector<QVariant> &bindings)
 {
@@ -253,21 +253,18 @@ DatabaseConnection::selectFromWriteConnection(const QString &queryString,
     return select(queryString, bindings/*, false*/);
 }
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 DatabaseConnection::selectOne(const QString &queryString,
                               const QVector<QVariant> &bindings)
 {
-    auto [ok, qtQuery] = statement(queryString, bindings);
+    auto query = statement(queryString, bindings);
 
-    if (!ok)
-        return {ok, qtQuery};
+    query.first();
 
-    ok = qtQuery.first();
-
-    return {ok, qtQuery};
+    return query;
 }
 
-std::tuple<bool, QSqlQuery>
+QSqlQuery
 DatabaseConnection::insert(const QString &queryString,
                            const QVector<QVariant> &bindings)
 {
@@ -288,14 +285,12 @@ DatabaseConnection::remove(const QString &queryString,
     return affectingStatement(queryString, bindings);
 }
 
-std::tuple<bool, QSqlQuery>
-DatabaseConnection::statement(const QString &queryString,
-                              const QVector<QVariant> &bindings)
+QSqlQuery DatabaseConnection::statement(const QString &queryString,
+                                        const QVector<QVariant> &bindings)
 {
-    return run<bool>(
-                queryString, bindings,
-                [this](const QString &queryString, const QVector<QVariant> &bindings)
-                -> std::tuple<bool, QSqlQuery>
+    return run<QSqlQuery>(queryString, bindings,
+               [this](const QString &queryString, const QVector<QVariant> &bindings)
+               -> QSqlQuery
     {
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString);
@@ -303,12 +298,12 @@ DatabaseConnection::statement(const QString &queryString,
         bindValues(query, prepareBindings(bindings));
 
         // TODO dilemma, return ok 😭 silverqx
-        if (const auto ok = query.exec(); ok) {
+        if (query.exec()) {
             // Query statements counter
             if (m_countingStatements)
                 ++m_statementsCounter.normal;
 
-            return {ok, query};
+            return query;
         }
 
         /* If an error occurs when attempting to run a query, we'll transform it
@@ -326,10 +321,9 @@ std::tuple<int, QSqlQuery>
 DatabaseConnection::affectingStatement(const QString &queryString,
                                        const QVector<QVariant> &bindings)
 {
-    return run<int>(
-                queryString, bindings,
-                [this](const QString &queryString, const QVector<QVariant> &bindings)
-                -> std::tuple<int, QSqlQuery>
+    return run<std::tuple<int, QSqlQuery>>(queryString, bindings,
+            [this](const QString &queryString, const QVector<QVariant> &bindings)
+            -> std::tuple<int, QSqlQuery>
     {
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString);
@@ -460,7 +454,7 @@ void DatabaseConnection::bindValues(QSqlQuery &query,
 }
 
 void DatabaseConnection::logQuery(const QSqlQuery &query,
-        const std::optional<qint64> &elapsed = std::nullopt)
+        const std::optional<qint64> &elapsed = std::nullopt) const
 {
     qDebug().nospace().noquote()
         << "Executed prepared query (" << (elapsed ? *elapsed : -1) << "ms, "
@@ -469,6 +463,13 @@ void DatabaseConnection::logQuery(const QSqlQuery &query,
         // Connection name
         << (m_qtConnection ? QStringLiteral(", %1").arg(*m_qtConnection) : "")
         << ") : " << parseExecutedQuery(query);;
+}
+
+void DatabaseConnection::logQuery(
+        const std::tuple<int, QSqlQuery> &queryResult,
+        const std::optional<qint64> &elapsed) const
+{
+    logQuery(std::get<1>(queryResult), elapsed);
 }
 
 void DatabaseConnection::logTransactionQuery(
