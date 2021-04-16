@@ -62,19 +62,17 @@ namespace Relations {
     // FEATURE EloquentCollection, solve how to implement, also look at Eloquent's Custom Collections silverqx
     // FEATURE next Constraining Eager Loads silverqx
     // TODO perf add pragma once to every header file, have branch pragma-once, but I can't get rid of the clang warning -Wpragma-once-outside-header in every file, I tried everything 😞 silverqx
-    // TODO future try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
-    // TODO future include every stl dependency in header files silverqx
+    // FUTURE try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
+    // FUTURE include every stl dependency in header files silverqx
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     // TODO QueryBuilder::updateOrInsert() silverqx
     // CUR code coverage silverqx
-    // CUR create future todo task silverqx
-    // CUR search ~~ in docs silverqx
     template<typename Derived, typename ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
             public Orm::Concerns::HasConnectionResolver
     {
-        // TODO future, try to solve problem with forward declarations for friend methods, to allow only relevant methods from TinyBuilder silverqx
+        // FUTURE try to solve problem with forward declarations for friend methods, to allow only relevant methods from TinyBuilder silverqx
         /* Used by TinyBuilder::eagerLoadRelationVisitor()/getRelationMethod(). */
         friend TinyBuilder<Derived>;
 
@@ -2173,7 +2171,7 @@ namespace Relations {
         return saved;
     }
 
-    // TODO future support for SaveOptions parameter, Eloquent doesn't have this parameter, maybe there's a reason for that, but I didn't find anything on github issues silverqx
+    // FUTURE support for SaveOptions parameter, Eloquent doesn't have this parameter, maybe there's a reason for that, but I didn't find anything on github issues silverqx
     template<typename Derived, typename ...AllRelations>
     bool Model<Derived, AllRelations...>::push()
     {
@@ -2184,7 +2182,7 @@ namespace Relations {
            the relationships and save each model via this "push" method, which allows
            us to recurse into all of these nested relations for the model instance. */
         for (auto &[relation, models] : m_relations)
-            // TODO future, Eloquent uses array_filter on models, investigate when this happens, null value (model) in many relations? silverqx
+            // FUTURE Eloquent uses array_filter on models, investigate when this happens, null value (model) in many relations? silverqx
             /* Following Eloquent API, if any push failed, then quit, remaining push-es
                will not be processed. */
             if (!pushWithVisitor(relation, models))
@@ -2290,7 +2288,7 @@ namespace Relations {
     {
         // Pointers to visited member methods by storeType, yes yes c++ 😂
         // An order has to be the same as in enum struct RelationStoreType
-        // TODO future should be QHash, for faster lookup, do benchmark, high chance that qvector has faster lookup than qhash silverqx
+        // FUTURE should be QHash, for faster lookup, do benchmark, high chance that qvector has faster lookup than qhash silverqx
         static const
         QVector<std::function<void(Model<Derived, AllRelations...> &)>> cached {
             &Model<Derived, AllRelations...>::eagerVisited<Related>,
@@ -2334,7 +2332,7 @@ namespace Relations {
             // NOTE api different silverqx
             return false;
 
-        // TODO future add support for model events silverqx
+        // FUTURE add support for model events silverqx
 //        if ($this->fireModelEvent('deleting') === false) {
 //            return false;
 //        }
@@ -2344,8 +2342,8 @@ namespace Relations {
            by the timestamp. Then we will go ahead and delete the model instance. */
         touchOwners();
 
-        // TODO future performDeleteOnModel() and return value, check logic here, eg what happens when no model is delete and combinations silverqx
-        // TODO future inconsistent return values save(), update(), remove(), ... silverqx
+        // FUTURE performDeleteOnModel() and return value, check logic here, eg what happens when no model is delete and combinations silverqx
+        // FUTURE inconsistent return values save(), update(), remove(), ... silverqx
         performDeleteOnModel();
 
         /* Once the model has been deleted, we will fire off the deleted event so that
@@ -2515,7 +2513,7 @@ namespace Relations {
         this->resetRelationStore();
     }
 
-    // TODO future LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
+    // FUTURE LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
     template<typename Derived, typename ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::load(
@@ -2523,7 +2521,7 @@ namespace Relations {
     {
         auto builder = newQueryWithoutRelationships()->with(relations);
 
-        // TODO future, make possible to pass single model to eagerLoadRelations() and whole relation flow, I indicative counted how many methods would have to rewrite and it is around 12 methods silverqx
+        // FUTURE make possible to pass single model to eagerLoadRelations() and whole relation flow, I indicative counted how many methods would have to rewrite and it is around 12 methods silverqx
         /* I have to make a copy here of this, because of eagerLoadRelations(),
            the solution would be to add a whole new chain for eager load relations,
            which will be able to work only on one Model &, but it is around
@@ -3345,7 +3343,7 @@ namespace Relations {
 
         const auto position = m_attributesHash.at(key);
 
-        // TODO future, all the operations on this containers should be synchronized silverqx
+        // FUTURE all the operations on this containers should be synchronized silverqx
         m_attributes.removeAt(position);
         m_attributesHash.erase(key);
 
@@ -4147,7 +4145,7 @@ namespace Relations {
         )
             return true;
 
-        // TODO future implement withoutTouching() and related data member $ignoreOnTouch silverqx
+        // FUTURE implement withoutTouching() and related data member $ignoreOnTouch silverqx
 
         return false;
     }

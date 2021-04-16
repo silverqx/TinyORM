@@ -98,7 +98,7 @@ namespace Concerns {
 
         auto instance = newRelatedInstanceFor(parent);
 
-        // TODO future, pass callback to withDefault(), I will need proxy model or better attribute proxy, something similar or the same like Model::AttributeReference class silverqx
+        // FUTURE pass callback to withDefault(), I will need proxy model or better attribute proxy, something similar or the same like Model::AttributeReference class silverqx
         // Invoke passed callback
 //        if (index == 2) {
 //            std::invoke(std::get<Callback>(m_withDefault), instance, parent);

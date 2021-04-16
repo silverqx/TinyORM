@@ -40,7 +40,7 @@ Database::getConfigurations(const QStringList &connections)
             {"prefix",    ""},
             {"strict",    true},
             {"options",   QVariantHash()},
-            // TODO future remove, when unit tested silverqx
+            // FUTURE remove, when unit tested silverqx
             // Example
 //            {"options",   "MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"},
 //            {"options",   QVariantHash {{"MYSQL_OPT_RECONNECT", 1},

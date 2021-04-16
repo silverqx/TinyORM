@@ -38,7 +38,7 @@ namespace Concerns
             IS_PIVOT_MODEL,
         };
 
-        // TODO future try to rewrite this by templated class to avoid polymorfic class, like described here http://groups.di.unipi.it/~nids/docs/templates_vs_inheritance.html silverqx
+        // FUTURE try to rewrite this by templated class to avoid polymorfic class, like described here http://groups.di.unipi.it/~nids/docs/templates_vs_inheritance.html silverqx
         class BaseRelationStore
         {
         protected:

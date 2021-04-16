@@ -720,7 +720,7 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
 QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings) const
 {
     // TODO investigate const, move, reserve() vs ctor(size), nice example of move semantics 😏 silverqx
-    // TODO future rewrite with ranges transform, for fun silverqx
+    // FUTURE rewrite with ranges transform, for fun silverqx
     QVector<QVariant> cleanedBindings;
     cleanedBindings.reserve(bindings.size());
 

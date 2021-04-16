@@ -324,7 +324,7 @@ namespace Relations
         /*! Get a base query builder instance. */
         inline QueryBuilder &toBase() const
         { return getQuery(); }
-        // TODO future add Query Scopes feature silverqx
+        // FUTURE add Query Scopes feature silverqx
 //        { return $this->applyScopes()->getQuery(); }
 
     protected:
@@ -606,7 +606,7 @@ namespace Relations
         return instance;
     }
 
-    // TODO future add onDelete (and similar) callback feature silverqx
+    // FUTURE add onDelete (and similar) callback feature silverqx
     template<typename Model>
     std::tuple<int, QSqlQuery> Builder<Model>::remove()
     {

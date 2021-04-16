@@ -139,7 +139,7 @@ MySqlGrammar::getWhereMethod(const WhereType whereType) const
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     // An order has to be the same as in enum struct WhereType
-    // TODO future, QHash would has faster lookup, I should choose QHash, fix also another Grammars silverx
+    // FUTURE QHash would has faster lookup, I should choose QHash, fix also another Grammars silverx
     static const QVector<std::function<QString(const WhereConditionItem &)>> cached {
         getBind(&MySqlGrammar::whereBasic),
         getBind(&MySqlGrammar::whereNested),

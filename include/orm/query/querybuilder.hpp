@@ -92,7 +92,7 @@ namespace Query
         Builder &select(const QString column);
         /*! Add new select columns to the query. */
         Builder &addSelect(const QStringList &columns);
-        // TODO future, when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
+        // FUTURE when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
         /*! Add a new select column to the query. */
         Builder &addSelect(const QString &column);
 
