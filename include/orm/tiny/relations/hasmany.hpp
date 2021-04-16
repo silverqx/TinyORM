@@ -11,7 +11,9 @@ namespace Orm::Tiny::Relations
 {
 
     template<class Model, class Related>
-    class HasMany : public HasOneOrMany<Model, Related>, public ManyRelation
+    class HasMany :
+            protected ManyRelation,
+            public HasOneOrMany<Model, Related>
     {
     protected:
         HasMany(std::unique_ptr<Related> &&related, Model &parent,
@@ -19,7 +21,7 @@ namespace Orm::Tiny::Relations
 
     public:
         /*! Instantiate and initialize a new HasMany instance. */
-        static std::unique_ptr<Relation<Model, Related>>
+        static std::unique_ptr<HasMany<Model, Related>>
         instance(std::unique_ptr<Related> &&related, Model &parent,
                  const QString &foreignKey, const QString &localKey);
 
@@ -51,7 +53,7 @@ namespace Orm::Tiny::Relations
     {}
 
     template<class Model, class Related>
-    std::unique_ptr<Relation<Model, Related>>
+    std::unique_ptr<HasMany<Model, Related>>
     HasMany<Model, Related>::instance(
             std::unique_ptr<Related> &&related, Model &parent,
             const QString &foreignKey, const QString &localKey)

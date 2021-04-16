@@ -20,6 +20,30 @@ public:
         return belongsTo<Torrent>();
     }
 
+    /*! Get the torrent that owns the previewable file. */
+    std::unique_ptr<Relation<TorrentPreviewableFile, Torrent>>
+    torrent_WithBoolDefault()
+    {
+        // Ownership of a unique_ptr()
+        auto relation = belongsTo<Torrent>();
+
+        relation->withDefault();
+
+        return relation;
+    }
+
+    /*! Get the torrent that owns the previewable file. */
+    std::unique_ptr<Relation<TorrentPreviewableFile, Torrent>>
+    torrent_WithVectorDefaults()
+    {
+        // Ownership of a unique_ptr()
+        auto relation = belongsTo<Torrent>();
+
+        relation->withDefault({{"name", "default_torrent_name"}, {"size", 123}});
+
+        return relation;
+    }
+
     /*! Get the file property associated with the previewable file. */
     std::unique_ptr<Relation<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
     fileProperty()
@@ -27,13 +51,39 @@ public:
         return hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
     }
 
+    /*! Get the file property associated with the previewable file. */
+    std::unique_ptr<Relation<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
+    fileProperty_WithBoolDefault()
+    {
+        auto relation = hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
+
+        relation->withDefault();
+
+        return relation;
+    }
+
+    /*! Get the file property associated with the previewable file. */
+    std::unique_ptr<Relation<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
+    fileProperty_WithVectorDefaults()
+    {
+        auto relation = hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
+
+        relation->withDefault({{"name", "default_fileproperty_name"}, {"size", 321}});
+
+        return relation;
+    }
+
 private:
     /*! The visitor to obtain a type for Related template parameter. */
     void relationVisitor(const QString &relation)
     {
-        if (relation      == "torrent")
+        if (QStringList{"torrent",
+                        "torrent_WithBoolDefault",
+                        "torrent_WithVectorDefaults"}.contains(relation))
             relationVisited<Torrent>();
-        else if (relation == "fileProperty")
+        else if (QStringList{"fileProperty",
+                             "fileProperty_WithBoolDefault",
+                             "fileProperty_WithVectorDefaults"}.contains(relation))
             relationVisited<TorrentPreviewableFileProperty>();
     }
 
@@ -42,8 +92,12 @@ private:
 
     /*! Map of relation names to methods. */
     QHash<QString, std::any> u_relations {
-        {"torrent",      &TorrentPreviewableFile::torrent},
-        {"fileProperty", &TorrentPreviewableFile::fileProperty},
+        {"torrent",                         &TorrentPreviewableFile::torrent},
+        {"torrent_WithBoolDefault",         &TorrentPreviewableFile::torrent_WithBoolDefault},
+        {"torrent_WithVectorDefaults",      &TorrentPreviewableFile::torrent_WithVectorDefaults},
+        {"fileProperty",                    &TorrentPreviewableFile::fileProperty},
+        {"fileProperty_WithBoolDefault",    &TorrentPreviewableFile::fileProperty_WithBoolDefault},
+        {"fileProperty_WithVectorDefaults", &TorrentPreviewableFile::fileProperty_WithVectorDefaults},
     };
 
     /*! The relations to eager load on every query. */

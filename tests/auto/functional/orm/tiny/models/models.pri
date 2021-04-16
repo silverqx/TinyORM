@@ -20,11 +20,13 @@ HEADERS += \
     $$PWD/models/torrent.hpp \
     $$PWD/models/torrenteager.hpp \
     $$PWD/models/torrenteager_failed.hpp \
+    $$PWD/models/torrenteager_withdefault.hpp \
     $$PWD/models/torrentpeereager_norelations.hpp \
     $$PWD/models/torrentpeer.hpp \
     $$PWD/models/torrentpeereager.hpp \
     $$PWD/models/torrentpreviewablefile.hpp \
     $$PWD/models/torrentpreviewablefileeager.hpp \
+    $$PWD/models/torrentpreviewablefileeager_withdefault.hpp \
     $$PWD/models/torrentpreviewablefileproperty.hpp \
     $$PWD/models/torrentpreviewablefilepropertyeager.hpp \
     $$PWD/models/user.hpp \

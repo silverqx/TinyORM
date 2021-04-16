@@ -47,6 +47,18 @@ public:
     {
         return hasOne<TorrentPeer>();
 //        return hasOne<TorrentPeer>("torrent_id", "id");
+
+        // Default Model example
+//        auto relation = hasOne<TorrentPeer>();
+//        relation->withDefault();
+//        relation->withDefault({{"seeds", 0}, {"total_seeds", -1}});
+        // This callback variant is not yet implemented 😟
+//        relation->withDefault([](Torrent &torrent,
+//                              const TorrentPreviewableFile &/*torrentFile*/)
+//        {
+//            torrent["name"] = "default_model_name";
+//        });
+//        return relation;
     }
 
     /*! Get tags that belong to the torrent. */
@@ -64,6 +76,7 @@ public:
         // Custom 'Tagged' pivot model ✨
         auto relation = belongsToMany<Tag, Tagged>();
         dynamic_cast<BelongsToMany<Torrent, Tag, Tagged> &>(*relation)
+                // CUR finish specific methods in Relation classes silverqx
                 .as("tagged")
                 .withPivot("active")
                 .withTimestamps(/*"created_at_custom", "updated_at_custom"*/);

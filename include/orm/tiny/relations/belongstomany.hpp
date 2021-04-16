@@ -33,8 +33,8 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType = Pivot>
     class BelongsToMany :
-            public Relation<Model, Related>,
             public ManyRelation,
+            public Relation<Model, Related>,
             public PivotRelation
     {
         template<typename Derived>
@@ -48,7 +48,7 @@ namespace Orm::Tiny::Relations
 
     public:
         /*! Instantiate and initialize a new BelongsToMany instance. */
-        static std::unique_ptr<Relation<Model, Related>>
+        static std::unique_ptr<BelongsToMany<Model, Related, PivotType>>
         instance(std::unique_ptr<Related> &&related, Model &parent,
                  const QString &table = "", const QString &foreignPivotKey = "",
                  const QString &relatedPivotKey = "", const QString &parentKey = "",
@@ -380,7 +380,7 @@ namespace Orm::Tiny::Relations
     {}
 
     template<class Model, class Related, class PivotType>
-    std::unique_ptr<Relation<Model, Related>>
+    std::unique_ptr<BelongsToMany<Model, Related, PivotType>>
     BelongsToMany<Model, Related, PivotType>::instance(
             std::unique_ptr<Related> &&related, Model &parent,
             const QString &table, const QString &foreignPivotKey,

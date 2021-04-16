@@ -95,7 +95,7 @@ function createTables(string $connection)
 
     $schema->create('torrent_previewable_files', function (Blueprint $table) {
         $table->id();
-        $table->unsignedBigInteger('torrent_id');
+        $table->unsignedBigInteger('torrent_id')->nullable();
         $table->integer('file_index');
         $table->string('filepath')->unique();
         $table->unsignedBigInteger('size');
@@ -200,28 +200,29 @@ function seedTables(string $connection)
             [2, 'test2', 12, 200, '2020-08-02 20:11:10', '2579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-02 14:51:23', '2021-01-02 18:46:31'],
             [3, 'test3', 13, 300, '2020-08-03 20:11:10', '3579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-03 14:51:23', '2021-01-03 18:46:31'],
             [4, 'test4', 14, 400, '2020-08-04 20:11:10', '4579e3af2768cdf52ec84c1f320333f68401dc6e', 'after update revert updated_at', '2021-01-04 14:51:23', '2021-01-04 18:46:31'],
-            [5, 'test5', 15, 500, '2020-08-05 20:11:10', '5579e3af2768cdf52ec84c1f320333f68401dc6e', 'no peers', '2021-01-05 14:51:23', '2021-01-05 18:46:31'],
-            [6, 'test6', 16, 600, '2020-08-06 20:11:10', '6579e3af2768cdf52ec84c1f320333f68401dc6e', 'no files no peers', '2021-01-06 14:51:23', '2021-01-06 18:46:31'],
+            [5, 'test5', 15, 500, '2020-08-05 20:11:10', '5579e3af2768cdf52ec84c1f320333f68401dc6e', 'no peers',                       '2021-01-05 14:51:23', '2021-01-05 18:46:31'],
+            [6, 'test6', 16, 600, '2020-08-06 20:11:10', '6579e3af2768cdf52ec84c1f320333f68401dc6e', 'no files no peers',              '2021-01-06 14:51:23', '2021-01-06 18:46:31'],
         ]));
 
     Capsule::table('torrent_peers', null, $connection)->insert(
         combineValues(['id', 'torrent_id', 'seeds', 'total_seeds', 'leechers', 'total_leechers', 'created_at', 'updated_at'], [
-            [1, 1, 1, 1, 1, 1, '2021-01-01 14:51:23', '2021-01-01 17:46:31'],
-            [2, 2, 2, 2, 2, 2, '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
-            [3, 3, 3, 3, 3, 3, '2021-01-03 14:51:23', '2021-01-03 17:46:31'],
+            [1, 1, 1,    1, 1, 1, '2021-01-01 14:51:23', '2021-01-01 17:46:31'],
+            [2, 2, 2,    2, 2, 2, '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
+            [3, 3, 3,    3, 3, 3, '2021-01-03 14:51:23', '2021-01-03 17:46:31'],
             [4, 4, NULL, 4, 4, 4, '2021-01-04 14:51:23', '2021-01-04 17:46:31'],
         ]));
 
     Capsule::table('torrent_previewable_files', null, $connection)->insert(
         combineValues(['id', 'torrent_id', 'file_index', 'filepath', 'size', 'progress', 'note', 'created_at', 'updated_at'], [
-            [1, 1, 0, 'test1_file1.mkv', 1024, 200, 'no file propreties', '2021-01-01 14:51:23', '2021-01-01 17:46:31'],
-            [2, 2, 0, 'test2_file1.mkv', 2048, 870, NULL, '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
-            [3, 2, 1, 'test2_file2.mkv', 3072, 1000, NULL, '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
-            [4, 3, 0, 'test3_file1.mkv', 5568, 870, NULL, '2021-01-03 14:51:23', '2021-01-03 17:46:31'],
-            [5, 4, 0, 'test4_file1.mkv', 4096, 0, NULL, '2021-01-04 14:51:23', '2021-01-04 17:46:31'],
-            [6, 5, 0, 'test5_file1.mkv', 2048, 999, NULL, '2021-01-05 14:51:23', '2021-01-05 17:46:31'],
-            [7, 5, 1, 'test5_file2.mkv', 2560, 890, 'for tst_BaseModel::remove()/destroy()', '2021-01-02 14:55:23', '2021-01-02 17:47:31'],
-            [8, 5, 2, 'test5_file3.mkv', 2570, 896, 'for tst_BaseModel::destroy()', '2021-01-02 14:56:23', '2021-01-02 17:48:31'],
+            [1, 1,    0, 'test1_file1.mkv', 1024, 200,  'no file properties', '2021-01-01 14:51:23', '2021-01-01 17:46:31'],
+            [2, 2,    0, 'test2_file1.mkv', 2048, 870,  NULL, '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
+            [3, 2,    1, 'test2_file2.mkv', 3072, 1000, NULL, '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
+            [4, 3,    0, 'test3_file1.mkv', 5568, 870,  NULL, '2021-01-03 14:51:23', '2021-01-03 17:46:31'],
+            [5, 4,    0, 'test4_file1.mkv', 4096, 0,    NULL, '2021-01-04 14:51:23', '2021-01-04 17:46:31'],
+            [6, 5,    0, 'test5_file1.mkv', 2048, 999,  NULL, '2021-01-05 14:51:23', '2021-01-05 17:46:31'],
+            [7, 5,    1, 'test5_file2.mkv', 2560, 890,  'for tst_BaseModel::remove()/destroy()', '2021-01-02 14:55:23', '2021-01-02 17:47:31'],
+            [8, 5,    2, 'test5_file3.mkv', 2570, 896,  'for tst_BaseModel::destroy()',          '2021-01-02 14:56:23', '2021-01-02 17:48:31'],
+            [9, NULL, 0, 'test0_file0.mkv', 1440, 420,  'no torrent parent model',               '2021-01-02 14:56:23', '2021-01-02 17:48:31'],
         ]));
 
     Capsule::table('torrent_previewable_file_properties', null, $connection)->insert(
@@ -263,9 +264,9 @@ function seedTables(string $connection)
 
     Capsule::table('tag_properties', null, $connection)->insert(
         combineValues(['id', 'tag_id', 'color', 'position', 'created_at', 'updated_at'], [
-            [1, 1, 'white', 0, '2021-02-11 12:41:28', '2021-02-11 22:17:11'],
-            [2, 2, 'blue', 1, '2021-02-12 12:41:28', '2021-02-12 22:17:11'],
-            [3, 3, 'red', 2, '2021-02-13 12:41:28', '2021-02-13 22:17:11'],
+            [1, 1, 'white',  0, '2021-02-11 12:41:28', '2021-02-11 22:17:11'],
+            [2, 2, 'blue',   1, '2021-02-12 12:41:28', '2021-02-12 22:17:11'],
+            [3, 3, 'red',    2, '2021-02-13 12:41:28', '2021-02-13 22:17:11'],
             [4, 4, 'orange', 3, '2021-02-14 12:41:28', '2021-02-14 22:17:11'],
         ]));
 

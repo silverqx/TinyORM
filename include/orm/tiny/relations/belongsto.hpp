@@ -4,6 +4,7 @@
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 
+#include "orm/tiny/relations/concerns/supportsdefaultmodels.hpp"
 #include "orm/tiny/relations/relation.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -14,7 +15,10 @@ namespace Orm::Tiny::Relations
 {
 
     template<class Model, class Related>
-    class BelongsTo : public Relation<Model, Related>, public OneRelation
+    class BelongsTo :
+            protected OneRelation,
+            public Relation<Model, Related>,
+            public Concerns::SupportsDefaultModels<Model, Related>
     {
     protected:
         BelongsTo(std::unique_ptr<Related> &&related, Model &child,
@@ -23,7 +27,7 @@ namespace Orm::Tiny::Relations
 
     public:
         /*! Instantiate and initialize a new BelongsTo instance. */
-        static std::unique_ptr<Relation<Model, Related>>
+        static std::unique_ptr<BelongsTo<Model, Related>>
         instance(std::unique_ptr<Related> &&related,
                  Model &child, const QString &foreignKey,
                  const QString &ownerKey, const QString &relation);
@@ -42,9 +46,11 @@ namespace Orm::Tiny::Relations
 
         /*! Set the constraints for an eager load of the relation. */
         void addEagerConstraints(const QVector<Model> &models) const override;
+
         /*! Initialize the relation on a set of models. */
         QVector<Model> &
         initRelation(QVector<Model> &models, const QString &relation) const override;
+
         /*! Match the eagerly loaded results to their parents. */
         void match(QVector<Model> &models, QVector<Related> results,
                    const QString &relation) const override;
@@ -55,15 +61,19 @@ namespace Orm::Tiny::Relations
     protected:
         /*! Gather the keys from a vector of related models. */
         QVector<QVariant> getEagerModelKeys(const QVector<Model> &models) const;
-        /*! Get the default value for this relation. */
-        Model &getDefaultFor(Model &parent) const;
         /*! Build model dictionary keyed by the parent's primary key. */
         QHash<typename Model::KeyType, Related>
         buildDictionary(const QVector<Related> &results) const;
 
+    public:
+        // CUR rewrite to cached silverqx
         /*! The textual representation of the Relation type. */
         inline QString relationTypeName() const override
         { return "BelongsTo"; };
+
+    protected:
+        /*! Make a new related instance for the given model. */
+        inline Related newRelatedInstanceFor(const Model &) const override;
 
         /*! The child model instance of the relation. */
         Model &m_child;
@@ -94,7 +104,7 @@ namespace Orm::Tiny::Relations
     {}
 
     template<class Model, class Related>
-    std::unique_ptr<Relation<Model, Related>>
+    std::unique_ptr<BelongsTo<Model, Related>>
     BelongsTo<Model, Related>::instance(
             std::unique_ptr<Related> &&related, Model &child,
             const QString &foreignKey, const QString &ownerKey, const QString &relation)
@@ -175,7 +185,8 @@ namespace Orm::Tiny::Relations
                                             const QString &relation) const
     {
         for (auto &model : models)
-            model.template setRelation<Related>(relation, std::nullopt);
+            model.template setRelation<Related>(relation,
+                                                this->getDefaultFor(model));
 
         return models;
     }
@@ -228,12 +239,12 @@ namespace Orm::Tiny::Relations
         if (const auto foreign = m_child.getAttribute(m_foreignKey);
             !foreign.isValid() || foreign.isNull()
         )
-            return std::nullopt;
+            return this->getDefaultFor(m_child);
 
         // FEATURE default models, add support for default models (trait SupportsDefaultModels), getDefaultFor() will be used in the initRelation()/getResults() methods and will be implemented in the one type relations only, so in HasOne and BelongsTo silverqx
         const auto first = this->m_query->first();
 
-        return first ? first : std::nullopt;
+        return first ? first : this->getDefaultFor(m_child);
     }
 
     template<class Model, class Related>
@@ -259,11 +270,9 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    Model &BelongsTo<Model, Related>::getDefaultFor(Model &parent) const
+    Related BelongsTo<Model, Related>::newRelatedInstanceFor(const Model &) const
     {
-        Q_UNUSED(parent)
-
-        return parent;
+        return this->m_related->newInstance();
     }
 
 } // namespace Orm::Tiny::Relations

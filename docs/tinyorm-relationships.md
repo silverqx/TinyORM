@@ -28,7 +28,7 @@ Database tables are often related to one another. For example, a blog post may h
 
 - [One To One](#one-to-one)
 - [One To Many](#one-to-many)
-- [~~Many To Many~~](#many-to-many) *coming soon*
+- [Many To Many](#many-to-many)
 
 <a name="defining-relationships"></a>
 ## Defining Relationships
@@ -377,6 +377,35 @@ The third `belongsTo` parameter is the relation name, if you pass it, the foreig
     somePost()
     {
         return belongsTo<Post>({}, {}, __func__); // the foreign key will be some_post_id
+    }
+
+<a name="default-models"></a>
+#### Default Models
+
+The `belongsTo`, and `hasOne` relationships allow you to define a default model that will be returned if the given relationship is `null`. This pattern is often referred to as the [Null Object pattern](https://en.wikipedia.org/wiki/Null_Object_pattern) and can help remove conditional checks in your code. In the following example, the `user` relation will return an empty `User` model if no user is attached to the `Post` model:
+
+    /*! Get the author of the post. */
+    std::unique_ptr<Relation<Post, User>>
+    user()
+    {
+        auto relation = belongsTo<User>();
+
+        relation->withDefault();
+
+        return relation;
+    }
+
+To populate the default model with attributes, you may pass the vector of attributes to the `withDefault` method:
+
+    /*! Get the author of the post. */
+    std::unique_ptr<Relation<Post, User>>
+    user()
+    {
+        auto relation = belongsTo<User>();
+
+        relation->withDefault({{"name", "Guest Author"}, {"is_active", false}});
+
+        return relation;
     }
 
 <a name="many-to-many"></a>

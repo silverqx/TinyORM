@@ -1,6 +1,7 @@
 #ifndef HASONE_H
 #define HASONE_H
 
+#include "orm/tiny/relations/concerns/supportsdefaultmodels.hpp"
 #include "orm/tiny/relations/hasoneormany.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -11,7 +12,10 @@ namespace Orm::Tiny::Relations
 {
 
     template<class Model, class Related>
-    class HasOne : public HasOneOrMany<Model, Related>, OneRelation
+    class HasOne :
+            protected OneRelation,
+            public HasOneOrMany<Model, Related>,
+            public Concerns::SupportsDefaultModels<Model, Related>
     {
     protected:
         HasOne(std::unique_ptr<Related> &&related, Model &parent,
@@ -19,7 +23,7 @@ namespace Orm::Tiny::Relations
 
     public:
         /*! Instantiate and initialize a new HasOne instance. */
-        static std::unique_ptr<Relation<Model, Related>>
+        static std::unique_ptr<HasOne<Model, Related>>
         instance(std::unique_ptr<Related> &&related, Model &parent,
                  const QString &foreignKey, const QString &localKey);
 
@@ -41,6 +45,9 @@ namespace Orm::Tiny::Relations
         /*! The textual representation of the Relation type. */
         inline QString relationTypeName() const override
         { return "HasOne"; };
+
+        /*! Make a new related instance for the given model. */
+        inline Related newRelatedInstanceFor(const Model &) const override;
     };
 
     template<class Model, class Related>
@@ -52,7 +59,7 @@ namespace Orm::Tiny::Relations
     {}
 
     template<class Model, class Related>
-    std::unique_ptr<Relation<Model, Related>>
+    std::unique_ptr<HasOne<Model, Related>>
     HasOne<Model, Related>::instance(
             std::unique_ptr<Related> &&related, Model &parent,
             const QString &foreignKey, const QString &localKey)
@@ -70,9 +77,9 @@ namespace Orm::Tiny::Relations
     HasOne<Model, Related>::initRelation(QVector<Model> &models,
                                          const QString &relation) const
     {
-        // FEATURE default models, add support for default models (trait SupportsDefaultModels) silverqx
         for (auto &model : models)
-            model.template setRelation<Related>(relation, std::nullopt);
+            model.template setRelation<Related>(relation,
+                                                this->getDefaultFor(model));
 
         return models;
     }
@@ -85,12 +92,20 @@ namespace Orm::Tiny::Relations
         if (const auto key = this->getParentKey();
             !key.isValid() || key.isNull()
         )
-            return std::nullopt;
+            return this->getDefaultFor(this->m_parent);
 
         // NRVO should kick in, I leave it const
         const auto first = this->m_query->first();
 
-        return first ? first : std::nullopt;
+        return first ? first : this->getDefaultFor(this->m_parent);
+    }
+
+    template<class Model, class Related>
+    Related HasOne<Model, Related>::newRelatedInstanceFor(const Model &parent) const
+    {
+        return this->m_related->newInstance().setAttribute(
+            this->getForeignKeyName(), parent[this->m_localKey]
+        );
     }
 
 } // namespace Orm::Tiny::Relations

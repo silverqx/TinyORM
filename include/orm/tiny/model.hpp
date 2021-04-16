@@ -67,6 +67,8 @@ namespace Relations {
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     // TODO QueryBuilder::updateOrInsert() silverqx
     // CUR code coverage silverqx
+    // CUR create future todo task silverqx
+    // CUR search ~~ in docs silverqx
     template<typename Derived, typename ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -485,6 +487,7 @@ namespace Relations {
         PivotType newPivot(const Parent &parent, const QVector<AttributeItem> &attributes,
                            const QString &table, bool exists) const;
 
+        // CUR cache result silverqx
         /*! Static cast this to a child's instance type (CRTP). */
         inline Derived &model()
         { return static_cast<Derived &>(*this); }
@@ -703,19 +706,19 @@ namespace Relations {
 
         /*! Define a one-to-one relationship. */
         template<typename Related>
-        std::unique_ptr<Relations::Relation<Derived, Related>>
+        std::unique_ptr<Relations::HasOne<Derived, Related>>
         hasOne(QString foreignKey = "", QString localKey = "");
         /*! Define an inverse one-to-one or many relationship. */
         template<typename Related>
-        std::unique_ptr<Relations::Relation<Derived, Related>>
+        std::unique_ptr<Relations::BelongsTo<Derived, Related>>
         belongsTo(QString foreignKey = "", QString ownerKey = "", QString relation = "");
         /*! Define a one-to-many relationship. */
         template<typename Related>
-        std::unique_ptr<Relations::Relation<Derived, Related>>
+        std::unique_ptr<Relations::HasMany<Derived, Related>>
         hasMany(QString foreignKey = "", QString localKey = "");
         /*! Define a many-to-many relationship. */
         template<typename Related, typename PivotType = Relations::Pivot>
-        std::unique_ptr<Relations::Relation<Derived, Related>>
+        std::unique_ptr<Relations::BelongsToMany<Derived, Related, PivotType>>
         belongsToMany(QString table = "", QString foreignPivotKey = "",
                       QString relatedPivotKey = "", QString parentKey = "",
                       QString relatedKey = "", QString relation = "");
@@ -883,14 +886,14 @@ namespace Relations {
 
         /*! Instantiate a new HasOne relationship. */
         template<typename Related>
-        inline std::unique_ptr<Relations::Relation<Derived, Related>>
+        inline std::unique_ptr<Relations::HasOne<Derived, Related>>
         newHasOne(std::unique_ptr<Related> &&related, Derived &parent,
                   const QString &foreignKey, const QString &localKey) const
         { return Relations::HasOne<Derived, Related>::instance(
                         std::move(related), parent, foreignKey, localKey); }
         /*! Instantiate a new BelongsTo relationship. */
         template<typename Related>
-        inline std::unique_ptr<Relations::Relation<Derived, Related>>
+        inline std::unique_ptr<Relations::BelongsTo<Derived, Related>>
         newBelongsTo(std::unique_ptr<Related> &&related,
                      Derived &child, const QString &foreignKey,
                      const QString &ownerKey, const QString &relation) const
@@ -898,14 +901,14 @@ namespace Relations {
                         std::move(related), child, foreignKey, ownerKey, relation); }
         /*! Instantiate a new HasMany relationship. */
         template<typename Related>
-        inline std::unique_ptr<Relations::Relation<Derived, Related>>
+        inline std::unique_ptr<Relations::HasMany<Derived, Related>>
         newHasMany(std::unique_ptr<Related> &&related, Derived &parent,
                    const QString &foreignKey, const QString &localKey) const
         { return Relations::HasMany<Derived, Related>::instance(
                         std::move(related), parent, foreignKey, localKey); }
         /*! Instantiate a new BelongsToMany relationship. */
         template<typename Related, typename PivotType>
-        inline std::unique_ptr<Relations::Relation<Derived, Related>>
+        inline std::unique_ptr<Relations::BelongsToMany<Derived, Related, PivotType>>
         newBelongsToMany(std::unique_ptr<Related> &&related, Derived &parent,
                          const QString &table, const QString &foreignPivotKey,
                          const QString &relatedPivotKey, const QString &parentKey,
@@ -2222,7 +2225,7 @@ namespace Relations {
     void Model<Derived, AllRelations...>::pushVisited()
     {
         auto &model = std::get<std::optional<Related>>(this->m_pushStore->models);
-        // TODO prod remove, this assert is only to catch the case, when std::optional() is empty, because I don't know if this can actually happen? silverqx
+        // CUR test push with default model silverqx
         Q_ASSERT(!!model);
         // Skip a null model, consider it as success
         if (!model) {
@@ -2622,6 +2625,10 @@ namespace Relations {
     Model<Derived, AllRelations...>::forceFill(
             const QVector<AttributeItem> &attributes)
     {
+        // Prevent unnecessary unguard
+        if (attributes.isEmpty())
+            return model();
+
         unguarded([this, &attributes]
         {
             fill(attributes);
@@ -2777,6 +2784,7 @@ namespace Relations {
         return getConnection().query();
     }
 
+    // CUR return optional reference, I remember that I abandoned it, but it is much better to avoid nullptr checks, anyway investigate it silverqx
     template<typename Derived, typename ...AllRelations>
     template<typename Related, template<typename> typename Container>
     const Container<Related *>
@@ -3595,7 +3603,7 @@ namespace Relations {
 
     template<typename Derived, typename ...AllRelations>
     template<typename Related>
-    std::unique_ptr<Relations::Relation<Derived, Related>>
+    std::unique_ptr<Relations::HasOne<Derived, Related>>
     Model<Derived, AllRelations...>::hasOne(QString foreignKey, QString localKey)
     {
         auto instance = newRelatedInstance<Related>();
@@ -3612,7 +3620,7 @@ namespace Relations {
 
     template<typename Derived, typename ...AllRelations>
     template<typename Related>
-    std::unique_ptr<Relations::Relation<Derived, Related>>
+    std::unique_ptr<Relations::BelongsTo<Derived, Related>>
     Model<Derived, AllRelations...>::belongsTo(QString foreignKey, QString ownerKey,
                                                QString relation)
     {
@@ -3644,7 +3652,7 @@ namespace Relations {
 
     template<typename Derived, typename ...AllRelations>
     template<typename Related>
-    std::unique_ptr<Relations::Relation<Derived, Related>>
+    std::unique_ptr<Relations::HasMany<Derived, Related>>
     Model<Derived, AllRelations...>::hasMany(QString foreignKey, QString localKey)
     {
         auto instance = newRelatedInstance<Related>();
@@ -3661,7 +3669,7 @@ namespace Relations {
 
     template<typename Derived, typename ...AllRelations>
     template<typename Related, typename PivotType>
-    std::unique_ptr<Relations::Relation<Derived, Related>>
+    std::unique_ptr<Relations::BelongsToMany<Derived, Related, PivotType>>
     Model<Derived, AllRelations...>::belongsToMany(
             QString table, QString foreignPivotKey, QString relatedPivotKey,
             QString parentKey, QString relatedKey, QString relation)
