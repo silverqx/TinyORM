@@ -8,6 +8,7 @@ class User; // Forward declaration to avoid cyclic dependency
 #include "models/roleuser.hpp"
 
 using Orm::Tiny::Model;
+using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 

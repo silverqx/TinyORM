@@ -1,7 +1,6 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-// CUR change to lib includes <> silverqx
 #include "orm/db.hpp"
 #include "orm/mysqlconnection.hpp"
 

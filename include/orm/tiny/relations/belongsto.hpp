@@ -66,7 +66,6 @@ namespace Orm::Tiny::Relations
         buildDictionary(const QVector<Related> &results) const;
 
     public:
-        // CUR rewrite to cached silverqx
         /*! The textual representation of the Relation type. */
         inline QString relationTypeName() const override
         { return "BelongsTo"; };

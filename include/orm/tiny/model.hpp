@@ -485,13 +485,10 @@ namespace Relations {
         PivotType newPivot(const Parent &parent, const QVector<AttributeItem> &attributes,
                            const QString &table, bool exists) const;
 
-        // CUR cache result silverqx
         /*! Static cast this to a child's instance type (CRTP). */
-        inline Derived &model()
-        { return static_cast<Derived &>(*this); }
+        inline Derived &model();
         /*! Static cast this to a child's instance type (CRTP), const version. */
-        inline const Derived &model() const
-        { return static_cast<const Derived &>(*this); }
+        inline const Derived &model() const;
 
         /* Getters / Setters */
         /*! Get the current connection name for the model. */
@@ -2745,6 +2742,19 @@ namespace Relations {
         else
             return PivotType::template fromRawAttributes<Parent>(
                         parent, attributes, table, exists);
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    Derived &Model<Derived, AllRelations...>::model()
+    {
+        // Can not be cached with static because a copy can be made
+        return static_cast<Derived &>(*this);
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    const Derived &Model<Derived, AllRelations...>::model() const
+    {
+        return static_cast<const Derived &>(*this);
     }
 
     template<typename Derived, typename ...AllRelations>

@@ -86,7 +86,7 @@ namespace Orm
         static QSqlQuery qtQuery(const QString &connection = "");
 
         /*! Create a new raw query expression. */
-        static inline Query::Expression raw(const QVariant &value)
+        inline static Query::Expression raw(const QVariant &value)
         { return value; }
 
         /*! Run a select statement against the database. */
