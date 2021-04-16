@@ -576,8 +576,8 @@ By default, only the model keys will be present on the `pivot` model. If your in
 
     // Ownership of a unique_ptr()
     auto relation = belongsToMany<Role>();
-    dynamic_cast<BelongsToMany<User, Role> &>(*relation)
-            .withPivot({"active", "created_by"});
+
+    relation->withPivot({"active", "created_by"});
 
     return relation;
 
@@ -587,8 +587,8 @@ If you would like your intermediate table to have `created_at` and `updated_at` 
 
     // Ownership of a unique_ptr()
     auto relation = belongsToMany<Role>();
-    dynamic_cast<BelongsToMany<User, Role> &>(*relation)
-            .withTimestamps();
+
+    relation->withTimestamps();
 
     return relation;
 
@@ -605,8 +605,8 @@ For example, if your application contains users that may subscribe to podcasts, 
 
     // Ownership of a unique_ptr()
     auto relation = belongsToMany<Podcast>();
-    dynamic_cast<BelongsToMany<User, Podcast> &>(*relation)
-            .as("subscription")
+
+    relation->as("subscription")
             .withTimestamps();
 
     return relation;

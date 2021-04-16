@@ -26,9 +26,9 @@ public:
     {
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<Torrent, Pivot>();
-        dynamic_cast<BelongsToMany<Tag, Torrent, Pivot> &>(*relation)
-//                .as("tagged")
-                .withPivot("active")
+
+        relation/*->as("tagged")*/
+                ->withPivot("active")
                 .withTimestamps();
 
         return relation;

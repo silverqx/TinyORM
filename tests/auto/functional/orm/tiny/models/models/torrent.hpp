@@ -67,17 +67,15 @@ public:
     {
         // Ownership of a unique_ptr()
 //        auto relation = belongsToMany<Tag>();
-//        dynamic_cast<BelongsToMany<Torrent, Tag/*, Pivot*/> &>(*relation)
-//                .as("tagged")
+//        relation->as("tagged")
 //                .withPivot("active")
 //                .withTimestamps();
 
+        // CUR finish specific methods in Relation classes silverqx
         // Ownership of a unique_ptr()
         // Custom 'Tagged' pivot model ✨
         auto relation = belongsToMany<Tag, Tagged>();
-        dynamic_cast<BelongsToMany<Torrent, Tag, Tagged> &>(*relation)
-                // CUR finish specific methods in Relation classes silverqx
-                .as("tagged")
+        relation->as("tagged")
                 .withPivot("active")
                 .withTimestamps(/*"created_at_custom", "updated_at_custom"*/);
 

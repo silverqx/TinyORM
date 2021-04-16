@@ -22,8 +22,8 @@ public:
     {
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<Role, RoleUser>();
-        dynamic_cast<BelongsToMany<User, Role, RoleUser> &>(*relation)
-                .as("subscription")
+
+        relation->as("subscription")
                 .withPivot("active");
 
         return relation;
