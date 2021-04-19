@@ -790,6 +790,8 @@ namespace Relations {
         /*! Merge new fillable attributes with existing fillable attributes
             on the model. */
         Derived &mergeFillable(const QStringList &fillable);
+        /*! Merge new fillable attributes with existing fillable attributes
+            on the model. */
         Derived &mergeFillable(QStringList &&fillable);
 
         /*! Get the guarded attributes for the model. */
@@ -801,6 +803,8 @@ namespace Relations {
         /*! Merge new guarded attributes with existing guarded attributes
             on the model. */
         Derived &mergeGuarded(const QStringList &guarded);
+        /*! Merge new guarded attributes with existing guarded attributes
+            on the model. */
         Derived &mergeGuarded(QStringList &&guarded);
 
         /*! Disable all mass assignable restrictions. */
@@ -938,6 +942,7 @@ namespace Relations {
         /*! Get the fillable attributes of a given vector. */
         QVector<AttributeItem>
         fillableFromArray(const QVector<AttributeItem> &attributes) const;
+        /*! Get the fillable attributes of a given vector. */
         QVector<AttributeItem>
         fillableFromArray(QVector<AttributeItem> &&attributes) const;
 
