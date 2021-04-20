@@ -44,6 +44,7 @@ HEADERS += \
     $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/sqltransactionerror.hpp \
     $$PWD/orm/support/configurationoptionsparser.hpp \
+    $$PWD/orm/tiny/concerns/guardsattributes.hpp \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \
     $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
     $$PWD/orm/tiny/massassignmenterror.hpp \

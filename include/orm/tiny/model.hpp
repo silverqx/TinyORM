@@ -5,6 +5,7 @@
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/invalidargumenterror.hpp"
 #include "orm/invalidformaterror.hpp"
+#include "orm/tiny/concerns/guardsattributes.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
 #include "orm/tiny/massassignmenterror.hpp"
 #include "orm/tiny/relationnotfounderror.hpp"
@@ -70,10 +71,13 @@ namespace Relations {
     template<typename Derived, typename ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
-            public Orm::Concerns::HasConnectionResolver
+            public Orm::Concerns::HasConnectionResolver,
+            public Concerns::GuardsAttributes<Derived, AllRelations...>
     {
+        // Helps to avoid 'friend Derived' declarations in models
+        friend Concerns::GuardsAttributes<Derived, AllRelations...>;
         // FUTURE try to solve problem with forward declarations for friend methods, to allow only relevant methods from TinyBuilder silverqx
-        /* Used by TinyBuilder::eagerLoadRelationVisitor()/getRelationMethod(). */
+        // Used by TinyBuilder::eagerLoadRelationVisitor()/getRelationMethod()
         friend TinyBuilder<Derived>;
 
         using JoinClause = Orm::Query::JoinClause;
@@ -780,50 +784,6 @@ namespace Relations {
         template<typename ClassToCheck = Derived>
         static bool isIgnoringTouch();
 
-        /* GuardsAttributes */
-        /*! Get the fillable attributes for the model. */
-        inline const QStringList &getFillable() const;
-        /*! Set the fillable attributes for the model. */
-        Derived &fillable(const QStringList &fillable);
-        /*! Set the fillable attributes for the model. */
-        Derived &fillable(QStringList &&fillable);
-        /*! Merge new fillable attributes with existing fillable attributes
-            on the model. */
-        Derived &mergeFillable(const QStringList &fillable);
-        /*! Merge new fillable attributes with existing fillable attributes
-            on the model. */
-        Derived &mergeFillable(QStringList &&fillable);
-
-        /*! Get the guarded attributes for the model. */
-        const QStringList &getGuarded() const;
-        /*! Set the guarded attributes for the model. */
-        Derived &guard(const QStringList &guarded);
-        /*! Set the guarded attributes for the model. */
-        Derived &guard(QStringList &&guarded);
-        /*! Merge new guarded attributes with existing guarded attributes
-            on the model. */
-        Derived &mergeGuarded(const QStringList &guarded);
-        /*! Merge new guarded attributes with existing guarded attributes
-            on the model. */
-        Derived &mergeGuarded(QStringList &&guarded);
-
-        /*! Disable all mass assignable restrictions. */
-        static void unguard(bool state = true);
-        /*! Enable the mass assignment restrictions. */
-        static void reguard();
-        /*! Determine if the current state is "unguarded". */
-        inline static bool isUnguarded();
-        /*! Run the given callable while being unguarded. */
-        static void unguarded(const std::function<void()> &callback);
-
-        /*! Determine if the given attribute may be mass assigned. */
-        bool isFillable(const QString &key) const;
-        /*! Determine if the given key is guarded. */
-        bool isGuarded(const QString &key) const;
-
-        /*! Determine if the model is totally guarded. */
-        bool totallyGuarded() const;
-
     protected:
         /*! Get a new query builder instance for the connection. */
         QSharedPointer<QueryBuilder> newBaseQueryBuilder() const;
@@ -934,18 +894,6 @@ namespace Relations {
         Derived &setRelations(
                 std::unordered_map<QString, RelationsType<AllRelations...>> &&relations);
 
-        /* GuardsAttributes */
-        /*! Determine if the given column is a valid, guardable column. */
-        bool isGuardableColumn(const QString &key) const;
-        /*! Th key for guardable columns hash cache. */
-        QString getKeyForGuardableHash() const;
-        /*! Get the fillable attributes of a given vector. */
-        QVector<AttributeItem>
-        fillableFromArray(const QVector<AttributeItem> &attributes) const;
-        /*! Get the fillable attributes of a given vector. */
-        QVector<AttributeItem>
-        fillableFromArray(QVector<AttributeItem> &&attributes) const;
-
         /* Others */
         /*! Perform the actual delete query on this model instance. */
         void performDeleteOnModel();
@@ -1030,16 +978,6 @@ namespace Relations {
         inline static const QString UPDATED_AT = QStringLiteral("updated_at");
         /*! Indicates if the model should be timestamped. */
         bool u_timestamps = true;
-
-        /* GuardsAttributes */
-        /*! The attributes that are mass assignable. */
-        inline static QStringList u_fillable {};
-        /*! The attributes that aren't mass assignable. */
-        inline static QStringList u_guarded {"*"};
-        /*! Indicates if all mass assignment is enabled. */
-        inline static bool m_unguarded = false;
-        /*! The actual columns that exist on the database and can be guarded. */
-        inline static QHash<QString, QStringList> m_guardableColumns {};
 
     private:
         /* Eager load from TinyBuilder */
@@ -1152,6 +1090,18 @@ namespace Relations {
         template<typename Related>
         const std::function<void(Model<Derived, AllRelations...> &)> &
         getMethodForRelationVisited(RelationStoreType storeType) const;
+
+        /* GuardsAttributes */
+        /* Getters for u_ data members defined in the Derived models, helps to avoid
+           'friend Derived' declarations in models. */
+        /*! Get the fillable attributes for the model. */
+        inline QStringList &getFillableInternal();
+        /*! Get the fillable attributes for the model. */
+        inline const QStringList &getFillableInternal() const;
+        /*! Get the guarded attributes for the model. */
+        inline QStringList &getGuardedInternal();
+        /*! Get the guarded attributes for the model. */
+        inline const QStringList &getGuardedInternal() const;
     };
 
     template<typename Derived, typename ...AllRelations>
@@ -2577,12 +2527,12 @@ namespace Relations {
     {
         const auto totallyGuarded = this->totallyGuarded();
 
-        for (auto &attribute : fillableFromArray(attributes))
+        for (auto &attribute : this->fillableFromArray(attributes))
             /* The developers may choose to place some attributes in the "fillable" vector
                which means only those attributes may be set through mass assignment to
                the model, and all others will just get ignored for security reasons. */
             if (auto &key = attribute.key;
-                isFillable(key)
+                this->isFillable(key)
             )
                 setAttribute(key, std::move(attribute.value));
 
@@ -2601,12 +2551,12 @@ namespace Relations {
     {
         const auto totallyGuarded = this->totallyGuarded();
 
-        for (auto &attribute : fillableFromArray(std::move(attributes))) {
+        for (auto &attribute : this->fillableFromArray(std::move(attributes))) {
             /* The developers may choose to place some attributes in the "fillable" vector
                which means only those attributes may be set through mass assignment to
                the model, and all others will just get ignored for security reasons. */
             if (auto &key = attribute.key;
-                isFillable(key)
+                this->isFillable(key)
             )
                 setAttribute(key, std::move(attribute.value));
 
@@ -2629,7 +2579,7 @@ namespace Relations {
         if (attributes.isEmpty())
             return model();
 
-        unguarded([this, &attributes]
+        this->unguarded([this, &attributes]
         {
             fill(attributes);
         });
@@ -3783,69 +3733,6 @@ namespace Relations {
         return model();
     }
 
-    /* GuardsAttributes */
-
-    template<typename Derived, typename ...AllRelations>
-    bool
-    Model<Derived, AllRelations...>::isGuardableColumn(const QString &key) const
-    {
-        // NOTE api different, Eloquent caches it only by the model name silverqx
-        // Cache columns by the connection and model name
-        const auto guardableKey = getKeyForGuardableHash();
-
-        if (!m_guardableColumns.contains(guardableKey))
-            m_guardableColumns[guardableKey] = getConnection()
-                                          .getSchemaBuilder()
-                                          ->getColumnListing(getTable());
-
-        return m_guardableColumns[guardableKey].contains(key);
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    QString Model<Derived, AllRelations...>::getKeyForGuardableHash() const
-    {
-        return QStringLiteral("%1-%2").arg(getConnectionName(),
-                                           Utils::Type::classPureBasename<Derived>());
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    QVector<AttributeItem>
-    Model<Derived, AllRelations...>::fillableFromArray(
-            const QVector<AttributeItem> &attributes) const
-    {
-        const auto &fillable = getFillable();
-
-        if (fillable.isEmpty() || m_unguarded)
-            return attributes;
-
-        QVector<AttributeItem> result;
-
-        for (const auto &attribute : attributes)
-            if (fillable.contains(attribute.key))
-                result.append(attribute);
-
-        return result;
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    QVector<AttributeItem>
-    Model<Derived, AllRelations...>::fillableFromArray(
-            QVector<AttributeItem> &&attributes) const
-    {
-        const auto &fillable = getFillable();
-
-        if (fillable.isEmpty() || m_unguarded)
-            return std::move(attributes);
-
-        QVector<AttributeItem> result;
-
-        for (auto &attribute : attributes)
-            if (fillable.contains(attribute.key))
-                result.append(std::move(attribute));
-
-        return result;
-    }
-
     template<typename Derived, typename ...AllRelations>
     void Model<Derived, AllRelations...>::eagerLoadRelationVisitor(
             const WithItem &relation, TinyBuilder<Derived> &builder,
@@ -4167,195 +4054,32 @@ namespace Relations {
 
     /* GuardsAttributes */
 
-    /* These methods may look a little strange because they are non-static, but it is
-       intentional because I want to preserve the same API as Eloquent and return
-       a Model &, but because of the CRTP pattern and the need of calling fill() method
-       from the Model::ctor all of the u_xx mass asignment related data members have
-       to be static. ✌ */
-
     template<typename Derived, typename ...AllRelations>
-    const QStringList &
-    Model<Derived, AllRelations...>::getFillable() const
+    QStringList &
+    Model<Derived, AllRelations...>::getFillableInternal()
     {
         return Derived::u_fillable;
     }
 
     template<typename Derived, typename ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::fillable(const QStringList &fillable)
+    const QStringList &
+    Model<Derived, AllRelations...>::getFillableInternal() const
     {
-        Derived::u_fillable = fillable;
-
-        return model();
+        return Derived::u_fillable;
     }
 
     template<typename Derived, typename ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::fillable(QStringList &&fillable)
-    {
-        Derived::u_fillable = std::move(fillable);
-
-        return model();
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::mergeFillable(const QStringList &fillable)
-    {
-        auto &fillable_ = Derived::u_fillable;
-
-        for (const auto &value : fillable)
-            if (!fillable_.contains(value))
-                fillable_.append(value);
-
-        return model();
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::mergeFillable(QStringList &&fillable)
-    {
-        auto &fillable_ = Derived::u_fillable;
-
-        for (auto &value : fillable)
-            if (!fillable_.contains(value))
-                fillable_.append(std::move(value));
-
-        return model();
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    const QStringList &Model<Derived, AllRelations...>::getGuarded() const
+    QStringList &
+    Model<Derived, AllRelations...>::getGuardedInternal()
     {
         return Derived::u_guarded;
     }
 
     template<typename Derived, typename ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::guard(const QStringList &guarded)
+    const QStringList &
+    Model<Derived, AllRelations...>::getGuardedInternal() const
     {
-        Derived::u_guarded = guarded;
-
-        return model();
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::guard(QStringList &&guarded)
-    {
-        Derived::u_guarded = std::move(guarded);
-
-        return model();
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::mergeGuarded(const QStringList &guarded)
-    {
-        auto &guarded_ = Derived::u_guarded;
-
-        for (const auto &value : guarded)
-            if (!guarded_.contains(value))
-                guarded_.append(value);
-
-        return model();
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::mergeGuarded(QStringList &&guarded)
-    {
-        auto &guarded_ = Derived::u_guarded;
-
-        for (auto &value : guarded)
-            if (!guarded_.contains(value))
-                guarded_.append(std::move(value));
-
-        return model();
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    void Model<Derived, AllRelations...>::unguard(const bool state)
-    {
-        // NOTE api different, Eloquent use late static binding for unguarded silverqx
-        m_unguarded = state;
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    void Model<Derived, AllRelations...>::reguard()
-    {
-        m_unguarded = false;
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    bool Model<Derived, AllRelations...>::isUnguarded()
-    {
-        return m_unguarded;
-    }
-
-    // NOTE api different, Eloquent returns whatever callback returns silverqx
-    template<typename Derived, typename ...AllRelations>
-    void Model<Derived, AllRelations...>::unguarded(
-            const std::function<void()> &callback)
-    {
-        if (m_unguarded)
-            return std::invoke(callback);
-
-        unguard();
-
-        try {
-            std::invoke(callback);
-        } catch (...) {
-        }
-
-        reguard();
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    bool Model<Derived, AllRelations...>::isFillable(const QString &key) const
-    {
-        if (m_unguarded)
-            return true;
-
-        const auto &fillable = getFillable();
-
-        /* If the key is in the "fillable" vector, we can of course assume that it's
-           a fillable attribute. Otherwise, we will check the guarded vector when
-           we need to determine if the attribute is black-listed on the model. */
-        if (fillable.contains(key))
-            return true;
-
-        /* If the attribute is explicitly listed in the "guarded" vector then we can
-           return false immediately. This means this attribute is definitely not
-           fillable and there is no point in going any further in this method. */
-        if (isGuarded(key))
-            return false;
-
-        return fillable.isEmpty()
-                // Don't allow mass filling with table names
-                && !key.contains(QChar('.'));
-                // NOTE api different, isFillable() !key.startsWith(), what is this good for? silverqx
-//                && !key.startsWith(QChar('_'));
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    bool Model<Derived, AllRelations...>::isGuarded(const QString &key) const
-    {
-        const auto &guarded = getGuarded();
-
-        if (guarded.isEmpty())
-            return false;
-
-        return guarded == QStringList {"*"}
-                // NOTE api different, Eloquent uses CaseInsensitive compare, silverqx
-                || guarded.contains(key)
-                /* Not a VALID guardable column is guarded, so it is not possible to fill
-                   a column that is not in the database. */
-                || !isGuardableColumn(key);
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    bool Model<Derived, AllRelations...>::totallyGuarded() const
-    {
-        return getFillable().isEmpty() && getGuarded() == QStringList {"*"};
+        return Derived::u_guarded;
     }
 
 } // namespace Orm::Tiny
