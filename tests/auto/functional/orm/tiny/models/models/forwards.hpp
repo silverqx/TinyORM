@@ -6,8 +6,8 @@ class Tag;
 class Tagged;
 class TagProperty;
 class Torrent;
-class TorrentPreviewableFile;
 class TorrentPeer;
+class TorrentPreviewableFile;
 class TorrentPreviewableFileProperty;
 
 #endif // FORWARDS_H
