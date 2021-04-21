@@ -3822,6 +3822,7 @@ namespace Relations {
     Model<Derived, AllRelations...>::getRelationMethodRaw(
             const QString &relation) const
     {
+        // TODO dilemma heterogenous container for u_relations container, return actual relation type, https://gieseanw.wordpress.com/2017/05/03/a-true-heterogeneous-container-in-c/ silverqx
         return std::any_cast<RelationType<Related>>(
                 model().u_relations.find(relation).value());
     }
