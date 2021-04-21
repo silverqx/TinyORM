@@ -1,7 +1,7 @@
 #ifndef TAGGED_H
 #define TAGGED_H
 
-#include "orm/tiny/relations/basepivot.hpp"
+#include "orm/tiny/model.hpp"
 
 using Orm::Tiny::Relations::BasePivot;
 
