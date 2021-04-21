@@ -297,7 +297,6 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
 
         bindValues(query, prepareBindings(bindings));
 
-        // TODO dilemma, return ok 😭 silverqx
         if (query.exec()) {
             // Query statements counter
             if (m_countingStatements)
