@@ -1165,8 +1165,7 @@ namespace Relations
         if (m_eagerLoad.isEmpty())
             return;
 
-        // CUR change all qAsConst() to std::as_const() silverqx
-        for (const auto &relation : qAsConst(m_eagerLoad))
+        for (const auto &relation : std::as_const(m_eagerLoad))
             /* For nested eager loads we'll skip loading them here and they will be set
                as an eager load on the query to retrieve the relation so that they will
                be eager loaded on that query, because that is where they get hydrated
