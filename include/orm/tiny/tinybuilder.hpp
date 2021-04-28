@@ -3,8 +3,6 @@
 
 #include <QtSql/QSqlRecord>
 
-#include <any>
-
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/algorithm/move.hpp>
@@ -294,16 +292,15 @@ namespace Relations
 
         /*! Get the hydrated models without eager loading. */
         QVector<Model> getModels(const QStringList &columns = {"*"});
+
         /*! Eager load the relationships for the models. */
         void eagerLoadRelations(QVector<Model> &models);
         /*! Eagerly load the relationship on a set of models. */
-        template<typename Related>
-        void eagerLoadRelation(QVector<Model> &models, const WithItem &relationItem);
-        /*! Get the relation instance for the given relation name. */
-        template<typename Related>
-        auto getRelation(const QString &name, Model &dummyModel);
-        /*! Create a vector of models from QSqlQuery. */
-        QVector<Model> hydrate(QSqlQuery result);
+        template<typename Relation>
+        void eagerLoadRelationVisited(Relation &&relation, QVector<Model> &models,
+                                      const WithItem &relationItem) const;
+        /*! Create a vector of models from the QSqlQuery. */
+        QVector<Model> hydrate(QSqlQuery &&result);
 
         /*! Get the model instance being queried. */
         inline Model &getModel()
@@ -1168,32 +1165,70 @@ namespace Relations
         if (m_eagerLoad.isEmpty())
             return;
 
+        // CUR change all qAsConst() to std::as_const() silverqx
         for (const auto &relation : qAsConst(m_eagerLoad))
             /* For nested eager loads we'll skip loading them here and they will be set
                as an eager load on the query to retrieve the relation so that they will
                be eager loaded on that query, because that is where they get hydrated
                as models. */
             if (!relation.name.contains(QChar('.')))
-                m_model.eagerLoadRelationVisitor(relation, *this, models);
+                /* Get the relation instance for the given relation name, have to be done
+                   through the visitor pattern. */
+                m_model.eagerLoadRelationWithVisitor(relation, *this, models);
     }
 
     template<typename Model>
-    template<typename Related>
-    void Builder<Model>::eagerLoadRelation(QVector<Model> &models,
-                                           const WithItem &relationItem)
+    template<typename Relation>
+    void Builder<Model>::eagerLoadRelationVisited(
+            Relation &&relation, QVector<Model> &models,
+            const WithItem &relationItem) const
     {
-        /*! Helping model for eager loads, because Relation::m_parent has to be
-            reference, this dummy model prevents dangling reference, we have to secure
-            that the model passed to the relation method called inside getRelation()
-            will live long enough, to not become a dangling reference.
-            Have to exists, until the 'relation->match()' is processed in this method.
-            Look at Relation::m_parent for additional info. */
-        auto dummyModel = getModel().newInstance();
+        // TODO docs add similar note for lazy load silverqx
+        /* Look also at EagerRelationStore::visited(), where the whole flow begins.
+           How this relation flow works:
+           EagerRelationStore::visited() obtains a reference by the relation name
+           to the relation method, these relation methods are defined on models
+           as member functions.
+           A reference to the relation methods are defined in the Model::u_relations
+           hash as lambda expressions. These lambda expressions will be visited/invoked
+           by EagerRelationStore::visited() to obtain references to the relation methods.
+           Relation constraints will be disabled for eager relations by
+           Relation::noConstraints() method, these default constraints are only used
+           for lazy loading, for eager constraints are used constraints, which are
+           defined by Relation::addEagerConstraints() virtual methods.
+           To the Relation::noConstraints() method is passed lambda, which invokes
+           obtained reference to the relation method defined on the model and invokes it
+           on the 'new' model instance refered as 'dummyModel'.
+           The Relation instance is created by this relation method, this relation
+           method calls factory method, which creates the Relation instance.
+           Every Relation has it's own Relation::create() factory method, to which
+           the following parameters are passed, newly created Related model instance,
+           current/parent model instance, database column names of the relationship, and
+           for a BelongsTo relation also the name of the relation.
+           The Relation instance saves a non-const reference to the current/parent model
+           instance, a copy of the related model instance because it is created
+           on the stack.
+           The Relation instance creates a new TinyBuilder instance from the Related
+           model instance by TinyBuilder::newQuery() and saves ownership as
+           the unique pointer.
+           Then eager constraints are applied to this newly created TinyBuilder and
+           the result is returned back to the initial model.
+           The result is transformed into models and these models are hydrated.
+           Hydrated models are saved to the Model::m_relations data member. */
 
         /* First we will "back up" the existing where conditions on the query so we can
-           add our eager constraints. Then we will merge the wheres that were on the
-           query back to it in order that any where conditions might be specified. */
-        auto relation = getRelation<Related>(relationItem.name, dummyModel);
+           add our eager constraints, this is done in the EagerRelationStore::visited()
+           by help of the Relations::Relation::noConstraints().
+           Folowing is not implemented for now, it is true for relationItem.constraints:
+           Then we will merge the wheres that were on the query back to it in order
+           that any where conditions might be specified. */
+        const auto nested = relationsNestedUnder(relationItem.name);
+
+        /* If there are nested relationships set on the query, we will put those onto
+           the query instances so that they can be handled after this relationship
+           is loaded. In this way they will all trickle down as they are loaded. */
+        if (nested.size() > 0)
+            relation->getQuery().with(nested);
 
         relation->addEagerConstraints(models);
 
@@ -1209,60 +1244,8 @@ namespace Relations
     }
 
     template<typename Model>
-    template<typename Related>
-    auto Builder<Model>::getRelation(const QString &name, Model &dummyModel)
-    {
-        // TODO docs add similar note for lazy load silverqx
-        /* How this relation flow works:
-           m_model.getRelationMethod<Related>() obtains relation method by relation
-           name, these relation methods are defined on models, relation constraints
-           will be disabled for eager relations by Relation::noConstraints() method,
-           these default constraints are only used for lazy loading, for eager
-           constraints are used constraints, which are defined
-           by Relation::addEagerConstraints() virtual methods.
-           To the Relation::noConstraints() method is passed lambda, which invokes
-           obtained relation method and invokes it on the new model instance.
-           The Relation instance is created by this relation method, this relation
-           method calls factory method, which creates the Relation instance.
-           Every Relation has it's own Relation::create() factory method, to which
-           the following parameters are passed, newly created Related model instance,
-           current/parent model instance, database column names of relationship, and
-           for BelongsTo relation also the name of the relation.
-           The Relation instance creates a copy of the current/parent model instance,
-           a copy of the related model instance because they are created on the stack.
-           The Relation instance creates a new TinyBuilder instance from the Related
-           model instance by TinyBuilder::newQuery() and saves ownership as
-           a shared pointer.
-           Then eager constraints are applied to this newly created TinyBuilder and
-           the result is returned back to the initial model.
-           The result is transformed into models and these models are hydrated.
-           Hydrated models are saved to the Model::m_relations data member. */
-
-        auto method = m_model.template getRelationMethod<Related>(name);
-
-        /* We want to run a relationship query without any constrains so that we will
-           not have to remove these where clauses manually which gets really hacky
-           and error prone. We don't want constraints because we add eager ones. */
-        auto relation = Relations::Relation<Model, Related>::noConstraints(
-                    [this, &method, &dummyModel]
-        {
-            return std::invoke(method, dummyModel);
-        });
-
-        const auto nested = relationsNestedUnder(name);
-
-        /* If there are nested relationships set on the query, we will put those onto
-           the query instances so that they can be handled after this relationship
-           is loaded. In this way they will all trickle down as they are loaded. */
-        if (nested.size() > 0)
-            relation->getQuery().with(nested);
-
-        return relation;
-    }
-
-    template<typename Model>
     QVector<Model>
-    Builder<Model>::hydrate(QSqlQuery result)
+    Builder<Model>::hydrate(QSqlQuery &&result)
     {
         auto instance = newModelInstance();
 

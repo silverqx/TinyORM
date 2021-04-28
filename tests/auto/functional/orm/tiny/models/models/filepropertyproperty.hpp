@@ -21,19 +21,12 @@ public:
     }
 
 private:
-    /*! The visitor to obtain a type for Related template parameter. */
-    void relationVisitor(const QString &relation)
-    {
-        if (relation == "fileProperty")
-            relationVisited<TorrentPreviewableFileProperty>();
-    }
-
     /*! The table associated with the model. */
     QString u_table {"file_property_properties"};
 
     /*! Map of relation names to methods. */
-    QHash<QString, std::any> u_relations {
-        {"fileProperty", &FilePropertyProperty::fileProperty},
+    QHash<QString, RelationVisitor> u_relations {
+        {"fileProperty", [](auto &v) { v(&FilePropertyProperty::fileProperty); }},
     };
 
     /*! The relations to eager load on every query. */

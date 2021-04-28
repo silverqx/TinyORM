@@ -36,22 +36,13 @@ public:
     }
 
 private:
-    /*! The visitor to obtain a type for Related template parameter. */
-    void relationVisitor(const QString &relation)
-    {
-        if (relation == "torrentFiles")
-            relationVisited<TorrentPreviewableFileEager>();
-        else if (relation == "torrentPeer")
-            relationVisited<TorrentPeerEager_NoRelations>();
-    }
-
     /*! The table associated with the model. */
     QString u_table {"torrents"};
 
     /*! Map of relation names to methods. */
-    QHash<QString, std::any> u_relations {
-        {"torrentFiles", &TorrentEager::torrentFiles},
-        {"torrentPeer",  &TorrentEager::torrentPeer},
+    QHash<QString, RelationVisitor> u_relations {
+        {"torrentFiles", [](auto &v) { v(&TorrentEager::torrentFiles); }},
+        {"torrentPeer",  [](auto &v) { v(&TorrentEager::torrentPeer); }},
     };
 
     /*! The relations to eager load on every query. */

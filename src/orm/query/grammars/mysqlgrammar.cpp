@@ -93,7 +93,7 @@ MySqlGrammar::getCompileMap() const
 {
     using std::placeholders::_1;
     // Needed, because some compileXx() methods are overloaded
-    const auto getBind = [this](const auto &&func)
+    const auto getBind = [this](auto &&func)
     {
         return std::bind(std::forward<decltype (func)>(func), this, _1);
     };
@@ -132,7 +132,7 @@ const std::function<QString(const WhereConditionItem &)> &
 MySqlGrammar::getWhereMethod(const WhereType whereType) const
 {
     using std::placeholders::_1;
-    const auto getBind = [this](const auto &&func)
+    const auto getBind = [this](auto &&func)
     {
         return std::bind(std::forward<decltype (func)>(func), this, _1);
     };

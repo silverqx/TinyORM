@@ -87,30 +87,17 @@ public:
     }
 
 private:
-    /*! The visitor to obtain a type for Related template parameter. */
-    void relationVisitor(const QString &relation)
-    {
-        if (QStringList{"torrent",
-                        "torrent_WithBoolDefault",
-                        "torrent_WithVectorDefaults"}.contains(relation))
-            relationVisited<TorrentEager_WithDefault>();
-        else if (QStringList{"fileProperty",
-                             "fileProperty_WithBoolDefault",
-                             "fileProperty_WithVectorDefaults"}.contains(relation))
-            relationVisited<TorrentPreviewableFilePropertyEager>();
-    }
-
     /*! The table associated with the model. */
     QString u_table {"torrent_previewable_files"};
 
     /*! Map of relation names to methods. */
-    QHash<QString, std::any> u_relations {
-        {"torrent",                         &TorrentPreviewableFileEager_WithDefault::torrent},
-        {"torrent_WithBoolDefault",         &TorrentPreviewableFileEager_WithDefault::torrent_WithBoolDefault},
-        {"torrent_WithVectorDefaults",      &TorrentPreviewableFileEager_WithDefault::torrent_WithVectorDefaults},
-        {"fileProperty",                    &TorrentPreviewableFileEager_WithDefault::fileProperty},
-        {"fileProperty_WithBoolDefault",    &TorrentPreviewableFileEager_WithDefault::fileProperty_WithBoolDefault},
-        {"fileProperty_WithVectorDefaults", &TorrentPreviewableFileEager_WithDefault::fileProperty_WithVectorDefaults},
+    QHash<QString, RelationVisitor> u_relations {
+        {"torrent",                         [](auto &v) { v(&TorrentPreviewableFileEager_WithDefault::torrent); }},
+        {"torrent_WithBoolDefault",         [](auto &v) { v(&TorrentPreviewableFileEager_WithDefault::torrent_WithBoolDefault); }},
+        {"torrent_WithVectorDefaults",      [](auto &v) { v(&TorrentPreviewableFileEager_WithDefault::torrent_WithVectorDefaults); }},
+        {"fileProperty",                    [](auto &v) { v(&TorrentPreviewableFileEager_WithDefault::fileProperty); }},
+        {"fileProperty_WithBoolDefault",    [](auto &v) { v(&TorrentPreviewableFileEager_WithDefault::fileProperty_WithBoolDefault); }},
+        {"fileProperty_WithVectorDefaults", [](auto &v) { v(&TorrentPreviewableFileEager_WithDefault::fileProperty_WithVectorDefaults); }},
     };
 
     /*! The relations to eager load on every query. */

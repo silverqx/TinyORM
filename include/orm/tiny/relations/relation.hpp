@@ -43,6 +43,9 @@ namespace Relations
         Relation(std::unique_ptr<Related> &&related, Model &parent);
 
     public:
+        /*! Related instance type passed to the relation. */
+        using RelatedType = Related;
+
         inline virtual ~Relation() = default;
 
         /*! Set the base constraints on the relation query. */
@@ -370,7 +373,6 @@ namespace Relations
         Builder<Related> &whereKeyNot(const QVariant &id) const;
 
         /* Inserting operations on the relationship */
-        // TODO study, would be possible to disable this by SFINAE by current class type? eg std::enable_if this is ManyRelation or PivotRelation; and if yes, then it's a good idea do it this way? silverqx
         /*! Attach a model instance to the parent model. */
         inline virtual std::tuple<bool, Related &> save(Related &) const
         { throw LogicError(methodNotImplementedMessage("save")); }
@@ -491,8 +493,8 @@ namespace Relations
         virtual QString relationTypeName() const = 0;
 
         /* During eager load, we secure m_parent to not become a dangling reference in
-           TinyBuilder::eagerLoadRelation() by help of the dummyModel local variable.
-           It has to be the reference, because eg BelongsTo::associate() directly
+           EagerRelationStore::visited() by help of the dummyModel local variable.
+           It has to be the reference, because eg. BelongsTo::associate() directly
            modifies attributes of m_parent. */
         /*! The parent model instance. */
         Model &m_parent;

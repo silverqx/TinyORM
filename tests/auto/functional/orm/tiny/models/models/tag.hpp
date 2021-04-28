@@ -42,24 +42,13 @@ public:
     }
 
 private:
-    /*! The visitor to obtain a type for Related template parameter. */
-    void relationVisitor(const QString &relation)
-    {
-        if (relation      == "torrents")
-            relationVisited<Torrent>();
-        else if (relation == "tagged") // Pivot
-            relationVisited<Tagged>();
-        else if (relation == "tagProperty")
-            relationVisited<TagProperty>();
-    }
-
     /*! The table associated with the model. */
     QString u_table {"torrent_tags"};
 
     /*! Map of relation names to methods. */
-    QHash<QString, std::any> u_relations {
-        {"torrents",    &Tag::torrents},
-        {"tagProperty", &Tag::tagProperty},
+    QHash<QString, RelationVisitor> u_relations {
+        {"torrents",    [](auto &v) { v(&Tag::torrents); }},
+        {"tagProperty", [](auto &v) { v(&Tag::tagProperty); }},
     };
 
     /*! The relations to eager load on every query. */

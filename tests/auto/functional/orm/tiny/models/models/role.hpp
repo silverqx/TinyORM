@@ -30,18 +30,9 @@ public:
     }
 
 private:
-    /*! The visitor to obtain a type for Related template parameter. */
-    void relationVisitor(const QString &relation)
-    {
-        if (relation == "users")
-            relationVisited<User>();
-        else if (relation == "subscription") // Pivot
-            relationVisited<RoleUser>();
-    }
-
     /*! Map of relation names to methods. */
-    QHash<QString, std::any> u_relations {
-        {"users", &Role::users},
+    QHash<QString, RelationVisitor> u_relations {
+        {"users", [](auto &v) { v(&Role::users); }},
     };
 
     /*! The attributes that are mass assignable. */

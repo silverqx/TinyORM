@@ -29,18 +29,9 @@ public:
     }
 
 private:
-    /*! The visitor to obtain a type for Related template parameter. */
-    void relationVisitor(const QString &relation)
-    {
-        if (relation == "roles")
-            relationVisited<Role>();
-        else if (relation == "pivot") // Pivot
-            relationVisited<Pivot>();
-    }
-
     /*! Map of relation names to methods. */
-    QHash<QString, std::any> u_relations {
-        {"roles", &User::roles},
+    QHash<QString, RelationVisitor> u_relations {
+        {"roles", [](auto &v) { v(&User::roles); }},
     };
 };
 

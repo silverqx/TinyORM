@@ -90,20 +90,6 @@ private:
     /*! The name of the "updated at" column. */
     inline static const QString UPDATED_AT = QStringLiteral("updated_at");
 
-    /*! The visitor to obtain a type for Related template parameter. */
-    void relationVisitor(const QString &relation)
-    {
-        if (relation      == "torrentFiles")
-            relationVisited<TorrentPreviewableFile>();
-        else if (relation == "torrentPeer")
-            relationVisited<TorrentPeer>();
-        else if (relation == "tags")
-            relationVisited<Tag>();
-        else if (relation == "pivot") // Pivot
-//            relationVisited<Tagged>();
-            relationVisited<Pivot>();
-    }
-
     /*! The table associated with the model. */
     QString u_table {"torrents"};
 
@@ -113,10 +99,10 @@ private:
 //    QString u_primaryKey {"id"};
 
     /*! Map of relation names to methods. */
-    QHash<QString, std::any> u_relations {
-        {"torrentFiles", &Torrent::torrentFiles},
-        {"torrentPeer",  &Torrent::torrentPeer},
-        {"tags",         &Torrent::tags},
+    QHash<QString, RelationVisitor> u_relations {
+        {"torrentFiles", [](auto &v) { v(&Torrent::torrentFiles); }},
+        {"torrentPeer",  [](auto &v) { v(&Torrent::torrentPeer); }},
+        {"tags",         [](auto &v) { v(&Torrent::tags); }},
     };
 
     /*! The relations to eager load on every query. */

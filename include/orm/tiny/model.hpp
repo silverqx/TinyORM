@@ -1,6 +1,9 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+// CUR try comment and without pch silverqx
+#include <unordered_set>
+
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/invalidargumenterror.hpp"
@@ -76,16 +79,13 @@ namespace Relations {
     {
         // Helps to avoid 'friend Derived' declarations in models
         friend Concerns::GuardsAttributes<Derived, AllRelations...>;
+        // Used by BaseRelationStore::visit() and also by visted methods
+        friend Concerns::HasRelationStore<Derived, AllRelations...>;
         // FUTURE try to solve problem with forward declarations for friend methods, to allow only relevant methods from TinyBuilder silverqx
-        // Used by TinyBuilder::eagerLoadRelationVisitor()/getRelationMethod()
+        // Used by TinyBuilder::eagerLoadRelations()
         friend TinyBuilder<Derived>;
 
         using JoinClause = Orm::Query::JoinClause;
-
-        /*! The type returned by Model's relation methods. */
-        template<typename Related>
-        using RelationType =
-                std::unique_ptr<Relations::Relation<Derived, Related>>(Derived::*)();
 
     public:
         /*! The "type" of the primary key ID. */
@@ -572,8 +572,7 @@ namespace Relations {
         const Container<Related *>
         getRelationValue(const QString &relation);
         /*! Get a relationship for a One type relation. */
-        template<typename Related, typename Tag,
-                 std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
+        template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
         Related *
         getRelationValue(const QString &relation);
 
@@ -680,8 +679,7 @@ namespace Relations {
         getRelation(const QString &relation);
         /*! Get a specified relationship as Related type, for use with HasOne and
             BelongsTo relation types. */
-        template<typename Related, typename Tag,
-                 std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
+        template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
         Related *getRelation(const QString &relation);
 
         /*! Determine if the given relation is loaded. */
@@ -698,6 +696,14 @@ namespace Relations {
         Derived &setRelation(const QString &relation, const std::optional<Related> &model);
         /*! Set the given relationship on the model. */
         template<typename Related>
+        Derived &setRelation(const QString &relation, std::optional<Related> &&model);
+        /*! Set the given relationship on the model. */
+        template<typename Related>
+        requires std::is_base_of_v<Relations::IsPivotModel, Related>
+        Derived &setRelation(const QString &relation, const std::optional<Related> &model);
+        /*! Set the given relationship on the model. */
+        template<typename Related>
+        requires std::is_base_of_v<Relations::IsPivotModel, Related>
         Derived &setRelation(const QString &relation, std::optional<Related> &&model);
 
         /*! Get the default foreign key name for the model. */
@@ -785,17 +791,13 @@ namespace Relations {
         static bool isIgnoringTouch();
 
     protected:
+        /*! Relation visitor lambda type. */
+        using RelationVisitor = std::function<void(
+                typename Concerns::HasRelationStore<Derived, AllRelations...>
+                                 ::BaseRelationStore &)>;
+
         /*! Get a new query builder instance for the connection. */
         QSharedPointer<QueryBuilder> newBaseQueryBuilder() const;
-
-        /*! The visitor to obtain a type for Related template parameter. */
-        inline void relationVisitor(const QString &)
-        {}
-
-        /*! On the base of a type saved in the relation store decide, which action
-            to call eager/push. */
-        template<typename Related>
-        void relationVisited();
 
         /* HasAttributes */
         /*! Transform a raw model value using mutators, casts, etc. */
@@ -805,14 +807,12 @@ namespace Relations {
                 const QString &key, const QVariant &defaultValue = {}) const;
 
         /*! Get a relationship value from a method. */
-        // TODO I think this can be merged to one template method, I want to preserve Orm::One/Many tags and use std::enable_if to switch types by Orm::One/Many tag 🤔 silverqx
         template<class Related,
                  template<typename> typename Container = QVector>
         Container<Related *>
         getRelationshipFromMethod(const QString &relation);
         /*! Get a relationship value from a method. */
-        template<class Related, typename Tag,
-                 std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
+        template<class Related, typename Tag> requires std::is_same_v<Tag, One>
         Related *
         getRelationshipFromMethod(const QString &relation);
 
@@ -929,9 +929,8 @@ namespace Relations {
         /*! The primary key associated with the table. */
         QString u_primaryKey {"id"};
 
-        // TODO for std::any check, whether is appropriate to define template requirement std::is_nothrow_move_constructible ( to avoid dynamic allocations for small objects and how this internally works ) silverqx
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations;
+        QHash<QString, RelationVisitor> u_relations {};
         // TODO detect (best at compile time) circular eager relation problem, the exception which happens during this problem is stackoverflow in QRegularExpression silverqx
         /*! The relations to eager load on every query. */
         QVector<WithItem> u_with;
@@ -970,6 +969,9 @@ namespace Relations {
         std::unordered_map<QString, RelationsType<AllRelations...>> m_relations;
         /*! The relationships that should be touched on save. */
         QStringList u_touches;
+        // CUR use sets instead of QStringList where appropriate silverqx
+        /*! Currently loaded Pivot relation names. */
+        std::unordered_set<QString> m_pivots;
 
         /* HasTimestamps */
         /*! The name of the "created at" column. */
@@ -983,14 +985,9 @@ namespace Relations {
         /* Eager load from TinyBuilder */
         /*! Invoke Model::eagerVisitor() to define template argument Related
             for eagerLoaded relation. */
-        void eagerLoadRelationVisitor(
-                const WithItem &relation, TinyBuilder<Derived> &builder,
+        void eagerLoadRelationWithVisitor(
+                const WithItem &relation, const TinyBuilder<Derived> &builder,
                 QVector<Derived> &models);
-        /*! Get a relation method in the relations hash data member, defined
-            in the current model instance. */
-        template<typename Related>
-        Model::template RelationType<Related>
-        getRelationMethod(const QString &relation) const;
 
         /* HasAttributes */
         /*! Get all of the current attributes on the model. */
@@ -1020,76 +1017,49 @@ namespace Relations {
         getRelationFromHash(const QString &relation);
         /*! Obtain related models from "relationships" data member hash
             without any checks. */
-        template<class Related, typename Tag,
-                 std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
+        template<class Related, typename Tag> requires std::is_same_v<Tag, One>
         Related *
         getRelationFromHash(const QString &relation);
 
-        /*! Get a relation method in the u_relations hash data member,
-            defined in the current model instance. */
-        template<typename Related>
-        Model::template RelationType<Related>
-        getRelationMethodRaw(const QString &relation) const;
+        /*! Create lazy store and obtain a relationship from defined method. */
+        template<typename Related, typename Result>
+        Result getRelationshipFromMethodWithVisitor(const QString &relation);
 
-        /* Eager loading and push */
-        /*! Continue execution after a relation type was obtained ( by
-            Related template parameter ). */
-        template<typename Related>
-        inline void eagerVisited() const
-        { this->m_eagerStore->builder.template eagerLoadRelation<Related>(
-                        this->m_eagerStore->models, this->m_eagerStore->relation); }
+        /* Push relation store related */
+        /*! Create push store and call push for every model. */
+        bool pushWithVisitor(const QString &relation,
+                             RelationsType<AllRelations...> &models);
 
         /*! On the base of alternative held by m_relations decide, which
             pushVisitied() to execute. */
         template<typename Related>
         void pushVisited();
         /*! Push for Many relation types. */
-        template<typename Related, typename Tag,
-                 std::enable_if_t<std::is_same_v<Tag, Many>, bool> = true>
+        template<typename Related, typename Tag> requires std::is_same_v<Tag, Many>
         void pushVisited();
         /*! Push for One relation type. */
-        template<typename Related, typename Tag,
-                 std::enable_if_t<std::is_same_v<Tag, One>, bool> = true>
+        template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
         void pushVisited();
 
+        /*! Create 'touch owners relation store' and touch all related models. */
+        void touchOwnersWithVisitor(const QString &relation);
         /*! On the base of alternative held by m_relations decide, which
             touchOwnersVisited() to execute. */
-        template<typename Related>
-        void touchOwnersVisited();
+        template<typename Related, typename Relation>
+        void touchOwnersVisited(Relation &&relation);
 
         /* Others */
-        /*! Decide, if the Related model passed as the template parameter is
-            the pivot model. */
-        template<typename Related>
-        void isPivotModelRelationVisited();
         /*! Obtain all loaded relation names except pivot relations. */
         QVector<WithItem> getLoadedRelationsWithoutPivot();
-        /*! Create 'is pivot model relation store' and by an obtained Related
-            template argument checks, if the model is a pivot model. */
-        bool isPivotModelWithVisitor(const QString &relation);
 
-        /*! Create push store and call push for every model. */
-        bool pushWithVisitor(const QString &relation,
-                             RelationsType<AllRelations...> &models);
         /*! Replace relations in the m_relation. */
         void replaceRelations(
                 std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
                 const QVector<WithItem> &onlyRelations);
 
-        /*! Create 'touch owners relation store' and touch all related models. */
-        void touchOwnersWithVisitor(const QString &relation);
-
-        /* Shortcuts for types related to the Relation Store */
-        /*! Relation store type enum struct. */
-        using RelationStoreType  =
-            typename Concerns::HasRelationStore<Derived, AllRelations...>
-                             ::RelationStoreType;
-
-        /*! Obtain a pointer to member function from relation store, after
-            relation was visited. */
-        template<typename Related>
-        const std::function<void(Model<Derived, AllRelations...> &)> &
-        getMethodForRelationVisited(RelationStoreType storeType) const;
+        /*! The reference to the u_relations hash. */
+        inline const QHash<QString, RelationVisitor> &
+        getRelationsRawMapInternal() const;
 
         /* GuardsAttributes */
         /* Getters for u_ data members defined in the Derived models, helps to avoid
@@ -2144,59 +2114,103 @@ namespace Relations {
     }
 
     template<typename Derived, typename ...AllRelations>
-    template<typename Related>
-    void Model<Derived, AllRelations...>::pushVisited()
+    bool Model<Derived, AllRelations...>::pushWithVisitor(
+            const QString &relation, RelationsType<AllRelations...> &models)
     {
-        /* When relationship data member holds QVector, then it is definitely Many
-           type relation. */
-        if (std::holds_alternative<QVector<Related>>(this->m_pushStore->models))
-            pushVisited<Related, Many>();
-        else
-            pushVisited<Related, One>();
+        // TODO prod remove, I don't exactly know if this can really happen silverqx
+        /* Check for empty variant, the std::monostate is at zero index and
+           consider it as success to continue 'pushing'. */
+        const auto variantIndex = models.index();
+        Q_ASSERT(variantIndex > 0);
+        if (variantIndex == 0)
+            return true;
+
+        // Throw excpetion if a relation is not defined
+        validateUserRelation(relation);
+
+        // Save model/s to the store to avoid passing variables to the visitor
+        this->createPushStore(models).visit(relation);
+
+        const auto pushResult = this->pushStore().result;
+
+        // Release stored pointers to the relation store
+        this->resetRelationStore();
+
+        return pushResult;
     }
 
     template<typename Derived, typename ...AllRelations>
-    template<typename Related, typename Tag,
-             std::enable_if_t<std::is_same_v<Tag, Many>, bool>>
+    template<typename Related>
     void Model<Derived, AllRelations...>::pushVisited()
     {
-        for (auto &model : std::get<QVector<Related>>(this->m_pushStore->models))
+        const RelationsType<AllRelations...> &models = this->pushStore().models;
+
+        // Invoke pushVisited() on the base of hold alternative in the models
+        if (std::holds_alternative<QVector<Related>>(models))
+            pushVisited<Related, Many>();
+        else if (std::holds_alternative<std::optional<Related>>(models))
+            pushVisited<Related, One>();
+        else
+            throw RuntimeError("this->pushStore().models holds unexpected alternative.");
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Related, typename Tag> requires std::is_same_v<Tag, Many>
+    void Model<Derived, AllRelations...>::pushVisited()
+    {
+        auto &pushStore = this->pushStore();
+
+        for (auto &model : std::get<QVector<Related>>(pushStore.models))
             if (!model.push()) {
-                this->m_pushStore->result = false;
+                pushStore.result = false;
                 return;
             }
 
-        this->m_pushStore->result = true;
+        pushStore.result = true;
     }
 
     template<typename Derived, typename ...AllRelations>
-    template<typename Related, typename Tag,
-             std::enable_if_t<std::is_same_v<Tag, One>, bool>>
+    template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
     void Model<Derived, AllRelations...>::pushVisited()
     {
-        auto &model = std::get<std::optional<Related>>(this->m_pushStore->models);
+        auto &pushStore = this->pushStore();
+
+        auto &model = std::get<std::optional<Related>>(pushStore.models);
         // CUR test push with default model silverqx
         Q_ASSERT(!!model);
+
         // Skip a null model, consider it as success
         if (!model) {
-            this->m_pushStore->result = true;
+            pushStore.result = true;
             return;
         }
 
-        this->m_pushStore->result = model->push();
+        pushStore.result = model->push();
     }
 
     template<typename Derived, typename ...AllRelations>
-    template<typename Related>
-    void Model<Derived, AllRelations...>::touchOwnersVisited()
+    void
+    Model<Derived, AllRelations...>::touchOwnersWithVisitor(const QString &relation)
     {
-        const auto &relationName = this->m_touchOwnersStore->relation;
+        // Throw excpetion if a relation is not defined
+        validateUserRelation(relation);
 
-        // Unique pointer to the relation
-        auto relation = std::invoke(getRelationMethodRaw<Related>(relationName),
-                                    model());
+        // Save model/s to the store to avoid passing variables to the visitor
+        this->createTouchOwnersStore(relation).visit(relation);
+
+        // Release stored pointers to the relation store
+        this->resetRelationStore();
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Related, typename Relation>
+    void Model<Derived, AllRelations...>::touchOwnersVisited(Relation &&relation)
+    {
+        const auto &relationName = this->touchOwnersStore().relation;
+
         relation->touch();
 
+        // CUR try to solve this with is_base_of or is_convertible silverqx
         // Many type relation
         if (dynamic_cast<Relations::ManyRelation *>(relation.get()) != nullptr) {
             for (auto *const relatedModel : getRelationValue<Related>(relationName))
@@ -2210,51 +2224,9 @@ namespace Relations {
                 relatedModel
             )
                 relatedModel->touchOwners();
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    template<typename Related>
-    void Model<Derived, AllRelations...>::isPivotModelRelationVisited()
-    {
-        if constexpr (std::is_base_of_v<Relations::IsPivotModel, Related>)
-            this->m_isPivotModelStore->result = true;
-        else
-            this->m_isPivotModelStore->result = false;
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    template<typename Related>
-    void Model<Derived, AllRelations...>::relationVisited()
-    {
-        const auto &method = getMethodForRelationVisited<Related>(
-                                 this->m_relationStore->getStoreType());
-
-        std::invoke(method, *this);
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    template<typename Related>
-    const std::function<void(Model<Derived, AllRelations...> &)> &
-    Model<Derived, AllRelations...>::getMethodForRelationVisited(
-            const RelationStoreType storeType) const
-    {
-        // Pointers to visited member methods by storeType, yes yes c++ 😂
-        // An order has to be the same as in enum struct RelationStoreType
-        // FUTURE should be QHash, for faster lookup, do benchmark, high chance that qvector has faster lookup than qhash silverqx
-        static const
-        QVector<std::function<void(Model<Derived, AllRelations...> &)>> cached {
-            &Model<Derived, AllRelations...>::eagerVisited<Related>,
-            &Model<Derived, AllRelations...>::pushVisited<Related>,
-            &Model<Derived, AllRelations...>::touchOwnersVisited<Related>,
-            &Model<Derived, AllRelations...>::isPivotModelRelationVisited<Related>,
-        };
-        static const auto size = cached.size();
-
-        // Check if storeType is in the range, just for sure 😏
-        const auto type = static_cast<int>(storeType);
-        Q_ASSERT((0 <= type) && (type < size));
-
-        return cached.at(type);
+            // CUR finish silverqx
+//            throw RuntimeError("Bad relation type passed to the "
+//                               "Model::touchOwnersVisited().");
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -2366,61 +2338,14 @@ namespace Relations {
         for (const auto &relation : m_relations) {
             const auto &relationName = relation.first;
 
-            if (hasPivotRelation)
-                // Skip pivot relations
-                if (isPivotModelWithVisitor(relationName))
+            // Skip pivot relations
+            if (hasPivotRelation && m_pivots.contains(relationName))
                     continue;
 
             relations.append({relationName});
         }
 
         return relations;
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    bool
-    Model<Derived, AllRelations...>::isPivotModelWithVisitor(const QString &relation)
-    {
-        this->createIsPivotModelStore();
-
-        // TODO next create wrapper method for this with better name silverqx
-        model().relationVisitor(relation);
-
-        bool isPivotModel = this->m_isPivotModelStore->result;
-
-        // Release stored pointers to the relation store
-        this->resetRelationStore();
-
-        return isPivotModel;
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    bool Model<Derived, AllRelations...>::pushWithVisitor(
-            const QString &relation, RelationsType<AllRelations...> &models)
-    {
-        // TODO prod remove, I don't exactly know if this can really happen silverqx
-        /* Check for empty variant, the std::monostate is at zero index and
-           consider it as success to continue 'pushing'. */
-        const auto variantIndex = models.index();
-        Q_ASSERT(variantIndex > 0);
-        if (variantIndex == 0)
-            return true;
-
-        // Throw excpetion if a relation is not defined
-        validateUserRelation(relation);
-
-        // Save model/s to the store to avoid passing variables to the visitor
-        this->createPushStore(models);
-
-        // TODO next create wrapper method for this with better name silverqx
-        model().relationVisitor(relation);
-
-        bool pushResult = this->m_pushStore->result;
-
-        // Release stored pointers to the relation store
-        this->resetRelationStore();
-
-        return pushResult;
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -2446,23 +2371,6 @@ namespace Relations {
 
             m_relations[key] = std::move(itRelation->second);
         }
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    void
-    Model<Derived, AllRelations...>::touchOwnersWithVisitor(const QString &relation)
-    {
-        // Throw excpetion if a relation is not defined
-        validateUserRelation(relation);
-
-        // Save model/s to the store to avoid passing variables to the visitor
-        this->createTouchOwnersStore(relation);
-
-        // TODO next create wrapper method for this with better name, over time, it seems fine to me, only thing I see now is that it has the same name for all visitations, but that looks ok too, will see, but this todo can be removed, looks good to me silverqx
-        model().relationVisitor(relation);
-
-        // Release stored pointers to the relation store
-        this->resetRelationStore();
     }
 
     // FUTURE LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
@@ -2769,8 +2677,7 @@ namespace Relations {
     }
 
     template<typename Derived, typename ...AllRelations>
-    template<typename Related, typename Tag,
-             std::enable_if_t<std::is_same_v<Tag, One>, bool>>
+    template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelationValue(const QString &relation)
     {
@@ -2784,7 +2691,7 @@ namespace Relations {
             from the query and hydrate the relationship's value on the "relationships"
             data member m_relations. */
         if (model().u_relations.contains(relation))
-            return getRelationshipFromMethod<Related, One>(relation);
+            return getRelationshipFromMethod<Related, Tag>(relation);
 
         return nullptr;
     }
@@ -2795,9 +2702,8 @@ namespace Relations {
     Model<Derived, AllRelations...>::getRelationshipFromMethod(const QString &relation)
     {
         // Obtain related models
-        auto relatedModels = std::get<QVector<Related>>(
-                std::invoke(getRelationMethodRaw<Related>(relation), model())
-                        ->getResults());
+        auto relatedModels =
+                getRelationshipFromMethodWithVisitor<Related, QVector<Related>>(relation);
 
         setRelation(relation, std::move(relatedModels));
 
@@ -2805,19 +2711,40 @@ namespace Relations {
     }
 
     template<typename Derived, typename ...AllRelations>
-    template<class Related, typename Tag,
-             std::enable_if_t<std::is_same_v<Tag, One>, bool>>
+    template<class Related, typename Tag> requires std::is_same_v<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelationshipFromMethod(const QString &relation)
     {
         // Obtain related model
-        auto relatedModel = std::get<std::optional<Related>>(
-                std::invoke(getRelationMethodRaw<Related>(relation), model())
-                        ->getResults());
+        auto relatedModel =
+                getRelationshipFromMethodWithVisitor<Related,
+                                                     std::optional<Related>>(relation);
 
         setRelation(relation, std::move(relatedModel));
 
-        return getRelationFromHash<Related, One>(relation);
+        return getRelationFromHash<Related, Tag>(relation);
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Related, typename Result>
+    Result
+    Model<Derived, AllRelations...>::getRelationshipFromMethodWithVisitor(
+            const QString &relation)
+    {
+        // CUR throw meaningful exception when tried to access one type relation with this method, 'bad_variant_access' thrown now silverqx
+        // Throw excpetion if a relation is not defined
+        validateUserRelation(relation);
+
+        // Save model/s to the store to avoid passing variables to the visitor
+        this->template createLazyStore<Related>().visit(relation);
+
+        // Obtain result, related model/s
+        const auto lazyResult = this->template lazyStore<Related>().result;
+
+        // Release stored pointers to the relation store
+        this->resetRelationStore();
+
+        return std::get<Result>(lazyResult);
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -3014,8 +2941,7 @@ namespace Relations {
     }
 
     template<typename Derived, typename ...AllRelations>
-    template<class Related, typename Tag,
-             std::enable_if_t<std::is_same_v<Tag, One>, bool>>
+    template<class Related, typename Tag> requires std::is_same_v<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelationFromHash(const QString &relation)
     {
@@ -3047,8 +2973,7 @@ namespace Relations {
 
     // TODO smart pointer for this relation stuffs? silverqx
     template<typename Derived, typename ...AllRelations>
-    template<typename Related, typename Tag,
-             std::enable_if_t<std::is_same_v<Tag, One>, bool>>
+    template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelation(const QString &relation)
     {
@@ -3100,6 +3025,34 @@ namespace Relations {
     Model<Derived, AllRelations...>::setRelation(const QString &relation,
                                                  std::optional<Related> &&model)
     {
+        m_relations[relation] = std::move(model);
+
+        return this->model();
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Related>
+    requires std::is_base_of_v<Relations::IsPivotModel, Related>
+    Derived &
+    Model<Derived, AllRelations...>::setRelation(const QString &relation,
+                                                 const std::optional<Related> &model)
+    {
+        m_pivots.insert(relation);
+
+        m_relations[relation] = model;
+
+        return this->model();
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Related>
+    requires std::is_base_of_v<Relations::IsPivotModel, Related>
+    Derived &
+    Model<Derived, AllRelations...>::setRelation(const QString &relation,
+                                                 std::optional<Related> &&model)
+    {
+        m_pivots.insert(relation);
+
         m_relations[relation] = std::move(model);
 
         return this->model();
@@ -3734,30 +3687,18 @@ namespace Relations {
     }
 
     template<typename Derived, typename ...AllRelations>
-    void Model<Derived, AllRelations...>::eagerLoadRelationVisitor(
-            const WithItem &relation, TinyBuilder<Derived> &builder,
+    void Model<Derived, AllRelations...>::eagerLoadRelationWithVisitor(
+            const WithItem &relation, const TinyBuilder<Derived> &builder,
             QVector<Derived> &models)
     {
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation.name);
 
-        // Save the needed variables to the store to avoid passing variables to the visitor
-        this->createEagerStore(relation, builder, models);
-
-        model().relationVisitor(relation.name);
+        /* Save the needed variables to the store to avoid passing variables
+           to the visitor. */
+        this->createEagerStore(builder, models, relation).visit(relation.name);
 
         this->resetRelationStore();
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    template<typename Related>
-    typename Model<Derived, AllRelations...>::template RelationType<Related>
-    Model<Derived, AllRelations...>::getRelationMethod(const QString &relation) const
-    {
-        // Throw excpetion if a relation is not defined
-        validateUserRelation(relation);
-
-        return getRelationMethodRaw<Related>(relation);
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -3814,17 +3755,6 @@ namespace Relations {
         if (!model().u_relations.contains(name))
             throw RelationNotFoundError(
                     Orm::Utils::Type::classPureBasename<Derived>(), name);
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    template<typename Related>
-    typename Model<Derived, AllRelations...>::template RelationType<Related>
-    Model<Derived, AllRelations...>::getRelationMethodRaw(
-            const QString &relation) const
-    {
-        // TODO dilemma heterogenous container for u_relations container, return actual relation type, https://gieseanw.wordpress.com/2017/05/03/a-true-heterogeneous-container-in-c/ silverqx
-        return std::any_cast<RelationType<Related>>(
-                model().u_relations.find(relation).value());
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -4051,6 +3981,13 @@ namespace Relations {
         // FUTURE implement withoutTouching() and related data member $ignoreOnTouch silverqx
 
         return false;
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    const QHash<QString, typename Model<Derived, AllRelations...>::RelationVisitor> &
+    Model<Derived, AllRelations...>::getRelationsRawMapInternal() const
+    {
+        return model().u_relations;
     }
 
     /* GuardsAttributes */
