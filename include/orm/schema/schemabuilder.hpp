@@ -1,6 +1,9 @@
 #ifndef SCHEMABUILDER_H
 #define SCHEMABUILDER_H
 
+#include <QStringList>
+#include <QtGlobal>
+
 #include "export.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

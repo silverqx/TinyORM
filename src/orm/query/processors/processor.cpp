@@ -1,6 +1,7 @@
 #include "orm/query/processors/processor.hpp"
 
 #include <QtSql/QSqlQuery>
+#include <QVariant>
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

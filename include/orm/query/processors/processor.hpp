@@ -1,6 +1,9 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
+#include <QStringList>
+#include <QtGlobal>
+
 #include "export.hpp"
 
 class QSqlQuery;

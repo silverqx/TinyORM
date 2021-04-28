@@ -1,7 +1,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-// CUR try comment and without pch silverqx
 #include <unordered_set>
 
 #include "orm/concerns/hasconnectionresolver.hpp"
