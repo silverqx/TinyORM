@@ -5,6 +5,8 @@
 
 #include "models/torrentpreviewablefileproperty.hpp"
 
+using Orm::Tiny::Relations::BelongsTo;
+
 class FilePropertyProperty final :
         public Model<FilePropertyProperty, TorrentPreviewableFileProperty>
 {
@@ -13,7 +15,7 @@ class FilePropertyProperty final :
 
 public:
     /*! Get the previewable file that owns the file property. */
-    std::unique_ptr<Relation<FilePropertyProperty, TorrentPreviewableFileProperty>>
+    std::unique_ptr<BelongsTo<FilePropertyProperty, TorrentPreviewableFileProperty>>
     fileProperty()
     {
         return belongsTo<TorrentPreviewableFileProperty>("file_property_id", {},

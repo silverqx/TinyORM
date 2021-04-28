@@ -8,6 +8,7 @@ class User; // Forward declaration to avoid cyclic dependency
 #include "models/roleuser.hpp"
 
 using Orm::Tiny::Model;
+using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 
@@ -18,7 +19,7 @@ class Role final : public Model<Role, User, RoleUser>
 
 public:
     /*! The users that belong to the role. */
-    std::unique_ptr<Relation<Role, User>>
+    std::unique_ptr<BelongsToMany<Role, User>>
     users()
     {
         // Ownership of a unique_ptr()

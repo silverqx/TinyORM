@@ -6,6 +6,9 @@
 #include "models/torrent.hpp"
 #include "models/torrentpreviewablefileproperty.hpp"
 
+using Orm::Tiny::Relations::BelongsTo;
+using Orm::Tiny::Relations::HasOne;
+
 class TorrentPreviewableFile final :
         public Model<TorrentPreviewableFile, Torrent, TorrentPreviewableFileProperty>
 {
@@ -14,14 +17,14 @@ class TorrentPreviewableFile final :
 
 public:
     /*! Get the torrent that owns the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFile, Torrent>>
+    std::unique_ptr<BelongsTo<TorrentPreviewableFile, Torrent>>
     torrent()
     {
         return belongsTo<Torrent>();
     }
 
     /*! Get the torrent that owns the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFile, Torrent>>
+    std::unique_ptr<BelongsTo<TorrentPreviewableFile, Torrent>>
     torrent_WithBoolDefault()
     {
         // Ownership of a unique_ptr()
@@ -33,7 +36,7 @@ public:
     }
 
     /*! Get the torrent that owns the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFile, Torrent>>
+    std::unique_ptr<BelongsTo<TorrentPreviewableFile, Torrent>>
     torrent_WithVectorDefaults()
     {
         // Ownership of a unique_ptr()
@@ -45,14 +48,14 @@ public:
     }
 
     /*! Get the file property associated with the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
+    std::unique_ptr<HasOne<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
     fileProperty()
     {
         return hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
     }
 
     /*! Get the file property associated with the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
+    std::unique_ptr<HasOne<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
     fileProperty_WithBoolDefault()
     {
         auto relation = hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
@@ -63,7 +66,7 @@ public:
     }
 
     /*! Get the file property associated with the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
+    std::unique_ptr<HasOne<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
     fileProperty_WithVectorDefaults()
     {
         auto relation = hasOne<TorrentPreviewableFileProperty>("previewable_file_id");

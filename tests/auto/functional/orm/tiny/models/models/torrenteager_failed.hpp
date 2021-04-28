@@ -8,6 +8,7 @@
 #include "models/torrentpreviewablefileeager.hpp"
 
 using Orm::Tiny::Model;
+using Orm::Tiny::Relations::HasMany;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
@@ -19,7 +20,7 @@ class TorrentEager_Failed final :
 
 public:
     /*! Get the previewable files associated with the torrent. */
-    std::unique_ptr<Relation<TorrentEager_Failed, TorrentPreviewableFileEager>>
+    std::unique_ptr<HasMany<TorrentEager_Failed, TorrentPreviewableFileEager>>
     torrentFiles()
     {
         return hasMany<TorrentPreviewableFileEager>("torrent_id");

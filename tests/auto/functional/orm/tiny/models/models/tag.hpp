@@ -9,6 +9,7 @@
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
+using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
@@ -21,7 +22,7 @@ class Tag final : public Model<Tag, Torrent, TagProperty, Tagged>
 
 public:
     /*! Get torrents that belong to the tag. */
-    std::unique_ptr<Relation<Tag, Torrent>>
+    std::unique_ptr<BelongsToMany<Tag, Torrent, Pivot>>
     torrents()
     {
         // Ownership of a unique_ptr()
@@ -35,7 +36,7 @@ public:
     }
 
     /*! Get the tag property associated with the tag. */
-    std::unique_ptr<Relation<Tag, TagProperty>>
+    std::unique_ptr<HasOne<Tag, TagProperty>>
     tagProperty()
     {
         return hasOne<TagProperty>();

@@ -5,6 +5,8 @@
 
 #include "models/torrenteager.hpp"
 
+using Orm::Tiny::Relations::BelongsTo;
+
 class TorrentPeerEager final : public Model<TorrentPeerEager, TorrentEager>
 {
     friend Model;
@@ -12,7 +14,7 @@ class TorrentPeerEager final : public Model<TorrentPeerEager, TorrentEager>
 
 public:
     /*! Get the torrent that owns the torrent peer. */
-    std::unique_ptr<Relation<TorrentPeerEager, TorrentEager>>
+    std::unique_ptr<BelongsTo<TorrentPeerEager, TorrentEager>>
     torrent()
     {
         return belongsTo<TorrentEager>({}, {}, __func__);

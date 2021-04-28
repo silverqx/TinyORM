@@ -16,7 +16,7 @@ class User final : public Model<User, Role, Pivot>
 
 public:
     /*! The roles that belong to the user. */
-    std::unique_ptr<Relation<User, Role>>
+    std::unique_ptr<BelongsToMany<User, Role, RoleUser>>
     roles()
     {
         // Ownership of a unique_ptr()

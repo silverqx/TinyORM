@@ -13,7 +13,7 @@ class TorrentPreviewableFileProperty final :
 
 public:
     /*! Get the previewable file that owns the file property. */
-    std::unique_ptr<Relation<TorrentPreviewableFileProperty, TorrentPreviewableFile>>
+    std::unique_ptr<BelongsTo<TorrentPreviewableFileProperty, TorrentPreviewableFile>>
     torrentFile()
     {
         return belongsTo<TorrentPreviewableFile>("previewable_file_id", {}, __func__);

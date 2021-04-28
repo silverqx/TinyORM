@@ -13,7 +13,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     class HasOne :
-            protected OneRelation,
+            public OneRelation,
             public HasOneOrMany<Model, Related>,
             public Concerns::SupportsDefaultModels<Model, Related>
     {

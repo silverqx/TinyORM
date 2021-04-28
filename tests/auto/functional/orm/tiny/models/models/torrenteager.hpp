@@ -10,6 +10,8 @@
 
 using Orm::AttributeItem;
 using Orm::Tiny::Model;
+using Orm::Tiny::Relations::HasOne;
+using Orm::Tiny::Relations::HasMany;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
@@ -22,14 +24,14 @@ class TorrentEager final :
 
 public:
     /*! Get the previewable files associated with the torrent. */
-    std::unique_ptr<Relation<TorrentEager, TorrentPreviewableFileEager>>
+    std::unique_ptr<HasMany<TorrentEager, TorrentPreviewableFileEager>>
     torrentFiles()
     {
         return hasMany<TorrentPreviewableFileEager>("torrent_id");
     }
 
     /*! Get the torrent peer associated with the torrent. */
-    std::unique_ptr<Relation<TorrentEager, TorrentPeerEager_NoRelations>>
+    std::unique_ptr<HasOne<TorrentEager, TorrentPeerEager_NoRelations>>
     torrentPeer()
     {
         return hasOne<TorrentPeerEager_NoRelations>("torrent_id");

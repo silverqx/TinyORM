@@ -12,7 +12,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     class HasMany :
-            protected ManyRelation,
+            public ManyRelation,
             public HasOneOrMany<Model, Related>
     {
     protected:

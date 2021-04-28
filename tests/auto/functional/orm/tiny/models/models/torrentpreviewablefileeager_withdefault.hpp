@@ -7,6 +7,8 @@
 #include "models/torrentpreviewablefilepropertyeager.hpp"
 
 using Orm::Tiny::Model;
+using Orm::Tiny::Relations::BelongsTo;
+using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
@@ -19,16 +21,16 @@ class TorrentPreviewableFileEager_WithDefault final :
 
 public:
     /*! Get the torrent that owns the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFileEager_WithDefault,
-                             TorrentEager_WithDefault>>
+    std::unique_ptr<BelongsTo<TorrentPreviewableFileEager_WithDefault,
+                              TorrentEager_WithDefault>>
     torrent()
     {
         return belongsTo<TorrentEager_WithDefault>();
     }
 
     /*! Get the torrent that owns the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFileEager_WithDefault,
-                             TorrentEager_WithDefault>>
+    std::unique_ptr<BelongsTo<TorrentPreviewableFileEager_WithDefault,
+                              TorrentEager_WithDefault>>
     torrent_WithBoolDefault()
     {
         // Ownership of a unique_ptr()
@@ -40,8 +42,8 @@ public:
     }
 
     /*! Get the torrent that owns the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFileEager_WithDefault,
-                             TorrentEager_WithDefault>>
+    std::unique_ptr<BelongsTo<TorrentPreviewableFileEager_WithDefault,
+                              TorrentEager_WithDefault>>
     torrent_WithVectorDefaults()
     {
         // Ownership of a unique_ptr()
@@ -53,16 +55,16 @@ public:
     }
 
     /*! Get the file property associated with the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFileEager_WithDefault,
-                             TorrentPreviewableFilePropertyEager>>
+    std::unique_ptr<HasOne<TorrentPreviewableFileEager_WithDefault,
+                           TorrentPreviewableFilePropertyEager>>
     fileProperty()
     {
         return hasOne<TorrentPreviewableFilePropertyEager>("previewable_file_id");
     }
 
     /*! Get the file property associated with the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFileEager_WithDefault,
-                             TorrentPreviewableFilePropertyEager>>
+    std::unique_ptr<HasOne<TorrentPreviewableFileEager_WithDefault,
+                           TorrentPreviewableFilePropertyEager>>
     fileProperty_WithBoolDefault()
     {
         auto relation =
@@ -74,8 +76,8 @@ public:
     }
 
     /*! Get the file property associated with the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFileEager_WithDefault,
-                             TorrentPreviewableFilePropertyEager>>
+    std::unique_ptr<HasOne<TorrentPreviewableFileEager_WithDefault,
+                           TorrentPreviewableFilePropertyEager>>
     fileProperty_WithVectorDefaults()
     {
         auto relation =

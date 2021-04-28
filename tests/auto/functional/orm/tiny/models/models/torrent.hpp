@@ -13,6 +13,8 @@
 //using Orm::AttributeItem;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
+using Orm::Tiny::Relations::HasOne;
+using Orm::Tiny::Relations::HasMany;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
@@ -32,9 +34,8 @@ public:
 
 //    explicit Torrent(const QVector<AttributeItem> &attributes = {});
 
-    // TODO desirable, would be amazing to return derived relation type, like HasMany, I will have to solve this somehow silverqx
     /*! Get the previewable files associated with the torrent. */
-    std::unique_ptr<Relation<Torrent, TorrentPreviewableFile>>
+    std::unique_ptr<HasMany<Torrent, TorrentPreviewableFile>>
     torrentFiles()
     {
         return hasMany<TorrentPreviewableFile>();
@@ -42,7 +43,7 @@ public:
     }
 
     /*! Get the torrent peer associated with the torrent. */
-    std::unique_ptr<Relation<Torrent, TorrentPeer>>
+    std::unique_ptr<HasOne<Torrent, TorrentPeer>>
     torrentPeer()
     {
         return hasOne<TorrentPeer>();
@@ -62,7 +63,7 @@ public:
     }
 
     /*! Get tags that belong to the torrent. */
-    std::unique_ptr<Relation<Torrent, Tag>>
+    std::unique_ptr<BelongsToMany<Torrent, Tag, Tagged>>
     tags()
     {
         // Ownership of a unique_ptr()

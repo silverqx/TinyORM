@@ -6,6 +6,7 @@
 #include "models/torrentpreviewablefilepropertyeager.hpp"
 
 using Orm::Tiny::Model;
+using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
@@ -17,8 +18,8 @@ class TorrentPreviewableFileEager final :
 
 public:
     /*! Get the file property associated with the previewable file. */
-    std::unique_ptr<Relation<TorrentPreviewableFileEager,
-                    TorrentPreviewableFilePropertyEager>>
+    std::unique_ptr<HasOne<TorrentPreviewableFileEager,
+                           TorrentPreviewableFilePropertyEager>>
     fileProperty()
     {
         return hasOne<TorrentPreviewableFilePropertyEager>("previewable_file_id");
