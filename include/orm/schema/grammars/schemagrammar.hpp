@@ -16,7 +16,7 @@ namespace Orm::Schema::Grammars
 
     public:
         SchemaGrammar() = default;
-        virtual ~SchemaGrammar() = default;
+        inline virtual ~SchemaGrammar() = default;
 
         /*! Compile the query to determine the list of columns. */
         virtual QString compileColumnListing(const QString &table = "") const = 0;

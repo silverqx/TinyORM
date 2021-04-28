@@ -34,7 +34,7 @@ namespace Query
 
     public:
         BaseGrammar() = default;
-        virtual ~BaseGrammar() = default;
+        inline virtual ~BaseGrammar() = default;
 
         /*! Get the format for database stored dates. */
         virtual const QString &getDateFormat() const;

@@ -21,7 +21,7 @@ namespace Concerns
     class GuardsAttributes
     {
     public:
-        virtual ~GuardsAttributes() = default;
+        inline virtual ~GuardsAttributes() = default;
 
         /*! Get the fillable attributes for the model. */
         inline const QStringList &getFillable() const;

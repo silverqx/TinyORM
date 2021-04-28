@@ -59,7 +59,6 @@ namespace Concerns
                               const RelationStoreType storeType);
 
         public:
-            // CUR make all default dtors inline silverqx
             inline virtual ~BaseRelationStore() = default;
 
             /*! Currently held store type. */
