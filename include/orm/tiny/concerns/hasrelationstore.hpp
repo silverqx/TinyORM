@@ -40,7 +40,7 @@ namespace Concerns
             EAGER,
             PUSH,
             TOUCH_OWNERS,
-            LAZY,
+            LAZY_RESULTS,
         };
 
         /* Forward declarations */
@@ -315,7 +315,7 @@ namespace Concerns
             static_cast<PushRelationStore *>(this)->visited(method);
             break;
 
-        case RelationStoreType::LAZY:
+        case RelationStoreType::LAZY_RESULTS:
         {
             using Related = typename std::invoke_result_t<Method, Derived>
                                         ::element_type::RelatedType;
@@ -421,7 +421,7 @@ namespace Concerns
                                               ::LazyRelationStore(
             HasRelationStore &hasRelationStore
     )
-        : BaseRelationStore(hasRelationStore, RelationStoreType::LAZY)
+        : BaseRelationStore(hasRelationStore, RelationStoreType::LAZY_RESULTS)
     {}
 
 
