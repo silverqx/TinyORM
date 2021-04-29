@@ -2684,7 +2684,7 @@ namespace Relations {
             relationship has already been loaded, so we'll just return it out of
             here because there is no need to query within the relations twice. */
         if (relationLoaded(relation))
-            return getRelationFromHash<Related, One>(relation);
+            return getRelationFromHash<Related, Tag>(relation);
 
         /*! If the relation is defined on the model, then lazy load and return results
             from the query and hydrate the relationship's value on the "relationships"
@@ -2982,7 +2982,7 @@ namespace Relations {
 
         // TODO instantiate relation by name and check if is_base_of OneRelation/ManyRelation, to have nice exception message (in debug mode only), because is impossible to check this during compile time silverqx
 
-        return getRelationFromHash<Related, One>(relation);
+        return getRelationFromHash<Related, Tag>(relation);
     }
 
     template<typename Derived, typename ...AllRelations>
