@@ -156,59 +156,61 @@ namespace Orm::Tiny::Relations
         inline QSharedPointer<QueryBuilder>
         newPivotStatementForId(const QVariant &id) const;
 
+        // CUR add missing create, createMany, save and saveMany silverqx
+
         /* Inserting & Updating relationship */
         /*! Attach models to the parent. */
         void attach(const QVector<QVariant> &ids,
                     const QVector<AttributeItem> &attributes = {},
-                    bool touch = true) const override;
+                    bool touch = true) const;
         /*! Attach models to the parent. */
         void attach(const QVector<std::reference_wrapper<Related>> &models,
                     const QVector<AttributeItem> &attributes = {},
-                    bool touch = true) const override;
+                    bool touch = true) const;
         /*! Attach a model to the parent. */
         inline void
         attach(const QVariant &id, const QVector<AttributeItem> &attributes = {},
-               bool touch = true) const override;
+               bool touch = true) const;
         /*! Attach a model to the parent. */
         inline void
         attach(const Related &model, const QVector<AttributeItem> &attributes = {},
-               bool touch = true) const override;
+               bool touch = true) const;
         /*! Attach models to the parent. */
         void attach(const std::map<typename BaseModel<Related>::KeyType,
                                    QVector<AttributeItem>> &idsWithAttributes,
-                    bool touch = true) const override;
+                    bool touch = true) const;
 
         /*! Sync the intermediate tables with a list of IDs. */
         SyncChanges sync(const std::map<typename BaseModel<Related>::KeyType,
                                         QVector<AttributeItem>> &idsWithAttributes,
-                         bool detaching = true) const override;
+                         bool detaching = true) const;
         /*! Sync the intermediate tables with a vector of IDs. */
         SyncChanges sync(const QVector<QVariant> &ids,
-                         bool detaching = true) const override;
+                         bool detaching = true) const;
 
         /*! Sync the intermediate tables with a vector of IDs without detaching. */
         SyncChanges syncWithoutDetaching(
                 const std::map<typename BaseModel<Related>::KeyType,
-                               QVector<AttributeItem>> &idsWithAttributes) const override;
+                               QVector<AttributeItem>> &idsWithAttributes) const;
         /*! Sync the intermediate tables with a vector of IDs without detaching. */
-        SyncChanges syncWithoutDetaching(const QVector<QVariant> &ids) const override;
+        SyncChanges syncWithoutDetaching(const QVector<QVariant> &ids) const;
 
         /*! Update an existing pivot record on the table. */
         int updateExistingPivot(const QVariant &id,
                                 QVector<AttributeItem> attributes,
-                                bool touch = true) const override;
+                                bool touch = true) const;
 
         /*! Detach models from the relationship. */
-        int detach(const QVector<QVariant> &ids, bool touch = true) const override;
+        int detach(const QVector<QVariant> &ids, bool touch = true) const;
         /*! Detach models from the relationship. */
-        int detach(bool touch = true) const override;
+        int detach(bool touch = true) const;
         /*! Detach models from the relationship. */
         int detach(const QVector<std::reference_wrapper<Related>> &models,
-                   bool touch = true) const override;
+                   bool touch = true) const;
         /*! Detach model from the relationship. */
-        inline int detach(const QVariant &id, bool touch = true) const override;
+        inline int detach(const QVariant &id, bool touch = true) const;
         /*! Detach model from the relationship. */
-        inline int detach(const Related &model, bool touch = true) const override;
+        inline int detach(const Related &model, bool touch = true) const;
 
         /*! Get all of the IDs for the related models. */
         QVector<QVariant> allRelatedIds() const;

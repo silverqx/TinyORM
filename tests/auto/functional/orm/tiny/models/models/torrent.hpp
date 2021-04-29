@@ -72,7 +72,6 @@ public:
 //                .withPivot("active")
 //                .withTimestamps();
 
-        // CUR finish specific methods in Relation classes silverqx
         // Ownership of a unique_ptr()
         // Custom 'Tagged' pivot model ✨
         auto relation = belongsToMany<Tag, Tagged>();

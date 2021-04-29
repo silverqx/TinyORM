@@ -34,11 +34,13 @@ namespace Orm::Tiny::Relations
 
         /* Updating relationship */
         /*! Associate the model instance to the given parent. */
-        Model &associate(const Related &model) const override;
+        Model &associate(const Related &model) const;
         /*! Associate the model instance to the given parent. */
-        Model &associate(const QVariant &id) const override;
+        Model &associate(const QVariant &id) const;
         /*! Dissociate previously associated model from the given parent. */
-        Model &dissociate() const override;
+        Model &dissociate() const;
+        /*! Alias of "dissociate" method. */
+        inline Model &disassociate() const;
 
         /* Basic operations */
         /*! Set the base constraints on the relation query. */
@@ -150,6 +152,12 @@ namespace Orm::Tiny::Relations
 
         // TEST operations that are related on the Model::m_relation data member how they behave, when m_relations value contains the std::nullopt value silverqx
         return m_child.template setRelation<Related>(m_relationName, std::nullopt);
+    }
+
+    template<class Model, class Related>
+    Model &BelongsTo<Model, Related>::disassociate() const
+    {
+        return dissociate();
     }
 
     template<class Model, class Related>
