@@ -60,6 +60,11 @@ namespace Orm::Tiny::Relations
         std::variant<QVector<Related>, std::optional<Related>>
         getResults() const override;
 
+        /* Others */
+        /*! The textual representation of the Relation type. */
+        inline QString relationTypeName() const override
+        { return "BelongsTo"; };
+
     protected:
         /*! Gather the keys from a vector of related models. */
         QVector<QVariant> getEagerModelKeys(const QVector<Model> &models) const;
@@ -67,12 +72,6 @@ namespace Orm::Tiny::Relations
         QHash<typename Model::KeyType, Related>
         buildDictionary(const QVector<Related> &results) const;
 
-    public:
-        /*! The textual representation of the Relation type. */
-        inline QString relationTypeName() const override
-        { return "BelongsTo"; };
-
-    protected:
         /*! Make a new related instance for the given model. */
         inline Related newRelatedInstanceFor(const Model &) const override;
 

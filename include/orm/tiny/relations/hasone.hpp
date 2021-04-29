@@ -41,11 +41,12 @@ namespace Orm::Tiny::Relations
         std::variant<QVector<Related>, std::optional<Related>>
         getResults() const override;
 
-    protected:
+        /* Others */
         /*! The textual representation of the Relation type. */
         inline QString relationTypeName() const override
         { return "HasOne"; };
 
+    protected:
         /*! Make a new related instance for the given model. */
         inline Related newRelatedInstanceFor(const Model &) const override;
     };

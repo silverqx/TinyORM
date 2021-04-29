@@ -215,6 +215,11 @@ namespace Orm::Tiny::Relations
         /*! Get all of the IDs for the related models. */
         QVector<QVariant> allRelatedIds() const;
 
+        /* Others */
+        /*! The textual representation of the Relation type. */
+        inline QString relationTypeName() const override
+        { return "BelongsToMany"; };
+
     protected:
         /*! Set the join clause for the relation query. */
         const BelongsToMany &performJoin() const;
@@ -322,10 +327,6 @@ namespace Orm::Tiny::Relations
         /*! Obtain ids from the QVector<AttributeItem>. */
         QVector<QVariant>
         getRelatedIds(QVector<PivotType> &&pivots) const;
-
-        /*! The textual representation of the Relation type. */
-        inline QString relationTypeName() const override
-        { return "BelongsToMany"; };
 
         /*! The intermediate table for the relation. */
         QString m_table;

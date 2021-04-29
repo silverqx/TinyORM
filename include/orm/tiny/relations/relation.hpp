@@ -8,7 +8,6 @@
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 
-#include "orm/logicerror.hpp"
 #include "orm/ormtypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -372,6 +371,10 @@ namespace Relations
         /*! Add a where clause on the primary key to the query. */
         Builder<Related> &whereKeyNot(const QVariant &id) const;
 
+        /* Others */
+        /*! The textual representation of the Relation type. */
+        virtual QString relationTypeName() const = 0;
+
     protected:
         /*! Initialize a Relation instance. */
         inline void init() const
@@ -380,9 +383,6 @@ namespace Relations
         /*! Get all of the primary keys for the vector of models. */
         QVector<QVariant>
         getKeys(const QVector<Model> &models, const QString &key = "") const;
-
-        /*! The textual representation of the Relation type. */
-        virtual QString relationTypeName() const = 0;
 
         /* During eager load, we secure m_parent to not become a dangling reference in
            EagerRelationStore::visited() by help of the dummyModel local variable.
@@ -397,13 +397,6 @@ namespace Relations
         std::unique_ptr<Builder<Related>> m_query;
         /*! Indicates if the relation is adding constraints. */
         static bool constraints;
-
-    private:
-        /*! Message for LogicError, when a user tries to call an unimplemented method. */
-        inline QString methodNotImplementedMessage(const QString &method) const
-        { return QStringLiteral("The '%1' method is not implemented "
-                                "for the '%2' relation type.")
-                    .arg(method, relationTypeName()); }
     };
 
     /*! The tag for one type relation. */
