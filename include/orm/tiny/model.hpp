@@ -3169,9 +3169,9 @@ namespace Relations {
         )
             return getAttributeValue(key);
 
+        // CUR add getRelationValue() overload without Related template argument, after that I will be able to use it here, Related template param. will be obtained by the visitor silverqx
         // NOTE api different silverqx
         return {};
-        // TODO Eloquent returns relation when didn't find attribute, decide how to solve this silverqx
 //        return $this->getRelationValue($key);
     }
 
