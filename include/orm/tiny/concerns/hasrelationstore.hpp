@@ -96,7 +96,7 @@ namespace Concerns
         template<typename Related>
         BaseRelationStore &createLazyStore();
 
-        /*! Releases the ownership and destroy currently held relation store. */
+        /*! Release the ownership and destroy the top relation store on the stack. */
         void resetRelationStore();
 
         /* Getters for Relation stores */
@@ -250,7 +250,6 @@ namespace Concerns
     template<typename Derived, typename ...AllRelations>
     void HasRelationStore<Derived, AllRelations...>::resetRelationStore()
     {
-        // Releases the ownership and destroy the top relation store on the stack
         m_relationStore.pop();
     }
 

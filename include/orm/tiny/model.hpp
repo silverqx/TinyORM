@@ -2132,7 +2132,7 @@ namespace Relations {
 
         const auto pushResult = this->pushStore().result;
 
-        // Release stored pointers to the relation store
+        // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
 
         return pushResult;
@@ -2197,7 +2197,7 @@ namespace Relations {
         // Save model/s to the store to avoid passing variables to the visitor
         this->createTouchOwnersStore(relation).visit(relation);
 
-        // Release stored pointers to the relation store
+        // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
     }
 
@@ -2740,7 +2740,7 @@ namespace Relations {
         // Obtain result, related model/s
         const auto lazyResult = this->template lazyStore<Related>().result;
 
-        // Release stored pointers to the relation store
+        // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
 
         return std::get<Result>(lazyResult);
@@ -3697,6 +3697,7 @@ namespace Relations {
            to the visitor. */
         this->createEagerStore(builder, models, relation).visit(relation.name);
 
+        // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
     }
 
