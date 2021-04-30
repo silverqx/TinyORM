@@ -36,10 +36,11 @@ Database::getConfigurations(const QStringList &connections)
             {"collation", qEnvironmentVariable("DB_MYSQL_COLLATION",
                                                "utf8mb4_0900_ai_ci")},
             // Very important for tests
-            {"timezone",  "+00:00"},
-            {"prefix",    ""},
-            {"strict",    true},
-            {"options",   QVariantHash()},
+            {"timezone",        "+00:00"},
+            {"prefix",          ""},
+            {"strict",          true},
+            {"isolation_level", "REPEATABLE READ"},
+            {"options",         QVariantHash()},
             // FUTURE remove, when unit tested silverqx
             // Example
 //            {"options",   "MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"},
