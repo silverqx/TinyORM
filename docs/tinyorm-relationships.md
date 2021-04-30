@@ -1063,6 +1063,23 @@ The `save` and `saveMany` methods will not add the new models to any in-memory r
     // All comments, including the newly saved comment...
     post->getRelation<Comment>("comments");
 
+The many-to-many relationship also supports the `save` and `saveMany` methods. In addition, you may pass the pivot attributes as a second argument and select if you want to touch parent timestamps as a third argument:
+
+    auto user = User::find(2);
+
+    Role role {{"name", "admin"}};
+
+    user->roles()->save(role, {{"active", true}});
+
+    Role role1 {{"name", "edit"}};
+    Role role2 {{"name", "view"}};
+
+    user->roles()->saveMany({role1, role2}, {{{"active", true}},
+                                             {{"active", false}}});
+
+    // No pivot attributes for role1
+    user->roles()->saveMany({role1, role2}, {{}, {{"active", false}}});
+
 <a name="the-push-method"></a>
 #### Recursively Saving Models & Relationships
 
@@ -1097,6 +1114,29 @@ You may use the `createMany` method to create multiple related models:
     auto comments = post->comments()->createMany({
         {{"message", "A new comment."}, {"is_published", true}},
         {{"message", "Another new comment."}, {"is_published", false}},
+    });
+
+The many-to-many relationship also supports the `create` and `createMany` methods. In addition, you may pass the pivot attributes as a second argument and select if you want to touch parent timestamps as a third argument:
+
+    auto user = User::find(2);
+
+    user->roles()->create({{"name", "admin"}}, {{"active", true}});
+
+    user->roles()->createMany({
+        {{"name", "edit"}},
+        {{"name", "view"}},
+    }, {
+        {{"active", true}},
+        {{"active", false}},
+    });
+
+    // No pivot attributes for the first role
+    user->roles()->createMany({
+        {{"name", "edit"}},
+        {{"name", "view"}},
+    }, {
+        {},
+        {{"active", false}},
     });
 
 You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate`, and `updateOrCreate` methods to [create and update models on relationships](tinyorm.md#retrieving-or-creating-models).

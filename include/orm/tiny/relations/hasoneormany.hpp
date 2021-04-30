@@ -132,7 +132,7 @@ namespace Orm::Tiny::Relations
     {
         setForeignAttributesForCreate(model);
 
-        return {model.save(), model};
+        return {model.save(), std::move(model)};
     }
 
     template<class Model, class Related>

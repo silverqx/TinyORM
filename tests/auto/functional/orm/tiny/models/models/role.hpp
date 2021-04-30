@@ -40,6 +40,9 @@ private:
     inline static QStringList u_fillable {
         "name",
     };
+
+    /*! Indicates if the model should be timestamped. */
+    bool u_timestamps = false;
 };
 
 #endif // ROLE_H

@@ -34,6 +34,24 @@ private slots:
     void createMany_OnHasOneOrMany_WithRValue() const;
     void createMany_OnHasOneOrMany_Failed() const;
     void createMany_OnHasOneOrMany_WithRValue_Failed() const;
+
+    void save_OnBelongsToMany() const;
+    void save_OnBelongsToMany_WithRValue() const;
+    void save_OnBelongsToMany_Failed() const;
+
+    void saveMany_OnBelongsToMany() const;
+    void saveMany_OnBelongsToMany_WithRValue() const;
+    void saveMany_OnBelongsToMany_Failed() const;
+
+    void create_OnBelongsToMany() const;
+    void create_OnBelongsToMany_WithRValue() const;
+    void create_OnBelongsToMany_Failed() const;
+    void create_OnBelongsToMany_WithRValue_Failed() const;
+
+    void createMany_OnBelongsToMany() const;
+    void createMany_OnBelongsToMany_WithRValue() const;
+    void createMany_OnBelongsToMany_Failed() const;
+    void createMany_OnBelongsToMany_WithRValue_Failed() const;
 };
 
 void tst_Relations_Inserting_Updating::initTestCase_data() const
@@ -76,6 +94,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
 
     // Obtain file and verify saved values
     auto fileVerify = TorrentPreviewableFile::find(file["id"]);
+    QCOMPARE((*fileVerify)["id"],         QVariant(file["id"]));
     QCOMPARE((*fileVerify)["torrent_id"], QVariant(5));
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-save.mkv"));
@@ -99,7 +118,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    auto [savedResult ,file] = torrent->torrentFiles()->save({
+    auto [savedResult, file] = torrent->torrentFiles()->save({
         {"file_index", 3},
         {"filepath", "test5_file4-save.mkv"},
         {"size", 322322},
@@ -113,6 +132,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
 
     // Obtain file and verify saved values
     auto fileVerify = TorrentPreviewableFile::find(file["id"]);
+    QCOMPARE((*fileVerify)["id"],         QVariant(file["id"]));
     QCOMPARE((*fileVerify)["torrent_id"], QVariant(5));
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-save.mkv"));
@@ -201,6 +221,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
 
     // Obtain files and verify saved values
     auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);
+    QCOMPARE((*file1Verify)["id"],         QVariant(savedFile1["id"]));
     QCOMPARE((*file1Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-saveMany.mkv"));
@@ -208,6 +229,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
     QCOMPARE((*file1Verify)["progress"],   QVariant(777));
     QCOMPARE((*file1Verify)["note"],       QVariant("relation's saveMany file1"));
     auto file2Verify = TorrentPreviewableFile::find(savedFile2["id"]);
+    QCOMPARE((*file2Verify)["id"],         QVariant(savedFile2["id"]));
     QCOMPARE((*file2Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-saveMany.mkv"));
@@ -260,6 +282,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() cons
 
     // Obtain files and verify saved values
     auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);
+    QCOMPARE((*file1Verify)["id"],         QVariant(savedFile1["id"]));
     QCOMPARE((*file1Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-saveMany.mkv"));
@@ -267,6 +290,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() cons
     QCOMPARE((*file1Verify)["progress"],   QVariant(777));
     QCOMPARE((*file1Verify)["note"],       QVariant("relation's saveMany file1"));
     auto file2Verify = TorrentPreviewableFile::find(savedFile2["id"]);
+    QCOMPARE((*file2Verify)["id"],         QVariant(savedFile2["id"]));
     QCOMPARE((*file2Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-saveMany.mkv"));
@@ -337,6 +361,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany() const
 
     // Obtain file and verify saved values
     auto fileVerify = TorrentPreviewableFile::find(file["id"]);
+    QCOMPARE((*fileVerify)["id"],         QVariant(file["id"]));
     QCOMPARE((*fileVerify)["torrent_id"], QVariant(5));
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-create.mkv"));
@@ -373,6 +398,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue() const
 
     // Obtain file and verify saved values
     auto fileVerify = TorrentPreviewableFile::find(file["id"]);
+    QCOMPARE((*fileVerify)["id"],         QVariant(file["id"]));
     QCOMPARE((*fileVerify)["torrent_id"], QVariant(5));
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-create.mkv"));
@@ -479,6 +505,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
 
     // Obtain files and verify saved values
     auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);
+    QCOMPARE((*file1Verify)["id"],         QVariant(savedFile1["id"]));
     QCOMPARE((*file1Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-createMany.mkv"));
@@ -486,6 +513,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
     QCOMPARE((*file1Verify)["progress"],   QVariant(777));
     QCOMPARE((*file1Verify)["note"],       QVariant("relation's createMany file1"));
     auto file2Verify = TorrentPreviewableFile::find(savedFile2["id"]);
+    QCOMPARE((*file2Verify)["id"],         QVariant(savedFile2["id"]));
     QCOMPARE((*file2Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-createMany.mkv"));
@@ -538,6 +566,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() co
 
     // Obtain files and verify saved values
     auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);
+    QCOMPARE((*file1Verify)["id"],         QVariant(savedFile1["id"]));
     QCOMPARE((*file1Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-createMany.mkv"));
@@ -545,6 +574,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() co
     QCOMPARE((*file1Verify)["progress"],   QVariant(777));
     QCOMPARE((*file1Verify)["note"],       QVariant("relation's createMany file1"));
     auto file2Verify = TorrentPreviewableFile::find(savedFile2["id"]);
+    QCOMPARE((*file2Verify)["id"],         QVariant(savedFile2["id"]));
     QCOMPARE((*file2Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-createMany.mkv"));
@@ -624,6 +654,609 @@ tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue_Failed() 
                 }}),
                 QueryError);
     QVERIFY(savedFiles.isEmpty());
+}
+
+void tst_Relations_Inserting_Updating::save_OnBelongsToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    Tag tag({{"name", "tag save"}});
+    QVERIFY(!tag.exists);
+
+    auto [savedResult, tagRef] = torrent->tags()->save(tag, {{"active", false}});
+    QVERIFY(savedResult);
+    QVERIFY(tag.exists);
+    QVERIFY(tag["id"]->isValid());
+    QVERIFY(tag["id"]->value<quint64>() > 4);
+
+    // Check records count in the pivot (tagged) table
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 1);
+
+    // save method have to return the same model as a reference
+    QVERIFY(reinterpret_cast<uintptr_t>(&tag)
+            == reinterpret_cast<uintptr_t>(&tagRef));
+
+    // Obtain file and verify saved values
+    auto tagVerify = Tag::find(tag["id"]);
+    QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
+    QCOMPARE((*tagVerify)["name"], QVariant("tag save"));
+
+    // Verify pivot attributes
+    auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
+    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag["id"]));
+    QCOMPARE((*taggedVerify)["active"], QVariant(0));
+
+    /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
+       constraint. */
+    const auto result = tag.remove();
+    QVERIFY(result);
+    QVERIFY(!tag.exists);
+
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::save_OnBelongsToMany_WithRValue() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    auto [savedResult, tag] = torrent->tags()->save({{"name", "tag save"}},
+                                                     {{"active", false}});
+    QVERIFY(savedResult);
+    QVERIFY(tag.exists);
+    QVERIFY(tag["id"]->isValid());
+    QVERIFY(tag["id"]->value<quint64>() > 4);
+
+    // Check records count in the pivot (tagged) table
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 1);
+
+    // Obtain file and verify saved values
+    auto tagVerify = Tag::find(tag["id"]);
+    QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
+    QCOMPARE((*tagVerify)["name"], QVariant("tag save"));
+
+    // Verify pivot attributes
+    auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
+    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag["id"]));
+    QCOMPARE((*taggedVerify)["active"], QVariant(0));
+
+    /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
+       constraint. */
+    const auto result = tag.remove();
+    QVERIFY(result);
+    QVERIFY(!tag.exists);
+
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::save_OnBelongsToMany_Failed() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(1);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 0);
+
+    Tag tag({{"name", "tag1"}});
+    QVERIFY(!tag.exists);
+
+    QVERIFY_EXCEPTION_THROWN(torrent->tags()->save(tag),
+                             QueryError);
+    QVERIFY(!tag.exists);
+    QVERIFY(!tag["id"]->isValid());
+
+    size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 0);
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    Tag tag1({{"name", "tag1 save"}});
+    Tag tag2({{"name", "tag2 save"}});
+    QVERIFY(!tag1.exists);
+    QVERIFY(!tag2.exists);
+
+    QVector<Tag> tagsToSave {std::move(tag1), std::move(tag2)};
+
+    auto &savedTags = torrent->tags()->saveMany(tagsToSave, {{}, {{"active", false}}});
+    QCOMPARE(savedTags.size(), 2);
+
+    auto &savedTag1 = savedTags[0];
+    auto &savedTag2 = savedTags[1];
+    QVERIFY(savedTag1.exists);
+    QVERIFY(savedTag1["id"]->isValid());
+    QVERIFY(savedTag1["id"]->value<quint64>() > 4);
+    QVERIFY(savedTag2.exists);
+    QVERIFY(savedTag2["id"]->isValid());
+    QVERIFY(savedTag2["id"]->value<quint64>() > 4);
+
+    size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 2);
+    // Check records size in the pivot table
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 2);
+
+    // saveMany method have to return the same models as a reference_wrapper
+    QVERIFY(reinterpret_cast<uintptr_t>(&tagsToSave[0])
+            == reinterpret_cast<uintptr_t>(&savedTag1));
+    QVERIFY(reinterpret_cast<uintptr_t>(&tagsToSave[1])
+            == reinterpret_cast<uintptr_t>(&savedTag2));
+
+    // Obtain file and verify saved values
+    auto tag1Verify = Tag::find(savedTag1["id"]);
+    QCOMPARE((*tag1Verify)["id"],   QVariant(savedTag1["id"]));
+    QCOMPARE((*tag1Verify)["name"], QVariant("tag1 save"));
+    auto tag2Verify = Tag::find(savedTag2["id"]);
+    QCOMPARE((*tag2Verify)["id"],   QVariant(savedTag2["id"]));
+    QCOMPARE((*tag2Verify)["name"], QVariant("tag2 save"));
+
+    // Verify pivot attributes
+    auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
+    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(savedTag1["id"]));
+    QCOMPARE(taggedVerify[0]["active"], QVariant(1));
+    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(savedTag2["id"]));
+    QCOMPARE(taggedVerify[1]["active"], QVariant(0));
+
+    /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
+       constraint. */
+    auto result = savedTag1.remove();
+    QVERIFY(result);
+    QVERIFY(!savedTag1.exists);
+    result = savedTag2.remove();
+    QVERIFY(result);
+    QVERIFY(!savedTag2.exists);
+
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_WithRValue() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    auto savedTags = torrent->tags()->saveMany({{{"name", "tag1 save"}},
+                                                {{"name", "tag2 save"}}},
+                                               {{{"active", false}}});
+    QCOMPARE(savedTags.size(), 2);
+
+    auto &savedTag1 = savedTags[0];
+    auto &savedTag2 = savedTags[1];
+    QVERIFY(savedTag1.exists);
+    QVERIFY(savedTag1["id"]->isValid());
+    QVERIFY(savedTag1["id"]->value<quint64>() > 4);
+    QVERIFY(savedTag2.exists);
+    QVERIFY(savedTag2["id"]->isValid());
+    QVERIFY(savedTag2["id"]->value<quint64>() > 4);
+
+    size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 2);
+    // Check records size in the pivot table
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 2);
+
+    // Obtain file and verify saved values
+    auto tag1Verify = Tag::find(savedTag1["id"]);
+    QCOMPARE((*tag1Verify)["id"],   QVariant(savedTag1["id"]));
+    QCOMPARE((*tag1Verify)["name"], QVariant("tag1 save"));
+    auto tag2Verify = Tag::find(savedTag2["id"]);
+    QCOMPARE((*tag2Verify)["id"],   QVariant(savedTag2["id"]));
+    QCOMPARE((*tag2Verify)["name"], QVariant("tag2 save"));
+
+    // Verify pivot attributes
+    auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
+    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(savedTag1["id"]));
+    QCOMPARE(taggedVerify[0]["active"], QVariant(0));
+    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(savedTag2["id"]));
+    QCOMPARE(taggedVerify[1]["active"], QVariant(1));
+
+    /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
+       constraint. */
+    auto result = savedTag1.remove();
+    QVERIFY(result);
+    QVERIFY(!savedTag1.exists);
+    result = savedTag2.remove();
+    QVERIFY(result);
+    QVERIFY(!savedTag2.exists);
+
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_Failed() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    Tag tag1({{"name", "tag1"}});
+    QVERIFY(!tag1.exists);
+    // Make a copy is enough
+    auto tag2 = tag1;
+    QVERIFY(!tag2.exists);
+
+    QVector<Tag> tagsToSave {std::move(tag1), std::move(tag2)};
+    QVector<Tag> savedTags;
+    QVERIFY_EXCEPTION_THROWN(savedTags = torrent->tags()->saveMany(tagsToSave),
+                             QueryError);
+    QVERIFY(savedTags.isEmpty());
+
+    size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 0);
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::create_OnBelongsToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    QVector<AttributeItem> tagAttribtues {{"name", "tag create"}};
+
+    auto tag = torrent->tags()->create(tagAttribtues, {{"active", false}});
+    QVERIFY(tag.exists);
+    QVERIFY(tag["id"]->isValid());
+    QVERIFY(tag["id"]->value<quint64>() > 4);
+
+    // Check records count in the pivot (tagged) table
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 1);
+
+    // Obtain file and verify saved values
+    auto tagVerify = Tag::find(tag["id"]);
+    QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
+    QCOMPARE((*tagVerify)["name"], QVariant("tag create"));
+
+    // Verify pivot attributes
+    auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
+    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag["id"]));
+    QCOMPARE((*taggedVerify)["active"], QVariant(0));
+
+    /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
+       constraint. */
+    const auto result = tag.remove();
+    QVERIFY(result);
+    QVERIFY(!tag.exists);
+
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    auto tag = torrent->tags()->create({{"name", "tag create rvalue"}},
+                                       {{"active", false}});
+    QVERIFY(tag.exists);
+    QVERIFY(tag["id"]->isValid());
+    QVERIFY(tag["id"]->value<quint64>() > 4);
+
+    // Check records count in the pivot (tagged) table
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 1);
+
+    // Obtain file and verify saved values
+    auto tagVerify = Tag::find(tag["id"]);
+    QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
+    QCOMPARE((*tagVerify)["name"], QVariant("tag create rvalue"));
+
+    // Verify pivot attributes
+    auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
+    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag["id"]));
+    QCOMPARE((*taggedVerify)["active"], QVariant(0));
+
+    /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
+       constraint. */
+    const auto result = tag.remove();
+    QVERIFY(result);
+    QVERIFY(!tag.exists);
+
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::create_OnBelongsToMany_Failed() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 0);
+
+    QVector<AttributeItem> tagAttributes {{"name", "tag1"}};
+    Tag tag;
+
+    QVERIFY_EXCEPTION_THROWN(tag = torrent->tags()->create(tagAttributes),
+                             QueryError);
+    QVERIFY(!tag.exists);
+    QVERIFY(tag.getAttributes().isEmpty());
+
+    size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 0);
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue_Failed() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 0);
+
+    Tag tag;
+
+    QVERIFY_EXCEPTION_THROWN(tag = torrent->tags()->create({{"name", "tag1"}}),
+                             QueryError);
+    QVERIFY(!tag.exists);
+    QVERIFY(tag.getAttributes().isEmpty());
+
+    size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 0);
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    QVector<QVector<AttributeItem>> tagAttribtues {{{"name", "tag create 1"}},
+                                                   {{"name", "tag create 2"}}};
+
+    auto tags = torrent->tags()->createMany(tagAttribtues, {{}, {{"active", false}}});
+    QCOMPARE(tags.size(), 2);
+
+    auto &tag1 = tags[0];
+    auto &tag2 = tags[1];
+    QVERIFY(tag1.exists);
+    QVERIFY(tag2.exists);
+    QVERIFY(tag1["id"]->isValid());
+    QVERIFY(tag2["id"]->isValid());
+    QVERIFY(tag1["id"]->value<quint64>() > 4);
+    QVERIFY(tag2["id"]->value<quint64>() > 4);
+
+    // Check records count in the pivot (tagged) table
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 2);
+
+    // Obtain file and verify saved values
+    auto tagVerify1 = Tag::find(tag1["id"]);
+    QCOMPARE((*tagVerify1)["id"],   QVariant(tag1["id"]));
+    QCOMPARE((*tagVerify1)["name"], QVariant("tag create 1"));
+    auto tagVerify2 = Tag::find(tag2["id"]);
+    QCOMPARE((*tagVerify2)["id"],   QVariant(tag2["id"]));
+    QCOMPARE((*tagVerify2)["name"], QVariant("tag create 2"));
+
+    // Verify pivot attributes
+    auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
+    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(tag1["id"]));
+    QCOMPARE(taggedVerify[0]["active"], QVariant(1));
+    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(tag2["id"]));
+    QCOMPARE(taggedVerify[1]["active"], QVariant(0));
+
+    /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
+       constraint. */
+    const auto result1 = tag1.remove();
+    QVERIFY(result1);
+    QVERIFY(!tag1.exists);
+    const auto result2 = tag2.remove();
+    QVERIFY(result2);
+    QVERIFY(!tag2.exists);
+
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    auto tags = torrent->tags()->createMany({{{"name", "tag create 1 rvalue"}},
+                                             {{"name", "tag create 2 rvalue"}}},
+
+                                            {{{"active", false}}});
+    QCOMPARE(tags.size(), 2);
+
+    auto &tag1 = tags[0];
+    auto &tag2 = tags[1];
+    QVERIFY(tag1.exists);
+    QVERIFY(tag2.exists);
+    QVERIFY(tag1["id"]->isValid());
+    QVERIFY(tag2["id"]->isValid());
+    QVERIFY(tag1["id"]->value<quint64>() > 4);
+    QVERIFY(tag2["id"]->value<quint64>() > 4);
+
+    // Check records count in the pivot (tagged) table
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 2);
+
+    // Obtain file and verify saved values
+    auto tagVerify1 = Tag::find(tag1["id"]);
+    QCOMPARE((*tagVerify1)["id"],   QVariant(tag1["id"]));
+    QCOMPARE((*tagVerify1)["name"], QVariant("tag create 1 rvalue"));
+    auto tagVerify2 = Tag::find(tag2["id"]);
+    QCOMPARE((*tagVerify2)["id"],   QVariant(tag2["id"]));
+    QCOMPARE((*tagVerify2)["name"], QVariant("tag create 2 rvalue"));
+
+    // Verify pivot attributes
+    auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
+    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(tag1["id"]));
+    QCOMPARE(taggedVerify[0]["active"], QVariant(0));
+    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(tag2["id"]));
+    QCOMPARE(taggedVerify[1]["active"], QVariant(1));
+
+    /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
+       constraint. */
+    const auto result1 = tag1.remove();
+    QVERIFY(result1);
+    QVERIFY(!tag1.exists);
+    const auto result2 = tag2.remove();
+    QVERIFY(result2);
+    QVERIFY(!tag2.exists);
+
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_Failed() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    QVector<QVector<AttributeItem>> tagAttribtues {{{"name", "tag1"}},
+                                                   {{"name", "tag1"}}};
+
+    QVector<Tag> tags;
+
+    QVERIFY_EXCEPTION_THROWN(tags = torrent->tags()->createMany(tagAttribtues,
+                                                                {{{"active", false}}}),
+                             QueryError);
+    QVERIFY(tags.isEmpty());
+
+    size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 0);
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+}
+
+void
+tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue_Failed() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
+
+    QVector<Tag> tags;
+
+    QVERIFY_EXCEPTION_THROWN(tags = torrent->tags()->createMany({{{"name", "tag1"}},
+                                                                 {{"name", "tag1"}}},
+
+                                                                {{{"active", false}}}),
+                             QueryError);
+    QVERIFY(tags.isEmpty());
+
+    size = torrent->tags()->get({"id"}).size();
+    QCOMPARE(size, 0);
+    size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
+    QCOMPARE(size, 0);
 }
 
 QTEST_MAIN(tst_Relations_Inserting_Updating)

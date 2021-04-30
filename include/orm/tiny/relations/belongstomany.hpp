@@ -156,7 +156,42 @@ namespace Orm::Tiny::Relations
         inline QSharedPointer<QueryBuilder>
         newPivotStatementForId(const QVariant &id) const;
 
-        // CUR add missing create, createMany, save and saveMany silverqx
+        /* Inserting operations on the relationship */
+        /*! Attach a model instance to the parent model. */
+        std::tuple<bool, Related &>
+        save(Related &model,
+             const QVector<AttributeItem> &pivotAttributes = {},
+             bool touch = true) const;
+        /*! Attach a model instance to the parent model. */
+        std::tuple<bool, Related>
+        save(Related &&model,
+             const QVector<AttributeItem> &pivotAttributes = {},
+             bool touch = true) const;
+        /*! Attach a vector of models to the parent instance. */
+        QVector<Related> &
+        saveMany(QVector<Related> &models,
+                 const QVector<QVector<AttributeItem>> &pivotAttributes = {}) const;
+        /*! Attach a vector of models to the parent instance. */
+        QVector<Related>
+        saveMany(QVector<Related> &&models,
+                 const QVector<QVector<AttributeItem>> &pivotAttributes = {}) const;
+
+        /*! Create a new instance of the related model. */
+        Related create(const QVector<AttributeItem> &attributes = {},
+                       const QVector<AttributeItem> &pivotAttributes = {},
+                       bool touch = true) const;
+        /*! Create a new instance of the related model. */
+        Related create(QVector<AttributeItem> &&attributes = {},
+                       const QVector<AttributeItem> &pivotAttributes = {},
+                       bool touch = true) const;
+        /*! Create a vector of new instances of the related model. */
+        QVector<Related>
+        createMany(const QVector<QVector<AttributeItem>> &records,
+                   const QVector<QVector<AttributeItem>> &pivotAttributes = {}) const;
+        /*! Create a vector of new instances of the related model. */
+        QVector<Related>
+        createMany(QVector<QVector<AttributeItem>> &&records,
+                   const QVector<QVector<AttributeItem>> &pivotAttributes = {}) const;
 
         /* Inserting & Updating relationship */
         /*! Attach models to the parent. */
@@ -709,6 +744,149 @@ namespace Orm::Tiny::Relations
         return newPivotStatementForId(QVector<QVariant> {id});
     }
 
+    template<class Model, class Related, class PivotType>
+    std::tuple<bool, Related &>
+    BelongsToMany<Model, Related, PivotType>::save(
+            Related &model,
+            const QVector<AttributeItem> &pivotAttributes, const bool touch) const
+    {
+        const auto result = model.save({.touch = false});
+
+        attach(model, pivotAttributes, touch);
+
+        return {result, model};
+    }
+
+    template<class Model, class Related, class PivotType>
+    std::tuple<bool, Related>
+    BelongsToMany<Model, Related, PivotType>::save(
+            Related &&model,
+            const QVector<AttributeItem> &pivotAttributes, const bool touch) const
+    {
+        const auto result = model.save({.touch = false});
+
+        attach(model, pivotAttributes, touch);
+
+        return {result, std::move(model)};
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<Related> &
+    BelongsToMany<Model, Related, PivotType>::saveMany(
+            QVector<Related> &models,
+            const QVector<QVector<AttributeItem>> &pivotAttributes) const
+    {
+        for (int i = 0, attributesSize = pivotAttributes.size(); i < models.size(); ++i)
+            // FUTURE uncomment [[likely]] / [[unlikely]] when clang will support it, I want to avoid warnings that are produced now silverqx
+            if (attributesSize > i)/* [[likely]]*/
+                save(models[i], pivotAttributes.at(i), false);
+            else/* [[unlikely]]*/
+                save(models[i], {}, false);
+
+        touchIfTouching();
+
+        return models;
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<Related>
+    BelongsToMany<Model, Related, PivotType>::saveMany(
+            QVector<Related> &&models,
+            const QVector<QVector<AttributeItem>> &pivotAttributes) const
+    {
+        for (int i = 0, attributesSize = pivotAttributes.size(); i < models.size(); ++i)
+            // FUTURE uncomment [[likely]] / [[unlikely]] when clang will support it, I want to avoid warnings that are produced now silverqx
+            if (attributesSize > i)/* [[likely]]*/
+                save(models[i], pivotAttributes.at(i), false);
+            else/* [[unlikely]]*/
+                save(models[i], {}, false);
+
+        touchIfTouching();
+
+        return models;
+    }
+
+    template<class Model, class Related, class PivotType>
+    Related
+    BelongsToMany<Model, Related, PivotType>::create(
+            const QVector<AttributeItem> &attributes,
+            const QVector<AttributeItem> &pivotAttributes, const bool touch) const
+    {
+        auto instance = this->m_related->newInstance(attributes);
+
+        /* Once we save the related model, we need to attach it to the base model via
+           through intermediate table so we'll use the existing "attach" method to
+           accomplish this which will insert the record and any more attributes. */
+        instance.save({.touch = false});
+
+        attach(instance, pivotAttributes, touch);
+
+        return instance;
+    }
+
+    template<class Model, class Related, class PivotType>
+    Related
+    BelongsToMany<Model, Related, PivotType>::create(
+            QVector<AttributeItem> &&attributes,
+            const QVector<AttributeItem> &pivotAttributes, const bool touch) const
+    {
+        auto instance = this->m_related->newInstance(std::move(attributes));
+
+        /* Once we save the related model, we need to attach it to the base model via
+           through intermediate table so we'll use the existing "attach" method to
+           accomplish this which will insert the record and any more attributes. */
+        instance.save({.touch = false});
+
+        attach(instance, pivotAttributes, touch);
+
+        return instance;
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<Related>
+    BelongsToMany<Model, Related, PivotType>::createMany(
+            const QVector<QVector<AttributeItem>> &records,
+            const QVector<QVector<AttributeItem>> &pivotAttributes) const
+    {
+        QVector<Related> instances;
+        const auto recordsSize = records.size();
+        instances.reserve(recordsSize);
+
+        for (int i = 0, attributesSize = pivotAttributes.size(); i < recordsSize; ++i)
+            // FUTURE uncomment [[likely]] / [[unlikely]] when clang will support it, I want to avoid warnings that are produced now silverqx
+            if (attributesSize > i)/* [[likely]]*/
+                instances << create(records.at(i), pivotAttributes.at(i), false);
+            else/* [[unlikely]]*/
+                instances << create(records.at(i), {}, false);
+
+        touchIfTouching();
+
+        return instances;
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<Related>
+    BelongsToMany<Model, Related, PivotType>::createMany(
+            QVector<QVector<AttributeItem>> &&records,
+            const QVector<QVector<AttributeItem>> &pivotAttributes) const
+    {
+        QVector<Related> instances;
+        const auto recordsSize = records.size();
+        instances.reserve(recordsSize);
+
+        for (int i = 0, attributesSize = pivotAttributes.size(); i < recordsSize; ++i)
+            // FUTURE uncomment [[likely]] / [[unlikely]] when clang will support it, I want to avoid warnings that are produced now silverqx
+            if (attributesSize > i)/* [[likely]]*/
+                instances << create(std::move(records[i]), pivotAttributes.at(i), false);
+            else/* [[unlikely]]*/
+                instances << create(std::move(records[i]), {}, false);
+
+        touchIfTouching();
+
+        return instances;
+    }
+
+    // FEATURE move semantics, for attributes silverqx
     template<class Model, class Related, class PivotType>
     void BelongsToMany<Model, Related, PivotType>::attach(
             const QVector<QVariant> &ids, const QVector<AttributeItem> &attributes,
