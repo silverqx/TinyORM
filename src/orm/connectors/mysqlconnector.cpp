@@ -79,10 +79,9 @@ void MySqlConnector::configureIsolationLevel(const QSqlDatabase &connection,
         return;
 
     QSqlQuery query(connection);
-    query.prepare(QStringLiteral("SET SESSION TRANSACTION ISOLATION LEVEL ?"));
-    query.addBindValue(config["isolation_level"]);
 
-    query.exec();
+    query.exec(QStringLiteral("SET SESSION TRANSACTION ISOLATION LEVEL %1;")
+               .arg(config["isolation_level"].value<QString>()));
 }
 
 void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
@@ -91,33 +90,26 @@ void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
     if (!config.contains("charset"))
         return;
 
-    const auto queryString = QStringLiteral("set names ?%1").arg(getCollation(config));
-
     QSqlQuery query(connection);
-    query.prepare(queryString);
-    query.addBindValue(config["charset"]);
-    if (config.contains("collation"))
-        query.addBindValue(config["collation"]);
 
-    query.exec();
+    query.exec(QStringLiteral("set names '%1'%2;")
+               .arg(config["charset"].value<QString>(), getCollation(config)));
 }
 
 QString MySqlConnector::getCollation(const QVariantHash &config) const
 {
-    return config.contains("collation") ? " collate ?" : "";
+    return config.contains("collation")
+            ? QStringLiteral(" collate '%1'").arg(config["collation"].value<QString>())
+            : "";
 }
 
 void MySqlConnector::configureTimezone(const QSqlDatabase &connection,
                                        const QVariantHash &config) const
 {
-    if (!config.contains("timezone"))
-        return;
-
     QSqlQuery query(connection);
-    query.prepare(QStringLiteral("set time_zone=?"));
-    query.addBindValue(config["timezone"]);
 
-    query.exec();
+    query.exec(QStringLiteral("set time_zone=\"%1\";")
+               .arg(config["timezone"].value<QString>()));
 }
 
 void MySqlConnector::setModes(const QSqlDatabase &connection,
@@ -130,20 +122,12 @@ void MySqlConnector::setModes(const QSqlDatabase &connection,
     else if (config.contains("strict")) {
 
         if (config["strict"].value<bool>()) {
-
-            const auto strictModeString = strictMode(connection, config);
-
-            if (!strictModeString.isEmpty()) {
-                QSqlQuery query(strictModeString, connection);
-
-                query.exec();
-            }
+            QSqlQuery query(connection);
+            query.exec(strictMode(connection, config));
         }
         else {
-            QSqlQuery query(
-                        QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'"),
-                        connection);
-            query.exec();
+            QSqlQuery query(connection);
+            query.exec(QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'"));
         }
     }
 }
@@ -156,13 +140,13 @@ QString MySqlConnector::strictMode(const QSqlDatabase &connection,
     /* NO_AUTO_CREATE_USER was removed in 8.0.11 */
     if (QVersionNumber::fromString(version) >= QVersionNumber(8, 0, 11))
         return QStringLiteral("set session sql_mode='ONLY_FULL_GROUP_BY,"
-                   "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,"
-                   "ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'");
+                              "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,"
+                              "ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'");
     else
         return QStringLiteral("set session sql_mode='ONLY_FULL_GROUP_BY,"
-                   "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,"
-                   "ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,"
-                   "NO_ENGINE_SUBSTITUTION'");
+                              "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,"
+                              "ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,"
+                              "NO_ENGINE_SUBSTITUTION'");
 }
 
 QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
@@ -176,9 +160,9 @@ QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
 
     // Obtain the MySQL version from the database
     else {
-        QSqlQuery query(QStringLiteral("select version()"), connection);
+        QSqlQuery query(connection);
 
-        if (!query.exec())
+        if (!query.exec(QStringLiteral("select version()")))
             return "";
 
         // TODO next handle query errors, in whole class, check all queries silverqx
@@ -197,10 +181,8 @@ void MySqlConnector::setCustomModes(const QSqlDatabase &connection,
     const auto modes = config["modes"].value<QStringList>().join(", ");
 
     QSqlQuery query(connection);
-    query.prepare(QStringLiteral("set session sql_mode=?"));
-    query.addBindValue(modes);
 
-    query.exec();
+    query.exec(QStringLiteral("set session sql_mode='%1';").arg(modes));
 }
 
 } // namespace Orm::Connectors
