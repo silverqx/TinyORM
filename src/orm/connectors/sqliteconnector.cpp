@@ -67,10 +67,8 @@ void SQLiteConnector::configureForeignKeyConstraints(
 
     QSqlQuery query(connection);
     // FEATURE schema builder, foreign key constraints silverqx
-    query.prepare(QStringLiteral("PRAGMA foreign_keys = ?;"));
-    query.addBindValue(foreignKeyConstraints);
-
-    query.exec();
+    // CUR throw on false result silverqx
+    query.exec(QStringLiteral("PRAGMA foreign_keys = %1;").arg(foreignKeyConstraints));
 }
 
 void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const
