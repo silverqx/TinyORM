@@ -12,6 +12,8 @@ namespace TINYORM_COMMON_NAMESPACE
 QString parseExecutedQuery(const QSqlQuery &query)
 {
     auto executedQuery = query.executedQuery();
+    if (executedQuery.isEmpty())
+        executedQuery = query.lastQuery();
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     const auto boundValues = query.boundValues();

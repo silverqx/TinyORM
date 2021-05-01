@@ -48,6 +48,9 @@ namespace Orm::Connectors
         tryAgainIfCausedByLostConnection(
                 const SqlError &e, const QString &name, const QVariantHash &config,
                 const QString &options) const;
+
+        /*! Error message used when connection configuration fails. */
+        static const QString m_configureErrorMessage;
     };
 
 } // namespace Orm::Connectors

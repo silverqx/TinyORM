@@ -3,6 +3,8 @@
 #include <QtSql/QSqlQuery>
 #include <QVersionNumber>
 
+#include "orm/queryerror.hpp"
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -80,8 +82,11 @@ void MySqlConnector::configureIsolationLevel(const QSqlDatabase &connection,
 
     QSqlQuery query(connection);
 
-    query.exec(QStringLiteral("SET SESSION TRANSACTION ISOLATION LEVEL %1;")
-               .arg(config["isolation_level"].value<QString>()));
+    if (query.exec(QStringLiteral("SET SESSION TRANSACTION ISOLATION LEVEL %1;")
+                   .arg(config["isolation_level"].value<QString>())))
+        return;
+
+    throw QueryError(m_configureErrorMessage.arg(__FUNCTION__), query);
 }
 
 void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
@@ -92,8 +97,11 @@ void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
 
     QSqlQuery query(connection);
 
-    query.exec(QStringLiteral("set names '%1'%2;")
-               .arg(config["charset"].value<QString>(), getCollation(config)));
+    if (query.exec(QStringLiteral("set names '%1'%2;")
+                   .arg(config["charset"].value<QString>(), getCollation(config))))
+        return;
+
+    throw QueryError(m_configureErrorMessage.arg(__FUNCTION__), query);
 }
 
 QString MySqlConnector::getCollation(const QVariantHash &config) const
@@ -106,10 +114,16 @@ QString MySqlConnector::getCollation(const QVariantHash &config) const
 void MySqlConnector::configureTimezone(const QSqlDatabase &connection,
                                        const QVariantHash &config) const
 {
+    if (!config.contains("timezone"))
+        return;
+
     QSqlQuery query(connection);
 
-    query.exec(QStringLiteral("set time_zone=\"%1\";")
-               .arg(config["timezone"].value<QString>()));
+    if (query.exec(QStringLiteral("set time_zone=\"%1\";")
+                   .arg(config["timezone"].value<QString>())))
+        return;
+
+    throw QueryError(m_configureErrorMessage.arg(__FUNCTION__), query);
 }
 
 void MySqlConnector::setModes(const QSqlDatabase &connection,
@@ -123,11 +137,18 @@ void MySqlConnector::setModes(const QSqlDatabase &connection,
 
         if (config["strict"].value<bool>()) {
             QSqlQuery query(connection);
-            query.exec(strictMode(connection, config));
+            if (query.exec(strictMode(connection, config)))
+                return;
+
+            throw QueryError(m_configureErrorMessage.arg(__FUNCTION__), query);
         }
         else {
             QSqlQuery query(connection);
-            query.exec(QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'"));
+            if (query.exec(
+                    QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'")))
+                return;
+
+            throw QueryError(m_configureErrorMessage.arg(__FUNCTION__), query);
         }
     }
 }
@@ -163,11 +184,14 @@ QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
         QSqlQuery query(connection);
 
         if (!query.exec(QStringLiteral("select version()")))
-            return "";
+            throw QueryError(m_configureErrorMessage.arg(__FUNCTION__), query);
 
-        // TODO next handle query errors, in whole class, check all queries silverqx
         if (!query.first())
-            return "";
+            // BUG study throwing exceptions from dll, look playground main.cpp silverqx
+            throw new RuntimeError(
+                        QStringLiteral("Error during connection configuration, can not "
+                                       "obtain the first record in %1().")
+                            .arg(__FUNCTION__));
 
         version = query.value(0).value<QString>();
     }
@@ -182,7 +206,10 @@ void MySqlConnector::setCustomModes(const QSqlDatabase &connection,
 
     QSqlQuery query(connection);
 
-    query.exec(QStringLiteral("set session sql_mode='%1';").arg(modes));
+    if (query.exec(QStringLiteral("set session sql_mode='%1';").arg(modes)))
+        return;
+
+    throw QueryError(m_configureErrorMessage.arg(__FUNCTION__), query);
 }
 
 } // namespace Orm::Connectors

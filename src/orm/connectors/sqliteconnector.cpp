@@ -4,6 +4,7 @@
 #include <QtSql/QSqlQuery>
 
 #include "orm/invalidargumenterror.hpp"
+#include "orm/queryerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -67,8 +68,11 @@ void SQLiteConnector::configureForeignKeyConstraints(
 
     QSqlQuery query(connection);
     // FEATURE schema builder, foreign key constraints silverqx
-    // CUR throw on false result silverqx
-    query.exec(QStringLiteral("PRAGMA foreign_keys = %1;").arg(foreignKeyConstraints));
+    if (query.exec(QStringLiteral("PRAGMA foreign_keys = %1;")
+                   .arg(foreignKeyConstraints)))
+        return;
+
+    throw QueryError(m_configureErrorMessage.arg(__FUNCTION__), query);
 }
 
 void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const

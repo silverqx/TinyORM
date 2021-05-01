@@ -10,6 +10,9 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Connectors
 {
 
+const QString Connector::m_configureErrorMessage =
+        "Connection configuration statement in %1() failed.";
+
 QSqlDatabase
 Connector::createConnection(const QString &name, const QVariantHash &config,
                             const QString &options) const
