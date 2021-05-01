@@ -188,7 +188,7 @@ QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
 
         if (!query.first())
             // BUG study throwing exceptions from dll, look playground main.cpp silverqx
-            throw new RuntimeError(
+            throw RuntimeError(
                         QStringLiteral("Error during connection configuration, can not "
                                        "obtain the first record in %1().")
                             .arg(__FUNCTION__));
