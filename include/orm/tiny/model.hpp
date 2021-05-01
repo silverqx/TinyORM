@@ -2210,7 +2210,8 @@ namespace Relations {
         relation->touch();
 
         // Many type relation
-        if constexpr (std::is_base_of_v<Relations::ManyRelation, Relation::element_type>)
+        if constexpr (std::is_base_of_v<Relations::ManyRelation,
+                                        typename Relation::element_type>)
         {
             for (auto *const relatedModel : getRelationValue<Related>(relationName))
                 // WARNING check and add note after, if many type relation QVector can contain nullptr silverqx
@@ -2220,7 +2221,7 @@ namespace Relations {
 
         // One type relation
         else if constexpr (std::is_base_of_v<Relations::OneRelation,
-                                             Relation::element_type>)
+                                             typename Relation::element_type>)
         {
             if (auto *const relatedModel = getRelationValue<Related, One>(relationName);
                 relatedModel
