@@ -181,6 +181,7 @@ namespace Concerns
         public:
             LazyRelationStore(HasRelationStore &hasRelationStore);
 
+            // TODO templated LazyRelationStore by Container too, QVector to Container silverqx
             /*! The result of lazy load. */
             std::variant<QVector<Related>, std::optional<Related>> result;
 

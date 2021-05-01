@@ -2209,23 +2209,26 @@ namespace Relations {
 
         relation->touch();
 
-        // CUR try to solve this with is_base_of or is_convertible silverqx
         // Many type relation
-        if (dynamic_cast<Relations::ManyRelation *>(relation.get()) != nullptr) {
+        if constexpr (std::is_base_of_v<Relations::ManyRelation, Relation::element_type>)
+        {
             for (auto *const relatedModel : getRelationValue<Related>(relationName))
                 // WARNING check and add note after, if many type relation QVector can contain nullptr silverqx
                 if (relatedModel)
                     relatedModel->touchOwners();
         }
+
         // One type relation
-        else
+        else if constexpr (std::is_base_of_v<Relations::OneRelation,
+                                             Relation::element_type>)
+        {
             if (auto *const relatedModel = getRelationValue<Related, One>(relationName);
                 relatedModel
             )
                 relatedModel->touchOwners();
-            // CUR finish silverqx
-//            throw RuntimeError("Bad relation type passed to the "
-//                               "Model::touchOwnersVisited().");
+        } else
+            throw RuntimeError("Bad relation type passed to the "
+                               "Model::touchOwnersVisited().");
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -3169,7 +3172,7 @@ namespace Relations {
         )
             return getAttributeValue(key);
 
-        // CUR add getRelationValue() overload without Related template argument, after that I will be able to use it here, Related template param. will be obtained by the visitor silverqx
+        // FUTURE add getRelationValue() overload without Related template argument, after that I will be able to use it here, Related template parameter will be obtained by the visitor, I think this task is impossible to do silverqx
         // NOTE api different silverqx
         return {};
 //        return $this->getRelationValue($key);
