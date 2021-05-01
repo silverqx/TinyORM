@@ -16,6 +16,9 @@ class RoleUser final : public BasePivot<RoleUser>
     inline static QStringList u_fillable {
         "active",
     };
+
+    /*! Indicates if the model should be timestamped. */
+    bool u_timestamps = false;
 };
 
 #endif // ROLEUSER_H

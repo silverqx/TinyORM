@@ -33,6 +33,9 @@ private:
     QHash<QString, RelationVisitor> u_relations {
         {"roles", [](auto &v) { v(&User::roles); }},
     };
+
+    /*! Indicates if the model should be timestamped. */
+    bool u_timestamps = false;
 };
 
 #endif // USER_H
