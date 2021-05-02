@@ -34,8 +34,10 @@ DEFINES += PROJECT_TINYORM
 # Log queries with time measurement
 DEFINES += TINYORM_DEBUG_SQL
 
-# Build as shared library
-DEFINES += TINYORM_BUILDING_SHARED
+# Build as the shared library
+CONFIG(shared, dll|shared|static|staticlib) | CONFIG(dll, dll|shared|static|staticlib) {
+    DEFINES += TINYORM_BUILDING_SHARED
+}
 
 # Enable code needed by tests, eg connection overriding in the Model
 build_tests {

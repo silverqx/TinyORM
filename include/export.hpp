@@ -6,15 +6,23 @@
                       || defined(__NT__)
 #  define TINY_DECL_EXPORT __declspec(dllexport)
 #  define TINY_DECL_IMPORT __declspec(dllimport)
-#else
+#elif __GNU__ >= 4
 #  define TINY_DECL_EXPORT __attribute__((visibility("default")))
 #  define TINY_DECL_IMPORT __attribute__((visibility("default")))
+#else
+#  define TINY_DECL_EXPORT
+#  define TINY_DECL_IMPORT
 #endif
 
 #if defined(TINYORM_BUILDING_SHARED)
 #  define SHAREDLIB_EXPORT TINY_DECL_EXPORT
-#else
+#elif defined(TINYORM_LINKING_SHARED)
 #  define SHAREDLIB_EXPORT TINY_DECL_IMPORT
+#endif
+
+// Building static library
+#ifndef SHAREDLIB_EXPORT
+#  define SHAREDLIB_EXPORT
 #endif
 
 #endif // TINYORM_EXPORT_H
