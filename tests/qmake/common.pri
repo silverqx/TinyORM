@@ -21,6 +21,11 @@ DEFINES += PROJECT_TINYORM_TEST
 # Enable code needed by tests, eg connection overriding in the Model
 DEFINES += TINYORM_TESTS_CODE
 
+# Other libraries defines
+# ---
+
+DEFINES += TINYORM_LINKING_SHARED
+
 # User Configuration
 # ---
 
