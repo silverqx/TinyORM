@@ -50,13 +50,13 @@ include(../../include/include.pri)
 # ---
 
 win32:CONFIG(release, debug|release) {
-    LIBS += -L$$TINYORM_BUILD_TREE/src/release/ -lTinyOrm0
+    LIBS += -L$$TINYORM_BUILD_TREE/src/release/ -lTinyOrm
 }
 else:win32:CONFIG(debug, debug|release) {
-    LIBS += -L$$TINYORM_BUILD_TREE/src/debug/ -lTinyOrm0
+    LIBS += -L$$TINYORM_BUILD_TREE/src/debug/ -lTinyOrm
 }
 else:unix {
-    LIBS += -L$$TINYORM_BUILD_TREE/src/ -lTinyOrm0
+    LIBS += -L$$TINYORM_BUILD_TREE/src/ -lTinyOrm
 }
 
 target.CONFIG += no_default_install

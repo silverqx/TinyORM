@@ -11,11 +11,13 @@ namespace Orm::Utils::Type
 {
     /*! Class name without a namespace and template parameters. */
     template<typename Type>
-    inline QString classPureBasename()
+    inline QString classPureBasename(const bool withNamespace = false)
     {
-        QRegularExpression re(
-                    QStringLiteral("(?:(?<=^struct )\\w+|(?<=^class )\\w+|(?<=::)\\w+)"
-                                   "(?=<.*>| |$)"));
+        const auto matchRegEx = withNamespace ? "[\\w:]+" : "\\w+|(?<=::)\\w+";
+
+        // FUTURE ask at some forum if this regexp is correctly written silverqx
+        QRegularExpression re(QStringLiteral("(?:(?<=^struct |^class )%1)(?=<.*>| |$)")
+                              .arg(matchRegEx));
 
         const auto match = re.match(typeid (Type).name());
 
@@ -29,14 +31,15 @@ namespace Orm::Utils::Type
 
     /*! Class name without a namespace and template parameters. */
     template<typename Type>
-    inline QString classPureBasename(const Type &type)
+    inline QString classPureBasename(const Type &type, const bool withNamespace = false)
     {
+        const auto matchRegEx = withNamespace ? "[\\w:]+" : "\\w+|(?<=::)\\w+";
+
+        QRegularExpression re(QStringLiteral("(?:(?<=^struct |^class )%1)(?=<.*>| |$)")
+                              .arg(matchRegEx));
+
         /* If you want to obtain a name for the polymorphic type, take care to pass
             a glvalue as the 'type' argument, the 'this' pointer is a prvalue! */
-        QRegularExpression re(
-                    QStringLiteral("(?:(?<=^struct )\\w+|(?<=^class )\\w+|(?<=::)\\w+)"
-                                   "(?=<.*>| |$)"));
-
         const auto match = re.match(typeid (type).name());
 
         // This should never happen, but who knows 🤔

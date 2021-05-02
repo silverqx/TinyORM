@@ -27,9 +27,8 @@ namespace Concerns
         static void unsetConnectionResolver();
 
     protected:
-        // WARNING if the m_resolver is inline static, that it is nullptr even after initialization from DatabaseManager ctor, examine why this happen and how it works silverqx
         /*! The connection resolver instance. */
-        static ConnectionResolverInterface *m_resolver;
+        inline static ConnectionResolverInterface *m_resolver = nullptr;
     };
 
 } // namespace Orm::Concerns

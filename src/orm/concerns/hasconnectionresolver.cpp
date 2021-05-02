@@ -7,8 +7,6 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Concerns
 {
 
-ConnectionResolverInterface *HasConnectionResolver::m_resolver = nullptr;
-
 ConnectionResolverInterface *HasConnectionResolver::getConnectionResolver()
 {
     return m_resolver;

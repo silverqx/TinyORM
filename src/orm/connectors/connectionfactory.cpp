@@ -103,7 +103,7 @@ ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &confi
         auto configCopy = config;
 
         const auto hosts = parseHosts(configCopy);
-        std::exception lastException;
+        std::exception_ptr lastException;
 
         // FUTURE add support for multiple hosts and connect randomly to one of them, in this step have to take into account also the sticky config paramater silverqx
         /* This for statement do nothing for now, it purpose is to randomly
@@ -115,13 +115,14 @@ ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &confi
 
                 return createConnector(configCopy)->connect(configCopy);
 
-            }  catch (const std::exception &e) {
+            // CUR check all catch blocks, if I properly handling exceptions silverqx
+            }  catch (const std::exception &) {
                 // Save last exception to be able to re-throw
-                lastException = e;
+                lastException = std::current_exception();
                 continue;
             }
 
-        throw lastException;
+        std::rethrow_exception(lastException);
     };
 }
 
