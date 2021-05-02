@@ -1164,7 +1164,7 @@ namespace Relations {
     template<typename Derived, typename ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::find(const QVariant &id,
-                                            const QStringList &columns)
+                                          const QStringList &columns)
     {
         return query()->find(id, columns);
     }

@@ -35,13 +35,13 @@ namespace Orm
         static std::unique_ptr<DatabaseManager>
         create(const QVariantHash &config,
                const QString &connection =
-                QLatin1String(DatabaseManager::defaultConnectionName));
+               QLatin1String(DatabaseManager::defaultConnectionName));
         /*! Factory method to create DatabaseManager instance and set connections
             at once. */
         static std::unique_ptr<DatabaseManager>
         create(const ConfigurationsType &configs,
                const QString &defaultConnection =
-                QLatin1String(DatabaseManager::defaultConnectionName));
+               QLatin1String(DatabaseManager::defaultConnectionName));
 
         /*! Get a database connection instance. */
         static ConnectionInterface &connection(const QString &name = "");
@@ -49,7 +49,7 @@ namespace Orm
         static DatabaseManager &
         addConnection(const QVariantHash &config,
                       const QString &name =
-                       QLatin1String(DatabaseManager::defaultConnectionName));
+                      QLatin1String(DatabaseManager::defaultConnectionName));
         /*! Remove the given connection from the manager. */
         static bool removeConnection(QString name = "");
 
