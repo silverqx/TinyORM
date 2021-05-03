@@ -49,7 +49,7 @@ namespace Query
         virtual QString wrapTable(const Expression &table) const;
 
         /*! Wrap an array of values. */
-        template<typename T> requires QStringContainer<T>
+        template<QStringContainer T>
         T wrapArray(T values) const;
 
         /*! Determine if the given value is a raw expression. */
@@ -65,7 +65,7 @@ namespace Query
         /*! Convert the vector of column names into a delimited string. */
         QString columnize(const QStringList &columns, bool isTorrentsTable) const;
         /*! Create query parameter place-holders for the vector. */
-        template<typename Container> requires Parametrize<Container>
+        template<Parametrize Container>
         QString parametrize(const Container &values) const;
         /*! Get the appropriate query parameter place-holder for a value. */
         QString parameter(const QVariant &value) const;
@@ -97,7 +97,7 @@ namespace Query
         QString m_tablePrefix = "";
     };
 
-    template<typename T> requires QStringContainer<T>
+    template<QStringContainer T>
     T BaseGrammar::wrapArray(T values) const
     {
         for (auto &value : values)
@@ -106,7 +106,7 @@ namespace Query
         return values;
     }
 
-    template<typename Container> requires Parametrize<Container>
+    template<Parametrize Container>
     QString BaseGrammar::parametrize(const Container &values) const
     {
         QStringList compiledParameters;
