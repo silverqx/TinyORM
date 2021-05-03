@@ -235,6 +235,11 @@ namespace Query
         return *this;
     }
 
+    /*! Concept for Model's AllRelations template parameter, AllRelations can not
+        contain actual model type declared in the Derived template parameter. */
+    template<typename Derived, typename ...AllRelations>
+    concept AllRelationsConcept = (!std::is_same_v<Derived, AllRelations> && ...);
+
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE

@@ -70,7 +70,7 @@ namespace Relations {
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     // TODO QueryBuilder::updateOrInsert() silverqx
     // CUR code coverage silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
             public Orm::Concerns::HasConnectionResolver,
@@ -1073,7 +1073,7 @@ namespace Relations {
         inline const QStringList &getGuardedInternal() const;
     };
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...>::Model()
     {
         // Compile time check if a primary key type is supported by a QVariant
@@ -1085,7 +1085,7 @@ namespace Relations {
         syncOriginal();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...>::Model(const QVector<AttributeItem> &attributes)
         : Model()
     {
@@ -1094,7 +1094,7 @@ namespace Relations {
         fill(attributes);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...>::Model(QVector<AttributeItem> &&attributes)
         : Model()
     {
@@ -1103,14 +1103,14 @@ namespace Relations {
         fill(std::move(attributes));
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...>::Model(
             std::initializer_list<AttributeItem> attributes
     )
         : Model(QVector<AttributeItem>(attributes.begin(), attributes.end()))
     {}
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::instance(const QVector<AttributeItem> &attributes)
     {
@@ -1121,7 +1121,7 @@ namespace Relations {
         return model;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::instance(QVector<AttributeItem> &&attributes)
     {
@@ -1132,14 +1132,14 @@ namespace Relations {
         return model;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::query()
     {
         return Derived().newQuery();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::on(const QString &connection)
     {
@@ -1154,14 +1154,14 @@ namespace Relations {
         return instance.newQuery();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<Derived>
     Model<Derived, AllRelations...>::all(const QStringList &columns)
     {
         return query()->get(columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::find(const QVariant &id,
                                           const QStringList &columns)
@@ -1169,7 +1169,7 @@ namespace Relations {
         return query()->find(id, columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::findOrNew(const QVariant &id,
                                                const QStringList &columns)
@@ -1177,7 +1177,7 @@ namespace Relations {
         return query()->findOrNew(id, columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::findOrFail(const QVariant &id,
                                                 const QStringList &columns)
@@ -1185,7 +1185,7 @@ namespace Relations {
         return query()->findOrFail(id, columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::firstOrNew(
             const QVector<WhereItem> &attributes,
@@ -1194,7 +1194,7 @@ namespace Relations {
         return query()->firstOrNew(attributes, values);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::firstOrCreate(
             const QVector<WhereItem> &attributes,
@@ -1203,14 +1203,14 @@ namespace Relations {
         return query()->firstOrCreate(attributes, values);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::firstOrFail(const QStringList &columns)
     {
         return query()->firstOrFail(columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::firstWhere(
             const QString &column, const QString &comparison,
@@ -1219,7 +1219,7 @@ namespace Relations {
         return where(column, comparison, value, condition)->first();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::firstWhereEq(
             const QString &column, const QVariant &value, const QString &condition)
@@ -1227,14 +1227,14 @@ namespace Relations {
         return where(column, QStringLiteral("="), value, condition)->first();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant Model<Derived, AllRelations...>::value(const QString &column)
     {
         return query()->value(column);
     }
 
     // TODO now problem with QStringList overload, its ambiguou, I think I need only QStringList, because is implicitly convertible to QString silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::with(const QVector<WithItem> &relations)
     {
@@ -1245,14 +1245,14 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::with(const QString &relation)
     {
         return with(QVector<WithItem> {{relation}});
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::without(const QVector<QString> &relations)
     {
@@ -1263,28 +1263,28 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::without(const QString &relation)
     {
         return without(QVector<QString> {relation});
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::create(const QVector<AttributeItem> &attributes)
     {
         return query()->create(attributes);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::first(const QStringList &columns)
     {
         return query()->first(columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<QSqlQuery>
     Model<Derived, AllRelations...>::insert(
             const QVector<AttributeItem> &attributes)
@@ -1293,7 +1293,7 @@ namespace Relations {
     }
 
     // FEATURE dilemma primarykey, Derived::KeyType vs QVariant silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     quint64
     Model<Derived, AllRelations...>::insertGetId(
             const QVector<AttributeItem> &attributes)
@@ -1301,7 +1301,7 @@ namespace Relations {
         return query()->insertGetId(attributes);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::updateOrCreate(
             const QVector<WhereItem> &attributes, const QVector<AttributeItem> &values)
@@ -1312,7 +1312,7 @@ namespace Relations {
     // TODO cpp check all int types and use std::size_t where appropriate silverqx
     // FEATURE dilemma primarykey, id should be Derived::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
     // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     size_t
     Model<Derived, AllRelations...>::destroy(const QVector<QVariant> &ids)
     {
@@ -1334,20 +1334,20 @@ namespace Relations {
         return count;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     size_t
     Model<Derived, AllRelations...>::destroy(const QVariant id)
     {
         return destroy(QVector<QVariant> {id});
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::truncate()
     {
         query()->truncate();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::select(const QStringList columns)
     {
@@ -1358,7 +1358,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::select(const QString column)
     {
@@ -1369,7 +1369,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::addSelect(const QStringList &columns)
     {
@@ -1380,7 +1380,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::addSelect(const QString &column)
     {
@@ -1391,7 +1391,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::distinct()
     {
@@ -1402,7 +1402,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::join(
             const QString &table, const QString &first,  const QString &comparison,
@@ -1415,7 +1415,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::join(
             const QString &table, const std::function<void(JoinClause &)> &callback,
@@ -1428,7 +1428,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::joinWhere(
             const QString &table, const QString &first, const QString &comparison,
@@ -1441,7 +1441,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::leftJoin(
             const QString &table, const QString &first,
@@ -1454,7 +1454,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::leftJoin(
             const QString &table, const std::function<void(JoinClause &)> &callback)
@@ -1466,7 +1466,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::leftJoinWhere(
             const QString &table, const QString &first,
@@ -1479,7 +1479,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::rightJoin(
             const QString &table, const QString &first,
@@ -1492,7 +1492,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::rightJoin(
             const QString &table, const std::function<void(JoinClause &)> &callback)
@@ -1504,7 +1504,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::rightJoinWhere(
             const QString &table, const QString &first,
@@ -1517,7 +1517,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::crossJoin(
             const QString &table, const QString &first,
@@ -1530,7 +1530,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::crossJoin(
             const QString &table, const std::function<void(JoinClause &)> &callback)
@@ -1542,7 +1542,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::where(
             const QString &column, const QString &comparison,
@@ -1555,7 +1555,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhere(
             const QString &column, const QString &comparison, const QVariant &value)
@@ -1567,7 +1567,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereEq(
             const QString &column, const QVariant &value, const QString &condition)
@@ -1579,7 +1579,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereEq(
             const QString &column, const QVariant &value)
@@ -1591,7 +1591,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::where(
             const std::function<void(TinyBuilder<Derived> &)> &callback,
@@ -1604,7 +1604,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhere(
             const std::function<void(TinyBuilder<Derived> &)> &callback)
@@ -1616,7 +1616,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::where(const QVector<WhereItem> &values,
                                              const QString &condition)
@@ -1630,7 +1630,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhere(const QVector<WhereItem> &values)
     {
@@ -1641,7 +1641,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereColumn(
             const QVector<WhereColumnItem> &values, const QString &condition)
@@ -1653,7 +1653,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereColumn(
             const QVector<WhereColumnItem> &values)
@@ -1665,7 +1665,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereColumn(
             const QString &first, const QString &comparison,
@@ -1678,7 +1678,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereColumn(
             const QString &first, const QString &comparison, const QString &second)
@@ -1690,7 +1690,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereColumnEq(
             const QString &first, const QString &second, const QString &condition)
@@ -1702,7 +1702,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereColumnEq(
             const QString &first, const QString &second)
@@ -1714,7 +1714,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereIn(
             const QString &column, const QVector<QVariant> &values,
@@ -1727,7 +1727,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereIn(
             const QString &column, const QVector<QVariant> &values)
@@ -1739,7 +1739,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereNotIn(
             const QString &column, const QVector<QVariant> &values,
@@ -1752,7 +1752,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereNotIn(
             const QString &column, const QVector<QVariant> &values)
@@ -1764,7 +1764,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereNull(
             const QStringList &columns, const QString &condition, const bool nope)
@@ -1776,7 +1776,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereNull(
             const QString &column, const QString &condition, const bool nope)
@@ -1788,7 +1788,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereNull(const QStringList &columns)
     {
@@ -1799,7 +1799,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereNull(const QString &column)
     {
@@ -1810,7 +1810,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereNotNull(
             const QStringList &columns, const QString &condition)
@@ -1822,7 +1822,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereNotNull(
             const QString &column, const QString &condition)
@@ -1834,7 +1834,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereNotNull(const QStringList &columns)
     {
@@ -1845,7 +1845,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereNotNull(const QString &column)
     {
@@ -1856,7 +1856,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::groupBy(const QStringList &groups)
     {
@@ -1867,7 +1867,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::groupBy(const QString &group)
     {
@@ -1878,7 +1878,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::having(
             const QString &column, const QString &comparison,
@@ -1891,7 +1891,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orHaving(
             const QString &column, const QString &comparison, const QVariant &value)
@@ -1903,7 +1903,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orderBy(const QString &column,
                                              const QString &direction)
@@ -1915,7 +1915,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orderByDesc(const QString &column)
     {
@@ -1926,7 +1926,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::latest(QString column)
     {
@@ -1937,7 +1937,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::oldest(QString column)
     {
@@ -1948,7 +1948,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::reorder()
     {
@@ -1959,7 +1959,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::reorder(const QString &column,
                                              const QString &direction)
@@ -1971,7 +1971,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::limit(const int value)
     {
@@ -1982,7 +1982,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::take(const int value)
     {
@@ -1993,7 +1993,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::offset(const int value)
     {
@@ -2004,7 +2004,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::skip(const int value)
     {
@@ -2015,7 +2015,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::forPage(const int page, const int perPage)
     {
@@ -2026,7 +2026,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereKey(const QVariant &id)
     {
@@ -2037,7 +2037,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereKeyNot(const QVariant &id)
     {
@@ -2048,7 +2048,7 @@ namespace Relations {
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::save(const SaveOptions &options)
     {
 //        mergeAttributesFromClassCasts();
@@ -2093,7 +2093,7 @@ namespace Relations {
     }
 
     // FUTURE support for SaveOptions parameter, Eloquent doesn't have this parameter, maybe there's a reason for that, but I didn't find anything on github issues silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::push()
     {
         if (!save())
@@ -2112,7 +2112,7 @@ namespace Relations {
         return true;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::pushWithVisitor(
             const QString &relation, RelationsType<AllRelations...> &models)
     {
@@ -2138,7 +2138,7 @@ namespace Relations {
         return pushResult;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     void Model<Derived, AllRelations...>::pushVisited()
     {
@@ -2153,7 +2153,7 @@ namespace Relations {
             throw RuntimeError("this->pushStore().models holds unexpected alternative.");
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Tag> requires std::is_same_v<Tag, Many>
     void Model<Derived, AllRelations...>::pushVisited()
     {
@@ -2168,7 +2168,7 @@ namespace Relations {
         pushStore.result = true;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
     void Model<Derived, AllRelations...>::pushVisited()
     {
@@ -2187,7 +2187,7 @@ namespace Relations {
         pushStore.result = model->push();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void
     Model<Derived, AllRelations...>::touchOwnersWithVisitor(const QString &relation)
     {
@@ -2201,7 +2201,7 @@ namespace Relations {
         this->resetRelationStore();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Relation>
     void Model<Derived, AllRelations...>::touchOwnersVisited(Relation &&relation)
     {
@@ -2232,7 +2232,7 @@ namespace Relations {
                                "Model::touchOwnersVisited().");
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::update(
             const QVector<AttributeItem> &attributes,
             const SaveOptions &options)
@@ -2243,7 +2243,7 @@ namespace Relations {
         return fill(attributes).save(options);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::remove()
     {
         // FEATURE castable silverqx
@@ -2281,13 +2281,13 @@ namespace Relations {
         return true;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::deleteModel()
     {
         return model().remove();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::fresh(
             const QVector<WithItem> &relations)
@@ -2300,14 +2300,14 @@ namespace Relations {
                 .first();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::fresh(const QString &relation)
     {
         return fresh(QVector<WithItem> {{relation}});
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::refresh()
     {
         if (!exists)
@@ -2324,7 +2324,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<WithItem>
     Model<Derived, AllRelations...>::getLoadedRelationsWithoutPivot()
     {
@@ -2351,7 +2351,7 @@ namespace Relations {
         return relations;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::replaceRelations(
             std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
             const QVector<WithItem> &onlyRelations)
@@ -2377,7 +2377,7 @@ namespace Relations {
     }
 
     // FUTURE LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::load(
             const QVector<WithItem> &relations)
@@ -2406,14 +2406,14 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::load(const QString &relation)
     {
         return load(QVector<WithItem> {{relation}});
     }
 
     // TODO add clean Model overloads, I don't remember what it exactly mean or better why should I need Model overloads silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename ModelToCompare>
     bool Model<Derived, AllRelations...>::is(
             const std::optional<ModelToCompare> &model) const
@@ -2424,7 +2424,7 @@ namespace Relations {
                 && getConnectionName() == model->getConnectionName();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename ModelToCompare>
     bool Model<Derived, AllRelations...>::isNot(
             const std::optional<ModelToCompare> &model) const
@@ -2432,7 +2432,7 @@ namespace Relations {
         return !is(model);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::fill(const QVector<AttributeItem> &attributes)
     {
@@ -2456,7 +2456,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::fill(QVector<AttributeItem> &&attributes)
     {
@@ -2481,7 +2481,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::forceFill(
             const QVector<AttributeItem> &attributes)
@@ -2498,7 +2498,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newQueryWithoutScopes()
     {
@@ -2509,7 +2509,7 @@ namespace Relations {
         return tinyBuilder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newModelQuery()
     {
@@ -2519,14 +2519,14 @@ namespace Relations {
         return newTinyBuilder(newBaseQueryBuilder());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newQueryWithoutRelationships()
     {
         return newModelQuery();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newTinyBuilder(
             const QSharedPointer<QueryBuilder> query)
@@ -2534,7 +2534,7 @@ namespace Relations {
         return std::make_unique<TinyBuilder<Derived>>(query, model());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newFromBuilder(
             const QVector<AttributeItem> &attributes,
@@ -2549,7 +2549,7 @@ namespace Relations {
         return model;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newInstance(
             const QVector<AttributeItem> &attributes, const bool exists)
@@ -2572,7 +2572,7 @@ namespace Relations {
         return model;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newInstance(
             QVector<AttributeItem> &&attributes, const bool exists)
@@ -2595,7 +2595,7 @@ namespace Relations {
         return model;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename PivotType, typename Parent>
     PivotType
     Model<Derived, AllRelations...>::newPivot(
@@ -2610,20 +2610,20 @@ namespace Relations {
                         parent, attributes, table, exists);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::model()
     {
         // Can not be cached with static because a copy can be made
         return static_cast<Derived &>(*this);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const Derived &Model<Derived, AllRelations...>::model() const
     {
         return static_cast<const Derived &>(*this);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QString &
     Model<Derived, AllRelations...>::getConnectionName() const
     {
@@ -2638,7 +2638,7 @@ namespace Relations {
         return model().u_connection;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QString Model<Derived, AllRelations...>::getTable() const
     {
         const auto &table = model().u_table;
@@ -2651,7 +2651,7 @@ namespace Relations {
         return table;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QSharedPointer<QueryBuilder>
     Model<Derived, AllRelations...>::newBaseQueryBuilder() const
     {
@@ -2659,7 +2659,7 @@ namespace Relations {
     }
 
     // CUR return optional reference, I remember that I abandoned it, but it is much better to avoid nullptr checks, anyway investigate it silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, template<typename> typename Container>
     const Container<Related *>
     Model<Derived, AllRelations...>::getRelationValue(const QString &relation)
@@ -2679,7 +2679,7 @@ namespace Relations {
         return {};
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelationValue(const QString &relation)
@@ -2699,7 +2699,7 @@ namespace Relations {
         return nullptr;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<class Related, template<typename> typename Container>
     Container<Related *>
     Model<Derived, AllRelations...>::getRelationshipFromMethod(const QString &relation)
@@ -2713,7 +2713,7 @@ namespace Relations {
         return getRelationFromHash<Related, Container>(relation);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<class Related, typename Tag> requires std::is_same_v<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelationshipFromMethod(const QString &relation)
@@ -2728,7 +2728,7 @@ namespace Relations {
         return getRelationFromHash<Related, Tag>(relation);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Result>
     Result
     Model<Derived, AllRelations...>::getRelationshipFromMethodWithVisitor(
@@ -2750,7 +2750,7 @@ namespace Relations {
         return std::get<Result>(lazyResult);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<AttributeItem>
     Model<Derived, AllRelations...>::getDirty() const
     {
@@ -2765,7 +2765,7 @@ namespace Relations {
         return dirty;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unordered_map<QString, int>
     Model<Derived, AllRelations...>::getDirtyHash() const
     {
@@ -2781,7 +2781,7 @@ namespace Relations {
         return dirtyHash;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::hasChanges(
             const std::unordered_map<QString, int> &changes,
             const QStringList &attributes) const
@@ -2802,7 +2802,7 @@ namespace Relations {
         return false;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::syncChanges()
     {
         m_changes = getDirty();
@@ -2812,7 +2812,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
     Model<Derived, AllRelations...>::originalIsEquivalent(const QString &key) const
     {
@@ -2849,7 +2849,7 @@ namespace Relations {
         return false;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::isDateAttribute(const QString &key) const
     {
         // FEATURE castable silverqx
@@ -2858,7 +2858,7 @@ namespace Relations {
     }
 
     // TODO would be good to make it the c++ way, make overload for every type, asDateTime() is protected, so I have full control over it, but I leave it for now, because there will be more methods which will use this method in the future, and it will be more clear later on silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QDateTime
     Model<Derived, AllRelations...>::asDateTime(const QVariant &value) const
     {
@@ -2900,7 +2900,7 @@ namespace Relations {
                     .arg(value.value<QString>(), format));
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
     Model<Derived, AllRelations...>::timestampColumnNames() const
     {
@@ -2914,7 +2914,7 @@ namespace Relations {
         return cached;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::rehashAttributePositions(
             const QVector<AttributeItem> &attributes,
             std::unordered_map<QString, int> &attributesHash,
@@ -2928,7 +2928,7 @@ namespace Relations {
             attributesHash[attributes.at(i).key] = i;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<class Related, template<typename> typename Container>
     Container<Related *>
     Model<Derived, AllRelations...>::getRelationFromHash(const QString &relation)
@@ -2943,7 +2943,7 @@ namespace Relations {
                 | ranges::to<Container<Related *>>();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<class Related, typename Tag> requires std::is_same_v<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelationFromHash(const QString &relation)
@@ -2962,7 +2962,7 @@ namespace Relations {
     // TODO solve different behavior like Eloquent getRelation() silverqx
     // TODO next many relation compiles with Orm::One and exception during runtime occures, solve this during compile, One relation only with Orm::One and many relation type only with Container version silverqx
     // Return const value to prevent clazy warning about detaching container
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, template<typename> typename Container>
     const Container<Related *>
     Model<Derived, AllRelations...>::getRelation(const QString &relation)
@@ -2975,7 +2975,7 @@ namespace Relations {
     }
 
     // TODO smart pointer for this relation stuffs? silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelation(const QString &relation)
@@ -2989,7 +2989,7 @@ namespace Relations {
         return getRelationFromHash<Related, Tag>(relation);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     Derived &
     Model<Derived, AllRelations...>::setRelation(const QString &relation,
@@ -3000,7 +3000,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     Derived &
     Model<Derived, AllRelations...>::setRelation(const QString &relation,
@@ -3011,7 +3011,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     Derived &
     Model<Derived, AllRelations...>::setRelation(const QString &relation,
@@ -3022,7 +3022,7 @@ namespace Relations {
         return this->model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     Derived &
     Model<Derived, AllRelations...>::setRelation(const QString &relation,
@@ -3033,7 +3033,7 @@ namespace Relations {
         return this->model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     requires std::is_base_of_v<Relations::IsPivotModel, Related>
     Derived &
@@ -3047,7 +3047,7 @@ namespace Relations {
         return this->model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     requires std::is_base_of_v<Relations::IsPivotModel, Related>
     Derived &
@@ -3061,7 +3061,7 @@ namespace Relations {
         return this->model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QString
     Model<Derived, AllRelations...>::qualifyColumn(const QString &column) const
     {
@@ -3072,7 +3072,7 @@ namespace Relations {
     }
 
     // TODO move, add rvalue version, for key parameter too silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::setAttribute(
             const QString &key, QVariant value)
     {
@@ -3105,7 +3105,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::setRawAttributes(
             const QVector<AttributeItem> &attributes,
@@ -3126,7 +3126,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::syncOriginal()
     {
         m_original = getAttributes();
@@ -3136,7 +3136,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QVector<AttributeItem> &
     Model<Derived, AllRelations...>::getAttributes() const
     {
@@ -3147,7 +3147,7 @@ namespace Relations {
         return m_attributes;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const std::unordered_map<QString, int> &
     Model<Derived, AllRelations...>::getAttributesHash() const
     {
@@ -3157,7 +3157,7 @@ namespace Relations {
         return m_attributesHash;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant Model<Derived, AllRelations...>::getAttribute(const QString &key) const
     {
         if (key.isEmpty() || key.isNull())
@@ -3179,7 +3179,7 @@ namespace Relations {
 //        return $this->getRelationValue($key);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::getAttributeValue(const QString &key) const
     {
@@ -3187,7 +3187,7 @@ namespace Relations {
     }
 
     // TODO candidate for optional const reference, to be able return null value and use reference at the same time silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::getAttributeFromArray(const QString &key) const
     {
@@ -3199,7 +3199,7 @@ namespace Relations {
     }
 
     // NOTE api different silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::getOriginal(
             const QString &key, const QVariant &defaultValue) const
@@ -3208,7 +3208,7 @@ namespace Relations {
                 .getOriginalWithoutRewindingModel(key, defaultValue);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<AttributeItem>
     Model<Derived, AllRelations...>::getOriginals() const
     {
@@ -3224,7 +3224,7 @@ namespace Relations {
         return originals;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const std::unordered_map<QString, int> &
     Model<Derived, AllRelations...>::getOriginalsHash() const
     {
@@ -3232,7 +3232,7 @@ namespace Relations {
     }
 
     // NOTE api different silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::getRawOriginal(
             const QString &key, const QVariant &defaultValue) const
@@ -3245,14 +3245,14 @@ namespace Relations {
         return defaultValue;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QVector<AttributeItem> &
     Model<Derived, AllRelations...>::getRawOriginals() const
     {
         return m_original;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::unsetAttribute(const AttributeItem &value)
     {
@@ -3274,7 +3274,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::unsetAttribute(const QString &key)
     {
         // Not found
@@ -3292,7 +3292,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QString &
     Model<Derived, AllRelations...>::getDateFormat() const
     {
@@ -3301,7 +3301,7 @@ namespace Relations {
                 : Derived::u_dateFormat;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::setDateFormat(const QString &format)
     {
@@ -3310,7 +3310,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::fromDateTime(const QVariant &value) const
     {
@@ -3320,7 +3320,7 @@ namespace Relations {
         return asDateTime(value).toString(getDateFormat());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QString
     Model<Derived, AllRelations...>::fromDateTime(const QDateTime &value) const
     {
@@ -3330,7 +3330,7 @@ namespace Relations {
         return {};
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
     Model<Derived, AllRelations...>::getDates() const
     {
@@ -3341,7 +3341,7 @@ namespace Relations {
 
     /* Model::AttributeReference - begin */
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...>::AttributeReference::AttributeReference(
             Model<Derived, AllRelations...> &model, const QString &attribute
     )
@@ -3349,7 +3349,7 @@ namespace Relations {
         , m_attribute(attribute)
     {}
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const typename Model<Derived, AllRelations...>::AttributeReference &
     Model<Derived, AllRelations...>::AttributeReference::operator=(
             const QVariant &value) const
@@ -3359,7 +3359,7 @@ namespace Relations {
         return *this;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const typename Model<Derived, AllRelations...>::AttributeReference &
     Model<Derived, AllRelations...>::AttributeReference::operator=(
             const AttributeReference &attributeReference) const
@@ -3370,7 +3370,7 @@ namespace Relations {
     }
 
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QVariant *
     Model<Derived, AllRelations...>::AttributeReference::operator->() const
     {
@@ -3379,21 +3379,21 @@ namespace Relations {
         return &m_attributeCache;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::AttributeReference::value() const
     {
         return m_model.getAttribute(m_attribute);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::AttributeReference::operator*() const
     {
         return value();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...>::AttributeReference::operator QVariant() const
     {
         return value();
@@ -3401,35 +3401,35 @@ namespace Relations {
 
     /* Model::AttributeReference - end */
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     typename Model<Derived, AllRelations...>::AttributeReference
     Model<Derived, AllRelations...>::operator[](const QString &attribute) &
     {
         return AttributeReference(*this, attribute);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::operator[](const QString &attribute) const &
     {
         return getAttribute(attribute);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::operator[](const QString &attribute) &&
     {
         return getAttribute(attribute);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::operator[](const QString &attribute) const &&
     {
         return getAttribute(attribute);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant Model<Derived, AllRelations...>::transformModelValue(
             const QString &key,
             const QVariant &value) const
@@ -3455,7 +3455,7 @@ namespace Relations {
         return value;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     Model<Derived, AllRelations...>::getOriginalWithoutRewindingModel(
             const QString &key, const QVariant &defaultValue) const
@@ -3468,14 +3468,14 @@ namespace Relations {
         return defaultValue;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
     Model<Derived, AllRelations...>::relationLoaded(const QString &relation) const
     {
         return m_relations.contains(relation);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QString Model<Derived, AllRelations...>::getForeignKey() const
     {
         return QStringLiteral("%1_%2").arg(
@@ -3484,14 +3484,14 @@ namespace Relations {
                     getKeyName());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::touchOwners()
     {
         for (const auto &relation : getTouchedRelations())
             touchOwnersWithVisitor(relation);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::unsetRelations()
     {
         m_relations.clear();
@@ -3499,7 +3499,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::unsetRelation(const QString &relation)
     {
         m_relations.erase(relation);
@@ -3507,7 +3507,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<Related>
     Model<Derived, AllRelations...>::newRelatedInstance() const
@@ -3520,7 +3520,7 @@ namespace Relations {
         return instance;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<Relations::HasOne<Derived, Related>>
     Model<Derived, AllRelations...>::hasOne(QString foreignKey, QString localKey)
@@ -3537,7 +3537,7 @@ namespace Relations {
                                   instance->getTable() + '.' + foreignKey, localKey);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<Relations::BelongsTo<Derived, Related>>
     Model<Derived, AllRelations...>::belongsTo(QString foreignKey, QString ownerKey,
@@ -3569,7 +3569,7 @@ namespace Relations {
                                      foreignKey, ownerKey, relation);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<Relations::HasMany<Derived, Related>>
     Model<Derived, AllRelations...>::hasMany(QString foreignKey, QString localKey)
@@ -3586,7 +3586,7 @@ namespace Relations {
                                    instance->getTable() + '.' + foreignKey, localKey);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename PivotType>
     std::unique_ptr<Relations::BelongsToMany<Derived, Related, PivotType>>
     Model<Derived, AllRelations...>::belongsToMany(
@@ -3628,7 +3628,7 @@ namespace Relations {
                     relatedPivotKey, parentKey, relatedKey, relation);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     QString Model<Derived, AllRelations...>::guessBelongsToRelation() const
     {
@@ -3640,14 +3640,14 @@ namespace Relations {
         return relation;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     QString Model<Derived, AllRelations...>::guessBelongsToManyRelation() const
     {
         return guessBelongsToRelation<Related>() + QChar('s');
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     QString Model<Derived, AllRelations...>::pivotTableName() const
     {
@@ -3669,7 +3669,7 @@ namespace Relations {
         return segments.join(QChar('_')).toLower();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::setRelations(
             const std::unordered_map<QString, RelationsType<AllRelations...>> &relations)
@@ -3679,7 +3679,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::setRelations(
             std::unordered_map<QString, RelationsType<AllRelations...>> &&relations)
@@ -3689,7 +3689,7 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::eagerLoadRelationWithVisitor(
             const WithItem &relation, const TinyBuilder<Derived> &builder,
             QVector<Derived> &models)
@@ -3705,14 +3705,14 @@ namespace Relations {
         this->resetRelationStore();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::throwIfCRTPctorProblem(
             const QVector<AttributeItem> &attributes) const
     {
         throwIfQDateTimeAttribute(attributes);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::throwIfQDateTimeAttribute(
             const QVector<AttributeItem> &attributes) const
     {
@@ -3735,7 +3735,7 @@ namespace Relations {
                         message.arg(Utils::Type::classPureBasename<Derived>()));
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QStringList
     Model<Derived, AllRelations...>::getDatesInternal() const
     {
@@ -3752,7 +3752,7 @@ namespace Relations {
         return dates;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void
     Model<Derived, AllRelations...>::validateUserRelation(const QString &name) const
     {
@@ -3761,7 +3761,7 @@ namespace Relations {
                     Orm::Utils::Type::classPureBasename<Derived>(), name);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::performDeleteOnModel()
     {
         /* Ownership of a unique_ptr(), if right passed down, then the
@@ -3771,14 +3771,14 @@ namespace Relations {
         this->exists = false;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     TinyBuilder<Derived> &
     Model<Derived, AllRelations...>::setKeysForSaveQuery(TinyBuilder<Derived> &query)
     {
         return query.where(getKeyName(), QStringLiteral("="), getKeyForSaveQuery());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant Model<Derived, AllRelations...>::getKeyForSaveQuery() const
     {
         // Found
@@ -3791,21 +3791,21 @@ namespace Relations {
         return getKey();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     TinyBuilder<Derived> &
     Model<Derived, AllRelations...>::setKeysForSelectQuery(TinyBuilder<Derived> &query)
     {
         return query.where(getKeyName(), QStringLiteral("="), getKeyForSelectQuery());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant Model<Derived, AllRelations...>::getKeyForSelectQuery() const
     {
         // Currently is the implementation exactly the same, so I can call it
         return getKeyForSaveQuery();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::performInsert(
             const TinyBuilder<Derived> &query)
     {
@@ -3845,7 +3845,7 @@ namespace Relations {
         return true;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::performUpdate(TinyBuilder<Derived> &query)
     {
         /* If the updating event returns false, we will cancel the update operation so
@@ -3877,7 +3877,7 @@ namespace Relations {
         return true;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::finishSave(const SaveOptions &options)
     {
 //        fireModelEvent('saved', false);
@@ -3889,7 +3889,7 @@ namespace Relations {
     }
 
     // FEATURE dilemma primarykey, add support for Derived::KeyType silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     quint64 Model<Derived, AllRelations...>::insertAndSetId(
             const TinyBuilder<Derived> &query,
             const QVector<AttributeItem> &attributes)
@@ -3908,7 +3908,7 @@ namespace Relations {
         return id;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::touch()
     {
         if (!usesTimestamps())
@@ -3919,7 +3919,7 @@ namespace Relations {
         return save();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::updateTimestamps()
     {
         const auto time = freshTimestamp();
@@ -3935,25 +3935,25 @@ namespace Relations {
             setCreatedAt(time);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::setCreatedAt(const QDateTime &value)
     {
         return setAttribute(getCreatedAtColumn(), value);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::setUpdatedAt(const QDateTime &value)
     {
         return setAttribute(getUpdatedAtColumn(), value);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QString Model<Derived, AllRelations...>::freshTimestampString() const
     {
         return fromDateTime(freshTimestamp());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::setUseTimestamps(const bool value)
     {
         model().u_timestamps = value;
@@ -3961,19 +3961,19 @@ namespace Relations {
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QString Model<Derived, AllRelations...>::getQualifiedCreatedAtColumn() const
     {
         return qualifyColumn(getCreatedAtColumn());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QString Model<Derived, AllRelations...>::getQualifiedUpdatedAtColumn() const
     {
         return qualifyColumn(getUpdatedAtColumn());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename ClassToCheck>
     bool Model<Derived, AllRelations...>::isIgnoringTouch()
     {
@@ -3987,7 +3987,7 @@ namespace Relations {
         return false;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QHash<QString, typename Model<Derived, AllRelations...>::RelationVisitor> &
     Model<Derived, AllRelations...>::getRelationsRawMapInternal() const
     {
@@ -3996,28 +3996,28 @@ namespace Relations {
 
     /* GuardsAttributes */
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QStringList &
     Model<Derived, AllRelations...>::getFillableInternal()
     {
         return Derived::u_fillable;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
     Model<Derived, AllRelations...>::getFillableInternal() const
     {
         return Derived::u_fillable;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QStringList &
     Model<Derived, AllRelations...>::getGuardedInternal()
     {
         return Derived::u_guarded;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
     Model<Derived, AllRelations...>::getGuardedInternal() const
     {

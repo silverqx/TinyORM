@@ -24,7 +24,7 @@ namespace Query
         or QVector<QString>). */
     template<typename T>
     concept Parametrize = std::is_same_v<T, QVariantMap> ||
-                                   std::is_same_v<T, QVector<QVariant>>;
+                          std::is_same_v<T, QVector<QVariant>>;
 
     class SHAREDLIB_EXPORT BaseGrammar
     {
@@ -64,7 +64,6 @@ namespace Query
         QString columnize(QStringList columns) const;
         /*! Convert the vector of column names into a delimited string. */
         QString columnize(const QStringList &columns, bool isTorrentsTable) const;
-        // TODO concept, template constraint to QVariantMap and QVector<QVariant> for now silverqx
         /*! Create query parameter place-holders for the vector. */
         template<typename Container> requires Parametrize<Container>
         QString parametrize(const Container &values) const;

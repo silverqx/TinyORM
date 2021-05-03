@@ -485,7 +485,7 @@ namespace Relations
         return where(column, QStringLiteral("="), value, condition).first();
     }
 
-    // TODO dilemma Raw Expressions fuckup🤔 silverqx
+    // FEATURE dilemma Raw Expressions fuckup🤔 silverqx
     template<typename Model>
     QVariant Builder<Model>::value(const QString &column)
     {

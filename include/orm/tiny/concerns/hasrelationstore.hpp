@@ -17,7 +17,7 @@ namespace Orm::Tiny
     template<typename Model>
     class Builder;
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model;
 
     template<typename Model>

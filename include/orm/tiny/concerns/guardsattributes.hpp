@@ -11,7 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 
 namespace Orm::Tiny
 {
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model;
 
 namespace Concerns

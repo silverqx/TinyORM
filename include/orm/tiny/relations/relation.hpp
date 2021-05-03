@@ -25,7 +25,7 @@ namespace Tiny
     template<class Model>
     class Builder;
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model;
 
 namespace Relations
