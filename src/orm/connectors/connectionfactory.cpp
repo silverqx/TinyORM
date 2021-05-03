@@ -115,7 +115,6 @@ ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &confi
 
                 return createConnector(configCopy)->connect(configCopy);
 
-            // CUR check all catch blocks, if I properly handling exceptions silverqx
             }  catch (const std::exception &) {
                 // Save last exception to be able to re-throw
                 lastException = std::current_exception();

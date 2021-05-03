@@ -46,8 +46,8 @@ namespace Orm::Connectors
         /*! Handle an exception that occurred during connect execution. */
         QSqlDatabase
         tryAgainIfCausedByLostConnection(
-                const SqlError &e, const QString &name, const QVariantHash &config,
-                const QString &options) const;
+                const std::exception_ptr ePtr, const SqlError &e, const QString &name,
+                const QVariantHash &config, const QString &options) const;
 
         /*! Error message used when connection configuration fails. */
         static const QString m_configureErrorMessage;

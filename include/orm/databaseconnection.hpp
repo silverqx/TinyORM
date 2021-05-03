@@ -287,14 +287,14 @@ namespace Orm
         /*! Handle a query exception. */
         template<typename Return>
         Return handleQueryException(
-                const QueryError &e, const QString &queryString,
-                const QVector<QVariant> &bindings,
+                const std::exception_ptr ePtr, const QueryError &e,
+                const QString &queryString, const QVector<QVariant> &bindings,
                 const RunCallback<Return> &callback) const;
         /*! Handle a query exception that occurred during query execution. */
         template<typename Return>
         Return tryAgainIfCausedByLostConnection(
-                const QueryError &e, const QString &queryString,
-                const QVector<QVariant> &bindings,
+                const std::exception_ptr ePtr, const QueryError &e,
+                const QString &queryString, const QVector<QVariant> &bindings,
                 const RunCallback<Return> &callback) const;
 
         /*! Count transactional queries execution time and statements counter. */
@@ -343,7 +343,8 @@ namespace Orm
             result = runQueryCallback(queryString, bindings, callback);
 
         }  catch (const QueryError &e) {
-            result = handleQueryException(e, queryString, bindings, callback);
+            result = handleQueryException(std::current_exception(), e,
+                                          queryString, bindings, callback);
         }
 
         std::optional<qint64> elapsed;
@@ -379,22 +380,23 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::handleQueryException(
-            const QueryError &e, const QString &queryString,
-            const QVector<QVariant> &bindings,
+            const std::exception_ptr ePtr, const QueryError &e,
+            const QString &queryString, const QVector<QVariant> &bindings,
             const RunCallback<Return> &callback) const
     {
-        // TODO next debug Eloquent $this->transactions >= 1 silverqx
+        // FUTURE add info about in transaction into the exception that it was a reason why connection was not reconnected/recovered silverqx
         if (m_inTransaction)
-            throw e;
+            std::rethrow_exception(ePtr);
 
-        return tryAgainIfCausedByLostConnection(e, queryString, bindings, callback);
+        return tryAgainIfCausedByLostConnection(ePtr, e, queryString, bindings,
+                                                callback);
     }
 
     template<typename Return>
     Return
     DatabaseConnection::tryAgainIfCausedByLostConnection(
-            const QueryError &e, const QString &queryString,
-            const QVector<QVariant> &bindings,
+            const std::exception_ptr ePtr, const QueryError &e,
+            const QString &queryString, const QVector<QVariant> &bindings,
             const RunCallback<Return> &callback) const
     {
         if (causedByLostConnection(e)) {
@@ -403,7 +405,7 @@ namespace Orm
             return runQueryCallback(queryString, bindings, callback);
         }
 
-        throw e;
+        std::rethrow_exception(ePtr);
     }
 
 } // namespace Orm

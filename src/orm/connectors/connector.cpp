@@ -22,7 +22,8 @@ Connector::createConnection(const QString &name, const QVariantHash &config,
     try {
         return createQSqlDatabaseConnection(name, config, options);
     }  catch (const SqlError &e) {
-        return tryAgainIfCausedByLostConnection(e, name, config, options);
+        return tryAgainIfCausedByLostConnection(std::current_exception(), e, name,
+                                                config, options);
     }
 }
 
@@ -86,13 +87,13 @@ Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &co
 
 QSqlDatabase
 Connector::tryAgainIfCausedByLostConnection(
-        const SqlError &e, const QString &name, const QVariantHash &config,
-        const QString &options) const
+        const std::exception_ptr ePtr, const SqlError &e, const QString &name,
+        const QVariantHash &config, const QString &options) const
 {
     if (causedByLostConnection(e))
         return createQSqlDatabaseConnection(name, config, options);
 
-    throw e;
+    std::rethrow_exception(ePtr);
 }
 
 } // namespace Orm::Connectors
