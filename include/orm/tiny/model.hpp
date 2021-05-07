@@ -1,6 +1,10 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#ifdef __GNUG__
+#include <map>
+#endif
+#include <unordered_map>
 #include <unordered_set>
 
 #include "orm/concerns/hasconnectionresolver.hpp"
@@ -70,6 +74,7 @@ namespace Relations {
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     // TODO QueryBuilder::updateOrInsert() silverqx
     // CUR code coverage silverqx
+    // CUR test perf. of TinyOrmPlayground in Manjaro vs Gentoo vs Windows silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -738,11 +743,19 @@ namespace Relations {
         { return getTouchedRelations().contains(relation); }
 
         /*! Get all the loaded relations for the instance. */
+#ifdef _MSC_VER
         inline const std::unordered_map<QString, RelationsType<AllRelations...>> &
+#elif __GNUG__
+        inline const std::map<QString, RelationsType<AllRelations...>> &
+#endif
         getRelations() const
         { return m_relations; }
         /*! Get all the loaded relations for the instance. */
+#ifdef _MSC_VER
         inline std::unordered_map<QString, RelationsType<AllRelations...>> &
+#elif __GNUG__
+        inline std::map<QString, RelationsType<AllRelations...>> &
+#endif
         getRelations()
         { return m_relations; }
 
@@ -887,11 +900,18 @@ namespace Relations {
 
         /*! Set the entire relations hash on the model. */
         Derived &setRelations(
-                const std::unordered_map<QString,
-                                         RelationsType<AllRelations...>> &relations);
+#ifdef _MSC_VER
+                const std::unordered_map<QString, RelationsType<AllRelations...>> &relations);
+#elif __GNUG__
+                const std::map<QString, RelationsType<AllRelations...>> &relations);
+#endif
         /*! Set the entire relations hash on the model. */
         Derived &setRelations(
+#ifdef _MSC_VER
                 std::unordered_map<QString, RelationsType<AllRelations...>> &&relations);
+#elif __GNUG__
+                std::map<QString, RelationsType<AllRelations...>> &&relations);
+#endif
 
         /* Others */
         /*! Perform the actual delete query on this model instance. */
@@ -966,7 +986,11 @@ namespace Relations {
         /* HasRelationships */
         // BUG this prevent us to compile on GCC, if I comment out std::optional<AllRelations>... in the RelationsType<AllRelations...>, or I change it to the QHash, then it compiles, I'm absolutelly lost why this is happening 😞😭, I can't change to the QHash because of 25734deb, I have created simple test project gcc_trivial_bug_test in merydeye-gentoo silverqx
         /*! The loaded relationships for the model. */
+#ifdef _MSC_VER
         std::unordered_map<QString, RelationsType<AllRelations...>> m_relations;
+#elif __GNUG__
+        std::map<QString, RelationsType<AllRelations...>> m_relations;
+#endif
         /*! The relationships that should be touched on save. */
         QStringList u_touches;
         // CUR use sets instead of QStringList where appropriate silverqx
@@ -1054,7 +1078,11 @@ namespace Relations {
 
         /*! Replace relations in the m_relation. */
         void replaceRelations(
+#ifdef _MSC_VER
                 std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
+#elif __GNUG__
+                std::map<QString, RelationsType<AllRelations...>> &relations,
+#endif
                 const QVector<WithItem> &onlyRelations);
 
         /*! The reference to the u_relations hash. */
@@ -2354,7 +2382,11 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::replaceRelations(
+#ifdef _MSC_VER
             std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
+#elif __GNUG__
+            std::map<QString, RelationsType<AllRelations...>> &relations,
+#endif
             const QVector<WithItem> &onlyRelations)
     {
         /* Replace only relations which was passed to this method, leave other
@@ -3673,7 +3705,11 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::setRelations(
+#ifdef _MSC_VER
             const std::unordered_map<QString, RelationsType<AllRelations...>> &relations)
+#elif __GNUG__
+            const std::map<QString, RelationsType<AllRelations...>> &relations)
+#endif
     {
         m_relations = relations;
 
@@ -3683,7 +3719,11 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::setRelations(
+#ifdef _MSC_VER
             std::unordered_map<QString, RelationsType<AllRelations...>> &&relations)
+#elif __GNUG__
+            std::map<QString, RelationsType<AllRelations...>> &&relations)
+#endif
     {
         m_relations = std::move(relations);
 

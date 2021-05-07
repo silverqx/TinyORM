@@ -1161,8 +1161,7 @@ namespace Orm::Tiny::Relations
         using namespace ranges;
         return columns | views::transform([this](const auto &column)
         {
-            return QStringLiteral("%1 as pivot_%2").arg(qualifyPivotColumn(column),
-                                                        column);
+            return QString("%1 as pivot_%2").arg(qualifyPivotColumn(column), column);
         })
                 | ranges::to<QStringList>();
     }
