@@ -23,4 +23,3 @@ else:unix {
 
     LIBS += -lmysqlclient
 }
-

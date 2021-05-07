@@ -13,4 +13,3 @@ else:unix {
     # range-v3
     INCLUDEPATH += $$quote(/home/xyz/vcpkg/installed/x64-linux/include)
 }
-

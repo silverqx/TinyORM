@@ -1,6 +1,3 @@
-# range-v3
-INCLUDEPATH += $$quote(E:/c/qMedia/vcpkg/installed/x64-windows/include)
-
 INCLUDEPATH += $$PWD
 
 SOURCES += \
