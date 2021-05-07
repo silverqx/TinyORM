@@ -80,7 +80,7 @@ include(src/src.pri)
 # Default rules for deployment
 # ---
 
-release {
+CONFIG(release, debug|release) {
     target.CONFIG += no_default_install
 }
 
