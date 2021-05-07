@@ -376,6 +376,7 @@ namespace Orm::Tiny::Relations
         /*! The name of the relationship. */
         QString m_relationName;
 
+        // CUR this fails on gcc, investigate silverqx
         /*! The name of the accessor to use for the "pivot" relationship. */
         QString m_accessor = QStringLiteral("pivot");
         // BUG should be QSet, duplicates are not allowed, check all the containers 😭 and use proper containers where I did mistake, from the point of view of duplicates silverqx
