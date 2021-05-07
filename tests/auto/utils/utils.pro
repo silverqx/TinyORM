@@ -93,7 +93,8 @@ build_tests {
 
     sqlitedatabase.target = sqlitedatabase
     sqlitedatabase.dbname = $$TINYORM_SQLITE_DATABASE
-    sqlitedatabase.commands = write_file($$sqlitedatabase.dbname)
+    win32: sqlitedatabase.commands = type nul >> $$sqlitedatabase.dbname
+    unix: sqlitedatabase.commands = touch $$sqlitedatabase.dbname
     sqlitedatabase.depends = sqlitedatabase_message
 
     sqlitedatabase_message.commands = @echo Creating SQLite database at $$sqlitedatabase.dbname
