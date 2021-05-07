@@ -964,6 +964,7 @@ namespace Relations {
         inline static QStringList u_dates {};
 
         /* HasRelationships */
+        // BUG this prevent us to compile on GCC, if I comment out std::optional<AllRelations>... in the RelationsType<AllRelations...>, or I change it to the QHash, then it compiles, I'm absolutelly lost why this is happening 😞😭, I can't change to the QHash because of 25734deb, I have created simple test project gcc_trivial_bug_test in merydeye-gentoo silverqx
         /*! The loaded relationships for the model. */
         std::unordered_map<QString, RelationsType<AllRelations...>> m_relations;
         /*! The relationships that should be touched on save. */
