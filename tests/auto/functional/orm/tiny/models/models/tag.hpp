@@ -11,7 +11,6 @@ using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::Pivot;
-using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
 class Tag final : public Model<Tag, Torrent, TagProperty, Tagged>

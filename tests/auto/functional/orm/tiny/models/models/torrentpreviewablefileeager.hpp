@@ -7,7 +7,6 @@
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
-using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
 class TorrentPreviewableFileEager final :

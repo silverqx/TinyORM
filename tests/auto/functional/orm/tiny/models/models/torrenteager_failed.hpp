@@ -9,7 +9,6 @@
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasMany;
-using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
 class TorrentEager_Failed final :

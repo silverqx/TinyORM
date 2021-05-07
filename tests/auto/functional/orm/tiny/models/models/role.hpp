@@ -10,7 +10,6 @@ class User; // Forward declaration to avoid cyclic dependency
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;
-using Orm::Tiny::Relations::Relation;
 
 class Role final : public Model<Role, User, RoleUser>
 {

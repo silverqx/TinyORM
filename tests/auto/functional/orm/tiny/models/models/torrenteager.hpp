@@ -12,7 +12,6 @@ using Orm::AttributeItem;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;
-using Orm::Tiny::Relations::Relation;
 using Orm::WithItem;
 
 class TorrentEager final :
