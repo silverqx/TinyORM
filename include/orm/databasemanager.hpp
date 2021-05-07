@@ -156,15 +156,15 @@ namespace Query
         void resetAllElapsedCounters();
 
         /*! Enable counting queries execution time on given connections. */
-        inline void enableElapsedCounters(const QStringList &connections);
+        void enableElapsedCounters(const QStringList &connections);
         /*! Disable counting queries execution time on given connections. */
-        inline void disableElapsedCounters(const QStringList &connections);
+        void disableElapsedCounters(const QStringList &connections);
         /*! Obtain queries execution time from given connections. */
-        inline qint64 getElapsedCounters(const QStringList &connections);
+        qint64 getElapsedCounters(const QStringList &connections);
         /*! Obtain and reset queries execution time on given connections. */
-        inline qint64 takeElapsedCounters(const QStringList &connections);
+        qint64 takeElapsedCounters(const QStringList &connections);
         /*! Reset queries execution time on given connections. */
-        inline void resetElapsedCounters(const QStringList &connections);
+        void resetElapsedCounters(const QStringList &connections);
 
         /* Queries executed counter */
         /*! Determine whether we're counting the number of executed queries. */
@@ -200,15 +200,15 @@ namespace Query
         void resetAllStatementCounters();
 
         /*! Enable counting the number of executed queries on given connections. */
-        inline void enableStatementCounters(const QStringList &connections);
+        void enableStatementCounters(const QStringList &connections);
         /*! Disable counting the number of executed queries on given connections. */
-        inline void disableStatementCounters(const QStringList &connections);
+        void disableStatementCounters(const QStringList &connections);
         /*! Obtain the number of executed queries on given connections. */
-        inline StatementsCounter getStatementCounters(const QStringList &connections);
+        StatementsCounter getStatementCounters(const QStringList &connections);
         /*! Obtain and reset the number of executed queries on given connections. */
-        inline StatementsCounter takeStatementCounters(const QStringList &connections);
+        StatementsCounter takeStatementCounters(const QStringList &connections);
         /*! Reset the number of executed queries on given connections. */
-        inline void resetStatementCounters(const QStringList &connections);
+        void resetStatementCounters(const QStringList &connections);
 
     protected:
         /*! Default connection name. */

@@ -145,26 +145,26 @@ namespace Orm
         inline const QString getName() const override
         { return getConfig("name").value<QString>(); }
         /*! Get the name of the connected database. */
-        inline const QString &getDatabaseName() const override
+        const QString &getDatabaseName() const override
         { return m_database; }
 
         /*! Set the query grammar to the default implementation. */
-        inline void useDefaultQueryGrammar() override;
+        void useDefaultQueryGrammar() override;
         /*! Get the query grammar used by the connection. */
-        inline const QueryGrammar &getQueryGrammar() const override;
+        const QueryGrammar &getQueryGrammar() const override;
 
         /*! Set the schema grammar to the default implementation. */
-        inline void useDefaultSchemaGrammar() override;
+        void useDefaultSchemaGrammar() override;
         /*! Get the schema grammar used by the connection. */
-        inline const SchemaGrammar &getSchemaGrammar() const override;
+        const SchemaGrammar &getSchemaGrammar() const override;
 
         /*! Get a schema builder instance for the connection. */
         std::unique_ptr<SchemaBuilder> getSchemaBuilder() override;
 
         /*! Set the query post processor to the default implementation. */
-        inline void useDefaultPostProcessor() override;
+        void useDefaultPostProcessor() override;
         /*! Get the query post processor used by the connection. */
-        inline const QueryProcessor &getPostProcessor() const override;
+        const QueryProcessor &getPostProcessor() const override;
 
         // TODO duplicate, extract to some internal types silverqx
         /*! Reconnector lambda type. */

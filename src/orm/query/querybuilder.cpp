@@ -671,7 +671,7 @@ Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> &query,
     if (!(query->m_wheres.size() > 0))
         return *this;
 
-    m_wheres.append({.condition = condition, .type = WhereType::NESTED,
+    m_wheres.append({.column = {}, .condition = condition, .type = WhereType::NESTED,
                      .nestedQuery = query});
 
     const auto &whereBindings =

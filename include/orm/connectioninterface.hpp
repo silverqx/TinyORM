@@ -3,6 +3,8 @@
 
 #include <QtSql/QSqlQuery>
 
+#include <memory>
+
 #include "orm/query/expression.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

@@ -2,7 +2,11 @@
 
 #include <QtSql/QSqlDriver>
 
+#ifdef _MSC_VER
 #include "mysql.h"
+#elif __GNUG__
+#include "mysql/mysql.h"
+#endif
 
 #include "orm/query/grammars/mysqlgrammar.hpp"
 #include "orm/query/processors/mysqlprocessor.hpp"

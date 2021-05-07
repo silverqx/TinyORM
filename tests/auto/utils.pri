@@ -13,5 +13,5 @@ else:win32:CONFIG(debug, debug|release) {
     LIBS += -L$$TINYORM_BUILD_TREE/tests/auto/utils/debug/ -lutils0
 }
 else:unix {
-    LIBS += -L$$TINYORM_BUILD_TREE/tests/auto/utils/ -lutils0
+    LIBS += -L$$TINYORM_BUILD_TREE/tests/auto/utils/ -lutils
 }

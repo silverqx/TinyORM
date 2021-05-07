@@ -23,7 +23,7 @@ namespace Orm
         std::unique_ptr<SchemaBuilder> getSchemaBuilder() override;
 
         /*! Determine if the connected database is a MariaDB database. */
-        inline bool isMaria();
+        bool isMaria();
 
         /*! Check database connection and show warnings when the state changed. */
         bool pingDatabase() override;

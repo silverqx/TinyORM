@@ -14,9 +14,6 @@ namespace TINYORM_COMMON_NAMESPACE
 QString parseExecutedQuery(const QSqlQuery &query);
 
 #ifdef QT_DEBUG
-#  ifndef Q_CC_MSVC
-    Q_NORETURN
-#  endif
     Q_DECL_UNUSED
     void logExecutedQuery(const QSqlQuery &query);
 #endif

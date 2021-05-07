@@ -79,3 +79,5 @@ Thumbs.db
 ~$*.xlsx
 /todos.csv
 /todos.xlsx
+conf.pri
+

@@ -83,7 +83,7 @@ include(src.pri)
 # Default rules for deployment
 # ---
 
-release {
-    win32-msvc*: target.path = C:/optx64/$${TARGET}
+win32-msvc*:CONFIG(debug, debug|release) {
+    target.path = C:/optx64/$${TARGET}
     !isEmpty(target.path): INSTALLS += target
 }

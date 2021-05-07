@@ -1,6 +1,8 @@
 #ifndef CONNECTIONFACTORY_HPP
 #define CONNECTIONFACTORY_HPP
 
+#include <memory>
+
 #include "orm/connectors/connectorinterface.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
