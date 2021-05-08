@@ -15,18 +15,6 @@ include(../qmake/common.pri)
 CONFIG *= create_prl
 #CONFIG *= create_libtool create_pc
 
-# Some info output
-# ---
-
-CONFIG(debug, debug|release): message( "Project is built in DEBUG mode." )
-CONFIG(release, debug|release): message( "Project is built in RELEASE mode." )
-
-# Disable debug output in release mode
-CONFIG(release, debug|release) {
-    message( "Disabling debug output." )
-    DEFINES += QT_NO_DEBUG_OUTPUT
-}
-
 # TinyORM defines
 # ---
 
@@ -84,6 +72,19 @@ include(src.pri)
 # ---
 
 win32-msvc*:CONFIG(debug, debug|release) {
-    target.path = C:/optx64/$${TARGET}
+    win32-msvc*: target.path = C:/optx64/$${TARGET}
+#    else: unix:!android: target.path = /opt/$${TARGET}/bin
     !isEmpty(target.path): INSTALLS += target
+}
+
+# Some info output
+# ---
+
+CONFIG(debug, debug|release): message( "Project is built in DEBUG mode." )
+CONFIG(release, debug|release): message( "Project is built in RELEASE mode." )
+
+# Disable debug output in release mode
+CONFIG(release, debug|release) {
+    message( "Disabling debug output." )
+    DEFINES += QT_NO_DEBUG_OUTPUT
 }

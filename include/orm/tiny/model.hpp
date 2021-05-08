@@ -74,7 +74,7 @@ namespace Relations {
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     // TODO QueryBuilder::updateOrInsert() silverqx
     // CUR code coverage silverqx
-    // CUR test perf. of TinyOrmPlayground in Manjaro vs Gentoo vs Windows silverqx
+    // CUR compile without PCH silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
