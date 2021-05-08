@@ -18,9 +18,7 @@ using Orm::WithItem;
 
 /* This class serves as a showcase, so all possible features are defined / used. */
 
-#ifdef _MSC_VER
 class TorrentPreviewableFile;
-#endif
 
 class Torrent final :
         public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Pivot>

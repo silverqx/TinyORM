@@ -3,9 +3,7 @@
 
 #include "orm/tiny/model.hpp"
 
-#if defined(__clang__) || defined(_MSC_VER)
 #include "models/torrentpreviewablefile.hpp"
-#endif
 
 class TorrentPreviewableFile;
 
