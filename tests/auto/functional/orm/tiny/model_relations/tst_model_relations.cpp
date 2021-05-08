@@ -260,7 +260,7 @@ void tst_Model_Relations::u_with_Empty() const
 
     Torrent torrent;
 
-    QCOMPARE(torrent.getRelations().size(), 0);
+    QCOMPARE(torrent.getRelations().size(), static_cast<std::size_t>(0));
 }
 
 void tst_Model_Relations::with_HasOne() const
@@ -426,7 +426,7 @@ void tst_Model_Relations::without() const
     auto &relations = torrent->getRelations();
     QVERIFY(!relations.contains("torrentPeer"));
     QVERIFY(relations.contains("torrentFiles"));
-    QCOMPARE(relations.size(), 1);
+    QCOMPARE(relations.size(), static_cast<std::size_t>(1));
 }
 
 void tst_Model_Relations::without_NestedRelations() const
@@ -442,7 +442,7 @@ void tst_Model_Relations::without_NestedRelations() const
     auto &relations = torrent->getRelations();
     QVERIFY(!relations.contains("torrentFiles"));
     QVERIFY(relations.contains("torrentPeer"));
-    QCOMPARE(relations.size(), 1);
+    QCOMPARE(relations.size(), static_cast<std::size_t>(1));
 }
 
 void tst_Model_Relations::without_Vector_MoreRelations() const
@@ -684,7 +684,7 @@ void tst_Model_Relations::push_EagerLoad() const
 
     /* Also contains torrentPeer relation, which is not needed for this test, but
        I will not create the new eager model class. */
-    QCOMPARE(torrent->getRelations().size(), 2);
+    QCOMPARE(torrent->getRelations().size(), static_cast<std::size_t>(2));
 
     auto files = torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
     /* Make a copy of a pointer, because first() returns reference,
@@ -720,7 +720,7 @@ void tst_Model_Relations::push_EagerLoad() const
     QVERIFY(torrentVerify);
     QVERIFY(torrentVerify->exists);
 
-    QCOMPARE(torrent->getRelations().size(), 2);
+    QCOMPARE(torrent->getRelations().size(), static_cast<std::size_t>(2));
 
     auto filesVerify =
             torrentVerify->getRelation<TorrentPreviewableFileEager>("torrentFiles");
