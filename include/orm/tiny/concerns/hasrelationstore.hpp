@@ -337,9 +337,9 @@ namespace Concerns
             QVector<Derived> &models, const WithItem &relation
     )
         : BaseRelationStore(hasRelationStore, RelationStoreType::EAGER)
-        , relation(relation)
         , builder(builder)
         , models(models)
+        , relation(relation)
     {}
 
     template<typename Derived, typename ...AllRelations>

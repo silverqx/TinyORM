@@ -368,7 +368,7 @@ void tst_Model::destroy() const
 
     // Delete record
     auto count = TorrentPreviewableFile::destroy(8);
-    QCOMPARE(count, 1);
+    QCOMPARE(count, static_cast<std::size_t>(1));
 
     /* This is normal, Eloquent behaves the same way, there is no way
        to set 'exists' to the false value in the torrentFiles vector
@@ -406,7 +406,7 @@ void tst_Model::destroyWithVector() const
 
     // Delete both at once
     auto count = TorrentPreviewableFile::destroy({7, 8});
-    QCOMPARE(count, 2);
+    QCOMPARE(count, static_cast<std::size_t>(2));
 
     /* This is normal, Eloquent behaves the same way, there is no way
        to set 'exists' to the false value in the torrentFiles vector

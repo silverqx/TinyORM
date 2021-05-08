@@ -984,7 +984,7 @@ namespace Relations {
         inline static QStringList u_dates {};
 
         /* HasRelationships */
-        // BUG this prevent us to compile on GCC, if I comment out std::optional<AllRelations>... in the RelationsType<AllRelations...>, or I change it to the QHash, then it compiles, I'm absolutelly lost why this is happening 😞😭, I can't change to the QHash because of 25734deb, I have created simple test project gcc_trivial_bug_test in merydeye-gentoo silverqx
+        // BUG std::unordered_map prevents to compile on GCC, if I comment out std::optional<AllRelations>... in the RelationsType<AllRelations...>, or I change it to the QHash, then it compile, I'm absolutelly lost why this is happening 😞😭, I can't change to the QHash because of 25734deb, I have created simple test project gcc_trivial_bug_test in merydeye-gentoo, but std::map works so it is a big win, because now I can compile whole project on gcc ✨🚀 silverqx
         /*! The loaded relationships for the model. */
 #ifdef _MSC_VER
         std::unordered_map<QString, RelationsType<AllRelations...>> m_relations;
