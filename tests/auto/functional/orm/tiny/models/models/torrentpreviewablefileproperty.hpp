@@ -3,7 +3,7 @@
 
 #include "orm/tiny/model.hpp"
 
-#ifdef __clang__
+#if defined(__clang__) || defined(_MSC_VER)
 #include "models/torrentpreviewablefile.hpp"
 #endif
 
