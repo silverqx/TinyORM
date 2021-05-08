@@ -5,13 +5,14 @@
 
 #include "models/tagged.hpp"
 #include "models/tagproperty.hpp"
-#include "models/torrent.hpp"
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::Pivot;
 using Orm::WithItem;
+
+class Torrent;
 
 class Tag final : public Model<Tag, Torrent, TagProperty, Tagged>
 //class Tag final : public Model<Tag, Torrent, TagProperty, Pivot>

@@ -3,11 +3,15 @@
 
 #include "orm/tiny/model.hpp"
 
+#ifdef __clang__
 #include "models/torrent.hpp"
+#endif
 #include "models/torrentpreviewablefileproperty.hpp"
 
 using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::HasOne;
+
+class Torrent;
 
 class TorrentPreviewableFile final :
         public Model<TorrentPreviewableFile, Torrent, TorrentPreviewableFileProperty>

@@ -3,9 +3,13 @@
 
 #include "orm/tiny/model.hpp"
 
+#ifdef __clang__
 #include "models/torrent.hpp"
+#endif
 
 using Orm::Tiny::Relations::BelongsTo;
+
+class Torrent;
 
 class TorrentPeer final : public Model<TorrentPeer, Torrent>
 {

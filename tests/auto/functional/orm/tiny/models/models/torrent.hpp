@@ -3,8 +3,6 @@
 
 #include "orm/tiny/model.hpp"
 
-#include "models/forwards.hpp"
-
 #include "models/tag.hpp"
 #include "models/tagged.hpp"
 #include "models/torrentpeer.hpp"

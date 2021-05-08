@@ -3,8 +3,6 @@
 
 #include "orm/tiny/model.hpp"
 
-#include "models/forwardseager.hpp"
-
 #include "models/torrentpeereager_norelations.hpp"
 #include "models/torrentpreviewablefileeager.hpp"
 

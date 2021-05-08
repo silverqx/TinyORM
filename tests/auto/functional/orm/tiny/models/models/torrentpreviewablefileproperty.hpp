@@ -3,7 +3,11 @@
 
 #include "orm/tiny/model.hpp"
 
+#ifdef __clang__
 #include "models/torrentpreviewablefile.hpp"
+#endif
+
+class TorrentPreviewableFile;
 
 class TorrentPreviewableFileProperty final :
         public Model<TorrentPreviewableFileProperty, TorrentPreviewableFile>
