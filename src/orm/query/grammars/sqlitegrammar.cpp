@@ -63,6 +63,7 @@ const QVector<QString> &SQLiteGrammar::getOperators() const
 QString SQLiteGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
 {
     QStringList compiledAssignments;
+    compiledAssignments.reserve(values.size());
 
     for (const auto &assignment : values)
         compiledAssignments << QStringLiteral("%1 = %2").arg(

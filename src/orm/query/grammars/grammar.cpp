@@ -221,9 +221,12 @@ QString Grammar::compileFrom(const QueryBuilder &query) const
 
 QString Grammar::compileJoins(const QueryBuilder &query) const
 {
-    QStringList sql;
+    const auto &joins = query.getJoins();
 
-    for (const auto &join : query.getJoins())
+    QStringList sql;
+    sql.reserve(joins.size());
+
+    for (const auto &join : joins)
         sql << QStringLiteral("%1 join %2 %3").arg(join->getType(),
                                                    wrapTable(join->getTable()),
                                                    compileWheres(*join));
@@ -243,9 +246,12 @@ QString Grammar::compileWheres(const QueryBuilder &query) const
 
 QStringList Grammar::compileWheresToVector(const QueryBuilder &query) const
 {
-    QStringList compiledWheres;
+    const auto &wheres = query.getWheres();
 
-    for (const auto &where : query.getWheres())
+    QStringList compiledWheres;
+    compiledWheres.reserve(wheres.size());
+
+    for (const auto &where : wheres)
         compiledWheres << QStringLiteral("%1 %2")
                           .arg(where.condition,
                                std::invoke(getWhereMethod(where.type), where));
@@ -272,9 +278,12 @@ QString Grammar::compileGroups(const QueryBuilder &query) const
 
 QString Grammar::compileHavings(const QueryBuilder &query) const
 {
-    QStringList compiledHavings;
+    const auto &havings = query.getHavings();
 
-    for (const auto &having : query.getHavings())
+    QStringList compiledHavings;
+    compiledHavings.reserve(havings.size());
+
+    for (const auto &having : havings)
         compiledHavings << compileHaving(having);
 
     return QStringLiteral("having %1").arg(
@@ -359,9 +368,12 @@ QString Grammar::compileOrders(const QueryBuilder &query) const
 
 QStringList Grammar::compileOrdersToVector(const QueryBuilder &query) const
 {
-    QStringList compiledOrders;
+    const auto &orders = query.getOrders();
 
-    for (const auto &order : query.getOrders())
+    QStringList compiledOrders;
+    compiledOrders.reserve(orders.size());
+
+    for (const auto &order : orders)
         compiledOrders << QStringLiteral("%1 %2")
                           .arg(wrap(order.column), order.direction.toLower());
 
@@ -395,6 +407,7 @@ Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
        to the query. Each insert should have the exact same amount of parameter
        bindings so we will loop through the record and parameterize them all. */
     QStringList compiledParameters;
+    compiledParameters.reserve(values.size());
 
     for (const auto &valuesMap : values)
         compiledParameters << QStringLiteral("(%1)").arg(parametrize(valuesMap));
@@ -406,6 +419,7 @@ QString
 Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
 {
     QStringList compiledAssignments;
+    compiledAssignments.reserve(values.size());
 
     for (const auto &assignment : values)
         compiledAssignments << QStringLiteral("%1 = %2").arg(

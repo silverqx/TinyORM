@@ -29,6 +29,7 @@ QString ModelNotFoundError::formatMessage(const char *model,
         const auto joinIds = [&ids]
         {
             QStringList result;
+            result.reserve(ids.size());
 
             for (const auto &id : ids)
                 result << id.value<QString>();

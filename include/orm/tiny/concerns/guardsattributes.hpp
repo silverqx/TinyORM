@@ -231,8 +231,10 @@ namespace Concerns
     void GuardsAttributes<Derived, AllRelations...>::unguarded(
             const std::function<void()> &callback)
     {
-        if (m_unguarded)
-            return std::invoke(callback);
+        if (m_unguarded) {
+            std::invoke(callback);
+            return;
+        }
 
         unguard();
 

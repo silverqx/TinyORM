@@ -54,7 +54,7 @@ ConnectionInterface &DB::reconnect(QString name)
 
 void DB::disconnect(QString name)
 {
-    return manager().disconnect(name);
+    manager().disconnect(name);
 }
 
 const QStringList DB::supportedDrivers()
@@ -79,7 +79,7 @@ const QString &DB::getDefaultConnection()
 
 void DB::setDefaultConnection(const QString &defaultConnection)
 {
-    return manager().setDefaultConnection(defaultConnection);
+    manager().setDefaultConnection(defaultConnection);
 }
 
 DatabaseManager &
@@ -219,12 +219,12 @@ bool DB::anyCountingElapsed()
 
 void DB::enableAllElapsedCounters()
 {
-    return manager().enableAllElapsedCounters();
+    manager().enableAllElapsedCounters();
 }
 
 void DB::disableAllElapsedCounters()
 {
-    return manager().disableAllElapsedCounters();
+    manager().disableAllElapsedCounters();
 }
 
 qint64 DB::getAllElapsedCounters()
@@ -239,7 +239,7 @@ qint64 DB::takeAllElapsedCounters()
 
 void DB::resetAllElapsedCounters()
 {
-    return manager().resetAllElapsedCounters();
+    manager().resetAllElapsedCounters();
 }
 
 void DB::enableElapsedCounters(const QStringList &connections)
@@ -304,12 +304,12 @@ bool DB::anyCountingStatements()
 
 void DB::enableAllStatementCounters()
 {
-    return manager().enableAllStatementCounters();
+    manager().enableAllStatementCounters();
 }
 
 void DB::disableAllStatementCounters()
 {
-    return manager().disableAllStatementCounters();
+    manager().disableAllStatementCounters();
 }
 
 StatementsCounter DB::getAllStatementCounters()
@@ -324,7 +324,7 @@ StatementsCounter DB::takeAllStatementCounters()
 
 void DB::resetAllStatementCounters()
 {
-    return manager().resetAllStatementCounters();
+    manager().resetAllStatementCounters();
 }
 
 void DB::enableStatementCounters(const QStringList &connections)

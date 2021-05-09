@@ -1250,9 +1250,12 @@ namespace Relations
 
         QVector<Model> models;
 
+        // Table row, instantiate the QVector once and then re-use
+        QVector<AttributeItem> row;
+        row.reserve(result.record().count());
+
         while (result.next()) {
-            // Table row
-            QVector<AttributeItem> row;
+            row.clear();
 
             // Populate table row with data from the database
             const auto record = result.record();
@@ -1271,6 +1274,8 @@ namespace Relations
     Builder<Model>::parseWithRelations(const QVector<WithItem> &relations) const
     {
         QVector<WithItem> results;
+        // Can contain nested relations
+        results.reserve(relations.size() * 2);
 
         for (auto relation : relations) {
             const auto emptyConstraints = !relation.constraints;
@@ -1290,7 +1295,7 @@ namespace Relations
                the relationship with its own key in the vector of eager-load names. */
             addNestedWiths(relation.name, results);
 
-            results.append(relation);
+            results.append(std::move(relation));
         }
 
         return results;
@@ -1318,10 +1323,13 @@ namespace Relations
            on the relationships. We will only set the ones that are not specified. */
         // Prevent container detach
         const auto names = name.split(QChar('.'));
+
+        progress.reserve(names.size());
+
         for (const auto &segment : names) {
             progress << segment;
 
-            const auto last = progress.join(QChar('.'));
+            auto last = progress.join(QChar('.'));
             const auto containsRelation = [&last](const auto &relation)
             {
                 return relation.name == last;
@@ -1330,7 +1338,7 @@ namespace Relations
 
             // Don't add a relation in the 'name' variable
             if (!contains && (last != name))
-                results.append({last});
+                results.append({std::move(last)});
         }
     }
 
