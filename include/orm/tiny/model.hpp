@@ -75,6 +75,7 @@ namespace Relations {
     // TODO QueryBuilder::updateOrInsert() silverqx
     // CUR code coverage silverqx
     // CUR compile without PCH silverqx
+    // CUR clang/gcc pendantic silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -172,7 +173,7 @@ namespace Relations {
         without(const QString &relation);
 
         /*! Save a new model and return the instance. */
-        static Derived create(const QVector<AttributeItem> &attributes);
+        static Derived create(const QVector<AttributeItem> &attributes = {});
 
         /* Proxies to TinyBuilder -> BuildsQueries */
         /*! Execute the query and get the first result. */

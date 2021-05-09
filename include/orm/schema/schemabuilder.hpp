@@ -27,6 +27,7 @@ namespace Grammars
 
     public:
         explicit SchemaBuilder(DatabaseConnection &connection);
+        inline virtual ~SchemaBuilder() = default;
 
         /*! Get the column listing for a given table. */
         virtual QStringList getColumnListing(const QString &table) const;

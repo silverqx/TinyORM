@@ -143,11 +143,6 @@ namespace Relations
         /*! Prevent the specified relations from being eager loaded. */
         Builder<Related> &without(const QString &relation) const;
 
-        /*! Save a new model and return the instance. */
-        virtual Related create(const QVector<AttributeItem> &attributes) const;
-        /*! Save a new model and return the instance. */
-        virtual Related create(QVector<AttributeItem> &&attributes) const;
-
         /* Proxies to TinyBuilder -> BuildsQueries */
         /*! Execute the query and get the first result. */
         std::optional<Model> first(const QStringList &columns = {"*"}) const;
@@ -548,20 +543,6 @@ namespace Relations
     Relation<Model, Related>::without(const QString &relation) const
     {
         return m_query->without(relation);
-    }
-
-    template<class Model, class Related>
-    Related
-    Relation<Model, Related>::create(const QVector<AttributeItem> &attributes) const
-    {
-        return m_query->create(attributes);
-    }
-
-    template<class Model, class Related>
-    Related
-    Relation<Model, Related>::create(QVector<AttributeItem> &&attributes) const
-    {
-        return m_query->create(std::move(attributes));
     }
 
     template<class Model, class Related>

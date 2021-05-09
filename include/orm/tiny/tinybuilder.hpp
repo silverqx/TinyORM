@@ -80,9 +80,9 @@ namespace Relations
         Builder &without(const QString &relation);
 
         /*! Save a new model and return the instance. */
-        Model create(const QVector<AttributeItem> &attributes);
+        Model create(const QVector<AttributeItem> &attributes = {});
         /*! Save a new model and return the instance. */
-        Model create(QVector<AttributeItem> &&attributes);
+        Model create(QVector<AttributeItem> &&attributes = {});
 
         /* BuildsQueries */
         // TODO BuildsQueries contains duplicit methods in TinyBuilder and QueryBuilder, make it by multi inheritance, I discovered now, that TinyBuilder will return different types than QueryBuilder, look eg at first() or get(), but investigate if there are cases, when API is same and use multi inheritance pattern for this methods silver

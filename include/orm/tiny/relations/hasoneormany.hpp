@@ -40,9 +40,9 @@ namespace Orm::Tiny::Relations
         QVector<Related> saveMany(QVector<Related> &&models) const;
 
         /*! Create a new instance of the related model. */
-        Related create(const QVector<AttributeItem> &attributes = {}) const override;
+        Related create(const QVector<AttributeItem> &attributes = {}) const;
         /*! Create a new instance of the related model. */
-        Related create(QVector<AttributeItem> &&attributes = {}) const override;
+        Related create(QVector<AttributeItem> &&attributes = {}) const;
         /*! Create a vector of new instances of the related model. */
         QVector<Related>
         createMany(const QVector<QVector<AttributeItem>> &records) const;
@@ -152,7 +152,7 @@ namespace Orm::Tiny::Relations
         for (auto &model : models)
             save(model);
 
-        return models;
+        return std::move(models);
     }
 
     template<class Model, class Related>

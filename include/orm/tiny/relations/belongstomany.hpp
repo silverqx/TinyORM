@@ -803,7 +803,7 @@ namespace Orm::Tiny::Relations
 
         touchIfTouching();
 
-        return models;
+        return std::move(models);
     }
 
     template<class Model, class Related, class PivotType>

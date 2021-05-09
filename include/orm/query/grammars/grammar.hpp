@@ -17,6 +17,7 @@ namespace Orm::Query::Grammars
 
     public:
         Grammar() = default;
+        inline virtual ~Grammar() = default;
 
         /*! Compile a select query into SQL. */
         QString compileSelect(QueryBuilder &query) const;

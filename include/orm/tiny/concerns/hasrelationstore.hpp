@@ -365,7 +365,7 @@ namespace Concerns
            and error prone. We don't want constraints because we add eager ones. */
         auto relationInstance =
                 Relations::Relation<Derived, Related>::noConstraints(
-                    [this, &method, &dummyModel]
+                    [&method, &dummyModel]
         {
             return std::invoke(method, dummyModel);
         });
