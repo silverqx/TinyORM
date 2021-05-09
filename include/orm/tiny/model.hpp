@@ -2206,7 +2206,7 @@ namespace Relations {
 
         auto &model = std::get<std::optional<Related>>(pushStore.models);
         // CUR test push with default model silverqx
-        Q_ASSERT(!!model);
+        Q_ASSERT(model);
 
         // Skip a null model, consider it as success
         if (!model) {
