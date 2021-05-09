@@ -39,9 +39,9 @@ namespace Orm::Query
 #endif
 
 #ifdef TINYORM_COMMON_NAMESPACE
-Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Query::Expression);
+Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Query::Expression)
 #else
-Q_DECLARE_METATYPE(Orm::Query::Expression);
+Q_DECLARE_METATYPE(Orm::Query::Expression)
 #endif
 
 #endif // EXPRESSION_H

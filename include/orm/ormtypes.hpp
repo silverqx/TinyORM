@@ -246,9 +246,9 @@ namespace Query
 #endif
 
 #ifdef TINYORM_COMMON_NAMESPACE
-Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem);
+Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem)
 #else
-Q_DECLARE_METATYPE(Orm::WhereConditionItem);
+Q_DECLARE_METATYPE(Orm::WhereConditionItem)
 #endif
 
 #endif // ORMTYPES_H

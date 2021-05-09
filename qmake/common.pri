@@ -1,7 +1,7 @@
 # Common Configuration ( also for tests )
 # ---
 
-CONFIG *= c++2a strict_c++ silent warn_off
+CONFIG *= c++2a strict_c++ silent warn_on
 CONFIG -= c++11 app_bundle
 
 # Qt defines
