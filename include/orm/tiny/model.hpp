@@ -76,6 +76,7 @@ namespace Relations {
     // CUR code coverage silverqx
     // CUR compile without PCH silverqx
     // CUR clang/gcc pendantic silverqx
+    // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
