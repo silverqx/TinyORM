@@ -3,9 +3,7 @@
 
 #include "orm/tiny/model.hpp"
 
-#ifdef __clang__
 #include "models/torrent.hpp"
-#endif
 
 using Orm::Tiny::Relations::BelongsTo;
 
