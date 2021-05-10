@@ -15,7 +15,7 @@ namespace Orm
     public:
         MySqlConnection(
                 const std::function<Connectors::ConnectionName()> &connection,
-                const QString &database = "", const QString tablePrefix = "",
+                const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
         inline virtual ~MySqlConnection() = default;
 

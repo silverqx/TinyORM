@@ -195,7 +195,7 @@ namespace Relations {
         /*! Destroy the models for the given IDs. */
         static std::size_t destroy(const QVector<QVariant> &ids);
         /*! Destroy the model by the given ID. */
-        static std::size_t destroy(QVariant id);
+        static std::size_t destroy(const QVariant &id);
 
         /*! Run a truncate statement on the table. */
         static void truncate();
@@ -203,10 +203,10 @@ namespace Relations {
         /* Select */
         /*! Set the columns to be selected. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        select(const QStringList columns = {"*"});
+        select(const QStringList &columns = {"*"});
         /*! Set the column to be selected. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        select(const QString column);
+        select(const QString &column);
         /*! Add new select columns to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         addSelect(const QStringList &columns);
@@ -384,10 +384,10 @@ namespace Relations {
 
         /*! Add an "order by" clause for a timestamp to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        latest(QString column = "");
+        latest(const QString &column = "");
         /*! Add an "order by" clause for a timestamp to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        oldest(QString column = "");
+        oldest(const QString &column = "");
         /*! Remove all existing orders. */
         static std::unique_ptr<TinyBuilder<Derived>>
         reorder();
@@ -423,13 +423,13 @@ namespace Relations {
 
         /* Operations on a model instance */
         /*! Save the model to the database. */
-        bool save(const SaveOptions &options = {});
+        bool save(const SaveOptions options = {});
         /*! Save the model and all of its relationships. */
         bool push();
 
         /*! Update records in the database. */
         bool update(const QVector<AttributeItem> &attributes,
-                    const SaveOptions &options = {});
+                    const SaveOptions options = {});
 
         /*! Delete the model from the database. */
         bool remove();
@@ -479,7 +479,7 @@ namespace Relations {
 
         /*! Create a new model instance that is existing. */
         Derived newFromBuilder(const QVector<AttributeItem> &attributes = {},
-                               const std::optional<QString> connection = std::nullopt);
+                               const std::optional<QString> &connection = std::nullopt);
         /*! Create a new instance of the given model. */
         inline Derived newInstance() { return newInstance({}); }
         /*! Create a new instance of the given model. */
@@ -934,7 +934,7 @@ namespace Relations {
         /*! Perform a model insert operation. */
         bool performUpdate(TinyBuilder<Derived> &query);
         /*! Perform any actions that are necessary after the model is saved. */
-        void finishSave(const SaveOptions &options = {});
+        void finishSave(const SaveOptions options = {});
 
         /*! Insert the given attributes and set the ID on the model. */
         quint64 insertAndSetId(const TinyBuilder<Derived> &query,
@@ -1366,7 +1366,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     size_t
-    Model<Derived, AllRelations...>::destroy(const QVariant id)
+    Model<Derived, AllRelations...>::destroy(const QVariant &id)
     {
         return destroy(QVector<QVariant> {id});
     }
@@ -1379,7 +1379,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::select(const QStringList columns)
+    Model<Derived, AllRelations...>::select(const QStringList &columns)
     {
         auto builder = query();
 
@@ -1390,7 +1390,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::select(const QString column)
+    Model<Derived, AllRelations...>::select(const QString &column)
     {
         auto builder = query();
 
@@ -1958,7 +1958,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::latest(QString column)
+    Model<Derived, AllRelations...>::latest(const QString &column)
     {
         auto builder = query();
 
@@ -1969,7 +1969,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::oldest(QString column)
+    Model<Derived, AllRelations...>::oldest(const QString &column)
     {
         auto builder = query();
 
@@ -2079,7 +2079,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool Model<Derived, AllRelations...>::save(const SaveOptions &options)
+    bool Model<Derived, AllRelations...>::save(const SaveOptions options)
     {
 //        mergeAttributesFromClassCasts();
 
@@ -2265,7 +2265,7 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::update(
             const QVector<AttributeItem> &attributes,
-            const SaveOptions &options)
+            const SaveOptions options)
     {
         if (!exists)
             return false;
@@ -2572,7 +2572,7 @@ namespace Relations {
     Derived
     Model<Derived, AllRelations...>::newFromBuilder(
             const QVector<AttributeItem> &attributes,
-            const std::optional<QString> connection)
+            const std::optional<QString> &connection)
     {
         auto model = newInstance({}, true);
 
@@ -3920,7 +3920,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void Model<Derived, AllRelations...>::finishSave(const SaveOptions &options)
+    void Model<Derived, AllRelations...>::finishSave(const SaveOptions options)
     {
 //        fireModelEvent('saved', false);
 

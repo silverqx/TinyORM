@@ -65,12 +65,13 @@ QVariant BaseGrammar::getValue(const Expression &expression) const
     return expression.getValue();
 }
 
-QString BaseGrammar::columnize(QStringList columns) const
+QString BaseGrammar::columnize(const QStringList &columns) const
 {
     return wrapArray(columns).join(", ");
 }
 
-QString BaseGrammar::columnize(const QStringList &columns, const bool isTorrentsTable) const
+QString BaseGrammar::columnize(const QStringList &columns,
+                               const bool isTorrentsTable) const
 {
     // BUG Qt and mysql json column silverqx
     /* Qt don't know how to iterate the result with json column, so I have to manually manage

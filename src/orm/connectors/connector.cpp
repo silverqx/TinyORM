@@ -87,7 +87,7 @@ Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &co
 
 QSqlDatabase
 Connector::tryAgainIfCausedByLostConnection(
-        const std::exception_ptr ePtr, const SqlError &e, const QString &name,
+        const std::exception_ptr &ePtr, const SqlError &e, const QString &name,
         const QVariantHash &config, const QString &options) const
 {
     if (causedByLostConnection(e))

@@ -172,9 +172,9 @@ namespace Relations
 
         /* Select */
         /*! Set the columns to be selected. */
-        Builder<Related> &select(const QStringList columns = {"*"}) const;
+        Builder<Related> &select(const QStringList &columns = {"*"}) const;
         /*! Set the column to be selected. */
-        Builder<Related> &select(const QString column) const;
+        Builder<Related> &select(const QString &column) const;
         /*! Add new select columns to the query. */
         Builder<Related> &addSelect(const QStringList &columns) const;
         /*! Add a new select column to the query. */
@@ -604,14 +604,14 @@ namespace Relations
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::select(const QStringList columns) const
+    Relation<Model, Related>::select(const QStringList &columns) const
     {
         return m_query->select(columns);
     }
 
     template<class Model, class Related>
     Builder<Related> &
-    Relation<Model, Related>::select(const QString column) const
+    Relation<Model, Related>::select(const QString &column) const
     {
         return m_query->select(column);
     }

@@ -51,12 +51,12 @@ namespace Orm
                       const QString &name =
                       QLatin1String(DatabaseManager::defaultConnectionName));
         /*! Remove the given connection from the manager. */
-        static bool removeConnection(QString name = "");
+        static bool removeConnection(const QString &name = "");
 
         /*! Reconnect to the given database. */
-        static ConnectionInterface &reconnect(QString name = "");
+        static ConnectionInterface &reconnect(const QString &name = "");
         /*! Disconnect from the given database. */
-        static void disconnect(QString name = "");
+        static void disconnect(const QString &name = "");
 
         /*! Get all of the support drivers. */
         static const QStringList supportedDrivers();

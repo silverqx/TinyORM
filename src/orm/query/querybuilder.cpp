@@ -161,7 +161,7 @@ void Builder::truncate()
         m_connection.statement(sql, bindings);
 }
 
-Builder &Builder::select(const QStringList columns)
+Builder &Builder::select(const QStringList &columns)
 {
     // FEATURE expression, add Query::Expression overload, find all occurences of Illuminate\Database\Query\Expression in the Eloquent and add support to TinyORM, I will need to add overloads for some methods, for columns and also for values silverqx
     clearColumns();
@@ -171,7 +171,7 @@ Builder &Builder::select(const QStringList columns)
     return *this;
 }
 
-Builder &Builder::select(const QString column)
+Builder &Builder::select(const QString &column)
 {
     return select(QStringList(column));
 }
@@ -595,7 +595,7 @@ Builder &Builder::sharedLock()
     return lock(false);
 }
 
-Builder &Builder::lock(const bool &value)
+Builder &Builder::lock(const bool value)
 {
     m_lock = value;
 

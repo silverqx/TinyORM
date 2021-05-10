@@ -33,7 +33,7 @@ namespace Orm
 
         explicit DatabaseConnection(
                 const std::function<Connectors::ConnectionName()> &connection,
-                const QString &database = "", const QString tablePrefix = "",
+                const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
         inline virtual ~DatabaseConnection() = default;
 
@@ -125,13 +125,13 @@ namespace Orm
 
         /*! Log a query into the connection's query log. */
         void logQuery(const QSqlQuery &query,
-                      const std::optional<qint64> &elapsed) const;
+                      const std::optional<qint64> elapsed) const;
         /*! Log a query into the connection's query log. */
         inline void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
-                             const std::optional<qint64> &elapsed) const;
+                             const std::optional<qint64> elapsed) const;
         /*! Log a transaction query into the connection's query log. */
         void logTransactionQuery(const QString &query,
-                                 const std::optional<qint64> &elapsed);
+                                 const std::optional<qint64> elapsed);
 
         /*! Check database connection and show warnings when the state changed. */
         bool pingDatabase() override;
@@ -287,19 +287,19 @@ namespace Orm
         /*! Handle a query exception. */
         template<typename Return>
         Return handleQueryException(
-                const std::exception_ptr ePtr, const QueryError &e,
+                const std::exception_ptr &ePtr, const QueryError &e,
                 const QString &queryString, const QVector<QVariant> &bindings,
                 const RunCallback<Return> &callback) const;
         /*! Handle a query exception that occurred during query execution. */
         template<typename Return>
         Return tryAgainIfCausedByLostConnection(
-                const std::exception_ptr ePtr, const QueryError &e,
+                const std::exception_ptr &ePtr, const QueryError &e,
                 const QString &queryString, const QVector<QVariant> &bindings,
                 const RunCallback<Return> &callback) const;
 
         /*! Count transactional queries execution time and statements counter. */
         std::optional<qint64>
-        hitTransactionalCounters(const QElapsedTimer &timer);
+        hitTransactionalCounters(const QElapsedTimer timer);
 
         /*! The flag for the database was disconnected. */
         bool m_disconnectedLogged = false;
@@ -380,7 +380,7 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::handleQueryException(
-            const std::exception_ptr ePtr, const QueryError &e,
+            const std::exception_ptr &ePtr, const QueryError &e,
             const QString &queryString, const QVector<QVariant> &bindings,
             const RunCallback<Return> &callback) const
     {
@@ -395,7 +395,7 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::tryAgainIfCausedByLostConnection(
-            const std::exception_ptr ePtr, const QueryError &e,
+            const std::exception_ptr &ePtr, const QueryError &e,
             const QString &queryString, const QVector<QVariant> &bindings,
             const RunCallback<Return> &callback) const
     {

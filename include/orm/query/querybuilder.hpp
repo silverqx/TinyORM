@@ -87,9 +87,9 @@ namespace Query
 
         /* Select */
         /*! Set the columns to be selected. */
-        Builder &select(const QStringList columns = {"*"});
+        Builder &select(const QStringList &columns = {"*"});
         /*! Set the column to be selected. */
-        Builder &select(const QString column);
+        Builder &select(const QString &column);
         /*! Add new select columns to the query. */
         Builder &addSelect(const QStringList &columns);
         // FUTURE when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
@@ -263,7 +263,7 @@ namespace Query
         /*! Share lock the selected rows in the table. */
         Builder &sharedLock();
         /*! Lock the selected rows in the table. */
-        Builder &lock(const bool &value = true);
+        Builder &lock(const bool value = true);
         /*! Lock the selected rows in the table. */
         Builder &lock(const char *value);
         /*! Lock the selected rows in the table. */

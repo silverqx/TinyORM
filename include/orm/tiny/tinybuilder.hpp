@@ -114,9 +114,9 @@ namespace Relations
 
         /* Select */
         /*! Set the columns to be selected. */
-        Builder &select(const QStringList columns = {"*"});
+        Builder &select(const QStringList &columns = {"*"});
         /*! Set the column to be selected. */
-        Builder &select(const QString column);
+        Builder &select(const QString &column);
         /*! Add new select columns to the query. */
         Builder &addSelect(const QStringList &columns);
         /*! Add a new select column to the query. */
@@ -623,14 +623,14 @@ namespace Relations
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::select(const QStringList columns)
+    Builder<Model> &Builder<Model>::select(const QStringList &columns)
     {
         toBase().select(columns);
         return *this;
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::select(const QString column)
+    Builder<Model> &Builder<Model>::select(const QString &column)
     {
         toBase().select(column);
         return *this;

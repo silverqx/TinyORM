@@ -39,7 +39,7 @@ DatabaseConnection::SAVEPOINT_NAMESPACE   = const_cast<char *>("tinyorm_savepoin
 // TODO err, may be configurable exceptions by config or compiler directive? (completely disable exceptions by directive) silverqx
 DatabaseConnection::DatabaseConnection(
         const std::function<Connectors::ConnectionName()> &connection,
-        const QString &database, const QString tablePrefix,
+        const QString &database, const QString &tablePrefix,
         const QVariantHash &config
 )
     : m_qtConnectionResolver(std::move(connection))
@@ -453,7 +453,7 @@ void DatabaseConnection::bindValues(QSqlQuery &query,
 }
 
 void DatabaseConnection::logQuery(const QSqlQuery &query,
-        const std::optional<qint64> &elapsed = std::nullopt) const
+        const std::optional<qint64> elapsed = std::nullopt) const
 {
     qDebug().nospace().noquote()
         << "Executed prepared query (" << (elapsed ? *elapsed : -1) << "ms, "
@@ -466,14 +466,14 @@ void DatabaseConnection::logQuery(const QSqlQuery &query,
 
 void DatabaseConnection::logQuery(
         const std::tuple<int, QSqlQuery> &queryResult,
-        const std::optional<qint64> &elapsed) const
+        const std::optional<qint64> elapsed) const
 {
     logQuery(std::get<1>(queryResult), elapsed);
 }
 
 void DatabaseConnection::logTransactionQuery(
         const QString &query,
-        const std::optional<qint64> &elapsed = std::nullopt)
+        const std::optional<qint64> elapsed = std::nullopt)
 {
     const auto connectionName = getName();
 
@@ -486,7 +486,7 @@ void DatabaseConnection::logTransactionQuery(
 }
 
 std::optional<qint64>
-DatabaseConnection::hitTransactionalCounters(const QElapsedTimer &timer)
+DatabaseConnection::hitTransactionalCounters(const QElapsedTimer timer)
 {
     /* This function was extracted to prevent duplicit code only. */
     std::optional<qint64> elapsed;

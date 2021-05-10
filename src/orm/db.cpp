@@ -42,17 +42,17 @@ DB::addConnection(const QVariantHash &config, const QString &name)
     return manager().addConnection(config, name);
 }
 
-bool DB::removeConnection(QString name)
+bool DB::removeConnection(const QString &name)
 {
     return manager().removeConnection(name);
 }
 
-ConnectionInterface &DB::reconnect(QString name)
+ConnectionInterface &DB::reconnect(const QString &name)
 {
     return manager().reconnect(name);
 }
 
-void DB::disconnect(QString name)
+void DB::disconnect(const QString &name)
 {
     manager().disconnect(name);
 }

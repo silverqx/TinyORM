@@ -22,7 +22,7 @@ namespace Orm
 
 MySqlConnection::MySqlConnection(
         const std::function<Connectors::ConnectionName()> &connection,
-        const QString &database, const QString tablePrefix,
+        const QString &database, const QString &tablePrefix,
         const QVariantHash &config
 )
     : DatabaseConnection(connection, database, tablePrefix, config)
