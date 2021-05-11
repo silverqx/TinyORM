@@ -5,7 +5,7 @@ TEMPLATE = lib
 # Utils library specific configuration
 # ---
 
-CONFIG *= qt link_prl tinyorm_utils
+CONFIG *= qt create_prl link_prl tinyorm_utils
 
 # Common configuration
 # ---

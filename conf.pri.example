@@ -21,5 +21,9 @@ else:unix {
     # range-v3
     INCLUDEPATH += $$quote(/home/xyz/vcpkg/installed/x64-linux/include)
 
+    # libraries
     LIBS += -lmysqlclient
+
+    # others
+    clang: CONFIG *= use_lld_linker
 }
