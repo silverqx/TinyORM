@@ -12,8 +12,7 @@ include(../qmake/common.pri)
 # TinyORM library specific configuration
 # ---
 
-CONFIG *= create_prl
-#CONFIG *= create_libtool create_pc
+CONFIG *= create_prl create_pc create_libtool
 
 # TinyORM defines
 # ---
