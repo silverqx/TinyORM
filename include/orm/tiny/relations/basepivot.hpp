@@ -62,8 +62,11 @@ namespace Orm::Tiny::Relations
         /*! Get the table associated with the model. */
         QString getTable() const;
         /*! Get the foreign key column name. */
-        inline QString getForeignKey() const
-        { return m_foreignKey; }
+        QString getForeignKey() const;
+        /*!  Get the "related key" column name. */
+        QString getRelatedKey() const;
+
+        // CUR unsetRelations silverqx
 
         // TODO fuckup, timestamps in pivot, I will solve it when I will have to use timestamps in the code, anyway may be I will not need it, because I can pass to the method right away what I will need silverqx
         /*! The parent model of the relationship. */
@@ -225,6 +228,18 @@ namespace Orm::Tiny::Relations
                             Utils::Type::classPureBasename<PivotModel>()));
 
         return table;
+    }
+
+    template<typename PivotModel>
+    QString BasePivot<PivotModel>::getForeignKey() const
+    {
+        return m_foreignKey;
+    }
+
+    template<typename PivotModel>
+    QString BasePivot<PivotModel>::getRelatedKey() const
+    {
+        return m_relatedKey;
     }
 
     template<typename PivotModel>

@@ -26,11 +26,17 @@ private slots:
 
     void getRelation_EagerLoad_ManyAndOne() const;
     void getRelation_EagerLoad_BelongsTo() const;
+    void getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const;
+    void getRelationValue_EagerLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const;
+    void getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const;
     void getRelation_EagerLoad_Failed() const;
     void EagerLoad_Failed() const;
 
     void getRelationValue_LazyLoad_ManyAndOne() const;
     void getRelationValue_LazyLoad_BelongsTo() const;
+    void getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const;
+    void getRelationValue_LazyLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const;
+    void getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const;
     void getRelationValue_LazyLoad_Failed() const;
 
     void u_with_Empty() const;
@@ -141,6 +147,151 @@ void tst_Model_Relations::getRelation_EagerLoad_BelongsTo() const
     QCOMPARE(typeid (TorrentEager *), typeid (torrent));
 }
 
+void tst_Model_Relations
+::getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Tag::with("torrents")->find(2);
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+
+    // Tag has many relation
+    auto torrents = tag->getRelation<Torrent>("torrents");
+    QCOMPARE(torrents.size(), 2);
+    QCOMPARE(typeid (QVector<Torrent *>), typeid (torrents));
+
+    // Expected torrent IDs
+    QVector<QVariant> torrentIds {2, 3};
+
+    for (auto *torrent : torrents) {
+        QVERIFY(torrent);
+        QVERIFY(torrent->exists);
+        QVERIFY(torrentIds.contains(torrent->getAttribute("id")));
+        QCOMPARE(typeid (Torrent *), typeid (torrent));
+
+        // Pivot relation
+        auto *pivot = torrent->getRelation<Pivot, One>("pivot");
+        QVERIFY(pivot);
+        QVERIFY(pivot->exists);
+        QCOMPARE(typeid (Pivot *), typeid (pivot));
+
+        QVERIFY(pivot->usesTimestamps());
+        QVERIFY(!pivot->getIncrementing());
+
+        QCOMPARE(pivot->getForeignKey(), QString("tag_id"));
+        QCOMPARE(pivot->getRelatedKey(), QString("torrent_id"));
+
+        const auto &attributesHash = pivot->getAttributesHash();
+
+        QCOMPARE(attributesHash.size(), 5);
+
+        QCOMPARE(pivot->getAttribute("tag_id"), (*tag)["id"]);
+        // With pivot attributes, active
+        QCOMPARE(pivot->getAttribute("active"), QVariant(1));
+        QVERIFY(attributesHash.contains("created_at"));
+        QVERIFY(attributesHash.contains("updated_at"));
+    }
+}
+
+void tst_Model_Relations
+::getRelationValue_EagerLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::with({"tags"})->find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    // Tag has many relation
+    auto tags = torrent->getRelation<Tag>("tags");
+    QCOMPARE(tags.size(), 4);
+    QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
+
+    // Expected tag IDs and pivot attribute 'active', tagId to active
+    std::unordered_map<int, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
+
+    for (auto *tag : tags) {
+        QVERIFY(tag);
+        QVERIFY(tag->exists);
+        const auto tagId = tag->getAttribute("id").value<quint64>();
+        QVERIFY(activeMap.contains(tagId));
+        QCOMPARE(typeid (Tag *), typeid (tag));
+
+        /* Custom Pivot relation as the Tagged class, under the 'tagged'
+           key in the m_relations hash. */
+        auto *tagged = tag->getRelation<Tagged, One>("tagged");
+        QVERIFY(tagged);
+        QVERIFY(tagged->exists);
+        QCOMPARE(typeid (Tagged *), typeid (tagged));
+
+        QVERIFY(tagged->usesTimestamps());
+        QVERIFY(!tagged->getIncrementing());
+
+        QCOMPARE(tagged->getForeignKey(), QString("torrent_id"));
+        QCOMPARE(tagged->getRelatedKey(), QString("tag_id"));
+
+        const auto &attributesHash = tagged->getAttributesHash();
+
+        QCOMPARE(attributesHash.size(), 5);
+
+        QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
+        // With pivot attributes, active
+        QCOMPARE(tagged->getAttribute("active"), QVariant(activeMap.at(tagId)));
+        QVERIFY(attributesHash.contains("created_at"));
+        QVERIFY(attributesHash.contains("updated_at"));
+    }
+}
+
+void tst_Model_Relations
+::getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Tag::with("torrents_WithoutPivotAttributes")->find(2);
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+
+    // Tag has many relation
+    auto torrents = tag->getRelation<Torrent>("torrents_WithoutPivotAttributes");
+    QCOMPARE(torrents.size(), 2);
+    QCOMPARE(typeid (QVector<Torrent *>), typeid (torrents));
+
+    // Expected torrent IDs
+    QVector<QVariant> torrentIds {2, 3};
+
+    for (auto *torrent : torrents) {
+        QVERIFY(torrent);
+        QVERIFY(torrent->exists);
+        QVERIFY(torrentIds.contains(torrent->getAttribute("id")));
+        QCOMPARE(typeid (Torrent *), typeid (torrent));
+
+        // Pivot relation
+        auto *pivot = torrent->getRelation<Pivot, One>("pivot");
+        QVERIFY(pivot);
+        QVERIFY(pivot->exists);
+        QCOMPARE(typeid (Pivot *), typeid (pivot));
+
+        QVERIFY(!pivot->usesTimestamps());
+        QVERIFY(!pivot->getIncrementing());
+
+        QCOMPARE(pivot->getForeignKey(), QString("tag_id"));
+        QCOMPARE(pivot->getRelatedKey(), QString("torrent_id"));
+
+        const auto &attributesHash = pivot->getAttributesHash();
+
+        QCOMPARE(attributesHash.size(), 2);
+
+        QCOMPARE(pivot->getAttribute("tag_id"), (*tag)["id"]);
+    }
+}
+
 void tst_Model_Relations::getRelation_EagerLoad_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -161,9 +312,13 @@ void tst_Model_Relations::getRelation_EagerLoad_Failed() const
     QVERIFY_EXCEPTION_THROWN(
                 (torrent.getRelation<TorrentPeer, One>("torrentFiles")),
                 RelationNotLoadedError);
-    // Belongs to relation
+    // BelongsTo relation
     QVERIFY_EXCEPTION_THROWN(
                 (TorrentPeer().getRelation<Torrent, One>("torrent")),
+                RelationNotLoadedError);
+    // BelongsToMany relation
+    QVERIFY_EXCEPTION_THROWN(
+                (torrent.getRelation<Tag>("tags")),
                 RelationNotLoadedError);
 }
 
@@ -235,6 +390,151 @@ void tst_Model_Relations::getRelationValue_LazyLoad_BelongsTo() const
     QCOMPARE(typeid (Torrent *), typeid (torrent));
 }
 
+void tst_Model_Relations
+::getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Tag::find(2);
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+
+    // Tag has many relation
+    auto torrents = tag->getRelationValue<Torrent>("torrents");
+    QCOMPARE(torrents.size(), 2);
+    QCOMPARE(typeid (QVector<Torrent *>), typeid (torrents));
+
+    // Expected torrent IDs
+    QVector<QVariant> torrentIds {2, 3};
+
+    for (auto *torrent : torrents) {
+        QVERIFY(torrent);
+        QVERIFY(torrent->exists);
+        QVERIFY(torrentIds.contains(torrent->getAttribute("id")));
+        QCOMPARE(typeid (Torrent *), typeid (torrent));
+
+        // Pivot relation
+        auto *pivot = torrent->getRelation<Pivot, One>("pivot");
+        QVERIFY(pivot);
+        QVERIFY(pivot->exists);
+        QCOMPARE(typeid (Pivot *), typeid (pivot));
+
+        QVERIFY(pivot->usesTimestamps());
+        QVERIFY(!pivot->getIncrementing());
+
+        QCOMPARE(pivot->getForeignKey(), QString("tag_id"));
+        QCOMPARE(pivot->getRelatedKey(), QString("torrent_id"));
+
+        const auto &attributesHash = pivot->getAttributesHash();
+
+        QCOMPARE(attributesHash.size(), 5);
+
+        QCOMPARE(pivot->getAttribute("tag_id"), (*tag)["id"]);
+        // With pivot attributes, active
+        QCOMPARE(pivot->getAttribute("active"), QVariant(1));
+        QVERIFY(attributesHash.contains("created_at"));
+        QVERIFY(attributesHash.contains("updated_at"));
+    }
+}
+
+void tst_Model_Relations
+::getRelationValue_LazyLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    // Tag has many relation
+    auto tags = torrent->getRelationValue<Tag>("tags");
+    QCOMPARE(tags.size(), 4);
+    QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
+
+    // Expected tag IDs and pivot attribute 'active', tagId to active
+    std::unordered_map<int, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
+
+    for (auto *tag : tags) {
+        QVERIFY(tag);
+        QVERIFY(tag->exists);
+        const auto tagId = tag->getAttribute("id").value<quint64>();
+        QVERIFY(activeMap.contains(tagId));
+        QCOMPARE(typeid (Tag *), typeid (tag));
+
+        /* Custom Pivot relation as the Tagged class, under the 'tagged'
+           key in the m_relations hash. */
+        auto *tagged = tag->getRelation<Tagged, One>("tagged");
+        QVERIFY(tagged);
+        QVERIFY(tagged->exists);
+        QCOMPARE(typeid (Tagged *), typeid (tagged));
+
+        QVERIFY(tagged->usesTimestamps());
+        QVERIFY(!tagged->getIncrementing());
+
+        QCOMPARE(tagged->getForeignKey(), QString("torrent_id"));
+        QCOMPARE(tagged->getRelatedKey(), QString("tag_id"));
+
+        const auto &attributesHash = tagged->getAttributesHash();
+
+        QCOMPARE(attributesHash.size(), 5);
+
+        QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
+        // With pivot attributes, active
+        QCOMPARE(tagged->getAttribute("active"), QVariant(activeMap.at(tagId)));
+        QVERIFY(attributesHash.contains("created_at"));
+        QVERIFY(attributesHash.contains("updated_at"));
+    }
+}
+
+void tst_Model_Relations
+::getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Tag::find(2);
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+
+    // Tag has many relation
+    auto torrents = tag->getRelationValue<Torrent>("torrents_WithoutPivotAttributes");
+    QCOMPARE(torrents.size(), 2);
+    QCOMPARE(typeid (QVector<Torrent *>), typeid (torrents));
+
+    // Expected torrent IDs
+    QVector<QVariant> torrentIds {2, 3};
+
+    for (auto *torrent : torrents) {
+        QVERIFY(torrent);
+        QVERIFY(torrent->exists);
+        QVERIFY(torrentIds.contains(torrent->getAttribute("id")));
+        QCOMPARE(typeid (Torrent *), typeid (torrent));
+
+        // Pivot relation
+        auto *pivot = torrent->getRelation<Pivot, One>("pivot");
+        QVERIFY(pivot);
+        QVERIFY(pivot->exists);
+        QCOMPARE(typeid (Pivot *), typeid (pivot));
+
+        QVERIFY(!pivot->usesTimestamps());
+        QVERIFY(!pivot->getIncrementing());
+
+        QCOMPARE(pivot->getForeignKey(), QString("tag_id"));
+        QCOMPARE(pivot->getRelatedKey(), QString("torrent_id"));
+
+        const auto &attributesHash = pivot->getAttributesHash();
+
+        QCOMPARE(attributesHash.size(), 2);
+
+        QCOMPARE(pivot->getAttribute("tag_id"), (*tag)["id"]);
+    }
+}
+
 void tst_Model_Relations::getRelationValue_LazyLoad_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -250,6 +550,9 @@ void tst_Model_Relations::getRelationValue_LazyLoad_Failed() const
     // One relation, obtained as QVector, also possible
     QCOMPARE((Torrent().getRelationValue<TorrentPeer>("notExists")),
              QVector<TorrentPeer *>());
+    // Just to be sure try BelongsToMany relation
+    QCOMPARE((Torrent().getRelationValue<Tag>("notExists")),
+             QVector<Tag *>());
 }
 
 void tst_Model_Relations::u_with_Empty() const

@@ -35,6 +35,14 @@ public:
         return relation;
     }
 
+    /*! Get torrents that belong to the tag. */
+    std::unique_ptr<BelongsToMany<Tag, Torrent, Pivot>>
+    torrents_WithoutPivotAttributes()
+    {
+        // Ownership of a unique_ptr()
+        return belongsToMany<Torrent, Pivot>();
+    }
+
     /*! Get the tag property associated with the tag. */
     std::unique_ptr<HasOne<Tag, TagProperty>>
     tagProperty()
@@ -48,8 +56,9 @@ private:
 
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"torrents",    [](auto &v) { v(&Tag::torrents); }},
-        {"tagProperty", [](auto &v) { v(&Tag::tagProperty); }},
+        {"torrents",                        [](auto &v) { v(&Tag::torrents); }},
+        {"torrents_WithoutPivotAttributes", [](auto &v) { v(&Tag::torrents_WithoutPivotAttributes); }},
+        {"tagProperty",                     [](auto &v) { v(&Tag::tagProperty); }},
     };
 
     /*! The relations to eager load on every query. */

@@ -14,7 +14,7 @@ using Orm::WithItem;
 
 class TorrentEager final :
         public Model<TorrentEager, TorrentPreviewableFileEager,
-                         TorrentPeerEager_NoRelations>
+                     TorrentPeerEager_NoRelations>
 {
     friend Model;
     using Model::Model;
