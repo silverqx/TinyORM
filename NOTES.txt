@@ -65,6 +65,7 @@ Common:
 
 Features related/to implement:
 
+ - aggregates            : aggregate values like count, max, min, avg and sum
  - castable              : attributes casting
  - default attributes    : Default Attribute Values
  - dilemma primarykey    : different types for primary keys

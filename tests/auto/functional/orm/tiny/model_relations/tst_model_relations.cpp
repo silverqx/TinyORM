@@ -1,6 +1,8 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include <typeinfo>
+
 #include "models/torrent.hpp"
 #include "models/torrenteager.hpp"
 #include "models/torrenteager_failed.hpp"

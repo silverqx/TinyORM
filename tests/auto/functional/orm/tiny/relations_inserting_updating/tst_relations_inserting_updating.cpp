@@ -1,6 +1,8 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include <typeinfo>
+
 #include "models/torrent.hpp"
 #include "models/torrentpreviewablefile.hpp"
 
@@ -57,7 +59,24 @@ private slots:
     void associate_WithModel() const;
     void associate_WithId() const;
     void associate_WithId_ShouldUnsetRelation() const;
+
     void dissociate() const;
+
+    void attach_BasicPivot_WithIds() const;
+    void attach_BasicPivot_WithModels() const;
+    void attach_CustomPivot_WithIds() const;
+    void attach_CustomPivot_WithModels() const;
+    void attach_BasicPivot_IdsWithAttributes() const;
+    void attach_CustomPivot_IdsWithAttributes() const;
+
+    void detach_BasicPivot_WithIds() const;
+    void detach_BasicPivot_WithModels() const;
+    void detach_BasicPivot_All() const;
+    void detach_CustomPivot_WithIds() const;
+    void detach_CustomPivot_WithModels() const;
+    void detach_CustomPivot_All() const;
+
+    // CUR updateExistingPivot(), also check if there is something more silverqx
 };
 
 void tst_Relations_Inserting_Updating::initTestCase_data() const
@@ -1491,6 +1510,629 @@ void tst_Relations_Inserting_Updating::dissociate() const
 
     verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5 == nullptr);
+}
+
+void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Torrent torrent100 {
+        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {"hash", "xyzhash100"}, {"note", "attach with pivot"},
+    };
+    torrent100.save();
+    Torrent torrent101 {
+        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {"hash", "xyzhash101"}, {"note", "attach with pivot"},
+    };
+    torrent101.save();
+
+    auto tag4 = Tag::find(4);
+
+    tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
+                             {{"active", 0}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
+            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected torrent IDs
+    QVector<QVariant> torrentIds {torrent100["id"], torrent101["id"]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
+        QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    // Restore db
+    torrent100.remove();
+    torrent101.remove();
+}
+
+void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Torrent torrent100 {
+        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {"hash", "xyzhash100"}, {"note", "attach with pivot"},
+    };
+    torrent100.save();
+    Torrent torrent101 {
+        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {"hash", "xyzhash101"}, {"note", "attach with pivot"},
+    };
+    torrent101.save();
+
+    auto tag4 = Tag::find(4);
+
+    tag4->torrents()->attach({{torrent100}, {torrent101}},
+                             {{"active", 0}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
+            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected torrent IDs
+    QVector<QVariant> torrentIds {torrent100["id"], torrent101["id"]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
+        QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    // Restore db
+    torrent100.remove();
+    torrent101.remove();
+}
+
+void tst_Relations_Inserting_Updating::attach_CustomPivot_WithIds() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Tag tag100({{"name", "tag100"}});
+    tag100.save();
+    Tag tag101({{"name", "tag101"}});
+    tag101.save();
+
+    auto torrent5 = Torrent::find(5);
+
+    torrent5->tags()->attach({tag100["id"], tag101["id"]},
+                             {{"active", 0}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("torrent_id", (*torrent5)["id"])
+            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected tag IDs
+    QVector<QVariant> tagIds {tag100["id"], tag101["id"]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["torrent_id"].value(), (*torrent5)["id"]);
+        QVERIFY(tagIds.contains(tagged["tag_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    // Restore db
+    tag100.remove();
+    tag101.remove();
+}
+
+void tst_Relations_Inserting_Updating::attach_CustomPivot_WithModels() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Tag tag100({{"name", "tag100"}});
+    tag100.save();
+    Tag tag101({{"name", "tag101"}});
+    tag101.save();
+
+    auto torrent5 = Torrent::find(5);
+
+    torrent5->tags()->attach({{tag100}, {tag101}},
+                             {{"active", 0}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("torrent_id", (*torrent5)["id"])
+            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected tag IDs
+    QVector<QVariant> tagIds {tag100["id"], tag101["id"]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["torrent_id"].value(), (*torrent5)["id"]);
+        QVERIFY(tagIds.contains(tagged["tag_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    // Restore db
+    tag100.remove();
+    tag101.remove();
+}
+
+void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Torrent torrent100 {
+        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {"hash", "xyzhash100"}, {"note", "attach with pivot"},
+    };
+    torrent100.save();
+    Torrent torrent101 {
+        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {"hash", "xyzhash101"}, {"note", "attach with pivot"},
+    };
+    torrent101.save();
+
+    auto tag4 = Tag::find(4);
+
+    tag4->torrents()->attach({
+        {torrent100["id"]->value<quint64>(), {{"active", 0}}},
+        {torrent101["id"]->value<quint64>(), {{"active", 1}}},
+    }, false);
+
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
+            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected active attribute values by the torrent ID
+    std::unordered_map<quint64, int> taggedActive {
+        {torrent100["id"].value().value<quint64>(), 0},
+        {torrent101["id"].value().value<quint64>(), 1},
+    };
+
+    quint64 torrentId;
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        torrentId = tagged["torrent_id"].value().value<quint64>();
+
+        QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
+        QVERIFY(taggedActive.contains(torrentId));
+        QCOMPARE(tagged["active"].value(), QVariant(taggedActive.at(torrentId)));
+    }
+
+    // Restore db
+    torrent100.remove();
+    torrent101.remove();
+}
+
+void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Tag tag100({{"name", "tag100"}});
+    tag100.save();
+    Tag tag101({{"name", "tag101"}});
+    tag101.save();
+
+    auto torrent5 = Torrent::find(5);
+
+    torrent5->tags()->attach({
+        {tag100["id"]->value<quint64>(), {{"active", 0}}},
+        {tag101["id"]->value<quint64>(), {{"active", 1}}}
+    }, false);
+
+    auto taggeds = Tagged::whereEq("torrent_id", (*torrent5)["id"])
+            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected active attribute values by the tag ID
+    std::unordered_map<quint64, int> taggedActive {
+        {tag100["id"].value().value<quint64>(), 0},
+        {tag101["id"].value().value<quint64>(), 1},
+    };
+
+    quint64 tagId;
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        tagId = tagged["tag_id"].value().value<quint64>();
+
+        QCOMPARE(tagged["torrent_id"].value(), (*torrent5)["id"]);
+        QVERIFY(taggedActive.contains(tagId));
+        QCOMPARE(tagged["active"].value(), QVariant(taggedActive.at(tagId)));
+    }
+
+    // Restore db
+    tag100.remove();
+    tag101.remove();
+}
+
+void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Torrent torrent100 {
+        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {"hash", "xyzhash100"}, {"note", "attach with pivot"},
+    };
+    torrent100.save();
+    Torrent torrent101 {
+        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {"hash", "xyzhash101"}, {"note", "attach with pivot"},
+    };
+    torrent101.save();
+
+    auto tag4 = Tag::find(4);
+
+    tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
+                             {{"active", 0}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
+            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected torrent IDs
+    QVector<QVariant> torrentIds {torrent100["id"], torrent101["id"]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
+        QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    auto affected = tag4->torrents()->detach({torrent100["id"], torrent101["id"]},
+                                             false);
+
+    QCOMPARE(affected, 2);
+
+    // FEATURE aggregates, use count silverqx
+    taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
+            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+            .get({"torrent_id"});
+
+    QCOMPARE(taggeds.size(), 0);
+
+    // Restore db
+    torrent100.remove();
+    torrent101.remove();
+}
+
+void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Torrent torrent100 {
+        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {"hash", "xyzhash100"}, {"note", "attach with pivot"},
+    };
+    torrent100.save();
+    Torrent torrent101 {
+        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {"hash", "xyzhash101"}, {"note", "attach with pivot"},
+    };
+    torrent101.save();
+
+    auto tag4 = Tag::find(4);
+
+    tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
+                             {{"active", 0}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
+            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected torrent IDs
+    QVector<QVariant> torrentIds {torrent100["id"], torrent101["id"]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
+        QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    auto affected = tag4->torrents()->detach({torrent100, torrent101}, false);
+
+    QCOMPARE(affected, 2);
+
+    // FEATURE aggregates, use count silverqx
+    taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
+            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+            .get({"torrent_id"});
+
+    QCOMPARE(taggeds.size(), 0);
+
+    // Restore db
+    torrent100.remove();
+    torrent101.remove();
+}
+
+void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Torrent torrent100 {
+        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {"hash", "xyzhash100"}, {"note", "attach with pivot"},
+    };
+    torrent100.save();
+    Torrent torrent101 {
+        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {"hash", "xyzhash101"}, {"note", "attach with pivot"},
+    };
+    torrent101.save();
+
+    auto tag5 = Tag::find(5);
+
+    tag5->torrents()->attach({torrent100["id"], torrent101["id"]},
+                             {{"active", 0}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("tag_id", (*tag5)["id"])
+            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected torrent IDs
+    QVector<QVariant> torrentIds {torrent100["id"], torrent101["id"]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["tag_id"].value(), (*tag5)["id"]);
+        QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    auto affected = tag5->torrents()->detach(false);
+
+    QCOMPARE(affected, 2);
+
+    // FEATURE aggregates, use count silverqx
+    taggeds = Tagged::whereEq("tag_id", (*tag5)["id"])
+            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+            .get({"torrent_id"});
+
+    QCOMPARE(taggeds.size(), 0);
+
+    // Restore db
+    torrent100.remove();
+    torrent101.remove();
+}
+
+void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Tag tag100({{"name", "tag100"}});
+    tag100.save();
+    Tag tag101({{"name", "tag101"}});
+    tag101.save();
+
+    auto torrent5 = Torrent::find(5);
+
+    torrent5->tags()->attach({tag100["id"], tag101["id"]},
+                             {{"active", 0}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("torrent_id", (*torrent5)["id"])
+            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected tag IDs
+    QVector<QVariant> tagIds {tag100["id"], tag101["id"]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["torrent_id"].value(), (*torrent5)["id"]);
+        QVERIFY(tagIds.contains(tagged["tag_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    auto affected = torrent5->tags()->detach({tag100["id"], tag101["id"]}, false);
+
+    QCOMPARE(affected, 2);
+
+    // FEATURE aggregates, use count silverqx
+    taggeds = Tagged::whereEq("torrent_id", (*torrent5)["id"])
+            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            .get({"tag_id"});
+
+    QCOMPARE(taggeds.size(), 0);
+
+    // Restore db
+    tag100.remove();
+    tag101.remove();
+}
+
+void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Tag tag100({{"name", "tag100"}});
+    tag100.save();
+    Tag tag101({{"name", "tag101"}});
+    tag101.save();
+
+    auto torrent5 = Torrent::find(5);
+
+    torrent5->tags()->attach({tag100["id"], tag101["id"]},
+                             {{"active", 0}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("torrent_id", (*torrent5)["id"])
+            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected tag IDs
+    QVector<QVariant> tagIds {tag100["id"], tag101["id"]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["torrent_id"].value(), (*torrent5)["id"]);
+        QVERIFY(tagIds.contains(tagged["tag_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    auto affected = torrent5->tags()->detach({tag100, tag101}, false);
+
+    QCOMPARE(affected, 2);
+
+    // FEATURE aggregates, use count silverqx
+    taggeds = Tagged::whereEq("torrent_id", (*torrent5)["id"])
+            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            .get({"tag_id"});
+
+    QCOMPARE(taggeds.size(), 0);
+
+    // Restore db
+    tag100.remove();
+    tag101.remove();
+}
+
+void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Tag tag100({{"name", "tag100"}});
+    tag100.save();
+    Tag tag101({{"name", "tag101"}});
+    tag101.save();
+
+    auto torrent5 = Torrent::find(5);
+
+    torrent5->tags()->attach({tag100["id"], tag101["id"]},
+                             {{"active", 0}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("torrent_id", (*torrent5)["id"])
+            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            .get();
+
+    QCOMPARE(taggeds.size(), 2);
+
+    // Expected tag IDs
+    QVector<QVariant> tagIds {tag100["id"], tag101["id"]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (Tagged), typeid (tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["torrent_id"].value(), (*torrent5)["id"]);
+        QVERIFY(tagIds.contains(tagged["tag_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    auto affected = torrent5->tags()->detach(false);
+
+    QCOMPARE(affected, 2);
+
+    // FEATURE aggregates, use count silverqx
+    taggeds = Tagged::whereEq("torrent_id", (*torrent5)["id"])
+            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            .get({"tag_id"});
+
+    QCOMPARE(taggeds.size(), 0);
+
+    // Restore db
+    tag100.remove();
+    tag101.remove();
 }
 
 QTEST_MAIN(tst_Relations_Inserting_Updating)
