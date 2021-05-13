@@ -234,6 +234,10 @@ namespace Orm::Tiny::Relations
         int updateExistingPivot(const QVariant &id,
                                 QVector<AttributeItem> attributes,
                                 bool touch = true) const;
+        /*! Update an existing pivot record on the table. */
+        int updateExistingPivot(const Related &model,
+                                const QVector<AttributeItem> &attributes,
+                                bool touch = true) const;
 
         /*! Detach models from the relationship. */
         int detach(const QVector<QVariant> &ids, bool touch = true) const;
@@ -1049,6 +1053,15 @@ namespace Orm::Tiny::Relations
             touchIfTouching();
 
         return updated;
+    }
+
+    template<class Model, class Related, class PivotType>
+    int BelongsToMany<Model, Related, PivotType>::updateExistingPivot(
+            const Related &model, const QVector<AttributeItem> &attributes,
+            const bool touch) const
+    {
+        return updateExistingPivot(model.getAttribute(m_relatedKey), attributes,
+                                   touch);
     }
 
     template<class Model, class Related, class PivotType>

@@ -76,7 +76,10 @@ private slots:
     void detach_CustomPivot_WithModels() const;
     void detach_CustomPivot_All() const;
 
-    // CUR updateExistingPivot(), also check if there is something more silverqx
+    void updateExistingPivot_BasicPivot_WithId() const;
+    void updateExistingPivot_BasicPivot_WithModel() const;
+    void updateExistingPivot_CustomPivot_WithId() const;
+    void updateExistingPivot_CustomPivot_WithModel() const;
 };
 
 void tst_Relations_Inserting_Updating::initTestCase_data() const
@@ -1530,6 +1533,8 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
     torrent101.save();
 
     auto tag4 = Tag::find(4);
+    QVERIFY(tag4);
+    QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
                              {{"active", 0}},
@@ -1578,6 +1583,8 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
     torrent101.save();
 
     auto tag4 = Tag::find(4);
+    QVERIFY(tag4);
+    QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({{torrent100}, {torrent101}},
                              {{"active", 0}},
@@ -1620,6 +1627,8 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithIds() const
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
+    QVERIFY(torrent5);
+    QVERIFY(torrent5->exists);
 
     torrent5->tags()->attach({tag100["id"], tag101["id"]},
                              {{"active", 0}},
@@ -1662,6 +1671,8 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithModels() const
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
+    QVERIFY(torrent5);
+    QVERIFY(torrent5->exists);
 
     torrent5->tags()->attach({{tag100}, {tag101}},
                              {{"active", 0}},
@@ -1710,6 +1721,8 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
     torrent101.save();
 
     auto tag4 = Tag::find(4);
+    QVERIFY(tag4);
+    QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({
         {torrent100["id"]->value<quint64>(), {{"active", 0}}},
@@ -1760,6 +1773,8 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() co
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
+    QVERIFY(torrent5);
+    QVERIFY(torrent5->exists);
 
     torrent5->tags()->attach({
         {tag100["id"]->value<quint64>(), {{"active", 0}}},
@@ -1816,6 +1831,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
     torrent101.save();
 
     auto tag4 = Tag::find(4);
+    QVERIFY(tag4);
+    QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
                              {{"active", 0}},
@@ -1876,6 +1893,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
     torrent101.save();
 
     auto tag4 = Tag::find(4);
+    QVERIFY(tag4);
+    QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
                              {{"active", 0}},
@@ -1935,6 +1954,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
     torrent101.save();
 
     auto tag5 = Tag::find(5);
+    QVERIFY(tag5);
+    QVERIFY(tag5->exists);
 
     tag5->torrents()->attach({torrent100["id"], torrent101["id"]},
                              {{"active", 0}},
@@ -1988,6 +2009,8 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
+    QVERIFY(torrent5);
+    QVERIFY(torrent5->exists);
 
     torrent5->tags()->attach({tag100["id"], tag101["id"]},
                              {{"active", 0}},
@@ -2041,6 +2064,8 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
+    QVERIFY(torrent5);
+    QVERIFY(torrent5->exists);
 
     torrent5->tags()->attach({tag100["id"], tag101["id"]},
                              {{"active", 0}},
@@ -2094,6 +2119,8 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
+    QVERIFY(torrent5);
+    QVERIFY(torrent5->exists);
 
     torrent5->tags()->attach({tag100["id"], tag101["id"]},
                              {{"active", 0}},
@@ -2133,6 +2160,190 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
     // Restore db
     tag100.remove();
     tag101.remove();
+}
+
+void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithId() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Tag::find(4);
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+
+    const auto tagId = (*tag)["id"];
+
+    // Check values before update
+    auto taggeds = Tagged::whereEq("tag_id", tagId)
+            ->whereEq("torrent_id", 3)
+            .get();
+
+    {
+        QCOMPARE(taggeds.size(), 1);
+        auto &tagged = taggeds.first();
+        QCOMPARE(tagged["tag_id"].value(), tagId);
+        QCOMPARE(tagged["torrent_id"].value(), QVariant(3));
+        QCOMPARE(tagged["active"].value(), QVariant(1));
+    }
+
+    auto updated = tag->torrents()->updateExistingPivot(3, {{"active", false}}, false);
+    QCOMPARE(updated, 1);
+
+    // Check values after update
+    taggeds = Tagged::whereEq("tag_id", tagId)
+            ->whereEq("torrent_id", 3)
+            .get();
+
+    {
+        QCOMPARE(taggeds.size(), 1);
+        auto &tagged = taggeds.first();
+        QCOMPARE(tagged["tag_id"].value(), tagId);
+        QCOMPARE(tagged["torrent_id"].value(), QVariant(3));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    // Restore db
+    tag->torrents()->updateExistingPivot(3, {{"active", true}}, false);
+}
+
+void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithModel() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Tag::find(4);
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+
+    const auto tagId = (*tag)["id"];
+
+    // Check values before update
+    auto taggeds = Tagged::whereEq("tag_id", tagId)
+            ->whereEq("torrent_id", 3)
+            .get();
+
+    {
+        QCOMPARE(taggeds.size(), 1);
+        auto &tagged = taggeds.first();
+        QCOMPARE(tagged["tag_id"].value(), tagId);
+        QCOMPARE(tagged["torrent_id"].value(), QVariant(3));
+        QCOMPARE(tagged["active"].value(), QVariant(1));
+    }
+
+    const auto torrent = Torrent::find(3);
+    auto updated = tag->torrents()->updateExistingPivot(*torrent, {{"active", false}},
+                                                        false);
+    QCOMPARE(updated, 1);
+
+    // Check values after update
+    taggeds = Tagged::whereEq("tag_id", tagId)
+            ->whereEq("torrent_id", 3)
+            .get();
+
+    {
+        QCOMPARE(taggeds.size(), 1);
+        auto &tagged = taggeds.first();
+        QCOMPARE(tagged["tag_id"].value(), tagId);
+        QCOMPARE(tagged["torrent_id"].value(), QVariant(3));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    // Restore db
+    tag->torrents()->updateExistingPivot(3, {{"active", true}}, false);
+}
+
+void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithId() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(3);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    const auto torrentId = (*torrent)["id"];
+
+    // Check values before update
+    auto taggeds = Tagged::whereEq("torrent_id", torrentId)
+            ->whereEq("tag_id", 4)
+            .get();
+
+    {
+        QCOMPARE(taggeds.size(), 1);
+        auto &tagged = taggeds.first();
+        QCOMPARE(tagged["torrent_id"].value(), torrentId);
+        QCOMPARE(tagged["tag_id"].value(), QVariant(4));
+        QCOMPARE(tagged["active"].value(), QVariant(1));
+    }
+
+    auto updated = torrent->tags()->updateExistingPivot(4, {{"active", false}}, false);
+    QCOMPARE(updated, 1);
+
+    // Check values after update
+    taggeds = Tagged::whereEq("torrent_id", torrentId)
+            ->whereEq("tag_id", 4)
+            .get();
+
+    {
+        QCOMPARE(taggeds.size(), 1);
+        auto &tagged = taggeds.first();
+        QCOMPARE(tagged["torrent_id"].value(), torrentId);
+        QCOMPARE(tagged["tag_id"].value(), QVariant(4));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    // Restore db
+    torrent->tags()->updateExistingPivot(4, {{"active", true}}, false);
+}
+
+void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithModel() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(3);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    const auto torrentId = (*torrent)["id"];
+
+    // Check values before update
+    auto taggeds = Tagged::whereEq("torrent_id", torrentId)
+            ->whereEq("tag_id", 4)
+            .get();
+
+    {
+        QCOMPARE(taggeds.size(), 1);
+        auto &tagged = taggeds.first();
+        QCOMPARE(tagged["torrent_id"].value(), torrentId);
+        QCOMPARE(tagged["tag_id"].value(), QVariant(4));
+        QCOMPARE(tagged["active"].value(), QVariant(1));
+    }
+
+    const auto tag = Tag::find(4);
+    auto updated = torrent->tags()->updateExistingPivot(*tag, {{"active", false}},
+                                                        false);
+    QCOMPARE(updated, 1);
+
+    // Check values after update
+    taggeds = Tagged::whereEq("torrent_id", torrentId)
+            ->whereEq("tag_id", 4)
+            .get();
+
+    {
+        QCOMPARE(taggeds.size(), 1);
+        auto &tagged = taggeds.first();
+        QCOMPARE(tagged["torrent_id"].value(), torrentId);
+        QCOMPARE(tagged["tag_id"].value(), QVariant(4));
+        QCOMPARE(tagged["active"].value(), QVariant(0));
+    }
+
+    // Restore db
+    torrent->tags()->updateExistingPivot(4, {{"active", true}}, false);
 }
 
 QTEST_MAIN(tst_Relations_Inserting_Updating)
