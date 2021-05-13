@@ -80,6 +80,8 @@ private slots:
     void withDefaultModel_EagerLoad_AttributesVector_HasOne() const;
     void withDefaultModel_EagerLoad_Bool_BelongsTo() const;
     void withDefaultModel_EagerLoad_AttributesVector_BelongsTo() const;
+
+    void belongsToMany_allRelatedIds() const;
 };
 
 void tst_Model_Relations::initTestCase_data() const
@@ -1397,6 +1399,26 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_BelongsTo(
     QCOMPARE(torrent->getAttributes().size(), 2);
     QCOMPARE((*torrent)["name"], QVariant("default_torrent_name"));
     QCOMPARE((*torrent)["size"], QVariant(123));
+}
+
+void tst_Model_Relations::belongsToMany_allRelatedIds() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(3);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    const auto relatedIds = torrent->tags()->allRelatedIds();
+
+    QCOMPARE(relatedIds.size(), 2);
+
+    const QVector<QVariant> expectedIds {2, 4};
+
+    for (const auto &relatedId : relatedIds)
+        QVERIFY(expectedIds.contains(relatedId));
 }
 
 QTEST_MAIN(tst_Model_Relations)
