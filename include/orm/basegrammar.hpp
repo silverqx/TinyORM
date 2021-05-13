@@ -71,7 +71,7 @@ namespace Query
         QString parameter(const QVariant &value) const;
 
         /*! Get the grammar's table prefix. */
-        inline QString getTablePrefix() const;
+        QString getTablePrefix() const;
         /*! Set the grammar's table prefix. */
         BaseGrammar &setTablePrefix(const QString &prefix);
 

@@ -45,7 +45,7 @@ namespace Concerns {
 
     private:
         /*! Return cached reference to the base relation instance. */
-        inline Relation<Model, Related> &relation();
+        Relation<Model, Related> &relation();
     };
 
     template<class Model, class Related>
@@ -117,7 +117,7 @@ namespace Concerns {
     }
 
     template<class Model, class Related>
-    Relation<Model, Related> &
+    inline Relation<Model, Related> &
     SupportsDefaultModels<Model, Related>::relation()
     {
         static auto &cached = dynamic_cast<Relation<Model, Related> &>(*this);

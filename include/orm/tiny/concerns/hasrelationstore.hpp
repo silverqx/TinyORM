@@ -101,12 +101,12 @@ namespace Concerns
 
         /* Getters for Relation stores */
         /*! Reference to the push store. */
-        inline PushRelationStore &pushStore();
+        PushRelationStore &pushStore();
         /*! Cont reference to the touch owners relation store. */
-        inline const TouchOwnersRelationStore &touchOwnersStore() const;
+        const TouchOwnersRelationStore &touchOwnersStore() const;
         /*! Const reference to the lazy store. */
         template<typename Related>
-        inline const LazyRelationStore<Related> &lazyStore() const;
+        const LazyRelationStore<Related> &lazyStore() const;
 
     private:
         /*! The store for loading eager relations. */
@@ -196,14 +196,14 @@ namespace Concerns
         std::stack<std::shared_ptr<BaseRelationStore>> m_relationStore;
 
         /*! Static cast this to a child's instance type (CRTP). */
-        inline Model<Derived, AllRelations...> &basemodel();
+        Model<Derived, AllRelations...> &basemodel();
         /*! Static cast this to a child's instance type (CRTP), const version. */
-        inline const Model<Derived, AllRelations...> &basemodel() const;
+        const Model<Derived, AllRelations...> &basemodel() const;
 
         /*! Static cast this to a child's instance type (CRTP). */
-        inline Derived &model();
+        Derived &model();
         /*! Static cast this to a child's instance type (CRTP), const version. */
-        inline const Derived &model() const;
+        const Derived &model() const;
     };
 
     template<typename Derived, typename ...AllRelations>
@@ -255,14 +255,15 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    typename HasRelationStore<Derived, AllRelations...>::PushRelationStore &
+    inline typename HasRelationStore<Derived, AllRelations...>::PushRelationStore &
     HasRelationStore<Derived, AllRelations...>::pushStore()
     {
         return *std::static_pointer_cast<PushRelationStore>(m_relationStore.top());
     }
 
     template<typename Derived, typename ...AllRelations>
-    const typename HasRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore &
+    inline const typename HasRelationStore<Derived, AllRelations...>
+                          ::TouchOwnersRelationStore &
     HasRelationStore<Derived, AllRelations...>::touchOwnersStore() const
     {
         return *std::static_pointer_cast<
@@ -271,8 +272,8 @@ namespace Concerns
 
     template<typename Derived, typename ...AllRelations>
     template<typename Related>
-    const typename HasRelationStore<Derived, AllRelations...>
-                   ::template LazyRelationStore<Related> &
+    inline const typename HasRelationStore<Derived, AllRelations...>
+                          ::template LazyRelationStore<Related> &
     HasRelationStore<Derived, AllRelations...>::lazyStore() const
     {
         return *std::static_pointer_cast<
@@ -438,28 +439,28 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    Model<Derived, AllRelations...> &
+    inline Model<Derived, AllRelations...> &
     HasRelationStore<Derived, AllRelations...>::basemodel()
     {
         return static_cast<Model<Derived, AllRelations...> &>(*this);
     }
 
     template<typename Derived, typename ...AllRelations>
-    const Model<Derived, AllRelations...> &
+    inline const Model<Derived, AllRelations...> &
     HasRelationStore<Derived, AllRelations...>::basemodel() const
     {
         return static_cast<const Model<Derived, AllRelations...> &>(*this);
     }
 
     template<typename Derived, typename ...AllRelations>
-    Derived &
+    inline Derived &
     HasRelationStore<Derived, AllRelations...>::model()
     {
         return static_cast<Derived &>(*this);
     }
 
     template<typename Derived, typename ...AllRelations>
-    const Derived &
+    inline const Derived &
     HasRelationStore<Derived, AllRelations...>::model() const
     {
         return static_cast<const Derived &>(*this);

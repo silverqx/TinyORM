@@ -48,7 +48,7 @@ namespace Orm::Tiny::Relations
 
     protected:
         /*! Make a new related instance for the given model. */
-        inline Related newRelatedInstanceFor(const Model &) const override;
+        Related newRelatedInstanceFor(const Model &) const override;
     };
 
     template<class Model, class Related>
@@ -102,7 +102,8 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    Related HasOne<Model, Related>::newRelatedInstanceFor(const Model &parent) const
+    inline Related
+    HasOne<Model, Related>::newRelatedInstanceFor(const Model &parent) const
     {
         return this->m_related->newInstance().setAttribute(
             this->getForeignKeyName(), parent[this->m_localKey]

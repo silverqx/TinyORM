@@ -113,9 +113,9 @@ namespace Relations {
 
         /* Static operations on a model instance */
         /*! Create a new TinyORM model instance with given attributes. */
-        inline static Derived instance(const QVector<AttributeItem> &attributes);
+        static Derived instance(const QVector<AttributeItem> &attributes);
         /*! Create a new TinyORM model instance with given attributes. */
-        inline static Derived instance(QVector<AttributeItem> &&attributes);
+        static Derived instance(QVector<AttributeItem> &&attributes);
 
         /*! Begin querying the model. */
         static std::unique_ptr<TinyBuilder<Derived>> query();
@@ -496,9 +496,9 @@ namespace Relations {
                            const QString &table, bool exists) const;
 
         /*! Static cast this to a child's instance type (CRTP). */
-        inline Derived &model();
+        Derived &model();
         /*! Static cast this to a child's instance type (CRTP), const version. */
-        inline const Derived &model() const;
+        const Derived &model() const;
 
         /* Getters / Setters */
         /*! Get the current connection name for the model. */
@@ -546,9 +546,9 @@ namespace Relations {
         /*! Sync the original attributes with the current. */
         Derived &syncOriginal();
         /*! Get all of the current attributes on the model (insert order). */
-        inline const QVector<AttributeItem> &getAttributes() const;
+        const QVector<AttributeItem> &getAttributes() const;
         /*! Get all of the current attributes on the model (for fast lookup). */
-        inline const std::unordered_map<QString, int> &getAttributesHash() const;
+        const std::unordered_map<QString, int> &getAttributesHash() const;
         /*! Get an attribute from the model. */
         QVariant getAttribute(const QString &key) const;
         /*! Get a plain attribute (not a relationship). */
@@ -561,12 +561,12 @@ namespace Relations {
         /*! Get the model's original attribute values (transformed and insert order). */
         QVector<AttributeItem> getOriginals() const;
         /*! Get the model's original attributes hash (for fast lookup). */
-        inline const std::unordered_map<QString, int> &getOriginalsHash() const;
+        const std::unordered_map<QString, int> &getOriginalsHash() const;
         /*! Get the model's raw original attribute value. */
         QVariant getRawOriginal(const QString &key,
                                 const QVariant &defaultValue = {}) const;
         /*! Get the model's raw original attribute values (insert order). */
-        inline const QVector<AttributeItem> &getRawOriginals() const;
+        const QVector<AttributeItem> &getRawOriginals() const;
         /*! Unset an attribute on the model, returns the number of attributes removed. */
         Derived &unsetAttribute(const AttributeItem &value);
         /*! Unset an attribute on the model. */
@@ -645,13 +645,13 @@ namespace Relations {
             operator=(const AttributeReference &attributeReference) const;
 
             /*! Accesses the contained value, only const member functions. */
-            inline const QVariant *operator->() const;
+            const QVariant *operator->() const;
             /*! Accesses the contained value. */
-            inline QVariant value() const;
+            QVariant value() const;
             /*! Accesses the contained value. */
-            inline QVariant operator*() const;
+            QVariant operator*() const;
             /*! Converting operator to the QVariant type. */
-            inline operator QVariant() const;
+            operator QVariant() const;
 
         private:
             /*! AttributeReference's private constructor. */
@@ -669,13 +669,13 @@ namespace Relations {
 
         /*! Return modifiable attribute reference, can be used on the left-hand side
             of an assignment operator. */
-        inline AttributeReference operator[](const QString &attribute) &;
+        AttributeReference operator[](const QString &attribute) &;
         /*! Return an attribute by the given key. */
-        inline QVariant operator[](const QString &attribute) const &;
+        QVariant operator[](const QString &attribute) const &;
         /*! Return an attribute by the given key. */
-        inline QVariant operator[](const QString &attribute) &&;
+        QVariant operator[](const QString &attribute) &&;
         /*! Return an attribute by the given key. */
-        inline QVariant operator[](const QString &attribute) const &&;
+        QVariant operator[](const QString &attribute) const &&;
 
         /* HasRelationships */
         /*! Get a specified relationship. */
@@ -928,7 +928,7 @@ namespace Relations {
         TinyBuilder<Derived> &
         setKeysForSelectQuery(TinyBuilder<Derived> &query);
         /*! Get the primary key value for a select query. */
-        inline QVariant getKeyForSelectQuery() const;
+        QVariant getKeyForSelectQuery() const;
 
         /*! Perform a model insert operation. */
         bool performInsert(const TinyBuilder<Derived> &query);
@@ -1023,8 +1023,7 @@ namespace Relations {
         /*! Throw InvalidArgumentError if attributes passed to the constructor contain
             some value, which will cause access of some data member in a derived
             instance. */
-        inline void
-        throwIfCRTPctorProblem(const QVector<AttributeItem> &attributes) const;
+        void throwIfCRTPctorProblem(const QVector<AttributeItem> &attributes) const;
         /*! The QDateTime attribute detected, causes CRTP ctor problem. */
         void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes) const;
 
@@ -1088,20 +1087,20 @@ namespace Relations {
                 const QVector<WithItem> &onlyRelations);
 
         /*! The reference to the u_relations hash. */
-        inline const QHash<QString, RelationVisitor> &
+        const QHash<QString, RelationVisitor> &
         getRelationsRawMapInternal() const;
 
         /* GuardsAttributes */
         /* Getters for u_ data members defined in the Derived models, helps to avoid
            'friend Derived' declarations in models. */
         /*! Get the fillable attributes for the model. */
-        inline QStringList &getFillableInternal();
+        QStringList &getFillableInternal();
         /*! Get the fillable attributes for the model. */
-        inline const QStringList &getFillableInternal() const;
+        const QStringList &getFillableInternal() const;
         /*! Get the guarded attributes for the model. */
-        inline QStringList &getGuardedInternal();
+        QStringList &getGuardedInternal();
         /*! Get the guarded attributes for the model. */
-        inline const QStringList &getGuardedInternal() const;
+        const QStringList &getGuardedInternal() const;
     };
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2646,14 +2645,14 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::model()
+    inline Derived &Model<Derived, AllRelations...>::model()
     {
         // Can not be cached with static because a copy can be made
         return static_cast<Derived &>(*this);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const Derived &Model<Derived, AllRelations...>::model() const
+    inline const Derived &Model<Derived, AllRelations...>::model() const
     {
         return static_cast<const Derived &>(*this);
     }
@@ -3172,7 +3171,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QVector<AttributeItem> &
+    inline const QVector<AttributeItem> &
     Model<Derived, AllRelations...>::getAttributes() const
     {
         // FEATURE castable silverqx
@@ -3183,7 +3182,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const std::unordered_map<QString, int> &
+    inline const std::unordered_map<QString, int> &
     Model<Derived, AllRelations...>::getAttributesHash() const
     {
         // FEATURE castable silverqx
@@ -3260,7 +3259,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const std::unordered_map<QString, int> &
+    inline const std::unordered_map<QString, int> &
     Model<Derived, AllRelations...>::getOriginalsHash() const
     {
         return m_originalHash;
@@ -3281,7 +3280,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QVector<AttributeItem> &
+    inline const QVector<AttributeItem> &
     Model<Derived, AllRelations...>::getRawOriginals() const
     {
         return m_original;
@@ -3406,7 +3405,7 @@ namespace Relations {
 
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QVariant *
+    inline const QVariant *
     Model<Derived, AllRelations...>::AttributeReference::operator->() const
     {
         m_attributeCache = value();
@@ -3415,21 +3414,21 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
+    inline QVariant
     Model<Derived, AllRelations...>::AttributeReference::value() const
     {
         return m_model.getAttribute(m_attribute);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
+    inline QVariant
     Model<Derived, AllRelations...>::AttributeReference::operator*() const
     {
         return value();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    Model<Derived, AllRelations...>::AttributeReference::operator QVariant() const
+    inline Model<Derived, AllRelations...>::AttributeReference::operator QVariant() const
     {
         return value();
     }
@@ -3437,28 +3436,28 @@ namespace Relations {
     /* Model::AttributeReference - end */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    typename Model<Derived, AllRelations...>::AttributeReference
+    inline typename Model<Derived, AllRelations...>::AttributeReference
     Model<Derived, AllRelations...>::operator[](const QString &attribute) &
     {
         return AttributeReference(*this, attribute);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
+    inline QVariant
     Model<Derived, AllRelations...>::operator[](const QString &attribute) const &
     {
         return getAttribute(attribute);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
+    inline QVariant
     Model<Derived, AllRelations...>::operator[](const QString &attribute) &&
     {
         return getAttribute(attribute);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
+    inline QVariant
     Model<Derived, AllRelations...>::operator[](const QString &attribute) const &&
     {
         return getAttribute(attribute);
@@ -3749,7 +3748,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void Model<Derived, AllRelations...>::throwIfCRTPctorProblem(
+    inline void Model<Derived, AllRelations...>::throwIfCRTPctorProblem(
             const QVector<AttributeItem> &attributes) const
     {
         throwIfQDateTimeAttribute(attributes);
@@ -3842,7 +3841,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant Model<Derived, AllRelations...>::getKeyForSelectQuery() const
+    inline QVariant Model<Derived, AllRelations...>::getKeyForSelectQuery() const
     {
         // Currently is the implementation exactly the same, so I can call it
         return getKeyForSaveQuery();
@@ -4031,7 +4030,8 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QHash<QString, typename Model<Derived, AllRelations...>::RelationVisitor> &
+    inline const QHash<QString,
+                       typename Model<Derived, AllRelations...>::RelationVisitor> &
     Model<Derived, AllRelations...>::getRelationsRawMapInternal() const
     {
         return model().u_relations;
@@ -4040,28 +4040,28 @@ namespace Relations {
     /* GuardsAttributes */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QStringList &
+    inline QStringList &
     Model<Derived, AllRelations...>::getFillableInternal()
     {
         return Derived::u_fillable;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QStringList &
+    inline const QStringList &
     Model<Derived, AllRelations...>::getFillableInternal() const
     {
         return Derived::u_fillable;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QStringList &
+    inline QStringList &
     Model<Derived, AllRelations...>::getGuardedInternal()
     {
         return Derived::u_guarded;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QStringList &
+    inline const QStringList &
     Model<Derived, AllRelations...>::getGuardedInternal() const
     {
         return Derived::u_guarded;

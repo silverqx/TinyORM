@@ -127,8 +127,8 @@ namespace Orm
         void logQuery(const QSqlQuery &query,
                       const std::optional<qint64> elapsed) const;
         /*! Log a query into the connection's query log. */
-        inline void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
-                             const std::optional<qint64> elapsed) const;
+        void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
+                      const std::optional<qint64> elapsed) const;
         /*! Log a transaction query into the connection's query log. */
         void logTransactionQuery(const QString &query,
                                  const std::optional<qint64> elapsed);

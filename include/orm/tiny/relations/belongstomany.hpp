@@ -153,7 +153,7 @@ namespace Orm::Tiny::Relations
         QSharedPointer<QueryBuilder>
         newPivotStatementForId(const QVector<QVariant> &ids) const;
         /*! Get a new pivot statement for a given "other" / "related" ID. */
-        inline QSharedPointer<QueryBuilder>
+        QSharedPointer<QueryBuilder>
         newPivotStatementForId(const QVariant &id) const;
 
         /* Inserting operations on the relationship */
@@ -203,11 +203,11 @@ namespace Orm::Tiny::Relations
                     const QVector<AttributeItem> &attributes = {},
                     bool touch = true) const;
         /*! Attach a model to the parent. */
-        inline void
+        void
         attach(const QVariant &id, const QVector<AttributeItem> &attributes = {},
                bool touch = true) const;
         /*! Attach a model to the parent. */
-        inline void
+        void
         attach(const Related &model, const QVector<AttributeItem> &attributes = {},
                bool touch = true) const;
         /*! Attach models to the parent. */
@@ -243,14 +243,14 @@ namespace Orm::Tiny::Relations
         int detach(const QVector<std::reference_wrapper<Related>> &models,
                    bool touch = true) const;
         /*! Detach model from the relationship. */
-        inline int detach(const QVariant &id, bool touch = true) const;
+        int detach(const QVariant &id, bool touch = true) const;
         /*! Detach model from the relationship. */
-        inline int detach(const Related &model, bool touch = true) const;
+        int detach(const Related &model, bool touch = true) const;
 
+        /* Others */
         /*! Get all of the IDs for the related models. */
         QVector<QVariant> allRelatedIds() const;
 
-        /* Others */
         /*! The textual representation of the Relation type. */
         inline QString relationTypeName() const override
         { return "BelongsToMany"; };
@@ -737,7 +737,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QSharedPointer<QueryBuilder>
+    inline QSharedPointer<QueryBuilder>
     BelongsToMany<Model, Related, PivotType>::newPivotStatementForId(
             const QVariant &id) const
     {
@@ -915,7 +915,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    void BelongsToMany<Model, Related, PivotType>::attach(
+    inline void BelongsToMany<Model, Related, PivotType>::attach(
             const QVariant &id, const QVector<AttributeItem> &attributes,
             const bool touch) const
     {
@@ -923,7 +923,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    void BelongsToMany<Model, Related, PivotType>::attach(
+    inline void BelongsToMany<Model, Related, PivotType>::attach(
             const Related &model, const QVector<AttributeItem> &attributes,
             const bool touch) const
     {
@@ -1065,7 +1065,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::detach(
+    inline int BelongsToMany<Model, Related, PivotType>::detach(
             const QVector<std::reference_wrapper<Related>> &models,
             const bool touch) const
     {
@@ -1080,7 +1080,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::detach(
+    inline int BelongsToMany<Model, Related, PivotType>::detach(
             const Related &model, const bool touch) const
     {
         return detach(QVector {model.getAttribute(m_relatedKey)}, touch);

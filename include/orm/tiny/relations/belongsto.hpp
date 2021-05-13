@@ -40,7 +40,7 @@ namespace Orm::Tiny::Relations
         /*! Dissociate previously associated model from the given parent. */
         Model &dissociate() const;
         /*! Alias of "dissociate" method. */
-        inline Model &disassociate() const;
+        Model &disassociate() const;
 
         /* Basic operations */
         /*! Set the base constraints on the relation query. */
@@ -77,7 +77,7 @@ namespace Orm::Tiny::Relations
         buildDictionary(const QVector<Related> &results) const;
 
         /*! Make a new related instance for the given model. */
-        inline Related newRelatedInstanceFor(const Model &) const override;
+        Related newRelatedInstanceFor(const Model &) const override;
 
         /*! The child model instance of the relation. */
         Model &m_child;
@@ -158,7 +158,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    Model &BelongsTo<Model, Related>::disassociate() const
+    inline Model &BelongsTo<Model, Related>::disassociate() const
     {
         return dissociate();
     }
@@ -256,7 +256,6 @@ namespace Orm::Tiny::Relations
         return first ? first : this->getDefaultFor(m_child);
     }
 
-    // CUR fix all inline silverqx
     template<class Model, class Related>
     inline QString BelongsTo<Model, Related>::getRelationName() const
     {
@@ -286,7 +285,8 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    Related BelongsTo<Model, Related>::newRelatedInstanceFor(const Model &) const
+    inline Related
+    BelongsTo<Model, Related>::newRelatedInstanceFor(const Model &) const
     {
         return this->m_related->newInstance();
     }
