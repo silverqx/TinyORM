@@ -1304,7 +1304,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     QVERIFY(torrent->exists);
 
     const auto &fileRelations = file.getRelations();
-    QCOMPARE(fileRelations.size(), 0);
+    QCOMPARE(fileRelations.size(), static_cast<std::size_t>(0));
 
     auto &fileRef = file.torrent()->associate(*torrent);
 
@@ -1317,7 +1317,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
 
     // Copy of the associated model have to be set on the file
-    QCOMPARE(fileRelations.size(), 1);
+    QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
 
     // CUR find by regex all getRelation<xx, One> and check pointer return value silverqx
@@ -1368,7 +1368,7 @@ void tst_Relations_Inserting_Updating::associate_WithId() const
     QVERIFY(torrent->exists);
 
     const auto &fileRelations = file.getRelations();
-    QCOMPARE(fileRelations.size(), 0);
+    QCOMPARE(fileRelations.size(), static_cast<std::size_t>(0));
 
     auto &fileRef = file.torrent()->associate((*torrent)["id"]);
 
@@ -1381,7 +1381,7 @@ void tst_Relations_Inserting_Updating::associate_WithId() const
     QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
 
     // This is only difference, associate with Id should unset relation model
-    QCOMPARE(fileRelations.size(), 0);
+    QCOMPARE(fileRelations.size(), static_cast<std::size_t>(0));
     QVERIFY(!fileRelations.contains(file.torrent()->getRelationName()));
 
     file.save();
@@ -1416,7 +1416,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
     QVERIFY(torrent->exists);
 
     const auto &fileRelations = file.getRelations();
-    QCOMPARE(fileRelations.size(), 0);
+    QCOMPARE(fileRelations.size(), static_cast<std::size_t>(0));
 
     auto &fileRef = file.torrent()->associate(*torrent);
 
@@ -1429,7 +1429,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
     QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
 
     // Copy of the associated model have to be set on the file
-    QCOMPARE(fileRelations.size(), 1);
+    QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
 
     // CUR find by regex all getRelation<xx, One> and check pointer return value silverqx
@@ -1448,7 +1448,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
     QCOMPARE(file[torrentForeignKeyName], QVariant(2));
 
     // This is only difference, associate with Id should unset relation model
-    QCOMPARE(fileRelations.size(), 0);
+    QCOMPARE(fileRelations.size(), static_cast<std::size_t>(0));
     QVERIFY(!fileRelations.contains(file.torrent()->getRelationName()));
 }
 
@@ -1472,7 +1472,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
     QVERIFY(torrent->exists);
 
     const auto &fileRelations = file.getRelations();
-    QCOMPARE(fileRelations.size(), 0);
+    QCOMPARE(fileRelations.size(), static_cast<std::size_t>(0));
 
     auto &fileRef = file.torrent()->associate(*torrent);
 
@@ -1485,7 +1485,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
     QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
 
     // Copy of the associated model have to be set on the file
-    QCOMPARE(fileRelations.size(), 1);
+    QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
 
     // CUR find by regex all getRelation<xx, One> and check pointer return value silverqx
@@ -1504,8 +1504,8 @@ void tst_Relations_Inserting_Updating::dissociate() const
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
     QVERIFY(!file[torrentForeignKeyName].value().isValid());
 
-    // Relation have to be set to std::nullopt
-    QCOMPARE(fileRelations.size(), 1);
+    // Relation have to be set to std::nullopt internally
+    QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
 
     verifyTorrent5 = file.getRelation<Torrent, One>("torrent");

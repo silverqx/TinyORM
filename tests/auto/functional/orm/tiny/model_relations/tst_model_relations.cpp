@@ -188,7 +188,7 @@ void tst_Model_Relations
 
         const auto &attributesHash = pivot->getAttributesHash();
 
-        QCOMPARE(attributesHash.size(), 5);
+        QCOMPARE(attributesHash.size(), static_cast<std::size_t>(5));
 
         QCOMPARE(pivot->getAttribute("tag_id"), (*tag)["id"]);
         // With pivot attributes, active
@@ -239,7 +239,7 @@ void tst_Model_Relations
 
         const auto &attributesHash = tagged->getAttributesHash();
 
-        QCOMPARE(attributesHash.size(), 5);
+        QCOMPARE(attributesHash.size(), static_cast<std::size_t>(5));
 
         QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
         // With pivot attributes, active
@@ -288,7 +288,7 @@ void tst_Model_Relations
 
         const auto &attributesHash = pivot->getAttributesHash();
 
-        QCOMPARE(attributesHash.size(), 2);
+        QCOMPARE(attributesHash.size(), static_cast<std::size_t>(2));
 
         QCOMPARE(pivot->getAttribute("tag_id"), (*tag)["id"]);
     }
@@ -431,7 +431,7 @@ void tst_Model_Relations
 
         const auto &attributesHash = pivot->getAttributesHash();
 
-        QCOMPARE(attributesHash.size(), 5);
+        QCOMPARE(attributesHash.size(), static_cast<std::size_t>(5));
 
         QCOMPARE(pivot->getAttribute("tag_id"), (*tag)["id"]);
         // With pivot attributes, active
@@ -482,7 +482,7 @@ void tst_Model_Relations
 
         const auto &attributesHash = tagged->getAttributesHash();
 
-        QCOMPARE(attributesHash.size(), 5);
+        QCOMPARE(attributesHash.size(), static_cast<std::size_t>(5));
 
         QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
         // With pivot attributes, active
@@ -531,7 +531,7 @@ void tst_Model_Relations
 
         const auto &attributesHash = pivot->getAttributesHash();
 
-        QCOMPARE(attributesHash.size(), 2);
+        QCOMPARE(attributesHash.size(), static_cast<std::size_t>(2));
 
         QCOMPARE(pivot->getAttribute("tag_id"), (*tag)["id"]);
     }
