@@ -7,6 +7,7 @@
 #include "database.hpp"
 
 using Orm::AttributeItem;
+using Orm::One;
 using Orm::QueryError;
 using Orm::Tiny::ConnectionOverride;
 
@@ -52,6 +53,11 @@ private slots:
     void createMany_OnBelongsToMany_WithRValue() const;
     void createMany_OnBelongsToMany_Failed() const;
     void createMany_OnBelongsToMany_WithRValue_Failed() const;
+
+    void associate_WithModel() const;
+    void associate_WithId() const;
+    void associate_WithId_ShouldUnsetRelation() const;
+    void dissociate() const;
 };
 
 void tst_Relations_Inserting_Updating::initTestCase_data() const
@@ -686,7 +692,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany() const
     QVERIFY(reinterpret_cast<uintptr_t>(&tag)
             == reinterpret_cast<uintptr_t>(&tagRef));
 
-    // Obtain file and verify saved values
+    // Obtain tag and verify saved values
     auto tagVerify = Tag::find(tag["id"]);
     QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
     QCOMPARE((*tagVerify)["name"], QVariant("tag save"));
@@ -730,7 +736,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany_WithRValue() const
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 1);
 
-    // Obtain file and verify saved values
+    // Obtain tag and verify saved values
     auto tagVerify = Tag::find(tag["id"]);
     QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
     QCOMPARE((*tagVerify)["name"], QVariant("tag save"));
@@ -821,7 +827,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
     QVERIFY(reinterpret_cast<uintptr_t>(&tagsToSave[1])
             == reinterpret_cast<uintptr_t>(&savedTag2));
 
-    // Obtain file and verify saved values
+    // Obtain tag and verify saved values
     auto tag1Verify = Tag::find(savedTag1["id"]);
     QCOMPARE((*tag1Verify)["id"],   QVariant(savedTag1["id"]));
     QCOMPARE((*tag1Verify)["name"], QVariant("tag1 save"));
@@ -882,7 +888,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_WithRValue() con
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 2);
 
-    // Obtain file and verify saved values
+    // Obtain tag and verify saved values
     auto tag1Verify = Tag::find(savedTag1["id"]);
     QCOMPARE((*tag1Verify)["id"],   QVariant(savedTag1["id"]));
     QCOMPARE((*tag1Verify)["name"], QVariant("tag1 save"));
@@ -965,7 +971,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany() const
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 1);
 
-    // Obtain file and verify saved values
+    // Obtain tag and verify saved values
     auto tagVerify = Tag::find(tag["id"]);
     QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
     QCOMPARE((*tagVerify)["name"], QVariant("tag create"));
@@ -1008,7 +1014,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue() const
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 1);
 
-    // Obtain file and verify saved values
+    // Obtain tag and verify saved values
     auto tagVerify = Tag::find(tag["id"]);
     QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
     QCOMPARE((*tagVerify)["name"], QVariant("tag create rvalue"));
@@ -1113,7 +1119,7 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany() const
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 2);
 
-    // Obtain file and verify saved values
+    // Obtain tag and verify saved values
     auto tagVerify1 = Tag::find(tag1["id"]);
     QCOMPARE((*tagVerify1)["id"],   QVariant(tag1["id"]));
     QCOMPARE((*tagVerify1)["name"], QVariant("tag create 1"));
@@ -1173,7 +1179,7 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue() c
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 2);
 
-    // Obtain file and verify saved values
+    // Obtain tag and verify saved values
     auto tagVerify1 = Tag::find(tag1["id"]);
     QCOMPARE((*tagVerify1)["id"],   QVariant(tag1["id"]));
     QCOMPARE((*tagVerify1)["name"], QVariant("tag create 1 rvalue"));
@@ -1257,6 +1263,234 @@ tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue_Failed()
     QCOMPARE(size, 0);
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
+}
+
+void tst_Relations_Inserting_Updating::associate_WithModel() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Create new torrent file for this test
+    TorrentPreviewableFile file {
+        {"file_index", 3},
+        {"filepath", "test5_file4.mkv"},
+        {"size", 3255},
+        {"progress", 115},
+        {"note", "associate"},
+    };
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    const auto &fileRelations = file.getRelations();
+    QCOMPARE(fileRelations.size(), 0);
+
+    auto &fileRef = file.torrent()->associate(*torrent);
+
+    // associate method have to return the same model as a reference
+    QVERIFY(reinterpret_cast<uintptr_t>(&file)
+            == reinterpret_cast<uintptr_t>(&fileRef));
+
+    const auto &torrentForeignKeyName = torrent->getForeignKey();
+    QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
+
+    // Copy of the associated model have to be set on the file
+    QCOMPARE(fileRelations.size(), 1);
+    QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
+
+    // CUR find by regex all getRelation<xx, One> and check pointer return value silverqx
+    auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
+    QVERIFY(verifyTorrent5);
+    QVERIFY(verifyTorrent5->exists);
+    QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
+    QVERIFY(verifyTorrent5->is(torrent));
+    // TEST ideal place for comparing models, verifyTorrent5 == torrent, have to have the same attribtues silverqx
+
+    file.save();
+
+    // Little useless, but will be absolutely sure that nothing changed
+    verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
+    QVERIFY(verifyTorrent5);
+    QVERIFY(verifyTorrent5->exists);
+    QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
+    QVERIFY(verifyTorrent5->is(torrent));
+    // TEST ideal place for comparing models, verifyTorrent5 == torrent, have to have the same attribtues silverqx
+
+    // Obtain file from the database and verify saved values
+    auto verifyFile = TorrentPreviewableFile::find(file["id"]);
+    QCOMPARE((*verifyFile)["id"], QVariant(file["id"]));
+    QCOMPARE((*verifyFile)["filepath"], file["filepath"].value());
+    QCOMPARE((*verifyFile)[torrentForeignKeyName], file[torrentForeignKeyName].value());
+
+    // Restore db
+    fileRef.remove();
+}
+
+void tst_Relations_Inserting_Updating::associate_WithId() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Create new torrent file for this test
+    TorrentPreviewableFile file {
+        {"file_index", 3},
+        {"filepath", "test5_file4.mkv"},
+        {"size", 3255},
+        {"progress", 115},
+        {"note", "associate"},
+    };
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    const auto &fileRelations = file.getRelations();
+    QCOMPARE(fileRelations.size(), 0);
+
+    auto &fileRef = file.torrent()->associate((*torrent)["id"]);
+
+    // associate method have to return the same model as a reference
+    QVERIFY(reinterpret_cast<uintptr_t>(&file)
+            == reinterpret_cast<uintptr_t>(&fileRef));
+
+    const auto &torrentForeignKeyName = torrent->getForeignKey();
+    QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
+
+    // This is only difference, associate with Id should unset relation model
+    QCOMPARE(fileRelations.size(), 0);
+    QVERIFY(!fileRelations.contains(file.torrent()->getRelationName()));
+
+    file.save();
+
+    // Obtain file from the database and verify saved values
+    auto verifyFile = TorrentPreviewableFile::find(file["id"]);
+    QCOMPARE((*verifyFile)["id"], QVariant(file["id"]));
+    QCOMPARE((*verifyFile)["filepath"], file["filepath"].value());
+    QCOMPARE((*verifyFile)[torrentForeignKeyName], file[torrentForeignKeyName].value());
+
+    // Restore db
+    fileRef.remove();
+}
+
+void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Create new torrent file for this test
+    TorrentPreviewableFile file {
+        {"file_index", 3},
+        {"filepath", "test5_file4.mkv"},
+        {"size", 3255},
+        {"progress", 115},
+        {"note", "associate"},
+    };
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    const auto &fileRelations = file.getRelations();
+    QCOMPARE(fileRelations.size(), 0);
+
+    auto &fileRef = file.torrent()->associate(*torrent);
+
+    // associate method have to return the same model as a reference
+    QVERIFY(reinterpret_cast<uintptr_t>(&file)
+            == reinterpret_cast<uintptr_t>(&fileRef));
+
+    const auto &torrentForeignKeyName = torrent->getForeignKey();
+    QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
+
+    // Copy of the associated model have to be set on the file
+    QCOMPARE(fileRelations.size(), 1);
+    QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
+
+    // CUR find by regex all getRelation<xx, One> and check pointer return value silverqx
+    auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
+    QVERIFY(verifyTorrent5);
+    QVERIFY(verifyTorrent5->exists);
+    QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
+    QVERIFY(verifyTorrent5->is(torrent));
+    // TEST ideal place for comparing models, verifyTorrent5 == torrent, have to have the same attribtues silverqx
+
+    /* Have to unset current relationship, this is clearly visible in the Eqloquent's
+       associate implementation. */
+    fileRef = file.torrent()->associate(2);
+
+    QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
+    QCOMPARE(file[torrentForeignKeyName], QVariant(2));
+
+    // This is only difference, associate with Id should unset relation model
+    QCOMPARE(fileRelations.size(), 0);
+    QVERIFY(!fileRelations.contains(file.torrent()->getRelationName()));
+}
+
+void tst_Relations_Inserting_Updating::dissociate() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Create new torrent file for this test
+    TorrentPreviewableFile file {
+        {"file_index", 3},
+        {"filepath", "test5_file4.mkv"},
+        {"size", 3255},
+        {"progress", 115},
+        {"note", "associate"},
+    };
+
+    auto torrent = Torrent::find(5);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    const auto &fileRelations = file.getRelations();
+    QCOMPARE(fileRelations.size(), 0);
+
+    auto &fileRef = file.torrent()->associate(*torrent);
+
+    // associate method have to return the same model as a reference
+    QVERIFY(reinterpret_cast<uintptr_t>(&file)
+            == reinterpret_cast<uintptr_t>(&fileRef));
+
+    const auto &torrentForeignKeyName = torrent->getForeignKey();
+    QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
+
+    // Copy of the associated model have to be set on the file
+    QCOMPARE(fileRelations.size(), 1);
+    QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
+
+    // CUR find by regex all getRelation<xx, One> and check pointer return value silverqx
+    auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
+    QVERIFY(verifyTorrent5);
+    QVERIFY(verifyTorrent5->exists);
+    QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
+    QVERIFY(verifyTorrent5->is(torrent));
+
+    auto &fileRefDissociate = file.torrent()->dissociate();
+
+    // dissociate method have to return the same model as a reference
+    QVERIFY(reinterpret_cast<uintptr_t>(&file)
+            == reinterpret_cast<uintptr_t>(&fileRefDissociate));
+
+    QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
+    QVERIFY(!file[torrentForeignKeyName].value().isValid());
+
+    // Relation have to be set to std::nullopt
+    QCOMPARE(fileRelations.size(), 1);
+    QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
+
+    verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
+    QVERIFY(verifyTorrent5 == nullptr);
 }
 
 QTEST_MAIN(tst_Relations_Inserting_Updating)

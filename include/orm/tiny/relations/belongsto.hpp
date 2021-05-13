@@ -60,6 +60,10 @@ namespace Orm::Tiny::Relations
         std::variant<QVector<Related>, std::optional<Related>>
         getResults() const override;
 
+        /* Getters / Setters */
+        /*! Get the name of the relationship. */
+        QString getRelationName() const;
+
         /* Others */
         /*! The textual representation of the Relation type. */
         inline QString relationTypeName() const override
@@ -250,6 +254,13 @@ namespace Orm::Tiny::Relations
         const auto first = this->m_query->first();
 
         return first ? first : this->getDefaultFor(m_child);
+    }
+
+    // CUR fix all inline silverqx
+    template<class Model, class Related>
+    inline QString BelongsTo<Model, Related>::getRelationName() const
+    {
+        return m_relationName;
     }
 
     template<class Model, class Related>
