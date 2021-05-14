@@ -2479,7 +2479,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(taggedActive.contains(torrentId));
-        QCOMPARE(tagged["active"]->value<quint64>(), taggedActive.at(torrentId));
+        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(torrentId));
     }
 
     torrent100.remove();
@@ -2604,7 +2604,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(taggedActive.contains(torrentId));
-        QCOMPARE(tagged["active"]->value<quint64>(), taggedActive.at(torrentId));
+        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(torrentId));
     }
 
     torrent100.remove();
@@ -2711,7 +2711,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(taggedActive.contains(tagId));
-        QCOMPARE(tagged["active"]->value<quint64>(), taggedActive.at(tagId));
+        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(tagId));
     }
 
     tag100.remove();
@@ -2824,7 +2824,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(taggedActive.contains(tagId));
-        QCOMPARE(tagged["active"]->value<quint64>(), taggedActive.at(tagId));
+        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(tagId));
     }
 
     tag100.remove();
@@ -2941,7 +2941,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(taggedActive.contains(torrentId));
-        QCOMPARE(tagged["active"]->value<quint64>(), taggedActive.at(torrentId));
+        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(torrentId));
     }
 
     torrent100.remove();
@@ -3064,7 +3064,7 @@ void tst_Relations_Inserting_Updating
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(taggedActive.contains(torrentId));
-        QCOMPARE(tagged["active"]->value<quint64>(), taggedActive.at(torrentId));
+        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(torrentId));
     }
 
     torrent100.remove();
@@ -3169,7 +3169,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(taggedActive.contains(tagId));
-        QCOMPARE(tagged["active"]->value<quint64>(), taggedActive.at(tagId));
+        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(tagId));
     }
 
     tag100.remove();
@@ -3280,7 +3280,7 @@ void tst_Relations_Inserting_Updating
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(taggedActive.contains(tagId));
-        QCOMPARE(tagged["active"]->value<quint64>(), taggedActive.at(tagId));
+        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(tagId));
     }
 
     tag100.remove();
