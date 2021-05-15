@@ -74,8 +74,6 @@ namespace Relations {
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
     // TODO QueryBuilder::updateOrInsert() silverqx
     // CUR code coverage silverqx
-    // CUR compile without PCH silverqx
-    // CUR clang/gcc pendantic silverqx
     // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
