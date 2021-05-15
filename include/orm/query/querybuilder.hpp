@@ -258,6 +258,7 @@ namespace Query
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});
 
+        /* Pessimistic Locking */
         /*! Lock the selected rows in the table for updating. */
         Builder &lockForUpdate();
         /*! Share lock the selected rows in the table. */
