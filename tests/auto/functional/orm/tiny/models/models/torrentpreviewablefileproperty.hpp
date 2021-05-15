@@ -31,8 +31,8 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<WithItem> u_with {
-//        {"torrentFile"},
+    QVector<QString> u_with {
+//        "torrentFile",
     };
 
     /*! Indicates if the model should be timestamped. */

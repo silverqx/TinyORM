@@ -74,6 +74,8 @@ namespace Relations
         Builder &with(const QVector<WithItem> &relations);
         /*! Set the relationships that should be eager loaded. */
         Builder &with(const QString &relation);
+        /*! Set the relationships that should be eager loaded. */
+        Builder &with(const QVector<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
         Builder &without(const QVector<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
@@ -513,6 +515,19 @@ namespace Relations
     Builder<Model>::with(const QString &relation)
     {
         return with(QVector<WithItem> {{relation}});
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::with(const QVector<QString> &relations)
+    {
+        QVector<WithItem> relationsConverted;
+
+        // CUR finish, may be add WithItem converting operator silverqx
+        for (const auto &relation : relations)
+            relationsConverted.append({relation});
+
+        return with(relationsConverted);
     }
 
     template<typename Model>

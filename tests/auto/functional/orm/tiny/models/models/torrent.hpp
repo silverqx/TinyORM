@@ -105,11 +105,11 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<WithItem> u_with {
-//        {"torrentFiles"},
-//        {"torrentPeer"},
-//        {"torrentFiles.fileProperty"},
-//        {"tags"},
+    QVector<QString> u_with {
+//        "torrentFiles",
+//        "torrentPeer",
+//        "torrentFiles.fileProperty",
+//        "tags",
     };
 
 #ifdef PROJECT_TINYORM_PLAYGROUND

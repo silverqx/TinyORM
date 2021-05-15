@@ -45,9 +45,9 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<WithItem> u_with {
-        {"torrentFiles.fileProperty"},
-        {"torrentPeer"},
+    QVector<QString> u_with {
+        "torrentFiles.fileProperty",
+        "torrentPeer",
     };
 
     /*! The model's default values for attributes. */

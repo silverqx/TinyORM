@@ -62,8 +62,8 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<WithItem> u_with {
-        {"tagProperty"},
+    QVector<QString> u_with {
+        "tagProperty",
     };
 
     /*! The attributes that are mass assignable. */

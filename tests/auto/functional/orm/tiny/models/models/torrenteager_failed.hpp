@@ -33,8 +33,8 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<WithItem> u_with {
-        {"torrentFiles-NON_EXISTENT"},
+    QVector<QString> u_with {
+        "torrentFiles-NON_EXISTENT",
     };
 
     /*! The attributes that should be mutated to dates. @deprecated */

@@ -102,13 +102,13 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<WithItem> u_with {
-        {"torrent"},
-        {"torrent_WithBoolDefault"},
-        {"torrent_WithVectorDefaults"},
-        {"fileProperty"},
-        {"fileProperty_WithBoolDefault"},
-        {"fileProperty_WithVectorDefaults"},
+    QVector<QString> u_with {
+        "torrent",
+        "torrent_WithBoolDefault",
+        "torrent_WithVectorDefaults",
+        "fileProperty",
+        "fileProperty_WithBoolDefault",
+        "fileProperty_WithVectorDefaults",
     };
 
     /*! The attributes that are mass assignable. */

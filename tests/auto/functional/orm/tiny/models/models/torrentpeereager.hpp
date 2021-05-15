@@ -30,8 +30,8 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<WithItem> u_with {
-        {"torrent"},
+    QVector<QString> u_with {
+        "torrent",
     };
 };
 

@@ -34,8 +34,8 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<WithItem> u_with {
-        {"fileProperty"},
+    QVector<QString> u_with {
+        "fileProperty",
     };
 
     /*! The attributes that are mass assignable. */

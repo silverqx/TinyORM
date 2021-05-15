@@ -65,6 +65,7 @@ namespace Relations {
     // TODO model missing methods Model::whereBetween() silverqx
     // TODO model missing methods Model::exists()/notExists() silverqx
     // TODO model missing methods Model::saveOrFail() silverqx
+    // TODO model missing methods TinyBuilder::withOnly() silverqx
     // TODO model missing methods EloquentCollection::toQuery() silverqx
     // FEATURE EloquentCollection, solve how to implement, also look at Eloquent's Custom Collections silverqx
     // FEATURE next Constraining Eager Loads silverqx
@@ -952,7 +953,7 @@ namespace Relations {
         QHash<QString, RelationVisitor> u_relations {};
         // TODO detect (best at compile time) circular eager relation problem, the exception which happens during this problem is stackoverflow in QRegularExpression silverqx
         /*! The relations to eager load on every query. */
-        QVector<WithItem> u_with;
+        QVector<QString> u_with;
         /*! The relationship counts that should be eager loaded on every query. */
 //        QVector<WithItem> u_withCount;
 

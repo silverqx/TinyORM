@@ -94,10 +94,10 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<WithItem> u_with {
-//        {"torrent"},
-//        {"torrent.torrentPeer"},
-//        {"fileProperty"},
+    QVector<QString> u_with {
+//        "torrent",
+//        "torrent.torrentPeer",
+//        "fileProperty",
     };
 
     /*! The attributes that are mass assignable. */
