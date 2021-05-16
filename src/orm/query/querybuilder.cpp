@@ -166,6 +166,7 @@ Builder &Builder::select(const QStringList &columns)
     // FEATURE expression, add Query::Expression overload, find all occurences of Illuminate\Database\Query\Expression in the Eloquent and add support to TinyORM, I will need to add overloads for some methods, for columns and also for values silverqx
     clearColumns();
 
+    // CUR change by std::ranges version silverqx
     ranges::copy(columns, ranges::back_inserter(m_columns));
 
     return *this;

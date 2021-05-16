@@ -98,6 +98,7 @@ namespace Orm::Tiny::Relations
         /*! Get the related key for the relationship. */
         inline const QString &getRelatedKeyName() const
         { return m_relatedKey; }
+        // CUR add note where this is used, also in BelongsTo relation silverqx
         /*! Get the relationship name for the relationship. */
         inline const QString &getRelationName() const
         { return m_relationName; }

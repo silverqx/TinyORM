@@ -326,9 +326,9 @@ namespace Relations
 
     protected:
         /*! Parse a list of relations into individuals. */
-        QVector<WithItem> parseWithRelations(const QVector<WithItem> &relations) const;
+        QVector<WithItem> parseWithRelations(const QVector<WithItem> &relations);
         /*! Create a constraint to select the given columns for the relation. */
-        WithItem createSelectWithConstraint(const QString &name) const;
+        WithItem createSelectWithConstraint(const QString &name);
         /*! Parse the nested relationships in a relation. */
         void addNestedWiths(const QString &name, QVector<WithItem> &results) const;
 
@@ -520,6 +520,7 @@ namespace Relations
     Builder<Model>::with(const QVector<QString> &relations)
     {
         QVector<WithItem> relationsConverted;
+        relationsConverted.reserve(relations.size());
 
         // CUR finish, may be add WithItem converting operator silverqx
         for (const auto &relation : relations)
@@ -1244,9 +1245,10 @@ namespace Relations
 
         relation->addEagerConstraints(models);
 
-        // TODO next add support for std::invoke(relationItem.constraints); silverqx
         // Add relation contraints defined in a user callback
-//        std::invoke(relationItem.constraints);
+        // NOTE api different, Eloquent is passing the Relation reference into the lambda, it would be almost impossible to do it silverqx
+        if (relationItem.constraints)
+            std::invoke(relationItem.constraints, relation->getBaseQuery());
 
         /* Once we have the results, we just match those back up to their parent models
            using the relationship instance. Then we just return the finished vectors
@@ -1284,23 +1286,22 @@ namespace Relations
 
     template<typename Model>
     QVector<WithItem>
-    Builder<Model>::parseWithRelations(const QVector<WithItem> &relations) const
+    Builder<Model>::parseWithRelations(const QVector<WithItem> &relations)
     {
         QVector<WithItem> results;
         // Can contain nested relations
         results.reserve(relations.size() * 2);
 
         for (auto relation : relations) {
-            const auto emptyConstraints = !relation.constraints;
             const auto isSelectConstraint = relation.name.contains(QChar(':'));
 
-            // FEATURE next Eager Loading Specific Columns silverqx
-            /* Select columns constraints are only allowed, when relation.constraints
-               is nullptr. */
-            if (isSelectConstraint)
-                Q_ASSERT(!emptyConstraints);
+            if (isSelectConstraint && relation.constraints)
+                throw RuntimeError(
+                        "Passing both 'Select constraint' and 'Lambda expression "
+                        "constraint' to the Model::with() method is not allowed, use "
+                        "only one of them.");
 
-            if (emptyConstraints && isSelectConstraint)
+            if (isSelectConstraint)
                 relation = createSelectWithConstraint(relation.name);
 
             /* We need to separate out any nested includes, which allows the developers
@@ -1315,12 +1316,50 @@ namespace Relations
     }
 
     template<typename Model>
-    WithItem Builder<Model>::createSelectWithConstraint(const QString &name) const
+    WithItem Builder<Model>::createSelectWithConstraint(const QString &name)
     {
+        auto splitted = name.split(QChar(':'));
+        auto relation = splitted.at(0).trimmed();
+        auto &columns = splitted[1];
+
+        // CUR invoke on dummy model instance, find other places and create m_dummyModel to avoid repeated instantiation and call similar methods on this dummy model to avoid side effects on the real model silverqx
+        auto belongsToManyRelatedTable =
+                m_model.getRelatedTableForBelongsToManyWithVisitor(relation);
+
         return {
-            name.split(QChar(':')).first(), [name](/*auto &query*/)
+            std::move(relation),
+                [columns = std::move(columns),
+                belongsToManyRelatedTable = std::move(belongsToManyRelatedTable)]
+                (auto &query)
             {
-//                query->select(name.split(QChar(':')).last().split(QChar(',')));
+                QStringList columnsList;
+                columnsList.reserve(columns.count(QChar(',')) + 1);
+
+                // Avoid 'clang might detach' warning
+                for (const auto columns_ = columns.split(QChar(','));
+                     auto column : columns_)
+                {
+                    column = column.trimmed();
+
+                    // Fully qualified column passed, not needed to process
+                    if (column.contains(QChar('.'))) {
+                        columnsList << std::move(column);
+                        continue;
+                    }
+
+                    /* Generate fully qualified column name for the BelongsToMany
+                       relation. */
+                    if (belongsToManyRelatedTable) {
+                        columnsList << QStringLiteral("%1.%2")
+                                       .arg(*belongsToManyRelatedTable, column);
+                        continue;
+                    }
+
+                    columnsList << std::move(column);
+                }
+
+                // TODO move, query.select() silverqx
+                query.select(std::move(columnsList));
             }
         };
     }

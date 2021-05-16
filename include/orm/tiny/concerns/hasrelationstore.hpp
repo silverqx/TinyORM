@@ -41,6 +41,7 @@ namespace Concerns
             PUSH,
             TOUCH_OWNERS,
             LAZY_RESULTS,
+            BELONGSTOMANY_RELATED_TABLE,
         };
 
         /* Forward declarations */
@@ -49,6 +50,7 @@ namespace Concerns
         class TouchOwnersRelationStore;
         template<typename Related>
         class LazyRelationStore;
+        class BelongsToManyRelatedTableStore;
 
     protected:
         // FUTURE try to rewrite this by templated class to avoid polymorfic class, like described here http://groups.di.unipi.it/~nids/docs/templates_vs_inheritance.html silverqx
@@ -95,6 +97,9 @@ namespace Concerns
         /*! Factory method to create the lazy store. */
         template<typename Related>
         BaseRelationStore &createLazyStore();
+        /*! Factory method to create the store to obtain BelongsToMany related model
+            table name. */
+        BaseRelationStore &createBelongsToManyRelatedTableStore();
 
         /*! Release the ownership and destroy the top relation store on the stack. */
         void resetRelationStore();
@@ -107,6 +112,8 @@ namespace Concerns
         /*! Const reference to the lazy store. */
         template<typename Related>
         const LazyRelationStore<Related> &lazyStore() const;
+        /*! Reference to the BelongsToMany related table name store. */
+        const BelongsToManyRelatedTableStore &belongsToManyRelatedTableStore() const;
 
     private:
         /*! The store for loading eager relations. */
@@ -190,6 +197,22 @@ namespace Concerns
             void visited(const Method method);
         };
 
+        /*! The store to obtain the related table name for BelongsToMany relation. */
+        class BelongsToManyRelatedTableStore final : public BaseRelationStore
+        {
+            Q_DISABLE_COPY(BelongsToManyRelatedTableStore)
+
+        public:
+            explicit BelongsToManyRelatedTableStore(HasRelationStore &hasRelationStore);
+
+            /*! The related table name result. */
+            std::optional<QString> result;
+
+            /*! Method called after visitation. */
+            template<typename Method>
+            void visited(const Method);
+        };
+
         // BUG this is bad, disable Model's copy/assignment ctors if m_relationStore is not empty, or empty the m_relationStore on copy?, have to think about this 🤔 silverqx
         /*! The store where the values will be saved, before BaseRelationStore::visit()
             is called. */
@@ -249,6 +272,15 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
+    typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
+    HasRelationStore<Derived, AllRelations...>::createBelongsToManyRelatedTableStore()
+    {
+        m_relationStore.push(std::make_shared<BelongsToManyRelatedTableStore>(*this));
+
+        return *m_relationStore.top();
+    }
+
+    template<typename Derived, typename ...AllRelations>
     void HasRelationStore<Derived, AllRelations...>::resetRelationStore()
     {
         m_relationStore.pop();
@@ -278,6 +310,15 @@ namespace Concerns
     {
         return *std::static_pointer_cast<
                 const LazyRelationStore<Related>>(m_relationStore.top());
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    inline const typename HasRelationStore<Derived, AllRelations...>
+    ::BelongsToManyRelatedTableStore &
+    HasRelationStore<Derived, AllRelations...>::belongsToManyRelatedTableStore() const
+    {
+        return *std::static_pointer_cast<
+                const BelongsToManyRelatedTableStore>(m_relationStore.top());
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -324,6 +365,10 @@ namespace Concerns
 
             static_cast<LazyRelationStore<Related> *>(this)->visited(method);
         }
+            break;
+
+        case RelationStoreType::BELONGSTOMANY_RELATED_TABLE:
+            static_cast<BelongsToManyRelatedTableStore *>(this)->visited(method);
             break;
 
         default:
@@ -436,6 +481,28 @@ namespace Concerns
     {
         result = std::invoke(method, this->m_hasRelationStore.model())
                  ->getResults();
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    HasRelationStore<Derived, AllRelations...>::BelongsToManyRelatedTableStore
+                                              ::BelongsToManyRelatedTableStore(
+            HasRelationStore &hasRelationStore
+    )
+        : BaseRelationStore(hasRelationStore,
+                            RelationStoreType::BELONGSTOMANY_RELATED_TABLE)
+    {}
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Method>
+    void HasRelationStore<Derived, AllRelations...>::BelongsToManyRelatedTableStore
+                                                   ::visited(const Method)
+    {
+        using Relation = typename std::invoke_result_t<Method, Derived>::element_type;
+
+        if constexpr (!std::is_base_of_v<Relations::PivotRelation, Relation>)
+            return;
+
+        result = typename Relation::RelatedType().getTable();
     }
 
     template<typename Derived, typename ...AllRelations>

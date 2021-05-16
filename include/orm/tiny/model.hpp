@@ -443,6 +443,7 @@ namespace Relations {
         /*! Reload the current model instance with fresh attributes from the database. */
         Derived &refresh();
 
+        // CUR verify constraining lazy loads silverqx
         /*! Eager load relations on the model. */
         Derived &load(const QVector<WithItem> &relations);
         /*! Eager load relations on the model. */
@@ -1013,6 +1014,11 @@ namespace Relations {
         void eagerLoadRelationWithVisitor(
                 const WithItem &relation, const TinyBuilder<Derived> &builder,
                 QVector<Derived> &models);
+
+        /*! Get Related model table name if the relation is BelongsToMany, otherwise
+            empty std::optional. */
+        std::optional<QString>
+        getRelatedTableForBelongsToManyWithVisitor(const QString &relation);
 
         /* HasAttributes */
         /*! Get all of the current attributes on the model. */
@@ -2316,6 +2322,7 @@ namespace Relations {
         return model().remove();
     }
 
+    // CUR verify, if WithItem is correct here, also check load, replaceRelations silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::fresh(
@@ -3744,6 +3751,26 @@ namespace Relations {
 
         // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::optional<QString>
+    Model<Derived, AllRelations...>::getRelatedTableForBelongsToManyWithVisitor(
+            const QString &relation)
+    {
+        // Throw excpetion if a relation is not defined
+        validateUserRelation(relation);
+
+        // Create the store and visit relation
+        this->createBelongsToManyRelatedTableStore().visit(relation);
+
+        // CUR test NRVO in gcc silverqx
+        const auto relatedTable = this->belongsToManyRelatedTableStore().result;
+
+        // Releases the ownership and destroy the top relation store on the stack
+        this->resetRelationStore();
+
+        return relatedTable;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

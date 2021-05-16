@@ -148,11 +148,11 @@ namespace Query
     /*! Eager load relation item. */
     struct WithItem
     {
-        QString               name;
-        std::function<void()> constraints {nullptr};
+        QString name;
+        std::function<void(QueryBuilder &)> constraints {nullptr};
     };
 
-//    bool operator==(const WithItem &lhs, const WithItem &rhs);
+//    SHAREDLIB_EXPORT bool operator==(const WithItem &lhs, const WithItem &rhs);
 
     /*! Tag for Model::getRelation() family methods to return Related type
         directly ( not container type ). */

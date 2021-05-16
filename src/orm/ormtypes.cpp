@@ -42,7 +42,7 @@ bool SyncChanges::supportedKey(const QString &key) const
 
 //bool operator==(const WithItem &lhs, const WithItem &rhs)
 //{
-//    return (lhs.name == rhs.name);
+//    return lhs.name == rhs.name;
 //}
 
 } // namespace Orm
