@@ -1755,7 +1755,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
         {torrent101["id"]->value<quint64>(), 1},
     };
 
-    quint64 torrentId;
+    quint64 torrentId = 0;
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1809,7 +1809,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() co
         {tag101["id"]->value<quint64>(), 1},
     };
 
-    quint64 tagId;
+    quint64 tagId = 0;
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);

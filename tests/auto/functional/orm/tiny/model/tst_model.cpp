@@ -227,7 +227,7 @@ void tst_Model::save_Insert_TableWithoutAutoincrementKey() const
     QVERIFY(settingToVerify->getAttribute("updated_at").isValid());
 
     // Remove it
-    int affected;
+    int affected = 0;
     std::tie(affected, std::ignore) =
             Setting::whereEq("name", "setting1")->remove();
     QCOMPARE(affected, 1);
