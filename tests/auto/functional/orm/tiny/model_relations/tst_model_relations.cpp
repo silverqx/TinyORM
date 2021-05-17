@@ -45,9 +45,16 @@ private slots:
     void with_HasOne() const;
     void with_HasMany() const;
     void with_BelongsTo() const;
+    void with_BelongsToMany() const;
     void with_NestedRelations() const;
     void with_Vector_MoreRelations() const;
     void with_NonExistentRelation_Failed() const;
+
+    void with_WithSelectConstraint() const;
+    void with_WithSelectConstraint_WithWhitespaces() const;
+    void with_BelongsToMany_WithSelectConstraint() const;
+    void with_WithLambdaConstraint() const;
+    void with_BelongsToMany_WithLambdaConstraint() const;
 
     void without() const;
     void without_NestedRelations() const;
@@ -631,6 +638,57 @@ void tst_Model_Relations::with_BelongsTo() const
     QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 }
 
+void tst_Model_Relations::with_BelongsToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::with("tags")->find(3);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto tags = torrent->getRelation<Tag>("tags");
+    QCOMPARE(tags.size(), 2);
+    QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
+
+    // Expected tag IDs
+    QVector<QVariant> tagIds {2, 4};
+    for (auto *tag : tags) {
+        QVERIFY(tag);
+        QVERIFY(tag->exists);
+        QVERIFY(tagIds.contains(tag->getAttribute("id")));
+        QCOMPARE(typeid (Tag *), typeid (tag));
+
+        const auto &relations = tag->getRelations();
+        QCOMPARE(relations.size(), static_cast<std::size_t>(2));
+        QVERIFY(relations.contains("tagged"));
+        QVERIFY(relations.contains("tagProperty"));
+
+        // Custom pivot relation
+        auto *tagged = tag->getRelation<Tagged, One>("tagged");
+        QVERIFY(tagged);
+        QVERIFY(tagged->exists);
+        QCOMPARE(typeid (Tagged *), typeid (tagged));
+
+        QVERIFY(tagged->usesTimestamps());
+        QVERIFY(!tagged->getIncrementing());
+
+        QCOMPARE(tagged->getForeignKey(), QString("torrent_id"));
+        QCOMPARE(tagged->getRelatedKey(), QString("tag_id"));
+
+        const auto &attributesHash = tagged->getAttributesHash();
+
+        QCOMPARE(attributesHash.size(), static_cast<std::size_t>(5));
+
+        QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
+        // With pivot attributes, active
+        QCOMPARE(tagged->getAttribute("active"), QVariant(1));
+        QVERIFY(attributesHash.contains("created_at"));
+        QVERIFY(attributesHash.contains("updated_at"));
+    }
+}
+
 void tst_Model_Relations::with_NestedRelations() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -718,6 +776,235 @@ void tst_Model_Relations::with_NonExistentRelation_Failed() const
 
     QVERIFY_EXCEPTION_THROWN(Torrent::with("torrentFiles-NON_EXISTENT")->find(1),
                              RelationNotFoundError);
+}
+
+void tst_Model_Relations::with_WithSelectConstraint() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::with({"torrentFiles:id,torrent_id,filepath"})->find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {2, 3};
+    for (auto *file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+
+        // Check whether constraints was correctly applied
+        const auto &attributes = file->getAttributes();
+        QCOMPARE(attributes.size(), static_cast<std::size_t>(3));
+
+        const QVector<QString> expectedAttributes {"id", "torrent_id", "filepath"};
+        for (const auto &attribute : attributes)
+            expectedAttributes.contains(attribute.key);
+
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
+        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+    }
+}
+
+void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::with({"  torrentFiles  :  id  ,  torrent_id ,filepath  "})
+                   ->find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {2, 3};
+    for (auto *file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+
+        // Check whether constraints was correctly applied
+        const auto &attributes = file->getAttributes();
+        QCOMPARE(attributes.size(), static_cast<std::size_t>(3));
+
+        const QVector<QString> expectedAttributes {"id", "torrent_id", "filepath"};
+        for (const auto &attribute : attributes)
+            expectedAttributes.contains(attribute.key);
+
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
+        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+    }
+}
+
+void tst_Model_Relations::with_BelongsToMany_WithSelectConstraint() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::with({"tags:id,name"})->find(3);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto tags = torrent->getRelation<Tag>("tags");
+    QCOMPARE(tags.size(), 2);
+    QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
+
+    // Expected tag IDs
+    QVector<QVariant> tagIds {2, 4};
+    for (auto *tag : tags) {
+        QVERIFY(tag);
+        QVERIFY(tag->exists);
+
+        // Check whether constraints was correctly applied
+        const auto &attributes = tag->getAttributes();
+        QCOMPARE(attributes.size(), static_cast<std::size_t>(2));
+
+        const QVector<QString> expectedAttributes {"id", "name"};
+        for (const auto &attribute : attributes)
+            expectedAttributes.contains(attribute.key);
+
+        QVERIFY(tagIds.contains(tag->getAttribute("id")));
+        QCOMPARE(typeid (Tag *), typeid (tag));
+
+        const auto &relations = tag->getRelations();
+        QCOMPARE(relations.size(), static_cast<std::size_t>(2));
+        QVERIFY(relations.contains("tagged"));
+        QVERIFY(relations.contains("tagProperty"));
+
+        // Custom pivot relation
+        auto *tagged = tag->getRelation<Tagged, One>("tagged");
+        QVERIFY(tagged);
+        QVERIFY(tagged->exists);
+        QCOMPARE(typeid (Tagged *), typeid (tagged));
+
+        QVERIFY(tagged->usesTimestamps());
+        QVERIFY(!tagged->getIncrementing());
+
+        QCOMPARE(tagged->getForeignKey(), QString("torrent_id"));
+        QCOMPARE(tagged->getRelatedKey(), QString("tag_id"));
+
+        const auto &attributesHash = tagged->getAttributesHash();
+
+        QCOMPARE(attributesHash.size(), static_cast<std::size_t>(5));
+
+        QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
+        // With pivot attributes, active
+        QCOMPARE(tagged->getAttribute("active"), QVariant(1));
+        QVERIFY(attributesHash.contains("created_at"));
+        QVERIFY(attributesHash.contains("updated_at"));
+    }
+}
+
+void tst_Model_Relations::with_WithLambdaConstraint() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::with({{"torrentFiles", [](auto &query)
+                                   {
+                                       query.select({"id", "torrent_id", "filepath"});
+                                   }}})->find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {2, 3};
+    for (auto *file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+
+        // Check whether constraints was correctly applied
+        const auto &attributes = file->getAttributes();
+        QCOMPARE(attributes.size(), static_cast<std::size_t>(3));
+
+        const QVector<QString> expectedAttributes {"id", "torrent_id", "filepath"};
+        for (const auto &attribute : attributes)
+            expectedAttributes.contains(attribute.key);
+
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
+        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+    }
+}
+
+void tst_Model_Relations::with_BelongsToMany_WithLambdaConstraint() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::with({{"tags", [](auto &query)
+                                   {
+                                       query.select({"id", "name"});
+                                   }}})->find(3);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto tags = torrent->getRelation<Tag>("tags");
+    QCOMPARE(tags.size(), 2);
+    QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
+
+    // Expected tag IDs
+    QVector<QVariant> tagIds {2, 4};
+    for (auto *tag : tags) {
+        QVERIFY(tag);
+        QVERIFY(tag->exists);
+
+        // Check whether constraints was correctly applied
+        const auto &attributes = tag->getAttributes();
+        QCOMPARE(attributes.size(), static_cast<std::size_t>(2));
+
+        const QVector<QString> expectedAttributes {"id", "name"};
+        for (const auto &attribute : attributes)
+            expectedAttributes.contains(attribute.key);
+
+        QVERIFY(tagIds.contains(tag->getAttribute("id")));
+        QCOMPARE(typeid (Tag *), typeid (tag));
+
+        const auto &relations = tag->getRelations();
+        QCOMPARE(relations.size(), static_cast<std::size_t>(2));
+        QVERIFY(relations.contains("tagged"));
+        QVERIFY(relations.contains("tagProperty"));
+
+        // Custom pivot relation
+        auto *tagged = tag->getRelation<Tagged, One>("tagged");
+        QVERIFY(tagged);
+        QVERIFY(tagged->exists);
+        QCOMPARE(typeid (Tagged *), typeid (tagged));
+
+        QVERIFY(tagged->usesTimestamps());
+        QVERIFY(!tagged->getIncrementing());
+
+        QCOMPARE(tagged->getForeignKey(), QString("torrent_id"));
+        QCOMPARE(tagged->getRelatedKey(), QString("tag_id"));
+
+        const auto &attributesHash = tagged->getAttributesHash();
+
+        QCOMPARE(attributesHash.size(), static_cast<std::size_t>(5));
+
+        QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
+        // With pivot attributes, active
+        QCOMPARE(tagged->getAttribute("active"), QVariant(1));
+        QVERIFY(attributesHash.contains("created_at"));
+        QVERIFY(attributesHash.contains("updated_at"));
+    }
 }
 
 void tst_Model_Relations::without() const

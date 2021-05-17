@@ -452,7 +452,8 @@ void DatabaseConnection::bindValues(QSqlQuery &query,
     }
 }
 
-void DatabaseConnection::logQuery(const QSqlQuery &query,
+void DatabaseConnection::logQuery(
+        const QSqlQuery &query,
         const std::optional<qint64> elapsed = std::nullopt) const
 {
     qDebug().nospace().noquote()
