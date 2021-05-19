@@ -60,6 +60,7 @@ Common:
  - reliability        : make things more robust and reliable
  - security           : self explaining
  - study              : don't know how something works, need to check up
+ - sync               : synchronization in multi thread environment silverqx
  - test               : tasks in auto tests
  - types              : juggling with c++ types
 

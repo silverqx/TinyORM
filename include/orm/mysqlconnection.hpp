@@ -12,6 +12,8 @@ namespace Orm
 
     class SHAREDLIB_EXPORT MySqlConnection final : public DatabaseConnection
     {
+        Q_DISABLE_COPY(MySqlConnection)
+
     public:
         MySqlConnection(
                 const std::function<Connectors::ConnectionName()> &connection,

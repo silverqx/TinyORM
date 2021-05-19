@@ -10,12 +10,15 @@ namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 
-// TODO code which was here, will be reverted after merge of the logQuery() and logExecutedQuery() silverqx
+/*! Get the last executed query with replaced placeholders ( ideal for logging ). */
 QString parseExecutedQuery(const QSqlQuery &query);
+/*! Get pretended query with replaced placeholders ( ideal for logging ). */
+QString parseExecutedQueryForPretend(QString query, const QVariantMap &bindings);
 
 #ifdef QT_DEBUG
-    Q_DECL_UNUSED
-    void logExecutedQuery(const QSqlQuery &query);
+/*! Log the last executed query to the debug output. */
+[[maybe_unused]]
+void logExecutedQuery(const QSqlQuery &query);
 #endif
 
 #ifndef LOG_EXECUTED_QUERY

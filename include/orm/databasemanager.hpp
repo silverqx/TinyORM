@@ -210,6 +210,43 @@ namespace Query
         /*! Reset the number of executed queries on given connections. */
         void resetStatementCounters(const QStringList &connections);
 
+        /* Logging */
+        /*! Get the connection query log. */
+        std::shared_ptr<QVector<Log>>
+        getQueryLog(const QString &connection = "");
+        /*! Clear the query log. */
+        void flushQueryLog(const QString &connection = "");
+        /*! Enable the query log on the connection. */
+        void enableQueryLog(const QString &connection = "");
+        /*! Disable the query log on the connection. */
+        void disableQueryLog(const QString &connection = "");
+        /*! Determine whether we're logging queries. */
+        bool logging(const QString &connection = "");
+        /*! The current order value for a query log record. */
+        std::size_t getQueryLogOrder();
+
+        /* Others */
+        /*! Return the connection's driver name. */
+        QString driverName(const QString &connection = "");
+
+        /* Others */
+        /*! Execute the given callback in "dry run" mode. */
+        QVector<Log>
+        pretend(const std::function<void()> &callback,
+                const QString &connection = "");
+        /*! Execute the given callback in "dry run" mode. */
+        QVector<Log>
+        pretend(const std::function<void(ConnectionInterface &)> &callback,
+                const QString &connection = "");
+
+        /*! Check if any records have been modified. */
+        bool getRecordsHaveBeenModified(const QString &connection = "");
+        /*! Indicate if any records have been modified. */
+        void recordsHaveBeenModified(bool value = true,
+                                     const QString &connection = "");
+        /*! Reset the record modification state. */
+        void forgetRecordModificationState(const QString &connection = "");
+
     protected:
         /*! Default connection name. */
         static const char *defaultConnectionName;

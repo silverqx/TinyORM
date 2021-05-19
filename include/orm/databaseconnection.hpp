@@ -27,6 +27,8 @@ namespace Orm
             public ConnectionInterface,
             public Concerns::DetectsLostConnections
     {
+        Q_DISABLE_COPY(DatabaseConnection)
+
     public:
         /*! Default connection name. */
         static const char *defaultConnectionName;
@@ -93,7 +95,8 @@ namespace Orm
         remove(const QString &queryString,
                const QVector<QVariant> &bindings = {}) override;
 
-        /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
+        /*! Execute an SQL statement, should be used for DDL queries, internally calls
+            DatabaseConnection::recordsHaveBeenModified(). */
         QSqlQuery statement(const QString &queryString,
                             const QVector<QVariant> &bindings = {}) override;
         /*! Run an SQL statement and get the number of rows affected. */
@@ -123,16 +126,6 @@ namespace Orm
         void bindValues(QSqlQuery &query,
                         const QVector<QVariant> &bindings) const;
 
-        /*! Log a query into the connection's query log. */
-        void logQuery(const QSqlQuery &query,
-                      const std::optional<qint64> elapsed) const;
-        /*! Log a query into the connection's query log. */
-        void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
-                      const std::optional<qint64> elapsed) const;
-        /*! Log a transaction query into the connection's query log. */
-        void logTransactionQuery(const QString &query,
-                                 const std::optional<qint64> elapsed);
-
         /*! Check database connection and show warnings when the state changed. */
         bool pingDatabase() override;
 
@@ -142,10 +135,9 @@ namespace Orm
         void disconnect();
 
         /*! Get the database connection name. */
-        inline const QString getName() const override
-        { return getConfig("name").value<QString>(); }
+        const QString &getName() const override;
         /*! Get the name of the connected database. */
-        const QString &getDatabaseName() const override
+        inline const QString &getDatabaseName() const override
         { return m_database; }
 
         /*! Set the query grammar to the default implementation. */
@@ -205,8 +197,55 @@ namespace Orm
         /*! Reset the number of executed queries. */
         DatabaseConnection &resetStatementsCounter() override;
 
+        /* Logging */
+        /*! Log a query into the connection's query log. */
+        void logQuery(const QSqlQuery &query,
+                      const std::optional<qint64> elapsed) const;
+        /*! Log a query into the connection's query log. */
+        void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
+                      const std::optional<qint64> elapsed) const;
+        /*! Log a query into the connection's query log in the pretending mode. */
+        void logQueryForPretend(const QString &query,
+                                const QVariantMap &bindings) const;
+        /*! Log a transaction query into the connection's query log. */
+        void logTransactionQuery(const QString &query,
+                                 const std::optional<qint64> elapsed) const;
+        /*! Log a transaction query into the connection's query log
+            in the pretending mode. */
+        void logTransactionQueryForPretend(const QString &query) const;
+
+        /*! Get the connection query log. */
+        std::shared_ptr<QVector<Log>> getQueryLog() const override;
+        /*! Clear the query log. */
+        void flushQueryLog() override;
+        /*! Enable the query log on the connection. */
+        void enableQueryLog() override;
+        /*! Disable the query log on the connection. */
+        void disableQueryLog() override;
+        /*! Determine whether we're logging queries. */
+        bool logging() const override;
+        /*! The current order value for a query log record. */
+        static std::size_t getQueryLogOrder();
+
+        /* Others */
         /*! Return the connection's driver name. */
         QString driverName() override;
+
+        /*! Execute the given callback in "dry run" mode. */
+        QVector<Log>
+        pretend(const std::function<void()> &callback) override;
+        /*! Execute the given callback in "dry run" mode. */
+        QVector<Log>
+        pretend(const std::function<void(ConnectionInterface &)> &callback) override;
+        /*! Determine if the connection is in a "dry run". */
+        bool pretending() const override;
+
+        /*! Check if any records have been modified. */
+        bool getRecordsHaveBeenModified() const override;
+        /*! Indicate if any records have been modified. */
+        void recordsHaveBeenModified(bool value = true) override;
+        /*! Reset the record modification state. */
+        void forgetRecordModificationState() override;
 
     protected:
         // NOTE api different, getDefaultQueryGrammar() can not be non-pure because it contains pure virtual member function silverqx
@@ -244,6 +283,10 @@ namespace Orm
         /*! Log database connected, examined during MySQL ping. */
         void logConnected();
 
+        /*! Execute the given callback in "dry run" mode. */
+        QVector<Log>
+        withFreshQueryLog(const std::function<QVector<Log>()> &callback);
+
         /*! The active QSqlDatabase connection name. */
         std::optional<Connectors::ConnectionName> m_qtConnection;
         /*! The QSqlDatabase connection resolver. */
@@ -277,6 +320,18 @@ namespace Orm
         /*! Counts executed statements on current connection. */
         StatementsCounter m_statementsCounter;
 
+        /* Logging */
+        /*! Indicates if changes have been made to the database. */
+        bool m_recordsModified = false;
+        /*! All of the queries run against the connection. */
+        std::shared_ptr<QVector<Log>> m_queryLog = nullptr;
+        /*! ID of the query log record. */
+        inline static std::size_t m_queryLogId = 0;
+
+        /* Others */
+        /*! Indicates if the connection is in a "dry run". */
+        bool m_pretending = false;
+
     private:
         /*! Namespace prefix for MySQL savepoints. */
         static const char *SAVEPOINT_NAMESPACE;
@@ -299,7 +354,10 @@ namespace Orm
 
         /*! Count transactional queries execution time and statements counter. */
         std::optional<qint64>
-        hitTransactionalCounters(const QElapsedTimer timer);
+        hitTransactionalCounters(const QElapsedTimer timer, bool countElapsed);
+        /*! Convert positional bindings vector to the named bindings map. */
+        QVariantMap
+        convertPositionalToNamedBindings(const QVector<QVariant> &bindings) const;
 
         /*! The flag for the database was disconnected. */
         bool m_disconnectedLogged = false;
@@ -310,6 +368,15 @@ namespace Orm
         /*! Active savepoints counter. */
         uint m_savepoints = 0;
 
+        /*! Connection name, obtained from the connection configuration. */
+        QString m_connectionName;
+
+        /* Logging */
+        /*! Indicates whether queries are being logged (private intentionally). */
+        bool m_loggingQueries = false;
+        /*! All of the queries run against the connection. */
+        std::shared_ptr<QVector<Log>> m_queryLogForPretend = nullptr;
+
 #ifdef TINYORM_DEBUG_SQL
         /*! Indicates whether logging of sql queries is enabled. */
         const bool m_debugSql = true;
@@ -318,6 +385,48 @@ namespace Orm
         const bool m_debugSql = false;
 #endif
     };
+
+    // TODO inline functions, do it like below silverqx
+    inline const QString &DatabaseConnection::getName() const
+    {
+        return m_connectionName;
+    }
+
+    inline std::shared_ptr<QVector<Log>>
+    DatabaseConnection::getQueryLog() const
+    {
+        return m_queryLog;
+    }
+
+    inline void DatabaseConnection::disableQueryLog()
+    {
+        m_loggingQueries = false;
+    }
+
+    inline bool DatabaseConnection::logging() const
+    {
+        return m_loggingQueries;
+    }
+
+    inline bool DatabaseConnection::pretending() const
+    {
+        return m_pretending;
+    }
+
+    inline bool DatabaseConnection::getRecordsHaveBeenModified() const
+    {
+        return m_recordsModified;
+    }
+
+    inline void DatabaseConnection::recordsHaveBeenModified(const bool value)
+    {
+        m_recordsModified = value;
+    }
+
+    inline void DatabaseConnection::forgetRecordModificationState()
+    {
+        m_recordsModified = false;
+    }
 
     template<typename Return>
     Return
@@ -328,10 +437,10 @@ namespace Orm
         reconnectIfMissingConnection();
 
         // Elapsed timer needed
-        const auto elapsedTimer = m_debugSql || m_countingElapsed;
+        const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
 
         QElapsedTimer timer;
-        if (elapsedTimer)
+        if (countElapsed)
             timer.start();
 
         Return result;
@@ -348,19 +457,21 @@ namespace Orm
         }
 
         std::optional<qint64> elapsed;
-        if (elapsedTimer)
+        if (countElapsed) {
+            // Hit elapsed timer
             elapsed = timer.elapsed();
 
-        // Queries execution time counter
-        if (m_countingElapsed)
+            // Queries execution time counter
             m_elapsedCounter += *elapsed;
+        }
 
-#ifdef TINYORM_DEBUG_SQL
         /* Once we have run the query we will calculate the time that it took
            to run and then log the query, bindings, and execution time. We'll
            log time in milliseconds. */
-        logQuery(result, elapsed);
-#endif
+        if (m_pretending)
+            logQueryForPretend(queryString, convertPositionalToNamedBindings(bindings));
+        else
+            logQuery(result, elapsed);
 
         return result;
     }

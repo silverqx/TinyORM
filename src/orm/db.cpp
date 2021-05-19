@@ -352,6 +352,70 @@ void DB::resetStatementCounters(const QStringList &connections)
     manager().resetStatementCounters(connections);
 }
 
+std::shared_ptr<QVector<Log>>
+DB::getQueryLog(const QString &connection)
+{
+    return manager().connection(connection).getQueryLog();
+}
+
+void DB::flushQueryLog(const QString &connection)
+{
+    manager().connection(connection).flushQueryLog();
+}
+
+void DB::enableQueryLog(const QString &connection)
+{
+    manager().connection(connection).enableQueryLog();
+}
+
+void DB::disableQueryLog(const QString &connection)
+{
+    manager().connection(connection).disableQueryLog();
+}
+
+bool DB::logging(const QString &connection)
+{
+    return manager().connection(connection).logging();
+}
+
+size_t DB::getQueryLogOrder()
+{
+    return manager().getQueryLogOrder();
+}
+
+QString DB::driverName(const QString &connection)
+{
+    return manager().connection(connection).driverName();
+}
+
+QVector<Log>
+DB::pretend(const std::function<void()> &callback, const QString &connection)
+{
+    return manager().connection(connection).pretend(callback);
+}
+
+QVector<Log>
+DB::pretend(const std::function<void(ConnectionInterface &)> &callback,
+            const QString &connection)
+{
+    return manager().connection(connection).pretend(callback);
+}
+
+bool DB::getRecordsHaveBeenModified(const QString &connection)
+{
+    return manager().connection(connection).getRecordsHaveBeenModified();
+}
+
+void DB::recordsHaveBeenModified(const bool value, const QString &connection)
+{
+    manager().connection(connection).recordsHaveBeenModified(value);
+}
+
+void DB::forgetRecordModificationState(const QString &connection)
+{
+    manager().connection(connection).forgetRecordModificationState();
+}
+
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE

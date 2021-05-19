@@ -46,6 +46,8 @@ DatabaseConnection::DatabaseConnection(
     , m_database(database)
     , m_tablePrefix(tablePrefix)
     , m_config(config)
+    // CUR test what happens if empty connection name silverqx
+    , m_connectionName(getConfig("name").value<QString>())
 {}
 
 QSharedPointer<QueryBuilder>
@@ -69,11 +71,14 @@ bool DatabaseConnection::beginTransaction()
 
     static const auto query = QStringLiteral("START TRANSACTION");
 
+    // Elapsed timer needed
+    const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
+
     QElapsedTimer timer;
-    if (m_debugSql || m_countingElapsed)
+    if (countElapsed)
         timer.start();
 
-    if (!getQtConnection().transaction())
+    if (!m_pretending && !getQtConnection().transaction())
         throw SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2").arg(__FUNCTION__, query),
                 getRawQtConnection().lastError());
@@ -81,14 +86,15 @@ bool DatabaseConnection::beginTransaction()
     m_inTransaction = true;
 
     // Queries execution time counter / Query statements counter
-    const auto elapsed = hitTransactionalCounters(timer);
+    auto elapsed = hitTransactionalCounters(timer, countElapsed);
 
-#ifdef TINYORM_DEBUG_SQL
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
-    logTransactionQuery(query, elapsed);
-#endif
+    if (m_pretending)
+        logTransactionQueryForPretend(query);
+    else
+        logTransactionQuery(query, std::move(elapsed));
 
     return true;
 }
@@ -99,11 +105,15 @@ bool DatabaseConnection::commit()
 
     static const auto query = QStringLiteral("COMMIT");
 
+    // Elapsed timer needed
+    const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
+
     QElapsedTimer timer;
-    if (m_debugSql || m_countingElapsed)
+    if (countElapsed)
         timer.start();
 
-    if (!getQtConnection().commit())
+    // TODO rewrite transactions to DatabaseConnection::statement, so I have access to QSqlQuery for logQuery() silverqx
+    if (!m_pretending && !getQtConnection().commit())
         throw SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2").arg(__FUNCTION__, query),
                 getRawQtConnection().lastError());
@@ -111,14 +121,15 @@ bool DatabaseConnection::commit()
     m_inTransaction = false;
 
     // Queries execution time counter / Query statements counter
-    const auto elapsed = hitTransactionalCounters(timer);
+    auto elapsed = hitTransactionalCounters(timer, countElapsed);
 
-#ifdef TINYORM_DEBUG_SQL
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
-    logTransactionQuery(query, elapsed);
-#endif
+    if (m_pretending)
+        logTransactionQueryForPretend(query);
+    else
+        logTransactionQuery(query, std::move(elapsed));
 
     return true;
 }
@@ -129,11 +140,14 @@ bool DatabaseConnection::rollBack()
 
     static const auto query = QStringLiteral("ROLLBACK");
 
+    // Elapsed timer needed
+    const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
+
     QElapsedTimer timer;
-    if (m_debugSql || m_countingElapsed)
+    if (countElapsed)
         timer.start();
 
-    if (!getQtConnection().rollback())
+    if (!m_pretending && !getQtConnection().rollback())
         throw SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2").arg(__FUNCTION__, query),
                 getRawQtConnection().lastError());
@@ -141,14 +155,15 @@ bool DatabaseConnection::rollBack()
     m_inTransaction = false;
 
     // Queries execution time counter / Query statements counter
-    const auto elapsed = hitTransactionalCounters(timer);
+    auto elapsed = hitTransactionalCounters(timer, countElapsed);
 
-#ifdef TINYORM_DEBUG_SQL
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
-    logTransactionQuery(query, elapsed);
-#endif
+    if (m_pretending)
+        logTransactionQueryForPretend(query);
+    else
+        logTransactionQuery(query, std::move(elapsed));
 
     return true;
 }
@@ -161,12 +176,15 @@ bool DatabaseConnection::savepoint(const QString &id)
     auto savePoint = getQtQuery();
     const auto query = QStringLiteral("SAVEPOINT %1_%2").arg(SAVEPOINT_NAMESPACE, id);
 
+    // Elapsed timer needed
+    const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
+
     QElapsedTimer timer;
-    if (m_debugSql || m_countingElapsed)
+    if (countElapsed)
         timer.start();
 
     // Execute a savepoint query
-    if (!savePoint.exec(query))
+    if (!m_pretending && !savePoint.exec(query))
         throw SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2")
                     .arg(__FUNCTION__, query),
@@ -175,14 +193,15 @@ bool DatabaseConnection::savepoint(const QString &id)
     ++m_savepoints;
 
     // Queries execution time counter / Query statements counter
-    const auto elapsed = hitTransactionalCounters(timer);
+    auto elapsed = hitTransactionalCounters(timer, countElapsed);
 
-#ifdef TINYORM_DEBUG_SQL
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
-    logTransactionQuery(query, elapsed);
-#endif
+    if (m_pretending)
+        logTransactionQueryForPretend(query);
+    else
+        logTransactionQuery(query, std::move(elapsed));
 
     return true;
 }
@@ -201,12 +220,15 @@ bool DatabaseConnection::rollbackToSavepoint(const QString &id)
     const auto query = QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2")
                        .arg(SAVEPOINT_NAMESPACE, id);
 
+    // Elapsed timer needed
+    const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
+
     QElapsedTimer timer;
-    if (m_debugSql || m_countingElapsed)
+    if (countElapsed)
         timer.start();
 
     // Execute a rollback to savepoint query
-    if (!rollbackToSavepoint.exec(query))
+    if (!m_pretending && !rollbackToSavepoint.exec(query))
         throw SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2")
                     .arg(__FUNCTION__, query),
@@ -215,14 +237,15 @@ bool DatabaseConnection::rollbackToSavepoint(const QString &id)
     m_savepoints = std::max<int>(0, m_savepoints - 1);
 
     // Queries execution time counter / Query statements counter
-    const auto elapsed = hitTransactionalCounters(timer);
+    auto elapsed = hitTransactionalCounters(timer, countElapsed);
 
-#ifdef TINYORM_DEBUG_SQL
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
-    logTransactionQuery(query, elapsed);
-#endif
+    if (m_pretending)
+        logTransactionQueryForPretend(query);
+    else
+        logTransactionQuery(query, std::move(elapsed));
 
     return true;
 }
@@ -236,12 +259,34 @@ QSqlQuery
 DatabaseConnection::select(const QString &queryString,
                            const QVector<QVariant> &bindings)
 {
-    /* select() and statement() have the same implementation for now, but
-       they don't in original Eloquent implementation.
-       They will have different implementation, when I implement
-       ::read ::write connections and sticky connection
-       (recordsHaveBeenModified()). */
-    return statement(queryString, bindings);
+    return run<QSqlQuery>(queryString, bindings,
+               [this](const QString &queryString, const QVector<QVariant> &bindings)
+               -> QSqlQuery
+    {
+        if (m_pretending)
+            return getQtQuery();
+
+        // Prepare QSqlQuery
+        auto query = prepareQuery(queryString);
+
+        bindValues(query, prepareBindings(bindings));
+
+        if (query.exec()) {
+            // Query statements counter
+            if (m_countingStatements)
+                ++m_statementsCounter.normal;
+
+            return query;
+        }
+
+        /* If an error occurs when attempting to run a query, we'll transform it
+           to the exception QueryError(), which formats the error message to
+           include the bindings with SQL, which will make this exception a lot
+           more helpful to the developer instead of just the database's errors. */
+        throw QueryError(
+                    QStringLiteral("Select statement in %1() failed.").arg(__FUNCTION__),
+                    query, bindings);
+    });
 }
 
 QSqlQuery
@@ -257,7 +302,7 @@ QSqlQuery
 DatabaseConnection::selectOne(const QString &queryString,
                               const QVector<QVariant> &bindings)
 {
-    auto query = statement(queryString, bindings);
+    auto query = select(queryString, bindings);
 
     query.first();
 
@@ -292,6 +337,9 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
                [this](const QString &queryString, const QVector<QVariant> &bindings)
                -> QSqlQuery
     {
+        if (m_pretending)
+            return getQtQuery();
+
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString);
 
@@ -302,6 +350,8 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
             if (m_countingStatements)
                 ++m_statementsCounter.normal;
 
+            recordsHaveBeenModified();
+
             return query;
         }
 
@@ -311,6 +361,7 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
            more helpful to the developer instead of just the database's errors. */
         throw QueryError(
                     // TODO next use __FUNCTION__ in similar statements silverqx
+                    // CUR unify __FUNCTION__ (__func__) msvc 'Xyz::fname', but gcc only 'fname' silverqx
                     QStringLiteral("Statement in %1() failed.").arg(__FUNCTION__),
                     query, bindings);
     });
@@ -324,6 +375,9 @@ DatabaseConnection::affectingStatement(const QString &queryString,
             [this](const QString &queryString, const QVector<QVariant> &bindings)
             -> std::tuple<int, QSqlQuery>
     {
+        if (m_pretending)
+            return {0, getQtQuery()};
+
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString);
 
@@ -334,7 +388,11 @@ DatabaseConnection::affectingStatement(const QString &queryString,
             if (m_countingStatements)
                 ++m_statementsCounter.affecting;
 
-            return {query.numRowsAffected(), query};
+            auto numRowsAffected = query.numRowsAffected();
+
+            recordsHaveBeenModified(numRowsAffected > 0);
+
+            return {numRowsAffected, query};
         }
 
         /* If an error occurs when attempting to run a query, we'll transform it
@@ -452,52 +510,20 @@ void DatabaseConnection::bindValues(QSqlQuery &query,
     }
 }
 
-void DatabaseConnection::logQuery(
-        const QSqlQuery &query,
-        const std::optional<qint64> elapsed = std::nullopt) const
-{
-    qDebug().nospace().noquote()
-        << "Executed prepared query (" << (elapsed ? *elapsed : -1) << "ms, "
-        << query.size() << " results, " << query.numRowsAffected()
-        << " affected"
-        // Connection name
-        << (m_qtConnection ? QStringLiteral(", %1").arg(*m_qtConnection) : "")
-        << ") : " << parseExecutedQuery(query);;
-}
-
-void DatabaseConnection::logQuery(
-        const std::tuple<int, QSqlQuery> &queryResult,
-        const std::optional<qint64> elapsed) const
-{
-    logQuery(std::get<1>(queryResult), elapsed);
-}
-
-void DatabaseConnection::logTransactionQuery(
-        const QString &query,
-        const std::optional<qint64> elapsed = std::nullopt)
-{
-    const auto connectionName = getName();
-
-    // This is only internal method and logs the passed string
-    qDebug().nospace().noquote()
-        << "Executed transaction query (" << (elapsed ? *elapsed : -1) << "ms"
-        // Connection name
-        << (!connectionName.isEmpty() ? QStringLiteral(", %1").arg(connectionName) : "")
-        << ") : " << query;
-}
-
 std::optional<qint64>
-DatabaseConnection::hitTransactionalCounters(const QElapsedTimer timer)
+DatabaseConnection::hitTransactionalCounters(const QElapsedTimer timer,
+                                             const bool countElapsed)
 {
-    /* This function was extracted to prevent duplicit code only. */
     std::optional<qint64> elapsed;
 
-    if (m_debugSql || m_countingElapsed)
+    if (countElapsed) {
+        // Hit elapsed timer
         elapsed = timer.elapsed();
 
-    // Queries execution time counter
-    if (m_countingElapsed)
+        // Queries execution time counter
         m_elapsedCounter += *elapsed;
+    }
+
     // Query statements counter
     if (m_countingStatements)
         ++m_statementsCounter.transactional;
@@ -691,9 +717,194 @@ DatabaseConnection &DatabaseConnection::resetStatementsCounter()
     return *this;
 }
 
+void DatabaseConnection::logQuery(
+        const QSqlQuery &query,
+        const std::optional<qint64> elapsed = std::nullopt) const
+{
+    if (m_loggingQueries && m_queryLog) {
+        auto executedQuery = query.executedQuery();
+        if (executedQuery.isEmpty())
+            executedQuery = query.lastQuery();
+
+        m_queryLog->append({std::move(executedQuery), query.boundValues(),
+                            Log::Type::NORMAL, ++m_queryLogId,
+                            elapsed ? *elapsed : -1, query.size(),
+                            query.numRowsAffected()});
+    }
+
+#ifdef TINYORM_DEBUG_SQL
+    const auto &connectionName = getName();
+
+    qDebug(QStringLiteral(
+               "Executed prepared query (%1ms, %2 results, %3 affected%4) : %5")
+           .arg(elapsed ? *elapsed : -1)
+           .arg(query.size())
+           .arg(query.numRowsAffected())
+           .arg(connectionName.isEmpty() ? QLatin1String("")
+                                         : QStringLiteral(", %1").arg(connectionName),
+                parseExecutedQuery(query))
+           .toUtf8().constData());
+#endif
+}
+
+void DatabaseConnection::logQuery(
+        const std::tuple<int, QSqlQuery> &queryResult,
+        const std::optional<qint64> elapsed) const
+{
+    logQuery(std::get<1>(queryResult), elapsed);
+}
+
+void DatabaseConnection::logQueryForPretend(
+        const QString &query, const QVariantMap &bindings) const
+{
+    if (m_loggingQueries && m_queryLog)
+        m_queryLog->append({query, bindings, Log::Type::NORMAL, ++m_queryLogId});
+
+#ifdef TINYORM_DEBUG_SQL
+    const auto &connectionName = getName();
+
+    qDebug(QStringLiteral("Pretended prepared query (%1) : %2")
+           .arg(connectionName.isEmpty() ? QLatin1String("") : connectionName,
+                parseExecutedQueryForPretend(query, bindings))
+           .toUtf8().constData());
+#endif
+}
+
+void DatabaseConnection::logTransactionQuery(
+        const QString &query, const std::optional<qint64> elapsed) const
+{
+    if (m_loggingQueries && m_queryLog)
+        m_queryLog->append({query, {}, Log::Type::TRANSACTION, ++m_queryLogId,
+                            elapsed ? *elapsed : -1});
+
+#ifdef TINYORM_DEBUG_SQL
+    const auto &connectionName = getName();
+
+    qDebug(QStringLiteral("%1 transaction query (%2ms%3) : %4")
+           .arg(QStringLiteral("Executed"))
+           .arg(elapsed ? *elapsed : -1)
+           .arg(connectionName.isEmpty() ? QLatin1String("")
+                                         : QStringLiteral(", %1").arg(connectionName),
+                query)
+           .toUtf8().constData());
+#endif
+}
+
+void DatabaseConnection::logTransactionQueryForPretend(const QString &query) const
+{
+    if (m_loggingQueries && m_queryLog)
+        m_queryLog->append({query, {}, Log::Type::TRANSACTION, ++m_queryLogId});
+
+#ifdef TINYORM_DEBUG_SQL
+    const auto &connectionName = getName();
+
+    qDebug(QStringLiteral("%1 transaction query (%2) : %3")
+           .arg(QStringLiteral("Pretended"),
+                connectionName.isEmpty() ? QLatin1String("") : connectionName,
+                query)
+           .toUtf8().constData());
+#endif
+}
+
+void DatabaseConnection::flushQueryLog()
+{
+    // TODO sync silverqx
+    if (m_queryLog)
+        m_queryLog->clear();
+
+    m_queryLogId = 0;
+}
+
+void DatabaseConnection::enableQueryLog()
+{
+    /* Instantiate the query log vector lazily, right before it is really needed,
+       and do not flush it. */
+    if (!m_queryLog)
+        m_queryLog = std::make_shared<QVector<Log>>();
+
+    m_loggingQueries = true;
+}
+
+size_t DatabaseConnection::getQueryLogOrder()
+{
+    return m_queryLogId;
+}
+
 QString DatabaseConnection::driverName()
 {
     return getQtConnection().driverName();
+}
+
+QVector<Log>
+DatabaseConnection::pretend(const std::function<void()> &callback)
+{
+    return withFreshQueryLog([this, &callback]
+    {
+        m_pretending = true;
+
+        /* Basically to make the database connection "pretend", we will just return
+           the default values for all the query methods, then we will return an
+           array of queries that were "executed" within the Closure callback. */
+        std::invoke(callback);
+
+        m_pretending = false;
+
+        // CUR check NRVO silverqx
+        return *m_queryLog;
+    });
+}
+
+QVector<Log>
+DatabaseConnection::pretend(const std::function<void(ConnectionInterface &)> &callback)
+{
+    return withFreshQueryLog([this, &callback]
+    {
+        m_pretending = true;
+
+        /* Basically to make the database connection "pretend", we will just return
+           the default values for all the query methods, then we will return an
+           array of queries that were "executed" within the Closure callback. */
+        std::invoke(callback, *this);
+
+        m_pretending = false;
+
+        return *m_queryLog;
+    });
+}
+
+QVector<Log>
+DatabaseConnection::withFreshQueryLog(const std::function<QVector<Log>()> &callback)
+{
+    /* First we will back up the value of the logging queries data members and then
+       we'll enable query logging. The query log will also get cleared so we will
+       have a new log of all the queries that will be executed. */
+    const auto loggingQueries = m_loggingQueries;
+    const auto queryLogId = m_queryLogId;
+    m_queryLogId = 0;
+
+    enableQueryLog();
+
+    if (m_queryLogForPretend)/* [[likely]]*/
+        m_queryLogForPretend->clear();
+    else/* [[unlikely]]*/
+        // Create the query log lazily, right before it is really needed
+        m_queryLogForPretend = std::make_shared<QVector<Log>>();
+
+    // Swap query logs, so I don't have to manage separate logic for pretend code
+    m_queryLog.swap(m_queryLogForPretend);
+
+    // CUR check NRVO silverqx
+    /* Now we'll execute this callback and capture the result. Once it has been
+       executed we will restore original values and give back the value of the callback
+       so the original callers can have the results. */
+    const auto result = std::invoke(callback);
+
+    // Restore
+    m_queryLog.swap(m_queryLogForPretend);
+    m_loggingQueries = loggingQueries;
+    m_queryLogId = queryLogId;
+
+    return result;
 }
 
 std::unique_ptr<QueryProcessor> DatabaseConnection::getDefaultPostProcessor() const
@@ -755,6 +966,18 @@ QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
     query.prepare(queryString);
 
     return query;
+}
+
+QVariantMap
+DatabaseConnection::convertPositionalToNamedBindings(
+        const QVector<QVariant> &bindings) const
+{
+    QVariantMap result;
+
+    for (const auto &binding : bindings)
+        result.insert(QStringLiteral(":a"), binding);
+
+    return result;
 }
 
 } // namespace Orm

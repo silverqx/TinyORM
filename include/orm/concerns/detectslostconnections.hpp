@@ -14,7 +14,11 @@ namespace Concerns
 
     class DetectsLostConnections
     {
+        Q_DISABLE_COPY(DetectsLostConnections)
+
     public:
+        DetectsLostConnections() = default;
+
         /*! Determine if the given exception was caused by a lost connection. */
         bool causedByLostConnection(const SqlError &e) const;
     };

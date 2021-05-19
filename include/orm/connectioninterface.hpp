@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "orm/query/expression.hpp"
+#include "orm/types/log.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -39,6 +40,7 @@ namespace Grammars
 }
 } // Orm::Schema
 
+    using Log            = Types::Log;
     using QueryBuilder   = Query::Builder;
     using QueryGrammar   = Query::Grammars::Grammar;
     using QueryProcessor = Query::Processors::Processor;
@@ -58,7 +60,10 @@ namespace Grammars
 
     class ConnectionInterface
     {
+        Q_DISABLE_COPY(ConnectionInterface)
+
     public:
+        ConnectionInterface() = default;
         inline virtual ~ConnectionInterface() = default;
 
         /*! Begin a fluent query against a database table. */
@@ -151,12 +156,8 @@ namespace Grammars
         /*! Check database connection and show warnings when the state changed. */
         virtual bool pingDatabase() = 0;
 
-        // FEATURE pretend, implement dry run mode silverqx
-        /*! Execute the given callback in "dry run" mode. */
-//        public function pretend(Closure $callback);
-
         /*! Get the database connection name. */
-        virtual const QString getName() const = 0;
+        virtual const QString &getName() const = 0;
 
         /*! Get the name of the connected database. */
         virtual const QString &getDatabaseName() const = 0;
@@ -207,8 +208,37 @@ namespace Grammars
         /*! Reset the number of executed queries. */
         virtual DatabaseConnection &resetStatementsCounter() = 0;
 
+        /* Logging */
+        /*! Get the connection query log. */
+        virtual std::shared_ptr<QVector<Log>> getQueryLog() const = 0;
+        /*! Clear the query log. */
+        virtual void flushQueryLog() = 0;
+        /*! Enable the query log on the connection. */
+        virtual void enableQueryLog() = 0;
+        /*! Disable the query log on the connection. */
+        virtual void disableQueryLog() = 0;
+        /*! Determine whether we're logging queries. */
+        virtual bool logging() const = 0;
+
+        /* Others */
         /*! Return the connection's driver name. */
         virtual QString driverName() = 0;
+
+        /*! Execute the given callback in "dry run" mode. */
+        virtual QVector<Log>
+        pretend(const std::function<void()> &callback) = 0;
+        /*! Execute the given callback in "dry run" mode. */
+        virtual QVector<Log>
+        pretend(const std::function<void(ConnectionInterface &)> &callback) = 0;
+        /*! Determine if the connection is in a "dry run". */
+        virtual bool pretending() const = 0;
+
+        /*! Check if any records have been modified. */
+        virtual bool getRecordsHaveBeenModified() const = 0;
+        /*! Indicate if any records have been modified. */
+        virtual void recordsHaveBeenModified(bool value = true) = 0;
+        /*! Reset the record modification state. */
+        virtual void forgetRecordModificationState() = 0;
     };
 
 } // namespace Orm

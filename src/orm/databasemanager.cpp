@@ -11,7 +11,8 @@ namespace Orm
 {
 
 DatabaseManager *DatabaseManager::m_instance = nullptr;
-const char *DatabaseManager::defaultConnectionName = const_cast<char *>("tinyorm_default");
+const char *
+DatabaseManager::defaultConnectionName = const_cast<char *>("tinyorm_default");
 
 /* This is needed because of the std::unique_ptr is used in the m_connections
    data member 😲, and when this dtor is not defined in the cpp, it will be
@@ -550,6 +551,72 @@ void DatabaseManager::resetStatementCounters(const QStringList &connections)
         if (connection.countingElapsed())
             connection.resetStatementsCounter();
     }
+}
+
+std::shared_ptr<QVector<Log>>
+DatabaseManager::getQueryLog(const QString &connection)
+{
+    return this->connection(connection).getQueryLog();
+}
+
+void DatabaseManager::flushQueryLog(const QString &connection)
+{
+    this->connection(connection).flushQueryLog();
+}
+
+void DatabaseManager::enableQueryLog(const QString &connection)
+{
+    this->connection(connection).enableQueryLog();
+}
+
+void DatabaseManager::disableQueryLog(const QString &connection)
+{
+    this->connection(connection).disableQueryLog();
+}
+
+bool DatabaseManager::logging(const QString &connection)
+{
+    return this->connection(connection).logging();
+}
+
+size_t DatabaseManager::getQueryLogOrder()
+{
+    return DatabaseConnection::getQueryLogOrder();
+}
+
+QString DatabaseManager::driverName(const QString &connection)
+{
+    return this->connection(connection).driverName();
+}
+
+QVector<Log>
+DatabaseManager::pretend(const std::function<void()> &callback,
+                         const QString &connection)
+{
+    return this->connection(connection).pretend(callback);
+}
+
+QVector<Log>
+DatabaseManager::pretend(const std::function<void(ConnectionInterface &)> &callback,
+                         const QString &connection)
+{
+    return this->connection(connection).pretend(callback);
+}
+
+bool DatabaseManager::getRecordsHaveBeenModified(const QString &connection)
+{
+    return this->connection(connection).getRecordsHaveBeenModified();
+}
+
+void DatabaseManager::recordsHaveBeenModified(const bool value,
+                                              const QString &connection)
+{
+    this->connection(connection).recordsHaveBeenModified(value);
+}
+
+void DatabaseManager::forgetRecordModificationState(const QString &connection)
+{
+    this->connection(connection).forgetRecordModificationState();
 }
 
 const QString &

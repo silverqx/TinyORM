@@ -216,6 +216,43 @@ namespace Orm
         static StatementsCounter takeStatementCounters(const QStringList &connections);
         /*! Reset the number of executed queries on given connections. */
         static void resetStatementCounters(const QStringList &connections);
+
+        /* Logging */
+        /*! Get the connection query log. */
+        static std::shared_ptr<QVector<Log>>
+        getQueryLog(const QString &connection = "");
+        /*! Clear the query log. */
+        static void flushQueryLog(const QString &connection = "");
+        /*! Enable the query log on the connection. */
+        static void enableQueryLog(const QString &connection = "");
+        /*! Disable the query log on the connection. */
+        static void disableQueryLog(const QString &connection = "");
+        /*! Determine whether we're logging queries. */
+        static bool logging(const QString &connection = "");
+        /*! The current order value for a query log record. */
+        static std::size_t getQueryLogOrder();
+
+        /* Others */
+        /*! Return the connection's driver name. */
+        static QString driverName(const QString &connection = "");
+
+        /* Others */
+        /*! Execute the given callback in "dry run" mode. */
+        static QVector<Log>
+        pretend(const std::function<void()> &callback,
+                const QString &connection = "");
+        /*! Execute the given callback in "dry run" mode. */
+        static QVector<Log>
+        pretend(const std::function<void(ConnectionInterface &)> &callback,
+                const QString &connection = "");
+
+        /*! Check if any records have been modified. */
+        static bool getRecordsHaveBeenModified(const QString &connection = "");
+        /*! Indicate if any records have been modified. */
+        static void recordsHaveBeenModified(bool value = true,
+                                            const QString &connection = "");
+        /*! Reset the record modification state. */
+        static void forgetRecordModificationState(const QString &connection = "");
     };
 
 } // namespace Orm

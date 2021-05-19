@@ -1,0 +1,43 @@
+#ifndef LOG_HPP
+#define LOG_HPP
+
+#ifdef TINYORM_COMMON_NAMESPACE
+namespace TINYORM_COMMON_NAMESPACE
+{
+#endif
+namespace Orm::Types
+{
+
+    /*! Query Log record. */
+    struct Log
+    {
+        /*! Type of the query in log record. */
+        enum struct Type
+        {
+            UNDEFINED = -1,
+            NORMAL,
+            TRANSACTION,
+        };
+
+        /*! Executed query. */
+        QString query;
+        /*! Map of bound values. */
+        QMap<QString, QVariant> boundValues {};
+        /*! Type of the query in log record. */
+        const Type type = Type::UNDEFINED;
+        /*! Order of the query log record. */
+        std::size_t order = 0;
+        /*! Query execution time. */
+        qint64 elapsed = -1;
+        /*! Size of the result (number of rows returned). */
+        int results = -1;
+        /*! Number of rows affected by the query. */
+        int affected = -1;
+    };
+
+} // namespace Orm::Types
+#ifdef TINYORM_COMMON_NAMESPACE
+} // namespace TINYORM_COMMON_NAMESPACE
+#endif
+
+#endif // LOG_HPP

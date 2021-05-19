@@ -12,6 +12,8 @@ namespace Orm
 
     class SHAREDLIB_EXPORT SQLiteConnection final : public DatabaseConnection
     {
+        Q_DISABLE_COPY(SQLiteConnection)
+
     public:
         SQLiteConnection(
                 const std::function<Connectors::ConnectionName()> &connection,

@@ -3764,7 +3764,7 @@ namespace Relations {
         // Create the store and visit relation
         this->createBelongsToManyRelatedTableStore().visit(relation);
 
-        // CUR test NRVO in gcc silverqx
+        // NRVO kicks in
         const auto relatedTable = this->belongsToManyRelatedTableStore().result;
 
         // Releases the ownership and destroy the top relation store on the stack
