@@ -1350,8 +1350,12 @@ namespace Relations
                     /* Generate fully qualified column name for the BelongsToMany
                        relation. */
                     if (belongsToManyRelatedTable) {
+#ifdef __GNUG__
+                        columnsList << QString("%1.%2").arg(*belongsToManyRelatedTable, column);
+#else
                         columnsList << QStringLiteral("%1.%2")
                                        .arg(*belongsToManyRelatedTable, column);
+#endif
                         continue;
                     }
 

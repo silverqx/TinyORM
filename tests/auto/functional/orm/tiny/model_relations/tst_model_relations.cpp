@@ -800,7 +800,7 @@ void tst_Model_Relations::with_WithSelectConstraint() const
 
         // Check whether constraints was correctly applied
         const auto &attributes = file->getAttributes();
-        QCOMPARE(attributes.size(), static_cast<std::size_t>(3));
+        QCOMPARE(attributes.size(), 3);
 
         const QVector<QString> expectedAttributes {"id", "torrent_id", "filepath"};
         for (const auto &attribute : attributes)
@@ -835,7 +835,7 @@ void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
 
         // Check whether constraints was correctly applied
         const auto &attributes = file->getAttributes();
-        QCOMPARE(attributes.size(), static_cast<std::size_t>(3));
+        QCOMPARE(attributes.size(), 3);
 
         const QVector<QString> expectedAttributes {"id", "torrent_id", "filepath"};
         for (const auto &attribute : attributes)
@@ -869,7 +869,7 @@ void tst_Model_Relations::with_BelongsToMany_WithSelectConstraint() const
 
         // Check whether constraints was correctly applied
         const auto &attributes = tag->getAttributes();
-        QCOMPARE(attributes.size(), static_cast<std::size_t>(2));
+        QCOMPARE(attributes.size(), 2);
 
         const QVector<QString> expectedAttributes {"id", "name"};
         for (const auto &attribute : attributes)
@@ -932,7 +932,7 @@ void tst_Model_Relations::with_WithLambdaConstraint() const
 
         // Check whether constraints was correctly applied
         const auto &attributes = file->getAttributes();
-        QCOMPARE(attributes.size(), static_cast<std::size_t>(3));
+        QCOMPARE(attributes.size(), 3);
 
         const QVector<QString> expectedAttributes {"id", "torrent_id", "filepath"};
         for (const auto &attribute : attributes)
@@ -969,7 +969,7 @@ void tst_Model_Relations::with_BelongsToMany_WithLambdaConstraint() const
 
         // Check whether constraints was correctly applied
         const auto &attributes = tag->getAttributes();
-        QCOMPARE(attributes.size(), static_cast<std::size_t>(2));
+        QCOMPARE(attributes.size(), 2);
 
         const QVector<QString> expectedAttributes {"id", "name"};
         for (const auto &attribute : attributes)

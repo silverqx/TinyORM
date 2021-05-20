@@ -735,15 +735,14 @@ void DatabaseConnection::logQuery(
 #ifdef TINYORM_DEBUG_SQL
     const auto &connectionName = getName();
 
-    qDebug(QStringLiteral(
-               "Executed prepared query (%1ms, %2 results, %3 affected%4) : %5")
-           .arg(elapsed ? *elapsed : -1)
-           .arg(query.size())
-           .arg(query.numRowsAffected())
-           .arg(connectionName.isEmpty() ? QLatin1String("")
-                                         : QStringLiteral(", %1").arg(connectionName),
-                parseExecutedQuery(query))
-           .toUtf8().constData());
+    qDebug("Executed prepared query (%llims, %i results, %i affected%s) : %s",
+           elapsed ? *elapsed : -1,
+           query.size(),
+           query.numRowsAffected(),
+           connectionName.isEmpty() ? ""
+                                    : QStringLiteral(", %1").arg(connectionName)
+                                      .toUtf8().constData(),
+           parseExecutedQuery(query).toUtf8().constData());
 #endif
 }
 
@@ -763,10 +762,9 @@ void DatabaseConnection::logQueryForPretend(
 #ifdef TINYORM_DEBUG_SQL
     const auto &connectionName = getName();
 
-    qDebug(QStringLiteral("Pretended prepared query (%1) : %2")
-           .arg(connectionName.isEmpty() ? QLatin1String("") : connectionName,
-                parseExecutedQueryForPretend(query, bindings))
-           .toUtf8().constData());
+    qDebug("Pretended prepared query (%s) : %s",
+           connectionName.isEmpty() ? "" : connectionName.toUtf8().constData(),
+           parseExecutedQueryForPretend(query, bindings).toUtf8().constData());
 #endif
 }
 
@@ -780,13 +778,13 @@ void DatabaseConnection::logTransactionQuery(
 #ifdef TINYORM_DEBUG_SQL
     const auto &connectionName = getName();
 
-    qDebug(QStringLiteral("%1 transaction query (%2ms%3) : %4")
-           .arg(QStringLiteral("Executed"))
-           .arg(elapsed ? *elapsed : -1)
-           .arg(connectionName.isEmpty() ? QLatin1String("")
-                                         : QStringLiteral(", %1").arg(connectionName),
-                query)
-           .toUtf8().constData());
+    qDebug("%s transaction query (%llims%s) : %s",
+           QStringLiteral("Executed").toUtf8().constData(),
+           elapsed ? *elapsed : -1,
+           connectionName.isEmpty() ? ""
+                                    : QStringLiteral(", %1").arg(connectionName)
+                                      .toUtf8().constData(),
+           query.toUtf8().constData());
 #endif
 }
 
@@ -798,11 +796,10 @@ void DatabaseConnection::logTransactionQueryForPretend(const QString &query) con
 #ifdef TINYORM_DEBUG_SQL
     const auto &connectionName = getName();
 
-    qDebug(QStringLiteral("%1 transaction query (%2) : %3")
-           .arg(QStringLiteral("Pretended"),
-                connectionName.isEmpty() ? QLatin1String("") : connectionName,
-                query)
-           .toUtf8().constData());
+    qDebug("%s transaction query (%s) : %s",
+           QStringLiteral("Pretended").toUtf8().constData(),
+           connectionName.isEmpty() ? "" : connectionName.toUtf8().constData(),
+           query.toUtf8().constData());
 #endif
 }
 

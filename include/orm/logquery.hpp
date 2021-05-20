@@ -2,6 +2,7 @@
 #define LOGQUERY_H
 
 #include <QString>
+#include <QVariant>
 
 class QSqlQuery;
 

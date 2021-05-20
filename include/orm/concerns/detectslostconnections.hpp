@@ -14,7 +14,8 @@ namespace Concerns
 
     class DetectsLostConnections
     {
-        Q_DISABLE_COPY(DetectsLostConnections)
+        DetectsLostConnections(const DetectsLostConnections &) = delete;
+        DetectsLostConnections &operator=(const DetectsLostConnections &) = delete;
 
     public:
         DetectsLostConnections() = default;
