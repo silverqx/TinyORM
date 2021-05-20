@@ -846,7 +846,6 @@ DatabaseConnection::pretend(const std::function<void()> &callback)
 
         m_pretending = false;
 
-        // CUR check NRVO silverqx
         return *m_queryLog;
     });
 }
@@ -890,7 +889,6 @@ DatabaseConnection::withFreshQueryLog(const std::function<QVector<Log>()> &callb
     // Swap query logs, so I don't have to manage separate logic for pretend code
     m_queryLog.swap(m_queryLogForPretend);
 
-    // CUR check NRVO silverqx
     /* Now we'll execute this callback and capture the result. Once it has been
        executed we will restore original values and give back the value of the callback
        so the original callers can have the results. */
@@ -901,6 +899,7 @@ DatabaseConnection::withFreshQueryLog(const std::function<QVector<Log>()> &callb
     m_loggingQueries = loggingQueries;
     m_queryLogId = queryLogId;
 
+    // NRVO kicks in
     return result;
 }
 
