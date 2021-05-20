@@ -38,6 +38,9 @@ private slots:
     void massAssignment_forceFill_OnGuardedAttribute() const;
     void massAssignment_forceFill_NonExistentAttribute() const;
 
+    void with_WithSelectConstraint_QueryWithoutRelatedTable() const;
+    void with_BelongsToMany_WithSelectConstraint_QualifiedColumnsForRelatedTable() const;
+
 private:
     /*! Connection name used in this test case. */
     QString m_connection;
@@ -276,6 +279,53 @@ void tst_Model_Connection_Independent
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent["dummy-NON_EXISTENT"], QVariant("foo"));
     QCOMPARE(torrent.getAttributes().size(), 1);
+}
+
+void tst_Model_Connection_Independent
+     ::with_WithSelectConstraint_QueryWithoutRelatedTable() const
+{
+    DB::flushQueryLog(m_connection);
+    DB::enableQueryLog(m_connection);
+    auto torrent = Torrent::with({"torrentFiles:id,torrent_id,filepath"})->find(2);
+    DB::disableQueryLog(m_connection);
+
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    const auto queryLog = DB::getQueryLog(m_connection);
+    QCOMPARE(queryLog->size(), 2);
+    QCOMPARE(queryLog->at(1).query,
+             QString("select `id`, `torrent_id`, `filepath` "
+                     "from `torrent_previewable_files` "
+                     "where `torrent_previewable_files`.`torrent_id` in (?)"));
+}
+
+void tst_Model_Connection_Independent
+     ::with_BelongsToMany_WithSelectConstraint_QualifiedColumnsForRelatedTable() const
+{
+    DB::flushQueryLog(m_connection);
+    DB::enableQueryLog(m_connection);
+    auto torrent = Torrent::with({"tags:id,name"})->find(3);
+    DB::disableQueryLog(m_connection);
+
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    const auto queryLog = DB::getQueryLog(m_connection);
+
+    QCOMPARE(queryLog->size(), 3);
+    QCOMPARE(queryLog->at(1).query,
+             QString(
+                 "select `torrent_tags`.`id`, `torrent_tags`.`name`, "
+                     "`tag_torrent`.`torrent_id` as `pivot_torrent_id`, "
+                     "`tag_torrent`.`tag_id` as `pivot_tag_id`, "
+                     "`tag_torrent`.`active` as `pivot_active`, "
+                     "`tag_torrent`.`created_at` as `pivot_created_at`, "
+                     "`tag_torrent`.`updated_at` as `pivot_updated_at` "
+                 "from `torrent_tags` "
+                     "inner join `tag_torrent` "
+                         "on `torrent_tags`.`id` = `tag_torrent`.`tag_id` "
+                 "where `tag_torrent`.`torrent_id` in (?)"));
 }
 
 QTEST_MAIN(tst_Model_Connection_Independent)

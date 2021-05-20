@@ -387,7 +387,7 @@ namespace Relations
 
         return models;
         // Laravel does it this way
-        //        return $builder->getModel()->newCollection($models);
+//        return $builder->getModel()->newCollection($models);
     }
 
     template<typename Model>
@@ -1335,7 +1335,7 @@ namespace Relations
                 QStringList columnsList;
                 columnsList.reserve(columns.count(QChar(',')) + 1);
 
-                // Avoid 'clang might detach' warning
+                // Avoid 'clazy might detach' warning
                 for (const auto columns_ = columns.split(QChar(','));
                      auto column : columns_)
                 {
