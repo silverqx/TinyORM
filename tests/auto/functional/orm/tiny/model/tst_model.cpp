@@ -63,7 +63,7 @@ private slots:
     void is() const;
     void isNot() const;
 
-    void fresh() const;
+    void fresh_OnlyAttributes() const;
     void refresh_OnlyAttributes() const;
 
     void create() const;
@@ -965,7 +965,7 @@ void tst_Model::isNot() const
     QVERIFY(torrent2_1->isNot(torrent2_2));
 }
 
-void tst_Model::fresh() const
+void tst_Model::fresh_OnlyAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 

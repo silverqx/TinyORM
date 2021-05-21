@@ -443,7 +443,6 @@ namespace Relations {
         /*! Reload the current model instance with fresh attributes from the database. */
         Derived &refresh();
 
-        // CUR verify constraining lazy loads silverqx
         /*! Eager load relations on the model. */
         Derived &load(const QVector<WithItem> &relations);
         /*! Eager load relations on the model. */
@@ -745,6 +744,7 @@ namespace Relations {
         { return getTouchedRelations().contains(relation); }
 
         /*! Get all the loaded relations for the instance. */
+// CUR fix silverqx
 #ifdef _MSC_VER
         inline const std::unordered_map<QString, RelationsType<AllRelations...>> &
 #elif __GNUG__
@@ -2322,7 +2322,6 @@ namespace Relations {
         return model().remove();
     }
 
-    // CUR verify, if WithItem is correct here, also check load, replaceRelations silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::fresh(
@@ -2406,7 +2405,11 @@ namespace Relations {
             const auto relationsContainKey =
                     ranges::contains(onlyRelations, true, [&key](const auto &relation)
             {
-                return relation.name == key;
+                if (!relation.name.contains(QChar(':')))
+                    return relation.name == key;
+
+                // Support for select constraints
+                return relation.name.split(QChar(':')).at(0).trimmed() == key;
             });
 
             if (!relationsContainKey)
@@ -2422,7 +2425,10 @@ namespace Relations {
     Model<Derived, AllRelations...>::load(
             const QVector<WithItem> &relations)
     {
-        auto builder = newQueryWithoutRelationships()->with(relations);
+        // Ownership of a unique_ptr()
+        auto builder = newQueryWithoutRelationships();
+
+        builder->with(relations);
 
         // FUTURE make possible to pass single model to eagerLoadRelations() and whole relation flow, I indicative counted how many methods would have to rewrite and it is around 12 methods silverqx
         /* I have to make a copy here of this, because of eagerLoadRelations(),
@@ -2434,7 +2440,7 @@ namespace Relations {
            that move relations from this copy to the real instance. */
         QVector<Derived> models {model()};
 
-        builder.eagerLoadRelations(models);
+        builder->eagerLoadRelations(models);
 
         /* Replace only relations which was passed to this method, leave other
            relations untouched.

@@ -61,7 +61,11 @@ private slots:
     void without_Vector_MoreRelations() const;
 
     void load() const;
+    void load_WithSelectConstraint() const;
     void load_Failed() const;
+
+    void fresh() const;
+    void fresh_WithSelectConstraint() const;
 
     void refresh_EagerLoad_OnlyRelations() const;
     void refresh_LazyLoad_OnlyRelations() const;
@@ -1099,6 +1103,44 @@ void tst_Model_Relations::load() const
     }
 }
 
+void tst_Model_Relations::load_WithSelectConstraint() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVERIFY(torrent->getRelations().empty());
+
+    torrent->load("torrentFiles:id,torrent_id,filepath");
+
+    auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {2, 3};
+    for (auto *file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+
+        // Check whether constraints was correctly applied
+        const auto &attributes = file->getAttributes();
+        QCOMPARE(attributes.size(), 3);
+
+        const QVector<QString> expectedAttributes {"id", "torrent_id", "filepath"};
+        for (const auto &attribute : attributes)
+            expectedAttributes.contains(attribute.key);
+
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
+        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+    }
+}
+
 void tst_Model_Relations::load_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -1112,6 +1154,96 @@ void tst_Model_Relations::load_Failed() const
     QVERIFY_EXCEPTION_THROWN(torrent->load("torrentFiles-NON_EXISTENT"),
                              RelationNotFoundError);
     QVERIFY(torrent->getRelations().empty());
+}
+
+void tst_Model_Relations::fresh() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+    QCOMPARE(torrent->getAttribute("id"), QVariant(2));
+
+    QVERIFY(torrent->getRelations().empty());
+
+    torrent->setAttribute("name", "test2 fresh");
+    QCOMPARE(torrent->getAttribute("name"), QVariant("test2 fresh"));
+
+    auto freshTorrent = torrent->fresh("torrentFiles");
+    QVERIFY(freshTorrent);
+    QVERIFY(&*torrent != &*freshTorrent);
+    QVERIFY(freshTorrent->exists);
+    QCOMPARE(freshTorrent->getAttribute("id"), (*torrent)["id"]);
+    QCOMPARE(freshTorrent->getAttribute("name"), QVariant("test2"));
+
+    auto files = freshTorrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {2, 3};
+    for (auto *file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+
+        // Check whether constraints was correctly applied
+        const auto &attributes = file->getAttributes();
+        QCOMPARE(attributes.size(), 9);
+
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
+        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+    }
+}
+
+void tst_Model_Relations::fresh_WithSelectConstraint() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+    QCOMPARE(torrent->getAttribute("id"), QVariant(2));
+
+    QVERIFY(torrent->getRelations().empty());
+
+    torrent->setAttribute("name", "test2 fresh");
+    QCOMPARE(torrent->getAttribute("name"), QVariant("test2 fresh"));
+
+    auto freshTorrent = torrent->fresh("torrentFiles:id,torrent_id,filepath");
+    QVERIFY(freshTorrent);
+    QVERIFY(&*torrent != &*freshTorrent);
+    QVERIFY(freshTorrent->exists);
+    QCOMPARE(freshTorrent->getAttribute("id"), (*torrent)["id"]);
+    QCOMPARE(freshTorrent->getAttribute("name"), QVariant("test2"));
+
+    auto files = freshTorrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {2, 3};
+    for (auto *file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+
+        // Check whether constraints was correctly applied
+        const auto &attributes = file->getAttributes();
+        QCOMPARE(attributes.size(), 3);
+
+        const QVector<QString> expectedAttributes {"id", "torrent_id", "filepath"};
+        for (const auto &attribute : attributes)
+            expectedAttributes.contains(attribute.key);
+
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute("id"));
+        QVERIFY(fileIds.contains(file->getAttribute("id")));
+        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+    }
 }
 
 void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
