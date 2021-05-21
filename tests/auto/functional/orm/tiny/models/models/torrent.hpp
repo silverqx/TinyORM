@@ -14,7 +14,6 @@ using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;
 using Orm::Tiny::Relations::Pivot;
-using Orm::WithItem;
 
 /* This class serves as a showcase, so all possible features are defined / used. */
 

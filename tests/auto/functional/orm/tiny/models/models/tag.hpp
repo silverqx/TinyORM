@@ -10,7 +10,6 @@ using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::Pivot;
-using Orm::WithItem;
 
 class Torrent;
 

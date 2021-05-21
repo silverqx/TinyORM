@@ -7,7 +7,6 @@
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasMany;
-using Orm::WithItem;
 
 class TorrentEager_Failed final :
         public Model<TorrentEager_Failed, TorrentPreviewableFileEager>

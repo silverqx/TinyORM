@@ -9,7 +9,6 @@
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::HasOne;
-using Orm::WithItem;
 
 class TorrentPreviewableFileEager_WithDefault final :
         public Model<TorrentPreviewableFileEager_WithDefault, TorrentEager_WithDefault,
