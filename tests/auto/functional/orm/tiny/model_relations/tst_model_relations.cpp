@@ -1074,7 +1074,7 @@ void tst_Model_Relations::load() const
     QVERIFY(relations.contains("torrentPeer"));
 
     // TorrentPeer has one relation
-    auto peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
+    auto *peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
     QVERIFY(peer);
     QVERIFY(peer->exists);
     QCOMPARE(peer->getAttribute("torrent_id"), torrent->getAttribute("id"));
@@ -1264,7 +1264,7 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
             torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
     auto filepathOriginal =
             filesOriginal.first()->getAttribute("filepath");
-    auto peerOriginal =
+    auto *peerOriginal =
             torrent->getRelation<TorrentPeerEager_NoRelations, One>("torrentPeer");
     auto seedsOriginal =
             peerOriginal->getAttribute("seeds");
@@ -1314,7 +1314,7 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
     auto filesRefreshed =
             torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
     auto filepathRefreshed = filesRefreshed.first()->getAttribute("filepath");
-    auto peerRefreshed =
+    auto *peerRefreshed =
             torrent->getRelation<TorrentPeerEager_NoRelations, One>("torrentPeer");
     auto seedsRefreshed = peerRefreshed->getAttribute("seeds");
     QVERIFY(filepathOriginal == filepathRefreshed);

@@ -1333,7 +1333,6 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
 
-    // CUR find by regex all getRelation<xx, One> and check pointer return value silverqx
     auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
     QVERIFY(verifyTorrent5->exists);
@@ -1445,7 +1444,6 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
 
-    // CUR find by regex all getRelation<xx, One> and check pointer return value silverqx
     auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
     QVERIFY(verifyTorrent5->exists);
@@ -1501,7 +1499,6 @@ void tst_Relations_Inserting_Updating::dissociate() const
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
 
-    // CUR find by regex all getRelation<xx, One> and check pointer return value silverqx
     auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
     QVERIFY(verifyTorrent5->exists);
