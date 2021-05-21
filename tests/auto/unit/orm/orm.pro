@@ -1,5 +1,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-    orm \
+    databaseconnection \
+    grammar \
     query \
