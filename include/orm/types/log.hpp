@@ -5,7 +5,9 @@
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Types
+namespace Orm
+{
+namespace Types
 {
 
     /*! Query Log record. */
@@ -36,6 +38,10 @@ namespace Orm::Types
     };
 
 } // namespace Orm::Types
+
+    using Log = Types::Log;
+
+} // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif

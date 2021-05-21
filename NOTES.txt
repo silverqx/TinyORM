@@ -58,6 +58,7 @@ Common:
  - perf               : performance
  - production         : check before deploy to production
  - reliability        : make things more robust and reliable
+ - repeat             : tasks that should I make from time to time
  - security           : self explaining
  - study              : don't know how something works, need to check up
  - sync               : synchronization in multi thread environment silverqx
@@ -107,6 +108,9 @@ Powershell commands:
 
  - export todos to csv:
 Get-ChildItem -Path *.cpp,*.hpp -Recurse | sls -Pattern ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE) ' -CaseSensitive | % { $_.Line = $_.Line.Trim().TrimStart('// '); return  $_; } | select Line,LineNumber,Path | Export-Csv todos.csv -Delimiter ';' -NoTypeInformation
+
+ - search in todos:
+Get-ChildItem -Path *.cpp,*.hpp -Recurse | sls -Pattern ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE) ' -CaseSensitive | % { $_.Line = $_.Line.Trim().TrimStart('// '); return  $_; } | where Line -Match 'pch' | select Line,LineNumber,Path | ft -AutoSize
 
  - filter out executed queries:
 Get-Content .\tmp.sql | sls -Pattern '^(Executed prepared query)' | Set-Content executed_queries.sql

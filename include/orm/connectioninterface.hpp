@@ -7,6 +7,7 @@
 
 #include "orm/query/expression.hpp"
 #include "orm/types/log.hpp"
+#include "orm/types/statementscounter.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -40,23 +41,11 @@ namespace Grammars
 }
 } // Orm::Schema
 
-    using Log            = Types::Log;
     using QueryBuilder   = Query::Builder;
     using QueryGrammar   = Query::Grammars::Grammar;
     using QueryProcessor = Query::Processors::Processor;
     using SchemaBuilder  = Schema::SchemaBuilder;
     using SchemaGrammar  = Schema::Grammars::SchemaGrammar;
-
-    /*! Counts executed statements in a current connection. */
-    struct StatementsCounter
-    {
-        /*! Normal select statements. */
-        int normal = -1;
-        /*! Affecting statements (UPDATE, INSERT, DELETE). */
-        int affecting = -1;
-        /*! Transactional statements (START TRANSACTION, ROLLBACK, COMMIT, SAVEPOINT). */
-        int transactional = -1;
-    };
 
     class ConnectionInterface
     {

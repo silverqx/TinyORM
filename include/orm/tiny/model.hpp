@@ -52,6 +52,8 @@ namespace Relations {
     };
 #endif
 
+    // TODO repeat, from time to time try to compile without microsoft extensions, QMAKE_CXXFLAGS *= -Za silverqx
+    // TODO repeat, recompile without PCH silverqx
     // TODO decide/unify when to use class/typename keywords for templates silverqx
     // TODO concept, AllRelations can not contain type defined in "Model" parameter silverqx
     // TODO next test no relation behavior silverqx

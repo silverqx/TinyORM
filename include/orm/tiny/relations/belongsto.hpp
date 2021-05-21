@@ -275,7 +275,7 @@ namespace Orm::Tiny::Relations
             const auto &value = model.getAttribute(m_foreignKey);
 
             if (!value.isNull())
-                // TODO add support for non-int primary keys, ranges::acrions doesn't accept QVariant container silverqx
+                // TODO add support for non-int primary keys, ranges::actions doesn't accept QVariant container silverqx
                 keys.append(value);
         }
 

@@ -63,6 +63,7 @@ HEADERS += \
     $$PWD/orm/tiny/relations/relation.hpp \
     $$PWD/orm/tiny/tinybuilder.hpp \
     $$PWD/orm/types/log.hpp \
+    $$PWD/orm/types/statementscounter.hpp \
     $$PWD/orm/utils/attribute.hpp \
     $$PWD/orm/utils/string.hpp \
     $$PWD/orm/utils/type.hpp \
