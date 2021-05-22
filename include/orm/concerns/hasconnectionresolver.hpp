@@ -1,7 +1,7 @@
 #ifndef HASCONNECTIONRESOLVER_H
 #define HASCONNECTIONRESOLVER_H
 
-#include "export.hpp"
+#include "orm/utils/export.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

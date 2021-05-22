@@ -4,7 +4,7 @@
 #include <QStringList>
 #include <QtGlobal>
 
-#include "export.hpp"
+#include "orm/utils/export.hpp"
 
 class QSqlQuery;
 

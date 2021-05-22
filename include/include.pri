@@ -1,7 +1,6 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
-    $$PWD/export.hpp \
     $$PWD/orm/basegrammar.hpp \
     $$PWD/orm/concerns/detectslostconnections.hpp \
     $$PWD/orm/concerns/hasconnectionresolver.hpp \
@@ -65,5 +64,6 @@ HEADERS += \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \
     $$PWD/orm/utils/attribute.hpp \
+    $$PWD/orm/utils/export.hpp \
     $$PWD/orm/utils/string.hpp \
     $$PWD/orm/utils/type.hpp \

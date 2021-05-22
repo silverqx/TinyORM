@@ -1,8 +1,8 @@
 #ifndef ATTRIBUTE_H
 #define ATTRIBUTE_H
 
-#include "export.hpp"
 #include "orm/ormtypes.hpp"
+#include "orm/utils/export.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
