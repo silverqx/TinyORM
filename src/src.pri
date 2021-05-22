@@ -40,3 +40,4 @@ SOURCES += \
     $$PWD/orm/tiny/relations/relation.cpp \
     $$PWD/orm/utils/attribute.cpp \
     $$PWD/orm/utils/string.cpp \
+    $$PWD/orm/utils/type.cpp \

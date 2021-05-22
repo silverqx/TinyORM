@@ -1,95 +1,60 @@
 #ifndef UTILS_TYPE_H
 #define UTILS_TYPE_H
 
-#include <QRegularExpression>
+#include <typeinfo>
 
 #ifdef __GNUG__
 #include <cxxabi.h>
 #endif
 
+// CUR move to orm/ silverqx
+#include "export.hpp"
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Utils::Type
+namespace Orm::Utils
 {
-    // CUR rewrite to library class to get rid of duplicate code silverqx
-    /*! Class name without a namespace and template parameters. */
-    template<typename Type>
-    inline QString classPureBasename(const bool withNamespace = false)
+
+    /*! Library class for types. */
+    class SHAREDLIB_EXPORT Type
     {
-        // FUTURE ask at some forum if this regexps are correctly written silverqx
-#ifdef _MSC_VER
-        const auto matchRegEx = withNamespace ? "[\\w:]+" : "\\w+|(?<=::)\\w+";
+        Q_DISABLE_COPY(Type)
 
-        QRegularExpression re(QStringLiteral("(?:(?<=^struct |^class )%1)(?=<.*>| |$)")
-                              .arg(matchRegEx));
+    public:
+        Type() = delete;
 
-        const auto match = re.match(typeid (Type).name());
-#elif __GNUG__
-        const auto matchRegEx = withNamespace ? "^[\\w:]+" : "^\\w+|(?<=::)\\w+";
+        /*! Class name with or w/o a namespace and template parameters. */
+        template<typename T>
+        static QString classPureBasename(bool withNamespace = false);
+        /*! Class name with or w/o a namespace and template parameters. */
+        template<typename T>
+        static QString classPureBasename(const T &type, bool withNamespace = false);
 
-        QRegularExpression re(QStringLiteral("(?:%1)(?=<.*>|$| |\\*)")
-                              .arg(matchRegEx));
+    private:
+        /*! Class name with or w/o a namespace and template parameters, common code. */
+        static QString classPureBasenameInternal(
+                const std::type_info &typeInfo, bool withNamespace = false);
+    };
 
-        int status;
-        const auto typeName_ = abi::__cxa_demangle(typeid (Type).name(), nullptr, nullptr,
-                                                   &status);
-        const QString typeName(typeName_);
-        // CUR check by valgrind silverqx
-        free(typeName_);
-
-        // CUR throw on status != 0 silverqx
-
-        const auto match = re.match(typeName);
-#endif
-
-        // This should never happen, but who knows 🤔
-        Q_ASSERT_X(match.hasMatch(),
-                   "regex match", "Can not get the class base name in "
-                                  "Utils::Type::classPureBasename().");
-
-        return match.captured();
+    template<typename T>
+    inline QString
+    Type::classPureBasename(const bool withNamespace)
+    {
+        return classPureBasenameInternal(typeid (T), withNamespace);
     }
 
-    /*! Class name without a namespace and template parameters. */
-    template<typename Type>
-    inline QString classPureBasename(const Type &type, const bool withNamespace = false)
+    template<typename T>
+    inline QString
+    Type::classPureBasename(const T &type, const bool withNamespace)
     {
         /* If you want to obtain a name for the polymorphic type, take care to pass
             a glvalue as the 'type' argument, the 'this' pointer is a prvalue! */
-
-#ifdef _MSC_VER
-        const auto matchRegEx = withNamespace ? "[\\w:]+" : "\\w+|(?<=::)\\w+";
-
-        QRegularExpression re(QStringLiteral("(?:(?<=^struct |^class )%1)(?=<.*>| |$)")
-                              .arg(matchRegEx));
-
-        const auto match = re.match(typeid (type).name());
-#elif __GNUG__
-        const auto matchRegEx = withNamespace ? "^[\\w:]+" : "^\\w+|(?<=::)\\w+";
-
-        QRegularExpression re(QStringLiteral("(?:%1)(?=<.*>|$| |\\*)")
-                              .arg(matchRegEx));
-
-        int status;
-        const auto typeName_ = abi::__cxa_demangle(typeid (type).name(), nullptr, nullptr,
-                                                   &status);
-        const QString typeName(typeName_);
-        free(typeName_);
-
-        const auto match = re.match(typeName);
-#endif
-
-        // This should never happen, but who knows 🤔
-        Q_ASSERT_X(match.hasMatch(),
-                   "regex match", "Can not get the class base name in "
-                                  "Utils::Type::classPureBasename().");
-
-        return match.captured();
+        return classPureBasenameInternal(typeid (type), withNamespace);
     }
 
-} // namespace Orm::Utils::Type
+} // namespace Orm::Utils
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
