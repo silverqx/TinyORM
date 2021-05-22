@@ -1,6 +1,8 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <QRegularExpression>
+
 #ifdef __GNUG__
 #include <map>
 #endif

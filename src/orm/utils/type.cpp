@@ -10,7 +10,7 @@ namespace Orm::Utils
 {
 
 QString
-Type::classPureBasenameInternal(const type_info &typeInfo, const bool withNamespace)
+Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withNamespace)
 {
     // FUTURE ask at some forum if this regexps are correctly written silverqx
 #ifdef _MSC_VER

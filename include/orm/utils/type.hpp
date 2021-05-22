@@ -1,6 +1,8 @@
 #ifndef UTILS_TYPE_H
 #define UTILS_TYPE_H
 
+#include <QString>
+
 #include <typeinfo>
 
 #ifdef __GNUG__
@@ -20,7 +22,8 @@ namespace Orm::Utils
     /*! Library class for types. */
     class SHAREDLIB_EXPORT Type
     {
-        Q_DISABLE_COPY(Type)
+        Type(const Type &) = delete;
+        Type &operator=(const Type &) = delete;
 
     public:
         Type() = delete;
