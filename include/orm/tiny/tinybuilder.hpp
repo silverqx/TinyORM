@@ -4,7 +4,6 @@
 #include <QtSql/QSqlRecord>
 
 #include <range/v3/algorithm/contains.hpp>
-#include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/remove_if.hpp>
 
@@ -1434,14 +1433,14 @@ namespace Relations
             return values;
 
         const auto valuesUpdatedAtColumn =
-                ranges::find_if(values,
-                                [&updatedAtColumn](const auto &updateItem)
+                std::ranges::find_if(values,
+                                     [&updatedAtColumn](const auto &updateItem)
         {
             return updateItem.column == updatedAtColumn;
         });
 
         // Not found
-        if (valuesUpdatedAtColumn == ranges::end(values))
+        if (valuesUpdatedAtColumn == std::ranges::cend(values))
             values.append({qualifiedUpdatedAtColumn,
                            m_model.freshTimestampString()});
         else

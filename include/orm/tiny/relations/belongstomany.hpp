@@ -4,7 +4,6 @@
 #include <QDateTime>
 #include <QtSql/QSqlRecord>
 
-#include <range/v3/algorithm/copy_if.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/set_algorithm.hpp>
@@ -669,8 +668,8 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType> &
     BelongsToMany<Model, Related, PivotType>::withPivot(const QStringList &columns)
     {
-        ranges::copy_if(columns, ranges::back_inserter(m_pivotColumns),
-                        [this](const auto &column)
+        std::ranges::copy_if(columns, std::back_inserter(m_pivotColumns),
+                             [this](const auto &column)
         {
             return !m_pivotColumns.contains(column);
         });

@@ -38,7 +38,8 @@ private slots:
     void getRelationValue_LazyLoad_BelongsTo() const;
     void getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const;
     void getRelationValue_LazyLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const;
-    void getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const;
+    void
+    getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const;
     void getRelationValue_LazyLoad_Failed() const;
 
     void u_with_Empty() const;

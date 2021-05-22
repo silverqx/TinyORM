@@ -2,9 +2,6 @@
 
 #include <QRegularExpression>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/iterator/insert_iterators.hpp>
-
 #include "orm/databaseconnection.hpp"
 #include "orm/query/joinclause.hpp"
 
@@ -166,8 +163,7 @@ Builder &Builder::select(const QStringList &columns)
     // FEATURE expression, add Query::Expression overload, find all occurences of Illuminate\Database\Query\Expression in the Eloquent and add support to TinyORM, I will need to add overloads for some methods, for columns and also for values silverqx
     clearColumns();
 
-    // CUR change by std::ranges version silverqx
-    ranges::copy(columns, ranges::back_inserter(m_columns));
+    std::ranges::copy(columns, std::back_inserter(m_columns));
 
     return *this;
 }
@@ -179,7 +175,7 @@ Builder &Builder::select(const QString &column)
 
 Builder &Builder::addSelect(const QStringList &columns)
 {
-    ranges::copy(columns, ranges::back_inserter(m_columns));
+    std::ranges::copy(columns, std::back_inserter(m_columns));
 
     return *this;
 }

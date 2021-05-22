@@ -5,7 +5,9 @@
 #include <QVariant>
 #include <QVector>
 
+#ifdef _MSC_VER
 #include <range/v3/algorithm/unique.hpp>
+#endif
 
 #include "export.hpp"
 
@@ -226,8 +228,13 @@ namespace Query
 
             // Remove duplicates
             // BUG in std::ranges::unique, when container contains only one element silverqx
+#ifdef _MSC_VER
             auto it = ranges::unique(merged, {}, castKey);
             merged.erase(it, ranges::end(merged));
+#else
+            auto it = std::ranges::unique(merged, {}, castKey);
+            merged.erase(it, std::ranges::end(merged));
+#endif
 
             (*this)[key].swap(merged);
         }
