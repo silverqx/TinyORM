@@ -5,9 +5,9 @@
 
 #include <optional>
 
+#include "orm/ormtypes.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/query/expression.hpp"
-#include "orm/ormtypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

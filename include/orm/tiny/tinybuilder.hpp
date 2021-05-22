@@ -521,7 +521,6 @@ namespace Relations
         QVector<WithItem> relationsConverted;
         relationsConverted.reserve(relations.size());
 
-        // CUR finish, may be add WithItem converting operator silverqx
         for (const auto &relation : relations)
             relationsConverted.append({relation});
 

@@ -46,7 +46,6 @@ DatabaseConnection::DatabaseConnection(
     , m_database(database)
     , m_tablePrefix(tablePrefix)
     , m_config(config)
-    // CUR test what happens if empty connection name silverqx
     , m_connectionName(getConfig("name").value<QString>())
 {}
 
