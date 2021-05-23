@@ -115,7 +115,6 @@ MySqlGrammar::getCompileMap() const
                         [](const auto &query) { return !query.getHavings().isEmpty(); }}},
         {SelectComponentType::ORDERS,    {getBind(&MySqlGrammar::compileOrders),
                         [](const auto &query) { return !query.getOrders().isEmpty(); }}},
-        // BUG I think that limit can be also negative silverqx
         {SelectComponentType::LIMIT,     {getBind(&MySqlGrammar::compileLimit),
                         [](const auto &query) { return query.getLimit() > -1; }}},
         {SelectComponentType::OFFSET,    {getBind(&MySqlGrammar::compileOffset),
