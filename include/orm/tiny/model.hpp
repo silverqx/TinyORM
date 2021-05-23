@@ -2714,7 +2714,6 @@ namespace Relations {
         return getConnection().query();
     }
 
-    // CUR return optional reference, I remember that I abandoned it, but it is much better to avoid nullptr checks, anyway investigate it silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, template<typename> typename Container>
     const Container<Related *>

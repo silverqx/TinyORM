@@ -420,7 +420,6 @@ namespace Query
         QVector<HavingConditionItem> m_havings;
         /*! The orderings for the query. */
         QVector<OrderByItem> m_orders;
-        // BUG I think that limit can be also negative silverqx
         /*! The maximum number of records to return. */
         int m_limit = -1;
         /*! The number of records to skip. */
