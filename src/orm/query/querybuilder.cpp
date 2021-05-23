@@ -550,6 +550,10 @@ Builder &Builder::reorder(const QString &column, const QString &direction)
 
 Builder &Builder::limit(const int value)
 {
+    /* I checked negative limit/offset, MySQL and PostgreSQL throws an error,
+       SQLite accepts a negative value, but it has no effect and Microsoft SQL Server
+       doesn't support negative values too, as is described here:
+       https://bit.ly/3yrG7aF */
     Q_ASSERT(value >= 0);
 
     if (value >= 0)
