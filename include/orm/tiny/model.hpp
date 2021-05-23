@@ -1059,6 +1059,12 @@ namespace Relations {
         template<typename Related, typename Result>
         Result getRelationshipFromMethodWithVisitor(const QString &relation);
 
+        /*! Throw exception if correct getRelation/Value() method was not used, to avoid
+            std::bad_variant_access. */
+        template<typename Result, typename Related, typename T>
+        void checkRelationType(
+                const T &result, const QString &relation, const QString &source) const;
+
         /* Push relation store related */
         /*! Create push store and call push for every model. */
         bool pushWithVisitor(const QString &relation,
@@ -2784,7 +2790,6 @@ namespace Relations {
     Model<Derived, AllRelations...>::getRelationshipFromMethodWithVisitor(
             const QString &relation)
     {
-        // CUR throw meaningful exception when tried to access one type relation with this method, 'bad_variant_access' thrown now silverqx
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation);
 
@@ -2796,6 +2801,9 @@ namespace Relations {
 
         // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
+
+        // Check relation type to avoid std::bad_variant_access
+        checkRelationType<Result, Related>(lazyResult, relation, "getRelationValue");
 
         return std::get<Result>(lazyResult);
     }
@@ -2983,12 +2991,18 @@ namespace Relations {
     Container<Related *>
     Model<Derived, AllRelations...>::getRelationFromHash(const QString &relation)
     {
+        auto &relationVariant = m_relations.find(relation)->second;
+
+        // Check relation type to avoid std::bad_variant_access
+        checkRelationType<QVector<Related>, Related>(
+                    relationVariant, relation, "getRelation");
+
         /* Obtain related models from data member hash as QVector, it is internal
            format and transform it into a Container of pointers to related models,
            so a user can directly modify these models and push or save them
            afterward. */
         using namespace ranges;
-        return std::get<QVector<Related>>(m_relations.find(relation)->second)
+        return std::get<QVector<Related>>(relationVariant)
                 | views::transform([](Related &model) -> Related * { return &model; })
                 | ranges::to<Container<Related *>>();
     }
@@ -2998,20 +3012,23 @@ namespace Relations {
     Related *
     Model<Derived, AllRelations...>::getRelationFromHash(const QString &relation)
     {
+        auto &relationVariant = m_relations.find(relation)->second;
+
+        // Check relation type to avoid std::bad_variant_access
+        checkRelationType<std::optional<Related>, Related>(
+                    relationVariant, relation, "getRelation");
+
         /* Obtain related model from data member hash and return it as a pointer or
            nullptr if no model is associated, so a user can directly modify this
            model and push or save it afterward. */
 
-        auto &relatedModel =
-                std::get<std::optional<Related>>(m_relations.find(relation)->second);
+        auto &relatedModel = std::get<std::optional<Related>>(relationVariant);
 
         return relatedModel ? &*relatedModel : nullptr;
     }
 
     // TODO make getRelation() Container argument compatible with STL containers API silverqx
     // TODO solve different behavior like Eloquent getRelation() silverqx
-    // TODO next many relation compiles with Orm::One and exception during runtime occures, solve this during compile, One relation only with Orm::One and many relation type only with Container version silverqx
-    // Return const value to prevent clazy warning about detaching container
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, template<typename> typename Container>
     const Container<Related *>
@@ -3837,6 +3854,33 @@ namespace Relations {
         if (!model().u_relations.contains(name))
             throw RelationNotFoundError(
                     Orm::Utils::Type::classPureBasename<Derived>(), name);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Result, typename Related, typename T>
+    void Model<Derived, AllRelations...>::checkRelationType(
+            const T &relationVariant, const QString &relation,
+            const QString &source) const
+    {
+        if constexpr (std::is_same_v<Result, std::optional<Related>>) {
+            if (!std::holds_alternative<Result>(relationVariant))
+                throw RuntimeError(
+                        QStringLiteral(
+                            "The relation '%1' is many type relation, use "
+                            "%2<%3>() method overload without an 'Orm::One' tag.")
+                        .arg(relation, source,
+                             Utils::Type::classPureBasename<Related>()));
+        } else if constexpr (std::is_same_v<Result, QVector<Related>>) {
+            if (!std::holds_alternative<Result>(relationVariant))
+                throw RuntimeError(
+                        QStringLiteral(
+                            "The relation '%1' is one type relation, use "
+                            "%2<%3, Orm::One>() method overload "
+                            "with an 'Orm::One' tag.")
+                        .arg(relation, source,
+                             Utils::Type::classPureBasename<Related>()));
+        } else
+            throw InvalidArgumentError("Unexpected 'Result' template argument.");
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
