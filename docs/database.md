@@ -78,17 +78,17 @@ Once you have configured your database connection, you may run queries using the
 
 To run a basic SELECT query, you may use the `select` method on the `DB` facade:
 
-    auto [ok, users] = DB::select("select * from users where active = ?", {1});
+    auto users = DB::select("select * from users where active = ?", {1});
 
 The first argument passed to the `select` method is the SQL query, while the second argument is any parameter bindings that need to be bound to the query. Typically, these are the values of the `where` clause constraints. Parameter binding provides protection against SQL injection.
 
-The `select` method returns a `std::tuple<bool, QSqlQuery>` containing the results of the query, where each result can be accessed by `QSqlQuery::next` method. Look into the `QSqlQuery` documentation on how to obtain results from the "query". You may access each column's value by `QSqlQuery::value` method. The first `bool` return value is the value returned from `QSqlQuery::exec` method:
+The `select` method returns a `QSqlQuery` containing the results of the query, where each result can be accessed by `QSqlQuery::next` method. Look into the `QSqlQuery` documentation on how to obtain results from the "query". You may access each column's value by `QSqlQuery::value` method. The first `bool` return value is the value returned from `QSqlQuery::exec` method:
 
     #include <QDebug>
 
     #include <orm/db.hpp>
 
-    auto [ok, users] = DB::select("select * from users");
+    auto users = DB::select("select * from users");
 
     while(users.next())
         qDebug() << users.value("name").toString();
@@ -96,16 +96,11 @@ The `select` method returns a `std::tuple<bool, QSqlQuery>` containing the resul
 <a name="running-an-insert-statement"></a>
 #### Running An Insert Statement
 
-To execute an `insert` statement, you may use the `insert` method on the `DB` facade. Like `select`, this method accepts the SQL query as its first argument and bindings as its second argument and returns `std::tuple<bool, QSqlQuery>`:
-
-    #include <QDebug>
+To execute an `insert` statement, you may use the `insert` method on the `DB` facade. Like `select`, this method accepts the SQL query as its first argument and bindings as its second argument and returns `QSqlQuery`:
 
     #include <orm/db.hpp>
 
-    auto [ok, query] = DB::insert("insert into users (id, name) values (?, ?)", {1, "Marc"});
-
-    if (!ok)
-        qDebug() << "Insert failed.";
+    DB::insert("insert into users (id, name) values (?, ?)", {1, "Marc"});
 
 <a name="running-an-update-statement"></a>
 #### Running An Update Statement
@@ -184,7 +179,7 @@ If your application needs to use multiple connections, you may access each conne
 
     #include <orm/db.hpp>
 
-    auto [ok, query] = DB::connection("mysql_test").select(...);
+    auto query = DB::connection("mysql_test").select(...);
 
 You may access the raw underlying `QSqlQuery` instance of a connection using the `getQtQuery` method on a connection instance:
 
