@@ -52,7 +52,7 @@ Before you start defining relationship methods, you have to declare a model clas
     #include "models/phone.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Relation;
+    using Orm::Tiny::Relations::HasOne;
 
     class User final : public Model<User, Phone>
     {
@@ -61,23 +61,16 @@ Before you start defining relationship methods, you have to declare a model clas
 
     public:
         /*! Get the phone associated with the user. */
-        std::unique_ptr<Relation<User, Phone>>
+        std::unique_ptr<HasOne<User, Phone>>
         phone()
         {
             return hasOne<Phone>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "phone")
-                relationVisited<Phone>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"phone", &User::phone},
+        QHash<QString, RelationVisitor> u_relations {
+            {"phone", &User::phone); }},
         };
     };
 
@@ -104,7 +97,7 @@ A one-to-one relationship is a very basic type of database relationship. For exa
     #include "models/phone.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Relation;
+    using Orm::Tiny::Relations::HasOne;
 
     class User final : public Model<User, Phone>
     {
@@ -113,23 +106,16 @@ A one-to-one relationship is a very basic type of database relationship. For exa
 
     public:
         /*! Get the phone associated with the user. */
-        std::unique_ptr<Relation<User, Phone>>
+        std::unique_ptr<HasOne<User, Phone>>
         phone()
         {
             return hasOne<Phone>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "phone")
-                relationVisited<Phone>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"phone", &User::phone},
+        QHash<QString, RelationVisitor> u_relations {
+            {"phone", [](auto &v) { v(&User::phone); }},
         };
     };
 
@@ -160,7 +146,7 @@ So, we can access the `Phone` model from our `User` model. Next, let's define a 
     #include "models/user.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Relation;
+    using Orm::Tiny::Relations::BelongsTo;
 
     class Phone final : public Model<Phone, User>
     {
@@ -169,23 +155,16 @@ So, we can access the `Phone` model from our `User` model. Next, let's define a 
 
     public:
         /*! Get the user that owns the phone. */
-        std::unique_ptr<Relation<Phone, User>>
+        std::unique_ptr<BelongsTo<Phone, User>>
         user()
         {
             return belongsTo<User>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "user")
-                relationVisited<User>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"user", &Phone::user},
+        QHash<QString, RelationVisitor> u_relations {
+            {"user", [](auto &v) { v(&Phone::user); }},
         };
     };
 
@@ -197,10 +176,10 @@ TinyORM determines the foreign key name by examining the type-name of the `Relat
 
  However, if the foreign key on the `Phone` model is not `user_id`, you may pass a custom key name as the first argument to the `belongsTo` method:
 
-    using Orm::Tiny::Relations::Relation;
+    using Orm::Tiny::Relations::BelongsTo;
 
     /*! Get the user that owns the phone. */
-    std::unique_ptr<Relation<Phone, User>>
+    std::unique_ptr<BelongsTo<Phone, User>>
     user()
     {
         return belongsTo<User>("foreign_key");
@@ -209,7 +188,7 @@ TinyORM determines the foreign key name by examining the type-name of the `Relat
 If the parent model does not use `id` as its primary key, or you wish to find the associated model using a different column, you may pass a second argument to the `belongsTo` method specifying the parent table's custom key:
 
     /*! Get the user that owns the phone. */
-    std::unique_ptr<Relation<Phone, User>>
+    std::unique_ptr<BelongsTo<Phone, User>>
     user()
     {
         return belongsTo<User>("foreign_key", "owner_key");
@@ -218,7 +197,7 @@ If the parent model does not use `id` as its primary key, or you wish to find th
 The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column, the `__func__` predefined identifier is ideal for this:
 
     /*! Get the user that owns the phone. */
-    std::unique_ptr<Relation<Phone, User>>
+    std::unique_ptr<BelongsTo<Phone, User>>
     someUser()
     {
         return belongsTo<User>({}, {}, __func__); // the foreign key will be some_user_id
@@ -237,7 +216,7 @@ A one-to-many relationship is used to define relationships where a single model 
     #include "models/comment.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Relation;
+    using Orm::Tiny::Relations::HasMany;
 
     class Post final : public Model<Post, Comment>
     {
@@ -246,23 +225,16 @@ A one-to-many relationship is used to define relationships where a single model 
 
     public:
         /*! Get the comments for the blog post. */
-        std::unique_ptr<Relation<Post, Comment>>
+        std::unique_ptr<HasMany<Post, Comment>>
         comments()
         {
             return hasMany<Comment>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "comments")
-                relationVisited<Comment>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"comments", &Post::comments},
+        QHash<QString, RelationVisitor> u_relations {
+            {"comments", [](auto &v) { v(&Post::comments); }},
         };
     };
 
@@ -305,7 +277,7 @@ Now that we can access all of a post's comments, let's define a relationship to 
     #include "models/post.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Relation;
+    using Orm::Tiny::Relations::BelongsTo;
 
     class Comment final : public Model<Comment, Post>
     {
@@ -314,23 +286,16 @@ Now that we can access all of a post's comments, let's define a relationship to 
 
     public:
         /*! Get the post that owns the comment. */
-        std::unique_ptr<Relation<Comment, Post>>
+        std::unique_ptr<BelongsTo<Comment, Post>>
         post()
         {
             return belongsTo<Post>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "post")
-                relationVisited<Post>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"post", &Comment::post},
+        QHash<QString, RelationVisitor> u_relations {
+            {"post", [](auto &v) { v(&Comment::post); }},
         };
     };
 
@@ -350,10 +315,10 @@ TinyORM determines the foreign key name by examining the type-name of the `Relat
 
 However, if the foreign key for your relationship does not follow these conventions, you may pass a custom foreign key name as the first argument to the `belongsTo` method:
 
-    using Orm::Tiny::Relations::Relation;
+    using Orm::Tiny::Relations::BelongsTo;
 
     /*! Get the post that owns the comment. */
-    std::unique_ptr<Relation<Comment, Post>>
+    std::unique_ptr<BelongsTo<Comment, Post>>
     post()
     {
         return belongsTo<Post>("foreign_key");
@@ -361,10 +326,10 @@ However, if the foreign key for your relationship does not follow these conventi
 
 If your parent model does not use `id` as its primary key, or you wish to find the associated model using a different column, you may pass a second argument to the `belongsTo` method specifying your parent table's custom key:
 
-    using Orm::Tiny::Relations::Relation;
+    using Orm::Tiny::Relations::BelongsTo;
 
     /*! Get the post that owns the comment. */
-    std::unique_ptr<Relation<Comment, Post>>
+    std::unique_ptr<BelongsTo<Comment, Post>>
     post()
     {
         return belongsTo<Post>("foreign_key", "owner_key");
@@ -373,7 +338,7 @@ If your parent model does not use `id` as its primary key, or you wish to find t
 The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column, the `__func__` predefined identifier is ideal for this:
 
     /*! Get the post that owns the comment. */
-    std::unique_ptr<Relation<Comment, Post>>
+    std::unique_ptr<BelongsTo<Comment, Post>>
     somePost()
     {
         return belongsTo<Post>({}, {}, __func__); // the foreign key will be some_post_id
@@ -385,9 +350,10 @@ The third `belongsTo` parameter is the relation name, if you pass it, the foreig
 The `belongsTo`, and `hasOne` relationships allow you to define a default model that will be returned if the given relationship is `null`. This pattern is often referred to as the [Null Object pattern](https://en.wikipedia.org/wiki/Null_Object_pattern) and can help remove conditional checks in your code. In the following example, the `user` relation will return an empty `User` model if no user is attached to the `Post` model:
 
     /*! Get the author of the post. */
-    std::unique_ptr<Relation<Post, User>>
+    std::unique_ptr<BelongsTo<Post, User>>
     user()
     {
+        // Ownership of a unique_ptr()
         auto relation = belongsTo<User>();
 
         relation->withDefault();
@@ -398,9 +364,10 @@ The `belongsTo`, and `hasOne` relationships allow you to define a default model 
 To populate the default model with attributes, you may pass the vector of attributes to the `withDefault` method:
 
     /*! Get the author of the post. */
-    std::unique_ptr<Relation<Post, User>>
+    std::unique_ptr<BelongsTo<Post, User>>
     user()
     {
+        // Ownership of a unique_ptr()
         auto relation = belongsTo<User>();
 
         relation->withDefault({{"name", "Guest Author"}, {"is_active", false}});
@@ -445,8 +412,8 @@ Many-to-many relationships are defined by writing a method that returns the resu
     #include "models/role.hpp"
 
     using Orm::Tiny::Model;
+    using Orm::Tiny::Relations::BelongsToMany;
     using Orm::Tiny::Relations::Pivot;
-    using Orm::Tiny::Relations::Relation;
 
     class User final : public Model<User, Role, Pivot>
     {
@@ -455,25 +422,16 @@ Many-to-many relationships are defined by writing a method that returns the resu
 
     public:
         /*! The roles that belong to the user. */
-        std::unique_ptr<Relation<User, Role>>
+        std::unique_ptr<BelongsToMany<User, Role>>
         roles()
         {
             return belongsToMany<Role>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "roles")
-                relationVisited<Role>();
-            else if (relation == "pivot") // Pivot
-                relationVisited<Pivot>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"roles", &User::roles},
+        QHash<QString, RelationVisitor> u_relations {
+            {"roles", [](auto &v) { v(&User::roles); }},
         };
     };
 
@@ -515,8 +473,8 @@ To define the "inverse" of a many-to-many relationship, you should define a meth
     class User; // Forward declaration to avoid cyclic dependency
 
     using Orm::Tiny::Model;
+    using Orm::Tiny::Relations::BelongsToMany;
     using Orm::Tiny::Relations::Pivot;
-    using Orm::Tiny::Relations::Relation;
 
     class Role final : public Model<Role, User, Pivot>
     {
@@ -525,25 +483,16 @@ To define the "inverse" of a many-to-many relationship, you should define a meth
 
     public:
         /*! The users that belong to the role. */
-        std::unique_ptr<Relation<Role, User>>
+        std::unique_ptr<BelongsToMany<Role, User>>
         users()
         {
             return belongsToMany<User>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "users")
-                relationVisited<User>();
-            else if (relation == "pivot") // Pivot
-                relationVisited<Pivot>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"users", &Role::users},
+        QHash<QString, RelationVisitor> u_relations {
+            {"users", [](auto &v) { v(&Role::users); }},
         };
     };
 
@@ -641,8 +590,8 @@ Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePi
     #include "models/role.hpp"
 
     using Orm::Tiny::Model;
+    using Orm::Tiny::Relations::BelongsToMany;
     using Orm::Tiny::Relations::Pivot;
-    using Orm::Tiny::Relations::Relation;
 
     class User final : public Model<User, Role, Pivot>
     {
@@ -651,25 +600,16 @@ Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePi
 
     public:
         /*! The roles that belong to the user. */
-        std::unique_ptr<Relation<User, Role>>
+        std::unique_ptr<BelongsToMany<User, Role>>
         roles()
         {
             return belongsToMany<Role, RoleUser>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "roles")
-                relationVisited<Role>();
-            else if (relation == "pivot") // Pivot
-                relationVisited<Pivot>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"roles", &User::roles},
+        QHash<QString, RelationVisitor> u_relations {
+            {"roles", [](auto &v) { v(&User::roles); }},
         };
     };
 
@@ -706,8 +646,8 @@ You have to pass a custom pivot type to the `AllRelations` template parameter pa
     #include "models/roleuser.hpp"
 
     using Orm::Tiny::Model;
+    using Orm::Tiny::Relations::BelongsToMany;
     using Orm::Tiny::Relations::Pivot;
-    using Orm::Tiny::Relations::Relation;
 
     class Role final : public Model<Role, User, RoleUser>
     {
@@ -716,25 +656,16 @@ You have to pass a custom pivot type to the `AllRelations` template parameter pa
 
     public:
         /*! The users that belong to the role. */
-        std::unique_ptr<Relation<Role, User>>
+        std::unique_ptr<BelongsToMany<Role, User>>
         users()
         {
             return belongsToMany<User>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "users")
-                relationVisited<User>();
-            else if (relation == "pivot") // Pivot
-                relationVisited<RoleUser>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"users", &Role::users},
+        QHash<QString, RelationVisitor> u_relations {
+            {"users", [](auto &v) { v(&Role::users); }},
         };
     };
 
@@ -771,7 +702,7 @@ For example, imagine a blog application in which a `User` model has many associa
     #include "models/post.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Relation;
+    using Orm::Tiny::Relations::HasMany;
 
     class User final : public Model<User, Post>
     {
@@ -780,23 +711,16 @@ For example, imagine a blog application in which a `User` model has many associa
 
     public:
         /*! Get all of the posts for the user. */
-        std::unique_ptr<Relation<User, Post>>
+        std::unique_ptr<HasMany<User, Post>>
         posts()
         {
             return hasMany<Post>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "posts")
-                relationVisited<Post>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"posts", &User::posts},
+        QHash<QString, RelationVisitor> u_relations {
+            {"posts", [](auto &v) { v(&User::posts); }},
         };
     };
 
@@ -890,7 +814,7 @@ The same is true for the `getRelationValue` method.
 When accessing TinyORM relationships by Model's `getRelationValue` method, the related models are "lazy loaded". This means the relationship data is not actually loaded until you first access them. However, TinyORM can "eager load" relationships at the time you query the parent model. Eager loading alleviates the "N + 1" query problem. To illustrate the N + 1 query problem, consider a `Book` model that "belongs to" to an `Author` model:
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Relation;
+    using Orm::Tiny::Relations::BelongsTo;
 
     class Book final : public Model<Book, Author>
     {
@@ -899,23 +823,16 @@ When accessing TinyORM relationships by Model's `getRelationValue` method, the r
 
     public:
         /*! Get the author that wrote the book. */
-        std::unique_ptr<Relation<Book, Author>>
+        std::unique_ptr<BelongsTo<Book, Author>>
         author()
         {
             return belongsTo<Author>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "author")
-                relationVisited<Author>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"author", &Book::author},
+        QHash<QString, RelationVisitor> u_relations {
+            {"author", [](auto &v) { v(&Book::author); }},
         };
     };
 
@@ -969,8 +886,7 @@ To eager a relationship's relationships, you may use "dot" syntax. For example, 
 Sometimes you might want to always load some relationships when retrieving a model. To accomplish this, you may define a `u_with` data member on the model:
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Relation;
-    using Orm::WithItem;
+    using Orm::Tiny::Relations::BelongsTo;
 
     class Book final : public Model<Book, Author>
     {
@@ -979,28 +895,21 @@ Sometimes you might want to always load some relationships when retrieving a mod
 
     public:
         /*! Get the author that wrote the book. */
-        std::unique_ptr<Relation<Book, Author>>
+        std::unique_ptr<BelongsTo<Book, Author>>
         author()
         {
             return belongsTo<Author>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "author")
-                relationVisited<Author>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"author", &Book::author},
+        QHash<QString, RelationVisitor> u_relations {
+            {"author", [](auto &v) { v(&Book::author); }},
         };
 
         /*! The relationships that should always be loaded. */
-        QVector<WithItem> u_with {
-            {"author"},
+        QVector<QString> u_with {
+            "author",
         };
     };
 
@@ -1249,6 +1158,9 @@ When a model defines a `belongsTo` relationship to another model, such as a `Com
 
 For example, when a `Comment` model is updated, you may want to automatically "touch" the `updated_at` timestamp of the owning `Post` so that it is set to the current date and time. To accomplish this, you may add a `u_touches` data member to your child model containing the names of the relationships that should have their `updated_at` timestamps updated when the child model is updated:
 
+    using Orm::Tiny::Model;
+    using Orm::Tiny::Relations::BelongsTo;
+
     class Comment final : public Model<Comment, Post>
     {
         friend Model;
@@ -1256,23 +1168,16 @@ For example, when a `Comment` model is updated, you may want to automatically "t
 
     public:
         /*! Get the post that owns the comment. */
-        std::unique_ptr<Relation<Comment, Post>>
+        std::unique_ptr<BelongsTo<Comment, Post>>
         post()
         {
             return belongsTo<Post>();
         }
 
     private:
-        /*! The visitor to obtain a type for Related template parameter. */
-        void relationVisitor(const QString &relation)
-        {
-            if (relation == "post")
-                relationVisited<Post>();
-        }
-
         /*! Map of relation names to methods. */
-        QHash<QString, std::any> u_relations {
-            {"post", &Comment::post},
+        QHash<QString, RelationVisitor> u_relations {
+            {"post", [](auto &v) { v(&Comment::post); }},
         };
 
         /*! All of the relationships to be touched. */
