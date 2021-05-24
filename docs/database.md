@@ -47,6 +47,8 @@ The first argument is configuration hash which is of type `QVariantHash` and the
 
 You may also configure connection options by `options` key as `QVariantHash` or `QString`, you can pass any [connection options](https://doc.qt.io/qt-5/qsqldatabase.html#setConnectOptions) supported by `QSqlDatabase`.
 
+You can also configure [Transaction Isolation Levels](https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html) for MySQL connection with the `isolation_level` configuration option.
+
 > {note} A database connection is resolved lazily, which means that the connection configuration is only saved after the `DB::create` method call. The connection will be resolved after you run some query or you can create it using the `DB::connection` method.
 
 <a name="sqlite-configuration"></a>
