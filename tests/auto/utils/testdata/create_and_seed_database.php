@@ -184,6 +184,15 @@ function createTables(string $connection)
         $table->foreign('user_id')->references('id')->on('users')
             ->cascadeOnUpdate()->cascadeOnDelete();
     });
+
+    $schema->create('user_phones', function (Blueprint $table) {
+        $table->id();
+        $table->unsignedBigInteger('user_id');
+        $table->string('number')->unique();
+
+        $table->foreign('user_id')->references('id')->on('users')
+            ->cascadeOnUpdate()->cascadeOnDelete();
+    });
 }
 
 /**
@@ -291,6 +300,13 @@ function seedTables(string $connection)
             [2, 1, 0],
             [3, 1, 1],
             [2, 2, 1],
+        ]));
+
+    Capsule::table('user_phones', null, $connection)->insert(
+        combineValues(['id', 'user_id', 'number'], [
+            [1, 1, '914111000'],
+            [2, 2, '902555777'],
+            [3, 3, '905111999'],
         ]));
 }
 

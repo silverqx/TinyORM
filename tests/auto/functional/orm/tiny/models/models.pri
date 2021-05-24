@@ -6,6 +6,7 @@ SOURCES += \
 HEADERS += \
     $$PWD/models/filepropertyproperty.hpp \
     $$PWD/models/massassignmentmodels.hpp \
+    $$PWD/models/phone.hpp \
     $$PWD/models/role.hpp \
     $$PWD/models/roleuser.hpp \
     $$PWD/models/setting.hpp \
