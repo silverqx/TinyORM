@@ -360,7 +360,7 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
            more helpful to the developer instead of just the database's errors. */
         throw QueryError(
                     // TODO next use __FUNCTION__ in similar statements silverqx
-                    // CUR unify __FUNCTION__ (__func__) msvc 'Xyz::fname', but gcc only 'fname' silverqx
+                    // CUR unify __FUNCTION__ (__func__) msvc 'Xyz::fname', but gcc only 'fname', belongsTo user defined code in docs depends on __func__, so it is critical silverqx
                     QStringLiteral("Statement in %1() failed.").arg(__FUNCTION__),
                     query, bindings);
     });

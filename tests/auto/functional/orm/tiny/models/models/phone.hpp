@@ -29,6 +29,9 @@ private:
     QHash<QString, RelationVisitor> u_relations {
         {"user", [](auto &v) { v(&Phone::user); }},
     };
+
+    /*! Indicates if the model should be timestamped. */
+    bool u_timestamps = false;
 };
 
 #endif // PHONE_HPP
