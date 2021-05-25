@@ -13,6 +13,7 @@
 - [Querying Relations](#querying-relations)
     - [Relationship Methods](#relationship-methods)
 - [Eager Loading](#eager-loading)
+    - [Constraining Eager Loads](#constraining-eager-loads)
     - [Lazy Eager Loading](#lazy-eager-loading)
 - [Inserting & Updating Related Models](#inserting-and-updating-related-models)
     - [The `save` Method](#the-save-method)
@@ -880,6 +881,15 @@ To eager a relationship's relationships, you may use "dot" syntax. For example, 
 
     auto books = Book::with("author.contacts")->get();
 
+<a name="eager-loading-specific-columns"></a>
+#### Eager Loading Specific Columns
+
+You may not always need every column from the relationships you are retrieving. For this reason, TinyORM allows you to specify which columns of the relationship you would like to retrieve:
+
+    auto books = Book::with("author:id,name,book_id")->get();
+
+> {note} When using this feature, you should always include the `id` column and any relevant foreign key columns in the list of columns you wish to retrieve, otherwise relations will not be loaded correctly.
+
 <a name="eager-loading-by-default"></a>
 #### Eager Loading By Default
 
@@ -917,6 +927,31 @@ If you would like to remove an item from the `u_with` data member for a single q
 
     auto books = Book::without("author")->get();
 
+If you would like to override all items within the `u_with` data member for a single query, you may use the `withOnly` method:
+
+    auto books = Book::withOnly("genre")->get();
+
+<a name="constraining-eager-loads"></a>
+### Constraining Eager Loads
+
+Sometimes you may wish to eager load a relationship but also specify additional query conditions for the eager loading query. You can accomplish this by passing a `QVector<Orm::WithItem>` of relationships to the `with` method where the `name` data member of `Orm::WithItem` struct is a relationship name and the `constraints` data member expects a lambda expression that adds additional constraints to the eager loading query. The first argument passed to the `constraints` lambda expression is an underlying `Orm::QueryBuilder` for a related model:
+
+    #include "models/user.hpp"
+
+    auto users = User::with({{"posts", [](auto &query)
+    {
+        query.where("title", "like", "%code%");
+    }}})->get();
+
+In this example, TinyORM will only eager load posts where the post's `title` column contains the word `code`. You may call other [query builder](query-builder.md#top) methods to further customize the eager loading operation:
+
+    auto users = User::with({{"posts", [](auto &query)
+    {
+        query.orderBy("created_at", "desc");
+    }}})->get();
+
+> {note} The `limit` and `take` query builder methods may not be used when constraining eager loads.
+
 <a name="lazy-eager-loading"></a>
 ### Lazy Eager Loading
 
@@ -934,6 +969,13 @@ You may load more relationships at once, to do so, just pass a `QVector<Orm::Wit
     Book::find(1)->load({{"author"}, {"publisher"}});
 
 > {note} So far, this only works on models, not on containers returned from Model's `get` or `all` methods.
+
+If you need to set additional query constraints on the eager loading query, you may pass a `QVector<Orm::WithItem>` of relationships to the `load` method where the `name` data member of `Orm::WithItem` struct is a relationship name and the `constraints` data member expects a lambda expression that adds additional constraints to the eager loading query. The first argument passed to the `constraints` lambda expression is an underlying `Orm::QueryBuilder` for a related model:
+
+    author->load({{"books", [](auto &query)
+    {
+        query.orderBy("published_date", "asc");
+    }}});
 
 <a name="inserting-and-updating-related-models"></a>
 ## Inserting & Updating Related Models
