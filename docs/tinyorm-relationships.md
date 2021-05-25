@@ -81,7 +81,7 @@ First, you have to extend the `Model<Derived, AllRelations...>`, it is a common 
 
 However, the second parameter is more interesting, here you have to provide a type-id of all related models. The TinyORM needs these types to store relationships in the hash.
 
-Next, you have to define the `relationVisitor` method, which maps a relation name to a related model's type-id. Last but not least, you have to define the `u_relations` hash, which maps a relation name to the relationship method.
+Next, you have to define the `u_relations` hash, which maps a relation name to the relationship method. 🔥🚀🙌
 
 > {note} You may omit the `friend Model` declaration and define all the private data and function members as public.
 
@@ -256,8 +256,8 @@ Once the relationship method has been defined, we can access the `QVector<Relate
 Since all relationships also serve as [query builders](query-builder.md#top), you may add further constraints to the relationship query by calling the `comments` method and continuing to chain conditions onto the query, all the `TinyBuilder` methods which are related to building queries are proxied:
 
     auto comment = Post::find(1)->comments()
-                        ->whereEq("title", "foo")
-                        .first();
+                         ->whereEq("title", "foo")
+                         .first();
 
 Like the `hasOne` method, you may also override the foreign and local keys by passing additional arguments to the `hasMany` method:
 
@@ -976,6 +976,8 @@ If you need to set additional query constraints on the eager loading query, you 
     {
         query.orderBy("published_date", "asc");
     }}});
+
+> {note} You can also use eager constraining in the Model's `fresh` method.
 
 <a name="inserting-and-updating-related-models"></a>
 ## Inserting & Updating Related Models

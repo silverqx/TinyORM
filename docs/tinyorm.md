@@ -531,7 +531,7 @@ You may call the `truncate` method to delete all of the model's associated datab
 <a name="comparing-models"></a>
 ## Comparing Models
 
-Sometimes you may need to determine if two models are the "same". The `is` method may be used to quickly verify two models have the same primary key, table, and database connection:
+Sometimes you may need to determine if two models are the "same". The `is` and `isNot` methods may be used to quickly verify two models have the same primary key, table, and database connection:
 
     if (post.is(anotherPost)) {
         //
