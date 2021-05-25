@@ -142,6 +142,12 @@ namespace Relations
         Builder<Related> &without(const QVector<QString> &relations) const;
         /*! Prevent the specified relations from being eager loaded. */
         Builder<Related> &without(const QString &relation) const;
+        /*! Set the relationships that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        Builder<Related> &withOnly(const QVector<WithItem> &relations) const;
+        /*! Set the relationship that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        Builder<Related> &withOnly(const QString &relation) const;
 
         /* Proxies to TinyBuilder -> BuildsQueries */
         /*! Execute the query and get the first result. */
@@ -543,6 +549,20 @@ namespace Relations
     Relation<Model, Related>::without(const QString &relation) const
     {
         return m_query->without(relation);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &
+    Relation<Model, Related>::withOnly(const QVector<WithItem> &relations) const
+    {
+        return m_query->withOnly(relations);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &
+    Relation<Model, Related>::withOnly(const QString &relation) const
+    {
+        return m_query->withOnly(relation);
     }
 
     template<class Model, class Related>

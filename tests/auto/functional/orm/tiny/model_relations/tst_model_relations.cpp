@@ -61,6 +61,8 @@ private slots:
     void without_NestedRelations() const;
     void without_Vector_MoreRelations() const;
 
+    void withOnly() const;
+
     void load() const;
     void load_WithSelectConstraint() const;
     void load_Failed() const;
@@ -1055,6 +1057,22 @@ void tst_Model_Relations::without_Vector_MoreRelations() const
     QVERIFY(torrent->exists);
 
     QVERIFY(torrent->getRelations().empty());
+}
+
+void tst_Model_Relations::withOnly() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = TorrentEager::withOnly("torrentPeer")->find(1);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto &relations = torrent->getRelations();
+    QVERIFY(relations.contains("torrentPeer"));
+    QVERIFY(!relations.contains("torrentFiles"));
+    QCOMPARE(relations.size(), static_cast<std::size_t>(1));
 }
 
 void tst_Model_Relations::load() const

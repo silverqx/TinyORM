@@ -69,7 +69,6 @@ namespace Relations {
     // TODO model missing methods Model::whereBetween() silverqx
     // TODO model missing methods Model::exists()/notExists() silverqx
     // TODO model missing methods Model::saveOrFail() silverqx
-    // TODO model missing methods TinyBuilder::withOnly() silverqx
     // TODO model missing methods EloquentCollection::toQuery() silverqx
     // FEATURE EloquentCollection, solve how to implement, also look at Eloquent's Custom Collections silverqx
     // FEATURE next Constraining Eager Loads silverqx
@@ -81,6 +80,7 @@ namespace Relations {
     // FEATURE code coverage silverqx
     // FEATURE CI/CD silverqx
     // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
+    // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -169,13 +169,20 @@ namespace Relations {
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Derived>>
         with(const QString &relation);
-
         /*! Prevent the specified relations from being eager loaded. */
         static std::unique_ptr<TinyBuilder<Derived>>
         without(const QVector<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
         static std::unique_ptr<TinyBuilder<Derived>>
         without(const QString &relation);
+        /*! Set the relationships that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        withOnly(const QVector<WithItem> &relations);
+        /*! Set the relationship that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        withOnly(const QString &relation);
 
         /*! Save a new model and return the instance. */
         static Derived create(const QVector<AttributeItem> &attributes = {});
@@ -1200,6 +1207,7 @@ namespace Relations {
         return instance.newQuery();
     }
 
+    // CUR eloquent doesn't have get() method, only all() method, think about this silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<Derived>
     Model<Derived, AllRelations...>::all(const QStringList &columns)
@@ -1279,7 +1287,7 @@ namespace Relations {
         return query()->value(column);
     }
 
-    // TODO now problem with QStringList overload, its ambiguou, I think I need only QStringList, because is implicitly convertible to QString silverqx
+    // TODO now problem with QStringList overload, its ambiguou, I think I need only QStringList, because is implicitly convertible to QString, so I tried QVector<QString> only without QString overload and still ambiguous silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::with(const QVector<WithItem> &relations)
@@ -1314,6 +1322,24 @@ namespace Relations {
     Model<Derived, AllRelations...>::without(const QString &relation)
     {
         return without(QVector<QString> {relation});
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::withOnly(const QVector<WithItem> &relations)
+    {
+        auto builder = query();
+
+        builder->withOnly(relations);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::withOnly(const QString &relation)
+    {
+        return withOnly(QVector<WithItem> {{relation}});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2559,9 +2585,19 @@ namespace Relations {
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newQueryWithoutScopes()
     {
+        // Transform the QString vector to the WithItem vector
+        const auto &relations = model().u_with;
+
+        QVector<WithItem> relationsConverted;
+        relationsConverted.reserve(relations.size());
+
+        for (const auto &relation : relations)
+            relationsConverted.append({relation});
+
+        // Ownership of a unique_ptr()
         auto tinyBuilder = newModelQuery();
 
-        tinyBuilder->with(model().u_with);
+        tinyBuilder->with(relationsConverted);
 
         return tinyBuilder;
     }

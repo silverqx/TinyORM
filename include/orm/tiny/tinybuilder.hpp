@@ -71,12 +71,16 @@ namespace Relations
         Builder &with(const QVector<WithItem> &relations);
         /*! Set the relationships that should be eager loaded. */
         Builder &with(const QString &relation);
-        /*! Set the relationships that should be eager loaded. */
-        Builder &with(const QVector<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
         Builder &without(const QVector<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
         Builder &without(const QString &relation);
+        /*! Set the relationships that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        Builder &withOnly(const QVector<WithItem> &relations);
+        /*! Set the relationship that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        Builder &withOnly(const QString &relation);
 
         /*! Save a new model and return the instance. */
         Model create(const QVector<AttributeItem> &attributes = {});
@@ -516,19 +520,6 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::with(const QVector<QString> &relations)
-    {
-        QVector<WithItem> relationsConverted;
-        relationsConverted.reserve(relations.size());
-
-        for (const auto &relation : relations)
-            relationsConverted.append({relation});
-
-        return with(relationsConverted);
-    }
-
-    template<typename Model>
-    Builder<Model> &
     Builder<Model>::without(const QVector<QString> &relations)
     {
         // Remove relations in the "relations" vector from m_eagerLoad vector
@@ -548,6 +539,22 @@ namespace Relations
     Builder<Model>::without(const QString &relation)
     {
         return without(QVector<QString> {relation});
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::withOnly(const QVector<WithItem> &relations)
+    {
+        m_eagerLoad.clear();
+
+        return with(relations);
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::withOnly(const QString &relation)
+    {
+        return withOnly(QVector<WithItem> {{relation}});
     }
 
     template<typename Model>
@@ -1349,7 +1356,8 @@ namespace Relations
                        relation. */
                     if (belongsToManyRelatedTable) {
 #ifdef __GNUG__
-                        columnsList << QString("%1.%2").arg(*belongsToManyRelatedTable, column);
+                        columnsList << QString("%1.%2")
+                                       .arg(*belongsToManyRelatedTable, column);
 #else
                         columnsList << QStringLiteral("%1.%2")
                                        .arg(*belongsToManyRelatedTable, column);
