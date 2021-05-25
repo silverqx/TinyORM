@@ -1207,7 +1207,6 @@ namespace Relations {
         return instance.newQuery();
     }
 
-    // CUR eloquent doesn't have get() method, only all() method, think about this silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<Derived>
     Model<Derived, AllRelations...>::all(const QStringList &columns)
