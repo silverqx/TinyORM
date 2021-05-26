@@ -23,7 +23,7 @@ public:
                               TorrentEager_WithDefault>>
     torrent()
     {
-        return belongsTo<TorrentEager_WithDefault>();
+        return belongsTo<TorrentEager_WithDefault>("", "", __func__);
     }
 
     /*! Get the torrent that owns the previewable file. */
@@ -32,7 +32,7 @@ public:
     torrent_WithBoolDefault()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsTo<TorrentEager_WithDefault>();
+        auto relation = belongsTo<TorrentEager_WithDefault>("", "", __func__);
 
         relation->withDefault();
 
@@ -45,7 +45,7 @@ public:
     torrent_WithVectorDefaults()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsTo<TorrentEager_WithDefault>();
+        auto relation = belongsTo<TorrentEager_WithDefault>("", "", __func__);
 
         relation->withDefault({{"name", "default_torrent_name"}, {"size", 123}});
 

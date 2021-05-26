@@ -15,7 +15,16 @@ namespace Orm::Tiny
     class SHAREDLIB_EXPORT RelationNotFoundError : public RuntimeError
     {
     public:
+        /*! Exception message will be generated on the base of this enum struct. */
+        enum struct From
+        {
+            UNDEFINED       = -1,
+            BELONGS_TO      = 0,
+            BELONGS_TO_MANY = 1,
+        };
+
         RelationNotFoundError(const QString &model, const QString &relation);
+        RelationNotFoundError(const QString &model, const QString &relation, From from);
 
         /*! Get the affected Eloquent model. */
         inline const QString &getModel() const
@@ -29,6 +38,8 @@ namespace Orm::Tiny
         const QString m_model;
         /*! The name of the relation. */
         const QString m_relation;
+        /*! Exception message will be generated on the base of this data member. */
+        const From m_from;
 
     private:
         /*! Format the error message. */

@@ -1020,6 +1020,8 @@ namespace Relations {
         bool u_timestamps = true;
 
     private:
+        using RelationFrom = RelationNotFoundError::From;
+
         /* Eager load from TinyBuilder */
         /*! Invoke Model::eagerVisitor() to define template argument Related
             for eagerLoaded relation. */
@@ -1049,7 +1051,8 @@ namespace Relations {
 
         /* HasRelationships */
         /*! Throw exception if a relation is not defined. */
-        void validateUserRelation(const QString &name) const;
+        void validateUserRelation(const QString &name,
+                                  RelationFrom from = RelationFrom::UNDEFINED) const;
 
         /*! Obtain related models from "relationships" data member hash
             without any checks. */
@@ -1072,6 +1075,10 @@ namespace Relations {
         template<typename Result, typename Related, typename T>
         void checkRelationType(
                 const T &result, const QString &relation, const QString &source) const;
+
+        /*! Guess the relationship name for belongsTo/belongsToMany. */
+        template<typename Related>
+        QString guessBelongsToRelationInternal() const;
 
         /* Push relation store related */
         /*! Create push store and call push for every model. */
@@ -3733,10 +3740,10 @@ namespace Relations {
     template<typename Related>
     QString Model<Derived, AllRelations...>::guessBelongsToRelation() const
     {
-        // TODO reliability, also add Utils::String::studly silverqx
-        auto relation = Utils::Type::classPureBasename<Related>();
+        const QString relation = guessBelongsToRelationInternal<Related>();
 
-        relation[0] = relation[0].toLower();
+        // Validate if the guessed relation name exists in the u_relations
+        validateUserRelation(relation, RelationFrom::BELONGS_TO);
 
         return relation;
     }
@@ -3745,7 +3752,24 @@ namespace Relations {
     template<typename Related>
     QString Model<Derived, AllRelations...>::guessBelongsToManyRelation() const
     {
-        return guessBelongsToRelation<Related>() + QChar('s');
+        const QString relation = guessBelongsToRelationInternal<Related>() + QChar('s');
+
+        // Validate if the guessed relation name exists in the u_relations
+        validateUserRelation(relation, RelationFrom::BELONGS_TO_MANY);
+
+        return relation;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    QString Model<Derived, AllRelations...>::guessBelongsToRelationInternal() const
+    {
+        // TODO reliability, also add Utils::String::studly silverqx
+        auto relation = Utils::Type::classPureBasename<Related>();
+
+        relation[0] = relation[0].toLower();
+
+        return relation;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -3883,11 +3907,12 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void
-    Model<Derived, AllRelations...>::validateUserRelation(const QString &name) const
+    Model<Derived, AllRelations...>::validateUserRelation(
+            const QString &name, const RelationFrom from) const
     {
         if (!model().u_relations.contains(name))
             throw RelationNotFoundError(
-                    Orm::Utils::Type::classPureBasename<Derived>(), name);
+                    Orm::Utils::Type::classPureBasename<Derived>(), name, from);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
