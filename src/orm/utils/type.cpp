@@ -2,12 +2,35 @@
 
 #include <QRegularExpression>
 
+#include "orm/runtimeerror.hpp"
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
 namespace Orm::Utils
 {
+
+QString Type::prettyFunction(const QString &function)
+{
+#ifdef __GNUG__
+    QRegularExpression re(QStringLiteral(".* (?:.*::)?(\\w+)(?:<.*>)?::(\\w+)\\(.*\\)"));
+#elif _MSC_VER
+    QRegularExpression re(QStringLiteral("(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)"));
+#else
+    throw RuntimeError("Unsupported compiler in Utils::Type::prettyFunction().");
+#endif
+
+    const auto match = re.match(function);
+
+    // This should never happen, but who knows 🤔
+    Q_ASSERT_X(match.hasMatch(), "regex match",
+               "Can not get the function name in Utils::Type::prettyFunction().");
+    Q_ASSERT_X(re.captureCount() == 2, "regex match",
+               "Can not get the function name in Utils::Type::prettyFunction().");
+
+    return QStringLiteral("%1::%2").arg(match.captured(1), match.captured(2));
+}
 
 QString
 Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withNamespace)

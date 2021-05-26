@@ -5,6 +5,7 @@
 
 #include "orm/invalidargumenterror.hpp"
 #include "orm/queryerror.hpp"
+#include "orm/utils/type.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -72,7 +73,7 @@ void SQLiteConnector::configureForeignKeyConstraints(
                    .arg(foreignKeyConstraints)))
         return;
 
-    throw QueryError(m_configureErrorMessage.arg(__FUNCTION__), query);
+    throw QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const

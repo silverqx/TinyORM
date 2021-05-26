@@ -2,6 +2,7 @@
 
 #include "orm/sqlerror.hpp"
 #include "orm/support/configurationoptionsparser.hpp"
+#include "orm/utils/type.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -40,7 +41,7 @@ Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash 
 
     if (!db.open())
         throw SqlError(QStringLiteral("Open databse connection in %1() failed.")
-                       .arg(__FUNCTION__),
+                       .arg(__tiny_func__),
                        db.lastError());
 
     return db;

@@ -5,6 +5,7 @@
 #include "orm/logquery.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/sqltransactionerror.hpp"
+#include "orm/utils/type.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -79,7 +80,8 @@ bool DatabaseConnection::beginTransaction()
 
     if (!m_pretending && !getQtConnection().transaction())
         throw SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2").arg(__FUNCTION__, query),
+                QStringLiteral("Statement in %1() failed : %2").arg(__tiny_func__,
+                                                                    query),
                 getRawQtConnection().lastError());
 
     m_inTransaction = true;
@@ -114,7 +116,8 @@ bool DatabaseConnection::commit()
     // TODO rewrite transactions to DatabaseConnection::statement, so I have access to QSqlQuery for logQuery() silverqx
     if (!m_pretending && !getQtConnection().commit())
         throw SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2").arg(__FUNCTION__, query),
+                QStringLiteral("Statement in %1() failed : %2").arg(__tiny_func__,
+                                                                    query),
                 getRawQtConnection().lastError());
 
     m_inTransaction = false;
@@ -148,7 +151,8 @@ bool DatabaseConnection::rollBack()
 
     if (!m_pretending && !getQtConnection().rollback())
         throw SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2").arg(__FUNCTION__, query),
+                QStringLiteral("Statement in %1() failed : %2").arg(__tiny_func__,
+                                                                    query),
                 getRawQtConnection().lastError());
 
     m_inTransaction = false;
@@ -186,7 +190,7 @@ bool DatabaseConnection::savepoint(const QString &id)
     if (!m_pretending && !savePoint.exec(query))
         throw SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__FUNCTION__, query),
+                    .arg(__tiny_func__, query),
                 savePoint.lastError());
 
     ++m_savepoints;
@@ -230,7 +234,7 @@ bool DatabaseConnection::rollbackToSavepoint(const QString &id)
     if (!m_pretending && !rollbackToSavepoint.exec(query))
         throw SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__FUNCTION__, query),
+                    .arg(__tiny_func__, query),
                 rollbackToSavepoint.lastError());
 
     m_savepoints = std::max<int>(0, m_savepoints - 1);
@@ -283,7 +287,8 @@ DatabaseConnection::select(const QString &queryString,
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw QueryError(
-                    QStringLiteral("Select statement in %1() failed.").arg(__FUNCTION__),
+                    QStringLiteral("Select statement in %1() failed.")
+                        .arg(__tiny_func__),
                     query, bindings);
     });
 }
@@ -360,8 +365,7 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
            more helpful to the developer instead of just the database's errors. */
         throw QueryError(
                     // TODO next use __FUNCTION__ in similar statements silverqx
-                    // CUR unify __FUNCTION__ (__func__) msvc 'Xyz::fname', but gcc only 'fname', belongsTo user defined code in docs depends on __func__, so it is critical silverqx
-                    QStringLiteral("Statement in %1() failed.").arg(__FUNCTION__),
+                    QStringLiteral("Statement in %1() failed.").arg(__tiny_func__),
                     query, bindings);
     });
 }
@@ -400,7 +404,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
            more helpful to the developer instead of just the database's errors. */
         throw QueryError(
                     QStringLiteral("Affecting statement in %1() failed.")
-                        .arg(__FUNCTION__),
+                        .arg(__tiny_func__),
                     query, bindings);
     });
 }

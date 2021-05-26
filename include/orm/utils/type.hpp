@@ -11,6 +11,14 @@
 
 #include "orm/utils/export.hpp"
 
+#ifdef __GNUG__
+#  define __tiny_func__ Orm::Utils::Type::prettyFunction(__PRETTY_FUNCTION__)
+#elif _MSC_VER
+#  define __tiny_func__ Orm::Utils::Type::prettyFunction(__FUNCTION__)
+#else
+#  define __tiny_func__ __FUNCTION__
+#endif
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -33,6 +41,9 @@ namespace Orm::Utils
         /*! Class name with or w/o a namespace and template parameters. */
         template<typename T>
         static QString classPureBasename(const T &type, bool withNamespace = false);
+
+        /*! Return a pretty function name in the following format: Xyz::function. */
+        static QString prettyFunction(const QString &function);
 
     private:
         /*! Class name with or w/o a namespace and template parameters, common code. */

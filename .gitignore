@@ -80,4 +80,4 @@ Thumbs.db
 /todos.csv
 /todos.xlsx
 conf.pri
-
+/CMakeUserPresets.json
