@@ -14,9 +14,11 @@ namespace Orm::Utils
 QString Type::prettyFunction(const QString &function)
 {
 #ifdef __GNUG__
-    QRegularExpression re(QStringLiteral(".* (?:.*::)?(\\w+)(?:<.*>)?::(\\w+)\\(.*\\)"));
+    QRegularExpression re(QStringLiteral(
+                              "(?:.* )?(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)\\(.*\\)"));
 #elif _MSC_VER
-    QRegularExpression re(QStringLiteral("(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)"));
+    QRegularExpression re(QStringLiteral(
+                              "(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)(?:$|::<lambda)"));
 #else
     throw RuntimeError("Unsupported compiler in Utils::Type::prettyFunction().");
 #endif
