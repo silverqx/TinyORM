@@ -351,6 +351,9 @@ namespace Relations
 
         /*! The base query builder instance. */
         const QSharedPointer<QueryBuilder> m_query;
+        /* This can't be a reference because the model is created on the stack
+           in Model::query(), then copied here and the original is destroyed
+           immediately. */
         /*! The model being queried. */
         Model m_model;
         /*! The relationships that should be eager loaded. */
@@ -1327,7 +1330,6 @@ namespace Relations
         auto relation = splitted.at(0).trimmed();
         auto &columns = splitted[1];
 
-        // CUR invoke on dummy model instance, find other places and create m_dummyModel to avoid repeated instantiation and call similar methods on this dummy model to avoid side effects on the real model silverqx
         auto belongsToManyRelatedTable =
                 m_model.getRelatedTableForBelongsToManyWithVisitor(relation);
 

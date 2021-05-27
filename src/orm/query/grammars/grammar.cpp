@@ -205,13 +205,7 @@ QString Grammar::compileColumns(const QueryBuilder &query) const
     else
         select += "select ";
 
-    // BUG Qt and mysql json column silverqx
-    // Contains json column
-    const auto isTorrentsTable =
-            (query.getFrom() == "torrents")
-            && (query.getConnection().getDatabaseName() == "q_media_test_orm");
-
-    return select + columnize(query.getColumns(), isTorrentsTable);
+    return select + columnize(query.getColumns());
 }
 
 QString Grammar::compileFrom(const QueryBuilder &query) const

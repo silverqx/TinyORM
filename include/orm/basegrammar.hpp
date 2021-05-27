@@ -62,8 +62,6 @@ namespace Query
     protected:
         /*! Convert the vector of column names into a delimited string. */
         QString columnize(const QStringList &columns) const;
-        /*! Convert the vector of column names into a delimited string. */
-        QString columnize(const QStringList &columns, bool isTorrentsTable) const;
         /*! Create query parameter place-holders for the vector. */
         template<Parametrize Container>
         QString parametrize(const Container &values) const;

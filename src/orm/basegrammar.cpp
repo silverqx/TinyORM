@@ -70,28 +70,6 @@ QString BaseGrammar::columnize(const QStringList &columns) const
     return wrapArray(columns).join(", ");
 }
 
-QString BaseGrammar::columnize(const QStringList &columns,
-                               const bool isTorrentsTable) const
-{
-    // BUG Qt and mysql json column silverqx
-    /* Qt don't know how to iterate the result with json column, so I have to manually manage
-       columns in the select clause. */
-    if (isTorrentsTable && (columns.size() == 1) && (columns.at(0) == "*")) {
-//        static const QString cached = wrapArray({
-//            "id, name, progress, eta, size, seeds, total_seeds, leechers, "
-//            "total_leechers, remaining, added_on, hash, status, "
-//            "movie_detail_index, savepath"
-//        }).join(", ");
-        static const QString cached =
-                wrapArray(QStringList {"id, name, size, progress, added_on, hash"})
-                .join(", ");
-
-        return cached;
-    }
-
-    return columnize(columns);
-}
-
 QString BaseGrammar::parameter(const QVariant &value) const
 {
     // TODO rethink expressions, how to work with them and pass them to the query builder 🤔 silverqx

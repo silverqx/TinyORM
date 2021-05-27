@@ -227,7 +227,7 @@ namespace Query
                                {}, castKey, castKey);
 
             // Remove duplicates
-            // BUG in std::ranges::unique, when container contains only one element on msvc compiler (in stl library) and clang doesn't compile I don't unserstand why silverqx
+            // BUG clang doesn't compile with std::ranges::unique, I don't unserstand why silverqx
 #if (defined(__GNUG__) && !defined(__clang__)) || (defined(_MSC_VER) && _MSC_VER >= 1929)
             auto [first, last] = std::ranges::unique(merged, {}, castKey);
             merged.erase(first, last);
