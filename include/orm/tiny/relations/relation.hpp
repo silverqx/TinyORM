@@ -1110,7 +1110,6 @@ namespace Relations
     {
         QVector<QVariant> keys;
 
-        // BUG what if key is empty/null/invalid, looks orig. implementation, there is used "->values()->unique(null, true)" silverqx
         for (const auto &model : models)
             keys.append(key.isEmpty() ? model.getKey()
                                       : model.getAttribute(key));

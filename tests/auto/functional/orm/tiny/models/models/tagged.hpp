@@ -20,11 +20,6 @@ class Tagged final : public BasePivot<Tagged>
 //    bool u_incrementing = true;
 
     // FUTURE u_connection and u_table can't be overriden, the same is true in Eloquent, add support to be able to override these silveqx
-
-    /*! The attributes that are mass assignable. */
-    inline static QStringList u_fillable {
-        "active",
-    };
 };
 
 #endif // TAGGED_H

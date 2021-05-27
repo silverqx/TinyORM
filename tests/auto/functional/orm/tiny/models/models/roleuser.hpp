@@ -12,11 +12,6 @@ class RoleUser final : public BasePivot<RoleUser>
 
     using BasePivot<RoleUser>::BasePivot;
 
-    /*! The attributes that are mass assignable. */
-    inline static QStringList u_fillable {
-        "active",
-    };
-
     /*! Indicates if the model should be timestamped. */
     bool u_timestamps = false;
 };

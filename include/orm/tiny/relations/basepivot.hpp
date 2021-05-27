@@ -77,12 +77,13 @@ namespace Orm::Tiny::Relations
         /*! Get the query builder for a delete operation on the pivot. */
         std::unique_ptr<TinyBuilder<PivotModel>> getDeleteQuery();
 
+        /* BasePivot */
         /*! Indicates if the ID is auto-incrementing. */
         bool u_incrementing = false;
-        // FEATURE guarded silverqx
         /*! The attributes that aren't mass assignable. */
-//        QStringList u_guarded;
+        inline static QStringList u_guarded;
 
+        /* AsPivot */
         /*! The name of the foreign key column. */
         QString m_foreignKey;
         /*! The name of the "other key" column. */
