@@ -233,8 +233,6 @@ namespace Orm::Tiny::Relations
         for (const auto &result : results)
             dictionary.insert(result.getAttribute(m_ownerKey)
                               .template value<typename Model::KeyType>(),
-                              // BUG test silverqx
-                              // QHash doesn't have the move type insert method
                               result);
 
         return dictionary;

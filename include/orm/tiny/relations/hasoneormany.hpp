@@ -236,7 +236,6 @@ namespace Orm::Tiny::Relations
     {
         QHash<typename Model::KeyType, RelationType> dictionary;
 
-        // BUG dictionary.insert how is possible that it moves if qhash doesn't have move insert, but the same code doesn't move in the belongsTo::buildDictionary, may be because of 'if constexpr'? silverqx
         for (auto &result : results)
             if constexpr (
                 const auto &foreign = result.getAttribute(getForeignKeyName())
@@ -245,6 +244,7 @@ namespace Orm::Tiny::Relations
             )
                 dictionary[foreign].append(std::move(result));
             else
+                // Moves to the std::optional
                 dictionary.insert(foreign, std::move(result));
 
         return dictionary;
