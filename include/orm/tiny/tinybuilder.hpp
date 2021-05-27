@@ -1335,9 +1335,9 @@ namespace Relations
 
         return {
             std::move(relation),
-                [columns = std::move(columns),
-                belongsToManyRelatedTable = std::move(belongsToManyRelatedTable)]
-                (auto &query)
+            [columns = std::move(columns),
+                    belongsToManyRelatedTable = std::move(belongsToManyRelatedTable)]
+                    (auto &query)
             {
                 QStringList columnsList;
                 columnsList.reserve(columns.count(QChar(',')) + 1);

@@ -57,8 +57,6 @@ namespace Relations {
     // TODO repeat, from time to time try to compile without microsoft extensions, QMAKE_CXXFLAGS *= -Za silverqx
     // TODO repeat, recompile without PCH silverqx
     // TODO decide/unify when to use class/typename keywords for templates silverqx
-    // TODO concept, AllRelations can not contain type defined in "Model" parameter silverqx
-    // TODO next test no relation behavior silverqx
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
     // TODO model missing methods Comparing Models silverqx
@@ -71,7 +69,6 @@ namespace Relations {
     // TODO model missing methods Model::saveOrFail() silverqx
     // TODO model missing methods EloquentCollection::toQuery() silverqx
     // FEATURE EloquentCollection, solve how to implement, also look at Eloquent's Custom Collections silverqx
-    // FEATURE next Constraining Eager Loads silverqx
     // TODO perf add pragma once to every header file, have branch pragma-once, but I can't get rid of the clang warning -Wpragma-once-outside-header in every file, I tried everything 😞 silverqx
     // FUTURE try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
     // FUTURE include every stl dependency in header files silverqx
@@ -2501,7 +2498,6 @@ namespace Relations {
         return load(QVector<WithItem> {{relation}});
     }
 
-    // TODO add clean Model overloads, I don't remember what it exactly mean or better why should I need Model overloads silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename ModelToCompare>
     bool Model<Derived, AllRelations...>::is(
@@ -3093,8 +3089,6 @@ namespace Relations {
             throw RelationNotLoadedError(
                     Orm::Utils::Type::classPureBasename<Derived>(), relation);
 
-        // TODO instantiate relation by name and check if is_base_of OneRelation/ManyRelation, to have nice exception message (in debug mode only), because is impossible to check this during compile time silverqx
-
         return getRelationFromHash<Related, Tag>(relation);
     }
 
@@ -3180,7 +3174,6 @@ namespace Relations {
         return model().getTable() + '.' + column;
     }
 
-    // TODO move, add rvalue version, for key parameter too silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::setAttribute(
             const QString &key, QVariant value)

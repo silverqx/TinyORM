@@ -695,7 +695,7 @@ bool Builder::invalidOperator(const QString &comparison) const
 Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
 {
     if (!m_bindings.contains(type))
-        // TODO add hash to map BindingType to QString silverqx
+        // TODO add hash which maps BindingType to the QString silverqx
         throw RuntimeError(QStringLiteral("Invalid binding type: %1")
                            .arg(static_cast<int>(type)));
 
@@ -708,7 +708,7 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
 {
     // TODO duplicate check, unify silverqx
     if (!m_bindings.contains(type))
-        // TODO add hash to map BindingType to QString silverqx
+        // TODO add hash which maps BindingType to the QString silverqx
         throw RuntimeError(QStringLiteral("Invalid binding type: %1")
                            .arg(static_cast<int>(type)));
 

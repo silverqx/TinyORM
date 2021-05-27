@@ -321,7 +321,7 @@ QString Grammar::whereColumn(const WhereConditionItem &where) const
        second column. */
     return QStringLiteral("%1 %2 %3").arg(wrap(where.column),
                                           where.comparison,
-                                          // TODO add data member to the WhereConditionItem for second column silverqx
+                                          // CUR add data member to the WhereConditionItem for second column silverqx
                                           wrap(where.value.value<QString>()));
 }
 
