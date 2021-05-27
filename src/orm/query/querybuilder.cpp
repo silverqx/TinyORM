@@ -368,7 +368,8 @@ Builder &Builder::whereColumn(const QString &first, const QString &comparison,
     // Compile check for a invalid comparison operator
     invalidOperator(comparison);
 
-    m_wheres.append({first, second, comparison, condition, WhereType::COLUMN});
+    m_wheres.append({.column = first, .comparison = comparison, .condition = condition,
+                     .type = WhereType::COLUMN, .columnTwo = second});
 
     return *this;
 }

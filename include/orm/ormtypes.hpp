@@ -66,6 +66,7 @@ namespace Query
         WhereType                    type        {WhereType::UNDEFINED};
         QSharedPointer<QueryBuilder> nestedQuery {nullptr};
         QVector<QVariant>            values      {};
+        QString                      columnTwo   {};
     };
 
     enum struct HavingType
