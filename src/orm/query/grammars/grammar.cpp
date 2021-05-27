@@ -298,9 +298,10 @@ QString Grammar::compileHaving(const HavingConditionItem &having) const
 
 QString Grammar::whereBasic(const WhereConditionItem &where) const
 {
-    // BUG whereBasic look Eloquent silverqx
-    return QStringLiteral("%1 %2 ?").arg(wrap(where.column),
-                                         where.comparison);
+    // FEATURE postgres, try operators with ? vs pdo str_replace(?, ??) https://wiki.php.net/rfc/pdo_escape_placeholders silverqx
+    return QStringLiteral("%1 %2 %3").arg(wrap(where.column),
+                                          where.comparison,
+                                          parameter(where.value));
 }
 
 QString Grammar::whereNested(const WhereConditionItem &where) const
