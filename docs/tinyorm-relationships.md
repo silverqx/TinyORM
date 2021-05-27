@@ -195,7 +195,7 @@ If the parent model does not use `id` as its primary key, or you wish to find th
         return belongsTo<User>("foreign_key", "owner_key");
     }
 
-The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column, the `__func__` predefined identifier is ideal for this:
+The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column to generate foreign key, the `__func__` predefined identifier is ideal for this. The relation name is also used in BelongsTo's `associate` and `disassociate` methods:
 
     /*! Get the user that owns the phone. */
     std::unique_ptr<BelongsTo<Phone, User>>
@@ -203,6 +203,8 @@ The third `belongsTo` parameter is the relation name, if you pass it, the foreig
     {
         return belongsTo<User>({}, {}, __func__); // the foreign key will be some_user_id
     }
+
+The relation name will be guessed from the type-id of the `Related` template parameter, TinyORM takes this name and changes the first character to lower case, so in the example above, the relation name will be `user`.
 
 <a name="one-to-many"></a>
 ### One To Many
@@ -336,7 +338,7 @@ If your parent model does not use `id` as its primary key, or you wish to find t
         return belongsTo<Post>("foreign_key", "owner_key");
     }
 
-The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column, the `__func__` predefined identifier is ideal for this:
+The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column to generate foreign key, the `__func__` predefined identifier is ideal for this. The relation name is also used in BelongsTo's `associate` and `disassociate` methods:
 
     /*! Get the post that owns the comment. */
     std::unique_ptr<BelongsTo<Comment, Post>>
@@ -344,6 +346,8 @@ The third `belongsTo` parameter is the relation name, if you pass it, the foreig
     {
         return belongsTo<Post>({}, {}, __func__); // the foreign key will be some_post_id
     }
+
+The relation name will be guessed from the type-id of the `Related` template parameter, TinyORM takes this name and changes the first character to lower case, so in the example above, the relation name will be `user`.
 
 <a name="default-models"></a>
 #### Default Models
@@ -460,6 +464,10 @@ To determine the table name of the relationship's intermediate table, TinyORM wi
 In addition to customizing the name of the intermediate table, you may also customize the column names of the keys on the table by passing additional arguments to the `belongsToMany` method. The second argument is the foreign key name of the model on which you are defining the relationship, while the third argument is the foreign key name of the model that you are joining to:
 
     return belongsToMany<Role>("role_user", "user_id", "role_id");
+
+The fourth and fifth arguments are primary key names on models in the many-to-many relation and the sixth argument is the relation name.
+
+The relation name is used during [Touching Parent Timestamps](#touching-parent-timestamps) and will be guessed from the type-id of the `Related` template parameter, TinyORM takes this name, changes the first character to lower case, and appends `s` character. So in the example above, the relation name will be `roles`.
 
 <a name="many-to-many-defining-the-inverse-of-the-relationship"></a>
 #### Defining The Inverse Of The Relationship
