@@ -76,7 +76,7 @@ private slots:
 
     void truncate() const;
 
-    void massAssignment_NotGuardableColumn() const;
+    void massAssignment_isGuardableColumn() const;
 };
 
 void tst_Model::initTestCase_data() const
@@ -1225,7 +1225,7 @@ void tst_Model::truncate() const
     QCOMPARE(Setting::all().size(), 0);
 }
 
-void tst_Model::massAssignment_NotGuardableColumn() const
+void tst_Model::massAssignment_isGuardableColumn() const
 {
     /* This test has to be here because it internally calls columns listing against
        database, so it is connection-dependent. */
@@ -1233,11 +1233,12 @@ void tst_Model::massAssignment_NotGuardableColumn() const
 
     ConnectionOverride::connection = connection;
 
-    Torrent_GuardedAttribute torrent;
+    Torrent_GuardableColumn torrent;
 
-    torrent.fill({{"dummy-NON_EXISTENT", "foo"}});
+    torrent.fill({{"updated_at", QDateTime::currentDateTime()}});
 
-    QCOMPARE(torrent.getAttributes().size(), 0);
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
 QTEST_MAIN(tst_Model)

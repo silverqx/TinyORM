@@ -158,7 +158,6 @@ void Builder::truncate()
         m_connection.statement(sql, bindings);
 }
 
-// CUR try with 'as' - select('name', 'email as user_email') and add tests silverqx
 Builder &Builder::select(const QStringList &columns)
 {
     // FEATURE expression, add Query::Expression overload, find all occurences of Illuminate\Database\Query\Expression in the Eloquent and add support to TinyORM, I will need to add overloads for some methods, for columns and also for values silverqx

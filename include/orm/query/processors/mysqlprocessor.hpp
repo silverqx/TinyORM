@@ -16,6 +16,9 @@ namespace Orm::Query::Processors
 
     public:
         MySqlProcessor() = default;
+
+        /*! Process the results of a column listing query. */
+        QStringList processColumnListing(QSqlQuery &query) const override;
     };
 
 } // namespace Orm::Query::Processors

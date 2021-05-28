@@ -1,7 +1,7 @@
 #include "orm/query/processors/processor.hpp"
 
-#include <QtSql/QSqlQuery>
-#include <QVariant>
+#include "orm/runtimeerror.hpp"
+#include "orm/utils/type.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -10,14 +10,10 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query::Processors
 {
 
-QStringList Processor::processColumnListing(QSqlQuery &query) const
+QStringList Processor::processColumnListing(QSqlQuery &) const
 {
-    QStringList columns;
-
-    while (query.next())
-        columns.append(query.value(0).value<QString>());
-
-    return columns;
+    throw RuntimeError(QStringLiteral("Method %1() is not implemented.")
+                       .arg(__tiny_func__));
 }
 
 } // namespace Orm::Query::Processors

@@ -24,7 +24,7 @@ namespace Orm::Query::Processors
         inline virtual ~Processor() = default;
 
         /*! Process the results of a column listing query. */
-        QStringList processColumnListing(QSqlQuery &query) const;
+        virtual QStringList processColumnListing(QSqlQuery &query) const;
     };
 
 } // namespace Orm::Query::Processors

@@ -52,4 +52,17 @@ class Torrent_AllowedMassAssignment final :
     inline static QStringList u_guarded {}; // disabled
 };
 
+class Torrent_GuardableColumn final :
+        public Model<Torrent_GuardableColumn>
+{
+    friend Model;
+    using Model::Model;
+
+    /*! The table associated with the model. */
+    QString u_table {"torrents"};
+
+    /*! The attributes that aren't mass assignable. */
+    inline static QStringList u_guarded {"xyz"};
+};
+
 #endif // MASSASSIGNMENTMODELS_HPP
