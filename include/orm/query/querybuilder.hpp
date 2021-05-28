@@ -100,7 +100,7 @@ namespace Query
         Builder &distinct();
 
         /*! Set the table which the query is targeting. */
-        Builder &from(const QString &table, const QString & = "");
+        Builder &from(const QString &table, const QString &as = "");
 
         /*! Add a join clause to the query. */
         Builder &join(const QString &table, const QString &first,

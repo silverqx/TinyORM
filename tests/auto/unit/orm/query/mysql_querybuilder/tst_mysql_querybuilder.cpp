@@ -139,6 +139,25 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
         QCOMPARE(builder->toSql(),
                  "select `w x`.`y`.`z` as `foo.bar` from `baz`");
     }
+    // Wrapping with as
+    {
+        const auto table = QStringLiteral("table as alias");
+        builder->select("*").from(table);
+
+        QCOMPARE(builder->getFrom(), table);
+        QCOMPARE(builder->toSql(),
+                 "select * from `table` as `alias`");
+    }
+    // Wrapping with as
+    {
+        const auto table = QStringLiteral("table");
+        const auto alias = QStringLiteral("alias");
+        builder->from(table, alias);
+
+        QCOMPARE(builder->getFrom(), QStringLiteral("%1 as %2").arg(table, alias));
+        QCOMPARE(builder->toSql(),
+                 "select * from `table` as `alias`");
+    }
 }
 
 void tst_MySql_QueryBuilder::select() const

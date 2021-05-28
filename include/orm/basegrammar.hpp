@@ -74,8 +74,7 @@ namespace Query
         BaseGrammar &setTablePrefix(const QString &prefix);
 
         /*! Wrap a value that has an alias. */
-        QString wrapAliasedValue(const QString &value,
-                                 const bool prefixAlias = false) const;
+        QString wrapAliasedValue(const QString &value, bool prefixAlias = false) const;
         /*! Wrap a single string in keyword identifiers. */
         virtual QString wrapValue(QString value) const;
 
