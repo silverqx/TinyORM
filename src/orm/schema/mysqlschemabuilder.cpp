@@ -11,11 +11,10 @@ namespace Orm::Schema
 
 QStringList MySqlSchemaBuilder::getColumnListing(const QString &table) const
 {
-    // FEATURE table prefix silverqx
-//    const auto table_ = m_connection.getTablePrefix() + table;
+    const QString table_ = m_connection.getTablePrefix() + table;
 
     auto query = m_connection.select(m_grammar.compileColumnListing(), {
-        m_connection.getDatabaseName(), table
+        m_connection.getDatabaseName(), table_
     });
 
     return m_connection.getPostProcessor().processColumnListing(query);

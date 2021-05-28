@@ -18,6 +18,8 @@ private slots:
 
     void from() const;
     void from_TableWrappingQuotationMarks() const;
+    void from_WithPrefix() const;
+    void from_AliasWithPrefix() const;
 
     void select() const;
     void addSelect() const;
@@ -158,6 +160,54 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
         QCOMPARE(builder->toSql(),
                  "select * from `table` as `alias`");
     }
+}
+
+void tst_MySql_QueryBuilder::from_WithPrefix() const
+{
+    auto builder = createQuery(m_connection);
+
+    const auto prefix = QStringLiteral("xyz_");
+    const auto table = QStringLiteral("table");
+    builder->from(table);
+
+    builder->getConnection().setTablePrefix(prefix);
+
+    QCOMPARE(builder->getFrom(), table);
+    QCOMPARE(builder->toSql(),
+             "select * from `xyz_table`");
+
+    // Restore
+    builder->getConnection().setTablePrefix("");
+}
+
+void tst_MySql_QueryBuilder::from_AliasWithPrefix() const
+{
+    auto builder = createQuery(m_connection);
+
+    const auto prefix = QStringLiteral("xyz_");
+    builder->getConnection().setTablePrefix(prefix);
+
+    {
+        const auto table = QStringLiteral("table");
+        const auto alias = QStringLiteral("alias");
+        builder->from(table, alias);
+
+        QCOMPARE(builder->getFrom(), QStringLiteral("%1 as %2").arg(table, alias));
+        QCOMPARE(builder->toSql(),
+                 "select * from `xyz_table` as `xyz_alias`");
+    }
+
+    {
+        const auto table = QStringLiteral("table as alias");
+        builder->from(table);
+
+        QCOMPARE(builder->getFrom(), table);
+        QCOMPARE(builder->toSql(),
+                 "select * from `xyz_table` as `xyz_alias`");
+    }
+
+    // Restore
+    builder->getConnection().setTablePrefix("");
 }
 
 void tst_MySql_QueryBuilder::select() const

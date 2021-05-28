@@ -16,6 +16,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+    class BaseGrammar;
     class DatabaseConnection;
 
 namespace Query
@@ -228,6 +229,13 @@ namespace Grammars
         virtual void recordsHaveBeenModified(bool value = true) = 0;
         /*! Reset the record modification state. */
         virtual void forgetRecordModificationState() = 0;
+
+        /*! Get the table prefix for the connection. */
+        virtual QString getTablePrefix() const = 0;
+        /*! Set the table prefix in use by the connection. */
+        virtual DatabaseConnection &setTablePrefix(const QString &prefix) = 0;
+        /*! Set the table prefix and return the query grammar. */
+        virtual BaseGrammar &withTablePrefix(BaseGrammar &grammar) const = 0;
     };
 
 } // namespace Orm

@@ -37,14 +37,22 @@ std::unique_ptr<SchemaBuilder> SQLiteConnection::getSchemaBuilder()
 
 std::unique_ptr<QueryGrammar> SQLiteConnection::getDefaultQueryGrammar() const
 {
-    // FEATURE table prefix silverqx
-    return std::make_unique<Query::Grammars::SQLiteGrammar>();
+    // Ownership of a unique_ptr()
+    auto grammar = std::make_unique<Query::Grammars::SQLiteGrammar>();
+
+    withTablePrefix(*grammar);
+
+    return grammar;
 }
 
 std::unique_ptr<SchemaGrammar> SQLiteConnection::getDefaultSchemaGrammar() const
 {
-    // FEATURE table prefix silverqx
-    return std::make_unique<Schema::Grammars::SQLiteSchemaGrammar>();
+    // Ownership of a unique_ptr()
+    auto grammar = std::make_unique<Schema::Grammars::SQLiteSchemaGrammar>();
+
+    withTablePrefix(*grammar);
+
+    return grammar;
 }
 
 std::unique_ptr<QueryProcessor> SQLiteConnection::getDefaultPostProcessor() const

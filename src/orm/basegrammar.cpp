@@ -65,6 +65,13 @@ QVariant BaseGrammar::getValue(const Expression &expression) const
     return expression.getValue();
 }
 
+BaseGrammar &BaseGrammar::setTablePrefix(const QString &prefix)
+{
+    m_tablePrefix = prefix;
+
+    return *this;
+}
+
 QString BaseGrammar::columnize(const QStringList &columns) const
 {
     return wrapArray(columns).join(", ");
@@ -76,18 +83,6 @@ QString BaseGrammar::parameter(const QVariant &value) const
     return isExpression(value)
             ? value.value<Expression>().getValue().value<QString>()
             : QStringLiteral("?");
-}
-
-QString BaseGrammar::getTablePrefix() const
-{
-    return m_tablePrefix;
-}
-
-BaseGrammar &BaseGrammar::setTablePrefix(const QString &prefix)
-{
-    m_tablePrefix = prefix;
-
-    return *this;
 }
 
 QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAlias) const

@@ -16,8 +16,8 @@ SchemaBuilder::SchemaBuilder(DatabaseConnection &connection)
 
 QStringList SchemaBuilder::getColumnListing(const QString &table) const
 {
-    // FEATURE table prefix silverqx
     auto query = m_connection.selectFromWriteConnection(
+                     m_connection.getTablePrefix() +
                      m_grammar.compileColumnListing(table));
 
     return m_connection.getPostProcessor().processColumnListing(query);

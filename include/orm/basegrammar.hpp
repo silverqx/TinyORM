@@ -59,6 +59,11 @@ namespace Query
         /*! Get the value of a raw expression. */
         QVariant getValue(const Expression &expression) const;
 
+        /*! Get the grammar's table prefix. */
+        QString getTablePrefix() const;
+        /*! Set the grammar's table prefix. */
+        BaseGrammar &setTablePrefix(const QString &prefix);
+
     protected:
         /*! Convert the vector of column names into a delimited string. */
         QString columnize(const QStringList &columns) const;
@@ -67,11 +72,6 @@ namespace Query
         QString parametrize(const Container &values) const;
         /*! Get the appropriate query parameter place-holder for a value. */
         QString parameter(const QVariant &value) const;
-
-        /*! Get the grammar's table prefix. */
-        QString getTablePrefix() const;
-        /*! Set the grammar's table prefix. */
-        BaseGrammar &setTablePrefix(const QString &prefix);
 
         /*! Wrap a value that has an alias. */
         QString wrapAliasedValue(const QString &value, bool prefixAlias = false) const;
@@ -93,6 +93,11 @@ namespace Query
         /*! The grammar table prefix. */
         QString m_tablePrefix = "";
     };
+
+    inline QString BaseGrammar::getTablePrefix() const
+    {
+        return m_tablePrefix;
+    }
 
     template<QStringContainer T>
     T BaseGrammar::wrapArray(T values) const

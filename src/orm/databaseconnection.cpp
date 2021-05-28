@@ -60,6 +60,22 @@ DatabaseConnection::table(const QString &table, const QString &as)
     return builder;
 }
 
+DatabaseConnection &DatabaseConnection::setTablePrefix(const QString &prefix)
+{
+    m_tablePrefix = prefix;
+
+    getQueryGrammar().setTablePrefix(prefix);
+
+    return *this;
+}
+
+BaseGrammar &DatabaseConnection::withTablePrefix(BaseGrammar &grammar) const
+{
+    grammar.setTablePrefix(m_tablePrefix);
+
+    return grammar;
+}
+
 QSharedPointer<QueryBuilder> DatabaseConnection::query()
 {
     return QSharedPointer<QueryBuilder>::create(*this, *m_queryGrammar);
@@ -977,6 +993,11 @@ DatabaseConnection::convertPositionalToNamedBindings(
         result.insert(QStringLiteral(":a"), binding);
 
     return result;
+}
+
+QueryGrammar &DatabaseConnection::getQueryGrammar()
+{
+    return *m_queryGrammar;
 }
 
 } // namespace Orm

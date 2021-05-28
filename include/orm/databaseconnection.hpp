@@ -23,6 +23,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+    // CUR return DatabaseConnection vs ConnectionInterface silverqx
     class SHAREDLIB_EXPORT DatabaseConnection :
             public ConnectionInterface,
             public Concerns::DetectsLostConnections
@@ -43,13 +44,19 @@ namespace Orm
         QSharedPointer<QueryBuilder>
         table(const QString &table, const QString &as = "") override;
 
+        /*! Get the table prefix for the connection. */
+        QString getTablePrefix() const override;
+        /*! Set the table prefix in use by the connection. */
+        DatabaseConnection &setTablePrefix(const QString &prefix) override;
+        /*! Set the table prefix and return the query grammar. */
+        BaseGrammar &withTablePrefix(BaseGrammar &grammar) const override;
+
         /*! Get a new query builder instance. */
         QSharedPointer<QueryBuilder> query() override;
 
         // FEATURE dilemma Raw Expressions fuckup🤔 silverqx
         /*! Get a new raw query expression. */
-        inline Query::Expression raw(const QVariant &value) const override
-        { return value; }
+        Query::Expression raw(const QVariant &value) const override;
 
         // TODO next transaction method with callback silverqx
         /*! Start a new database transaction. */
@@ -67,8 +74,7 @@ namespace Orm
         /*! Rollback to a named transaction savepoint. */
         bool rollbackToSavepoint(size_t id) override;
         /*! Get the number of active transactions. */
-        inline uint transactionLevel() const override
-        { return m_savepoints; }
+        uint transactionLevel() const override;
 
         /*! Run a select statement against the database. */
         QSqlQuery
@@ -109,9 +115,8 @@ namespace Orm
         /*! Get underlying database connection without executing any reconnect logic. */
         QSqlDatabase getRawQtConnection() const;
         /*! Get the connection resolver for an underlying database connection. */
-        inline const std::function<Connectors::ConnectionName()> &
-        getQtConnectionResolver() const
-        { return m_qtConnectionResolver; }
+        const std::function<Connectors::ConnectionName()> &
+        getQtConnectionResolver() const;
         /*! Set the connection resolver for an underlying database connection. */
         DatabaseConnection &setQtConnectionResolver(
                 const std::function<Connectors::ConnectionName()> &resolver);
@@ -137,8 +142,7 @@ namespace Orm
         /*! Get the database connection name. */
         const QString &getName() const override;
         /*! Get the name of the connected database. */
-        inline const QString &getDatabaseName() const override
-        { return m_database; }
+        const QString &getDatabaseName() const override;
 
         /*! Set the query grammar to the default implementation. */
         void useDefaultQueryGrammar() override;
@@ -293,9 +297,8 @@ namespace Orm
         std::function<Connectors::ConnectionName()> m_qtConnectionResolver;
         /*! The name of the connected database. */
         const QString m_database;
-        // FEATURE table prefix silverqx
         /*! The table prefix for the connection. */
-        const QString m_tablePrefix {""};
+        QString m_tablePrefix;
         /*! The database connection configuration options. */
         const QVariantHash m_config;
         /*! The reconnector instance for the connection. */
@@ -359,6 +362,9 @@ namespace Orm
         QVariantMap
         convertPositionalToNamedBindings(const QVector<QVariant> &bindings) const;
 
+        /*! Get the query grammar used by the connection. */
+        QueryGrammar &getQueryGrammar();
+
         /*! The flag for the database was disconnected. */
         bool m_disconnectedLogged = false;
         /*! The flag for the database was connected. */
@@ -387,9 +393,36 @@ namespace Orm
     };
 
     // TODO inline functions, do it like below silverqx
+    inline QString DatabaseConnection::getTablePrefix() const
+    {
+        return m_tablePrefix;
+    }
+
+    inline Query::Expression
+    DatabaseConnection::raw(const QVariant &value) const
+    {
+        return value;
+    }
+
+    inline uint DatabaseConnection::transactionLevel() const
+    {
+        return m_savepoints;
+    }
+
+    inline const std::function<Connectors::ConnectionName()> &
+    DatabaseConnection::getQtConnectionResolver() const
+    {
+        return m_qtConnectionResolver;
+    }
+
     inline const QString &DatabaseConnection::getName() const
     {
         return m_connectionName;
+    }
+
+    inline const QString &DatabaseConnection::getDatabaseName() const
+    {
+        return m_database;
     }
 
     inline std::shared_ptr<QVector<Log>>

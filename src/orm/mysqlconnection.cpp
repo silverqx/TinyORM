@@ -114,14 +114,22 @@ bool MySqlConnection::pingDatabase()
 
 std::unique_ptr<QueryGrammar> MySqlConnection::getDefaultQueryGrammar() const
 {
-    // FEATURE table prefix silverqx
-    return std::make_unique<Query::Grammars::MySqlGrammar>();
+    // Ownership of a unique_ptr()
+    auto grammar = std::make_unique<Query::Grammars::MySqlGrammar>();
+
+    withTablePrefix(*grammar);
+
+    return grammar;
 }
 
 std::unique_ptr<SchemaGrammar> MySqlConnection::getDefaultSchemaGrammar() const
 {
-    // FEATURE table prefix silverqx
-    return std::make_unique<Schema::Grammars::MySqlSchemaGrammar>();
+    // Ownership of a unique_ptr()
+    auto grammar = std::make_unique<Schema::Grammars::MySqlSchemaGrammar>();
+
+    withTablePrefix(*grammar);
+
+    return grammar;
 }
 
 std::unique_ptr<QueryProcessor> MySqlConnection::getDefaultPostProcessor() const
