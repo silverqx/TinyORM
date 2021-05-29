@@ -333,12 +333,12 @@ $capsule->bootEloquent();
 $configs = [
     'mysql' => [
         'driver'    => 'mysql',
-        'host'      => \getenv('DB_MYSQL_HOST') ?? '127.0.0.1',
-        'port'      => \getenv('DB_MYSQL_PORT') ?? '3306',
-        'database'  => \getenv('DB_MYSQL_DATABASE') ?? '',
-        'username'  => \getenv('DB_MYSQL_USERNAME') ?? 'root',
-        'password'  => \getenv('DB_MYSQL_PASSWORD') ?? '',
-        'charset'   => \getenv('DB_MYSQL_CHARSET') ?? 'utf8mb4',
+        'host'      => \getenv('DB_MYSQL_HOST')      ?? '127.0.0.1',
+        'port'      => \getenv('DB_MYSQL_PORT')      ?? '3306',
+        'database'  => \getenv('DB_MYSQL_DATABASE')  ?? '',
+        'username'  => \getenv('DB_MYSQL_USERNAME')  ?? 'root',
+        'password'  => \getenv('DB_MYSQL_PASSWORD')  ?? '',
+        'charset'   => \getenv('DB_MYSQL_CHARSET')   ?? 'utf8mb4',
         'collation' => \getenv('DB_MYSQL_COLLATION') ?? 'utf8mb4_0900_ai_ci',
         'timezone'  => '+00:00',
         'prefix'    => '',
@@ -349,6 +349,19 @@ $configs = [
         'database' => \getenv('DB_SQLITE_DATABASE') ?? '',
         'prefix'   => '',
         'foreign_key_constraints' => true,
+    ],
+
+    'pgsql' => [
+        'driver'   => 'pgsql',
+        'host'     => \getenv('DB_PGSQL_HOST')     ?? '127.0.0.1',
+        'port'     => \getenv('DB_PGSQL_PORT')     ?? '5432',
+        'database' => \getenv('DB_PGSQL_DATABASE') ?? 'postgres',
+        'schema'   => \getenv('DB_PGSQL_SCHEMA')   ?? 'public',
+        'username' => \getenv('DB_PGSQL_USERNAME') ?? 'postgres',
+        'password' => \getenv('DB_PGSQL_PASSWORD') ?? '',
+        'charset'  => \getenv('DB_PGSQL_CHARSET')  ?? 'utf8',
+        'sslmode'  => 'prefer',
+        'prefix'   => '',
     ],
 ];
 
