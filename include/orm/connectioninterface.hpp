@@ -136,6 +136,10 @@ namespace Grammars
         affectingStatement(const QString &queryString,
                            const QVector<QVariant> &bindings = {}) = 0;
 
+        /*! Run a raw, unprepared query against the database. */
+        virtual QSqlQuery
+        unprepared(const QString &queryString) = 0;
+
         /*! Get a new QSqlQuery instance for the current connection. */
         virtual QSqlQuery getQtQuery() = 0;
 

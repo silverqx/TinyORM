@@ -159,7 +159,8 @@ namespace Relations
         std::optional<QSqlQuery>
         insert(const QVector<AttributeItem> &attributes) const;
         /*! Insert a new record and get the value of the primary key. */
-        quint64 insertGetId(const QVector<AttributeItem> &attributes) const;
+        quint64 insertGetId(const QVector<AttributeItem> &attributes,
+                            const QString &sequence = "") const;
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
@@ -582,9 +583,10 @@ namespace Relations
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<class Model, class Related>
     quint64
-    Relation<Model, Related>::insertGetId(const QVector<AttributeItem> &attributes) const
+    Relation<Model, Related>::insertGetId(const QVector<AttributeItem> &attributes,
+                                          const QString &sequence) const
     {
-        return m_query->insertGetId(attributes);
+        return m_query->insertGetId(attributes, sequence);
     }
 
     template<class Model, class Related>

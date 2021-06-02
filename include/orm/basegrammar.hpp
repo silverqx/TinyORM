@@ -90,6 +90,7 @@ namespace Query
         /*! Get the column name without the table name, a string after last dot. */
         QString unqualifyColumn(const QString &column) const;
 
+        // FEATURE qt6, use everywhere QLatin1String("") instead of = "", BUT Qt6 has char8_t ctor, so u"" can be used, I will wait with this problem silverqx
         /*! The grammar table prefix. */
         QString m_tablePrefix = "";
     };

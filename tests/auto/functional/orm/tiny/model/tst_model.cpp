@@ -14,6 +14,7 @@ using Orm::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::ModelNotFoundError;
 
+// TEST tests, look at commit history for inspiration for new tests silverqx
 class tst_Model : public QObject
 {
     Q_OBJECT
@@ -394,7 +395,9 @@ void tst_Model::destroyWithVector() const
 
     auto torrentFiles =
             TorrentPreviewableFile::where({{"id", 7, "="},
-                                           {"id", 8, "=", "or"}})->get();
+                                           {"id", 8, "=", "or"}})
+            ->orderBy("id")
+            .get();
     auto &torrentFile7 = torrentFiles[0];
     auto &torrentFile8 = torrentFiles[1];
 
@@ -439,10 +442,17 @@ void tst_Model::all() const
     auto torrents = Torrent::all();
 
     QCOMPARE(torrents.size(), 6);
-    QCOMPARE(torrents.at(0).getAttribute("id"), QVariant(1));
-    QCOMPARE(torrents.at(0).getAttribute("name"), QVariant("test1"));
-    QCOMPARE(torrents.at(2).getAttribute("id"), QVariant(3));
-    QCOMPARE(torrents.at(2).getAttribute("name"), QVariant("test3"));
+
+    const std::unordered_map<quint64, QString> expectedIdNames {
+        {1, "test1"}, {2, "test2"}, {3, "test3"},
+        {4, "test4"}, {5, "test5"}, {6, "test6"},
+    };
+    for (const auto &torrent : torrents) {
+        const auto torrentId = torrent["id"].value<quint64>();
+
+        QVERIFY(expectedIdNames.contains(torrentId));
+        QCOMPARE(expectedIdNames.at(torrentId), torrent["name"].value<QString>());
+    }
 }
 
 void tst_Model::all_Columns() const
@@ -459,10 +469,10 @@ void tst_Model::all_Columns() const
     {
         auto torrents = Torrent::all({"id", "name"});
 
-        const auto &torrent2 = torrents.at(1);
-        QCOMPARE(torrent2.getAttributes().size(), 2);
-        QCOMPARE(torrent2.getAttributes().at(0).key, QString("id"));
-        QCOMPARE(torrent2.getAttributes().at(1).key, QString("name"));
+        const auto &torrent = torrents.at(1);
+        QCOMPARE(torrent.getAttributes().size(), 2);
+        QCOMPARE(torrent.getAttributes().at(0).key, QString("id"));
+        QCOMPARE(torrent.getAttributes().at(1).key, QString("name"));
     }
 }
 
@@ -519,11 +529,12 @@ void tst_Model::where() const
     }
     {
         auto torrents = Torrent::where("id", ">=", 3)->get();
+
         QCOMPARE(torrents.size(), 4);
-        QCOMPARE(torrents.at(0).getAttribute("id"), QVariant(3));
-        QCOMPARE(torrents.at(1).getAttribute("id"), QVariant(4));
-        QCOMPARE(torrents.at(2).getAttribute("id"), QVariant(5));
-        QCOMPARE(torrents.at(3).getAttribute("id"), QVariant(6));
+
+        const QVector<QVariant> expectedIds {3, 4, 5, 6};
+        for (const auto &torrent : torrents)
+            QVERIFY(expectedIds.contains(torrent.getAttribute("id")));
     }
 }
 
@@ -570,10 +581,16 @@ void tst_Model::where_WithVector() const
     {
         auto torrents = Torrent::where({{"id", 3, ">="}})->get();
         QCOMPARE(torrents.size(), 4);
-        QCOMPARE(torrents.at(0).getAttribute("id"), QVariant(3));
-        QCOMPARE(torrents.at(1).getAttribute("id"), QVariant(4));
-        QCOMPARE(torrents.at(2).getAttribute("id"), QVariant(5));
-        QCOMPARE(torrents.at(3).getAttribute("id"), QVariant(6));
+
+        const std::unordered_map<quint64, QString> expectedIdNames {
+            {3, "test3"}, {4, "test4"}, {5, "test5"}, {6, "test6"},
+        };
+        for (const auto &torrent : torrents) {
+            const auto torrentId = torrent["id"].value<quint64>();
+
+            QVERIFY(expectedIdNames.contains(torrentId));
+            QCOMPARE(expectedIdNames.at(torrentId), torrent["name"].value<QString>());
+        }
     }
 }
 
@@ -591,8 +608,10 @@ void tst_Model::where_WithVector_Condition() const
     {
         auto torrents = Torrent::where({{"size", 13}, {"size", 14, "=", "or"}})->get();
         QCOMPARE(torrents.size(), 2);
-        QCOMPARE(torrents.at(0).getAttribute("id"), QVariant(3));
-        QCOMPARE(torrents.at(1).getAttribute("id"), QVariant(4));
+
+        const QVector<QVariant> expectedIds {3, 4};
+        for (const auto &torrent : torrents)
+            QVERIFY(expectedIds.contains(torrent["id"]));
     }
     {
         auto torrents = Torrent::where({{"size", 13}, {"size", 14, "=", "or"}})
@@ -740,7 +759,7 @@ void tst_Model::firstOrNew_Found() const
     ConnectionOverride::connection = connection;
 
     {
-        auto torrent = Torrent::firstOrNew({{"id", 3}});
+        auto torrent = Torrent::firstOrNew({{"name", "test3"}});
 
         QVERIFY(torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 9);
@@ -751,10 +770,9 @@ void tst_Model::firstOrNew_Found() const
     }
     {
         auto torrent = Torrent::firstOrNew(
-                           {{"id", 3}},
+                           {{"name", "test3"}},
 
-                           {{"name", "test3"},
-                            {"size", 113},
+                           {{"size", 113},
                             {"progress", 313}});
 
         QVERIFY(torrent.exists);
@@ -773,24 +791,21 @@ void tst_Model::firstOrNew_NotFound() const
     ConnectionOverride::connection = connection;
 
     {
-        auto torrent = Torrent::firstOrNew({{"id", 100}});
+        auto torrent = Torrent::firstOrNew({{"name", "test100"}});
 
         QVERIFY(!torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 1);
-        QCOMPARE(torrent["id"], QVariant(100));
-        QCOMPARE(torrent["name"], QVariant());
+        QCOMPARE(torrent["name"], QVariant("test100"));
     }
     {
         auto torrent = Torrent::firstOrNew(
-                           {{"id", 100}},
+                           {{"name", "test100"}},
 
-                           {{"name", "test100"},
-                            {"size", 113},
+                           {{"size", 113},
                             {"progress", 313}});
 
         QVERIFY(!torrent.exists);
-        QCOMPARE(torrent.getAttributes().size(), 4);
-        QCOMPARE(torrent["id"], QVariant(100));
+        QCOMPARE(torrent.getAttributes().size(), 3);
         QCOMPARE(torrent["name"], QVariant("test100"));
         QCOMPARE(torrent["size"], QVariant(113));
         QCOMPARE(torrent["progress"], QVariant(313));
@@ -804,7 +819,7 @@ void tst_Model::firstOrCreate_Found() const
     ConnectionOverride::connection = connection;
 
     {
-        auto torrent = Torrent::firstOrCreate({{"id", 3}});
+        auto torrent = Torrent::firstOrCreate({{"name", "test3"}});
 
         QVERIFY(torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 9);
@@ -817,13 +832,12 @@ void tst_Model::firstOrCreate_Found() const
         const auto addedOn = QDateTime::currentDateTime();
 
         auto torrent = Torrent::firstOrCreate(
-                           {{"id", 3}},
+                           {{"name", "test3"}},
 
-                           {{"name", "test3"},
-                            {"size", 33},
+                           {{"size", 33},
                             {"progress", 33},
                             {"added_on", addedOn},
-                            {"hash", "3579e3af2768cdf52ec84c1f320333f68401dc60"}});
+                            {"hash", "0009e3af2768cdf52ec84c1f320333f68401dc60"}});
 
         QVERIFY(torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 9);
@@ -831,6 +845,9 @@ void tst_Model::firstOrCreate_Found() const
         QCOMPARE(torrent["name"], QVariant("test3"));
         QCOMPARE(torrent["size"], QVariant(13));
         QCOMPARE(torrent["progress"], QVariant(300));
+        QCOMPARE(torrent["added_on"],
+                QVariant(QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate)));
+        QCOMPARE(torrent["hash"], QVariant("3579e3af2768cdf52ec84c1f320333f68401dc6e"));
     }
 }
 
@@ -843,17 +860,16 @@ void tst_Model::firstOrCreate_NotFound() const
     const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
 
     auto torrent = Torrent::firstOrCreate(
-                       {{"id", 100}},
+                       {{"name", "test100"}},
 
-                       {{"name", "test100"},
-                        {"size", 113},
+                       {{"size", 113},
                         {"progress", 313},
                         {"added_on", addedOn},
                         {"hash", "1999e3af2768cdf52ec84c1f320333f68401dc6e"}});
 
     QVERIFY(torrent.exists);
     QCOMPARE(torrent.getAttributes().size(), 8);
-    QCOMPARE(torrent["id"], QVariant(100));
+    QVERIFY(torrent["id"]->value<quint64>() > 6);
     QCOMPARE(torrent["name"], QVariant("test100"));
     QCOMPARE(torrent["size"], QVariant(113));
     QCOMPARE(torrent["progress"], QVariant(313));
@@ -1244,5 +1260,3 @@ void tst_Model::massAssignment_isGuardableColumn() const
 QTEST_MAIN(tst_Model)
 
 #include "tst_model.moc"
-
-// TEST tests looks at commit history for inspiration for new tests silverqx

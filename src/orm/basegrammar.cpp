@@ -74,6 +74,7 @@ BaseGrammar &BaseGrammar::setTablePrefix(const QString &prefix)
 
 QString BaseGrammar::columnize(const QStringList &columns) const
 {
+    // CUR QString allocation 😟 solve everywhere 😭 silverqx
     return wrapArray(columns).join(", ");
 }
 
@@ -151,10 +152,7 @@ QString BaseGrammar::getAliasFromFrom(const QString &from) const
 
 QString BaseGrammar::unqualifyColumn(const QString &column) const
 {
-    // Prevent clazy warning
-    const auto columnList = column.split(QChar('.'));
-
-    return columnList.last().trimmed();
+    return column.split(QChar('.')).last().trimmed();
 }
 
 } // namespace Orm

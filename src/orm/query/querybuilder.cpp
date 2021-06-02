@@ -104,12 +104,13 @@ Builder::insertOrIgnore(const QVariantMap &values)
     return insertOrIgnore(QVector<QVariantMap> {values});
 }
 
-quint64 Builder::insertGetId(const QVariantMap &values)
+quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
 {
     const QVector<QVariantMap> valuesVector {values};
 
-    auto query = m_connection.insert(m_grammar.compileInsertGetId(*this, valuesVector),
-                                     cleanBindings(flatValuesForInsert(valuesVector)));
+    auto query = m_connection.insert(
+                     m_grammar.compileInsertGetId(*this, valuesVector, sequence),
+                     cleanBindings(flatValuesForInsert(valuesVector)));
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant, Processor::processInsertGetId() silverqx
     return query.lastInsertId().value<quint64>();
@@ -155,7 +156,12 @@ std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
 void Builder::truncate()
 {
     for (const auto &[sql, bindings] : m_grammar.compileTruncate(*this))
-        m_connection.statement(sql, bindings);
+        /* Postgres doesn't execute truncate statement as prepared query:
+           https://www.postgresql.org/docs/13/sql-prepare.html */
+        if (m_connection.driverName() == "QPSQL")
+            m_connection.unprepared(sql);
+        else
+            m_connection.statement(sql, bindings);
 }
 
 Builder &Builder::select(const QStringList &columns)
@@ -188,6 +194,20 @@ Builder &Builder::addSelect(const QString &column)
 Builder &Builder::distinct()
 {
     m_distinct = true;
+
+    return *this;
+}
+
+Builder &Builder::distinct(const QStringList &columns)
+{
+    m_distinct = columns;
+
+    return *this;
+}
+
+Builder &Builder::distinct(QStringList &&columns)
+{
+    m_distinct = std::move(columns);
 
     return *this;
 }

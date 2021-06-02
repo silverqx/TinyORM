@@ -27,12 +27,12 @@ Database::getConfigurations(const QStringList &connections)
     static auto configurations = ConfigurationsType {
         {"tinyorm_mysql_tests", {
             {"driver",    "QMYSQL"},
-            {"host",      qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
-            {"port",      qEnvironmentVariable("DB_MYSQL_PORT", "3306")},
+            {"host",      qEnvironmentVariable("DB_MYSQL_HOST",     "127.0.0.1")},
+            {"port",      qEnvironmentVariable("DB_MYSQL_PORT",     "3306")},
             {"database",  qEnvironmentVariable("DB_MYSQL_DATABASE", "")},
             {"username",  qEnvironmentVariable("DB_MYSQL_USERNAME", "root")},
             {"password",  qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
-            {"charset",   qEnvironmentVariable("DB_MYSQL_CHARSET", "utf8mb4")},
+            {"charset",   qEnvironmentVariable("DB_MYSQL_CHARSET",  "utf8mb4")},
             {"collation", qEnvironmentVariable("DB_MYSQL_COLLATION",
                                                "utf8mb4_0900_ai_ci")},
             // Very important for tests
@@ -55,6 +55,22 @@ Database::getConfigurations(const QStringList &connections)
             {"foreign_key_constraints", qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS",
                                                              "true")},
             {"check_database_exists",   true},
+        }},
+
+        {"tinyorm_pgsql_tests", {
+            {"driver",   "QPSQL"},
+            {"host",     qEnvironmentVariable("DB_PGSQL_HOST",     "127.0.0.1")},
+            {"port",     qEnvironmentVariable("DB_PGSQL_PORT",     "5432")},
+            {"database", qEnvironmentVariable("DB_PGSQL_DATABASE", "")},
+            {"schema",   qEnvironmentVariable("DB_PGSQL_SCHEMA",   "public")},
+            {"username", qEnvironmentVariable("DB_PGSQL_USERNAME", "postgres")},
+            {"password", qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},
+            {"charset",  qEnvironmentVariable("DB_PGSQL_CHARSET",  "utf8")},
+            // Very important for tests
+            // BUG if I change timezone, tests don't fail, that is problem silverqx
+            {"timezone", "UTC"},
+            {"prefix",   ""},
+            {"options",  QVariantHash()},
         }},
     };
 

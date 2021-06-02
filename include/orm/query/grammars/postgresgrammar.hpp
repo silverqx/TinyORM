@@ -1,5 +1,5 @@
-#ifndef SQLITEGRAMMAR_H
-#define SQLITEGRAMMAR_H
+#ifndef POSTGRESGRAMMAR_H
+#define POSTGRESGRAMMAR_H
 
 #include "orm/query/grammars/grammar.hpp"
 
@@ -10,16 +10,20 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query::Grammars
 {
 
-    class SHAREDLIB_EXPORT SQLiteGrammar : public Grammar
+    class SHAREDLIB_EXPORT PostgresGrammar : public Grammar
     {
-        Q_DISABLE_COPY(SQLiteGrammar)
+        Q_DISABLE_COPY(PostgresGrammar)
 
     public:
-        SQLiteGrammar() = default;
+        PostgresGrammar() = default;
 
         /*! Compile an insert ignore statement into SQL. */
         QString compileInsertOrIgnore(const QueryBuilder &query,
                                       const QVector<QVariantMap> &values) const override;
+        /*! Compile an insert and get ID statement into SQL. */
+        QString compileInsertGetId(const QueryBuilder &query,
+                                   const QVector<QVariantMap> &values,
+                                   const QString &sequence) const override;
 
         /*! Compile an update statement into SQL. */
         QString compileUpdate(QueryBuilder &query,
@@ -39,6 +43,9 @@ namespace Orm::Query::Grammars
         /*! Get the grammar specific operators. */
         const QVector<QString> &getOperators() const override;
 
+        /*! Compile a basic where clause. */
+        QString whereBasic(const WhereConditionItem &where) const;
+
     protected:
         /*! Compile the columns for an update statement. */
         QString compileUpdateColumns(const QVector<UpdateItem> &values) const override;
@@ -49,6 +56,9 @@ namespace Orm::Query::Grammars
         /*! Map the WhereType to a Grammar::whereXx() methods. */
         const std::function<QString(const WhereConditionItem &)> &
         getWhereMethod(WhereType whereType) const override;
+
+        /*! Compile the "select *" portion of the query. */
+        QString compileColumns(const QueryBuilder &query) const override;
 
     private:
         /*! Compile an update statement with joins or limit into SQL. */
@@ -64,4 +74,4 @@ namespace Orm::Query::Grammars
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // SQLITEGRAMMAR_H
+#endif // POSTGRESGRAMMAR_H

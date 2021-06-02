@@ -79,6 +79,7 @@ namespace Relations {
     // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
     // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
     // BUG Qt sql drivers do not work with mysql json columns silverqx
+    // CUR postgres, study how collation works silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -196,7 +197,8 @@ namespace Relations {
         insert(const QVector<AttributeItem> &attributes);
         /*! Insert a new record and get the value of the primary key. */
         static quint64
-        insertGetId(const QVector<AttributeItem> &attributes);
+        insertGetId(const QVector<AttributeItem> &attributes,
+                    const QString &sequence = "");
 
         /*! Create or update a record matching the attributes, and fill it with values. */
         Derived updateOrCreate(const QVector<WhereItem> &attributes,
@@ -1372,9 +1374,9 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     quint64
     Model<Derived, AllRelations...>::insertGetId(
-            const QVector<AttributeItem> &attributes)
+            const QVector<AttributeItem> &attributes, const QString &sequence)
     {
-        return query()->insertGetId(attributes);
+        return query()->insertGetId(attributes, sequence);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -4069,14 +4071,14 @@ namespace Relations {
             const TinyBuilder<Derived> &query,
             const QVector<AttributeItem> &attributes)
     {
-        // FEATURE postgres, insertGetId() and getKeyName() for sequence parameter silverqx
-//        const auto &keyName = getKeyName();
+        const auto &keyName = getKeyName();
 
-        const auto id = query.insertGetId(attributes/*, keyName*/);
+        const auto id = query.insertGetId(attributes, keyName);
 
+        // CUR try assert and try to remove this check silverqx
         // When insert was successful
         if (id != 0)
-            setAttribute(getKeyName(), id);
+            setAttribute(keyName, id);
 
         /* QSqlQuery returns an invalid QVariant if can't obtain last inserted id,
            which is converted to 0. */

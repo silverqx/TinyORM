@@ -200,7 +200,15 @@ QString Grammar::compileColumns(const QueryBuilder &query) const
 {
     QString select;
 
-    if (query.getDistinct())
+    const auto &distinct = query.getDistinct();
+
+    if (!std::holds_alternative<bool>(distinct))
+        throw RuntimeError(
+                QStringLiteral("Connection '%1' doesn't support defining more distinct "
+                               "columns.")
+                .arg(query.getConnection().getName()));
+
+    if (std::get<bool>(distinct))
         select += "select distinct ";
     else
         select += "select ";

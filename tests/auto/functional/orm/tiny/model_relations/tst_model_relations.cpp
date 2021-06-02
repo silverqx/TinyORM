@@ -1431,10 +1431,17 @@ void tst_Model_Relations::push_EagerLoad() const
        I will not create the new eager model class. */
     QCOMPARE(torrent->getRelations().size(), static_cast<std::size_t>(2));
 
+    const auto findFile2 = [](const auto *file)
+    {
+        return (*file)["id"].template value<quint64>() == 2
+                && (*file)["torrent_id"].template value<quint64>() == 2;
+    };
+
     auto files = torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
-    /* Make a copy of a pointer, because first() returns reference,
-       reference to pointer is not needed. */
-    auto *file = files.first();
+    auto itFile = std::find_if(files.cbegin(), files.cend(), findFile2);
+    if (itFile == files.cend())
+        QFAIL("File was not found in the files vector.");
+    auto *file = *itFile;
     auto *fileProperty =
             file->getRelation<TorrentPreviewableFilePropertyEager, One>("fileProperty");
 
@@ -1469,7 +1476,11 @@ void tst_Model_Relations::push_EagerLoad() const
 
     auto filesVerify =
             torrentVerify->getRelation<TorrentPreviewableFileEager>("torrentFiles");
-    auto *fileVerify = filesVerify.first();
+    auto itFileVerify =
+            std::find_if(filesVerify.cbegin(), filesVerify.cend(), findFile2);
+    if (itFileVerify == filesVerify.cend())
+        QFAIL("File to verify was not found in the filesVerify vector.");
+    auto *fileVerify = *itFileVerify;
     auto *filePropertyVerify =
             fileVerify->getRelation<TorrentPreviewableFilePropertyEager, One>(
                 "fileProperty");
@@ -1505,10 +1516,17 @@ void tst_Model_Relations::push_LazyLoad() const
 
     QVERIFY(torrent->getRelations().empty());
 
+    const auto findFile2 = [](const auto *file)
+    {
+        return (*file)["id"].template value<quint64>() == 2
+                && (*file)["torrent_id"].template value<quint64>() == 2;
+    };
+
     auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
-    /* Make a copy of a pointer, because first() returns reference,
-       reference to pointer is not needed. */
-    auto *file = files.first();
+    auto itFile = std::find_if(files.cbegin(), files.cend(), findFile2);
+    if (itFile == files.cend())
+        QFAIL("File was not found in the files vector.");
+    auto *file = *itFile;
     auto *fileProperty =
             file->getRelationValue<TorrentPreviewableFileProperty, One>("fileProperty");
 
@@ -1543,7 +1561,11 @@ void tst_Model_Relations::push_LazyLoad() const
 
     auto filesVerify =
             torrentVerify->getRelationValue<TorrentPreviewableFile>("torrentFiles");
-    auto *fileVerify = filesVerify.first();
+    auto itFileVerify =
+            std::find_if(filesVerify.cbegin(), filesVerify.cend(), findFile2);
+    if (itFileVerify == filesVerify.cend())
+        QFAIL("File to verify was not found in the filesVerify vector.");
+    auto *fileVerify = *itFileVerify;
     auto *filePropertyVerify =
             fileVerify->getRelationValue<TorrentPreviewableFileProperty, One>(
                 "fileProperty");

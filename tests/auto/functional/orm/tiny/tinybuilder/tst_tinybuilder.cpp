@@ -62,10 +62,17 @@ void tst_TinyBuilder::get() const
     auto torrents = createQuery<Torrent>()->get();
 
     QCOMPARE(torrents.size(), 6);
-    QCOMPARE(torrents.at(0).getAttribute("id"), QVariant(1));
-    QCOMPARE(torrents.at(0).getAttribute("name"), QVariant("test1"));
-    QCOMPARE(torrents.at(2).getAttribute("id"), QVariant(3));
-    QCOMPARE(torrents.at(2).getAttribute("name"), QVariant("test3"));
+
+    const std::unordered_map<quint64, QString> expectedIdNames {
+        {1, "test1"}, {2, "test2"}, {3, "test3"},
+        {4, "test4"}, {5, "test5"}, {6, "test6"},
+    };
+    for (const auto &torrent : torrents) {
+        const auto torrentId = torrent["id"].value<quint64>();
+
+        QVERIFY(expectedIdNames.contains(torrentId));
+        QCOMPARE(expectedIdNames.at(torrentId), torrent["name"].value<QString>());
+    }
 
     QCOMPARE(torrents.at(1).getAttributes().size(), 9);
 }
@@ -278,6 +285,7 @@ void tst_TinyBuilder::update_SameValue() const
     auto [affected, query] = Torrent::whereEq("id", 5)
             ->update({{"progress", torrent->getAttribute("progress")}});
 
+    // CUR fix this, first used different value for progress and remove dilemma below silverqx
     /* Don't exactly know what cause this, I think some sort of caching can
        occure. */
     QVERIFY(affected == 1 || affected == 0);

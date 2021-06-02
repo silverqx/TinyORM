@@ -30,12 +30,11 @@ namespace Orm::Query::Grammars
         virtual QString
         compileInsertOrIgnore(const QueryBuilder &query,
                               const QVector<QVariantMap> &values) const;
-        // FEATURE postgres, sequence silverqx
         /*! Compile an insert and get ID statement into SQL. */
-        inline QString
+        virtual QString
         compileInsertGetId(const QueryBuilder &query,
-                           const QVector<QVariantMap> &values) const
-        { return compileInsert(query, values); }
+                           const QVector<QVariantMap> &values,
+                           const QString &sequence) const;
 
         /*! Compile an update statement into SQL. */
         virtual QString
@@ -95,7 +94,7 @@ namespace Orm::Query::Grammars
         QStringList compileComponents(const QueryBuilder &query) const;
 
         /*! Compile the "select *" portion of the query. */
-        QString compileColumns(const QueryBuilder &query) const;
+        virtual QString compileColumns(const QueryBuilder &query) const;
         /*! Compile the "from" portion of the query. */
         QString compileFrom(const QueryBuilder &query) const;
         /*! Compile the "join" portions of the query. */
@@ -170,6 +169,13 @@ namespace Orm::Query::Grammars
         /*! Remove the leading boolean from a statement. */
         QString removeLeadingBoolean(QString statement) const;
     };
+
+    inline QString Grammar::compileInsertGetId(
+            const QueryBuilder &query, const QVector<QVariantMap> &values,
+            const QString &) const
+    {
+        return compileInsert(query, values);
+    }
 
 } // namespace Orm::Query::Grammars
 #ifdef TINYORM_COMMON_NAMESPACE

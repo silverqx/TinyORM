@@ -11,6 +11,7 @@ HEADERS += \
     $$PWD/orm/connectors/connector.hpp \
     $$PWD/orm/connectors/connectorinterface.hpp \
     $$PWD/orm/connectors/mysqlconnector.hpp \
+    $$PWD/orm/connectors/postgresconnector.hpp \
     $$PWD/orm/connectors/sqliteconnector.hpp \
     $$PWD/orm/databaseconnection.hpp \
     $$PWD/orm/databasemanager.hpp \
@@ -22,21 +23,26 @@ HEADERS += \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/mysqlconnection.hpp \
     $$PWD/orm/ormtypes.hpp \
+    $$PWD/orm/postgresconnection.hpp \
     $$PWD/orm/query/expression.hpp \
     $$PWD/orm/query/grammars/grammar.hpp \
     $$PWD/orm/query/grammars/mysqlgrammar.hpp \
+    $$PWD/orm/query/grammars/postgresgrammar.hpp \
     $$PWD/orm/query/grammars/sqlitegrammar.hpp \
     $$PWD/orm/query/joinclause.hpp \
     $$PWD/orm/query/processors/mysqlprocessor.hpp \
+    $$PWD/orm/query/processors/postgresprocessor.hpp \
     $$PWD/orm/query/processors/processor.hpp \
     $$PWD/orm/query/processors/sqliteprocessor.hpp \
     $$PWD/orm/query/querybuilder.hpp \
     $$PWD/orm/queryerror.hpp \
     $$PWD/orm/runtimeerror.hpp \
     $$PWD/orm/schema/grammars/mysqlschemagrammar.hpp \
+    $$PWD/orm/schema/grammars/postgresschemagrammar.hpp \
     $$PWD/orm/schema/grammars/schemagrammar.hpp \
     $$PWD/orm/schema/grammars/sqliteschemagrammar.hpp \
     $$PWD/orm/schema/mysqlschemabuilder.hpp \
+    $$PWD/orm/schema/postgresschemabuilder.hpp \
     $$PWD/orm/schema/schemabuilder.hpp \
     $$PWD/orm/schema/sqliteschemabuilder.hpp \
     $$PWD/orm/sqlerror.hpp \

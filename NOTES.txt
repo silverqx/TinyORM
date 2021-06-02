@@ -79,6 +79,7 @@ Features related/to implement:
  - multidriver           : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
  - pivot                 : pivot table in the many-to-many relationship
  - postgres              : specific to PostgreSQL server
+ - qt6                   : related to Qt6 upgrade or compatibility
  - read/write connection : read/write connection
  - relations             : relations related 🤓
  - savepoints            : database savepoints

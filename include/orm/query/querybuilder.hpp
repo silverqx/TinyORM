@@ -64,10 +64,9 @@ namespace Query
         /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVariantMap &values);
-        // FEATURE postgres, support sequence, add sequence parameter silverqx
         // FEATURE dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
         /*! Insert a new record and get the value of the primary key. */
-        quint64 insertGetId(const QVariantMap &values);
+        quint64 insertGetId(const QVariantMap &values, const QString &sequence = "");
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
@@ -98,6 +97,10 @@ namespace Query
 
         /*! Force the query to only return distinct results. */
         Builder &distinct();
+        /*! Force the query to only return distinct results. */
+        Builder &distinct(const QStringList &columns);
+        /*! Force the query to only return distinct results. */
+        Builder &distinct(QStringList &&columns);
 
         /*! Set the table which the query is targeting. */
         Builder &from(const QString &table, const QString &as = "");
@@ -287,8 +290,15 @@ namespace Query
         { return m_bindings; }
 
         /*! Check if the query returns distinct results. */
-        inline bool getDistinct() const
-        { return m_distinct; }
+        const std::variant<bool, QStringList> &
+        getDistinct() const;
+        /*! Check if the query returns distinct results. */
+        template<typename T> requires std::is_same_v<T, bool>
+        bool getDistinct() const;
+        /*! Check if the query returns distinct results. */
+        template<typename T> requires std::is_same_v<T, QStringList>
+        const QStringList &
+        getDistinct() const;
         // TODO check up all code and return references when appropriate silverqx
         /*! Get the columns that should be returned. */
         inline const QStringList &getColumns() const
@@ -405,7 +415,7 @@ namespace Query
         };
 
         /*! Indicates if the query returns distinct results. */
-        bool m_distinct = false;
+        std::variant<bool, QStringList> m_distinct = false;
         /*! The columns that should be returned. */
         QStringList m_columns;
         /*! The table which the query is targeting. */
@@ -427,6 +437,25 @@ namespace Query
         /*! Indicates whether row locking is being used. */
         std::variant<std::monostate, bool, QString> m_lock;
     };
+
+    inline const std::variant<bool, QStringList> &
+    Builder::getDistinct() const
+    {
+        return m_distinct;
+    }
+
+    template<typename T> requires std::is_same_v<T, bool>
+    inline bool Builder::getDistinct() const
+    {
+        return std::get<bool>(m_distinct);
+    }
+
+    template<typename T> requires std::is_same_v<T, QStringList>
+    inline const QStringList &
+    Builder::getDistinct() const
+    {
+        return std::get<QStringList>(m_distinct);
+    }
 
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>

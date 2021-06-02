@@ -311,6 +311,34 @@ function seedTables(string $connection)
 }
 
 /**
+ * Fix sequence number for Postgres.
+ *
+ * I have to fix sequences in Postgres because I'm inserting IDs manually and
+ * it doesn't increment sequences.
+ *
+ * @return void
+ */
+function fixSequences() {
+    $sequences = [
+        'torrents_id_seq'                            => 7,
+        'torrent_peers_id_seq'                       => 5,
+        'torrent_previewable_files_id_seq'           => 10,
+        'torrent_previewable_file_properties_id_seq' => 6,
+        'file_property_properties_id_seq'            => 7,
+        'torrent_tags_id_seq'                        => 6,
+        'tag_properties_id_seq'                      => 5,
+        'users_id_seq'                               => 4,
+        'roles_id_seq'                               => 4,
+        'user_phones_id_seq'                         => 4,
+    ];
+
+    foreach ($sequences as $sequence => $id) {
+        Capsule::connection('pgsql')
+            ->unprepared("ALTER SEQUENCE {$sequence} RESTART WITH {$id}");
+    }
+}
+
+/**
  * Create and seed all tables for all connections.
  *
  * @param array $connections Connection names
@@ -322,6 +350,9 @@ function createAndSeedTables(array $connections)
         dropAllTables($connection);
         createTables($connection);
         seedTables($connection);
+
+        if ($connection === 'pgsql')
+            fixSequences();
     }
 }
 
@@ -333,33 +364,34 @@ $capsule->bootEloquent();
 $configs = [
     'mysql' => [
         'driver'    => 'mysql',
-        'host'      => \getenv('DB_MYSQL_HOST')      ?? '127.0.0.1',
-        'port'      => \getenv('DB_MYSQL_PORT')      ?? '3306',
-        'database'  => \getenv('DB_MYSQL_DATABASE')  ?? '',
-        'username'  => \getenv('DB_MYSQL_USERNAME')  ?? 'root',
-        'password'  => \getenv('DB_MYSQL_PASSWORD')  ?? '',
-        'charset'   => \getenv('DB_MYSQL_CHARSET')   ?? 'utf8mb4',
-        'collation' => \getenv('DB_MYSQL_COLLATION') ?? 'utf8mb4_0900_ai_ci',
+        'host'      => \getenv('DB_MYSQL_HOST')      ?: '127.0.0.1',
+        'port'      => \getenv('DB_MYSQL_PORT')      ?: '3306',
+        'database'  => \getenv('DB_MYSQL_DATABASE')  ?: '',
+        'username'  => \getenv('DB_MYSQL_USERNAME')  ?: 'root',
+        'password'  => \getenv('DB_MYSQL_PASSWORD')  ?: '',
+        'charset'   => \getenv('DB_MYSQL_CHARSET')   ?: 'utf8mb4',
+        'collation' => \getenv('DB_MYSQL_COLLATION') ?: 'utf8mb4_0900_ai_ci',
         'timezone'  => '+00:00',
         'prefix'    => '',
     ],
 
     'sqlite' => [
         'driver'   => 'sqlite',
-        'database' => \getenv('DB_SQLITE_DATABASE') ?? '',
+        'database' => \getenv('DB_SQLITE_DATABASE') ?: '',
         'prefix'   => '',
         'foreign_key_constraints' => true,
     ],
 
     'pgsql' => [
         'driver'   => 'pgsql',
-        'host'     => \getenv('DB_PGSQL_HOST')     ?? '127.0.0.1',
-        'port'     => \getenv('DB_PGSQL_PORT')     ?? '5432',
-        'database' => \getenv('DB_PGSQL_DATABASE') ?? 'postgres',
-        'schema'   => \getenv('DB_PGSQL_SCHEMA')   ?? 'public',
-        'username' => \getenv('DB_PGSQL_USERNAME') ?? 'postgres',
-        'password' => \getenv('DB_PGSQL_PASSWORD') ?? '',
-        'charset'  => \getenv('DB_PGSQL_CHARSET')  ?? 'utf8',
+        'host'     => \getenv('DB_PGSQL_HOST')     ?: '127.0.0.1',
+        'port'     => \getenv('DB_PGSQL_PORT')     ?: '5432',
+        'database' => \getenv('DB_PGSQL_DATABASE') ?: 'postgres',
+        'schema'   => \getenv('DB_PGSQL_SCHEMA')   ?: 'public',
+        'username' => \getenv('DB_PGSQL_USERNAME') ?: 'postgres',
+        'password' => \getenv('DB_PGSQL_PASSWORD') ?: '',
+        'charset'  => \getenv('DB_PGSQL_CHARSET')  ?: 'utf8',
+        'timezone' => 'UTC',
         'sslmode'  => 'prefer',
         'prefix'   => '',
     ],

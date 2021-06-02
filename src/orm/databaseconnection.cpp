@@ -425,6 +425,38 @@ DatabaseConnection::affectingStatement(const QString &queryString,
     });
 }
 
+QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
+{
+    return run<QSqlQuery>(queryString, {},
+               [this](const QString &queryString, const QVector<QVariant> &)
+               -> QSqlQuery
+    {
+        if (m_pretending)
+            return getQtQuery();
+
+        // Prepare unprepared QSqlQuery 🙂
+        auto query = getQtQuery();
+
+        if (query.exec(queryString)) {
+            // Query statements counter
+            if (m_countingStatements)
+                ++m_statementsCounter.normal;
+
+            recordsHaveBeenModified();
+
+            return query;
+        }
+
+        /* If an error occurs when attempting to run a query, we'll transform it
+           to the exception QueryError(), which formats the error message to
+           include the bindings with SQL, which will make this exception a lot
+           more helpful to the developer instead of just the database's errors. */
+        throw QueryError(
+                    QStringLiteral("Statement in %1() failed.").arg(__tiny_func__),
+                    query);
+    });
+}
+
 QSqlDatabase DatabaseConnection::getQtConnection()
 {
     if (!m_qtConnection) {
@@ -504,11 +536,15 @@ DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
                       .toString(m_queryGrammar->getDateFormat());
             break;
 
-        /* Even if eg. the MySQL driver handles this internally, I will do it this way
-           to be consistent across all supported databases. */
-        case QMetaType::Bool:
-            binding.convert(QMetaType::Int);
-            break;
+        /* I have decided to not handle the QMetaType::Bool here, little info:
+           - Qt's MySql driver handles bool values internally, it doesn't matter if you
+             pass true/false or 0/1
+           - I have not investigated how Qt's Postgres driver works internally, but
+             Postgres is very sensitive about bool columns and bool values, so if you
+             have bool column then you have to pass bool type to the driver
+           - I don't remember about Qt's Sqlite driver exactly, but I'm pretty sure that
+             it doesn't handle bool values as Qt's mysql driver does, because I had some
+             problems with bool values when I have added Sqlite support */
 
         default:
             break;

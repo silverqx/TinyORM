@@ -235,11 +235,11 @@ void tst_SQLite_QueryBuilder::distinct() const
 
     builder->from("torrents");
 
-    auto distinct = builder->getDistinct();
+    auto distinct = std::get<bool>(builder->getDistinct());
     QCOMPARE(distinct, false);
 
     builder->distinct();
-    distinct = builder->getDistinct();
+    distinct = std::get<bool>(builder->getDistinct());
     QCOMPARE(distinct, true);
     QCOMPARE(builder->toSql(),
              "select distinct * from \"torrents\"");

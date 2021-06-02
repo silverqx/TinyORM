@@ -1,8 +1,10 @@
 #include "orm/connectors/connectionfactory.hpp"
 
 #include "orm/connectors/mysqlconnector.hpp"
+#include "orm/connectors/postgresconnector.hpp"
 #include "orm/connectors/sqliteconnector.hpp"
 #include "orm/mysqlconnection.hpp"
+#include "orm/postgresconnection.hpp"
 #include "orm/sqliteconnection.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -34,8 +36,8 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
 
     if (driver == "QMYSQL")
         return std::make_unique<MySqlConnector>();
-//    else if (driver == "QPSQL")
-//        return std::make_unique<PostgresConnector>();
+    else if (driver == "QPSQL")
+        return std::make_unique<PostgresConnector>();
     else if (driver == "QSQLITE")
         return std::make_unique<SQLiteConnector>();
 //    else if (driver == "SQLSRV")
@@ -144,8 +146,8 @@ ConnectionFactory::createConnection(
 {
     if (driver == "QMYSQL")
         return std::make_unique<MySqlConnection>(connection, database, prefix, config);
-//    else if (driver == "QPSQL")
-//        return std::make_unique<PostgresConnection>(connection, database, prefix, config);
+    else if (driver == "QPSQL")
+        return std::make_unique<PostgresConnection>(connection, database, prefix, config);
     else if (driver == "QSQLITE")
         return std::make_unique<SQLiteConnection>(connection, database, prefix, config);
 //    else if (driver == "SQLSRV")

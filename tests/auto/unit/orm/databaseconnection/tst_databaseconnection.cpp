@@ -37,7 +37,7 @@ void tst_DatabaseConnection::pingDatabase() const
     auto &connection_ = DB::connection(connection);
 
     if (const auto driverName = connection_.driverName();
-        driverName == "QSQLITE"
+        driverName != "QMYSQL"
     )
         QSKIP(QStringLiteral("The '%1' database driver doesn't support ping command.")
               .arg(driverName).toUtf8().constData(), );

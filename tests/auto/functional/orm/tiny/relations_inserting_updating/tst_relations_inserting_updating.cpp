@@ -1544,7 +1544,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
     QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
-                             {{"active", 0}},
+                             {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
@@ -1594,7 +1594,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
     QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({{torrent100}, {torrent101}},
-                             {{"active", 0}},
+                             {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
@@ -1640,7 +1640,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithIds() const
     const auto torrent5Id = (*torrent5)["id"];
 
     torrent5->tags()->attach({tag100["id"], tag101["id"]},
-                             {{"active", 0}},
+                             {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
@@ -1686,7 +1686,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithModels() const
     const auto torrent5Id = (*torrent5)["id"];
 
     torrent5->tags()->attach({{tag100}, {tag101}},
-                             {{"active", 0}},
+                             {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
@@ -1736,8 +1736,8 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
     QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({
-        {torrent100["id"]->value<quint64>(), {{"active", 0}}},
-        {torrent101["id"]->value<quint64>(), {{"active", 1}}},
+        {torrent100["id"]->value<quint64>(), {{"active", false}}},
+        {torrent101["id"]->value<quint64>(), {{"active", true}}},
     }, false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
@@ -1747,9 +1747,9 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
     QCOMPARE(taggeds.size(), 2);
 
     // Expected active attribute values by the torrent ID
-    std::unordered_map<quint64, int> taggedActive {
-        {torrent100["id"]->value<quint64>(), 0},
-        {torrent101["id"]->value<quint64>(), 1},
+    std::unordered_map<quint64, bool> taggedActive {
+        {torrent100["id"]->value<quint64>(), false},
+        {torrent101["id"]->value<quint64>(), true},
     };
 
     quint64 torrentId = 0;
@@ -1790,8 +1790,8 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() co
     const auto torrent5Id = (*torrent5)["id"];
 
     torrent5->tags()->attach({
-        {tag100["id"]->value<quint64>(), {{"active", 0}}},
-        {tag101["id"]->value<quint64>(), {{"active", 1}}}
+        {tag100["id"]->value<quint64>(), {{"active", false}}},
+        {tag101["id"]->value<quint64>(), {{"active", true}}}
     }, false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
@@ -1802,8 +1802,8 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() co
 
     // Expected active attribute values by the tag ID
     std::unordered_map<quint64, int> taggedActive {
-        {tag100["id"]->value<quint64>(), 0},
-        {tag101["id"]->value<quint64>(), 1},
+        {tag100["id"]->value<quint64>(), false},
+        {tag101["id"]->value<quint64>(), true},
     };
 
     quint64 tagId = 0;
@@ -1848,7 +1848,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
     QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
-                             {{"active", 0}},
+                             {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
@@ -1868,7 +1868,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
 
         QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(0));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
     auto affected = tag4->torrents()->detach({torrent100["id"], torrent101["id"]},
@@ -1910,7 +1910,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
     QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
-                             {{"active", 0}},
+                             {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
@@ -1930,7 +1930,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
 
         QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(0));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
     auto affected = tag4->torrents()->detach({torrent100, torrent101}, false);
@@ -1971,7 +1971,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
     QVERIFY(tag5->exists);
 
     tag5->torrents()->attach({torrent100["id"], torrent101["id"]},
-                             {{"active", 0}},
+                             {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag5)["id"])
@@ -1991,7 +1991,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
 
         QCOMPARE(tagged["tag_id"].value(), (*tag5)["id"]);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(0));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
     auto affected = tag5->torrents()->detach(false);
@@ -2028,7 +2028,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
     const auto torrent5Id = (*torrent5)["id"];
 
     torrent5->tags()->attach({tag100["id"], tag101["id"]},
-                             {{"active", 0}},
+                             {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
@@ -2048,7 +2048,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(tagIds.contains(tagged["tag_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(0));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
     auto affected = torrent5->tags()->detach({tag100["id"], tag101["id"]}, false);
@@ -2085,7 +2085,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
     const auto torrent5Id = (*torrent5)["id"];
 
     torrent5->tags()->attach({tag100["id"], tag101["id"]},
-                             {{"active", 0}},
+                             {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
@@ -2105,7 +2105,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(tagIds.contains(tagged["tag_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(0));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
     auto affected = torrent5->tags()->detach({tag100, tag101}, false);
@@ -2142,7 +2142,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
     const auto torrent5Id = (*torrent5)["id"];
 
     torrent5->tags()->attach({tag100["id"], tag101["id"]},
-                             {{"active", 0}},
+                             {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
@@ -2162,7 +2162,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(tagIds.contains(tagged["tag_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(0));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
     auto affected = torrent5->tags()->detach(false);
@@ -2203,7 +2203,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithId() c
         auto &tagged = taggeds.first();
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QCOMPARE(tagged["torrent_id"].value(), QVariant(3));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     auto updated = tag->torrents()->updateExistingPivot(3, {{"active", false}}, false);
@@ -2219,7 +2219,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithId() c
         auto &tagged = taggeds.first();
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QCOMPARE(tagged["torrent_id"].value(), QVariant(3));
-        QCOMPARE(tagged["active"].value(), QVariant(0));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
     // Restore db
@@ -2248,7 +2248,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithModel(
         auto &tagged = taggeds.first();
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QCOMPARE(tagged["torrent_id"].value(), QVariant(3));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     const auto torrent = Torrent::find(3);
@@ -2266,7 +2266,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithModel(
         auto &tagged = taggeds.first();
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QCOMPARE(tagged["torrent_id"].value(), QVariant(3));
-        QCOMPARE(tagged["active"].value(), QVariant(0));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
     // Restore db
@@ -2295,7 +2295,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithId() 
         auto &tagged = taggeds.first();
         QCOMPARE(tagged["torrent_id"].value(), torrentId);
         QCOMPARE(tagged["tag_id"].value(), QVariant(4));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     auto updated = torrent->tags()->updateExistingPivot(4, {{"active", false}}, false);
@@ -2311,7 +2311,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithId() 
         auto &tagged = taggeds.first();
         QCOMPARE(tagged["torrent_id"].value(), torrentId);
         QCOMPARE(tagged["tag_id"].value(), QVariant(4));
-        QCOMPARE(tagged["active"].value(), QVariant(0));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
     // Restore db
@@ -2340,7 +2340,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithModel
         auto &tagged = taggeds.first();
         QCOMPARE(tagged["torrent_id"].value(), torrentId);
         QCOMPARE(tagged["tag_id"].value(), QVariant(4));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     const auto tag = Tag::find(4);
@@ -2358,7 +2358,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithModel
         auto &tagged = taggeds.first();
         QCOMPARE(tagged["torrent_id"].value(), torrentId);
         QCOMPARE(tagged["tag_id"].value(), QVariant(4));
-        QCOMPARE(tagged["active"].value(), QVariant(0));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
     // Restore db
@@ -2422,7 +2422,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     const auto changed =
@@ -2458,10 +2458,10 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
     QCOMPARE(taggeds.size(), 3);
 
     // Expected active attribute values by the tag ID
-    std::unordered_map<quint64, int> taggedActive {
-        {torrent100["id"]->value<quint64>(), 1},
-        {torrent101["id"]->value<quint64>(), 1},
-        {torrent103["id"]->value<quint64>(), 1},
+    std::unordered_map<quint64, bool> taggedActive {
+        {torrent100["id"]->value<quint64>(), true},
+        {torrent101["id"]->value<quint64>(), true},
+        {torrent103["id"]->value<quint64>(), true},
     };
 
     quint64 torrentId = 0;
@@ -2476,7 +2476,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(taggedActive.contains(torrentId));
-        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(torrentId));
+        QCOMPARE(tagged["active"]->value<bool>(), taggedActive.at(torrentId));
     }
 
     torrent100.remove();
@@ -2542,13 +2542,13 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     const auto changed = tag5->torrents()->sync(
-                           {{torrent100["id"]->value<quint64>(), {{"active", 1}}},
-                            {torrent101["id"]->value<quint64>(), {{"active", 0}}},
-                            {torrent103["id"]->value<quint64>(), {{"active", 1}}}});
+                           {{torrent100["id"]->value<quint64>(), {{"active", true}}},
+                            {torrent101["id"]->value<quint64>(), {{"active", false}}},
+                            {torrent103["id"]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -2583,10 +2583,10 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
     QCOMPARE(taggeds.size(), 3);
 
     // Expected active attribute values by the tag ID
-    std::unordered_map<quint64, int> taggedActive {
-        {torrent100["id"]->value<quint64>(), 1},
-        {torrent101["id"]->value<quint64>(), 0},
-        {torrent103["id"]->value<quint64>(), 1},
+    std::unordered_map<quint64, bool> taggedActive {
+        {torrent100["id"]->value<quint64>(), true},
+        {torrent101["id"]->value<quint64>(), false},
+        {torrent103["id"]->value<quint64>(), true},
     };
 
     quint64 torrentId = 0;
@@ -2601,7 +2601,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(taggedActive.contains(torrentId));
-        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(torrentId));
+        QCOMPARE(tagged["active"]->value<bool>(), taggedActive.at(torrentId));
     }
 
     torrent100.remove();
@@ -2655,7 +2655,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(tagIds.contains(tagged["tag_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     const auto changed =
@@ -2690,10 +2690,10 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
     QCOMPARE(taggeds.size(), 3);
 
     // Expected active attribute values by the tag ID
-    std::unordered_map<quint64, int> taggedActive {
-        {tag100["id"]->value<quint64>(), 1},
-        {tag101["id"]->value<quint64>(), 1},
-        {tag103["id"]->value<quint64>(), 1},
+    std::unordered_map<quint64, bool> taggedActive {
+        {tag100["id"]->value<quint64>(), true},
+        {tag101["id"]->value<quint64>(), true},
+        {tag103["id"]->value<quint64>(), true},
     };
 
     quint64 tagId = 0;
@@ -2708,7 +2708,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(taggedActive.contains(tagId));
-        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(tagId));
+        QCOMPARE(tagged["active"]->value<bool>(), taggedActive.at(tagId));
     }
 
     tag100.remove();
@@ -2762,13 +2762,13 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(tagIds.contains(tagged["tag_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     const auto changed = torrent5->tags()->sync(
-                       {{tag100["id"]->value<quint64>(), {{"active", 1}}},
-                        {tag101["id"]->value<quint64>(), {{"active", 0}}},
-                        {tag103["id"]->value<quint64>(), {{"active", 1}}}});
+                       {{tag100["id"]->value<quint64>(), {{"active", true}}},
+                        {tag101["id"]->value<quint64>(), {{"active", false}}},
+                        {tag103["id"]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -2803,10 +2803,10 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
     QCOMPARE(taggeds.size(), 3);
 
     // Expected active attribute values by the tag ID
-    std::unordered_map<quint64, int> taggedActive {
-        {tag100["id"]->value<quint64>(), 1},
-        {tag101["id"]->value<quint64>(), 0},
-        {tag103["id"]->value<quint64>(), 1},
+    std::unordered_map<quint64, bool> taggedActive {
+        {tag100["id"]->value<quint64>(), true},
+        {tag101["id"]->value<quint64>(), false},
+        {tag103["id"]->value<quint64>(), true},
     };
 
     quint64 tagId = 0;
@@ -2821,7 +2821,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(taggedActive.contains(tagId));
-        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(tagId));
+        QCOMPARE(tagged["active"]->value<bool>(), taggedActive.at(tagId));
     }
 
     tag100.remove();
@@ -2887,7 +2887,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     const auto changed =
@@ -2919,11 +2919,11 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
     QCOMPARE(taggeds.size(), 4);
 
     // Expected active attribute values by the tag ID
-    std::unordered_map<quint64, int> taggedActive {
-        {torrent100["id"]->value<quint64>(), 1},
-        {torrent101["id"]->value<quint64>(), 1},
-        {torrent102["id"]->value<quint64>(), 1},
-        {torrent103["id"]->value<quint64>(), 1},
+    std::unordered_map<quint64, bool> taggedActive {
+        {torrent100["id"]->value<quint64>(), true},
+        {torrent101["id"]->value<quint64>(), true},
+        {torrent102["id"]->value<quint64>(), true},
+        {torrent103["id"]->value<quint64>(), true},
     };
 
     quint64 torrentId = 0;
@@ -2938,7 +2938,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(taggedActive.contains(torrentId));
-        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(torrentId));
+        QCOMPARE(tagged["active"]->value<bool>(), taggedActive.at(torrentId));
     }
 
     torrent100.remove();
@@ -3005,13 +3005,13 @@ void tst_Relations_Inserting_Updating
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     const auto changed = tag5->torrents()->syncWithoutDetaching(
-                           {{torrent100["id"]->value<quint64>(), {{"active", 1}}},
-                            {torrent101["id"]->value<quint64>(), {{"active", 0}}},
-                            {torrent103["id"]->value<quint64>(), {{"active", 1}}}});
+                           {{torrent100["id"]->value<quint64>(), {{"active", true}}},
+                            {torrent101["id"]->value<quint64>(), {{"active", false}}},
+                            {torrent103["id"]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -3042,11 +3042,11 @@ void tst_Relations_Inserting_Updating
     QCOMPARE(taggeds.size(), 4);
 
     // Expected active attribute values by the tag ID
-    std::unordered_map<quint64, int> taggedActive {
-        {torrent100["id"]->value<quint64>(), 1},
-        {torrent101["id"]->value<quint64>(), 0},
-        {torrent102["id"]->value<quint64>(), 1},
-        {torrent103["id"]->value<quint64>(), 1},
+    std::unordered_map<quint64, bool> taggedActive {
+        {torrent100["id"]->value<quint64>(), true},
+        {torrent101["id"]->value<quint64>(), false},
+        {torrent102["id"]->value<quint64>(), true},
+        {torrent103["id"]->value<quint64>(), true},
     };
 
     quint64 torrentId = 0;
@@ -3061,7 +3061,7 @@ void tst_Relations_Inserting_Updating
 
         QCOMPARE(tagged["tag_id"].value(), tagId);
         QVERIFY(taggedActive.contains(torrentId));
-        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(torrentId));
+        QCOMPARE(tagged["active"]->value<bool>(), taggedActive.at(torrentId));
     }
 
     torrent100.remove();
@@ -3115,7 +3115,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(tagIds.contains(tagged["tag_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     const auto changed =
@@ -3147,11 +3147,11 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
     QCOMPARE(taggeds.size(), 4);
 
     // Expected active attribute values by the tag ID
-    std::unordered_map<quint64, int> taggedActive {
-        {tag100["id"]->value<quint64>(), 1},
-        {tag101["id"]->value<quint64>(), 1},
-        {tag102["id"]->value<quint64>(), 1},
-        {tag103["id"]->value<quint64>(), 1},
+    std::unordered_map<quint64, bool> taggedActive {
+        {tag100["id"]->value<quint64>(), true},
+        {tag101["id"]->value<quint64>(), true},
+        {tag102["id"]->value<quint64>(), true},
+        {tag103["id"]->value<quint64>(), true},
     };
 
     quint64 tagId = 0;
@@ -3166,7 +3166,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(taggedActive.contains(tagId));
-        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(tagId));
+        QCOMPARE(tagged["active"]->value<bool>(), taggedActive.at(tagId));
     }
 
     tag100.remove();
@@ -3221,13 +3221,13 @@ void tst_Relations_Inserting_Updating
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(tagIds.contains(tagged["tag_id"].value()));
-        QCOMPARE(tagged["active"].value(), QVariant(1));
+        QCOMPARE(tagged["active"].value(), QVariant(true));
     }
 
     const auto changed = torrent5->tags()->syncWithoutDetaching(
-                       {{tag100["id"]->value<quint64>(), {{"active", 1}}},
-                        {tag101["id"]->value<quint64>(), {{"active", 0}}},
-                        {tag103["id"]->value<quint64>(), {{"active", 1}}}});
+                       {{tag100["id"]->value<quint64>(), {{"active", true}}},
+                        {tag101["id"]->value<quint64>(), {{"active", false}}},
+                        {tag103["id"]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -3258,11 +3258,11 @@ void tst_Relations_Inserting_Updating
     QCOMPARE(taggeds.size(), 4);
 
     // Expected active attribute values by the tag ID
-    std::unordered_map<quint64, int> taggedActive {
-        {tag100["id"]->value<quint64>(), 1},
-        {tag101["id"]->value<quint64>(), 0},
-        {tag102["id"]->value<quint64>(), 1},
-        {tag103["id"]->value<quint64>(), 1},
+    std::unordered_map<quint64, bool> taggedActive {
+        {tag100["id"]->value<quint64>(), true},
+        {tag101["id"]->value<quint64>(), false},
+        {tag102["id"]->value<quint64>(), true},
+        {tag103["id"]->value<quint64>(), true},
     };
 
     quint64 tagId = 0;
@@ -3277,7 +3277,7 @@ void tst_Relations_Inserting_Updating
 
         QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
         QVERIFY(taggedActive.contains(tagId));
-        QCOMPARE(tagged["active"]->value<int>(), taggedActive.at(tagId));
+        QCOMPARE(tagged["active"]->value<bool>(), taggedActive.at(tagId));
     }
 
     tag100.remove();
