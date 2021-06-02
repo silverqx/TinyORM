@@ -1,5 +1,6 @@
 #include "orm/connectors/postgresconnector.hpp"
 
+#include <QRegularExpression>
 #include <QtSql/QSqlQuery>
 
 #include "orm/queryerror.hpp"
