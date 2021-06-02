@@ -14,6 +14,7 @@ Almost every modern application interacts with a database. TinyORM makes interac
 
 <div class="content-list" markdown="1">
 - MySQL or MariaDB 5.0+ ([Version Policy](https://en.wikipedia.org/wiki/MySQL#Release_history))
+- PostgreSQL 9.6+ ([Version Policy](https://www.postgresql.org/support/versioning/))
 - SQLite 3.8.8+
 </div>
 

@@ -285,9 +285,8 @@ void tst_TinyBuilder::update_SameValue() const
     auto [affected, query] = Torrent::whereEq("id", 5)
             ->update({{"progress", torrent->getAttribute("progress")}});
 
-    // CUR fix this, first used different value for progress and remove dilemma below silverqx
     /* Don't exactly know what cause this, I think some sort of caching can
-       occure. */
+       occure, but it doesn't matter, leave it as is in the future, it is ok. */
     QVERIFY(affected == 1 || affected == 0);
     QVERIFY(query.isActive());
 
