@@ -257,11 +257,9 @@ void DatabaseManager::disconnect(QString name) const
 
 QStringList DatabaseManager::supportedDrivers() const
 {
-    // CUR driver names from Eloquent? should be from Qt silverqx
     // FUTURE add method to not only supported drivers, but also check if driver is available/loadable by qsqldatabase silverqx
-    // aaaaaaaaaaaaaachjo 🤔😁
-    return {"mysql", "pgsql", "sqlite"};
-    //    return {"mysql", "pgsql", "sqlite", "sqlsrv"};
+    // aaaaaaaaaaaaaachjo 🤔😁 -- 4 months later, looks much better, right?
+    return {"QMYSQL", "QPSQL", "QSQLITE"};
 }
 
 QStringList DatabaseManager::connectionNames() const
