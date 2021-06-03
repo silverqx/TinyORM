@@ -1,5 +1,5 @@
-#ifndef DATABASE_H
-#define DATABASE_H
+#ifndef DATABASES_H
+#define DATABASES_H
 
 #include "orm/configuration.hpp"
 #include "orm/connectioninterface.hpp"
@@ -9,10 +9,9 @@
 namespace TestUtils
 {
 
-    // CUR rename to Databases silverqx
-    class UTILS_EXPORT Database
+    class UTILS_EXPORT Databases
     {
-        Q_DISABLE_COPY(Database)
+        Q_DISABLE_COPY(Databases)
 
         using ConfigurationsType = Orm::Configuration::ConfigurationsType;
 
@@ -57,4 +56,4 @@ namespace TestUtils
     };
 
 }
-#endif // DATABASE_H
+#endif // DATABASES_H

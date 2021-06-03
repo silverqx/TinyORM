@@ -8,12 +8,12 @@
 #include "models/torrent.hpp"
 #include "models/torrenteager.hpp"
 
-#include "database.hpp"
+#include "databases.hpp"
 
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::MassAssignmentError;
 
-using TestUtils::Database;
+using TestUtils::Databases;
 
 class tst_Model_Connection_Independent : public QObject
 {
@@ -51,13 +51,13 @@ private:
 void tst_Model_Connection_Independent::initTestCase()
 {
     ConnectionOverride::connection = m_connection =
-            Database::createConnection(Database::MYSQL);
+            Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
                              "for '%2' connection have not been defined.")
               .arg("tst_Model_Connection_Independent",
-                   Database::MYSQL).toUtf8().constData(), );
+                   Databases::MYSQL).toUtf8().constData(), );
 }
 
 void tst_Model_Connection_Independent::subscriptOperator() const

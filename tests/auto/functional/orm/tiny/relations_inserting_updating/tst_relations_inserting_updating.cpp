@@ -6,14 +6,14 @@
 #include "models/torrent.hpp"
 #include "models/torrentpreviewablefile.hpp"
 
-#include "database.hpp"
+#include "databases.hpp"
 
 using Orm::AttributeItem;
 using Orm::One;
 using Orm::QueryError;
 using Orm::Tiny::ConnectionOverride;
 
-using TestUtils::Database;
+using TestUtils::Databases;
 
 class tst_Relations_Inserting_Updating : public QObject
 {
@@ -96,7 +96,7 @@ private slots:
 
 void tst_Relations_Inserting_Updating::initTestCase_data() const
 {
-    const auto &connections = Database::createConnections();
+    const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "

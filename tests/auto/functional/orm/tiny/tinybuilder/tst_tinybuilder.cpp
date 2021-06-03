@@ -5,7 +5,7 @@
 
 #include "models/torrent.hpp"
 
-#include "database.hpp"
+#include "databases.hpp"
 
 using Orm::QueryError;
 using Orm::Tiny::ConnectionOverride;
@@ -14,7 +14,7 @@ using Orm::Tiny::ModelNotFoundError;
 template<typename Model>
 using TinyBuilder = Orm::Tiny::Builder<Model>;
 
-using TestUtils::Database;
+using TestUtils::Databases;
 
 class tst_TinyBuilder : public QObject
 {
@@ -48,7 +48,7 @@ private:
 
 void tst_TinyBuilder::initTestCase_data() const
 {
-    const auto &connections = Database::createConnections();
+    const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "

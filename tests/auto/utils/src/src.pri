@@ -1,8 +1,8 @@
 INCLUDEPATH += $$PWD
 
 SOURCES += \
-    $$PWD/database.cpp \
+    $$PWD/databases.cpp
 
 HEADERS += \
+    $$PWD/databases.hpp \
     $$PWD/utils_global.hpp \
-    $$PWD/database.hpp \

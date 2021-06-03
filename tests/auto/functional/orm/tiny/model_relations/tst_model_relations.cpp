@@ -11,7 +11,7 @@
 #include "models/torrentpeereager_norelations.hpp"
 #include "models/torrentpreviewablefileeager_withdefault.hpp"
 
-#include "database.hpp"
+#include "databases.hpp"
 
 using Orm::One;
 using Orm::RuntimeError;
@@ -19,7 +19,7 @@ using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::RelationNotFoundError;
 using Orm::Tiny::RelationNotLoadedError;
 
-using TestUtils::Database;
+using TestUtils::Databases;
 
 class tst_Model_Relations : public QObject
 {
@@ -102,7 +102,7 @@ private slots:
 
 void tst_Model_Relations::initTestCase_data() const
 {
-    const auto &connections = Database::createConnections();
+    const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "

@@ -4,12 +4,12 @@
 #include "orm/db.hpp"
 #include "orm/query/querybuilder.hpp"
 
-#include "database.hpp"
+#include "databases.hpp"
 
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
 
-using TestUtils::Database;
+using TestUtils::Databases;
 
 class tst_SQLite_QueryBuilder : public QObject
 {
@@ -71,12 +71,12 @@ private:
 
 void tst_SQLite_QueryBuilder::initTestCase()
 {
-    m_connection = Database::createConnection(Database::SQLITE);
+    m_connection = Databases::createConnection(Databases::SQLITE);
 
     if (m_connection.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
                              "for '%2' connection have not been defined.")
-              .arg("tst_SQLite_QueryBuilder", Database::SQLITE).toUtf8().constData(), );
+              .arg("tst_SQLite_QueryBuilder", Databases::SQLITE).toUtf8().constData(), );
 }
 
 void tst_SQLite_QueryBuilder::from() const

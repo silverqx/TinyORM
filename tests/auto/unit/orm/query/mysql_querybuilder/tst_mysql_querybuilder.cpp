@@ -4,12 +4,12 @@
 #include "orm/db.hpp"
 #include "orm/query/querybuilder.hpp"
 
-#include "database.hpp"
+#include "databases.hpp"
 
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
 
-using TestUtils::Database;
+using TestUtils::Databases;
 
 class tst_MySql_QueryBuilder : public QObject
 {
@@ -71,12 +71,12 @@ private:
 
 void tst_MySql_QueryBuilder::initTestCase()
 {
-    m_connection = Database::createConnection(Database::MYSQL);
+    m_connection = Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
                              "for '%2' connection have not been defined.")
-              .arg("tst_MySql_QueryBuilder", Database::MYSQL).toUtf8().constData(), );
+              .arg("tst_MySql_QueryBuilder", Databases::MYSQL).toUtf8().constData(), );
 }
 
 void tst_MySql_QueryBuilder::from() const

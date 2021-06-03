@@ -1,4 +1,4 @@
-#include "database.hpp"
+#include "databases.hpp"
 
 #include "orm/db.hpp"
 #include "orm/logicerror.hpp"
@@ -17,7 +17,7 @@ namespace TestUtils
    correctly.
    Tests don't fail but are skipped when a connection is not available. */
 
-const QStringList &Database::createConnections(const QStringList &connections)
+const QStringList &Databases::createConnections(const QStringList &connections)
 {
     checkInitialized();
 
@@ -32,7 +32,7 @@ const QStringList &Database::createConnections(const QStringList &connections)
     return cachedConnectionNames;
 }
 
-QString Database::createConnection(const QString &connection)
+QString Databases::createConnection(const QString &connection)
 {
     const auto &connections = createConnections({connection});
 
@@ -46,8 +46,8 @@ QString Database::createConnection(const QString &connection)
     return {};
 }
 
-const Database::ConfigurationsType &
-Database::getConfigurations(const QStringList &connections)
+const Databases::ConfigurationsType &
+Databases::getConfigurations(const QStringList &connections)
 {
     static auto configurations = createConfigurationsHash(connections);
 
@@ -58,8 +58,8 @@ Database::getConfigurations(const QStringList &connections)
     return configurations;
 }
 
-const Database::ConfigurationsType &
-Database::createConfigurationsHash(const QStringList &connections)
+const Databases::ConfigurationsType &
+Databases::createConfigurationsHash(const QStringList &connections)
 {
     static ConfigurationsType configurations;
 
@@ -84,7 +84,7 @@ Database::createConfigurationsHash(const QStringList &connections)
 }
 
 std::pair<std::reference_wrapper<const QVariantHash>, bool>
-Database::mysqlConfiguration()
+Databases::mysqlConfiguration()
 {
     static const QVariantHash config {
         {"driver",    "QMYSQL"},
@@ -121,7 +121,7 @@ Database::mysqlConfiguration()
 }
 
 std::pair<std::reference_wrapper<const QVariantHash>, bool>
-Database::sqliteConfiguration()
+Databases::sqliteConfiguration()
 {
     static const QVariantHash config {
         {"driver",    "QSQLITE"},
@@ -140,7 +140,7 @@ Database::sqliteConfiguration()
 }
 
 std::pair<std::reference_wrapper<const QVariantHash>, bool>
-Database::postgresConfiguration()
+Databases::postgresConfiguration()
 {
     static const QVariantHash config {
         {"driver",   "QPSQL"},
@@ -168,7 +168,7 @@ Database::postgresConfiguration()
     return {std::cref(config), false};
 }
 
-void Database::checkInitialized()
+void Databases::checkInitialized()
 {
     if (m_initialized)
         throw LogicError("Databases::createConnections/createConnection methods "

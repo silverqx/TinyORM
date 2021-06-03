@@ -8,13 +8,13 @@
 #include "models/setting.hpp"
 #include "models/torrent.hpp"
 
-#include "database.hpp"
+#include "databases.hpp"
 
 using Orm::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::ModelNotFoundError;
 
-using TestUtils::Database;
+using TestUtils::Databases;
 
 // TEST tests, look at commit history for inspiration for new tests silverqx
 class tst_Model : public QObject
@@ -84,7 +84,7 @@ private slots:
 
 void tst_Model::initTestCase_data() const
 {
-    const auto &connections = Database::createConnections();
+    const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "

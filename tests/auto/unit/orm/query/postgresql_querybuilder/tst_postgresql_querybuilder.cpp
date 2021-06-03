@@ -4,12 +4,12 @@
 #include "orm/db.hpp"
 #include "orm/query/querybuilder.hpp"
 
-#include "database.hpp"
+#include "databases.hpp"
 
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
 
-using TestUtils::Database;
+using TestUtils::Databases;
 
 class tst_PostgreSQL_QueryBuilder : public QObject
 {
@@ -72,13 +72,13 @@ private:
 
 void tst_PostgreSQL_QueryBuilder::initTestCase()
 {
-    m_connection = Database::createConnection(Database::POSTGRESQL);
+    m_connection = Databases::createConnection(Databases::POSTGRESQL);
 
     if (m_connection.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
                              "for '%2' connection have not been defined.")
               .arg("tst_PostgreSQL_QueryBuilder",
-                   Database::POSTGRESQL).toUtf8().constData(), );
+                   Databases::POSTGRESQL).toUtf8().constData(), );
 }
 
 void tst_PostgreSQL_QueryBuilder::from() const

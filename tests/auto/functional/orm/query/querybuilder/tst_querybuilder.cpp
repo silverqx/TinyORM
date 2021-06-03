@@ -5,11 +5,11 @@
 #include "orm/db.hpp"
 #include "orm/query/querybuilder.hpp"
 
-#include "database.hpp"
+#include "databases.hpp"
 
 using QueryBuilder = Orm::Query::Builder;
 
-using TestUtils::Database;
+using TestUtils::Databases;
 
 class tst_QueryBuilder : public QObject
 {
@@ -30,7 +30,7 @@ private:
 
 void tst_QueryBuilder::initTestCase_data() const
 {
-    const auto &connections = Database::createConnections();
+    const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
