@@ -13,6 +13,8 @@ using Orm::One;
 using Orm::QueryError;
 using Orm::Tiny::ConnectionOverride;
 
+using TestUtils::Database;
+
 class tst_Relations_Inserting_Updating : public QObject
 {
     Q_OBJECT
@@ -94,10 +96,17 @@ private slots:
 
 void tst_Relations_Inserting_Updating::initTestCase_data() const
 {
+    const auto &connections = Database::createConnections();
+
+    if (connections.isEmpty())
+        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
+                             "for ANY connection have not been defined.")
+              .arg("tst_Relations_Inserting_Updating").toUtf8().constData(), );
+
     QTest::addColumn<QString>("connection");
 
     // Run all tests for all supported database connections
-    for (const auto &connection : TestUtils::Database::createConnections())
+    for (const auto &connection : connections)
         QTest::newRow(connection.toUtf8().constData()) << connection;
 }
 

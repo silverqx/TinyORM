@@ -9,6 +9,8 @@
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
 
+using TestUtils::Database;
+
 class tst_MySql_QueryBuilder : public QObject
 {
     Q_OBJECT
@@ -69,7 +71,12 @@ private:
 
 void tst_MySql_QueryBuilder::initTestCase()
 {
-    m_connection = TestUtils::Database::createConnection("tinyorm_mysql_tests");
+    m_connection = Database::createConnection(Database::MYSQL);
+
+    if (m_connection.isEmpty())
+        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
+                             "for '%2' connection have not been defined.")
+              .arg("tst_MySql_QueryBuilder", Database::MYSQL).toUtf8().constData(), );
 }
 
 void tst_MySql_QueryBuilder::from() const

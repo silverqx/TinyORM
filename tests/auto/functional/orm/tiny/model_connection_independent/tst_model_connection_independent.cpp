@@ -13,6 +13,8 @@
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::MassAssignmentError;
 
+using TestUtils::Database;
+
 class tst_Model_Connection_Independent : public QObject
 {
     Q_OBJECT
@@ -49,7 +51,13 @@ private:
 void tst_Model_Connection_Independent::initTestCase()
 {
     ConnectionOverride::connection = m_connection =
-            TestUtils::Database::createConnection("tinyorm_mysql_tests");
+            Database::createConnection(Database::MYSQL);
+
+    if (m_connection.isEmpty())
+        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
+                             "for '%2' connection have not been defined.")
+              .arg("tst_Model_Connection_Independent",
+                   Database::MYSQL).toUtf8().constData(), );
 }
 
 void tst_Model_Connection_Independent::subscriptOperator() const

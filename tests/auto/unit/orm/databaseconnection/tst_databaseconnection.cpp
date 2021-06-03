@@ -8,6 +8,8 @@
 
 using Orm::MySqlConnection;
 
+using TestUtils::Database;
+
 // TEST exceptions in tests, qt doesn't care about exceptions, totally ignore it, so when the exception is thrown, I didn't get any exception message or something similar, nothing 👿, try to solve it somehow 🤔 silverqx
 class tst_DatabaseConnection : public QObject
 {
@@ -23,10 +25,17 @@ private slots:
 
 void tst_DatabaseConnection::initTestCase_data() const
 {
+    const auto &connections = Database::createConnections();
+
+    if (connections.isEmpty())
+        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
+                             "for ANY connection have not been defined.")
+              .arg("tst_DatabaseConnection").toUtf8().constData(), );
+
     QTest::addColumn<QString>("connection");
 
     // Run all tests for all supported database connections
-    for (const auto &connection : TestUtils::Database::createConnections())
+    for (const auto &connection : connections)
         QTest::newRow(connection.toUtf8().constData()) << connection;
 }
 
@@ -60,7 +69,7 @@ void tst_DatabaseConnection::isNotMaria_OnMySqlConnection() const
                              "method.")
               .arg(driverName).toUtf8().constData(), );
 
-    const auto expected = !(connection == "tinyorm_mysql_tests");
+    const auto expected = !(connection == Database::MYSQL);
 
     const auto isMaria = dynamic_cast<MySqlConnection &>(connection_).isMaria();
 

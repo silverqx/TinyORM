@@ -9,6 +9,8 @@
 
 using QueryBuilder = Orm::Query::Builder;
 
+using TestUtils::Database;
+
 class tst_QueryBuilder : public QObject
 {
     Q_OBJECT
@@ -28,10 +30,17 @@ private:
 
 void tst_QueryBuilder::initTestCase_data() const
 {
+    const auto &connections = Database::createConnections();
+
+    if (connections.isEmpty())
+        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
+                             "for ANY connection have not been defined.")
+              .arg("tst_QueryBuilder").toUtf8().constData(), );
+
     QTest::addColumn<QString>("connection");
 
     // Run all tests for all supported database connections
-    for (const auto &connection : TestUtils::Database::createConnections())
+    for (const auto &connection : connections)
         QTest::newRow(connection.toUtf8().constData()) << connection;
 }
 

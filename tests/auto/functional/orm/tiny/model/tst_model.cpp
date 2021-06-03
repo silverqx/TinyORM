@@ -14,6 +14,8 @@ using Orm::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::ModelNotFoundError;
 
+using TestUtils::Database;
+
 // TEST tests, look at commit history for inspiration for new tests silverqx
 class tst_Model : public QObject
 {
@@ -82,10 +84,17 @@ private slots:
 
 void tst_Model::initTestCase_data() const
 {
+    const auto &connections = Database::createConnections();
+
+    if (connections.isEmpty())
+        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
+                             "for ANY connection have not been defined.")
+              .arg("tst_Model").toUtf8().constData(), );
+
     QTest::addColumn<QString>("connection");
 
     // Run all tests for all supported database connections
-    for (const auto &connection : TestUtils::Database::createConnections())
+    for (const auto &connection : connections)
         QTest::newRow(connection.toUtf8().constData()) << connection;
 }
 

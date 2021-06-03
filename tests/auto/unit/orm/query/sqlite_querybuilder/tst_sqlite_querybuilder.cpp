@@ -9,6 +9,8 @@
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
 
+using TestUtils::Database;
+
 class tst_SQLite_QueryBuilder : public QObject
 {
     Q_OBJECT
@@ -69,7 +71,12 @@ private:
 
 void tst_SQLite_QueryBuilder::initTestCase()
 {
-    m_connection = TestUtils::Database::createConnection("tinyorm_sqlite_tests");
+    m_connection = Database::createConnection(Database::SQLITE);
+
+    if (m_connection.isEmpty())
+        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
+                             "for '%2' connection have not been defined.")
+              .arg("tst_SQLite_QueryBuilder", Database::SQLITE).toUtf8().constData(), );
 }
 
 void tst_SQLite_QueryBuilder::from() const

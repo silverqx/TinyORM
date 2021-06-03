@@ -9,6 +9,8 @@
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
 
+using TestUtils::Database;
+
 class tst_PostgreSQL_QueryBuilder : public QObject
 {
     Q_OBJECT
@@ -70,7 +72,13 @@ private:
 
 void tst_PostgreSQL_QueryBuilder::initTestCase()
 {
-    m_connection = TestUtils::Database::createConnection("tinyorm_pgsql_tests");
+    m_connection = Database::createConnection(Database::POSTGRESQL);
+
+    if (m_connection.isEmpty())
+        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
+                             "for '%2' connection have not been defined.")
+              .arg("tst_PostgreSQL_QueryBuilder",
+                   Database::POSTGRESQL).toUtf8().constData(), );
 }
 
 void tst_PostgreSQL_QueryBuilder::from() const
