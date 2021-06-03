@@ -81,9 +81,16 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
 
     QSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set time zone '%1'")
-                   .arg(config["timezone"].value<QString>())))
-        return;
+    static const QStringList local {"local", "default"};
+
+    const auto timezone = config["timezone"].value<QString>();
+
+    if (local.contains(timezone, Qt::CaseInsensitive)) {
+        if (query.exec(QStringLiteral("set time zone %1").arg(timezone)))
+            return;
+    } else
+        if (query.exec(QStringLiteral("set time zone '%1'").arg(timezone)))
+            return;
 
     throw QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
