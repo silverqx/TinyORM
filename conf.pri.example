@@ -12,8 +12,9 @@ else:win32-msvc* {
     # boost
 #    INCLUDEPATH += $$quote(E:/c_libs/boost/boost_latest)
 
+    # libraries
+    # MySQL C library
     LIBS += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.0/lib)
-
     LIBS += -llibmysql
 }
 else:unix {
@@ -26,4 +27,5 @@ else:unix {
 
     # others
     clang: CONFIG *= use_lld_linker
+    else: CONFIG *= use_gold_linker
 }

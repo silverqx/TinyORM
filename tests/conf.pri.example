@@ -12,4 +12,8 @@ else:unix {
     # includes
     # range-v3
     INCLUDEPATH += $$quote(/home/xyz/vcpkg/installed/x64-linux/include)
+
+    # others
+    clang: CONFIG *= use_lld_linker
+    else: CONFIG *= use_gold_linker
 }
