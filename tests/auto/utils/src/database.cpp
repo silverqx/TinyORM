@@ -66,8 +66,7 @@ Database::getConfigurations(const QStringList &connections)
             {"username", qEnvironmentVariable("DB_PGSQL_USERNAME", "postgres")},
             {"password", qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},
             {"charset",  qEnvironmentVariable("DB_PGSQL_CHARSET",  "utf8")},
-            // Very important for tests
-            // BUG if I change timezone, tests don't fail, that is problem silverqx
+            // I don't use timezone types in postgres anyway
             {"timezone", "UTC"},
             {"prefix",   ""},
             {"options",  QVariantHash()},

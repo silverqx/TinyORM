@@ -79,7 +79,6 @@ namespace Relations {
     // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
     // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
     // BUG Qt sql drivers do not work with mysql json columns silverqx
-    // CUR postgres, study how collation works silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
