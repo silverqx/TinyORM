@@ -1,6 +1,7 @@
 #ifndef TORRENT_H
 #define TORRENT_H
 
+#include "orm/db.hpp"
 #include "orm/tiny/model.hpp"
 
 #include "models/tag.hpp"
@@ -112,8 +113,11 @@ private:
     };
 
 #ifdef PROJECT_TINYORM_PLAYGROUND
+    // I leave the initializer here to be clearly visible
     /*! The connection name for the model. */
-    QString u_connection {"mysql_alt"};
+    QString u_connection {DB::getDefaultConnection() == "mysql"
+                          ? "mysql_alt"
+                          : DB::getDefaultConnection()};
 #endif
 
     /*! The connection name for the model. */
