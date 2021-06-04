@@ -79,6 +79,8 @@ namespace Relations {
     // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
     // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
     // BUG Qt sql drivers do not work with mysql json columns silverqx
+    // CUR blesk playground another icon silverqx
+    // CUR do valgrind in gentoo silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -162,11 +164,19 @@ namespace Relations {
         static QVariant value(const QString &column);
 
         /*! Begin querying a model with eager loading. */
+        template<typename = void>
         static std::unique_ptr<TinyBuilder<Derived>>
         with(const QVector<WithItem> &relations);
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Derived>>
         with(const QString &relation);
+        /*! Begin querying a model with eager loading. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        with(const QVector<QString> &relations);
+        /*! Begin querying a model with eager loading. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        with(QVector<QString> &&relations);
+
         /*! Prevent the specified relations from being eager loaded. */
         static std::unique_ptr<TinyBuilder<Derived>>
         without(const QVector<QString> &relations);
@@ -1292,8 +1302,8 @@ namespace Relations {
         return query()->value(column);
     }
 
-    // TODO now problem with QStringList overload, its ambiguou, I think I need only QStringList, because is implicitly convertible to QString, so I tried QVector<QString> only without QString overload and still ambiguous silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::with(const QVector<WithItem> &relations)
     {
@@ -1309,6 +1319,32 @@ namespace Relations {
     Model<Derived, AllRelations...>::with(const QString &relation)
     {
         return with(QVector<WithItem> {{relation}});
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::with(const QVector<QString> &relations)
+    {
+        QVector<WithItem> relationsConverted;
+        relationsConverted.reserve(relations.size());
+
+        for (const auto &relation : relations)
+            relationsConverted.append({relation});
+
+        return with(relationsConverted);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::with(QVector<QString> &&relations)
+    {
+        QVector<WithItem> relationsConverted;
+        relationsConverted.reserve(relations.size());
+
+        for (auto &relation : relations)
+            relationsConverted.append({std::move(relation)});
+
+        return with(relationsConverted);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
