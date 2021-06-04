@@ -168,6 +168,7 @@ namespace Relations {
         static std::unique_ptr<TinyBuilder<Derived>>
         with(const QVector<WithItem> &relations);
         /*! Begin querying a model with eager loading. */
+        template<typename = void>
         static std::unique_ptr<TinyBuilder<Derived>>
         with(const QString &relation);
         /*! Begin querying a model with eager loading. */
@@ -1315,6 +1316,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::with(const QString &relation)
     {
