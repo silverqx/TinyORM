@@ -4074,7 +4074,7 @@ namespace Relations {
 
         const auto id = query.insertGetId(attributes, keyName);
 
-        // CUR try assert and try to remove this check silverqx
+        // NOTE api different, Eloquent doesn't check like below and returns void instead silverqx
         // When insert was successful
         if (id != 0)
             setAttribute(keyName, id);
