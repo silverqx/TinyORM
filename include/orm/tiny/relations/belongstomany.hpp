@@ -24,11 +24,11 @@ namespace Orm::Tiny::Relations
 
     /*! TinyORM's 'Pivot' class. */
     template<typename PivotType>
-    concept OurPivot = std::is_same_v<PivotType, Pivot>;
+    concept OurPivot = std::same_as<PivotType, Pivot>;
 
     /*! Custom pivot class, not TinyORM's 'Pivot' class. */
     template<typename PivotType>
-    concept CustomPivot = !std::is_same_v<PivotType, Pivot>;
+    concept CustomPivot = !std::same_as<PivotType, Pivot>;
 
     template<class Model, class Related, class PivotType = Pivot>
     class BelongsToMany :

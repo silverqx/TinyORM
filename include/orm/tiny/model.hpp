@@ -597,7 +597,7 @@ namespace Relations {
         const Container<Related *>
         getRelationValue(const QString &relation);
         /*! Get a relationship for a One type relation. */
-        template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
+        template<typename Related, typename Tag> requires std::same_as<Tag, One>
         Related *
         getRelationValue(const QString &relation);
 
@@ -704,7 +704,7 @@ namespace Relations {
         getRelation(const QString &relation);
         /*! Get a specified relationship as Related type, for use with HasOne and
             BelongsTo relation types. */
-        template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
+        template<typename Related, typename Tag> requires std::same_as<Tag, One>
         Related *getRelation(const QString &relation);
 
         /*! Determine if the given relation is loaded. */
@@ -845,7 +845,7 @@ namespace Relations {
         Container<Related *>
         getRelationshipFromMethod(const QString &relation);
         /*! Get a relationship value from a method. */
-        template<class Related, typename Tag> requires std::is_same_v<Tag, One>
+        template<class Related, typename Tag> requires std::same_as<Tag, One>
         Related *
         getRelationshipFromMethod(const QString &relation);
 
@@ -1070,7 +1070,7 @@ namespace Relations {
         getRelationFromHash(const QString &relation);
         /*! Obtain related models from "relationships" data member hash
             without any checks. */
-        template<class Related, typename Tag> requires std::is_same_v<Tag, One>
+        template<class Related, typename Tag> requires std::same_as<Tag, One>
         Related *
         getRelationFromHash(const QString &relation);
 
@@ -1098,10 +1098,10 @@ namespace Relations {
         template<typename Related>
         void pushVisited();
         /*! Push for Many relation types. */
-        template<typename Related, typename Tag> requires std::is_same_v<Tag, Many>
+        template<typename Related, typename Tag> requires std::same_as<Tag, Many>
         void pushVisited();
         /*! Push for One relation type. */
-        template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
+        template<typename Related, typename Tag> requires std::same_as<Tag, One>
         void pushVisited();
 
         /*! Create 'touch owners relation store' and touch all related models. */
@@ -2267,7 +2267,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Related, typename Tag> requires std::is_same_v<Tag, Many>
+    template<typename Related, typename Tag> requires std::same_as<Tag, Many>
     void Model<Derived, AllRelations...>::pushVisited()
     {
         auto &pushStore = this->pushStore();
@@ -2282,7 +2282,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
+    template<typename Related, typename Tag> requires std::same_as<Tag, One>
     void Model<Derived, AllRelations...>::pushVisited()
     {
         auto &pushStore = this->pushStore();
@@ -2811,7 +2811,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
+    template<typename Related, typename Tag> requires std::same_as<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelationValue(const QString &relation)
     {
@@ -2845,7 +2845,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<class Related, typename Tag> requires std::is_same_v<Tag, One>
+    template<class Related, typename Tag> requires std::same_as<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelationshipFromMethod(const QString &relation)
     {
@@ -3083,7 +3083,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<class Related, typename Tag> requires std::is_same_v<Tag, One>
+    template<class Related, typename Tag> requires std::same_as<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelationFromHash(const QString &relation)
     {
@@ -3118,7 +3118,7 @@ namespace Relations {
 
     // TODO smart pointer for this relation stuffs? silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Related, typename Tag> requires std::is_same_v<Tag, One>
+    template<typename Related, typename Tag> requires std::same_as<Tag, One>
     Related *
     Model<Derived, AllRelations...>::getRelation(const QString &relation)
     {

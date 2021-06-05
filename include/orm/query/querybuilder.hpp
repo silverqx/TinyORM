@@ -293,10 +293,10 @@ namespace Query
         const std::variant<bool, QStringList> &
         getDistinct() const;
         /*! Check if the query returns distinct results. */
-        template<typename T> requires std::is_same_v<T, bool>
+        template<typename T> requires std::same_as<T, bool>
         bool getDistinct() const;
         /*! Check if the query returns distinct results. */
-        template<typename T> requires std::is_same_v<T, QStringList>
+        template<typename T> requires std::same_as<T, QStringList>
         const QStringList &
         getDistinct() const;
         // TODO check up all code and return references when appropriate silverqx
@@ -444,13 +444,13 @@ namespace Query
         return m_distinct;
     }
 
-    template<typename T> requires std::is_same_v<T, bool>
+    template<typename T> requires std::same_as<T, bool>
     inline bool Builder::getDistinct() const
     {
         return std::get<bool>(m_distinct);
     }
 
-    template<typename T> requires std::is_same_v<T, QStringList>
+    template<typename T> requires std::same_as<T, QStringList>
     inline const QStringList &
     Builder::getDistinct() const
     {

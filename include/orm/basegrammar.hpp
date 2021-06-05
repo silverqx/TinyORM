@@ -17,14 +17,14 @@ namespace Query
 
     /*! QString container concept (QStringList or QVector<QString>). */
     template<typename T>
-    concept QStringContainer = std::is_same_v<T, QStringList> ||
-                               std::is_same_v<T, QVector<QString>>;
+    concept QStringContainer = std::same_as<T, QStringList> ||
+                               std::same_as<T, QVector<QString>>;
 
     /*! Concept for container passed to the parametrize() method (QVariantMap
         or QVector<QString>). */
     template<typename T>
-    concept Parametrize = std::is_same_v<T, QVariantMap> ||
-                          std::is_same_v<T, QVector<QVariant>>;
+    concept Parametrize = std::same_as<T, QVariantMap> ||
+                          std::same_as<T, QVector<QVariant>>;
 
     class SHAREDLIB_EXPORT BaseGrammar
     {
