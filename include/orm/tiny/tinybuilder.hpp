@@ -37,7 +37,9 @@ namespace Relations
         /*! Execute the query as a "select" statement. */
         QVector<Model> get(const QStringList &columns = {"*"});
 
-        // FEATURE dilemma primarykey, Model::KeyType for id silverqx
+        /*! Get a single column's value from the first result of a query. */
+        QVariant value(const QString &column);
+
         /*! Find a model by its primary key. */
         std::optional<Model>
         find(const QVariant &id, const QStringList &columns = {"*"});
@@ -61,7 +63,7 @@ namespace Relations
         std::optional<Model>
         firstWhere(const QString &column, const QString &comparison,
                    const QVariant &value, const QString &condition = "and");
-        /*! Add a basic where clause to the query, and return the first result. */
+        /*! Add a basic equal where clause to the query, and return the first result. */
         std::optional<Model>
         firstWhereEq(const QString &column, const QVariant &value,
                      const QString &condition = "and");
@@ -71,17 +73,22 @@ namespace Relations
         /*! Add a where clause on the primary key to the query. */
         Builder &whereKeyNot(const QVariant &id);
 
-        /*! Get a single column's value from the first result of a query. */
-        QVariant value(const QString &column);
-
         /*! Set the relationships that should be eager loaded. */
+        template<typename = void>
         Builder &with(const QVector<WithItem> &relations);
         /*! Set the relationships that should be eager loaded. */
+        template<typename = void>
         Builder &with(const QString &relation);
+        /*! Set the relationships that should be eager loaded. */
+        Builder &with(const QVector<QString> &relations);
+        /*! Set the relationships that should be eager loaded. */
+        Builder &with(QVector<QString> &&relations);
+
         /*! Prevent the specified relations from being eager loaded. */
         Builder &without(const QVector<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
         Builder &without(const QString &relation);
+
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
         Builder &withOnly(const QVector<WithItem> &relations);
@@ -300,7 +307,7 @@ namespace Relations
         /*! Share lock the selected rows in the table. */
         Builder &sharedLock();
         /*! Lock the selected rows in the table. */
-        Builder &lock(const bool value = true);
+        Builder &lock(bool value = true);
         /*! Lock the selected rows in the table. */
         Builder &lock(const char *value);
         /*! Lock the selected rows in the table. */
@@ -414,6 +421,7 @@ namespace Relations
 //        return $builder->getModel()->newCollection($models);
     }
 
+    // FEATURE dilemma primarykey, Model::KeyType for id silverqx
     template<typename Model>
     std::optional<Model>
     Builder<Model>::find(const QVariant &id, const QStringList &columns)
@@ -548,6 +556,7 @@ namespace Relations
     }
 
     template<typename Model>
+    template<typename>
     Builder<Model> &
     Builder<Model>::with(const QVector<WithItem> &relations)
     {
@@ -559,10 +568,37 @@ namespace Relations
     }
 
     template<typename Model>
+    template<typename>
     Builder<Model> &
     Builder<Model>::with(const QString &relation)
     {
         return with(QVector<WithItem> {{relation}});
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::with(const QVector<QString> &relations)
+    {
+        QVector<WithItem> relationsConverted;
+        relationsConverted.reserve(relations.size());
+
+        for (const auto &relation : relations)
+            relationsConverted.append({relation});
+
+        return with(relationsConverted);
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::with(QVector<QString> &&relations)
+    {
+        QVector<WithItem> relationsConverted;
+        relationsConverted.reserve(relations.size());
+
+        for (auto &relation : relations)
+            relationsConverted.append({std::move(relation)});
+
+        return with(relationsConverted);
     }
 
     template<typename Model>

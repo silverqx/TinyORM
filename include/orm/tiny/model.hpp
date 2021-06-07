@@ -129,6 +129,9 @@ namespace Relations {
         static QVector<Derived> all(const QStringList &columns = {"*"});
 
         /* TinyBuilder proxy methods */
+        /*! Get a single column's value from the first result of a query. */
+        static QVariant value(const QString &column);
+
         /*! Find a model by its primary key. */
         static std::optional<Derived>
         find(const QVariant &id, const QStringList &columns = {"*"});
@@ -168,9 +171,6 @@ namespace Relations {
         /*! Add a where clause on the primary key to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         whereKeyNot(const QVariant &id);
-
-        /*! Get a single column's value from the first result of a query. */
-        static QVariant value(const QString &column);
 
         /*! Begin querying a model with eager loading. */
         template<typename = void>
@@ -1256,6 +1256,12 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant Model<Derived, AllRelations...>::value(const QString &column)
+    {
+        return query()->value(column);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::find(const QVariant &id,
                                           const QStringList &columns)
@@ -1351,12 +1357,6 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant Model<Derived, AllRelations...>::value(const QString &column)
-    {
-        return query()->value(column);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::with(const QVector<WithItem> &relations)
@@ -1380,26 +1380,22 @@ namespace Relations {
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::with(const QVector<QString> &relations)
     {
-        QVector<WithItem> relationsConverted;
-        relationsConverted.reserve(relations.size());
+        auto builder = query();
 
-        for (const auto &relation : relations)
-            relationsConverted.append({relation});
+        builder->with(relations);
 
-        return with(relationsConverted);
+        return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::with(QVector<QString> &&relations)
     {
-        QVector<WithItem> relationsConverted;
-        relationsConverted.reserve(relations.size());
+        auto builder = query();
 
-        for (auto &relation : relations)
-            relationsConverted.append({std::move(relation)});
+        builder->with(std::move(relations));
 
-        return with(relationsConverted);
+        return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

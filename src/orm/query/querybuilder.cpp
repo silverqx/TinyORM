@@ -87,6 +87,19 @@ Builder::insert(const QVector<QVariantMap> &values)
                                cleanBindings(flatValuesForInsert(values)));
 }
 
+// FEATURE dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
+quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
+{
+    const QVector<QVariantMap> valuesVector {values};
+
+    auto query = m_connection.insert(
+                     m_grammar.compileInsertGetId(*this, valuesVector, sequence),
+                     cleanBindings(flatValuesForInsert(valuesVector)));
+
+    // FEATURE dilemma primarykey, Model::KeyType vs QVariant, Processor::processInsertGetId() silverqx
+    return query.lastInsertId().value<quint64>();
+}
+
 std::tuple<int, std::optional<QSqlQuery>>
 Builder::insertOrIgnore(const QVector<QVariantMap> &values)
 {
@@ -102,18 +115,6 @@ std::tuple<int, std::optional<QSqlQuery>>
 Builder::insertOrIgnore(const QVariantMap &values)
 {
     return insertOrIgnore(QVector<QVariantMap> {values});
-}
-
-quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
-{
-    const QVector<QVariantMap> valuesVector {values};
-
-    auto query = m_connection.insert(
-                     m_grammar.compileInsertGetId(*this, valuesVector, sequence),
-                     cleanBindings(flatValuesForInsert(valuesVector)));
-
-    // FEATURE dilemma primarykey, Model::KeyType vs QVariant, Processor::processInsertGetId() silverqx
-    return query.lastInsertId().value<quint64>();
 }
 
 std::tuple<int, QSqlQuery>
@@ -186,6 +187,7 @@ Builder &Builder::addSelect(const QStringList &columns)
     return *this;
 }
 
+// FUTURE when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
 Builder &Builder::addSelect(const QString &column)
 {
     return addSelect(QStringList(column));

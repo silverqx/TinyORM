@@ -106,6 +106,9 @@ namespace Relations
         rawUpdate(const QVector<UpdateItem> &values = {}) const;
 
         /* TinyBuilder proxy methods */
+        /*! Get a single column's value from the first result of a query. */
+        QVariant value(const QString &column) const;
+
         /*! Find a model by its primary key. */
         std::optional<Related>
         find(const QVariant &id, const QStringList &columns = {"*"}) const;
@@ -139,17 +142,22 @@ namespace Relations
         /*! Add a where clause on the primary key to the query. */
         Builder<Related> &whereKeyNot(const QVariant &id) const;
 
-        /*! Get a single column's value from the first result of a query. */
-        QVariant value(const QString &column) const;
-
         /*! Set the relationships that should be eager loaded. */
+        template<typename = void>
         Builder<Related> &with(const QVector<WithItem> &relations) const;
         /*! Set the relationships that should be eager loaded. */
+        template<typename = void>
         Builder<Related> &with(const QString &relation) const;
+        /*! Begin querying a model with eager loading. */
+        Builder<Related> &with(const QVector<QString> &relations) const;
+        /*! Begin querying a model with eager loading. */
+        Builder<Related> &with(QVector<QString> &&relations) const;
+
         /*! Prevent the specified relations from being eager loaded. */
         Builder<Related> &without(const QVector<QString> &relations) const;
         /*! Prevent the specified relations from being eager loaded. */
         Builder<Related> &without(const QString &relation) const;
+
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
         Builder<Related> &withOnly(const QVector<WithItem> &relations) const;
@@ -474,6 +482,12 @@ namespace Relations
     }
 
     template<class Model, class Related>
+    QVariant Relation<Model, Related>::value(const QString &column) const
+    {
+        return m_query->value(column);
+    }
+
+    template<class Model, class Related>
     std::optional<Related>
     Relation<Model, Related>::find(const QVariant &id, const QStringList &columns) const
     {
@@ -557,12 +571,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    QVariant Relation<Model, Related>::value(const QString &column) const
-    {
-        return m_query->value(column);
-    }
-
-    template<class Model, class Related>
+    template<typename>
     Builder<Related> &
     Relation<Model, Related>::with(const QVector<WithItem> &relations) const
     {
@@ -570,10 +579,25 @@ namespace Relations
     }
 
     template<class Model, class Related>
+    template<typename>
     Builder<Related> &
     Relation<Model, Related>::with(const QString &relation) const
     {
         return m_query->with(relation);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &
+    Relation<Model, Related>::with(const QVector<QString> &relations) const
+    {
+        return m_query->with(relations);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &
+    Relation<Model, Related>::with(QVector<QString> &&relations) const
+    {
+        return m_query->with(std::move(relations));
     }
 
     template<class Model, class Related>

@@ -751,7 +751,7 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
 
     ConnectionOverride::connection = connection;
 
-    auto torrent = Torrent::with({{"torrentFiles"}, {"torrentPeer"}})->find(2);
+    auto torrent = Torrent::with({"torrentFiles", "torrentPeer"})->find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 

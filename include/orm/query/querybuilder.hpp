@@ -58,15 +58,14 @@ namespace Query
         /*! Insert new records into the database. */
         std::optional<QSqlQuery>
         insert(const QVector<QVariantMap> &values);
+        /*! Insert a new record and get the value of the primary key. */
+        quint64 insertGetId(const QVariantMap &values, const QString &sequence = "");
         /*! Insert new records into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVector<QVariantMap> &values);
         /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVariantMap &values);
-        // FEATURE dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
-        /*! Insert a new record and get the value of the primary key. */
-        quint64 insertGetId(const QVariantMap &values, const QString &sequence = "");
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
@@ -91,7 +90,6 @@ namespace Query
         Builder &select(const QString &column);
         /*! Add new select columns to the query. */
         Builder &addSelect(const QStringList &columns);
-        // FUTURE when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
         /*! Add a new select column to the query. */
         Builder &addSelect(const QString &column);
 
