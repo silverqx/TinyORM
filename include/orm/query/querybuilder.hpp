@@ -37,12 +37,12 @@ namespace Query
 
         /*! Execute the query as a "select" statement. */
         QSqlQuery get(const QStringList &columns = {"*"});
+        /*! Execute a query for a single record by ID. */
+        QSqlQuery find(const QVariant &id, const QStringList &columns = {"*"});
         /*! Execute the query and get the first result. */
         QSqlQuery first(const QStringList &columns = {"*"});
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const QString &column);
-        /*! Execute a query for a single record by ID. */
-        QSqlQuery find(const QVariant &id, const QStringList &columns = {"*"});
 
         /*! Get the SQL representation of the query. */
         QString toSql();

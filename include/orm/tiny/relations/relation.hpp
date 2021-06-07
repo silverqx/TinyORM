@@ -106,6 +106,7 @@ namespace Relations
         rawUpdate(const QVector<UpdateItem> &values = {}) const;
 
         /* TinyBuilder proxy methods */
+        /*! Find a model by its primary key. */
         std::optional<Related>
         find(const QVariant &id, const QStringList &columns = {"*"}) const;
         /*! Find a model by its primary key or return fresh model instance. */
@@ -113,6 +114,8 @@ namespace Relations
         /*! Find a model by its primary key or throw an exception. */
         Related findOrFail(const QVariant &id, const QStringList &columns = {"*"}) const;
 
+        /*! Execute the query and get the first result. */
+        std::optional<Model> first(const QStringList &columns = {"*"}) const;
         /*! Get the first record matching the attributes or instantiate it. */
         Related firstOrNew(const QVector<WhereItem> &attributes = {},
                          const QVector<AttributeItem> &values = {}) const;
@@ -131,6 +134,11 @@ namespace Relations
         firstWhereEq(const QString &column, const QVariant &value,
                      const QString &condition = "and") const;
 
+        /*! Add a where clause on the primary key to the query. */
+        Builder<Related> &whereKey(const QVariant &id) const;
+        /*! Add a where clause on the primary key to the query. */
+        Builder<Related> &whereKeyNot(const QVariant &id) const;
+
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const QString &column) const;
 
@@ -148,10 +156,6 @@ namespace Relations
         /*! Set the relationship that should be eager loaded while removing
             any previously added eager loading specifications. */
         Builder<Related> &withOnly(const QString &relation) const;
-
-        /* Proxies to TinyBuilder -> BuildsQueries */
-        /*! Execute the query and get the first result. */
-        std::optional<Model> first(const QStringList &columns = {"*"}) const;
 
         /* Proxies to TinyBuilder -> QueryBuilder */
         /* Insert, Update, Delete */
@@ -368,11 +372,6 @@ namespace Relations
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {}) const;
 
-        /*! Add a where clause on the primary key to the query. */
-        Builder<Related> &whereKey(const QVariant &id) const;
-        /*! Add a where clause on the primary key to the query. */
-        Builder<Related> &whereKeyNot(const QVariant &id) const;
-
         /* Others */
         /*! The textual representation of the Relation type. */
         virtual QString relationTypeName() const = 0;
@@ -480,6 +479,13 @@ namespace Relations
     }
 
     template<class Model, class Related>
+    std::optional<Model>
+    Relation<Model, Related>::first(const QStringList &columns) const
+    {
+        return m_query->first(columns);
+    }
+
+    template<class Model, class Related>
     Related
     Relation<Model, Related>::firstOrNew(const QVector<WhereItem> &attributes,
                                          const QVector<AttributeItem> &values) const
@@ -516,6 +522,20 @@ namespace Relations
                                            const QString &condition) const
     {
         return m_query->firstWhereEq(column, value, condition);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &
+    Relation<Model, Related>::whereKey(const QVariant &id) const
+    {
+        return m_query->whereKey(id);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &
+    Relation<Model, Related>::whereKeyNot(const QVariant &id) const
+    {
+        return m_query->whereKeyNot(id);
     }
 
     template<class Model, class Related>
@@ -564,13 +584,6 @@ namespace Relations
     Relation<Model, Related>::withOnly(const QString &relation) const
     {
         return m_query->withOnly(relation);
-    }
-
-    template<class Model, class Related>
-    std::optional<Model>
-    Relation<Model, Related>::first(const QStringList &columns) const
-    {
-        return m_query->first(columns);
     }
 
     template<class Model, class Related>
@@ -1089,20 +1102,6 @@ namespace Relations
                                         const QVector<UpdateItem> &extra) const
     {
         return m_query->decrement(column, amount, extra);
-    }
-
-    template<class Model, class Related>
-    Builder<Related> &
-    Relation<Model, Related>::whereKey(const QVariant &id) const
-    {
-        return m_query->whereKey(id);
-    }
-
-    template<class Model, class Related>
-    Builder<Related> &
-    Relation<Model, Related>::whereKeyNot(const QVariant &id) const
-    {
-        return m_query->whereKeyNot(id);
     }
 
     template<class Model, class Related>

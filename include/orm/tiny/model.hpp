@@ -79,6 +79,7 @@ namespace Relations {
     // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
     // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
     // BUG Qt sql drivers do not work with mysql json columns silverqx
+    // CUR check by all possible checkers, https://doc.qt.io/qtcreator/creator-analyze-mode.html silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -124,10 +125,10 @@ namespace Relations {
         /*! Begin querying the model on a given connection. */
         static std::unique_ptr<TinyBuilder<Derived>> on(const QString &connection = "");
 
-        /* TinyBuilder proxy methods */
         /*! Get all of the models from the database. */
         static QVector<Derived> all(const QStringList &columns = {"*"});
 
+        /* TinyBuilder proxy methods */
         /*! Find a model by its primary key. */
         static std::optional<Derived>
         find(const QVariant &id, const QStringList &columns = {"*"});
@@ -138,6 +139,9 @@ namespace Relations {
         static Derived
         findOrFail(const QVariant &id, const QStringList &columns = {"*"});
 
+        /*! Execute the query and get the first result. */
+        static std::optional<Derived>
+        first(const QStringList &columns = {"*"});
         /*! Get the first record matching the attributes or instantiate it. */
         static Derived
         firstOrNew(const QVector<WhereItem> &attributes = {},
@@ -157,6 +161,13 @@ namespace Relations {
         static std::optional<Derived>
         firstWhereEq(const QString &column, const QVariant &value,
                      const QString &condition = "and");
+
+        /*! Add a where clause on the primary key to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereKey(const QVariant &id);
+        /*! Add a where clause on the primary key to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereKeyNot(const QVariant &id);
 
         /*! Get a single column's value from the first result of a query. */
         static QVariant value(const QString &column);
@@ -193,10 +204,6 @@ namespace Relations {
 
         /*! Save a new model and return the instance. */
         static Derived create(const QVector<AttributeItem> &attributes = {});
-
-        /* Proxies to TinyBuilder -> BuildsQueries */
-        /*! Execute the query and get the first result. */
-        static std::optional<Derived> first(const QStringList &columns = {"*"});
 
         /* Proxies to TinyBuilder -> QueryBuilder */
         /* Insert, Update, Delete */
@@ -432,14 +439,6 @@ namespace Relations {
         forPage(int page, int perPage = 30);
 
         // TODO next fuckin increment, finish later 👿 silverqx
-
-        /* Proxies to TinyBuilder */
-        /*! Add a where clause on the primary key to the query. */
-        static std::unique_ptr<TinyBuilder<Derived>>
-        whereKey(const QVariant &id);
-        /*! Add a where clause on the primary key to the query. */
-        static std::unique_ptr<TinyBuilder<Derived>>
-        whereKeyNot(const QVariant &id);
 
         /* Operations on a model instance */
         /*! Save the model to the database. */
@@ -1254,6 +1253,13 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::optional<Derived>
+    Model<Derived, AllRelations...>::first(const QStringList &columns)
+    {
+        return query()->first(columns);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::firstOrNew(
             const QVector<WhereItem> &attributes,
@@ -1293,6 +1299,28 @@ namespace Relations {
             const QString &column, const QVariant &value, const QString &condition)
     {
         return where(column, QStringLiteral("="), value, condition)->first();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereKey(const QVariant &id)
+    {
+        auto builder = query();
+
+        builder->whereKey(id);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereKeyNot(const QVariant &id)
+    {
+        auto builder = query();
+
+        builder->whereKeyNot(id);
+
+        return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1388,13 +1416,6 @@ namespace Relations {
     Model<Derived, AllRelations...>::create(const QVector<AttributeItem> &attributes)
     {
         return query()->create(attributes);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::optional<Derived>
-    Model<Derived, AllRelations...>::first(const QStringList &columns)
-    {
-        return query()->first(columns);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2135,28 +2156,6 @@ namespace Relations {
         auto builder = query();
 
         builder->forPage(page, perPage);
-
-        return builder;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::whereKey(const QVariant &id)
-    {
-        auto builder = query();
-
-        builder->whereKey(id);
-
-        return builder;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::whereKeyNot(const QVariant &id)
-    {
-        auto builder = query();
-
-        builder->whereKeyNot(id);
 
         return builder;
     }

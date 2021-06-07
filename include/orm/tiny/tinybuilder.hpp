@@ -46,6 +46,8 @@ namespace Relations
         /*! Find a model by its primary key or throw an exception. */
         Model findOrFail(const QVariant &id, const QStringList &columns = {"*"});
 
+        /*! Execute the query and get the first result. */
+        std::optional<Model> first(const QStringList &columns = {"*"});
         /*! Get the first record matching the attributes or instantiate it. */
         Model firstOrNew(const QVector<WhereItem> &attributes = {},
                          const QVector<AttributeItem> &values = {});
@@ -63,6 +65,11 @@ namespace Relations
         std::optional<Model>
         firstWhereEq(const QString &column, const QVariant &value,
                      const QString &condition = "and");
+
+        /*! Add a where clause on the primary key to the query. */
+        Builder &whereKey(const QVariant &id);
+        /*! Add a where clause on the primary key to the query. */
+        Builder &whereKeyNot(const QVariant &id);
 
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const QString &column);
@@ -86,11 +93,6 @@ namespace Relations
         Model create(const QVector<AttributeItem> &attributes = {});
         /*! Save a new model and return the instance. */
         Model create(QVector<AttributeItem> &&attributes = {});
-
-        /* BuildsQueries */
-        // TODO BuildsQueries contains duplicit methods in TinyBuilder and QueryBuilder, make it by multi inheritance, I discovered now, that TinyBuilder will return different types than QueryBuilder, look eg at first() or get(), but investigate if there are cases, when API is same and use multi inheritance pattern for this methods silver
-        /*! Execute the query and get the first result. */
-        std::optional<Model> first(const QStringList &columns = {"*"});
 
         /* Proxy methods to the QueryBuilder */
         /* Insert, Update, Delete */
@@ -128,6 +130,7 @@ namespace Relations
 
         /*! Force the query to only return distinct results. */
         Builder &distinct();
+        // CUR missing disctinct overloads silverqx
 
         /*! Add a join clause to the query. */
         Builder &join(const QString &table, const QString &first,
@@ -285,12 +288,10 @@ namespace Relations
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});
 
-        /* TinyBuilder methods */
-        /*! Add a where clause on the primary key to the query. */
-        Builder &whereKey(const QVariant &id);
-        /*! Add a where clause on the primary key to the query. */
-        Builder &whereKeyNot(const QVariant &id);
+        // CUR missing Pessimistic Locking proxy, also in model and relation class silverqx
+        // CUR eloquent also allows from() proxy, wtf 😄 silverqx
 
+        /* TinyBuilder methods */
         /*! Create a new instance of the model being queried. */
         Model newModelInstance(const QVector<AttributeItem> &attributes = {});
 
@@ -432,6 +433,18 @@ namespace Relations
     }
 
     template<typename Model>
+    std::optional<Model>
+    Builder<Model>::first(const QStringList &columns)
+    {
+        const auto models = take(1).get(columns);
+
+        if (models.isEmpty())
+            return std::nullopt;
+
+        return models.first();
+    }
+
+    template<typename Model>
     Model
     Builder<Model>::firstOrNew(const QVector<WhereItem> &attributes,
                                const QVector<AttributeItem> &values)
@@ -489,6 +502,20 @@ namespace Relations
                                  const QString &condition)
     {
         return where(column, QStringLiteral("="), value, condition).first();
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereKey(const QVariant &id)
+    {
+        return where(m_model.getQualifiedKeyName(), QStringLiteral("="), id);
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereKeyNot(const QVariant &id)
+    {
+        return where(m_model.getQualifiedKeyName(), QStringLiteral("!="), id);
     }
 
     // FEATURE dilemma Raw Expressions fuckup🤔 silverqx
@@ -578,18 +605,6 @@ namespace Relations
         model.save();
 
         return model;
-    }
-
-    template<typename Model>
-    std::optional<Model>
-    Builder<Model>::first(const QStringList &columns)
-    {
-        const auto models = take(1).get(columns);
-
-        if (models.isEmpty())
-            return std::nullopt;
-
-        return models.first();
     }
 
     template<typename Model>
@@ -1153,20 +1168,6 @@ namespace Relations
     {
         return toBase().template decrement<T>(column, amount,
                                               addUpdatedAtColumn(extra));
-    }
-
-    template<typename Model>
-    Builder<Model> &
-    Builder<Model>::whereKey(const QVariant &id)
-    {
-        return where(m_model.getQualifiedKeyName(), QStringLiteral("="), id);
-    }
-
-    template<typename Model>
-    Builder<Model> &
-    Builder<Model>::whereKeyNot(const QVariant &id)
-    {
-        return where(m_model.getQualifiedKeyName(), QStringLiteral("!="), id);
     }
 
     template<typename Model>

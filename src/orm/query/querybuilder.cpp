@@ -26,6 +26,12 @@ Builder::get(const QStringList &columns)
     });
 }
 
+QSqlQuery
+Builder::find(const QVariant &id, const QStringList &columns)
+{
+    return where("id", "=", id).first(columns);
+}
+
 QSqlQuery Builder::first(const QStringList &columns)
 {
     auto query = take(1).get(columns);
@@ -38,12 +44,6 @@ QSqlQuery Builder::first(const QStringList &columns)
 QVariant Builder::value(const QString &column)
 {
     return first({column}).value(column);
-}
-
-QSqlQuery
-Builder::find(const QVariant &id, const QStringList &columns)
-{
-    return where("id", "=", id).first(columns);
 }
 
 QString Builder::toSql()
