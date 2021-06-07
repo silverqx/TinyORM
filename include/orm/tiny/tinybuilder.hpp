@@ -89,10 +89,16 @@ namespace Relations
             any previously added eager loading specifications. */
         Builder &withOnly(const QString &relation);
 
+        /* Insert, Update, Delete */
         /*! Save a new model and return the instance. */
         Model create(const QVector<AttributeItem> &attributes = {});
         /*! Save a new model and return the instance. */
         Model create(QVector<AttributeItem> &&attributes = {});
+
+        /*! Create or update a record matching the attributes, and fill it with
+            values. */
+        Model updateOrCreate(const QVector<WhereItem> &attributes,
+                             const QVector<AttributeItem> &values = {});
 
         /* Proxy methods to the QueryBuilder */
         /* Insert, Update, Delete */
@@ -106,17 +112,14 @@ namespace Relations
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
         update(const QVector<UpdateItem> &values) const;
-        /*! Create or update a record matching the attributes, and fill it with values. */
-        Model updateOrCreate(const QVector<WhereItem> &attributes,
-                             const QVector<AttributeItem> &values = {});
 
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> remove();
+        std::tuple<int, QSqlQuery> remove() const;
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> deleteModels();
+        std::tuple<int, QSqlQuery> deleteModels() const;
 
         /*! Run a truncate statement on the table. */
-        void truncate();
+        void truncate() const;
 
         /* Select */
         /*! Set the columns to be selected. */
@@ -130,7 +133,10 @@ namespace Relations
 
         /*! Force the query to only return distinct results. */
         Builder &distinct();
-        // CUR missing disctinct overloads silverqx
+        /*! Force the query to only return distinct results. */
+        Builder &distinct(const QStringList &columns);
+        /*! Force the query to only return distinct results. */
+        Builder &distinct(QStringList &&columns);
 
         /*! Add a join clause to the query. */
         Builder &join(const QString &table, const QString &first,
@@ -281,15 +287,26 @@ namespace Relations
         template<typename T> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         increment(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {});
+                  const QVector<UpdateItem> &extra = {}) const;
         /*! Decrement a column's value by a given amount. */
         template<typename T> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         decrement(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {});
+                  const QVector<UpdateItem> &extra = {}) const;
 
-        // CUR missing Pessimistic Locking proxy, also in model and relation class silverqx
-        // CUR eloquent also allows from() proxy, wtf 😄 silverqx
+        /* Pessimistic Locking */
+        /*! Lock the selected rows in the table for updating. */
+        Builder &lockForUpdate();
+        /*! Share lock the selected rows in the table. */
+        Builder &sharedLock();
+        /*! Lock the selected rows in the table. */
+        Builder &lock(const bool value = true);
+        /*! Lock the selected rows in the table. */
+        Builder &lock(const char *value);
+        /*! Lock the selected rows in the table. */
+        Builder &lock(const QString &value);
+        /*! Lock the selected rows in the table. */
+        Builder &lock(QString &&value);
 
         /* TinyBuilder methods */
         /*! Create a new instance of the model being queried. */
@@ -608,6 +625,17 @@ namespace Relations
     }
 
     template<typename Model>
+    Model Builder<Model>::updateOrCreate(const QVector<WhereItem> &attributes,
+                                         const QVector<AttributeItem> &values)
+    {
+        auto instance = firstOrNew(attributes);
+
+        instance.fill(values).save();
+
+        return instance;
+    }
+
+    template<typename Model>
     std::optional<QSqlQuery>
     Builder<Model>::insert(const QVector<AttributeItem> &attributes) const
     {
@@ -631,32 +659,21 @@ namespace Relations
         return toBase().update(addUpdatedAtColumn(values));
     }
 
-    template<typename Model>
-    Model Builder<Model>::updateOrCreate(const QVector<WhereItem> &attributes,
-                                         const QVector<AttributeItem> &values)
-    {
-        auto instance = firstOrNew(attributes);
-
-        instance.fill(values).save();
-
-        return instance;
-    }
-
     // FUTURE add onDelete (and similar) callback feature silverqx
     template<typename Model>
-    std::tuple<int, QSqlQuery> Builder<Model>::remove()
+    std::tuple<int, QSqlQuery> Builder<Model>::remove() const
     {
         return toBase().deleteRow();
     }
 
     template<typename Model>
-    std::tuple<int, QSqlQuery> Builder<Model>::deleteModels()
+    std::tuple<int, QSqlQuery> Builder<Model>::deleteModels() const
     {
         return remove();
     }
 
     template<typename Model>
-    void Builder<Model>::truncate()
+    void Builder<Model>::truncate() const
     {
         toBase().truncate();
     }
@@ -693,6 +710,20 @@ namespace Relations
     Builder<Model> &Builder<Model>::distinct()
     {
         toBase().distinct();
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::distinct(const QStringList &columns)
+    {
+        toBase().distinct(columns);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::distinct(QStringList &&columns)
+    {
+        toBase().distinct(std::move(columns));
         return *this;
     }
 
@@ -1154,7 +1185,7 @@ namespace Relations
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
     Builder<Model>::increment(const QString &column, const T amount,
-                              const QVector<UpdateItem> &extra)
+                              const QVector<UpdateItem> &extra) const
     {
         return toBase().template increment<T>(column, amount,
                                               addUpdatedAtColumn(extra));
@@ -1164,10 +1195,52 @@ namespace Relations
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
     Builder<Model>::decrement(const QString &column, const T amount,
-                              const QVector<UpdateItem> &extra)
+                              const QVector<UpdateItem> &extra) const
     {
         return toBase().template decrement<T>(column, amount,
                                               addUpdatedAtColumn(extra));
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::lockForUpdate()
+    {
+        toBase().lock(true);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::sharedLock()
+    {
+        toBase().lock(false);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::lock(const bool value)
+    {
+        toBase().lock(value);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::lock(const char *value)
+    {
+        toBase().lock(value);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::lock(const QString &value)
+    {
+        toBase().lock(value);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::lock(QString &&value)
+    {
+        toBase().lock(std::move(value));
+        return *this;
     }
 
     template<typename Model>

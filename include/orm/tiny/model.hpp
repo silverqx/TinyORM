@@ -242,7 +242,14 @@ namespace Relations {
         addSelect(const QString &column);
 
         /*! Force the query to only return distinct results. */
-        static std::unique_ptr<TinyBuilder<Derived>> distinct();
+        static std::unique_ptr<TinyBuilder<Derived>>
+        distinct();
+        /*! Force the query to only return distinct results. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        distinct(const QStringList &columns);
+        /*! Force the query to only return distinct results. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        distinct(QStringList &&columns);
 
         /*! Add a join clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -439,6 +446,26 @@ namespace Relations {
         forPage(int page, int perPage = 30);
 
         // TODO next fuckin increment, finish later 👿 silverqx
+
+        /* Pessimistic Locking */
+        /*! Lock the selected rows in the table for updating. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        lockForUpdate();
+        /*! Share lock the selected rows in the table. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        sharedLock();
+        /*! Lock the selected rows in the table. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        lock(bool value = true);
+        /*! Lock the selected rows in the table. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        lock(const char *value);
+        /*! Lock the selected rows in the table. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        lock(const QString &value);
+        /*! Lock the selected rows in the table. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        lock(QString &&value);
 
         /* Operations on a model instance */
         /*! Save the model to the database. */
@@ -1538,6 +1565,28 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::distinct(const QStringList &columns)
+    {
+        auto builder = query();
+
+        builder->distinct(columns);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::distinct(QStringList &&columns)
+    {
+        auto builder = query();
+
+        builder->distinct(std::move(columns));
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::join(
             const QString &table, const QString &first,  const QString &comparison,
             const QString &second, const QString &type, const bool where)
@@ -2156,6 +2205,72 @@ namespace Relations {
         auto builder = query();
 
         builder->forPage(page, perPage);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::lockForUpdate()
+    {
+        auto builder = query();
+
+        builder->lock(true);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::sharedLock()
+    {
+        auto builder = query();
+
+        builder->lock(false);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::lock(const bool value)
+    {
+        auto builder = query();
+
+        builder->lock(value);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::lock(const char *value)
+    {
+        auto builder = query();
+
+        builder->lock(value);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::lock(const QString &value)
+    {
+        auto builder = query();
+
+        builder->lock(value);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::lock(QString &&value)
+    {
+        auto builder = query();
+
+        builder->lock(std::move(value));
 
         return builder;
     }

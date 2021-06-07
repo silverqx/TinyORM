@@ -267,7 +267,7 @@ namespace Query
         /*! Share lock the selected rows in the table. */
         Builder &sharedLock();
         /*! Lock the selected rows in the table. */
-        Builder &lock(const bool value = true);
+        Builder &lock(bool value = true);
         /*! Lock the selected rows in the table. */
         Builder &lock(const char *value);
         /*! Lock the selected rows in the table. */

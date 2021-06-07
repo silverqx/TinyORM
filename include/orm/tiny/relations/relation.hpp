@@ -193,6 +193,10 @@ namespace Relations
 
         /*! Force the query to only return distinct results. */
         Builder<Related> &distinct() const;
+        /*! Force the query to only return distinct results. */
+        Builder<Related> &distinct(const QStringList &columns) const;
+        /*! Force the query to only return distinct results. */
+        Builder<Related> &distinct(QStringList &&columns) const;
 
         /*! Add a join clause to the query. */
         Builder<Related> &join(const QString &table, const QString &first,
@@ -371,6 +375,20 @@ namespace Relations
         std::tuple<int, QSqlQuery>
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {}) const;
+
+        /* Pessimistic Locking */
+        /*! Lock the selected rows in the table for updating. */
+        Builder<Related> &lockForUpdate();
+        /*! Share lock the selected rows in the table. */
+        Builder<Related> &sharedLock();
+        /*! Lock the selected rows in the table. */
+        Builder<Related> &lock(bool value = true);
+        /*! Lock the selected rows in the table. */
+        Builder<Related> &lock(const char *value);
+        /*! Lock the selected rows in the table. */
+        Builder<Related> &lock(const QString &value);
+        /*! Lock the selected rows in the table. */
+        Builder<Related> &lock(QString &&value);
 
         /* Others */
         /*! The textual representation of the Relation type. */
@@ -669,6 +687,19 @@ namespace Relations
     Builder<Related> &Relation<Model, Related>::distinct() const
     {
         return m_query->distinct();
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &Relation<Model, Related>::distinct(
+            const QStringList &columns) const
+    {
+        return m_query->distinct(columns);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &Relation<Model, Related>::distinct(QStringList &&columns) const
+    {
+        return m_query->distinct(std::move(columns));
     }
 
     template<class Model, class Related>
@@ -1102,6 +1133,42 @@ namespace Relations
                                         const QVector<UpdateItem> &extra) const
     {
         return m_query->decrement(column, amount, extra);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &Relation<Model, Related>::lockForUpdate()
+    {
+        return m_query->lock(true);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &Relation<Model, Related>::sharedLock()
+    {
+        return m_query->lock(false);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &Relation<Model, Related>::lock(const bool value)
+    {
+        return m_query->lock(value);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &Relation<Model, Related>::lock(const char *value)
+    {
+        return m_query->lock(value);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &Relation<Model, Related>::lock(const QString &value)
+    {
+        return m_query->lock(value);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &Relation<Model, Related>::lock(QString &&value)
+    {
+        return m_query->lock(std::move(value));
     }
 
     template<class Model, class Related>
