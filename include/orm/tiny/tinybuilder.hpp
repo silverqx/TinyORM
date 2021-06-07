@@ -109,12 +109,22 @@ namespace Relations
 
         /* Proxy methods to the QueryBuilder */
         /* Insert, Update, Delete */
+        /*! Insert a new record into the database. */
+        std::optional<QSqlQuery>
+        insert(const QVector<AttributeItem> &values) const;
         /*! Insert new records into the database. */
         std::optional<QSqlQuery>
-        insert(const QVector<AttributeItem> &attributes) const;
+        insert(const QVector<QVector<AttributeItem>> &values) const;
         /*! Insert a new record and get the value of the primary key. */
-        quint64 insertGetId(const QVector<AttributeItem> &attributes,
+        quint64 insertGetId(const QVector<AttributeItem> &values,
                             const QString &sequence = "") const;
+
+        /*! Insert a new record into the database while ignoring errors. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<AttributeItem> &values) const;
+        /*! Insert new records into the database while ignoring errors. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<QVector<AttributeItem>> &values) const;
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
@@ -673,19 +683,40 @@ namespace Relations
 
     template<typename Model>
     std::optional<QSqlQuery>
-    Builder<Model>::insert(const QVector<AttributeItem> &attributes) const
+    Builder<Model>::insert(const QVector<AttributeItem> &values) const
     {
-        return toBase().insert(Utils::Attribute::convertVectorToMap(attributes));
+        return toBase().insert(Utils::Attribute::convertVectorToMap(values));
+    }
+
+    template<typename Model>
+    std::optional<QSqlQuery>
+    Builder<Model>::insert(const QVector<QVector<AttributeItem>> &values) const
+    {
+        return toBase().insert(Utils::Attribute::convertVectorsToMaps(values));
     }
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<typename Model>
     quint64
-    Builder<Model>::insertGetId(const QVector<AttributeItem> &attributes,
+    Builder<Model>::insertGetId(const QVector<AttributeItem> &values,
                                 const QString &sequence) const
     {
-        return toBase().insertGetId(Utils::Attribute::convertVectorToMap(attributes),
+        return toBase().insertGetId(Utils::Attribute::convertVectorToMap(values),
                                     sequence);
+    }
+
+    template<typename Model>
+    std::tuple<int, std::optional<QSqlQuery>>
+    Builder<Model>::insertOrIgnore(const QVector<AttributeItem> &values) const
+    {
+        return toBase().insertOrIgnore(Utils::Attribute::convertVectorToMap(values));
+    }
+
+    template<typename Model>
+    std::tuple<int, std::optional<QSqlQuery>>
+    Builder<Model>::insertOrIgnore(const QVector<QVector<AttributeItem>> &values) const
+    {
+        return toBase().insertOrIgnore(Utils::Attribute::convertVectorsToMaps(values));
     }
 
     template<typename Model>

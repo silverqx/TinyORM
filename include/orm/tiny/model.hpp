@@ -193,6 +193,7 @@ namespace Relations {
         /*! Prevent the specified relations from being eager loaded. */
         static std::unique_ptr<TinyBuilder<Derived>>
         without(const QString &relation);
+
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -202,22 +203,35 @@ namespace Relations {
         static std::unique_ptr<TinyBuilder<Derived>>
         withOnly(const QString &relation);
 
+        /* Insert, Update, Delete */
         /*! Save a new model and return the instance. */
         static Derived create(const QVector<AttributeItem> &attributes = {});
-
-        /* Proxies to TinyBuilder -> QueryBuilder */
-        /* Insert, Update, Delete */
-        /*! Insert new records into the database. */
-        static std::optional<QSqlQuery>
-        insert(const QVector<AttributeItem> &attributes);
-        /*! Insert a new record and get the value of the primary key. */
-        static quint64
-        insertGetId(const QVector<AttributeItem> &attributes,
-                    const QString &sequence = "");
+        /*! Save a new model and return the instance. */
+        static Derived create(QVector<AttributeItem> &&attributes = {});
 
         /*! Create or update a record matching the attributes, and fill it with values. */
         Derived updateOrCreate(const QVector<WhereItem> &attributes,
                                const QVector<AttributeItem> &values = {});
+
+        /* Proxies to TinyBuilder -> QueryBuilder */
+        /* Insert, Update, Delete */
+        /*! Insert a new record into the database. */
+        static std::optional<QSqlQuery>
+        insert(const QVector<AttributeItem> &values);
+        /*! Insert new records into the database. */
+        static std::optional<QSqlQuery>
+        insert(const QVector<QVector<AttributeItem>> &values);
+        /*! Insert a new record and get the value of the primary key. */
+        static quint64
+        insertGetId(const QVector<AttributeItem> &values,
+                    const QString &sequence = "");
+
+        /*! Insert a new record into the database while ignoring errors. */
+        static std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<AttributeItem> &values);
+        /*! Insert new records into the database while ignoring errors. */
+        static std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<QVector<AttributeItem>> &values);
 
         /*! Destroy the models for the given IDs. */
         static std::size_t destroy(const QVector<QVariant> &ids);
@@ -1442,20 +1456,10 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::optional<QSqlQuery>
-    Model<Derived, AllRelations...>::insert(
-            const QVector<AttributeItem> &attributes)
+    Derived
+    Model<Derived, AllRelations...>::create(QVector<AttributeItem> &&attributes)
     {
-        return query()->insert(attributes);
-    }
-
-    // FEATURE dilemma primarykey, Derived::KeyType vs QVariant silverqx
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    quint64
-    Model<Derived, AllRelations...>::insertGetId(
-            const QVector<AttributeItem> &attributes, const QString &sequence)
-    {
-        return query()->insertGetId(attributes, sequence);
+        return query()->create(std::move(attributes));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1464,6 +1468,47 @@ namespace Relations {
             const QVector<WhereItem> &attributes, const QVector<AttributeItem> &values)
     {
         return query()->updateOrCreate(attributes, values);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::optional<QSqlQuery>
+    Model<Derived, AllRelations...>::insert(
+            const QVector<AttributeItem> &values)
+    {
+        return query()->insert(values);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::optional<QSqlQuery>
+    Model<Derived, AllRelations...>::insert(
+            const QVector<QVector<AttributeItem>> &values)
+    {
+        return query()->insert(values);
+    }
+
+    // FEATURE dilemma primarykey, Derived::KeyType vs QVariant silverqx
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    quint64
+    Model<Derived, AllRelations...>::insertGetId(
+            const QVector<AttributeItem> &values, const QString &sequence)
+    {
+        return query()->insertGetId(values, sequence);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::tuple<int, std::optional<QSqlQuery>>
+    Model<Derived, AllRelations...>::insertOrIgnore(
+            const QVector<AttributeItem> &values)
+    {
+        return query()->insertOrIgnore(values);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::tuple<int, std::optional<QSqlQuery>>
+    Model<Derived, AllRelations...>::insertOrIgnore(
+            const QVector<QVector<AttributeItem>> &values)
+    {
+        return query()->insertOrIgnore(values);
     }
 
     // TODO cpp check all int types and use std::size_t where appropriate silverqx

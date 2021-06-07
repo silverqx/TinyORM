@@ -167,19 +167,26 @@ namespace Relations
 
         /* Proxies to TinyBuilder -> QueryBuilder */
         /* Insert, Update, Delete */
+        /*! Insert a new record into the database. */
+        std::optional<QSqlQuery>
+        insert(const QVector<AttributeItem> &values) const;
         /*! Insert new records into the database. */
         std::optional<QSqlQuery>
-        insert(const QVector<AttributeItem> &attributes) const;
+        insert(const QVector<QVector<AttributeItem>> &values) const;
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVector<AttributeItem> &attributes,
                             const QString &sequence = "") const;
 
+        /*! Insert a new record into the database while ignoring errors. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<AttributeItem> &values) const;
+        /*! Insert new records into the database while ignoring errors. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<QVector<AttributeItem>> &values) const;
+
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
         update(const QVector<UpdateItem> &values) const;
-        /*! Create or update a record matching the attributes, and fill it with values. */
-        Related updateOrCreate(const QVector<WhereItem> &attributes,
-                               const QVector<AttributeItem> &values = {}) const;
 
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery> remove() const;
@@ -630,9 +637,16 @@ namespace Relations
 
     template<class Model, class Related>
     std::optional<QSqlQuery>
-    Relation<Model, Related>::insert(const QVector<AttributeItem> &attributes) const
+    Relation<Model, Related>::insert(const QVector<AttributeItem> &values) const
     {
-        return m_query->insert(attributes);
+        return m_query->insert(values);
+    }
+
+    template<class Model, class Related>
+    std::optional<QSqlQuery>
+    Relation<Model, Related>::insert(const QVector<QVector<AttributeItem>> &values) const
+    {
+        return m_query->insert(values);
     }
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
@@ -645,18 +659,25 @@ namespace Relations
     }
 
     template<class Model, class Related>
+    std::tuple<int, std::optional<QSqlQuery>>
+    Relation<Model, Related>::insertOrIgnore(const QVector<AttributeItem> &values) const
+    {
+        return m_query->insertOrIgnore(values);
+    }
+
+    template<class Model, class Related>
+    std::tuple<int, std::optional<QSqlQuery>>
+    Relation<Model, Related>::insertOrIgnore(
+            const QVector<QVector<AttributeItem>> &values) const
+    {
+        return m_query->insertOrIgnore(values);
+    }
+
+    template<class Model, class Related>
     std::tuple<int, QSqlQuery>
     Relation<Model, Related>::update(const QVector<UpdateItem> &values) const
     {
         return m_query->update(values);
-    }
-
-    template<class Model, class Related>
-    Related
-    Relation<Model, Related>::updateOrCreate(const QVector<WhereItem> &attributes,
-                                             const QVector<AttributeItem> &values) const
-    {
-        return m_query->updateOrCreate(attributes, values);
     }
 
     template<class Model, class Related>

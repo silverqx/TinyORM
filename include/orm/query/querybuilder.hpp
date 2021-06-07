@@ -52,7 +52,7 @@ namespace Query
 //        { dd($this->toSql(), $this->getBindings()); }
 
         /* Insert, Update, Delete */
-        /*! Insert new records into the database. */
+        /*! Insert a new record into the database. */
         std::optional<QSqlQuery>
         insert(const QVariantMap &values);
         /*! Insert new records into the database. */
@@ -60,12 +60,13 @@ namespace Query
         insert(const QVector<QVariantMap> &values);
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVariantMap &values, const QString &sequence = "");
-        /*! Insert new records into the database while ignoring errors. */
-        std::tuple<int, std::optional<QSqlQuery>>
-        insertOrIgnore(const QVector<QVariantMap> &values);
+
         /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVariantMap &values);
+        /*! Insert new records into the database while ignoring errors. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<QVariantMap> &values);
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
