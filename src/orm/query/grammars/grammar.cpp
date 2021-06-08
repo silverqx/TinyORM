@@ -1,7 +1,5 @@
 #include "orm/query/grammars/grammar.hpp"
 
-#include <QRegularExpression>
-
 #include "orm/databaseconnection.hpp"
 #include "orm/query/joinclause.hpp"
 
@@ -270,7 +268,7 @@ QString Grammar::concatenateWhereClauses(const QueryBuilder &query,
                              : QStringLiteral("on");
 
     return QStringLiteral("%1 %2").arg(conjunction,
-                                       removeLeadingBoolean(sql.join(' ')));
+                                       removeLeadingBoolean(sql.join(QChar(' '))));
 }
 
 QString Grammar::compileGroups(const QueryBuilder &query) const
@@ -289,7 +287,7 @@ QString Grammar::compileHavings(const QueryBuilder &query) const
         compiledHavings << compileHaving(having);
 
     return QStringLiteral("having %1").arg(
-                removeLeadingBoolean(compiledHavings.join(' ')));
+                removeLeadingBoolean(compiledHavings.join(QChar(' '))));
 }
 
 QString Grammar::compileHaving(const HavingConditionItem &having) const
@@ -485,10 +483,26 @@ QString Grammar::concatenate(const QStringList &segments) const
 
 QString Grammar::removeLeadingBoolean(QString statement) const
 {
-    return statement.replace(
-                QRegularExpression(QStringLiteral("^(and |or )"),
-                                   QRegularExpression::CaseInsensitiveOption),
-                "");
+    // Skip all whitespaces after and/or, to avoid trimmed() for performance reasons
+    const auto firstChar = [&statement](const auto from)
+    {
+        for (auto i = from; i < statement.size(); ++i)
+            if (statement.at(i) != QChar(' '))
+                return i;
+
+        // Return initial value if space has not been found, should never happen :/
+        return from;
+    };
+
+    // RegExp not used for performance reasons
+    /* Before and/or could not be whitespace, current implementation doesn't include
+       whitespaces before. */
+    if (statement.startsWith(QLatin1String("and ")))
+        return statement.mid(firstChar(4));
+    else if (statement.startsWith(QLatin1String("or ")))
+        return statement.mid(firstChar(3));
+    else
+        return statement;
 }
 
 } // namespace Orm::Query::Grammars

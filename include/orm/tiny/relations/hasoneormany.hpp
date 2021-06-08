@@ -10,7 +10,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Relations
 {
 
-    // TODO missing methods updateOrCreate(), firstOrNew(), also add to BelongsToMany and BelongsTo can proxy directly to TinyBuilder versions? have to find out silverqx
+    // CUR missing methods updateOrCreate(), firstOrNew(), also add to BelongsToMany and BelongsTo can proxy directly to TinyBuilder versions? have to find out silverqx
     template<class Model, class Related>
     class HasOneOrMany : public Relation<Model, Related>
     {

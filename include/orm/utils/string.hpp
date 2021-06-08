@@ -12,7 +12,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Utils::String
 {
     /*! Convert a string to snake case. */
-    SHAREDLIB_EXPORT QString toSnake(const QString &string);
+    SHAREDLIB_EXPORT QString toSnake(QString string);
 
     /*! Get the singular form of an English word. */
     SHAREDLIB_EXPORT QString singular(const QString &string);

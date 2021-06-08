@@ -1,7 +1,5 @@
 #include "orm/utils/string.hpp"
 
-#include <QRegularExpression>
-
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -9,17 +7,32 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Utils::String
 {
 
-QString toSnake(const QString &string)
+QString toSnake(QString string)
 {
-    static const QRegularExpression regExp1 {"(.)([A-Z][a-z]+)"};
-    static const QRegularExpression regExp2 {"([a-z0-9])([A-Z])"};
+    // RegExp not used for performance reasons
+    std::vector<unsigned int> positions;
+    positions.reserve(string.size() / 2 + 2);
 
-    QString result = string;
+    for (auto i = 0; i < string.size(); ++i) {
+        const auto ch = string.at(i);
 
-    result.replace(regExp1, "\\1_\\2");
-    result.replace(regExp2, "\\1_\\2");
+        if (i > 0 && ch >= QChar('A') && ch <= QChar('Z')) {
+            const auto previousChar = string.at(i - 1);
 
-    return result.toLower();
+            if ((previousChar >= QChar('a') && previousChar <= QChar('z')) ||
+                (previousChar >= QChar('0') && previousChar <= QChar('9'))
+            )
+                positions.push_back(i);
+        }
+    }
+
+    // Positions stay valid after inserts because reverse iterators used
+    std::for_each(positions.crbegin(), positions.crend(), [&string](const int pos)
+    {
+        string.insert(pos, QChar('_'));
+    });
+
+    return string.toLower();
 }
 
 QString singular(const QString &string)

@@ -1,7 +1,5 @@
 #include "orm/query/querybuilder.hpp"
 
-#include <QRegularExpression>
-
 #include "orm/databaseconnection.hpp"
 #include "orm/query/joinclause.hpp"
 
