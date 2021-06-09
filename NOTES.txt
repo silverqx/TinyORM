@@ -120,25 +120,27 @@ Get-Content .\tmp.sql | sls -Pattern '^(Executed prepared query)' | Set-Content 
 constructor copy/move snippet:
 ------------------------------
 
+Add code below to class you want to optimize and set breakpoints inside and you will see what cause what 😎:
+
 Torrent(const Torrent &torrent)
-    : BaseModel(torrent)
+    : Model(torrent)
 {
     qDebug() << "Torrent copy ctor";
 }
-Torrent &operator=(const Torrent &torrent)
-{
-    BaseModel::operator=(torrent);
-    qDebug() << "Torrent copy assign";
-    return *this;
-}
 Torrent(Torrent &&torrent)
-    : BaseModel(std::move(torrent))
+    : Model(std::move(torrent))
 {
     qDebug() << "Torrent move ctor";
 }
+Torrent &operator=(const Torrent &torrent)
+{
+    Model::operator=(torrent);
+    qDebug() << "Torrent copy assign";
+    return *this;
+}
 Torrent &operator=(Torrent &&torrent)
 {
-    BaseModel::operator=(std::move(torrent));
+    Model::operator=(std::move(torrent));
     qDebug() << "Torrent move assign";
     return *this;
 }
@@ -150,14 +152,14 @@ conversions:
 Makes possible to assign QVector<AttributeItem> to the Model, 
 or implicitly converts a QVector<AttributeItem> to Model:
 
-BaseModel(const QVector<AttributeItem> &attributes);
-BaseModel(QVector<AttributeItem> &&attributes);
+Model(const QVector<AttributeItem> &attributes);
+Model(QVector<AttributeItem> &&attributes);
 
 --
 Allows initialize the Model with QVector<AttributeItem>:
 
-BaseModel(std::initializer_list<AttributeItem> attributes)
-    : BaseModel(QVector<AttributeItem> {attributes.begin(), attributes.end()})
+Model(std::initializer_list<AttributeItem> attributes)
+    : Model(QVector<AttributeItem> {attributes.begin(), attributes.end()})
 {}
 
 --

@@ -80,6 +80,7 @@ namespace Relations {
     // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
     // BUG Qt sql drivers do not work with mysql json columns silverqx
     // CUR check by all possible checkers, https://doc.qt.io/qtcreator/creator-analyze-mode.html silverqx
+    // CUR model copies, try simple command like Torrent::find(2) silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -100,8 +101,19 @@ namespace Relations {
         /*! The "type" of the primary key ID. */
         using KeyType = quint64;
 
+        /* Constructors */
         /*! Create a new TinORM model instance. */
         Model();
+
+        /*! Model's copy constructor. */
+        inline Model(const Model &) = default;
+        /*! Model's move constructor. */
+        inline Model(Model &&) = default;
+
+        /*! Model's copy assignment operator. */
+        inline Model &operator=(const Model &) = default;
+        /*! Model's move assignment operator. */
+        inline Model &operator=(Model &&) = default;
 
         /*! Create a new TinORM model instance from attributes
             (converting constructor). */

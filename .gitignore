@@ -77,6 +77,8 @@ Thumbs.db
 
 # others
 ~$*.xlsx
+/exports*.txt
+/exports.xlsx
 /todos.csv
 /todos.xlsx
 conf.pri

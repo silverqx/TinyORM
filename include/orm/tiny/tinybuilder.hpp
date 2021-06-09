@@ -471,12 +471,12 @@ namespace Relations
     std::optional<Model>
     Builder<Model>::first(const QStringList &columns)
     {
-        const auto models = take(1).get(columns);
+        auto models = take(1).get(columns);
 
         if (models.isEmpty())
             return std::nullopt;
 
-        return models.first();
+        return std::move(models.first());
     }
 
     template<typename Model>
@@ -1315,6 +1315,9 @@ namespace Relations
     {
         return m_model.newInstance(attributes)
                 .setConnection(m_query->getConnection().getName());
+        // CUR stackoverflow move or not move? its a question 🤔 silverqx
+//        return std::move(m_model.newInstance(attributes)
+//                         .setConnection(m_query->getConnection().getName()));
     }
 
     template<typename Model>
