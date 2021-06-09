@@ -1,6 +1,8 @@
 #ifndef LOG_HPP
 #define LOG_HPP
 
+#include "orm/types/boundvalues.hpp"
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -24,9 +26,9 @@ namespace Types
         /*! Executed query. */
         QString query;
         /*! Map of bound values. */
-        QMap<QString, QVariant> boundValues {};
+        BoundValues boundValues {};
         /*! Type of the query in log record. */
-        const Type type = Type::UNDEFINED;
+        Type type = Type::UNDEFINED;
         /*! Order of the query log record. */
         std::size_t order = 0;
         /*! Query execution time. */

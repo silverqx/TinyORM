@@ -67,6 +67,7 @@ HEADERS += \
     $$PWD/orm/tiny/relations/pivot.hpp \
     $$PWD/orm/tiny/relations/relation.hpp \
     $$PWD/orm/tiny/tinybuilder.hpp \
+    $$PWD/orm/types/boundvalues.hpp \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \
     $$PWD/orm/utils/attribute.hpp \

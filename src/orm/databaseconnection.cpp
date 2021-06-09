@@ -809,7 +809,8 @@ void DatabaseConnection::logQuery(
 }
 
 void DatabaseConnection::logQueryForPretend(
-        const QString &query, const QVariantMap &bindings) const
+        const QString &query,
+        const Types::BoundValues &bindings) const
 {
     if (m_loggingQueries && m_queryLog)
         m_queryLog->append({query, bindings, Log::Type::NORMAL, ++m_queryLogId});
