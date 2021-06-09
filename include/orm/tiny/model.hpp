@@ -572,7 +572,7 @@ namespace Relations {
         inline Derived &setTable(const QString &value)
         { model().u_table = value; return model(); }
         /*! Get the table associated with the model. */
-        QString getTable() const;
+        const QString &getTable() const;
         /*! Get the primary key for the model. */
         inline const QString &getKeyName() const
         { return model().u_primaryKey; }
@@ -2926,14 +2926,16 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QString Model<Derived, AllRelations...>::getTable() const
+    const QString &
+    Model<Derived, AllRelations...>::getTable() const
     {
         const auto &table = model().u_table;
 
         // Get pluralized snake-case table name
         if (table.isEmpty())
-            return Utils::String::toSnake(Utils::Type::classPureBasename<Derived>())
-                    + QChar('s');
+            const_cast<QString &>(model().u_table) =
+                Utils::String::toSnake(Utils::Type::classPureBasename<Derived>())
+                + QChar('s');
 
         return table;
     }
