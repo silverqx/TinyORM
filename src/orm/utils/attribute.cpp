@@ -2,6 +2,10 @@
 
 #include <unordered_set>
 
+#include <range/v3/algorithm/contains.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/remove_if.hpp>
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -81,6 +85,31 @@ removeDuplicitKeys(const QVector<AttributeItem> &attributes)
 
     // Reverse order
     return QVector<AttributeItem>(dedupedAttributes.crbegin(), dedupedAttributes.crend());
+}
+
+QVector<AttributeItem>
+joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
+                         const QVector<AttributeItem> &values)
+{
+    // Convert attributes to the QVector<AttributeItem>, so they can be joined
+    QVector<AttributeItem> attributesConverted(attributes.cbegin(),
+                                               attributes.cend());
+
+    // Attributes which already exist in 'attributes' will be removed from 'values'
+    using namespace ranges;
+    auto valuesFiltered =
+            values | views::remove_if(
+                [&attributesConverted](const AttributeItem &value)
+    {
+        return ranges::contains(attributesConverted, true,
+                                [&value](const AttributeItem &attribute)
+        {
+            return attribute.key == value.key;
+        });
+    })
+            | ranges::to<QVector<AttributeItem>>();
+
+    return attributesConverted + valuesFiltered;
 }
 
 } // namespace Orm

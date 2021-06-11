@@ -31,6 +31,7 @@ namespace Tiny
 namespace Relations
 {
 
+    /*! Base relations class. */
     template<class Model, class Related>
     class Relation
     {
@@ -140,7 +141,11 @@ namespace Relations
         /*! Add a where clause on the primary key to the query. */
         Builder<Related> &whereKey(const QVariant &id) const;
         /*! Add a where clause on the primary key to the query. */
+        Builder<Related> &whereKey(const QVector<QVariant> &ids) const;
+        /*! Add a where clause on the primary key to the query. */
         Builder<Related> &whereKeyNot(const QVariant &id) const;
+        /*! Add a where clause on the primary key to the query. */
+        Builder<Related> &whereKeyNot(const QVector<QVariant> &ids) const;
 
         /*! Set the relationships that should be eager loaded. */
         template<typename = void>
@@ -164,6 +169,12 @@ namespace Relations
         /*! Set the relationship that should be eager loaded while removing
             any previously added eager loading specifications. */
         Builder<Related> &withOnly(const QString &relation) const;
+
+        /* Insert, Update, Delete */
+        /*! Create or update a related record matching the attributes, and fill it
+            with values. */
+        Related updateOrCreate(const QVector<WhereItem> &attributes,
+                               const QVector<AttributeItem> &values = {}) const;
 
         /* Proxies to TinyBuilder -> QueryBuilder */
         /* Insert, Update, Delete */
@@ -572,9 +583,23 @@ namespace Relations
 
     template<class Model, class Related>
     Builder<Related> &
+    Relation<Model, Related>::whereKey(const QVector<QVariant> &ids) const
+    {
+        return m_query->whereKey(ids);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &
     Relation<Model, Related>::whereKeyNot(const QVariant &id) const
     {
         return m_query->whereKeyNot(id);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &
+    Relation<Model, Related>::whereKeyNot(const QVector<QVariant> &ids) const
+    {
+        return m_query->whereKeyNot(ids);
     }
 
     template<class Model, class Related>
@@ -633,6 +658,15 @@ namespace Relations
     Relation<Model, Related>::withOnly(const QString &relation) const
     {
         return m_query->withOnly(relation);
+    }
+
+    template<class Model, class Related>
+    Related
+    Relation<Model, Related>::updateOrCreate(
+            const QVector<WhereItem> &attributes,
+            const QVector<AttributeItem> &values) const
+    {
+        return m_query->updateOrCreate(attributes, values);
     }
 
     template<class Model, class Related>

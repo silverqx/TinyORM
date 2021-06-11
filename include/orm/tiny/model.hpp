@@ -153,6 +153,9 @@ namespace Relations {
         /*! Find a model by its primary key or throw an exception. */
         static Derived
         findOrFail(const QVariant &id, const QStringList &columns = {"*"});
+        /*! Find multiple models by their primary keys. */
+        static QVector<Derived>
+        findMany(const QVector<QVariant> &ids, const QStringList &columns = {"*"});
 
         /*! Execute the query and get the first result. */
         static std::optional<Derived>
@@ -182,7 +185,13 @@ namespace Relations {
         whereKey(const QVariant &id);
         /*! Add a where clause on the primary key to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
+        whereKey(const QVector<QVariant> &ids);
+        /*! Add a where clause on the primary key to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
         whereKeyNot(const QVariant &id);
+        /*! Add a where clause on the primary key to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereKeyNot(const QVector<QVariant> &ids);
 
         /*! Begin querying a model with eager loading. */
         template<typename = void>
@@ -1312,6 +1321,14 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVector<Derived>
+    Model<Derived, AllRelations...>::findMany(const QVector<QVariant> &ids,
+                                              const QStringList &columns)
+    {
+        return query()->findMany(ids, columns);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     Model<Derived, AllRelations...>::first(const QStringList &columns)
     {
@@ -1373,11 +1390,33 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereKey(const QVector<QVariant> &ids)
+    {
+        auto builder = query();
+
+        builder->whereKey(ids);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereKeyNot(const QVariant &id)
     {
         auto builder = query();
 
         builder->whereKeyNot(id);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereKeyNot(const QVector<QVariant> &ids)
+    {
+        auto builder = query();
+
+        builder->whereKeyNot(ids);
 
         return builder;
     }

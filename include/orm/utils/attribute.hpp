@@ -28,6 +28,10 @@ namespace Orm::Utils::Attribute
     SHAREDLIB_EXPORT QVector<AttributeItem>
     removeDuplicitKeys(const QVector<AttributeItem> &attributes);
 
+    /*! Join attributes and values for firstOrXx methods. */
+    SHAREDLIB_EXPORT QVector<AttributeItem>
+    joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
+                             const QVector<AttributeItem> &values);
 } // namespace Orm::Utils::Attribute
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE

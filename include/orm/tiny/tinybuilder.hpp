@@ -47,6 +47,9 @@ namespace Relations
         Model findOrNew(const QVariant &id, const QStringList &columns = {"*"});
         /*! Find a model by its primary key or throw an exception. */
         Model findOrFail(const QVariant &id, const QStringList &columns = {"*"});
+        /*! Find multiple models by their primary keys. */
+        QVector<Model>
+        findMany(const QVector<QVariant> &ids, const QStringList &columns = {"*"});
 
         /*! Execute the query and get the first result. */
         std::optional<Model> first(const QStringList &columns = {"*"});
@@ -71,7 +74,11 @@ namespace Relations
         /*! Add a where clause on the primary key to the query. */
         Builder &whereKey(const QVariant &id);
         /*! Add a where clause on the primary key to the query. */
+        Builder &whereKey(const QVector<QVariant> &ids);
+        /*! Add a where clause on the primary key to the query. */
         Builder &whereKeyNot(const QVariant &id);
+        /*! Add a where clause on the primary key to the query. */
+        Builder &whereKeyNot(const QVector<QVariant> &ids);
 
         /*! Set the relationships that should be eager loaded. */
         template<typename = void>
@@ -394,12 +401,6 @@ namespace Relations
         Model m_model;
         /*! The relationships that should be eager loaded. */
         QVector<WithItem> m_eagerLoad;
-
-    private:
-        /*! Join attributes for firstOrXx methods. */
-        QVector<AttributeItem>
-        joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
-                                 const QVector<AttributeItem> &values);
     };
 
     template<typename Model>
@@ -467,6 +468,17 @@ namespace Relations
         throw ModelNotFoundError(Utils::Type::classPureBasename<Model>(), {id});
     }
 
+    // CUR add proxies, dont forget others too silverqx
+    template<typename Model>
+    QVector<Model>
+    Builder<Model>::findMany(const QVector<QVariant> &ids, const QStringList &columns)
+    {
+        if (ids.isEmpty())
+            return {};
+
+        return whereKey(ids).get(columns);
+    }
+
     template<typename Model>
     std::optional<Model>
     Builder<Model>::first(const QStringList &columns)
@@ -490,7 +502,8 @@ namespace Relations
         if (instance)
             return *instance;
 
-        return newModelInstance(joinAttributesForFirstOr(attributes, values));
+        return newModelInstance(
+                    Utils::Attribute::joinAttributesForFirstOr(attributes, values));
     }
 
     template<typename Model>
@@ -498,14 +511,14 @@ namespace Relations
     Builder<Model>::firstOrCreate(const QVector<WhereItem> &attributes,
                                   const QVector<AttributeItem> &values)
     {
-        auto instance = where(attributes).first();
-
         // Model found in db
-        if (instance)
+        if (auto instance = where(attributes).first(); instance)
             return *instance;
 
-        auto newInstance = newModelInstance(
-                               joinAttributesForFirstOr(attributes, values));
+        auto newInstance =
+                newModelInstance(
+                    Utils::Attribute::joinAttributesForFirstOr(attributes, values));
+
         newInstance.save();
 
         return newInstance;
@@ -548,9 +561,27 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
+    Builder<Model>::whereKey(const QVector<QVariant> &ids)
+    {
+        m_query->whereIn(m_model.getQualifiedKeyName(), ids);
+
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
     Builder<Model>::whereKeyNot(const QVariant &id)
     {
         return where(m_model.getQualifiedKeyName(), QStringLiteral("!="), id);
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereKeyNot(const QVector<QVariant> &ids)
+    {
+        m_query->whereNotIn(m_model.getQualifiedKeyName(), ids);
+
+        return *this;
     }
 
     // FEATURE dilemma Raw Expressions fuckup🤔 silverqx
@@ -1603,32 +1634,6 @@ namespace Relations
             valuesUpdatedAtColumn->column = qualifiedUpdatedAtColumn;
 
         return values;
-    }
-
-    template<typename Model>
-    QVector<AttributeItem>
-    Builder<Model>::joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
-                                             const QVector<AttributeItem> &values)
-    {
-        // Convert attributes to the QVector<AttributeItem>, so they can be joined
-        QVector<AttributeItem> attributesConverted(attributes.cbegin(),
-                                                   attributes.cend());
-
-        // Attributes which already exist in 'attributes' will be removed from 'values'
-        using namespace ranges;
-        auto valuesFiltered =
-                values | views::remove_if(
-                    [&attributesConverted](const AttributeItem &value)
-        {
-            return ranges::contains(attributesConverted, true,
-                                    [&value](const AttributeItem &attribute)
-            {
-                return attribute.key == value.key;
-            });
-        })
-                | ranges::to<QVector<AttributeItem>>();
-
-        return attributesConverted + valuesFiltered;
     }
 
 } // namespace Orm::Tiny

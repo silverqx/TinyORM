@@ -2,6 +2,7 @@
 #define HASONEORMANY_H
 
 #include "orm/tiny/relations/relation.hpp"
+#include "orm/utils/attribute.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -28,6 +29,24 @@ namespace Orm::Tiny::Relations
         /* Getters / Setters */
         /*! Get the key value of the parent's local key. */
         QVariant getParentKey() const;
+
+        /* TinyBuilder proxy methods */
+        /*! Find a model by its primary key or return a new instance of the related
+            model. */
+        Related findOrNew(const QVariant &id, const QStringList &columns = {"*"}) const;
+
+        /*! Get the first related model record matching the attributes or instantiate
+            it. */
+        Related firstOrNew(const QVector<WhereItem> &attributes = {},
+                           const QVector<AttributeItem> &values = {}) const;
+        /*! Get the first related record matching the attributes or create it. */
+        Related firstOrCreate(const QVector<WhereItem> &attributes = {},
+                              const QVector<AttributeItem> &values = {}) const;
+
+        /*! Create or update a related record matching the attributes, and fill it
+            with values. */
+        Related updateOrCreate(const QVector<WhereItem> &attributes,
+                               const QVector<AttributeItem> &values = {}) const;
 
         /* Inserting operations on the relationship */
         /*! Attach a model instance to the parent model. */
@@ -114,6 +133,66 @@ namespace Orm::Tiny::Relations
     QVariant HasOneOrMany<Model, Related>::getParentKey() const
     {
         return this->m_parent.getAttribute(m_localKey);
+    }
+
+    template<class Model, class Related>
+    Related HasOneOrMany<Model, Related>::findOrNew(const QVariant &id,
+                                                    const QStringList &columns) const
+    {
+        // Found
+        if (auto instance = this->find(id, columns); instance)
+            return *instance;
+
+        auto newInstance = this->m_related->newInstance();
+
+        setForeignAttributesForCreate(newInstance);
+
+        return newInstance;
+    }
+
+    template<class Model, class Related>
+    Related HasOneOrMany<Model, Related>::firstOrNew(
+            const QVector<WhereItem> &attributes,
+            const QVector<AttributeItem> &values) const
+    {
+        // Model found in db
+        if (auto instance = this->where(attributes).first(); instance)
+            return *instance;
+
+        auto newInstance =
+                this->m_related->newInstance(
+                    Utils::Attribute::joinAttributesForFirstOr(attributes, values));
+
+        setForeignAttributesForCreate(newInstance);
+
+        return newInstance;
+    }
+
+    template<class Model, class Related>
+    Related HasOneOrMany<Model, Related>::firstOrCreate(
+            const QVector<WhereItem> &attributes,
+            const QVector<AttributeItem> &values) const
+    {
+        auto instance = this->where(attributes).first();
+
+        // Model found in db
+        if (instance)
+            return *instance;
+
+        return create(Utils::Attribute::joinAttributesForFirstOr(attributes, values));
+    }
+
+    template<class Model, class Related>
+    Related HasOneOrMany<Model, Related>::updateOrCreate(
+            const QVector<WhereItem> &attributes,
+            const QVector<AttributeItem> &values) const
+    {
+        auto instance = firstOrNew(attributes);
+
+        instance.fill(values).save();
+
+        return instance;
+
     }
 
     // NOTE api different silverqx
