@@ -8,7 +8,6 @@
 #include <QDateTime>
 #include <QHash>
 #include <QMap>
-#include <QRegularExpression>
 #include <QSharedPointer>
 #include <QStringList>
 #include <QVariant>

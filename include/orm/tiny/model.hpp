@@ -1,8 +1,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <QRegularExpression>
-
 #ifdef __GNUG__
 #include <map>
 #endif
@@ -3218,9 +3216,8 @@ namespace Relations {
         /* If this value is an integer, we will assume it is a UNIX timestamp's value
            and format a Carbon object from this timestamp. This allows flexibility
            when defining your date fields as they might be UNIX timestamps here. */
-        if (value.canConvert<qint64>() &&
-            QRegularExpression(QStringLiteral("^\\d{1,20}$"))
-            .match(value.value<QString>()).hasMatch()
+        if (value.canConvert<QString>() &&
+            Utils::String::isNumber(value.value<QString>())
         )
             // TODO switch ms accuracy? For the u_dateFormat too? silverqx
             return QDateTime::fromSecsSinceEpoch(value.value<qint64>());

@@ -43,6 +43,26 @@ QString singular(const QString &string)
     return string.chopped(1);
 }
 
+bool isNumber(const QString &string)
+{
+    /* Performance boost was amazing after the QRegularExpression has been removed,
+       around 50% on the Playground app 👀, from 800ms to 400ms. */
+    if (string.isEmpty())
+        return false;
+
+    auto itBegin = string.cbegin();
+    if (string.front() == QChar('+') || string.front() == QChar('-'))
+        ++itBegin;
+
+    const auto nonDigit = std::find_if(itBegin, string.cend(),
+                                       [](const auto &ch)
+    {
+        return !std::isdigit(ch.toLatin1());
+    });
+
+    return nonDigit == string.cend();
+}
+
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
