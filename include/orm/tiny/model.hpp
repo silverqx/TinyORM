@@ -4001,6 +4001,7 @@ namespace Relations {
     QString Model<Derived, AllRelations...>::guessBelongsToRelationInternal() const
     {
         // TODO reliability, also add Utils::String::studly silverqx
+        // CUR perf, cache relation names silverqx
         auto relation = Utils::Type::classPureBasename<Related>();
 
         relation[0] = relation[0].toLower();

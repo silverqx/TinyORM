@@ -37,36 +37,92 @@ QString Type::prettyFunction(const QString &function)
 QString
 Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withNamespace)
 {
-    // FUTURE ask at some forum if this regexps are correctly written silverqx
 #ifdef _MSC_VER
-    const auto matchRegEx = withNamespace ? "[\\w:]+" : "\\w+|(?<=::)\\w+";
-
-    QRegularExpression re(QStringLiteral("(?:(?<=^struct |^class )%1)(?=<.*>| |$)")
-                          .arg(matchRegEx));
-
-    const auto match = re.match(typeInfo.name());
+    return classPureBasenameMsvc(typeInfo.name(), withNamespace);
 #elif __GNUG__
-    const auto matchRegEx = withNamespace ? "^[\\w:]+" : "^\\w+|(?<=::)\\w+";
+    return classPureBasenameGcc(typeInfo.name(), withNamespace);
 
-    QRegularExpression re(QStringLiteral("(?:%1)(?=<.*>|$| |\\*)").arg(matchRegEx));
+//    const auto matchRegEx = withNamespace ? "^[\\w:]+" : "^\\w+|(?<=::)\\w+";
 
-    int status;
-    const auto typeName_ = abi::__cxa_demangle(typeInfo.name(), nullptr, nullptr,
-                                               &status);
-    const QString typeName(typeName_);
-    // CUR check by valgrind silverqx
-    free(typeName_);
+//    QRegularExpression re(QStringLiteral("(?:%1)(?=<.*>|$| |\\*)").arg(matchRegEx));
 
-    // CUR throw on status != 0 silverqx
+//    int status;
+//    const auto typeName_ = abi::__cxa_demangle(typeInfo.name(), nullptr, nullptr,
+//                                               &status);
+//    const QString typeName(typeName_);
+//    // CUR check by valgrind silverqx
+//    free(typeName_);
 
-    const auto match = re.match(typeName);
+//    // CUR throw on status != 0 silverqx
+
+//    const auto match = re.match(typeName);
+
+//    // This should never happen, but who knows 🤔
+//    Q_ASSERT_X(match.hasMatch(), "regex match",
+//               "Can not get the class base name in Utils::Type::classPureBasename().");
+
+//    return match.captured();
+#else
+    throw RuntimeError("Unsupported compiler.");
 #endif
+}
 
-    // This should never happen, but who knows 🤔
-    Q_ASSERT_X(match.hasMatch(), "regex match",
-               "Can not get the class base name in Utils::Type::classPureBasename().");
+QString
+Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
+{
+    auto findBeginWithoutNS = [&className]
+    {
+        return className.indexOf(QChar(' ')) + 1;
+    };
 
-    return match.captured();
+    // Find the beginning of the class name
+    auto itBegin = className.cbegin();
+
+    // Include the namespace in the result
+    if (withNamespace)
+        itBegin += findBeginWithoutNS();
+
+    // Doesn't contain the namespace
+    else if (auto toBegin = className.lastIndexOf(QStringLiteral("::"));
+             toBegin == -1
+    )
+        itBegin += findBeginWithoutNS();
+
+    // Have the namespace and :: found, +2 to point after
+    else
+        itBegin += toBegin + 2;
+
+    // Find the end of the class name
+    auto itEnd = std::find_if(itBegin, className.cend(),
+                              [](const QChar ch)
+    {
+        // The class name can end with < or space, anything else
+        return ch == QChar('<') || ch == QChar(' ');
+    });
+
+    return QStringView(itBegin, itEnd).toString();
+}
+
+QString
+Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
+{
+    // Find the beginning of the class name
+    auto itBegin = className.cbegin();
+
+    if (!withNamespace)
+        // Have the namespace and :: found, +2 to point after
+        if (auto toBegin = className.lastIndexOf(QStringLiteral("::")); toBegin != -1)
+            itBegin += toBegin + 2;
+
+    // Find the end of the class name
+    auto itEnd = std::find_if(itBegin, className.cend(),
+                              [](const QChar ch)
+    {
+        // The class name can end with <, * or space, anything else
+        return ch == QChar('<') || ch == QChar(' ') || ch == QChar('*');
+    });
+
+    return QStringView(itBegin, itEnd).toString();
 }
 
 } // namespace Orm

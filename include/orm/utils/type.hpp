@@ -49,6 +49,12 @@ namespace Orm::Utils
         /*! Class name with or w/o a namespace and template parameters, common code. */
         static QString classPureBasenameInternal(
                 const std::type_info &typeInfo, bool withNamespace = false);
+        /*! Class name with or w/o a namespace and template parameters, msvc code. */
+        static QString classPureBasenameMsvc(
+                const QString &className, bool withNamespace);
+        /*! Class name with or w/o a namespace and template parameters, gcc code. */
+        static QString classPureBasenameGcc(
+                const QString &className, bool withNamespace);
     };
 
     template<typename T>
