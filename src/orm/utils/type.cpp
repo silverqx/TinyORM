@@ -40,28 +40,17 @@ Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withN
 #ifdef _MSC_VER
     return classPureBasenameMsvc(typeInfo.name(), withNamespace);
 #elif __GNUG__
-    return classPureBasenameGcc(typeInfo.name(), withNamespace);
+    // Demangle a type name
+    int status;
+    const auto typeName_ = abi::__cxa_demangle(typeInfo.name(), nullptr, nullptr,
+                                               &status);
+    const QString typeName(typeName_);
+    // CUR check by valgrind silverqx
+    free(typeName_);
 
-//    const auto matchRegEx = withNamespace ? "^[\\w:]+" : "^\\w+|(?<=::)\\w+";
+    // CUR throw on status != 0 silverqx
 
-//    QRegularExpression re(QStringLiteral("(?:%1)(?=<.*>|$| |\\*)").arg(matchRegEx));
-
-//    int status;
-//    const auto typeName_ = abi::__cxa_demangle(typeInfo.name(), nullptr, nullptr,
-//                                               &status);
-//    const QString typeName(typeName_);
-//    // CUR check by valgrind silverqx
-//    free(typeName_);
-
-//    // CUR throw on status != 0 silverqx
-
-//    const auto match = re.match(typeName);
-
-//    // This should never happen, but who knows 🤔
-//    Q_ASSERT_X(match.hasMatch(), "regex match",
-//               "Can not get the class base name in Utils::Type::classPureBasename().");
-
-//    return match.captured();
+    return classPureBasenameGcc(typeName, withNamespace);
 #else
     throw RuntimeError("Unsupported compiler.");
 #endif
