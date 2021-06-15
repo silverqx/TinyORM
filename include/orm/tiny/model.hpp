@@ -3978,7 +3978,10 @@ namespace Relations {
     template<typename Related>
     QString Model<Derived, AllRelations...>::guessBelongsToRelation() const
     {
-        const QString relation = guessBelongsToRelationInternal<Related>();
+        static const QString relation = guessBelongsToRelationInternal<Related>();
+
+        /* validateUserRelation() method call can not be cached, has to be called
+           every time, to correctly inform the user about invalid relation name. */
 
         // Validate if the guessed relation name exists in the u_relations
         validateUserRelation(relation, RelationFrom::BELONGS_TO);
@@ -3990,8 +3993,11 @@ namespace Relations {
     template<typename Related>
     QString Model<Derived, AllRelations...>::guessBelongsToManyRelation() const
     {
-        const QString relation = QStringLiteral("%1s")
-                                 .arg(guessBelongsToRelationInternal<Related>());
+        static const QString relation =
+                QStringLiteral("%1s").arg(guessBelongsToRelationInternal<Related>());
+
+        /* validateUserRelation() method call can not be cached, has to be called
+           every time, to correctly inform the user about invalid relation name. */
 
         // Validate if the guessed relation name exists in the u_relations
         validateUserRelation(relation, RelationFrom::BELONGS_TO_MANY);
@@ -4004,7 +4010,6 @@ namespace Relations {
     QString Model<Derived, AllRelations...>::guessBelongsToRelationInternal() const
     {
         // TODO reliability, also add Utils::String::studly silverqx
-        // CUR perf, cache relation names silverqx
         auto relation = Utils::Type::classPureBasename<Related>();
 
         relation[0] = relation[0].toLower();

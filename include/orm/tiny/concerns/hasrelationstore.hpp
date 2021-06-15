@@ -31,6 +31,7 @@ namespace Orm::Tiny
 
 namespace Concerns
 {
+
     template<typename Derived, typename ...AllRelations>
     class HasRelationStore
     {
