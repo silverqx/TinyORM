@@ -467,8 +467,8 @@ namespace Relations
                                        const QString &relatedKey)
         : m_parent(parent)
         , m_related(std::move(related))
-        , m_query(m_related->newQuery())
         , m_relatedKey(relatedKey.isEmpty() ? m_related->getKeyName() : relatedKey)
+        , m_query(m_related->newQuery())
     {}
 
     template<class Model, class Related>
