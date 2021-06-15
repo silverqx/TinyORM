@@ -68,6 +68,7 @@ private:
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable {
         "name",
+        "note",
     };
 
     /*! All of the relationships to be touched. */

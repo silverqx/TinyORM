@@ -134,6 +134,7 @@ function createTables(string $connection)
     $schema->create('torrent_tags', function (Blueprint $table) {
         $table->id();
         $table->string('name')->unique();
+        $table->string('note')->nullable();
         $table->timestamps();
     });
 
@@ -254,12 +255,12 @@ function seedTables(string $connection)
         ]));
 
     Capsule::table('torrent_tags', null, $connection)->insert(
-        combineValues(['id', 'name', 'created_at', 'updated_at'], [
-            [1, 'tag1', '2021-01-11 11:51:28', '2021-01-11 23:47:11'],
-            [2, 'tag2', '2021-01-12 11:51:28', '2021-01-12 23:47:11'],
-            [3, 'tag3', '2021-01-13 11:51:28', '2021-01-13 23:47:11'],
-            [4, 'tag4', '2021-01-14 11:51:28', '2021-01-14 23:47:11'],
-            [5, 'tag5', '2021-01-15 11:51:28', '2021-01-15 23:47:11'],
+        combineValues(['id', 'name', 'note', 'created_at', 'updated_at'], [
+            [1, 'tag1', null, '2021-01-11 11:51:28', '2021-01-11 23:47:11'],
+            [2, 'tag2', null, '2021-01-12 11:51:28', '2021-01-12 23:47:11'],
+            [3, 'tag3', null, '2021-01-13 11:51:28', '2021-01-13 23:47:11'],
+            [4, 'tag4', null, '2021-01-14 11:51:28', '2021-01-14 23:47:11'],
+            [5, 'tag5', null, '2021-01-15 11:51:28', '2021-01-15 23:47:11'],
         ]));
 
     Capsule::table('tag_torrent', null, $connection)->insert(

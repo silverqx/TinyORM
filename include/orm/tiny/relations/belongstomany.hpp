@@ -1268,6 +1268,8 @@ namespace Orm::Tiny::Relations
 
         instance->save({.touch = touch});
 
+        // TODO update also pivot attributes silverqx
+
         return *instance;
     }
 
