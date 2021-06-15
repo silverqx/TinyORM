@@ -740,7 +740,8 @@ void tst_Model::firstWhere() const
         QCOMPARE((*torrentFile3)["filepath"], QVariant("test2_file2.mkv"));
     }
     {
-        auto torrentFile1 = TorrentPreviewableFile::firstWhere("id", "<", 4);
+        auto torrentFile1 =
+                TorrentPreviewableFile::orderBy("id")->firstWhere("id", "<", 4);
 
         QVERIFY(torrentFile1->exists);
         QCOMPARE((*torrentFile1)["id"], QVariant(1));
