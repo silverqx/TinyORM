@@ -598,8 +598,7 @@ namespace Orm::Tiny::Relations
         if (column.contains(QChar('.')))
             return column;
 
-        // CUR QStringLiteral silverqx
-        return m_table + QChar('.') + column;
+        return QStringLiteral("%1.%2").arg(m_table, column);
     }
 
     template<class Model, class Related, class PivotType>
@@ -1322,7 +1321,8 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType>::shouldSelect(QStringList columns) const
     {
         if (columns == QStringList {"*"})
-            columns = QStringList {this->m_related->getTable() + QStringLiteral(".*")};
+            columns = QStringList {QStringLiteral("%1.*")
+                                   .arg(this->m_related->getTable())};
 
         columns += aliasedPivotColumns();
 
@@ -1682,7 +1682,7 @@ namespace Orm::Tiny::Relations
 
         relation[0] = relation[0].toLower();
 
-        return relation + QChar('s');
+        return QStringLiteral("%1s").arg(relation);
     }
 
     template<class Model, class Related, class PivotType>

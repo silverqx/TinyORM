@@ -42,7 +42,7 @@ QString QueryError::formatMessage(const char *message, const QSqlQuery &query)
     if (const auto executedQuery = parseExecutedQuery(query);
         !executedQuery.isEmpty()
     )
-        result += QStringLiteral(", SQL: ") + executedQuery;
+        result += QStringLiteral(", SQL: %1").arg(executedQuery);
 
     return result;
 }

@@ -11,7 +11,8 @@ namespace Orm::Schema
 
 QStringList MySqlSchemaBuilder::getColumnListing(const QString &table) const
 {
-    const QString table_ = m_connection.getTablePrefix() + table;
+    const QString table_ = QStringLiteral("%1%2").arg(m_connection.getTablePrefix(),
+                                                      table);
 
     auto query = m_connection.select(m_grammar.compileColumnListing(), {
         m_connection.getDatabaseName(), table_

@@ -2981,8 +2981,8 @@ namespace Relations {
         // Get pluralized snake-case table name
         if (table.isEmpty())
             const_cast<QString &>(model().u_table) =
-                Utils::String::toSnake(Utils::Type::classPureBasename<Derived>())
-                + QChar('s');
+                QStringLiteral("%1s").arg(
+                    Utils::String::toSnake(Utils::Type::classPureBasename<Derived>()));
 
         return table;
     }
@@ -3408,10 +3408,10 @@ namespace Relations {
     QString
     Model<Derived, AllRelations...>::qualifyColumn(const QString &column) const
     {
-        if (column.contains('.'))
+        if (column.contains(QChar('.')))
             return column;
 
-        return model().getTable() + '.' + column;
+        return QStringLiteral("%1.%2").arg(model().getTable(), column);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -3876,7 +3876,9 @@ namespace Relations {
             localKey = getKeyName();
 
         return newHasOne<Related>(std::move(instance), model(),
-                                  instance->getTable() + '.' + foreignKey, localKey);
+                                  QStringLiteral("%1.%2").arg(instance->getTable(),
+                                                              foreignKey),
+                                  localKey);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -3899,8 +3901,7 @@ namespace Relations {
            by using the snake case name of the relationship, which when combined
            with an "_id" should conventionally match the columns. */
         if (foreignKey.isEmpty())
-            // CUR QStringLiteral silverqx
-            foreignKey = Utils::String::toSnake(relation) + '_' + relatedKeyName;
+            foreignKey = QStringLiteral("%1_%2").arg(relation, relatedKeyName);
 
         /* Once we have the foreign key names, we return the relationship instance,
            which will actually be responsible for retrieving and hydrating every
@@ -3926,7 +3927,9 @@ namespace Relations {
             localKey = getKeyName();
 
         return newHasMany<Related>(std::move(instance), model(),
-                                   instance->getTable() + '.' + foreignKey, localKey);
+                                   QStringLiteral("%1.%2").arg(instance->getTable(),
+                                                               foreignKey),
+                                   localKey);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -3987,7 +3990,8 @@ namespace Relations {
     template<typename Related>
     QString Model<Derived, AllRelations...>::guessBelongsToManyRelation() const
     {
-        const QString relation = guessBelongsToRelationInternal<Related>() + QChar('s');
+        const QString relation = QStringLiteral("%1s")
+                                 .arg(guessBelongsToRelationInternal<Related>());
 
         // Validate if the guessed relation name exists in the u_relations
         validateUserRelation(relation, RelationFrom::BELONGS_TO_MANY);

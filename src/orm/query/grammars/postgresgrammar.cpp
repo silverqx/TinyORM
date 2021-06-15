@@ -194,7 +194,8 @@ QString PostgresGrammar::compileUpdateWithJoinsOrLimit(
 
     const auto alias = getAliasFromFrom(table);
 
-    const auto selectSql = compileSelect(query.select(alias + ".ctid"));
+    const auto selectSql = compileSelect(
+                               query.select(QStringLiteral("%1.ctid").arg(alias)));
 
     return QStringLiteral("update %1 set %2 where %3 in (%4)")
             .arg(tableWrapped, columns, wrap(QStringLiteral("ctid")), selectSql);
@@ -208,7 +209,8 @@ QString PostgresGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) cons
 
     const auto alias = getAliasFromFrom(table);
 
-    const auto selectSql = compileSelect(query.select(alias + ".ctid"));
+    const auto selectSql = compileSelect(
+                               query.select(QStringLiteral("%1.ctid").arg(alias)));
 
     return QStringLiteral("delete from %1 where %2 in (%3)")
             .arg(tableWrapped, wrap(QStringLiteral("ctid")), selectSql);

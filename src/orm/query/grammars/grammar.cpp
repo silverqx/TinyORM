@@ -207,11 +207,11 @@ QString Grammar::compileColumns(const QueryBuilder &query) const
                 .arg(query.getConnection().getName()));
 
     if (std::get<bool>(distinct))
-        select += "select distinct ";
+        select = QStringLiteral("select distinct %1");
     else
-        select += "select ";
+        select = QStringLiteral("select %1");
 
-    return select + columnize(query.getColumns());
+    return select.arg(columnize(query.getColumns()));
 }
 
 QString Grammar::compileFrom(const QueryBuilder &query) const
@@ -475,7 +475,7 @@ QString Grammar::concatenate(const QStringList &segments) const
         if (segment.isEmpty())
             continue;
 
-        result += segment + QChar(' ');
+        result += QStringLiteral("%1 ").arg(segment);
     }
 
     return result.trimmed();

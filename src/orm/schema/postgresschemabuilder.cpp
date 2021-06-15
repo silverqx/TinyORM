@@ -13,7 +13,7 @@ QStringList PostgresSchemaBuilder::getColumnListing(const QString &table) const
 {
     auto [schema, table_] = parseSchemaAndTable(table);
 
-    table_ = m_connection.getTablePrefix() + table;
+    table_ = QStringLiteral("%1%2").arg(m_connection.getTablePrefix(), table);
 
     auto query = m_connection.select(m_grammar.compileColumnListing(), {
         schema, table_

@@ -41,7 +41,7 @@ QString BaseGrammar::wrap(const Expression &value, const bool) const
 
 QString BaseGrammar::wrapTable(const QString &table) const
 {
-    return wrap(m_tablePrefix + table, true);
+    return wrap(QStringLiteral("%1%2").arg(m_tablePrefix, table), true);
 }
 
 QString BaseGrammar::wrapTable(const Expression &table) const
@@ -94,7 +94,7 @@ QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAli
        as well in order to generate proper syntax. If this is a column of course
        no prefix is necessary. The condition will be true when from wrapTable. */
     if (prefixAlias)
-        segments[1] = m_tablePrefix + segments[1];
+        segments[1] = QStringLiteral("%1%2").arg(m_tablePrefix, segments[1]);
 
     return QStringLiteral("%1 as %2").arg(wrap(segments[0]), wrapValue(segments[1]));
 }
@@ -104,7 +104,8 @@ QString BaseGrammar::wrapValue(QString value) const
     if (value == '*')
         return value;
 
-    return '"' + value.replace(QChar('"'), QStringLiteral("\"\"")) + '"';
+    return QStringLiteral("\"%1\"").arg(value.replace(QStringLiteral("\""),
+                                                      QStringLiteral("\"\"")));
 }
 
 QString BaseGrammar::wrapSegments(QStringList segments) const

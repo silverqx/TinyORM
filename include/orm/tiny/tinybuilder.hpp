@@ -1602,7 +1602,7 @@ namespace Relations
                                        const QString &nestedRelation) const
     {
         return nestedRelation.contains(QChar('.'))
-                && nestedRelation.startsWith(topRelation + QChar('.'));
+                && nestedRelation.startsWith(QStringLiteral("%1.").arg(topRelation));
     }
 
     template<typename Model>

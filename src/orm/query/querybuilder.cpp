@@ -147,7 +147,7 @@ std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
        ID to let developers to simply and quickly remove a single row from this
        database without manually specifying the "where" clauses on the query.
        m_from will be wrapped in the Grammar. */
-    where(m_from + ".id", "=", id, "and");
+    where(QStringLiteral("%1.id").arg(m_from), "=", id, "and");
 
     return remove();
 }

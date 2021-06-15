@@ -153,7 +153,8 @@ SQLiteGrammar::compileUpdateWithJoinsOrLimit(QueryBuilder &query,
 
     const auto alias = getAliasFromFrom(table);
 
-    const auto selectSql = compileSelect(query.select(alias + ".rowid"));
+    const auto selectSql = compileSelect(
+                               query.select(QStringLiteral("%1.rowid").arg(alias)));
 
     return QStringLiteral("update %1 set %2 where %3 in (%4)")
             .arg(tableWrapped, columns, wrap(QStringLiteral("rowid")), selectSql);
@@ -167,7 +168,8 @@ QString SQLiteGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) const
 
     const auto alias = getAliasFromFrom(table);
 
-    const auto selectSql = compileSelect(query.select(alias + ".rowid"));
+    const auto selectSql = compileSelect(
+                               query.select(QStringLiteral("%1.rowid").arg(alias)));
 
     return QStringLiteral("delete from %1 where %2 in (%3)")
             .arg(tableWrapped, wrap(QStringLiteral("rowid")), selectSql);

@@ -53,10 +53,10 @@ MySqlGrammar::compileUpdateWithoutJoins(
     /* When using MySQL, udpate statements may contain order by statements and limits
        so we will compile both of those here. */
     if (!query.getOrders().isEmpty())
-        sql += QChar(' ') + compileOrders(query);
+        sql += QStringLiteral(" %1").arg(compileOrders(query));
 
     if (query.getLimit() > -1)
-        sql += QChar(' ') + compileLimit(query);
+        sql += QStringLiteral(" %1").arg(compileLimit(query));
 
     return sql;
 }
@@ -72,10 +72,10 @@ MySqlGrammar::compileDeleteWithoutJoins(const QueryBuilder &query, const QString
        so we will compile both of those here. Once we have finished compiling this
        we will return the completed SQL statement so it will be executed for us. */
     if (!query.getOrders().isEmpty())
-        sql += QChar(' ') + compileOrders(query);
+        sql += QStringLiteral(" %1").arg(compileOrders(query));
 
     if (query.getLimit() > -1)
-        sql += QChar(' ') + compileLimit(query);
+        sql += QStringLiteral(" %1").arg(compileLimit(query));
 
     return sql;
 }
@@ -85,7 +85,8 @@ QString MySqlGrammar::wrapValue(QString value) const
     if (value == QChar('*'))
         return value;
 
-    return '`' + value.replace(QChar('`'), QStringLiteral("``")) + '`';
+    return QStringLiteral("`%1`").arg(value.replace(QStringLiteral("`"),
+                                                    QStringLiteral("``")));
 }
 
 const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
