@@ -31,7 +31,8 @@ namespace Orm::Utils::Attribute
     /*! Join attributes and values for firstOrXx methods. */
     SHAREDLIB_EXPORT QVector<AttributeItem>
     joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
-                             const QVector<AttributeItem> &values);
+                             const QVector<AttributeItem> &values,
+                             const QString &keyName);
 } // namespace Orm::Utils::Attribute
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE

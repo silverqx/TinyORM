@@ -437,10 +437,6 @@ namespace Relations
     std::optional<Model>
     Builder<Model>::find(const QVariant &id, const QStringList &columns)
     {
-//        if (is_array($id) || $id instanceof Arrayable) {
-//            return $this->findMany($id, $columns);
-//        }
-
         return whereKey(id).first(columns);
     }
 
@@ -503,7 +499,8 @@ namespace Relations
             return *instance;
 
         return newModelInstance(
-                    Utils::Attribute::joinAttributesForFirstOr(attributes, values));
+                    Utils::Attribute::joinAttributesForFirstOr(attributes, values,
+                                                               m_model.getKeyName()));
     }
 
     template<typename Model>
@@ -517,7 +514,8 @@ namespace Relations
 
         auto newInstance =
                 newModelInstance(
-                    Utils::Attribute::joinAttributesForFirstOr(attributes, values));
+                    Utils::Attribute::joinAttributesForFirstOr(attributes, values,
+                                                               m_model.getKeyName()));
 
         newInstance.save();
 

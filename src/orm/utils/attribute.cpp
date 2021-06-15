@@ -89,19 +89,25 @@ removeDuplicitKeys(const QVector<AttributeItem> &attributes)
 
 QVector<AttributeItem>
 joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
-                         const QVector<AttributeItem> &values)
+                         const QVector<AttributeItem> &values,
+                         const QString &keyName)
 {
-    // Convert attributes to the QVector<AttributeItem>, so they can be joined
-    QVector<AttributeItem> attributesConverted(attributes.cbegin(),
-                                               attributes.cend());
+    using namespace ranges;
+
+    // Remove the primary key from attributes
+    auto attributesFiltered =
+            attributes | views::remove_if([&keyName](const WhereItem &value)
+    {
+        return keyName == value.column;
+    })
+            | ranges::to<QVector<AttributeItem>>();
 
     // Attributes which already exist in 'attributes' will be removed from 'values'
-    using namespace ranges;
     auto valuesFiltered =
             values | views::remove_if(
-                [&attributesConverted](const AttributeItem &value)
+                [&attributesFiltered](const AttributeItem &value)
     {
-        return ranges::contains(attributesConverted, true,
+        return ranges::contains(attributesFiltered, true,
                                 [&value](const AttributeItem &attribute)
         {
             return attribute.key == value.key;
@@ -109,7 +115,7 @@ joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
     })
             | ranges::to<QVector<AttributeItem>>();
 
-    return attributesConverted + valuesFiltered;
+    return attributesFiltered + valuesFiltered;
 }
 
 } // namespace Orm

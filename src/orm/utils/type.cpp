@@ -13,6 +13,8 @@ namespace Orm::Utils
 
 QString Type::prettyFunction(const QString &function)
 {
+    /* I can leave RegEx here because this function is used only during throwing
+       exceptions, so there would not be any performance benefit. */
 #ifdef __GNUG__
     QRegularExpression re(QStringLiteral(
                               "(?:.* )?(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)\\(.*\\)"));
@@ -52,7 +54,8 @@ Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withN
 
     return classPureBasenameGcc(typeName, withNamespace);
 #else
-    throw RuntimeError("Unsupported compiler.");
+    throw RuntimeError(
+                "Unsupported compiler in Utils::Type::classPureBasenameInternal().");
 #endif
 }
 

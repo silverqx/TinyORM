@@ -173,6 +173,7 @@ namespace Orm::Tiny::Relations
                of the related models matching on the foreign key that's on a parent. */
         const auto &table = this->m_related->getTable();
 
+        // CUR QStringLiteral, check other places in relations silverqx
         this->m_query->where(table + '.' + m_ownerKey, QStringLiteral("="),
                              m_child.getAttribute(m_foreignKey));
     }

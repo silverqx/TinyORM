@@ -3895,19 +3895,20 @@ namespace Relations {
 
         auto instance = newRelatedInstance<Related>();
 
-        const auto &primaryKey = instance->getKeyName();
+        const auto &relatedKeyName = instance->getKeyName();
 
         /* If no foreign key was supplied, we can guess the proper foreign key name
            by using the snake case name of the relationship, which when combined
            with an "_id" should conventionally match the columns. */
         if (foreignKey.isEmpty())
-            foreignKey = Utils::String::toSnake(relation) + '_' + primaryKey;
+            // CUR QStringLiteral silverqx
+            foreignKey = Utils::String::toSnake(relation) + '_' + relatedKeyName;
 
         /* Once we have the foreign key names, we return the relationship instance,
            which will actually be responsible for retrieving and hydrating every
            relations. */
         if (ownerKey.isEmpty())
-            ownerKey = primaryKey;
+            ownerKey = relatedKeyName;
 
         return newBelongsTo<Related>(std::move(instance), model(),
                                      foreignKey, ownerKey, relation);
