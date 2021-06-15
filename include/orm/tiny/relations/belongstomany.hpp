@@ -174,7 +174,7 @@ namespace Orm::Tiny::Relations
         /*! Get the first record matching the attributes or create it. */
         Related firstOrCreate(const QVector<WhereItem> &attributes = {},
                               const QVector<AttributeItem> &values = {},
-                              const QVector<AttributeItem> &pivotAttributes = {},
+                              const QVector<AttributeItem> &pivotValues = {},
                               bool touch = true) const;
         /*! Execute the query and get the first result or throw an exception. */
         Related firstOrFail(const QStringList &columns = {"*"}) const;
@@ -192,39 +192,38 @@ namespace Orm::Tiny::Relations
         /*! Attach a model instance to the parent model. */
         std::tuple<bool, Related &>
         save(Related &model,
-             // CUR rename pivotAttributes to pivotValues silverqx
-             const QVector<AttributeItem> &pivotAttributes = {},
+             const QVector<AttributeItem> &pivotValues = {},
              bool touch = true) const;
         /*! Attach a model instance to the parent model. */
         std::tuple<bool, Related>
         save(Related &&model,
-             const QVector<AttributeItem> &pivotAttributes = {},
+             const QVector<AttributeItem> &pivotValues = {},
              bool touch = true) const;
         /*! Attach a vector of models to the parent instance. */
         QVector<Related> &
         saveMany(QVector<Related> &models,
-                 const QVector<QVector<AttributeItem>> &pivotAttributes = {}) const;
+                 const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
         /*! Attach a vector of models to the parent instance. */
         QVector<Related>
         saveMany(QVector<Related> &&models,
-                 const QVector<QVector<AttributeItem>> &pivotAttributes = {}) const;
+                 const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
 
         /*! Create a new instance of the related model. */
         Related create(const QVector<AttributeItem> &attributes = {},
-                       const QVector<AttributeItem> &pivotAttributes = {},
+                       const QVector<AttributeItem> &pivotValues = {},
                        bool touch = true) const;
         /*! Create a new instance of the related model. */
         Related create(QVector<AttributeItem> &&attributes = {},
-                       const QVector<AttributeItem> &pivotAttributes = {},
+                       const QVector<AttributeItem> &pivotValues = {},
                        bool touch = true) const;
         /*! Create a vector of new instances of the related model. */
         QVector<Related>
         createMany(const QVector<QVector<AttributeItem>> &records,
-                   const QVector<QVector<AttributeItem>> &pivotAttributes = {}) const;
+                   const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
         /*! Create a vector of new instances of the related model. */
         QVector<Related>
         createMany(QVector<QVector<AttributeItem>> &&records,
-                   const QVector<QVector<AttributeItem>> &pivotAttributes = {}) const;
+                   const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
 
         /* Inserting & Updating relationship */
         /*! Attach models to the parent. */
@@ -288,7 +287,7 @@ namespace Orm::Tiny::Relations
             with values. */
         Related updateOrCreate(const QVector<WhereItem> &attributes,
                                const QVector<AttributeItem> &values = {},
-                               const QVector<AttributeItem> &pivotAttributes = {},
+                               const QVector<AttributeItem> &pivotValues = {},
                                bool touch = true) const;
 
         /* Others */
@@ -863,7 +862,7 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType>::firstOrCreate(
             const QVector<WhereItem> &attributes,
             const QVector<AttributeItem> &values,
-            const QVector<AttributeItem> &pivotAttributes,
+            const QVector<AttributeItem> &pivotValues,
             const bool touch) const
     {
         if (auto instance = this->where(attributes).first(); instance)
@@ -872,7 +871,7 @@ namespace Orm::Tiny::Relations
         // NOTE api different, Eloquent doen't use values argument silverqx
         return create(Utils::Attribute::joinAttributesForFirstOr(
                           attributes, values, this->m_relatedKey),
-                      pivotAttributes, touch);
+                      pivotValues, touch);
     }
 
     template<class Model, class Related, class PivotType>
@@ -908,11 +907,11 @@ namespace Orm::Tiny::Relations
     std::tuple<bool, Related &>
     BelongsToMany<Model, Related, PivotType>::save(
             Related &model,
-            const QVector<AttributeItem> &pivotAttributes, const bool touch) const
+            const QVector<AttributeItem> &pivotValues, const bool touch) const
     {
         const auto result = model.save({.touch = false});
 
-        attach(model, pivotAttributes, touch);
+        attach(model, pivotValues, touch);
 
         return {result, model};
     }
@@ -921,11 +920,11 @@ namespace Orm::Tiny::Relations
     std::tuple<bool, Related>
     BelongsToMany<Model, Related, PivotType>::save(
             Related &&model,
-            const QVector<AttributeItem> &pivotAttributes, const bool touch) const
+            const QVector<AttributeItem> &pivotValues, const bool touch) const
     {
         const auto result = model.save({.touch = false});
 
-        attach(model, pivotAttributes, touch);
+        attach(model, pivotValues, touch);
 
         return {result, std::move(model)};
     }
@@ -934,12 +933,12 @@ namespace Orm::Tiny::Relations
     QVector<Related> &
     BelongsToMany<Model, Related, PivotType>::saveMany(
             QVector<Related> &models,
-            const QVector<QVector<AttributeItem>> &pivotAttributes) const
+            const QVector<QVector<AttributeItem>> &pivotValues) const
     {
-        for (int i = 0, attributesSize = pivotAttributes.size(); i < models.size(); ++i)
+        for (int i = 0, attributesSize = pivotValues.size(); i < models.size(); ++i)
             // FUTURE uncomment [[likely]] / [[unlikely]] when clang will support it, I want to avoid warnings that are produced now, search all other places too!, because I have delete other todo tasks silverqx
             if (attributesSize > i)/* [[likely]]*/
-                save(models[i], pivotAttributes.at(i), false);
+                save(models[i], pivotValues.at(i), false);
             else/* [[unlikely]]*/
                 save(models[i], {}, false);
 
@@ -952,11 +951,11 @@ namespace Orm::Tiny::Relations
     QVector<Related>
     BelongsToMany<Model, Related, PivotType>::saveMany(
             QVector<Related> &&models,
-            const QVector<QVector<AttributeItem>> &pivotAttributes) const
+            const QVector<QVector<AttributeItem>> &pivotValues) const
     {
-        for (int i = 0, attributesSize = pivotAttributes.size(); i < models.size(); ++i)
+        for (int i = 0, attributesSize = pivotValues.size(); i < models.size(); ++i)
             if (attributesSize > i)/* [[likely]]*/
-                save(models[i], pivotAttributes.at(i), false);
+                save(models[i], pivotValues.at(i), false);
             else/* [[unlikely]]*/
                 save(models[i], {}, false);
 
@@ -969,7 +968,7 @@ namespace Orm::Tiny::Relations
     Related
     BelongsToMany<Model, Related, PivotType>::create(
             const QVector<AttributeItem> &attributes,
-            const QVector<AttributeItem> &pivotAttributes, const bool touch) const
+            const QVector<AttributeItem> &pivotValues, const bool touch) const
     {
         auto instance = this->m_related->newInstance(attributes);
 
@@ -978,7 +977,7 @@ namespace Orm::Tiny::Relations
            accomplish this which will insert the record and any more attributes. */
         instance.save({.touch = false});
 
-        attach(instance, pivotAttributes, touch);
+        attach(instance, pivotValues, touch);
 
         return instance;
     }
@@ -987,7 +986,7 @@ namespace Orm::Tiny::Relations
     Related
     BelongsToMany<Model, Related, PivotType>::create(
             QVector<AttributeItem> &&attributes,
-            const QVector<AttributeItem> &pivotAttributes, const bool touch) const
+            const QVector<AttributeItem> &pivotValues, const bool touch) const
     {
         auto instance = this->m_related->newInstance(std::move(attributes));
 
@@ -996,7 +995,7 @@ namespace Orm::Tiny::Relations
            accomplish this which will insert the record and any more attributes. */
         instance.save({.touch = false});
 
-        attach(instance, pivotAttributes, touch);
+        attach(instance, pivotValues, touch);
 
         return instance;
     }
@@ -1005,15 +1004,15 @@ namespace Orm::Tiny::Relations
     QVector<Related>
     BelongsToMany<Model, Related, PivotType>::createMany(
             const QVector<QVector<AttributeItem>> &records,
-            const QVector<QVector<AttributeItem>> &pivotAttributes) const
+            const QVector<QVector<AttributeItem>> &pivotValues) const
     {
         QVector<Related> instances;
         const auto recordsSize = records.size();
         instances.reserve(recordsSize);
 
-        for (int i = 0, attributesSize = pivotAttributes.size(); i < recordsSize; ++i)
+        for (int i = 0, attributesSize = pivotValues.size(); i < recordsSize; ++i)
             if (attributesSize > i)/* [[likely]]*/
-                instances << create(records.at(i), pivotAttributes.at(i), false);
+                instances << create(records.at(i), pivotValues.at(i), false);
             else/* [[unlikely]]*/
                 instances << create(records.at(i), {}, false);
 
@@ -1026,15 +1025,15 @@ namespace Orm::Tiny::Relations
     QVector<Related>
     BelongsToMany<Model, Related, PivotType>::createMany(
             QVector<QVector<AttributeItem>> &&records,
-            const QVector<QVector<AttributeItem>> &pivotAttributes) const
+            const QVector<QVector<AttributeItem>> &pivotValues) const
     {
         QVector<Related> instances;
         const auto recordsSize = records.size();
         instances.reserve(recordsSize);
 
-        for (int i = 0, attributesSize = pivotAttributes.size(); i < recordsSize; ++i)
+        for (int i = 0, attributesSize = pivotValues.size(); i < recordsSize; ++i)
             if (attributesSize > i)/* [[likely]]*/
-                instances << create(std::move(records[i]), pivotAttributes.at(i), false);
+                instances << create(std::move(records[i]), pivotValues.at(i), false);
             else/* [[unlikely]]*/
                 instances << create(std::move(records[i]), {}, false);
 
@@ -1256,13 +1255,13 @@ namespace Orm::Tiny::Relations
     Related BelongsToMany<Model, Related, PivotType>::updateOrCreate(
             const QVector<WhereItem> &attributes,
             const QVector<AttributeItem> &values,
-            const QVector<AttributeItem> &pivotAttributes,
+            const QVector<AttributeItem> &pivotValues,
             const bool touch) const
     {
         auto instance = this->where(attributes).first();
 
         if (!instance)
-            return create(values, pivotAttributes, touch);
+            return create(values, pivotValues, touch);
 
         instance->fill(values);
 

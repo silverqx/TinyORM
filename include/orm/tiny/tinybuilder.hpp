@@ -464,7 +464,6 @@ namespace Relations
         throw ModelNotFoundError(Utils::Type::classPureBasename<Model>(), {id});
     }
 
-    // CUR add proxies, dont forget others too silverqx
     template<typename Model>
     QVector<Model>
     Builder<Model>::findMany(const QVector<QVariant> &ids, const QStringList &columns)
@@ -1344,7 +1343,7 @@ namespace Relations
     {
         return m_model.newInstance(attributes)
                 .setConnection(m_query->getConnection().getName());
-        // CUR stackoverflow move or not move? its a question 🤔 silverqx
+        // TODO study, or stackoverflow move or not move? its a question 🤔 silverqx
 //        return std::move(m_model.newInstance(attributes)
 //                         .setConnection(m_query->getConnection().getName()));
     }
