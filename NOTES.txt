@@ -295,6 +295,34 @@ Model copy ctor:
     {}
 
 
+AssignmentList:
+---------------
+
+I want to save this pattern:
+
+struct AssignmentListItem
+{
+    QString  column;
+    QVariant value;
+};
+
+class AssignmentList final : public QVector<AssignmentListItem>
+{
+    // Inherit all the base class constructors, wow 😲✨
+    using QVector<AssignmentListItem>::QVector;
+
+public:
+    AssignmentList(const QVariantHash &variantHash)
+    {
+        auto itHash = variantHash.constBegin();
+        while (itHash != variantHash.constEnd()) {
+            *this << AssignmentListItem({itHash.key(), itHash.value()});
+            ++itHash;
+        }
+    }
+};
+
+
 EntityManager.hpp:
 ------------------
 

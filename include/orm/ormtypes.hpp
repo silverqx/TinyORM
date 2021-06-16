@@ -84,21 +84,6 @@ namespace Query
         HavingType type       {HavingType::UNDEFINED};
     };
 
-    struct AssignmentListItem
-    {
-        QString  column;
-        QVariant value;
-    };
-
-    class AssignmentList final : public QVector<AssignmentListItem>
-    {
-        // Inherit all the base class constructors, wow 😲✨
-        using QVector<AssignmentListItem>::QVector;
-
-    public:
-        AssignmentList(const QVariantHash &variantHash);
-    };
-
     struct OrderByItem
     {
         QString column;

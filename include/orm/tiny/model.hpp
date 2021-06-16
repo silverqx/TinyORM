@@ -343,6 +343,7 @@ namespace Relations {
         /*! Add an equal "or where" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereEq(const QString &column, const QVariant &value);
+
         /*! Add a nested where clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         where(const std::function<void(TinyBuilder<Derived> &)> &callback,

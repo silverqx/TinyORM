@@ -211,6 +211,7 @@ namespace Relations
                          const QString &condition = "and");
         /*! Add an equal "or where" clause to the query. */
         Builder &orWhereEq(const QString &column, const QVariant &value);
+
         /*! Add a nested where clause to the query. */
         Builder &where(const std::function<void(Builder &)> &callback,
                        const QString &condition = "and");

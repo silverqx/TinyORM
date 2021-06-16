@@ -283,6 +283,7 @@ namespace Relations
                                 const QString &condition = "and") const;
         /*! Add an equal "or where" clause to the query. */
         const Relation &orWhereEq(const QString &column, const QVariant &value) const;
+
         /*! Add a nested where clause to the query. */
         const Relation &where(const std::function<void(Builder<Related> &)> &callback,
                               const QString &condition = "and") const;

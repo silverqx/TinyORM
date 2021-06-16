@@ -7,15 +7,6 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-AssignmentList::AssignmentList(const QVariantHash &variantHash)
-{
-    auto itHash = variantHash.constBegin();
-    while (itHash != variantHash.constEnd()) {
-        *this << AssignmentListItem({itHash.key(), itHash.value()});
-        ++itHash;
-    }
-}
-
 WhereItem::operator AttributeItem() const
 {
     return {column, value};
