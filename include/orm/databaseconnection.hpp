@@ -55,7 +55,7 @@ namespace Orm
         /*! Get a new query builder instance. */
         QSharedPointer<QueryBuilder> query() override;
 
-        // FEATURE dilemma Raw Expressions fuckup🤔 silverqx
+        // FEATURE expressions, fuckup🤔 silverqx
         /*! Get a new raw query expression. */
         Query::Expression raw(const QVariant &value) const override;
 

@@ -49,7 +49,7 @@ QString BaseGrammar::wrapTable(const Expression &table) const
     return getValue(table).value<QString>();
 }
 
-// FEATURE expression, this api (method overloads) which takes Expression as parameter looks strange and inconsistent because wrap() takes QString/Expression, wrapTable() the same, instead getValue() takes QVariant/Expression and parameter takes QVariant only, this is a consequence of that columns are always passed as QString (Expression overload are not never called), but values are passed as QVariant and CAN CONTAIN QVariant(Expression), so investigate in the future and it is also related to the another feature todo, which propose to add Expression overloads for methods in the query builder silverqx
+// FEATURE expressions, this api (method overloads) which takes Expression as parameter looks strange and inconsistent because wrap() takes QString/Expression, wrapTable() the same, instead getValue() takes QVariant/Expression and parameter takes QVariant only, this is a consequence of that columns are always passed as QString (Expression overload are not never called), but values are passed as QVariant and CAN CONTAIN QVariant(Expression), so investigate in the future and it is also related to the another feature todo, which propose to add Expression overloads for methods in the query builder silverqx
 bool BaseGrammar::isExpression(const QVariant &value) const
 {
     return value.canConvert<Expression>();
@@ -80,7 +80,7 @@ QString BaseGrammar::columnize(const QStringList &columns) const
 
 QString BaseGrammar::parameter(const QVariant &value) const
 {
-    // TODO rethink expressions, how to work with them and pass them to the query builder 🤔 silverqx
+    // FEATURE expressions, how to work with them and pass them to the query builder 🤔 silverqx
     return isExpression(value)
             ? value.value<Expression>().getValue().value<QString>()
             : QStringLiteral("?");

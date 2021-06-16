@@ -583,7 +583,7 @@ namespace Relations
         return *this;
     }
 
-    // FEATURE dilemma Raw Expressions fuckup🤔 silverqx
+    // FEATURE expressions, fuckup🤔 silverqx
     template<typename Model>
     QVariant Builder<Model>::value(const QString &column)
     {

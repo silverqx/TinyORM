@@ -14,7 +14,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
-    // TODO rework saving Expressions to the "BindingsMap m_bindings", see also todo at BindingsMap definition in ormtypes.hpp silverqx
+    // FEATURE expressions, rework saving Expressions to the "BindingsMap m_bindings", see also todo at BindingsMap definition in ormtypes.hpp silverqx
     class SHAREDLIB_EXPORT Expression
     {
     public:

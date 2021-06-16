@@ -37,7 +37,7 @@ namespace Orm
         UNIONORDER,
     };
 
-    // TODO have to be QMap<BindingType, QVector<BindingValue>> to correctly support Expressions silverqx
+    // FEATURE expressions, have to be QMap<BindingType, QVector<BindingValue>> to correctly support Expressions silverqx
     using BindingsMap = QMap<BindingType, QVector<QVariant>>;
 
     enum struct WhereType
