@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TAGGED_H
 #define TAGGED_H
 

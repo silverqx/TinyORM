@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MYSQLSCHEMABUILDER_H
 #define MYSQLSCHEMABUILDER_H
 

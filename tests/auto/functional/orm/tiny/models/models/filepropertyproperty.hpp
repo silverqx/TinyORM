@@ -1,3 +1,4 @@
+#pragma once
 #ifndef FILEPROPERTYPROPERTY_H
 #define FILEPROPERTYPROPERTY_H
 

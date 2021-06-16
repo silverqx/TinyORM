@@ -1,3 +1,4 @@
+#pragma once
 #ifndef POSTGRESSCHEMAGRAMMAR_H
 #define POSTGRESSCHEMAGRAMMAR_H
 

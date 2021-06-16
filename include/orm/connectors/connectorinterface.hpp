@@ -1,3 +1,4 @@
+#pragma once
 #ifndef CONNECTORINTERFACE_HPP
 #define CONNECTORINTERFACE_HPP
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SCHEMAGRAMMAR_H
 #define SCHEMAGRAMMAR_H
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TORRENTPREVIEWABLEFILE_H
 #define TORRENTPREVIEWABLEFILE_H
 

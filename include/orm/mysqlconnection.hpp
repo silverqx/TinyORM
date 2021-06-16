@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MYSQLCONNECTION_HPP
 #define MYSQLCONNECTION_HPP
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TORRENTEAGER_H
 #define TORRENTEAGER_H
 

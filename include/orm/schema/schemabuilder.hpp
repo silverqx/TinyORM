@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SCHEMABUILDER_H
 #define SCHEMABUILDER_H
 

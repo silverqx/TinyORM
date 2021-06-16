@@ -1,3 +1,4 @@
+#pragma once
 #ifndef RUNTIMEERROR_H
 #define RUNTIMEERROR_H
 

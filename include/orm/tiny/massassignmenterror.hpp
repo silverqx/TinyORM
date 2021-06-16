@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MASSASSIGNMENTERROR_H
 #define MASSASSIGNMENTERROR_H
 

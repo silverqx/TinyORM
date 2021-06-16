@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TORRENTEAGER_FAILED_H
 #define TORRENTEAGER_FAILED_H
 

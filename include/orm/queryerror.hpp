@@ -1,3 +1,4 @@
+#pragma once
 #ifndef QUERYERROR_H
 #define QUERYERROR_H
 

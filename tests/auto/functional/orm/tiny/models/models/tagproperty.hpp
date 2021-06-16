@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TAGPROPERTY_H
 #define TAGPROPERTY_H
 

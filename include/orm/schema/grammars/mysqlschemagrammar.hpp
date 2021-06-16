@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MYSQLSCHEMAGRAMMAR_H
 #define MYSQLSCHEMAGRAMMAR_H
 

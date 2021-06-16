@@ -1,3 +1,4 @@
+#pragma once
 #ifndef PIVOT_H
 #define PIVOT_H
 

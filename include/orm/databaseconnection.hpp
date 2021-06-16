@@ -1,3 +1,4 @@
+#pragma once
 #ifndef DATABASECONNECTION_H
 #define DATABASECONNECTION_H
 

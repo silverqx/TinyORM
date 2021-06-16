@@ -1,3 +1,4 @@
+#pragma once
 #ifndef LOGQUERY_H
 #define LOGQUERY_H
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MASSASSIGNMENTMODELS_HPP
 #define MASSASSIGNMENTMODELS_HPP
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MODELNOTFOUNDERROR_H
 #define MODELNOTFOUNDERROR_H
 

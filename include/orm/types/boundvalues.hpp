@@ -1,3 +1,4 @@
+#pragma once
 #ifndef BOUNDVALUES_HPP
 #define BOUNDVALUES_HPP
 

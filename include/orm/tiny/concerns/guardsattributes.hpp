@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GUARDSATTRIBUTES_HPP
 #define GUARDSATTRIBUTES_HPP
 

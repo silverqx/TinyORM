@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SQLITESCHEMAGRAMMAR_H
 #define SQLITESCHEMAGRAMMAR_H
 

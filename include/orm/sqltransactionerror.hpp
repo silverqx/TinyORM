@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SQLTRANSACTIONERROR_H
 #define SQLTRANSACTIONERROR_H
 

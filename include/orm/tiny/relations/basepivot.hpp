@@ -1,3 +1,4 @@
+#pragma once
 #ifndef BASEPIVOT_HPP
 #define BASEPIVOT_HPP
 

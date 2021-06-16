@@ -1,3 +1,4 @@
+#pragma once
 #ifndef UTILS_GLOBAL_H
 #define UTILS_GLOBAL_H
 

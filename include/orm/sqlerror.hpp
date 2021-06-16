@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SQLERROR_H
 #define SQLERROR_H
 

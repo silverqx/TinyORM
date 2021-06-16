@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ROLEUSER_H
 #define ROLEUSER_H
 

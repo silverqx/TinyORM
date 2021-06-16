@@ -1,3 +1,4 @@
+#pragma once
 #ifndef HASRELATIONSTORE_H
 #define HASRELATIONSTORE_H
 

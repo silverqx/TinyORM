@@ -1,3 +1,4 @@
+#pragma once
 #ifndef HASMANY_H
 #define HASMANY_H
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef INVALIDFORMATERROR_H
 #define INVALIDFORMATERROR_H
 

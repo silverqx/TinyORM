@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TINYBUILDER_H
 #define TINYBUILDER_H
 

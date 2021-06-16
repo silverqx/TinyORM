@@ -1,3 +1,4 @@
+#pragma once
 #ifndef POSTGRESSCHEMABUILDER_H
 #define POSTGRESSCHEMABUILDER_H
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef CONNECTIONFACTORY_HPP
 #define CONNECTIONFACTORY_HPP
 

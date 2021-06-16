@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SQLITESCHEMABUILDER_H
 #define SQLITESCHEMABUILDER_H
 

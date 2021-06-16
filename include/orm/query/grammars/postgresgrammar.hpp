@@ -1,3 +1,4 @@
+#pragma once
 #ifndef POSTGRESGRAMMAR_H
 #define POSTGRESGRAMMAR_H
 

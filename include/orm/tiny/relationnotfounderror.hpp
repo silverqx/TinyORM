@@ -1,3 +1,4 @@
+#pragma once
 #ifndef RELATIONNOTFOUNDERROR_H
 #define RELATIONNOTFOUNDERROR_H
 

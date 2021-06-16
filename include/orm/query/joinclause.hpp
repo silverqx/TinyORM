@@ -1,3 +1,4 @@
+#pragma once
 #ifndef JOINCLAUSE_H
 #define JOINCLAUSE_H
 

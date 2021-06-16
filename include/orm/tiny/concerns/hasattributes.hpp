@@ -1,3 +1,4 @@
+#pragma once
 #ifndef HASATTRIBUTES_H
 #define HASATTRIBUTES_H
 

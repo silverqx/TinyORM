@@ -1,3 +1,4 @@
+#pragma once
 #ifndef DATABASES_H
 #define DATABASES_H
 

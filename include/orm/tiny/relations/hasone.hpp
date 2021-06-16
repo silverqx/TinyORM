@@ -1,3 +1,4 @@
+#pragma once
 #ifndef HASONE_H
 #define HASONE_H
 

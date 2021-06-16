@@ -1,3 +1,4 @@
+#pragma once
 #ifndef BASEGRAMMAR_H
 #define BASEGRAMMAR_H
 

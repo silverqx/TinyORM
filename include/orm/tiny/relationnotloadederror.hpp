@@ -1,3 +1,4 @@
+#pragma once
 #ifndef RELATIONNOTLOADEDERROR_H
 #define RELATIONNOTLOADEDERROR_H
 

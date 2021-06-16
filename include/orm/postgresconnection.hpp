@@ -1,3 +1,4 @@
+#pragma once
 #ifndef POSTGRESCONNECTION_HPP
 #define POSTGRESCONNECTION_HPP
 

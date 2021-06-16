@@ -1,3 +1,4 @@
+#pragma once
 #ifndef BELONGSTO_H
 #define BELONGSTO_H
 

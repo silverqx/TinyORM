@@ -1,3 +1,4 @@
+#pragma once
 #ifndef INVALIDARGUMENTERROR_H
 #define INVALIDARGUMENTERROR_H
 

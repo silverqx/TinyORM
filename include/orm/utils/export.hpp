@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TINYORM_EXPORT_H
 #define TINYORM_EXPORT_H
 

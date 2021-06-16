@@ -1,3 +1,4 @@
+#pragma once
 #ifndef HASCONNECTIONRESOLVER_H
 #define HASCONNECTIONRESOLVER_H
 

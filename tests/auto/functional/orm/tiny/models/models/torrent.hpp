@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TORRENT_H
 #define TORRENT_H
 

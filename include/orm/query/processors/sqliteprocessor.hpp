@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SQLITEPROCESSOR_H
 #define SQLITEPROCESSOR_H
 

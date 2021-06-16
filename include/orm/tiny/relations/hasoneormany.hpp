@@ -1,3 +1,4 @@
+#pragma once
 #ifndef HASONEORMANY_H
 #define HASONEORMANY_H
 

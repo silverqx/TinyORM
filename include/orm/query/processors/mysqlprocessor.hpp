@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MYSQLPROCESSOR_H
 #define MYSQLPROCESSOR_H
 

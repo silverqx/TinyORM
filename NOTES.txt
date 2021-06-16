@@ -270,6 +270,31 @@ message(INCLUDEPATH: $$INCLUDEPATH)
 message(-------)
 
 
+Model copy ctor:
+----------------
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Model<Derived, AllRelations...>::Model(const Model &model)
+        : exists(model.exists)
+        , u_table(model.u_table)
+        , u_connection(model.u_connection)
+        , u_incrementing(model.u_incrementing)
+        , u_primaryKey(model.u_primaryKey)
+        , u_relations(model.u_relations)
+        , u_with(model.u_with)
+        , m_attributes(model.m_attributes)
+        , m_original(model.m_original)
+        , m_changes(model.m_changes)
+        , m_attributesHash(model.m_attributesHash)
+        , m_originalHash(model.m_originalHash)
+        , m_changesHash(model.m_changesHash)
+        , m_relations(model.m_relations)
+        , u_touches(model.u_touches)
+        , m_pivots(model.m_pivots)
+        , u_timestamps(model.u_timestamps)
+    {}
+
+
 EntityManager.hpp:
 ------------------
 

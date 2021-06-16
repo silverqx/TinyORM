@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TORRENTPEEREAGER_H
 #define TORRENTPEEREAGER_H
 

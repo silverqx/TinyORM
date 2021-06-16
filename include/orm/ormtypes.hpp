@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ORMTYPES_H
 #define ORMTYPES_H
 

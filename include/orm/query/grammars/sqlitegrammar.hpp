@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SQLITEGRAMMAR_H
 #define SQLITEGRAMMAR_H
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef DB_HPP
 #define DB_HPP
 

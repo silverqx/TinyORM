@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ROLE_H
 #define ROLE_H
 

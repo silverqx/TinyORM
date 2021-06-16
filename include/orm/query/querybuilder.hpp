@@ -1,3 +1,4 @@
+#pragma once
 #ifndef QUERYBUILDER_H
 #define QUERYBUILDER_H
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef CONNECTOR_HPP
 #define CONNECTOR_HPP
 

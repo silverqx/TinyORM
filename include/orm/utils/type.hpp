@@ -1,3 +1,4 @@
+#pragma once
 #ifndef UTILS_TYPE_H
 #define UTILS_TYPE_H
 

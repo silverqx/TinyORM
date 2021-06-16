@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SQLITECONNECTOR_HPP
 #define SQLITECONNECTOR_HPP
 

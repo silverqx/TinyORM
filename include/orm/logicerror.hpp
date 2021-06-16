@@ -1,3 +1,4 @@
+#pragma once
 #ifndef LOGICERROR_H
 #define LOGICERROR_H
 

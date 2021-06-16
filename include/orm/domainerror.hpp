@@ -1,3 +1,4 @@
+#pragma once
 #ifndef DOMAINERROR_H
 #define DOMAINERROR_H
 

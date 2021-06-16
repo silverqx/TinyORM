@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TORRENTPEER_H
 #define TORRENTPEER_H
 
