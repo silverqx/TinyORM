@@ -105,7 +105,8 @@ MySqlGrammar::getCompileMap() const
         {SelectComponentType::COLUMNS,   {getBind(&MySqlGrammar::compileColumns),
                         [](const auto &query) { return !query.getColumns().isEmpty(); }}},
         {SelectComponentType::FROM,      {getBind(&MySqlGrammar::compileFrom),
-                        [](const auto &query) { return !query.getFrom().isEmpty(); }}},
+                        [this]
+                        (const auto &query) { return issetFrom(query.getFrom()); }}},
         {SelectComponentType::JOINS,     {getBind(&MySqlGrammar::compileJoins),
                         [](const auto &query) { return !query.getJoins().isEmpty(); }}},
         {SelectComponentType::WHERES,    {getBind(&MySqlGrammar::compileWheres),

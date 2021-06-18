@@ -6,6 +6,7 @@
 
 #include "databases.hpp"
 
+using Expression = Orm::Query::Expression;
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
 
@@ -22,6 +23,14 @@ private slots:
     void from_TableWrappingQuotationMarks() const;
     void from_WithPrefix() const;
     void from_AliasWithPrefix() const;
+
+    void fromRaw() const;
+    void fromRaw_withWhere() const;
+    void fromRaw_withBindings_withWhere() const;
+
+    void fromSub_QStringOverload() const;
+    void fromSub_QueryBuilderOverload_WithWhere() const;
+    void fromSub_CallbackOverload() const;
 
     void select() const;
     void addSelect() const;
@@ -83,20 +92,23 @@ void tst_MySql_QueryBuilder::from() const
 {
     auto builder = createQuery(m_connection);
 
-    const auto tableEmpty = QString("");
-    QCOMPARE(builder->getFrom(), tableEmpty);
+    const auto &from = builder->getFrom();
+
+    QVERIFY(std::holds_alternative<std::monostate>(from));
 
     const auto tableTorrents = QStringLiteral("torrents");
     builder->from(tableTorrents);
 
-    QCOMPARE(builder->getFrom(), tableTorrents);
+    QVERIFY(std::holds_alternative<QString>(from));
+    QCOMPARE(std::get<QString>(from), tableTorrents);
     QCOMPARE(builder->toSql(),
              "select * from `torrents`");
 
     const auto tableTorrentPeers = QStringLiteral("torrent_peers");
     builder->from(tableTorrentPeers);
 
-    QCOMPARE(builder->getFrom(), tableTorrentPeers);
+    QVERIFY(std::holds_alternative<QString>(from));
+    QCOMPARE(std::get<QString>(from), tableTorrentPeers);
     QCOMPARE(builder->toSql(),
              "select * from `torrent_peers`");
 }
@@ -105,12 +117,15 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
 {
     auto builder = createQuery(m_connection);
 
+    const auto &from = builder->getFrom();
+
     // Protects quotation marks
     {
         const auto table = QStringLiteral("some`table");
         builder->from(table);
 
-        QCOMPARE(builder->getFrom(), table);
+        QVERIFY(std::holds_alternative<QString>(from));
+        QCOMPARE(std::get<QString>(from), table);
         QCOMPARE(builder->toSql(),
                  "select * from `some``table`");
     }
@@ -118,7 +133,8 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
         const auto table = QStringLiteral("some\"table");
         builder->from(table);
 
-        QCOMPARE(builder->getFrom(), table);
+        QVERIFY(std::holds_alternative<QString>(from));
+        QCOMPARE(std::get<QString>(from), table);
         QCOMPARE(builder->toSql(),
                  "select * from `some\"table`");
     }
@@ -126,7 +142,8 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
         const auto table = QStringLiteral("some'table");
         builder->from(table);
 
-        QCOMPARE(builder->getFrom(), table);
+        QVERIFY(std::holds_alternative<QString>(from));
+        QCOMPARE(std::get<QString>(from), table);
         QCOMPARE(builder->toSql(),
                  "select * from `some'table`");
     }
@@ -135,7 +152,8 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
         const auto table = QStringLiteral("baz");
         builder->select("x.y as foo.bar").from(table);
 
-        QCOMPARE(builder->getFrom(), table);
+        QVERIFY(std::holds_alternative<QString>(from));
+        QCOMPARE(std::get<QString>(from), table);
         QCOMPARE(builder->toSql(),
                  "select `x`.`y` as `foo.bar` from `baz`");
     }
@@ -144,7 +162,8 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
         const auto table = QStringLiteral("baz");
         builder->select("w x.y.z as foo.bar").from(table);
 
-        QCOMPARE(builder->getFrom(), table);
+        QVERIFY(std::holds_alternative<QString>(from));
+        QCOMPARE(std::get<QString>(from), table);
         QCOMPARE(builder->toSql(),
                  "select `w x`.`y`.`z` as `foo.bar` from `baz`");
     }
@@ -153,7 +172,8 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
         const auto table = QStringLiteral("table as alias");
         builder->select("*").from(table);
 
-        QCOMPARE(builder->getFrom(), table);
+        QVERIFY(std::holds_alternative<QString>(from));
+        QCOMPARE(std::get<QString>(from), table);
         QCOMPARE(builder->toSql(),
                  "select * from `table` as `alias`");
     }
@@ -163,7 +183,9 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
         const auto alias = QStringLiteral("alias");
         builder->from(table, alias);
 
-        QCOMPARE(builder->getFrom(), QStringLiteral("%1 as %2").arg(table, alias));
+        QVERIFY(std::holds_alternative<QString>(from));
+        QCOMPARE(std::get<QString>(from),
+                 QStringLiteral("%1 as %2").arg(table, alias));
         QCOMPARE(builder->toSql(),
                  "select * from `table` as `alias`");
     }
@@ -179,7 +201,10 @@ void tst_MySql_QueryBuilder::from_WithPrefix() const
 
     builder->getConnection().setTablePrefix(prefix);
 
-    QCOMPARE(builder->getFrom(), table);
+    const auto &from = builder->getFrom();
+
+    QVERIFY(std::holds_alternative<QString>(from));
+    QCOMPARE(std::get<QString>(from), table);
     QCOMPARE(builder->toSql(),
              "select * from `xyz_table`");
 
@@ -191,6 +216,8 @@ void tst_MySql_QueryBuilder::from_AliasWithPrefix() const
 {
     auto builder = createQuery(m_connection);
 
+    const auto &from = builder->getFrom();
+
     const auto prefix = QStringLiteral("xyz_");
     builder->getConnection().setTablePrefix(prefix);
 
@@ -199,7 +226,9 @@ void tst_MySql_QueryBuilder::from_AliasWithPrefix() const
         const auto alias = QStringLiteral("alias");
         builder->from(table, alias);
 
-        QCOMPARE(builder->getFrom(), QStringLiteral("%1 as %2").arg(table, alias));
+        QVERIFY(std::holds_alternative<QString>(from));
+        QCOMPARE(std::get<QString>(from),
+                 QStringLiteral("%1 as %2").arg(table, alias));
         QCOMPARE(builder->toSql(),
                  "select * from `xyz_table` as `xyz_alias`");
     }
@@ -208,13 +237,123 @@ void tst_MySql_QueryBuilder::from_AliasWithPrefix() const
         const auto table = QStringLiteral("table as alias");
         builder->from(table);
 
-        QCOMPARE(builder->getFrom(), table);
+        QVERIFY(std::holds_alternative<QString>(from));
+        QCOMPARE(std::get<QString>(from), table);
         QCOMPARE(builder->toSql(),
                  "select * from `xyz_table` as `xyz_alias`");
     }
 
     // Restore
     builder->getConnection().setTablePrefix("");
+}
+
+void tst_MySql_QueryBuilder::fromRaw() const
+{
+    auto builder = createQuery(m_connection);
+
+    const auto &from = builder->getFrom();
+
+    builder->fromRaw("(select max(last_seen_at) as last_seen_at "
+                     "from `user_sessions`) as `sessions`");
+
+    QVERIFY(std::holds_alternative<Expression>(from));
+    QCOMPARE(builder->toSql(),
+             "select * from (select max(last_seen_at) as last_seen_at "
+             "from `user_sessions`) as `sessions`");
+}
+
+void tst_MySql_QueryBuilder::fromRaw_withWhere() const
+{
+    auto builder = createQuery(m_connection);
+
+    const auto &from = builder->getFrom();
+
+    // fromRaw() with where on main query
+    builder->fromRaw("(select max(last_seen_at) as last_seen_at "
+                     "from `sessions`) as `last_seen_at`")
+            .where("last_seen_at", ">", 1520652582);
+
+    QVERIFY(std::holds_alternative<Expression>(from));
+    QCOMPARE(builder->toSql(),
+             "select * from (select max(last_seen_at) as last_seen_at "
+             "from `sessions`) as `last_seen_at` where `last_seen_at` > ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(1520652582)}));
+}
+
+void tst_MySql_QueryBuilder::fromRaw_withBindings_withWhere() const
+{
+    auto builder = createQuery(m_connection);
+
+    const auto &from = builder->getFrom();
+
+    // fromRaw() with bindings and with where on main query
+    builder->fromRaw("(select max(last_seen_at) as last_seen_at "
+                     "from `sessions` where id < ?) as `last_seen_at`",
+                     {10})
+            .where("last_seen_at", ">", 1520652582);
+
+    QVERIFY(std::holds_alternative<Expression>(from));
+    QCOMPARE(builder->toSql(),
+             "select * from (select max(last_seen_at) as last_seen_at "
+             "from `sessions` where id < ?) as `last_seen_at` "
+             "where `last_seen_at` > ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(10), QVariant(1520652582)}));
+}
+
+void tst_MySql_QueryBuilder::fromSub_QStringOverload() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->fromSub("select max(last_seen_at) as last_seen_at from `user_sessions`",
+                     "sessions");
+
+    QVERIFY(std::holds_alternative<Expression>(builder->getFrom()));
+    QCOMPARE(builder->toSql(),
+             "select * from (select max(last_seen_at) as last_seen_at "
+             "from `user_sessions`) as `sessions`");
+}
+
+void tst_MySql_QueryBuilder::fromSub_QueryBuilderOverload_WithWhere() const
+{
+    auto builder = createQuery(m_connection);
+
+    auto fromQuery = createQuery(m_connection)
+                       ->from("user_sessions")
+                       .select({"id", "name"})
+                       .where("id", "<", 5);
+
+    builder->fromSub(fromQuery, "sessions")
+            .whereEq("name", "xyz");
+
+    QVERIFY(std::holds_alternative<Expression>(builder->getFrom()));
+    QCOMPARE(builder->toSql(),
+             "select * from (select `id`, `name` "
+             "from `user_sessions` where `id` < ?) as `sessions` "
+             "where `name` = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+}
+
+void tst_MySql_QueryBuilder::fromSub_CallbackOverload() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->fromSub([](auto &query)
+    {
+        query.from("user_sessions")
+             .select({"id", "name"})
+             .where("id", "<", 5);
+    }, "sessions").whereEq("name", "xyz");
+
+    QVERIFY(std::holds_alternative<Expression>(builder->getFrom()));
+    QCOMPARE(builder->toSql(),
+             "select * from (select `id`, `name` "
+             "from `user_sessions` where `id` < ?) as `sessions` "
+             "where `name` = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_MySql_QueryBuilder::select() const

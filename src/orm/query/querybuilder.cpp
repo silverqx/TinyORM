@@ -147,7 +147,7 @@ std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
        ID to let developers to simply and quickly remove a single row from this
        database without manually specifying the "where" clauses on the query.
        m_from will be wrapped in the Grammar. */
-    where(QStringLiteral("%1.id").arg(m_from), "=", id, "and");
+    where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)), "=", id, "and");
 
     return remove();
 }
@@ -219,6 +219,66 @@ Builder &Builder::from(const QString &table, const QString &as)
     return *this;
 }
 
+Builder &Builder::from(const Expression &table)
+{
+    m_from.emplace<Expression>(table);
+
+    return *this;
+}
+
+Builder &Builder::from(Expression &&table)
+{
+    m_from.emplace<Expression>(std::move(table));
+
+    return *this;
+}
+
+Builder &Builder::fromRaw(const QString &expression, const QVector<QVariant> &bindings)
+{
+    m_from.emplace<Expression>(expression);
+
+    addBinding(bindings, BindingType::FROM);
+
+    return *this;
+}
+
+Builder &Builder::fromSub(const std::function<void (Builder &)> &callback,
+                          const QString &as)
+{
+    auto [queryString, bindings] = createSub(callback);
+
+    return fromRaw(QStringLiteral("(%1) as %2")
+                   .arg(std::move(queryString), m_grammar.wrapTable(as)),
+                   bindings);
+}
+
+Builder &Builder::fromSub(Builder &query, const QString &as)
+{
+    auto [queryString, bindings] = createSub(query);
+
+    return fromRaw(QStringLiteral("(%1) as %2")
+                   .arg(std::move(queryString), m_grammar.wrapTable(as)),
+                   bindings);
+}
+
+Builder &Builder::fromSub(const QString &query, const QString &as)
+{
+    auto [queryString, bindings] = createSub(query);
+
+    return fromRaw(QStringLiteral("(%1) as %2")
+                   .arg(std::move(queryString), m_grammar.wrapTable(as)),
+                   bindings);
+}
+
+Builder &Builder::fromSub(QString &&query, const QString &as)
+{
+    auto [queryString, bindings] = createSub(std::move(query));
+
+    return fromRaw(QStringLiteral("(%1) as %2")
+                   .arg(std::move(queryString), m_grammar.wrapTable(as)),
+                   bindings);
+}
+
 Builder &Builder::join(const QString &table, const QString &first,
                        const QString &comparison, const QString &second,
                        const QString &type, const bool where)
@@ -243,7 +303,8 @@ Builder &Builder::join(const QString &table, const QString &first,
     return *this;
 }
 
-Builder &Builder::join(const QString &table, const std::function<void(JoinClause &)> &callback,
+Builder &Builder::join(const QString &table,
+                       const std::function<void(JoinClause &)> &callback,
                        const QString &type)
 {
     const auto join = newJoinClause(*this, type, table);
@@ -345,6 +406,7 @@ Builder &Builder::orWhereEq(const QString &column, const QVariant &value)
 Builder &Builder::where(const std::function<void(Builder &)> &callback,
                         const QString &condition)
 {
+    // Ownership of a QSharedPointer()
     const auto query = forNestedWhere();
 
     std::invoke(callback, *query);
@@ -674,9 +736,11 @@ QSharedPointer<Builder> Builder::newQuery() const
 
 QSharedPointer<Builder> Builder::forNestedWhere() const
 {
+    // CUR unify ownership comments, use <> instead of () silverqx
+    // Ownership of the QSharedPointer
     const auto query = newQuery();
 
-    query->from(m_from);
+    query->setFrom(m_from);
 
     return query;
 }
@@ -779,7 +843,8 @@ Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values, const QString 
 }
 
 QSharedPointer<JoinClause>
-Builder::newJoinClause(const Builder &query, const QString &type, const QString &table) const
+Builder::newJoinClause(const Builder &query, const QString &type,
+                       const QString &table) const
 {
     return QSharedPointer<JoinClause>::create(query, type, table);
 }
@@ -810,6 +875,53 @@ Builder::onceWithColumns(
     m_columns = original;
 
     return result;
+}
+
+std::pair<QString, QVector<QVariant>>
+Builder::createSub(const std::function<void(Builder &)> &callback) const
+{
+    // Ownership of a QSharedPointer()
+    const auto query = forSubQuery();
+
+    std::invoke(callback, *query);
+
+    prependDatabaseNameIfCrossDatabaseQuery(*query);
+
+    return {query->toSql(), query->getBindings()};
+}
+
+std::pair<QString, QVector<QVariant>>
+Builder::createSub(Builder &query) const
+{
+    prependDatabaseNameIfCrossDatabaseQuery(query);
+
+    return {query.toSql(), query.getBindings()};
+}
+
+std::pair<QString, QVector<QVariant>>
+Builder::createSub(const QString &query) const
+{
+    return {query, {}};
+}
+
+std::pair<QString, QVector<QVariant>>
+Builder::createSub(QString &&query) const
+{
+    return {std::move(query), {}};
+}
+
+Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
+{
+    const auto &queryDatabaseName = query.getConnection().getDatabaseName();
+    const auto queryFrom = std::get<QString>(query.m_from);
+
+    if (queryDatabaseName != getConnection().getDatabaseName() &&
+        !queryFrom.startsWith(queryDatabaseName) &&
+        !queryFrom.contains(QChar('.'))
+    )
+        query.from(QStringLiteral("%1.%2").arg(queryDatabaseName, queryFrom));
+
+    return query;
 }
 
 QSqlQuery Builder::runSelect()

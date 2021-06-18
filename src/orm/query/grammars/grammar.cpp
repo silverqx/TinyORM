@@ -109,6 +109,8 @@ Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
 {
     QVector<QVariant> preparedBindings;
 
+    // CUR Arr:except(select, join), the same for prepareForDelete silverqx
+
     // TODO I don't know why I'm using mergeVector here, when the preparedBindings can be initialized by ctor, revisit all this code, because it is the one of the first code I wrote and I'm much better in c++ now silverqx
     // Merge join bindings from bindings map
     mergeVector(preparedBindings, bindings.find(BindingType::JOIN).value());
@@ -179,6 +181,14 @@ const QVector<QString> &Grammar::getOperators() const
     static const QVector<QString> cachedOperators;
 
     return cachedOperators;
+}
+
+bool Grammar::issetFrom(
+        const std::variant<std::monostate, QString, Query::Expression> &from) const
+{
+    return !std::holds_alternative<std::monostate>(from) ||
+            (std::holds_alternative<QString>(from) &&
+             !std::get<QString>(from).isEmpty());
 }
 
 QStringList Grammar::compileComponents(const QueryBuilder &query) const

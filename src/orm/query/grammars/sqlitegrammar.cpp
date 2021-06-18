@@ -89,7 +89,8 @@ SQLiteGrammar::getCompileMap() const
         {SelectComponentType::COLUMNS,   {getBind(&SQLiteGrammar::compileColumns),
                         [](const auto &query) { return !query.getColumns().isEmpty(); }}},
         {SelectComponentType::FROM,      {getBind(&SQLiteGrammar::compileFrom),
-                        [](const auto &query) { return !query.getFrom().isEmpty(); }}},
+                        [this]
+                        (const auto &query) { return issetFrom(query.getFrom()); }}},
         {SelectComponentType::JOINS,     {getBind(&SQLiteGrammar::compileJoins),
                         [](const auto &query) { return !query.getJoins().isEmpty(); }}},
         {SelectComponentType::WHERES,    {getBind(&SQLiteGrammar::compileWheres),
@@ -145,7 +146,7 @@ QString
 SQLiteGrammar::compileUpdateWithJoinsOrLimit(QueryBuilder &query,
                                              const QVector<UpdateItem> &values) const
 {
-    const auto &table = query.getFrom();
+    const auto table = std::get<QString>(query.getFrom());
 
     const auto tableWrapped = wrapTable(table);
 
@@ -162,7 +163,7 @@ SQLiteGrammar::compileUpdateWithJoinsOrLimit(QueryBuilder &query,
 
 QString SQLiteGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) const
 {
-    const auto &table = query.getFrom();
+    const auto table = std::get<QString>(query.getFrom());
 
     const auto tableWrapped = wrapTable(table);
 

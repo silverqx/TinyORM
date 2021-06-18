@@ -24,6 +24,17 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+namespace Query
+{
+    class Builder;
+    class Expression;
+}
+    using QueryBuilder = Query::Builder;
+
+    /*! From clause defined in the QueryBuilder. */
+    using FromClause = std::variant<std::monostate, QString, Query::Expression>;
+
+    /*! Binding types. */
     enum struct BindingType
     {
         SELECT,
@@ -51,12 +62,6 @@ namespace Orm
         NULL_,
         NOT_NULL,
     };
-
-namespace Query
-{
-    class Builder;
-}
-    using QueryBuilder = Query::Builder;
 
     struct WhereConditionItem
     {

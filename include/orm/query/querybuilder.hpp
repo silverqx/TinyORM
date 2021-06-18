@@ -104,6 +104,24 @@ namespace Query
 
         /*! Set the table which the query is targeting. */
         Builder &from(const QString &table, const QString &as = "");
+        /*! Set the table which the query is targeting. */
+        Builder &from(const Expression &table);
+        /*! Set the table which the query is targeting. */
+        Builder &from(Expression &&table);
+
+        /*! Set the table which the query is targeting. */
+        Builder &fromRaw(const QString &expression,
+                         const QVector<QVariant> &bindings = {});
+
+        /*! Makes "from" fetch from a subquery. */
+        Builder &fromSub(const std::function<void(Builder &)> &callback,
+                         const QString &as);
+        /*! Makes "from" fetch from a subquery. */
+        Builder &fromSub(Builder &query, const QString &as);
+        /*! Makes "from" fetch from a subquery. */
+        Builder &fromSub(const QString &query, const QString &as);
+        /*! Makes "from" fetch from a subquery. */
+        Builder &fromSub(QString &&query, const QString &as);
 
         /*! Add a join clause to the query. */
         Builder &join(const QString &table, const QString &first,
@@ -308,7 +326,7 @@ namespace Query
         inline Builder &setColumns(const QStringList &columns)
         { m_columns = columns; return *this; }
         /*! Get the table associated with the query builder. */
-        inline const QString &getFrom() const
+        inline const std::variant<std::monostate, QString, Expression> &getFrom() const
         { return m_from; }
         /*! Get the table joins for the query. */
         inline const QVector<QSharedPointer<JoinClause>> &getJoins() const
@@ -337,7 +355,7 @@ namespace Query
 
         /* Other methods */
         /*! Get a new instance of the query builder. */
-        QSharedPointer<Builder> newQuery() const;
+        virtual QSharedPointer<Builder> newQuery() const;
         /*! Create a new query instance for nested where condition. */
         QSharedPointer<Builder> forNestedWhere() const;
 
@@ -382,9 +400,31 @@ namespace Query
         onceWithColumns(const QStringList &columns,
                         const std::function<QSqlQuery()> &callback);
 
+        /*! Creates a subquery and parse it. */
+        std::pair<QString, QVector<QVariant>>
+        createSub(const std::function<void(Builder &)> &callback) const;
+        /*! Creates a subquery and parse it. */
+        std::pair<QString, QVector<QVariant>>
+        createSub(Builder &query) const;
+        /*! Creates a subquery and parse it. */
+        std::pair<QString, QVector<QVariant>>
+        createSub(const QString &query) const;
+        /*! Creates a subquery and parse it. */
+        std::pair<QString, QVector<QVariant>>
+        createSub(QString &&query) const;
+
+        /*! Create a new query instance for a sub-query. */
+        virtual QSharedPointer<Builder> forSubQuery() const;
+
+        /*! Prepend the database name if the given query is on another database. */
+        Builder &prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const;
+
     private:
         /*! Run the query as a "select" statement against the connection. */
         QSqlQuery runSelect();
+
+        /*! Set the table which the query is targeting. */
+        Builder &setFrom(const FromClause &from);
 
         /*! All of the available clause operators. */
         const QVector<QString> m_operators {
@@ -420,7 +460,7 @@ namespace Query
         /*! The columns that should be returned. */
         QStringList m_columns;
         /*! The table which the query is targeting. */
-        QString m_from;
+        FromClause m_from;
         /*! The table joins for the query. */
         QVector<QSharedPointer<JoinClause>> m_joins;
         /*! The where constraints for the query. */
@@ -484,6 +524,19 @@ namespace Query
         std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
 
         return update(columns);
+    }
+
+    inline QSharedPointer<Builder> Builder::forSubQuery() const
+    {
+        return newQuery();
+    }
+
+    inline Builder &
+    Builder::setFrom(const FromClause &from)
+    {
+        m_from = from;
+
+        return *this;
     }
 
 } // namespace Orm::Query

@@ -27,6 +27,7 @@ namespace Relations
     class Relation;
 }
 
+    // CUR add missing toSql/getBindings proxies silverqx
     template<typename Model>
     class Builder
     {

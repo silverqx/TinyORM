@@ -1,5 +1,6 @@
 #include "orm/basegrammar.hpp"
 
+#include "orm/runtimeerror.hpp"
 #include "orm/query/expression.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -34,9 +35,16 @@ QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const
     return wrapSegments(value.split(QChar('.')));
 }
 
-QString BaseGrammar::wrap(const Expression &value, const bool) const
+// CUR finish commented, also add comment when is which overload used and how it works silverqx
+//QString BaseGrammar::wrap(const Expression &value, const bool) const
+//{
+//    return getValue(value).value<QString>();
+//}
+
+QString BaseGrammar::wrap(const QVariant &value) const
 {
-    return getValue(value).value<QString>();
+    return isExpression(value) ? getValue(value).value<QString>()
+                               : wrap(value.value<QString>());
 }
 
 QString BaseGrammar::wrapTable(const QString &table) const
@@ -44,10 +52,20 @@ QString BaseGrammar::wrapTable(const QString &table) const
     return wrap(QStringLiteral("%1%2").arg(m_tablePrefix, table), true);
 }
 
-QString BaseGrammar::wrapTable(const Expression &table) const
+QString BaseGrammar::wrapTable(const FromClause &table) const
 {
-    return getValue(table).value<QString>();
+    if (std::holds_alternative<std::monostate>(table))
+        throw RuntimeError("std::monostate in wrapTable().");
+    else if (std::holds_alternative<Expression>(table))
+        return getValue(std::get<Expression>(table)).value<QString>();
+
+    return wrapTable(std::get<QString>(table));
 }
+
+//QString BaseGrammar::wrapTable(const Expression &table) const
+//{
+//    return getValue(table).value<QString>();
+//}
 
 // FEATURE expressions, this api (method overloads) which takes Expression as parameter looks strange and inconsistent because wrap() takes QString/Expression, wrapTable() the same, instead getValue() takes QVariant/Expression and parameter takes QVariant only, this is a consequence of that columns are always passed as QString (Expression overload are not never called), but values are passed as QVariant and CAN CONTAIN QVariant(Expression), so investigate in the future and it is also related to the another feature todo, which propose to add Expression overloads for methods in the query builder silverqx
 bool BaseGrammar::isExpression(const QVariant &value) const
@@ -81,9 +99,8 @@ QString BaseGrammar::columnize(const QStringList &columns) const
 QString BaseGrammar::parameter(const QVariant &value) const
 {
     // FEATURE expressions, how to work with them and pass them to the query builder 🤔 silverqx
-    return isExpression(value)
-            ? value.value<Expression>().getValue().value<QString>()
-            : QStringLiteral("?");
+    return isExpression(value) ? getValue(value).value<QString>()
+                               : QStringLiteral("?");
 }
 
 QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAlias) const

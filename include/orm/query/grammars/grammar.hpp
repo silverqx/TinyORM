@@ -91,6 +91,10 @@ namespace Orm::Query::Grammars
         virtual const std::function<QString(const WhereConditionItem &)> &
         getWhereMethod(WhereType whereType) const = 0;
 
+        /*! Determine whether the 'from' component is set and is not empty. */
+        bool issetFrom(const std::variant<std::monostate, QString,
+                                          Query::Expression> &from) const;
+
         /*! Compile the components necessary for a select clause. */
         QStringList compileComponents(const QueryBuilder &query) const;
 

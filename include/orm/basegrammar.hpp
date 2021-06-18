@@ -41,13 +41,18 @@ namespace Query
         virtual const QString &getDateFormat() const;
 
         /*! Wrap a value in keyword identifiers. */
-        virtual QString wrap(const QString &value, bool prefixAlias = false) const;
+        QString wrap(const QString &value, bool prefixAlias = false) const;
         /*! Wrap a value in keyword identifiers. */
-        virtual QString wrap(const Expression &value, bool prefixAlias = false) const;
+//        virtual QString wrap(const Expression &value, bool prefixAlias = false) const;
+        /*! Wrap a value in keyword identifiers. */
+        QString wrap(const QVariant &value) const;
+
         /*! Wrap a table in keyword identifiers. */
-        virtual QString wrapTable(const QString &table) const;
+        QString wrapTable(const QString &table) const;
         /*! Wrap a table in keyword identifiers. */
-        virtual QString wrapTable(const Expression &table) const;
+//        virtual QString wrapTable(const Expression &table) const;
+        /*! Wrap a table in keyword identifiers. */
+        QString wrapTable(const FromClause &table) const;
 
         /*! Wrap an array of values. */
         template<QStringContainer T>
@@ -55,6 +60,7 @@ namespace Query
 
         /*! Determine if the given value is a raw expression. */
         bool isExpression(const QVariant &value) const;
+
         /*! Get the value of a raw expression. */
         QVariant getValue(const QVariant &expression) const;
         /*! Get the value of a raw expression. */
@@ -68,6 +74,7 @@ namespace Query
     protected:
         /*! Convert the vector of column names into a delimited string. */
         QString columnize(const QStringList &columns) const;
+
         /*! Create query parameter place-holders for the vector. */
         template<Parametrize Container>
         QString parametrize(const Container &values) const;
