@@ -18,7 +18,7 @@ QString Grammar::compileSelect(QueryBuilder &query) const
     const auto original = query.getColumns();
 
     if (original.isEmpty())
-        query.setColumns({"*"});
+        query.setColumns({QStringLiteral("*")});
 
     /* To compile the query, we'll spin through each component of the query and
        see if that component exists. If it does we'll just call the compiler
@@ -315,7 +315,7 @@ QString Grammar::whereNotNull(const WhereConditionItem &where) const
 QString Grammar::compileOrders(const QueryBuilder &query) const
 {
     if (query.getOrders().isEmpty())
-        return "";
+        return QLatin1String("");
 
     return QStringLiteral("order by %1").arg(compileOrdersToVector(query).join(", "));
 }
@@ -351,7 +351,7 @@ QString Grammar::compileLock(const QueryBuilder &query) const
     if (std::holds_alternative<QString>(lock))
         return std::get<QString>(lock);
 
-    return "";
+    return QLatin1String("");
 }
 
 QStringList

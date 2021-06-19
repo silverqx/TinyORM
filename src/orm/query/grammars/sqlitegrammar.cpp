@@ -39,14 +39,14 @@ SQLiteGrammar::compileTruncate(const QueryBuilder &query) const
     const auto table = wrapTable(query.getFrom());
 
     return {
-        {"delete from sqlite_sequence where name = ?", {table}},
+        {QStringLiteral("delete from sqlite_sequence where name = ?"), {table}},
         {QStringLiteral("delete from %1").arg(table), {}},
     };
 }
 
 QString SQLiteGrammar::compileLock(const QueryBuilder &) const
 {
-    return "";
+    return QLatin1String("");
 }
 
 const QVector<QString> &SQLiteGrammar::getOperators() const

@@ -147,7 +147,8 @@ std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
        ID to let developers to simply and quickly remove a single row from this
        database without manually specifying the "where" clauses on the query.
        m_from will be wrapped in the Grammar. */
-    where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)), "=", id, "and");
+    where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)),
+          QStringLiteral("="), id, QStringLiteral("and"));
 
     return remove();
 }
@@ -325,37 +326,37 @@ Builder &Builder::joinWhere(const QString &table, const QString &first,
 Builder &Builder::leftJoin(const QString &table, const QString &first,
                            const QString &comparison, const QString &second)
 {
-    return join(table, first, comparison, second, "left");
+    return join(table, first, comparison, second, QStringLiteral("left"));
 }
 
 Builder &Builder::leftJoin(const QString &table,
                            const std::function<void(JoinClause &)> &callback)
 {
-    return join(table, callback, "left");
+    return join(table, callback, QStringLiteral("left"));
 }
 
 Builder &Builder::leftJoinWhere(const QString &table, const QString &first,
                                 const QString &comparison, const QString &second)
 {
-    return join(table, first, comparison, second, "left");
+    return join(table, first, comparison, second, QStringLiteral("left"));
 }
 
 Builder &Builder::rightJoin(const QString &table, const QString &first,
                             const QString &comparison, const QString &second)
 {
-    return join(table, first, comparison, second, "right");
+    return join(table, first, comparison, second, QStringLiteral("right"));
 }
 
 Builder &Builder::rightJoin(const QString &table,
                             const std::function<void(JoinClause &)> &callback)
 {
-    return join(table, callback, "right");
+    return join(table, callback, QStringLiteral("right"));
 }
 
 Builder &Builder::rightJoinWhere(const QString &table, const QString &first,
                                  const QString &comparison, const QString &second)
 {
-    return joinWhere(table, first, comparison, second, "right");
+    return joinWhere(table, first, comparison, second, QStringLiteral("right"));
 }
 
 // TODO docs missing example, because of different api silverqx
@@ -363,13 +364,13 @@ Builder &Builder::rightJoinWhere(const QString &table, const QString &first,
 Builder &Builder::crossJoin(const QString &table, const QString &first,
                             const QString &comparison, const QString &second)
 {
-    return join(table, first, comparison, second, "cross");
+    return join(table, first, comparison, second, QStringLiteral("cross"));
 }
 
 Builder &Builder::crossJoin(const QString &table,
                             const std::function<void(JoinClause &)> &callback)
 {
-    return join(table, callback, "cross");
+    return join(table, callback, QStringLiteral("cross"));
 }
 
 Builder &Builder::where(const QString &column, const QString &comparison,
@@ -387,18 +388,18 @@ Builder &Builder::where(const QString &column, const QString &comparison,
 Builder &Builder::orWhere(const QString &column, const QString &comparison,
                           const QVariant &value)
 {
-    return where(column, comparison, value, "or");
+    return where(column, comparison, value, QStringLiteral("or"));
 }
 
 Builder &Builder::whereEq(const QString &column, const QVariant &value,
                           const QString &condition)
 {
-    return where(column, "=", value, condition);
+    return where(column, QStringLiteral("="), value, condition);
 }
 
 Builder &Builder::orWhereEq(const QString &column, const QVariant &value)
 {
-    return where(column, "=", value, "or");
+    return where(column, QStringLiteral("="), value, QStringLiteral("or"));
 }
 
 Builder &Builder::where(const std::function<void(Builder &)> &callback,
@@ -414,7 +415,7 @@ Builder &Builder::where(const std::function<void(Builder &)> &callback,
 
 Builder &Builder::orWhere(const std::function<void(Builder &)> &callback)
 {
-    return where(callback, "or");
+    return where(callback, QStringLiteral("or"));
 }
 
 Builder &Builder::where(const QVector<WhereItem> &values, const QString &condition)
@@ -428,7 +429,7 @@ Builder &Builder::where(const QVector<WhereItem> &values, const QString &conditi
 
 Builder &Builder::orWhere(const QVector<WhereItem> &values)
 {
-    return where(values, "or");
+    return where(values, QStringLiteral("or"));
 }
 
 Builder &Builder::whereColumn(const QVector<WhereColumnItem> &values,
@@ -439,7 +440,7 @@ Builder &Builder::whereColumn(const QVector<WhereColumnItem> &values,
 
 Builder &Builder::orWhereColumn(const QVector<WhereColumnItem> &values)
 {
-    return addArrayOfWheres(values, "or");
+    return addArrayOfWheres(values, QStringLiteral("or"));
 }
 
 Builder &Builder::whereColumn(const QString &first, const QString &comparison,
@@ -457,18 +458,18 @@ Builder &Builder::whereColumn(const QString &first, const QString &comparison,
 Builder &Builder::orWhereColumn(const QString &first, const QString &comparison,
                                 const QString &second)
 {
-    return whereColumn(first, comparison, second, "or");
+    return whereColumn(first, comparison, second, QStringLiteral("or"));
 }
 
 Builder &Builder::whereColumnEq(const QString &first, const QString &second,
                                 const QString &condition)
 {
-    return whereColumn(first, "=", second, condition);
+    return whereColumn(first, QStringLiteral("="), second, condition);
 }
 
 Builder &Builder::orWhereColumnEq(const QString &first, const QString &second)
 {
-    return whereColumn(first, "=", second, "or");
+    return whereColumn(first, QStringLiteral("="), second, QStringLiteral("or"));
 }
 
 Builder &Builder::whereIn(const QString &column, const QVector<QVariant> &values,
@@ -489,7 +490,7 @@ Builder &Builder::whereIn(const QString &column, const QVector<QVariant> &values
 
 Builder &Builder::orWhereIn(const QString &column, const QVector<QVariant> &values)
 {
-    return whereIn(column, values, "or");
+    return whereIn(column, values, QStringLiteral("or"));
 }
 
 Builder &Builder::whereNotIn(const QString &column, const QVector<QVariant> &values,
@@ -500,7 +501,7 @@ Builder &Builder::whereNotIn(const QString &column, const QVector<QVariant> &val
 
 Builder &Builder::orWhereNotIn(const QString &column, const QVector<QVariant> &values)
 {
-    return whereNotIn(column, values, "or");
+    return whereNotIn(column, values, QStringLiteral("or"));
 }
 
 Builder &Builder::whereNull(const QStringList &columns, const QString &condition,
@@ -580,7 +581,7 @@ Builder &Builder::having(const QString &column, const QString &comparison,
 Builder &Builder::orHaving(const QString &column, const QString &comparison,
                            const QVariant &value)
 {
-    return having(column, comparison, value, "or");
+    return having(column, comparison, value, QStringLiteral("or"));
 }
 
 Builder &Builder::orderBy(const QString &column, const QString &direction)
@@ -598,7 +599,7 @@ Builder &Builder::orderBy(const QString &column, const QString &direction)
 
 Builder &Builder::orderByDesc(const QString &column)
 {
-    return orderBy(column, "desc");
+    return orderBy(column, QStringLiteral("desc"));
 }
 
 Builder &Builder::latest(const QString &column)
@@ -606,12 +607,12 @@ Builder &Builder::latest(const QString &column)
     /* Default value "created_at" is ok, because we are in the QueryBuilder,
        in the Model/TinyBuilder is this default argument processed by
        the TinyBuilder::getCreatedAtColumnForLatestOldest() method. */
-    return orderBy(column, "desc");
+    return orderBy(column, QStringLiteral("desc"));
 }
 
 Builder &Builder::oldest(const QString &column)
 {
-    return orderBy(column, "asc");
+    return orderBy(column, QStringLiteral("asc"));
 }
 
 Builder &Builder::reorder()
@@ -841,7 +842,8 @@ Builder::addArrayOfWheres(const QVector<WhereItem> &values, const QString &condi
 }
 
 Builder &
-Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values, const QString &condition)
+Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values,
+                          const QString &condition)
 {
     // WARN condition also affects condition in QVector, I don't like it silverqx
     return where([&values, &condition](Builder &query)

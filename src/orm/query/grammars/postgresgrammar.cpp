@@ -21,7 +21,7 @@ QString PostgresGrammar::compileInsertGetId(const QueryBuilder &query,
 {
     return QStringLiteral("%1 returning %2")
             .arg(compileInsert(query, values),
-                 wrap(sequence.isEmpty() ? "id" : sequence));
+                 wrap(sequence.isEmpty() ? QStringLiteral("id") : sequence));
 }
 
 QString PostgresGrammar::compileUpdate(QueryBuilder &query,
@@ -54,7 +54,8 @@ QString PostgresGrammar::compileLock(const QueryBuilder &query) const
     const auto &lock = query.getLock();
 
     if (!std::holds_alternative<QString>(lock))
-        return std::get<bool>(lock) ? "for update" : "for share";
+        return std::get<bool>(lock) ? QStringLiteral("for update")
+                                    : QStringLiteral("for share");
 
     return std::get<QString>(lock);
 }
@@ -176,10 +177,10 @@ QString PostgresGrammar::compileColumns(const QueryBuilder &query) const
                       .arg(columnize(std::get<QStringList>(distinct))));
 
     else if (std::holds_alternative<bool>(distinct) && std::get<bool>(distinct))
-        select.append("select distinct ");
+        select.append(QStringLiteral("select distinct "));
 
     else
-        select.append("select ");
+        select.append(QStringLiteral("select "));
 
     return select.append(columnize(query.getColumns()));
 }

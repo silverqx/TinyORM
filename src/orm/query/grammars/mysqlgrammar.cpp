@@ -30,14 +30,15 @@ QString MySqlGrammar::compileLock(const QueryBuilder &query) const
     const auto &lock = query.getLock();
 
     if (!std::holds_alternative<QString>(lock))
-        return std::get<bool>(lock) ? "for update" : "lock in share mode";
+        return std::get<bool>(lock) ? QStringLiteral("for update") :
+                                      QStringLiteral("lock in share mode");
 
     return std::get<QString>(lock);
 }
 
 const QVector<QString> &MySqlGrammar::getOperators() const
 {
-    static const QVector<QString> cachedOperators {"sounds like"};
+    static const QVector<QString> cachedOperators {QLatin1String("sounds like")};
 
     return cachedOperators;
 }
