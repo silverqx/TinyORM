@@ -283,22 +283,20 @@ Builder &Builder::join(const QString &table, const QString &first,
                        const QString &comparison, const QString &second,
                        const QString &type, const bool where)
 {
-    const auto join = newJoinClause(*this, type, table);
+    // Ownership of the QSharedPointer<JoinClause>
+    auto join = newJoinClause(*this, type, table);
 
-    enum struct JoinType { WHERE, ON };
-    const auto method = where ? JoinType::WHERE : JoinType::ON;
-    switch (method) {
-    case JoinType::WHERE:
+    if (where)
         join->where(first, comparison, second);
-        break;
-
-    case JoinType::ON:
+    else
         join->on(first, comparison, second);
-        break;
-    }
 
-    m_joins.append(join);
-    addBinding(join->getBindings(), BindingType::JOIN);
+    // For convenience, I want to append first and afterwards add bindings
+    const auto &joinRef = *join;
+
+    m_joins.append(std::move(join));
+
+    addBinding(joinRef.getBindings(), BindingType::JOIN);
 
     return *this;
 }
@@ -478,7 +476,8 @@ Builder &Builder::whereIn(const QString &column, const QVector<QVariant> &values
 {
     const auto type = nope ? WhereType::NOT_IN : WhereType::IN_;
 
-    m_wheres.append({.column = column, .condition = condition, .type = type, .values = values});
+    m_wheres.append({.column = column, .condition = condition, .type = type,
+                     .values = values});
 
     /* Finally we'll add a binding for each values unless that value is an expression
        in which case we will just skip over it since it will be the query as a raw
@@ -798,6 +797,19 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
                            .arg(static_cast<int>(type)));
 
     std::copy(bindings.cbegin(), bindings.cend(), std::back_inserter(m_bindings[type]));
+
+    return *this;
+}
+
+Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType type)
+{
+    // TODO duplicate check, unify silverqx
+    if (!m_bindings.contains(type))
+        // TODO add hash which maps BindingType to the QString silverqx
+        throw RuntimeError(QStringLiteral("Invalid binding type: %1")
+                           .arg(static_cast<int>(type)));
+
+    std::move(bindings.begin(), bindings.end(), std::back_inserter(m_bindings[type]));
 
     return *this;
 }

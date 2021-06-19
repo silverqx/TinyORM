@@ -376,6 +376,9 @@ namespace Query
         /*! Add bindings to the query. */
         Builder &addBinding(const QVector<QVariant> &bindings,
                             BindingType type = BindingType::WHERE);
+        /*! Add bindings to the query. */
+        Builder &addBinding(QVector<QVariant> &&bindings,
+                            BindingType type = BindingType::WHERE);
         /*! Remove all of the expressions from a list of bindings. */
         QVector<QVariant> cleanBindings(const QVector<QVariant> &bindings) const;
 

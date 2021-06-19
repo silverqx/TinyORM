@@ -7,7 +7,6 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
-// TODO check newQuery(), forSubQuery(), newParentQuery() in JoinClause, they have separate implementation in Eloquent silverqx
 JoinClause::JoinClause(const Builder &query, const QString &type, const QString &table)
     : Builder(query.getConnection(), query.getGrammar())
     , m_type(type)
@@ -37,6 +36,16 @@ JoinClause::orOn(const QString &first, const QString &comparison,
                  const QString &second)
 {
     return on(first, comparison, second, "or");
+}
+
+QSharedPointer<Builder> JoinClause::newQuery() const
+{
+    return QSharedPointer<JoinClause>::create(*this, m_type, m_table);
+}
+
+QSharedPointer<Builder> JoinClause::forSubQuery() const
+{
+    return Builder::newQuery();
 }
 
 } // namespace Orm

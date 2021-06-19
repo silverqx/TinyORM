@@ -30,6 +30,13 @@ namespace Orm::Query
         inline const QString &getTable() const
         { return m_table; }
 
+        /*! Get a new instance of the join clause builder. */
+        QSharedPointer<Builder> newQuery() const override;
+
+    protected:
+        /*! Create a new query instance for a sub-query. */
+        QSharedPointer<Builder> forSubQuery() const override;
+
     private:
         /*! The type of join being performed. */
         const QString m_type;

@@ -325,10 +325,11 @@ QString Grammar::whereNested(const WhereConditionItem &where) const
     /* Here we will calculate what portion of the string we need to remove. If this
        is a join clause query, we need to remove the "on" portion of the SQL and
        if it is a normal query we need to take the leading "where" of queries. */
-    const auto offset = 6;
+    auto compiled = compileWheres(*where.nestedQuery);
 
-    return QStringLiteral("(%1)").arg(compileWheres(*where.nestedQuery)
-                                      .mid(offset));
+    const auto offset = compiled.indexOf(QChar(' ')) + 1;
+
+    return QStringLiteral("(%1)").arg(compiled.remove(0, offset));
 }
 
 QString Grammar::whereColumn(const WhereConditionItem &where) const
