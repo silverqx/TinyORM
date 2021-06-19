@@ -467,13 +467,12 @@ Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
 
     for (auto itBindingVector = bindings.constBegin();
          itBindingVector != bindings.constEnd(); ++itBindingVector)
-    {
+
         if (exclude.contains(itBindingVector.key()))
             continue;
-
-        for (const auto &binding : itBindingVector.value())
-            cleanBindingsFlatten.append(std::cref(binding));
-    }
+        else
+            for (const auto &binding : itBindingVector.value())
+                cleanBindingsFlatten.append(std::cref(binding));
 
     return cleanBindingsFlatten;
 }

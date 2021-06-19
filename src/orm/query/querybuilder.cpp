@@ -404,7 +404,7 @@ Builder &Builder::orWhereEq(const QString &column, const QVariant &value)
 Builder &Builder::where(const std::function<void(Builder &)> &callback,
                         const QString &condition)
 {
-    // Ownership of a QSharedPointer()
+    // Ownership of the QSharedPointer<QueryBuilder>
     const auto query = forNestedWhere();
 
     std::invoke(callback, *query);
@@ -735,7 +735,6 @@ QSharedPointer<Builder> Builder::newQuery() const
 
 QSharedPointer<Builder> Builder::forNestedWhere() const
 {
-    // CUR unify ownership comments, use <> instead of () silverqx
     // Ownership of the QSharedPointer
     const auto query = newQuery();
 
@@ -892,7 +891,7 @@ Builder::onceWithColumns(
 std::pair<QString, QVector<QVariant>>
 Builder::createSub(const std::function<void(Builder &)> &callback) const
 {
-    // Ownership of a QSharedPointer()
+    // Ownership of the QSharedPointer<QueryBuilder>
     const auto query = forSubQuery();
 
     std::invoke(callback, *query);
