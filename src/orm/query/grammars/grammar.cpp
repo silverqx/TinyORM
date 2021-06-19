@@ -66,61 +66,25 @@ QString Grammar::compileUpdate(QueryBuilder &query,
             : compileUpdateWithJoins(query, table, columns, wheres);
 }
 
-namespace
-{
-    /*! Flat bindings map and exclude select and join bindings. */
-    const auto flatBindingsForUpdate = [](BindingsMap &bindings)
-    {
-        QVector<BindingType> bindingsToReject {BindingType::SELECT, BindingType::JOIN};
-        QVector<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
-
-        for (auto itBindingVector = bindings.constBegin();
-             itBindingVector != bindings.constEnd(); ++itBindingVector)
-        {
-            if (bindingsToReject.contains(itBindingVector.key()))
-                continue;
-            for (const auto &binding : itBindingVector.value())
-                cleanBindingsFlatten.append(std::cref(binding));
-        }
-
-        return cleanBindingsFlatten;
-    };
-
-    // TODO revisit, is merge really needed, because this is not merge fuckin silverqx
-    /*! Merge a 'from' vector into a 'to' vector. */
-    const auto mergeVector = [](auto &to, const auto &from)
-    {
-        std::copy(from.cbegin(), from.cend(), std::back_inserter(to));
-    };
-
-    /*! Merge update values bindings. */
-    const auto mergeValuesForUpdate = [](auto &to, const auto &from)
-    {
-        std::for_each(from.cbegin(), from.cend(), [&to](const auto &updateItem)
-        {
-            to.append(updateItem.value);
-        });
-    };
-}
-
 QVector<QVariant>
 Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
                                   const QVector<UpdateItem> &values) const
 {
-    QVector<QVariant> preparedBindings;
+    QVector<QVariant> preparedBindings(bindings.find(BindingType::JOIN).value());
 
-    // CUR Arr:except(select, join), the same for prepareForDelete silverqx
-
-    // TODO I don't know why I'm using mergeVector here, when the preparedBindings can be initialized by ctor, revisit all this code, because it is the one of the first code I wrote and I'm much better in c++ now silverqx
-    // Merge join bindings from bindings map
-    mergeVector(preparedBindings, bindings.find(BindingType::JOIN).value());
     // Merge update values bindings
-    mergeValuesForUpdate(preparedBindings, values);
+    std::transform(values.cbegin(), values.cend(), std::back_inserter(preparedBindings),
+                   [](const auto &updateItem)
+    {
+        return updateItem.value;
+    });
 
-    // Flatten bindings map and exclude select and join bindings and than merge
-    // all remaining bindings from flatten bindings map.
-    mergeVector(preparedBindings,
-                flatBindingsForUpdate(const_cast<BindingsMap &>(bindings)));
+    /* Flatten bindings map and exclude select and join bindings and than merge
+       all remaining bindings from flatten bindings map. */
+    const auto flatten = flatBindingsForUpdateDelete(bindings, {BindingType::SELECT,
+                                                                BindingType::JOIN});
+
+    std::copy(flatten.cbegin(), flatten.cend(), std::back_inserter(preparedBindings));
 
     return preparedBindings;
 }
@@ -134,36 +98,15 @@ QString Grammar::compileDelete(QueryBuilder &query) const
                                       : compileDeleteWithJoins(query, table, wheres);
 }
 
-namespace
-{
-    /*! Flat bindings map and exclude select bindings. */
-    const auto flatBindingsForDelete = [](BindingsMap &bindings)
-    {
-        QVector<BindingType> bindingsToReject {BindingType::SELECT};
-        QVector<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
-
-        for (auto itBindingVector = bindings.constBegin();
-             itBindingVector != bindings.constEnd();
-             ++itBindingVector)
-        {
-            if (bindingsToReject.contains(itBindingVector.key()))
-                continue;
-            for (const auto &binding : itBindingVector.value())
-                cleanBindingsFlatten.append(std::cref(binding));
-        }
-
-        return cleanBindingsFlatten;
-    };
-}
-
 QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings) const
 {
     QVector<QVariant> preparedBindings;
 
-    // Flatten bindings map and exclude select bindings and than merge
-    // all remaining bindings from flatten bindings map.
-    mergeVector(preparedBindings,
-                flatBindingsForDelete(const_cast<BindingsMap &>(bindings)));
+    /* Flatten bindings map and exclude select bindings and than merge all remaining
+       bindings from flatten bindings map. */
+    const auto flatten = flatBindingsForUpdateDelete(bindings, {BindingType::SELECT});
+
+    std::copy(flatten.cbegin(), flatten.cend(), std::back_inserter(preparedBindings));
 
     return preparedBindings;
 }
@@ -514,6 +457,25 @@ QString Grammar::removeLeadingBoolean(QString statement) const
         return statement.mid(firstChar(3));
     else
         return statement;
+}
+
+QVector<std::reference_wrapper<const QVariant>>
+Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
+                                     const QVector<BindingType> &exclude) const
+{
+    QVector<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
+
+    for (auto itBindingVector = bindings.constBegin();
+         itBindingVector != bindings.constEnd(); ++itBindingVector)
+    {
+        if (exclude.contains(itBindingVector.key()))
+            continue;
+
+        for (const auto &binding : itBindingVector.value())
+            cleanBindingsFlatten.append(std::cref(binding));
+    }
+
+    return cleanBindingsFlatten;
 }
 
 } // namespace Orm::Query::Grammars

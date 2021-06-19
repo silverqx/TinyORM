@@ -173,6 +173,11 @@ namespace Orm::Query::Grammars
         QString concatenate(const QStringList &segments) const;
         /*! Remove the leading boolean from a statement. */
         QString removeLeadingBoolean(QString statement) const;
+
+        /*! Flat bindings map and exclude given binding types. */
+        QVector<std::reference_wrapper<const QVariant>>
+        flatBindingsForUpdateDelete(const BindingsMap &bindings,
+                                    const QVector<BindingType> &exclude) const;
     };
 
     inline QString Grammar::compileInsertGetId(
