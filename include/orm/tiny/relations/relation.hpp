@@ -182,6 +182,11 @@ namespace Relations
                                const QVector<AttributeItem> &values = {}) const;
 
         /* Proxies to TinyBuilder -> QueryBuilder */
+        /*! Get the SQL representation of the query. */
+        QString toSql() const;
+        /*! Get the current query value bindings as flattened QVector. */
+        QVector<QVariant> getBindings() const;
+
         /* Insert, Update, Delete */
         /*! Insert a new record into the database. */
         std::optional<QSqlQuery>
@@ -698,6 +703,18 @@ namespace Relations
             const QVector<AttributeItem> &values) const
     {
         return m_query->updateOrCreate(attributes, values);
+    }
+
+    template<class Model, class Related>
+    inline QString Relation<Model, Related>::toSql() const
+    {
+        return getBaseQuery().toSql();
+    }
+
+    template<class Model, class Related>
+    inline QVector<QVariant> Relation<Model, Related>::getBindings() const
+    {
+        return getBaseQuery().getBindings();
     }
 
     template<class Model, class Related>

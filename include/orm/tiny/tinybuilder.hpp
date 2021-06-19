@@ -36,6 +36,11 @@ namespace Relations
     public:
         Builder(const QSharedPointer<QueryBuilder> query, Model &model);
 
+        /*! Get the SQL representation of the query. */
+        QString toSql() const;
+        /*! Get the current query value bindings as flattened QVector. */
+        QVector<QVariant> getBindings() const;
+
         /*! Execute the query as a "select" statement. */
         QVector<Model> get(const QStringList &columns = {"*"});
 
@@ -415,6 +420,18 @@ namespace Relations
         m_query->from(m_model.getTable());
     }
 
+    template<typename Model>
+    inline QString Builder<Model>::toSql() const
+    {
+        return toBase().toSql();
+    }
+
+    template<typename Model>
+    inline QVector<QVariant> Builder<Model>::getBindings() const
+    {
+        return toBase().getBindings();
+    }
+
     // TODO now name QVector<Model> model collections by using, eg CollectionType silverqx
     template<typename Model>
     QVector<Model>
@@ -433,6 +450,18 @@ namespace Relations
         return models;
         // Laravel does it this way
 //        return $builder->getModel()->newCollection($models);
+    }
+
+    // FEATURE expressions, fuckup🤔 silverqx
+    template<typename Model>
+    QVariant Builder<Model>::value(const QString &column)
+    {
+        auto model = first({column});
+
+        if (!model)
+            return {};
+
+        return model->getAttribute(column.mid(column.lastIndexOf(QChar('.')) + 1));
     }
 
     // FEATURE dilemma primarykey, Model::KeyType for id silverqx
@@ -582,18 +611,6 @@ namespace Relations
         m_query->whereNotIn(m_model.getQualifiedKeyName(), ids);
 
         return *this;
-    }
-
-    // FEATURE expressions, fuckup🤔 silverqx
-    template<typename Model>
-    QVariant Builder<Model>::value(const QString &column)
-    {
-        auto model = first({column});
-
-        if (!model)
-            return {};
-
-        return model->getAttribute(column.mid(column.lastIndexOf(QChar('.')) + 1));
     }
 
     template<typename Model>
