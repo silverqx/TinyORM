@@ -11,6 +11,10 @@ Expression::Expression(const QVariant &value)
     : m_value(value)
 {}
 
+Expression::Expression(const QString &value)
+    : m_value(value)
+{}
+
 Expression::operator QVariant() const
 {
     return QVariant::fromValue(*this);

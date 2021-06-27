@@ -32,6 +32,10 @@ private slots:
     void fromSub_QueryBuilderOverload_WithWhere() const;
     void fromSub_CallbackOverload() const;
 
+    void joinSub_QStringOverload() const;
+    void joinSub_QueryBuilderOverload_WithWhere() const;
+    void joinSub_CallbackOverload() const;
+
     void select() const;
     void addSelect() const;
 
@@ -353,6 +357,69 @@ void tst_PostgreSQL_QueryBuilder::fromSub_CallbackOverload() const
     QCOMPARE(builder->toSql(),
              "select * from (select \"id\", \"name\" "
              "from \"user_sessions\" where \"id\" < ?) as \"sessions\" "
+             "where \"name\" = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+}
+
+void tst_PostgreSQL_QueryBuilder::joinSub_QStringOverload() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("users")
+            .joinSub("select id as files_id, \"user_id\", \"name\" "
+                     "from \"user_sessions\"",
+                     "sessions", "users.id", "=", "sessions.user_id", "left");
+
+    QCOMPARE(builder->toSql(),
+             "select * from \"users\" "
+             "left join (select id as files_id, \"user_id\", \"name\" "
+             "from \"user_sessions\") as \"sessions\" "
+             "on \"users\".\"id\" = \"sessions\".\"user_id\"");
+}
+
+void tst_PostgreSQL_QueryBuilder::joinSub_QueryBuilderOverload_WithWhere() const
+{
+    auto builder = createQuery(m_connection);
+
+    auto fromQuery = createQuery(m_connection)
+                     ->from("user_sessions")
+                     .select({"id as files_id", "user_id", "name"})
+                     .where("user_id", "<", 5);
+
+    builder->from("users")
+            .joinSub(fromQuery, "sessions", "users.id", "=", "sessions.user_id")
+            .whereEq("name", "xyz");
+
+    QCOMPARE(builder->toSql(),
+             "select * from \"users\" "
+             "inner join (select \"id\" as \"files_id\", \"user_id\", \"name\" "
+                 "from \"user_sessions\" where \"user_id\" < ?) as \"sessions\" "
+             "on \"users\".\"id\" = \"sessions\".\"user_id\" "
+             "where \"name\" = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+}
+
+void tst_PostgreSQL_QueryBuilder::joinSub_CallbackOverload() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("users")
+            .joinSub([](auto &query)
+    {
+        query.from("user_sessions")
+                .select({"id as files_id", "user_id", "name"})
+                .where("user_id", "<", 5);
+    }, "sessions", "users.id", "=", "sessions.user_id", "left")
+
+            .whereEq("name", "xyz");
+
+    QCOMPARE(builder->toSql(),
+             "select * from \"users\" "
+             "left join (select \"id\" as \"files_id\", \"user_id\", \"name\" "
+                 "from \"user_sessions\" where \"user_id\" < ?) as \"sessions\" "
+             "on \"users\".\"id\" = \"sessions\".\"user_id\" "
              "where \"name\" = ?");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(5), QVariant("xyz")}));

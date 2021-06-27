@@ -13,6 +13,24 @@ JoinClause::JoinClause(const Builder &query, const QString &type, const QString 
     , m_table(table)
 {}
 
+JoinClause::JoinClause(const Builder &query, const QString &type, const Expression &table)
+    : Builder(query.getConnection(), query.getGrammar())
+    , m_type(type)
+    , m_table(table)
+{}
+
+JoinClause::JoinClause(const Builder &query, const QString &type, Expression &&table)
+    : Builder(query.getConnection(), query.getGrammar())
+    , m_type(type)
+    , m_table(std::move(table))
+{}
+
+JoinClause::JoinClause(const Builder &query, const QString &type, const JoinTable &table)
+    : Builder(query.getConnection(), query.getGrammar())
+    , m_type(type)
+    , m_table(table)
+{}
+
 JoinClause &JoinClause::on(const QString &first, const QString &comparison,
                            const QString &second, const QString &condition)
 {

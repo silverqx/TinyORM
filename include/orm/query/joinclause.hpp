@@ -14,7 +14,17 @@ namespace Orm::Query
     class SHAREDLIB_EXPORT JoinClause final : public Builder
     {
     public:
+        /*! Join table type. */
+        using JoinTable = FromClause;
+
+        /*! Constructor with the table as QString. */
         JoinClause(const Builder &query, const QString &type, const QString &table);
+        /*! Constructor with the table as Expression. */
+        JoinClause(const Builder &query, const QString &type, const Expression &table);
+        /*! Constructor with the table as Expression. */
+        JoinClause(const Builder &query, const QString &type, Expression &&table);
+        /*! Constructor with the table as Expression. */
+        JoinClause(const Builder &query, const QString &type, const JoinTable &table);
 
         /*! Add an "on" clause to the join. */
         JoinClause &on(const QString &first, const QString &comparison,
@@ -24,11 +34,10 @@ namespace Orm::Query
                          const QString &second);
 
         /*! Get the type of join being performed. */
-        inline const QString &getType() const
-        { return m_type; }
+        const QString &getType() const;
         /*! Get the table the join clause is joining to. */
-        inline const QString &getTable() const
-        { return m_table; }
+        const std::variant<std::monostate, QString, Expression> &
+        getTable() const;
 
         /*! Get a new instance of the join clause builder. */
         QSharedPointer<Builder> newQuery() const override;
@@ -41,8 +50,20 @@ namespace Orm::Query
         /*! The type of join being performed. */
         const QString m_type;
         /*! The table the join clause is joining to. */
-        const QString m_table;
+        const JoinTable m_table;
     };
+
+    inline const QString &
+    JoinClause::getType() const
+    {
+        return m_type;
+    }
+
+    inline const std::variant<std::monostate, QString, Expression> &
+    JoinClause::getTable() const
+    {
+        return m_table;
+    }
 
 } // namespace Orm::Query
 #ifdef TINYORM_COMMON_NAMESPACE

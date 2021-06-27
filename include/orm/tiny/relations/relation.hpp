@@ -859,7 +859,7 @@ namespace Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     Relation<Model, Related>::join(const QString &table,
-                                   const std::function<void (JoinClause &)> &callback,
+                                   const std::function<void(JoinClause &)> &callback,
                                    const QString &type) const
     {
         m_query->join(table, callback, type);
@@ -893,7 +893,7 @@ namespace Relations
     const Relation<Model, Related> &
     Relation<Model, Related>::leftJoin(
             const QString &table,
-            const std::function<void (JoinClause &)> &callback) const
+            const std::function<void(JoinClause &)> &callback) const
     {
         m_query->leftJoin(table, callback);
 
@@ -926,7 +926,7 @@ namespace Relations
     const Relation<Model, Related> &
     Relation<Model, Related>::rightJoin(
             const QString &table,
-            const std::function<void (JoinClause &)> &callback) const
+            const std::function<void(JoinClause &)> &callback) const
     {
         m_query->rightJoin(table, callback);
 
@@ -959,7 +959,7 @@ namespace Relations
     const Relation<Model, Related> &
     Relation<Model, Related>::crossJoin(
             const QString &table,
-            const std::function<void (JoinClause &)> &callback) const
+            const std::function<void(JoinClause &)> &callback) const
     {
         m_query->crossJoin(table, callback);
 

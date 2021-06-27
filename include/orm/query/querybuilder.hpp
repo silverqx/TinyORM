@@ -23,6 +23,12 @@ namespace Query
 {
     class JoinClause;
 
+    /*! Concept for from clause or table name. */
+    template<typename T>
+    concept FromConcept = std::convertible_to<T, Orm::QueryBuilder &> ||
+                          std::convertible_to<T, QString> ||
+                          std::invocable<T, Orm::QueryBuilder &>;
+
     // FEATURE subqueries, add support for subqueries, first in where() silverqx
     // TODO add inRandomOrder() silverqx
     class SHAREDLIB_EXPORT Builder
@@ -114,14 +120,8 @@ namespace Query
                          const QVector<QVariant> &bindings = {});
 
         /*! Makes "from" fetch from a subquery. */
-        Builder &fromSub(const std::function<void(Builder &)> &callback,
-                         const QString &as);
-        /*! Makes "from" fetch from a subquery. */
-        Builder &fromSub(Builder &query, const QString &as);
-        /*! Makes "from" fetch from a subquery. */
-        Builder &fromSub(const QString &query, const QString &as);
-        /*! Makes "from" fetch from a subquery. */
-        Builder &fromSub(QString &&query, const QString &as);
+        template<FromConcept T>
+        Builder &fromSub(T &&query, const QString &as);
 
         /*! Add a join clause to the query. */
         Builder &join(const QString &table, const QString &first,
@@ -131,10 +131,16 @@ namespace Query
         Builder &join(const QString &table,
                       const std::function<void(JoinClause &)> &callback,
                       const QString &type = "inner");
+        /*! Add a join clause to the query. */
+        Builder &join(Expression &&table, const QString &first,
+                      const QString &comparison, const QString &second,
+                      const QString &type = "inner", bool where = false);
+
         /*! Add a "join where" clause to the query. */
         Builder &joinWhere(const QString &table, const QString &first,
                            const QString &comparison, const QString &second,
                            const QString &type = "inner");
+
         /*! Add a left join to the query. */
         Builder &leftJoin(const QString &table, const QString &first,
                           const QString &comparison, const QString &second);
@@ -144,6 +150,7 @@ namespace Query
         /*! Add a "join where" clause to the query. */
         Builder &leftJoinWhere(const QString &table, const QString &first,
                                const QString &comparison, const QString &second);
+
         /*! Add a right join to the query. */
         Builder &rightJoin(const QString &table, const QString &first,
                            const QString &comparison, const QString &second);
@@ -153,12 +160,19 @@ namespace Query
         /*! Add a "right join where" clause to the query. */
         Builder &rightJoinWhere(const QString &table, const QString &first,
                                 const QString &comparison, const QString &second);
+
         /*! Add a "cross join" clause to the query. */
         Builder &crossJoin(const QString &table, const QString &first,
                            const QString &comparison, const QString &second);
         /*! Add an advanced "cross join" clause to the query. */
         Builder &crossJoin(const QString &table,
                            const std::function<void(JoinClause &)> &callback);
+
+        /*! Add a subquery join clause to the query. */
+        template<FromConcept T>
+        Builder &joinSub(T &&query, const QString &as, const QString &first,
+                         const QString &comparison, const QString &second,
+                         const QString &type = "inner", bool where = false);
 
         /*! Add a basic where clause to the query. */
         Builder &where(const QString &column, const QString &comparison,
@@ -395,6 +409,10 @@ namespace Query
         QSharedPointer<JoinClause>
         newJoinClause(const Builder &query, const QString &type,
                       const QString &table) const;
+        /*! Get a new join clause. */
+        QSharedPointer<JoinClause>
+        newJoinClause(const Builder &query, const QString &type,
+                      Expression &&table) const;
 
         /*! Remove all existing columns and column bindings. */
         Builder &clearColumns();
@@ -428,6 +446,16 @@ namespace Query
 
         /*! Set the table which the query is targeting. */
         Builder &setFrom(const FromClause &from);
+
+        /*! Add a join clause to the query, common code. */
+        Builder &joinInternal(
+                QSharedPointer<JoinClause> &&join, const QString &first,
+                const QString &comparison, const QString &second, bool where);
+        /*! Add a subquery join clause to the query, common code. */
+        Builder &joinSubInternal(
+                std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
+                const QString &first, const QString &comparison, const QString &second,
+                const QString &type = "inner", bool where = false);
 
         /*! All of the available clause operators. */
         const QVector<QString> m_operators {
@@ -481,6 +509,28 @@ namespace Query
         /*! Indicates whether row locking is being used. */
         std::variant<std::monostate, bool, QString> m_lock;
     };
+
+    template<FromConcept T>
+    Builder &
+    Builder::fromSub(T &&query, const QString &as)
+    {
+        auto [queryString, bindings] = createSub(std::forward<T>(query));
+
+        return fromRaw(QStringLiteral("(%1) as %2")
+                       .arg(std::move(queryString), m_grammar.wrapTable(as)),
+                        bindings);
+    }
+
+    // CUR add docs https://laravel.com/docs/8.x/queries#subquery-joins silverqx
+    template<FromConcept T>
+    inline Builder &
+    Builder::joinSub(T &&query, const QString &as, const QString &first,
+                     const QString &comparison, const QString &second,
+                     const QString &type, const bool where)
+    {
+        return joinSubInternal(createSub(std::forward<T>(query)),
+                               as, first, comparison, second, type, where);
+    }
 
     inline const std::variant<bool, QStringList> &
     Builder::getDistinct() const

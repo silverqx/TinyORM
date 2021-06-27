@@ -243,63 +243,13 @@ Builder &Builder::fromRaw(const QString &expression, const QVector<QVariant> &bi
     return *this;
 }
 
-Builder &Builder::fromSub(const std::function<void (Builder &)> &callback,
-                          const QString &as)
-{
-    auto [queryString, bindings] = createSub(callback);
-
-    return fromRaw(QStringLiteral("(%1) as %2")
-                   .arg(std::move(queryString), m_grammar.wrapTable(as)),
-                   bindings);
-}
-
-Builder &Builder::fromSub(Builder &query, const QString &as)
-{
-    auto [queryString, bindings] = createSub(query);
-
-    return fromRaw(QStringLiteral("(%1) as %2")
-                   .arg(std::move(queryString), m_grammar.wrapTable(as)),
-                   bindings);
-}
-
-Builder &Builder::fromSub(const QString &query, const QString &as)
-{
-    auto [queryString, bindings] = createSub(query);
-
-    return fromRaw(QStringLiteral("(%1) as %2")
-                   .arg(std::move(queryString), m_grammar.wrapTable(as)),
-                   bindings);
-}
-
-Builder &Builder::fromSub(QString &&query, const QString &as)
-{
-    auto [queryString, bindings] = createSub(std::move(query));
-
-    return fromRaw(QStringLiteral("(%1) as %2")
-                   .arg(std::move(queryString), m_grammar.wrapTable(as)),
-                   bindings);
-}
-
 Builder &Builder::join(const QString &table, const QString &first,
                        const QString &comparison, const QString &second,
                        const QString &type, const bool where)
 {
     // Ownership of the QSharedPointer<JoinClause>
-    auto join = newJoinClause(*this, type, table);
-
-    if (where)
-        join->where(first, comparison, second);
-    else
-        join->on(first, comparison, second);
-
-    // For convenience, I want to append first and afterwards add bindings
-    const auto &joinRef = *join;
-
-    m_joins.append(std::move(join));
-
-    addBinding(joinRef.getBindings(), BindingType::JOIN);
-
-    return *this;
+    return joinInternal(newJoinClause(*this, type, table),
+                        first, comparison, second, where);
 }
 
 Builder &Builder::join(const QString &table,
@@ -314,6 +264,16 @@ Builder &Builder::join(const QString &table,
     addBinding(join->getBindings(), BindingType::JOIN);
 
     return *this;
+}
+
+// CUR finish Expression overloads for all join methods silverqx
+Builder &Builder::join(Expression &&table, const QString &first,
+                       const QString &comparison, const QString &second,
+                       const QString &type, const bool where)
+{
+    // Ownership of the QSharedPointer<JoinClause>
+    return joinInternal(newJoinClause(*this, type, std::move(table)),
+                        first, comparison, second, where);
 }
 
 Builder &Builder::joinWhere(const QString &table, const QString &first,
@@ -803,9 +763,7 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
 
 Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType type)
 {
-    // TODO duplicate check, unify silverqx
     if (!m_bindings.contains(type))
-        // TODO add hash which maps BindingType to the QString silverqx
         throw RuntimeError(QStringLiteral("Invalid binding type: %1")
                            .arg(static_cast<int>(type)));
 
@@ -855,11 +813,19 @@ Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values,
     }, condition);
 }
 
+// CUR revisit QSharedPointer, here it should be unique_prt absolutely silverqx
 QSharedPointer<JoinClause>
 Builder::newJoinClause(const Builder &query, const QString &type,
                        const QString &table) const
 {
     return QSharedPointer<JoinClause>::create(query, type, table);
+}
+
+QSharedPointer<JoinClause>
+Builder::newJoinClause(const Builder &query, const QString &type,
+                       Expression &&table) const
+{
+    return QSharedPointer<JoinClause>::create(query, type, std::move(table));
 }
 
 Builder &Builder::clearColumns()
@@ -940,6 +906,41 @@ Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
 QSqlQuery Builder::runSelect()
 {
     return m_connection.select(toSql(), getBindings());
+}
+
+Builder &Builder::joinInternal(
+            QSharedPointer<JoinClause> &&join, const QString &first,
+            const QString &comparison, const QString &second, const bool where)
+{
+    if (where)
+        join->where(first, comparison, second);
+    else
+        join->on(first, comparison, second);
+
+    // For convenience, I want to append first and afterwards add bindings
+    const auto &joinRef = *join;
+
+    // CUR revisit QSharedPointer, here it should be unique_prt absolutely silverqx
+    // Move ownership
+    m_joins.append(std::move(join));
+
+    addBinding(joinRef.getBindings(), BindingType::JOIN);
+
+    return *this;
+}
+
+Builder &Builder::joinSubInternal(
+            std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
+            const QString &first, const QString &comparison, const QString &second,
+            const QString &type, const bool where)
+{
+    auto &[queryString, bindings] = subQuery;
+
+    addBinding(std::move(bindings), BindingType::JOIN);
+
+    return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
+                                                            m_grammar.wrapTable(as))),
+                first, comparison, second, type, where);
 }
 
 } // namespace Orm

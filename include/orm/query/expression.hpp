@@ -14,6 +14,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
+    // CUR finish this class, also add comments silverqx
     // FEATURE expressions, rework saving Expressions to the "BindingsMap m_bindings", see also todo at BindingsMap definition in ormtypes.hpp silverqx
     class SHAREDLIB_EXPORT Expression
     {
@@ -21,9 +22,14 @@ namespace Orm::Query
         Expression() = default;
         ~Expression() = default;
         Expression(const QVariant &value);
+        Expression(const QString &value);
 
         Expression(const Expression &) = default;
         Expression &operator=(const Expression &) = default;
+
+        // CUR check by dllexp.exe silverqx
+        Expression(Expression &&) = default;
+        Expression &operator=(Expression &&) = default;
 
         operator QVariant() const;
 
@@ -31,6 +37,7 @@ namespace Orm::Query
         { return m_value; }
 
     private:
+        // CUR should be QString? silverqx
         QVariant m_value;
     };
 
