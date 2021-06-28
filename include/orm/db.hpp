@@ -88,7 +88,7 @@ namespace Orm
 
         /*! Create a new raw query expression. */
         inline static Query::Expression raw(const QVariant &value)
-        { return value; }
+        { return Query::Expression(value); }
 
         /*! Run a select statement against the database. */
         static QSqlQuery

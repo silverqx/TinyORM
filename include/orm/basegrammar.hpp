@@ -58,6 +58,12 @@ namespace Query
         template<QStringContainer T>
         T wrapArray(T values) const;
 
+        /*! Quote the given string literal. */
+        QString quoteString(const QString &value) const;
+        /*! Quote the given string literal. */
+        template<typename = void>
+        QString quoteString(const QVector<QString> &values) const;
+
         /*! Determine if the given value is a raw expression. */
         bool isExpression(const QVariant &value) const;
 
@@ -115,6 +121,26 @@ namespace Query
             value = wrap(value);
 
         return values;
+    }
+
+    template<typename>
+    QString BaseGrammar::quoteString(const QVector<QString> &values) const
+    {
+        QString quoted;
+
+        if (values.isEmpty())
+            return quoted;
+
+        const auto end = values.cend() - 1;
+        auto it = values.begin();
+
+        for (; it < end; ++it)
+            quoted += QStringLiteral("'%1', ").arg(*it);
+
+        if (it == end)
+            quoted += QStringLiteral("'%1'").arg(*it);
+
+        return quoted;
     }
 
     template<Parametrize Container>

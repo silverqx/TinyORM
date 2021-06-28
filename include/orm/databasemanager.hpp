@@ -53,7 +53,7 @@ namespace Query
 
         /*! Create a new raw query expression. */
         inline Query::Expression raw(const QVariant &value)
-        { return value; }
+        { return Query::Expression(value); }
 
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */

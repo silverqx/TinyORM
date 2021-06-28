@@ -987,6 +987,16 @@ void tst_PostgreSQL_QueryBuilder::rawWhereIn() const
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(2)}));
     }
+
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->select("*").from("torrents").whereIn("name", {Raw("'xyz'")});
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" where \"name\" in ('xyz')");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>());
+    }
 }
 
 void tst_PostgreSQL_QueryBuilder::basicWhereNull() const

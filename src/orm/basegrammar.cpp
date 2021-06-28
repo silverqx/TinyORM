@@ -10,6 +10,14 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+/*
+   wrap methods are only for column names, table names and identifiers.
+   parameter()/parametrize() methods are for values.
+   Values or columns/tables/identifiers can also be the Query::Expression.
+   The Query::Expression is always converted to the QString and appended to the query.
+   quoteString() can be used to quote string literals, it is not used anywhere for now.
+*/
+
 const QString &BaseGrammar::getDateFormat() const
 {
     static const auto cachedFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
@@ -62,11 +70,17 @@ QString BaseGrammar::wrapTable(const FromClause &table) const
     return wrapTable(std::get<QString>(table));
 }
 
+QString BaseGrammar::quoteString(const QString &value) const
+{
+    return QStringLiteral("'%1'").arg(value);
+}
+
 //QString BaseGrammar::wrapTable(const Expression &table) const
 //{
 //    return getValue(table).value<QString>();
 //}
 
+// CUR remove all expressions todos when I finish expressions for columns and add comment why I have different overloads for columns and values, described below silverqx
 // FEATURE expressions, this api (method overloads) which takes Expression as parameter looks strange and inconsistent because wrap() takes QString/Expression, wrapTable() the same, instead getValue() takes QVariant/Expression and parameter takes QVariant only, this is a consequence of that columns are always passed as QString (Expression overload are not never called), but values are passed as QVariant and CAN CONTAIN QVariant(Expression), so investigate in the future and it is also related to the another feature todo, which propose to add Expression overloads for methods in the query builder silverqx
 bool BaseGrammar::isExpression(const QVariant &value) const
 {

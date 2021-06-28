@@ -406,7 +406,7 @@ namespace Orm
     inline Query::Expression
     DatabaseConnection::raw(const QVariant &value) const
     {
-        return value;
+        return Query::Expression(value);
     }
 
     inline uint DatabaseConnection::transactionLevel() const

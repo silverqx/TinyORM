@@ -247,12 +247,18 @@ QString Grammar::compileHaving(const HavingConditionItem &having) const
 {
     switch (having.type) {
     case HavingType::BASIC:
-        return QStringLiteral("%1 %2 %3 ?").arg(having.condition, wrap(having.column),
-                                                having.comparison);
+        return compileBasicHaving(having);
+
     default:
         throw RuntimeError(QStringLiteral("Unknown HavingType (%1).")
                            .arg(static_cast<int>(having.type)));
     }
+}
+
+QString Grammar::compileBasicHaving(const HavingConditionItem &having) const
+{
+    return QStringLiteral("%1 %2 %3 %4").arg(having.condition, wrap(having.column),
+                                             having.comparison, parameter(having.value));
 }
 
 QString Grammar::whereBasic(const WhereConditionItem &where) const

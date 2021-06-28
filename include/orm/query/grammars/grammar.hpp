@@ -117,6 +117,8 @@ namespace Orm::Query::Grammars
         QString compileHavings(const QueryBuilder &query) const;
         /*! Compile a single having clause. */
         QString compileHaving(const HavingConditionItem &having) const;
+        /*! Compile a basic having clause. */
+        QString compileBasicHaving(const HavingConditionItem &having) const;
 
         /*! Compile a basic where clause. */
         QString whereBasic(const WhereConditionItem &where) const;
