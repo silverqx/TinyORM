@@ -376,28 +376,6 @@ Builder &Builder::orWhereNotIn(const Column &column, const QVector<QVariant> &va
     return whereNotIn(column, values, QStringLiteral("or"));
 }
 
-Builder &Builder::whereNull(const Column &column, const QString &condition,
-                            const bool nope)
-{
-    return whereNull(QVector<Column> {column}, condition, nope);
-}
-
-Builder &Builder::orWhereNull(const Column &column)
-{
-    return orWhereNull(QVector<Column> {column});
-}
-
-Builder &Builder::whereNotNull(const Column &column, const QString &condition)
-{
-    return whereNotNull(QVector<Column> {column}, condition);
-}
-
-Builder &Builder::orWhereNotNull(const Column &column)
-{
-    return orWhereNotNull(QVector<Column> {column});
-}
-
-// CUR reorder above Column versions silverqx
 Builder &Builder::whereNull(const QVector<Column> &columns, const QString &condition,
                             const bool nope)
 {
@@ -422,6 +400,27 @@ Builder &Builder::whereNotNull(const QVector<Column> &columns, const QString &co
 Builder &Builder::orWhereNotNull(const QVector<Column> &columns)
 {
     return whereNotNull(columns, QStringLiteral("or"));
+}
+
+Builder &Builder::whereNull(const Column &column, const QString &condition,
+                            const bool nope)
+{
+    return whereNull(QVector<Column> {column}, condition, nope);
+}
+
+Builder &Builder::orWhereNull(const Column &column)
+{
+    return orWhereNull(QVector<Column> {column});
+}
+
+Builder &Builder::whereNotNull(const Column &column, const QString &condition)
+{
+    return whereNotNull(QVector<Column> {column}, condition);
+}
+
+Builder &Builder::orWhereNotNull(const Column &column)
+{
+    return orWhereNotNull(QVector<Column> {column});
 }
 
 Builder &Builder::groupBy(const QStringList &groups)

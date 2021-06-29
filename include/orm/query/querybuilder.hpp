@@ -241,16 +241,6 @@ namespace Query
         Builder &orWhereNotIn(const Column &column, const QVector<QVariant> &values);
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const Column &column, const QString &condition = "and",
-                           bool nope = false);
-        /*! Add an "or where null" clause to the query. */
-        Builder &orWhereNull(const Column &column);
-        /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const Column &column, const QString &condition = "and");
-        /*! Add an "or where not null" clause to the query. */
-        Builder &orWhereNotNull(const Column &column);
-
-        /*! Add a "where null" clause to the query. */
         Builder &whereNull(const QVector<Column> &columns = {"*"},
                            const QString &condition = "and", bool nope = false);
         /*! Add an "or where null" clause to the query. */
@@ -260,6 +250,16 @@ namespace Query
                               const QString &condition = "and");
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const QVector<Column> &columns = {"*"});
+
+        /*! Add a "where null" clause to the query. */
+        Builder &whereNull(const Column &column, const QString &condition = "and",
+                           bool nope = false);
+        /*! Add an "or where null" clause to the query. */
+        Builder &orWhereNull(const Column &column);
+        /*! Add a "where not null" clause to the query. */
+        Builder &whereNotNull(const Column &column, const QString &condition = "and");
+        /*! Add an "or where not null" clause to the query. */
+        Builder &orWhereNotNull(const Column &column);
 
         /*! Add a "group by" clause to the query. */
         Builder &groupBy(const QStringList &groups);

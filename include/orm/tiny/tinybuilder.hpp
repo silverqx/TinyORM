@@ -259,16 +259,6 @@ namespace Relations
         Builder &orWhereNotIn(const Column &column, const QVector<QVariant> &values);
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const Column &column, const QString &condition = "and",
-                           bool nope = false);
-        /*! Add an "or where null" clause to the query. */
-        Builder &orWhereNull(const Column &column);
-        /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const Column &column, const QString &condition = "and");
-        /*! Add an "or where not null" clause to the query. */
-        Builder &orWhereNotNull(const Column &column);
-
-        /*! Add a "where null" clause to the query. */
         Builder &whereNull(const QVector<Column> &columns = {"*"},
                            const QString &condition = "and", bool nope = false);
         /*! Add an "or where null" clause to the query. */
@@ -278,6 +268,16 @@ namespace Relations
                               const QString &condition = "and");
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const QVector<Column> &columns = {"*"});
+
+        /*! Add a "where null" clause to the query. */
+        Builder &whereNull(const Column &column, const QString &condition = "and",
+                           bool nope = false);
+        /*! Add an "or where null" clause to the query. */
+        Builder &orWhereNull(const Column &column);
+        /*! Add a "where not null" clause to the query. */
+        Builder &whereNotNull(const Column &column, const QString &condition = "and");
+        /*! Add an "or where not null" clause to the query. */
+        Builder &orWhereNotNull(const Column &column);
 
         /*! Add a "group by" clause to the query. */
         Builder &groupBy(const QStringList &groups);
@@ -1104,37 +1104,6 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereNull(const Column &column, const QString &condition,
-                              const bool nope)
-    {
-        toBase().whereNull(column, condition, nope);
-        return *this;
-    }
-
-    template<typename Model>
-    Builder<Model> &Builder<Model>::orWhereNull(const Column &column)
-    {
-        toBase().orWhereNull(column);
-        return *this;
-    }
-
-    template<typename Model>
-    Builder<Model> &
-    Builder<Model>::whereNotNull(const Column &column, const QString &condition)
-    {
-        toBase().whereNotNull(column, condition);
-        return *this;
-    }
-
-    template<typename Model>
-    Builder<Model> &Builder<Model>::orWhereNotNull(const Column &column)
-    {
-        toBase().orWhereNotNull(column);
-        return *this;
-    }
-
-    template<typename Model>
-    Builder<Model> &
     Builder<Model>::whereNull(const QVector<Column> &columns, const QString &condition,
                               bool nope)
     {
@@ -1162,6 +1131,37 @@ namespace Relations
     Builder<Model> &Builder<Model>::orWhereNotNull(const QVector<Column> &columns)
     {
         toBase().orWhereNotNull(columns);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereNull(const Column &column, const QString &condition,
+                              const bool nope)
+    {
+        toBase().whereNull(column, condition, nope);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::orWhereNull(const Column &column)
+    {
+        toBase().orWhereNull(column);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereNotNull(const Column &column, const QString &condition)
+    {
+        toBase().whereNotNull(column, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::orWhereNotNull(const Column &column)
+    {
+        toBase().orWhereNotNull(column);
         return *this;
     }
 
