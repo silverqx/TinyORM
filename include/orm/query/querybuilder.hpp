@@ -29,6 +29,11 @@ namespace Query
                           std::convertible_to<T, QString> ||
                           std::invocable<T, Orm::QueryBuilder &>;
 
+    /*! Concept for the join's table. */
+    template<typename T>
+    concept JoinTable = std::same_as<T, Query::Expression> ||
+                        std::convertible_to<T, QString>;
+
     // FEATURE subqueries, add support for subqueries, first in where() silverqx
     // TODO add inRandomOrder() silverqx
     class SHAREDLIB_EXPORT Builder
@@ -124,55 +129,64 @@ namespace Query
         Builder &fromSub(T &&query, const QString &as);
 
         /*! Add a join clause to the query. */
-        Builder &join(const QString &table, const QString &first,
-                      const QString &comparison, const QString &second,
-                      const QString &type = "inner", bool where = false);
+        template<JoinTable T>
+        Builder &join(T &&table, const QString &first, const QString &comparison,
+                      const QVariant &second, const QString &type = "inner",
+                      bool where = false);
         /*! Add an advanced join clause to the query. */
-        Builder &join(const QString &table,
-                      const std::function<void(JoinClause &)> &callback,
+        template<JoinTable T>
+        Builder &join(T &&table, const std::function<void(JoinClause &)> &callback,
                       const QString &type = "inner");
-        /*! Add a join clause to the query. */
-        Builder &join(Expression &&table, const QString &first,
-                      const QString &comparison, const QString &second,
-                      const QString &type = "inner", bool where = false);
-
         /*! Add a "join where" clause to the query. */
-        Builder &joinWhere(const QString &table, const QString &first,
-                           const QString &comparison, const QString &second,
-                           const QString &type = "inner");
+        template<JoinTable T>
+        Builder &joinWhere(T &&table, const QString &first, const QString &comparison,
+                           const QVariant &second, const QString &type = "inner");
 
         /*! Add a left join to the query. */
-        Builder &leftJoin(const QString &table, const QString &first,
-                          const QString &comparison, const QString &second);
+        template<JoinTable T>
+        Builder &leftJoin(T &&table, const QString &first, const QString &comparison,
+                          const QVariant &second);
         /*! Add an advanced left join to the query. */
-        Builder &leftJoin(const QString &table,
-                          const std::function<void(JoinClause &)> &callback);
+        template<JoinTable T>
+        Builder &leftJoin(T &&table, const std::function<void(JoinClause &)> &callback);
         /*! Add a "join where" clause to the query. */
-        Builder &leftJoinWhere(const QString &table, const QString &first,
-                               const QString &comparison, const QString &second);
+        template<JoinTable T>
+        Builder &leftJoinWhere(T &&table, const QString &first,
+                               const QString &comparison, const QVariant &second);
 
         /*! Add a right join to the query. */
-        Builder &rightJoin(const QString &table, const QString &first,
-                           const QString &comparison, const QString &second);
+        template<JoinTable T>
+        Builder &rightJoin(T &&table, const QString &first, const QString &comparison,
+                           const QVariant &second);
         /*! Add an advanced right join to the query. */
-        Builder &rightJoin(const QString &table,
-                           const std::function<void(JoinClause &)> &callback);
+        template<JoinTable T>
+        Builder &rightJoin(T &&table, const std::function<void(JoinClause &)> &callback);
         /*! Add a "right join where" clause to the query. */
-        Builder &rightJoinWhere(const QString &table, const QString &first,
-                                const QString &comparison, const QString &second);
+        template<JoinTable T>
+        Builder &rightJoinWhere(T &&table, const QString &first,
+                                const QString &comparison, const QVariant &second);
 
         /*! Add a "cross join" clause to the query. */
-        Builder &crossJoin(const QString &table, const QString &first,
-                           const QString &comparison, const QString &second);
+        template<JoinTable T>
+        Builder &crossJoin(T &&table, const QString &first, const QString &comparison,
+                           const QVariant &second);
         /*! Add an advanced "cross join" clause to the query. */
-        Builder &crossJoin(const QString &table,
-                           const std::function<void(JoinClause &)> &callback);
+        template<JoinTable T>
+        Builder &crossJoin(T &&table, const std::function<void(JoinClause &)> &callback);
 
         /*! Add a subquery join clause to the query. */
         template<FromConcept T>
         Builder &joinSub(T &&query, const QString &as, const QString &first,
-                         const QString &comparison, const QString &second,
+                         const QString &comparison, const QVariant &second,
                          const QString &type = "inner", bool where = false);
+        /*! Add a subquery left join to the query. */
+        template<FromConcept T>
+        Builder &leftJoinSub(T &&query, const QString &as, const QString &first,
+                             const QString &comparison, const QVariant &second);
+        /*! Add a subquery right join to the query. */
+        template<FromConcept T>
+        Builder &rightJoinSub(T &&query, const QString &as, const QString &first,
+                              const QString &comparison, const QVariant &second);
 
         /*! Add a basic where clause to the query. */
         Builder &where(const QString &column, const QString &comparison,
@@ -450,12 +464,19 @@ namespace Query
         /*! Add a join clause to the query, common code. */
         Builder &joinInternal(
                 QSharedPointer<JoinClause> &&join, const QString &first,
-                const QString &comparison, const QString &second, bool where);
+                const QString &comparison, const QVariant &second, bool where);
+        /*! Add an advanced join clause to the query, common code. */
+        Builder &joinInternal(
+                QSharedPointer<JoinClause> &&join,
+                const std::function<void(JoinClause &)> &callback);
+        /*! Add a join clause to the query, common code for the above two methods. */
+        Builder &joinInternal(QSharedPointer<JoinClause> &&join);
+
         /*! Add a subquery join clause to the query, common code. */
         Builder &joinSubInternal(
                 std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
-                const QString &first, const QString &comparison, const QString &second,
-                const QString &type = "inner", bool where = false);
+                const QString &first, const QString &comparison, const QVariant &second,
+                const QString &type, bool where);
 
         /*! All of the available clause operators. */
         const QVector<QString> m_operators {
@@ -521,15 +542,126 @@ namespace Query
                         bindings);
     }
 
+    template<JoinTable T>
+    inline Builder &
+    Builder::join(T &&table, const QString &first, const QString &comparison,
+                  const QVariant &second, const QString &type, const bool where)
+    {
+        // Ownership of the QSharedPointer<JoinClause>
+        return joinInternal(newJoinClause(*this, type, std::forward<T>(table)),
+                            first, comparison, second, where);
+    }
+
+    template<JoinTable T>
+    inline Builder &
+    Builder::join(T &&table, const std::function<void(JoinClause &)> &callback,
+                  const QString &type)
+    {
+        // Ownership of the QSharedPointer<JoinClause>
+        return joinInternal(newJoinClause(*this, type, std::forward<T>(table)),
+                            callback);
+    }
+
+    template<JoinTable T>
+    inline Builder &
+    Builder::joinWhere(T &&table, const QString &first, const QString &comparison,
+                       const QVariant &second, const QString &type)
+    {
+        return join(std::forward<T>(table), first, comparison, second, type, true);
+    }
+
+    template<JoinTable T>
+    inline Builder &
+    Builder::leftJoin(T &&table, const QString &first, const QString &comparison,
+                      const QVariant &second)
+    {
+        return join(std::forward<T>(table), first, comparison, second,
+                    QStringLiteral("left"));
+    }
+
+    template<JoinTable T>
+    inline Builder &
+    Builder::leftJoin(T &&table, const std::function<void(JoinClause &)> &callback)
+    {
+        return join(std::forward<T>(table), callback, QStringLiteral("left"));
+    }
+
+    template<JoinTable T>
+    inline Builder &
+    Builder::leftJoinWhere(T &&table, const QString &first, const QString &comparison,
+                           const QVariant &second)
+    {
+        return joinWhere(std::forward<T>(table), first, comparison, second,
+                         QStringLiteral("left"));
+    }
+
+    template<JoinTable T>
+    inline Builder &
+    Builder::rightJoin(T &&table, const QString &first, const QString &comparison,
+                       const QVariant &second)
+    {
+        return join(table, first, comparison, second, QStringLiteral("right"));
+    }
+
+    template<JoinTable T>
+    inline Builder &
+    Builder::rightJoin(T &&table, const std::function<void(JoinClause &)> &callback)
+    {
+        return join(table, callback, QStringLiteral("right"));
+    }
+
+    template<JoinTable T>
+    inline Builder &
+    Builder::rightJoinWhere(T &&table, const QString &first, const QString &comparison,
+                            const QVariant &second)
+    {
+        return joinWhere(table, first, comparison, second, QStringLiteral("right"));
+    }
+
+    // TODO docs missing example, because of different api silverqx
+    // NOTE api different silverqx
+    template<JoinTable T>
+    inline Builder &
+    Builder::crossJoin(T &&table, const QString &first, const QString &comparison,
+                       const QVariant &second)
+    {
+        return join(table, first, comparison, second, QStringLiteral("cross"));
+    }
+
+    template<JoinTable T>
+    inline Builder &
+    Builder::crossJoin(T &&table, const std::function<void(JoinClause &)> &callback)
+    {
+        return join(table, callback, QStringLiteral("cross"));
+    }
+
     // CUR add docs https://laravel.com/docs/8.x/queries#subquery-joins silverqx
     template<FromConcept T>
     inline Builder &
     Builder::joinSub(T &&query, const QString &as, const QString &first,
-                     const QString &comparison, const QString &second,
+                     const QString &comparison, const QVariant &second,
                      const QString &type, const bool where)
     {
         return joinSubInternal(createSub(std::forward<T>(query)),
                                as, first, comparison, second, type, where);
+    }
+
+    template<FromConcept T>
+    inline Builder &
+    Builder::leftJoinSub(T &&query, const QString &as, const QString &first,
+                         const QString &comparison, const QVariant &second)
+    {
+        return joinSub(std::forward<T>(query), as, first, comparison, second,
+                       QStringLiteral("left"));
+    }
+
+    template<FromConcept T>
+    inline Builder &
+    Builder::rightJoinSub(T &&query, const QString &as, const QString &first,
+                          const QString &comparison, const QVariant &second)
+    {
+        return joinSub(std::forward<T>(query), as, first, comparison, second,
+                       QStringLiteral("right"));
     }
 
     inline const std::variant<bool, QStringList> &

@@ -243,96 +243,6 @@ Builder &Builder::fromRaw(const QString &expression, const QVector<QVariant> &bi
     return *this;
 }
 
-Builder &Builder::join(const QString &table, const QString &first,
-                       const QString &comparison, const QString &second,
-                       const QString &type, const bool where)
-{
-    // Ownership of the QSharedPointer<JoinClause>
-    return joinInternal(newJoinClause(*this, type, table),
-                        first, comparison, second, where);
-}
-
-Builder &Builder::join(const QString &table,
-                       const std::function<void(JoinClause &)> &callback,
-                       const QString &type)
-{
-    const auto join = newJoinClause(*this, type, table);
-
-    std::invoke(callback, *join);
-
-    m_joins.append(join);
-    addBinding(join->getBindings(), BindingType::JOIN);
-
-    return *this;
-}
-
-// CUR finish Expression overloads for all join methods silverqx
-Builder &Builder::join(Expression &&table, const QString &first,
-                       const QString &comparison, const QString &second,
-                       const QString &type, const bool where)
-{
-    // Ownership of the QSharedPointer<JoinClause>
-    return joinInternal(newJoinClause(*this, type, std::move(table)),
-                        first, comparison, second, where);
-}
-
-Builder &Builder::joinWhere(const QString &table, const QString &first,
-                            const QString &comparison, const QString &second,
-                            const QString &type)
-{
-    return join(table, first, comparison, second, type, true);
-}
-
-Builder &Builder::leftJoin(const QString &table, const QString &first,
-                           const QString &comparison, const QString &second)
-{
-    return join(table, first, comparison, second, QStringLiteral("left"));
-}
-
-Builder &Builder::leftJoin(const QString &table,
-                           const std::function<void(JoinClause &)> &callback)
-{
-    return join(table, callback, QStringLiteral("left"));
-}
-
-Builder &Builder::leftJoinWhere(const QString &table, const QString &first,
-                                const QString &comparison, const QString &second)
-{
-    return join(table, first, comparison, second, QStringLiteral("left"));
-}
-
-Builder &Builder::rightJoin(const QString &table, const QString &first,
-                            const QString &comparison, const QString &second)
-{
-    return join(table, first, comparison, second, QStringLiteral("right"));
-}
-
-Builder &Builder::rightJoin(const QString &table,
-                            const std::function<void(JoinClause &)> &callback)
-{
-    return join(table, callback, QStringLiteral("right"));
-}
-
-Builder &Builder::rightJoinWhere(const QString &table, const QString &first,
-                                 const QString &comparison, const QString &second)
-{
-    return joinWhere(table, first, comparison, second, QStringLiteral("right"));
-}
-
-// TODO docs missing example, because of different api silverqx
-// NOTE api different silverqx
-Builder &Builder::crossJoin(const QString &table, const QString &first,
-                            const QString &comparison, const QString &second)
-{
-    return join(table, first, comparison, second, QStringLiteral("cross"));
-}
-
-Builder &Builder::crossJoin(const QString &table,
-                            const std::function<void(JoinClause &)> &callback)
-{
-    return join(table, callback, QStringLiteral("cross"));
-}
-
 Builder &Builder::where(const QString &column, const QString &comparison,
                         const QVariant &value, const QString &condition)
 {
@@ -910,13 +820,28 @@ QSqlQuery Builder::runSelect()
 
 Builder &Builder::joinInternal(
             QSharedPointer<JoinClause> &&join, const QString &first,
-            const QString &comparison, const QString &second, const bool where)
+            const QString &comparison, const QVariant &second, const bool where)
 {
     if (where)
         join->where(first, comparison, second);
     else
-        join->on(first, comparison, second);
+        join->on(first, comparison, second.value<QString>());
 
+    // Move ownership
+    return joinInternal(std::move(join));
+}
+
+Builder &Builder::joinInternal(QSharedPointer<JoinClause> &&join,
+                               const std::function<void(JoinClause &)> &callback)
+{
+    std::invoke(callback, *join);
+
+    // Move ownership
+    return joinInternal(std::move(join));
+}
+
+Builder &Builder::joinInternal(QSharedPointer<JoinClause> &&join)
+{
     // For convenience, I want to append first and afterwards add bindings
     const auto &joinRef = *join;
 
@@ -931,7 +856,7 @@ Builder &Builder::joinInternal(
 
 Builder &Builder::joinSubInternal(
             std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
-            const QString &first, const QString &comparison, const QString &second,
+            const QString &first, const QString &comparison, const QVariant &second,
             const QString &type, const bool where)
 {
     auto &[queryString, bindings] = subQuery;
