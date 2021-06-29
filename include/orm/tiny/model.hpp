@@ -401,31 +401,32 @@ namespace Relations {
 
         /*! Add a "where null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereNull(const QStringList &columns = {"*"},
-                  const QString &condition = "and", bool nope = false);
-        /*! Add a "where null" clause to the query. */
-        static std::unique_ptr<TinyBuilder<Derived>>
         whereNull(const QString &column, const QString &condition = "and",
                   bool nope = false);
-        /*! Add an "or where null" clause to the query. */
-        static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereNull(const QStringList &columns = {"*"});
         /*! Add an "or where null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereNull(const QString &column);
         /*! Add a "where not null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereNotNull(const QStringList &columns = {"*"},
-                     const QString &condition = "and");
-        /*! Add a "where not null" clause to the query. */
-        static std::unique_ptr<TinyBuilder<Derived>>
         whereNotNull(const QString &column, const QString &condition = "and");
         /*! Add an "or where not null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereNotNull(const QStringList &columns = {"*"});
+        orWhereNotNull(const QString &column);
+
+        /*! Add a "where null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereNull(const QStringList &columns = {"*"},
+                  const QString &condition = "and", bool nope = false);
+        /*! Add an "or where null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereNull(const QStringList &columns = {"*"});
+        /*! Add a "where not null" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereNotNull(const QStringList &columns = {"*"},
+                     const QString &condition = "and");
         /*! Add an "or where not null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereNotNull(const QString &column);
+        orWhereNotNull(const QStringList &columns = {"*"});
 
         /*! Add a "group by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -2041,34 +2042,11 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereNull(
-            const QStringList &columns, const QString &condition, const bool nope)
-    {
-        auto builder = query();
-
-        builder->whereNull(columns, condition, nope);
-
-        return builder;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::whereNull(
             const QString &column, const QString &condition, const bool nope)
     {
         auto builder = query();
 
         builder->whereNull(column, condition, nope);
-
-        return builder;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::orWhereNull(const QStringList &columns)
-    {
-        auto builder = query();
-
-        builder->orWhereNull(columns);
 
         return builder;
     }
@@ -2087,18 +2065,6 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereNotNull(
-            const QStringList &columns, const QString &condition)
-    {
-        auto builder = query();
-
-        builder->whereNotNull(columns, condition);
-
-        return builder;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::whereNotNull(
             const QString &column, const QString &condition)
     {
         auto builder = query();
@@ -2110,22 +2076,57 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::orWhereNotNull(const QStringList &columns)
+    Model<Derived, AllRelations...>::orWhereNotNull(const QString &column)
     {
         auto builder = query();
 
-        builder->orWhereNotNull(columns);
+        builder->orWhereNotNull(column);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::orWhereNotNull(const QString &column)
+    Model<Derived, AllRelations...>::whereNull(
+            const QStringList &columns, const QString &condition, const bool nope)
     {
         auto builder = query();
 
-        builder->orWhereNotNull(column);
+        builder->whereNull(columns, condition, nope);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orWhereNull(const QStringList &columns)
+    {
+        auto builder = query();
+
+        builder->orWhereNull(columns);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereNotNull(
+            const QStringList &columns, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereNotNull(columns, condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orWhereNotNull(const QStringList &columns)
+    {
+        auto builder = query();
+
+        builder->orWhereNotNull(columns);
 
         return builder;
     }

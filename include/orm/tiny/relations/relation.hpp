@@ -338,27 +338,28 @@ namespace Relations
                                      const QVector<QVariant> &values) const;
 
         /*! Add a "where null" clause to the query. */
-        const Relation &whereNull(const QStringList &columns = {"*"},
-                                  const QString &condition = "and",
-                                  bool nope = false) const;
-        /*! Add a "where null" clause to the query. */
         const Relation &whereNull(const QString &column,
                                   const QString &condition = "and",
                                   bool nope = false) const;
         /*! Add an "or where null" clause to the query. */
-        const Relation &orWhereNull(const QStringList &columns = {"*"}) const;
-        /*! Add an "or where null" clause to the query. */
         const Relation &orWhereNull(const QString &column) const;
-        /*! Add a "where not null" clause to the query. */
-        const Relation &whereNotNull(const QStringList &columns = {"*"},
-                                     const QString &condition = "and") const;
         /*! Add a "where not null" clause to the query. */
         const Relation &whereNotNull(const QString &column,
                                      const QString &condition = "and") const;
         /*! Add an "or where not null" clause to the query. */
-        const Relation &orWhereNotNull(const QStringList &columns = {"*"}) const;
-        /*! Add an "or where not null" clause to the query. */
         const Relation &orWhereNotNull(const QString &column) const;
+
+        /*! Add a "where null" clause to the query. */
+        const Relation &whereNull(const QStringList &columns = {"*"},
+                                  const QString &condition = "and",
+                                  bool nope = false) const;
+        /*! Add an "or where null" clause to the query. */
+        const Relation &orWhereNull(const QStringList &columns = {"*"}) const;
+        /*! Add a "where not null" clause to the query. */
+        const Relation &whereNotNull(const QStringList &columns = {"*"},
+                                     const QString &condition = "and") const;
+        /*! Add an "or where not null" clause to the query. */
+        const Relation &orWhereNotNull(const QStringList &columns = {"*"}) const;
 
         /*! Add a "group by" clause to the query. */
         const Relation &groupBy(const QStringList &groups) const;
@@ -1151,16 +1152,6 @@ namespace Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     Relation<Model, Related>::whereNull(
-            const QStringList &columns, const QString &condition, const bool nope) const
-    {
-        m_query->whereNull(columns, condition, nope);
-
-        return *this;
-    }
-
-    template<class Model, class Related>
-    const Relation<Model, Related> &
-    Relation<Model, Related>::whereNull(
             const QString &column, const QString &condition, const bool nope) const
     {
         m_query->whereNull(column, condition, nope);
@@ -1170,28 +1161,9 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::orWhereNull(const QStringList &columns) const
-    {
-        m_query->orWhereNull(columns);
-
-        return *this;
-    }
-
-    template<class Model, class Related>
-    const Relation<Model, Related> &
     Relation<Model, Related>::orWhereNull(const QString &column) const
     {
         m_query->orWhereNull(column);
-
-        return *this;
-    }
-
-    template<class Model, class Related>
-    const Relation<Model, Related> &
-    Relation<Model, Related>::whereNotNull(const QStringList &columns,
-                                           const QString &condition) const
-    {
-        m_query->whereNotNull(columns, condition);
 
         return *this;
     }
@@ -1208,18 +1180,47 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::orWhereNotNull(const QStringList &columns) const
+    Relation<Model, Related>::orWhereNotNull(const QString &column) const
     {
-        m_query->orWhereNotNull(columns);
+        m_query->orWhereNotNull(column);
 
         return *this;
     }
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::orWhereNotNull(const QString &column) const
+    Relation<Model, Related>::whereNull(
+            const QStringList &columns, const QString &condition, const bool nope) const
     {
-        m_query->orWhereNotNull(column);
+        m_query->whereNull(columns, condition, nope);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orWhereNull(const QStringList &columns) const
+    {
+        m_query->orWhereNull(columns);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::whereNotNull(const QStringList &columns,
+                                           const QString &condition) const
+    {
+        m_query->whereNotNull(columns, condition);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orWhereNotNull(const QStringList &columns) const
+    {
+        m_query->orWhereNotNull(columns);
 
         return *this;
     }
