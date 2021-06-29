@@ -9,7 +9,9 @@ namespace Orm
 
 WhereItem::operator AttributeItem() const
 {
-    return {column, value};
+    /* AttributeItem or more precise TinyORM attributes as such, can not contain
+       expression in the column name. */
+    return {std::get<QString>(column), value};
 }
 
 bool operator==(const AttributeItem &lhs, const AttributeItem &rhs)

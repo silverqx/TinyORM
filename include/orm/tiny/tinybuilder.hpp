@@ -206,16 +206,16 @@ namespace Relations
                            const std::function<void(JoinClause &)> &callback);
 
         /*! Add a basic where clause to the query. */
-        Builder &where(const QString &column, const QString &comparison,
+        Builder &where(const Column &column, const QString &comparison,
                        const QVariant &value, const QString &condition = "and");
         /*! Add an "or where" clause to the query. */
-        Builder &orWhere(const QString &column, const QString &comparison,
+        Builder &orWhere(const Column &column, const QString &comparison,
                          const QVariant &value);
         /*! Add a basic equal where clause to the query. */
-        Builder &whereEq(const QString &column, const QVariant &value,
+        Builder &whereEq(const Column &column, const QVariant &value,
                          const QString &condition = "and");
         /*! Add an equal "or where" clause to the query. */
-        Builder &orWhereEq(const QString &column, const QVariant &value);
+        Builder &orWhereEq(const Column &column, const QVariant &value);
 
         /*! Add a nested where clause to the query. */
         Builder &where(const std::function<void(Builder &)> &callback,
@@ -236,48 +236,48 @@ namespace Relations
         Builder &orWhereColumn(const QVector<WhereColumnItem> &values);
 
         /*! Add a "where" clause comparing two columns to the query. */
-        Builder &whereColumn(const QString &first, const QString &comparison,
-                             const QString &second, const QString &condition = "and");
+        Builder &whereColumn(const Column &first, const QString &comparison,
+                             const Column &second, const QString &condition = "and");
         /*! Add a "or where" clause comparing two columns to the query. */
-        Builder &orWhereColumn(const QString &first, const QString &comparison,
-                               const QString &second);
+        Builder &orWhereColumn(const Column &first, const QString &comparison,
+                               const Column &second);
         /*! Add an equal "where" clause comparing two columns to the query. */
-        Builder &whereColumnEq(const QString &first, const QString &second,
+        Builder &whereColumnEq(const Column &first, const Column &second,
                                const QString &condition = "and");
         /*! Add an equal "or where" clause comparing two columns to the query. */
-        Builder &orWhereColumnEq(const QString &first, const QString &second);
+        Builder &orWhereColumnEq(const Column &first, const Column &second);
 
         /*! Add a "where in" clause to the query. */
-        Builder &whereIn(const QString &column, const QVector<QVariant> &values,
+        Builder &whereIn(const Column &column, const QVector<QVariant> &values,
                          const QString &condition = "and", bool nope = false);
         /*! Add an "or where in" clause to the query. */
-        Builder &orWhereIn(const QString &column, const QVector<QVariant> &values);
+        Builder &orWhereIn(const Column &column, const QVector<QVariant> &values);
         /*! Add a "where not in" clause to the query. */
-        Builder &whereNotIn(const QString &column, const QVector<QVariant> &values,
+        Builder &whereNotIn(const Column &column, const QVector<QVariant> &values,
                             const QString &condition = "and");
         /*! Add an "or where not in" clause to the query. */
-        Builder &orWhereNotIn(const QString &column, const QVector<QVariant> &values);
+        Builder &orWhereNotIn(const Column &column, const QVector<QVariant> &values);
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const QString &column, const QString &condition = "and",
+        Builder &whereNull(const Column &column, const QString &condition = "and",
                            bool nope = false);
         /*! Add an "or where null" clause to the query. */
-        Builder &orWhereNull(const QString &column);
+        Builder &orWhereNull(const Column &column);
         /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const QString &column, const QString &condition = "and");
+        Builder &whereNotNull(const Column &column, const QString &condition = "and");
         /*! Add an "or where not null" clause to the query. */
-        Builder &orWhereNotNull(const QString &column);
+        Builder &orWhereNotNull(const Column &column);
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const QStringList &columns = {"*"},
+        Builder &whereNull(const QVector<Column> &columns = {"*"},
                            const QString &condition = "and", bool nope = false);
         /*! Add an "or where null" clause to the query. */
-        Builder &orWhereNull(const QStringList &columns = {"*"});
+        Builder &orWhereNull(const QVector<Column> &columns = {"*"});
         /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const QStringList &columns = {"*"},
+        Builder &whereNotNull(const QVector<Column> &columns = {"*"},
                               const QString &condition = "and");
         /*! Add an "or where not null" clause to the query. */
-        Builder &orWhereNotNull(const QStringList &columns = {"*"});
+        Builder &orWhereNotNull(const QVector<Column> &columns = {"*"});
 
         /*! Add a "group by" clause to the query. */
         Builder &groupBy(const QStringList &groups);
@@ -946,7 +946,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::where(const QString &column, const QString &comparison,
+    Builder<Model>::where(const Column &column, const QString &comparison,
                           const QVariant &value, const QString &condition)
     {
         toBase().where(column, comparison, value, condition);
@@ -955,7 +955,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::orWhere(const QString &column, const QString &comparison,
+    Builder<Model>::orWhere(const Column &column, const QString &comparison,
                             const QVariant &value)
     {
         toBase().orWhere(column, comparison, value);
@@ -964,7 +964,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereEq(const QString &column, const QVariant &value,
+    Builder<Model>::whereEq(const Column &column, const QVariant &value,
                             const QString &condition)
     {
         toBase().whereEq(column, value, condition);
@@ -973,7 +973,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::orWhereEq(const QString &column, const QVariant &value)
+    Builder<Model>::orWhereEq(const Column &column, const QVariant &value)
     {
         toBase().orWhereEq(column, value);
         return *this;
@@ -1035,8 +1035,8 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereColumn(const QString &first, const QString &comparison,
-                                const QString &second, const QString &condition)
+    Builder<Model>::whereColumn(const Column &first, const QString &comparison,
+                                const Column &second, const QString &condition)
     {
         toBase().whereColumn(first, comparison, second, condition);
         return *this;
@@ -1044,8 +1044,8 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::orWhereColumn(const QString &first, const QString &comparison,
-                                  const QString &second)
+    Builder<Model>::orWhereColumn(const Column &first, const QString &comparison,
+                                  const Column &second)
     {
         toBase().orWhereColumn(first, comparison, second);
         return *this;
@@ -1053,7 +1053,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereColumnEq(const QString &first, const QString &second,
+    Builder<Model>::whereColumnEq(const Column &first, const Column &second,
                                   const QString &condition)
     {
         toBase().whereColumnEq(first, second, condition);
@@ -1062,7 +1062,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::orWhereColumnEq(const QString &first, const QString &second)
+    Builder<Model>::orWhereColumnEq(const Column &first, const Column &second)
     {
         toBase().orWhereColumnEq(first, second);
         return *this;
@@ -1070,7 +1070,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereIn(const QString &column, const QVector<QVariant> &values,
+    Builder<Model>::whereIn(const Column &column, const QVector<QVariant> &values,
                             const QString &condition, const bool nope)
     {
         toBase().whereIn(column, values, condition, nope);
@@ -1079,7 +1079,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::orWhereIn(const QString &column, const QVector<QVariant> &values)
+    Builder<Model>::orWhereIn(const Column &column, const QVector<QVariant> &values)
     {
         toBase().orWhereIn(column, values);
         return *this;
@@ -1087,7 +1087,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereNotIn(const QString &column, const QVector<QVariant> &values,
+    Builder<Model>::whereNotIn(const Column &column, const QVector<QVariant> &values,
                                const QString &condition)
     {
         toBase().whereNotIn(column, values, condition);
@@ -1096,7 +1096,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::orWhereNotIn(const QString &column, const QVector<QVariant> &values)
+    Builder<Model>::orWhereNotIn(const Column &column, const QVector<QVariant> &values)
     {
         toBase().orWhereNotIn(column, values);
         return *this;
@@ -1104,7 +1104,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereNull(const QString &column, const QString &condition,
+    Builder<Model>::whereNull(const Column &column, const QString &condition,
                               const bool nope)
     {
         toBase().whereNull(column, condition, nope);
@@ -1112,7 +1112,7 @@ namespace Relations
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::orWhereNull(const QString &column)
+    Builder<Model> &Builder<Model>::orWhereNull(const Column &column)
     {
         toBase().orWhereNull(column);
         return *this;
@@ -1120,14 +1120,14 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereNotNull(const QString &column, const QString &condition)
+    Builder<Model>::whereNotNull(const Column &column, const QString &condition)
     {
         toBase().whereNotNull(column, condition);
         return *this;
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::orWhereNotNull(const QString &column)
+    Builder<Model> &Builder<Model>::orWhereNotNull(const Column &column)
     {
         toBase().orWhereNotNull(column);
         return *this;
@@ -1135,7 +1135,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereNull(const QStringList &columns, const QString &condition,
+    Builder<Model>::whereNull(const QVector<Column> &columns, const QString &condition,
                               bool nope)
     {
         toBase().whereNull(columns, condition, nope);
@@ -1143,7 +1143,7 @@ namespace Relations
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::orWhereNull(const QStringList &columns)
+    Builder<Model> &Builder<Model>::orWhereNull(const QVector<Column> &columns)
     {
         toBase().orWhereNull(columns);
         return *this;
@@ -1151,14 +1151,15 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereNotNull(const QStringList &columns, const QString &condition)
+    Builder<Model>::whereNotNull(const QVector<Column> &columns,
+                                 const QString &condition)
     {
         toBase().whereNotNull(columns, condition);
         return *this;
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::orWhereNotNull(const QStringList &columns)
+    Builder<Model> &Builder<Model>::orWhereNotNull(const QVector<Column> &columns)
     {
         toBase().orWhereNotNull(columns);
         return *this;

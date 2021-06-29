@@ -10,6 +10,7 @@
 #include <range/v3/algorithm/unique.hpp>
 #endif
 
+#include "orm/query/expression.hpp"
 #include "orm/utils/export.hpp"
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
@@ -27,9 +28,13 @@ namespace Orm
 namespace Query
 {
     class Builder;
-    class Expression;
 }
     using QueryBuilder = Query::Builder;
+
+    /*! Type for the database column. */
+    using Column = std::variant<QString, Query::Expression>;
+    /*! Columns vector. */
+    using ColumnList = QVector<Column>;
 
     /*! From clause defined in the QueryBuilder. */
     using FromClause = std::variant<std::monostate, QString, Query::Expression>;
@@ -65,14 +70,14 @@ namespace Query
 
     struct WhereConditionItem
     {
-        QString                      column;
+        Column                       column;
         QVariant                     value       {};
         QString                      comparison  {"="};
         QString                      condition   {"and"};
         WhereType                    type        {WhereType::UNDEFINED};
         QSharedPointer<QueryBuilder> nestedQuery {nullptr};
         QVector<QVariant>            values      {};
-        QString                      columnTwo   {};
+        Column                       columnTwo   {};
     };
 
     enum struct HavingType
@@ -121,7 +126,7 @@ namespace Query
 
     struct SHAREDLIB_EXPORT WhereItem
     {
-        QString  column;
+        Column   column;
         QVariant value;
         QString  comparison {"="};
         QString  condition  {};
@@ -131,8 +136,8 @@ namespace Query
 
     struct WhereColumnItem
     {
-        QString first;
-        QString second;
+        Column  first;
+        Column  second;
         QString comparison {"="};
         QString condition  {};
     };

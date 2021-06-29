@@ -8,7 +8,6 @@
 
 #include "orm/ormtypes.hpp"
 #include "orm/query/grammars/grammar.hpp"
-#include "orm/query/expression.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -189,16 +188,16 @@ namespace Query
                               const QString &comparison, const QVariant &second);
 
         /*! Add a basic where clause to the query. */
-        Builder &where(const QString &column, const QString &comparison,
+        Builder &where(const Column &column, const QString &comparison,
                        const QVariant &value, const QString &condition = "and");
         /*! Add an "or where" clause to the query. */
-        Builder &orWhere(const QString &column, const QString &comparison,
+        Builder &orWhere(const Column &column, const QString &comparison,
                          const QVariant &value);
         /*! Add a basic equal where clause to the query. */
-        Builder &whereEq(const QString &column, const QVariant &value,
+        Builder &whereEq(const Column &column, const QVariant &value,
                          const QString &condition = "and");
         /*! Add an equal "or where" clause to the query. */
-        Builder &orWhereEq(const QString &column, const QVariant &value);
+        Builder &orWhereEq(const Column &column, const QVariant &value);
 
         /*! Add a nested where clause to the query. */
         Builder &where(const std::function<void(Builder &)> &callback,
@@ -219,48 +218,48 @@ namespace Query
         Builder &orWhereColumn(const QVector<WhereColumnItem> &values);
 
         /*! Add a "where" clause comparing two columns to the query. */
-        Builder &whereColumn(const QString &first, const QString &comparison,
-                             const QString &second, const QString &condition = "and");
+        Builder &whereColumn(const Column &first, const QString &comparison,
+                             const Column &second, const QString &condition = "and");
         /*! Add a "or where" clause comparing two columns to the query. */
-        Builder &orWhereColumn(const QString &first, const QString &comparison,
-                               const QString &second);
+        Builder &orWhereColumn(const Column &first, const QString &comparison,
+                               const Column &second);
         /*! Add an equal "where" clause comparing two columns to the query. */
-        Builder &whereColumnEq(const QString &first, const QString &second,
+        Builder &whereColumnEq(const Column &first, const Column &second,
                                const QString &condition = "and");
         /*! Add an equal "or where" clause comparing two columns to the query. */
-        Builder &orWhereColumnEq(const QString &first, const QString &second);
+        Builder &orWhereColumnEq(const Column &first, const Column &second);
 
         /*! Add a "where in" clause to the query. */
-        Builder &whereIn(const QString &column, const QVector<QVariant> &values,
+        Builder &whereIn(const Column &column, const QVector<QVariant> &values,
                          const QString &condition = "and", bool nope = false);
         /*! Add an "or where in" clause to the query. */
-        Builder &orWhereIn(const QString &column, const QVector<QVariant> &values);
+        Builder &orWhereIn(const Column &column, const QVector<QVariant> &values);
         /*! Add a "where not in" clause to the query. */
-        Builder &whereNotIn(const QString &column, const QVector<QVariant> &values,
+        Builder &whereNotIn(const Column &column, const QVector<QVariant> &values,
                             const QString &condition = "and");
         /*! Add an "or where not in" clause to the query. */
-        Builder &orWhereNotIn(const QString &column, const QVector<QVariant> &values);
+        Builder &orWhereNotIn(const Column &column, const QVector<QVariant> &values);
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const QString &column, const QString &condition = "and",
+        Builder &whereNull(const Column &column, const QString &condition = "and",
                            bool nope = false);
         /*! Add an "or where null" clause to the query. */
-        Builder &orWhereNull(const QString &column);
+        Builder &orWhereNull(const Column &column);
         /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const QString &column, const QString &condition = "and");
+        Builder &whereNotNull(const Column &column, const QString &condition = "and");
         /*! Add an "or where not null" clause to the query. */
-        Builder &orWhereNotNull(const QString &column);
+        Builder &orWhereNotNull(const Column &column);
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const QStringList &columns = {"*"},
+        Builder &whereNull(const QVector<Column> &columns = {"*"},
                            const QString &condition = "and", bool nope = false);
         /*! Add an "or where null" clause to the query. */
-        Builder &orWhereNull(const QStringList &columns = {"*"});
+        Builder &orWhereNull(const QVector<Column> &columns = {"*"});
         /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const QStringList &columns = {"*"},
+        Builder &whereNotNull(const QVector<Column> &columns = {"*"},
                               const QString &condition = "and");
         /*! Add an "or where not null" clause to the query. */
-        Builder &orWhereNotNull(const QStringList &columns = {"*"});
+        Builder &orWhereNotNull(const QVector<Column> &columns = {"*"});
 
         /*! Add a "group by" clause to the query. */
         Builder &groupBy(const QStringList &groups);

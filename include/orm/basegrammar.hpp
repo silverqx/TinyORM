@@ -46,6 +46,8 @@ namespace Query
 //        virtual QString wrap(const Expression &value, bool prefixAlias = false) const;
         /*! Wrap a value in keyword identifiers. */
         QString wrap(const QVariant &value) const;
+        /*! Wrap a value in keyword identifiers. */
+        QString wrap(const Column &value) const;
 
         /*! Wrap a table in keyword identifiers. */
         QString wrapTable(const QString &table) const;

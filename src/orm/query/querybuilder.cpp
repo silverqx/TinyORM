@@ -243,32 +243,33 @@ Builder &Builder::fromRaw(const QString &expression, const QVector<QVariant> &bi
     return *this;
 }
 
-Builder &Builder::where(const QString &column, const QString &comparison,
+Builder &Builder::where(const Column &column, const QString &comparison,
                         const QVariant &value, const QString &condition)
 {
     // Compile check for a invalid comparison operator
     invalidOperator(comparison);
 
-    m_wheres.append({column, value, comparison, condition, WhereType::BASIC});
+    m_wheres.append({.column = column, .value = value, .comparison = comparison,
+                     .condition = condition, .type = WhereType::BASIC});
 
     addBinding(value, BindingType::WHERE);
 
     return *this;
 }
 
-Builder &Builder::orWhere(const QString &column, const QString &comparison,
+Builder &Builder::orWhere(const Column &column, const QString &comparison,
                           const QVariant &value)
 {
     return where(column, comparison, value, QStringLiteral("or"));
 }
 
-Builder &Builder::whereEq(const QString &column, const QVariant &value,
+Builder &Builder::whereEq(const Column &column, const QVariant &value,
                           const QString &condition)
 {
     return where(column, QStringLiteral("="), value, condition);
 }
 
-Builder &Builder::orWhereEq(const QString &column, const QVariant &value)
+Builder &Builder::orWhereEq(const Column &column, const QVariant &value)
 {
     return where(column, QStringLiteral("="), value, QStringLiteral("or"));
 }
@@ -314,8 +315,8 @@ Builder &Builder::orWhereColumn(const QVector<WhereColumnItem> &values)
     return addArrayOfWheres(values, QStringLiteral("or"));
 }
 
-Builder &Builder::whereColumn(const QString &first, const QString &comparison,
-                              const QString &second, const QString &condition)
+Builder &Builder::whereColumn(const Column &first, const QString &comparison,
+                              const Column &second, const QString &condition)
 {
     // Compile check for a invalid comparison operator
     invalidOperator(comparison);
@@ -326,24 +327,24 @@ Builder &Builder::whereColumn(const QString &first, const QString &comparison,
     return *this;
 }
 
-Builder &Builder::orWhereColumn(const QString &first, const QString &comparison,
-                                const QString &second)
+Builder &Builder::orWhereColumn(const Column &first, const QString &comparison,
+                                const Column &second)
 {
     return whereColumn(first, comparison, second, QStringLiteral("or"));
 }
 
-Builder &Builder::whereColumnEq(const QString &first, const QString &second,
+Builder &Builder::whereColumnEq(const Column &first, const Column &second,
                                 const QString &condition)
 {
     return whereColumn(first, QStringLiteral("="), second, condition);
 }
 
-Builder &Builder::orWhereColumnEq(const QString &first, const QString &second)
+Builder &Builder::orWhereColumnEq(const Column &first, const Column &second)
 {
     return whereColumn(first, QStringLiteral("="), second, QStringLiteral("or"));
 }
 
-Builder &Builder::whereIn(const QString &column, const QVector<QVariant> &values,
+Builder &Builder::whereIn(const Column &column, const QVector<QVariant> &values,
                           const QString &condition, const bool nope)
 {
     const auto type = nope ? WhereType::NOT_IN : WhereType::IN_;
@@ -359,44 +360,45 @@ Builder &Builder::whereIn(const QString &column, const QVector<QVariant> &values
     return *this;
 }
 
-Builder &Builder::orWhereIn(const QString &column, const QVector<QVariant> &values)
+Builder &Builder::orWhereIn(const Column &column, const QVector<QVariant> &values)
 {
     return whereIn(column, values, QStringLiteral("or"));
 }
 
-Builder &Builder::whereNotIn(const QString &column, const QVector<QVariant> &values,
+Builder &Builder::whereNotIn(const Column &column, const QVector<QVariant> &values,
                              const QString &condition)
 {
     return whereIn(column, values, condition, true);
 }
 
-Builder &Builder::orWhereNotIn(const QString &column, const QVector<QVariant> &values)
+Builder &Builder::orWhereNotIn(const Column &column, const QVector<QVariant> &values)
 {
     return whereNotIn(column, values, QStringLiteral("or"));
 }
 
-Builder &Builder::whereNull(const QString &column, const QString &condition,
+Builder &Builder::whereNull(const Column &column, const QString &condition,
                             const bool nope)
 {
-    return whereNull(QStringList(column), condition, nope);
+    return whereNull(QVector<Column> {column}, condition, nope);
 }
 
-Builder &Builder::orWhereNull(const QString &column)
+Builder &Builder::orWhereNull(const Column &column)
 {
-    return orWhereNull(QStringList(column));
+    return orWhereNull(QVector<Column> {column});
 }
 
-Builder &Builder::whereNotNull(const QString &column, const QString &condition)
+Builder &Builder::whereNotNull(const Column &column, const QString &condition)
 {
-    return whereNotNull(QStringList(column), condition);
+    return whereNotNull(QVector<Column> {column}, condition);
 }
 
-Builder &Builder::orWhereNotNull(const QString &column)
+Builder &Builder::orWhereNotNull(const Column &column)
 {
-    return orWhereNotNull(QStringList(column));
+    return orWhereNotNull(QVector<Column> {column});
 }
 
-Builder &Builder::whereNull(const QStringList &columns, const QString &condition,
+// CUR reorder above Column versions silverqx
+Builder &Builder::whereNull(const QVector<Column> &columns, const QString &condition,
                             const bool nope)
 {
     const auto type = nope ? WhereType::NOT_NULL : WhereType::NULL_;
@@ -407,17 +409,17 @@ Builder &Builder::whereNull(const QStringList &columns, const QString &condition
     return *this;
 }
 
-Builder &Builder::orWhereNull(const QStringList &columns)
+Builder &Builder::orWhereNull(const QVector<Column> &columns)
 {
     return whereNull(columns, QStringLiteral("or"));
 }
 
-Builder &Builder::whereNotNull(const QStringList &columns, const QString &condition)
+Builder &Builder::whereNotNull(const QVector<Column> &columns, const QString &condition)
 {
     return whereNull(columns, condition, true);
 }
 
-Builder &Builder::orWhereNotNull(const QStringList &columns)
+Builder &Builder::orWhereNotNull(const QVector<Column> &columns)
 {
     return whereNotNull(columns, QStringLiteral("or"));
 }

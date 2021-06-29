@@ -1,7 +1,6 @@
 #include "orm/basegrammar.hpp"
 
 #include "orm/runtimeerror.hpp"
-#include "orm/query/expression.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -51,8 +50,19 @@ QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const
 
 QString BaseGrammar::wrap(const QVariant &value) const
 {
+    // CUR remove after some time silverqx
+    // TODO prod remove, it looks like this wrap overload is never called silverqx
+    Q_ASSERT("wrap(QVariant");
+
     return isExpression(value) ? getValue(value).value<QString>()
                                : wrap(value.value<QString>());
+}
+
+QString BaseGrammar::wrap(const Column &value) const
+{
+    return std::holds_alternative<Expression>(value)
+            ? getValue(std::get<Expression>(value)).value<QString>()
+            : wrap(std::get<QString>(value));
 }
 
 QString BaseGrammar::wrapTable(const QString &table) const

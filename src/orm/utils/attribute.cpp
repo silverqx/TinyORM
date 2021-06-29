@@ -98,7 +98,12 @@ joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
     auto attributesFiltered =
             attributes | views::remove_if([&keyName](const WhereItem &value)
     {
-        return keyName == value.column;
+        /* AttributeItem or more precise TinyORM attributes as such, can not contain
+           expression in the column name.
+           Of course, I could obtain the QString value from the expression and
+           compare it, but I will not support that intentionally, instead
+           the std::bad_variant_access exception will be thrown. */
+        return keyName == std::get<QString>(value.column);
     })
             | ranges::to<QVector<AttributeItem>>();
 
