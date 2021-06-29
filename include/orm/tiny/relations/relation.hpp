@@ -235,46 +235,78 @@ namespace Relations
         const Relation &distinct(QStringList &&columns) const;
 
         /*! Add a join clause to the query. */
-        const Relation &join(const QString &table, const QString &first,
-                             const QString &comparison, const QString &second,
-                             const QString &type = "inner", bool where = false) const;
+        template<JoinTable T>
+        const Relation &join(
+                T &&table, const QString &first, const QString &comparison,
+                const QString &second, const QString &type = "inner",
+                bool where = false) const;
         /*! Add an advanced join clause to the query. */
-        const Relation &join(const QString &table,
-                             const std::function<void(JoinClause &)> &callback,
-                             const QString &type = "inner") const;
+        template<JoinTable T>
+        const Relation &join(
+                T &&table, const std::function<void(JoinClause &)> &callback,
+                const QString &type = "inner") const;
         /*! Add a "join where" clause to the query. */
-        const Relation &joinWhere(const QString &table, const QString &first,
-                                  const QString &comparison, const QString &second,
-                                  const QString &type = "inner") const;
+        template<JoinTable T>
+        const Relation &joinWhere(
+                T &&table, const QString &first, const QString &comparison,
+                const QVariant &second, const QString &type = "inner") const;
+
         /*! Add a left join to the query. */
-        const Relation &leftJoin(const QString &table, const QString &first,
-                                 const QString &comparison, const QString &second) const;
+        template<JoinTable T>
+        const Relation &leftJoin(
+                T &&table, const QString &first, const QString &comparison,
+                const QString &second) const;
         /*! Add an advanced left join to the query. */
-        const Relation &leftJoin(const QString &table,
-                                 const std::function<void(JoinClause &)> &callback) const;
+        template<JoinTable T>
+        const Relation &leftJoin(
+                T &&table, const std::function<void(JoinClause &)> &callback) const;
         /*! Add a "join where" clause to the query. */
-        const Relation &leftJoinWhere(const QString &table, const QString &first,
-                                      const QString &comparison,
-                                      const QString &second) const;
+        template<JoinTable T>
+        const Relation &leftJoinWhere(
+                T &&table, const QString &first, const QString &comparison,
+                const QVariant &second) const;
+
         /*! Add a right join to the query. */
-        const Relation &rightJoin(const QString &table, const QString &first,
-                                  const QString &comparison, const QString &second) const;
-        /*! Add an advanced right join to the query. */
+        template<JoinTable T>
         const Relation &rightJoin(
-                const QString &table,
-                const std::function<void(JoinClause &)> &callback) const;
+                T &&table, const QString &first, const QString &comparison,
+                const QString &second) const;
+        /*! Add an advanced right join to the query. */
+        template<JoinTable T>
+        const Relation &rightJoin(
+                T &&table, const std::function<void(JoinClause &)> &callback) const;
         /*! Add a "right join where" clause to the query. */
-        const Relation &rightJoinWhere(const QString &table, const QString &first,
-                                       const QString &comparison,
-                                       const QString &second) const;
+        template<JoinTable T>
+        const Relation &rightJoinWhere(
+                T &&table, const QString &first, const QString &comparison,
+                const QVariant &second) const;
+
         /*! Add a "cross join" clause to the query. */
+        template<JoinTable T>
         const Relation &crossJoin(
-                const QString &table, const QString &first,
-                const QString &comparison, const QString &second) const;
+                T &&table, const QString &first, const QString &comparison,
+                const QString &second) const;
         /*! Add an advanced "cross join" clause to the query. */
+        template<JoinTable T>
         const Relation &crossJoin(
-                const QString &table,
-                const std::function<void(JoinClause &)> &callback) const;
+                T &&table, const std::function<void(JoinClause &)> &callback) const;
+
+        /*! Add a subquery join clause to the query. */
+        template<FromConcept T>
+        const Relation &joinSub(
+                T &&query, const QString &as, const QString &first,
+                const QString &comparison, const QVariant &second,
+                const QString &type = "inner", bool where = false) const;
+        /*! Add a subquery left join to the query. */
+        template<FromConcept T>
+        const Relation &leftJoinSub(
+                T &&query, const QString &as, const QString &first,
+                const QString &comparison, const QVariant &second) const;
+        /*! Add a subquery right join to the query. */
+        template<FromConcept T>
+        const Relation &rightJoinSub(
+                T &&query, const QString &as, const QString &first,
+                const QString &comparison, const QVariant &second) const;
 
         /*! Add a basic where clause to the query. */
         const Relation &where(
@@ -847,122 +879,168 @@ namespace Relations
     }
 
     template<class Model, class Related>
+    template<JoinTable T>
     const Relation<Model, Related> &
-    Relation<Model, Related>::join(const QString &table, const QString &first,
-                                   const QString &comparison, const QString &second,
-                                   const QString &type, const bool where) const
+    Relation<Model, Related>::join(
+            T &&table, const QString &first, const QString &comparison,
+            const QString &second, const QString &type, const bool where) const
     {
-        m_query->join(table, first, comparison, second, type, where);
+        m_query->join(std::forward<T>(table), first, comparison, second, type, where);
 
         return *this;
     }
 
     template<class Model, class Related>
+    template<JoinTable T>
     const Relation<Model, Related> &
-    Relation<Model, Related>::join(const QString &table,
-                                   const std::function<void(JoinClause &)> &callback,
-                                   const QString &type) const
+    Relation<Model, Related>::join(
+            T &&table, const std::function<void(JoinClause &)> &callback,
+            const QString &type) const
     {
-        m_query->join(table, callback, type);
+        m_query->join(std::forward<T>(table), callback, type);
 
         return *this;
     }
 
     template<class Model, class Related>
+    template<JoinTable T>
     const Relation<Model, Related> &
-    Relation<Model, Related>::joinWhere(const QString &table, const QString &first,
-                                        const QString &comparison, const QString &second,
-                                        const QString &type) const
+    Relation<Model, Related>::joinWhere(
+            T &&table, const QString &first, const QString &comparison,
+            const QVariant &second, const QString &type) const
     {
-        m_query->joinWhere(table, first, comparison, second, type);
+        m_query->joinWhere(std::forward<T>(table), first, comparison, second, type);
 
         return *this;
     }
 
     template<class Model, class Related>
-    const Relation<Model, Related> &
-    Relation<Model, Related>::leftJoin(
-            const QString &table, const QString &first,
-            const QString &comparison, const QString &second) const
-    {
-        m_query->leftJoin(table, first, comparison, second);
-
-        return *this;
-    }
-
-    template<class Model, class Related>
+    template<JoinTable T>
     const Relation<Model, Related> &
     Relation<Model, Related>::leftJoin(
-            const QString &table,
-            const std::function<void(JoinClause &)> &callback) const
+            T &&table, const QString &first, const QString &comparison,
+            const QString &second) const
     {
-        m_query->leftJoin(table, callback);
+        m_query->leftJoin(std::forward<T>(table), first, comparison, second);
 
         return *this;
     }
 
     template<class Model, class Related>
+    template<JoinTable T>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::leftJoin(
+            T &&table, const std::function<void(JoinClause &)> &callback) const
+    {
+        m_query->leftJoin(std::forward<T>(table), callback);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<JoinTable T>
     const Relation<Model, Related> &
     Relation<Model, Related>::leftJoinWhere(
-            const QString &table, const QString &first,
-            const QString &comparison, const QString &second) const
+            T &&table, const QString &first, const QString &comparison,
+            const QVariant &second) const
     {
-        m_query->leftJoinWhere(table, first, comparison, second);
+        m_query->leftJoinWhere(std::forward<T>(table), first, comparison, second);
 
         return *this;
     }
 
     template<class Model, class Related>
+    template<JoinTable T>
     const Relation<Model, Related> &
     Relation<Model, Related>::rightJoin(
-            const QString &table, const QString &first,
-            const QString &comparison, const QString &second) const
+            T &&table, const QString &first, const QString &comparison,
+            const QString &second) const
     {
-        m_query->rightJoin(table, first, comparison, second);
+        m_query->rightJoin(std::forward<T>(table), first, comparison, second);
 
         return *this;
     }
 
     template<class Model, class Related>
+    template<JoinTable T>
     const Relation<Model, Related> &
     Relation<Model, Related>::rightJoin(
-            const QString &table,
-            const std::function<void(JoinClause &)> &callback) const
+            T &&table, const std::function<void(JoinClause &)> &callback) const
     {
-        m_query->rightJoin(table, callback);
+        m_query->rightJoin(std::forward<T>(table), callback);
 
         return *this;
     }
 
     template<class Model, class Related>
+    template<JoinTable T>
     const Relation<Model, Related> &
     Relation<Model, Related>::rightJoinWhere(
-            const QString &table, const QString &first,
-            const QString &comparison, const QString &second) const
+            T &&table, const QString &first, const QString &comparison,
+            const QVariant &second) const
     {
-        m_query->rightJoinWhere(table, first, comparison, second);
+        m_query->rightJoinWhere(std::forward<T>(table), first, comparison, second);
 
         return *this;
     }
 
     template<class Model, class Related>
+    template<JoinTable T>
     const Relation<Model, Related> &
     Relation<Model, Related>::crossJoin(
-            const QString &table, const QString &first,
-            const QString &comparison, const QString &second) const
+            T &&table, const QString &first, const QString &comparison,
+            const QString &second) const
     {
-        m_query->crossJoin(table, first, comparison, second);
+        m_query->crossJoin(std::forward<T>(table), first, comparison, second);
 
         return *this;
     }
 
     template<class Model, class Related>
+    template<JoinTable T>
     const Relation<Model, Related> &
     Relation<Model, Related>::crossJoin(
-            const QString &table,
-            const std::function<void(JoinClause &)> &callback) const
+            T &&table, const std::function<void(JoinClause &)> &callback) const
     {
-        m_query->crossJoin(table, callback);
+        m_query->crossJoin(std::forward<T>(table), callback);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<FromConcept T>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::joinSub(
+            T &&query, const QString &as, const QString &first,
+            const QString &comparison, const QVariant &second,
+            const QString &type, const bool where) const
+    {
+        m_query->joinSub(std::forward<T>(query), as, first, comparison, second, type,
+                         where);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<FromConcept T>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::leftJoinSub(
+            T &&query, const QString &as, const QString &first,
+            const QString &comparison, const QVariant &second) const
+    {
+        m_query->leftJoinSub(std::forward<T>(query), as, first, comparison, second);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<FromConcept T>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::rightJoinSub(
+            T &&query, const QString &as, const QString &first,
+            const QString &comparison, const QVariant &second) const
+    {
+        m_query->rightJoinSub(std::forward<T>(query), as, first, comparison, second);
 
         return *this;
     }

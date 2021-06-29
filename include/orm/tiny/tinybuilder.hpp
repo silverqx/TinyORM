@@ -169,41 +169,64 @@ namespace Relations
         Builder &distinct(QStringList &&columns);
 
         /*! Add a join clause to the query. */
-        Builder &join(const QString &table, const QString &first,
-                      const QString &comparison, const QString &second,
-                      const QString &type = "inner", bool where = false);
+        template<JoinTable T>
+        Builder &join(T &&table, const QString &first, const QString &comparison,
+                      const QString &second, const QString &type = "inner",
+                      bool where = false);
         /*! Add an advanced join clause to the query. */
-        Builder &join(const QString &table,
-                      const std::function<void(JoinClause &)> &callback,
+        template<JoinTable T>
+        Builder &join(T &&table, const std::function<void(JoinClause &)> &callback,
                       const QString &type = "inner");
         /*! Add a "join where" clause to the query. */
-        Builder &joinWhere(const QString &table, const QString &first,
-                           const QString &comparison, const QString &second,
-                           const QString &type = "inner");
+        template<JoinTable T>
+        Builder &joinWhere(T &&table, const QString &first, const QString &comparison,
+                           const QVariant &second, const QString &type = "inner");
+
         /*! Add a left join to the query. */
-        Builder &leftJoin(const QString &table, const QString &first,
-                          const QString &comparison, const QString &second);
+        template<JoinTable T>
+        Builder &leftJoin(T &&table, const QString &first, const QString &comparison,
+                          const QString &second);
         /*! Add an advanced left join to the query. */
-        Builder &leftJoin(const QString &table,
-                          const std::function<void(JoinClause &)> &callback);
+        template<JoinTable T>
+        Builder &leftJoin(T &&table, const std::function<void(JoinClause &)> &callback);
         /*! Add a "join where" clause to the query. */
-        Builder &leftJoinWhere(const QString &table, const QString &first,
-                               const QString &comparison, const QString &second);
+        template<JoinTable T>
+        Builder &leftJoinWhere(T &&table, const QString &first,
+                               const QString &comparison, const QVariant &second);
+
         /*! Add a right join to the query. */
-        Builder &rightJoin(const QString &table, const QString &first,
-                           const QString &comparison, const QString &second);
+        template<JoinTable T>
+        Builder &rightJoin(T &&table, const QString &first, const QString &comparison,
+                           const QString &second);
         /*! Add an advanced right join to the query. */
-        Builder &rightJoin(const QString &table,
-                           const std::function<void(JoinClause &)> &callback);
+        template<JoinTable T>
+        Builder &rightJoin(T &&table, const std::function<void(JoinClause &)> &callback);
         /*! Add a "right join where" clause to the query. */
-        Builder &rightJoinWhere(const QString &table, const QString &first,
-                                const QString &comparison, const QString &second);
+        template<JoinTable T>
+        Builder &rightJoinWhere(T &&table, const QString &first,
+                                const QString &comparison, const QVariant &second);
+
         /*! Add a "cross join" clause to the query. */
-        Builder &crossJoin(const QString &table, const QString &first,
-                           const QString &comparison, const QString &second);
+        template<JoinTable T>
+        Builder &crossJoin(T &&table, const QString &first, const QString &comparison,
+                           const QString &second);
         /*! Add an advanced "cross join" clause to the query. */
-        Builder &crossJoin(const QString &table,
-                           const std::function<void(JoinClause &)> &callback);
+        template<JoinTable T>
+        Builder &crossJoin(T &&table, const std::function<void(JoinClause &)> &callback);
+
+        /*! Add a subquery join clause to the query. */
+        template<FromConcept T>
+        Builder &joinSub(T &&query, const QString &as, const QString &first,
+                         const QString &comparison, const QVariant &second,
+                         const QString &type = "inner", bool where = false);
+        /*! Add a subquery left join to the query. */
+        template<FromConcept T>
+        Builder &leftJoinSub(T &&query, const QString &as, const QString &first,
+                             const QString &comparison, const QVariant &second);
+        /*! Add a subquery right join to the query. */
+        template<FromConcept T>
+        Builder &rightJoinSub(T &&query, const QString &as, const QString &first,
+                              const QString &comparison, const QVariant &second);
 
         /*! Add a basic where clause to the query. */
         Builder &where(const Column &column, const QString &comparison,
@@ -843,104 +866,144 @@ namespace Relations
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::join(const QString &table, const QString &first,
-                         const QString &comparison, const QString &second,
-                         const QString &type, const bool where)
+    Builder<Model>::join(T &&table, const QString &first, const QString &comparison,
+                         const QString &second, const QString &type, const bool where)
     {
-        toBase().join(table, first, comparison, second, type, where);
+        toBase().join(std::forward<T>(table), first, comparison, second, type, where);
         return *this;
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::join(const QString &table,
-                         const std::function<void(JoinClause &)> &callback,
+    Builder<Model>::join(T &&table, const std::function<void(JoinClause &)> &callback,
                          const QString &type)
     {
-        toBase().join(table, callback, type);
+        toBase().join(std::forward<T>(table), callback, type);
         return *this;
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::joinWhere(const QString &table, const QString &first,
-                              const QString &comparison, const QString &second,
-                              const QString &type)
+    Builder<Model>::joinWhere(T &&table, const QString &first, const QString &comparison,
+                              const QVariant &second, const QString &type)
     {
-        toBase().joinWhere(table, first, comparison, second, type);
+        toBase().joinWhere(std::forward<T>(table), first, comparison, second, type);
         return *this;
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::leftJoin(const QString &table, const QString &first,
-                             const QString &comparison, const QString &second)
+    Builder<Model>::leftJoin(T &&table, const QString &first, const QString &comparison,
+                             const QString &second)
     {
-        toBase().leftJoin(table, first, comparison, second);
+        toBase().leftJoin(std::forward<T>(table), first, comparison, second);
         return *this;
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::leftJoin(const QString &table,
+    Builder<Model>::leftJoin(T &&table,
                              const std::function<void(JoinClause &)> &callback)
     {
-        toBase().leftJoin(table, callback);
+        toBase().leftJoin(std::forward<T>(table), callback);
         return *this;
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::leftJoinWhere(const QString &table, const QString &first,
-                                  const QString &comparison, const QString &second)
+    Builder<Model>::leftJoinWhere(T &&table, const QString &first,
+                                  const QString &comparison, const QVariant &second)
     {
-        toBase().leftJoinWhere(table, first, comparison, second);
+        toBase().leftJoinWhere(std::forward<T>(table), first, comparison, second);
         return *this;
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::rightJoin(const QString &table, const QString &first,
-                              const QString &comparison, const QString &second)
+    Builder<Model>::rightJoin(T &&table, const QString &first, const QString &comparison,
+                              const QString &second)
     {
-        toBase().rightJoin(table, first, comparison, second);
+        toBase().rightJoin(std::forward<T>(table), first, comparison, second);
         return *this;
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::rightJoin(const QString &table,
+    Builder<Model>::rightJoin(T &&table,
                               const std::function<void(JoinClause &)> &callback)
     {
-        toBase().rightJoin(table, callback);
+        toBase().rightJoin(std::forward<T>(table), callback);
         return *this;
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::rightJoinWhere(const QString &table, const QString &first,
-                                   const QString &comparison, const QString &second)
+    Builder<Model>::rightJoinWhere(T &&table, const QString &first,
+                                   const QString &comparison, const QVariant &second)
     {
-        toBase().rightJoinWhere(table, first, comparison, second);
+        toBase().rightJoinWhere(std::forward<T>(table), first, comparison, second);
         return *this;
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::crossJoin(const QString &table, const QString &first,
-                              const QString &comparison, const QString &second)
+    Builder<Model>::crossJoin(T &&table, const QString &first, const QString &comparison,
+                              const QString &second)
     {
-        toBase().crossJoin(table, first, comparison, second);
+        toBase().crossJoin(std::forward<T>(table), first, comparison, second);
         return *this;
     }
 
     template<typename Model>
+    template<JoinTable T>
     Builder<Model> &
-    Builder<Model>::crossJoin(const QString &table,
+    Builder<Model>::crossJoin(T &&table,
                               const std::function<void(JoinClause &)> &callback)
     {
-        toBase().crossJoin(table, callback);
+        toBase().crossJoin(std::forward<T>(table), callback);
+        return *this;
+    }
+
+    template<typename Model>
+    template<FromConcept T>
+    Builder<Model> &
+    Builder<Model>::joinSub(T &&query, const QString &as, const QString &first,
+                            const QString &comparison, const QVariant &second,
+                            const QString &type, const bool where)
+    {
+        toBase().joinSub(std::forward<T>(query), as, first, comparison, second, type,
+                         where);
+        return *this;
+    }
+
+    template<typename Model>
+    template<FromConcept T>
+    Builder<Model> &
+    Builder<Model>::leftJoinSub(T &&query, const QString &as, const QString &first,
+                                const QString &comparison, const QVariant &second)
+    {
+        toBase().leftJoinSub(std::forward<T>(query), as, first, comparison, second);
+        return *this;
+    }
+
+    template<typename Model>
+    template<FromConcept T>
+    Builder<Model> &
+    Builder<Model>::rightJoinSub(T &&query, const QString &as, const QString &first,
+                                 const QString &comparison, const QVariant &second)
+    {
+        toBase().rightJoinSub(std::forward<T>(query), as, first, comparison, second);
         return *this;
     }
 

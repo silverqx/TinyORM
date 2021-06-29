@@ -285,49 +285,77 @@ namespace Relations {
         distinct(QStringList &&columns);
 
         /*! Add a join clause to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        join(const QString &table, const QString &first, const QString &comparison,
+        join(T &&table, const QString &first, const QString &comparison,
              const QString &second, const QString &type = "inner", bool where = false);
         /*! Add an advanced join clause to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        join(const QString &table, const std::function<void(JoinClause &)> &callback,
+        join(T &&table, const std::function<void(JoinClause &)> &callback,
              const QString &type = "inner");
         /*! Add a "join where" clause to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        joinWhere(const QString &table, const QString &first, const QString &comparison,
-                  const QString &second, const QString &type = "inner");
+        joinWhere(T &&table, const QString &first, const QString &comparison,
+                  const QVariant &second, const QString &type = "inner");
+
         /*! Add a left join to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        leftJoin(const QString &table, const QString &first,
-                 const QString &comparison, const QString &second);
+        leftJoin(T &&table, const QString &first, const QString &comparison,
+                 const QString &second);
         /*! Add an advanced left join to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        leftJoin(const QString &table,
-                 const std::function<void(JoinClause &)> &callback);
+        leftJoin(T &&table, const std::function<void(JoinClause &)> &callback);
         /*! Add a "join where" clause to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        leftJoinWhere(const QString &table, const QString &first,
-                      const QString &comparison, const QString &second);
+        leftJoinWhere(T &&table, const QString &first, const QString &comparison,
+                      const QVariant &second);
+
         /*! Add a right join to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        rightJoin(const QString &table, const QString &first,
-                  const QString &comparison, const QString &second);
+        rightJoin(T &&table, const QString &first, const QString &comparison,
+                  const QString &second);
         /*! Add an advanced right join to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        rightJoin(const QString &table,
-                  const std::function<void(JoinClause &)> &callback);
+        rightJoin(T &&table, const std::function<void(JoinClause &)> &callback);
         /*! Add a "right join where" clause to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        rightJoinWhere(const QString &table, const QString &first,
-                       const QString &comparison, const QString &second);
+        rightJoinWhere(T &&table, const QString &first, const QString &comparison,
+                       const QVariant &second);
+
         /*! Add a "cross join" clause to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        crossJoin(const QString &table, const QString &first,
-                  const QString &comparison, const QString &second);
+        crossJoin(T &&table, const QString &first, const QString &comparison,
+                  const QString &second);
         /*! Add an advanced "cross join" clause to the query. */
+        template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        crossJoin(const QString &table,
-                  const std::function<void(JoinClause &)> &callback);
+        crossJoin(T &&table, const std::function<void(JoinClause &)> &callback);
+
+        /*! Add a subquery join clause to the query. */
+        template<FromConcept T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        joinSub(T &&query, const QString &as, const QString &first,
+                const QString &comparison, const QVariant &second,
+                const QString &type = "inner", bool where = false);
+        /*! Add a subquery left join to the query. */
+        template<FromConcept T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        leftJoinSub(T &&query, const QString &as, const QString &first,
+                    const QString &comparison, const QVariant &second);
+        /*! Add a subquery right join to the query. */
+        template<FromConcept T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        rightJoinSub(T &&query, const QString &as, const QString &first,
+                     const QString &comparison, const QVariant &second);
 
         /*! Add a basic where clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -1678,141 +1706,196 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::join(
-            const QString &table, const QString &first,  const QString &comparison,
+            T &&table, const QString &first,  const QString &comparison,
             const QString &second, const QString &type, const bool where)
     {
         auto builder = query();
 
-        builder->join(table, first, comparison, second, type, where);
+        builder->join(std::forward<T>(table), first, comparison, second, type, where);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::join(
-            const QString &table, const std::function<void(JoinClause &)> &callback,
+            T &&table, const std::function<void(JoinClause &)> &callback,
             const QString &type)
     {
         auto builder = query();
 
-        builder->join(table, callback, type);
+        builder->join(std::forward<T>(table), callback, type);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::joinWhere(
-            const QString &table, const QString &first, const QString &comparison,
-            const QString &second, const QString &type)
+            T &&table, const QString &first, const QString &comparison,
+            const QVariant &second, const QString &type)
     {
         auto builder = query();
 
-        builder->joinWhere(table, first, comparison, second, type);
+        builder->joinWhere(std::forward<T>(table), first, comparison, second, type);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::leftJoin(
-            const QString &table, const QString &first,
-            const QString &comparison, const QString &second)
+            T &&table, const QString &first, const QString &comparison,
+            const QString &second)
     {
         auto builder = query();
 
-        builder->leftJoin(table, first, comparison, second);
+        builder->leftJoin(std::forward<T>(table), first, comparison, second);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::leftJoin(
-            const QString &table, const std::function<void(JoinClause &)> &callback)
+            T &&table, const std::function<void(JoinClause &)> &callback)
     {
         auto builder = query();
 
-        builder->leftJoin(table, callback);
+        builder->leftJoin(std::forward<T>(table), callback);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::leftJoinWhere(
-            const QString &table, const QString &first,
-            const QString &comparison, const QString &second)
+            T &&table, const QString &first, const QString &comparison,
+            const QVariant &second)
     {
         auto builder = query();
 
-        builder->leftJoinWhere(table, first, comparison, second);
+        builder->leftJoinWhere(std::forward<T>(table), first, comparison, second);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::rightJoin(
-            const QString &table, const QString &first,
-            const QString &comparison, const QString &second)
+            T &&table, const QString &first, const QString &comparison,
+            const QString &second)
     {
         auto builder = query();
 
-        builder->rightJoin(table, first, comparison, second);
+        builder->rightJoin(std::forward<T>(table), first, comparison, second);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::rightJoin(
-            const QString &table, const std::function<void(JoinClause &)> &callback)
+            T &&table, const std::function<void(JoinClause &)> &callback)
     {
         auto builder = query();
 
-        builder->rightJoin(table, callback);
+        builder->rightJoin(std::forward<T>(table), callback);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::rightJoinWhere(
-            const QString &table, const QString &first,
-            const QString &comparison, const QString &second)
+            T &&table, const QString &first, const QString &comparison,
+            const QVariant &second)
     {
         auto builder = query();
 
-        builder->rightJoinWhere(table, first, comparison, second);
+        builder->rightJoinWhere(std::forward<T>(table), first, comparison, second);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::crossJoin(
-            const QString &table, const QString &first,
-            const QString &comparison, const QString &second)
+            T &&table, const QString &first, const QString &comparison,
+            const QString &second)
     {
         auto builder = query();
 
-        builder->crossJoin(table, first, comparison, second);
+        builder->crossJoin(std::forward<T>(table), first, comparison, second);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::crossJoin(
-            const QString &table, const std::function<void(JoinClause &)> &callback)
+            T &&table, const std::function<void(JoinClause &)> &callback)
     {
         auto builder = query();
 
-        builder->crossJoin(table, callback);
+        builder->crossJoin(std::forward<T>(table), callback);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<FromConcept T>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::joinSub(
+            T &&query, const QString &as, const QString &first,
+            const QString &comparison, const QVariant &second,
+            const QString &type, const bool where)
+    {
+        auto builder = Derived::query();
+
+        builder->joinSub(std::forward<T>(query), as, first, comparison, second, type,
+                         where);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<FromConcept T>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::leftJoinSub(
+            T &&query, const QString &as, const QString &first,
+            const QString &comparison, const QVariant &second)
+    {
+        auto builder = Derived::query();
+
+        builder->leftJoinSub(std::forward<T>(query), as, first, comparison, second);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<FromConcept T>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::rightJoinSub(
+            T &&query, const QString &as, const QString &first,
+            const QString &comparison, const QVariant &second)
+    {
+        auto builder = Derived::query();
+
+        builder->rightJoinSub(std::forward<T>(query), as, first, comparison, second);
 
         return builder;
     }

@@ -22,17 +22,6 @@ namespace Query
 {
     class JoinClause;
 
-    /*! Concept for from clause or table name. */
-    template<typename T>
-    concept FromConcept = std::convertible_to<T, Orm::QueryBuilder &> ||
-                          std::convertible_to<T, QString> ||
-                          std::invocable<T, Orm::QueryBuilder &>;
-
-    /*! Concept for the join's table. */
-    template<typename T>
-    concept JoinTable = std::same_as<T, Query::Expression> ||
-                        std::convertible_to<T, QString>;
-
     // FEATURE subqueries, add support for subqueries, first in where() silverqx
     // TODO add inRandomOrder() silverqx
     class SHAREDLIB_EXPORT Builder
