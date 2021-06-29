@@ -242,24 +242,25 @@ namespace Query
         Builder &orWhereNotIn(const QString &column, const QVector<QVariant> &values);
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const QStringList &columns = {"*"},
-                           const QString &condition = "and", bool nope = false);
-        /*! Add a "where null" clause to the query. */
         Builder &whereNull(const QString &column, const QString &condition = "and",
                            bool nope = false);
         /*! Add an "or where null" clause to the query. */
-        Builder &orWhereNull(const QStringList &columns = {"*"});
-        /*! Add an "or where null" clause to the query. */
         Builder &orWhereNull(const QString &column);
-        /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const QStringList &columns = {"*"},
-                              const QString &condition = "and");
         /*! Add a "where not null" clause to the query. */
         Builder &whereNotNull(const QString &column, const QString &condition = "and");
         /*! Add an "or where not null" clause to the query. */
-        Builder &orWhereNotNull(const QStringList &columns = {"*"});
-        /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const QString &column);
+
+        /*! Add a "where null" clause to the query. */
+        Builder &whereNull(const QStringList &columns = {"*"},
+                           const QString &condition = "and", bool nope = false);
+        /*! Add an "or where null" clause to the query. */
+        Builder &orWhereNull(const QStringList &columns = {"*"});
+        /*! Add a "where not null" clause to the query. */
+        Builder &whereNotNull(const QStringList &columns = {"*"},
+                              const QString &condition = "and");
+        /*! Add an "or where not null" clause to the query. */
+        Builder &orWhereNotNull(const QStringList &columns = {"*"});
 
         /*! Add a "group by" clause to the query. */
         Builder &groupBy(const QStringList &groups);
