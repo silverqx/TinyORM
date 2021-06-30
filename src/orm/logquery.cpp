@@ -45,8 +45,7 @@ QString parseExecutedQuery(const QSqlQuery &query)
     return executedQuery;
 }
 
-QString parseExecutedQueryForPretend(QString query,
-                                     const Orm::Types::BoundValues &bindings)
+QString parseExecutedQueryForPretend(QString query, const QVector<QVariant> &bindings)
 {
     QString boundValue;
 

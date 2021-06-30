@@ -79,6 +79,15 @@ private slots:
 
     void lock() const;
 
+    void insert() const;
+    void insert_WithExpression() const;
+
+    void update() const;
+    void update_WithExpression() const;
+
+    void remove() const;
+    void remove_WithExpression() const;
+
 private:
     /*! Create QueryBuilder instance for the given connection. */
     inline QSharedPointer<QueryBuilder>
@@ -1299,6 +1308,110 @@ void tst_PostgreSQL_QueryBuilder::lock() const
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(4)}));
     }
+}
+
+void tst_PostgreSQL_QueryBuilder::insert() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").insert({{"name", "xyz"}, {"size", 6}});
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "insert into \"torrents\" (\"name\", \"size\") values (?, ?)");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant("xyz"), QVariant(6)}));
+}
+
+void tst_PostgreSQL_QueryBuilder::insert_WithExpression() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents")
+                .insert({{"name", DB::raw("'xyz'")}, {"size", 6},
+                         {"progress", DB::raw(2)}});
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "insert into \"torrents\" (\"name\", \"progress\", \"size\") "
+             "values ('xyz', 2, ?)");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(6)}));
+}
+
+void tst_PostgreSQL_QueryBuilder::update() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents")
+                .whereEq("id", 10)
+                .update({{"name", "xyz"}, {"size", 6}});
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "update \"torrents\" set \"name\" = ?, \"size\" = ? where \"id\" = ?");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant("xyz"), QVariant(6), QVariant(10)}));
+}
+
+void tst_PostgreSQL_QueryBuilder::update_WithExpression() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents")
+                .whereEq("id", 10)
+                .update({{"name", DB::raw("'xyz'")}, {"size", 6},
+                         {"progress", DB::raw(2)}});
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "update \"torrents\" set \"name\" = 'xyz', \"size\" = ?, \"progress\" = 2 "
+             "where \"id\" = ?");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(6), QVariant(10)}));
+}
+
+void tst_PostgreSQL_QueryBuilder::remove() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").remove(2222);
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "delete from \"torrents\" where \"torrents\".\"id\" = ?");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(2222)}));
+}
+
+void tst_PostgreSQL_QueryBuilder::remove_WithExpression() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").remove(DB::raw(2223));
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "delete from \"torrents\" where \"torrents\".\"id\" = 2223");
+    QVERIFY(firstLog.boundValues.isEmpty());
 }
 
 QTEST_MAIN(tst_PostgreSQL_QueryBuilder)

@@ -215,7 +215,7 @@ namespace Orm
                       const std::optional<qint64> elapsed) const;
         /*! Log a query into the connection's query log in the pretending mode. */
         void logQueryForPretend(const QString &query,
-                                const Types::BoundValues &bindings) const;
+                                const QVector<QVariant> &bindings) const;
         /*! Log a transaction query into the connection's query log. */
         void logTransactionQuery(const QString &query,
                                  const std::optional<qint64> elapsed) const;
@@ -363,9 +363,9 @@ namespace Orm
         /*! Count transactional queries execution time and statements counter. */
         std::optional<qint64>
         hitTransactionalCounters(const QElapsedTimer timer, bool countElapsed);
-        /*! Convert positional bindings vector to the named bindings map. */
-        QVariantMap
-        convertPositionalToNamedBindings(const QVector<QVariant> &bindings) const;
+        /*! Convert a named bindings map to the positional bindings vector. */
+        QVector<QVariant>
+        convertNamedToPositionalBindings(QVariantMap &&bindings) const;
 
         /*! Get the query grammar used by the connection. */
         QueryGrammar &getQueryGrammar();
@@ -507,11 +507,7 @@ namespace Orm
            to run and then log the query, bindings, and execution time. We'll
            log time in milliseconds. */
         if (m_pretending)
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             logQueryForPretend(queryString, bindings);
-#else
-            logQueryForPretend(queryString, convertPositionalToNamedBindings(bindings));
-#endif
         else
             logQuery(result, elapsed);
 

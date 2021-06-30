@@ -5,8 +5,6 @@
 #include <QString>
 #include <QVariant>
 
-#include "orm/types/boundvalues.hpp"
-
 class QSqlQuery;
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -17,8 +15,7 @@ namespace TINYORM_COMMON_NAMESPACE
 /*! Get the last executed query with replaced placeholders ( ideal for logging ). */
 QString parseExecutedQuery(const QSqlQuery &query);
 /*! Get pretended query with replaced placeholders ( ideal for logging ). */
-QString parseExecutedQueryForPretend(QString query,
-                                     const Orm::Types::BoundValues &bindings);
+QString parseExecutedQueryForPretend(QString query, const QVector<QVariant> &bindings);
 
 #ifdef QT_DEBUG
 /*! Log the last executed query to the debug output. */

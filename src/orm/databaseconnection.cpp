@@ -781,7 +781,12 @@ void DatabaseConnection::logQuery(
         if (executedQuery.isEmpty())
             executedQuery = query.lastQuery();
 
-        m_queryLog->append({std::move(executedQuery), query.boundValues(),
+        m_queryLog->append({std::move(executedQuery),
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                            query.boundValues(),
+#else
+                            convertNamedToPositionalBindings(query.boundValues()),
+#endif
                             Log::Type::NORMAL, ++m_queryLogId,
                             elapsed ? *elapsed : -1, query.size(),
                             query.numRowsAffected()});
@@ -809,8 +814,7 @@ void DatabaseConnection::logQuery(
 }
 
 void DatabaseConnection::logQueryForPretend(
-        const QString &query,
-        const Types::BoundValues &bindings) const
+        const QString &query, const QVector<QVariant> &bindings) const
 {
     if (m_loggingQueries && m_queryLog)
         m_queryLog->append({query, bindings, Log::Type::NORMAL, ++m_queryLogId});
@@ -1020,14 +1024,14 @@ QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
     return query;
 }
 
-QVariantMap
-DatabaseConnection::convertPositionalToNamedBindings(
-        const QVector<QVariant> &bindings) const
+QVector<QVariant>
+DatabaseConnection::convertNamedToPositionalBindings(QVariantMap &&bindings) const
 {
-    QVariantMap result;
+    QVector<QVariant> result;
+    result.reserve(bindings.size());
 
-    for (const auto &binding : bindings)
-        result.insert(QStringLiteral(":a"), binding);
+    for (auto &&binding : bindings)
+        result << std::move(binding);
 
     return result;
 }

@@ -136,23 +136,6 @@ std::tuple<int, QSqlQuery> Builder::remove()
             cleanBindings(m_grammar.prepareBindingsForDelete(getRawBindings())));
 }
 
-std::tuple<int, QSqlQuery> Builder::deleteRow(const quint64 id)
-{
-    return remove(id);
-}
-
-std::tuple<int, QSqlQuery> Builder::remove(const quint64 id)
-{
-    /* If an ID is passed to the method, we will set the where clause to check the
-       ID to let developers to simply and quickly remove a single row from this
-       database without manually specifying the "where" clauses on the query.
-       m_from will be wrapped in the Grammar. */
-    where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)),
-          QStringLiteral("="), id, QStringLiteral("and"));
-
-    return remove();
-}
-
 void Builder::truncate()
 {
     for (const auto &[sql, bindings] : m_grammar.compileTruncate(*this))

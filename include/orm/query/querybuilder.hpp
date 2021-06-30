@@ -22,6 +22,11 @@ namespace Query
 {
     class JoinClause;
 
+    /*! Concept for the remove() method parameter. */
+    template<typename T>
+    concept Remove = std::convertible_to<T, quint64> ||
+                     std::same_as<T, Query::Expression>;
+
     // FEATURE subqueries, add support for subqueries, first in where() silverqx
     // TODO add inRandomOrder() silverqx
     class SHAREDLIB_EXPORT Builder
@@ -77,9 +82,11 @@ namespace Query
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery> remove();
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> deleteRow(const quint64 id);
+        template<Remove T>
+        std::tuple<int, QSqlQuery> deleteRow(T &&id);
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> remove(const quint64 id);
+        template<Remove T>
+        std::tuple<int, QSqlQuery> remove(T &&id);
 
         /*! Run a truncate statement on the table. */
         void truncate();
@@ -519,6 +526,25 @@ namespace Query
         /*! Indicates whether row locking is being used. */
         std::variant<std::monostate, bool, QString> m_lock;
     };
+
+    template<Remove T>
+    inline std::tuple<int, QSqlQuery> Builder::deleteRow(T &&id)
+    {
+        return remove(std::forward<T>(id));
+    }
+
+    template<Remove T>
+    std::tuple<int, QSqlQuery> Builder::remove(T &&id)
+    {
+        /* If an ID is passed to the method, we will set the where clause to check the
+           ID to let developers to simply and quickly remove a single row from this
+           database without manually specifying the "where" clauses on the query.
+           m_from will be wrapped in the Grammar. */
+        where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)),
+              QStringLiteral("="), std::forward<T>(id), QStringLiteral("and"));
+
+        return remove();
+    }
 
     template<FromConcept T>
     Builder &
