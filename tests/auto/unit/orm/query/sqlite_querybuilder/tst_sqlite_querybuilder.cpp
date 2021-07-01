@@ -19,6 +19,11 @@ class tst_SQLite_QueryBuilder : public QObject
 private slots:
     void initTestCase();
 
+    void select() const;
+    void addSelect() const;
+
+    void distinct() const;
+
     void from() const;
     void from_TableWrappingQuotationMarks() const;
     void from_WithPrefix() const;
@@ -35,18 +40,6 @@ private slots:
     void joinSub_QStringOverload() const;
     void joinSub_QueryBuilderOverload_WithWhere() const;
     void joinSub_CallbackOverload() const;
-
-    void select() const;
-    void addSelect() const;
-
-    void distinct() const;
-
-    void orderBy() const;
-    void latestOldest() const;
-
-    void limitOffset() const;
-    void takeSkip() const;
-    void forPage() const;
 
     void basicWhere() const;
     void whereWithVectorValue() const;
@@ -75,6 +68,13 @@ private slots:
     void basicWhereNotNull_ColumnExpression() const;
     void whereNullWithVectorValue() const;
     void whereNotNullWithVectorValue() const;
+
+    void orderBy() const;
+    void latestOldest() const;
+
+    void limitOffset() const;
+    void takeSkip() const;
+    void forPage() const;
 
     void lock() const;
 
@@ -105,6 +105,64 @@ void tst_SQLite_QueryBuilder::initTestCase()
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
                              "for '%2' connection have not been defined.")
               .arg("tst_SQLite_QueryBuilder", Databases::SQLITE).toUtf8().constData(), );
+}
+
+void tst_SQLite_QueryBuilder::select() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("torrents");
+
+    builder->select({"id", "name"});
+    QCOMPARE(builder->toSql(),
+             "select \"id\", \"name\" from \"torrents\"");
+
+    builder->select();
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\"");
+
+    builder->select("id");
+    QCOMPARE(builder->toSql(),
+             "select \"id\" from \"torrents\"");
+}
+
+void tst_SQLite_QueryBuilder::addSelect() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("torrents");
+
+    builder->addSelect({"id", "name"});
+    QCOMPARE(builder->toSql(),
+             "select \"id\", \"name\" from \"torrents\"");
+
+    builder->addSelect("size");
+    QCOMPARE(builder->toSql(),
+             "select \"id\", \"name\", \"size\" from \"torrents\"");
+
+    builder->addSelect("*");
+    QCOMPARE(builder->toSql(),
+             "select \"id\", \"name\", \"size\", * from \"torrents\"");
+}
+
+void tst_SQLite_QueryBuilder::distinct() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("torrents");
+
+    auto distinct = std::get<bool>(builder->getDistinct());
+    QCOMPARE(distinct, false);
+
+    builder->distinct();
+    distinct = std::get<bool>(builder->getDistinct());
+    QCOMPARE(distinct, true);
+    QCOMPARE(builder->toSql(),
+             "select distinct * from \"torrents\"");
+
+    builder->select({"name", "size"});
+    QCOMPARE(builder->toSql(),
+             "select distinct \"name\", \"size\" from \"torrents\"");
 }
 
 void tst_SQLite_QueryBuilder::from() const
@@ -436,148 +494,6 @@ void tst_SQLite_QueryBuilder::joinSub_CallbackOverload() const
              "where \"name\" = ?");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(5), QVariant("xyz")}));
-}
-
-void tst_SQLite_QueryBuilder::select() const
-{
-    auto builder = createQuery(m_connection);
-
-    builder->from("torrents");
-
-    builder->select({"id", "name"});
-    QCOMPARE(builder->toSql(),
-             "select \"id\", \"name\" from \"torrents\"");
-
-    builder->select();
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\"");
-
-    builder->select("id");
-    QCOMPARE(builder->toSql(),
-             "select \"id\" from \"torrents\"");
-}
-
-void tst_SQLite_QueryBuilder::addSelect() const
-{
-    auto builder = createQuery(m_connection);
-
-    builder->from("torrents");
-
-    builder->addSelect({"id", "name"});
-    QCOMPARE(builder->toSql(),
-             "select \"id\", \"name\" from \"torrents\"");
-
-    builder->addSelect("size");
-    QCOMPARE(builder->toSql(),
-             "select \"id\", \"name\", \"size\" from \"torrents\"");
-
-    builder->addSelect("*");
-    QCOMPARE(builder->toSql(),
-             "select \"id\", \"name\", \"size\", * from \"torrents\"");
-}
-
-void tst_SQLite_QueryBuilder::distinct() const
-{
-    auto builder = createQuery(m_connection);
-
-    builder->from("torrents");
-
-    auto distinct = std::get<bool>(builder->getDistinct());
-    QCOMPARE(distinct, false);
-
-    builder->distinct();
-    distinct = std::get<bool>(builder->getDistinct());
-    QCOMPARE(distinct, true);
-    QCOMPARE(builder->toSql(),
-             "select distinct * from \"torrents\"");
-
-    builder->select({"name", "size"});
-    QCOMPARE(builder->toSql(),
-             "select distinct \"name\", \"size\" from \"torrents\"");
-}
-
-void tst_SQLite_QueryBuilder::orderBy() const
-{
-    auto builder = createQuery(m_connection);
-
-    builder->from("torrents");
-
-    builder->orderBy("name", "asc");
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by \"name\" asc");
-
-    builder->orderBy("id", "desc");
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by \"name\" asc, \"id\" desc");
-
-    builder->reorder()
-            .orderByDesc("name");
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by \"name\" desc");
-
-    builder->reorder("id", "asc");
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by \"id\" asc");
-}
-
-void tst_SQLite_QueryBuilder::latestOldest() const
-{
-    auto builder = createQuery(m_connection);
-
-    builder->from("torrents");
-
-    builder->latest("name");
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by \"name\" desc");
-
-    builder->reorder().oldest("name");
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" order by \"name\" asc");
-}
-
-void tst_SQLite_QueryBuilder::limitOffset() const
-{
-    auto builder = createQuery(m_connection);
-
-    builder->from("torrents");
-
-    builder->limit(10);
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" limit 10");
-
-    builder->offset(5);
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" limit 10 offset 5");
-}
-
-void tst_SQLite_QueryBuilder::takeSkip() const
-{
-    auto builder = createQuery(m_connection);
-
-    builder->from("torrents");
-
-    builder->take(15);
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" limit 15");
-
-    builder->skip(5);
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" limit 15 offset 5");
-}
-
-void tst_SQLite_QueryBuilder::forPage() const
-{
-    auto builder = createQuery(m_connection);
-
-    builder->from("torrents");
-
-    builder->forPage(2, 10);
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" limit 10 offset 10");
-
-    builder->forPage(5);
-    QCOMPARE(builder->toSql(),
-             "select * from \"torrents\" limit 30 offset 120");
 }
 
 void tst_SQLite_QueryBuilder::basicWhere() const
@@ -1209,6 +1125,90 @@ void tst_SQLite_QueryBuilder::whereNotNullWithVectorValue() const
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3)}));
     }
+}
+
+void tst_SQLite_QueryBuilder::orderBy() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("torrents");
+
+    builder->orderBy("name", "asc");
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" order by \"name\" asc");
+
+    builder->orderBy("id", "desc");
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" order by \"name\" asc, \"id\" desc");
+
+    builder->reorder()
+            .orderByDesc("name");
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" order by \"name\" desc");
+
+    builder->reorder("id", "asc");
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" order by \"id\" asc");
+}
+
+void tst_SQLite_QueryBuilder::latestOldest() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("torrents");
+
+    builder->latest("name");
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" order by \"name\" desc");
+
+    builder->reorder().oldest("name");
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" order by \"name\" asc");
+}
+
+void tst_SQLite_QueryBuilder::limitOffset() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("torrents");
+
+    builder->limit(10);
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" limit 10");
+
+    builder->offset(5);
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" limit 10 offset 5");
+}
+
+void tst_SQLite_QueryBuilder::takeSkip() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("torrents");
+
+    builder->take(15);
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" limit 15");
+
+    builder->skip(5);
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" limit 15 offset 5");
+}
+
+void tst_SQLite_QueryBuilder::forPage() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("torrents");
+
+    builder->forPage(2, 10);
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" limit 10 offset 10");
+
+    builder->forPage(5);
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" limit 30 offset 120");
 }
 
 void tst_SQLite_QueryBuilder::lock() const
