@@ -196,7 +196,6 @@ namespace Orm::Tiny::Relations
                      const QString &condition = "and") const override;
 
         /* Inserting operations on the relationship */
-        // CUR make all virtual silverqx
         /*! Attach a model instance to the parent model. */
         std::tuple<bool, Related &>
         save(Related &model,

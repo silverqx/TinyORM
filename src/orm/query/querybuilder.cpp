@@ -160,7 +160,6 @@ Builder &Builder::select(const QVector<Column> &columns)
     // FEATURE expressions, add Query::Expression overload, find all occurences of Illuminate\Database\Query\Expression in the Eloquent and add support to TinyORM, I will need to add overloads for some methods, for columns and also for values silverqx
     clearColumns();
 
-    // CUR check all std::ranges/::copy/move() and use copy/move ctor instead, but only if container  have to be empty before copy/move!! silverqx
     std::ranges::copy(columns, std::back_inserter(m_columns));
 
     return *this;

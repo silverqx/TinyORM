@@ -84,6 +84,7 @@ Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
     const auto flatten = flatBindingsForUpdateDelete(bindings, {BindingType::SELECT,
                                                                 BindingType::JOIN});
 
+    // std::copy() is ok, 'flatten' contains vector of references
     std::copy(flatten.cbegin(), flatten.cend(), std::back_inserter(preparedBindings));
 
     return preparedBindings;
@@ -106,6 +107,7 @@ QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings)
        bindings from flatten bindings map. */
     const auto flatten = flatBindingsForUpdateDelete(bindings, {BindingType::SELECT});
 
+    // std::copy() is ok, 'flatten' contains vector of references
     std::copy(flatten.cbegin(), flatten.cend(), std::back_inserter(preparedBindings));
 
     return preparedBindings;

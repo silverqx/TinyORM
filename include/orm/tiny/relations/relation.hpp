@@ -124,6 +124,7 @@ namespace Relations
         /*! Find a model by its primary key or throw an exception. */
         virtual Related
         findOrFail(const QVariant &id, const QVector<Column> &columns = {"*"}) const;
+        // findMany() is missing intentionally doesn't make sense for one type relations
 
         /*! Execute the query and get the first result. */
         virtual std::optional<Related>
@@ -138,7 +139,6 @@ namespace Relations
                       const QVector<AttributeItem> &values = {}) const;
         /*! Execute the query and get the first result or throw an exception. */
         virtual Related firstOrFail(const QVector<Column> &columns = {"*"}) const;
-        // CUR findMany missing and make it virtual silverqx
 
         /*! Add a basic where clause to the query, and return the first result. */
         virtual std::optional<Related>
