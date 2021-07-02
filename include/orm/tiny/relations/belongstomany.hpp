@@ -427,7 +427,6 @@ namespace Orm::Tiny::Relations
         /*! The name of the accessor to use for the "pivot" relationship. */
         QString m_accessor {"pivot"};
         // BUG should be QSet, duplicates are not allowed, check all the containers 😭 and use proper containers where I did mistake, from the point of view of duplicates silverqx
-        // CUR expressions also for m_pivotColumns, test this expressions will be hell on the earth 😭 silverqx
         /*! The pivot table columns to retrieve. */
         QStringList m_pivotColumns;
 
@@ -1338,7 +1337,7 @@ namespace Orm::Tiny::Relations
 
         // Merge aliasedPivotColumns into columns
         for (auto &&column : columns) {
-            // Avoid duplicates, expressions doesn't be checked
+            // Avoid duplicates, expressions are not checked
             if (std::holds_alternative<QString>(column))
                 if (const auto &column_ = std::get<QString>(column);
                     /* Here can be aliasedPivotColumns_.contains(), but I use
@@ -1357,7 +1356,6 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     QStringList BelongsToMany<Model, Related, PivotType>::aliasedPivotColumns() const
     {
-        // CUR change to QVector<Column> silverqx
         QStringList columns {
             // Default columns
             m_foreignPivotKey,
