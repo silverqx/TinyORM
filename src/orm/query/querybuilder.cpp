@@ -16,7 +16,7 @@ Builder::Builder(ConnectionInterface &connection, const QueryGrammar &grammar)
 {}
 
 QSqlQuery
-Builder::get(const QStringList &columns)
+Builder::get(const QVector<Column> &columns)
 {
     return onceWithColumns(columns, [this]
     {
@@ -25,12 +25,12 @@ Builder::get(const QStringList &columns)
 }
 
 QSqlQuery
-Builder::find(const QVariant &id, const QStringList &columns)
+Builder::find(const QVariant &id, const QVector<Column> &columns)
 {
     return where("id", "=", id).first(columns);
 }
 
-QSqlQuery Builder::first(const QStringList &columns)
+QSqlQuery Builder::first(const QVector<Column> &columns)
 {
     auto query = take(1).get(columns);
 
@@ -39,9 +39,17 @@ QSqlQuery Builder::first(const QStringList &columns)
     return query;
 }
 
-QVariant Builder::value(const QString &column)
+QVariant Builder::value(const Column &column)
 {
-    return first({column}).value(column);
+    // Expression support
+    QString column_;
+
+    if (std::holds_alternative<Expression>(column))
+        column_ = std::get<Expression>(column).getValue().value<QString>();
+    else
+        column_ = std::get<QString>(column);
+
+    return first({column}).value(column_);
 }
 
 QString Builder::toSql()
@@ -147,22 +155,23 @@ void Builder::truncate()
             m_connection.statement(sql, bindings);
 }
 
-Builder &Builder::select(const QStringList &columns)
+Builder &Builder::select(const QVector<Column> &columns)
 {
     // FEATURE expressions, add Query::Expression overload, find all occurences of Illuminate\Database\Query\Expression in the Eloquent and add support to TinyORM, I will need to add overloads for some methods, for columns and also for values silverqx
     clearColumns();
 
+    // CUR check all std::ranges/::copy/move() and use copy/move ctor instead, but only if container  have to be empty before copy/move!! silverqx
     std::ranges::copy(columns, std::back_inserter(m_columns));
 
     return *this;
 }
 
-Builder &Builder::select(const QString &column)
+Builder &Builder::select(const Column &column)
 {
-    return select(QStringList(column));
+    return select(QVector<Column> {column});
 }
 
-Builder &Builder::addSelect(const QStringList &columns)
+Builder &Builder::addSelect(const QVector<Column> &columns)
 {
     std::ranges::copy(columns, std::back_inserter(m_columns));
 
@@ -170,9 +179,9 @@ Builder &Builder::addSelect(const QStringList &columns)
 }
 
 // FUTURE when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
-Builder &Builder::addSelect(const QString &column)
+Builder &Builder::addSelect(const Column &column)
 {
-    return addSelect(QStringList(column));
+    return addSelect(QVector<Column> {column});
 }
 
 Builder &Builder::distinct()
@@ -229,13 +238,14 @@ Builder &Builder::fromRaw(const QString &expression, const QVector<QVariant> &bi
 Builder &Builder::where(const Column &column, const QString &comparison,
                         const QVariant &value, const QString &condition)
 {
-    // Compile check for a invalid comparison operator
+    // TODO constexpr, compile check for a invalid comparison operator silverqx
     invalidOperator(comparison);
 
     m_wheres.append({.column = column, .value = value, .comparison = comparison,
                      .condition = condition, .type = WhereType::BASIC});
 
-    addBinding(value, BindingType::WHERE);
+    if (!value.canConvert<Expression>())
+        addBinding(value, BindingType::WHERE);
 
     return *this;
 }
@@ -428,7 +438,9 @@ Builder &Builder::having(const QString &column, const QString &comparison,
     invalidOperator(comparison);
 
     m_havings.append({column, value, comparison, condition, HavingType::BASIC});
-    addBinding(value, BindingType::HAVING);
+
+    if (!value.canConvert<Expression>())
+        addBinding(value, BindingType::HAVING);
 
     return *this;
 }
@@ -734,7 +746,7 @@ Builder &Builder::clearColumns()
 
 QSqlQuery
 Builder::onceWithColumns(
-            const QStringList &columns,
+            const QVector<Column> &columns,
             const std::function<QSqlQuery()> &callback)
 {
     // Save orignal columns

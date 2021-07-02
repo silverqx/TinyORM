@@ -41,13 +41,13 @@ namespace Query
         inline virtual ~Builder() = default;
 
         /*! Execute the query as a "select" statement. */
-        QSqlQuery get(const QStringList &columns = {"*"});
+        QSqlQuery get(const QVector<Column> &columns = {"*"});
         /*! Execute a query for a single record by ID. */
-        QSqlQuery find(const QVariant &id, const QStringList &columns = {"*"});
+        QSqlQuery find(const QVariant &id, const QVector<Column> &columns = {"*"});
         /*! Execute the query and get the first result. */
-        QSqlQuery first(const QStringList &columns = {"*"});
+        QSqlQuery first(const QVector<Column> &columns = {"*"});
         /*! Get a single column's value from the first result of a query. */
-        QVariant value(const QString &column);
+        QVariant value(const Column &column);
 
         /*! Get the SQL representation of the query. */
         QString toSql();
@@ -93,13 +93,13 @@ namespace Query
 
         /* Select */
         /*! Set the columns to be selected. */
-        Builder &select(const QStringList &columns = {"*"});
+        Builder &select(const QVector<Column> &columns = {"*"});
         /*! Set the column to be selected. */
-        Builder &select(const QString &column);
+        Builder &select(const Column &column);
         /*! Add new select columns to the query. */
-        Builder &addSelect(const QStringList &columns);
+        Builder &addSelect(const QVector<Column> &columns);
         /*! Add a new select column to the query. */
-        Builder &addSelect(const QString &column);
+        Builder &addSelect(const Column &column);
 
         /*! Force the query to only return distinct results. */
         Builder &distinct();
@@ -344,10 +344,10 @@ namespace Query
         getDistinct() const;
         // TODO check up all code and return references when appropriate silverqx
         /*! Get the columns that should be returned. */
-        inline const QStringList &getColumns() const
+        inline const QVector<Column> &getColumns() const
         { return m_columns; }
         /*! Set the columns that should be returned. */
-        inline Builder &setColumns(const QStringList &columns)
+        inline Builder &setColumns(const QVector<Column> &columns)
         { m_columns = columns; return *this; }
         /*! Get the table associated with the query builder. */
         inline const std::variant<std::monostate, QString, Expression> &getFrom() const
@@ -428,7 +428,7 @@ namespace Query
         Builder &clearColumns();
         /*! Execute the given callback while selecting the given columns. */
         QSqlQuery
-        onceWithColumns(const QStringList &columns,
+        onceWithColumns(const QVector<Column> &columns,
                         const std::function<QSqlQuery()> &callback);
 
         /*! Creates a subquery and parse it. */
@@ -506,7 +506,7 @@ namespace Query
         /*! Indicates if the query returns distinct results. */
         std::variant<bool, QStringList> m_distinct = false;
         /*! The columns that should be returned. */
-        QStringList m_columns;
+        QVector<Column> m_columns;
         /*! The table which the query is targeting. */
         FromClause m_from;
         /*! The table joins for the query. */

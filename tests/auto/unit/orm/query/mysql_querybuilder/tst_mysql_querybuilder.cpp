@@ -19,8 +19,22 @@ class tst_MySql_QueryBuilder : public QObject
 private slots:
     void initTestCase();
 
+    void get() const;
+    void get_ColumnExpression() const;
+
+    void find() const;
+    void find_ColumnAndValueExpression() const;
+
+    void first() const;
+    void first_ColumnExpression() const;
+
+    void value() const;
+    void value_ColumnExpression() const;
+
     void select() const;
+    void select_ColumnExpression() const;
     void addSelect() const;
+    void addSelect_ColumnExpression() const;
 
     void distinct() const;
 
@@ -30,8 +44,8 @@ private slots:
     void from_AliasWithPrefix() const;
 
     void fromRaw() const;
-    void fromRaw_withWhere() const;
-    void fromRaw_withBindings_withWhere() const;
+    void fromRaw_WithWhere() const;
+    void fromRaw_WithBindings_WithWhere() const;
 
     void fromSub_QStringOverload() const;
     void fromSub_QueryBuilderOverload_WithWhere() const;
@@ -107,6 +121,163 @@ void tst_MySql_QueryBuilder::initTestCase()
               .arg("tst_MySql_QueryBuilder", Databases::MYSQL).toUtf8().constData(), );
 }
 
+void tst_MySql_QueryBuilder::get() const
+{
+    {
+        auto log = DB::connection(m_connection).pretend([](auto &connection)
+        {
+            connection.query()->from("torrents").get({"id", "name"});
+        });
+
+        const auto &firstLog = log.first();
+
+        QCOMPARE(log.size(), 1);
+        QCOMPARE(firstLog.query,
+                 "select `id`, `name` from `torrents`");
+        QVERIFY(firstLog.boundValues.isEmpty());
+    }
+
+    {
+        auto log = DB::connection(m_connection).pretend([](auto &connection)
+        {
+            connection.query()->from("torrents").get();
+        });
+
+        const auto &firstLog = log.first();
+
+        QCOMPARE(log.size(), 1);
+        QCOMPARE(firstLog.query,
+                 "select * from `torrents`");
+        QVERIFY(firstLog.boundValues.isEmpty());
+    }
+}
+
+void tst_MySql_QueryBuilder::get_ColumnExpression() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").get({Raw("id"), "name"});
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select id, `name` from `torrents`");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::find() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").find(3, {"id", "name"});
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select `id`, `name` from `torrents` where `id` = ? limit 1");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(3)}));
+}
+
+void tst_MySql_QueryBuilder::find_ColumnAndValueExpression() const
+{
+    {
+        auto log = DB::connection(m_connection).pretend([](auto &connection)
+        {
+            connection.query()->from("torrents").find(3, {"id", Raw("name")});
+        });
+
+        const auto &firstLog = log.first();
+
+        QCOMPARE(log.size(), 1);
+        QCOMPARE(firstLog.query,
+                 "select `id`, name from `torrents` where `id` = ? limit 1");
+        QCOMPARE(firstLog.boundValues,
+                 QVector<QVariant>({QVariant(3)}));
+    }
+
+    {
+        auto log = DB::connection(m_connection).pretend([](auto &connection)
+        {
+            connection.query()->from("torrents").find(Raw("1 + 3"), {"id", Raw("name")});
+        });
+
+        const auto &firstLog = log.first();
+
+        QCOMPARE(log.size(), 1);
+        QCOMPARE(firstLog.query,
+                 "select `id`, name from `torrents` where `id` = 1 + 3 limit 1");
+        QVERIFY(firstLog.boundValues.isEmpty());
+    }
+}
+
+void tst_MySql_QueryBuilder::first() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").first({"id", "name"});
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select `id`, `name` from `torrents` limit 1");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::first_ColumnExpression() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").first({"id", Raw("name")});
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select `id`, name from `torrents` limit 1");
+    QVERIFY(firstLog.boundValues.isEmpty());
+
+
+    auto builder = createQuery(m_connection);
+}
+
+void tst_MySql_QueryBuilder::value() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").value("name");
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select `name` from `torrents` limit 1");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::value_ColumnExpression() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").value(Raw("name"));
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select name from `torrents` limit 1");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
 void tst_MySql_QueryBuilder::select() const
 {
     auto builder = createQuery(m_connection);
@@ -126,6 +297,25 @@ void tst_MySql_QueryBuilder::select() const
              "select `id` from `torrents`");
 }
 
+void tst_MySql_QueryBuilder::select_ColumnExpression() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("torrents");
+
+    builder->select(Raw("name"));
+    QCOMPARE(builder->toSql(),
+             "select name from `torrents`");
+
+    builder->select({"id", Raw("name")});
+    QCOMPARE(builder->toSql(),
+             "select `id`, name from `torrents`");
+
+    builder->select(DB::raw("count(*) as user_count, status"));
+    QCOMPARE(builder->toSql(),
+             "select count(*) as user_count, status from `torrents`");
+}
+
 void tst_MySql_QueryBuilder::addSelect() const
 {
     auto builder = createQuery(m_connection);
@@ -143,6 +333,26 @@ void tst_MySql_QueryBuilder::addSelect() const
     builder->addSelect("*");
     QCOMPARE(builder->toSql(),
              "select `id`, `name`, `size`, * from `torrents`");
+}
+
+void tst_MySql_QueryBuilder::addSelect_ColumnExpression() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->from("torrents");
+
+    builder->addSelect(Raw("name"));
+    QCOMPARE(builder->toSql(),
+             "select name from `torrents`");
+
+    builder->addSelect({"id", Raw("happiness")});
+    QCOMPARE(builder->toSql(),
+             "select name, `id`, happiness from `torrents`");
+
+    builder->addSelect(DB::raw("count(*) as user_count, status"));
+    QCOMPARE(builder->toSql(),
+             "select name, `id`, happiness, count(*) as user_count, status "
+             "from `torrents`");
 }
 
 void tst_MySql_QueryBuilder::distinct() const
@@ -339,7 +549,7 @@ void tst_MySql_QueryBuilder::fromRaw() const
              "from `user_sessions`) as `sessions`");
 }
 
-void tst_MySql_QueryBuilder::fromRaw_withWhere() const
+void tst_MySql_QueryBuilder::fromRaw_WithWhere() const
 {
     auto builder = createQuery(m_connection);
 
@@ -358,7 +568,7 @@ void tst_MySql_QueryBuilder::fromRaw_withWhere() const
              QVector<QVariant>({QVariant(1520652582)}));
 }
 
-void tst_MySql_QueryBuilder::fromRaw_withBindings_withWhere() const
+void tst_MySql_QueryBuilder::fromRaw_WithBindings_WithWhere() const
 {
     auto builder = createQuery(m_connection);
 

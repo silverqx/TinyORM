@@ -44,8 +44,6 @@ namespace Query
 
     /*! Type for the database column. */
     using Column = std::variant<QString, Query::Expression>;
-    /*! Columns vector. */
-    using ColumnList = QVector<Column>;
 
     /*! From clause defined in the QueryBuilder. */
     using FromClause = std::variant<std::monostate, QString, Query::Expression>;

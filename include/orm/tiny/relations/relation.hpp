@@ -74,7 +74,7 @@ namespace Relations
         inline QVector<Related> getEager() const
         { return get(); }
         /*! Execute the query as a "select" statement. */
-        inline virtual QVector<Related> get(const QStringList &columns = {"*"}) const
+        inline virtual QVector<Related> get(const QVector<Column> &columns = {"*"}) const
         { return m_query->get(columns); }
 
         /* Getters / Setters */
@@ -113,34 +113,40 @@ namespace Relations
 
         /* TinyBuilder proxy methods */
         /*! Get a single column's value from the first result of a query. */
-        QVariant value(const QString &column) const;
+        QVariant value(const Column &column) const;
 
         /*! Find a model by its primary key. */
-        std::optional<Related>
-        find(const QVariant &id, const QStringList &columns = {"*"}) const;
+        virtual std::optional<Related>
+        find(const QVariant &id, const QVector<Column> &columns = {"*"}) const;
         /*! Find a model by its primary key or return fresh model instance. */
-        Related findOrNew(const QVariant &id, const QStringList &columns = {"*"}) const;
+        virtual Related
+        findOrNew(const QVariant &id, const QVector<Column> &columns = {"*"}) const;
         /*! Find a model by its primary key or throw an exception. */
-        Related findOrFail(const QVariant &id, const QStringList &columns = {"*"}) const;
+        virtual Related
+        findOrFail(const QVariant &id, const QVector<Column> &columns = {"*"}) const;
 
         /*! Execute the query and get the first result. */
-        virtual std::optional<Related> first(const QStringList &columns = {"*"}) const;
+        virtual std::optional<Related>
+        first(const QVector<Column> &columns = {"*"}) const;
         /*! Get the first record matching the attributes or instantiate it. */
-        Related firstOrNew(const QVector<WhereItem> &attributes = {},
-                         const QVector<AttributeItem> &values = {}) const;
+        virtual Related
+        firstOrNew(const QVector<WhereItem> &attributes = {},
+                   const QVector<AttributeItem> &values = {}) const;
         /*! Get the first record matching the attributes or create it. */
-        Related firstOrCreate(const QVector<WhereItem> &attributes = {},
-                            const QVector<AttributeItem> &values = {}) const;
+        Related
+        firstOrCreate(const QVector<WhereItem> &attributes = {},
+                      const QVector<AttributeItem> &values = {}) const;
         /*! Execute the query and get the first result or throw an exception. */
-        Related firstOrFail(const QStringList &columns = {"*"}) const;
+        virtual Related firstOrFail(const QVector<Column> &columns = {"*"}) const;
+        // CUR findMany missing and make it virtual silverqx
 
         /*! Add a basic where clause to the query, and return the first result. */
-        std::optional<Related>
-        firstWhere(const QString &column, const QString &comparison,
+        virtual std::optional<Related>
+        firstWhere(const Column &column, const QString &comparison,
                    const QVariant &value, const QString &condition = "and") const;
         /*! Add a basic where clause to the query, and return the first result. */
-        std::optional<Related>
-        firstWhereEq(const QString &column, const QVariant &value,
+        virtual std::optional<Related>
+        firstWhereEq(const Column &column, const QVariant &value,
                      const QString &condition = "and") const;
 
         /*! Add a where clause on the primary key to the query. */
@@ -219,13 +225,13 @@ namespace Relations
 
         /* Select */
         /*! Set the columns to be selected. */
-        const Relation &select(const QStringList &columns = {"*"}) const;
+        const Relation &select(const QVector<Column> &columns = {"*"}) const;
         /*! Set the column to be selected. */
-        const Relation &select(const QString &column) const;
+        const Relation &select(const Column &column) const;
         /*! Add new select columns to the query. */
-        const Relation &addSelect(const QStringList &columns) const;
+        const Relation &addSelect(const QVector<Column> &columns) const;
         /*! Add a new select column to the query. */
-        const Relation &addSelect(const QString &column) const;
+        const Relation &addSelect(const Column &column) const;
 
         /*! Force the query to only return distinct results. */
         const Relation &distinct() const;
@@ -545,14 +551,15 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    QVariant Relation<Model, Related>::value(const QString &column) const
+    QVariant Relation<Model, Related>::value(const Column &column) const
     {
         return m_query->value(column);
     }
 
     template<class Model, class Related>
     std::optional<Related>
-    Relation<Model, Related>::find(const QVariant &id, const QStringList &columns) const
+    Relation<Model, Related>::find(const QVariant &id,
+                                   const QVector<Column> &columns) const
     {
         return m_query->find(id, columns);
     }
@@ -560,7 +567,7 @@ namespace Relations
     template<class Model, class Related>
     Related
     Relation<Model, Related>::findOrNew(const QVariant &id,
-                                        const QStringList &columns) const
+                                        const QVector<Column> &columns) const
     {
         return m_query->findOrNew(id, columns);
     }
@@ -568,14 +575,14 @@ namespace Relations
     template<class Model, class Related>
     Related
     Relation<Model, Related>::findOrFail(const QVariant &id,
-                                         const QStringList &columns) const
+                                         const QVector<Column> &columns) const
     {
         return m_query->findOrFail(id, columns);
     }
 
     template<class Model, class Related>
     std::optional<Related>
-    Relation<Model, Related>::first(const QStringList &columns) const
+    Relation<Model, Related>::first(const QVector<Column> &columns) const
     {
         return m_query->first(columns);
     }
@@ -597,7 +604,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    Related Relation<Model, Related>::firstOrFail(const QStringList &columns) const
+    Related Relation<Model, Related>::firstOrFail(const QVector<Column> &columns) const
     {
         return m_query->firstOrFail(columns);
     }
@@ -605,7 +612,7 @@ namespace Relations
     template<class Model, class Related>
     std::optional<Related>
     Relation<Model, Related>::firstWhere(
-            const QString &column, const QString &comparison,
+            const Column &column, const QString &comparison,
             const QVariant &value, const QString &condition) const
     {
         return m_query->firstWhere(column, comparison, value, condition);
@@ -613,7 +620,7 @@ namespace Relations
 
     template<class Model, class Related>
     std::optional<Related>
-    Relation<Model, Related>::firstWhereEq(const QString &column, const QVariant &value,
+    Relation<Model, Related>::firstWhereEq(const Column &column, const QVariant &value,
                                            const QString &condition) const
     {
         return m_query->firstWhereEq(column, value, condition);
@@ -817,7 +824,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::select(const QStringList &columns) const
+    Relation<Model, Related>::select(const QVector<Column> &columns) const
     {
         m_query->select(columns);
 
@@ -826,7 +833,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::select(const QString &column) const
+    Relation<Model, Related>::select(const Column &column) const
     {
         m_query->select(column);
 
@@ -835,7 +842,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::addSelect(const QStringList &columns) const
+    Relation<Model, Related>::addSelect(const QVector<Column> &columns) const
     {
         m_query->addSelect(columns);
 
@@ -844,7 +851,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::addSelect(const QString &column) const
+    Relation<Model, Related>::addSelect(const Column &column) const
     {
         m_query->addSelect(column);
 

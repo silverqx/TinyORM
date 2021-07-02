@@ -41,24 +41,24 @@ namespace Relations
         QVector<QVariant> getBindings() const;
 
         /*! Execute the query as a "select" statement. */
-        QVector<Model> get(const QStringList &columns = {"*"});
+        QVector<Model> get(const QVector<Column> &columns = {"*"});
 
         /*! Get a single column's value from the first result of a query. */
-        QVariant value(const QString &column);
+        QVariant value(const Column &column);
 
         /*! Find a model by its primary key. */
         std::optional<Model>
-        find(const QVariant &id, const QStringList &columns = {"*"});
+        find(const QVariant &id, const QVector<Column> &columns = {"*"});
         /*! Find a model by its primary key or return fresh model instance. */
-        Model findOrNew(const QVariant &id, const QStringList &columns = {"*"});
+        Model findOrNew(const QVariant &id, const QVector<Column> &columns = {"*"});
         /*! Find a model by its primary key or throw an exception. */
-        Model findOrFail(const QVariant &id, const QStringList &columns = {"*"});
+        Model findOrFail(const QVariant &id, const QVector<Column> &columns = {"*"});
         /*! Find multiple models by their primary keys. */
         QVector<Model>
-        findMany(const QVector<QVariant> &ids, const QStringList &columns = {"*"});
+        findMany(const QVector<QVariant> &ids, const QVector<Column> &columns = {"*"});
 
         /*! Execute the query and get the first result. */
-        std::optional<Model> first(const QStringList &columns = {"*"});
+        std::optional<Model> first(const QVector<Column> &columns = {"*"});
         /*! Get the first record matching the attributes or instantiate it. */
         Model firstOrNew(const QVector<WhereItem> &attributes = {},
                          const QVector<AttributeItem> &values = {});
@@ -66,15 +66,15 @@ namespace Relations
         Model firstOrCreate(const QVector<WhereItem> &attributes = {},
                             const QVector<AttributeItem> &values = {});
         /*! Execute the query and get the first result or throw an exception. */
-        Model firstOrFail(const QStringList &columns = {"*"});
+        Model firstOrFail(const QVector<Column> &columns = {"*"});
 
         /*! Add a basic where clause to the query, and return the first result. */
         std::optional<Model>
-        firstWhere(const QString &column, const QString &comparison,
+        firstWhere(const Column &column, const QString &comparison,
                    const QVariant &value, const QString &condition = "and");
         /*! Add a basic equal where clause to the query, and return the first result. */
         std::optional<Model>
-        firstWhereEq(const QString &column, const QVariant &value,
+        firstWhereEq(const Column &column, const QVariant &value,
                      const QString &condition = "and");
 
         /*! Add a where clause on the primary key to the query. */
@@ -153,13 +153,13 @@ namespace Relations
 
         /* Select */
         /*! Set the columns to be selected. */
-        Builder &select(const QStringList &columns = {"*"});
+        Builder &select(const QVector<Column> &columns = {"*"});
         /*! Set the column to be selected. */
-        Builder &select(const QString &column);
+        Builder &select(const Column &column);
         /*! Add new select columns to the query. */
-        Builder &addSelect(const QStringList &columns);
+        Builder &addSelect(const QVector<Column> &columns);
         /*! Add a new select column to the query. */
-        Builder &addSelect(const QString &column);
+        Builder &addSelect(const Column &column);
 
         /*! Force the query to only return distinct results. */
         Builder &distinct();
@@ -368,7 +368,7 @@ namespace Relations
         Model newModelInstance(const QVector<AttributeItem> &attributes = {});
 
         /*! Get the hydrated models without eager loading. */
-        QVector<Model> getModels(const QStringList &columns = {"*"});
+        QVector<Model> getModels(const QVector<Column> &columns = {"*"});
 
         /*! Eager load the relationships for the models. */
         void eagerLoadRelations(QVector<Model> &models);
@@ -402,6 +402,9 @@ namespace Relations
 //        { return $this->applyScopes()->getQuery(); }
 
     protected:
+        /*! Expression alias. */
+        using Expression = Orm::Query::Expression;
+
         /*! Parse a list of relations into individuals. */
         QVector<WithItem> parseWithRelations(const QVector<WithItem> &relations);
         /*! Create a constraint to select the given columns for the relation. */
@@ -458,7 +461,7 @@ namespace Relations
     // TODO now name QVector<Model> model collections by using, eg CollectionType silverqx
     template<typename Model>
     QVector<Model>
-    Builder<Model>::get(const QStringList &columns)
+    Builder<Model>::get(const QVector<Column> &columns)
     {
         auto models = getModels(columns);
 
@@ -477,26 +480,34 @@ namespace Relations
 
     // FEATURE expressions, fuckup🤔 silverqx
     template<typename Model>
-    QVariant Builder<Model>::value(const QString &column)
+    QVariant Builder<Model>::value(const Column &column)
     {
         auto model = first({column});
 
         if (!model)
             return {};
 
-        return model->getAttribute(column.mid(column.lastIndexOf(QChar('.')) + 1));
+        // Expression support
+        QString column_;
+
+        if (std::holds_alternative<Expression>(column))
+            column_ = std::get<Expression>(column).getValue().value<QString>();
+        else
+            column_ = std::get<QString>(column);
+
+        return model->getAttribute(column_.mid(column_.lastIndexOf(QChar('.')) + 1));
     }
 
     // FEATURE dilemma primarykey, Model::KeyType for id silverqx
     template<typename Model>
     std::optional<Model>
-    Builder<Model>::find(const QVariant &id, const QStringList &columns)
+    Builder<Model>::find(const QVariant &id, const QVector<Column> &columns)
     {
         return whereKey(id).first(columns);
     }
 
     template<typename Model>
-    Model Builder<Model>::findOrNew(const QVariant &id, const QStringList &columns)
+    Model Builder<Model>::findOrNew(const QVariant &id, const QVector<Column> &columns)
     {
         auto model = find(id, columns);
 
@@ -508,7 +519,7 @@ namespace Relations
     }
 
     template<typename Model>
-    Model Builder<Model>::findOrFail(const QVariant &id, const QStringList &columns)
+    Model Builder<Model>::findOrFail(const QVariant &id, const QVector<Column> &columns)
     {
         auto model = find(id, columns);
 
@@ -521,7 +532,8 @@ namespace Relations
 
     template<typename Model>
     QVector<Model>
-    Builder<Model>::findMany(const QVector<QVariant> &ids, const QStringList &columns)
+    Builder<Model>::findMany(const QVector<QVariant> &ids,
+                             const QVector<Column> &columns)
     {
         if (ids.isEmpty())
             return {};
@@ -531,7 +543,7 @@ namespace Relations
 
     template<typename Model>
     std::optional<Model>
-    Builder<Model>::first(const QStringList &columns)
+    Builder<Model>::first(const QVector<Column> &columns)
     {
         auto models = take(1).get(columns);
 
@@ -577,7 +589,7 @@ namespace Relations
     }
 
     template<typename Model>
-    Model Builder<Model>::firstOrFail(const QStringList &columns)
+    Model Builder<Model>::firstOrFail(const QVector<Column> &columns)
     {
         auto model = first(columns);
 
@@ -590,7 +602,7 @@ namespace Relations
 
     template<typename Model>
     std::optional<Model>
-    Builder<Model>::firstWhere(const QString &column, const QString &comparison,
+    Builder<Model>::firstWhere(const Column &column, const QString &comparison,
                                const QVariant &value, const QString &condition)
     {
         return where(column, comparison, value, condition).first();
@@ -598,7 +610,7 @@ namespace Relations
 
     template<typename Model>
     std::optional<Model>
-    Builder<Model>::firstWhereEq(const QString &column, const QVariant &value,
+    Builder<Model>::firstWhereEq(const Column &column, const QVariant &value,
                                  const QString &condition)
     {
         return where(column, QStringLiteral("="), value, condition).first();
@@ -817,28 +829,28 @@ namespace Relations
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::select(const QStringList &columns)
+    Builder<Model> &Builder<Model>::select(const QVector<Column> &columns)
     {
         toBase().select(columns);
         return *this;
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::select(const QString &column)
+    Builder<Model> &Builder<Model>::select(const Column &column)
     {
         toBase().select(column);
         return *this;
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::addSelect(const QStringList &columns)
+    Builder<Model> &Builder<Model>::addSelect(const QVector<Column> &columns)
     {
         toBase().addSelect(columns);
         return *this;
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::addSelect(const QString &column)
+    Builder<Model> &Builder<Model>::addSelect(const Column &column)
     {
         toBase().addSelect(column);
         return *this;
@@ -1434,7 +1446,7 @@ namespace Relations
 
     template<typename Model>
     QVector<Model>
-    Builder<Model>::getModels(const QStringList &columns)
+    Builder<Model>::getModels(const QVector<Column> &columns)
     {
         return hydrate(m_query->get(columns));
     }
@@ -1597,7 +1609,7 @@ namespace Relations
                     belongsToManyRelatedTable = std::move(belongsToManyRelatedTable)]
                     (auto &query)
             {
-                QStringList columnsList;
+                QVector<Column> columnsList;
                 columnsList.reserve(columns.count(QChar(',')) + 1);
 
                 // Avoid 'clazy might detach' warning

@@ -114,12 +114,6 @@ BaseGrammar &BaseGrammar::setTablePrefix(const QString &prefix)
     return *this;
 }
 
-QString BaseGrammar::columnize(const QStringList &columns) const
-{
-    // CUR QString allocation 😟 solve everywhere 😭 silverqx
-    return wrapArray(columns).join(", ");
-}
-
 QString BaseGrammar::parameter(const QVariant &value) const
 {
     // FEATURE expressions, how to work with them and pass them to the query builder 🤔 silverqx
@@ -195,6 +189,26 @@ QString BaseGrammar::getAliasFromFrom(const QString &from) const
 QString BaseGrammar::unqualifyColumn(const QString &column) const
 {
     return column.split(QChar('.')).last().trimmed();
+}
+
+QString BaseGrammar::columnizeInternal(const QVector<QString> &columns) const
+{
+    // CUR duplicate join container, create join function in utils and use it everywhere silverqx
+    QString columnized;
+
+    if (columns.isEmpty())
+        return columnized;
+
+    const auto end = columns.cend() - 1;
+    auto it = columns.begin();
+
+    for (; it < end; ++it)
+        columnized += QStringLiteral("%1, ").arg(*it);
+
+    if (it == end)
+        columnized += *it;
+
+    return columnized;
 }
 
 } // namespace Orm

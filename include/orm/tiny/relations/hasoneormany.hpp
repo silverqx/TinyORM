@@ -33,7 +33,8 @@ namespace Orm::Tiny::Relations
         /* TinyBuilder proxy methods */
         /*! Find a model by its primary key or return a new instance of the related
             model. */
-        Related findOrNew(const QVariant &id, const QStringList &columns = {"*"}) const;
+        Related findOrNew(const QVariant &id,
+                          const QVector<Column> &columns = {"*"}) const;
 
         /*! Get the first related model record matching the attributes or instantiate
             it. */
@@ -137,7 +138,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     Related HasOneOrMany<Model, Related>::findOrNew(const QVariant &id,
-                                                    const QStringList &columns) const
+                                                    const QVector<Column> &columns) const
     {
         // Found
         if (auto instance = this->find(id, columns); instance)

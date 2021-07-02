@@ -42,14 +42,17 @@ namespace Orm::Query
         operator QVariant() const;
 
         /*! Obtain expression's value. */
-        QVariant getValue() const;
+        const QVariant &getValue() const;
+
+        /*! Equality operator, the inequality operator is automatically generated. */
+        bool operator==(const Expression &) const = default;
 
     private:
         /*! Expression's value. */
         QVariant m_value;
     };
 
-    inline QVariant Expression::getValue() const
+    inline const QVariant &Expression::getValue() const
     {
         return m_value;
     }

@@ -18,8 +18,9 @@ namespace Query
 
     /*! QString container concept (QStringList or QVector<QString>). */
     template<typename T>
-    concept QStringContainer = std::same_as<T, QStringList> ||
-                               std::same_as<T, QVector<QString>>;
+    concept ColumnContainer = std::convertible_to<T, const QStringList &> ||
+                              std::convertible_to<T, const QVector<QString> &> ||
+                              std::convertible_to<T, const QVector<Column> &>;
 
     /*! Concept for container passed to the parametrize() method (QVariantMap
         or QVector<QString>). */
@@ -57,8 +58,8 @@ namespace Query
         QString wrapTable(const FromClause &table) const;
 
         /*! Wrap an array of values. */
-        template<QStringContainer T>
-        T wrapArray(T values) const;
+        template<ColumnContainer T>
+        QVector<QString> wrapArray(const T &values) const;
 
         /*! Quote the given string literal. */
         QString quoteString(const QString &value) const;
@@ -81,7 +82,8 @@ namespace Query
 
     protected:
         /*! Convert the vector of column names into a delimited string. */
-        QString columnize(const QStringList &columns) const;
+        template<ColumnContainer T>
+        QString columnize(const T &columns) const;
 
         /*! Create query parameter place-holders for the vector. */
         template<Parametrize Container>
@@ -109,20 +111,33 @@ namespace Query
         // FEATURE qt6, use everywhere QLatin1String("") instead of = "", BUT Qt6 has char8_t ctor, so u"" can be used, I will wait with this problem silverqx
         /*! The grammar table prefix. */
         QString m_tablePrefix = "";
+
+    private:
+        /*! Convert the vector of column names into a delimited string. */
+        QString columnizeInternal(const QVector<QString> &columns) const;
     };
+
+    template<ColumnContainer T>
+    inline QString BaseGrammar::columnize(const T &columns) const
+    {
+        return columnizeInternal(wrapArray(columns));
+    }
 
     inline QString BaseGrammar::getTablePrefix() const
     {
         return m_tablePrefix;
     }
 
-    template<QStringContainer T>
-    T BaseGrammar::wrapArray(T values) const
+    template<ColumnContainer T>
+    QVector<QString> BaseGrammar::wrapArray(const T &values) const
     {
-        for (auto &value : values)
-            value = wrap(value);
+        QVector<QString> wrapped;
+        wrapped.reserve(values.size());
 
-        return values;
+        for (const auto &value : values)
+            wrapped << wrap(value);
+
+        return wrapped;
     }
 
     template<typename>
@@ -153,6 +168,7 @@ namespace Query
         for (const auto &value : values)
             compiledParameters << parameter(value);
 
+        // CUR QString allocation 😟 solve everywhere 😭 silverqx
         // TODO move all common QStringLiteral() to the common file as global constants silverqx
         return compiledParameters.join(", ");
     }
