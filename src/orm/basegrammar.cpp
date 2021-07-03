@@ -193,7 +193,6 @@ QString BaseGrammar::unqualifyColumn(const QString &column) const
 
 QString BaseGrammar::columnizeInternal(const QVector<QString> &columns) const
 {
-    // CUR duplicate join container, create join function in utils and use it everywhere silverqx
     QString columnized;
 
     if (columns.isEmpty())

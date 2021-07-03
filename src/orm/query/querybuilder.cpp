@@ -183,6 +183,16 @@ Builder &Builder::addSelect(const Column &column)
     return addSelect(QVector<Column> {column});
 }
 
+// CUR docs silverqx
+Builder &Builder::selectRaw(const QString &expression, const QVector<QVariant> &bindings)
+{
+    addSelect(Expression(expression));
+
+    addBinding(bindings, BindingType::SELECT);
+
+    return *this;
+}
+
 Builder &Builder::distinct()
 {
     m_distinct = true;
@@ -244,6 +254,7 @@ Builder &Builder::where(const Column &column, const QString &comparison,
                      .condition = condition, .type = WhereType::BASIC});
 
     if (!value.canConvert<Expression>())
+        // CUR check flattenBindings, I already have flatBindingsForUpdateDelete() algo silverqx
         addBinding(value, BindingType::WHERE);
 
     return *this;
@@ -439,6 +450,7 @@ Builder &Builder::having(const QString &column, const QString &comparison,
     m_havings.append({column, value, comparison, condition, HavingType::BASIC});
 
     if (!value.canConvert<Expression>())
+        // CUR check flattenBindings, I already have flatBindingsForUpdateDelete() algo silverqx
         addBinding(value, BindingType::HAVING);
 
     return *this;
@@ -628,8 +640,7 @@ Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> &query,
     const auto &whereBindings =
             query->getRawBindings().find(BindingType::WHERE).value();
 
-    if (whereBindings.size() > 0)
-        addBinding(whereBindings, BindingType::WHERE);
+    addBinding(whereBindings, BindingType::WHERE);
 
     return *this;
 }
@@ -662,7 +673,8 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
         throw RuntimeError(QStringLiteral("Invalid binding type: %1")
                            .arg(static_cast<int>(type)));
 
-    std::copy(bindings.cbegin(), bindings.cend(), std::back_inserter(m_bindings[type]));
+    if (!bindings.isEmpty())
+        std::ranges::copy(bindings, std::back_inserter(m_bindings[type]));
 
     return *this;
 }
@@ -673,7 +685,8 @@ Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType typ
         throw RuntimeError(QStringLiteral("Invalid binding type: %1")
                            .arg(static_cast<int>(type)));
 
-    std::move(bindings.begin(), bindings.end(), std::back_inserter(m_bindings[type]));
+    if (!bindings.isEmpty())
+        std::ranges::move(bindings, std::back_inserter(m_bindings[type]));
 
     return *this;
 }

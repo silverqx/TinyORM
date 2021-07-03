@@ -274,6 +274,14 @@ namespace Relations {
         static std::unique_ptr<TinyBuilder<Derived>>
         addSelect(const Column &column);
 
+        /*! Add a subselect expression to the query. */
+        template<FromConcept T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        selectSub(T &&query, const QString &as);
+        /*! Add a new "raw" select expression to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        selectRaw(const QString &expression, const QVector<QVariant> &bindings = {});
+
         /*! Force the query to only return distinct results. */
         static std::unique_ptr<TinyBuilder<Derived>>
         distinct();
@@ -1668,6 +1676,31 @@ namespace Relations {
         auto builder = query();
 
         builder->addSelect(column);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    // CUR change FromConcept name silverqx
+    template<FromConcept T>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::selectSub(T &&query, const QString &as)
+    {
+        auto builder = Derived::query();
+
+        builder->selectSub(std::forward<T>(query), as);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::selectRaw(
+            const QString &expression, const QVector<QVariant> &bindings)
+    {
+        auto builder = query();
+
+        builder->selectRaw(expression, bindings);
 
         return builder;
     }

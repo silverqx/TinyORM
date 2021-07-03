@@ -161,6 +161,13 @@ namespace Relations
         /*! Add a new select column to the query. */
         Builder &addSelect(const Column &column);
 
+        /*! Add a subselect expression to the query. */
+        template<FromConcept T>
+        Builder &selectSub(T &&query, const QString &as);
+        /*! Add a new "raw" select expression to the query. */
+        Builder &selectRaw(const QString &expression,
+                           const QVector<QVariant> &bindings = {});
+
         /*! Force the query to only return distinct results. */
         Builder &distinct();
         /*! Force the query to only return distinct results. */
@@ -853,6 +860,22 @@ namespace Relations
     Builder<Model> &Builder<Model>::addSelect(const Column &column)
     {
         toBase().addSelect(column);
+        return *this;
+    }
+
+    template<typename Model>
+    template<FromConcept T>
+    Builder<Model> &Builder<Model>::selectSub(T &&query, const QString &as)
+    {
+        toBase().selectSub(std::forward<T>(query), as);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::selectRaw(const QString &expression,
+                                              const QVector<QVariant> &bindings)
+    {
+        toBase().selectRaw(expression, bindings);
         return *this;
     }
 

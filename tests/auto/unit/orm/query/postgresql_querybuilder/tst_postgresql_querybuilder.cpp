@@ -647,12 +647,13 @@ void tst_PostgreSQL_QueryBuilder::fromSub_QueryBuilderOverload_WithWhere() const
 {
     auto builder = createQuery(m_connection);
 
-    auto fromQuery = createQuery(m_connection)
-                       ->from("user_sessions")
-                       .select({"id", "name"})
-                       .where("id", "<", 5);
+    // Ownership of the QSharedPointer<QueryBuilder>
+    auto subQuery = createQuery(m_connection);
+    subQuery->from("user_sessions")
+            .select({"id", "name"})
+            .where("id", "<", 5);
 
-    builder->fromSub(fromQuery, "sessions")
+    builder->fromSub(*subQuery, "sessions")
             .whereEq("name", "xyz");
 
     QVERIFY(std::holds_alternative<Expression>(builder->getFrom()));
@@ -704,13 +705,14 @@ void tst_PostgreSQL_QueryBuilder::joinSub_QueryBuilderOverload_WithWhere() const
 {
     auto builder = createQuery(m_connection);
 
-    auto fromQuery = createQuery(m_connection)
-                     ->from("user_sessions")
-                     .select({"id as files_id", "user_id", "name"})
-                     .where("user_id", "<", 5);
+    // Ownership of the QSharedPointer<QueryBuilder>
+    auto subQuery = createQuery(m_connection);
+    subQuery->from("user_sessions")
+            .select({"id as files_id", "user_id", "name"})
+            .where("user_id", "<", 5);
 
     builder->from("users")
-            .joinSub(fromQuery, "sessions", "users.id", "=", "sessions.user_id")
+            .joinSub(*subQuery, "sessions", "users.id", "=", "sessions.user_id")
             .whereEq("name", "xyz");
 
     QCOMPARE(builder->toSql(),

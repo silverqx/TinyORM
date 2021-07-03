@@ -233,6 +233,13 @@ namespace Relations
         /*! Add a new select column to the query. */
         const Relation &addSelect(const Column &column) const;
 
+        /*! Add a subselect expression to the query. */
+        template<FromConcept T>
+        const Relation &selectSub(T &&query, const QString &as) const;
+        /*! Add a new "raw" select expression to the query. */
+        const Relation &selectRaw(const QString &expression,
+                                  const QVector<QVariant> &bindings = {}) const;
+
         /*! Force the query to only return distinct results. */
         const Relation &distinct() const;
         /*! Force the query to only return distinct results. */
@@ -854,6 +861,26 @@ namespace Relations
     Relation<Model, Related>::addSelect(const Column &column) const
     {
         m_query->addSelect(column);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<FromConcept T>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::selectSub(T &&query, const QString &as) const
+    {
+        m_query->selectSub(std::forward<T>(query), as);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::selectRaw(
+            const QString &expression, const QVector<QVariant> &bindings) const
+    {
+        m_query->selectRaw(expression, bindings);
 
         return *this;
     }

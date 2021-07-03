@@ -101,6 +101,13 @@ namespace Query
         /*! Add a new select column to the query. */
         Builder &addSelect(const Column &column);
 
+        /*! Add a subselect expression to the query. */
+        template<FromConcept T>
+        Builder &selectSub(T &&query, const QString &as);
+        /*! Add a new "raw" select expression to the query. */
+        Builder &selectRaw(const QString &expression,
+                           const QVector<QVariant> &bindings = {});
+
         /*! Force the query to only return distinct results. */
         Builder &distinct();
         /*! Force the query to only return distinct results. */
@@ -526,6 +533,17 @@ namespace Query
         /*! Indicates whether row locking is being used. */
         std::variant<std::monostate, bool, QString> m_lock;
     };
+
+    // CUR docs silverqx
+    template<FromConcept T>
+    inline Builder &Builder::selectSub(T &&query, const QString &as)
+    {
+        auto [queryString, bindings] = createSub(std::forward<T>(query));
+
+        return selectRaw(QStringLiteral("(%1) as %2").arg(std::move(queryString),
+                                                          m_grammar.wrap(as)),
+                         bindings);
+    }
 
     template<Remove T>
     inline std::tuple<int, QSqlQuery> Builder::deleteRow(T &&id)

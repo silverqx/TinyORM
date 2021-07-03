@@ -36,6 +36,13 @@ private slots:
     void addSelect() const;
     void addSelect_ColumnExpression() const;
 
+    void selectRaw() const;
+    void selectRaw_WithBindings_WithWhere() const;
+
+    void selectSub_QStringOverload() const;
+    void selectSub_QueryBuilderOverload_WithWhere() const;
+    void selectSub_CallbackOverload() const;
+
     void distinct() const;
 
     void from() const;
@@ -355,6 +362,120 @@ void tst_MySql_QueryBuilder::addSelect_ColumnExpression() const
              "from `torrents`");
 }
 
+void tst_MySql_QueryBuilder::selectRaw() const
+{
+    auto builder = createQuery(m_connection);
+
+    const auto &columns = builder->getColumns();
+
+    // selectRaw() with bindings and with where on main query
+    builder->selectRaw("id, filepath as `path`")
+            .from("torrents");
+
+    QCOMPARE(columns.size(), 1);
+    QVERIFY(std::holds_alternative<Expression>(columns.first()));
+    QCOMPARE(builder->toSql(),
+             "select id, filepath as `path` from `torrents`");
+    QVERIFY(builder->getBindings().isEmpty());
+}
+
+void tst_MySql_QueryBuilder::selectRaw_WithBindings_WithWhere() const
+{
+    auto builder = createQuery(m_connection);
+
+    const auto &columns = builder->getColumns();
+
+    // selectRaw() with bindings and with where on main query
+    builder->selectRaw("(select max(last_seen_at) as last_seen_at "
+                       "from `sessions` where id < ?) as `last_seen_at`",
+                       {10})
+            .from("torrents")
+            .where("last_seen_at", ">", 1520652582);
+
+    QCOMPARE(columns.size(), 1);
+    QVERIFY(std::holds_alternative<Expression>(columns.first()));
+    QCOMPARE(builder->toSql(),
+             "select (select max(last_seen_at) as last_seen_at "
+                     "from `sessions` where id < ?) as `last_seen_at` "
+             "from `torrents` "
+             "where `last_seen_at` > ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(10), QVariant(1520652582)}));
+}
+
+void tst_MySql_QueryBuilder::selectSub_QStringOverload() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->selectSub("select max(size) from `torrents`",
+                       "max_size")
+            .addSelect({"id", "name"})
+            .from("torrents");
+
+    const auto &columns = builder->getColumns();
+
+    QCOMPARE(columns.size(), 3);
+    QVERIFY(std::holds_alternative<Expression>(columns.first()));
+    QCOMPARE(builder->toSql(),
+             "select (select max(size) from `torrents`) as `max_size`, `id`, `name` "
+             "from `torrents`");
+}
+
+void tst_MySql_QueryBuilder::selectSub_QueryBuilderOverload_WithWhere() const
+{
+    auto builder = createQuery(m_connection);
+
+    // Ownership of the QSharedPointer<QueryBuilder>
+    auto subQuery = createQuery(m_connection);
+    subQuery->from("torrents")
+            .select(Raw("max(size)"))
+            .where("id", "<", 5);
+
+    builder->selectSub(*subQuery, "max_size")
+            .addSelect({"id", "name"})
+            .from("torrents")
+            .whereEq("name", "xyz");
+
+    const auto &columns = builder->getColumns();
+
+    QCOMPARE(columns.size(), 3);
+    QVERIFY(std::holds_alternative<Expression>(columns.first()));
+    QCOMPARE(builder->toSql(),
+             "select (select max(size) from `torrents` where `id` < ?) as `max_size`, "
+               "`id`, `name` "
+             "from `torrents` "
+             "where `name` = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+}
+
+void tst_MySql_QueryBuilder::selectSub_CallbackOverload() const
+{
+    auto builder = createQuery(m_connection);
+
+    builder->selectSub([](auto &query)
+    {
+        query.select(Raw("max(size)"))
+                .from("torrents")
+                .where("id", "<", 5);
+    }, "max_size")
+            .addSelect({"id", "name"})
+            .from("torrents")
+            .whereEq("name", "xyz");
+
+    const auto &columns = builder->getColumns();
+
+    QCOMPARE(columns.size(), 3);
+    QVERIFY(std::holds_alternative<Expression>(columns.first()));
+    QCOMPARE(builder->toSql(),
+             "select (select max(size) from `torrents` where `id` < ?) as `max_size`, "
+               "`id`, `name` "
+             "from `torrents` "
+             "where `name` = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+}
+
 void tst_MySql_QueryBuilder::distinct() const
 {
     auto builder = createQuery(m_connection);
@@ -556,6 +677,7 @@ void tst_MySql_QueryBuilder::fromRaw_WithWhere() const
     const auto &from = builder->getFrom();
 
     // fromRaw() with where on main query
+    // this query is nonsense, but it doesn't matter
     builder->fromRaw("(select max(last_seen_at) as last_seen_at "
                      "from `sessions`) as `last_seen_at`")
             .where("last_seen_at", ">", 1520652582);
@@ -575,6 +697,7 @@ void tst_MySql_QueryBuilder::fromRaw_WithBindings_WithWhere() const
     const auto &from = builder->getFrom();
 
     // fromRaw() with bindings and with where on main query
+    // this query is nonsense, but it doesn't matter
     builder->fromRaw("(select max(last_seen_at) as last_seen_at "
                      "from `sessions` where id < ?) as `last_seen_at`",
                      {10})
@@ -606,12 +729,13 @@ void tst_MySql_QueryBuilder::fromSub_QueryBuilderOverload_WithWhere() const
 {
     auto builder = createQuery(m_connection);
 
-    auto fromQuery = createQuery(m_connection)
-                       ->from("user_sessions")
-                       .select({"id", "name"})
-                       .where("id", "<", 5);
+    // Ownership of the QSharedPointer<QueryBuilder>
+    auto subQuery = createQuery(m_connection);
+    subQuery->from("user_sessions")
+            .select({"id", "name"})
+            .where("id", "<", 5);
 
-    builder->fromSub(fromQuery, "sessions")
+    builder->fromSub(*subQuery, "sessions")
             .whereEq("name", "xyz");
 
     QVERIFY(std::holds_alternative<Expression>(builder->getFrom()));
@@ -662,13 +786,14 @@ void tst_MySql_QueryBuilder::joinSub_QueryBuilderOverload_WithWhere() const
 {
     auto builder = createQuery(m_connection);
 
-    auto fromQuery = createQuery(m_connection)
-                     ->from("user_sessions")
-                     .select({"id as files_id", "user_id", "name"})
-                     .where("user_id", "<", 5);
+    // Ownership of the QSharedPointer<QueryBuilder>
+    auto subQuery = createQuery(m_connection);
+    subQuery->from("user_sessions")
+            .select({"id as files_id", "user_id", "name"})
+            .where("user_id", "<", 5);
 
     builder->from("users")
-            .joinSub(fromQuery, "sessions", "users.id", "=", "sessions.user_id")
+            .joinSub(*subQuery, "sessions", "users.id", "=", "sessions.user_id")
             .whereEq("name", "xyz");
 
     QCOMPARE(builder->toSql(),
