@@ -73,7 +73,7 @@ void tst_QueryBuilder::count() const
         auto count = builder->from("torrent_peers").count();
 
         QCOMPARE(typeid (quint64), typeid (count));
-        QCOMPARE(count, 4);
+        QCOMPARE(count, static_cast<quint64>(4));
     }
 
     // Should exclude columns with NULL values
@@ -83,7 +83,7 @@ void tst_QueryBuilder::count() const
         auto count = builder->from("torrent_peers").count("seeds");
 
         QCOMPARE(typeid (quint64), typeid (count));
-        QCOMPARE(count, 3);
+        QCOMPARE(count, static_cast<quint64>(3));
     }
 }
 
@@ -98,7 +98,7 @@ void tst_QueryBuilder::count_Distinct() const
                  .count("file_property_id");
 
     QCOMPARE(typeid (quint64), typeid (count));
-    QCOMPARE(count, 5);
+    QCOMPARE(count, static_cast<quint64>(5));
 }
 
 void tst_QueryBuilder::min_Aggregate() const

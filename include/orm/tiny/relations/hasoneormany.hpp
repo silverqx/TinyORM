@@ -34,12 +34,12 @@ namespace Orm::Tiny::Relations
         /*! Find a model by its primary key or return a new instance of the related
             model. */
         Related findOrNew(const QVariant &id,
-                          const QVector<Column> &columns = {"*"}) const;
+                          const QVector<Column> &columns = {"*"}) const override;
 
         /*! Get the first related model record matching the attributes or instantiate
             it. */
         Related firstOrNew(const QVector<WhereItem> &attributes = {},
-                           const QVector<AttributeItem> &values = {}) const;
+                           const QVector<AttributeItem> &values = {}) const override;
         /*! Get the first related record matching the attributes or create it. */
         Related firstOrCreate(const QVector<WhereItem> &attributes = {},
                               const QVector<AttributeItem> &values = {}) const;
