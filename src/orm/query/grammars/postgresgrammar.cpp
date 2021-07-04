@@ -108,12 +108,17 @@ PostgresGrammar::getCompileMap() const
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     static const QMap<SelectComponentType, SelectComponentValue> cached {
-//        {ComponentType::AGGREGATE, {}},
+        {SelectComponentType::AGGREGATE, {getBind(&PostgresGrammar::compileAggregate),
+                        [this]
+                        (const auto &query)
+                        { return shouldCompileAggregate(query.getAggregate()); }}},
         {SelectComponentType::COLUMNS,   {getBind(&PostgresGrammar::compileColumns),
-                        [](const auto &query) { return !query.getColumns().isEmpty(); }}},
+                        [this]
+                        (const auto &query) { return shouldCompileColumns(query); }}},
         {SelectComponentType::FROM,      {getBind(&PostgresGrammar::compileFrom),
                         [this]
-                        (const auto &query) { return issetFrom(query.getFrom()); }}},
+                        (const auto &query)
+                        { return shouldCompileFrom(query.getFrom()); }}},
         {SelectComponentType::JOINS,     {getBind(&PostgresGrammar::compileJoins),
                         [](const auto &query) { return !query.getJoins().isEmpty(); }}},
         {SelectComponentType::WHERES,    {getBind(&PostgresGrammar::compileWheres),

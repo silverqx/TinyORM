@@ -41,5 +41,6 @@
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #endif

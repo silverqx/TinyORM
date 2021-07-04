@@ -12,6 +12,8 @@ namespace Orm
 /*
    wrap methods are only for column names, table names and identifiers.
    parameter()/parametrize() methods are for values.
+   columnize() is used for column names containers (constrained by ColumnContainer
+   concept) and it calls wrapArray() internally.
    Values or columns/tables/identifiers can also be the Query::Expression.
    The Query::Expression is always converted to the QString and appended to the query.
    quoteString() can be used to quote string literals, it is not used anywhere for now.

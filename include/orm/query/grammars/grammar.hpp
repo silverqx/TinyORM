@@ -91,13 +91,19 @@ namespace Orm::Query::Grammars
         virtual const std::function<QString(const WhereConditionItem &)> &
         getWhereMethod(WhereType whereType) const = 0;
 
-        /*! Determine whether the 'from' component is set and is not empty. */
-        bool issetFrom(const std::variant<std::monostate, QString,
-                                          Query::Expression> &from) const;
+        /*! Determine whether the 'aggregate' component should be compiled. */
+        bool shouldCompileAggregate(const std::optional<AggregateItem> &aggregate) const;
+        /*! Determine whether the 'columns' component should be compiled. */
+        bool shouldCompileColumns(const QueryBuilder &query) const;
+        /*! Determine whether the 'from' component should be compiled. */
+        bool shouldCompileFrom(const std::variant<std::monostate, QString,
+                                                  Query::Expression> &from) const;
 
         /*! Compile the components necessary for a select clause. */
         QStringList compileComponents(const QueryBuilder &query) const;
 
+        /*! Compile an aggregated select clause. */
+        QString compileAggregate(const QueryBuilder &query) const;
         /*! Compile the "select *" portion of the query. */
         virtual QString compileColumns(const QueryBuilder &query) const;
         /*! Compile the "from" portion of the query. */

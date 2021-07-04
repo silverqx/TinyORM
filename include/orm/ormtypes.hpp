@@ -65,6 +65,12 @@ namespace Query
     // FEATURE expressions, have to be QMap<BindingType, QVector<BindingValue>> to correctly support Expressions silverqx
     using BindingsMap = QMap<BindingType, QVector<QVariant>>;
 
+    struct AggregateItem
+    {
+        QString         function;
+        QVector<Column> columns;
+    };
+
     enum struct WhereType
     {
         UNDEFINED = -1,

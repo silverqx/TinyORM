@@ -5,6 +5,7 @@
 #include <QtSql/QSqlQuery>
 
 #include <optional>
+#include <unordered_set>
 
 #include "orm/ormtypes.hpp"
 #include "orm/query/grammars/grammar.hpp"
@@ -92,6 +93,26 @@ namespace Query
         void truncate();
 
         /* Select */
+        /*! Retrieve the "count" result of the query. */
+        quint64 count(const QVector<Column> &columns = {"*"});
+        /*! Retrieve the "count" result of the query. */
+        template<typename = void>
+        quint64 count(const Column &column);
+        /*! Retrieve the minimum value of a given column. */
+        QVariant min(const Column &column);
+        /*! Retrieve the maximum value of a given column. */
+        QVariant max(const Column &column);
+        /*! Retrieve the sum of the values of a given column. */
+        QVariant sum(const Column &column);
+        /*! Retrieve the average of the values of a given column. */
+        QVariant avg(const Column &column);
+        /*! Alias for the "avg" method. */
+        QVariant average(const Column &column);
+
+        /*! Execute an aggregate function on the database. */
+        QVariant aggregate(const QString &function,
+                           const QVector<Column> &columns = {"*"});
+
         /*! Set the columns to be selected. */
         Builder &select(const QVector<Column> &columns = {"*"});
         /*! Set the column to be selected. */
@@ -339,6 +360,8 @@ namespace Query
         inline const BindingsMap &getRawBindings() const
         { return m_bindings; }
 
+        /*! Get an aggregate function and column to be run. */
+        const std::optional<AggregateItem> &getAggregate() const;
         /*! Check if the query returns distinct results. */
         const std::variant<bool, QStringList> &
         getDistinct() const;
@@ -396,6 +419,18 @@ namespace Query
         /*! Add another query builder as a nested where to the query builder. */
         Builder &addNestedWhereQuery(const QSharedPointer<Builder> &query,
                                      const QString &condition);
+
+        /*! Builder property types. */
+        enum struct PropertyType
+        {
+            COLUMNS,
+        };
+
+        /*! Clone the query without the given properties. */
+        Builder cloneWithout(const std::unordered_set<PropertyType> &properties) const;
+        /*! Clone the query without the given bindings. */
+        Builder cloneWithoutBindings(
+                const std::unordered_set<BindingType> &except) const;
 
     protected:
         /*! Determine if the given operator is supported. */
@@ -457,6 +492,10 @@ namespace Query
         /*! Prepend the database name if the given query is on another database. */
         Builder &prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const;
 
+        /* Getters / Setters */
+        /*! Set the aggregate property without running the query. */
+        Builder &setAggregate(const QString &function, const QVector<Column> &columns);
+
     private:
         /*! Run the query as a "select" statement against the connection. */
         QSqlQuery runSelect();
@@ -510,6 +549,8 @@ namespace Query
             {BindingType::UNIONORDER, {}},
         };
 
+        /*! An aggregate function and column to be run. */
+        std::optional<AggregateItem> m_aggregate = std::nullopt;
         /*! Indicates if the query returns distinct results. */
         std::variant<bool, QStringList> m_distinct = false;
         /*! The columns that should be returned. */
@@ -534,12 +575,54 @@ namespace Query
         std::variant<std::monostate, bool, QString> m_lock;
     };
 
+    inline quint64 Builder::count(const QVector<Column> &columns)
+    {
+        return aggregate(QStringLiteral("count"), columns).template value<quint64>();
+    }
+
+    template<typename>
+    inline quint64 Builder::count(const Column &column)
+    {
+        return aggregate(QStringLiteral("count"), {column}).template value<quint64>();
+    }
+
+    inline QVariant Builder::min(const Column &column)
+    {
+        return aggregate(QStringLiteral("min"), {column});
+    }
+
+    inline QVariant Builder::max(const Column &column)
+    {
+        return aggregate(QStringLiteral("max"), {column});
+    }
+
+    inline QVariant Builder::sum(const Column &column)
+    {
+        auto result = aggregate(QStringLiteral("sum"), {column});
+
+        if (!result.isValid() || result.isNull())
+            result = 0;
+
+        return result;
+    }
+
+    inline QVariant Builder::avg(const Column &column)
+    {
+        return aggregate(QStringLiteral("avg"), {column});
+    }
+
+    inline QVariant Builder::average(const Column &column)
+    {
+        return avg(column);
+    }
+
     // CUR docs silverqx
     template<SubQuery T>
     inline Builder &Builder::selectSub(T &&query, const QString &as)
     {
         auto [queryString, bindings] = createSub(std::forward<T>(query));
 
+        // CUR this std::move are uselesss silverqx
         return selectRaw(QStringLiteral("(%1) as %2").arg(std::move(queryString),
                                                           m_grammar.wrap(as)),
                          bindings);
@@ -695,6 +778,11 @@ namespace Query
     {
         return joinSub(std::forward<T>(query), as, first, comparison, second,
                        QStringLiteral("right"));
+    }
+
+    inline const std::optional<AggregateItem> &Builder::getAggregate() const
+    {
+        return m_aggregate;
     }
 
     inline const std::variant<bool, QStringList> &

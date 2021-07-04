@@ -31,6 +31,14 @@ private slots:
     void value() const;
     void value_ColumnExpression() const;
 
+    void count() const;
+    void count_Distinct() const;
+    void min_Aggregate() const;
+    void min_Aggregate_ColumnExpression() const;
+    void max_Aggregate() const;
+    void sum_Aggregate() const;
+    void average_Aggregate() const;
+
     void select() const;
     void select_ColumnExpression() const;
     void addSelect() const;
@@ -282,6 +290,143 @@ void tst_MySql_QueryBuilder::value_ColumnExpression() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "select name from `torrents` limit 1");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::count() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").count();
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select count(*) as `aggregate` from `torrents`");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::count_Distinct() const
+{
+    {
+        auto log = DB::connection(m_connection).pretend([](auto &connection)
+        {
+            connection.query()->from("torrents").distinct().count("size");
+        });
+
+        const auto &firstLog = log.first();
+
+        QCOMPARE(log.size(), 1);
+        QCOMPARE(firstLog.query,
+                 "select count(distinct `size`) as `aggregate` from `torrents`");
+        QVERIFY(firstLog.boundValues.isEmpty());
+    }
+
+    // MySQL only, it allows more columns
+    {
+        auto log = DB::connection(m_connection).pretend([](auto &connection)
+        {
+            connection.query()->from("torrents").distinct().count({"size", "note"});
+        });
+
+        const auto &firstLog = log.first();
+
+        QCOMPARE(log.size(), 1);
+        QCOMPARE(firstLog.query,
+                 "select count(distinct `size`, `note`) as `aggregate` from `torrents`");
+        QVERIFY(firstLog.boundValues.isEmpty());
+    }
+
+    // MySQL only, it allows more columns, columns defined in distinct()
+    {
+        auto log = DB::connection(m_connection).pretend([](auto &connection)
+        {
+            connection.query()->from("torrents").distinct({"size", "note"}).count();
+        });
+
+        const auto &firstLog = log.first();
+
+        QCOMPARE(log.size(), 1);
+        QCOMPARE(firstLog.query,
+                 "select count(distinct `size`, `note`) as `aggregate` from `torrents`");
+        QVERIFY(firstLog.boundValues.isEmpty());
+    }
+}
+
+void tst_MySql_QueryBuilder::min_Aggregate() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").min("size");
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select min(`size`) as `aggregate` from `torrents`");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::min_Aggregate_ColumnExpression() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").min(Raw("size"));
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select min(size) as `aggregate` from `torrents`");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::max_Aggregate() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").max("size");
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select max(`size`) as `aggregate` from `torrents`");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::sum_Aggregate() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").sum("size");
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select sum(`size`) as `aggregate` from `torrents`");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::average_Aggregate() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").avg("size");
+    });
+
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select avg(`size`) as `aggregate` from `torrents`");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 

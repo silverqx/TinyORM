@@ -1,6 +1,7 @@
 #include "orm/query/grammars/grammar.hpp"
 
 #include "orm/databaseconnection.hpp"
+#include "orm/macros.hpp"
 #include "orm/query/joinclause.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -128,7 +129,20 @@ const QVector<QString> &Grammar::getOperators() const
     return cachedOperators;
 }
 
-bool Grammar::issetFrom(
+bool Grammar::shouldCompileAggregate(const std::optional<AggregateItem> &aggregate) const
+{
+    return aggregate.has_value() && !aggregate->function.isEmpty();
+}
+
+bool Grammar::shouldCompileColumns(const QueryBuilder &query) const
+{
+    /* If the query is actually performing an aggregating select, we will let
+       compileAggregate() to handle the building of the select clauses, as it will need
+       some more syntax that is best handled by that function to keep things neat. */
+    return !query.getAggregate() && !query.getColumns().isEmpty();
+}
+
+bool Grammar::shouldCompileFrom(
         const std::variant<std::monostate, QString, Query::Expression> &from) const
 {
     return !std::holds_alternative<std::monostate>(from) ||
@@ -147,6 +161,29 @@ QStringList Grammar::compileComponents(const QueryBuilder &query) const
                 sql.append(std::invoke(component.compileMethod, query));
 
     return sql;
+}
+
+QString Grammar::compileAggregate(const QueryBuilder &query) const
+{
+    const auto &aggregate = query.getAggregate();
+    const auto &distinct = query.getDistinct();
+
+    auto column = columnize(aggregate->columns);
+
+    /* If the query has a "distinct" constraint and we're not asking for all columns
+       we need to prepend "distinct" onto the column name so that the query takes
+       it into account when it performs the aggregating operations on the data. */
+    if (std::holds_alternative<bool>(distinct) && query.getDistinct<bool>() &&
+        column != QLatin1String("*")
+    ) T_LIKELY
+        column = QStringLiteral("distinct %1").arg(column);
+
+    else if (std::holds_alternative<QStringList>(distinct)) T_UNLIKELY
+        column = QStringLiteral("distinct %1")
+                 .arg(columnize(std::get<QStringList>(distinct)));
+
+    return QStringLiteral("select %1(%2) as %3").arg(aggregate->function, column,
+                                                     wrap(QStringLiteral("aggregate")));
 }
 
 QString Grammar::compileColumns(const QueryBuilder &query) const

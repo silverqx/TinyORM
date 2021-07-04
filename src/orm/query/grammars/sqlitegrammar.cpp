@@ -85,12 +85,17 @@ SQLiteGrammar::getCompileMap() const
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     static const QMap<SelectComponentType, SelectComponentValue> cached {
-//        {ComponentType::AGGREGATE, {}},
+        {SelectComponentType::AGGREGATE, {getBind(&SQLiteGrammar::compileAggregate),
+                        [this]
+                        (const auto &query)
+                        { return shouldCompileAggregate(query.getAggregate()); }}},
         {SelectComponentType::COLUMNS,   {getBind(&SQLiteGrammar::compileColumns),
-                        [](const auto &query) { return !query.getColumns().isEmpty(); }}},
+                        [this]
+                        (const auto &query) { return shouldCompileColumns(query); }}},
         {SelectComponentType::FROM,      {getBind(&SQLiteGrammar::compileFrom),
                         [this]
-                        (const auto &query) { return issetFrom(query.getFrom()); }}},
+                        (const auto &query)
+                        { return shouldCompileFrom(query.getFrom()); }}},
         {SelectComponentType::JOINS,     {getBind(&SQLiteGrammar::compileJoins),
                         [](const auto &query) { return !query.getJoins().isEmpty(); }}},
         {SelectComponentType::WHERES,    {getBind(&SQLiteGrammar::compileWheres),

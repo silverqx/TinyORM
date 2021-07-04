@@ -6,7 +6,6 @@
 #include <map>
 #endif
 #include <unordered_map>
-#include <unordered_set>
 
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"

@@ -21,6 +21,7 @@ HEADERS += \
     $$PWD/orm/invalidformaterror.hpp \
     $$PWD/orm/logicerror.hpp \
     $$PWD/orm/logquery.hpp \
+    $$PWD/orm/macros.hpp \
     $$PWD/orm/mysqlconnection.hpp \
     $$PWD/orm/ormtypes.hpp \
     $$PWD/orm/postgresconnection.hpp \

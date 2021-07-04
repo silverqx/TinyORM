@@ -155,6 +155,20 @@ void Builder::truncate()
             m_connection.statement(sql, bindings);
 }
 
+QVariant Builder::aggregate(const QString &function, const QVector<Column> &columns)
+{
+    auto resultsQuery = cloneWithout({PropertyType::COLUMNS})
+                        .cloneWithoutBindings({BindingType::SELECT})
+                        .setAggregate(function, columns)
+                        .get(columns);
+
+    // Empty result
+    if (!resultsQuery.first())
+        return {};
+
+    return resultsQuery.value(QStringLiteral("aggregate"));
+}
+
 Builder &Builder::select(const QVector<Column> &columns)
 {
     // FEATURE expressions, add Query::Expression overload, find all occurences of Illuminate\Database\Query\Expression in the Eloquent and add support to TinyORM, I will need to add overloads for some methods, for columns and also for values silverqx
@@ -645,6 +659,41 @@ Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> &query,
     return *this;
 }
 
+Builder Builder::cloneWithout(const std::unordered_set<PropertyType> &properties) const
+{
+    auto copy = *this;
+
+    for (const auto property : properties)
+        switch (property) {
+        case PropertyType::COLUMNS:
+            copy.m_columns.clear();
+            break;
+
+        default:
+            break;
+        }
+
+    return copy;
+}
+
+Builder Builder::cloneWithoutBindings(
+        const std::unordered_set<BindingType> &except) const
+{
+    auto copy = *this;
+
+    for (const auto bindingType : except)
+        switch (bindingType) {
+        case BindingType::SELECT:
+            copy.m_bindings[BindingType::SELECT].clear();
+            break;
+
+        default:
+            break;
+        }
+
+    return copy;
+}
+
 bool Builder::invalidOperator(const QString &comparison) const
 {
     const auto comparison_ = comparison.toLower();
@@ -820,6 +869,24 @@ Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
         query.from(QStringLiteral("%1.%2").arg(queryDatabaseName, queryFrom));
 
     return query;
+}
+
+Builder &Builder::setAggregate(const QString &function, const QVector<Column> &columns)
+{
+// TODO clang13 doesn't support in_place construction of aggregates in std::optional.emplace() 😲, gcc and msvc are ok silverqx
+#ifdef __clang__
+    m_aggregate = {function, columns};
+#else
+    m_aggregate.emplace(function, columns);
+#endif
+
+    if (m_groups.isEmpty()) {
+        m_orders.clear();
+
+        m_bindings[BindingType::ORDER].clear();
+    }
+
+    return *this;
 }
 
 QSqlQuery Builder::runSelect()
