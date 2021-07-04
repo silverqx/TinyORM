@@ -12,6 +12,15 @@ using Raw = Orm::Query::Expression;
 
 using TestUtils::Databases;
 
+/*
+   Is not needed to duplicate these tests to tst_PostgreSQL_QueryBuilder and
+   tst_SQLite_QueryBuilder because at the end of the day when there is no custom
+   processing branch by DB, then I'm only testing quotation of columns that is only
+   difference.
+   It only makes sense only when there is a custom processing branch by DB.
+   But I will not delete already written tests, more tests is better always 😁 right?
+*/
+
 class tst_MySql_QueryBuilder : public QObject
 {
     Q_OBJECT
