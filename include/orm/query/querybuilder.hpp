@@ -622,8 +622,7 @@ namespace Query
     {
         auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        // CUR this std::move are uselesss silverqx
-        return selectRaw(QStringLiteral("(%1) as %2").arg(std::move(queryString),
+        return selectRaw(QStringLiteral("(%1) as %2").arg(queryString,
                                                           m_grammar.wrap(as)),
                          bindings);
     }
@@ -653,9 +652,9 @@ namespace Query
     {
         auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        return fromRaw(QStringLiteral("(%1) as %2")
-                       .arg(std::move(queryString), m_grammar.wrapTable(as)),
-                        bindings);
+        return fromRaw(QStringLiteral("(%1) as %2").arg(queryString,
+                                                        m_grammar.wrapTable(as)),
+                       bindings);
     }
 
     template<JoinTable T>
