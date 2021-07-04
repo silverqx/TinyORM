@@ -50,15 +50,11 @@ QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const
 //    return getValue(value).value<QString>();
 //}
 
-QString BaseGrammar::wrap(const QVariant &value) const
-{
-    // CUR remove after some time silverqx
-    // TODO prod remove, it looks like this wrap overload is never called silverqx
-    Q_ASSERT("wrap(QVariant");
-
-    return isExpression(value) ? getValue(value).value<QString>()
-                               : wrap(value.value<QString>());
-}
+//QString BaseGrammar::wrap(const QVariant &value) const
+//{
+//    return isExpression(value) ? getValue(value).value<QString>()
+//                               : wrap(value.value<QString>());
+//}
 
 QString BaseGrammar::wrap(const Column &value) const
 {
