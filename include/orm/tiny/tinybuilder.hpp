@@ -162,7 +162,7 @@ namespace Relations
         Builder &addSelect(const Column &column);
 
         /*! Add a subselect expression to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         Builder &selectSub(T &&query, const QString &as);
         /*! Add a new "raw" select expression to the query. */
         Builder &selectRaw(const QString &expression,
@@ -222,16 +222,16 @@ namespace Relations
         Builder &crossJoin(T &&table, const std::function<void(JoinClause &)> &callback);
 
         /*! Add a subquery join clause to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         Builder &joinSub(T &&query, const QString &as, const QString &first,
                          const QString &comparison, const QVariant &second,
                          const QString &type = "inner", bool where = false);
         /*! Add a subquery left join to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         Builder &leftJoinSub(T &&query, const QString &as, const QString &first,
                              const QString &comparison, const QVariant &second);
         /*! Add a subquery right join to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         Builder &rightJoinSub(T &&query, const QString &as, const QString &first,
                               const QString &comparison, const QVariant &second);
 
@@ -864,7 +864,7 @@ namespace Relations
     }
 
     template<typename Model>
-    template<FromConcept T>
+    template<SubQuery T>
     Builder<Model> &Builder<Model>::selectSub(T &&query, const QString &as)
     {
         toBase().selectSub(std::forward<T>(query), as);
@@ -1011,7 +1011,7 @@ namespace Relations
     }
 
     template<typename Model>
-    template<FromConcept T>
+    template<SubQuery T>
     Builder<Model> &
     Builder<Model>::joinSub(T &&query, const QString &as, const QString &first,
                             const QString &comparison, const QVariant &second,
@@ -1023,7 +1023,7 @@ namespace Relations
     }
 
     template<typename Model>
-    template<FromConcept T>
+    template<SubQuery T>
     Builder<Model> &
     Builder<Model>::leftJoinSub(T &&query, const QString &as, const QString &first,
                                 const QString &comparison, const QVariant &second)
@@ -1033,7 +1033,7 @@ namespace Relations
     }
 
     template<typename Model>
-    template<FromConcept T>
+    template<SubQuery T>
     Builder<Model> &
     Builder<Model>::rightJoinSub(T &&query, const QString &as, const QString &first,
                                  const QString &comparison, const QVariant &second)

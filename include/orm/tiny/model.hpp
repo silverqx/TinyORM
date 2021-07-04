@@ -275,7 +275,7 @@ namespace Relations {
         addSelect(const Column &column);
 
         /*! Add a subselect expression to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         static std::unique_ptr<TinyBuilder<Derived>>
         selectSub(T &&query, const QString &as);
         /*! Add a new "raw" select expression to the query. */
@@ -349,18 +349,18 @@ namespace Relations {
         crossJoin(T &&table, const std::function<void(JoinClause &)> &callback);
 
         /*! Add a subquery join clause to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         static std::unique_ptr<TinyBuilder<Derived>>
         joinSub(T &&query, const QString &as, const QString &first,
                 const QString &comparison, const QVariant &second,
                 const QString &type = "inner", bool where = false);
         /*! Add a subquery left join to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         static std::unique_ptr<TinyBuilder<Derived>>
         leftJoinSub(T &&query, const QString &as, const QString &first,
                     const QString &comparison, const QVariant &second);
         /*! Add a subquery right join to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         static std::unique_ptr<TinyBuilder<Derived>>
         rightJoinSub(T &&query, const QString &as, const QString &first,
                      const QString &comparison, const QVariant &second);
@@ -1681,8 +1681,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    // CUR change FromConcept name silverqx
-    template<FromConcept T>
+    template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::selectSub(T &&query, const QString &as)
     {
@@ -1890,7 +1889,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<FromConcept T>
+    template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::joinSub(
             T &&query, const QString &as, const QString &first,
@@ -1906,7 +1905,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<FromConcept T>
+    template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::leftJoinSub(
             T &&query, const QString &as, const QString &first,
@@ -1920,7 +1919,7 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<FromConcept T>
+    template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::rightJoinSub(
             T &&query, const QString &as, const QString &first,

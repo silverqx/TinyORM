@@ -234,7 +234,7 @@ namespace Relations
         const Relation &addSelect(const Column &column) const;
 
         /*! Add a subselect expression to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         const Relation &selectSub(T &&query, const QString &as) const;
         /*! Add a new "raw" select expression to the query. */
         const Relation &selectRaw(const QString &expression,
@@ -305,18 +305,18 @@ namespace Relations
                 T &&table, const std::function<void(JoinClause &)> &callback) const;
 
         /*! Add a subquery join clause to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         const Relation &joinSub(
                 T &&query, const QString &as, const QString &first,
                 const QString &comparison, const QVariant &second,
                 const QString &type = "inner", bool where = false) const;
         /*! Add a subquery left join to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         const Relation &leftJoinSub(
                 T &&query, const QString &as, const QString &first,
                 const QString &comparison, const QVariant &second) const;
         /*! Add a subquery right join to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         const Relation &rightJoinSub(
                 T &&query, const QString &as, const QString &first,
                 const QString &comparison, const QVariant &second) const;
@@ -866,7 +866,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    template<FromConcept T>
+    template<SubQuery T>
     const Relation<Model, Related> &
     Relation<Model, Related>::selectSub(T &&query, const QString &as) const
     {
@@ -1042,7 +1042,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    template<FromConcept T>
+    template<SubQuery T>
     const Relation<Model, Related> &
     Relation<Model, Related>::joinSub(
             T &&query, const QString &as, const QString &first,
@@ -1056,7 +1056,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    template<FromConcept T>
+    template<SubQuery T>
     const Relation<Model, Related> &
     Relation<Model, Related>::leftJoinSub(
             T &&query, const QString &as, const QString &first,
@@ -1068,7 +1068,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    template<FromConcept T>
+    template<SubQuery T>
     const Relation<Model, Related> &
     Relation<Model, Related>::rightJoinSub(
             T &&query, const QString &as, const QString &first,

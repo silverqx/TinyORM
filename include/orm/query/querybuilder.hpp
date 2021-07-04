@@ -102,7 +102,7 @@ namespace Query
         Builder &addSelect(const Column &column);
 
         /*! Add a subselect expression to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         Builder &selectSub(T &&query, const QString &as);
         /*! Add a new "raw" select expression to the query. */
         Builder &selectRaw(const QString &expression,
@@ -127,7 +127,7 @@ namespace Query
                          const QVector<QVariant> &bindings = {});
 
         /*! Makes "from" fetch from a subquery. */
-        template<FromConcept T>
+        template<SubQuery T>
         Builder &fromSub(T &&query, const QString &as);
 
         /*! Add a join clause to the query. */
@@ -177,16 +177,16 @@ namespace Query
         Builder &crossJoin(T &&table, const std::function<void(JoinClause &)> &callback);
 
         /*! Add a subquery join clause to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         Builder &joinSub(T &&query, const QString &as, const QString &first,
                          const QString &comparison, const QVariant &second,
                          const QString &type = "inner", bool where = false);
         /*! Add a subquery left join to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         Builder &leftJoinSub(T &&query, const QString &as, const QString &first,
                              const QString &comparison, const QVariant &second);
         /*! Add a subquery right join to the query. */
-        template<FromConcept T>
+        template<SubQuery T>
         Builder &rightJoinSub(T &&query, const QString &as, const QString &first,
                               const QString &comparison, const QVariant &second);
 
@@ -535,7 +535,7 @@ namespace Query
     };
 
     // CUR docs silverqx
-    template<FromConcept T>
+    template<SubQuery T>
     inline Builder &Builder::selectSub(T &&query, const QString &as)
     {
         auto [queryString, bindings] = createSub(std::forward<T>(query));
@@ -564,7 +564,7 @@ namespace Query
         return remove();
     }
 
-    template<FromConcept T>
+    template<SubQuery T>
     Builder &
     Builder::fromSub(T &&query, const QString &as)
     {
@@ -669,7 +669,7 @@ namespace Query
     }
 
     // CUR add docs https://laravel.com/docs/8.x/queries#subquery-joins silverqx
-    template<FromConcept T>
+    template<SubQuery T>
     inline Builder &
     Builder::joinSub(T &&query, const QString &as, const QString &first,
                      const QString &comparison, const QVariant &second,
@@ -679,7 +679,7 @@ namespace Query
                                as, first, comparison, second, type, where);
     }
 
-    template<FromConcept T>
+    template<SubQuery T>
     inline Builder &
     Builder::leftJoinSub(T &&query, const QString &as, const QString &first,
                          const QString &comparison, const QVariant &second)
@@ -688,7 +688,7 @@ namespace Query
                        QStringLiteral("left"));
     }
 
-    template<FromConcept T>
+    template<SubQuery T>
     inline Builder &
     Builder::rightJoinSub(T &&query, const QString &as, const QString &first,
                           const QString &comparison, const QVariant &second)
