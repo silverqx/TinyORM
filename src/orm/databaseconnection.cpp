@@ -3,6 +3,7 @@
 #include <QDateTime>
 
 #include "orm/logquery.hpp"
+#include "orm/macros.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/sqltransactionerror.hpp"
 #include "orm/utils/type.hpp"
@@ -940,9 +941,9 @@ DatabaseConnection::withFreshQueryLog(const std::function<QVector<Log>()> &callb
 
     enableQueryLog();
 
-    if (m_queryLogForPretend)/* [[likely]]*/
+    if (m_queryLogForPretend) T_LIKELY
         m_queryLogForPretend->clear();
-    else/* [[unlikely]]*/
+    else T_UNLIKELY
         // Create the query log lazily, right before it is really needed
         m_queryLogForPretend = std::make_shared<QVector<Log>>();
 

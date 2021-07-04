@@ -11,6 +11,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include "orm/domainerror.hpp"
+#include "orm/macros.hpp"
 #include "orm/tiny/modelnotfounderror.hpp"
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/utils/attribute.hpp"
@@ -942,10 +943,9 @@ namespace Orm::Tiny::Relations
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
         for (int i = 0, attributesSize = pivotValues.size(); i < models.size(); ++i)
-            // FUTURE uncomment [[likely]] / [[unlikely]] when clang will support it, I want to avoid warnings that are produced now, search all other places too!, because I have delete other todo tasks silverqx
-            if (attributesSize > i)/* [[likely]]*/
+            if (attributesSize > i) T_LIKELY
                 save(models[i], pivotValues.at(i), false);
-            else/* [[unlikely]]*/
+            else T_UNLIKELY
                 save(models[i], {}, false);
 
         touchIfTouching();
@@ -960,9 +960,9 @@ namespace Orm::Tiny::Relations
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
         for (int i = 0, attributesSize = pivotValues.size(); i < models.size(); ++i)
-            if (attributesSize > i)/* [[likely]]*/
+            if (attributesSize > i) T_LIKELY
                 save(models[i], pivotValues.at(i), false);
-            else/* [[unlikely]]*/
+            else T_UNLIKELY
                 save(models[i], {}, false);
 
         touchIfTouching();
@@ -1017,9 +1017,9 @@ namespace Orm::Tiny::Relations
         instances.reserve(recordsSize);
 
         for (int i = 0, attributesSize = pivotValues.size(); i < recordsSize; ++i)
-            if (attributesSize > i)/* [[likely]]*/
+            if (attributesSize > i) T_LIKELY
                 instances << create(records.at(i), pivotValues.at(i), false);
-            else/* [[unlikely]]*/
+            else T_UNLIKELY
                 instances << create(records.at(i), {}, false);
 
         touchIfTouching();
@@ -1038,9 +1038,9 @@ namespace Orm::Tiny::Relations
         instances.reserve(recordsSize);
 
         for (int i = 0, attributesSize = pivotValues.size(); i < recordsSize; ++i)
-            if (attributesSize > i)/* [[likely]]*/
+            if (attributesSize > i) T_LIKELY
                 instances << create(std::move(records[i]), pivotValues.at(i), false);
-            else/* [[unlikely]]*/
+            else T_UNLIKELY
                 instances << create(std::move(records[i]), {}, false);
 
         touchIfTouching();
