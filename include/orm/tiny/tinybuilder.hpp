@@ -318,24 +318,25 @@ namespace Relations
         Builder &groupBy(Args &&...groups);
 
         /*! Add a "having" clause to the query. */
-        Builder &having(const QString &column, const QString &comparison,
+        Builder &having(const Column &column, const QString &comparison,
                         const QVariant &value, const QString &condition = "and");
         /*! Add an "or having" clause to the query. */
-        Builder &orHaving(const QString &column, const QString &comparison,
+        Builder &orHaving(const Column &column, const QString &comparison,
                           const QVariant &value);
 
         /*! Add an "order by" clause to the query. */
-        Builder &orderBy(const QString &column, const QString &direction = "asc");
+        Builder &orderBy(const Column &column, const QString &direction = "asc");
         /*! Add a descending "order by" clause to the query. */
-        Builder &orderByDesc(const QString &column);
+        Builder &orderByDesc(const Column &column);
+
         /*! Add an "order by" clause for a timestamp to the query. */
-        Builder &latest(const QString &column = "");
+        Builder &latest(const Column &column = "");
         /*! Add an "order by" clause for a timestamp to the query. */
-        Builder &oldest(const QString &column = "");
+        Builder &oldest(const Column &column = "");
         /*! Remove all existing orders. */
         Builder &reorder();
         /*! Remove all existing orders and optionally add a new order. */
-        Builder &reorder(const QString &column, const QString &direction = "asc");
+        Builder &reorder(const Column &column, const QString &direction = "asc");
 
         /*! Set the "limit" value of the query. */
         Builder &limit(int value);
@@ -434,7 +435,7 @@ namespace Relations
         addUpdatedAtColumn(QVector<UpdateItem> values) const;
 
         /*! Get the name of the "created at" column. */
-        QString getCreatedAtColumnForLatestOldest(QString column) const;
+        Column getCreatedAtColumnForLatestOldest(Column column) const;
 
         /*! The base query builder instance. */
         const QSharedPointer<QueryBuilder> m_query;
@@ -1290,7 +1291,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::having(const QString &column, const QString &comparison,
+    Builder<Model>::having(const Column &column, const QString &comparison,
                            const QVariant &value, const QString &condition)
     {
         toBase().having(column, comparison, value, condition);
@@ -1299,7 +1300,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::orHaving(const QString &column, const QString &comparison,
+    Builder<Model>::orHaving(const Column &column, const QString &comparison,
                              const QVariant &value)
     {
         toBase().orHaving(column, comparison, value);
@@ -1308,14 +1309,14 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::orderBy(const QString &column, const QString &direction)
+    Builder<Model>::orderBy(const Column &column, const QString &direction)
     {
         toBase().orderBy(column, direction);
         return *this;
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::orderByDesc(const QString &column)
+    Builder<Model> &Builder<Model>::orderByDesc(const Column &column)
     {
         toBase().orderByDesc(column);
         return *this;
@@ -1323,7 +1324,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::latest(const QString &column)
+    Builder<Model>::latest(const Column &column)
     {
         toBase().latest(getCreatedAtColumnForLatestOldest(column));
         return *this;
@@ -1331,7 +1332,7 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::oldest(const QString &column)
+    Builder<Model>::oldest(const Column &column)
     {
         toBase().oldest(getCreatedAtColumnForLatestOldest(column));
         return *this;
@@ -1346,21 +1347,25 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::reorder(const QString &column, const QString &direction)
+    Builder<Model>::reorder(const Column &column, const QString &direction)
     {
         toBase().reorder(column, direction);
         return *this;
     }
 
     template<typename Model>
-    QString
-    Builder<Model>::getCreatedAtColumnForLatestOldest(QString column) const
+    Column
+    Builder<Model>::getCreatedAtColumnForLatestOldest(Column column) const
     {
-        if (column.isEmpty()) {
+        /* Don't initialize column when user passed column expression, only when it
+           holds the QString type. */
+        if (std::holds_alternative<QString>(column) &&
+            std::get<QString>(column).isEmpty()
+        ) {
             if (const auto &createdAtColumn = m_model.getCreatedAtColumn();
                 createdAtColumn.isEmpty()
             )
-                column = "created_at";
+                column = QStringLiteral("created_at");
             else
                 column = createdAtColumn;
         }

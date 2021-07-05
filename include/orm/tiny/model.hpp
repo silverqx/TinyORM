@@ -477,32 +477,32 @@ namespace Relations {
 
         /*! Add a "having" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        having(const QString &column, const QString &comparison,
+        having(const Column &column, const QString &comparison,
                const QVariant &value, const QString &condition = "and");
         /*! Add an "or having" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orHaving(const QString &column, const QString &comparison,
+        orHaving(const Column &column, const QString &comparison,
                  const QVariant &value);
 
         /*! Add an "order by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orderBy(const QString &column, const QString &direction = "asc");
+        orderBy(const Column &column, const QString &direction = "asc");
         /*! Add a descending "order by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orderByDesc(const QString &column);
+        orderByDesc(const Column &column);
 
         /*! Add an "order by" clause for a timestamp to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        latest(const QString &column = "");
+        latest(const Column &column = "");
         /*! Add an "order by" clause for a timestamp to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        oldest(const QString &column = "");
+        oldest(const Column &column = "");
         /*! Remove all existing orders. */
         static std::unique_ptr<TinyBuilder<Derived>>
         reorder();
         /*! Remove all existing orders and optionally add a new order. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        reorder(const QString &column, const QString &direction = "asc");
+        reorder(const Column &column, const QString &direction = "asc");
 
         /*! Set the "limit" value of the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -2287,7 +2287,7 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::having(
-            const QString &column, const QString &comparison,
+            const Column &column, const QString &comparison,
             const QVariant &value, const QString &condition)
     {
         auto builder = query();
@@ -2300,7 +2300,7 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orHaving(
-            const QString &column, const QString &comparison, const QVariant &value)
+            const Column &column, const QString &comparison, const QVariant &value)
     {
         auto builder = query();
 
@@ -2311,7 +2311,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::orderBy(const QString &column,
+    Model<Derived, AllRelations...>::orderBy(const Column &column,
                                              const QString &direction)
     {
         auto builder = query();
@@ -2323,7 +2323,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::orderByDesc(const QString &column)
+    Model<Derived, AllRelations...>::orderByDesc(const Column &column)
     {
         auto builder = query();
 
@@ -2334,7 +2334,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::latest(const QString &column)
+    Model<Derived, AllRelations...>::latest(const Column &column)
     {
         auto builder = query();
 
@@ -2345,7 +2345,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::oldest(const QString &column)
+    Model<Derived, AllRelations...>::oldest(const Column &column)
     {
         auto builder = query();
 
@@ -2367,7 +2367,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::reorder(const QString &column,
+    Model<Derived, AllRelations...>::reorder(const Column &column,
                                              const QString &direction)
     {
         auto builder = query();

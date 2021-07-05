@@ -91,7 +91,7 @@ namespace Query
     };
     struct HavingConditionItem
     {
-        QString    column;
+        Column     column;
         QVariant   value;
         QString    comparison {"="};
         QString    condition  {"and"};
@@ -100,7 +100,7 @@ namespace Query
 
     struct OrderByItem
     {
-        QString column;
+        Column  column;
         QString direction {"asc"};
     };
 

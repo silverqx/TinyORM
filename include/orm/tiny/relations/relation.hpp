@@ -416,26 +416,27 @@ namespace Relations
         const Relation &groupBy(Args &&...groups) const;
 
         /*! Add a "having" clause to the query. */
-        const Relation &having(const QString &column, const QString &comparison,
+        const Relation &having(const Column &column, const QString &comparison,
                                const QVariant &value,
                                const QString &condition = "and") const;
         /*! Add an "or having" clause to the query. */
-        const Relation &orHaving(const QString &column, const QString &comparison,
+        const Relation &orHaving(const Column &column, const QString &comparison,
                                  const QVariant &value) const;
 
         /*! Add an "order by" clause to the query. */
-        const Relation &orderBy(const QString &column,
+        const Relation &orderBy(const Column &column,
                                 const QString &direction = "asc") const;
         /*! Add a descending "order by" clause to the query. */
-        const Relation &orderByDesc(const QString &column) const;
+        const Relation &orderByDesc(const Column &column) const;
+
         /*! Add an "order by" clause for a timestamp to the query. */
-        const Relation &latest(const QString &column = "") const;
+        const Relation &latest(const Column &column = "") const;
         /*! Add an "order by" clause for a timestamp to the query. */
-        const Relation &oldest(const QString &column = "") const;
+        const Relation &oldest(const Column &column = "") const;
         /*! Remove all existing orders. */
         const Relation &reorder() const;
         /*! Remove all existing orders and optionally add a new order. */
-        const Relation &reorder(const QString &column,
+        const Relation &reorder(const Column &column,
                                 const QString &direction = "asc") const;
 
         /*! Set the "limit" value of the query. */
@@ -1373,7 +1374,7 @@ namespace Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     Relation<Model, Related>::having(
-            const QString &column, const QString &comparison,
+            const Column &column, const QString &comparison,
             const QVariant &value, const QString &condition) const
     {
         m_query->having(column, comparison, value, condition);
@@ -1383,7 +1384,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::orHaving(const QString &column, const QString &comparison,
+    Relation<Model, Related>::orHaving(const Column &column, const QString &comparison,
                                        const QVariant &value) const
     {
         m_query->orHaving(column, comparison, value);
@@ -1393,7 +1394,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::orderBy(const QString &column,
+    Relation<Model, Related>::orderBy(const Column &column,
                                       const QString &direction) const
     {
         m_query->orderBy(column, direction);
@@ -1403,7 +1404,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::orderByDesc(const QString &column) const
+    Relation<Model, Related>::orderByDesc(const Column &column) const
     {
         m_query->orderByDesc(column);
 
@@ -1412,7 +1413,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::latest(const QString &column) const
+    Relation<Model, Related>::latest(const Column &column) const
     {
         m_query->latest(column);
 
@@ -1421,7 +1422,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::oldest(const QString &column) const
+    Relation<Model, Related>::oldest(const Column &column) const
     {
         m_query->oldest(column);
 
@@ -1439,7 +1440,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::reorder(const QString &column,
+    Relation<Model, Related>::reorder(const Column &column,
                                       const QString &direction) const
     {
         m_query->reorder(column, direction);

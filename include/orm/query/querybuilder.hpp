@@ -295,24 +295,25 @@ namespace Query
         Builder &groupBy(Args &&...groups);
 
         /*! Add a "having" clause to the query. */
-        Builder &having(const QString &column, const QString &comparison,
+        Builder &having(const Column &column, const QString &comparison,
                         const QVariant &value, const QString &condition = "and");
         /*! Add an "or having" clause to the query. */
-        Builder &orHaving(const QString &column, const QString &comparison,
+        Builder &orHaving(const Column &column, const QString &comparison,
                           const QVariant &value);
 
         /*! Add an "order by" clause to the query. */
-        Builder &orderBy(const QString &column, const QString &direction = "asc");
+        Builder &orderBy(const Column &column, const QString &direction = "asc");
         /*! Add a descending "order by" clause to the query. */
-        Builder &orderByDesc(const QString &column);
+        Builder &orderByDesc(const Column &column);
+
         /*! Add an "order by" clause for a timestamp to the query. */
-        Builder &latest(const QString &column = "created_at");
+        Builder &latest(const Column &column = "created_at");
         /*! Add an "order by" clause for a timestamp to the query. */
-        Builder &oldest(const QString &column = "created_at");
+        Builder &oldest(const Column &column = "created_at");
         /*! Remove all existing orders. */
         Builder &reorder();
         /*! Remove all existing orders and optionally add a new order. */
-        Builder &reorder(const QString &column, const QString &direction = "asc");
+        Builder &reorder(const Column &column, const QString &direction = "asc");
 
         /*! Set the "limit" value of the query. */
         Builder &limit(int value);

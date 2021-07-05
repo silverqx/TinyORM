@@ -455,7 +455,7 @@ Builder &Builder::groupBy(const Column &group)
     return groupBy(QVector<Column> {group});
 }
 
-Builder &Builder::having(const QString &column, const QString &comparison,
+Builder &Builder::having(const Column &column, const QString &comparison,
                          const QVariant &value, const QString &condition)
 {
     // Compile check for a invalid comparison operator
@@ -470,17 +470,19 @@ Builder &Builder::having(const QString &column, const QString &comparison,
     return *this;
 }
 
-Builder &Builder::orHaving(const QString &column, const QString &comparison,
+Builder &Builder::orHaving(const Column &column, const QString &comparison,
                            const QVariant &value)
 {
     return having(column, comparison, value, QStringLiteral("or"));
 }
 
-Builder &Builder::orderBy(const QString &column, const QString &direction)
+Builder &Builder::orderBy(const Column &column, const QString &direction)
 {
     const auto &directionLower = direction.toLower();
 
-    if ((directionLower != "asc") && (directionLower != "desc"))
+    if (directionLower != QLatin1String("asc") &&
+        directionLower != QLatin1String("desc")
+    )
         throw RuntimeError("Order direction must be \"asc\" or \"desc\", "
                            "case is not important.");
 
@@ -489,12 +491,12 @@ Builder &Builder::orderBy(const QString &column, const QString &direction)
     return *this;
 }
 
-Builder &Builder::orderByDesc(const QString &column)
+Builder &Builder::orderByDesc(const Column &column)
 {
     return orderBy(column, QStringLiteral("desc"));
 }
 
-Builder &Builder::latest(const QString &column)
+Builder &Builder::latest(const Column &column)
 {
     /* Default value "created_at" is ok, because we are in the QueryBuilder,
        in the Model/TinyBuilder is this default argument processed by
@@ -502,7 +504,7 @@ Builder &Builder::latest(const QString &column)
     return orderBy(column, QStringLiteral("desc"));
 }
 
-Builder &Builder::oldest(const QString &column)
+Builder &Builder::oldest(const Column &column)
 {
     return orderBy(column, QStringLiteral("asc"));
 }
@@ -516,7 +518,7 @@ Builder &Builder::reorder()
     return *this;
 }
 
-Builder &Builder::reorder(const QString &column, const QString &direction)
+Builder &Builder::reorder(const Column &column, const QString &direction)
 {
     reorder();
 
