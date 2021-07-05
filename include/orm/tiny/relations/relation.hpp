@@ -9,6 +9,7 @@
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 
+#include "orm/concepts.hpp"
 #include "orm/ormtypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -407,9 +408,12 @@ namespace Relations
         const Relation &orWhereNotNull(const Column &column) const;
 
         /*! Add a "group by" clause to the query. */
-        const Relation &groupBy(const QStringList &groups) const;
+        const Relation &groupBy(const QVector<Column> &groups) const;
         /*! Add a "group by" clause to the query. */
-        const Relation &groupBy(const QString &group) const;
+        const Relation &groupBy(const Column &group) const;
+        /*! Add a "group by" clause to the query. */
+        template<ColumnConcept ...Args>
+        const Relation &groupBy(Args &&...groups) const;
 
         /*! Add a "having" clause to the query. */
         const Relation &having(const QString &column, const QString &comparison,
@@ -1340,7 +1344,7 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::groupBy(const QStringList &groups) const
+    Relation<Model, Related>::groupBy(const QVector<Column> &groups) const
     {
         m_query->groupBy(groups);
 
@@ -1349,9 +1353,19 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    Relation<Model, Related>::groupBy(const QString &group) const
+    Relation<Model, Related>::groupBy(const Column &group) const
     {
         m_query->groupBy(group);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<ColumnConcept ...Args>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::groupBy(Args &&...groups) const
+    {
+        m_query->groupBy(QVector<Column> {std::forward<Args>(groups)...});
 
         return *this;
     }

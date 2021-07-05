@@ -7,6 +7,7 @@
 #include <optional>
 #include <unordered_set>
 
+#include "orm/concepts.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/query/grammars/grammar.hpp"
 
@@ -286,9 +287,12 @@ namespace Query
         Builder &orWhereNotNull(const Column &column);
 
         /*! Add a "group by" clause to the query. */
-        Builder &groupBy(const QStringList &groups);
+        Builder &groupBy(const QVector<Column> &groups);
         /*! Add a "group by" clause to the query. */
-        Builder &groupBy(const QString &group);
+        Builder &groupBy(const Column &group);
+        /*! Add a "group by" clause to the query. */
+        template<ColumnConcept ...Args>
+        Builder &groupBy(Args &&...groups);
 
         /*! Add a "having" clause to the query. */
         Builder &having(const QString &column, const QString &comparison,
@@ -389,7 +393,7 @@ namespace Query
         inline const QVector<WhereConditionItem> &getWheres() const
         { return m_wheres; }
         /*! Get the groupings for the query. */
-        inline const QStringList &getGroups() const
+        inline const QVector<Column> &getGroups() const
         { return m_groups; }
         /*! Get the having constraints for the query. */
         inline const QVector<HavingConditionItem> &getHavings() const
@@ -562,7 +566,7 @@ namespace Query
         /*! The where constraints for the query. */
         QVector<WhereConditionItem> m_wheres;
         /*! The groupings for the query. */
-        QStringList m_groups;
+        QVector<Column> m_groups;
         /*! The having constraints for the query. */
         QVector<HavingConditionItem> m_havings;
         /*! The orderings for the query. */
@@ -777,6 +781,12 @@ namespace Query
     {
         return joinSub(std::forward<T>(query), as, first, comparison, second,
                        QStringLiteral("right"));
+    }
+
+    template<ColumnConcept ...Args>
+    inline Builder &Builder::groupBy(Args &&...groups)
+    {
+        return groupBy(QVector<Column> {std::forward<Args>(groups)...});
     }
 
     inline const std::optional<AggregateItem> &Builder::getAggregate() const

@@ -31,17 +31,6 @@ namespace Query
 }
     using QueryBuilder = Query::Builder;
 
-    /*! Concept for the subquery, used in the from clause (tablename), join clause, ... */
-    template<typename T>
-    concept SubQuery = std::convertible_to<T, Orm::QueryBuilder &> ||
-                       std::convertible_to<T, QString> ||
-                       std::invocable<T, Orm::QueryBuilder &>;
-
-    /*! Concept for the join's table. */
-    template<typename T>
-    concept JoinTable = std::same_as<T, Query::Expression> ||
-                        std::convertible_to<T, QString>;
-
     /*! Type for the database column. */
     using Column = std::variant<QString, Query::Expression>;
 

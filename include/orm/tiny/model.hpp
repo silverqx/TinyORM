@@ -78,6 +78,7 @@ namespace Relations {
     // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
     // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
     // BUG Qt sql drivers do not work with mysql json columns silverqx
+    // CUR solve all cur task about expressions, remove commented code in basegrammar and add new tasks about left column expressions in orderby, incerement/decrement, having and maybe groupby that I finish it later or something silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -465,10 +466,14 @@ namespace Relations {
 
         /*! Add a "group by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        groupBy(const QStringList &groups);
+        groupBy(const QVector<Column> &groups);
         /*! Add a "group by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        groupBy(const QString &group);
+        groupBy(const Column &group);
+        /*! Add a "group by" clause to the query. */
+        template<ColumnConcept ...Args>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        groupBy(Args &&...groups);
 
         /*! Add a "having" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -2247,7 +2252,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::groupBy(const QStringList &groups)
+    Model<Derived, AllRelations...>::groupBy(const QVector<Column> &groups)
     {
         auto builder = query();
 
@@ -2258,11 +2263,23 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::groupBy(const QString &group)
+    Model<Derived, AllRelations...>::groupBy(const Column &group)
     {
         auto builder = query();
 
         builder->groupBy(group);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<ColumnConcept ...Args>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::groupBy(Args &&...groups)
+    {
+        auto builder = query();
+
+        builder->groupBy(QVector<Column> {std::forward<Args>(groups)...});
 
         return builder;
     }

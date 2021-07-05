@@ -310,9 +310,12 @@ namespace Relations
         Builder &orWhereNotNull(const Column &column);
 
         /*! Add a "group by" clause to the query. */
-        Builder &groupBy(const QStringList &groups);
+        Builder &groupBy(const QVector<Column> &groups);
         /*! Add a "group by" clause to the query. */
-        Builder &groupBy(const QString &group);
+        Builder &groupBy(const Column &group);
+        /*! Add a "group by" clause to the query. */
+        template<ColumnConcept ...Args>
+        Builder &groupBy(Args &&...groups);
 
         /*! Add a "having" clause to the query. */
         Builder &having(const QString &column, const QString &comparison,
@@ -1264,16 +1267,24 @@ namespace Relations
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::groupBy(const QStringList &groups)
+    Builder<Model> &Builder<Model>::groupBy(const QVector<Column> &groups)
     {
         toBase().groupBy(groups);
         return *this;
     }
 
     template<typename Model>
-    Builder<Model> &Builder<Model>::groupBy(const QString &group)
+    Builder<Model> &Builder<Model>::groupBy(const Column &group)
     {
         toBase().groupBy(group);
+        return *this;
+    }
+
+    template<typename Model>
+    template<ColumnConcept ...Args>
+    Builder<Model> &Builder<Model>::groupBy(Args &&...groups)
+    {
+        toBase().groupBy(QVector<Column> {std::forward<Args>(groups)...});
         return *this;
     }
 

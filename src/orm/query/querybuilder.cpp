@@ -440,7 +440,7 @@ Builder &Builder::orWhereNotNull(const Column &column)
     return orWhereNotNull(QVector<Column> {column});
 }
 
-Builder &Builder::groupBy(const QStringList &groups)
+Builder &Builder::groupBy(const QVector<Column> &groups)
 {
     if (groups.isEmpty())
         return *this;
@@ -450,9 +450,9 @@ Builder &Builder::groupBy(const QStringList &groups)
     return *this;
 }
 
-Builder &Builder::groupBy(const QString &group)
+Builder &Builder::groupBy(const Column &group)
 {
-    return groupBy(QStringList {group});
+    return groupBy(QVector<Column> {group});
 }
 
 Builder &Builder::having(const QString &column, const QString &comparison,
