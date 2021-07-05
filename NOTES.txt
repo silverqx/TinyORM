@@ -512,3 +512,34 @@ EntityManager::createConnection(const QVariantHash &config)
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
+
+
+Test Column expressions code, just swap groupBy
+-----
+
+auto q1 = Torrent::find(1)->torrentFiles()->groupBy({"xyz", "abc"}).toSql();
+qDebug() << q1;
+auto q2 = Torrent::find(1)->torrentFiles()->groupBy("xyz").toSql();
+qDebug() << q2;
+auto q = Torrent::find(1)->torrentFiles()->groupBy("abc", "def").toSql();
+qDebug() << q;
+
+auto t1 = Torrent::find(1)->torrentFiles()->groupBy({DB::raw("xyz"), "abc"}).toSql();
+qDebug() << t1;
+auto t2 = Torrent::find(1)->torrentFiles()->groupBy(DB::raw("xyz")).toSql();
+qDebug() << t2;
+auto t = Torrent::find(1)->torrentFiles()->groupBy("abc", DB::raw("def")).toSql();
+qDebug() << t;
+
+QString s1("abc");
+const QString s2("fgh");
+auto q3 = Torrent::find(1)->torrentFiles()->groupBy(s1, s2).toSql();
+qDebug() << q3;
+auto q4 = Torrent::find(1)->torrentFiles()->groupBy(std::move(s1), s2).toSql();
+qDebug() << q4;
+
+const QString s3("jkl");
+auto t3 = Torrent::find(1)->torrentFiles()->groupBy(s3, DB::raw(s2)).toSql();
+qDebug() << t3;
+auto t4 = Torrent::find(1)->torrentFiles()->groupBy(std::move(s3), DB::raw(s2)).toSql();
+qDebug() << t4;
