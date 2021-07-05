@@ -225,6 +225,26 @@ namespace Relations
         void truncate() const;
 
         /* Select */
+        /*! Retrieve the "count" result of the query. */
+        quint64 count(const QVector<Column> &columns = {"*"}) const;
+        /*! Retrieve the "count" result of the query. */
+        template<typename = void>
+        quint64 count(const Column &column) const;
+        /*! Retrieve the minimum value of a given column. */
+        QVariant min(const Column &column) const;
+        /*! Retrieve the maximum value of a given column. */
+        QVariant max(const Column &column) const;
+        /*! Retrieve the sum of the values of a given column. */
+        QVariant sum(const Column &column) const;
+        /*! Retrieve the average of the values of a given column. */
+        QVariant avg(const Column &column) const;
+        /*! Alias for the "avg" method. */
+        QVariant average(const Column &column) const;
+
+        /*! Execute an aggregate function on the database. */
+        QVariant aggregate(const QString &function,
+                           const QVector<Column> &columns = {"*"}) const;
+
         /*! Set the columns to be selected. */
         const Relation &select(const QVector<Column> &columns = {"*"}) const;
         /*! Set the column to be selected. */
@@ -832,6 +852,56 @@ namespace Relations
     void Relation<Model, Related>::truncate() const
     {
         m_query->truncate();
+    }
+
+    template<class Model, class Related>
+    quint64 Relation<Model, Related>::count(const QVector<Column> &columns) const
+    {
+        return m_query->count(columns);
+    }
+
+    template<class Model, class Related>
+    template<typename>
+    quint64 Relation<Model, Related>::count(const Column &column) const
+    {
+        return m_query->count(QVector<Column> {column});
+    }
+
+    template<class Model, class Related>
+    QVariant Relation<Model, Related>::min(const Column &column) const
+    {
+        return m_query->min(column);
+    }
+
+    template<class Model, class Related>
+    QVariant Relation<Model, Related>::max(const Column &column) const
+    {
+        return m_query->max(column);
+    }
+
+    template<class Model, class Related>
+    QVariant Relation<Model, Related>::sum(const Column &column) const
+    {
+        return m_query->sum(column);
+    }
+
+    template<class Model, class Related>
+    QVariant Relation<Model, Related>::avg(const Column &column) const
+    {
+        return m_query->avg(column);
+    }
+
+    template<class Model, class Related>
+    QVariant Relation<Model, Related>::average(const Column &column) const
+    {
+        return m_query->avg(column);
+    }
+
+    template<class Model, class Related>
+    QVariant Relation<Model, Related>::aggregate(const QString &function,
+                                                 const QVector<Column> &columns) const
+    {
+        return m_query->aggregate(function, columns);
     }
 
     template<class Model, class Related>

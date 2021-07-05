@@ -152,6 +152,26 @@ namespace Relations
         void truncate() const;
 
         /* Select */
+        /*! Retrieve the "count" result of the query. */
+        quint64 count(const QVector<Column> &columns = {"*"});
+        /*! Retrieve the "count" result of the query. */
+        template<typename = void>
+        quint64 count(const Column &column);
+        /*! Retrieve the minimum value of a given column. */
+        QVariant min(const Column &column);
+        /*! Retrieve the maximum value of a given column. */
+        QVariant max(const Column &column);
+        /*! Retrieve the sum of the values of a given column. */
+        QVariant sum(const Column &column);
+        /*! Retrieve the average of the values of a given column. */
+        QVariant avg(const Column &column);
+        /*! Alias for the "avg" method. */
+        QVariant average(const Column &column);
+
+        /*! Execute an aggregate function on the database. */
+        QVariant aggregate(const QString &function,
+                           const QVector<Column> &columns = {"*"});
+
         /*! Set the columns to be selected. */
         Builder &select(const QVector<Column> &columns = {"*"});
         /*! Set the column to be selected. */
@@ -837,6 +857,56 @@ namespace Relations
     void Builder<Model>::truncate() const
     {
         toBase().truncate();
+    }
+
+    template<typename Model>
+    quint64 Builder<Model>::count(const QVector<Column> &columns)
+    {
+        return toBase().count(columns);
+    }
+
+    template<typename Model>
+    template<typename>
+    quint64 Builder<Model>::count(const Column &column)
+    {
+        return toBase().count(QVector<Column> {column});
+    }
+
+    template<typename Model>
+    QVariant Builder<Model>::min(const Column &column)
+    {
+        return toBase().min(column);
+    }
+
+    template<typename Model>
+    QVariant Builder<Model>::max(const Column &column)
+    {
+        return toBase().max(column);
+    }
+
+    template<typename Model>
+    QVariant Builder<Model>::sum(const Column &column)
+    {
+        return toBase().sum(column);
+    }
+
+    template<typename Model>
+    QVariant Builder<Model>::avg(const Column &column)
+    {
+        return toBase().avg(column);
+    }
+
+    template<typename Model>
+    QVariant Builder<Model>::average(const Column &column)
+    {
+        return toBase().avg(column);
+    }
+
+    template<typename Model>
+    QVariant Builder<Model>::aggregate(const QString &function,
+                                       const QVector<Column> &columns)
+    {
+        return toBase().aggregate(function, columns);
     }
 
     template<typename Model>

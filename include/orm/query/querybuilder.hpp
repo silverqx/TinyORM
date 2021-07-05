@@ -499,7 +499,8 @@ namespace Query
 
         /* Getters / Setters */
         /*! Set the aggregate property without running the query. */
-        Builder &setAggregate(const QString &function, const QVector<Column> &columns);
+        Builder &setAggregate(const QString &function,
+                              const QVector<Column> &columns = {"*"});
 
     private:
         /*! Run the query as a "select" statement against the connection. */

@@ -261,6 +261,26 @@ namespace Relations {
         static void truncate();
 
         /* Select */
+        /*! Retrieve the "count" result of the query. */
+        static quint64 count(const QVector<Column> &columns = {"*"});
+        /*! Retrieve the "count" result of the query. */
+        template<typename = void>
+        static quint64 count(const Column &column);
+        /*! Retrieve the minimum value of a given column. */
+        static QVariant min(const Column &column);
+        /*! Retrieve the maximum value of a given column. */
+        static QVariant max(const Column &column);
+        /*! Retrieve the sum of the values of a given column. */
+        static QVariant sum(const Column &column);
+        /*! Retrieve the average of the values of a given column. */
+        static QVariant avg(const Column &column);
+        /*! Alias for the "avg" method. */
+        static QVariant average(const Column &column);
+
+        /*! Execute an aggregate function on the database. */
+        static QVariant aggregate(const QString &function,
+                                  const QVector<Column> &columns = {"*"});
+
         /*! Set the columns to be selected. */
         static std::unique_ptr<TinyBuilder<Derived>>
         select(const QVector<Column> &columns = {"*"});
@@ -1638,6 +1658,57 @@ namespace Relations {
     void Model<Derived, AllRelations...>::truncate()
     {
         query()->truncate();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    quint64 Model<Derived, AllRelations...>::count(const QVector<Column> &columns)
+    {
+        return query()->count(columns);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename>
+    quint64 Model<Derived, AllRelations...>::count(const Column &column)
+    {
+        return query()->count(QVector<Column> {column});
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant Model<Derived, AllRelations...>::min(const Column &column)
+    {
+        return query()->min(column);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant Model<Derived, AllRelations...>::max(const Column &column)
+    {
+        return query()->max(column);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant Model<Derived, AllRelations...>::sum(const Column &column)
+    {
+        return query()->sum(column);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant Model<Derived, AllRelations...>::avg(const Column &column)
+    {
+        return query()->avg(column);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant Model<Derived, AllRelations...>::average(const Column &column)
+    {
+        return query()->avg(column);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant
+    Model<Derived, AllRelations...>::aggregate(const QString &function,
+                                               const QVector<Column> &columns)
+    {
+        return query()->aggregate(function, columns);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
