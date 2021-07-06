@@ -775,7 +775,6 @@ namespace Query
         return join(table, callback, QStringLiteral("cross"));
     }
 
-    // CUR add docs https://laravel.com/docs/8.x/queries#subquery-joins silverqx
     template<SubQuery T>
     inline Builder &
     Builder::joinSub(T &&query, const QString &as, const QString &first,
