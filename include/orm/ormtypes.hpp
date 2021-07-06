@@ -51,7 +51,6 @@ namespace Query
         UNIONORDER,
     };
 
-    // FEATURE expressions, have to be QMap<BindingType, QVector<BindingValue>> to correctly support Expressions silverqx
     using BindingsMap = QMap<BindingType, QVector<QVariant>>;
 
     struct AggregateItem

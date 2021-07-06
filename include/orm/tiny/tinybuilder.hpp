@@ -509,7 +509,6 @@ namespace Relations
 //        return $builder->getModel()->newCollection($models);
     }
 
-    // FEATURE expressions, fuckup🤔 silverqx
     template<typename Model>
     QVariant Builder<Model>::value(const Column &column)
     {

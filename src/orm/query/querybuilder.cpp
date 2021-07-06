@@ -171,7 +171,6 @@ QVariant Builder::aggregate(const QString &function, const QVector<Column> &colu
 
 Builder &Builder::select(const QVector<Column> &columns)
 {
-    // FEATURE expressions, add Query::Expression overload, find all occurences of Illuminate\Database\Query\Expression in the Eloquent and add support to TinyORM, I will need to add overloads for some methods, for columns and also for values silverqx
     clearColumns();
 
     std::ranges::copy(columns, std::back_inserter(m_columns));

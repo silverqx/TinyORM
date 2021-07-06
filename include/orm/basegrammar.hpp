@@ -32,10 +32,11 @@ namespace Query
     {
         Q_DISABLE_COPY(BaseGrammar)
 
+        /*! Expression alias. */
         using Expression = Query::Expression;
 
     public:
-        BaseGrammar() = default;
+        /*! Virtual destructor. */
         inline virtual ~BaseGrammar() = default;
 
         /*! Get the format for database stored dates. */
@@ -44,16 +45,10 @@ namespace Query
         /*! Wrap a value in keyword identifiers. */
         QString wrap(const QString &value, bool prefixAlias = false) const;
         /*! Wrap a value in keyword identifiers. */
-//        virtual QString wrap(const Expression &value, bool prefixAlias = false) const;
-        /*! Wrap a value in keyword identifiers. */
-//        QString wrap(const QVariant &value) const;
-        /*! Wrap a value in keyword identifiers. */
         QString wrap(const Column &value) const;
 
         /*! Wrap a table in keyword identifiers. */
         QString wrapTable(const QString &table) const;
-        /*! Wrap a table in keyword identifiers. */
-//        virtual QString wrapTable(const Expression &table) const;
         /*! Wrap a table in keyword identifiers. */
         QString wrapTable(const FromClause &table) const;
 

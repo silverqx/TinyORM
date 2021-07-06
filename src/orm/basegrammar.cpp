@@ -10,10 +10,13 @@ namespace Orm
 {
 
 /*
-   wrap methods are only for column names, table names and identifiers.
-   parameter()/parametrize() methods are for values.
+   wrap methods are only for column names, table names and identifiers, they use
+   primarily Column type and QString type.
+   parameter()/parametrize() methods are for values, parameter uses QVariant only and
+   parametrize uses Container type and Parametrize constraint.
    columnize() is used for column names containers (constrained by ColumnContainer
-   concept) and it calls wrapArray() internally.
+   concept) and it calls wrapArray() internally, columnize uses ColumnContainer
+   constraint.
    Values or columns/tables/identifiers can also be the Query::Expression.
    The Query::Expression is always converted to the QString and appended to the query.
    quoteString() can be used to quote string literals, it is not used anywhere for now.
@@ -44,18 +47,6 @@ QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const
     return wrapSegments(value.split(QChar('.')));
 }
 
-// CUR finish commented, also add comment when is which overload used and how it works silverqx
-//QString BaseGrammar::wrap(const Expression &value, const bool) const
-//{
-//    return getValue(value).value<QString>();
-//}
-
-//QString BaseGrammar::wrap(const QVariant &value) const
-//{
-//    return isExpression(value) ? getValue(value).value<QString>()
-//                               : wrap(value.value<QString>());
-//}
-
 QString BaseGrammar::wrap(const Column &value) const
 {
     return std::holds_alternative<Expression>(value)
@@ -83,13 +74,6 @@ QString BaseGrammar::quoteString(const QString &value) const
     return QStringLiteral("'%1'").arg(value);
 }
 
-//QString BaseGrammar::wrapTable(const Expression &table) const
-//{
-//    return getValue(table).value<QString>();
-//}
-
-// CUR remove all expressions todos when I finish expressions for columns and add comment why I have different overloads for columns and values, described below silverqx
-// FEATURE expressions, this api (method overloads) which takes Expression as parameter looks strange and inconsistent because wrap() takes QString/Expression, wrapTable() the same, instead getValue() takes QVariant/Expression and parameter takes QVariant only, this is a consequence of that columns are always passed as QString (Expression overload are not never called), but values are passed as QVariant and CAN CONTAIN QVariant(Expression), so investigate in the future and it is also related to the another feature todo, which propose to add Expression overloads for methods in the query builder silverqx
 bool BaseGrammar::isExpression(const QVariant &value) const
 {
     return value.canConvert<Expression>();
@@ -114,7 +98,6 @@ BaseGrammar &BaseGrammar::setTablePrefix(const QString &prefix)
 
 QString BaseGrammar::parameter(const QVariant &value) const
 {
-    // FEATURE expressions, how to work with them and pass them to the query builder 🤔 silverqx
     return isExpression(value) ? getValue(value).value<QString>()
                                : QStringLiteral("?");
 }
