@@ -203,14 +203,27 @@ namespace Query
         Builder &joinSub(T &&query, const QString &as, const QString &first,
                          const QString &comparison, const QVariant &second,
                          const QString &type = "inner", bool where = false);
+        /*! Add a subquery join clause to the query. */
+        template<SubQuery T>
+        Builder &joinSub(T &&query, const QString &as,
+                         const std::function<void(JoinClause &)> &callback,
+                         const QString &type = "inner");
         /*! Add a subquery left join to the query. */
         template<SubQuery T>
         Builder &leftJoinSub(T &&query, const QString &as, const QString &first,
                              const QString &comparison, const QVariant &second);
+        /*! Add a subquery left join to the query. */
+        template<SubQuery T>
+        Builder &leftJoinSub(T &&query, const QString &as,
+                             const std::function<void(JoinClause &)> &callback);
         /*! Add a subquery right join to the query. */
         template<SubQuery T>
         Builder &rightJoinSub(T &&query, const QString &as, const QString &first,
                               const QString &comparison, const QVariant &second);
+        /*! Add a subquery right join to the query. */
+        template<SubQuery T>
+        Builder &rightJoinSub(T &&query, const QString &as,
+                              const std::function<void(JoinClause &)> &callback);
 
         /*! Add a basic where clause to the query. */
         Builder &where(const Column &column, const QString &comparison,
@@ -525,6 +538,11 @@ namespace Query
                 std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
                 const QString &first, const QString &comparison, const QVariant &second,
                 const QString &type, bool where);
+        /*! Add a subquery join clause to the query, common code. */
+        Builder &joinSubInternal(
+                std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
+                const std::function<void(JoinClause &)> &callback,
+                const QString &type);
 
         /*! All of the available clause operators. */
         const QVector<QString> m_operators {
@@ -673,6 +691,7 @@ namespace Query
                             first, comparison, second, where);
     }
 
+    // FUTURE joinSub, missing where param, also in joinSub silverqx
     template<JoinTable T>
     inline Builder &
     Builder::join(T &&table, const std::function<void(JoinClause &)> &callback,
@@ -769,6 +788,15 @@ namespace Query
 
     template<SubQuery T>
     inline Builder &
+    Builder::joinSub(T &&query, const QString &as,
+                     const std::function<void(JoinClause &)> &callback,
+                     const QString &type)
+    {
+        return joinSubInternal(createSub(std::forward<T>(query)), as, callback, type);
+    }
+
+    template<SubQuery T>
+    inline Builder &
     Builder::leftJoinSub(T &&query, const QString &as, const QString &first,
                          const QString &comparison, const QVariant &second)
     {
@@ -778,11 +806,27 @@ namespace Query
 
     template<SubQuery T>
     inline Builder &
+    Builder::leftJoinSub(T &&query, const QString &as,
+                         const std::function<void(JoinClause &)> &callback)
+    {
+        return joinSub(std::forward<T>(query), as, callback, QStringLiteral("left"));
+    }
+
+    template<SubQuery T>
+    inline Builder &
     Builder::rightJoinSub(T &&query, const QString &as, const QString &first,
                           const QString &comparison, const QVariant &second)
     {
         return joinSub(std::forward<T>(query), as, first, comparison, second,
                        QStringLiteral("right"));
+    }
+
+    template<SubQuery T>
+    inline Builder &
+    Builder::rightJoinSub(T &&query, const QString &as,
+                          const std::function<void(JoinClause &)> &callback)
+    {
+        return joinSub(std::forward<T>(query), as, callback, QStringLiteral("right"));
     }
 
     template<ColumnConcept ...Args>

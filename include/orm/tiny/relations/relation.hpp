@@ -331,16 +331,32 @@ namespace Relations
                 T &&query, const QString &as, const QString &first,
                 const QString &comparison, const QVariant &second,
                 const QString &type = "inner", bool where = false) const;
+        /*! Add a subquery join clause to the query. */
+        template<SubQuery T>
+        const Relation &joinSub(
+                T &&query, const QString &as,
+                const std::function<void(JoinClause &)> &callback,
+                const QString &type = "inner") const;
         /*! Add a subquery left join to the query. */
         template<SubQuery T>
         const Relation &leftJoinSub(
                 T &&query, const QString &as, const QString &first,
                 const QString &comparison, const QVariant &second) const;
+        /*! Add a subquery left join to the query. */
+        template<SubQuery T>
+        const Relation &leftJoinSub(
+                T &&query, const QString &as,
+                const std::function<void(JoinClause &)> &callback) const;
         /*! Add a subquery right join to the query. */
         template<SubQuery T>
         const Relation &rightJoinSub(
                 T &&query, const QString &as, const QString &first,
                 const QString &comparison, const QVariant &second) const;
+        /*! Add a subquery right join to the query. */
+        template<SubQuery T>
+        const Relation &rightJoinSub(
+                T &&query, const QString &as,
+                const std::function<void(JoinClause &)> &callback) const;
 
         /*! Add a basic where clause to the query. */
         const Relation &where(
@@ -1133,6 +1149,19 @@ namespace Relations
     template<class Model, class Related>
     template<SubQuery T>
     const Relation<Model, Related> &
+    Relation<Model, Related>::joinSub(
+            T &&query, const QString &as,
+            const std::function<void(JoinClause &)> &callback,
+            const QString &type) const
+    {
+        m_query->joinSub(std::forward<T>(query), as, callback, type);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<SubQuery T>
+    const Relation<Model, Related> &
     Relation<Model, Related>::leftJoinSub(
             T &&query, const QString &as, const QString &first,
             const QString &comparison, const QVariant &second) const
@@ -1145,11 +1174,35 @@ namespace Relations
     template<class Model, class Related>
     template<SubQuery T>
     const Relation<Model, Related> &
+    Relation<Model, Related>::leftJoinSub(
+            T &&query, const QString &as,
+            const std::function<void(JoinClause &)> &callback) const
+    {
+        m_query->joinSub(std::forward<T>(query), as, callback, QStringLiteral("left"));
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<SubQuery T>
+    const Relation<Model, Related> &
     Relation<Model, Related>::rightJoinSub(
             T &&query, const QString &as, const QString &first,
             const QString &comparison, const QVariant &second) const
     {
         m_query->rightJoinSub(std::forward<T>(query), as, first, comparison, second);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<SubQuery T>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::rightJoinSub(
+            T &&query, const QString &as,
+            const std::function<void(JoinClause &)> &callback) const
+    {
+        m_query->joinSub(std::forward<T>(query), as, callback, QStringLiteral("right"));
 
         return *this;
     }

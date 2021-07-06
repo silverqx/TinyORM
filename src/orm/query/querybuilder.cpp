@@ -944,6 +944,20 @@ Builder &Builder::joinSubInternal(
                 first, comparison, second, type, where);
 }
 
+Builder &Builder::joinSubInternal(
+        std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
+        const std::function<void(JoinClause &)> &callback,
+        const QString &type)
+{
+    auto &[queryString, bindings] = subQuery;
+
+    addBinding(std::move(bindings), BindingType::JOIN);
+
+    return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
+                                                            m_grammar.wrapTable(as))),
+                callback, type);
+}
+
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE
 } // namespace TINYORM_COMMON_NAMESPACE

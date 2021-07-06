@@ -373,16 +373,32 @@ namespace Relations {
         joinSub(T &&query, const QString &as, const QString &first,
                 const QString &comparison, const QVariant &second,
                 const QString &type = "inner", bool where = false);
+        /*! Add a subquery join clause to the query. */
+        template<SubQuery T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        joinSub(T &&query, const QString &as,
+                const std::function<void(JoinClause &)> &callback,
+                const QString &type = "inner");
         /*! Add a subquery left join to the query. */
         template<SubQuery T>
         static std::unique_ptr<TinyBuilder<Derived>>
         leftJoinSub(T &&query, const QString &as, const QString &first,
                     const QString &comparison, const QVariant &second);
+        /*! Add a subquery left join to the query. */
+        template<SubQuery T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        leftJoinSub(T &&query, const QString &as,
+                    const std::function<void(JoinClause &)> &callback);
         /*! Add a subquery right join to the query. */
         template<SubQuery T>
         static std::unique_ptr<TinyBuilder<Derived>>
         rightJoinSub(T &&query, const QString &as, const QString &first,
                      const QString &comparison, const QVariant &second);
+        /*! Add a subquery right join to the query. */
+        template<SubQuery T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        rightJoinSub(T &&query, const QString &as,
+                     const std::function<void(JoinClause &)> &callback);
 
         /*! Add a basic where clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -1981,6 +1997,21 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::joinSub(
+            T &&query, const QString &as,
+            const std::function<void(JoinClause &)> &callback,
+            const QString &type)
+    {
+        auto builder = Derived::query();
+
+        builder->joinSub(std::forward<T>(query), as, callback, type);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SubQuery T>
+    std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::leftJoinSub(
             T &&query, const QString &as, const QString &first,
             const QString &comparison, const QVariant &second)
@@ -1995,6 +2026,20 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::leftJoinSub(
+            T &&query, const QString &as,
+            const std::function<void(JoinClause &)> &callback)
+    {
+        auto builder = Derived::query();
+
+        builder->joinSub(std::forward<T>(query), as, callback, QStringLiteral("left"));
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SubQuery T>
+    std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::rightJoinSub(
             T &&query, const QString &as, const QString &first,
             const QString &comparison, const QVariant &second)
@@ -2002,6 +2047,20 @@ namespace Relations {
         auto builder = Derived::query();
 
         builder->rightJoinSub(std::forward<T>(query), as, first, comparison, second);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SubQuery T>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::rightJoinSub(
+            T &&query, const QString &as,
+            const std::function<void(JoinClause &)> &callback)
+    {
+        auto builder = Derived::query();
+
+        builder->joinSub(std::forward<T>(query), as, callback, QStringLiteral("right"));
 
         return builder;
     }

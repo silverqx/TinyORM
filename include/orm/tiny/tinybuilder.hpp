@@ -246,14 +246,27 @@ namespace Relations
         Builder &joinSub(T &&query, const QString &as, const QString &first,
                          const QString &comparison, const QVariant &second,
                          const QString &type = "inner", bool where = false);
+        /*! Add a subquery join clause to the query. */
+        template<SubQuery T>
+        Builder &joinSub(T &&query, const QString &as,
+                         const std::function<void(JoinClause &)> &callback,
+                         const QString &type = "inner");
         /*! Add a subquery left join to the query. */
         template<SubQuery T>
         Builder &leftJoinSub(T &&query, const QString &as, const QString &first,
                              const QString &comparison, const QVariant &second);
+        /*! Add a subquery left join to the query. */
+        template<SubQuery T>
+        Builder &leftJoinSub(T &&query, const QString &as,
+                             const std::function<void(JoinClause &)> &callback);
         /*! Add a subquery right join to the query. */
         template<SubQuery T>
         Builder &rightJoinSub(T &&query, const QString &as, const QString &first,
                               const QString &comparison, const QVariant &second);
+        /*! Add a subquery right join to the query. */
+        template<SubQuery T>
+        Builder &rightJoinSub(T &&query, const QString &as,
+                              const std::function<void(JoinClause &)> &callback);
 
         /*! Add a basic where clause to the query. */
         Builder &where(const Column &column, const QString &comparison,
@@ -1098,6 +1111,17 @@ namespace Relations
     template<typename Model>
     template<SubQuery T>
     Builder<Model> &
+    Builder<Model>::joinSub(T &&query, const QString &as,
+                            const std::function<void(JoinClause &)> &callback,
+                            const QString &type)
+    {
+        toBase().joinSub(std::forward<T>(query), as, callback, type);
+        return *this;
+    }
+
+    template<typename Model>
+    template<SubQuery T>
+    Builder<Model> &
     Builder<Model>::leftJoinSub(T &&query, const QString &as, const QString &first,
                                 const QString &comparison, const QVariant &second)
     {
@@ -1108,10 +1132,30 @@ namespace Relations
     template<typename Model>
     template<SubQuery T>
     Builder<Model> &
+    Builder<Model>::leftJoinSub(T &&query, const QString &as,
+                                const std::function<void(JoinClause &)> &callback)
+    {
+        toBase().joinSub(std::forward<T>(query), as, callback, QStringLiteral("left"));
+        return *this;
+    }
+
+    template<typename Model>
+    template<SubQuery T>
+    Builder<Model> &
     Builder<Model>::rightJoinSub(T &&query, const QString &as, const QString &first,
                                  const QString &comparison, const QVariant &second)
     {
         toBase().rightJoinSub(std::forward<T>(query), as, first, comparison, second);
+        return *this;
+    }
+
+    template<typename Model>
+    template<SubQuery T>
+    Builder<Model> &
+    Builder<Model>::rightJoinSub(T &&query, const QString &as,
+                                 const std::function<void(JoinClause &)> &callback)
+    {
+        toBase().joinSub(std::forward<T>(query), as, callback, QStringLiteral("right"));
         return *this;
     }
 
