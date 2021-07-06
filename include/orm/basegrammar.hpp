@@ -36,6 +36,8 @@ namespace Query
         using Expression = Query::Expression;
 
     public:
+        /*! Default constructor. */
+        BaseGrammar() = default;
         /*! Virtual destructor. */
         inline virtual ~BaseGrammar() = default;
 
