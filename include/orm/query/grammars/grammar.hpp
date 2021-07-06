@@ -140,7 +140,10 @@ namespace Orm::Query::Grammars
         QString whereNull(const WhereConditionItem &where) const;
         /*! Compile a "where not null" clause. */
         QString whereNotNull(const WhereConditionItem &where) const;
+        /*! Compile a raw where clause. */
+        QString whereRaw(const WhereConditionItem &where) const;
 
+        // CUR reorder silverqx
         /*! Compile the "order by" portions of the query. */
         QString compileOrders(const QueryBuilder &query) const;
         /*! Compile the query orders to the vector. */

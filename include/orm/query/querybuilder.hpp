@@ -144,13 +144,12 @@ namespace Query
         /*! Set the table which the query is targeting. */
         Builder &from(Expression &&table);
 
-        /*! Set the table which the query is targeting. */
-        Builder &fromRaw(const QString &expression,
-                         const QVector<QVariant> &bindings = {});
-
         /*! Makes "from" fetch from a subquery. */
         template<SubQuery T>
         Builder &fromSub(T &&query, const QString &as);
+        /*! Set the table which the query is targeting. */
+        Builder &fromRaw(const QString &expression,
+                         const QVector<QVariant> &bindings = {});
 
         /*! Add a join clause to the query. */
         template<JoinTable T>
@@ -299,6 +298,12 @@ namespace Query
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const Column &column);
 
+        /*! Add a raw "where" clause to the query. */
+        Builder &whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
+                          const QString &condition = "and");
+        /*! Add a raw "or where" clause to the query. */
+        Builder &orWhereRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+
         /*! Add a "group by" clause to the query. */
         Builder &groupBy(const QVector<Column> &groups);
         /*! Add a "group by" clause to the query. */
@@ -307,6 +312,9 @@ namespace Query
         template<ColumnConcept ...Args>
         Builder &groupBy(Args &&...groups);
 
+        /*! Add a raw "groupBy" clause to the query. */
+        Builder &groupByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+
         /*! Add a "having" clause to the query. */
         Builder &having(const Column &column, const QString &comparison,
                         const QVariant &value, const QString &condition = "and");
@@ -314,10 +322,19 @@ namespace Query
         Builder &orHaving(const Column &column, const QString &comparison,
                           const QVariant &value);
 
+        /*! Add a raw "having" clause to the query. */
+        Builder &havingRaw(const QString &sql, const QVector<QVariant> &bindings = {},
+                           const QString &condition = "and");
+        /*! Add a raw "or having" clause to the query. */
+        Builder &orHavingRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+
         /*! Add an "order by" clause to the query. */
         Builder &orderBy(const Column &column, const QString &direction = "asc");
         /*! Add a descending "order by" clause to the query. */
         Builder &orderByDesc(const Column &column);
+
+        /*! Add a raw "order by" clause to the query. */
+        Builder &orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
         /*! Add an "order by" clause for a timestamp to the query. */
         Builder &latest(const Column &column = "created_at");

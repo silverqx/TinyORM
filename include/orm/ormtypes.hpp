@@ -69,6 +69,7 @@ namespace Query
         NOT_IN,
         NULL_,
         NOT_NULL,
+        RAW,
     };
 
     struct WhereConditionItem
@@ -81,13 +82,16 @@ namespace Query
         QSharedPointer<QueryBuilder> nestedQuery {nullptr};
         QVector<QVariant>            values      {};
         Column                       columnTwo   {};
+        QString                      sql         {};
     };
 
     enum struct HavingType
     {
         UNDEFINED = -1,
         BASIC,
+        RAW,
     };
+
     struct HavingConditionItem
     {
         Column     column;
@@ -95,12 +99,14 @@ namespace Query
         QString    comparison {"="};
         QString    condition  {"and"};
         HavingType type       {HavingType::UNDEFINED};
+        QString    sql        {};
     };
 
     struct OrderByItem
     {
-        Column  column;
-        QString direction {"asc"};
+        Column      column;
+        QString     direction {"asc"};
+        QString     sql       {};
     };
 
     struct SHAREDLIB_EXPORT UpdateItem

@@ -443,6 +443,14 @@ namespace Relations
         /*! Add an "or where not null" clause to the query. */
         const Relation &orWhereNotNull(const Column &column) const;
 
+        /*! Add a raw "where" clause to the query. */
+        const Relation &whereRaw(const QString &sql,
+                                 const QVector<QVariant> &bindings = {},
+                                 const QString &condition = "and") const;
+        /*! Add a raw "or where" clause to the query. */
+        const Relation &orWhereRaw(const QString &sql,
+                                   const QVector<QVariant> &bindings = {}) const;
+
         /*! Add a "group by" clause to the query. */
         const Relation &groupBy(const QVector<Column> &groups) const;
         /*! Add a "group by" clause to the query. */
@@ -450,6 +458,10 @@ namespace Relations
         /*! Add a "group by" clause to the query. */
         template<ColumnConcept ...Args>
         const Relation &groupBy(Args &&...groups) const;
+
+        /*! Add a raw "groupBy" clause to the query. */
+        const Relation &groupByRaw(const QString &sql,
+                                   const QVector<QVariant> &bindings = {}) const;
 
         /*! Add a "having" clause to the query. */
         const Relation &having(const Column &column, const QString &comparison,
@@ -459,11 +471,23 @@ namespace Relations
         const Relation &orHaving(const Column &column, const QString &comparison,
                                  const QVariant &value) const;
 
+        /*! Add a raw "having" clause to the query. */
+        const Relation &havingRaw(const QString &sql,
+                                  const QVector<QVariant> &bindings = {},
+                                  const QString &condition = "and") const;
+        /*! Add a raw "or having" clause to the query. */
+        const Relation &orHavingRaw(const QString &sql,
+                                    const QVector<QVariant> &bindings = {}) const;
+
         /*! Add an "order by" clause to the query. */
         const Relation &orderBy(const Column &column,
                                 const QString &direction = "asc") const;
         /*! Add a descending "order by" clause to the query. */
         const Relation &orderByDesc(const Column &column) const;
+
+        /*! Add a raw "order by" clause to the query. */
+        const Relation &orderByRaw(const QString &sql,
+                                   const QVector<QVariant> &bindings = {}) const;
 
         /*! Add an "order by" clause for a timestamp to the query. */
         const Relation &latest(const Column &column = "") const;
@@ -1468,6 +1492,27 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
+    Relation<Model, Related>::whereRaw(
+            const QString &sql, const QVector<QVariant> &bindings,
+            const QString &condition) const
+    {
+        m_query->whereRaw(sql, bindings, condition);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orWhereRaw(
+            const QString &sql, const QVector<QVariant> &bindings) const
+    {
+        m_query->whereRaw(sql, bindings, QStringLiteral("or"));
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
     Relation<Model, Related>::groupBy(const QVector<Column> &groups) const
     {
         m_query->groupBy(groups);
@@ -1496,6 +1541,16 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
+    Relation<Model, Related>::groupByRaw(const QString &sql,
+                                         const QVector<QVariant> &bindings) const
+    {
+        m_query->groupByRaw(sql, bindings);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
     Relation<Model, Related>::having(
             const Column &column, const QString &comparison,
             const QVariant &value, const QString &condition) const
@@ -1517,6 +1572,27 @@ namespace Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
+    Relation<Model, Related>::havingRaw(
+            const QString &sql,  const QVector<QVariant> &bindings,
+            const QString &condition) const
+    {
+        m_query->havingRaw(sql, bindings, condition);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orHavingRaw(
+            const QString &sql,  const QVector<QVariant> &bindings) const
+    {
+        m_query->havingRaw(sql, bindings, QStringLiteral("or"));
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
     Relation<Model, Related>::orderBy(const Column &column,
                                       const QString &direction) const
     {
@@ -1530,6 +1606,16 @@ namespace Relations
     Relation<Model, Related>::orderByDesc(const Column &column) const
     {
         m_query->orderByDesc(column);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orderByRaw(const QString &sql,
+                                         const QVector<QVariant> &bindings) const
+    {
+        m_query->orderByRaw(sql, bindings);
 
         return *this;
     }

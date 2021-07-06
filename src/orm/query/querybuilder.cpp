@@ -438,6 +438,21 @@ Builder &Builder::orWhereNotNull(const Column &column)
     return orWhereNotNull(QVector<Column> {column});
 }
 
+Builder &Builder::whereRaw(const QString &sql, const QVector<QVariant> &bindings,
+                           const QString &condition)
+{
+    m_wheres.append({.condition = condition, .type = WhereType::RAW, .sql = sql});
+
+    addBinding(bindings, BindingType::WHERE);
+
+    return *this;
+}
+
+Builder &Builder::orWhereRaw(const QString &sql, const QVector<QVariant> &bindings)
+{
+    return whereRaw(sql, bindings, QStringLiteral("or"));
+}
+
 Builder &Builder::groupBy(const QVector<Column> &groups)
 {
     if (groups.isEmpty())
@@ -451,6 +466,15 @@ Builder &Builder::groupBy(const QVector<Column> &groups)
 Builder &Builder::groupBy(const Column &group)
 {
     return groupBy(QVector<Column> {group});
+}
+
+Builder &Builder::groupByRaw(const QString &sql, const QVector<QVariant> &bindings)
+{
+    m_groups.append(Expression(sql));
+
+    addBinding(bindings, BindingType::GROUPBY);
+
+    return *this;
 }
 
 Builder &Builder::having(const Column &column, const QString &comparison,
@@ -474,6 +498,21 @@ Builder &Builder::orHaving(const Column &column, const QString &comparison,
     return having(column, comparison, value, QStringLiteral("or"));
 }
 
+Builder &Builder::havingRaw(const QString &sql, const QVector<QVariant> &bindings,
+                            const QString &condition)
+{
+    m_havings.append({.condition = condition, .type = HavingType::RAW, .sql = sql});
+
+    addBinding(bindings, BindingType::HAVING);
+
+    return *this;
+}
+
+Builder &Builder::orHavingRaw(const QString &sql, const QVector<QVariant> &bindings)
+{
+    return havingRaw(sql, bindings, QStringLiteral("or"));
+}
+
 Builder &Builder::orderBy(const Column &column, const QString &direction)
 {
     const auto &directionLower = direction.toLower();
@@ -492,6 +531,15 @@ Builder &Builder::orderBy(const Column &column, const QString &direction)
 Builder &Builder::orderByDesc(const Column &column)
 {
     return orderBy(column, QStringLiteral("desc"));
+}
+
+Builder &Builder::orderByRaw(const QString &sql, const QVector<QVariant> &bindings)
+{
+    m_orders.append({.sql = sql});
+
+    addBinding(bindings, BindingType::ORDER);
+
+    return *this;
 }
 
 Builder &Builder::latest(const Column &column)

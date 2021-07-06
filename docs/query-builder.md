@@ -148,6 +148,55 @@ The `selectRaw` method can be used in place of `addSelect(DB::raw(...))`. This m
                       ->selectRaw("price * ? as price_with_tax", {1.0825})
                       .get();
 
+<a name="fromraw"></a>
+#### `fromRaw`
+
+The `fromRaw` method may be used to provide a raw string as the value of the "from" clause:
+
+    auto users = DB::connection("postgres").query()
+                     ->fromRaw("(select id, name from users where id < ?) as u", {5})
+                     .where("id", "<", 3)
+                     .get();
+
+<a name="whereraw-orwhereraw"></a>
+#### `whereRaw / orWhereRaw`
+
+The `whereRaw` and `orWhereRaw` methods can be used to inject a raw "where" clause into your query. These methods accept an optional vector of bindings as their second argument:
+
+    auto orders = DB::table("orders")
+                      ->whereRaw("price > IF(state = \"TX\", ?, 100)", {200})
+                      .get();
+
+<a name="groupbyraw"></a>
+### `groupByRaw`
+
+The `groupByRaw` method may be used to provide a raw string as the value of the `group by` clause:
+
+    auto orders = DB::table("orders")
+                      ->select({"city", "state"})
+                      .groupByRaw("city, state")
+                      .get();
+
+<a name="havingraw-orhavingraw"></a>
+#### `havingRaw / orHavingRaw`
+
+The `havingRaw` and `orHavingRaw` methods may be used to provide a raw string as the value of the "having" clause. These methods accept an optional vector of bindings as their second argument:
+
+    auto orders = DB::table("orders")
+                      ->select({"department", DB::raw("SUM(price) as total_sales")})
+                      .groupBy("department")
+                      .havingRaw("SUM(price) > ?", {2500})
+                      .get();
+
+<a name="orderbyraw"></a>
+#### `orderByRaw`
+
+The `orderByRaw` method may be used to provide a raw string as the value of the "order by" clause:
+
+    auto orders = DB::table("orders")
+                      ->orderByRaw("updated_at - created_at DESC")
+                      .get();
+
 <a name="joins"></a>
 ## Joins
 

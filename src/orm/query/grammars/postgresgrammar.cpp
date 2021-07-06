@@ -160,6 +160,7 @@ PostgresGrammar::getWhereMethod(const WhereType whereType) const
         getBind(&PostgresGrammar::whereNotIn),
         getBind(&PostgresGrammar::whereNull),
         getBind(&PostgresGrammar::whereNotNull),
+        getBind(&PostgresGrammar::whereRaw),
     };
 
     static const auto size = cached.size();

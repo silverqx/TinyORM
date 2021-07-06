@@ -284,10 +284,19 @@ QString Grammar::compileHavings(const QueryBuilder &query) const
 
 QString Grammar::compileHaving(const HavingConditionItem &having) const
 {
+    /* If the having clause is "raw", we can just return the clause straight away
+       without doing any more processing on it. Otherwise, we will compile the
+       clause into SQL based on the components that make it up from builder. */
     switch (having.type) {
+    T_LIKELY
     case HavingType::BASIC:
         return compileBasicHaving(having);
 
+    T_UNLIKELY
+    case HavingType::RAW:
+        return QStringLiteral("%1 %2").arg(having.condition, having.sql);
+
+    T_UNLIKELY
     default:
         throw RuntimeError(QStringLiteral("Unknown HavingType (%1).")
                            .arg(static_cast<int>(having.type)));
@@ -357,6 +366,11 @@ QString Grammar::whereNotNull(const WhereConditionItem &where) const
     return QStringLiteral("%1 is not null").arg(wrap(where.column));
 }
 
+QString Grammar::whereRaw(const WhereConditionItem &where) const
+{
+    return where.sql;
+}
+
 QString Grammar::compileOrders(const QueryBuilder &query) const
 {
     if (query.getOrders().isEmpty())
@@ -373,8 +387,11 @@ QStringList Grammar::compileOrdersToVector(const QueryBuilder &query) const
     compiledOrders.reserve(orders.size());
 
     for (const auto &order : orders)
-        compiledOrders << QStringLiteral("%1 %2")
-                          .arg(wrap(order.column), order.direction.toLower());
+        if (order.sql.isEmpty()) T_LIKELY
+            compiledOrders << QStringLiteral("%1 %2")
+                              .arg(wrap(order.column), order.direction.toLower());
+        else T_UNLIKELY
+            compiledOrders << order.sql;
 
     return compiledOrders;
 }

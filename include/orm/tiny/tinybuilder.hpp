@@ -342,6 +342,12 @@ namespace Relations
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const Column &column);
 
+        /*! Add a raw "where" clause to the query. */
+        Builder &whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
+                          const QString &condition = "and");
+        /*! Add a raw "or where" clause to the query. */
+        Builder &orWhereRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+
         /*! Add a "group by" clause to the query. */
         Builder &groupBy(const QVector<Column> &groups);
         /*! Add a "group by" clause to the query. */
@@ -350,6 +356,9 @@ namespace Relations
         template<ColumnConcept ...Args>
         Builder &groupBy(Args &&...groups);
 
+        /*! Add a raw "groupBy" clause to the query. */
+        Builder &groupByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+
         /*! Add a "having" clause to the query. */
         Builder &having(const Column &column, const QString &comparison,
                         const QVariant &value, const QString &condition = "and");
@@ -357,10 +366,19 @@ namespace Relations
         Builder &orHaving(const Column &column, const QString &comparison,
                           const QVariant &value);
 
+        /*! Add a raw "having" clause to the query. */
+        Builder &havingRaw(const QString &sql, const QVector<QVariant> &bindings = {},
+                           const QString &condition = "and");
+        /*! Add a raw "or having" clause to the query. */
+        Builder &orHavingRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+
         /*! Add an "order by" clause to the query. */
         Builder &orderBy(const Column &column, const QString &direction = "asc");
         /*! Add a descending "order by" clause to the query. */
         Builder &orderByDesc(const Column &column);
+
+        /*! Add a raw "order by" clause to the query. */
+        Builder &orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
         /*! Add an "order by" clause for a timestamp to the query. */
         Builder &latest(const Column &column = "");
@@ -1381,6 +1399,23 @@ namespace Relations
     }
 
     template<typename Model>
+    Builder<Model> &
+    Builder<Model>::whereRaw(const QString &sql, const QVector<QVariant> &bindings,
+                             const QString &condition)
+    {
+        toBase().whereRaw(sql, bindings, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::orWhereRaw(const QString &sql, const QVector<QVariant> &bindings)
+    {
+        toBase().whereRaw(sql, bindings, QStringLiteral("or"));
+        return *this;
+    }
+
+    template<typename Model>
     Builder<Model> &Builder<Model>::groupBy(const QVector<Column> &groups)
     {
         toBase().groupBy(groups);
@@ -1404,6 +1439,14 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
+    Builder<Model>::groupByRaw(const QString &sql, const QVector<QVariant> &bindings)
+    {
+        toBase().groupByRaw(sql, bindings);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
     Builder<Model>::having(const Column &column, const QString &comparison,
                            const QVariant &value, const QString &condition)
     {
@@ -1422,6 +1465,23 @@ namespace Relations
 
     template<typename Model>
     Builder<Model> &
+    Builder<Model>::havingRaw(const QString &sql, const QVector<QVariant> &bindings,
+                              const QString &condition)
+    {
+        toBase().havingRaw(sql, bindings, condition);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::orHavingRaw(const QString &sql, const QVector<QVariant> &bindings)
+    {
+        toBase().havingRaw(sql, bindings, QStringLiteral("or"));
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
     Builder<Model>::orderBy(const Column &column, const QString &direction)
     {
         toBase().orderBy(column, direction);
@@ -1432,6 +1492,14 @@ namespace Relations
     Builder<Model> &Builder<Model>::orderByDesc(const Column &column)
     {
         toBase().orderByDesc(column);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::orderByRaw(const QString &sql,
+                                               const QVector<QVariant> &bindings)
+    {
+        toBase().orderByRaw(sql, bindings);
         return *this;
     }
 

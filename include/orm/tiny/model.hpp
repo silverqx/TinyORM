@@ -499,6 +499,14 @@ namespace Relations {
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereNotNull(const Column &column);
 
+        /*! Add a raw "where" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
+                 const QString &condition = "and");
+        /*! Add a raw "or where" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+
         /*! Add a "group by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         groupBy(const QVector<Column> &groups);
@@ -510,6 +518,10 @@ namespace Relations {
         static std::unique_ptr<TinyBuilder<Derived>>
         groupBy(Args &&...groups);
 
+        /*! Add a raw "groupBy" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        groupByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+
         /*! Add a "having" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         having(const Column &column, const QString &comparison,
@@ -519,12 +531,24 @@ namespace Relations {
         orHaving(const Column &column, const QString &comparison,
                  const QVariant &value);
 
+        /*! Add a raw "having" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        havingRaw(const QString &sql, const QVector<QVariant> &bindings = {},
+                  const QString &condition = "and");
+        /*! Add a raw "or having" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orHavingRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+
         /*! Add an "order by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         orderBy(const Column &column, const QString &direction = "asc");
         /*! Add a descending "order by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         orderByDesc(const Column &column);
+
+        /*! Add a raw "order by" clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
         /*! Add an "order by" clause for a timestamp to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -2381,6 +2405,31 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereRaw(
+            const QString &sql, const QVector<QVariant> &bindings,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereRaw(sql, bindings, condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orWhereRaw(
+            const QString &sql, const QVector<QVariant> &bindings)
+    {
+        auto builder = query();
+
+        builder->whereRaw(sql, bindings, QStringLiteral("or"));
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::groupBy(const QVector<Column> &groups)
     {
         auto builder = query();
@@ -2397,6 +2446,18 @@ namespace Relations {
         auto builder = query();
 
         builder->groupBy(group);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::groupByRaw(
+            const QString &sql, const QVector<QVariant> &bindings)
+    {
+        auto builder = query();
+
+        builder->groupByRaw(sql, bindings);
 
         return builder;
     }
@@ -2440,6 +2501,31 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::havingRaw(
+            const QString &sql, const QVector<QVariant> &bindings,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->havingRaw(sql, bindings, condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orHavingRaw(
+            const QString &sql, const QVector<QVariant> &bindings)
+    {
+        auto builder = query();
+
+        builder->havingRaw(sql, bindings, QStringLiteral("or"));
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orderBy(const Column &column,
                                              const QString &direction)
     {
@@ -2457,6 +2543,18 @@ namespace Relations {
         auto builder = query();
 
         builder->orderByDesc(column);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orderByRaw(const QString &sql,
+                                                const QVector<QVariant> &bindings)
+    {
+        auto builder = query();
+
+        builder->orderByRaw(sql, bindings);
 
         return builder;
     }
