@@ -203,6 +203,21 @@ If you would like to use a "where" clause on your joins, you may use the `where`
         })
         .get();
 
+<a name="subquery-joins"></a>
+#### Subquery Joins
+
+You may use the `joinSub`, `leftJoinSub`, and `rightJoinSub` methods to join a query to a subquery. Each of these methods receives three arguments: the subquery, its table alias, and a lambda expression that defines the related columns. In this example, we will retrieve a collection of users where each user record also contains the `created_at` timestamp of the user's most recently published blog post:
+
+    auto latestPosts = DB::table("posts")
+                       ->select({"user_id", DB::raw("MAX(created_at) as last_post_created_at")})
+                       .whereEq("is_published", true)
+                       .groupBy("user_id");
+
+    auto users = DB::table("users")
+                     ->joinSub(latestPosts, "latest_posts", [](auto &join) {
+                         join.on("users.id", "=", "latest_posts.user_id");
+                     }).get();
+
 <a name="basic-where-clauses"></a>
 ## Basic Where Clauses
 
