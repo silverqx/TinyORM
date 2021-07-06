@@ -277,7 +277,7 @@ As we have seen, TinyORM methods like `all` and `get` retrieve multiple records 
 <a name="retrieving-single-models"></a>
 ## Retrieving Single Models
 
-In addition to retrieving all of the records matching a given query, you may also retrieve single records using the `find`, `first`, `firstWhere`, or `firstWhereEq` methods. Instead of returning a collection of models, these methods return a single model instance:
+In addition to retrieving all of the records matching a given query, you may also retrieve single records using the `find`, `first`, `firstWhere`, or `firstWhereEq` methods. Instead of returning a vector of models, these methods return a single model instance:
 
     #include "models/flight.hpp"
 

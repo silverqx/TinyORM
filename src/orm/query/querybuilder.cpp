@@ -196,7 +196,6 @@ Builder &Builder::addSelect(const Column &column)
     return addSelect(QVector<Column> {column});
 }
 
-// CUR docs silverqx
 Builder &Builder::selectRaw(const QString &expression, const QVector<QVariant> &bindings)
 {
     addSelect(Expression(expression));

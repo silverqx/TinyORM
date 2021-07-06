@@ -3,6 +3,7 @@
 
 - [Introduction](#introduction)
 - [Running Database Queries](#running-database-queries)
+    - [Aggregates](#aggregates)
 - [Select Statements](#select-statements)
 - [Raw Expressions](#raw-expressions)
 - [Joins](#joins)
@@ -79,6 +80,23 @@ To retrieve a single row by its `id` column value, use the `find` method. This m
 
     user.value("email").toString();
 
+<a name="aggregates"></a>
+### Aggregates
+
+The query builder also provides a variety of methods for retrieving aggregate values like `count`, `max`, `min`, `avg`, and `sum`. You may call any of these methods after constructing your query:
+
+    #include <orm/db.hpp>
+
+    auto users = DB::table("users")->count();
+
+    auto price = DB::table("orders")->max("price");
+
+Of course, you may combine these methods with other clauses to fine-tune how your aggregate value is calculated:
+
+    auto price = DB::table("orders")
+                     ->whereEq("finalized", 1)
+                     .avg("price");
+
 <a name="select-statements"></a>
 ## Select Statements
 
@@ -116,6 +134,20 @@ Sometimes you may need to insert an arbitrary string into a query. To create a r
 
 > {note} Raw statements will be injected into the query as strings, so you should be extremely careful to avoid creating SQL injection vulnerabilities.
 
+<a name="raw-methods"></a>
+### Raw Methods
+
+Instead of using the `DB::raw` method, you may also use the following methods to insert a raw expression into various parts of your query. **Remember, TinyORM can not guarantee that any query using raw expressions is protected against SQL injection vulnerabilities.**
+
+<a name="selectraw"></a>
+#### `selectRaw`
+
+The `selectRaw` method can be used in place of `addSelect(DB::raw(...))`. This method accepts an optional vector of bindings as its second argument:
+
+    auto orders = DB::table("orders")
+                      ->selectRaw("price * ? as price_with_tax", {1.0825})
+                      .get();
+
 <a name="joins"></a>
 ## Joins
 
@@ -148,7 +180,7 @@ If you would like to perform a "left join" or "right join" instead of an "inner 
 <a name="advanced-join-clauses"></a>
 #### Advanced Join Clauses
 
-You may also specify more advanced join clauses. To get started, pass a closure as the second argument to the `join` method. The closure will receive a `Orm::Query::JoinClause` instance which allows you to specify constraints on the "join" clause:
+You may also specify more advanced join clauses. To get started, pass a lambda expression as the second argument to the `join` method. The lambda expression will receive a `Orm::Query::JoinClause` instance which allows you to specify constraints on the "join" clause:
 
     #include <orm/db.hpp>
     #include <orm/query/joinclause.hpp>
@@ -223,7 +255,7 @@ When chaining together calls to the query builder's `where` method, the "where" 
                      .orWhereEq("name", "Jack")
                      .get();
 
-If you need to group an "or" condition within parentheses, you may pass a closure as the first argument to the `orWhere` method:
+If you need to group an "or" condition within parentheses, you may pass a lambda expression as the first argument to the `orWhere` method:
 
     auto users = DB::table("users")
                      ->where("votes", ">", 100)
@@ -348,7 +380,7 @@ Or by the second `whereColumn` argument:
 <a name="logical-grouping"></a>
 ### Logical Grouping
 
-Sometimes you may need to group several "where" clauses within parentheses in order to achieve your query's desired logical grouping. In fact, you should generally always group calls to the `orWhere` method in parentheses in order to avoid unexpected query behavior. To accomplish this, you may pass a closure to the `where` method:
+Sometimes you may need to group several "where" clauses within parentheses in order to achieve your query's desired logical grouping. In fact, you should generally always group calls to the `orWhere` method in parentheses in order to avoid unexpected query behavior. To accomplish this, you may pass a lambda expression to the `where` method:
 
     auto users = DB::table("users")
                      ->where("name", "=", "John")
@@ -358,7 +390,7 @@ Sometimes you may need to group several "where" clauses within parentheses in or
                      })
                      .get();
 
-As you can see, passing a closure into the `where` method instructs the query builder to begin a constraint group. The closure will receive a query builder instance which you can use to set the constraints that should be contained within the parenthesis group. The example above will produce the following SQL:
+As you can see, passing a lambda expression into the `where` method instructs the query builder to begin a constraint group. The lambda expression will receive a query builder instance which you can use to set the constraints that should be contained within the parenthesis group. The example above will produce the following SQL:
 
 ```sql
 select * from users where name = "John" and (votes > 100 or title = "Admin")
