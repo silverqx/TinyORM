@@ -106,10 +106,10 @@ namespace Orm::Query::Grammars
         QString compileAggregate(const QueryBuilder &query) const;
         /*! Compile the "select *" portion of the query. */
         virtual QString compileColumns(const QueryBuilder &query) const;
+
         /*! Compile the "from" portion of the query. */
         QString compileFrom(const QueryBuilder &query) const;
-        /*! Compile the "join" portions of the query. */
-        QString compileJoins(const QueryBuilder &query) const;
+
         /*! Compile the "where" portions of the query. */
         QString compileWheres(const QueryBuilder &query) const;
         /*! Get the vector of all the where clauses for the query. */
@@ -117,14 +117,31 @@ namespace Orm::Query::Grammars
         /*! Format the where clause statements into one string. */
         QString concatenateWhereClauses(const QueryBuilder &query,
                                         const QStringList &sql) const;
+
+        /*! Compile the "join" portions of the query. */
+        QString compileJoins(const QueryBuilder &query) const;
+
         /*! Compile the "group by" portions of the query. */
         QString compileGroups(const QueryBuilder &query) const;
+
         /*! Compile the "having" portions of the query. */
         QString compileHavings(const QueryBuilder &query) const;
         /*! Compile a single having clause. */
         QString compileHaving(const HavingConditionItem &having) const;
         /*! Compile a basic having clause. */
         QString compileBasicHaving(const HavingConditionItem &having) const;
+
+        /*! Compile the "order by" portions of the query. */
+        QString compileOrders(const QueryBuilder &query) const;
+        /*! Compile the query orders to the vector. */
+        QStringList compileOrdersToVector(const QueryBuilder &query) const;
+        /*! Compile the "limit" portions of the query. */
+        QString compileLimit(const QueryBuilder &query) const;
+        /*! Compile the "offset" portions of the query. */
+        QString compileOffset(const QueryBuilder &query) const;
+
+        /*! Compile the lock into SQL. */
+        virtual QString compileLock(const QueryBuilder &query) const;
 
         /*! Compile a basic where clause. */
         QString whereBasic(const WhereConditionItem &where) const;
@@ -142,19 +159,6 @@ namespace Orm::Query::Grammars
         QString whereNotNull(const WhereConditionItem &where) const;
         /*! Compile a raw where clause. */
         QString whereRaw(const WhereConditionItem &where) const;
-
-        // CUR reorder silverqx
-        /*! Compile the "order by" portions of the query. */
-        QString compileOrders(const QueryBuilder &query) const;
-        /*! Compile the query orders to the vector. */
-        QStringList compileOrdersToVector(const QueryBuilder &query) const;
-        /*! Compile the "limit" portions of the query. */
-        QString compileLimit(const QueryBuilder &query) const;
-        /*! Compile the "offset" portions of the query. */
-        QString compileOffset(const QueryBuilder &query) const;
-
-        /*! Compile the lock into SQL. */
-        virtual QString compileLock(const QueryBuilder &query) const;
 
         /*! Compile a insert values lists. */
         QStringList compileInsertToVector(const QVector<QVariantMap> &values) const;

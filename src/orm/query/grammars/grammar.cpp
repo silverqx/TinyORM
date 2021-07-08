@@ -211,21 +211,6 @@ QString Grammar::compileFrom(const QueryBuilder &query) const
     return QStringLiteral("from %1").arg(wrapTable(query.getFrom()));
 }
 
-QString Grammar::compileJoins(const QueryBuilder &query) const
-{
-    const auto &joins = query.getJoins();
-
-    QStringList sql;
-    sql.reserve(joins.size());
-
-    for (const auto &join : joins)
-        sql << QStringLiteral("%1 join %2 %3").arg(join->getType(),
-                                                   wrapTable(join->getTable()),
-                                                   compileWheres(*join));
-
-    return sql.join(' ');
-}
-
 QString Grammar::compileWheres(const QueryBuilder &query) const
 {
     const auto sql = compileWheresToVector(query);
@@ -261,6 +246,21 @@ QString Grammar::concatenateWhereClauses(const QueryBuilder &query,
 
     return QStringLiteral("%1 %2").arg(conjunction,
                                        removeLeadingBoolean(sql.join(QChar(' '))));
+}
+
+QString Grammar::compileJoins(const QueryBuilder &query) const
+{
+    const auto &joins = query.getJoins();
+
+    QStringList sql;
+    sql.reserve(joins.size());
+
+    for (const auto &join : joins)
+        sql << QStringLiteral("%1 join %2 %3").arg(join->getType(),
+                                                   wrapTable(join->getTable()),
+                                                   compileWheres(*join));
+
+    return sql.join(' ');
 }
 
 QString Grammar::compileGroups(const QueryBuilder &query) const
@@ -307,6 +307,51 @@ QString Grammar::compileBasicHaving(const HavingConditionItem &having) const
 {
     return QStringLiteral("%1 %2 %3 %4").arg(having.condition, wrap(having.column),
                                              having.comparison, parameter(having.value));
+}
+
+QString Grammar::compileOrders(const QueryBuilder &query) const
+{
+    if (query.getOrders().isEmpty())
+        return QLatin1String("");
+
+    return QStringLiteral("order by %1").arg(compileOrdersToVector(query).join(", "));
+}
+
+QStringList Grammar::compileOrdersToVector(const QueryBuilder &query) const
+{
+    const auto &orders = query.getOrders();
+
+    QStringList compiledOrders;
+    compiledOrders.reserve(orders.size());
+
+    for (const auto &order : orders)
+        if (order.sql.isEmpty()) T_LIKELY
+            compiledOrders << QStringLiteral("%1 %2")
+                              .arg(wrap(order.column), order.direction.toLower());
+        else T_UNLIKELY
+            compiledOrders << order.sql;
+
+    return compiledOrders;
+}
+
+QString Grammar::compileLimit(const QueryBuilder &query) const
+{
+    return QStringLiteral("limit %1").arg(query.getLimit());
+}
+
+QString Grammar::compileOffset(const QueryBuilder &query) const
+{
+    return QStringLiteral("offset %1").arg(query.getOffset());
+}
+
+QString Grammar::compileLock(const QueryBuilder &query) const
+{
+    const auto &lock = query.getLock();
+
+    if (std::holds_alternative<QString>(lock))
+        return std::get<QString>(lock);
+
+    return QLatin1String("");
 }
 
 QString Grammar::whereBasic(const WhereConditionItem &where) const
@@ -369,51 +414,6 @@ QString Grammar::whereNotNull(const WhereConditionItem &where) const
 QString Grammar::whereRaw(const WhereConditionItem &where) const
 {
     return where.sql;
-}
-
-QString Grammar::compileOrders(const QueryBuilder &query) const
-{
-    if (query.getOrders().isEmpty())
-        return QLatin1String("");
-
-    return QStringLiteral("order by %1").arg(compileOrdersToVector(query).join(", "));
-}
-
-QStringList Grammar::compileOrdersToVector(const QueryBuilder &query) const
-{
-    const auto &orders = query.getOrders();
-
-    QStringList compiledOrders;
-    compiledOrders.reserve(orders.size());
-
-    for (const auto &order : orders)
-        if (order.sql.isEmpty()) T_LIKELY
-            compiledOrders << QStringLiteral("%1 %2")
-                              .arg(wrap(order.column), order.direction.toLower());
-        else T_UNLIKELY
-            compiledOrders << order.sql;
-
-    return compiledOrders;
-}
-
-QString Grammar::compileLimit(const QueryBuilder &query) const
-{
-    return QStringLiteral("limit %1").arg(query.getLimit());
-}
-
-QString Grammar::compileOffset(const QueryBuilder &query) const
-{
-    return QStringLiteral("offset %1").arg(query.getOffset());
-}
-
-QString Grammar::compileLock(const QueryBuilder &query) const
-{
-    const auto &lock = query.getLock();
-
-    if (std::holds_alternative<QString>(lock))
-        return std::get<QString>(lock);
-
-    return QLatin1String("");
 }
 
 QStringList
