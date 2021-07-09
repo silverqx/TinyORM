@@ -1,4 +1,8 @@
-<a name="top"></a>
+---
+sidebar_position: 5
+description: TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful query builders, defining relationships as methods provides powerful method chaining and querying capabilities.
+---
+
 # TinyORM: Relationships
 
 - [Introduction](#introduction)
@@ -22,7 +26,6 @@
     - [Many To Many Relationships](#updating-many-to-many-relationships)
 - [Touching Parent Timestamps](#touching-parent-timestamps)
 
-<a name="introduction"></a>
 ## Introduction
 
 Database tables are often related to one another. For example, a blog post may have many comments or an order could be related to the user who placed it. TinyORM makes managing and working with these relationships easy, and supports basic relationships:
@@ -31,16 +34,14 @@ Database tables are often related to one another. For example, a blog post may h
 - [One To Many](#one-to-many)
 - [Many To Many](#many-to-many)
 
-<a name="defining-relationships"></a>
 ## Defining Relationships
 
-TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful [query builders](query-builder.md#top), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
+TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful [query builders](query-builder.mdx), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
 
     user->posts()->whereEq("active", 1).get();
 
 But, before diving too deep into using relationships, let's learn how to define each type of relationship supported by TinyORM.
 
-<a name="common-rules"></a>
 ### Common Rules
 
 Before you start defining relationship methods, you have to declare a model class, let's examine following model class with a "one" type relation:
@@ -83,9 +84,10 @@ However, the second parameter is more interesting, here you have to provide a ty
 
 Next, you have to define the `u_relations` hash, which maps a relation name to the relationship method. 🔥🚀🙌
 
-> {note} You may omit the `friend Model` declaration and define all the private data and function members as public.
+:::tip
+You may omit the `friend Model` declaration and define all the private data and function members as public.
+:::
 
-<a name="one-to-one"></a>
 ### One To One
 
 A one-to-one relationship is a very basic type of database relationship. For example, a `User` model might be associated with one `Phone` model. To define this relationship, we will place a `phone` method on the `User` model. The `phone` method should call the `hasOne` method and return its result. The `hasOne<Related>` method is available to your model via the model's `Orm::Tiny::Model<Derived, AllRelations...>` base class:
@@ -134,7 +136,6 @@ Additionally, TinyORM assumes that the foreign key should have a value matching 
 
     return hasOne<Phone>("foreign_key", "local_key");
 
-<a name="one-to-one-defining-the-inverse-of-the-relationship"></a>
 #### Defining The Inverse Of The Relationship
 
 So, we can access the `Phone` model from our `User` model. Next, let's define a relationship on the `Phone` model that will let us access the user that owns the phone. We can define the inverse of a `hasOne` relationship using the `belongsTo<Related>` method:
@@ -206,7 +207,6 @@ The third `belongsTo` parameter is the relation name, if you pass it, the foreig
 
 The relation name will be guessed from the type-id of the `Related` template parameter, TinyORM takes this name and changes the first character to lower case, so in the example above, the relation name will be `user`.
 
-<a name="one-to-many"></a>
 ### One To Many
 
 A one-to-many relationship is used to define relationships where a single model is the parent to one or more child models. For example, a blog post may have an infinite number of comments. Like all other TinyORM relationships, one-to-many relationships are defined by defining a `hasMany<Related>` method on your TinyORM model:
@@ -255,7 +255,7 @@ Once the relationship method has been defined, we can access the `QVector<Relate
         //
     }
 
-Since all relationships also serve as [query builders](query-builder.md#top), you may add further constraints to the relationship query by calling the `comments` method and continuing to chain conditions onto the query, all the `TinyBuilder` methods which are related to building queries are proxied:
+Since all relationships also serve as [query builders](query-builder.mdx), you may add further constraints to the relationship query by calling the `comments` method and continuing to chain conditions onto the query, all the `TinyBuilder` methods which are related to building queries are proxied:
 
     auto comment = Post::find(1)->comments()
                          ->whereEq("title", "foo")
@@ -267,8 +267,7 @@ Like the `hasOne` method, you may also override the foreign and local keys by pa
 
     return hasMany<Comment>("foreign_key", "local_key");
 
-<a name="one-to-many-inverse"></a>
-### One To Many (Inverse) / Belongs To
+### One To Many (Inverse) / Belongs To {#one-to-many-inverse}
 
 Now that we can access all of a post's comments, let's define a relationship to allow a comment to access its parent post. To define the inverse of a `hasMany` relationship, define a relationship method on the child model which calls the `belongsTo` method:
 
@@ -349,7 +348,6 @@ The third `belongsTo` parameter is the relation name, if you pass it, the foreig
 
 The relation name will be guessed from the type-id of the `Related` template parameter, TinyORM takes this name and changes the first character to lower case, so in the example above, the relation name will be `user`.
 
-<a name="default-models"></a>
 #### Default Models
 
 The `belongsTo`, and `hasOne` relationships allow you to define a default model that will be returned if the given relationship is `null`. This pattern is often referred to as the [Null Object pattern](https://en.wikipedia.org/wiki/Null_Object_pattern) and can help remove conditional checks in your code. In the following example, the `user` relation will return an empty `User` model if no user is attached to the `Post` model:
@@ -380,12 +378,10 @@ To populate the default model with attributes, you may pass the vector of attrib
         return relation;
     }
 
-<a name="many-to-many"></a>
-## Many To Many Relationships
+## Many To Many Relationships {#many-to-many}
 
 Many-to-many relations are slightly more complicated than `hasOne` and `hasMany` relationships. An example of a many-to-many relationship is a user that has many roles and those roles are also shared by other users in the application. For example, a user may be assigned the role of "Author" and "Editor"; however, those roles may also be assigned to other users as well. So, a user has many roles and a role has many users.
 
-<a name="many-to-many-table-structure"></a>
 #### Table Structure
 
 To define this relationship, three database tables are needed: `users`, `roles`, and `role_user`. The `role_user` table is derived from the alphabetical order of the related model names and contains `user_id` and `role_id` columns. This table is used as an intermediate table linking the users and roles.
@@ -404,7 +400,6 @@ Remember, since a role can belong to many users, we cannot simply place a `user_
         user_id - integer
         role_id - integer
 
-<a name="many-to-many-model-structure"></a>
 #### Model Structure
 
 Many-to-many relationships are defined by writing a method that returns the result of the `belongsToMany` method. The `belongsToMany` method is provided by the `Orm::Tiny::Model<Derived, AllRelations...>` base class that is used by all of your application's TinyORM models. For example, let's define a `roles` method on our `User` model. The first argument passed to this method is the name of the related model class:
@@ -469,7 +464,6 @@ The fourth and fifth arguments are primary key names on models in the many-to-ma
 
 The relation name is used during [Touching Parent Timestamps](#touching-parent-timestamps) and will be guessed from the type-id of the `Related` template parameter, TinyORM takes this name, changes the first character to lower case, and appends `s` character. So in the example above, the relation name will be `roles`.
 
-<a name="many-to-many-defining-the-inverse-of-the-relationship"></a>
 #### Defining The Inverse Of The Relationship
 
 To define the "inverse" of a many-to-many relationship, you should define a method on the related model which also returns the result of the `belongsToMany` method. To complete our user / role example, let's define the `users` method on the `Role` model:
@@ -509,7 +503,6 @@ To define the "inverse" of a many-to-many relationship, you should define a meth
 
 As you can see, the relationship is defined exactly the same as its `User` model counterpart with the exception of referencing the `User` model. Since we're reusing the `belongsToMany` method, all of the usual table and key customization options are available when defining the "inverse" of many-to-many relationships.
 
-<a name="retrieving-intermediate-table-columns"></a>
 ### Retrieving Intermediate Table Columns
 
 As you have already learned, working with many-to-many relations requires the presence of an intermediate table. TinyORM provides some very helpful ways of interacting with this table. For example, let's assume our `User` model has many `Role` models that it is related to. After accessing this relationship, we may access the intermediate table using the `pivot` attribute on the models:
@@ -550,9 +543,10 @@ If you would like your intermediate table to have `created_at` and `updated_at` 
 
     return relation;
 
-> {note} Intermediate tables that utilize TinyORM's automatically maintained timestamps are required to have both `created_at` and `updated_at` timestamp columns.
+:::caution
+Intermediate tables that utilize TinyORM's automatically maintained timestamps are required to have both `created_at` and `updated_at` timestamp columns.
+:::
 
-<a name="customizing-the-pivot-relation-name"></a>
 #### Customizing The `pivot` Relation Name
 
 As noted previously, attributes from the intermediate table may be accessed on models via the `pivot` relation name. However, you are free to customize the name of this relation to better reflect its purpose within your application.
@@ -584,7 +578,6 @@ Once the custom intermediate table relation name has been specified, you may acc
             qDebug() << podcast->getRelation<Pivot, Orm::One>("subscription")
                                ->getAttribute("created_at");
 
-<a name="defining-custom-intermediate-table-models"></a>
 ### Defining Custom Intermediate Table Models
 
 If you would like to define a custom model to represent the intermediate table of your many-to-many relationship, you may pass the custom pivot type as a second template argument to the `belongsToMany<Related, PivotType = Pivot>` method when defining the relationship. Custom pivot models give you the opportunity to define additional methods on the pivot model.
@@ -693,7 +686,6 @@ Once the custom pivot model `RoleUser` has been defined, `getRelation` or `getRe
             qDebug() << role->getRelation<RoleUser, Orm::One>("pivot")
                             ->getAttribute("created_at");
 
-<a name="custom-pivot-models-and-incrementing-ids"></a>
 #### Custom Pivot Models And Incrementing IDs
 
 If you have defined a many-to-many relationship that uses a custom pivot model, and that pivot model has an auto-incrementing primary key, you should ensure your custom pivot model class defines an `u_incrementing` data member that is set to `true`.
@@ -701,10 +693,9 @@ If you have defined a many-to-many relationship that uses a custom pivot model, 
     /*! Indicates if the IDs are auto-incrementing. */
     bool u_incrementing = true;
 
-<a name="querying-relations"></a>
 ## Querying Relations
 
-Since all TinyORM relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing a query to load the related models. In addition, all types of TinyORM relationships also serve as [query builders](query-builder.md#top), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL query against your database.
+Since all TinyORM relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing a query to load the related models. In addition, all types of TinyORM relationships also serve as [query builders](query-builder.mdx), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL query against your database.
 
 For example, imagine a blog application in which a `User` model has many associated `Post` models:
 
@@ -741,11 +732,12 @@ You may query the `posts` relationship and add additional constraints to the rel
 
     user->posts()->whereEq("active", 1).get();
 
-You are able to use any of the Laravel [query builder's](query-builder.md#top) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
+You are able to use any of the Laravel [query builder's](query-builder.mdx) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
 
-> {note} All the `TinyBuilder` methods which are related to building queries are proxied on the `Relation` base class.
+:::note
+All the `TinyBuilder` methods which are related to building queries are proxied on the `Relation` base class.
+:::
 
-<a name="chaining-orwhere-clauses-after-relationships"></a>
 #### Chaining `orWhere` Clauses After Relationships
 
 As demonstrated in the example above, you are free to add additional constraints to relationships when querying them. However, be careful when chaining `orWhere` clauses onto a relationship, as the `orWhere` clauses will be logically grouped at the same level as the relationship constraint:
@@ -763,7 +755,7 @@ from posts
 where user_id = ? and active = 1 or votes >= 100
 ```
 
-In most situations, you should use [logical groups](query-builder.md#logical-grouping) to group the conditional checks between parentheses:
+In most situations, you should use [logical groups](query-builder.mdx#logical-grouping) to group the conditional checks between parentheses:
 
     user->posts()
         ->where([](auto &query) {
@@ -780,7 +772,6 @@ from posts
 where user_id = ? and (active = 1 or votes >= 100)
 ```
 
-<a name="relationship-methods"></a>
 ### Relationship Methods
 
 If you do not need to add additional constraints to an TinyORM relationship query, you may access the relationship directly. For example, continuing to use our `User` and `Post` example models, we may access all of a user's posts like so:
@@ -817,7 +808,6 @@ The `getRelation<Related, Tag>` overload is for obtaining "one" type relationshi
 
 The same is true for the `getRelationValue` method.
 
-<a name="eager-loading"></a>
 ## Eager Loading
 
 When accessing TinyORM relationships by Model's `getRelationValue` method, the related models are "lazy loaded". This means the relationship data is not actually loaded until you first access them. However, TinyORM can "eager load" relationships at the time you query the parent model. Eager loading alleviates the "N + 1" query problem. To illustrate the N + 1 query problem, consider a `Book` model that "belongs to" to an `Author` model:
@@ -875,30 +865,28 @@ select * from books
 select * from authors where id in (1, 2, 3, 4, 5, ...)
 ```
 
-<a name="eager-loading-multiple-relationships"></a>
 #### Eager Loading Multiple Relationships
 
 Sometimes you may need to eager load several different relationships. To do so, just pass a `QVector<Orm::WithItem>` of relationships to the `with` method:
 
     auto books = Book::with({{"author"}, {"publisher"}})->get();
 
-<a name="nested-eager-loading"></a>
 #### Nested Eager Loading
 
 To eager a relationship's relationships, you may use "dot" syntax. For example, let's eager load all of the book's authors and all of the author's personal contacts:
 
     auto books = Book::with("author.contacts")->get();
 
-<a name="eager-loading-specific-columns"></a>
 #### Eager Loading Specific Columns
 
 You may not always need every column from the relationships you are retrieving. For this reason, TinyORM allows you to specify which columns of the relationship you would like to retrieve:
 
     auto books = Book::with("author:id,name,book_id")->get();
 
-> {note} When using this feature, you should always include the `id` column and any relevant foreign key columns in the list of columns you wish to retrieve, otherwise relations will not be loaded correctly.
+:::caution
+When using this feature, you should always include the `id` column and any relevant foreign key columns in the list of columns you wish to retrieve, otherwise relations will not be loaded correctly.
+:::
 
-<a name="eager-loading-by-default"></a>
 #### Eager Loading By Default
 
 Sometimes you might want to always load some relationships when retrieving a model. To accomplish this, you may define a `u_with` data member on the model:
@@ -939,7 +927,6 @@ If you would like to override all items within the `u_with` data member for a si
 
     auto books = Book::withOnly("genre")->get();
 
-<a name="constraining-eager-loads"></a>
 ### Constraining Eager Loads
 
 Sometimes you may wish to eager load a relationship but also specify additional query conditions for the eager loading query. You can accomplish this by passing a `QVector<Orm::WithItem>` of relationships to the `with` method where the `name` data member of `Orm::WithItem` struct is a relationship name and the `constraints` data member expects a lambda expression that adds additional constraints to the eager loading query. The first argument passed to the `constraints` lambda expression is an underlying `Orm::QueryBuilder` for a related model:
@@ -951,16 +938,17 @@ Sometimes you may wish to eager load a relationship but also specify additional 
         query.where("title", "like", "%code%");
     }}})->get();
 
-In this example, TinyORM will only eager load posts where the post's `title` column contains the word `code`. You may call other [query builder](query-builder.md#top) methods to further customize the eager loading operation:
+In this example, TinyORM will only eager load posts where the post's `title` column contains the word `code`. You may call other [query builder](query-builder.mdx) methods to further customize the eager loading operation:
 
     auto users = User::with({{"posts", [](auto &query)
     {
         query.orderBy("created_at", "desc");
     }}})->get();
 
-> {note} The `limit` and `take` query builder methods may not be used when constraining eager loads.
+:::note
+The `limit` and `take` query builder methods may not be used when constraining eager loads.
+:::
 
-<a name="lazy-eager-loading"></a>
 ### Lazy Eager Loading
 
 Sometimes you may need to eager load a relationship after the parent model has already been retrieved. For example, this may be useful if you need to dynamically decide whether to load related models:
@@ -976,7 +964,9 @@ You may load more relationships at once, to do so, just pass a `QVector<Orm::Wit
 
     Book::find(1)->load({{"author"}, {"publisher"}});
 
-> {note} So far, this only works on models, not on containers returned from Model's `get` or `all` methods.
+:::note
+So far, this only works on models, not on containers returned from Model's `get` or `all` methods.
+:::
 
 If you need to set additional query constraints on the eager loading query, you may pass a `QVector<Orm::WithItem>` of relationships to the `load` method where the `name` data member of `Orm::WithItem` struct is a relationship name and the `constraints` data member expects a lambda expression that adds additional constraints to the eager loading query. The first argument passed to the `constraints` lambda expression is an underlying `Orm::QueryBuilder` for a related model:
 
@@ -985,12 +975,12 @@ If you need to set additional query constraints on the eager loading query, you 
         query.orderBy("published_date", "asc");
     }}});
 
-> {note} You can also use eager constraining in the Model's `fresh` method.
+:::tip
+You can also use eager constraining in the Model's `fresh` method.
+:::
 
-<a name="inserting-and-updating-related-models"></a>
-## Inserting & Updating Related Models
+## Inserting & Updating Related Models {#inserting-and-updating-related-models}
 
-<a name="the-save-method"></a>
 ### The `save` Method
 
 TinyORM provides convenient methods for adding new models to relationships. For example, perhaps you need to add a new comment to a post. Instead of manually setting the `post_id` attribute on the `Comment` model you may insert the comment using the relationship's `save` method:
@@ -1041,7 +1031,6 @@ The many-to-many relationship also supports the `save` and `saveMany` methods. I
     // No pivot attributes for role1
     user->roles()->saveMany({role1, role2}, {{}, {{"active", false}}});
 
-<a name="the-push-method"></a>
 #### Recursively Saving Models & Relationships
 
 If you would like to `save` your model and all of its associated relationships, you may use the `push` method. In this example, the `Post` model will be saved as well as its comments and the comment's authors:
@@ -1055,7 +1044,6 @@ If you would like to `save` your model and all of its associated relationships, 
 
     post->push();
 
-<a name="the-create-method"></a>
 ### The `create` Method
 
 In addition to the `save` and `saveMany` methods, you may also use the `create` method, which accepts a vector of attributes, creates a model, and inserts it into the database. The difference between `save` and `create` is that `save` accepts a full TinyORM model instance while `create` accepts a `QVector<Orm::AttributeItem>`. The newly created model will be returned by the `create` method:
@@ -1100,12 +1088,13 @@ The many-to-many relationship also supports the `create` and `createMany` method
         {{"active", false}},
     });
 
-You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate`, and `updateOrCreate` methods to [create and update models on relationships](tinyorm.md#retrieving-or-creating-models).
+You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate`, and `updateOrCreate` methods to [create and update models on relationships](tinyorm.mdx#retrieving-or-creating-models).
 
-> {tip} Before using the `create` method, be sure to review the [mass assignment](tinyorm.md#mass-assignment) documentation.
+:::tip
+Before using the `create` method, be sure to review the [mass assignment](tinyorm.mdx#mass-assignment) documentation.
+:::
 
-<a name="updating-belongs-to-relationships"></a>
-### Belongs To Relationships
+### Belongs To Relationships {#updating-belongs-to-relationships}
 
 If you would like to assign a child model to a new parent model, you may use the `associate` method. In this example, the `User` model defines a `belongsTo` relationship to the `Account` model. The `associate` method will set the foreign key on the child model:
 
@@ -1125,10 +1114,8 @@ To remove a parent model from a child model, you may use the `dissociate` method
 
     user.save();
 
-<a name="updating-many-to-many-relationships"></a>
-### Many To Many Relationships
+### Many To Many Relationships {#updating-many-to-many-relationships}
 
-<a name="attaching-detaching"></a>
 #### Attaching / Detaching
 
 TinyORM also provides methods to make working with many-to-many relationships more convenient. For example, let's imagine a user can have many roles and a role can have many users. You may use the `attach` method to attach a role to a user by inserting a record in the relationship's intermediate table:
@@ -1173,7 +1160,6 @@ The `attach` method also accepts `std::map` as input, so you can pass different 
         {2, {{"expires", false}, {"is_active", true}}},
     });
 
-<a name="syncing-associations"></a>
 #### Syncing Associations
 
 You may also use the `sync` method to construct many-to-many associations. The `sync` method accepts a vector of IDs to place on the intermediate table. Any IDs that are not in the given vector will be removed from the intermediate table. So, after this operation is complete, only the IDs in the given vector will exist in the intermediate table:
@@ -1192,7 +1178,6 @@ If you do not want to detach existing IDs that are missing from the given vector
 
     user->roles()->syncWithoutDetaching({1, 2, 3});
 
-<a name="updating-a-record-on-the-intermediate-table"></a>
 #### Updating A Record On The Intermediate Table
 
 If you need to update an existing row in your relationship's intermediate table, you may use the `updateExistingPivot` method. This method accepts the intermediate record foreign key and the vector of attributes to update:
@@ -1203,7 +1188,6 @@ If you need to update an existing row in your relationship's intermediate table,
         {"active", false},
     });
 
-<a name="touching-parent-timestamps"></a>
 ## Touching Parent Timestamps
 
 When a model defines a `belongsTo` relationship to another model, such as a `Comment` which belongs to a `Post`, it is sometimes helpful to update the parent's timestamp when the child model is updated.
@@ -1236,4 +1220,6 @@ For example, when a `Comment` model is updated, you may want to automatically "t
         QStringList u_touches {"post"};
     };
 
-> {note} Parent model timestamps will only be updated if the child model is updated using TinyORM's `save`, `push`, or `remove` method.
+:::note
+Parent model timestamps will only be updated if the child model is updated using TinyORM's `save`, `push`, or `remove` method.
+:::

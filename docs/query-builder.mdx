@@ -1,4 +1,8 @@
-<a name="top"></a>
+---
+sidebar_position: 3
+description: TinyORM's database query builder provides a convenient, fluent interface to creating and running database queries. It can be used to perform most database operations in your application. The query builder uses QSqlQuery parameter binding to protect your application against SQL injection attacks. There is no need to clean or sanitize strings passed to the query builder as query bindings.
+---
+
 # Database: Query Builder
 
 - [Introduction](#introduction)
@@ -24,19 +28,18 @@
     - [Truncate Statement](#truncate-statement)
 - [Pessimistic Locking](#pessimistic-locking)
 
-<a name="introduction"></a>
 ## Introduction
 
 TinyORM's database query builder provides a convenient, fluent interface to creating and running database queries. It can be used to perform most database operations in your application.
 
 The TinyORM query builder uses `QSqlQuery` parameter binding to protect your application against SQL injection attacks. There is no need to clean or sanitize strings passed to the query builder as query bindings.
 
-> {note} QSqlQuery does not support binding column names. Therefore, you should never allow user input, to dictate the column names referenced by your queries, including "order by" columns.
+:::danger
+`QSqlQuery` does not support binding column names. Therefore, you should never allow user input to dictate the column names referenced by your queries, including "order by" columns.
+:::
 
-<a name="running-database-queries"></a>
 ## Running Database Queries
 
-<a name="retrieving-all-rows-from-a-table"></a>
 #### Retrieving All Rows From A Table
 
 You may use the `table` method provided by the `DB` facade to begin a query. The `table` method returns a fluent query builder instance for the given table, allowing you to chain more constraints onto the query and then finally retrieve the results of the query using the `get` method:
@@ -61,7 +64,6 @@ The `get` method returns a `QSqlQuery` containing the results of the query where
     while(users.next())
         qDebug() << users.value("name").toString();
 
-<a name="retrieving-a-single-row-column-from-a-table"></a>
 #### Retrieving A Single Row / Column From A Table
 
 If you just need to retrieve a single row from a database table, you may use the `QueryBuilder::first` method. This method will return a `QSqlQuery` object, on which was internally called `QSqlQuery::first` method. This method retrieves the first record in the result, if available, and positions the query on the retrieved record:
@@ -80,7 +82,6 @@ To retrieve a single row by its `id` column value, use the `find` method. This m
 
     user.value("email").toString();
 
-<a name="aggregates"></a>
 ### Aggregates
 
 The query builder also provides a variety of methods for retrieving aggregate values like `count`, `max`, `min`, `avg`, and `sum`. You may call any of these methods after constructing your query:
@@ -97,10 +98,8 @@ Of course, you may combine these methods with other clauses to fine-tune how you
                      ->whereEq("finalized", 1)
                      .avg("price");
 
-<a name="select-statements"></a>
 ## Select Statements
 
-<a name="specifying-a-select-clause"></a>
 #### Specifying A Select Clause
 
 You may not always want to select all columns from a database table. Using the `select` method, you can specify a custom "select" clause for the query:
@@ -121,7 +120,6 @@ If you already have a query builder instance and you wish to add a column to its
 
     auto users = query.addSelect("age").get();
 
-<a name="raw-expressions"></a>
 ## Raw Expressions
 
 Sometimes you may need to insert an arbitrary string into a query. To create a raw string expression, you may use the `raw` method provided by the `DB` facade:
@@ -132,14 +130,14 @@ Sometimes you may need to insert an arbitrary string into a query. To create a r
                      .groupBy("status")
                      .get();
 
-> {note} Raw statements will be injected into the query as strings, so you should be extremely careful to avoid creating SQL injection vulnerabilities.
+:::danger
+Raw statements will be injected into the query as strings, so you should be extremely careful to avoid creating SQL injection vulnerabilities.
+:::
 
-<a name="raw-methods"></a>
 ### Raw Methods
 
 Instead of using the `DB::raw` method, you may also use the following methods to insert a raw expression into various parts of your query. **Remember, TinyORM can not guarantee that any query using raw expressions is protected against SQL injection vulnerabilities.**
 
-<a name="selectraw"></a>
 #### `selectRaw`
 
 The `selectRaw` method can be used in place of `addSelect(DB::raw(...))`. This method accepts an optional vector of bindings as its second argument:
@@ -148,7 +146,6 @@ The `selectRaw` method can be used in place of `addSelect(DB::raw(...))`. This m
                       ->selectRaw("price * ? as price_with_tax", {1.0825})
                       .get();
 
-<a name="fromraw"></a>
 #### `fromRaw`
 
 The `fromRaw` method may be used to provide a raw string as the value of the "from" clause:
@@ -158,7 +155,6 @@ The `fromRaw` method may be used to provide a raw string as the value of the "fr
                      .where("id", "<", 3)
                      .get();
 
-<a name="whereraw-orwhereraw"></a>
 #### `whereRaw / orWhereRaw`
 
 The `whereRaw` and `orWhereRaw` methods can be used to inject a raw "where" clause into your query. These methods accept an optional vector of bindings as their second argument:
@@ -167,7 +163,6 @@ The `whereRaw` and `orWhereRaw` methods can be used to inject a raw "where" clau
                       ->whereRaw("price > IF(state = \"TX\", ?, 100)", {200})
                       .get();
 
-<a name="groupbyraw"></a>
 ### `groupByRaw`
 
 The `groupByRaw` method may be used to provide a raw string as the value of the `group by` clause:
@@ -177,7 +172,6 @@ The `groupByRaw` method may be used to provide a raw string as the value of the 
                       .groupByRaw("city, state")
                       .get();
 
-<a name="havingraw-orhavingraw"></a>
 #### `havingRaw / orHavingRaw`
 
 The `havingRaw` and `orHavingRaw` methods may be used to provide a raw string as the value of the "having" clause. These methods accept an optional vector of bindings as their second argument:
@@ -188,7 +182,6 @@ The `havingRaw` and `orHavingRaw` methods may be used to provide a raw string as
                       .havingRaw("SUM(price) > ?", {2500})
                       .get();
 
-<a name="orderbyraw"></a>
 #### `orderByRaw`
 
 The `orderByRaw` method may be used to provide a raw string as the value of the "order by" clause:
@@ -197,10 +190,8 @@ The `orderByRaw` method may be used to provide a raw string as the value of the 
                       ->orderByRaw("updated_at - created_at DESC")
                       .get();
 
-<a name="joins"></a>
 ## Joins
 
-<a name="inner-join-clause"></a>
 #### Inner Join Clause
 
 The query builder may also be used to add join clauses to your queries. To perform a basic "inner join", you may use the `join` method on a query builder instance. The first argument passed to the `join` method is the name of the table you need to join to, while the remaining arguments specify the column constraints for the join. You may even join multiple tables in a single query:
@@ -213,7 +204,6 @@ The query builder may also be used to add join clauses to your queries. To perfo
                      .select({"users.*", "contacts.phone", "orders.price"})
                      .get();
 
-<a name="left-join-right-join-clause"></a>
 #### Left Join / Right Join Clause
 
 If you would like to perform a "left join" or "right join" instead of an "inner join", use the `leftJoin` or `rightJoin` methods. These methods have the same signature as the `join` method:
@@ -226,7 +216,6 @@ If you would like to perform a "left join" or "right join" instead of an "inner 
                      ->rightJoin("posts", "users.id", "=", "posts.user_id")
                      .get();
 
-<a name="advanced-join-clauses"></a>
 #### Advanced Join Clauses
 
 You may also specify more advanced join clauses. To get started, pass a lambda expression as the second argument to the `join` method. The lambda expression will receive a `Orm::Query::JoinClause` instance which allows you to specify constraints on the "join" clause:
@@ -252,7 +241,6 @@ If you would like to use a "where" clause on your joins, you may use the `where`
         })
         .get();
 
-<a name="subquery-joins"></a>
 #### Subquery Joins
 
 You may use the `joinSub`, `leftJoinSub`, and `rightJoinSub` methods to join a query to a subquery. Each of these methods receives three arguments: the subquery, its table alias, and a lambda expression that defines the related columns. In this example, we will retrieve a collection of users where each user record also contains the `created_at` timestamp of the user's most recently published blog post:
@@ -267,10 +255,8 @@ You may use the `joinSub`, `leftJoinSub`, and `rightJoinSub` methods to join a q
                          join.on("users.id", "=", "latest_posts.user_id");
                      }).get();
 
-<a name="basic-where-clauses"></a>
 ## Basic Where Clauses
 
-<a name="where-clauses"></a>
 ### Where Clauses
 
 You may use the query builder's `where` method to add "where" clauses to the query. The most basic call to the `where` method requires three arguments. The first argument is the name of the column. The second argument is an operator, which can be any of the database's supported operators. The third argument is the value to compare against the column's value.
@@ -308,7 +294,6 @@ You may also pass a `QVector<Orm::WhereItem>` of conditions to the `where` funct
                          {"subscribed", 1, "<>"},
                      }).get();
 
-<a name="or-where-clauses"></a>
 ### Or Where Clauses
 
 When chaining together calls to the query builder's `where` method, the "where" clauses will be joined together using the `and` operator. However, you may use the `orWhere` or `orWhereEq` method to join a clause to the query using the `or` operator. The `orWhere` method accepts the same arguments as the `where` method:
@@ -334,7 +319,6 @@ The example above will produce the following SQL:
 ```sql
 select * from users where votes > 100 or (name = "Abigail" and votes > 50)
 ```
-<a name="condition-operator-overriding"></a>
 ### Condition Operator Overriding
 
 The `where` method overload with a `QVector<Orm::WhereItem>` as the first argument joins conditions using the `and` operator by default:
@@ -369,9 +353,10 @@ The example above will produce the following SQL:
 select * from users where (first_name = "John" or last_name = "Smith" and votes > 50)
 ```
 
-> {tip} Still, it is a better idea to use [Logical Grouping](#logical-grouping) described few lines below, which allows better control of the parentheses.
+:::tip
+Still, it is a better idea to use [Logical Grouping](#logical-grouping) described few lines below, which allows better control of the parentheses.
+:::
 
-<a name="additional-where-clauses"></a>
 ### Additional Where Clauses
 
 **whereIn / whereNotIn / orWhereIn / orWhereNotIn**
@@ -441,7 +426,6 @@ Or by the second `whereColumn` argument:
                      }, "or")
                      .get();
 
-<a name="logical-grouping"></a>
 ### Logical Grouping
 
 Sometimes you may need to group several "where" clauses within parentheses in order to achieve your query's desired logical grouping. In fact, you should generally always group calls to the `orWhere` method in parentheses in order to avoid unexpected query behavior. To accomplish this, you may pass a lambda expression to the `where` method:
@@ -460,13 +444,10 @@ As you can see, passing a lambda expression into the `where` method instructs th
 select * from users where name = "John" and (votes > 100 or title = "Admin")
 ```
 
-<a name="ordering-grouping-limit-and-offset"></a>
-## Ordering, Grouping, Limit & Offset
+## Ordering, Grouping, Limit & Offset {#ordering-grouping-limit-and-offset}
 
-<a name="ordering"></a>
 ### Ordering
 
-<a name="orderby"></a>
 #### The `orderBy` Method
 
 The `orderBy` method allows you to sort the results of the query by a given column. The first argument accepted by the `orderBy` method should be the column you wish to sort by, while the second argument determines the direction of the sort and may be either `asc` or `desc`:
@@ -482,7 +463,6 @@ To sort by multiple columns, you may simply invoke `orderBy` as many times as ne
                      .orderBy("email", "asc")
                      .get();
 
-<a name="latest-oldest"></a>
 #### The `latest` & `oldest` Methods
 
 The `latest` and `oldest` methods allow you to easily order results by date. By default, the result will be ordered by the table's `created_at` column. Or, you may pass the column name that you wish to sort by:
@@ -491,7 +471,6 @@ The `latest` and `oldest` methods allow you to easily order results by date. By 
                     ->latest()
                     .first();
 
-<a name="removing-existing-orderings"></a>
 #### Removing Existing Orderings
 
 The `reorder` method removes all of the "order by" clauses that have previously been applied to the query:
@@ -506,10 +485,8 @@ You may pass a column and direction when calling the `reorder` method in order t
 
     auto usersOrderedByEmail = query.reorder("email", "desc").get();
 
-<a name="grouping"></a>
 ### Grouping
 
-<a name="groupby-having"></a>
 #### The `groupBy` & `having` Methods
 
 As you might expect, the `groupBy` and `having` methods may be used to group the query results. The `having` method's signature is similar to that of the `where` method:
@@ -526,10 +503,8 @@ You may pass multiple items to the `groupBy` method to group by multiple columns
                      .having("account_id", ">", 100)
                      .get();
 
-<a name="limit-and-offset"></a>
-### Limit & Offset
+### Limit & Offset {#limit-and-offset}
 
-<a name="skip-take"></a>
 #### The `skip` & `take` Methods
 
 You may use the `skip` and `take` methods to limit the number of results returned from the query or to skip a given number of results in the query:
@@ -543,7 +518,6 @@ Alternatively, you may use the `limit` and `offset` methods. These methods are f
                      .limit(5)
                      .get();
 
-<a name="insert-statements"></a>
 ## Insert Statements
 
 The query builder also provides an `insert` method that may be used to insert records into the database table. The `insert` method accepts the `QVariantMap` of column names and values:
@@ -567,7 +541,6 @@ The `insertOrIgnore` method will ignore duplicate record errors while inserting 
         {{"id", 2}, {"email", "archer@example.com"}},
     });
 
-<a name="auto-incrementing-ids"></a>
 #### Auto-Incrementing IDs
 
 If the table has an auto-incrementing id, use the `insertGetId` method to insert a record and then retrieve the ID:
@@ -577,7 +550,6 @@ If the table has an auto-incrementing id, use the `insertGetId` method to insert
         {"votes", 0},
     });
 
-<a name="update-statements"></a>
 ## Update Statements
 
 In addition to inserting records into the database, the query builder can also update existing records using the `update` method. The `update` method, accepts a `QVector<Orm::UpdateItem>` of column and value pairs, indicating the columns to be updated and returns a `std::tuple<int, QSqlQuery>` . You may constrain the `update` query using `where` clauses:
@@ -586,10 +558,11 @@ In addition to inserting records into the database, the query builder can also u
                                  ->whereEq("id", 1)
                                  .update({{"votes", 1}});
 
-> {note} `update` and `delete` are affecting statements, so they return `std::tuple<int, QSqlQuery>`.
+:::note
+An `update` and `delete` are affecting statements, so they return `std::tuple<int, QSqlQuery>`.
+:::
 
-<a name="increment-and-decrement"></a>
-### Increment & Decrement
+### Increment & Decrement {#increment-and-decrement}
 
 The query builder also provides convenient methods for incrementing or decrementing the value of a given column. Both of these methods accept at least one argument: the column to modify. A second argument may be provided to specify the amount by which the column should be incremented or decremented:
 
@@ -609,7 +582,6 @@ You should constrain `increment`, `decrement` by `where` to update only specific
 
     DB::table("users")->whereEq("id", 1).increment("votes", 5);
 
-<a name="delete-statements"></a>
 ## Delete Statements
 
 The query builder's `remove`, or an alias `deleteRow` method may be used to delete records from the table. You may constrain `delete` statements by adding "where" clauses before calling the `delete` method:
@@ -618,13 +590,14 @@ The query builder's `remove`, or an alias `deleteRow` method may be used to dele
 
     DB::table("users")->where("votes", ">", 100).remove();
 
-> {note} 'delete' can not be used as the method name because it is the reserved word.
+:::note
+`delete` can not be used as the method name because it is the reserved word.
+:::
 
 You may also pass record `id` to the `remove` method as the first argument, it is the shortcut method, which internally calls `where`:
 
     DB::table("users")->remove(2);
 
-<a name="truncate-statement"></a>
 ### Truncate Statement
 
 If you wish to truncate an entire table, which will remove all records from the table and reset the auto-incrementing ID to zero, you may use the `truncate` method:
@@ -635,7 +608,6 @@ If you wish to truncate an entire table, which will remove all records from the 
 
 When truncating a PostgreSQL database, the `CASCADE` behavior will be applied. This means that all foreign key related records in other tables will be deleted as well.
 
-<a name="pessimistic-locking"></a>
 ## Pessimistic Locking
 
 The query builder also includes a few functions to help you achieve "pessimistic locking" when executing your `select` statements. To execute a statement with a "shared lock", you may call the `sharedLock` method. A shared lock prevents the selected rows from being modified until your transaction is committed:

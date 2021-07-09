@@ -1,4 +1,8 @@
-<a name="top"></a>
+---
+sidebar_position: 2
+description: TinyORM makes interacting with a database extremely simple using raw SQL, a fluent query builder, and the TinyORM. It provides first-party support for three databases MySQL/MariaDB, PostgreSQL, and SQLite.
+---
+
 # Database: Getting Started
 
 - [Introduction](#introduction)
@@ -7,22 +11,20 @@
     - [Using Multiple Database Connections](#using-multiple-database-connections)
 - [Database Transactions](#database-transactions)
 
-<a name="introduction"></a>
-## Introduction
+## Introduction {#introduction}
 
-Almost every modern application interacts with a database. TinyORM makes interacting with a database extremely simple using raw SQL, a [fluent query builder](query-builder.md#top), and the [TinyORM](tinyorm.md#top). Currently, TinyORM provides first-party support for one database:
+Almost every modern application interacts with a database. TinyORM makes interacting with a database extremely simple using raw SQL, a [fluent query builder](query-builder.mdx), and the [TinyORM](tinyorm.mdx). Currently, TinyORM provides first-party support for three databases:
 
-<div class="content-list" markdown="1">
 - MySQL or MariaDB 5.0+ ([Version Policy](https://en.wikipedia.org/wiki/MySQL#Release_history))
 - PostgreSQL 9.6+ ([Version Policy](https://www.postgresql.org/support/versioning/))
 - SQLite 3.8.8+
-</div>
 
 TinyORM internally uses `QtSql` module, you can look for [supported databases](https://doc.qt.io/qt-5/sql-driver.html#supported-databases).
 
-> {note} TinyORM's code is ready and designed to simply add support for the following databases PostgreSQL and SQL Server.
+:::note
+TinyORM's code is ready and designed to simply add support for the  SQL Server.
+:::
 
-<a name="configuration"></a>
 ### Configuration
 
 You can create and configure new database connection by `create` method provided by `DB` facade:
@@ -50,9 +52,10 @@ You may also configure connection options by `options` key as `QVariantHash` or 
 
 You can also configure [Transaction Isolation Levels](https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html) for MySQL connection with the `isolation_level` configuration option.
 
-> {note} A database connection is resolved lazily, which means that the connection configuration is only saved after the `DB::create` method call. The connection will be resolved after you run some query or you can create it using the `DB::connection` method.
+:::info
+A database connection is resolved lazily, which means that the connection configuration is only saved after the `DB::create` method call. The connection will be resolved after you run some query or you can create it using the `DB::connection` method.
+:::
 
-<a name="sqlite-configuration"></a>
 #### SQLite Configuration
 
 SQLite databases are contained within a single file on your filesystem. You can create a new SQLite database using the `touch` command in your terminal: `touch database.sqlite`. After the database has been created, you may configure SQLite database connection:
@@ -71,12 +74,10 @@ The `database` configuration value is the absolute path to the database. To enab
 
 If the `check_database_exists` configuration value is set to the `true` value, then the database connection throws an `Orm::InvalidArgumentError` exception, when the SQLite database file doesn't exist. If it is set to the `false` value and the SQLite database file doesn't exist, then it will be created for you by SQLite driver. The default value is `true`.
 
-<a name="running-sql-queries"></a>
 ## Running SQL Queries
 
 Once you have configured your database connection, you may run queries using the `DB` facade. The `DB` facade provides methods for each type of query: `select`, `update`, `insert`, `delete`, and `statement`.
 
-<a name="running-a-select-query"></a>
 #### Running A Select Query
 
 To run a basic SELECT query, you may use the `select` method on the `DB` facade:
@@ -96,7 +97,6 @@ The `select` method returns a `QSqlQuery` containing the results of the query, w
     while(users.next())
         qDebug() << users.value("name").toString();
 
-<a name="running-an-insert-statement"></a>
 #### Running An Insert Statement
 
 To execute an `insert` statement, you may use the `insert` method on the `DB` facade. Like `select`, this method accepts the SQL query as its first argument and bindings as its second argument and returns `QSqlQuery`:
@@ -105,7 +105,6 @@ To execute an `insert` statement, you may use the `insert` method on the `DB` fa
 
     DB::insert("insert into users (id, name) values (?, ?)", {1, "Marc"});
 
-<a name="running-an-update-statement"></a>
 #### Running An Update Statement
 
 The `update` method should be used to update existing records in the database. The number of rows affected by the statement and `QSqlQuery` is returned by the method as `std::tuple<int, QSqlQuery>`:
@@ -122,7 +121,6 @@ The `update` method should be used to update existing records in the database. T
     if (!affected)
         qDebug() << "Any record was updated.";
 
-<a name="running-a-delete-statement"></a>
 #### Running A Delete Statement
 
 The `remove` method should be used to delete records from the database. Like `update`, the number of affected rows and `QSqlQuery` will be returned by the method as `std::tuple<int, QSqlQuery>`:
@@ -131,16 +129,16 @@ The `remove` method should be used to delete records from the database. Like `up
 
     auto [affected, query] = DB::remove("delete from users");
 
-> {note} `DB::delete` can not be used as the method name because it is the reserved word.
+:::note
+`delete` can not be used as the method name because it is the reserved word.
+:::
 
-<a name="running-a-general-statement"></a>
 #### Running A General Statement
 
 Some database statements do not return any value. For these types of operations, you may use the `statement` method on the `DB` facade:
 
     DB::statement("drop table users");
 
-<a name="implicit-commits-in-transactions"></a>
 #### Implicit Commits
 
 When using the `DB` facade's `statement` methods within transactions, you must be careful to avoid statements that cause [implicit commits](https://dev.mysql.com/doc/refman/8.0/en/implicit-commit.html). These statements will cause the database engine to indirectly commit the entire transaction, leaving TinyORM unaware of the database's transaction level. An example of such a statement is creating a database table:
@@ -149,7 +147,6 @@ When using the `DB` facade's `statement` methods within transactions, you must b
 
 Please refer to the MySQL manual for [a list of all statements](https://dev.mysql.com/doc/refman/8.0/en/implicit-commit.html) that trigger implicit commits.
 
-<a name="using-multiple-database-connections"></a>
 ### Using Multiple Database Connections
 
 You can configure multiple database connections at once during `DatabaseManager` instantiation using the `DB::create` overload, where the first argument is a hash of multiple connections and is of type `QHash<QString, QVariantHash>` and the second argument is the name of the default connection:
@@ -192,10 +189,8 @@ Or you can use the shortcut method `qtQuery` provided by the `DB` facade:
 
     auto query = DB::qtQuery();
 
-<a name="database-transactions"></a>
 ## Database Transactions
 
-<a name="manually-using-transactions"></a>
 #### Manually Using Transactions
 
 If you would like to begin a transaction manually and have complete control over rollbacks and commits, you may use the `beginTransaction` method provided by the `DB` facade:
@@ -216,4 +211,6 @@ All transaction methods accept a connection name as the optional argument:
 
     DB::beginTransaction("mysql_test");
 
-> {tip} The `DB` facade's transaction methods control the transactions for both the [query builder](query-builder.md#top) and [TinyORM](tinyorm.md#top).
+:::tip
+The `DB` facade's transaction methods control the transactions for both the [query builder](query-builder.mdx) and [TinyORM](tinyorm.mdx).
+:::
