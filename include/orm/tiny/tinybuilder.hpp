@@ -45,6 +45,12 @@ namespace Relations
 
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
+        // CUR omg const works here, all proxies which don't return *this can be const 😯 silverqx
+        /*! Get the vector with the values of a given column. */
+        QVector<QVariant> pluck(const QString &column) const;
+        /*! Get the vector with the values of a given column. */
+        template<typename T>
+        std::map<T, QVariant> pluck(const QString &column, const QString &key) const;
 
         /*! Find a model by its primary key. */
         std::optional<Model>
@@ -557,6 +563,20 @@ namespace Relations
             column_ = std::get<QString>(column);
 
         return model->getAttribute(column_.mid(column_.lastIndexOf(QChar('.')) + 1));
+    }
+
+    template<typename Model>
+    QVector<QVariant> Builder<Model>::pluck(const QString &column) const
+    {
+        return toBase().pluck(column);
+    }
+
+    template<typename Model>
+    template<typename T>
+    std::map<T, QVariant>
+    Builder<Model>::pluck(const QString &column, const QString &key) const
+    {
+        return toBase().template pluck<T>(column, key);
     }
 
     // FEATURE dilemma primarykey, Model::KeyType for id silverqx

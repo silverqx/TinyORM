@@ -52,6 +52,34 @@ QVariant Builder::value(const Column &column)
     return first({column}).value(column_);
 }
 
+QVector<QVariant> Builder::pluck(const QString &column)
+{
+    /* First, we will need to select the results of the query accounting for the
+       given column. Once we have the results, we will be able to take the results
+       and get the exact data that was requested for the query. */
+    auto query = get({column});
+
+    const auto size = query.size();
+
+    // Empty result
+    if (size == 0)
+        return {};
+
+    /* If the columns are qualified with a table or have an alias, we cannot use
+       those directly in the "pluck" operations since the results from the DB
+       are only keyed by the column itself. We'll strip the table out here. */
+    const auto unqualifiedColumn = stripTableForPluck(column);
+
+    QVector<QVariant> result;
+    if (size > 0)
+        result.reserve(size);
+
+    while (query.next())
+        result << query.value(unqualifiedColumn);
+
+    return result;
+}
+
 QString Builder::toSql()
 {
     return m_grammar.compileSelect(*this);
@@ -917,6 +945,16 @@ Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
         query.from(QStringLiteral("%1.%2").arg(queryDatabaseName, queryFrom));
 
     return query;
+}
+
+QString Builder::stripTableForPluck(const QString &column) const
+{
+    const auto as = QStringLiteral(" as ");
+
+    if (!column.contains(as))
+        return m_grammar.unqualifyColumn(column);
+
+    return column.split(as).last().trimmed();
 }
 
 Builder &Builder::setAggregate(const QString &function, const QVector<Column> &columns)

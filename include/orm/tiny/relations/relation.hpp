@@ -116,6 +116,12 @@ namespace Relations
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column) const;
 
+        /*! Get the vector with the values of a given column. */
+        QVector<QVariant> pluck(const QString &column) const;
+        /*! Get the vector with the values of a given column. */
+        template<typename T>
+        std::map<T, QVariant> pluck(const QString &column, const QString &key) const;
+
         /*! Find a model by its primary key. */
         virtual std::optional<Related>
         find(const QVariant &id, const QVector<Column> &columns = {"*"}) const;
@@ -626,6 +632,20 @@ namespace Relations
     QVariant Relation<Model, Related>::value(const Column &column) const
     {
         return m_query->value(column);
+    }
+
+    template<class Model, class Related>
+    QVector<QVariant> Relation<Model, Related>::pluck(const QString &column) const
+    {
+        return m_query->pluck(column);
+    }
+
+    template<class Model, class Related>
+    template<typename T>
+    std::map<T, QVariant>
+    Relation<Model, Related>::pluck(const QString &column, const QString &key) const
+    {
+        return m_query->template pluck<T>(column, key);
     }
 
     template<class Model, class Related>

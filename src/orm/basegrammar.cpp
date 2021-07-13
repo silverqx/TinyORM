@@ -96,6 +96,11 @@ BaseGrammar &BaseGrammar::setTablePrefix(const QString &prefix)
     return *this;
 }
 
+QString BaseGrammar::unqualifyColumn(const QString &column) const
+{
+    return column.split(QChar('.')).last().trimmed();
+}
+
 QString BaseGrammar::parameter(const QVariant &value) const
 {
     return isExpression(value) ? getValue(value).value<QString>()
@@ -165,11 +170,6 @@ QString BaseGrammar::getAliasFromFrom(const QString &from) const
     const auto segments = getSegmentsFromFrom(from);
 
     return segments.last();
-}
-
-QString BaseGrammar::unqualifyColumn(const QString &column) const
-{
-    return column.split(QChar('.')).last().trimmed();
 }
 
 QString BaseGrammar::columnizeInternal(const QVector<QString> &columns) const

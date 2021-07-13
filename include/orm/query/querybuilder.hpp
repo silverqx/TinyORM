@@ -50,6 +50,11 @@ namespace Query
         QSqlQuery first(const QVector<Column> &columns = {"*"});
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
+        /*! Get the vector with the values of a given column. */
+        QVector<QVariant> pluck(const QString &column);
+        /*! Get the vector with the values of a given column. */
+        template<typename T>
+        std::map<T, QVariant> pluck(const QString &column, const QString &key);
 
         /*! Get the SQL representation of the query. */
         QString toSql();
@@ -527,6 +532,9 @@ namespace Query
         /*! Prepend the database name if the given query is on another database. */
         Builder &prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const;
 
+        /*! Strip off the table name or alias from a column identifier. */
+        QString stripTableForPluck(const QString &column) const;
+
         /* Getters / Setters */
         /*! Set the aggregate property without running the query. */
         Builder &setAggregate(const QString &function,
@@ -615,6 +623,37 @@ namespace Query
         /*! Indicates whether row locking is being used. */
         std::variant<std::monostate, bool, QString> m_lock;
     };
+
+    template<typename T>
+    std::map<T, QVariant>
+    Builder::pluck(const QString &column, const QString &key)
+    {
+        /* First, we will need to select the results of the query accounting for the
+           given column / key. Once we have the results, we will be able to take
+           the results and get the exact data that was requested for the query. */
+        auto query = get({column, key});
+
+        const auto size = query.size();
+
+        // Empty result
+        if (size == 0)
+            return {};
+
+        /* If the columns are qualified with a table or have an alias, we cannot use
+           those directly in the "pluck" operations since the results from the DB
+           are only keyed by the column itself. We'll strip the table out here. */
+        const auto unqualifiedColumn = stripTableForPluck(column);
+
+        const auto unqualifiedKey = stripTableForPluck(key);
+
+        std::map<T, QVariant> result;
+
+        while (query.next())
+            result.emplace(std::make_pair(query.value(unqualifiedKey).value<T>(),
+                                          query.value(unqualifiedColumn)));
+
+        return result;
+    }
 
     inline quint64 Builder::count(const QVector<Column> &columns)
     {

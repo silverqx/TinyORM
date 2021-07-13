@@ -20,6 +20,10 @@ private slots:
 
     void find() const;
 
+    void pluck() const;
+    void pluck_EmptyResult() const;
+    void pluck_QualifiedColumnOrKey() const;
+
     void count() const;
     void count_Distinct() const;
     void min_Aggregate() const;
@@ -61,6 +65,150 @@ void tst_QueryBuilder::find() const
 
     QCOMPARE(query.value("id"), QVariant(2));
     QCOMPARE(query.value("name"), QVariant("test2"));
+}
+
+void tst_QueryBuilder::pluck() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Simple pluck without keying
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents").orderBy("name").pluck("name");
+
+        QVector<QVariant> expected {
+            "test1", "test2", "test3", "test4", "test5", "test6",
+        };
+        QCOMPARE(result, expected);
+    }
+    // Templated pluck keyed by id<quint64>
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents").pluck<quint64>("name", "id");
+
+        std::map<quint64, QVariant> expected {
+            {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
+            {5, "test5"}, {6, "test6"},
+        };
+        QCOMPARE(result, expected);
+    }
+    // Templated pluck keyed by name<QString>
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents").pluck<QString>("size", "name");
+
+        std::map<QString, QVariant> expected {
+            {"test1", 11}, {"test2", 12}, {"test3", 13}, {"test4", 14},
+            {"test5", 15}, {"test6", 16},
+        };
+        QCOMPARE(result, expected);
+    }
+    // Templated pluck keyed by file_index<bool>, bool type is used intentionally 😎
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrent_previewable_files").orderBy("id")
+                      .pluck<bool>("filepath", "file_index");
+
+        std::map<bool, QVariant> expected {
+            {false, "test1_file1.mkv"}, {true, "test2_file2.mkv"},
+        };
+        QCOMPARE(result, expected);
+    }
+}
+
+void tst_QueryBuilder::pluck_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents")
+                      .whereEq("name", "DUMMY_RECORD").pluck("name");
+
+        QCOMPARE(result, QVector<QVariant>());
+    }
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents")
+                      .whereEq("name", "DUMMY_RECORD").pluck<quint64>("name", "id");
+
+        std::map<quint64, QVariant> expected;
+        QCOMPARE(result, expected);
+    }
+}
+
+void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Strip table name
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents").orderBy("name").pluck("torrents.name");
+
+        QVector<QVariant> expected {
+            "test1", "test2", "test3", "test4", "test5", "test6",
+        };
+        QCOMPARE(result, expected);
+    }
+    // Strip table name
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents").pluck<quint64>("torrents.name",
+                                                               "torrents.id");
+
+        std::map<quint64, QVariant> expected {
+            {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
+            {5, "test5"}, {6, "test6"},
+        };
+        QCOMPARE(result, expected);
+    }
+    // Strip column alias
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents")
+                      .orderBy("name_alt").pluck("name as name_alt");
+
+        QVector<QVariant> expected {
+            "test1", "test2", "test3", "test4", "test5", "test6",
+        };
+        QCOMPARE(result, expected);
+    }
+    // Strip column alias
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents")
+                      .pluck<quint64>("name as name_alt", "id as id_alt");
+
+        std::map<quint64, QVariant> expected {
+            {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
+            {5, "test5"}, {6, "test6"},
+        };
+        QCOMPARE(result, expected);
+    }
+    // Strip column alias and table name
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents")
+                      .pluck<quint64>("torrents.name", "id as id_alt");
+
+        std::map<quint64, QVariant> expected {
+            {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
+            {5, "test5"}, {6, "test6"},
+        };
+        QCOMPARE(result, expected);
+    }
 }
 
 void tst_QueryBuilder::count() const
