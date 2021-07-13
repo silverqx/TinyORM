@@ -1,4 +1,7 @@
-# TinyORM
+<h1><img src="https://github.com/silverqx/TinyORM/blob/main/resources/logo-optim.svg" width="34" height="34" alt="TinyORM Logo" align="center">&nbsp;TinyORM</h1>
+
+[![silverqx.github.io][docs-badge]][docs]
+[![License MIT][license-badge]][license]
 
 TinyORM is a modern ORM library heavily inspired by Laravel's Eloquent ORM that makes interacting with a database extremely simple.
 
@@ -6,8 +9,15 @@ TinyORM is a modern ORM library heavily inspired by Laravel's Eloquent ORM that 
 
 Whole library is documented as markdown documents:
 
+[![silverqx.github.io][docs-badge]][docs]
+
 - [Documentation: Index](/docs/README.md#top)
 - [Database: Getting Started](/docs/database.md#top)
 - [Database: Query Builder](/docs/query-builder.md#top)
 - [TinyORM: Getting Started](/docs/tinyorm.md#top)
 - [TinyORM: Relationships](/docs/tinyorm-relationships.md#top)
+
+[docs-badge]: https://img.shields.io/badge/Docs-github.io-blue
+[docs]: https://silverqx.github.io/TinyORM/
+[license-badge]: https://img.shields.io/github/license/silverqx/TinyORM
+[license]: https://github.com/silverqx/TinyORM/blob/main/LICENSE
