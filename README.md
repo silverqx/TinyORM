@@ -12,6 +12,7 @@ Whole library is documented as markdown documents:
 [![silverqx.github.io][docs-badge]][docs]
 
 - [Documentation: Index](/docs/README.mdx#prologue)
+- [Dependencies](/docs/dependencies.mdx#dependencies)
 - [Database: Getting Started](/docs/database.mdx#database-getting-started)
 - [Database: Query Builder](/docs/query-builder.mdx#database-query-builder)
 - [TinyORM: Getting Started](/docs/tinyorm.mdx#tinyorm-getting-started)
