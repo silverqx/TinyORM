@@ -45,7 +45,7 @@ namespace Relations
 
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
-        // CUR omg const works here, all proxies which don't return *this can be const 😯 silverqx
+
         /*! Get the vector with the values of a given column. */
         QVector<QVariant> pluck(const QString &column) const;
         /*! Get the vector with the values of a given column. */
@@ -159,24 +159,24 @@ namespace Relations
 
         /* Select */
         /*! Retrieve the "count" result of the query. */
-        quint64 count(const QVector<Column> &columns = {"*"});
+        quint64 count(const QVector<Column> &columns = {"*"}) const;
         /*! Retrieve the "count" result of the query. */
         template<typename = void>
-        quint64 count(const Column &column);
+        quint64 count(const Column &column) const;
         /*! Retrieve the minimum value of a given column. */
-        QVariant min(const Column &column);
+        QVariant min(const Column &column) const;
         /*! Retrieve the maximum value of a given column. */
-        QVariant max(const Column &column);
+        QVariant max(const Column &column) const;
         /*! Retrieve the sum of the values of a given column. */
-        QVariant sum(const Column &column);
+        QVariant sum(const Column &column) const;
         /*! Retrieve the average of the values of a given column. */
-        QVariant avg(const Column &column);
+        QVariant avg(const Column &column) const;
         /*! Alias for the "avg" method. */
-        QVariant average(const Column &column);
+        QVariant average(const Column &column) const;
 
         /*! Execute an aggregate function on the database. */
         QVariant aggregate(const QString &function,
-                           const QVector<Column> &columns = {"*"});
+                           const QVector<Column> &columns = {"*"}) const;
 
         /*! Set the columns to be selected. */
         Builder &select(const QVector<Column> &columns = {"*"});
@@ -910,51 +910,51 @@ namespace Relations
     }
 
     template<typename Model>
-    quint64 Builder<Model>::count(const QVector<Column> &columns)
+    quint64 Builder<Model>::count(const QVector<Column> &columns) const
     {
         return toBase().count(columns);
     }
 
     template<typename Model>
     template<typename>
-    quint64 Builder<Model>::count(const Column &column)
+    quint64 Builder<Model>::count(const Column &column) const
     {
         return toBase().count(QVector<Column> {column});
     }
 
     template<typename Model>
-    QVariant Builder<Model>::min(const Column &column)
+    QVariant Builder<Model>::min(const Column &column) const
     {
         return toBase().min(column);
     }
 
     template<typename Model>
-    QVariant Builder<Model>::max(const Column &column)
+    QVariant Builder<Model>::max(const Column &column) const
     {
         return toBase().max(column);
     }
 
     template<typename Model>
-    QVariant Builder<Model>::sum(const Column &column)
+    QVariant Builder<Model>::sum(const Column &column) const
     {
         return toBase().sum(column);
     }
 
     template<typename Model>
-    QVariant Builder<Model>::avg(const Column &column)
+    QVariant Builder<Model>::avg(const Column &column) const
     {
         return toBase().avg(column);
     }
 
     template<typename Model>
-    QVariant Builder<Model>::average(const Column &column)
+    QVariant Builder<Model>::average(const Column &column) const
     {
         return toBase().avg(column);
     }
 
     template<typename Model>
     QVariant Builder<Model>::aggregate(const QString &function,
-                                       const QVector<Column> &columns)
+                                       const QVector<Column> &columns) const
     {
         return toBase().aggregate(function, columns);
     }
