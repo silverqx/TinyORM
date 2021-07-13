@@ -11,11 +11,11 @@ Whole library is documented as markdown documents:
 
 [![silverqx.github.io][docs-badge]][docs]
 
-- [Documentation: Index](/docs/README.md#top)
-- [Database: Getting Started](/docs/database.md#top)
-- [Database: Query Builder](/docs/query-builder.md#top)
-- [TinyORM: Getting Started](/docs/tinyorm.md#top)
-- [TinyORM: Relationships](/docs/tinyorm-relationships.md#top)
+- [Documentation: Index](/docs/README.mdx)
+- [Database: Getting Started](/docs/database.mdx)
+- [Database: Query Builder](/docs/query-builder.mdx)
+- [TinyORM: Getting Started](/docs/tinyorm.mdx)
+- [TinyORM: Relationships](/docs/tinyorm-relationships.mdx)
 
 [docs-badge]: https://img.shields.io/badge/Docs-github.io-blue
 [docs]: https://silverqx.github.io/TinyORM/
