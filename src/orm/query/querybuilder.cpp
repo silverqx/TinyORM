@@ -857,11 +857,12 @@ Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values,
     }, condition);
 }
 
-// CUR revisit QSharedPointer, here it should be unique_prt absolutely silverqx
 QSharedPointer<JoinClause>
 Builder::newJoinClause(const Builder &query, const QString &type,
                        const QString &table) const
 {
+    /* It has to be shared pointer, because it can not be passed down to joinInternal()
+       in join() as incomplete type. */
     return QSharedPointer<JoinClause>::create(query, type, table);
 }
 
@@ -1007,7 +1008,6 @@ Builder &Builder::joinInternal(QSharedPointer<JoinClause> &&join)
     // For convenience, I want to append first and afterwards add bindings
     const auto &joinRef = *join;
 
-    // CUR revisit QSharedPointer, here it should be unique_prt absolutely silverqx
     // Move ownership
     m_joins.append(std::move(join));
 
