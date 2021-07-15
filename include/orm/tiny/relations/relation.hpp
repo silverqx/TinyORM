@@ -453,6 +453,21 @@ namespace Relations
         /*! Add an "or where not null" clause to the query. */
         const Relation &orWhereNotNull(const Column &column) const;
 
+        /*! Add a basic where clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        const Relation &where(C &&column, const QString &comparison, V &&value,
+                              const QString &condition = "and") const;
+        /*! Add an "or where" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        const Relation &orWhere(C &&column, const QString &comparison, V &&value) const;
+        /*! Add a basic equal where clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        const Relation &whereEq(C &&column, V &&value,
+                                const QString &condition = "and") const;
+        /*! Add an equal "or where" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        const Relation &orWhereEq(C &&column, V &&value) const;
+
         /*! Add a full sub-select to the "where" clause. */
         template<WhereValueSubQuery T>
         const Relation &whereSub(const Column &column, const QString &comparison,
@@ -1518,6 +1533,54 @@ namespace Relations
     Relation<Model, Related>::orWhereNotNull(const Column &column) const
     {
         m_query->orWhereNotNull(column);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<Queryable C, WhereValue V>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::where(
+            C &&column, const QString &comparison, V &&value,
+            const QString &condition) const
+    {
+        m_query->where(std::forward<C>(column), comparison, std::forward<V>(value),
+                       condition);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<Queryable C, WhereValue V>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orWhere(
+            C &&column, const QString &comparison, V &&value) const
+    {
+        m_query->where(std::forward<C>(column), comparison, std::forward<V>(value),
+                       QStringLiteral("or"));
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<Queryable C, WhereValue V>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::whereEq(
+            C &&column, V &&value, const QString &condition) const
+    {
+        m_query->where(std::forward<C>(column), QStringLiteral("="),
+                       std::forward<V>(value), condition);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<Queryable C, WhereValue V>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orWhereEq(C &&column, V &&value) const
+    {
+        m_query->where(std::forward<C>(column), QStringLiteral("="),
+                       std::forward<V>(value), QStringLiteral("or"));
 
         return *this;
     }

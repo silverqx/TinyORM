@@ -306,6 +306,20 @@ namespace Query
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const Column &column);
 
+        /*! Add a basic where clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        Builder &where(C &&column, const QString &comparison, V &&value,
+                       const QString &condition = "and");
+        /*! Add an "or where" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        Builder &orWhere(C &&column, const QString &comparison, V &&value);
+        /*! Add a basic equal where clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        Builder &whereEq(C &&column, V &&value, const QString &condition = "and");
+        /*! Add an equal "or where" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        Builder &orWhereEq(C &&column, V &&value);
+
         /*! Add a full sub-select to the "where" clause. */
         template<WhereValueSubQuery T>
         Builder &whereSub(const Column &column, const QString &comparison, T &&query,
@@ -935,6 +949,46 @@ namespace Query
     {
         return where(column, QStringLiteral("="), std::forward<T>(value),
                      QStringLiteral("or"));
+    }
+
+    template<Queryable C, WhereValue V>
+    Builder &
+    Builder::where(C &&column, const QString &comparison, V &&value,
+                   const QString &condition)
+    {
+        /* If the column is a Closure instance and there is an operator value, we will
+           assume the developer wants to run a subquery and then compare the result
+           of that subquery with the given value that was provided to the method. */
+
+        // comparison operator check will be done in the where() method
+
+        auto [queryString, bindings] = createSub(std::forward<C>(column));
+
+        addBinding(bindings, BindingType::WHERE);
+
+        return where(Expression(QStringLiteral("(%1)").arg(queryString)), comparison,
+                     std::forward<V>(value), condition);
+    }
+
+    template<Queryable C, WhereValue V>
+    inline Builder &Builder::orWhere(C &&column, const QString &comparison, V &&value)
+    {
+        return where(std::forward<C>(column), comparison, std::forward<V>(value),
+                     QStringLiteral("or"));
+    }
+
+    template<Queryable C, WhereValue V>
+    inline Builder &Builder::whereEq(C &&column, V &&value, const QString &condition)
+    {
+        return where(std::forward<C>(column), QStringLiteral("="),
+                     std::forward<V>(value), condition);
+    }
+
+    template<Queryable C, WhereValue V>
+    inline Builder &Builder::orWhereEq(C &&column, V &&value)
+    {
+        return where(std::forward<C>(column), QStringLiteral("="),
+                     std::forward<V>(value), QStringLiteral("or"));
     }
 
     template<WhereValueSubQuery T>

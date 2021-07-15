@@ -507,6 +507,24 @@ namespace Relations {
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereNotNull(const Column &column);
 
+        /*! Add a basic where clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        where(C &&column, const QString &comparison, V &&value,
+              const QString &condition = "and");
+        /*! Add an "or where" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhere(C &&column, const QString &comparison, V &&value);
+        /*! Add a basic equal where clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereEq(C &&column, V &&value, const QString &condition = "and");
+        /*! Add an equal "or where" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereEq(C &&column, V &&value);
+
         /*! Add a full sub-select to the "where" clause. */
         template<WhereValueSubQuery T>
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -2431,6 +2449,62 @@ namespace Relations {
         auto builder = query();
 
         builder->orWhereNotNull(column);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<Queryable C, WhereValue V>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::where(
+            C &&column, const QString &comparison, V &&value,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->where(std::forward<C>(column), comparison, std::forward<V>(value),
+                       condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<Queryable C, WhereValue V>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orWhere(
+            C &&column, const QString &comparison, V &&value)
+    {
+        auto builder = query();
+
+        builder->where(std::forward<C>(column), comparison, std::forward<V>(value),
+                       QStringLiteral("or"));
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<Queryable C, WhereValue V>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereEq(
+            C &&column, V &&value, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->where(std::forward<C>(column), QStringLiteral("="),
+                       std::forward<V>(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<Queryable C, WhereValue V>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orWhereEq(C &&column, V &&value)
+    {
+        auto builder = query();
+
+        builder->where(std::forward<C>(column), QStringLiteral("="),
+                       std::forward<V>(value), QStringLiteral("or"));
 
         return builder;
     }

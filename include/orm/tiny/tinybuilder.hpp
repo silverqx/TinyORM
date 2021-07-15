@@ -351,6 +351,20 @@ namespace Relations
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const Column &column);
 
+        /*! Add a basic where clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        Builder &where(C &&column, const QString &comparison, V &&value,
+                       const QString &condition = "and");
+        /*! Add an "or where" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        Builder &orWhere(C &&column, const QString &comparison, V &&value);
+        /*! Add a basic equal where clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        Builder &whereEq(C &&column, V &&value, const QString &condition = "and");
+        /*! Add an equal "or where" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        Builder &orWhereEq(C &&column, V &&value);
+
         /*! Add a full sub-select to the "where" clause. */
         template<WhereValueSubQuery T>
         Builder &whereSub(const Column &column, const QString &comparison, T &&query,
@@ -1425,6 +1439,46 @@ namespace Relations
     Builder<Model> &Builder<Model>::orWhereNotNull(const Column &column)
     {
         toBase().orWhereNotNull(column);
+        return *this;
+    }
+
+    template<typename Model>
+    template<Queryable C, WhereValue V>
+    Builder<Model> &
+    Builder<Model>::where(C &&column, const QString &comparison, V &&value,
+                          const QString &condition)
+    {
+        toBase().where(std::forward<C>(column), comparison, std::forward<V>(value),
+                       condition);
+        return *this;
+    }
+
+    template<typename Model>
+    template<Queryable C, WhereValue V>
+    Builder<Model> &
+    Builder<Model>::orWhere(C &&column, const QString &comparison, V &&value)
+    {
+        toBase().where(std::forward<C>(column), comparison, std::forward<V>(value),
+                       QStringLiteral("or"));
+        return *this;
+    }
+
+    template<typename Model>
+    template<Queryable C, WhereValue V>
+    Builder<Model> &
+    Builder<Model>::whereEq(C &&column, V &&value, const QString &condition)
+    {
+        toBase().where(std::forward<C>(column), QStringLiteral("="),
+                       std::forward<V>(value), condition);
+        return *this;
+    }
+
+    template<typename Model>
+    template<Queryable C, WhereValue V>
+    Builder<Model> &Builder<Model>::orWhereEq(C &&column, V &&value)
+    {
+        toBase().where(std::forward<C>(column), QStringLiteral("="),
+                       std::forward<V>(value), QStringLiteral("or"));
         return *this;
     }
 

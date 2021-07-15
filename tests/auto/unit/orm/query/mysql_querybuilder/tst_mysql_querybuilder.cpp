@@ -83,12 +83,15 @@ private slots:
     // CUR rename these tests silverqx
     void whereWithVectorValue() const;
     void where_QueryableValue() const;
+    void where_QueryableColumn() const;
 
     void basicOrWhere() const;
     void basicOrWhere_ColumnExpression() const;
     void orWhereWithVectorValue() const;
     void orWhereWithVectorValue_ColumnExpression() const;
     void orWhereEq_QueryableValue() const;
+    void orWhereEq_QueryableColumn() const;
+    void orWhereEq_QueryableColumnAndValue() const;
 
     void whereColumn() const;
     void orWhereColumn() const;
@@ -1128,6 +1131,39 @@ void tst_MySql_QueryBuilder::where_QueryableValue() const
     }
 }
 
+void tst_MySql_QueryBuilder::where_QueryableColumn() const
+{
+    // With lambda expression
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->from("torrents").where([](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        }, ">", 13);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where (select avg(t.size) from `torrents` as `t`) > ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(13)}));
+    }
+    // With QueryBuilder
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->from("torrents")
+                .where(createQuery(m_connection)
+                       ->from("torrents", "t")
+                       .selectRaw("avg(t.size)"),
+                       ">", 13);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where (select avg(t.size) from `torrents` as `t`) > ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(13)}));
+    }
+}
+
 void tst_MySql_QueryBuilder::basicOrWhere() const
 {
     {
@@ -1223,6 +1259,81 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableValue() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` "
                  "where `id` = ? or `id` = (select avg(t.size) from `torrents` as `t`)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::orWhereEq_QueryableColumn() const
+{
+    // With lambda expression
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->from("torrents")
+                .whereEq("id", 2)
+                .orWhereEq([](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        }, 13);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where `id` = ? or (select avg(t.size) from `torrents` as `t`) = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2), QVariant(13)}));
+    }
+    // With QueryBuilder
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->from("torrents")
+                .whereEq("id", 2)
+                .orWhereEq(createQuery(m_connection)
+                           ->from("torrents", "t")
+                           .selectRaw("avg(t.size)"), 13);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where `id` = ? or (select avg(t.size) from `torrents` as `t`) = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2), QVariant(13)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::orWhereEq_QueryableColumnAndValue() const
+{
+    // Following is extreme case, but it should work
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->from("torrents")
+                .whereEq("id", 2)
+                .orWhereEq([](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        }, createQuery(m_connection)->from("torrents", "t")
+                                    .selectRaw("avg(t.size)"));
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where `id` = ? or (select avg(t.size) from `torrents` as `t`) = "
+                 "(select avg(t.size) from `torrents` as `t`)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->from("torrents")
+                .whereEq("id", 2)
+                .orWhereEq(createQuery(m_connection)
+                           ->from("torrents", "t")
+                           .selectRaw("avg(t.size)"), [](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        });
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where `id` = ? or (select avg(t.size) from `torrents` as `t`) = "
+                 "(select avg(t.size) from `torrents` as `t`)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(2)}));
     }
