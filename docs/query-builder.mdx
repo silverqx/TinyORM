@@ -477,10 +477,8 @@ As you can see, passing a lambda expression into the `where` method instructs th
 select * from users where name = "John" and (votes > 100 or title = "Admin")
 ```
 
-<a name="advanced-where-clauses"></a>
 ## Advanced Where Clauses
 
-<a name="subquery-where-clauses"></a>
 ### Subquery Where Clauses
 
 Sometimes you may need to construct a "where" clause that compares the results of a subquery to a given value. You may accomplish this by passing a lambda expression and a value to the `where` method. For example, the following query will retrieve all users who have a recent "membership" of a given type:
