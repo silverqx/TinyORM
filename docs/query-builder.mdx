@@ -17,6 +17,8 @@ description: TinyORM's database query builder provides a convenient, fluent inte
     - [Additional Where Clauses](#additional-where-clauses)
     - [Condition Operator Overriding](#condition-operator-overriding)
     - [Logical Grouping](#logical-grouping)
+- [Advanced Where Clauses](#advanced-where-clauses)
+    - [Subquery Where Clauses](#subquery-where-clauses)
 - [Ordering, Grouping, Limit & Offset](#ordering-grouping-limit-and-offset)
     - [Ordering](#ordering)
     - [Grouping](#grouping)
@@ -279,7 +281,8 @@ You may use the `joinSub`, `leftJoinSub`, and `rightJoinSub` methods to join a q
                        .groupBy("user_id");
 
     auto users = DB::table("users")
-                     ->joinSub(latestPosts, "latest_posts", [](auto &join) {
+                     ->joinSub(latestPosts, "latest_posts", [](auto &join)
+                     {
                          join.on("users.id", "=", "latest_posts.user_id");
                      }).get();
 
@@ -336,7 +339,8 @@ If you need to group an "or" condition within parentheses, you may pass a lambda
 
     auto users = DB::table("users")
                      ->where("votes", ">", 100)
-                     .orWhere([](auto &query) {
+                     .orWhere([](auto &query)
+                     {
                          query.whereEq("name", "Abigail")
                              .where("votes", ">", 50);
                      })
@@ -460,7 +464,8 @@ Sometimes you may need to group several "where" clauses within parentheses in or
 
     auto users = DB::table("users")
                      ->where("name", "=", "John")
-                     .where([](auto &query) {
+                     .where([](auto &query)
+                     {
                          query.where("votes", ">", 100)
                              .orWhere("title", "=", "Admin");
                      })
@@ -471,6 +476,34 @@ As you can see, passing a lambda expression into the `where` method instructs th
 ```sql
 select * from users where name = "John" and (votes > 100 or title = "Admin")
 ```
+
+<a name="advanced-where-clauses"></a>
+## Advanced Where Clauses
+
+<a name="subquery-where-clauses"></a>
+### Subquery Where Clauses
+
+Sometimes you may need to construct a "where" clause that compares the results of a subquery to a given value. You may accomplish this by passing a lambda expression and a value to the `where` method. For example, the following query will retrieve all users who have a recent "membership" of a given type:
+
+    #include "models/user.hpp"
+
+    auto users = User::whereEq([](auto &query)
+    {
+        query.select("type")
+             .from("membership")
+             .whereColumnEq("membership.user_id", "users.id")
+             .orderByDesc("membership.start_date")
+             .limit(1);
+    }, "Pro")->get();
+
+Or, you may need to construct a "where" clause that compares a column to the results of a subquery. You may accomplish this by passing a column, operator, and lambda expression to the `where` method. For example, the following query will retrieve all income records where the amount is less than average;
+
+    #include "models/income.hpp"
+
+    auto incomes = Income::where("amount", "<", [](auto &query)
+    {
+        query.selectRaw("avg(i.amount)").from("incomes as i");
+    })->get();
 
 ## Ordering, Grouping, Limit & Offset {#ordering-grouping-limit-and-offset}
 
