@@ -270,6 +270,59 @@ message(INCLUDEPATH: $$INCLUDEPATH)
 message(-------)
 
 
+tmp notes - Queryable columns:
+------------------------------
+
+    template<SubQuery T>
+    struct Queryable
+    {
+        QString as;
+//        std::variant<std::function<void(Orm::QueryBuilder &)>> queryable;
+        T       queryable;
+    };
+
+    Queryable(Orm::QueryBuilder &) -> Queryable<Orm::QueryBuilder &>;
+
+
+        /*! Set the columns to be selected. */
+        template<SubQuery T>
+        Builder &select(const QVector<Queryable<T>> &columns)
+//        Builder &select(const QVector<Queryable> &columns)
+        {
+            clearColumns();
+
+            for (const auto &q : columns)
+                selectSub(q.queryable, q.as);
+
+            return *this;
+        }
+        /*! Set the column to be selected. */
+//        template<SubQuery T>
+//        Builder &select(const Column &column);
+//        /*! Add new select columns to the query. */
+//        template<SubQuery T>
+//        Builder &addSelect(const QVector<Column> &columns);
+//        /*! Add a new select column to the query. */
+//        template<SubQuery T>
+//        Builder &addSelect(const Column &column);
+
+
+        /*! Makes "from" fetch from a subquery. */
+//        template<SubQuery T>
+//        Builder &whereSub(T &&query, const QVariant &value)
+//        {
+//            /* If the column is a Closure instance and there is an operator value, we will
+//               assume the developer wants to run a subquery and then compare the result
+//               of that subquery with the given value that was provided to the method. */
+//            auto [queryString, bindings] = createSub(std::forward<T>(query));
+
+//            addBinding(bindings, BindingType::WHERE);
+
+//            return where(Expression(QStringLiteral("(%1)").arg(queryString)),
+//                         QStringLiteral("="), value);
+//        }
+
+
 Model copy ctor:
 ----------------
 

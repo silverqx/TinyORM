@@ -407,20 +407,22 @@ namespace Relations {
                      const std::function<void(JoinClause &)> &callback);
 
         /*! Add a basic where clause to the query. */
+        template<WhereValue T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        where(const Column &column, const QString &comparison,
-              const QVariant &value, const QString &condition = "and");
+        where(const Column &column, const QString &comparison, T &&value,
+              const QString &condition = "and");
         /*! Add an "or where" clause to the query. */
+        template<WhereValue T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhere(const Column &column, const QString &comparison,
-                const QVariant &value);
+        orWhere(const Column &column, const QString &comparison, T &&value);
         /*! Add a basic equal where clause to the query. */
+        template<WhereValue T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereEq(const Column &column, const QVariant &value,
-                const QString &condition = "and");
+        whereEq(const Column &column, T &&value, const QString &condition = "and");
         /*! Add an equal "or where" clause to the query. */
+        template<WhereValue T>
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereEq(const Column &column, const QVariant &value);
+        orWhereEq(const Column &column, T &&value);
 
         /*! Add a nested where clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -504,6 +506,12 @@ namespace Relations {
         /*! Add an "or where not null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereNotNull(const Column &column);
+
+        /*! Add a full sub-select to the "where" clause. */
+        template<WhereValueSubQuery T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereSub(const Column &column, const QString &comparison, T &&query,
+                 const QString &condition = "and");
 
         /*! Add a raw "where" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -2110,50 +2118,54 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<WhereValue T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::where(
-            const Column &column, const QString &comparison,
-            const QVariant &value, const QString &condition)
+            const Column &column, const QString &comparison, T &&value,
+            const QString &condition)
     {
         auto builder = query();
 
-        builder->where(column, comparison, value, condition);
+        builder->where(column, comparison, std::forward<T>(value), condition);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<WhereValue T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhere(
-            const Column &column, const QString &comparison, const QVariant &value)
+            const Column &column, const QString &comparison, T &&value)
     {
         auto builder = query();
 
-        builder->orWhere(column, comparison, value);
+        builder->orWhere(column, comparison, std::forward<T>(value));
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<WhereValue T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::whereEq(
-            const Column &column, const QVariant &value, const QString &condition)
+            const Column &column, T &&value, const QString &condition)
     {
         auto builder = query();
 
-        builder->whereEq(column, value, condition);
+        builder->whereEq(column, std::forward<T>(value), condition);
 
         return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<WhereValue T>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::orWhereEq(
-            const Column &column, const QVariant &value)
+            const Column &column, T &&value)
     {
         auto builder = query();
 
-        builder->orWhereEq(column, value);
+        builder->orWhereEq(column, std::forward<T>(value));
 
         return builder;
     }
@@ -2419,6 +2431,20 @@ namespace Relations {
         auto builder = query();
 
         builder->orWhereNotNull(column);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<WhereValueSubQuery T>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereSub(
+            const Column &column, const QString &comparison, T &&query,
+            const QString &condition)
+    {
+        auto builder = Derived::query();
+
+        builder->whereSub(column, comparison, std::forward<T>(query), condition);
 
         return builder;
     }

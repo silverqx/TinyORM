@@ -80,12 +80,15 @@ private slots:
     void joinSub_CallbackOverload() const;
 
     void basicWhere() const;
+    // CUR rename these tests silverqx
     void whereWithVectorValue() const;
+    void where_QueryableValue() const;
 
     void basicOrWhere() const;
     void basicOrWhere_ColumnExpression() const;
     void orWhereWithVectorValue() const;
     void orWhereWithVectorValue_ColumnExpression() const;
+    void orWhereEq_QueryableValue() const;
 
     void whereColumn() const;
     void orWhereColumn() const;
@@ -1094,6 +1097,37 @@ void tst_MySql_QueryBuilder::whereWithVectorValue() const
     }
 }
 
+void tst_MySql_QueryBuilder::where_QueryableValue() const
+{
+    // With lambda expression
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->from("torrents").where("id", ">", [](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        });
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where `id` > (select avg(t.size) from `torrents` as `t`)");
+        QVERIFY(builder->getBindings().isEmpty());
+    }
+    // With QueryBuilder
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->from("torrents")
+                .where("id", ">",
+                       createQuery(m_connection)
+                       ->from("torrents", "t")
+                       .selectRaw("avg(t.size)"));
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where `id` > (select avg(t.size) from `torrents` as `t`)");
+        QVERIFY(builder->getBindings().isEmpty());
+    }
+}
+
 void tst_MySql_QueryBuilder::basicOrWhere() const
 {
     {
@@ -1156,6 +1190,42 @@ void tst_MySql_QueryBuilder::orWhereWithVectorValue_ColumnExpression() const
              "(progress >= ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+}
+
+void tst_MySql_QueryBuilder::orWhereEq_QueryableValue() const
+{
+    // With lambda expression
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->from("torrents")
+                .whereEq("id", 2)
+                .orWhereEq("id", [](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        });
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where `id` = ? or `id` = (select avg(t.size) from `torrents` as `t`)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+    // With QueryBuilder
+    {
+        auto builder = createQuery(m_connection);
+
+        builder->from("torrents")
+                .whereEq("id", 2)
+                .orWhereEq("id",
+                           createQuery(m_connection)
+                           ->from("torrents", "t")
+                           .selectRaw("avg(t.size)"));
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where `id` = ? or `id` = (select avg(t.size) from `torrents` as `t`)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
 }
 
 void tst_MySql_QueryBuilder::whereColumn() const
@@ -1425,7 +1495,7 @@ void tst_MySql_QueryBuilder::whereIn_ValueExpression() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereEq("id", {2})
+        builder->select("*").from("torrents").whereEq("id", 2)
                 .orWhereIn("id", {Raw(3)});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or `id` in (3)");

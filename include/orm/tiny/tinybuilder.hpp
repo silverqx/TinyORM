@@ -275,16 +275,19 @@ namespace Relations
                               const std::function<void(JoinClause &)> &callback);
 
         /*! Add a basic where clause to the query. */
-        Builder &where(const Column &column, const QString &comparison,
-                       const QVariant &value, const QString &condition = "and");
+        template<WhereValue T>
+        Builder &where(const Column &column, const QString &comparison, T &&value,
+                       const QString &condition = "and");
         /*! Add an "or where" clause to the query. */
-        Builder &orWhere(const Column &column, const QString &comparison,
-                         const QVariant &value);
+        template<WhereValue T>
+        Builder &orWhere(const Column &column, const QString &comparison, T &&value);
         /*! Add a basic equal where clause to the query. */
-        Builder &whereEq(const Column &column, const QVariant &value,
+        template<WhereValue T>
+        Builder &whereEq(const Column &column, T &&value,
                          const QString &condition = "and");
         /*! Add an equal "or where" clause to the query. */
-        Builder &orWhereEq(const Column &column, const QVariant &value);
+        template<WhereValue T>
+        Builder &orWhereEq(const Column &column, T &&value);
 
         /*! Add a nested where clause to the query. */
         Builder &where(const std::function<void(Builder &)> &callback,
@@ -347,6 +350,11 @@ namespace Relations
         Builder &whereNotNull(const Column &column, const QString &condition = "and");
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const Column &column);
+
+        /*! Add a full sub-select to the "where" clause. */
+        template<WhereValueSubQuery T>
+        Builder &whereSub(const Column &column, const QString &comparison, T &&query,
+                          const QString &condition = "and");
 
         /*! Add a raw "where" clause to the query. */
         Builder &whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
@@ -1198,37 +1206,39 @@ namespace Relations
     }
 
     template<typename Model>
+    template<WhereValue T>
     Builder<Model> &
-    Builder<Model>::where(const Column &column, const QString &comparison,
-                          const QVariant &value, const QString &condition)
+    Builder<Model>::where(const Column &column, const QString &comparison, T &&value,
+                          const QString &condition)
     {
-        toBase().where(column, comparison, value, condition);
+        toBase().where(column, comparison, std::forward<T>(value), condition);
         return *this;
     }
 
     template<typename Model>
+    template<WhereValue T>
     Builder<Model> &
-    Builder<Model>::orWhere(const Column &column, const QString &comparison,
-                            const QVariant &value)
+    Builder<Model>::orWhere(const Column &column, const QString &comparison, T &&value)
     {
-        toBase().orWhere(column, comparison, value);
+        toBase().orWhere(column, comparison, std::forward<T>(value));
         return *this;
     }
 
     template<typename Model>
+    template<WhereValue T>
     Builder<Model> &
-    Builder<Model>::whereEq(const Column &column, const QVariant &value,
-                            const QString &condition)
+    Builder<Model>::whereEq(const Column &column, T &&value, const QString &condition)
     {
-        toBase().whereEq(column, value, condition);
+        toBase().whereEq(column, std::forward<T>(value), condition);
         return *this;
     }
 
     template<typename Model>
+    template<WhereValue T>
     Builder<Model> &
-    Builder<Model>::orWhereEq(const Column &column, const QVariant &value)
+    Builder<Model>::orWhereEq(const Column &column, T &&value)
     {
-        toBase().orWhereEq(column, value);
+        toBase().orWhereEq(column, std::forward<T>(value));
         return *this;
     }
 
@@ -1415,6 +1425,16 @@ namespace Relations
     Builder<Model> &Builder<Model>::orWhereNotNull(const Column &column)
     {
         toBase().orWhereNotNull(column);
+        return *this;
+    }
+
+    template<typename Model>
+    template<WhereValueSubQuery T>
+    Builder<Model> &
+    Builder<Model>::whereSub(const Column &column, const QString &comparison,
+                             T &&query, const QString &condition)
+    {
+        toBase().whereSub(column, comparison, std::forward<T>(query), condition);
         return *this;
     }
 

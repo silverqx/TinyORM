@@ -284,39 +284,6 @@ Builder &Builder::fromRaw(const QString &expression, const QVector<QVariant> &bi
     return *this;
 }
 
-Builder &Builder::where(const Column &column, const QString &comparison,
-                        const QVariant &value, const QString &condition)
-{
-    // TODO constexpr, compile check for a invalid comparison operator silverqx
-    invalidOperator(comparison);
-
-    m_wheres.append({.column = column, .value = value, .comparison = comparison,
-                     .condition = condition, .type = WhereType::BASIC});
-
-    if (!value.canConvert<Expression>())
-        // CUR check flattenBindings, I already have flatBindingsForUpdateDelete() algo silverqx
-        addBinding(value, BindingType::WHERE);
-
-    return *this;
-}
-
-Builder &Builder::orWhere(const Column &column, const QString &comparison,
-                          const QVariant &value)
-{
-    return where(column, comparison, value, QStringLiteral("or"));
-}
-
-Builder &Builder::whereEq(const Column &column, const QVariant &value,
-                          const QString &condition)
-{
-    return where(column, QStringLiteral("="), value, condition);
-}
-
-Builder &Builder::orWhereEq(const Column &column, const QVariant &value)
-{
-    return where(column, QStringLiteral("="), value, QStringLiteral("or"));
-}
-
 Builder &Builder::where(const std::function<void(Builder &)> &callback,
                         const QString &condition)
 {
@@ -1042,6 +1009,22 @@ Builder &Builder::joinSubInternal(
     return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
                                                             m_grammar.wrapTable(as))),
                 callback, type);
+}
+
+Builder &Builder::whereInternal(const Column &column, const QString &comparison,
+                                const QVariant &value, const QString &condition)
+{
+    // TODO constexpr, compile check for a invalid comparison operator silverqx
+    invalidOperator(comparison);
+
+    m_wheres.append({.column = column, .value = value, .comparison = comparison,
+                     .condition = condition, .type = WhereType::BASIC});
+
+    if (!value.canConvert<Expression>())
+        // CUR check flattenBindings, I already have flatBindingsForUpdateDelete() algo silverqx
+        addBinding(value, BindingType::WHERE);
+
+    return *this;
 }
 
 } // namespace Orm

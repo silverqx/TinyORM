@@ -15,13 +15,26 @@ namespace Query
 }
     using QueryBuilder = Query::Builder;
 
+    /*! Concept for a queryable parameter. */
+    template<typename T>
+    concept Queryable = std::convertible_to<T, Orm::QueryBuilder &> ||
+                        std::invocable<T, Orm::QueryBuilder &>;
+
+    /*! Concept for whereSub()'s value parameter. */
+    template<typename T>
+    concept WhereValueSubQuery = Queryable<T>;
+
     /*! Concept for the subquery, used in the from clause (tablename), join clause, ... */
     template<typename T>
-    concept SubQuery = std::convertible_to<T, Orm::QueryBuilder &> ||
-                       std::convertible_to<T, QString> ||
-                       std::invocable<T, Orm::QueryBuilder &>;
+    concept SubQuery = std::convertible_to<T, QString> ||
+                       Queryable<T>;
 
-    /*! Concept for the join's table. */
+    /*! Concept for where()'s value parameter. */
+    template<typename T>
+    concept WhereValue = std::convertible_to<T, const QVariant &> ||
+                         WhereValueSubQuery<T>;
+
+    /*! Concept for the join's table parameter. */
     template<typename T>
     concept JoinTable = std::same_as<T, Query::Expression> ||
                         std::convertible_to<T, QString>;

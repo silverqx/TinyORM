@@ -1153,7 +1153,7 @@ void tst_SQLite_QueryBuilder::whereIn_ValueExpression() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereEq("id", {2})
+        builder->select("*").from("torrents").whereEq("id", 2)
                 .orWhereIn("id", {Raw(3)});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" = ? or \"id\" in (3)");
