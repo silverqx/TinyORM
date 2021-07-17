@@ -81,16 +81,15 @@ private slots:
     void joinSub_QueryBuilderOverload_WithWhere() const;
     void joinSub_CallbackOverload() const;
 
-    void basicWhere() const;
-    // CUR rename these tests silverqx
-    void whereWithVectorValue() const;
+    void where() const;
+    void where_WithVectorValue() const;
     void where_QueryableValue() const;
     void where_QueryableColumn() const;
 
-    void basicOrWhere() const;
-    void basicOrWhere_ColumnExpression() const;
-    void orWhereWithVectorValue() const;
-    void orWhereWithVectorValue_ColumnExpression() const;
+    void orWhere() const;
+    void orWhere_ColumnExpression() const;
+    void orWhere_WithVectorValue() const;
+    void orWhere_WithVectorValue_ColumnExpression() const;
     void orWhereEq_QueryableValue() const;
     void orWhereEq_QueryableColumn() const;
     void orWhereEq_QueryableColumnAndValue() const;
@@ -98,22 +97,22 @@ private slots:
     void whereColumn() const;
     void orWhereColumn() const;
     void orWhereColumn_ColumnExpression() const;
-    void whereColumnWithVectorValue() const;
-    void orWhereColumnWithVectorValue() const;
-    void orWhereColumnWithVectorValue_ColumnExpression() const;
+    void whereColumn_WithVectorValue() const;
+    void orWhereColumn_WithVectorValue() const;
+    void orWhereColumn_WithVectorValue_ColumnExpression() const;
 
-    void basicWhereIn() const;
-    void basicWhereNotIn() const;
-    void basicWhereNotIn_ColumnExpression() const;
-    void emptyWhereIn() const;
-    void emptyNotWhereIn() const;
+    void whereIn() const;
+    void whereNotIn() const;
+    void whereNotIn_ColumnExpression() const;
+    void whereIn_Empty() const;
+    void whereNotIn_Empty() const;
     void whereIn_ValueExpression() const;
 
-    void basicWhereNull() const;
-    void basicWhereNotNull() const;
-    void basicWhereNotNull_ColumnExpression() const;
-    void whereNullWithVectorValue() const;
-    void whereNotNullWithVectorValue() const;
+    void whereNull() const;
+    void whereNotNull() const;
+    void whereNotNull_ColumnExpression() const;
+    void whereNull_WithVectorValue() const;
+    void whereNotNull_WithVectorValue() const;
 
     void orderBy() const;
     void latestOldest() const;
@@ -992,7 +991,7 @@ void tst_MySql_QueryBuilder::joinSub_CallbackOverload() const
              QVector<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
-void tst_MySql_QueryBuilder::basicWhere() const
+void tst_MySql_QueryBuilder::where() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1067,7 +1066,7 @@ void tst_MySql_QueryBuilder::basicWhere() const
     }
 }
 
-void tst_MySql_QueryBuilder::whereWithVectorValue() const
+void tst_MySql_QueryBuilder::where_WithVectorValue() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1166,7 +1165,7 @@ void tst_MySql_QueryBuilder::where_QueryableColumn() const
     }
 }
 
-void tst_MySql_QueryBuilder::basicOrWhere() const
+void tst_MySql_QueryBuilder::orWhere() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1191,7 +1190,7 @@ void tst_MySql_QueryBuilder::basicOrWhere() const
     }
 }
 
-void tst_MySql_QueryBuilder::basicOrWhere_ColumnExpression() const
+void tst_MySql_QueryBuilder::orWhere_ColumnExpression() const
 {
     auto builder = createQuery(m_connection);
 
@@ -1203,7 +1202,7 @@ void tst_MySql_QueryBuilder::basicOrWhere_ColumnExpression() const
              QVector<QVariant>({QVariant(4), QVariant("test3")}));
 }
 
-void tst_MySql_QueryBuilder::orWhereWithVectorValue() const
+void tst_MySql_QueryBuilder::orWhere_WithVectorValue() const
 {
     auto builder = createQuery(m_connection);
 
@@ -1216,7 +1215,7 @@ void tst_MySql_QueryBuilder::orWhereWithVectorValue() const
              QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
 }
 
-void tst_MySql_QueryBuilder::orWhereWithVectorValue_ColumnExpression() const
+void tst_MySql_QueryBuilder::orWhere_WithVectorValue_ColumnExpression() const
 {
     auto builder = createQuery(m_connection);
 
@@ -1398,7 +1397,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_ColumnExpression() const
              QVector<QVariant>());
 }
 
-void tst_MySql_QueryBuilder::whereColumnWithVectorValue() const
+void tst_MySql_QueryBuilder::whereColumn_WithVectorValue() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1427,7 +1426,7 @@ void tst_MySql_QueryBuilder::whereColumnWithVectorValue() const
     }
 }
 
-void tst_MySql_QueryBuilder::orWhereColumnWithVectorValue() const
+void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1469,7 +1468,7 @@ void tst_MySql_QueryBuilder::orWhereColumnWithVectorValue() const
     }
 }
 
-void tst_MySql_QueryBuilder::orWhereColumnWithVectorValue_ColumnExpression() const
+void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue_ColumnExpression() const
 {
     auto builder = createQuery(m_connection);
 
@@ -1483,7 +1482,7 @@ void tst_MySql_QueryBuilder::orWhereColumnWithVectorValue_ColumnExpression() con
              QVector<QVariant>({QVariant(2)}));
 }
 
-void tst_MySql_QueryBuilder::basicWhereIn() const
+void tst_MySql_QueryBuilder::whereIn() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1508,7 +1507,7 @@ void tst_MySql_QueryBuilder::basicWhereIn() const
     }
 }
 
-void tst_MySql_QueryBuilder::basicWhereNotIn() const
+void tst_MySql_QueryBuilder::whereNotIn() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1533,7 +1532,7 @@ void tst_MySql_QueryBuilder::basicWhereNotIn() const
     }
 }
 
-void tst_MySql_QueryBuilder::basicWhereNotIn_ColumnExpression() const
+void tst_MySql_QueryBuilder::whereNotIn_ColumnExpression() const
 {
     auto builder = createQuery(m_connection);
 
@@ -1545,7 +1544,7 @@ void tst_MySql_QueryBuilder::basicWhereNotIn_ColumnExpression() const
              QVector<QVariant>({QVariant(1), QVariant(2), QVariant(3), QVariant(4)}));
 }
 
-void tst_MySql_QueryBuilder::emptyWhereIn() const
+void tst_MySql_QueryBuilder::whereIn_Empty() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1569,7 +1568,7 @@ void tst_MySql_QueryBuilder::emptyWhereIn() const
     }
 }
 
-void tst_MySql_QueryBuilder::emptyNotWhereIn() const
+void tst_MySql_QueryBuilder::whereNotIn_Empty() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1627,7 +1626,7 @@ void tst_MySql_QueryBuilder::whereIn_ValueExpression() const
     }
 }
 
-void tst_MySql_QueryBuilder::basicWhereNull() const
+void tst_MySql_QueryBuilder::whereNull() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1662,7 +1661,7 @@ void tst_MySql_QueryBuilder::basicWhereNull() const
     }
 }
 
-void tst_MySql_QueryBuilder::basicWhereNotNull() const
+void tst_MySql_QueryBuilder::whereNotNull() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1697,7 +1696,7 @@ void tst_MySql_QueryBuilder::basicWhereNotNull() const
     }
 }
 
-void tst_MySql_QueryBuilder::basicWhereNotNull_ColumnExpression() const
+void tst_MySql_QueryBuilder::whereNotNull_ColumnExpression() const
 {
     auto builder = createQuery(m_connection);
 
@@ -1709,7 +1708,7 @@ void tst_MySql_QueryBuilder::basicWhereNotNull_ColumnExpression() const
              QVector<QVariant>({QVariant(3)}));
 }
 
-void tst_MySql_QueryBuilder::whereNullWithVectorValue() const
+void tst_MySql_QueryBuilder::whereNull_WithVectorValue() const
 {
     {
         auto builder = createQuery(m_connection);
@@ -1747,7 +1746,7 @@ void tst_MySql_QueryBuilder::whereNullWithVectorValue() const
     }
 }
 
-void tst_MySql_QueryBuilder::whereNotNullWithVectorValue() const
+void tst_MySql_QueryBuilder::whereNotNull_WithVectorValue() const
 {
     {
         auto builder = createQuery(m_connection);
