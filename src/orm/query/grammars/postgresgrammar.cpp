@@ -93,7 +93,7 @@ QString PostgresGrammar::compileUpdateColumns(const QVector<UpdateItem> &values)
                                    wrap(unqualifyColumn(assignment.column)),
                                    parameter(assignment.value));
 
-    return compiledAssignments.join(", ");
+    return compiledAssignments.join(COMMA);
 }
 
 const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &

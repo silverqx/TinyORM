@@ -1,5 +1,9 @@
 #include "orm/tiny/modelnotfounderror.hpp"
 
+#include "orm/constants.hpp"
+
+using namespace Orm::Constants;
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -34,7 +38,7 @@ QString ModelNotFoundError::formatMessage(const char *model,
             for (const auto &id : ids)
                 result << id.value<QString>();
 
-            return result.join(", ");
+            return result.join(COMMA);
         };
 
         result += QStringLiteral(" with ids : %2").arg(joinIds());

@@ -45,7 +45,7 @@ QString Grammar::compileInsert(const QueryBuilder &query,
                 table,
                 // Columns are obtained only from a first QMap
                 columnize(values.at(0).keys()),
-                compileInsertToVector(values).join(", "));
+                compileInsertToVector(values).join(COMMA));
 }
 
 QString Grammar::compileInsertOrIgnore(const QueryBuilder &,
@@ -314,7 +314,7 @@ QString Grammar::compileOrders(const QueryBuilder &query) const
     if (query.getOrders().isEmpty())
         return QLatin1String("");
 
-    return QStringLiteral("order by %1").arg(compileOrdersToVector(query).join(", "));
+    return QStringLiteral("order by %1").arg(compileOrdersToVector(query).join(COMMA));
 }
 
 QStringList Grammar::compileOrdersToVector(const QueryBuilder &query) const
@@ -442,7 +442,7 @@ Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
                                    wrap(assignment.column),
                                    parameter(assignment.value));
 
-    return compiledAssignments.join(", ");
+    return compiledAssignments.join(COMMA);
 }
 
 QString

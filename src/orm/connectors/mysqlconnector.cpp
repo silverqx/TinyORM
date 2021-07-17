@@ -205,7 +205,7 @@ QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
 void MySqlConnector::setCustomModes(const QSqlDatabase &connection,
                                     const QVariantHash &config) const
 {
-    const auto modes = config["modes"].value<QStringList>().join(", ");
+    const auto modes = config["modes"].value<QStringList>().join(COMMA);
 
     QSqlQuery query(connection);
 

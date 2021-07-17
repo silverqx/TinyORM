@@ -2,6 +2,10 @@
 
 #include <QStringList>
 
+#include "orm/constants.hpp"
+
+using namespace Orm::Constants;
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -51,7 +55,7 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error) con
     )
         errorText << databaseText;
 
-    result += errorText.join(", ");
+    result += errorText.join(COMMA);
 
     result += QChar(')');
 
