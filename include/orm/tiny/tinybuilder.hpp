@@ -718,14 +718,14 @@ namespace Relations
     Builder<Model>::firstWhereEq(const Column &column, const QVariant &value,
                                  const QString &condition)
     {
-        return where(column, QStringLiteral("="), value, condition).first();
+        return where(column, EQ, value, condition).first();
     }
 
     template<typename Model>
     Builder<Model> &
     Builder<Model>::whereKey(const QVariant &id)
     {
-        return where(m_model.getQualifiedKeyName(), QStringLiteral("="), id);
+        return where(m_model.getQualifiedKeyName(), EQ, id);
     }
 
     template<typename Model>
@@ -1277,7 +1277,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::orWhere(const std::function<void(Builder &)> &callback)
     {
-        return where(callback, "or");
+        return where(callback, OR);
     }
 
     template<typename Model>
@@ -1469,8 +1469,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::whereEq(C &&column, V &&value, const QString &condition)
     {
-        toBase().where(std::forward<C>(column), QStringLiteral("="),
-                       std::forward<V>(value), condition);
+        toBase().where(std::forward<C>(column), EQ, std::forward<V>(value), condition);
         return *this;
     }
 
@@ -1478,8 +1477,7 @@ namespace Relations
     template<Queryable C, WhereValue V>
     Builder<Model> &Builder<Model>::orWhereEq(C &&column, V &&value)
     {
-        toBase().where(std::forward<C>(column), QStringLiteral("="),
-                       std::forward<V>(value), OR);
+        toBase().where(std::forward<C>(column), EQ, std::forward<V>(value), OR);
         return *this;
     }
 

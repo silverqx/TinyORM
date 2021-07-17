@@ -752,8 +752,8 @@ namespace Query
            ID to let developers to simply and quickly remove a single row from this
            database without manually specifying the "where" clauses on the query.
            m_from will be wrapped in the Grammar. */
-        where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)),
-              QStringLiteral("="), std::forward<T>(id), AND);
+        where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)), EQ,
+              std::forward<T>(id), AND);
 
         return remove();
     }
@@ -937,13 +937,13 @@ namespace Query
     Builder &
     Builder::whereEq(const Column &column, T &&value, const QString &condition)
     {
-        return where(column, QStringLiteral("="), std::forward<T>(value), condition);
+        return where(column, EQ, std::forward<T>(value), condition);
     }
 
     template<WhereValue T>
     Builder &Builder::orWhereEq(const Column &column, T &&value)
     {
-        return where(column, QStringLiteral("="), std::forward<T>(value), OR);
+        return where(column, EQ, std::forward<T>(value), OR);
     }
 
     template<Queryable C, WhereValue V>
@@ -974,15 +974,13 @@ namespace Query
     template<Queryable C, WhereValue V>
     inline Builder &Builder::whereEq(C &&column, V &&value, const QString &condition)
     {
-        return where(std::forward<C>(column), QStringLiteral("="),
-                     std::forward<V>(value), condition);
+        return where(std::forward<C>(column), EQ, std::forward<V>(value), condition);
     }
 
     template<Queryable C, WhereValue V>
     inline Builder &Builder::orWhereEq(C &&column, V &&value)
     {
-        return where(std::forward<C>(column), QStringLiteral("="),
-                     std::forward<V>(value), OR);
+        return where(std::forward<C>(column), EQ, std::forward<V>(value), OR);
     }
 
     template<WhereValueSubQuery T>

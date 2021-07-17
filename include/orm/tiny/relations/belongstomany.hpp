@@ -798,8 +798,7 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType>::find(
             const QVariant &id, const QVector<Column> &columns) const
     {
-        return this->where(this->m_related->getQualifiedKeyName(),
-                           QStringLiteral("="), id)
+        return this->where(this->m_related->getQualifiedKeyName(), EQ, id)
                 .first(columns);
     }
 
@@ -908,7 +907,7 @@ namespace Orm::Tiny::Relations
             const Column &column, const QVariant &value,
             const QString &condition) const
     {
-        return firstWhere(column, QStringLiteral("="), value, condition);
+        return firstWhere(column, EQ, value, condition);
     }
 
     template<class Model, class Related, class PivotType>
@@ -1308,7 +1307,7 @@ namespace Orm::Tiny::Relations
         /* We need to join to the intermediate table on the related model's primary
            key column with the intermediate table's foreign key for the related
            model instance. Then we can set the "where" for the parent models. */
-        query.join(m_table, getQualifiedRelatedKeyName(), QStringLiteral("="),
+        query.join(m_table, getQualifiedRelatedKeyName(), EQ,
                    getQualifiedRelatedPivotKeyName());
 
         return *this;
@@ -1318,7 +1317,7 @@ namespace Orm::Tiny::Relations
     const BelongsToMany<Model, Related, PivotType> &
     BelongsToMany<Model, Related, PivotType>::addWhereConstraints() const
     {
-        this->m_query->where(getQualifiedForeignPivotKeyName(), QStringLiteral("="),
+        this->m_query->where(getQualifiedForeignPivotKeyName(), EQ,
                              this->m_parent.getAttribute(m_parentKey));
 
         return *this;

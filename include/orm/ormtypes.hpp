@@ -78,8 +78,8 @@ namespace Query
     {
         Column                       column      {};
         QVariant                     value       {};
-        QString                      comparison  {"="};
-        QString                      condition   {"and"};
+        QString                      comparison  {EQ};
+        QString                      condition   {AND};
         WhereType                    type        {WhereType::UNDEFINED};
         QSharedPointer<QueryBuilder> nestedQuery {nullptr};
         QVector<QVariant>            values      {};
@@ -98,8 +98,8 @@ namespace Query
     {
         Column     column     {};
         QVariant   value      {};
-        QString    comparison {"="};
-        QString    condition  {"and"};
+        QString    comparison {EQ};
+        QString    condition  {AND};
         HavingType type       {HavingType::UNDEFINED};
         QString    sql        {};
     };
@@ -139,7 +139,7 @@ namespace Query
     {
         Column   column;
         QVariant value;
-        QString  comparison {"="};
+        QString  comparison {EQ};
         QString  condition  {};
 
         operator AttributeItem() const;
@@ -149,7 +149,7 @@ namespace Query
     {
         Column  first;
         Column  second;
-        QString comparison {"="};
+        QString comparison {EQ};
         QString condition  {};
     };
 

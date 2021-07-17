@@ -1570,8 +1570,7 @@ namespace Relations
     Relation<Model, Related>::whereEq(
             C &&column, V &&value, const QString &condition) const
     {
-        m_query->where(std::forward<C>(column), QStringLiteral("="),
-                       std::forward<V>(value), condition);
+        m_query->where(std::forward<C>(column), EQ, std::forward<V>(value), condition);
 
         return *this;
     }
@@ -1581,8 +1580,7 @@ namespace Relations
     const Relation<Model, Related> &
     Relation<Model, Related>::orWhereEq(C &&column, V &&value) const
     {
-        m_query->where(std::forward<C>(column), QStringLiteral("="),
-                       std::forward<V>(value), OR);
+        m_query->where(std::forward<C>(column), EQ, std::forward<V>(value), OR);
 
         return *this;
     }

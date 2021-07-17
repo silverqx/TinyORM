@@ -1520,7 +1520,7 @@ namespace Relations {
     Model<Derived, AllRelations...>::firstWhereEq(
             const Column &column, const QVariant &value, const QString &condition)
     {
-        return where(column, QStringLiteral("="), value, condition)->first();
+        return where(column, EQ, value, condition)->first();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2490,8 +2490,7 @@ namespace Relations {
     {
         auto builder = query();
 
-        builder->where(std::forward<C>(column), QStringLiteral("="),
-                       std::forward<V>(value), condition);
+        builder->where(std::forward<C>(column), EQ, std::forward<V>(value), condition);
 
         return builder;
     }
@@ -2503,8 +2502,7 @@ namespace Relations {
     {
         auto builder = query();
 
-        builder->where(std::forward<C>(column), QStringLiteral("="),
-                       std::forward<V>(value), OR);
+        builder->where(std::forward<C>(column), EQ, std::forward<V>(value), OR);
 
         return builder;
     }
@@ -4683,7 +4681,7 @@ namespace Relations {
     TinyBuilder<Derived> &
     Model<Derived, AllRelations...>::setKeysForSaveQuery(TinyBuilder<Derived> &query)
     {
-        return query.where(getKeyName(), QStringLiteral("="), getKeyForSaveQuery());
+        return query.where(getKeyName(), EQ, getKeyForSaveQuery());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -4703,7 +4701,7 @@ namespace Relations {
     TinyBuilder<Derived> &
     Model<Derived, AllRelations...>::setKeysForSelectQuery(TinyBuilder<Derived> &query)
     {
-        return query.where(getKeyName(), QStringLiteral("="), getKeyForSelectQuery());
+        return query.where(getKeyName(), EQ, getKeyForSelectQuery());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

@@ -174,8 +174,7 @@ namespace Orm::Tiny::Relations
                of the related models matching on the foreign key that's on a parent. */
         const auto &table = this->m_related->getTable();
 
-        this->m_query->where(QStringLiteral("%1.%2").arg(table, m_ownerKey),
-                             QStringLiteral("="),
+        this->m_query->where(QStringLiteral("%1.%2").arg(table, m_ownerKey), EQ,
                              m_child.getAttribute(m_foreignKey));
     }
 

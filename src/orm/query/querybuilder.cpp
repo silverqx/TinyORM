@@ -27,7 +27,7 @@ Builder::get(const QVector<Column> &columns)
 QSqlQuery
 Builder::find(const QVariant &id, const QVector<Column> &columns)
 {
-    return where(ID, "=", id).first(columns);
+    return where(ID, EQ, id).first(columns);
 }
 
 QSqlQuery Builder::first(const QVector<Column> &columns)
@@ -346,12 +346,12 @@ Builder &Builder::orWhereColumn(const Column &first, const QString &comparison,
 Builder &Builder::whereColumnEq(const Column &first, const Column &second,
                                 const QString &condition)
 {
-    return whereColumn(first, QStringLiteral("="), second, condition);
+    return whereColumn(first, EQ, second, condition);
 }
 
 Builder &Builder::orWhereColumnEq(const Column &first, const Column &second)
 {
-    return whereColumn(first, QStringLiteral("="), second, OR);
+    return whereColumn(first, EQ, second, OR);
 }
 
 Builder &Builder::whereIn(const Column &column, const QVector<QVariant> &values,

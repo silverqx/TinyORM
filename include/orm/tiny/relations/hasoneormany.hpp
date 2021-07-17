@@ -117,7 +117,7 @@ namespace Orm::Tiny::Relations
         if (!this->constraints)
             return;
 
-        this->m_query->where(m_foreignKey, QStringLiteral("="), getParentKey());
+        this->m_query->where(m_foreignKey, EQ, getParentKey());
 
         this->m_query->whereNotNull(m_foreignKey);
     }

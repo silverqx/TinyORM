@@ -8,7 +8,6 @@ namespace Orm::Constants
 {
 
     // CUR search for common join chars, strings silverqx
-    // CUR in tests silverqx
     const QString ASTERISK   = QStringLiteral("*");
     const QString COMMA      = QStringLiteral(", ");
     const QString INNER      = QStringLiteral("inner");
