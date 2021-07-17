@@ -28,12 +28,12 @@ PostgresSchemaBuilder::parseSchemaAndTable(const QString &table) const
     QString schema;
 
     if (m_connection.getConfig().contains("schema")) {
-        auto table_ = table.split(QChar('.'));
+        auto table_ = table.split(DOT);
         auto schemaConfig = m_connection.getConfig("schema").value<QStringList>();
 
         // table was specified with the schema, like schema.table, so use this schema
         if (schemaConfig.contains(table_.at(0)))
-            return {table_.takeFirst(), table_.join(QChar('.'))};
+            return {table_.takeFirst(), table_.join(DOT)};
 
         // Instead, get a schema from the configuration
         if (!schemaConfig.isEmpty())

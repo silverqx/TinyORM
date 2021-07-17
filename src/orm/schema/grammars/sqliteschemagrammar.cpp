@@ -12,7 +12,7 @@ QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const
     auto table_ = table;
 
     // TODO study, wtf is this 🤔 silverqx
-    table_.replace(QChar('.'), "__");
+    table_.replace(DOT, "__");
 
     return QStringLiteral("pragma table_info(%1)").arg(wrap(table_));
 }

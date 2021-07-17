@@ -906,7 +906,7 @@ Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
 
     if (queryDatabaseName != getConnection().getDatabaseName() &&
         !queryFrom.startsWith(queryDatabaseName) &&
-        !queryFrom.contains(QChar('.'))
+        !queryFrom.contains(DOT)
     )
         query.from(QStringLiteral("%1.%2").arg(queryDatabaseName, queryFrom));
 

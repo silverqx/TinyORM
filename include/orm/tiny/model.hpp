@@ -77,6 +77,7 @@ namespace Relations {
     // FEATURE CI/CD silverqx
     // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
     // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
+    // CUR connection SSL support silverqx
     // BUG Qt sql drivers do not work with mysql json columns silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
@@ -3164,11 +3165,11 @@ namespace Relations {
             const auto relationsContainKey =
                     ranges::contains(onlyRelations, true, [&key](const auto &relation)
             {
-                if (!relation.name.contains(QChar(':')))
+                if (!relation.name.contains(COLON))
                     return relation.name == key;
 
                 // Support for select constraints
-                return relation.name.split(QChar(':')).at(0).trimmed() == key;
+                return relation.name.split(COLON).at(0).trimmed() == key;
             });
 
             if (!relationsContainKey)
@@ -3888,7 +3889,7 @@ namespace Relations {
     QString
     Model<Derived, AllRelations...>::qualifyColumn(const QString &column) const
     {
-        if (column.contains(QChar('.')))
+        if (column.contains(DOT))
             return column;
 
         return QStringLiteral("%1.%2").arg(model().getTable(), column);
@@ -4516,7 +4517,7 @@ namespace Relations {
            which is typically used by convention within the database system. */
         segments.sort(Qt::CaseInsensitive);
 
-        return segments.join(QChar('_')).toLower();
+        return segments.join(UNDERSCORE).toLower();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

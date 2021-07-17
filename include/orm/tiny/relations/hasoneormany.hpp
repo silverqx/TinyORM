@@ -335,7 +335,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     QString HasOneOrMany<Model, Related>::getForeignKeyName() const
     {
-        const auto segments = getQualifiedForeignKeyName().split(QChar('.'));
+        const auto segments = getQualifiedForeignKeyName().split(DOT);
 
         return segments.last();
     }

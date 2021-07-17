@@ -44,7 +44,7 @@ QString ModelNotFoundError::formatMessage(const char *model,
         result += QStringLiteral(" with ids : %2").arg(joinIds());
     }
 
-    result += QChar('.');
+    result += DOT;
 
     return result;
 }

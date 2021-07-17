@@ -604,7 +604,7 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType>::qualifyPivotColumn(
             const QString &column) const
     {
-        if (column.contains(QChar('.')))
+        if (column.contains(DOT))
             return column;
 
         return QStringLiteral("%1.%2").arg(m_table, column);

@@ -3,6 +3,9 @@
 #include <stdexcept>
 
 #include "orm/connectors/connector.hpp"
+#include "orm/constants.hpp"
+
+using namespace Orm::Constants;
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -63,12 +66,12 @@ ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options) const
         return options.value<QVariantHash>();
 
     // Convert to the QVariantHash
-    const auto list = options.value<QString>().split(QChar(';'),
+    const auto list = options.value<QString>().split(SEMICOLON,
                                                      Qt::SkipEmptyParts);
     QVariantHash preparedOptions;
 
     for (const auto &value : list) {
-        const auto option = value.split(QChar('='));
+        const auto option = value.split(EQ_C);
 
         preparedOptions.insert(option[0].trimmed(),
                                option[1].trimmed());
@@ -116,7 +119,7 @@ QString ConfigurationOptionsParser::joinOptions(const QVariantHash &options) con
         ++itOption;
     }
 
-    return joined.join(QChar(';'));
+    return joined.join(SEMICOLON);
 }
 
 } // namespace Orm::Support

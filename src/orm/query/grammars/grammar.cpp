@@ -245,7 +245,7 @@ QString Grammar::concatenateWhereClauses(const QueryBuilder &query,
                              : QStringLiteral("on");
 
     return QStringLiteral("%1 %2").arg(conjunction,
-                                       removeLeadingBoolean(sql.join(QChar(' '))));
+                                       removeLeadingBoolean(sql.join(SPACE)));
 }
 
 QString Grammar::compileJoins(const QueryBuilder &query) const
@@ -260,7 +260,7 @@ QString Grammar::compileJoins(const QueryBuilder &query) const
                                                    wrapTable(join->getTable()),
                                                    compileWheres(*join));
 
-    return sql.join(' ');
+    return sql.join(SPACE);
 }
 
 QString Grammar::compileGroups(const QueryBuilder &query) const
@@ -279,7 +279,7 @@ QString Grammar::compileHavings(const QueryBuilder &query) const
         compiledHavings << compileHaving(having);
 
     return QStringLiteral("having %1").arg(
-                removeLeadingBoolean(compiledHavings.join(QChar(' '))));
+                removeLeadingBoolean(compiledHavings.join(SPACE)));
 }
 
 QString Grammar::compileHaving(const HavingConditionItem &having) const
@@ -369,7 +369,7 @@ QString Grammar::whereNested(const WhereConditionItem &where) const
        if it is a normal query we need to take the leading "where" of queries. */
     auto compiled = compileWheres(*where.nestedQuery);
 
-    const auto offset = compiled.indexOf(QChar(' ')) + 1;
+    const auto offset = compiled.indexOf(SPACE) + 1;
 
     return QStringLiteral("(%1)").arg(compiled.remove(0, offset));
 }
@@ -503,7 +503,7 @@ QString Grammar::removeLeadingBoolean(QString statement) const
     const auto firstChar = [&statement](const auto from)
     {
         for (auto i = from; i < statement.size(); ++i)
-            if (statement.at(i) != QChar(' '))
+            if (statement.at(i) != SPACE)
                 return i;
 
         // Return initial value if space has not been found, should never happen :/

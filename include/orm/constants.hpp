@@ -10,9 +10,27 @@
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
+/*! Namespace constains common chars and strings. */
 namespace Orm::Constants
 {
 
+    // Common chars
+    SHAREDLIB_EXPORT extern const QChar SPACE;
+    SHAREDLIB_EXPORT extern const QChar DOT;
+    SHAREDLIB_EXPORT extern const QChar SEMICOLON;
+    SHAREDLIB_EXPORT extern const QChar COLON;
+    SHAREDLIB_EXPORT extern const QChar UNDERSCORE;
+    SHAREDLIB_EXPORT extern const QChar DASH;
+    SHAREDLIB_EXPORT extern const QChar MINUS;
+    SHAREDLIB_EXPORT extern const QChar PLUS;
+    SHAREDLIB_EXPORT extern const QChar ASTERISK_C;
+    SHAREDLIB_EXPORT extern const QChar COMMA_C;
+    SHAREDLIB_EXPORT extern const QChar EQ_C;
+    SHAREDLIB_EXPORT extern const QChar NOT_C;
+    SHAREDLIB_EXPORT extern const QChar LT_C;
+    SHAREDLIB_EXPORT extern const QChar GT_C;
+
+    // Common strings
     SHAREDLIB_EXPORT extern const QString ASTERISK;
     SHAREDLIB_EXPORT extern const QString COMMA;
     SHAREDLIB_EXPORT extern const QString INNER;
@@ -26,6 +44,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString CREATED_AT;
     SHAREDLIB_EXPORT extern const QString UPDATED_AT;
 
+    // Comparison/logical/search operators
     SHAREDLIB_EXPORT extern const QString EQ;
     SHAREDLIB_EXPORT extern const QString NE;
     SHAREDLIB_EXPORT extern const QString LT;
@@ -39,11 +58,13 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString NLIKE;
     SHAREDLIB_EXPORT extern const QString ILIKE;
 
+    // Alternatives
     SHAREDLIB_EXPORT extern const QString NE_;
     SHAREDLIB_EXPORT extern const QString OR_;
     SHAREDLIB_EXPORT extern const QString AND_;
     SHAREDLIB_EXPORT extern const QString NOT_;
 
+    // Bitewise operators
     SHAREDLIB_EXPORT extern const QString B_OR;
     SHAREDLIB_EXPORT extern const QString B_AND;
 

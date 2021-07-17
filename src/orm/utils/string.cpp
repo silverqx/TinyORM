@@ -1,5 +1,9 @@
 #include "orm/utils/string.hpp"
 
+#include "orm/constants.hpp"
+
+using namespace Orm::Constants;
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -29,7 +33,7 @@ QString toSnake(QString string)
     // Positions stay valid after inserts because reverse iterators used
     std::for_each(positions.crbegin(), positions.crend(), [&string](const int pos)
     {
-        string.insert(pos, QChar('_'));
+        string.insert(pos, UNDERSCORE);
     });
 
     return string.toLower();
@@ -51,7 +55,7 @@ bool isNumber(const QString &string)
         return false;
 
     auto itBegin = string.cbegin();
-    if (string.front() == QChar('+') || string.front() == QChar('-'))
+    if (string.front() == PLUS || string.front() == MINUS)
         ++itBegin;
 
     const auto nonDigit = std::find_if(itBegin, string.cend(),

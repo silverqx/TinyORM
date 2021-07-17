@@ -586,7 +586,7 @@ namespace Relations
         else
             column_ = std::get<QString>(column);
 
-        return model->getAttribute(column_.mid(column_.lastIndexOf(QChar('.')) + 1));
+        return model->getAttribute(column_.mid(column_.lastIndexOf(DOT) + 1));
     }
 
     template<typename Model>
@@ -1775,7 +1775,7 @@ namespace Relations
                as an eager load on the query to retrieve the relation so that they will
                be eager loaded on that query, because that is where they get hydrated
                as models. */
-            if (!relation.name.contains(QChar('.')))
+            if (!relation.name.contains(DOT))
                 /* Get the relation instance for the given relation name, have to be done
                    through the visitor pattern. */
                 m_model.eagerLoadRelationWithVisitor(relation, *this, models);
@@ -1884,7 +1884,7 @@ namespace Relations
         results.reserve(relations.size() * 2);
 
         for (auto relation : relations) {
-            const auto isSelectConstraint = relation.name.contains(QChar(':'));
+            const auto isSelectConstraint = relation.name.contains(COLON);
 
             if (isSelectConstraint && relation.constraints)
                 throw RuntimeError(
@@ -1909,7 +1909,7 @@ namespace Relations
     template<typename Model>
     WithItem Builder<Model>::createSelectWithConstraint(const QString &name)
     {
-        auto splitted = name.split(QChar(':'));
+        auto splitted = name.split(COLON);
         auto relation = splitted.at(0).trimmed();
         auto &columns = splitted[1];
 
@@ -1923,16 +1923,16 @@ namespace Relations
                     (auto &query)
             {
                 QVector<Column> columnsList;
-                columnsList.reserve(columns.count(QChar(',')) + 1);
+                columnsList.reserve(columns.count(COMMA_C) + 1);
 
                 // Avoid 'clazy might detach' warning
-                for (const auto columns_ = columns.split(QChar(','));
+                for (const auto columns_ = columns.split(COMMA_C);
                      auto column : columns_)
                 {
                     column = column.trimmed();
 
                     // Fully qualified column passed, not needed to process
-                    if (column.contains(QChar('.'))) {
+                    if (column.contains(DOT)) {
                         columnsList << std::move(column);
                         continue;
                     }
@@ -1969,14 +1969,14 @@ namespace Relations
            again, since that would override any constraints that were already placed
            on the relationships. We will only set the ones that are not specified. */
         // Prevent container detach
-        const auto names = name.split(QChar('.'));
+        const auto names = name.split(DOT);
 
         progress.reserve(names.size());
 
         for (const auto &segment : names) {
             progress << segment;
 
-            auto last = progress.join(QChar('.'));
+            auto last = progress.join(DOT);
             const auto containsRelation = [&last](const auto &relation)
             {
                 return relation.name == last;
@@ -2010,7 +2010,7 @@ namespace Relations
     bool Builder<Model>::isNestedUnder(const QString &topRelation,
                                        const QString &nestedRelation) const
     {
-        return nestedRelation.contains(QChar('.'))
+        return nestedRelation.contains(DOT)
                 && nestedRelation.startsWith(QStringLiteral("%1.").arg(topRelation));
     }
 

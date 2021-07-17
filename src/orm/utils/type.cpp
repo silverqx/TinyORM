@@ -2,7 +2,10 @@
 
 #include <QRegularExpression>
 
+#include "orm/constants.hpp"
 #include "orm/runtimeerror.hpp"
+
+using namespace Orm::Constants;
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -64,7 +67,7 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
 {
     auto findBeginWithoutNS = [&className]
     {
-        return className.indexOf(QChar(' ')) + 1;
+        return className.indexOf(SPACE) + 1;
     };
 
     // Find the beginning of the class name
@@ -89,7 +92,7 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
                               [](const QChar ch)
     {
         // The class name can end with < or space, anything else
-        return ch == QChar('<') || ch == QChar(' ');
+        return ch == LT_C || ch == SPACE;
     });
 
     return QStringView(itBegin, itEnd).toString();
@@ -111,7 +114,7 @@ Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
                               [](const QChar ch)
     {
         // The class name can end with <, * or space, anything else
-        return ch == QChar('<') || ch == QChar(' ') || ch == QChar('*');
+        return ch == LT_C || ch == SPACE || ch == ASTERISK_C;
     });
 
     return QStringView(itBegin, itEnd).toString();

@@ -83,7 +83,7 @@ MySqlGrammar::compileDeleteWithoutJoins(const QueryBuilder &query, const QString
 
 QString MySqlGrammar::wrapValue(QString value) const
 {
-    if (value == QChar('*'))
+    if (value == ASTERISK_C)
         return value;
 
     return QStringLiteral("`%1`").arg(value.replace(QStringLiteral("`"),

@@ -270,9 +270,9 @@ namespace Concerns
 
         return fillable.isEmpty()
                 // Don't allow mass filling with table names
-                && !key.contains(QChar('.'));
+                && !key.contains(DOT);
                 // NOTE api different, isFillable() !key.startsWith(), what is this good for? silverqx
-//                && !key.startsWith(QChar('_'));
+//                && !key.startsWith(UNDERSCORE);
     }
 
     template<typename Derived, typename ...AllRelations>

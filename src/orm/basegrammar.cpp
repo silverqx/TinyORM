@@ -44,7 +44,7 @@ QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const
 //    if (isJsonSelector(value))
 //        return wrapJsonSelector(value);
 
-    return wrapSegments(value.split(QChar('.')));
+    return wrapSegments(value.split(DOT));
 }
 
 QString BaseGrammar::wrap(const Column &value) const
@@ -98,7 +98,7 @@ BaseGrammar &BaseGrammar::setTablePrefix(const QString &prefix)
 
 QString BaseGrammar::unqualifyColumn(const QString &column) const
 {
-    return column.split(QChar('.')).last().trimmed();
+    return column.split(DOT).last().trimmed();
 }
 
 QString BaseGrammar::parameter(const QVariant &value) const
@@ -141,7 +141,7 @@ QString BaseGrammar::wrapSegments(QStringList segments) const
         else
             segments[i] = wrapValue(segments[i]);
 
-    return segments.join(QChar('.'));
+    return segments.join(DOT);
 }
 
 QStringList BaseGrammar::getSegmentsFromFrom(const QString &from) const
