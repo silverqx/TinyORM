@@ -105,10 +105,16 @@ namespace Orm
         /*! Run a delete statement against the database. */
         static std::tuple<int, QSqlQuery>
         remove(const QString &query, const QVector<QVariant> &bindings = {});
+
         /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
         static QSqlQuery
-        statement(const QString &query,
-                  const QVector<QVariant> &bindings = {});
+        statement(const QString &query, const QVector<QVariant> &bindings = {});
+        /*! Run an SQL statement and get the number of rows affected. */
+        static std::tuple<int, QSqlQuery>
+        affectingStatement(const QString &query, const QVector<QVariant> &bindings = {});
+
+        /*! Run a raw, unprepared query against the database. */
+        static QSqlQuery unprepared(const QString &query);
 
         /*! Start a new database transaction. */
         static bool beginTransaction(const QString &connection = "");

@@ -141,6 +141,17 @@ DB::statement(const QString &query, const QVector<QVariant> &bindings)
     return manager().connection().statement(query, bindings);
 }
 
+std::tuple<int, QSqlQuery>
+DB::affectingStatement(const QString &query, const QVector<QVariant> &bindings)
+{
+    return manager().connection().affectingStatement(query, bindings);
+}
+
+QSqlQuery DB::unprepared(const QString &query)
+{
+    return manager().connection().unprepared(query);
+}
+
 // NOTE api different silverqx
 bool DB::beginTransaction(const QString &connection)
 {

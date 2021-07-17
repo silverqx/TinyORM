@@ -128,6 +128,18 @@ DatabaseManager::statement(const QString &query, const QVector<QVariant> &bindin
     return connection().statement(query, bindings);
 }
 
+std::tuple<int, QSqlQuery>
+DatabaseManager::affectingStatement(const QString &query,
+                                    const QVector<QVariant> &bindings)
+{
+    return connection().affectingStatement(query, bindings);
+}
+
+QSqlQuery DatabaseManager::unprepared(const QString &query)
+{
+    return connection().unprepared(query);
+}
+
 bool DatabaseManager::beginTransaction()
 {
     return connection().beginTransaction();

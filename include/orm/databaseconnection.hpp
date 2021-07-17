@@ -111,8 +111,7 @@ namespace Orm
                            const QVector<QVariant> &bindings = {}) override;
 
         /*! Run a raw, unprepared query against the database. */
-        QSqlQuery
-        unprepared(const QString &queryString) override;
+        QSqlQuery unprepared(const QString &queryString) override;
 
         /*! Get underlying database connection (QSqlDatabase). */
         QSqlDatabase getQtConnection();

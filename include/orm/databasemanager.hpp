@@ -71,10 +71,16 @@ namespace Query
         /*! Run a delete statement against the database. */
         std::tuple<int, QSqlQuery>
         remove(const QString &query, const QVector<QVariant> &bindings = {});
+
         /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
         QSqlQuery
-        statement(const QString &query,
-                  const QVector<QVariant> &bindings = {});
+        statement(const QString &query, const QVector<QVariant> &bindings = {});
+        /*! Run an SQL statement and get the number of rows affected. */
+        std::tuple<int, QSqlQuery>
+        affectingStatement(const QString &query, const QVector<QVariant> &bindings = {});
+
+        /*! Run a raw, unprepared query against the database. */
+        QSqlQuery unprepared(const QString &query);
 
         /*! Start a new database transaction. */
         bool beginTransaction();
