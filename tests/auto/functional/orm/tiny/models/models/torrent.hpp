@@ -87,7 +87,6 @@ public:
     }
 
 private:
-    // CUR docs silverqx
     /*! The name of the "created at" column. */
     inline static const QString CREATED_AT = Orm::CREATED_AT;
     /*! The name of the "updated at" column. */
@@ -98,7 +97,6 @@ private:
 
     /*! Indicates if the model's ID is auto-incrementing. */
 //    bool u_incrementing = true;
-    // CUR docs silverqx
     /*! The primary key associated with the table. */
 //    QString u_primaryKey {ID};
 
