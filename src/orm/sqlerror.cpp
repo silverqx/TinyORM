@@ -45,12 +45,12 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error) con
     )
         errorText << nativeErrorCode;
 
-    if (const auto driverText = error.driverText();
+    if (const auto driverText = error.driverText().trimmed();
         !driverText.isEmpty()
     )
         errorText << driverText;
 
-    if (const auto databaseText = error.databaseText();
+    if (const auto databaseText = error.databaseText().trimmed();
         !databaseText.isEmpty()
     )
         errorText << databaseText;
