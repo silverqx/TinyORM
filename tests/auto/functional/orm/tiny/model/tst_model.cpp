@@ -10,6 +10,8 @@
 
 #include "databases.hpp"
 
+using namespace Orm::Constants;
+
 using Orm::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::ModelNotFoundError;
@@ -127,8 +129,8 @@ void tst_Model::save_Insert() const
     QCOMPARE(torrent.getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrent.getAttribute("hash"),
              QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
-    QVERIFY(torrent.getAttribute("created_at").isValid());
-    QVERIFY(torrent.getAttribute("updated_at").isValid());
+    QVERIFY(torrent.getAttribute(CREATED_AT).isValid());
+    QVERIFY(torrent.getAttribute(UPDATED_AT).isValid());
 
     // Get the fresh record from the database
     auto torrentToVerify = Torrent::find(torrent.getAttribute("id"));
@@ -143,8 +145,8 @@ void tst_Model::save_Insert() const
     QCOMPARE(torrentToVerify->getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrentToVerify->getAttribute("hash"),
              QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
-    QVERIFY(torrentToVerify->getAttribute("created_at").isValid());
-    QVERIFY(torrentToVerify->getAttribute("updated_at").isValid());
+    QVERIFY(torrentToVerify->getAttribute(CREATED_AT).isValid());
+    QVERIFY(torrentToVerify->getAttribute(UPDATED_AT).isValid());
 
     // Remove it
     torrent.remove();
@@ -176,8 +178,8 @@ void tst_Model::save_Insert_WithDefaultValues() const
     QCOMPARE(torrent.getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrent.getAttribute("hash"),
              QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
-    QVERIFY(torrent.getAttribute("created_at").isValid());
-    QVERIFY(torrent.getAttribute("updated_at").isValid());
+    QVERIFY(torrent.getAttribute(CREATED_AT).isValid());
+    QVERIFY(torrent.getAttribute(UPDATED_AT).isValid());
 
     // Get the fresh record from the database
     auto torrentToVerify = Torrent::find(torrent.getAttribute("id"));
@@ -193,8 +195,8 @@ void tst_Model::save_Insert_WithDefaultValues() const
     QCOMPARE(torrentToVerify->getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrentToVerify->getAttribute("hash"),
              QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
-    QVERIFY(torrentToVerify->getAttribute("created_at").isValid());
-    QVERIFY(torrentToVerify->getAttribute("updated_at").isValid());
+    QVERIFY(torrentToVerify->getAttribute(CREATED_AT).isValid());
+    QVERIFY(torrentToVerify->getAttribute(UPDATED_AT).isValid());
 
     // Remove it
     torrent.remove();
@@ -221,8 +223,8 @@ void tst_Model::save_Insert_TableWithoutAutoincrementKey() const
     QVERIFY(!setting.getAttribute("id").isValid());
     QCOMPARE(setting.getAttribute("name"), QVariant("setting1"));
     QCOMPARE(setting.getAttribute("value"), QVariant("value1"));
-    QVERIFY(setting.getAttribute("created_at").isValid());
-    QVERIFY(setting.getAttribute("updated_at").isValid());
+    QVERIFY(setting.getAttribute(CREATED_AT).isValid());
+    QVERIFY(setting.getAttribute(UPDATED_AT).isValid());
 
     // Get the fresh record from the database
     auto settingToVerify = Setting::whereEq("name", "setting1")->first();
@@ -233,8 +235,8 @@ void tst_Model::save_Insert_TableWithoutAutoincrementKey() const
     QVERIFY(!settingToVerify->getAttribute("id").isValid());
     QCOMPARE(settingToVerify->getAttribute("name"), QVariant("setting1"));
     QCOMPARE(settingToVerify->getAttribute("value"), QVariant("value1"));
-    QVERIFY(settingToVerify->getAttribute("created_at").isValid());
-    QVERIFY(settingToVerify->getAttribute("updated_at").isValid());
+    QVERIFY(settingToVerify->getAttribute(CREATED_AT).isValid());
+    QVERIFY(settingToVerify->getAttribute(UPDATED_AT).isValid());
 
     // Remove it
     int affected = 0;
@@ -1261,7 +1263,7 @@ void tst_Model::massAssignment_isGuardableColumn() const
 
     Torrent_GuardableColumn torrent;
 
-    torrent.fill({{"updated_at", QDateTime::currentDateTime()}});
+    torrent.fill({{UPDATED_AT, QDateTime::currentDateTime()}});
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent.getAttributes().size(), 1);

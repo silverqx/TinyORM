@@ -43,7 +43,7 @@ namespace Orm::Tiny::Relations
         /*! Find multiple models by their primary keys. */
         QVector<Related>
         findMany(const QVector<QVariant> &ids,
-                 const QVector<Column> &columns = {"*"}) const;
+                 const QVector<Column> &columns = {ASTERISK}) const;
 
         /* Others */
         /*! The textual representation of the Relation type. */

@@ -6,6 +6,8 @@
 
 #include "databases.hpp"
 
+using namespace Orm::Constants;
+
 using Expression = Orm::Query::Expression;
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
@@ -651,7 +653,7 @@ void tst_SQLite_QueryBuilder::joinSub_QStringOverload() const
     builder->from("users")
             .joinSub("select id as files_id, \"user_id\", \"name\" "
                      "from \"user_sessions\"",
-                     "sessions", "users.id", "=", "sessions.user_id", "left");
+                     "sessions", "users.id", "=", "sessions.user_id", LEFT);
 
     QCOMPARE(builder->toSql(),
              "select * from \"users\" "
@@ -694,7 +696,7 @@ void tst_SQLite_QueryBuilder::joinSub_CallbackOverload() const
         query.from("user_sessions")
                 .select({"id as files_id", "user_id", "name"})
                 .where("user_id", "<", 5);
-    }, "sessions", "users.id", "=", "sessions.user_id", "left")
+    }, "sessions", "users.id", "=", "sessions.user_id", LEFT)
 
             .whereEq("name", "xyz");
 
@@ -775,7 +777,7 @@ void tst_SQLite_QueryBuilder::basicWhere() const
         auto builder = createQuery(m_connection);
 
         builder->select("*").from("torrents").where("id", ">", 3)
-                .where("name", "like", "test%");
+                .where("name", LIKE, "test%");
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" > ? and \"name\" like ?");
         QCOMPARE(builder->getBindings(),
@@ -1345,11 +1347,11 @@ void tst_SQLite_QueryBuilder::orderBy() const
 
     builder->from("torrents");
 
-    builder->orderBy("name", "asc");
+    builder->orderBy("name", ASC);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" order by \"name\" asc");
 
-    builder->orderBy("id", "desc");
+    builder->orderBy("id", DESC);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" order by \"name\" asc, \"id\" desc");
 
@@ -1358,7 +1360,7 @@ void tst_SQLite_QueryBuilder::orderBy() const
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" order by \"name\" desc");
 
-    builder->reorder("id", "asc");
+    builder->reorder("id", ASC);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" order by \"id\" asc");
 }

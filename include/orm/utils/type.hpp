@@ -30,8 +30,7 @@ namespace Orm::Utils
     /*! Library class for types. */
     class SHAREDLIB_EXPORT Type
     {
-        Type(const Type &) = delete;
-        Type &operator=(const Type &) = delete;
+        Q_DISABLE_COPY(Type)
 
     public:
         Type() = delete;

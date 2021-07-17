@@ -82,7 +82,7 @@ namespace Concerns
         /*! The attributes that are mass assignable. */
         inline static QStringList u_fillable {};
         /*! The attributes that aren't mass assignable. */
-        inline static QStringList u_guarded {"*"};
+        inline static QStringList u_guarded {ASTERISK};
         /*! Indicates if all mass assignment is enabled. */
         inline static bool m_unguarded = false;
         /*! The actual columns that exist on the database and can be guarded. */
@@ -284,7 +284,7 @@ namespace Concerns
         if (guarded.isEmpty())
             return false;
 
-        return guarded == QStringList {"*"}
+        return guarded == QStringList {ASTERISK}
                 // NOTE api different, Eloquent uses CaseInsensitive compare, silverqx
                 || guarded.contains(key)
                 /* Not a VALID guardable column is guarded, so it is not possible to fill
@@ -296,7 +296,7 @@ namespace Concerns
     bool GuardsAttributes<Derived, AllRelations...>::totallyGuarded() const
     {
         return basemodel().getFillableInternal().isEmpty()
-                && basemodel().getGuardedInternal() == QStringList {"*"};
+                && basemodel().getGuardedInternal() == QStringList {ASTERISK};
     }
 
     template<typename Derived, typename ...AllRelations>

@@ -52,9 +52,9 @@ QString SQLiteGrammar::compileLock(const QueryBuilder &) const
 const QVector<QString> &SQLiteGrammar::getOperators() const
 {
     static const QVector<QString> cachedOperators {
-        "=", "<", ">", "<=", ">=", "<>", "!=",
-        "like", "not like", "ilike",
-        "&", "|", "<<", ">>",
+        EQ, LT, GT, LE, GE, NE_, NE,
+        LIKE, NLIKE, ILIKE,
+        B_AND, B_OR, "<<", ">>",
     };
 
     return cachedOperators;

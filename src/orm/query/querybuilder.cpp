@@ -27,7 +27,7 @@ Builder::get(const QVector<Column> &columns)
 QSqlQuery
 Builder::find(const QVariant &id, const QVector<Column> &columns)
 {
-    return where("id", "=", id).first(columns);
+    return where(ID, "=", id).first(columns);
 }
 
 QSqlQuery Builder::first(const QVector<Column> &columns)
@@ -297,7 +297,7 @@ Builder &Builder::where(const std::function<void(Builder &)> &callback,
 
 Builder &Builder::orWhere(const std::function<void(Builder &)> &callback)
 {
-    return where(callback, QStringLiteral("or"));
+    return where(callback, OR);
 }
 
 Builder &Builder::where(const QVector<WhereItem> &values, const QString &condition)
@@ -311,7 +311,7 @@ Builder &Builder::where(const QVector<WhereItem> &values, const QString &conditi
 
 Builder &Builder::orWhere(const QVector<WhereItem> &values)
 {
-    return where(values, QStringLiteral("or"));
+    return where(values, OR);
 }
 
 Builder &Builder::whereColumn(const QVector<WhereColumnItem> &values,
@@ -322,7 +322,7 @@ Builder &Builder::whereColumn(const QVector<WhereColumnItem> &values,
 
 Builder &Builder::orWhereColumn(const QVector<WhereColumnItem> &values)
 {
-    return addArrayOfWheres(values, QStringLiteral("or"));
+    return addArrayOfWheres(values, OR);
 }
 
 Builder &Builder::whereColumn(const Column &first, const QString &comparison,
@@ -340,7 +340,7 @@ Builder &Builder::whereColumn(const Column &first, const QString &comparison,
 Builder &Builder::orWhereColumn(const Column &first, const QString &comparison,
                                 const Column &second)
 {
-    return whereColumn(first, comparison, second, QStringLiteral("or"));
+    return whereColumn(first, comparison, second, OR);
 }
 
 Builder &Builder::whereColumnEq(const Column &first, const Column &second,
@@ -351,7 +351,7 @@ Builder &Builder::whereColumnEq(const Column &first, const Column &second,
 
 Builder &Builder::orWhereColumnEq(const Column &first, const Column &second)
 {
-    return whereColumn(first, QStringLiteral("="), second, QStringLiteral("or"));
+    return whereColumn(first, QStringLiteral("="), second, OR);
 }
 
 Builder &Builder::whereIn(const Column &column, const QVector<QVariant> &values,
@@ -372,7 +372,7 @@ Builder &Builder::whereIn(const Column &column, const QVector<QVariant> &values,
 
 Builder &Builder::orWhereIn(const Column &column, const QVector<QVariant> &values)
 {
-    return whereIn(column, values, QStringLiteral("or"));
+    return whereIn(column, values, OR);
 }
 
 Builder &Builder::whereNotIn(const Column &column, const QVector<QVariant> &values,
@@ -383,7 +383,7 @@ Builder &Builder::whereNotIn(const Column &column, const QVector<QVariant> &valu
 
 Builder &Builder::orWhereNotIn(const Column &column, const QVector<QVariant> &values)
 {
-    return whereNotIn(column, values, QStringLiteral("or"));
+    return whereNotIn(column, values, OR);
 }
 
 Builder &Builder::whereNull(const QVector<Column> &columns, const QString &condition,
@@ -399,7 +399,7 @@ Builder &Builder::whereNull(const QVector<Column> &columns, const QString &condi
 
 Builder &Builder::orWhereNull(const QVector<Column> &columns)
 {
-    return whereNull(columns, QStringLiteral("or"));
+    return whereNull(columns, OR);
 }
 
 Builder &Builder::whereNotNull(const QVector<Column> &columns, const QString &condition)
@@ -409,7 +409,7 @@ Builder &Builder::whereNotNull(const QVector<Column> &columns, const QString &co
 
 Builder &Builder::orWhereNotNull(const QVector<Column> &columns)
 {
-    return whereNotNull(columns, QStringLiteral("or"));
+    return whereNotNull(columns, OR);
 }
 
 Builder &Builder::whereNull(const Column &column, const QString &condition,
@@ -445,7 +445,7 @@ Builder &Builder::whereRaw(const QString &sql, const QVector<QVariant> &bindings
 
 Builder &Builder::orWhereRaw(const QString &sql, const QVector<QVariant> &bindings)
 {
-    return whereRaw(sql, bindings, QStringLiteral("or"));
+    return whereRaw(sql, bindings, OR);
 }
 
 Builder &Builder::groupBy(const QVector<Column> &groups)
@@ -490,7 +490,7 @@ Builder &Builder::having(const Column &column, const QString &comparison,
 Builder &Builder::orHaving(const Column &column, const QString &comparison,
                            const QVariant &value)
 {
-    return having(column, comparison, value, QStringLiteral("or"));
+    return having(column, comparison, value, OR);
 }
 
 Builder &Builder::havingRaw(const QString &sql, const QVector<QVariant> &bindings,
@@ -505,16 +505,14 @@ Builder &Builder::havingRaw(const QString &sql, const QVector<QVariant> &binding
 
 Builder &Builder::orHavingRaw(const QString &sql, const QVector<QVariant> &bindings)
 {
-    return havingRaw(sql, bindings, QStringLiteral("or"));
+    return havingRaw(sql, bindings, OR);
 }
 
 Builder &Builder::orderBy(const Column &column, const QString &direction)
 {
     const auto &directionLower = direction.toLower();
 
-    if (directionLower != QLatin1String("asc") &&
-        directionLower != QLatin1String("desc")
-    )
+    if (directionLower != ASC && directionLower != DESC)
         throw RuntimeError("Order direction must be \"asc\" or \"desc\", "
                            "case is not important.");
 
@@ -525,7 +523,7 @@ Builder &Builder::orderBy(const Column &column, const QString &direction)
 
 Builder &Builder::orderByDesc(const Column &column)
 {
-    return orderBy(column, QStringLiteral("desc"));
+    return orderBy(column, DESC);
 }
 
 Builder &Builder::orderByRaw(const QString &sql, const QVector<QVariant> &bindings)
@@ -542,12 +540,12 @@ Builder &Builder::latest(const Column &column)
     /* Default value "created_at" is ok, because we are in the QueryBuilder,
        in the Model/TinyBuilder is this default argument processed by
        the TinyBuilder::getCreatedAtColumnForLatestOldest() method. */
-    return orderBy(column, QStringLiteral("desc"));
+    return orderBy(column, DESC);
 }
 
 Builder &Builder::oldest(const Column &column)
 {
-    return orderBy(column, QStringLiteral("asc"));
+    return orderBy(column, ASC);
 }
 
 Builder &Builder::reorder()

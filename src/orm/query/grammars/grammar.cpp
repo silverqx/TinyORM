@@ -19,7 +19,7 @@ QString Grammar::compileSelect(QueryBuilder &query) const
     const auto original = query.getColumns();
 
     if (original.isEmpty())
-        query.setColumns({QStringLiteral("*")});
+        query.setColumns({ASTERISK});
 
     /* To compile the query, we'll spin through each component of the query and
        see if that component exists. If it does we'll just call the compiler
@@ -174,7 +174,7 @@ QString Grammar::compileAggregate(const QueryBuilder &query) const
        we need to prepend "distinct" onto the column name so that the query takes
        it into account when it performs the aggregating operations on the data. */
     if (std::holds_alternative<bool>(distinct) && query.getDistinct<bool>() &&
-        column != QLatin1String("*")
+        column != ASTERISK
     ) T_LIKELY
         column = QStringLiteral("distinct %1").arg(column);
 

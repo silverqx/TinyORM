@@ -7,8 +7,8 @@
 //QDebug operator<<(QDebug debug, const Torrent &c)
 //{
 //    QDebugStateSaver saver(debug);
-//    debug.nospace() << c.getAttribute("id") << ", "
-//                    << c.getAttribute("name");
+//    debug.nospace() << c.getAttribute(ID) << ", "
+//                    << c.getAttribute(NAME);
 
 //    return debug;
 //}

@@ -51,7 +51,7 @@ QVariantHash &
 ConnectionFactory::parseConfig(QVariantHash &config, const QString &name) const
 {
     // Insert/normalize needed configuration values
-    config.insert("name", name);
+    config.insert(NAME, name);
 
     normalizeDriverName(config);
 

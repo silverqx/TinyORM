@@ -71,7 +71,7 @@ namespace Orm::Tiny::Relations
         std::variant<QVector<Related>, std::optional<Related>>
         getResults() const override;
         /*! Execute the query as a "select" statement. */
-        QVector<Related> get(const QVector<Column> &columns = {"*"}) const override;
+        QVector<Related> get(const QVector<Column> &columns = {ASTERISK}) const override;
 
         /* Getters / Setters */
         /*! Qualify the given column name by the pivot table. */
@@ -158,23 +158,24 @@ namespace Orm::Tiny::Relations
         /* TinyBuilder proxy methods */
         /*! Find a model by its primary key. */
         std::optional<Related>
-        find(const QVariant &id, const QVector<Column> &columns = {"*"}) const override;
+        find(const QVariant &id,
+             const QVector<Column> &columns = {ASTERISK}) const override;
         /*! Find a model by its primary key or return fresh model instance. */
         Related
         findOrNew(const QVariant &id,
-                  const QVector<Column> &columns = {"*"}) const override;
+                  const QVector<Column> &columns = {ASTERISK}) const override;
         /*! Find a model by its primary key or throw an exception. */
         Related
         findOrFail(const QVariant &id,
-                   const QVector<Column> &columns = {"*"}) const override;
+                   const QVector<Column> &columns = {ASTERISK}) const override;
         /*! Find multiple models by their primary keys. */
         QVector<Related>
         findMany(const QVector<QVariant> &ids,
-                 const QVector<Column> &columns = {"*"}) const;
+                 const QVector<Column> &columns = {ASTERISK}) const;
 
         /*! Execute the query and get the first result. */
         std::optional<Related>
-        first(const QVector<Column> &columns = {"*"}) const override;
+        first(const QVector<Column> &columns = {ASTERISK}) const override;
         /*! Get the first record matching the attributes or instantiate it. */
         Related firstOrNew(const QVector<WhereItem> &attributes = {},
                            const QVector<AttributeItem> &values = {}) const override;
@@ -184,17 +185,17 @@ namespace Orm::Tiny::Relations
                               const QVector<AttributeItem> &pivotValues = {},
                               bool touch = true) const;
         /*! Execute the query and get the first result or throw an exception. */
-        Related firstOrFail(const QVector<Column> &columns = {"*"}) const override;
+        Related firstOrFail(const QVector<Column> &columns = {ASTERISK}) const override;
 
         /*! Add a basic where clause to the query, and return the first result. */
         std::optional<Related>
         firstWhere(const Column &column, const QString &comparison,
                    const QVariant &value,
-                   const QString &condition = "and") const override;
+                   const QString &condition = AND) const override;
         /*! Add a basic where clause to the query, and return the first result. */
         std::optional<Related>
         firstWhereEq(const Column &column, const QVariant &value,
-                     const QString &condition = "and") const override;
+                     const QString &condition = AND) const override;
 
         /* Inserting operations on the relationship */
         /*! Attach a model instance to the parent model. */
@@ -319,7 +320,7 @@ namespace Orm::Tiny::Relations
         buildDictionary(QVector<Related> &results) const;
 
         /*! Get the select columns for the relation query. */
-        QVector<Column> shouldSelect(QVector<Column> columns = {"*"}) const;
+        QVector<Column> shouldSelect(QVector<Column> columns = {ASTERISK}) const;
         /*! Get the pivot columns for the relation, "pivot_" is prefixed
             to each column for easy removal later. */
         QStringList aliasedPivotColumns() const;
@@ -1327,7 +1328,7 @@ namespace Orm::Tiny::Relations
     QVector<Column>
     BelongsToMany<Model, Related, PivotType>::shouldSelect(QVector<Column> columns) const
     {
-        if (columns == QVector<Column> {"*"})
+        if (columns == QVector<Column> {ASTERISK})
             columns = QVector<Column> {QStringLiteral("%1.*")
                                        .arg(this->m_related->getTable())};
 

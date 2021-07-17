@@ -3,9 +3,12 @@
 #include <QFile>
 #include <QtSql/QSqlQuery>
 
+#include "orm/constants.hpp"
 #include "orm/invalidargumenterror.hpp"
 #include "orm/queryerror.hpp"
 #include "orm/utils/type.hpp"
+
+using namespace Orm::Constants;
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -17,7 +20,7 @@ namespace Orm::Connectors
 ConnectionName
 SQLiteConnector::connect(const QVariantHash &config) const
 {
-    const auto name = config["name"].value<QString>();
+    const auto name = config[NAME].value<QString>();
 
     const auto options = getOptions(config);
 

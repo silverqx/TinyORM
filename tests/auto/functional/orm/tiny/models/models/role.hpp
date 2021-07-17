@@ -6,6 +6,8 @@
 
 #include "models/roleuser.hpp"
 
+using namespace Orm::Constants;
+
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;
@@ -38,7 +40,7 @@ private:
 
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable {
-        "name",
+        NAME,
     };
 
     /*! Indicates if the model should be timestamped. */

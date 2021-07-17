@@ -10,6 +10,7 @@
 #include <range/v3/algorithm/unique.hpp>
 #endif
 
+#include "orm/constants.hpp"
 #include "orm/query/expression.hpp"
 #include "orm/utils/export.hpp"
 
@@ -24,6 +25,7 @@ namespace TINYORM_COMMON_NAMESPACE
 #endif
 namespace Orm
 {
+    using namespace Orm::Constants;
 
 namespace Query
 {
@@ -74,7 +76,7 @@ namespace Query
 
     struct WhereConditionItem
     {
-        Column                       column;
+        Column                       column      {};
         QVariant                     value       {};
         QString                      comparison  {"="};
         QString                      condition   {"and"};
@@ -94,8 +96,8 @@ namespace Query
 
     struct HavingConditionItem
     {
-        Column     column;
-        QVariant   value;
+        Column     column     {};
+        QVariant   value      {};
         QString    comparison {"="};
         QString    condition  {"and"};
         HavingType type       {HavingType::UNDEFINED};
@@ -104,8 +106,8 @@ namespace Query
 
     struct OrderByItem
     {
-        Column      column;
-        QString     direction {"asc"};
+        Column      column    {};
+        QString     direction {ASC};
         QString     sql       {};
     };
 

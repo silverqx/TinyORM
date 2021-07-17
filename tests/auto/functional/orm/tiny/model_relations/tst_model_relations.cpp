@@ -13,6 +13,8 @@
 
 #include "databases.hpp"
 
+using namespace Orm::Constants;
+
 using Orm::One;
 using Orm::RuntimeError;
 using Orm::Tiny::ConnectionOverride;
@@ -218,8 +220,8 @@ void tst_Model_Relations
         QCOMPARE(pivot->getAttribute("tag_id"), (*tag)["id"]);
         // With pivot attributes, active
         QCOMPARE(pivot->getAttribute("active"), QVariant(1));
-        QVERIFY(attributesHash.contains("created_at"));
-        QVERIFY(attributesHash.contains("updated_at"));
+        QVERIFY(attributesHash.contains(CREATED_AT));
+        QVERIFY(attributesHash.contains(UPDATED_AT));
     }
 }
 
@@ -269,8 +271,8 @@ void tst_Model_Relations
         QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
         // With pivot attributes, active
         QCOMPARE(tagged->getAttribute("active"), QVariant(activeMap.at(tagId)));
-        QVERIFY(attributesHash.contains("created_at"));
-        QVERIFY(attributesHash.contains("updated_at"));
+        QVERIFY(attributesHash.contains(CREATED_AT));
+        QVERIFY(attributesHash.contains(UPDATED_AT));
     }
 }
 
@@ -461,8 +463,8 @@ void tst_Model_Relations
         QCOMPARE(pivot->getAttribute("tag_id"), (*tag)["id"]);
         // With pivot attributes, active
         QCOMPARE(pivot->getAttribute("active"), QVariant(1));
-        QVERIFY(attributesHash.contains("created_at"));
-        QVERIFY(attributesHash.contains("updated_at"));
+        QVERIFY(attributesHash.contains(CREATED_AT));
+        QVERIFY(attributesHash.contains(UPDATED_AT));
     }
 }
 
@@ -512,8 +514,8 @@ void tst_Model_Relations
         QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
         // With pivot attributes, active
         QCOMPARE(tagged->getAttribute("active"), QVariant(activeMap.at(tagId)));
-        QVERIFY(attributesHash.contains("created_at"));
-        QVERIFY(attributesHash.contains("updated_at"));
+        QVERIFY(attributesHash.contains(CREATED_AT));
+        QVERIFY(attributesHash.contains(UPDATED_AT));
     }
 }
 
@@ -700,8 +702,8 @@ void tst_Model_Relations::with_BelongsToMany() const
         QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
         // With pivot attributes, active
         QCOMPARE(tagged->getAttribute("active"), QVariant(1));
-        QVERIFY(attributesHash.contains("created_at"));
-        QVERIFY(attributesHash.contains("updated_at"));
+        QVERIFY(attributesHash.contains(CREATED_AT));
+        QVERIFY(attributesHash.contains(UPDATED_AT));
     }
 }
 
@@ -918,8 +920,8 @@ void tst_Model_Relations::with_BelongsToMany_WithSelectConstraint() const
         QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
         // With pivot attributes, active
         QCOMPARE(tagged->getAttribute("active"), QVariant(1));
-        QVERIFY(attributesHash.contains("created_at"));
-        QVERIFY(attributesHash.contains("updated_at"));
+        QVERIFY(attributesHash.contains(CREATED_AT));
+        QVERIFY(attributesHash.contains(UPDATED_AT));
     }
 }
 
@@ -1018,8 +1020,8 @@ void tst_Model_Relations::with_BelongsToMany_WithLambdaConstraint() const
         QCOMPARE(tagged->getAttribute("torrent_id"), (*torrent)["id"]);
         // With pivot attributes, active
         QCOMPARE(tagged->getAttribute("active"), QVariant(1));
-        QVERIFY(attributesHash.contains("created_at"));
-        QVERIFY(attributesHash.contains("updated_at"));
+        QVERIFY(attributesHash.contains(CREATED_AT));
+        QVERIFY(attributesHash.contains(UPDATED_AT));
     }
 }
 

@@ -7,6 +7,8 @@
 #include "models/tagged.hpp"
 #include "models/tagproperty.hpp"
 
+using namespace Orm::Constants;
+
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::HasOne;
@@ -68,7 +70,7 @@ private:
 
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable {
-        "name",
+        NAME,
         "note",
     };
 

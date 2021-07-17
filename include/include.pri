@@ -14,6 +14,7 @@ HEADERS += \
     $$PWD/orm/connectors/mysqlconnector.hpp \
     $$PWD/orm/connectors/postgresconnector.hpp \
     $$PWD/orm/connectors/sqliteconnector.hpp \
+    $$PWD/orm/constants.hpp \
     $$PWD/orm/databaseconnection.hpp \
     $$PWD/orm/databasemanager.hpp \
     $$PWD/orm/db.hpp \

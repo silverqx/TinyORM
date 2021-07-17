@@ -48,7 +48,7 @@ DatabaseConnection::DatabaseConnection(
     , m_database(database)
     , m_tablePrefix(tablePrefix)
     , m_config(config)
-    , m_connectionName(getConfig("name").value<QString>())
+    , m_connectionName(getConfig(NAME).value<QString>())
 {}
 
 QSharedPointer<QueryBuilder>

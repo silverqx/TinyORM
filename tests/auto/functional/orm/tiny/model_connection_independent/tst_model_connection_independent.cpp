@@ -10,6 +10,8 @@
 
 #include "databases.hpp"
 
+using namespace Orm::Constants;
+
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::MassAssignmentError;
 
@@ -189,7 +191,7 @@ void tst_Model_Connection_Independent::massAssignment_Guarded() const
 {
     Torrent_GuardedAttribute torrent;
 
-    torrent.fill({{"created_at", QDateTime::currentDateTime()}});
+    torrent.fill({{CREATED_AT, QDateTime::currentDateTime()}});
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent.getAttributes().size(), 0);
@@ -271,10 +273,10 @@ void tst_Model_Connection_Independent
 
     const auto createdAt = QDateTime::fromString("2021-02-02 10:11:12", Qt::ISODate);
 
-    torrent.forceFill({{"created_at", createdAt}});
+    torrent.forceFill({{CREATED_AT, createdAt}});
 
     QVERIFY(!torrent.exists);
-    QCOMPARE(torrent["created_at"], QVariant(createdAt));
+    QCOMPARE(torrent[CREATED_AT], QVariant(createdAt));
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 

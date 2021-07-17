@@ -43,11 +43,11 @@ namespace Query
         inline virtual ~Builder() = default;
 
         /*! Execute the query as a "select" statement. */
-        QSqlQuery get(const QVector<Column> &columns = {"*"});
+        QSqlQuery get(const QVector<Column> &columns = {ASTERISK});
         /*! Execute a query for a single record by ID. */
-        QSqlQuery find(const QVariant &id, const QVector<Column> &columns = {"*"});
+        QSqlQuery find(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
         /*! Execute the query and get the first result. */
-        QSqlQuery first(const QVector<Column> &columns = {"*"});
+        QSqlQuery first(const QVector<Column> &columns = {ASTERISK});
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
         /*! Get the vector with the values of a given column. */
@@ -100,7 +100,7 @@ namespace Query
 
         /* Select */
         /*! Retrieve the "count" result of the query. */
-        quint64 count(const QVector<Column> &columns = {"*"});
+        quint64 count(const QVector<Column> &columns = {ASTERISK});
         /*! Retrieve the "count" result of the query. */
         template<typename = void>
         quint64 count(const Column &column);
@@ -117,10 +117,10 @@ namespace Query
 
         /*! Execute an aggregate function on the database. */
         QVariant aggregate(const QString &function,
-                           const QVector<Column> &columns = {"*"});
+                           const QVector<Column> &columns = {ASTERISK});
 
         /*! Set the columns to be selected. */
-        Builder &select(const QVector<Column> &columns = {"*"});
+        Builder &select(const QVector<Column> &columns = {ASTERISK});
         /*! Set the column to be selected. */
         Builder &select(const Column &column);
         /*! Add new select columns to the query. */
@@ -159,16 +159,16 @@ namespace Query
         /*! Add a join clause to the query. */
         template<JoinTable T>
         Builder &join(T &&table, const QString &first, const QString &comparison,
-                      const QVariant &second, const QString &type = "inner",
+                      const QVariant &second, const QString &type = INNER,
                       bool where = false);
         /*! Add an advanced join clause to the query. */
         template<JoinTable T>
         Builder &join(T &&table, const std::function<void(JoinClause &)> &callback,
-                      const QString &type = "inner");
+                      const QString &type = INNER);
         /*! Add a "join where" clause to the query. */
         template<JoinTable T>
         Builder &joinWhere(T &&table, const QString &first, const QString &comparison,
-                           const QVariant &second, const QString &type = "inner");
+                           const QVariant &second, const QString &type = INNER);
 
         /*! Add a left join to the query. */
         template<JoinTable T>
@@ -206,12 +206,12 @@ namespace Query
         template<SubQuery T>
         Builder &joinSub(T &&query, const QString &as, const QString &first,
                          const QString &comparison, const QVariant &second,
-                         const QString &type = "inner", bool where = false);
+                         const QString &type = INNER, bool where = false);
         /*! Add a subquery join clause to the query. */
         template<SubQuery T>
         Builder &joinSub(T &&query, const QString &as,
                          const std::function<void(JoinClause &)> &callback,
-                         const QString &type = "inner");
+                         const QString &type = INNER);
         /*! Add a subquery left join to the query. */
         template<SubQuery T>
         Builder &leftJoinSub(T &&query, const QString &as, const QString &first,
@@ -232,90 +232,90 @@ namespace Query
         /*! Add a basic where clause to the query. */
         template<WhereValue T>
         Builder &where(const Column &column, const QString &comparison,
-                       T &&value, const QString &condition = "and");
+                       T &&value, const QString &condition = AND);
         /*! Add an "or where" clause to the query. */
         template<WhereValue T>
         Builder &orWhere(const Column &column, const QString &comparison, T &&value);
         /*! Add a basic equal where clause to the query. */
         template<WhereValue T>
         Builder &whereEq(const Column &column, T &&value,
-                         const QString &condition = "and");
+                         const QString &condition = AND);
         /*! Add an equal "or where" clause to the query. */
         template<WhereValue T>
         Builder &orWhereEq(const Column &column, T &&value);
 
         /*! Add a nested where clause to the query. */
         Builder &where(const std::function<void(Builder &)> &callback,
-                       const QString &condition = "and");
+                       const QString &condition = AND);
         /*! Add a nested "or where" clause to the query. */
         Builder &orWhere(const std::function<void(Builder &)> &callback);
 
         /*! Add a vector of basic where clauses to the query. */
         Builder &where(const QVector<WhereItem> &values,
-                       const QString &condition = "and");
+                       const QString &condition = AND);
         /*! Add a vector of basic "or where" clauses to the query. */
         Builder &orWhere(const QVector<WhereItem> &values);
 
         /*! Add a vector of where clauses comparing two columns to the query. */
         Builder &whereColumn(const QVector<WhereColumnItem> &values,
-                             const QString &condition = "and");
+                             const QString &condition = AND);
         /*! Add a vector of "or where" clauses comparing two columns to the query. */
         Builder &orWhereColumn(const QVector<WhereColumnItem> &values);
 
         /*! Add a "where" clause comparing two columns to the query. */
         Builder &whereColumn(const Column &first, const QString &comparison,
-                             const Column &second, const QString &condition = "and");
+                             const Column &second, const QString &condition = AND);
         /*! Add a "or where" clause comparing two columns to the query. */
         Builder &orWhereColumn(const Column &first, const QString &comparison,
                                const Column &second);
         /*! Add an equal "where" clause comparing two columns to the query. */
         Builder &whereColumnEq(const Column &first, const Column &second,
-                               const QString &condition = "and");
+                               const QString &condition = AND);
         /*! Add an equal "or where" clause comparing two columns to the query. */
         Builder &orWhereColumnEq(const Column &first, const Column &second);
 
         /*! Add a "where in" clause to the query. */
         Builder &whereIn(const Column &column, const QVector<QVariant> &values,
-                         const QString &condition = "and", bool nope = false);
+                         const QString &condition = AND, bool nope = false);
         /*! Add an "or where in" clause to the query. */
         Builder &orWhereIn(const Column &column, const QVector<QVariant> &values);
         /*! Add a "where not in" clause to the query. */
         Builder &whereNotIn(const Column &column, const QVector<QVariant> &values,
-                            const QString &condition = "and");
+                            const QString &condition = AND);
         /*! Add an "or where not in" clause to the query. */
         Builder &orWhereNotIn(const Column &column, const QVector<QVariant> &values);
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const QVector<Column> &columns = {"*"},
-                           const QString &condition = "and", bool nope = false);
+        Builder &whereNull(const QVector<Column> &columns = {ASTERISK},
+                           const QString &condition = AND, bool nope = false);
         /*! Add an "or where null" clause to the query. */
-        Builder &orWhereNull(const QVector<Column> &columns = {"*"});
+        Builder &orWhereNull(const QVector<Column> &columns = {ASTERISK});
         /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const QVector<Column> &columns = {"*"},
-                              const QString &condition = "and");
+        Builder &whereNotNull(const QVector<Column> &columns = {ASTERISK},
+                              const QString &condition = AND);
         /*! Add an "or where not null" clause to the query. */
-        Builder &orWhereNotNull(const QVector<Column> &columns = {"*"});
+        Builder &orWhereNotNull(const QVector<Column> &columns = {ASTERISK});
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const Column &column, const QString &condition = "and",
+        Builder &whereNull(const Column &column, const QString &condition = AND,
                            bool nope = false);
         /*! Add an "or where null" clause to the query. */
         Builder &orWhereNull(const Column &column);
         /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const Column &column, const QString &condition = "and");
+        Builder &whereNotNull(const Column &column, const QString &condition = AND);
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const Column &column);
 
         /*! Add a basic where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         Builder &where(C &&column, const QString &comparison, V &&value,
-                       const QString &condition = "and");
+                       const QString &condition = AND);
         /*! Add an "or where" clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         Builder &orWhere(C &&column, const QString &comparison, V &&value);
         /*! Add a basic equal where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
-        Builder &whereEq(C &&column, V &&value, const QString &condition = "and");
+        Builder &whereEq(C &&column, V &&value, const QString &condition = AND);
         /*! Add an equal "or where" clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         Builder &orWhereEq(C &&column, V &&value);
@@ -323,11 +323,11 @@ namespace Query
         /*! Add a full sub-select to the "where" clause. */
         template<WhereValueSubQuery T>
         Builder &whereSub(const Column &column, const QString &comparison, T &&query,
-                          const QString &condition = "and");
+                          const QString &condition = AND);
 
         /*! Add a raw "where" clause to the query. */
         Builder &whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
-                          const QString &condition = "and");
+                          const QString &condition = AND);
         /*! Add a raw "or where" clause to the query. */
         Builder &orWhereRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
@@ -344,19 +344,19 @@ namespace Query
 
         /*! Add a "having" clause to the query. */
         Builder &having(const Column &column, const QString &comparison,
-                        const QVariant &value, const QString &condition = "and");
+                        const QVariant &value, const QString &condition = AND);
         /*! Add an "or having" clause to the query. */
         Builder &orHaving(const Column &column, const QString &comparison,
                           const QVariant &value);
 
         /*! Add a raw "having" clause to the query. */
         Builder &havingRaw(const QString &sql, const QVector<QVariant> &bindings = {},
-                           const QString &condition = "and");
+                           const QString &condition = AND);
         /*! Add a raw "or having" clause to the query. */
         Builder &orHavingRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
         /*! Add an "order by" clause to the query. */
-        Builder &orderBy(const Column &column, const QString &direction = "asc");
+        Builder &orderBy(const Column &column, const QString &direction = ASC);
         /*! Add a descending "order by" clause to the query. */
         Builder &orderByDesc(const Column &column);
 
@@ -364,13 +364,13 @@ namespace Query
         Builder &orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
         /*! Add an "order by" clause for a timestamp to the query. */
-        Builder &latest(const Column &column = "created_at");
+        Builder &latest(const Column &column = CREATED_AT);
         /*! Add an "order by" clause for a timestamp to the query. */
-        Builder &oldest(const Column &column = "created_at");
+        Builder &oldest(const Column &column = CREATED_AT);
         /*! Remove all existing orders. */
         Builder &reorder();
         /*! Remove all existing orders and optionally add a new order. */
-        Builder &reorder(const Column &column, const QString &direction = "asc");
+        Builder &reorder(const Column &column, const QString &direction = ASC);
 
         /*! Set the "limit" value of the query. */
         Builder &limit(int value);
@@ -513,11 +513,11 @@ namespace Query
         /*! Add a vector of basic where clauses to the query. */
         Builder &
         addArrayOfWheres(const QVector<WhereItem> &values,
-                         const QString &condition = "and");
+                         const QString &condition = AND);
         /*! Add a vector of where clauses comparing two columns to the query. */
         Builder &
         addArrayOfWheres(const QVector<WhereColumnItem> &values,
-                         const QString &condition = "and");
+                         const QString &condition = AND);
 
         /*! Get a new join clause. */
         QSharedPointer<JoinClause>
@@ -566,7 +566,7 @@ namespace Query
         /* Getters / Setters */
         /*! Set the aggregate property without running the query. */
         Builder &setAggregate(const QString &function,
-                              const QVector<Column> &columns = {"*"});
+                              const QVector<Column> &columns = {ASTERISK});
 
     private:
         /*! Run the query as a "select" statement against the connection. */
@@ -603,9 +603,9 @@ namespace Query
 
         /*! All of the available clause operators. */
         const QVector<QString> m_operators {
-            "=", "<", ">", "<=", ">=", "<>", "!=", "<=>",
-            "like", "like binary", "not like", "ilike",
-            "&", "|", "^", "<<", ">>",
+            EQ, LT, GT, LE, GE, NE_, NE, "<=>",
+            LIKE, "like binary", NLIKE, ILIKE,
+            B_AND, B_OR, "^", "<<", ">>",
             "rlike", "not rlike", "regexp", "not regexp",
             "~", "~*", "!~", "!~*", "similar to",
             "not similar to", "not ilike", "~~*", "!~~*",
@@ -753,7 +753,7 @@ namespace Query
            database without manually specifying the "where" clauses on the query.
            m_from will be wrapped in the Grammar. */
         where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)),
-              QStringLiteral("="), std::forward<T>(id), QStringLiteral("and"));
+              QStringLiteral("="), std::forward<T>(id), AND);
 
         return remove();
     }
@@ -803,15 +803,14 @@ namespace Query
     Builder::leftJoin(T &&table, const QString &first, const QString &comparison,
                       const QVariant &second)
     {
-        return join(std::forward<T>(table), first, comparison, second,
-                    QStringLiteral("left"));
+        return join(std::forward<T>(table), first, comparison, second, LEFT);
     }
 
     template<JoinTable T>
     inline Builder &
     Builder::leftJoin(T &&table, const std::function<void(JoinClause &)> &callback)
     {
-        return join(std::forward<T>(table), callback, QStringLiteral("left"));
+        return join(std::forward<T>(table), callback, LEFT);
     }
 
     template<JoinTable T>
@@ -819,8 +818,7 @@ namespace Query
     Builder::leftJoinWhere(T &&table, const QString &first, const QString &comparison,
                            const QVariant &second)
     {
-        return joinWhere(std::forward<T>(table), first, comparison, second,
-                         QStringLiteral("left"));
+        return joinWhere(std::forward<T>(table), first, comparison, second, LEFT);
     }
 
     template<JoinTable T>
@@ -828,14 +826,14 @@ namespace Query
     Builder::rightJoin(T &&table, const QString &first, const QString &comparison,
                        const QVariant &second)
     {
-        return join(table, first, comparison, second, QStringLiteral("right"));
+        return join(table, first, comparison, second, RIGHT);
     }
 
     template<JoinTable T>
     inline Builder &
     Builder::rightJoin(T &&table, const std::function<void(JoinClause &)> &callback)
     {
-        return join(table, callback, QStringLiteral("right"));
+        return join(table, callback, RIGHT);
     }
 
     template<JoinTable T>
@@ -843,7 +841,7 @@ namespace Query
     Builder::rightJoinWhere(T &&table, const QString &first, const QString &comparison,
                             const QVariant &second)
     {
-        return joinWhere(table, first, comparison, second, QStringLiteral("right"));
+        return joinWhere(table, first, comparison, second, RIGHT);
     }
 
     // TODO docs missing example, because of different api silverqx
@@ -853,14 +851,14 @@ namespace Query
     Builder::crossJoin(T &&table, const QString &first, const QString &comparison,
                        const QVariant &second)
     {
-        return join(table, first, comparison, second, QStringLiteral("cross"));
+        return join(table, first, comparison, second, CROSS);
     }
 
     template<JoinTable T>
     inline Builder &
     Builder::crossJoin(T &&table, const std::function<void(JoinClause &)> &callback)
     {
-        return join(table, callback, QStringLiteral("cross"));
+        return join(table, callback, CROSS);
     }
 
     template<SubQuery T>
@@ -887,8 +885,7 @@ namespace Query
     Builder::leftJoinSub(T &&query, const QString &as, const QString &first,
                          const QString &comparison, const QVariant &second)
     {
-        return joinSub(std::forward<T>(query), as, first, comparison, second,
-                       QStringLiteral("left"));
+        return joinSub(std::forward<T>(query), as, first, comparison, second, LEFT);
     }
 
     template<SubQuery T>
@@ -896,7 +893,7 @@ namespace Query
     Builder::leftJoinSub(T &&query, const QString &as,
                          const std::function<void(JoinClause &)> &callback)
     {
-        return joinSub(std::forward<T>(query), as, callback, QStringLiteral("left"));
+        return joinSub(std::forward<T>(query), as, callback, LEFT);
     }
 
     template<SubQuery T>
@@ -904,8 +901,7 @@ namespace Query
     Builder::rightJoinSub(T &&query, const QString &as, const QString &first,
                           const QString &comparison, const QVariant &second)
     {
-        return joinSub(std::forward<T>(query), as, first, comparison, second,
-                       QStringLiteral("right"));
+        return joinSub(std::forward<T>(query), as, first, comparison, second, RIGHT);
     }
 
     template<SubQuery T>
@@ -913,7 +909,7 @@ namespace Query
     Builder::rightJoinSub(T &&query, const QString &as,
                           const std::function<void(JoinClause &)> &callback)
     {
-        return joinSub(std::forward<T>(query), as, callback, QStringLiteral("right"));
+        return joinSub(std::forward<T>(query), as, callback, RIGHT);
     }
 
     template<WhereValue T>
@@ -934,7 +930,7 @@ namespace Query
     Builder &
     Builder::orWhere(const Column &column, const QString &comparison, T &&value)
     {
-        return where(column, comparison, std::forward<T>(value), QStringLiteral("or"));
+        return where(column, comparison, std::forward<T>(value), OR);
     }
 
     template<WhereValue T>
@@ -947,8 +943,7 @@ namespace Query
     template<WhereValue T>
     Builder &Builder::orWhereEq(const Column &column, T &&value)
     {
-        return where(column, QStringLiteral("="), std::forward<T>(value),
-                     QStringLiteral("or"));
+        return where(column, QStringLiteral("="), std::forward<T>(value), OR);
     }
 
     template<Queryable C, WhereValue V>
@@ -973,8 +968,7 @@ namespace Query
     template<Queryable C, WhereValue V>
     inline Builder &Builder::orWhere(C &&column, const QString &comparison, V &&value)
     {
-        return where(std::forward<C>(column), comparison, std::forward<V>(value),
-                     QStringLiteral("or"));
+        return where(std::forward<C>(column), comparison, std::forward<V>(value), OR);
     }
 
     template<Queryable C, WhereValue V>
@@ -988,7 +982,7 @@ namespace Query
     inline Builder &Builder::orWhereEq(C &&column, V &&value)
     {
         return where(std::forward<C>(column), QStringLiteral("="),
-                     std::forward<V>(value), QStringLiteral("or"));
+                     std::forward<V>(value), OR);
     }
 
     template<WhereValueSubQuery T>

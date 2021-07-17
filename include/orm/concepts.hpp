@@ -1,6 +1,12 @@
 #ifndef ORM_CONCEPTS_HPP
 #define ORM_CONCEPTS_HPP
 
+namespace std
+{
+    template<typename ..._Types>
+    class variant;
+}
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {

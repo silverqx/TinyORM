@@ -41,7 +41,7 @@ namespace Relations
         QVector<QVariant> getBindings() const;
 
         /*! Execute the query as a "select" statement. */
-        QVector<Model> get(const QVector<Column> &columns = {"*"});
+        QVector<Model> get(const QVector<Column> &columns = {ASTERISK});
 
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
@@ -54,17 +54,19 @@ namespace Relations
 
         /*! Find a model by its primary key. */
         std::optional<Model>
-        find(const QVariant &id, const QVector<Column> &columns = {"*"});
+        find(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
         /*! Find a model by its primary key or return fresh model instance. */
-        Model findOrNew(const QVariant &id, const QVector<Column> &columns = {"*"});
+        Model findOrNew(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
         /*! Find a model by its primary key or throw an exception. */
-        Model findOrFail(const QVariant &id, const QVector<Column> &columns = {"*"});
+        Model findOrFail(const QVariant &id,
+                         const QVector<Column> &columns = {ASTERISK});
         /*! Find multiple models by their primary keys. */
         QVector<Model>
-        findMany(const QVector<QVariant> &ids, const QVector<Column> &columns = {"*"});
+        findMany(const QVector<QVariant> &ids,
+                 const QVector<Column> &columns = {ASTERISK});
 
         /*! Execute the query and get the first result. */
-        std::optional<Model> first(const QVector<Column> &columns = {"*"});
+        std::optional<Model> first(const QVector<Column> &columns = {ASTERISK});
         /*! Get the first record matching the attributes or instantiate it. */
         Model firstOrNew(const QVector<WhereItem> &attributes = {},
                          const QVector<AttributeItem> &values = {});
@@ -72,16 +74,16 @@ namespace Relations
         Model firstOrCreate(const QVector<WhereItem> &attributes = {},
                             const QVector<AttributeItem> &values = {});
         /*! Execute the query and get the first result or throw an exception. */
-        Model firstOrFail(const QVector<Column> &columns = {"*"});
+        Model firstOrFail(const QVector<Column> &columns = {ASTERISK});
 
         /*! Add a basic where clause to the query, and return the first result. */
         std::optional<Model>
         firstWhere(const Column &column, const QString &comparison,
-                   const QVariant &value, const QString &condition = "and");
+                   const QVariant &value, const QString &condition = AND);
         /*! Add a basic equal where clause to the query, and return the first result. */
         std::optional<Model>
         firstWhereEq(const Column &column, const QVariant &value,
-                     const QString &condition = "and");
+                     const QString &condition = AND);
 
         /*! Add a where clause on the primary key to the query. */
         Builder &whereKey(const QVariant &id);
@@ -159,7 +161,7 @@ namespace Relations
 
         /* Select */
         /*! Retrieve the "count" result of the query. */
-        quint64 count(const QVector<Column> &columns = {"*"}) const;
+        quint64 count(const QVector<Column> &columns = {ASTERISK}) const;
         /*! Retrieve the "count" result of the query. */
         template<typename = void>
         quint64 count(const Column &column) const;
@@ -176,10 +178,10 @@ namespace Relations
 
         /*! Execute an aggregate function on the database. */
         QVariant aggregate(const QString &function,
-                           const QVector<Column> &columns = {"*"}) const;
+                           const QVector<Column> &columns = {ASTERISK}) const;
 
         /*! Set the columns to be selected. */
-        Builder &select(const QVector<Column> &columns = {"*"});
+        Builder &select(const QVector<Column> &columns = {ASTERISK});
         /*! Set the column to be selected. */
         Builder &select(const Column &column);
         /*! Add new select columns to the query. */
@@ -204,16 +206,16 @@ namespace Relations
         /*! Add a join clause to the query. */
         template<JoinTable T>
         Builder &join(T &&table, const QString &first, const QString &comparison,
-                      const QString &second, const QString &type = "inner",
+                      const QString &second, const QString &type = INNER,
                       bool where = false);
         /*! Add an advanced join clause to the query. */
         template<JoinTable T>
         Builder &join(T &&table, const std::function<void(JoinClause &)> &callback,
-                      const QString &type = "inner");
+                      const QString &type = INNER);
         /*! Add a "join where" clause to the query. */
         template<JoinTable T>
         Builder &joinWhere(T &&table, const QString &first, const QString &comparison,
-                           const QVariant &second, const QString &type = "inner");
+                           const QVariant &second, const QString &type = INNER);
 
         /*! Add a left join to the query. */
         template<JoinTable T>
@@ -251,12 +253,12 @@ namespace Relations
         template<SubQuery T>
         Builder &joinSub(T &&query, const QString &as, const QString &first,
                          const QString &comparison, const QVariant &second,
-                         const QString &type = "inner", bool where = false);
+                         const QString &type = INNER, bool where = false);
         /*! Add a subquery join clause to the query. */
         template<SubQuery T>
         Builder &joinSub(T &&query, const QString &as,
                          const std::function<void(JoinClause &)> &callback,
-                         const QString &type = "inner");
+                         const QString &type = INNER);
         /*! Add a subquery left join to the query. */
         template<SubQuery T>
         Builder &leftJoinSub(T &&query, const QString &as, const QString &first,
@@ -277,90 +279,90 @@ namespace Relations
         /*! Add a basic where clause to the query. */
         template<WhereValue T>
         Builder &where(const Column &column, const QString &comparison, T &&value,
-                       const QString &condition = "and");
+                       const QString &condition = AND);
         /*! Add an "or where" clause to the query. */
         template<WhereValue T>
         Builder &orWhere(const Column &column, const QString &comparison, T &&value);
         /*! Add a basic equal where clause to the query. */
         template<WhereValue T>
         Builder &whereEq(const Column &column, T &&value,
-                         const QString &condition = "and");
+                         const QString &condition = AND);
         /*! Add an equal "or where" clause to the query. */
         template<WhereValue T>
         Builder &orWhereEq(const Column &column, T &&value);
 
         /*! Add a nested where clause to the query. */
         Builder &where(const std::function<void(Builder &)> &callback,
-                       const QString &condition = "and");
+                       const QString &condition = AND);
         /*! Add a nested "or where" clause to the query. */
         Builder &orWhere(const std::function<void(Builder &)> &callback);
 
         /*! Add a vector of basic where clauses to the query. */
         Builder &where(const QVector<WhereItem> &values,
-                       const QString &condition = "and");
+                       const QString &condition = AND);
         /*! Add a vector of basic "or where" clauses to the query. */
         Builder &orWhere(const QVector<WhereItem> &values);
 
         /*! Add a vector of where clauses comparing two columns to the query. */
         Builder &whereColumn(const QVector<WhereColumnItem> &values,
-                             const QString &condition = "and");
+                             const QString &condition = AND);
         /*! Add a vector of "or where" clauses comparing two columns to the query. */
         Builder &orWhereColumn(const QVector<WhereColumnItem> &values);
 
         /*! Add a "where" clause comparing two columns to the query. */
         Builder &whereColumn(const Column &first, const QString &comparison,
-                             const Column &second, const QString &condition = "and");
+                             const Column &second, const QString &condition = AND);
         /*! Add a "or where" clause comparing two columns to the query. */
         Builder &orWhereColumn(const Column &first, const QString &comparison,
                                const Column &second);
         /*! Add an equal "where" clause comparing two columns to the query. */
         Builder &whereColumnEq(const Column &first, const Column &second,
-                               const QString &condition = "and");
+                               const QString &condition = AND);
         /*! Add an equal "or where" clause comparing two columns to the query. */
         Builder &orWhereColumnEq(const Column &first, const Column &second);
 
         /*! Add a "where in" clause to the query. */
         Builder &whereIn(const Column &column, const QVector<QVariant> &values,
-                         const QString &condition = "and", bool nope = false);
+                         const QString &condition = AND, bool nope = false);
         /*! Add an "or where in" clause to the query. */
         Builder &orWhereIn(const Column &column, const QVector<QVariant> &values);
         /*! Add a "where not in" clause to the query. */
         Builder &whereNotIn(const Column &column, const QVector<QVariant> &values,
-                            const QString &condition = "and");
+                            const QString &condition = AND);
         /*! Add an "or where not in" clause to the query. */
         Builder &orWhereNotIn(const Column &column, const QVector<QVariant> &values);
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const QVector<Column> &columns = {"*"},
-                           const QString &condition = "and", bool nope = false);
+        Builder &whereNull(const QVector<Column> &columns = {ASTERISK},
+                           const QString &condition = AND, bool nope = false);
         /*! Add an "or where null" clause to the query. */
-        Builder &orWhereNull(const QVector<Column> &columns = {"*"});
+        Builder &orWhereNull(const QVector<Column> &columns = {ASTERISK});
         /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const QVector<Column> &columns = {"*"},
-                              const QString &condition = "and");
+        Builder &whereNotNull(const QVector<Column> &columns = {ASTERISK},
+                              const QString &condition = AND);
         /*! Add an "or where not null" clause to the query. */
-        Builder &orWhereNotNull(const QVector<Column> &columns = {"*"});
+        Builder &orWhereNotNull(const QVector<Column> &columns = {ASTERISK});
 
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const Column &column, const QString &condition = "and",
+        Builder &whereNull(const Column &column, const QString &condition = AND,
                            bool nope = false);
         /*! Add an "or where null" clause to the query. */
         Builder &orWhereNull(const Column &column);
         /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const Column &column, const QString &condition = "and");
+        Builder &whereNotNull(const Column &column, const QString &condition = AND);
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const Column &column);
 
         /*! Add a basic where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         Builder &where(C &&column, const QString &comparison, V &&value,
-                       const QString &condition = "and");
+                       const QString &condition = AND);
         /*! Add an "or where" clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         Builder &orWhere(C &&column, const QString &comparison, V &&value);
         /*! Add a basic equal where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
-        Builder &whereEq(C &&column, V &&value, const QString &condition = "and");
+        Builder &whereEq(C &&column, V &&value, const QString &condition = AND);
         /*! Add an equal "or where" clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         Builder &orWhereEq(C &&column, V &&value);
@@ -368,11 +370,11 @@ namespace Relations
         /*! Add a full sub-select to the "where" clause. */
         template<WhereValueSubQuery T>
         Builder &whereSub(const Column &column, const QString &comparison, T &&query,
-                          const QString &condition = "and");
+                          const QString &condition = AND);
 
         /*! Add a raw "where" clause to the query. */
         Builder &whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
-                          const QString &condition = "and");
+                          const QString &condition = AND);
         /*! Add a raw "or where" clause to the query. */
         Builder &orWhereRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
@@ -389,19 +391,19 @@ namespace Relations
 
         /*! Add a "having" clause to the query. */
         Builder &having(const Column &column, const QString &comparison,
-                        const QVariant &value, const QString &condition = "and");
+                        const QVariant &value, const QString &condition = AND);
         /*! Add an "or having" clause to the query. */
         Builder &orHaving(const Column &column, const QString &comparison,
                           const QVariant &value);
 
         /*! Add a raw "having" clause to the query. */
         Builder &havingRaw(const QString &sql, const QVector<QVariant> &bindings = {},
-                           const QString &condition = "and");
+                           const QString &condition = AND);
         /*! Add a raw "or having" clause to the query. */
         Builder &orHavingRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
         /*! Add an "order by" clause to the query. */
-        Builder &orderBy(const Column &column, const QString &direction = "asc");
+        Builder &orderBy(const Column &column, const QString &direction = ASC);
         /*! Add a descending "order by" clause to the query. */
         Builder &orderByDesc(const Column &column);
 
@@ -415,7 +417,7 @@ namespace Relations
         /*! Remove all existing orders. */
         Builder &reorder();
         /*! Remove all existing orders and optionally add a new order. */
-        Builder &reorder(const Column &column, const QString &direction = "asc");
+        Builder &reorder(const Column &column, const QString &direction = ASC);
 
         /*! Set the "limit" value of the query. */
         Builder &limit(int value);
@@ -458,7 +460,7 @@ namespace Relations
         Model newModelInstance(const QVector<AttributeItem> &attributes = {});
 
         /*! Get the hydrated models without eager loading. */
-        QVector<Model> getModels(const QVector<Column> &columns = {"*"});
+        QVector<Model> getModels(const QVector<Column> &columns = {ASTERISK});
 
         /*! Eager load the relationships for the models. */
         void eagerLoadRelations(QVector<Model> &models);
@@ -739,7 +741,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::whereKeyNot(const QVariant &id)
     {
-        return where(m_model.getQualifiedKeyName(), QStringLiteral("!="), id);
+        return where(m_model.getQualifiedKeyName(), NE, id);
     }
 
     template<typename Model>
@@ -1195,7 +1197,7 @@ namespace Relations
     Builder<Model>::leftJoinSub(T &&query, const QString &as,
                                 const std::function<void(JoinClause &)> &callback)
     {
-        toBase().joinSub(std::forward<T>(query), as, callback, QStringLiteral("left"));
+        toBase().joinSub(std::forward<T>(query), as, callback, LEFT);
         return *this;
     }
 
@@ -1215,7 +1217,7 @@ namespace Relations
     Builder<Model>::rightJoinSub(T &&query, const QString &as,
                                  const std::function<void(JoinClause &)> &callback)
     {
-        toBase().joinSub(std::forward<T>(query), as, callback, QStringLiteral("right"));
+        toBase().joinSub(std::forward<T>(query), as, callback, RIGHT);
         return *this;
     }
 
@@ -1458,8 +1460,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::orWhere(C &&column, const QString &comparison, V &&value)
     {
-        toBase().where(std::forward<C>(column), comparison, std::forward<V>(value),
-                       QStringLiteral("or"));
+        toBase().where(std::forward<C>(column), comparison, std::forward<V>(value), OR);
         return *this;
     }
 
@@ -1478,7 +1479,7 @@ namespace Relations
     Builder<Model> &Builder<Model>::orWhereEq(C &&column, V &&value)
     {
         toBase().where(std::forward<C>(column), QStringLiteral("="),
-                       std::forward<V>(value), QStringLiteral("or"));
+                       std::forward<V>(value), OR);
         return *this;
     }
 
@@ -1505,7 +1506,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::orWhereRaw(const QString &sql, const QVector<QVariant> &bindings)
     {
-        toBase().whereRaw(sql, bindings, QStringLiteral("or"));
+        toBase().whereRaw(sql, bindings, OR);
         return *this;
     }
 
@@ -1570,7 +1571,7 @@ namespace Relations
     Builder<Model> &
     Builder<Model>::orHavingRaw(const QString &sql, const QVector<QVariant> &bindings)
     {
-        toBase().havingRaw(sql, bindings, QStringLiteral("or"));
+        toBase().havingRaw(sql, bindings, OR);
         return *this;
     }
 
@@ -1640,7 +1641,7 @@ namespace Relations
             if (const auto &createdAtColumn = m_model.getCreatedAtColumn();
                 createdAtColumn.isEmpty()
             )
-                column = QStringLiteral("created_at");
+                column = CREATED_AT;
             else
                 column = createdAtColumn;
         }

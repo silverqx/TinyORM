@@ -28,7 +28,7 @@ namespace Orm::Query
 
         /*! Add an "on" clause to the join. */
         JoinClause &on(const QString &first, const QString &comparison,
-                       const QString &second, const QString &condition = "and");
+                       const QString &second, const QString &condition = AND);
         /*! Add an "or on" clause to the join. */
         JoinClause &orOn(const QString &first, const QString &comparison,
                          const QString &second);

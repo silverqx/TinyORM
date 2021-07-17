@@ -3,6 +3,10 @@
 #include <QtSql/QSqlQuery>
 #include <QVariant>
 
+#include "orm/constants.hpp"
+
+using namespace Orm::Constants;
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
@@ -15,7 +19,7 @@ QStringList SQLiteProcessor::processColumnListing(QSqlQuery &query) const
     QStringList columns;
 
     while (query.next())
-        columns.append(query.value("name").value<QString>());
+        columns.append(query.value(NAME).value<QString>());
 
     return columns;
 }

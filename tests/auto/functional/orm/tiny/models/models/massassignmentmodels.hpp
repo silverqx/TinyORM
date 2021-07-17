@@ -25,18 +25,18 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute>
 
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable {
-        "name",
+        Orm::NAME,
         "size",
         "progress",
         "added_on",
         "hash",
         "note",
-        "updated_at",
+        Orm::UPDATED_AT,
     };
 
     /*! The attributes that aren't mass assignable. */
     inline static QStringList u_guarded {
-        "created_at",
+        Orm::CREATED_AT,
     };
 };
 

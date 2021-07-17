@@ -34,7 +34,7 @@ namespace Orm::Tiny::Relations
         /*! Find a model by its primary key or return a new instance of the related
             model. */
         Related findOrNew(const QVariant &id,
-                          const QVector<Column> &columns = {"*"}) const override;
+                          const QVector<Column> &columns = {ASTERISK}) const override;
 
         /*! Get the first related model record matching the attributes or instantiate
             it. */

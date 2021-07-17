@@ -3,8 +3,11 @@
 #include <QRegularExpression>
 #include <QtSql/QSqlQuery>
 
+#include "orm/constants.hpp"
 #include "orm/queryerror.hpp"
 #include "orm/utils/type.hpp"
+
+using namespace Orm::Constants;
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -16,7 +19,7 @@ namespace Orm::Connectors
 ConnectionName
 PostgresConnector::connect(const QVariantHash &config) const
 {
-    const auto name = config["name"].value<QString>();
+    const auto name = config[NAME].value<QString>();
 
     /* We need to grab the QSqlDatabse options that should be used while making
        the brand new connection instance. The QSqlDatabase options control various

@@ -10,6 +10,8 @@
 #include "models/torrentpeer.hpp"
 #include "models/torrentpreviewablefile.hpp"
 
+using namespace Orm::Constants;
+
 //using Orm::AttributeItem;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
@@ -39,7 +41,7 @@ public:
     torrentFiles()
     {
         return hasMany<TorrentPreviewableFile>();
-//        return hasMany<TorrentPreviewableFile>("torrent_id", "id");
+//        return hasMany<TorrentPreviewableFile>("torrent_id", ID);
     }
 
     /*! Get the torrent peer associated with the torrent. */
@@ -47,7 +49,7 @@ public:
     torrentPeer()
     {
         return hasOne<TorrentPeer>();
-//        return hasOne<TorrentPeer>("torrent_id", "id");
+//        return hasOne<TorrentPeer>("torrent_id", ID);
 
         // Default Model example
 //        auto relation = hasOne<TorrentPeer>();
@@ -57,7 +59,7 @@ public:
 //        relation->withDefault([](Torrent &torrent,
 //                              const TorrentPreviewableFile &/*torrentFile*/)
 //        {
-//            torrent["name"] = "default_model_name";
+//            torrent[NAME] = "default_model_name";
 //        });
 //        return relation;
     }
@@ -80,23 +82,25 @@ public:
                 .withTimestamps(/*"created_at_custom", "updated_at_custom"*/);
 
         return relation;
-//        return belongsToMany<Tag>("tag_torrent", "torrent_id", "tag_id", "id", "id",
+//        return belongsToMany<Tag>("tag_torrent", "torrent_id", "tag_id", ID, ID,
 //                                  "tags");
     }
 
 private:
+    // CUR docs silverqx
     /*! The name of the "created at" column. */
-    inline static const QString CREATED_AT = QStringLiteral("created_at");
+    inline static const QString CREATED_AT = Orm::CREATED_AT;
     /*! The name of the "updated at" column. */
-    inline static const QString UPDATED_AT = QStringLiteral("updated_at");
+    inline static const QString UPDATED_AT = Orm::UPDATED_AT;
 
     /*! The table associated with the model. */
     QString u_table {"torrents"};
 
     /*! Indicates if the model's ID is auto-incrementing. */
 //    bool u_incrementing = true;
+    // CUR docs silverqx
     /*! The primary key associated with the table. */
-//    QString u_primaryKey {"id"};
+//    QString u_primaryKey {ID};
 
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
@@ -133,14 +137,14 @@ private:
 
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable {
-        "id",
-        "name",
+        ID,
+        NAME,
         "size",
         "progress",
         "added_on",
         "hash",
         "note",
-        "updated_at",
+        Orm::UPDATED_AT,
     };
 
     /*! The attributes that aren't mass assignable. */

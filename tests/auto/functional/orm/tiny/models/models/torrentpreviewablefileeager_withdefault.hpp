@@ -7,6 +7,8 @@
 #include "models/torrenteager_withdefault.hpp"
 #include "models/torrentpreviewablefilepropertyeager.hpp"
 
+using namespace Orm::Constants;
+
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::HasOne;
@@ -48,7 +50,7 @@ public:
         // Ownership of a unique_ptr()
         auto relation = belongsTo<TorrentEager_WithDefault>("", "", __func__);
 
-        relation->withDefault({{"name", "default_torrent_name"}, {"size", 123}});
+        relation->withDefault({{NAME, "default_torrent_name"}, {"size", 123}});
 
         return relation;
     }
@@ -82,7 +84,7 @@ public:
         auto relation =
                 hasOne<TorrentPreviewableFilePropertyEager>("previewable_file_id");
 
-        relation->withDefault({{"name", "default_fileproperty_name"}, {"size", 321}});
+        relation->withDefault({{NAME, "default_fileproperty_name"}, {"size", 321}});
 
         return relation;
     }

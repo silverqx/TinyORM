@@ -7,6 +7,8 @@
 #include "models/torrentpeereager_norelations.hpp"
 #include "models/torrentpreviewablefileeager.hpp"
 
+using namespace Orm::Constants;
+
 using Orm::AttributeItem;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
@@ -59,7 +61,7 @@ private:
 
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable {
-        "name",
+        NAME,
         "size",
         "progress",
         "added_on",

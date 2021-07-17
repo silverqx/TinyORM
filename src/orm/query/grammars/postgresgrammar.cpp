@@ -21,7 +21,7 @@ QString PostgresGrammar::compileInsertGetId(const QueryBuilder &query,
 {
     return QStringLiteral("%1 returning %2")
             .arg(compileInsert(query, values),
-                 wrap(sequence.isEmpty() ? QStringLiteral("id") : sequence));
+                 wrap(sequence.isEmpty() ? ID : sequence));
 }
 
 QString PostgresGrammar::compileUpdate(QueryBuilder &query,
@@ -63,10 +63,10 @@ QString PostgresGrammar::compileLock(const QueryBuilder &query) const
 const QVector<QString> &PostgresGrammar::getOperators() const
 {
     static const QVector<QString> cachedOperators {
-        "=", "<", ">", "<=", ">=", "<>", "!=",
-        "like", "not like", "between", "ilike", "not ilike",
-        "~", "&", "|", "#", "<<", ">>", "<<=", ">>=",
-        "&&", "@>", "<@", "?", "?|", "?&", "||", "-", "@?", "@@", "#-",
+        EQ, LT, GT, LE, GE, NE, NE_,
+        LIKE, NLIKE, "between", ILIKE, "not ilike",
+        "~", B_AND, B_OR, "#", "<<", ">>", "<<=", ">>=",
+        AND_, "@>", "<@", "?", "?|", "?&", OR_, "-", "@?", "@@", "#-",
         "is distinct from", "is not distinct from",
     };
 
@@ -75,7 +75,7 @@ const QVector<QString> &PostgresGrammar::getOperators() const
 
 QString PostgresGrammar::whereBasic(const WhereConditionItem &where) const
 {
-    if (!where.comparison.contains("like", Qt::CaseInsensitive))
+    if (!where.comparison.contains(LIKE, Qt::CaseInsensitive))
         return Grammar::whereBasic(where);
 
     return QStringLiteral("%1::text %2 %3").arg(wrap(where.column),

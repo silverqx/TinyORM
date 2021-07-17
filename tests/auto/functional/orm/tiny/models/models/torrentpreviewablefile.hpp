@@ -46,7 +46,7 @@ public:
         // Ownership of a unique_ptr()
         auto relation = belongsTo<Torrent>();
 
-        relation->withDefault({{"name", "default_torrent_name"}, {"size", 123}});
+        relation->withDefault({{NAME, "default_torrent_name"}, {"size", 123}});
 
         return relation;
     }
@@ -75,7 +75,7 @@ public:
     {
         auto relation = hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
 
-        relation->withDefault({{"name", "default_fileproperty_name"}, {"size", 321}});
+        relation->withDefault({{NAME, "default_fileproperty_name"}, {"size", 321}});
 
         return relation;
     }
