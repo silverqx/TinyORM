@@ -158,7 +158,7 @@ void tst_MySql_QueryBuilder::get() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").get({"id", "name"});
+            connection.query()->from("torrents").get({ID, "name"});
         });
 
         const auto &firstLog = log.first();
@@ -188,7 +188,7 @@ void tst_MySql_QueryBuilder::get_ColumnExpression() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").get({Raw("id"), "name"});
+        connection.query()->from("torrents").get({Raw(ID), "name"});
     });
 
     const auto &firstLog = log.first();
@@ -203,7 +203,7 @@ void tst_MySql_QueryBuilder::find() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").find(3, {"id", "name"});
+        connection.query()->from("torrents").find(3, {ID, "name"});
     });
 
     const auto &firstLog = log.first();
@@ -220,7 +220,7 @@ void tst_MySql_QueryBuilder::find_ColumnAndValueExpression() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").find(3, {"id", Raw("name")});
+            connection.query()->from("torrents").find(3, {ID, Raw("name")});
         });
 
         const auto &firstLog = log.first();
@@ -235,7 +235,7 @@ void tst_MySql_QueryBuilder::find_ColumnAndValueExpression() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").find(Raw("1 + 3"), {"id", Raw("name")});
+            connection.query()->from("torrents").find(Raw("1 + 3"), {ID, Raw("name")});
         });
 
         const auto &firstLog = log.first();
@@ -251,7 +251,7 @@ void tst_MySql_QueryBuilder::first() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").first({"id", "name"});
+        connection.query()->from("torrents").first({ID, "name"});
     });
 
     const auto &firstLog = log.first();
@@ -266,7 +266,7 @@ void tst_MySql_QueryBuilder::first_ColumnExpression() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").first({"id", Raw("name")});
+        connection.query()->from("torrents").first({ID, Raw("name")});
     });
 
     const auto &firstLog = log.first();
@@ -453,7 +453,7 @@ void tst_MySql_QueryBuilder::select() const
 
     builder->from("torrents");
 
-    builder->select({"id", "name"});
+    builder->select({ID, "name"});
     QCOMPARE(builder->toSql(),
              "select `id`, `name` from `torrents`");
 
@@ -461,7 +461,7 @@ void tst_MySql_QueryBuilder::select() const
     QCOMPARE(builder->toSql(),
              "select * from `torrents`");
 
-    builder->select("id");
+    builder->select(ID);
     QCOMPARE(builder->toSql(),
              "select `id` from `torrents`");
 }
@@ -476,7 +476,7 @@ void tst_MySql_QueryBuilder::select_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select name from `torrents`");
 
-    builder->select({"id", Raw("name")});
+    builder->select({ID, Raw("name")});
     QCOMPARE(builder->toSql(),
              "select `id`, name from `torrents`");
 
@@ -491,7 +491,7 @@ void tst_MySql_QueryBuilder::addSelect() const
 
     builder->from("torrents");
 
-    builder->addSelect({"id", "name"});
+    builder->addSelect({ID, "name"});
     QCOMPARE(builder->toSql(),
              "select `id`, `name` from `torrents`");
 
@@ -514,7 +514,7 @@ void tst_MySql_QueryBuilder::addSelect_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select name from `torrents`");
 
-    builder->addSelect({"id", Raw("happiness")});
+    builder->addSelect({ID, Raw("happiness")});
     QCOMPARE(builder->toSql(),
              "select name, `id`, happiness from `torrents`");
 
@@ -571,7 +571,7 @@ void tst_MySql_QueryBuilder::selectSub_QStringOverload() const
 
     builder->selectSub("select max(size) from `torrents`",
                        "max_size")
-            .addSelect({"id", "name"})
+            .addSelect({ID, "name"})
             .from("torrents");
 
     const auto &columns = builder->getColumns();
@@ -591,10 +591,10 @@ void tst_MySql_QueryBuilder::selectSub_QueryBuilderOverload_WithWhere() const
     auto subQuery = createQuery(m_connection);
     subQuery->from("torrents")
             .select(Raw("max(size)"))
-            .where("id", "<", 5);
+            .where(ID, "<", 5);
 
     builder->selectSub(*subQuery, "max_size")
-            .addSelect({"id", "name"})
+            .addSelect({ID, "name"})
             .from("torrents")
             .whereEq("name", "xyz");
 
@@ -619,9 +619,9 @@ void tst_MySql_QueryBuilder::selectSub_CallbackOverload() const
     {
         query.select(Raw("max(size)"))
                 .from("torrents")
-                .where("id", "<", 5);
+                .where(ID, "<", 5);
     }, "max_size")
-            .addSelect({"id", "name"})
+            .addSelect({ID, "name"})
             .from("torrents")
             .whereEq("name", "xyz");
 
@@ -894,8 +894,8 @@ void tst_MySql_QueryBuilder::fromSub_QueryBuilderOverload_WithWhere() const
     // Ownership of the QSharedPointer<QueryBuilder>
     auto subQuery = createQuery(m_connection);
     subQuery->from("user_sessions")
-            .select({"id", "name"})
-            .where("id", "<", 5);
+            .select({ID, "name"})
+            .where(ID, "<", 5);
 
     builder->fromSub(*subQuery, "sessions")
             .whereEq("name", "xyz");
@@ -916,8 +916,8 @@ void tst_MySql_QueryBuilder::fromSub_CallbackOverload() const
     builder->fromSub([](auto &query)
     {
         query.from("user_sessions")
-             .select({"id", "name"})
-             .where("id", "<", 5);
+             .select({ID, "name"})
+             .where(ID, "<", 5);
     }, "sessions").whereEq("name", "xyz");
 
     QVERIFY(std::holds_alternative<Expression>(builder->getFrom()));
@@ -997,7 +997,7 @@ void tst_MySql_QueryBuilder::basicWhere() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", "=", 3);
+        builder->select("*").from("torrents").where(ID, "=", 3);
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ?");
         QCOMPARE(builder->getBindings(),
@@ -1007,7 +1007,7 @@ void tst_MySql_QueryBuilder::basicWhere() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereEq("id", 3);
+        builder->select("*").from("torrents").whereEq(ID, 3);
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ?");
         QCOMPARE(builder->getBindings(),
@@ -1017,7 +1017,7 @@ void tst_MySql_QueryBuilder::basicWhere() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereEq("id", 3)
+        builder->select("*").from("torrents").whereEq(ID, 3)
                 .whereEq("name", "test3");
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? and `name` = ?");
@@ -1028,7 +1028,7 @@ void tst_MySql_QueryBuilder::basicWhere() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", "!=", 3);
+        builder->select("*").from("torrents").where(ID, "!=", 3);
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` != ?");
         QCOMPARE(builder->getBindings(),
@@ -1038,7 +1038,7 @@ void tst_MySql_QueryBuilder::basicWhere() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", "<>", 3);
+        builder->select("*").from("torrents").where(ID, "<>", 3);
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` <> ?");
         QCOMPARE(builder->getBindings(),
@@ -1048,7 +1048,7 @@ void tst_MySql_QueryBuilder::basicWhere() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", ">", 3);
+        builder->select("*").from("torrents").where(ID, ">", 3);
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ?");
         QCOMPARE(builder->getBindings(),
@@ -1058,7 +1058,7 @@ void tst_MySql_QueryBuilder::basicWhere() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", ">", 3)
+        builder->select("*").from("torrents").where(ID, ">", 3)
                 .where("name", LIKE, "test%");
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? and `name` like ?");
@@ -1072,7 +1072,7 @@ void tst_MySql_QueryBuilder::whereWithVectorValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where({{"id", 3}});
+        builder->select("*").from("torrents").where({{ID, 3}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`id` = ?)");
         QCOMPARE(builder->getBindings(),
@@ -1082,7 +1082,7 @@ void tst_MySql_QueryBuilder::whereWithVectorValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where({{"id", 3}, {"size", 10, ">"}});
+        builder->select("*").from("torrents").where({{ID, 3}, {"size", 10, ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`id` = ? and `size` > ?)");
         QCOMPARE(builder->getBindings(),
@@ -1092,7 +1092,7 @@ void tst_MySql_QueryBuilder::whereWithVectorValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where({{"id", 3}, {"size", 10, ">"}})
+        builder->select("*").from("torrents").where({{ID, 3}, {"size", 10, ">"}})
                 .where({{"progress", 100, ">="}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`id` = ? and `size` > ?) "
@@ -1108,7 +1108,7 @@ void tst_MySql_QueryBuilder::where_QueryableValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->from("torrents").where("id", ">", [](auto &query)
+        builder->from("torrents").where(ID, ">", [](auto &query)
         {
             query.from("torrents", "t").selectRaw("avg(t.size)");
         });
@@ -1122,7 +1122,7 @@ void tst_MySql_QueryBuilder::where_QueryableValue() const
         auto builder = createQuery(m_connection);
 
         builder->from("torrents")
-                .where("id", ">",
+                .where(ID, ">",
                        createQuery(m_connection)
                        ->from("torrents", "t")
                        .selectRaw("avg(t.size)"));
@@ -1171,7 +1171,7 @@ void tst_MySql_QueryBuilder::basicOrWhere() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", ">", 4)
+        builder->select("*").from("torrents").where(ID, ">", 4)
                 .orWhere("progress", ">=", 300);
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? or `progress` >= ?");
@@ -1182,7 +1182,7 @@ void tst_MySql_QueryBuilder::basicOrWhere() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", ">", 4)
+        builder->select("*").from("torrents").where(ID, ">", 4)
                 .orWhereEq("name", "test3");
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? or `name` = ?");
@@ -1195,7 +1195,7 @@ void tst_MySql_QueryBuilder::basicOrWhere_ColumnExpression() const
 {
     auto builder = createQuery(m_connection);
 
-    builder->select("*").from("torrents").where(Raw("id"), ">", 4)
+    builder->select("*").from("torrents").where(Raw(ID), ">", 4)
             .orWhereEq(Raw("`name`"), "test3");
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where id > ? or `name` = ?");
@@ -1207,7 +1207,7 @@ void tst_MySql_QueryBuilder::orWhereWithVectorValue() const
 {
     auto builder = createQuery(m_connection);
 
-    builder->select("*").from("torrents").where({{"id", 3}, {"size", 10, ">"}})
+    builder->select("*").from("torrents").where({{ID, 3}, {"size", 10, ">"}})
             .orWhere({{"progress", 100, ">="}});
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where (`id` = ? and `size` > ?) or "
@@ -1221,7 +1221,7 @@ void tst_MySql_QueryBuilder::orWhereWithVectorValue_ColumnExpression() const
     auto builder = createQuery(m_connection);
 
     builder->select("*").from("torrents")
-            .where({{Raw("id"), 3}, {Raw("`size`"), 10, ">"}})
+            .where({{Raw(ID), 3}, {Raw("`size`"), 10, ">"}})
             .orWhere({{Raw("progress"), 100, ">="}});
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where (id = ? and `size` > ?) or "
@@ -1237,8 +1237,8 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableValue() const
         auto builder = createQuery(m_connection);
 
         builder->from("torrents")
-                .whereEq("id", 2)
-                .orWhereEq("id", [](auto &query)
+                .whereEq(ID, 2)
+                .orWhereEq(ID, [](auto &query)
         {
             query.from("torrents", "t").selectRaw("avg(t.size)");
         });
@@ -1253,8 +1253,8 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableValue() const
         auto builder = createQuery(m_connection);
 
         builder->from("torrents")
-                .whereEq("id", 2)
-                .orWhereEq("id",
+                .whereEq(ID, 2)
+                .orWhereEq(ID,
                            createQuery(m_connection)
                            ->from("torrents", "t")
                            .selectRaw("avg(t.size)"));
@@ -1273,7 +1273,7 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableColumn() const
         auto builder = createQuery(m_connection);
 
         builder->from("torrents")
-                .whereEq("id", 2)
+                .whereEq(ID, 2)
                 .orWhereEq([](auto &query)
         {
             query.from("torrents", "t").selectRaw("avg(t.size)");
@@ -1289,7 +1289,7 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableColumn() const
         auto builder = createQuery(m_connection);
 
         builder->from("torrents")
-                .whereEq("id", 2)
+                .whereEq(ID, 2)
                 .orWhereEq(createQuery(m_connection)
                            ->from("torrents", "t")
                            .selectRaw("avg(t.size)"), 13);
@@ -1308,7 +1308,7 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableColumnAndValue() const
         auto builder = createQuery(m_connection);
 
         builder->from("torrents")
-                .whereEq("id", 2)
+                .whereEq(ID, 2)
                 .orWhereEq([](auto &query)
         {
             query.from("torrents", "t").selectRaw("avg(t.size)");
@@ -1325,7 +1325,7 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableColumnAndValue() const
         auto builder = createQuery(m_connection);
 
         builder->from("torrents")
-                .whereEq("id", 2)
+                .whereEq(ID, 2)
                 .orWhereEq(createQuery(m_connection)
                            ->from("torrents", "t")
                            .selectRaw("avg(t.size)"), [](auto &query)
@@ -1432,7 +1432,7 @@ void tst_MySql_QueryBuilder::orWhereColumnWithVectorValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_previewable_files").whereEq("id", 2)
+        builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", "note"},
                                 {"size", "progress", ">"}});
         QCOMPARE(builder->toSql(),
@@ -1445,7 +1445,7 @@ void tst_MySql_QueryBuilder::orWhereColumnWithVectorValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_previewable_files").whereEq("id", 2)
+        builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", "note"},
                                 {"size", "progress", ">", "and"}});
         QCOMPARE(builder->toSql(),
@@ -1458,7 +1458,7 @@ void tst_MySql_QueryBuilder::orWhereColumnWithVectorValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_previewable_files").whereEq("id", 2)
+        builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", "note"},
                                 {"size", "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
@@ -1473,7 +1473,7 @@ void tst_MySql_QueryBuilder::orWhereColumnWithVectorValue_ColumnExpression() con
 {
     auto builder = createQuery(m_connection);
 
-    builder->select("*").from("torrent_previewable_files").whereEq("id", 2)
+    builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
             .orWhereColumn({{Raw("filepath"), Raw("`note`")},
                             {"size", Raw("progress"), ">"}});
     QCOMPARE(builder->toSql(),
@@ -1488,7 +1488,7 @@ void tst_MySql_QueryBuilder::basicWhereIn() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereIn("id", {2, 3, 4});
+        builder->select("*").from("torrents").whereIn(ID, {2, 3, 4});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
@@ -1498,8 +1498,8 @@ void tst_MySql_QueryBuilder::basicWhereIn() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", "=", 1)
-                .orWhereIn("id", {2, 3, 4});
+        builder->select("*").from("torrents").where(ID, "=", 1)
+                .orWhereIn(ID, {2, 3, 4});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or `id` in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
@@ -1513,7 +1513,7 @@ void tst_MySql_QueryBuilder::basicWhereNotIn() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereNotIn("id", {2, 3, 4});
+        builder->select("*").from("torrents").whereNotIn(ID, {2, 3, 4});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` not in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
@@ -1523,8 +1523,8 @@ void tst_MySql_QueryBuilder::basicWhereNotIn() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", "=", 1)
-                .orWhereNotIn("id", {2, 3, 4});
+        builder->select("*").from("torrents").where(ID, "=", 1)
+                .orWhereNotIn(ID, {2, 3, 4});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or `id` not in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
@@ -1537,8 +1537,8 @@ void tst_MySql_QueryBuilder::basicWhereNotIn_ColumnExpression() const
 {
     auto builder = createQuery(m_connection);
 
-    builder->select("*").from("torrents").where("id", "=", 1)
-            .orWhereNotIn(Raw("id"), {2, 3, 4});
+    builder->select("*").from("torrents").where(ID, "=", 1)
+            .orWhereNotIn(Raw(ID), {2, 3, 4});
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where `id` = ? or id not in (?, ?, ?)");
     QCOMPARE(builder->getBindings(),
@@ -1550,7 +1550,7 @@ void tst_MySql_QueryBuilder::emptyWhereIn() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereIn("id", {});
+        builder->select("*").from("torrents").whereIn(ID, {});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where 0 = 1");
         QCOMPARE(builder->getBindings(),
@@ -1560,8 +1560,8 @@ void tst_MySql_QueryBuilder::emptyWhereIn() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", "=", 1)
-                .orWhereIn("id", {});
+        builder->select("*").from("torrents").where(ID, "=", 1)
+                .orWhereIn(ID, {});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or 0 = 1");
         QCOMPARE(builder->getBindings(),
@@ -1574,7 +1574,7 @@ void tst_MySql_QueryBuilder::emptyNotWhereIn() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereNotIn("id", {});
+        builder->select("*").from("torrents").whereNotIn(ID, {});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where 1 = 1");
         QCOMPARE(builder->getBindings(),
@@ -1584,8 +1584,8 @@ void tst_MySql_QueryBuilder::emptyNotWhereIn() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").where("id", "=", 1)
-                .orWhereNotIn("id", {});
+        builder->select("*").from("torrents").where(ID, "=", 1)
+                .orWhereNotIn(ID, {});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or 1 = 1");
         QCOMPARE(builder->getBindings(),
@@ -1598,7 +1598,7 @@ void tst_MySql_QueryBuilder::whereIn_ValueExpression() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereIn("id", {Raw(3)});
+        builder->select("*").from("torrents").whereIn(ID, {Raw(3)});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` in (3)");
         QCOMPARE(builder->getBindings(),
@@ -1608,8 +1608,8 @@ void tst_MySql_QueryBuilder::whereIn_ValueExpression() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereEq("id", 2)
-                .orWhereIn("id", {Raw(3)});
+        builder->select("*").from("torrents").whereEq(ID, 2)
+                .orWhereIn(ID, {Raw(3)});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or `id` in (3)");
         QCOMPARE(builder->getBindings(),
@@ -1642,7 +1642,7 @@ void tst_MySql_QueryBuilder::basicWhereNull() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 4)
+        builder->select("*").from("torrent_peers").whereEq(ID, 4)
                 .whereNull("seeds");
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? and `seeds` is null");
@@ -1653,7 +1653,7 @@ void tst_MySql_QueryBuilder::basicWhereNull() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 3)
+        builder->select("*").from("torrent_peers").whereEq(ID, 3)
                 .orWhereNull("seeds");
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? or `seeds` is null");
@@ -1677,7 +1677,7 @@ void tst_MySql_QueryBuilder::basicWhereNotNull() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 4)
+        builder->select("*").from("torrent_peers").whereEq(ID, 4)
                 .whereNotNull("seeds");
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? and `seeds` is not null");
@@ -1688,7 +1688,7 @@ void tst_MySql_QueryBuilder::basicWhereNotNull() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 3)
+        builder->select("*").from("torrent_peers").whereEq(ID, 3)
                 .orWhereNotNull("seeds");
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? or `seeds` is not null");
@@ -1701,7 +1701,7 @@ void tst_MySql_QueryBuilder::basicWhereNotNull_ColumnExpression() const
 {
     auto builder = createQuery(m_connection);
 
-    builder->select("*").from("torrent_peers").whereEq("id", 3)
+    builder->select("*").from("torrent_peers").whereEq(ID, 3)
             .orWhereNotNull(Raw("seeds"));
     QCOMPARE(builder->toSql(),
              "select * from `torrent_peers` where `id` = ? or seeds is not null");
@@ -1725,7 +1725,7 @@ void tst_MySql_QueryBuilder::whereNullWithVectorValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 4)
+        builder->select("*").from("torrent_peers").whereEq(ID, 4)
                 .whereNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? and `seeds` is null "
@@ -1737,7 +1737,7 @@ void tst_MySql_QueryBuilder::whereNullWithVectorValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 3)
+        builder->select("*").from("torrent_peers").whereEq(ID, 3)
                 .orWhereNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? or `seeds` is null "
@@ -1764,7 +1764,7 @@ void tst_MySql_QueryBuilder::whereNotNullWithVectorValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 4)
+        builder->select("*").from("torrent_peers").whereEq(ID, 4)
                 .whereNotNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? and `seeds` is not null "
@@ -1776,7 +1776,7 @@ void tst_MySql_QueryBuilder::whereNotNullWithVectorValue() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 3)
+        builder->select("*").from("torrent_peers").whereEq(ID, 3)
                 .orWhereNotNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? or `seeds` is not null "
@@ -1796,7 +1796,7 @@ void tst_MySql_QueryBuilder::orderBy() const
     QCOMPARE(builder->toSql(),
              "select * from `torrents` order by `name` asc");
 
-    builder->orderBy("id", DESC);
+    builder->orderBy(ID, DESC);
     QCOMPARE(builder->toSql(),
              "select * from `torrents` order by `name` asc, `id` desc");
 
@@ -1805,7 +1805,7 @@ void tst_MySql_QueryBuilder::orderBy() const
     QCOMPARE(builder->toSql(),
              "select * from `torrents` order by `name` desc");
 
-    builder->reorder("id", ASC);
+    builder->reorder(ID, ASC);
     QCOMPARE(builder->toSql(),
              "select * from `torrents` order by `id` asc");
 }
@@ -1876,7 +1876,7 @@ void tst_MySql_QueryBuilder::lock() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 4).lock();
+        builder->select("*").from("torrent_peers").whereEq(ID, 4).lock();
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? for update");
         QCOMPARE(builder->getBindings(),
@@ -1885,7 +1885,7 @@ void tst_MySql_QueryBuilder::lock() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 4).lockForUpdate();
+        builder->select("*").from("torrent_peers").whereEq(ID, 4).lockForUpdate();
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? for update");
         QCOMPARE(builder->getBindings(),
@@ -1895,7 +1895,7 @@ void tst_MySql_QueryBuilder::lock() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 4).lock(false);
+        builder->select("*").from("torrent_peers").whereEq(ID, 4).lock(false);
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? lock in share mode");
         QCOMPARE(builder->getBindings(),
@@ -1904,7 +1904,7 @@ void tst_MySql_QueryBuilder::lock() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 4).sharedLock();
+        builder->select("*").from("torrent_peers").whereEq(ID, 4).sharedLock();
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? lock in share mode");
         QCOMPARE(builder->getBindings(),
@@ -1913,7 +1913,7 @@ void tst_MySql_QueryBuilder::lock() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrent_peers").whereEq("id", 4)
+        builder->select("*").from("torrent_peers").whereEq(ID, 4)
                 .lock("lock in share mode");
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? lock in share mode");
@@ -1961,7 +1961,7 @@ void tst_MySql_QueryBuilder::update() const
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         connection.query()->from("torrents")
-                .whereEq("id", 10)
+                .whereEq(ID, 10)
                 .update({{"name", "xyz"}, {"size", 6}});
     });
 
@@ -1979,7 +1979,7 @@ void tst_MySql_QueryBuilder::update_WithExpression() const
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         connection.query()->from("torrents")
-                .whereEq("id", 10)
+                .whereEq(ID, 10)
                 .update({{"name", DB::raw("'xyz'")}, {"size", 6},
                          {"progress", DB::raw(2)}});
     });

@@ -77,7 +77,7 @@ void tst_TinyBuilder::get() const
         {4, "test4"}, {5, "test5"}, {6, "test6"},
     };
     for (const auto &torrent : torrents) {
-        const auto torrentId = torrent["id"].value<quint64>();
+        const auto torrentId = torrent[ID].value<quint64>();
 
         QVERIFY(expectedIdNames.contains(torrentId));
         QCOMPARE(expectedIdNames.at(torrentId), torrent["name"].value<QString>());
@@ -92,11 +92,11 @@ void tst_TinyBuilder::get_Columns() const
 
     ConnectionOverride::connection = connection;
 
-    auto torrents = createQuery<Torrent>()->get({"id", "name", "size"});
+    auto torrents = createQuery<Torrent>()->get({ID, "name", "size"});
 
     const auto &torrent = torrents.at(1);
     QCOMPARE(torrent.getAttributes().size(), 3);
-    QCOMPARE(torrent.getAttributes().at(0).key, QString("id"));
+    QCOMPARE(torrent.getAttributes().at(0).key, QString(ID));
     QCOMPARE(torrent.getAttributes().at(1).key, QString("name"));
     QCOMPARE(torrent.getAttributes().at(2).key, QString("size"));
 }
@@ -107,7 +107,7 @@ void tst_TinyBuilder::value() const
 
     ConnectionOverride::connection = connection;
 
-    auto value = Torrent::whereEq("id", 2)->value("name");
+    auto value = Torrent::whereEq(ID, 2)->value("name");
 
     QCOMPARE(value, QVariant("test2"));
 }
@@ -118,7 +118,7 @@ void tst_TinyBuilder::value_ModelNotFound() const
 
     ConnectionOverride::connection = connection;
 
-    auto value = Torrent::whereEq("id", 999999)->value("name");
+    auto value = Torrent::whereEq(ID, 999999)->value("name");
 
     QVERIFY(!value.isValid());
     QVERIFY(value.isNull());
@@ -131,19 +131,19 @@ void tst_TinyBuilder::firstOrFail_Found() const
     ConnectionOverride::connection = connection;
 
     {
-        auto torrent = Torrent::whereEq("id", 3)->firstOrFail();
+        auto torrent = Torrent::whereEq(ID, 3)->firstOrFail();
 
         QVERIFY(torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 9);
-        QCOMPARE(torrent["id"], QVariant(3));
+        QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent["name"], QVariant("test3"));
     }
     {
-        auto torrent = Torrent::whereEq("id", 3)->firstOrFail({"id", "name"});
+        auto torrent = Torrent::whereEq(ID, 3)->firstOrFail({ID, "name"});
 
         QVERIFY(torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 2);
-        QCOMPARE(torrent["id"], QVariant(3));
+        QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent["name"], QVariant("test3"));
     }
 }
@@ -154,9 +154,9 @@ void tst_TinyBuilder::firstOrFail_NotFoundFailed() const
 
     ConnectionOverride::connection = connection;
 
-    QVERIFY_EXCEPTION_THROWN(Torrent::whereEq("id", 999999)->firstOrFail(),
+    QVERIFY_EXCEPTION_THROWN(Torrent::whereEq(ID, 999999)->firstOrFail(),
                              ModelNotFoundError);
-    QVERIFY_EXCEPTION_THROWN(Torrent::whereEq("id", 999999)->firstOrFail({"id", "name"}),
+    QVERIFY_EXCEPTION_THROWN(Torrent::whereEq(ID, 999999)->firstOrFail({ID, "name"}),
                              ModelNotFoundError);
 }
 
@@ -188,7 +188,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
              QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
 
     // Incremented
-    Torrent::whereEq("id", 4)->increment("size", 2, {{"progress", 444}});
+    Torrent::whereEq(ID, 4)->increment("size", 2, {{"progress", 444}});
 
     auto torrent4_2 = Torrent::find(4);
     QVERIFY(torrent4_2);
@@ -199,7 +199,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
             >= timeBeforeIncrement);
 
     // Decremented and restore updated at column
-    Torrent::whereEq("id", 4)->decrement("size", 2,
+    Torrent::whereEq(ID, 4)->decrement("size", 2,
                                          {{"progress", 400},
                                           {updatedAtColumn, updatedAtOriginal}});
 
@@ -236,7 +236,7 @@ void tst_TinyBuilder::update() const
     QCOMPARE(updatedAtOriginal,
              QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
 
-    auto [affected, query] = Torrent::whereEq("id", 4)->update({{"progress", 447}});
+    auto [affected, query] = Torrent::whereEq(ID, 4)->update({{"progress", 447}});
     QCOMPARE(affected, 1);
     QVERIFY(query.isActive());
 
@@ -249,7 +249,7 @@ void tst_TinyBuilder::update() const
 
     // Revert value back
     auto [affectedRevert, queryRevert] =
-            Torrent::whereEq("id", 4)->update({{"progress", progressOriginal},
+            Torrent::whereEq(ID, 4)->update({{"progress", progressOriginal},
                                                {updatedAtColumn, updatedAtOriginal}});
     QCOMPARE(affectedRevert, 1);
     QVERIFY(queryRevert.isActive());
@@ -269,7 +269,7 @@ void tst_TinyBuilder::update_Failed() const
     ConnectionOverride::connection = connection;
 
     QVERIFY_EXCEPTION_THROWN(
-                Torrent::whereEq("id", 3)->update({{"progress-NON_EXISTENT", 333}}),
+                Torrent::whereEq(ID, 3)->update({{"progress-NON_EXISTENT", 333}}),
                 QueryError);
 }
 
@@ -291,7 +291,7 @@ void tst_TinyBuilder::update_SameValue() const
 
     /* Send update query to the database, this is different from
        the Model::update() method. */
-    auto [affected, query] = Torrent::whereEq("id", 5)
+    auto [affected, query] = Torrent::whereEq(ID, 5)
             ->update({{"progress", torrent->getAttribute("progress")}});
 
     /* Don't exactly know what cause this, I think some sort of caching can

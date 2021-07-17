@@ -18,14 +18,12 @@ namespace Orm::Constants
     // CUR aggregates silverqx
     const QString ASC        = QStringLiteral("asc");
     const QString DESC       = QStringLiteral("desc");
-    // CUR ID in tests silverqx
     const QString ID         = QStringLiteral("id");
     // CUR NAME in tests silverqx
     const QString NAME       = QStringLiteral("name");
     const QString CREATED_AT = QStringLiteral("created_at");
     const QString UPDATED_AT = QStringLiteral("updated_at");
 
-    // CUR operators in tests silverqx
     const QString EQ       = QStringLiteral("=");
     const QString NE       = QStringLiteral("!=");
     const QString LT       = QStringLiteral("<");

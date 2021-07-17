@@ -67,7 +67,7 @@ void tst_Model_Connection_Independent::subscriptOperator() const
     auto torrent = Torrent::find(2);
     QVERIFY(torrent->exists);
 
-    QCOMPARE((*torrent)["id"], QVariant(2));
+    QCOMPARE((*torrent)[ID], QVariant(2));
     QCOMPARE((*torrent)["name"], QVariant("test2"));
 
     QCOMPARE((*torrent)["added_on"],
@@ -79,7 +79,7 @@ void tst_Model_Connection_Independent::subscriptOperator_OnLhs() const
     auto torrent = Torrent::find(2);
     QVERIFY(torrent->exists);
 
-    QCOMPARE(torrent->getAttribute("id"), QVariant(2));
+    QCOMPARE(torrent->getAttribute(ID), QVariant(2));
     QCOMPARE(torrent->getAttribute("name"), QVariant("test2"));
     QCOMPARE(torrent->getAttribute("size"), QVariant(12));
 
@@ -98,7 +98,7 @@ void tst_Model_Connection_Independent
     auto torrent2 = Torrent::find(2);
     QVERIFY(torrent2->exists);
 
-    QCOMPARE(torrent2->getAttribute("id"), QVariant(2));
+    QCOMPARE(torrent2->getAttribute(ID), QVariant(2));
     QCOMPARE(torrent2->getAttribute("name"), QVariant("test2"));
 
     auto attributeReference = (*torrent2)["name"];
@@ -107,7 +107,7 @@ void tst_Model_Connection_Independent
     auto torrent3 = Torrent::find(3);
     QVERIFY(torrent3->exists);
 
-    QCOMPARE(torrent3->getAttribute("id"), QVariant(3));
+    QCOMPARE(torrent3->getAttribute(ID), QVariant(3));
     QCOMPARE(torrent3->getAttribute("name"), QVariant("test3"));
 
     (*torrent3)["name"] = attributeReference;

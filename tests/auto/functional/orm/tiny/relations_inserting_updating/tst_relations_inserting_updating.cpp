@@ -132,16 +132,16 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
     auto [savedResult, fileRef] = torrent->torrentFiles()->save(file);
     QVERIFY(savedResult);
     QVERIFY(file.exists);
-    QVERIFY(file["id"]->isValid());
-    QVERIFY(file["id"]->value<quint64>() > 8);
+    QVERIFY(file[ID]->isValid());
+    QVERIFY(file[ID]->value<quint64>() > 8);
 
     // save method have to return the same model as a reference
     QVERIFY(reinterpret_cast<uintptr_t>(&file)
             == reinterpret_cast<uintptr_t>(&fileRef));
 
     // Obtain file and verify saved values
-    auto fileVerify = TorrentPreviewableFile::find(file["id"]);
-    QCOMPARE((*fileVerify)["id"],         QVariant(file["id"]));
+    auto fileVerify = TorrentPreviewableFile::find(file[ID]);
+    QCOMPARE((*fileVerify)[ID],         QVariant(file[ID]));
     QCOMPARE((*fileVerify)["torrent_id"], QVariant(5));
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-save.mkv"));
@@ -174,12 +174,12 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
     });
     QVERIFY(savedResult);
     QVERIFY(file.exists);
-    QVERIFY(file["id"]->isValid());
-    QVERIFY(file["id"]->value<quint64>() > 8);
+    QVERIFY(file[ID]->isValid());
+    QVERIFY(file[ID]->value<quint64>() > 8);
 
     // Obtain file and verify saved values
-    auto fileVerify = TorrentPreviewableFile::find(file["id"]);
-    QCOMPARE((*fileVerify)["id"],         QVariant(file["id"]));
+    auto fileVerify = TorrentPreviewableFile::find(file[ID]);
+    QCOMPARE((*fileVerify)[ID],         QVariant(file[ID]));
     QCOMPARE((*fileVerify)["torrent_id"], QVariant(5));
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-save.mkv"));
@@ -215,7 +215,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_Failed() const
     QVERIFY_EXCEPTION_THROWN(torrent->torrentFiles()->save(file),
                              QueryError);
     QVERIFY(!file.exists);
-    QVERIFY(!file["id"]->isValid());
+    QVERIFY(!file[ID]->isValid());
     QCOMPARE(file["torrent_id"], QVariant(1));
 }
 
@@ -255,10 +255,10 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
     auto &savedFile2 = savedFiles[1];
     QVERIFY(savedFile1.exists);
     QVERIFY(savedFile2.exists);
-    QVERIFY(savedFile1["id"]->isValid());
-    QVERIFY(savedFile2["id"]->isValid());
-    QVERIFY(savedFile1["id"]->value<quint64>() > 8);
-    QVERIFY(savedFile2["id"]->value<quint64>() > 9);
+    QVERIFY(savedFile1[ID]->isValid());
+    QVERIFY(savedFile2[ID]->isValid());
+    QVERIFY(savedFile1[ID]->value<quint64>() > 8);
+    QVERIFY(savedFile2[ID]->value<quint64>() > 9);
 
     // saveMany() have to return reference to the same 'models' vector
     QVERIFY(reinterpret_cast<uintptr_t>(&filesToSave[0])
@@ -267,16 +267,16 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
             != reinterpret_cast<uintptr_t>(&savedFile2));
 
     // Obtain files and verify saved values
-    auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);
-    QCOMPARE((*file1Verify)["id"],         QVariant(savedFile1["id"]));
+    auto file1Verify = TorrentPreviewableFile::find(savedFile1[ID]);
+    QCOMPARE((*file1Verify)[ID],         QVariant(savedFile1[ID]));
     QCOMPARE((*file1Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-saveMany.mkv"));
     QCOMPARE((*file1Verify)["size"],       QVariant(322322));
     QCOMPARE((*file1Verify)["progress"],   QVariant(777));
     QCOMPARE((*file1Verify)["note"],       QVariant("relation's saveMany file1"));
-    auto file2Verify = TorrentPreviewableFile::find(savedFile2["id"]);
-    QCOMPARE((*file2Verify)["id"],         QVariant(savedFile2["id"]));
+    auto file2Verify = TorrentPreviewableFile::find(savedFile2[ID]);
+    QCOMPARE((*file2Verify)[ID],         QVariant(savedFile2[ID]));
     QCOMPARE((*file2Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-saveMany.mkv"));
@@ -322,22 +322,22 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() cons
     auto &savedFile2 = savedFiles[1];
     QVERIFY(savedFile1.exists);
     QVERIFY(savedFile2.exists);
-    QVERIFY(savedFile1["id"]->isValid());
-    QVERIFY(savedFile2["id"]->isValid());
-    QVERIFY(savedFile1["id"]->value<quint64>() > 8);
-    QVERIFY(savedFile2["id"]->value<quint64>() > 9);
+    QVERIFY(savedFile1[ID]->isValid());
+    QVERIFY(savedFile2[ID]->isValid());
+    QVERIFY(savedFile1[ID]->value<quint64>() > 8);
+    QVERIFY(savedFile2[ID]->value<quint64>() > 9);
 
     // Obtain files and verify saved values
-    auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);
-    QCOMPARE((*file1Verify)["id"],         QVariant(savedFile1["id"]));
+    auto file1Verify = TorrentPreviewableFile::find(savedFile1[ID]);
+    QCOMPARE((*file1Verify)[ID],         QVariant(savedFile1[ID]));
     QCOMPARE((*file1Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-saveMany.mkv"));
     QCOMPARE((*file1Verify)["size"],       QVariant(322322));
     QCOMPARE((*file1Verify)["progress"],   QVariant(777));
     QCOMPARE((*file1Verify)["note"],       QVariant("relation's saveMany file1"));
-    auto file2Verify = TorrentPreviewableFile::find(savedFile2["id"]);
-    QCOMPARE((*file2Verify)["id"],         QVariant(savedFile2["id"]));
+    auto file2Verify = TorrentPreviewableFile::find(savedFile2[ID]);
+    QCOMPARE((*file2Verify)[ID],         QVariant(savedFile2[ID]));
     QCOMPARE((*file2Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-saveMany.mkv"));
@@ -403,12 +403,12 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany() const
 
     auto file = torrent->torrentFiles()->create(fileAttribtues);
     QVERIFY(file.exists);
-    QVERIFY(file["id"]->isValid());
-    QVERIFY(file["id"]->value<quint64>() > 8);
+    QVERIFY(file[ID]->isValid());
+    QVERIFY(file[ID]->value<quint64>() > 8);
 
     // Obtain file and verify saved values
-    auto fileVerify = TorrentPreviewableFile::find(file["id"]);
-    QCOMPARE((*fileVerify)["id"],         QVariant(file["id"]));
+    auto fileVerify = TorrentPreviewableFile::find(file[ID]);
+    QCOMPARE((*fileVerify)[ID],         QVariant(file[ID]));
     QCOMPARE((*fileVerify)["torrent_id"], QVariant(5));
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-create.mkv"));
@@ -440,12 +440,12 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue() const
         {"note", "relation's save"},
     });
     QVERIFY(file.exists);
-    QVERIFY(file["id"]->isValid());
-    QVERIFY(file["id"]->value<quint64>() > 8);
+    QVERIFY(file[ID]->isValid());
+    QVERIFY(file[ID]->value<quint64>() > 8);
 
     // Obtain file and verify saved values
-    auto fileVerify = TorrentPreviewableFile::find(file["id"]);
-    QCOMPARE((*fileVerify)["id"],         QVariant(file["id"]));
+    auto fileVerify = TorrentPreviewableFile::find(file[ID]);
+    QCOMPARE((*fileVerify)[ID],         QVariant(file[ID]));
     QCOMPARE((*fileVerify)["torrent_id"], QVariant(5));
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-create.mkv"));
@@ -545,22 +545,22 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
     auto &savedFile2 = savedFiles[1];
     QVERIFY(savedFile1.exists);
     QVERIFY(savedFile2.exists);
-    QVERIFY(savedFile1["id"]->isValid());
-    QVERIFY(savedFile2["id"]->isValid());
-    QVERIFY(savedFile1["id"]->value<quint64>() > 8);
-    QVERIFY(savedFile2["id"]->value<quint64>() > 9);
+    QVERIFY(savedFile1[ID]->isValid());
+    QVERIFY(savedFile2[ID]->isValid());
+    QVERIFY(savedFile1[ID]->value<quint64>() > 8);
+    QVERIFY(savedFile2[ID]->value<quint64>() > 9);
 
     // Obtain files and verify saved values
-    auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);
-    QCOMPARE((*file1Verify)["id"],         QVariant(savedFile1["id"]));
+    auto file1Verify = TorrentPreviewableFile::find(savedFile1[ID]);
+    QCOMPARE((*file1Verify)[ID],         QVariant(savedFile1[ID]));
     QCOMPARE((*file1Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-createMany.mkv"));
     QCOMPARE((*file1Verify)["size"],       QVariant(322322));
     QCOMPARE((*file1Verify)["progress"],   QVariant(777));
     QCOMPARE((*file1Verify)["note"],       QVariant("relation's createMany file1"));
-    auto file2Verify = TorrentPreviewableFile::find(savedFile2["id"]);
-    QCOMPARE((*file2Verify)["id"],         QVariant(savedFile2["id"]));
+    auto file2Verify = TorrentPreviewableFile::find(savedFile2[ID]);
+    QCOMPARE((*file2Verify)[ID],         QVariant(savedFile2[ID]));
     QCOMPARE((*file2Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-createMany.mkv"));
@@ -606,22 +606,22 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() co
     auto &savedFile2 = savedFiles[1];
     QVERIFY(savedFile1.exists);
     QVERIFY(savedFile2.exists);
-    QVERIFY(savedFile1["id"]->isValid());
-    QVERIFY(savedFile2["id"]->isValid());
-    QVERIFY(savedFile1["id"]->value<quint64>() > 8);
-    QVERIFY(savedFile2["id"]->value<quint64>() > 9);
+    QVERIFY(savedFile1[ID]->isValid());
+    QVERIFY(savedFile2[ID]->isValid());
+    QVERIFY(savedFile1[ID]->value<quint64>() > 8);
+    QVERIFY(savedFile2[ID]->value<quint64>() > 9);
 
     // Obtain files and verify saved values
-    auto file1Verify = TorrentPreviewableFile::find(savedFile1["id"]);
-    QCOMPARE((*file1Verify)["id"],         QVariant(savedFile1["id"]));
+    auto file1Verify = TorrentPreviewableFile::find(savedFile1[ID]);
+    QCOMPARE((*file1Verify)[ID],         QVariant(savedFile1[ID]));
     QCOMPARE((*file1Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-createMany.mkv"));
     QCOMPARE((*file1Verify)["size"],       QVariant(322322));
     QCOMPARE((*file1Verify)["progress"],   QVariant(777));
     QCOMPARE((*file1Verify)["note"],       QVariant("relation's createMany file1"));
-    auto file2Verify = TorrentPreviewableFile::find(savedFile2["id"]);
-    QCOMPARE((*file2Verify)["id"],         QVariant(savedFile2["id"]));
+    auto file2Verify = TorrentPreviewableFile::find(savedFile2[ID]);
+    QCOMPARE((*file2Verify)[ID],         QVariant(savedFile2[ID]));
     QCOMPARE((*file2Verify)["torrent_id"], QVariant(5));
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-createMany.mkv"));
@@ -722,8 +722,8 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany() const
     auto [savedResult, tagRef] = torrent->tags()->save(tag, {{"active", false}});
     QVERIFY(savedResult);
     QVERIFY(tag.exists);
-    QVERIFY(tag["id"]->isValid());
-    QVERIFY(tag["id"]->value<quint64>() > 4);
+    QVERIFY(tag[ID]->isValid());
+    QVERIFY(tag[ID]->value<quint64>() > 4);
 
     // Check records count in the pivot (tagged) table
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
@@ -734,13 +734,13 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany() const
             == reinterpret_cast<uintptr_t>(&tagRef));
 
     // Obtain tag and verify saved values
-    auto tagVerify = Tag::find(tag["id"]);
-    QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
+    auto tagVerify = Tag::find(tag[ID]);
+    QCOMPARE((*tagVerify)[ID],   QVariant(tag[ID]));
     QCOMPARE((*tagVerify)["name"], QVariant("tag save"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
-    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag["id"]));
+    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag[ID]));
     QCOMPARE((*taggedVerify)["active"], QVariant(0));
 
     /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
@@ -770,21 +770,21 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany_WithRValue() const
                                                      {{"active", false}});
     QVERIFY(savedResult);
     QVERIFY(tag.exists);
-    QVERIFY(tag["id"]->isValid());
-    QVERIFY(tag["id"]->value<quint64>() > 4);
+    QVERIFY(tag[ID]->isValid());
+    QVERIFY(tag[ID]->value<quint64>() > 4);
 
     // Check records count in the pivot (tagged) table
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 1);
 
     // Obtain tag and verify saved values
-    auto tagVerify = Tag::find(tag["id"]);
-    QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
+    auto tagVerify = Tag::find(tag[ID]);
+    QCOMPARE((*tagVerify)[ID],   QVariant(tag[ID]));
     QCOMPARE((*tagVerify)["name"], QVariant("tag save"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
-    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag["id"]));
+    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag[ID]));
     QCOMPARE((*taggedVerify)["active"], QVariant(0));
 
     /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
@@ -807,7 +807,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany_Failed() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    auto size = torrent->tags()->get({"id"}).size();
+    auto size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
 
     Tag tag({{"name", "tag1"}});
@@ -816,9 +816,9 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany_Failed() const
     QVERIFY_EXCEPTION_THROWN(torrent->tags()->save(tag),
                              QueryError);
     QVERIFY(!tag.exists);
-    QVERIFY(!tag["id"]->isValid());
+    QVERIFY(!tag[ID]->isValid());
 
-    size = torrent->tags()->get({"id"}).size();
+    size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
@@ -850,13 +850,13 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
     auto &savedTag1 = savedTags[0];
     auto &savedTag2 = savedTags[1];
     QVERIFY(savedTag1.exists);
-    QVERIFY(savedTag1["id"]->isValid());
-    QVERIFY(savedTag1["id"]->value<quint64>() > 4);
+    QVERIFY(savedTag1[ID]->isValid());
+    QVERIFY(savedTag1[ID]->value<quint64>() > 4);
     QVERIFY(savedTag2.exists);
-    QVERIFY(savedTag2["id"]->isValid());
-    QVERIFY(savedTag2["id"]->value<quint64>() > 4);
+    QVERIFY(savedTag2[ID]->isValid());
+    QVERIFY(savedTag2[ID]->value<quint64>() > 4);
 
-    size = torrent->tags()->get({"id"}).size();
+    size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 2);
     // Check records size in the pivot table
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
@@ -869,18 +869,18 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
             == reinterpret_cast<uintptr_t>(&savedTag2));
 
     // Obtain tag and verify saved values
-    auto tag1Verify = Tag::find(savedTag1["id"]);
-    QCOMPARE((*tag1Verify)["id"],   QVariant(savedTag1["id"]));
+    auto tag1Verify = Tag::find(savedTag1[ID]);
+    QCOMPARE((*tag1Verify)[ID],   QVariant(savedTag1[ID]));
     QCOMPARE((*tag1Verify)["name"], QVariant("tag1 save"));
-    auto tag2Verify = Tag::find(savedTag2["id"]);
-    QCOMPARE((*tag2Verify)["id"],   QVariant(savedTag2["id"]));
+    auto tag2Verify = Tag::find(savedTag2[ID]);
+    QCOMPARE((*tag2Verify)[ID],   QVariant(savedTag2[ID]));
     QCOMPARE((*tag2Verify)["name"], QVariant("tag2 save"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
-    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(savedTag1["id"]));
+    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(savedTag1[ID]));
     QCOMPARE(taggedVerify[0]["active"], QVariant(1));
-    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(savedTag2["id"]));
+    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(savedTag2[ID]));
     QCOMPARE(taggedVerify[1]["active"], QVariant(0));
 
     /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
@@ -917,31 +917,31 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_WithRValue() con
     auto &savedTag1 = savedTags[0];
     auto &savedTag2 = savedTags[1];
     QVERIFY(savedTag1.exists);
-    QVERIFY(savedTag1["id"]->isValid());
-    QVERIFY(savedTag1["id"]->value<quint64>() > 4);
+    QVERIFY(savedTag1[ID]->isValid());
+    QVERIFY(savedTag1[ID]->value<quint64>() > 4);
     QVERIFY(savedTag2.exists);
-    QVERIFY(savedTag2["id"]->isValid());
-    QVERIFY(savedTag2["id"]->value<quint64>() > 4);
+    QVERIFY(savedTag2[ID]->isValid());
+    QVERIFY(savedTag2[ID]->value<quint64>() > 4);
 
-    size = torrent->tags()->get({"id"}).size();
+    size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 2);
     // Check records size in the pivot table
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 2);
 
     // Obtain tag and verify saved values
-    auto tag1Verify = Tag::find(savedTag1["id"]);
-    QCOMPARE((*tag1Verify)["id"],   QVariant(savedTag1["id"]));
+    auto tag1Verify = Tag::find(savedTag1[ID]);
+    QCOMPARE((*tag1Verify)[ID],   QVariant(savedTag1[ID]));
     QCOMPARE((*tag1Verify)["name"], QVariant("tag1 save"));
-    auto tag2Verify = Tag::find(savedTag2["id"]);
-    QCOMPARE((*tag2Verify)["id"],   QVariant(savedTag2["id"]));
+    auto tag2Verify = Tag::find(savedTag2[ID]);
+    QCOMPARE((*tag2Verify)[ID],   QVariant(savedTag2[ID]));
     QCOMPARE((*tag2Verify)["name"], QVariant("tag2 save"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
-    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(savedTag1["id"]));
+    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(savedTag1[ID]));
     QCOMPARE(taggedVerify[0]["active"], QVariant(0));
-    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(savedTag2["id"]));
+    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(savedTag2[ID]));
     QCOMPARE(taggedVerify[1]["active"], QVariant(1));
 
     /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
@@ -982,7 +982,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_Failed() const
                              QueryError);
     QVERIFY(savedTags.isEmpty());
 
-    size = torrent->tags()->get({"id"}).size();
+    size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
@@ -1005,21 +1005,21 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany() const
 
     auto tag = torrent->tags()->create(tagAttribtues, {{"active", false}});
     QVERIFY(tag.exists);
-    QVERIFY(tag["id"]->isValid());
-    QVERIFY(tag["id"]->value<quint64>() > 4);
+    QVERIFY(tag[ID]->isValid());
+    QVERIFY(tag[ID]->value<quint64>() > 4);
 
     // Check records count in the pivot (tagged) table
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 1);
 
     // Obtain tag and verify saved values
-    auto tagVerify = Tag::find(tag["id"]);
-    QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
+    auto tagVerify = Tag::find(tag[ID]);
+    QCOMPARE((*tagVerify)[ID],   QVariant(tag[ID]));
     QCOMPARE((*tagVerify)["name"], QVariant("tag create"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
-    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag["id"]));
+    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag[ID]));
     QCOMPARE((*taggedVerify)["active"], QVariant(0));
 
     /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
@@ -1048,21 +1048,21 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue() const
     auto tag = torrent->tags()->create({{"name", "tag create rvalue"}},
                                        {{"active", false}});
     QVERIFY(tag.exists);
-    QVERIFY(tag["id"]->isValid());
-    QVERIFY(tag["id"]->value<quint64>() > 4);
+    QVERIFY(tag[ID]->isValid());
+    QVERIFY(tag[ID]->value<quint64>() > 4);
 
     // Check records count in the pivot (tagged) table
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 1);
 
     // Obtain tag and verify saved values
-    auto tagVerify = Tag::find(tag["id"]);
-    QCOMPARE((*tagVerify)["id"],   QVariant(tag["id"]));
+    auto tagVerify = Tag::find(tag[ID]);
+    QCOMPARE((*tagVerify)[ID],   QVariant(tag[ID]));
     QCOMPARE((*tagVerify)["name"], QVariant("tag create rvalue"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
-    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag["id"]));
+    QCOMPARE((*taggedVerify)["tag_id"], QVariant(tag[ID]));
     QCOMPARE((*taggedVerify)["active"], QVariant(0));
 
     /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
@@ -1085,7 +1085,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_Failed() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    auto size = torrent->tags()->get({"id"}).size();
+    auto size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
 
     QVector<AttributeItem> tagAttributes {{"name", "tag1"}};
@@ -1096,7 +1096,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_Failed() const
     QVERIFY(!tag.exists);
     QVERIFY(tag.getAttributes().isEmpty());
 
-    size = torrent->tags()->get({"id"}).size();
+    size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
@@ -1112,7 +1112,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue_Failed(
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    auto size = torrent->tags()->get({"id"}).size();
+    auto size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
 
     Tag tag;
@@ -1122,7 +1122,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue_Failed(
     QVERIFY(!tag.exists);
     QVERIFY(tag.getAttributes().isEmpty());
 
-    size = torrent->tags()->get({"id"}).size();
+    size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
@@ -1151,28 +1151,28 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany() const
     auto &tag2 = tags[1];
     QVERIFY(tag1.exists);
     QVERIFY(tag2.exists);
-    QVERIFY(tag1["id"]->isValid());
-    QVERIFY(tag2["id"]->isValid());
-    QVERIFY(tag1["id"]->value<quint64>() > 4);
-    QVERIFY(tag2["id"]->value<quint64>() > 4);
+    QVERIFY(tag1[ID]->isValid());
+    QVERIFY(tag2[ID]->isValid());
+    QVERIFY(tag1[ID]->value<quint64>() > 4);
+    QVERIFY(tag2[ID]->value<quint64>() > 4);
 
     // Check records count in the pivot (tagged) table
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 2);
 
     // Obtain tag and verify saved values
-    auto tagVerify1 = Tag::find(tag1["id"]);
-    QCOMPARE((*tagVerify1)["id"],   QVariant(tag1["id"]));
+    auto tagVerify1 = Tag::find(tag1[ID]);
+    QCOMPARE((*tagVerify1)[ID],   QVariant(tag1[ID]));
     QCOMPARE((*tagVerify1)["name"], QVariant("tag create 1"));
-    auto tagVerify2 = Tag::find(tag2["id"]);
-    QCOMPARE((*tagVerify2)["id"],   QVariant(tag2["id"]));
+    auto tagVerify2 = Tag::find(tag2[ID]);
+    QCOMPARE((*tagVerify2)[ID],   QVariant(tag2[ID]));
     QCOMPARE((*tagVerify2)["name"], QVariant("tag create 2"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
-    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(tag1["id"]));
+    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(tag1[ID]));
     QCOMPARE(taggedVerify[0]["active"], QVariant(1));
-    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(tag2["id"]));
+    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(tag2[ID]));
     QCOMPARE(taggedVerify[1]["active"], QVariant(0));
 
     /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
@@ -1211,28 +1211,28 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue() c
     auto &tag2 = tags[1];
     QVERIFY(tag1.exists);
     QVERIFY(tag2.exists);
-    QVERIFY(tag1["id"]->isValid());
-    QVERIFY(tag2["id"]->isValid());
-    QVERIFY(tag1["id"]->value<quint64>() > 4);
-    QVERIFY(tag2["id"]->value<quint64>() > 4);
+    QVERIFY(tag1[ID]->isValid());
+    QVERIFY(tag2[ID]->isValid());
+    QVERIFY(tag1[ID]->value<quint64>() > 4);
+    QVERIFY(tag2[ID]->value<quint64>() > 4);
 
     // Check records count in the pivot (tagged) table
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 2);
 
     // Obtain tag and verify saved values
-    auto tagVerify1 = Tag::find(tag1["id"]);
-    QCOMPARE((*tagVerify1)["id"],   QVariant(tag1["id"]));
+    auto tagVerify1 = Tag::find(tag1[ID]);
+    QCOMPARE((*tagVerify1)[ID],   QVariant(tag1[ID]));
     QCOMPARE((*tagVerify1)["name"], QVariant("tag create 1 rvalue"));
-    auto tagVerify2 = Tag::find(tag2["id"]);
-    QCOMPARE((*tagVerify2)["id"],   QVariant(tag2["id"]));
+    auto tagVerify2 = Tag::find(tag2[ID]);
+    QCOMPARE((*tagVerify2)[ID],   QVariant(tag2[ID]));
     QCOMPARE((*tagVerify2)["name"], QVariant("tag create 2 rvalue"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
-    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(tag1["id"]));
+    QCOMPARE(taggedVerify[0]["tag_id"], QVariant(tag1[ID]));
     QCOMPARE(taggedVerify[0]["active"], QVariant(0));
-    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(tag2["id"]));
+    QCOMPARE(taggedVerify[1]["tag_id"], QVariant(tag2[ID]));
     QCOMPARE(taggedVerify[1]["active"], QVariant(1));
 
     /* Remove tag, restore db, pivot record will be deleted by ON DELETE CASCADE
@@ -1271,7 +1271,7 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_Failed() const
                              QueryError);
     QVERIFY(tags.isEmpty());
 
-    size = torrent->tags()->get({"id"}).size();
+    size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
@@ -1300,7 +1300,7 @@ tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue_Failed()
                              QueryError);
     QVERIFY(tags.isEmpty());
 
-    size = torrent->tags()->get({"id"}).size();
+    size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
     size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
@@ -1336,7 +1336,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
-    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute(ID));
 
     // Copy of the associated model have to be set on the file
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
@@ -1360,8 +1360,8 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     // TEST ideal place for comparing models, verifyTorrent5 == torrent, have to have the same attribtues silverqx
 
     // Obtain file from the database and verify saved values
-    auto verifyFile = TorrentPreviewableFile::find(file["id"]);
-    QCOMPARE((*verifyFile)["id"], QVariant(file["id"]));
+    auto verifyFile = TorrentPreviewableFile::find(file[ID]);
+    QCOMPARE((*verifyFile)[ID], QVariant(file[ID]));
     QCOMPARE((*verifyFile)["filepath"], file["filepath"].value());
     QCOMPARE((*verifyFile)[torrentForeignKeyName], file[torrentForeignKeyName].value());
 
@@ -1391,7 +1391,7 @@ void tst_Relations_Inserting_Updating::associate_WithId() const
     const auto &fileRelations = file.getRelations();
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(0));
 
-    auto &fileRef = file.torrent()->associate((*torrent)["id"]);
+    auto &fileRef = file.torrent()->associate((*torrent)[ID]);
 
     // associate method have to return the same model as a reference
     QVERIFY(reinterpret_cast<uintptr_t>(&file)
@@ -1399,7 +1399,7 @@ void tst_Relations_Inserting_Updating::associate_WithId() const
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
-    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute(ID));
 
     // This is only difference, associate with Id should unset relation model
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(0));
@@ -1408,8 +1408,8 @@ void tst_Relations_Inserting_Updating::associate_WithId() const
     file.save();
 
     // Obtain file from the database and verify saved values
-    auto verifyFile = TorrentPreviewableFile::find(file["id"]);
-    QCOMPARE((*verifyFile)["id"], QVariant(file["id"]));
+    auto verifyFile = TorrentPreviewableFile::find(file[ID]);
+    QCOMPARE((*verifyFile)[ID], QVariant(file[ID]));
     QCOMPARE((*verifyFile)["filepath"], file["filepath"].value());
     QCOMPARE((*verifyFile)[torrentForeignKeyName], file[torrentForeignKeyName].value());
 
@@ -1447,7 +1447,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
-    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute(ID));
 
     // Copy of the associated model have to be set on the file
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
@@ -1502,7 +1502,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
-    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute("id"));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute(ID));
 
     // Copy of the associated model have to be set on the file
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
@@ -1552,18 +1552,18 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
     QVERIFY(tag4);
     QVERIFY(tag4->exists);
 
-    tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
+    tag4->torrents()->attach({torrent100[ID], torrent101[ID]},
                              {{"active", false}},
                              false);
 
-    auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent100["id"], torrent101["id"]};
+    QVector<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1571,7 +1571,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
-        QCOMPARE(*tagged["tag_id"], (*tag4)["id"]);
+        QCOMPARE(*tagged["tag_id"], (*tag4)[ID]);
         QVERIFY(torrentIds.contains(*tagged["torrent_id"]));
         QCOMPARE(*tagged["active"], QVariant(0));
     }
@@ -1606,14 +1606,14 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
                              {{"active", false}},
                              false);
 
-    auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent100["id"], torrent101["id"]};
+    QVector<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1621,7 +1621,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
-        QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
+        QCOMPARE(tagged["tag_id"].value(), (*tag4)[ID]);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
         QCOMPARE(tagged["active"].value(), QVariant(0));
     }
@@ -1646,20 +1646,20 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithIds() const
     QVERIFY(torrent5);
     QVERIFY(torrent5->exists);
 
-    const auto torrent5Id = (*torrent5)["id"];
+    const auto torrent5Id = (*torrent5)[ID];
 
-    torrent5->tags()->attach({tag100["id"], tag101["id"]},
+    torrent5->tags()->attach({tag100[ID], tag101[ID]},
                              {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100["id"], tag101["id"]};
+    QVector<QVariant> tagIds {tag100[ID], tag101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1692,20 +1692,20 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithModels() const
     QVERIFY(torrent5);
     QVERIFY(torrent5->exists);
 
-    const auto torrent5Id = (*torrent5)["id"];
+    const auto torrent5Id = (*torrent5)[ID];
 
     torrent5->tags()->attach({{tag100}, {tag101}},
                              {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100["id"], tag101["id"]};
+    QVector<QVariant> tagIds {tag100[ID], tag101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1745,20 +1745,20 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
     QVERIFY(tag4->exists);
 
     tag4->torrents()->attach({
-        {torrent100["id"]->value<quint64>(), {{"active", false}}},
-        {torrent101["id"]->value<quint64>(), {{"active", true}}},
+        {torrent100[ID]->value<quint64>(), {{"active", false}}},
+        {torrent101[ID]->value<quint64>(), {{"active", true}}},
     }, false);
 
-    auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected active attribute values by the torrent ID
     std::unordered_map<quint64, bool> taggedActive {
-        {torrent100["id"]->value<quint64>(), false},
-        {torrent101["id"]->value<quint64>(), true},
+        {torrent100[ID]->value<quint64>(), false},
+        {torrent101[ID]->value<quint64>(), true},
     };
 
     quint64 torrentId = 0;
@@ -1771,7 +1771,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
 
         torrentId = tagged["torrent_id"]->value<quint64>();
 
-        QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
+        QCOMPARE(tagged["tag_id"].value(), (*tag4)[ID]);
         QVERIFY(taggedActive.contains(torrentId));
         QCOMPARE(tagged["active"].value(), QVariant(taggedActive.at(torrentId)));
     }
@@ -1796,23 +1796,23 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() co
     QVERIFY(torrent5);
     QVERIFY(torrent5->exists);
 
-    const auto torrent5Id = (*torrent5)["id"];
+    const auto torrent5Id = (*torrent5)[ID];
 
     torrent5->tags()->attach({
-        {tag100["id"]->value<quint64>(), {{"active", false}}},
-        {tag101["id"]->value<quint64>(), {{"active", true}}}
+        {tag100[ID]->value<quint64>(), {{"active", false}}},
+        {tag101[ID]->value<quint64>(), {{"active", true}}}
     }, false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected active attribute values by the tag ID
     std::unordered_map<quint64, int> taggedActive {
-        {tag100["id"]->value<quint64>(), false},
-        {tag101["id"]->value<quint64>(), true},
+        {tag100[ID]->value<quint64>(), false},
+        {tag101[ID]->value<quint64>(), true},
     };
 
     quint64 tagId = 0;
@@ -1856,18 +1856,18 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
     QVERIFY(tag4);
     QVERIFY(tag4->exists);
 
-    tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
+    tag4->torrents()->attach({torrent100[ID], torrent101[ID]},
                              {{"active", false}},
                              false);
 
-    auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent100["id"], torrent101["id"]};
+    QVector<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1875,19 +1875,19 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
-        QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
+        QCOMPARE(tagged["tag_id"].value(), (*tag4)[ID]);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
         QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
-    auto affected = tag4->torrents()->detach({torrent100["id"], torrent101["id"]},
+    auto affected = tag4->torrents()->detach({torrent100[ID], torrent101[ID]},
                                              false);
 
     QCOMPARE(affected, 2);
 
     // FEATURE aggregates, use count silverqx
-    taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+    taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
             .get({"torrent_id"});
 
     QCOMPARE(taggeds.size(), 0);
@@ -1918,18 +1918,18 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
     QVERIFY(tag4);
     QVERIFY(tag4->exists);
 
-    tag4->torrents()->attach({torrent100["id"], torrent101["id"]},
+    tag4->torrents()->attach({torrent100[ID], torrent101[ID]},
                              {{"active", false}},
                              false);
 
-    auto taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent100["id"], torrent101["id"]};
+    QVector<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1937,7 +1937,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
-        QCOMPARE(tagged["tag_id"].value(), (*tag4)["id"]);
+        QCOMPARE(tagged["tag_id"].value(), (*tag4)[ID]);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
         QCOMPARE(tagged["active"].value(), QVariant(false));
     }
@@ -1947,8 +1947,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
     QCOMPARE(affected, 2);
 
     // FEATURE aggregates, use count silverqx
-    taggeds = Tagged::whereEq("tag_id", (*tag4)["id"])
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+    taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
             .get({"torrent_id"});
 
     QCOMPARE(taggeds.size(), 0);
@@ -1979,18 +1979,18 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
     QVERIFY(tag5);
     QVERIFY(tag5->exists);
 
-    tag5->torrents()->attach({torrent100["id"], torrent101["id"]},
+    tag5->torrents()->attach({torrent100[ID], torrent101[ID]},
                              {{"active", false}},
                              false);
 
-    auto taggeds = Tagged::whereEq("tag_id", (*tag5)["id"])
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+    auto taggeds = Tagged::whereEq("tag_id", (*tag5)[ID])
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent100["id"], torrent101["id"]};
+    QVector<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1998,7 +1998,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
-        QCOMPARE(tagged["tag_id"].value(), (*tag5)["id"]);
+        QCOMPARE(tagged["tag_id"].value(), (*tag5)[ID]);
         QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
         QCOMPARE(tagged["active"].value(), QVariant(false));
     }
@@ -2008,8 +2008,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
     QCOMPARE(affected, 2);
 
     // FEATURE aggregates, use count silverqx
-    taggeds = Tagged::whereEq("tag_id", (*tag5)["id"])
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"]})
+    taggeds = Tagged::whereEq("tag_id", (*tag5)[ID])
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
             .get({"torrent_id"});
 
     QCOMPARE(taggeds.size(), 0);
@@ -2034,20 +2034,20 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
     QVERIFY(torrent5);
     QVERIFY(torrent5->exists);
 
-    const auto torrent5Id = (*torrent5)["id"];
+    const auto torrent5Id = (*torrent5)[ID];
 
-    torrent5->tags()->attach({tag100["id"], tag101["id"]},
+    torrent5->tags()->attach({tag100[ID], tag101[ID]},
                              {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100["id"], tag101["id"]};
+    QVector<QVariant> tagIds {tag100[ID], tag101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2060,13 +2060,13 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
         QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
-    auto affected = torrent5->tags()->detach({tag100["id"], tag101["id"]}, false);
+    auto affected = torrent5->tags()->detach({tag100[ID], tag101[ID]}, false);
 
     QCOMPARE(affected, 2);
 
     // FEATURE aggregates, use count silverqx
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
             .get({"tag_id"});
 
     QCOMPARE(taggeds.size(), 0);
@@ -2091,20 +2091,20 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
     QVERIFY(torrent5);
     QVERIFY(torrent5->exists);
 
-    const auto torrent5Id = (*torrent5)["id"];
+    const auto torrent5Id = (*torrent5)[ID];
 
-    torrent5->tags()->attach({tag100["id"], tag101["id"]},
+    torrent5->tags()->attach({tag100[ID], tag101[ID]},
                              {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100["id"], tag101["id"]};
+    QVector<QVariant> tagIds {tag100[ID], tag101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2123,7 +2123,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
 
     // FEATURE aggregates, use count silverqx
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
             .get({"tag_id"});
 
     QCOMPARE(taggeds.size(), 0);
@@ -2148,20 +2148,20 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
     QVERIFY(torrent5);
     QVERIFY(torrent5->exists);
 
-    const auto torrent5Id = (*torrent5)["id"];
+    const auto torrent5Id = (*torrent5)[ID];
 
-    torrent5->tags()->attach({tag100["id"], tag101["id"]},
+    torrent5->tags()->attach({tag100[ID], tag101[ID]},
                              {{"active", false}},
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100["id"], tag101["id"]};
+    QVector<QVariant> tagIds {tag100[ID], tag101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2180,7 +2180,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
 
     // FEATURE aggregates, use count silverqx
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
             .get({"tag_id"});
 
     QCOMPARE(taggeds.size(), 0);
@@ -2200,7 +2200,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithId() c
     QVERIFY(tag);
     QVERIFY(tag->exists);
 
-    const auto tagId = (*tag)["id"];
+    const auto tagId = (*tag)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("tag_id", tagId)
@@ -2245,7 +2245,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithModel(
     QVERIFY(tag);
     QVERIFY(tag->exists);
 
-    const auto tagId = (*tag)["id"];
+    const auto tagId = (*tag)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("tag_id", tagId)
@@ -2292,7 +2292,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithId() 
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    const auto torrentId = (*torrent)["id"];
+    const auto torrentId = (*torrent)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("torrent_id", torrentId)
@@ -2337,7 +2337,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithModel
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    const auto torrentId = (*torrent)["id"];
+    const auto torrentId = (*torrent)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("torrent_id", torrentId)
@@ -2405,7 +2405,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
     QVERIFY(tag5);
     QVERIFY(tag5->exists);
 
-    const auto tagId = (*tag5)["id"];
+    const auto tagId = (*tag5)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("tag_id", tagId)->get();
@@ -2415,13 +2415,13 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
     // Verify attached tags
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent101["id"], torrent102["id"]})
+            ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent101["id"], torrent102["id"]};
+    QVector<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2435,8 +2435,8 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
     }
 
     const auto changed =
-            tag5->torrents()->sync({*torrent100["id"], *torrent101["id"],
-                                    *torrent103["id"]});
+            tag5->torrents()->sync({*torrent100[ID], *torrent101[ID],
+                                    *torrent103[ID]});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -2450,8 +2450,8 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
     QCOMPARE(detachedVector.size(), 1);
     QVERIFY(changed.at("updated").isEmpty());
 
-    const QVector<QVariant> expectedAttached {torrent100["id"], torrent103["id"]};
-    const QVector<QVariant> expectedDetached {torrent102["id"]};
+    const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
+    const QVector<QVariant> expectedDetached {torrent102[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -2460,17 +2460,17 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"],
-                                     torrent102["id"], torrent103["id"]})
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
+                                     torrent102[ID], torrent103[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 3);
 
     // Expected active attribute values by the tag ID
     std::unordered_map<quint64, bool> taggedActive {
-        {torrent100["id"]->value<quint64>(), true},
-        {torrent101["id"]->value<quint64>(), true},
-        {torrent103["id"]->value<quint64>(), true},
+        {torrent100[ID]->value<quint64>(), true},
+        {torrent101[ID]->value<quint64>(), true},
+        {torrent103[ID]->value<quint64>(), true},
     };
 
     quint64 torrentId = 0;
@@ -2525,7 +2525,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
     QVERIFY(tag5);
     QVERIFY(tag5->exists);
 
-    const auto tagId = (*tag5)["id"];
+    const auto tagId = (*tag5)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("tag_id", tagId)->get();
@@ -2535,13 +2535,13 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
     // Verify attached tags
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent101["id"], torrent102["id"]})
+            ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent101["id"], torrent102["id"]};
+    QVector<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2555,9 +2555,9 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
     }
 
     const auto changed = tag5->torrents()->sync(
-                           {{torrent100["id"]->value<quint64>(), {{"active", true}}},
-                            {torrent101["id"]->value<quint64>(), {{"active", false}}},
-                            {torrent103["id"]->value<quint64>(), {{"active", true}}}});
+                           {{torrent100[ID]->value<quint64>(), {{"active", true}}},
+                            {torrent101[ID]->value<quint64>(), {{"active", false}}},
+                            {torrent103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -2572,9 +2572,9 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
     const auto &updatedVector = changed.at("updated");
     QCOMPARE(updatedVector.size(), 1);
 
-    const QVector<QVariant> expectedAttached {torrent100["id"], torrent103["id"]};
-    const QVector<QVariant> expectedDetached {torrent102["id"]};
-    const QVector<QVariant> expectedUpdated {torrent101["id"]};
+    const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
+    const QVector<QVariant> expectedDetached {torrent102[ID]};
+    const QVector<QVariant> expectedUpdated {torrent101[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -2585,17 +2585,17 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"],
-                                     torrent102["id"], torrent103["id"]})
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
+                                     torrent102[ID], torrent103[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 3);
 
     // Expected active attribute values by the tag ID
     std::unordered_map<quint64, bool> taggedActive {
-        {torrent100["id"]->value<quint64>(), true},
-        {torrent101["id"]->value<quint64>(), false},
-        {torrent103["id"]->value<quint64>(), true},
+        {torrent100[ID]->value<quint64>(), true},
+        {torrent101[ID]->value<quint64>(), false},
+        {torrent103[ID]->value<quint64>(), true},
     };
 
     quint64 torrentId = 0;
@@ -2638,7 +2638,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
     QVERIFY(torrent5);
     QVERIFY(torrent5->exists);
 
-    const auto torrent5Id = (*torrent5)["id"];
+    const auto torrent5Id = (*torrent5)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)->get();
@@ -2648,13 +2648,13 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
     // Verify attached tags
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag101["id"], tag102["id"]})
+            ->whereIn("tag_id", {tag101[ID], tag102[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag101["id"], tag102["id"]};
+    QVector<QVariant> tagIds {tag101[ID], tag102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2668,7 +2668,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
     }
 
     const auto changed =
-            torrent5->tags()->sync({*tag100["id"], *tag101["id"], *tag103["id"]});
+            torrent5->tags()->sync({*tag100[ID], *tag101[ID], *tag103[ID]});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -2682,8 +2682,8 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
     QCOMPARE(detachedVector.size(), 1);
     QVERIFY(changed.at("updated").isEmpty());
 
-    const QVector<QVariant> expectedAttached {tag100["id"], tag103["id"]};
-    const QVector<QVariant> expectedDetached {tag102["id"]};
+    const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
+    const QVector<QVariant> expectedDetached {tag102[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -2692,17 +2692,17 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"],
-                                 tag102["id"], tag103["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID],
+                                 tag102[ID], tag103[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 3);
 
     // Expected active attribute values by the tag ID
     std::unordered_map<quint64, bool> taggedActive {
-        {tag100["id"]->value<quint64>(), true},
-        {tag101["id"]->value<quint64>(), true},
-        {tag103["id"]->value<quint64>(), true},
+        {tag100[ID]->value<quint64>(), true},
+        {tag101[ID]->value<quint64>(), true},
+        {tag103[ID]->value<quint64>(), true},
     };
 
     quint64 tagId = 0;
@@ -2745,7 +2745,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
     QVERIFY(torrent5);
     QVERIFY(torrent5->exists);
 
-    const auto torrent5Id = (*torrent5)["id"];
+    const auto torrent5Id = (*torrent5)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)->get();
@@ -2755,13 +2755,13 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
     // Verify attached tags
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag101["id"], tag102["id"]})
+            ->whereIn("tag_id", {tag101[ID], tag102[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag101["id"], tag102["id"]};
+    QVector<QVariant> tagIds {tag101[ID], tag102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2775,9 +2775,9 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
     }
 
     const auto changed = torrent5->tags()->sync(
-                       {{tag100["id"]->value<quint64>(), {{"active", true}}},
-                        {tag101["id"]->value<quint64>(), {{"active", false}}},
-                        {tag103["id"]->value<quint64>(), {{"active", true}}}});
+                       {{tag100[ID]->value<quint64>(), {{"active", true}}},
+                        {tag101[ID]->value<quint64>(), {{"active", false}}},
+                        {tag103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -2792,9 +2792,9 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
     const auto &updatedVector = changed.at("updated");
     QCOMPARE(updatedVector.size(), 1);
 
-    const QVector<QVariant> expectedAttached {tag100["id"], tag103["id"]};
-    const QVector<QVariant> expectedDetached {tag102["id"]};
-    const QVector<QVariant> expectedUpdated {tag101["id"]};
+    const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
+    const QVector<QVariant> expectedDetached {tag102[ID]};
+    const QVector<QVariant> expectedUpdated {tag101[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -2805,17 +2805,17 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"],
-                                 tag102["id"], tag103["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID],
+                                 tag102[ID], tag103[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 3);
 
     // Expected active attribute values by the tag ID
     std::unordered_map<quint64, bool> taggedActive {
-        {tag100["id"]->value<quint64>(), true},
-        {tag101["id"]->value<quint64>(), false},
-        {tag103["id"]->value<quint64>(), true},
+        {tag100[ID]->value<quint64>(), true},
+        {tag101[ID]->value<quint64>(), false},
+        {tag103[ID]->value<quint64>(), true},
     };
 
     quint64 tagId = 0;
@@ -2870,7 +2870,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
     QVERIFY(tag5);
     QVERIFY(tag5->exists);
 
-    const auto tagId = (*tag5)["id"];
+    const auto tagId = (*tag5)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("tag_id", tagId)->get();
@@ -2880,13 +2880,13 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
 
     // Verify attached tags
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent101["id"], torrent102["id"]})
+            ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent101["id"], torrent102["id"]};
+    QVector<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2900,8 +2900,8 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
     }
 
     const auto changed =
-            tag5->torrents()->syncWithoutDetaching({*torrent100["id"], *torrent101["id"],
-                                                    *torrent103["id"]});
+            tag5->torrents()->syncWithoutDetaching({*torrent100[ID], *torrent101[ID],
+                                                    *torrent103[ID]});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -2914,25 +2914,25 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
     QVERIFY(changed.at("detached").isEmpty());
     QVERIFY(changed.at("updated").isEmpty());
 
-    const QVector<QVariant> expectedAttached {torrent100["id"], torrent103["id"]};
+    const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"],
-                                     torrent102["id"], torrent103["id"]})
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
+                                     torrent102[ID], torrent103[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 4);
 
     // Expected active attribute values by the tag ID
     std::unordered_map<quint64, bool> taggedActive {
-        {torrent100["id"]->value<quint64>(), true},
-        {torrent101["id"]->value<quint64>(), true},
-        {torrent102["id"]->value<quint64>(), true},
-        {torrent103["id"]->value<quint64>(), true},
+        {torrent100[ID]->value<quint64>(), true},
+        {torrent101[ID]->value<quint64>(), true},
+        {torrent102[ID]->value<quint64>(), true},
+        {torrent103[ID]->value<quint64>(), true},
     };
 
     quint64 torrentId = 0;
@@ -2988,7 +2988,7 @@ void tst_Relations_Inserting_Updating
     QVERIFY(tag5);
     QVERIFY(tag5->exists);
 
-    const auto tagId = (*tag5)["id"];
+    const auto tagId = (*tag5)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("tag_id", tagId)->get();
@@ -2998,13 +2998,13 @@ void tst_Relations_Inserting_Updating
 
     // Verify attached tags
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent101["id"], torrent102["id"]})
+            ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent101["id"], torrent102["id"]};
+    QVector<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -3018,9 +3018,9 @@ void tst_Relations_Inserting_Updating
     }
 
     const auto changed = tag5->torrents()->syncWithoutDetaching(
-                           {{torrent100["id"]->value<quint64>(), {{"active", true}}},
-                            {torrent101["id"]->value<quint64>(), {{"active", false}}},
-                            {torrent103["id"]->value<quint64>(), {{"active", true}}}});
+                           {{torrent100[ID]->value<quint64>(), {{"active", true}}},
+                            {torrent101[ID]->value<quint64>(), {{"active", false}}},
+                            {torrent103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -3034,8 +3034,8 @@ void tst_Relations_Inserting_Updating
     const auto &updatedVector = changed.at("updated");
     QCOMPARE(updatedVector.size(), 1);
 
-    const QVector<QVariant> expectedAttached {torrent100["id"], torrent103["id"]};
-    const QVector<QVariant> expectedUpdated {torrent101["id"]};
+    const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
+    const QVector<QVariant> expectedUpdated {torrent101[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -3044,18 +3044,18 @@ void tst_Relations_Inserting_Updating
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent100["id"], torrent101["id"],
-                                     torrent102["id"], torrent103["id"]})
+            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
+                                     torrent102[ID], torrent103[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 4);
 
     // Expected active attribute values by the tag ID
     std::unordered_map<quint64, bool> taggedActive {
-        {torrent100["id"]->value<quint64>(), true},
-        {torrent101["id"]->value<quint64>(), false},
-        {torrent102["id"]->value<quint64>(), true},
-        {torrent103["id"]->value<quint64>(), true},
+        {torrent100[ID]->value<quint64>(), true},
+        {torrent101[ID]->value<quint64>(), false},
+        {torrent102[ID]->value<quint64>(), true},
+        {torrent103[ID]->value<quint64>(), true},
     };
 
     quint64 torrentId = 0;
@@ -3098,7 +3098,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
     QVERIFY(torrent5);
     QVERIFY(torrent5->exists);
 
-    const auto torrent5Id = (*torrent5)["id"];
+    const auto torrent5Id = (*torrent5)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)->get();
@@ -3108,13 +3108,13 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
 
     // Verify attached tags
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag101["id"], tag102["id"]})
+            ->whereIn("tag_id", {tag101[ID], tag102[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag101["id"], tag102["id"]};
+    QVector<QVariant> tagIds {tag101[ID], tag102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -3128,8 +3128,8 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
     }
 
     const auto changed =
-            torrent5->tags()->syncWithoutDetaching({*tag100["id"], *tag101["id"],
-                                                    *tag103["id"]});
+            torrent5->tags()->syncWithoutDetaching({*tag100[ID], *tag101[ID],
+                                                    *tag103[ID]});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -3142,25 +3142,25 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
     QVERIFY(changed.at("detached").isEmpty());
     QVERIFY(changed.at("updated").isEmpty());
 
-    const QVector<QVariant> expectedAttached {tag100["id"], tag103["id"]};
+    const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
 
     for (const auto &attached : changed.at("attached"))
         QVERIFY(expectedAttached.contains(attached));
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"],
-                                 tag102["id"], tag103["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID],
+                                 tag102[ID], tag103[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 4);
 
     // Expected active attribute values by the tag ID
     std::unordered_map<quint64, bool> taggedActive {
-        {tag100["id"]->value<quint64>(), true},
-        {tag101["id"]->value<quint64>(), true},
-        {tag102["id"]->value<quint64>(), true},
-        {tag103["id"]->value<quint64>(), true},
+        {tag100[ID]->value<quint64>(), true},
+        {tag101[ID]->value<quint64>(), true},
+        {tag102[ID]->value<quint64>(), true},
+        {tag103[ID]->value<quint64>(), true},
     };
 
     quint64 tagId = 0;
@@ -3204,7 +3204,7 @@ void tst_Relations_Inserting_Updating
     QVERIFY(torrent5);
     QVERIFY(torrent5->exists);
 
-    const auto torrent5Id = (*torrent5)["id"];
+    const auto torrent5Id = (*torrent5)[ID];
 
     // Check values before update
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)->get();
@@ -3214,13 +3214,13 @@ void tst_Relations_Inserting_Updating
 
     // Verify attached tags
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag101["id"], tag102["id"]})
+            ->whereIn("tag_id", {tag101[ID], tag102[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag101["id"], tag102["id"]};
+    QVector<QVariant> tagIds {tag101[ID], tag102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -3234,9 +3234,9 @@ void tst_Relations_Inserting_Updating
     }
 
     const auto changed = torrent5->tags()->syncWithoutDetaching(
-                       {{tag100["id"]->value<quint64>(), {{"active", true}}},
-                        {tag101["id"]->value<quint64>(), {{"active", false}}},
-                        {tag103["id"]->value<quint64>(), {{"active", true}}}});
+                       {{tag100[ID]->value<quint64>(), {{"active", true}}},
+                        {tag101[ID]->value<quint64>(), {{"active", false}}},
+                        {tag103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QCOMPARE(changed.size(), static_cast<std::size_t>(3));
@@ -3250,8 +3250,8 @@ void tst_Relations_Inserting_Updating
     const auto &updatedVector = changed.at("updated");
     QCOMPARE(updatedVector.size(), 1);
 
-    const QVector<QVariant> expectedAttached {tag100["id"], tag103["id"]};
-    const QVector<QVariant> expectedUpdated {tag101["id"]};
+    const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
+    const QVector<QVariant> expectedUpdated {tag101[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -3260,18 +3260,18 @@ void tst_Relations_Inserting_Updating
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100["id"], tag101["id"],
-                                 tag102["id"], tag103["id"]})
+            ->whereIn("tag_id", {tag100[ID], tag101[ID],
+                                 tag102[ID], tag103[ID]})
             .get();
 
     QCOMPARE(taggeds.size(), 4);
 
     // Expected active attribute values by the tag ID
     std::unordered_map<quint64, bool> taggedActive {
-        {tag100["id"]->value<quint64>(), true},
-        {tag101["id"]->value<quint64>(), false},
-        {tag102["id"]->value<quint64>(), true},
-        {tag103["id"]->value<quint64>(), true},
+        {tag100[ID]->value<quint64>(), true},
+        {tag101[ID]->value<quint64>(), false},
+        {tag102[ID]->value<quint64>(), true},
+        {tag103[ID]->value<quint64>(), true},
     };
 
     quint64 tagId = 0;

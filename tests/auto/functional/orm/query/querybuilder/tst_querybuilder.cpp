@@ -7,6 +7,8 @@
 
 #include "databases.hpp"
 
+using namespace Orm::Constants;
+
 using QueryBuilder = Orm::Query::Builder;
 
 using TestUtils::Databases;
@@ -63,7 +65,7 @@ void tst_QueryBuilder::find() const
 
     auto query = builder->from("torrents").find(2);
 
-    QCOMPARE(query.value("id"), QVariant(2));
+    QCOMPARE(query.value(ID), QVariant(2));
     QCOMPARE(query.value("name"), QVariant("test2"));
 }
 
@@ -86,7 +88,7 @@ void tst_QueryBuilder::pluck() const
     {
         auto builder = createQuery(connection);
 
-        auto result = builder->from("torrents").pluck<quint64>("name", "id");
+        auto result = builder->from("torrents").pluck<quint64>("name", ID);
 
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
@@ -110,7 +112,7 @@ void tst_QueryBuilder::pluck() const
     {
         auto builder = createQuery(connection);
 
-        auto result = builder->from("torrent_previewable_files").orderBy("id")
+        auto result = builder->from("torrent_previewable_files").orderBy(ID)
                       .pluck<bool>("filepath", "file_index");
 
         std::map<bool, QVariant> expected {
@@ -136,7 +138,7 @@ void tst_QueryBuilder::pluck_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq("name", "DUMMY_RECORD").pluck<quint64>("name", "id");
+                      .whereEq("name", "DUMMY_RECORD").pluck<quint64>("name", ID);
 
         std::map<quint64, QVariant> expected;
         QCOMPARE(result, expected);
@@ -277,7 +279,7 @@ void tst_QueryBuilder::sum_Aggregate_ShouldReturnZeroInsteadOfNull() const
 
     auto builder = createQuery(connection);
 
-    auto sum = builder->from("torrent_peers").whereEq("id", 4).sum("seeds");
+    auto sum = builder->from("torrent_peers").whereEq(ID, 4).sum("seeds");
 
     QCOMPARE(sum, QVariant(0));
 }
@@ -297,19 +299,19 @@ void tst_QueryBuilder::limit() const
     auto builder = createQuery(connection);
 
     {
-        auto query = builder->from("torrents").limit(1).get({"id"});
+        auto query = builder->from("torrents").limit(1).get({ID});
 
         QCOMPARE(query.size(), 1);
     }
 
     {
-        auto query = builder->from("torrents").limit(3).get({"id"});
+        auto query = builder->from("torrents").limit(3).get({ID});
 
         QCOMPARE(query.size(), 3);
     }
 
     {
-        auto query = builder->from("torrents").limit(4).get({"id"});
+        auto query = builder->from("torrents").limit(4).get({ID});
 
         QCOMPARE(query.size(), 4);
     }
