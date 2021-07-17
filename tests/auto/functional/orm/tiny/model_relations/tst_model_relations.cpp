@@ -889,7 +889,7 @@ void tst_Model_Relations::with_BelongsToMany_WithSelectConstraint() const
         const auto &attributes = tag->getAttributes();
         QCOMPARE(attributes.size(), 2);
 
-        const QVector<QString> expectedAttributes {ID, "name"};
+        const QVector<QString> expectedAttributes {ID, NAME};
         for (const auto &attribute : attributes)
             expectedAttributes.contains(attribute.key);
 
@@ -970,7 +970,7 @@ void tst_Model_Relations::with_BelongsToMany_WithLambdaConstraint() const
 
     auto torrent = Torrent::with({{"tags", [](auto &query)
                                    {
-                                       query.select({ID, "name"});
+                                       query.select({ID, NAME});
                                    }}})->find(3);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
@@ -989,7 +989,7 @@ void tst_Model_Relations::with_BelongsToMany_WithLambdaConstraint() const
         const auto &attributes = tag->getAttributes();
         QCOMPARE(attributes.size(), 2);
 
-        const QVector<QString> expectedAttributes {ID, "name"};
+        const QVector<QString> expectedAttributes {ID, NAME};
         for (const auto &attribute : attributes)
             expectedAttributes.contains(attribute.key);
 
@@ -1199,15 +1199,15 @@ void tst_Model_Relations::fresh() const
 
     QVERIFY(torrent->getRelations().empty());
 
-    torrent->setAttribute("name", "test2 fresh");
-    QCOMPARE(torrent->getAttribute("name"), QVariant("test2 fresh"));
+    torrent->setAttribute(NAME, "test2 fresh");
+    QCOMPARE(torrent->getAttribute(NAME), QVariant("test2 fresh"));
 
     auto freshTorrent = torrent->fresh("torrentFiles");
     QVERIFY(freshTorrent);
     QVERIFY(&*torrent != &*freshTorrent);
     QVERIFY(freshTorrent->exists);
     QCOMPARE(freshTorrent->getAttribute(ID), (*torrent)[ID]);
-    QCOMPARE(freshTorrent->getAttribute("name"), QVariant("test2"));
+    QCOMPARE(freshTorrent->getAttribute(NAME), QVariant("test2"));
 
     auto files = freshTorrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
@@ -1242,15 +1242,15 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
 
     QVERIFY(torrent->getRelations().empty());
 
-    torrent->setAttribute("name", "test2 fresh");
-    QCOMPARE(torrent->getAttribute("name"), QVariant("test2 fresh"));
+    torrent->setAttribute(NAME, "test2 fresh");
+    QCOMPARE(torrent->getAttribute(NAME), QVariant("test2 fresh"));
 
     auto freshTorrent = torrent->fresh("torrentFiles:id,torrent_id,filepath");
     QVERIFY(freshTorrent);
     QVERIFY(&*torrent != &*freshTorrent);
     QVERIFY(freshTorrent->exists);
     QCOMPARE(freshTorrent->getAttribute(ID), (*torrent)[ID]);
-    QCOMPARE(freshTorrent->getAttribute("name"), QVariant("test2"));
+    QCOMPARE(freshTorrent->getAttribute(NAME), QVariant("test2"));
 
     auto files = freshTorrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
@@ -1462,18 +1462,18 @@ void tst_Model_Relations::push_EagerLoad() const
     QVERIFY(fileProperty);
     QVERIFY(fileProperty->exists);
 
-    auto torrentNameOriginal = torrent->getAttribute("name");
+    auto torrentNameOriginal = torrent->getAttribute(NAME);
     auto fileFilepathOriginal = file->getAttribute("filepath");
-    auto propertyNameOriginal = fileProperty->getAttribute("name");
+    auto propertyNameOriginal = fileProperty->getAttribute(NAME);
 
     QCOMPARE(torrentNameOriginal, QVariant("test2"));
     QCOMPARE(fileFilepathOriginal, QVariant("test2_file1.mkv"));
     QCOMPARE(propertyNameOriginal, QVariant("test2_file1"));
 
     // Modify values in relations
-    torrent->setAttribute("name", "test2 push");
+    torrent->setAttribute(NAME, "test2 push");
     file->setAttribute("filepath", "test2_file1-push.mkv");
-    fileProperty->setAttribute("name", "test2_file1 push");
+    fileProperty->setAttribute(NAME, "test2_file1 push");
 
     QVERIFY(torrent->push());
 
@@ -1502,14 +1502,14 @@ void tst_Model_Relations::push_EagerLoad() const
     QVERIFY(filePropertyVerify);
     QVERIFY(filePropertyVerify->exists);
 
-    QCOMPARE(torrentVerify->getAttribute("name"), QVariant("test2 push"));
+    QCOMPARE(torrentVerify->getAttribute(NAME), QVariant("test2 push"));
     QCOMPARE(fileVerify->getAttribute("filepath"), QVariant("test2_file1-push.mkv"));
-    QCOMPARE(filePropertyVerify->getAttribute("name"), QVariant("test2_file1 push"));
+    QCOMPARE(filePropertyVerify->getAttribute(NAME), QVariant("test2_file1 push"));
 
     // Revert values back
-    torrentVerify->setAttribute("name", "test2");
+    torrentVerify->setAttribute(NAME, "test2");
     fileVerify->setAttribute("filepath", "test2_file1.mkv");
-    filePropertyVerify->setAttribute("name", "test2_file1");
+    filePropertyVerify->setAttribute(NAME, "test2_file1");
 
     torrentVerify->push();
 }
@@ -1547,18 +1547,18 @@ void tst_Model_Relations::push_LazyLoad() const
     QVERIFY(fileProperty);
     QVERIFY(fileProperty->exists);
 
-    auto torrentNameOriginal = torrent->getAttribute("name");
+    auto torrentNameOriginal = torrent->getAttribute(NAME);
     auto fileFilepathOriginal = file->getAttribute("filepath");
-    auto propertyNameOriginal = fileProperty->getAttribute("name");
+    auto propertyNameOriginal = fileProperty->getAttribute(NAME);
 
     QCOMPARE(torrentNameOriginal, QVariant("test2"));
     QCOMPARE(fileFilepathOriginal, QVariant("test2_file1.mkv"));
     QCOMPARE(propertyNameOriginal, QVariant("test2_file1"));
 
     // Modify values in relations
-    torrent->setAttribute("name", "test2 push");
+    torrent->setAttribute(NAME, "test2 push");
     file->setAttribute("filepath", "test2_file1-push.mkv");
-    fileProperty->setAttribute("name", "test2_file1 push");
+    fileProperty->setAttribute(NAME, "test2_file1 push");
 
     QVERIFY(torrent->push());
 
@@ -1587,14 +1587,14 @@ void tst_Model_Relations::push_LazyLoad() const
     QVERIFY(filePropertyVerify);
     QVERIFY(filePropertyVerify->exists);
 
-    QCOMPARE(torrentVerify->getAttribute("name"), QVariant("test2 push"));
+    QCOMPARE(torrentVerify->getAttribute(NAME), QVariant("test2 push"));
     QCOMPARE(fileVerify->getAttribute("filepath"), QVariant("test2_file1-push.mkv"));
-    QCOMPARE(filePropertyVerify->getAttribute("name"), QVariant("test2_file1 push"));
+    QCOMPARE(filePropertyVerify->getAttribute(NAME), QVariant("test2_file1 push"));
 
     // Revert values back
-    torrentVerify->setAttribute("name", "test2");
+    torrentVerify->setAttribute(NAME, "test2");
     fileVerify->setAttribute("filepath", "test2_file1.mkv");
-    filePropertyVerify->setAttribute("name", "test2_file1");
+    filePropertyVerify->setAttribute(NAME, "test2_file1");
 
     torrentVerify->push();
 }
@@ -1748,7 +1748,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_HasOne() co
     QCOMPARE(typeid (TorrentPreviewableFileProperty *), typeid (fileProperty));
     QCOMPARE(fileProperty->getAttributes().size(), 3);
     QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
-    QCOMPARE((*fileProperty)["name"], QVariant("default_fileproperty_name"));
+    QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
     QCOMPARE((*fileProperty)["size"], QVariant(321));
 }
 
@@ -1786,7 +1786,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_BelongsTo()
     QVERIFY(!torrent->exists);
     QCOMPARE(typeid (Torrent *), typeid (torrent));
     QCOMPARE(torrent->getAttributes().size(), 2);
-    QCOMPARE((*torrent)["name"], QVariant("default_torrent_name"));
+    QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
     QCOMPARE((*torrent)["size"], QVariant(123));
 }
 
@@ -1828,7 +1828,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_HasOne() c
     QCOMPARE(typeid (TorrentPreviewableFilePropertyEager *), typeid (fileProperty));
     QCOMPARE(fileProperty->getAttributes().size(), 3);
     QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
-    QCOMPARE((*fileProperty)["name"], QVariant("default_fileproperty_name"));
+    QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
     QCOMPARE((*fileProperty)["size"], QVariant(321));
 }
 
@@ -1868,7 +1868,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_BelongsTo(
     QVERIFY(!torrent->exists);
     QCOMPARE(typeid (TorrentEager_WithDefault *), typeid (torrent));
     QCOMPARE(torrent->getAttributes().size(), 2);
-    QCOMPARE((*torrent)["name"], QVariant("default_torrent_name"));
+    QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
     QCOMPARE((*torrent)["size"], QVariant(123));
 }
 

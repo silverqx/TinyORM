@@ -66,7 +66,7 @@ void tst_QueryBuilder::find() const
     auto query = builder->from("torrents").find(2);
 
     QCOMPARE(query.value(ID), QVariant(2));
-    QCOMPARE(query.value("name"), QVariant("test2"));
+    QCOMPARE(query.value(NAME), QVariant("test2"));
 }
 
 void tst_QueryBuilder::pluck() const
@@ -77,7 +77,7 @@ void tst_QueryBuilder::pluck() const
     {
         auto builder = createQuery(connection);
 
-        auto result = builder->from("torrents").orderBy("name").pluck("name");
+        auto result = builder->from("torrents").orderBy(NAME).pluck(NAME);
 
         QVector<QVariant> expected {
             "test1", "test2", "test3", "test4", "test5", "test6",
@@ -88,7 +88,7 @@ void tst_QueryBuilder::pluck() const
     {
         auto builder = createQuery(connection);
 
-        auto result = builder->from("torrents").pluck<quint64>("name", ID);
+        auto result = builder->from("torrents").pluck<quint64>(NAME, ID);
 
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
@@ -100,7 +100,7 @@ void tst_QueryBuilder::pluck() const
     {
         auto builder = createQuery(connection);
 
-        auto result = builder->from("torrents").pluck<QString>("size", "name");
+        auto result = builder->from("torrents").pluck<QString>("size", NAME);
 
         std::map<QString, QVariant> expected {
             {"test1", 11}, {"test2", 12}, {"test3", 13}, {"test4", 14},
@@ -130,7 +130,7 @@ void tst_QueryBuilder::pluck_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq("name", "DUMMY_RECORD").pluck("name");
+                      .whereEq(NAME, "DUMMY_RECORD").pluck(NAME);
 
         QCOMPARE(result, QVector<QVariant>());
     }
@@ -138,7 +138,7 @@ void tst_QueryBuilder::pluck_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq("name", "DUMMY_RECORD").pluck<quint64>("name", ID);
+                      .whereEq(NAME, "DUMMY_RECORD").pluck<quint64>(NAME, ID);
 
         std::map<quint64, QVariant> expected;
         QCOMPARE(result, expected);
@@ -153,7 +153,7 @@ void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
     {
         auto builder = createQuery(connection);
 
-        auto result = builder->from("torrents").orderBy("name").pluck("torrents.name");
+        auto result = builder->from("torrents").orderBy(NAME).pluck("torrents.name");
 
         QVector<QVariant> expected {
             "test1", "test2", "test3", "test4", "test5", "test6",

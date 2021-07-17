@@ -128,7 +128,7 @@ void tst_SQLite_QueryBuilder::get() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").get({ID, "name"});
+            connection.query()->from("torrents").get({ID, NAME});
         });
 
         const auto &firstLog = log.first();
@@ -158,7 +158,7 @@ void tst_SQLite_QueryBuilder::get_ColumnExpression() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").get({Raw(ID), "name"});
+        connection.query()->from("torrents").get({Raw(ID), NAME});
     });
 
     const auto &firstLog = log.first();
@@ -173,7 +173,7 @@ void tst_SQLite_QueryBuilder::find() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").find(3, {ID, "name"});
+        connection.query()->from("torrents").find(3, {ID, NAME});
     });
 
     const auto &firstLog = log.first();
@@ -190,7 +190,7 @@ void tst_SQLite_QueryBuilder::find_ColumnAndValueExpression() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").find(3, {ID, Raw("name")});
+            connection.query()->from("torrents").find(3, {ID, Raw(NAME)});
         });
 
         const auto &firstLog = log.first();
@@ -205,7 +205,7 @@ void tst_SQLite_QueryBuilder::find_ColumnAndValueExpression() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").find(Raw("1 + 3"), {ID, Raw("name")});
+            connection.query()->from("torrents").find(Raw("1 + 3"), {ID, Raw(NAME)});
         });
 
         const auto &firstLog = log.first();
@@ -221,7 +221,7 @@ void tst_SQLite_QueryBuilder::first() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").first({ID, "name"});
+        connection.query()->from("torrents").first({ID, NAME});
     });
 
     const auto &firstLog = log.first();
@@ -236,7 +236,7 @@ void tst_SQLite_QueryBuilder::first_ColumnExpression() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").first({ID, Raw("name")});
+        connection.query()->from("torrents").first({ID, Raw(NAME)});
     });
 
     const auto &firstLog = log.first();
@@ -254,7 +254,7 @@ void tst_SQLite_QueryBuilder::value() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").value("name");
+        connection.query()->from("torrents").value(NAME);
     });
 
     const auto &firstLog = log.first();
@@ -269,7 +269,7 @@ void tst_SQLite_QueryBuilder::value_ColumnExpression() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").value(Raw("name"));
+        connection.query()->from("torrents").value(Raw(NAME));
     });
 
     const auto &firstLog = log.first();
@@ -286,7 +286,7 @@ void tst_SQLite_QueryBuilder::select() const
 
     builder->from("torrents");
 
-    builder->select({ID, "name"});
+    builder->select({ID, NAME});
     QCOMPARE(builder->toSql(),
              "select \"id\", \"name\" from \"torrents\"");
 
@@ -305,11 +305,11 @@ void tst_SQLite_QueryBuilder::select_ColumnExpression() const
 
     builder->from("torrents");
 
-    builder->select(Raw("name"));
+    builder->select(Raw(NAME));
     QCOMPARE(builder->toSql(),
              "select name from \"torrents\"");
 
-    builder->select({ID, Raw("name")});
+    builder->select({ID, Raw(NAME)});
     QCOMPARE(builder->toSql(),
              "select \"id\", name from \"torrents\"");
 
@@ -324,7 +324,7 @@ void tst_SQLite_QueryBuilder::addSelect() const
 
     builder->from("torrents");
 
-    builder->addSelect({ID, "name"});
+    builder->addSelect({ID, NAME});
     QCOMPARE(builder->toSql(),
              "select \"id\", \"name\" from \"torrents\"");
 
@@ -343,7 +343,7 @@ void tst_SQLite_QueryBuilder::addSelect_ColumnExpression() const
 
     builder->from("torrents");
 
-    builder->addSelect(Raw("name"));
+    builder->addSelect(Raw(NAME));
     QCOMPARE(builder->toSql(),
              "select name from \"torrents\"");
 
@@ -372,7 +372,7 @@ void tst_SQLite_QueryBuilder::distinct() const
     QCOMPARE(builder->toSql(),
              "select distinct * from \"torrents\"");
 
-    builder->select({"name", "size"});
+    builder->select({NAME, "size"});
     QCOMPARE(builder->toSql(),
              "select distinct \"name\", \"size\" from \"torrents\"");
 }
@@ -611,11 +611,11 @@ void tst_SQLite_QueryBuilder::fromSub_QueryBuilderOverload_WithWhere() const
     // Ownership of the QSharedPointer<QueryBuilder>
     auto subQuery = createQuery(m_connection);
     subQuery->from("user_sessions")
-            .select({ID, "name"})
+            .select({ID, NAME})
             .where(ID, "<", 5);
 
     builder->fromSub(*subQuery, "sessions")
-            .whereEq("name", "xyz");
+            .whereEq(NAME, "xyz");
 
     QVERIFY(std::holds_alternative<Expression>(builder->getFrom()));
     QCOMPARE(builder->toSql(),
@@ -633,9 +633,9 @@ void tst_SQLite_QueryBuilder::fromSub_CallbackOverload() const
     builder->fromSub([](auto &query)
     {
         query.from("user_sessions")
-             .select({ID, "name"})
+             .select({ID, NAME})
              .where(ID, "<", 5);
-    }, "sessions").whereEq("name", "xyz");
+    }, "sessions").whereEq(NAME, "xyz");
 
     QVERIFY(std::holds_alternative<Expression>(builder->getFrom()));
     QCOMPARE(builder->toSql(),
@@ -669,12 +669,12 @@ void tst_SQLite_QueryBuilder::joinSub_QueryBuilderOverload_WithWhere() const
     // Ownership of the QSharedPointer<QueryBuilder>
     auto subQuery = createQuery(m_connection);
     subQuery->from("user_sessions")
-            .select({"id as files_id", "user_id", "name"})
+            .select({"id as files_id", "user_id", NAME})
             .where("user_id", "<", 5);
 
     builder->from("users")
             .joinSub(*subQuery, "sessions", "users.id", "=", "sessions.user_id")
-            .whereEq("name", "xyz");
+            .whereEq(NAME, "xyz");
 
     QCOMPARE(builder->toSql(),
              "select * from \"users\" "
@@ -694,11 +694,11 @@ void tst_SQLite_QueryBuilder::joinSub_CallbackOverload() const
             .joinSub([](auto &query)
     {
         query.from("user_sessions")
-                .select({"id as files_id", "user_id", "name"})
+                .select({"id as files_id", "user_id", NAME})
                 .where("user_id", "<", 5);
     }, "sessions", "users.id", "=", "sessions.user_id", LEFT)
 
-            .whereEq("name", "xyz");
+            .whereEq(NAME, "xyz");
 
     QCOMPARE(builder->toSql(),
              "select * from \"users\" "
@@ -736,7 +736,7 @@ void tst_SQLite_QueryBuilder::basicWhere() const
         auto builder = createQuery(m_connection);
 
         builder->select("*").from("torrents").whereEq(ID, 3)
-                .whereEq("name", "test3");
+                .whereEq(NAME, "test3");
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" = ? and \"name\" = ?");
         QCOMPARE(builder->getBindings(),
@@ -777,7 +777,7 @@ void tst_SQLite_QueryBuilder::basicWhere() const
         auto builder = createQuery(m_connection);
 
         builder->select("*").from("torrents").where(ID, ">", 3)
-                .where("name", LIKE, "test%");
+                .where(NAME, LIKE, "test%");
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" > ? and \"name\" like ?");
         QCOMPARE(builder->getBindings(),
@@ -837,7 +837,7 @@ void tst_SQLite_QueryBuilder::basicOrWhere() const
         auto builder = createQuery(m_connection);
 
         builder->select("*").from("torrents").where(ID, ">", 4)
-                .orWhereEq("name", "test3");
+                .orWhereEq(NAME, "test3");
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" > ? or \"name\" = ?");
         QCOMPARE(builder->getBindings(),
@@ -1166,7 +1166,7 @@ void tst_SQLite_QueryBuilder::whereIn_ValueExpression() const
     {
         auto builder = createQuery(m_connection);
 
-        builder->select("*").from("torrents").whereIn("name", {Raw("'xyz'")});
+        builder->select("*").from("torrents").whereIn(NAME, {Raw("'xyz'")});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"name\" in ('xyz')");
         QCOMPARE(builder->getBindings(),
@@ -1347,7 +1347,7 @@ void tst_SQLite_QueryBuilder::orderBy() const
 
     builder->from("torrents");
 
-    builder->orderBy("name", ASC);
+    builder->orderBy(NAME, ASC);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" order by \"name\" asc");
 
@@ -1356,7 +1356,7 @@ void tst_SQLite_QueryBuilder::orderBy() const
              "select * from \"torrents\" order by \"name\" asc, \"id\" desc");
 
     builder->reorder()
-            .orderByDesc("name");
+            .orderByDesc(NAME);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" order by \"name\" desc");
 
@@ -1371,11 +1371,11 @@ void tst_SQLite_QueryBuilder::latestOldest() const
 
     builder->from("torrents");
 
-    builder->latest("name");
+    builder->latest(NAME);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" order by \"name\" desc");
 
-    builder->reorder().oldest("name");
+    builder->reorder().oldest(NAME);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" order by \"name\" asc");
 }
@@ -1481,7 +1481,7 @@ void tst_SQLite_QueryBuilder::insert() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").insert({{"name", "xyz"}, {"size", 6}});
+        connection.query()->from("torrents").insert({{NAME, "xyz"}, {"size", 6}});
     });
 
     const auto &firstLog = log.first();
@@ -1498,7 +1498,7 @@ void tst_SQLite_QueryBuilder::insert_WithExpression() const
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         connection.query()->from("torrents")
-                .insert({{"name", DB::raw("'xyz'")}, {"size", 6},
+                .insert({{NAME, DB::raw("'xyz'")}, {"size", 6},
                          {"progress", DB::raw(2)}});
     });
 
@@ -1518,7 +1518,7 @@ void tst_SQLite_QueryBuilder::update() const
     {
         connection.query()->from("torrents")
                 .whereEq(ID, 10)
-                .update({{"name", "xyz"}, {"size", 6}});
+                .update({{NAME, "xyz"}, {"size", 6}});
     });
 
     const auto &firstLog = log.first();
@@ -1536,7 +1536,7 @@ void tst_SQLite_QueryBuilder::update_WithExpression() const
     {
         connection.query()->from("torrents")
                 .whereEq(ID, 10)
-                .update({{"name", DB::raw("'xyz'")}, {"size", 6},
+                .update({{NAME, DB::raw("'xyz'")}, {"size", 6},
                          {"progress", DB::raw(2)}});
     });
 

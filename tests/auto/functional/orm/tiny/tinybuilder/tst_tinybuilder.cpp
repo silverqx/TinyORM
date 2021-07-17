@@ -80,7 +80,7 @@ void tst_TinyBuilder::get() const
         const auto torrentId = torrent[ID].value<quint64>();
 
         QVERIFY(expectedIdNames.contains(torrentId));
-        QCOMPARE(expectedIdNames.at(torrentId), torrent["name"].value<QString>());
+        QCOMPARE(expectedIdNames.at(torrentId), torrent[NAME].value<QString>());
     }
 
     QCOMPARE(torrents.at(1).getAttributes().size(), 9);
@@ -92,12 +92,12 @@ void tst_TinyBuilder::get_Columns() const
 
     ConnectionOverride::connection = connection;
 
-    auto torrents = createQuery<Torrent>()->get({ID, "name", "size"});
+    auto torrents = createQuery<Torrent>()->get({ID, NAME, "size"});
 
     const auto &torrent = torrents.at(1);
     QCOMPARE(torrent.getAttributes().size(), 3);
     QCOMPARE(torrent.getAttributes().at(0).key, QString(ID));
-    QCOMPARE(torrent.getAttributes().at(1).key, QString("name"));
+    QCOMPARE(torrent.getAttributes().at(1).key, QString(NAME));
     QCOMPARE(torrent.getAttributes().at(2).key, QString("size"));
 }
 
@@ -107,7 +107,7 @@ void tst_TinyBuilder::value() const
 
     ConnectionOverride::connection = connection;
 
-    auto value = Torrent::whereEq(ID, 2)->value("name");
+    auto value = Torrent::whereEq(ID, 2)->value(NAME);
 
     QCOMPARE(value, QVariant("test2"));
 }
@@ -118,7 +118,7 @@ void tst_TinyBuilder::value_ModelNotFound() const
 
     ConnectionOverride::connection = connection;
 
-    auto value = Torrent::whereEq(ID, 999999)->value("name");
+    auto value = Torrent::whereEq(ID, 999999)->value(NAME);
 
     QVERIFY(!value.isValid());
     QVERIFY(value.isNull());
@@ -136,15 +136,15 @@ void tst_TinyBuilder::firstOrFail_Found() const
         QVERIFY(torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 9);
         QCOMPARE(torrent[ID], QVariant(3));
-        QCOMPARE(torrent["name"], QVariant("test3"));
+        QCOMPARE(torrent[NAME], QVariant("test3"));
     }
     {
-        auto torrent = Torrent::whereEq(ID, 3)->firstOrFail({ID, "name"});
+        auto torrent = Torrent::whereEq(ID, 3)->firstOrFail({ID, NAME});
 
         QVERIFY(torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 2);
         QCOMPARE(torrent[ID], QVariant(3));
-        QCOMPARE(torrent["name"], QVariant("test3"));
+        QCOMPARE(torrent[NAME], QVariant("test3"));
     }
 }
 
@@ -156,7 +156,7 @@ void tst_TinyBuilder::firstOrFail_NotFoundFailed() const
 
     QVERIFY_EXCEPTION_THROWN(Torrent::whereEq(ID, 999999)->firstOrFail(),
                              ModelNotFoundError);
-    QVERIFY_EXCEPTION_THROWN(Torrent::whereEq(ID, 999999)->firstOrFail({ID, "name"}),
+    QVERIFY_EXCEPTION_THROWN(Torrent::whereEq(ID, 999999)->firstOrFail({ID, NAME}),
                              ModelNotFoundError);
 }
 

@@ -716,7 +716,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    Tag tag({{"name", "tag save"}});
+    Tag tag({{NAME, "tag save"}});
     QVERIFY(!tag.exists);
 
     auto [savedResult, tagRef] = torrent->tags()->save(tag, {{"active", false}});
@@ -736,7 +736,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany() const
     // Obtain tag and verify saved values
     auto tagVerify = Tag::find(tag[ID]);
     QCOMPARE((*tagVerify)[ID],   QVariant(tag[ID]));
-    QCOMPARE((*tagVerify)["name"], QVariant("tag save"));
+    QCOMPARE((*tagVerify)[NAME], QVariant("tag save"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
@@ -766,7 +766,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany_WithRValue() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    auto [savedResult, tag] = torrent->tags()->save({{"name", "tag save"}},
+    auto [savedResult, tag] = torrent->tags()->save({{NAME, "tag save"}},
                                                      {{"active", false}});
     QVERIFY(savedResult);
     QVERIFY(tag.exists);
@@ -780,7 +780,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany_WithRValue() const
     // Obtain tag and verify saved values
     auto tagVerify = Tag::find(tag[ID]);
     QCOMPARE((*tagVerify)[ID],   QVariant(tag[ID]));
-    QCOMPARE((*tagVerify)["name"], QVariant("tag save"));
+    QCOMPARE((*tagVerify)[NAME], QVariant("tag save"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
@@ -810,7 +810,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany_Failed() const
     auto size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
 
-    Tag tag({{"name", "tag1"}});
+    Tag tag({{NAME, "tag1"}});
     QVERIFY(!tag.exists);
 
     QVERIFY_EXCEPTION_THROWN(torrent->tags()->save(tag),
@@ -837,8 +837,8 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    Tag tag1({{"name", "tag1 save"}});
-    Tag tag2({{"name", "tag2 save"}});
+    Tag tag1({{NAME, "tag1 save"}});
+    Tag tag2({{NAME, "tag2 save"}});
     QVERIFY(!tag1.exists);
     QVERIFY(!tag2.exists);
 
@@ -871,10 +871,10 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
     // Obtain tag and verify saved values
     auto tag1Verify = Tag::find(savedTag1[ID]);
     QCOMPARE((*tag1Verify)[ID],   QVariant(savedTag1[ID]));
-    QCOMPARE((*tag1Verify)["name"], QVariant("tag1 save"));
+    QCOMPARE((*tag1Verify)[NAME], QVariant("tag1 save"));
     auto tag2Verify = Tag::find(savedTag2[ID]);
     QCOMPARE((*tag2Verify)[ID],   QVariant(savedTag2[ID]));
-    QCOMPARE((*tag2Verify)["name"], QVariant("tag2 save"));
+    QCOMPARE((*tag2Verify)[NAME], QVariant("tag2 save"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
@@ -909,8 +909,8 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_WithRValue() con
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    auto savedTags = torrent->tags()->saveMany({{{"name", "tag1 save"}},
-                                                {{"name", "tag2 save"}}},
+    auto savedTags = torrent->tags()->saveMany({{{NAME, "tag1 save"}},
+                                                {{NAME, "tag2 save"}}},
                                                {{{"active", false}}});
     QCOMPARE(savedTags.size(), 2);
 
@@ -932,10 +932,10 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_WithRValue() con
     // Obtain tag and verify saved values
     auto tag1Verify = Tag::find(savedTag1[ID]);
     QCOMPARE((*tag1Verify)[ID],   QVariant(savedTag1[ID]));
-    QCOMPARE((*tag1Verify)["name"], QVariant("tag1 save"));
+    QCOMPARE((*tag1Verify)[NAME], QVariant("tag1 save"));
     auto tag2Verify = Tag::find(savedTag2[ID]);
     QCOMPARE((*tag2Verify)[ID],   QVariant(savedTag2[ID]));
-    QCOMPARE((*tag2Verify)["name"], QVariant("tag2 save"));
+    QCOMPARE((*tag2Verify)[NAME], QVariant("tag2 save"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
@@ -970,7 +970,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_Failed() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    Tag tag1({{"name", "tag1"}});
+    Tag tag1({{NAME, "tag1"}});
     QVERIFY(!tag1.exists);
     // Make a copy is enough
     auto tag2 = tag1;
@@ -1001,7 +1001,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    QVector<AttributeItem> tagAttribtues {{"name", "tag create"}};
+    QVector<AttributeItem> tagAttribtues {{NAME, "tag create"}};
 
     auto tag = torrent->tags()->create(tagAttribtues, {{"active", false}});
     QVERIFY(tag.exists);
@@ -1015,7 +1015,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany() const
     // Obtain tag and verify saved values
     auto tagVerify = Tag::find(tag[ID]);
     QCOMPARE((*tagVerify)[ID],   QVariant(tag[ID]));
-    QCOMPARE((*tagVerify)["name"], QVariant("tag create"));
+    QCOMPARE((*tagVerify)[NAME], QVariant("tag create"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
@@ -1045,7 +1045,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    auto tag = torrent->tags()->create({{"name", "tag create rvalue"}},
+    auto tag = torrent->tags()->create({{NAME, "tag create rvalue"}},
                                        {{"active", false}});
     QVERIFY(tag.exists);
     QVERIFY(tag[ID]->isValid());
@@ -1058,7 +1058,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue() const
     // Obtain tag and verify saved values
     auto tagVerify = Tag::find(tag[ID]);
     QCOMPARE((*tagVerify)[ID],   QVariant(tag[ID]));
-    QCOMPARE((*tagVerify)["name"], QVariant("tag create rvalue"));
+    QCOMPARE((*tagVerify)[NAME], QVariant("tag create rvalue"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->first();
@@ -1088,7 +1088,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_Failed() const
     auto size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
 
-    QVector<AttributeItem> tagAttributes {{"name", "tag1"}};
+    QVector<AttributeItem> tagAttributes {{NAME, "tag1"}};
     Tag tag;
 
     QVERIFY_EXCEPTION_THROWN(tag = torrent->tags()->create(tagAttributes),
@@ -1117,7 +1117,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue_Failed(
 
     Tag tag;
 
-    QVERIFY_EXCEPTION_THROWN(tag = torrent->tags()->create({{"name", "tag1"}}),
+    QVERIFY_EXCEPTION_THROWN(tag = torrent->tags()->create({{NAME, "tag1"}}),
                              QueryError);
     QVERIFY(!tag.exists);
     QVERIFY(tag.getAttributes().isEmpty());
@@ -1141,8 +1141,8 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    QVector<QVector<AttributeItem>> tagAttribtues {{{"name", "tag create 1"}},
-                                                   {{"name", "tag create 2"}}};
+    QVector<QVector<AttributeItem>> tagAttribtues {{{NAME, "tag create 1"}},
+                                                   {{NAME, "tag create 2"}}};
 
     auto tags = torrent->tags()->createMany(tagAttribtues, {{}, {{"active", false}}});
     QCOMPARE(tags.size(), 2);
@@ -1163,10 +1163,10 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany() const
     // Obtain tag and verify saved values
     auto tagVerify1 = Tag::find(tag1[ID]);
     QCOMPARE((*tagVerify1)[ID],   QVariant(tag1[ID]));
-    QCOMPARE((*tagVerify1)["name"], QVariant("tag create 1"));
+    QCOMPARE((*tagVerify1)[NAME], QVariant("tag create 1"));
     auto tagVerify2 = Tag::find(tag2[ID]);
     QCOMPARE((*tagVerify2)[ID],   QVariant(tag2[ID]));
-    QCOMPARE((*tagVerify2)["name"], QVariant("tag create 2"));
+    QCOMPARE((*tagVerify2)[NAME], QVariant("tag create 2"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
@@ -1201,8 +1201,8 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue() c
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    auto tags = torrent->tags()->createMany({{{"name", "tag create 1 rvalue"}},
-                                             {{"name", "tag create 2 rvalue"}}},
+    auto tags = torrent->tags()->createMany({{{NAME, "tag create 1 rvalue"}},
+                                             {{NAME, "tag create 2 rvalue"}}},
 
                                             {{{"active", false}}});
     QCOMPARE(tags.size(), 2);
@@ -1223,10 +1223,10 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue() c
     // Obtain tag and verify saved values
     auto tagVerify1 = Tag::find(tag1[ID]);
     QCOMPARE((*tagVerify1)[ID],   QVariant(tag1[ID]));
-    QCOMPARE((*tagVerify1)["name"], QVariant("tag create 1 rvalue"));
+    QCOMPARE((*tagVerify1)[NAME], QVariant("tag create 1 rvalue"));
     auto tagVerify2 = Tag::find(tag2[ID]);
     QCOMPARE((*tagVerify2)[ID],   QVariant(tag2[ID]));
-    QCOMPARE((*tagVerify2)["name"], QVariant("tag create 2 rvalue"));
+    QCOMPARE((*tagVerify2)[NAME], QVariant("tag create 2 rvalue"));
 
     // Verify pivot attributes
     auto taggedVerify = Tagged::whereEq("torrent_id", 5)->get();
@@ -1261,8 +1261,8 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_Failed() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    QVector<QVector<AttributeItem>> tagAttribtues {{{"name", "tag1"}},
-                                                   {{"name", "tag1"}}};
+    QVector<QVector<AttributeItem>> tagAttribtues {{{NAME, "tag1"}},
+                                                   {{NAME, "tag1"}}};
 
     QVector<Tag> tags;
 
@@ -1293,8 +1293,8 @@ tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue_Failed()
 
     QVector<Tag> tags;
 
-    QVERIFY_EXCEPTION_THROWN(tags = torrent->tags()->createMany({{{"name", "tag1"}},
-                                                                 {{"name", "tag1"}}},
+    QVERIFY_EXCEPTION_THROWN(tags = torrent->tags()->createMany({{{NAME, "tag1"}},
+                                                                 {{NAME, "tag1"}}},
 
                                                                 {{{"active", false}}}),
                              QueryError);
@@ -1538,12 +1538,12 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {NAME, "test100"}, {"size", 100}, {"progress", 555},
         {"hash", "xyzhash100"}, {"note", "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {NAME, "test101"}, {"size", 101}, {"progress", 556},
         {"hash", "xyzhash101"}, {"note", "attach with pivot"},
     };
     torrent101.save();
@@ -1588,12 +1588,12 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {NAME, "test100"}, {"size", 100}, {"progress", 555},
         {"hash", "xyzhash100"}, {"note", "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {NAME, "test101"}, {"size", 101}, {"progress", 556},
         {"hash", "xyzhash101"}, {"note", "attach with pivot"},
     };
     torrent101.save();
@@ -1637,9 +1637,9 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithIds() const
 
     ConnectionOverride::connection = connection;
 
-    Tag tag100({{"name", "tag100"}});
+    Tag tag100({{NAME, "tag100"}});
     tag100.save();
-    Tag tag101({{"name", "tag101"}});
+    Tag tag101({{NAME, "tag101"}});
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
@@ -1683,9 +1683,9 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithModels() const
 
     ConnectionOverride::connection = connection;
 
-    Tag tag100({{"name", "tag100"}});
+    Tag tag100({{NAME, "tag100"}});
     tag100.save();
-    Tag tag101({{"name", "tag101"}});
+    Tag tag101({{NAME, "tag101"}});
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
@@ -1730,12 +1730,12 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {NAME, "test100"}, {"size", 100}, {"progress", 555},
         {"hash", "xyzhash100"}, {"note", "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {NAME, "test101"}, {"size", 101}, {"progress", 556},
         {"hash", "xyzhash101"}, {"note", "attach with pivot"},
     };
     torrent101.save();
@@ -1787,9 +1787,9 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() co
 
     ConnectionOverride::connection = connection;
 
-    Tag tag100({{"name", "tag100"}});
+    Tag tag100({{NAME, "tag100"}});
     tag100.save();
-    Tag tag101({{"name", "tag101"}});
+    Tag tag101({{NAME, "tag101"}});
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
@@ -1842,12 +1842,12 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {NAME, "test100"}, {"size", 100}, {"progress", 555},
         {"hash", "xyzhash100"}, {"note", "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {NAME, "test101"}, {"size", 101}, {"progress", 556},
         {"hash", "xyzhash101"}, {"note", "attach with pivot"},
     };
     torrent101.save();
@@ -1904,12 +1904,12 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {NAME, "test100"}, {"size", 100}, {"progress", 555},
         {"hash", "xyzhash100"}, {"note", "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {NAME, "test101"}, {"size", 101}, {"progress", 556},
         {"hash", "xyzhash101"}, {"note", "attach with pivot"},
     };
     torrent101.save();
@@ -1965,12 +1965,12 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {NAME, "test100"}, {"size", 100}, {"progress", 555},
         {"hash", "xyzhash100"}, {"note", "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {NAME, "test101"}, {"size", 101}, {"progress", 556},
         {"hash", "xyzhash101"}, {"note", "attach with pivot"},
     };
     torrent101.save();
@@ -2025,9 +2025,9 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
 
     ConnectionOverride::connection = connection;
 
-    Tag tag100({{"name", "tag100"}});
+    Tag tag100({{NAME, "tag100"}});
     tag100.save();
-    Tag tag101({{"name", "tag101"}});
+    Tag tag101({{NAME, "tag101"}});
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
@@ -2082,9 +2082,9 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
 
     ConnectionOverride::connection = connection;
 
-    Tag tag100({{"name", "tag100"}});
+    Tag tag100({{NAME, "tag100"}});
     tag100.save();
-    Tag tag101({{"name", "tag101"}});
+    Tag tag101({{NAME, "tag101"}});
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
@@ -2139,9 +2139,9 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
 
     ConnectionOverride::connection = connection;
 
-    Tag tag100({{"name", "tag100"}});
+    Tag tag100({{NAME, "tag100"}});
     tag100.save();
-    Tag tag101({{"name", "tag101"}});
+    Tag tag101({{NAME, "tag101"}});
     tag101.save();
 
     auto torrent5 = Torrent::find(5);
@@ -2381,22 +2381,22 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {NAME, "test100"}, {"size", 100}, {"progress", 555},
         {"hash", "xyzhash100"}, {"note", "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {NAME, "test101"}, {"size", 101}, {"progress", 556},
         {"hash", "xyzhash101"}, {"note", "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
-        {"name", "test102"}, {"size", 102}, {"progress", 557},
+        {NAME, "test102"}, {"size", 102}, {"progress", 557},
         {"hash", "xyzhash102"}, {"note", "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
-        {"name", "test103"}, {"size", 103}, {"progress", 558},
+        {NAME, "test103"}, {"size", 103}, {"progress", 558},
         {"hash", "xyzhash103"}, {"note", "sync with pivot"},
     };
     torrent103.save();
@@ -2501,22 +2501,22 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {NAME, "test100"}, {"size", 100}, {"progress", 555},
         {"hash", "xyzhash100"}, {"note", "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {NAME, "test101"}, {"size", 101}, {"progress", 556},
         {"hash", "xyzhash101"}, {"note", "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
-        {"name", "test102"}, {"size", 102}, {"progress", 557},
+        {NAME, "test102"}, {"size", 102}, {"progress", 557},
         {"hash", "xyzhash102"}, {"note", "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
-        {"name", "test103"}, {"size", 103}, {"progress", 558},
+        {NAME, "test103"}, {"size", 103}, {"progress", 558},
         {"hash", "xyzhash103"}, {"note", "sync with pivot"},
     };
     torrent103.save();
@@ -2625,13 +2625,13 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
     ConnectionOverride::connection = connection;
 
-    Tag tag100({{"name", "tag100"}});
+    Tag tag100({{NAME, "tag100"}});
     tag100.save();
-    Tag tag101({{"name", "tag101"}});
+    Tag tag101({{NAME, "tag101"}});
     tag101.save();
-    Tag tag102({{"name", "tag102"}});
+    Tag tag102({{NAME, "tag102"}});
     tag102.save();
-    Tag tag103({{"name", "tag103"}});
+    Tag tag103({{NAME, "tag103"}});
     tag103.save();
 
     auto torrent5 = Torrent::find(5);
@@ -2732,13 +2732,13 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
     ConnectionOverride::connection = connection;
 
-    Tag tag100({{"name", "tag100"}});
+    Tag tag100({{NAME, "tag100"}});
     tag100.save();
-    Tag tag101({{"name", "tag101"}});
+    Tag tag101({{NAME, "tag101"}});
     tag101.save();
-    Tag tag102({{"name", "tag102"}});
+    Tag tag102({{NAME, "tag102"}});
     tag102.save();
-    Tag tag103({{"name", "tag103"}});
+    Tag tag103({{NAME, "tag103"}});
     tag103.save();
 
     auto torrent5 = Torrent::find(5);
@@ -2846,22 +2846,22 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {NAME, "test100"}, {"size", 100}, {"progress", 555},
         {"hash", "xyzhash100"}, {"note", "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {NAME, "test101"}, {"size", 101}, {"progress", 556},
         {"hash", "xyzhash101"}, {"note", "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
-        {"name", "test102"}, {"size", 102}, {"progress", 557},
+        {NAME, "test102"}, {"size", 102}, {"progress", 557},
         {"hash", "xyzhash102"}, {"note", "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
-        {"name", "test103"}, {"size", 103}, {"progress", 558},
+        {NAME, "test103"}, {"size", 103}, {"progress", 558},
         {"hash", "xyzhash103"}, {"note", "sync with pivot"},
     };
     torrent103.save();
@@ -2964,22 +2964,22 @@ void tst_Relations_Inserting_Updating
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {"name", "test100"}, {"size", 100}, {"progress", 555},
+        {NAME, "test100"}, {"size", 100}, {"progress", 555},
         {"hash", "xyzhash100"}, {"note", "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {"name", "test101"}, {"size", 101}, {"progress", 556},
+        {NAME, "test101"}, {"size", 101}, {"progress", 556},
         {"hash", "xyzhash101"}, {"note", "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
-        {"name", "test102"}, {"size", 102}, {"progress", 557},
+        {NAME, "test102"}, {"size", 102}, {"progress", 557},
         {"hash", "xyzhash102"}, {"note", "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
-        {"name", "test103"}, {"size", 103}, {"progress", 558},
+        {NAME, "test103"}, {"size", 103}, {"progress", 558},
         {"hash", "xyzhash103"}, {"note", "sync with pivot"},
     };
     torrent103.save();
@@ -3085,13 +3085,13 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
 
     ConnectionOverride::connection = connection;
 
-    Tag tag100({{"name", "tag100"}});
+    Tag tag100({{NAME, "tag100"}});
     tag100.save();
-    Tag tag101({{"name", "tag101"}});
+    Tag tag101({{NAME, "tag101"}});
     tag101.save();
-    Tag tag102({{"name", "tag102"}});
+    Tag tag102({{NAME, "tag102"}});
     tag102.save();
-    Tag tag103({{"name", "tag103"}});
+    Tag tag103({{NAME, "tag103"}});
     tag103.save();
 
     auto torrent5 = Torrent::find(5);
@@ -3191,13 +3191,13 @@ void tst_Relations_Inserting_Updating
 
     ConnectionOverride::connection = connection;
 
-    Tag tag100({{"name", "tag100"}});
+    Tag tag100({{NAME, "tag100"}});
     tag100.save();
-    Tag tag101({{"name", "tag101"}});
+    Tag tag101({{NAME, "tag101"}});
     tag101.save();
-    Tag tag102({{"name", "tag102"}});
+    Tag tag102({{NAME, "tag102"}});
     tag102.save();
-    Tag tag103({{"name", "tag103"}});
+    Tag tag103({{NAME, "tag103"}});
     tag103.save();
 
     auto torrent5 = Torrent::find(5);
