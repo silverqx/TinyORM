@@ -14,6 +14,7 @@ description: TinyORM is an object-relational mapper (ORM) that makes it enjoyabl
     - [Default Attribute Values](#default-attribute-values)
 - [Retrieving Models](#retrieving-models)
     - [Containers](#containers)
+    - [Advanced Subqueries](#advanced-subqueries)
 - [Retrieving Single Models](#retrieving-single-models)
     - [Retrieving Or Creating Models](#retrieving-or-creating-models)
 - [Inserting & Updating Models](#inserting-and-updating-models)
@@ -281,6 +282,37 @@ As we have seen, TinyORM methods like `all` and `get` retrieve multiple records 
 :::note
 An `all` method is defined on the `Orm::Tiny::Model<Derived, AllRelations...>` class and `get` method is defined on the `Orm::Tiny::Builder`, may be also referred as `TinyBuilder`, and on the `Orm::Query::Builder` alias `QueryBuilder`.
 :::
+
+### Advanced Subqueries
+
+#### Subquery Selects
+
+TinyORM also offers advanced subquery support, which allows you to pull information from related tables in a single query. For example, let's imagine that we have a table of flight `destinations` and a table of `flights` to destinations. The `flights` table contains an `arrived_at` column which indicates when the flight arrived at the destination.
+
+Using the subquery functionality available to the query builder's `select` and `addSelect` methods, we can select all of the `destinations` and the name of the flight that most recently arrived at that destination using a single query:
+
+    #include "models/destination.hpp"
+    #include "models/flight.hpp"
+
+    return Destination::addSelect(
+            Flight::select("name")
+                ->whereColumnEq("destination_id", "destinations.id")
+                .orderByDesc("arrived_at")
+                .limit(1)
+                .toBase(), "last_flight")
+        ->get();
+
+#### Subquery Ordering
+
+In addition, the query builder's `orderBy` function supports subqueries. Continuing to use our flight example, we may use this functionality to sort all destinations based on when the last flight arrived at that destination. Again, this may be done while executing a single database query:
+
+    return Destination::orderByDesc(
+            Flight::select("arrived_at")
+                ->whereColumnEq("destination_id", "destinations.id")
+                .orderByDesc("arrived_at")
+                .limit(1)
+                .toBase())
+        ->get();
 
 ## Retrieving Single Models
 
