@@ -589,6 +589,15 @@ namespace Relations {
         static std::unique_ptr<TinyBuilder<Derived>>
         orderByDesc(const Column &column);
 
+        /*! Add an "order by" clause to the query with a subquery ordering. */
+        template<Queryable T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orderBy(T &&query, const QString &direction = ASC);
+        /*! Add a descending "order by" clause to the query with a subquery ordering. */
+        template<Queryable T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orderByDesc(T &&query);
+
         /*! Add a raw "order by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
@@ -2695,6 +2704,30 @@ namespace Relations {
         auto builder = query();
 
         builder->orderByDesc(column);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<Queryable T>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orderBy(T &&query, const QString &direction)
+    {
+        auto builder = Derived::query();
+
+        builder->orderBy(std::forward<T>(query), direction);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<Queryable T>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orderByDesc(T &&query)
+    {
+        auto builder = Derived::query();
+
+        builder->orderBy(std::forward<T>(query), DESC);
 
         return builder;
     }

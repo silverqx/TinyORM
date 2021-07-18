@@ -367,6 +367,13 @@ namespace Query
         /*! Add a descending "order by" clause to the query. */
         Builder &orderByDesc(const Column &column);
 
+        /*! Add an "order by" clause to the query with a subquery ordering. */
+        template<Queryable T>
+        Builder &orderBy(T &&query, const QString &direction = ASC);
+        /*! Add a descending "order by" clause to the query with a subquery ordering. */
+        template<Queryable T>
+        Builder &orderByDesc(T &&query);
+
         /*! Add a raw "order by" clause to the query. */
         Builder &orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
@@ -982,7 +989,7 @@ namespace Query
 
         auto [queryString, bindings] = createSub(std::forward<C>(column));
 
-        addBinding(bindings, BindingType::WHERE);
+        addBinding(std::move(bindings), BindingType::WHERE);
 
         return where(Expression(QStringLiteral("(%1)").arg(queryString)), comparison,
                      std::forward<V>(value), condition);
@@ -1015,7 +1022,7 @@ namespace Query
 
         auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        addBinding(bindings, BindingType::WHERE);
+        addBinding(std::move(bindings), BindingType::WHERE);
 
         return where(column, comparison, Expression(QStringLiteral("(%1)")
                                                     .arg(queryString)),
@@ -1026,6 +1033,22 @@ namespace Query
     inline Builder &Builder::groupBy(Args &&...groups)
     {
         return groupBy(QVector<Column> {std::forward<Args>(groups)...});
+    }
+
+    template<Queryable T>
+    Builder &Builder::orderBy(T &&query, const QString &direction)
+    {
+        auto [queryString, bindings] = createSub(std::forward<T>(query));
+
+        addBinding(std::move(bindings), BindingType::ORDER);
+
+        return orderBy(Expression(QStringLiteral("(%1)").arg(queryString)), direction);
+    }
+
+    template<Queryable T>
+    inline Builder &Builder::orderByDesc(T &&query)
+    {
+        return orderBy(std::forward<T>(query), DESC);
     }
 
     inline const std::optional<AggregateItem> &Builder::getAggregate() const

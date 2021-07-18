@@ -525,6 +525,13 @@ namespace Relations
         /*! Add a descending "order by" clause to the query. */
         const Relation &orderByDesc(const Column &column) const;
 
+        /*! Add an "order by" clause to the query with a subquery ordering. */
+        template<Queryable T>
+        const Relation &orderBy(T &&query, const QString &direction = ASC) const;
+        /*! Add a descending "order by" clause to the query with a subquery ordering. */
+        template<Queryable T>
+        const Relation &orderByDesc(T &&query) const;
+
         /*! Add a raw "order by" clause to the query. */
         const Relation &orderByRaw(const QString &sql,
                                    const QVector<QVariant> &bindings = {}) const;
@@ -1740,6 +1747,26 @@ namespace Relations
     Relation<Model, Related>::orderByDesc(const Column &column) const
     {
         m_query->orderByDesc(column);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<Queryable T>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orderBy(T &&query, const QString &direction) const
+    {
+        m_query->orderBy(std::forward<T>(query), direction);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<Queryable T>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orderByDesc(T &&query) const
+    {
+        m_query->orderBy(std::forward<T>(query), DESC);
 
         return *this;
     }

@@ -414,6 +414,13 @@ namespace Relations
         /*! Add a descending "order by" clause to the query. */
         Builder &orderByDesc(const Column &column);
 
+        /*! Add an "order by" clause to the query with a subquery ordering. */
+        template<Queryable T>
+        Builder &orderBy(T &&query, const QString &direction = ASC);
+        /*! Add a descending "order by" clause to the query with a subquery ordering. */
+        template<Queryable T>
+        Builder &orderByDesc(T &&query);
+
         /*! Add a raw "order by" clause to the query. */
         Builder &orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
@@ -1608,6 +1615,23 @@ namespace Relations
     Builder<Model> &Builder<Model>::orderByDesc(const Column &column)
     {
         toBase().orderByDesc(column);
+        return *this;
+    }
+
+    template<typename Model>
+    template<Queryable T>
+    Builder<Model> &
+    Builder<Model>::orderBy(T &&query, const QString &direction)
+    {
+        toBase().orderBy(std::forward<T>(query), direction);
+        return *this;
+    }
+
+    template<typename Model>
+    template<Queryable T>
+    Builder<Model> &Builder<Model>::orderByDesc(T &&query)
+    {
+        toBase().orderBy(std::forward<T>(query), DESC);
         return *this;
     }
 
