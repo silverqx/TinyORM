@@ -758,7 +758,7 @@ namespace Query
         return selectSub(std::forward<T>(query), as);
     }
 
-    // CUR docs silverqx
+    // TODO docs silverqx
     template<SubQuery T>
     inline Builder &Builder::selectSub(T &&query, const QString &as)
     {
