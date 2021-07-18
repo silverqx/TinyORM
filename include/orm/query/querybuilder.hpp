@@ -128,6 +128,13 @@ namespace Query
         /*! Add a new select column to the query. */
         Builder &addSelect(const Column &column);
 
+        /*! Set a select subquery on the query. */
+        template<Queryable T>
+        Builder &select(T &&query, const QString &as);
+        /*! Add a select subquery to the query. */
+        template<Queryable T>
+        Builder &addSelect(T &&query, const QString &as);
+
         /*! Add a subselect expression to the query. */
         template<SubQuery T>
         Builder &selectSub(T &&query, const QString &as);
@@ -726,6 +733,22 @@ namespace Query
     inline QVariant Builder::average(const Column &column)
     {
         return avg(column);
+    }
+
+    template<Queryable T>
+    inline Builder &Builder::select(T &&query, const QString &as)
+    {
+        return selectSub(std::forward<T>(query), as);
+    }
+
+    template<Queryable T>
+    Builder &Builder::addSelect(T &&query, const QString &as)
+    {
+        if (m_columns.isEmpty())
+            select(QVector<Column> {QStringLiteral("%1.*")
+                                    .arg(std::get<QString>(m_from))});
+
+        return selectSub(std::forward<T>(query), as);
     }
 
     // CUR docs silverqx

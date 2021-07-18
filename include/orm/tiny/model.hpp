@@ -301,6 +301,15 @@ namespace Relations {
         static std::unique_ptr<TinyBuilder<Derived>>
         addSelect(const Column &column);
 
+        /*! Set a select subquery on the query. */
+        template<Queryable T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        select(T &&query, const QString &as);
+        /*! Add a select subquery to the query. */
+        template<Queryable T>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        addSelect(T &&query, const QString &as);
+
         /*! Add a subselect expression to the query. */
         template<SubQuery T>
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -1838,6 +1847,30 @@ namespace Relations {
         auto builder = query();
 
         builder->addSelect(column);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<Queryable T>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::select(T &&query, const QString &as)
+    {
+        auto builder = Derived::query();
+
+        builder->select(std::forward<T>(query), as);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<Queryable T>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::addSelect(T &&query, const QString &as)
+    {
+        auto builder = Derived::query();
+
+        builder->addSelect(std::forward<T>(query), as);
 
         return builder;
     }

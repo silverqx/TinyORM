@@ -208,7 +208,11 @@ Builder &Builder::select(const QVector<Column> &columns)
 
 Builder &Builder::select(const Column &column)
 {
-    return select(QVector<Column> {column});
+    clearColumns();
+
+    m_columns << column;
+
+    return *this;
 }
 
 Builder &Builder::addSelect(const QVector<Column> &columns)
@@ -221,7 +225,9 @@ Builder &Builder::addSelect(const QVector<Column> &columns)
 // FUTURE when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
 Builder &Builder::addSelect(const Column &column)
 {
-    return addSelect(QVector<Column> {column});
+    m_columns << column;
+
+    return *this;
 }
 
 Builder &Builder::selectRaw(const QString &expression, const QVector<QVariant> &bindings)

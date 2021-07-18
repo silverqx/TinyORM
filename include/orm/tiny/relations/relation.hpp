@@ -262,6 +262,13 @@ namespace Relations
         /*! Add a new select column to the query. */
         const Relation &addSelect(const Column &column) const;
 
+        /*! Set a select subquery on the query. */
+        template<Queryable T>
+        const Relation &select(T &&query, const QString &as) const;
+        /*! Add a select subquery to the query. */
+        template<Queryable T>
+        const Relation &addSelect(T &&query, const QString &as) const;
+
         /*! Add a subselect expression to the query. */
         template<SubQuery T>
         const Relation &selectSub(T &&query, const QString &as) const;
@@ -1023,6 +1030,26 @@ namespace Relations
     Relation<Model, Related>::addSelect(const Column &column) const
     {
         m_query->addSelect(column);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<Queryable T>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::select(T &&query, const QString &as) const
+    {
+        m_query->select(std::forward<T>(query), as);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<Queryable T>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::addSelect(T &&query, const QString &as) const
+    {
+        m_query->addSelect(std::forward<T>(query), as);
 
         return *this;
     }

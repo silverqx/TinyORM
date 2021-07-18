@@ -189,6 +189,13 @@ namespace Relations
         /*! Add a new select column to the query. */
         Builder &addSelect(const Column &column);
 
+        /*! Set a select subquery on the query. */
+        template<Queryable T>
+        Builder &select(T &&query, const QString &as);
+        /*! Add a select subquery to the query. */
+        template<Queryable T>
+        Builder &addSelect(T &&query, const QString &as);
+
         /*! Add a subselect expression to the query. */
         template<SubQuery T>
         Builder &selectSub(T &&query, const QString &as);
@@ -1008,6 +1015,22 @@ namespace Relations
     Builder<Model> &Builder<Model>::addSelect(const Column &column)
     {
         toBase().addSelect(column);
+        return *this;
+    }
+
+    template<typename Model>
+    template<Queryable T>
+    Builder<Model> &Builder<Model>::select(T &&query, const QString &as)
+    {
+        toBase().select(std::forward<T>(query), as);
+        return *this;
+    }
+
+    template<typename Model>
+    template<Queryable T>
+    Builder<Model> &Builder<Model>::addSelect(T &&query, const QString &as)
+    {
+        toBase().addSelect(std::forward<T>(query), as);
         return *this;
     }
 
