@@ -498,7 +498,7 @@ namespace Relations
         { return m_query; }
 
         /*! Get a database connection. */
-        inline const ConnectionInterface &getConnection() const
+        inline ConnectionInterface &getConnection() const
         { return m_query->getConnection(); }
 
         /*! Get a base query builder instance. */
@@ -506,6 +506,9 @@ namespace Relations
         { return getQuery(); }
         // FUTURE add Query Scopes feature silverqx
 //        { return $this->applyScopes()->getQuery(); }
+
+        /*! Explains the query. */
+//        QSqlQuery explain() const;
 
     protected:
         /*! Expression alias. */
@@ -1921,6 +1924,14 @@ namespace Relations
 
         return models;
     }
+
+    // BUG Qt sql driver does not support to call EXPLAIN as a prepared statement silverqx
+//    template<typename Model>
+//    QSqlQuery Builder<Model>::explain() const
+//    {
+//        return getConnection().select(QStringLiteral("EXPLAIN %1").arg(toSql()),
+//                                      getBindings());
+//    }
 
     template<typename Model>
     QVector<WithItem>
