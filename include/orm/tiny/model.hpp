@@ -79,8 +79,12 @@ namespace Relations {
     // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
     // CUR connection SSL support silverqx
     // BUG Qt sql drivers do not work with mysql json columns silverqx
-    // CUR add Concerns\QueriesRelationships silverqx
     // CUR add cmake build silverqx
+    // CUR add Relations::Concerns::ComparesRelatedModels silverqx
+    // CUR build systems, add cmake build silverqx
+    // CUR build systems, add autotools build silverqx
+    // CUR build systems, add docs on how to make a production build of the TinyORM library silverqx
+    // CUR build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
