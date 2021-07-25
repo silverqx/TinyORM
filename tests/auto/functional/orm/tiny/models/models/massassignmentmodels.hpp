@@ -4,6 +4,8 @@
 
 #include "orm/tiny/model.hpp"
 
+using namespace Orm::Constants;
+
 using Orm::Tiny::Model;
 
 class Torrent_TotallyGuarded final : public Model<Torrent_TotallyGuarded>

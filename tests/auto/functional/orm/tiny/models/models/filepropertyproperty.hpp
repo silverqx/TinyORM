@@ -8,6 +8,8 @@
 
 using Orm::Tiny::Relations::BelongsTo;
 
+class TorrentPreviewableFileProperty;
+
 class FilePropertyProperty final :
         public Model<FilePropertyProperty, TorrentPreviewableFileProperty>
 {
