@@ -627,6 +627,9 @@ namespace Query
         Builder &whereInternal(const Column &column, const QString &comparison,
                                const QVariant &value, const QString &condition);
 
+        /*! Throw exception when m_bindings doesn't contain a passed type. */
+        void checkBindingType(BindingType type) const;
+
         /*! All of the available clause operators. */
         const QVector<QString> m_operators {
             EQ, LT, GT, LE, GE, NE_, NE, "<=>",

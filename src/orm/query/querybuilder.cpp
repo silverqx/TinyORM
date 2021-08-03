@@ -670,10 +670,8 @@ QVector<QVariant> Builder::getBindings() const
 
 Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
 {
-    if (!m_bindings.contains(type))
-        // TODO add hash which maps BindingType to the QString silverqx
-        throw InvalidArgumentError(QStringLiteral("Invalid binding type: %1")
-                                   .arg(static_cast<int>(type)));
+    // Check if m_bindings contain type
+    checkBindingType(type);
 
     m_bindings[type].append(binding);
 
@@ -682,10 +680,8 @@ Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
 
 Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingType type)
 {
-    // CUR duplicate check, unify, add checkBindingsType() silverqx
-    if (!m_bindings.contains(type))
-        throw InvalidArgumentError(QStringLiteral("Invalid binding type: %1")
-                                   .arg(static_cast<int>(type)));
+    // Check if m_bindings contain type
+    checkBindingType(type);
 
     if (!bindings.isEmpty())
         std::ranges::copy(bindings, std::back_inserter(m_bindings[type]));
@@ -695,9 +691,8 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
 
 Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType type)
 {
-    if (!m_bindings.contains(type))
-        throw InvalidArgumentError(QStringLiteral("Invalid binding type: %1")
-                                   .arg(static_cast<int>(type)));
+    // Check if m_bindings contain type
+    checkBindingType(type);
 
     if (!bindings.isEmpty())
         std::ranges::move(bindings, std::back_inserter(m_bindings[type]));
@@ -707,9 +702,8 @@ Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType typ
 
 Builder &Builder::setBindings(QVector<QVariant> &&bindings, const BindingType type)
 {
-    if (!m_bindings.contains(type))
-        throw InvalidArgumentError(QStringLiteral("Invalid binding type: %1")
-                                   .arg(static_cast<int>(type)));
+    // Check if m_bindings contain type
+    checkBindingType(type);
 
     auto &bindingsRef = m_bindings[type]; // clazy:exclude=detaching-member
 
@@ -1077,6 +1071,16 @@ Builder &Builder::whereInternal(const Column &column, const QString &comparison,
         addBinding(value, BindingType::WHERE);
 
     return *this;
+}
+
+void Builder::checkBindingType(const BindingType type) const
+{
+    if (m_bindings.contains(type))
+        return;
+
+    // TODO add hash which maps BindingType to the QString silverqx
+    throw InvalidArgumentError(QStringLiteral("Invalid binding type: %1")
+                               .arg(static_cast<int>(type)));
 }
 
 } // namespace Orm
