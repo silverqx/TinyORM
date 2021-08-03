@@ -8,10 +8,10 @@
 
 using namespace Orm::Constants;
 
-// CUR fix all this aliases, using Orm::Query::Expression dont need alias!!, silverqx
-using Expression = Orm::Query::Expression;
-using QueryBuilder = Orm::Query::Builder;
+using Orm::Query::Expression;
+
 using Raw = Orm::Query::Expression;
+using QueryBuilder = Orm::Query::Builder;
 
 using TestUtils::Databases;
 

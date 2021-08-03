@@ -8,7 +8,8 @@
 
 using namespace Orm::Constants;
 
-using Expression = Orm::Query::Expression;
+using Orm::Query::Expression;
+
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
 
