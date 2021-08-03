@@ -100,7 +100,7 @@ namespace Relations
         /*! Get the underlying query for the relation. */
         inline Builder<Related> &getQuery() const
         { return *m_query; }
-        /*! Get the base query builder driving the Eloquent builder. */
+        /*! Get the base QueryBuilder driving the TinyBuilder. */
         inline QueryBuilder &getBaseQuery() const
         { return m_query->getQuery(); }
 
@@ -746,7 +746,7 @@ namespace Relations
         /*! The key name of the related model. */
         QString m_relatedKey;
         // TODO next would be good to use TinyBuilder alias instead of Builder silverqx
-        /*! The Eloquent query builder instance. */
+        /*! The TinyORM TinyBuilder instance. */
         std::unique_ptr<Builder<Related>> m_query;
         /*! Indicates if the relation is adding constraints. */
         static bool constraints;

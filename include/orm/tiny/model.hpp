@@ -3773,10 +3773,9 @@ namespace Relations {
     Model<Derived, AllRelations...>::newInstance(
             const QVector<AttributeItem> &attributes, const bool exists)
     {
-        // CUR replace all Eloquent by TinyORM, also in docs silverqx
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
-           hydration of new objects via the Eloquent query builder instances. */
+           hydration of new objects via the QueryBuilder instances. */
         Derived model;
 
         /* setAttribute() can call getDateFormat() inside and it tries to obtain
@@ -3799,7 +3798,7 @@ namespace Relations {
     {
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
-           hydration of new objects via the Eloquent query builder instances. */
+           hydration of new objects via the QueryBuilder instances. */
         Derived model;
 
         /* setAttribute() can call getDateFormat() inside and it tries to obtain

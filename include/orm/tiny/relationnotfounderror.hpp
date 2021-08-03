@@ -27,7 +27,7 @@ namespace Orm::Tiny
         RelationNotFoundError(const QString &model, const QString &relation);
         RelationNotFoundError(const QString &model, const QString &relation, From from);
 
-        /*! Get the affected Eloquent model. */
+        /*! Get the affected TinyORM model. */
         inline const QString &getModel() const
         { return m_model; }
         /*! Get the name of the relation. */
@@ -35,7 +35,7 @@ namespace Orm::Tiny
         { return m_relation; }
 
     protected:
-        /*! The name of the affected Eloquent model.. */
+        /*! The name of the affected TinyORM model.. */
         const QString m_model;
         /*! The name of the relation. */
         const QString m_relation;

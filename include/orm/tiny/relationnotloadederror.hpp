@@ -17,7 +17,7 @@ namespace Orm::Tiny
     public:
         RelationNotLoadedError(const QString &model, const QString &relation);
 
-        /*! Get the affected Eloquent model. */
+        /*! Get the affected TinyORM model. */
         inline const QString &getModel() const
         { return m_model; }
         /*! Get the name of the relation. */
@@ -25,7 +25,7 @@ namespace Orm::Tiny
         { return m_relation; }
 
     protected:
-        /*! The name of the affected Eloquent model.. */
+        /*! The name of the affected TinyORM model.. */
         const QString m_model;
         /*! The name of the relation. */
         const QString m_relation;
