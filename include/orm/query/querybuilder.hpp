@@ -1006,7 +1006,7 @@ namespace Query
 
         addBinding(std::move(bindings), BindingType::WHERE);
 
-        return where(Expression(QStringLiteral("(%1)").arg(queryString)), comparison,
+        return where(Expression(PARENTH_ONE.arg(queryString)), comparison,
                      std::forward<V>(value), condition);
     }
 
@@ -1039,8 +1039,7 @@ namespace Query
 
         addBinding(std::move(bindings), BindingType::WHERE);
 
-        return where(column, comparison, Expression(QStringLiteral("(%1)")
-                                                    .arg(queryString)),
+        return where(column, comparison, Expression(PARENTH_ONE.arg(queryString)),
                      condition);
     }
 
@@ -1057,7 +1056,7 @@ namespace Query
 
         addBinding(std::move(bindings), BindingType::ORDER);
 
-        return orderBy(Expression(QStringLiteral("(%1)").arg(queryString)), direction);
+        return orderBy(Expression(PARENTH_ONE.arg(queryString)), direction);
     }
 
     template<Queryable T>

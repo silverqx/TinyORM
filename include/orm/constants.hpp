@@ -43,6 +43,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString NAME;
     SHAREDLIB_EXPORT extern const QString CREATED_AT;
     SHAREDLIB_EXPORT extern const QString UPDATED_AT;
+    SHAREDLIB_EXPORT extern const QString PARENTH_ONE;
 
     // Comparison/logical/search operators
     SHAREDLIB_EXPORT extern const QString EQ;

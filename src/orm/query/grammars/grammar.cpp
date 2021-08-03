@@ -371,7 +371,7 @@ QString Grammar::whereNested(const WhereConditionItem &where) const
 
     const auto offset = compiled.indexOf(SPACE) + 1;
 
-    return QStringLiteral("(%1)").arg(compiled.remove(0, offset));
+    return PARENTH_ONE.arg(compiled.remove(0, offset));
 }
 
 QString Grammar::whereColumn(const WhereConditionItem &where) const
@@ -436,7 +436,7 @@ Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
     compiledParameters.reserve(values.size());
 
     for (const auto &valuesMap : values)
-        compiledParameters << QStringLiteral("(%1)").arg(parametrize(valuesMap));
+        compiledParameters << PARENTH_ONE.arg(parametrize(valuesMap));
 
     return compiledParameters;
 }

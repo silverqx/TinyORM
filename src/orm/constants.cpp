@@ -24,18 +24,19 @@ namespace Orm::Constants
     const QChar GT_C       = QChar('>');
 
     // Common strings
-    const QString ASTERISK   = QStringLiteral("*");
-    const QString COMMA      = QStringLiteral(", ");
-    const QString INNER      = QStringLiteral("inner");
-    const QString LEFT       = QStringLiteral("left");
-    const QString RIGHT      = QStringLiteral("right");
-    const QString CROSS      = QStringLiteral("cross");
-    const QString ASC        = QStringLiteral("asc");
-    const QString DESC       = QStringLiteral("desc");
-    const QString ID         = QStringLiteral("id");
-    const QString NAME       = QStringLiteral("name");
-    const QString CREATED_AT = QStringLiteral("created_at");
-    const QString UPDATED_AT = QStringLiteral("updated_at");
+    const QString ASTERISK    = QStringLiteral("*");
+    const QString COMMA       = QStringLiteral(", ");
+    const QString INNER       = QStringLiteral("inner");
+    const QString LEFT        = QStringLiteral("left");
+    const QString RIGHT       = QStringLiteral("right");
+    const QString CROSS       = QStringLiteral("cross");
+    const QString ASC         = QStringLiteral("asc");
+    const QString DESC        = QStringLiteral("desc");
+    const QString ID          = QStringLiteral("id");
+    const QString NAME        = QStringLiteral("name");
+    const QString CREATED_AT  = QStringLiteral("created_at");
+    const QString UPDATED_AT  = QStringLiteral("updated_at");
+    const QString PARENTH_ONE = QStringLiteral("(%1)");
 
     // Comparison/logical/search operators
     const QString EQ       = QStringLiteral("=");

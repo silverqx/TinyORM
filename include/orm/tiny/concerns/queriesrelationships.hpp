@@ -502,9 +502,7 @@ namespace Private
     {
         this->query().getQuery().addBinding(query->getBindings(), BindingType::WHERE);
 
-        // CUR make "(%1)" global constant silverqx
-        return this->query().where(Expression(QStringLiteral("(%1)")
-                                              .arg(query->toSql())),
+        return this->query().where(Expression(PARENTH_ONE.arg(query->toSql())),
                                    comparison, Expression(count), condition);
     }
 
