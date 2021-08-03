@@ -24,6 +24,16 @@ using TestUtils::Databases;
    But I will not delete already written tests, more tests is better always 😁 right?
 */
 
+/*
+   Only the DatabaseConnection instance will be created during connection initialization
+   in these query/tiny builder unit tests and a physical connection to the database
+   will not be made because the DatabaseConnection class makes a connection lazily,
+   until it is really needed.
+   And because of these lazy connections database credentials for these tests are not
+   needed.
+   I wrote it like a hungarian, but whatever, it serves a purpose. 😁
+*/
+
 class tst_MySql_QueryBuilder : public QObject
 {
     Q_OBJECT

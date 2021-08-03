@@ -15,7 +15,6 @@ using Orm::Tiny::TinyBuilder;
 
 using TestUtils::Databases;
 
-// CUR add note about connection physically created in query tests silverqx
 class tst_MySql_TinyBuilder : public QObject
 {
     Q_OBJECT
