@@ -252,7 +252,7 @@ All the static methods defined on the `Orm::Tiny::Model<Derived, AllRelations...
 
 #### Refreshing Models
 
-If you already have an instance of an TinyOrm model that was retrieved from the database, you can "refresh" the model using the `fresh` and `refresh` methods. The `fresh` method will re-retrieve the model from the database. The existing model instance will not be affected:
+If you already have an instance of the TinyOrm model that was retrieved from the database, you can "refresh" the model using the `fresh` and `refresh` methods. The `fresh` method will re-retrieve the model from the database. The existing model instance will not be affected:
 
     auto flight = Flight::whereEq("number", "FR 900")->first();
 
@@ -393,7 +393,7 @@ Alternatively, you may use the `create` method to "save" a new model using a sin
         {"name", "London to Paris"},
     });
 
-However, before using the `create` method, you will need to specify either a `u_fillable` or `u_guarded` static data member on your model class. These static data members are required because all Eloquent models are protected against mass assignment vulnerabilities by default. To learn more about mass assignment, please consult the [mass assignment documentation](#mass-assignment).
+However, before using the `create` method, you will need to specify either a `u_fillable` or `u_guarded` static data member on your model class. These static data members are required because all TinyORM models are protected against mass assignment vulnerabilities by default. To learn more about mass assignment, please consult the [mass assignment documentation](#mass-assignment).
 
 ### Updates
 
@@ -546,7 +546,7 @@ The `destroy` method loads models from the database and calls the `remove` metho
 
 #### Deleting Models Using Queries
 
-Of course, you may build an Eloquent query to delete all models matching your query's criteria. In this example, we will delete all flights that are marked as inactive:
+Of course, you may build the query to delete all models matching your query's criteria. In this example, we will delete all flights that are marked as inactive:
 
     auto deletedRows = Flight::whereEq("active", 0)->remove();
 
