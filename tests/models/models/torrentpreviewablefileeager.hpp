@@ -16,7 +16,7 @@ class TorrentPreviewableFileEager final :
     using Model::Model;
 
 public:
-    /*! Get the file property associated with the previewable file. */
+    /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFileEager,
                            TorrentPreviewableFilePropertyEager>>
     fileProperty()

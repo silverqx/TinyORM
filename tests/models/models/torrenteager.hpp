@@ -22,14 +22,14 @@ class TorrentEager final :
     using Model::Model;
 
 public:
-    /*! Get the previewable files associated with the torrent. */
+    /*! Get previewable files associated with the torrent. */
     std::unique_ptr<HasMany<TorrentEager, TorrentPreviewableFileEager>>
     torrentFiles()
     {
         return hasMany<TorrentPreviewableFileEager>("torrent_id");
     }
 
-    /*! Get the torrent peer associated with the torrent. */
+    /*! Get a torrent peer associated with the torrent. */
     std::unique_ptr<HasOne<TorrentEager, TorrentPeerEager_NoRelations>>
     torrentPeer()
     {

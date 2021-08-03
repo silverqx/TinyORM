@@ -16,7 +16,7 @@ class TorrentEager_Failed final :
     using Model::Model;
 
 public:
-    /*! Get the previewable files associated with the torrent. */
+    /*! Get previewable files associated with the torrent. */
     std::unique_ptr<HasMany<TorrentEager_Failed, TorrentPreviewableFileEager>>
     torrentFiles()
     {

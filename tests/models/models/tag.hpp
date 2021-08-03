@@ -45,7 +45,7 @@ public:
         return belongsToMany<Torrent, Pivot>();
     }
 
-    /*! Get the tag property associated with the tag. */
+    /*! Get a tag property associated with the tag. */
     std::unique_ptr<HasOne<Tag, TagProperty>>
     tagProperty()
     {

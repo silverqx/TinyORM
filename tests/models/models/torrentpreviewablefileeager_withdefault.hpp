@@ -21,7 +21,7 @@ class TorrentPreviewableFileEager_WithDefault final :
     using Model::Model;
 
 public:
-    /*! Get the torrent that owns the previewable file. */
+    /*! Get a torrent that owns the previewable file. */
     std::unique_ptr<BelongsTo<TorrentPreviewableFileEager_WithDefault,
                               TorrentEager_WithDefault>>
     torrent()
@@ -29,7 +29,7 @@ public:
         return belongsTo<TorrentEager_WithDefault>("", "", __func__);
     }
 
-    /*! Get the torrent that owns the previewable file. */
+    /*! Get a torrent that owns the previewable file. */
     std::unique_ptr<BelongsTo<TorrentPreviewableFileEager_WithDefault,
                               TorrentEager_WithDefault>>
     torrent_WithBoolDefault()
@@ -42,7 +42,7 @@ public:
         return relation;
     }
 
-    /*! Get the torrent that owns the previewable file. */
+    /*! Get a torrent that owns the previewable file. */
     std::unique_ptr<BelongsTo<TorrentPreviewableFileEager_WithDefault,
                               TorrentEager_WithDefault>>
     torrent_WithVectorDefaults()
@@ -55,7 +55,7 @@ public:
         return relation;
     }
 
-    /*! Get the file property associated with the previewable file. */
+    /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFileEager_WithDefault,
                            TorrentPreviewableFilePropertyEager>>
     fileProperty()
@@ -63,7 +63,7 @@ public:
         return hasOne<TorrentPreviewableFilePropertyEager>("previewable_file_id");
     }
 
-    /*! Get the file property associated with the previewable file. */
+    /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFileEager_WithDefault,
                            TorrentPreviewableFilePropertyEager>>
     fileProperty_WithBoolDefault()
@@ -76,7 +76,7 @@ public:
         return relation;
     }
 
-    /*! Get the file property associated with the previewable file. */
+    /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFileEager_WithDefault,
                            TorrentPreviewableFilePropertyEager>>
     fileProperty_WithVectorDefaults()

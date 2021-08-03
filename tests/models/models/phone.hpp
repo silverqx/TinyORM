@@ -15,7 +15,7 @@ class Phone final : public Model<Phone, User>
     using Model::Model;
 
 public:
-    /*! Get the user that owns the phone. */
+    /*! Get a user that owns the phone. */
     std::unique_ptr<BelongsTo<Phone, User>>
     user()
     {

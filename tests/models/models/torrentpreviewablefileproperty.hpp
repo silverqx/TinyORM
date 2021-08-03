@@ -20,14 +20,14 @@ class TorrentPreviewableFileProperty final :
     using Model::Model;
 
 public:
-    /*! Get the previewable file that owns the file property. */
+    /*! Get a previewable file that owns the file property. */
     std::unique_ptr<BelongsTo<TorrentPreviewableFileProperty, TorrentPreviewableFile>>
     torrentFile()
     {
         return belongsTo<TorrentPreviewableFile>("previewable_file_id", {}, __func__);
     }
 
-    /*! Get the property property associated with the file property. */
+    /*! Get a property property associated with the file property. */
     std::unique_ptr<HasMany<TorrentPreviewableFileProperty, FilePropertyProperty>>
     filePropertyProperty()
     {

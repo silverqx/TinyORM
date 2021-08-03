@@ -20,14 +20,14 @@ class TorrentPreviewableFile final :
     using Model::Model;
 
 public:
-    /*! Get the torrent that owns the previewable file. */
+    /*! Get a torrent that owns the previewable file. */
     std::unique_ptr<BelongsTo<TorrentPreviewableFile, Torrent>>
     torrent()
     {
         return belongsTo<Torrent>();
     }
 
-    /*! Get the torrent that owns the previewable file. */
+    /*! Get a torrent that owns the previewable file. */
     std::unique_ptr<BelongsTo<TorrentPreviewableFile, Torrent>>
     torrent_WithBoolDefault()
     {
@@ -39,7 +39,7 @@ public:
         return relation;
     }
 
-    /*! Get the torrent that owns the previewable file. */
+    /*! Get a torrent that owns the previewable file. */
     std::unique_ptr<BelongsTo<TorrentPreviewableFile, Torrent>>
     torrent_WithVectorDefaults()
     {
@@ -51,14 +51,14 @@ public:
         return relation;
     }
 
-    /*! Get the file property associated with the previewable file. */
+    /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
     fileProperty()
     {
         return hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
     }
 
-    /*! Get the file property associated with the previewable file. */
+    /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
     fileProperty_WithBoolDefault()
     {
@@ -69,7 +69,7 @@ public:
         return relation;
     }
 
-    /*! Get the file property associated with the previewable file. */
+    /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
     fileProperty_WithVectorDefaults()
     {

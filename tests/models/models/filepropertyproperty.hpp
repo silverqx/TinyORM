@@ -17,7 +17,7 @@ class FilePropertyProperty final :
     using Model::Model;
 
 public:
-    /*! Get the previewable file that owns the file property. */
+    /*! Get a previewable file that owns the file property. */
     std::unique_ptr<BelongsTo<FilePropertyProperty, TorrentPreviewableFileProperty>>
     fileProperty()
     {

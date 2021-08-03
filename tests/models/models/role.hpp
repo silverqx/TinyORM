@@ -20,7 +20,7 @@ class Role final : public Model<Role, User, RoleUser>
     using Model::Model;
 
 public:
-    /*! The users that belong to the role. */
+    /*! Get users that belong to the role. */
     std::unique_ptr<BelongsToMany<Role, User>>
     users()
     {

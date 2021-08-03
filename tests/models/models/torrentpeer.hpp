@@ -16,7 +16,7 @@ class TorrentPeer final : public Model<TorrentPeer, Torrent>
     using Model::Model;
 
 public:
-    /*! Get the torrent that owns the torrent peer. */
+    /*! Get a torrent that owns the torrent peer. */
     std::unique_ptr<BelongsTo<TorrentPeer, Torrent>>
     torrent()
     {
