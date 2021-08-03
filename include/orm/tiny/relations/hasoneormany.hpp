@@ -367,7 +367,8 @@ namespace Orm::Tiny::Relations
     inline const QString &
     HasOneOrMany<Model, Related>::getQualifiedForeignKeyName() const
     {
-        // CUR check if it is really qualified silverqx
+        /* Foreign key is already qualified, it is done in Model::hasMany/hasOne() and
+           will be qulified even if a user pass unqualified foreign column name. */
         return m_foreignKey;
     }
 
