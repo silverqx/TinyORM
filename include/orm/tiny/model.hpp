@@ -9,7 +9,6 @@
 
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
-#include "orm/invalidargumenterror.hpp"
 #include "orm/invalidformaterror.hpp"
 #include "orm/tiny/concerns/guardsattributes.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
@@ -31,10 +30,6 @@ namespace Orm
 {
 
     class DatabaseConnection;
-namespace Query
-{
-    class Builder;
-}
 
 namespace Tiny
 {
@@ -77,14 +72,17 @@ namespace Relations {
     // FEATURE CI/CD silverqx
     // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
     // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
-    // CUR connection SSL support silverqx
+    // CUR1 connection SSL support silverqx
     // BUG Qt sql drivers do not work with mysql json columns silverqx
-    // CUR add cmake build silverqx
-    // CUR add Relations::Concerns::ComparesRelatedModels silverqx
-    // CUR build systems, add cmake build silverqx
-    // CUR build systems, add autotools build silverqx
-    // CUR build systems, add docs on how to make a production build of the TinyORM library silverqx
-    // CUR build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
+    // CUR1 add Relations::Concerns::ComparesRelatedModels silverqx
+    // FEATURE build systems, add cmake build silverqx
+    // FEATURE build systems, add autotools build silverqx
+    // FEATURE build systems, add docs on how to make a production build of the TinyORM library silverqx
+    // FEATURE build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
+    // FEATURE build systems, libuv example how it could look like https://github.com/libuv/libuv silverqx
+    // CUR extract proxies to base classes, multi inhertance delirium 😎, I don't remember what this todo task means 😕, ohhh I already remembered, I wanted to move for every class (TinyBuilder, Model and Relation) move proxied to base class, so they will not visually distract class's api, I still think it is a good idea silverqx
+    // CUR torrent belongs to a user, update db seed, needed to update 7 tests silverqx
+    // CUR docs, move Querying Relations - Relationship Methods somewhere else?, it looks like on the first look that it does not belongs to Querying Relations section silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,
@@ -95,11 +93,24 @@ namespace Relations {
         friend Concerns::GuardsAttributes<Derived, AllRelations...>;
         // Used by BaseRelationStore::visit() and also by visted methods
         friend Concerns::HasRelationStore<Derived, AllRelations...>;
+        // Used by QueriesRelationships::has()
+        friend Concerns::QueriesRelationships<Derived>;
         // FUTURE try to solve problem with forward declarations for friend methods, to allow only relevant methods from TinyBuilder silverqx
         // Used by TinyBuilder::eagerLoadRelations()
         friend TinyBuilder<Derived>;
 
+        /*! JoinClause alias. */
         using JoinClause = Orm::Query::JoinClause;
+        /*! Apply all the Model's template parameters to the passed T template
+            argument. */
+        template<template<typename ...> typename T>
+        using ModelTypeApply = T<Derived, AllRelations...>;
+        /*! Alias for the QueriesRelationships callback type. */
+        template<typename Related>
+        using CallbackType = Concerns::QueriesRelationshipsCallback<Related>;
+        /*! Alias for the Relations::Relation. */
+        template<typename Related>
+        using RelationAlias = Orm::Tiny::Relations::Relation<Derived, Related>;
 
     public:
         /*! The "type" of the primary key ID. */
@@ -658,6 +669,103 @@ namespace Relations {
         /*! Lock the selected rows in the table. */
         static std::unique_ptr<TinyBuilder<Derived>>
         lock(QString &&value);
+
+        /* Querying Relationship Existence/Absence */
+        /*! Add a relationship count / exists condition to the query. */
+        template<typename Related = void>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        has(const QString &relation, const QString &comparison = GE, qint64 count = 1,
+            const QString &condition = AND,
+            const std::function<void(CallbackType<Related> &)> &callback = nullptr);
+
+        /*! Add a relationship count / exists condition to the query with an "or". */
+        template<typename Related = void>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orHas(const QString &relation, const QString &comparison = GE, qint64 count = 1);
+        /*! Add a relationship count / exists condition to the query. */
+        template<typename Related = void>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        doesntHave(const QString &relation, const QString &condition = AND,
+                   const std::function<void(
+                       CallbackType<Related> &)> &callback = nullptr);
+        /*! Add a relationship count / exists condition to the query with an "or". */
+        template<typename Related = void>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orDoesntHave(const QString &relation);
+
+        /*! Add a relationship count / exists condition to the query. */
+        template<typename Related>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        has(std::unique_ptr<RelationAlias<Related>> &&relation,
+            const QString &comparison = GE, qint64 count = 1,
+            const QString &condition = AND,
+            const std::function<void(QueryBuilder &)> &callback = nullptr);
+        /*! Add a relationship count / exists condition to the query, prefer this over
+            above overload, void type to avoid ambiguity. */
+        template<typename Related, typename = void>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        has(std::unique_ptr<RelationAlias<Related>> &&relation,
+            const QString &comparison = GE, qint64 count = 1,
+            const QString &condition = AND,
+            const std::function<void(TinyBuilder<Related> &)> &callback = nullptr);
+
+        /*! Add a relationship count / exists condition to the query. */
+#ifdef __clang__
+        template<typename Related, typename Method,
+                 std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true>
+#else
+        template<typename Related, typename Method>
+        requires std::is_member_function_pointer_v<Method>
+#endif
+        static std::unique_ptr<TinyBuilder<Derived>>
+        has(const Method relation, const QString &comparison = GE, qint64 count = 1,
+            const QString &condition = AND,
+            const std::function<void(TinyBuilder<Related> &)> &callback = nullptr);
+
+        /*! Add a relationship count / exists condition to the query with where
+            clauses. */
+        template<typename Related = void>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereHas(const QString &relation,
+                 const std::function<void(CallbackType<Related> &)> &callback = nullptr,
+                 const QString &comparison = GE, qint64 count = 1);
+
+        /*! Add a relationship count / exists condition to the query with where
+            clauses and an "or". */
+        template<typename Related = void>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereHas(const QString &relation,
+                   const std::function<void(
+                       CallbackType<Related> &)> &callback = nullptr,
+                   const QString &comparison = GE, qint64 count = 1);
+        /*! Add a relationship count / exists condition to the query with where
+            clauses. */
+        template<typename Related = void>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereDoesntHave(const QString &relation,
+                        const std::function<void(
+                            CallbackType<Related> &)> &callback = nullptr);
+        /*! Add a relationship count / exists condition to the query with where
+            clauses and an "or". */
+        template<typename Related = void>
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereDoesntHave(const QString &relation,
+                          const std::function<void(
+                              CallbackType<Related> &)> &callback = nullptr);
+
+        /*! Add a relationship count / exists condition to the query with where
+            clauses. */
+#ifdef __clang__
+        template<typename Related, typename Method,
+                 std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true>
+#else
+        template<typename Related, typename Method>
+        requires std::is_member_function_pointer_v<Method>
+#endif
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereHas(const Method relation,
+                 const std::function<void(TinyBuilder<Related> &)> &callback = nullptr,
+                 const QString &comparison = GE, qint64 count = 1);
 
         /* Operations on a model instance */
         /*! Save the model to the database. */
@@ -1233,7 +1341,7 @@ namespace Relations {
 #endif
         /*! The relationships that should be touched on save. */
         QStringList u_touches;
-        // CUR use sets instead of QStringList where appropriate silverqx
+        // CUR1 use sets instead of QStringList where appropriate silverqx
         /*! Currently loaded Pivot relation names. */
         std::unordered_set<QString> m_pivots;
 
@@ -1246,6 +1354,7 @@ namespace Relations {
         bool u_timestamps = true;
 
     private:
+        /*! Alias for the enum struct RelationNotFoundError::From. */
         using RelationFrom = RelationNotFoundError::From;
 
         /* Eager load from TinyBuilder */
@@ -1322,12 +1431,24 @@ namespace Relations {
         template<typename Related, typename Tag> requires std::same_as<Tag, One>
         void pushVisited();
 
+        /* Touch owners store related */
         /*! Create 'touch owners relation store' and touch all related models. */
         void touchOwnersWithVisitor(const QString &relation);
         /*! On the base of alternative held by m_relations decide, which
             touchOwnersVisited() to execute. */
         template<typename Related, typename Relation>
         void touchOwnersVisited(Relation &&relation);
+
+        /* QueriesRelationships store related */
+        /*! Create 'QueriesRelationships relation store' to obtain relation instance. */
+        template<typename Related = void>
+        void queriesRelationshipsWithVisitor(
+                const QString &relation, Concerns::QueriesRelationships<Derived> &origin,
+                const QString &comparison, qint64 count, const QString &condition,
+                const std::function<void(
+                    Concerns::QueriesRelationshipsCallback<Related> &)> &callback,
+                const std::optional<std::reference_wrapper<
+                        QStringList>> relations = std::nullopt);
 
         /* Others */
         /*! Obtain all loaded relation names except pivot relations. */
@@ -2917,6 +3038,196 @@ namespace Relations {
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::has(
+            const QString &relation, const QString &comparison, const qint64 count,
+            const QString &condition,
+            const std::function<void(CallbackType<Related> &)> &callback)
+    {
+        auto builder = query();
+
+        builder->template has<Related>(relation, comparison, count, condition, callback);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orHas(
+            const QString &relation, const QString &comparison, const qint64 count)
+    {
+        auto builder = query();
+
+        builder->template orHas<Related>(relation, comparison, count);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::doesntHave(
+            const QString &relation, const QString &condition,
+            const std::function<void(CallbackType<Related> &)> &callback)
+    {
+        auto builder = query();
+
+        builder->template doesntHave<Related>(relation, condition, callback);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orDoesntHave(const QString &relation)
+    {
+        auto builder = query();
+
+        builder->template orDoesntHave<Related>(relation);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::has(
+            std::unique_ptr<RelationAlias<Related>> &&relation,
+            const QString &comparison, const qint64 count, const QString &condition,
+            const std::function<void(QueryBuilder &)> &callback)
+    {
+        /* I will not unify this two has(unique_ptr) overloads because it would not be
+           possible to call them like it is possible now, I mean exactly this api
+           for TinyBuilder overload:
+           has<Xyz, void>(..., [](auto &q)) */
+        auto builder = query();
+
+        builder->template has<Related>(std::move(relation), comparison, count,
+                                       condition, callback);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related, typename>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::has(
+            std::unique_ptr<RelationAlias<Related>> &&relation,
+            const QString &comparison, const qint64 count, const QString &condition,
+            const std::function<void(TinyBuilder<Related> &)> &callback)
+    {
+        auto builder = query();
+
+        builder->template has<Related, void>(std::move(relation), comparison, count,
+                                             condition, callback);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+#ifdef __clang__
+    template<typename Related, typename Method,
+             std::enable_if_t<std::is_member_function_pointer_v<Method>, bool>>
+#else
+    template<typename Related, typename Method>
+    requires std::is_member_function_pointer_v<Method>
+#endif
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::has(
+            const Method relation, const QString &comparison, const qint64 count,
+            const QString &condition,
+            const std::function<void(TinyBuilder<Related> &)> &callback)
+    {
+        auto builder = query();
+
+        builder->template has<Related>(relation, comparison, count, condition, callback);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereHas(
+            const QString &relation,
+            const std::function<void(CallbackType<Related> &)> &callback,
+            const QString &comparison, const qint64 count)
+    {
+        auto builder = query();
+
+        builder->template whereHas<Related>(relation, callback, comparison, count);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orWhereHas(
+            const QString &relation,
+            const std::function<void(CallbackType<Related> &)> &callback,
+            const QString &comparison, const qint64 count)
+    {
+        auto builder = query();
+
+        builder->template orWhereHas<Related>(relation, callback, comparison, count);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereDoesntHave(
+            const QString &relation,
+            const std::function<void(CallbackType<Related> &)> &callback)
+    {
+        auto builder = query();
+
+        builder->template whereDoesntHave<Related>(relation, callback);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::orWhereDoesntHave(
+            const QString &relation,
+            const std::function<void(CallbackType<Related> &)> &callback)
+    {
+        auto builder = query();
+
+        builder->template orWhereDoesntHave<Related>(relation, callback);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+#ifdef __clang__
+    template<typename Related, typename Method,
+             std::enable_if_t<std::is_member_function_pointer_v<Method>, bool>>
+#else
+    template<typename Related, typename Method>
+    requires std::is_member_function_pointer_v<Method>
+#endif
+    std::unique_ptr<TinyBuilder<Derived>>
+    Model<Derived, AllRelations...>::whereHas(
+            const Method relation,
+            const std::function<void(TinyBuilder<Related> &)> &callback,
+            const QString &comparison, const qint64 count)
+    {
+        auto builder = query();
+
+        builder->template whereHas<Related>(relation, callback, comparison, count);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::save(const SaveOptions options)
     {
 //        mergeAttributesFromClassCasts();
@@ -3097,6 +3408,27 @@ namespace Relations {
         } else
             throw RuntimeError("Bad relation type passed to the "
                                "Model::touchOwnersVisited().");
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    void Model<Derived, AllRelations...>::queriesRelationshipsWithVisitor(
+            const QString &relation, Concerns::QueriesRelationships<Derived> &origin,
+            const QString &comparison, const qint64 count, const QString &condition,
+            const std::function<void(
+                Concerns::QueriesRelationshipsCallback<Related> &)> &callback,
+            const std::optional<std::reference_wrapper<QStringList>> relations)
+    {
+        // Throw excpetion if a relation is not defined
+        validateUserRelation(relation);
+
+        // Save model/s to the store to avoid passing variables to the visitor
+        this->template createQueriesRelationshipsStore<Related>(
+                    origin, comparison, count, condition, callback, relations)
+                .visit(relation);
+
+        // Releases the ownership and destroy the top relation store on the stack
+        this->resetRelationStore();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -3441,6 +3773,7 @@ namespace Relations {
     Model<Derived, AllRelations...>::newInstance(
             const QVector<AttributeItem> &attributes, const bool exists)
     {
+        // CUR replace all Eloquent by TinyORM, also in docs silverqx
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
            hydration of new objects via the Eloquent query builder instances. */

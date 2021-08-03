@@ -433,8 +433,19 @@ namespace Query
         /*! Get the current query value bindings as flattened QVector. */
         QVector<QVariant> getBindings() const;
         /*! Get the raw map of bindings. */
-        inline const BindingsMap &getRawBindings() const
-        { return m_bindings; }
+        const BindingsMap &getRawBindings() const;
+        /*! Add a binding to the query. */
+        Builder &addBinding(const QVariant &binding,
+                            BindingType type = BindingType::WHERE);
+        /*! Add bindings to the query. */
+        Builder &addBinding(const QVector<QVariant> &bindings,
+                            BindingType type = BindingType::WHERE);
+        /*! Add bindings to the query. */
+        Builder &addBinding(QVector<QVariant> &&bindings,
+                            BindingType type = BindingType::WHERE);
+        /*! Set the bindings on the query builder. */
+        Builder &setBindings(QVector<QVariant> &&bindings,
+                             BindingType type = BindingType::WHERE);
 
         /*! Get an aggregate function and column to be run. */
         const std::optional<AggregateItem> &getAggregate() const;
@@ -495,6 +506,16 @@ namespace Query
         /*! Add another query builder as a nested where to the query builder. */
         Builder &addNestedWhereQuery(const QSharedPointer<Builder> &query,
                                      const QString &condition);
+        /*! Add an "exists" clause to the query. */
+        Builder &addWhereExistsQuery(const QSharedPointer<Builder> &query,
+                                     const QString &condition = AND, bool nope = false);
+
+        /*! Merge an array of where clauses and bindings. */
+        Builder &mergeWheres(const QVector<WhereConditionItem> &wheres,
+                             const QVector<QVariant> &bindings);
+        /*! Merge an array of where clauses and bindings. */
+        Builder &mergeWheres(QVector<WhereConditionItem> &&wheres,
+                             QVector<QVariant> &&bindings);
 
         /*! Builder property types. */
         enum struct PropertyType
@@ -512,15 +533,6 @@ namespace Query
         /*! Determine if the given operator is supported. */
         bool invalidOperator(const QString &comparison) const;
 
-        /*! Add a binding to the query. */
-        Builder &addBinding(const QVariant &binding,
-                            BindingType type = BindingType::WHERE);
-        /*! Add bindings to the query. */
-        Builder &addBinding(const QVector<QVariant> &bindings,
-                            BindingType type = BindingType::WHERE);
-        /*! Add bindings to the query. */
-        Builder &addBinding(QVector<QVariant> &&bindings,
-                            BindingType type = BindingType::WHERE);
         /*! Remove all of the expressions from a list of bindings. */
         QVector<QVariant> cleanBindings(const QVector<QVariant> &bindings) const;
 
@@ -1051,30 +1063,6 @@ namespace Query
         return orderBy(std::forward<T>(query), DESC);
     }
 
-    inline const std::optional<AggregateItem> &Builder::getAggregate() const
-    {
-        return m_aggregate;
-    }
-
-    inline const std::variant<bool, QStringList> &
-    Builder::getDistinct() const
-    {
-        return m_distinct;
-    }
-
-    template<typename T> requires std::same_as<T, bool>
-    inline bool Builder::getDistinct() const
-    {
-        return std::get<bool>(m_distinct);
-    }
-
-    template<typename T> requires std::same_as<T, QStringList>
-    inline const QStringList &
-    Builder::getDistinct() const
-    {
-        return std::get<QStringList>(m_distinct);
-    }
-
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
     Builder::increment(const QString &column, const T amount,
@@ -1101,6 +1089,35 @@ namespace Query
         std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
 
         return update(columns);
+    }
+
+    inline const BindingsMap &Builder::getRawBindings() const
+    {
+        return m_bindings;
+    }
+
+    inline const std::optional<AggregateItem> &Builder::getAggregate() const
+    {
+        return m_aggregate;
+    }
+
+    inline const std::variant<bool, QStringList> &
+    Builder::getDistinct() const
+    {
+        return m_distinct;
+    }
+
+    template<typename T> requires std::same_as<T, bool>
+    inline bool Builder::getDistinct() const
+    {
+        return std::get<bool>(m_distinct);
+    }
+
+    template<typename T> requires std::same_as<T, QStringList>
+    inline const QStringList &
+    Builder::getDistinct() const
+    {
+        return std::get<QStringList>(m_distinct);
     }
 
     inline QSharedPointer<Builder> Builder::forSubQuery() const

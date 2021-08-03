@@ -8,6 +8,7 @@
 
 using namespace Orm::Constants;
 
+// CUR fix all this aliases, using Orm::Query::Expression dont need alias!!, silverqx
 using Expression = Orm::Query::Expression;
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
@@ -133,6 +134,8 @@ private slots:
     void remove_WithExpression() const;
 
 private:
+    // CUR move all this inlines out of class silverqx
+    // CUR remove connection param. all conn. are mysql, or postgre, sqlite in others auto tests silverqx
     /*! Create QueryBuilder instance for the given connection. */
     inline QSharedPointer<QueryBuilder>
     createQuery(const QString &connection) const

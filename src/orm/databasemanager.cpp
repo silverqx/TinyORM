@@ -660,7 +660,7 @@ DatabaseManager::configuration(QString name)
         throw std::invalid_argument(
                 "Database connection '" + name.toStdString() + "' not configured.");
 
-    return m_config.connections[name];
+    return m_config.connections[name]; // clazy:exclude=detaching-member
 
     // TODO add ConfigurationUrlParser silverqx
 //    return (new ConfigurationUrlParser)

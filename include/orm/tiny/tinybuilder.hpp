@@ -9,10 +9,9 @@
 #include <range/v3/view/remove_if.hpp>
 
 #include "orm/databaseconnection.hpp"
-#include "orm/query/querybuilder.hpp"
+#include "orm/tiny/concerns/queriesrelationships.hpp"
 #include "orm/tiny/modelnotfounderror.hpp"
 #include "orm/utils/attribute.hpp"
-#include "orm/utils/type.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -21,14 +20,9 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny
 {
 
-namespace Relations
-{
-    template<class Model, class Related>
-    class Relation;
-}
-
     template<typename Model>
-    class Builder
+    class Builder :
+            public Orm::Tiny::Concerns::QueriesRelationships<Model>
     {
         using JoinClause = Orm::Query::JoinClause;
 
@@ -469,6 +463,18 @@ namespace Relations
         /*! Lock the selected rows in the table. */
         Builder &lock(QString &&value);
 
+        /* Others proxy methods, not added to the Model and Relation */
+        /*! Add an "exists" clause to the query. */
+        Builder &addWhereExistsQuery(const QSharedPointer<QueryBuilder> &query,
+                                     const QString &condition = AND, bool nope = false);
+
+        /*! Merge an array of where clauses and bindings. */
+        Builder &mergeWheres(const QVector<WhereConditionItem> &wheres,
+                             const QVector<QVariant> &bindings);
+        /*! Merge an array of where clauses and bindings. */
+        Builder &mergeWheres(QVector<WhereConditionItem> &&wheres,
+                             QVector<QVariant> &&bindings);
+
         /* TinyBuilder methods */
         /*! Create a new instance of the model being queried. */
         Model newModelInstance(const QVector<AttributeItem> &attributes = {});
@@ -492,6 +498,7 @@ namespace Relations
         inline QueryBuilder &getQuery() const
         { return *m_query; }
         // TODO now fix revisit silverqx
+        // CUR this cant be const &, omg, OR can be? I can make copy immediatelly, but anyway it should be non-const non-ref silverqx
         /*! Get the underlying query builder instance as a QSharedPointer. */
         inline const QSharedPointer<QueryBuilder> &
         getQuerySharedPointer() const
@@ -509,6 +516,9 @@ namespace Relations
 
         /*! Explains the query. */
 //        QSqlQuery explain() const;
+
+        /*! Qualify the given column name by the model's table. */
+        QString qualifyColumn(const QString &column) const;
 
     protected:
         /*! Expression alias. */
@@ -534,6 +544,11 @@ namespace Relations
 
         /*! Get the name of the "created at" column. */
         Column getCreatedAtColumnForLatestOldest(Column column) const;
+
+        /*! Apply the given scope on the current builder instance. */
+//        template<typename ...Args>
+//        Builder &callScope(const std::function<void(Builder &, Args ...)> &scope,
+//                           Args &&...parameters);
 
         /*! The base query builder instance. */
         const QSharedPointer<QueryBuilder> m_query;
@@ -1677,6 +1692,7 @@ namespace Relations
         return *this;
     }
 
+    // CUR reorder this method, also check other methods when I will be up here silverqx
     template<typename Model>
     Column
     Builder<Model>::getCreatedAtColumnForLatestOldest(Column column) const
@@ -1794,6 +1810,33 @@ namespace Relations
     Builder<Model> &Builder<Model>::lock(QString &&value)
     {
         toBase().lock(std::move(value));
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::addWhereExistsQuery(const QSharedPointer<QueryBuilder> &query,
+                                        const QString &condition, const bool nope)
+    {
+        toBase().addWhereExistsQuery(query, condition, nope);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::mergeWheres(const QVector<WhereConditionItem> &wheres,
+                                const QVector<QVariant> &bindings)
+    {
+        toBase().mergeWheres(wheres, bindings);
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::mergeWheres(QVector<WhereConditionItem> &&wheres,
+                                QVector<QVariant> &&bindings)
+    {
+        toBase().mergeWheres(std::move(wheres), std::move(bindings));
         return *this;
     }
 
@@ -1923,6 +1966,12 @@ namespace Relations
         }
 
         return models;
+    }
+
+    template<typename Model>
+    inline QString Builder<Model>::qualifyColumn(const QString &column) const
+    {
+        return m_model.qualifyColumn(column);
     }
 
     // BUG Qt sql driver does not support to call EXPLAIN as a prepared statement silverqx
@@ -2099,6 +2148,19 @@ namespace Relations
 
         return values;
     }
+
+    // FEATURE scopes, anyway std::apply() do the same, will have to investigate it silverqx
+//    template<typename Model>
+//    template<typename ...Args>
+//    Builder<Model> &
+//    Builder<Model>::callScope(
+//            const std::function<void (Builder &, Args ...)> &scope,
+//            Args &&...parameters)
+//    {
+//        std::invoke(scope, *this, std::forward<Args>(parameters)...);
+
+//        return *this;
+//    }
 
 } // namespace Orm::Tiny
 #ifdef TINYORM_COMMON_NAMESPACE

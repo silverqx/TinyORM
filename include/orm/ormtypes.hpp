@@ -72,6 +72,8 @@ namespace Query
         NULL_,
         NOT_NULL,
         RAW,
+        EXISTS,
+        NOT_EXISTS,
     };
 
     struct WhereConditionItem

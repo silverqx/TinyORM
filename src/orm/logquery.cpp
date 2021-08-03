@@ -18,7 +18,7 @@ QString parseExecutedQuery(const QSqlQuery &query)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     const auto boundValues = query.boundValues();
 #else
-    const auto boundValues = query.boundValues().values();
+    const auto boundValues = query.boundValues().values(); // clazy:exclude=inefficient-qlist
 #endif
 
     for (int i = 0; i < boundValues.size(); ++i) {

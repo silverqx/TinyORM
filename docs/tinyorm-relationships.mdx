@@ -16,6 +16,8 @@ description: TinyORM relationships are defined as methods on your TinyORM model 
     - [Defining Custom Intermediate Table Models](#defining-custom-intermediate-table-models)
 - [Querying Relations](#querying-relations)
     - [Relationship Methods](#relationship-methods)
+    - [Querying Relationship Existence](#querying-relationship-existence)
+    - [Querying Relationship Absence](#querying-relationship-absence)
 - [Eager Loading](#eager-loading)
     - [Constraining Eager Loads](#constraining-eager-loads)
     - [Lazy Eager Loading](#lazy-eager-loading)
@@ -87,6 +89,78 @@ Next, you have to define the `u_relations` hash, which maps a relation name to t
 :::tip
 You may omit the `friend Model` declaration and define all the private data and function members as public.
 :::
+
+### Querying Relationship Existence
+
+When retrieving model records, you may wish to limit your results based on the existence of a relationship. For example, imagine you want to retrieve all blog posts that have at least one comment. To do so, you may pass the name of the relationship to the `has` and `orHas` methods:
+
+    #include "models/post.hpp"
+
+    // Retrieve all posts that have at least one comment...
+    auto posts = Post::has("comments")->get();
+
+You may also specify an operator and count value to further customize the query:
+
+    // Retrieve all posts that have three or more comments...
+    auto posts = Post::has("comments", ">=", 3)->get();
+
+Nested `has` statements may be constructed using "dot" notation. For example, you may retrieve all posts that have at least one comment that has at least one image:
+
+    // Retrieve posts that have at least one comment with images...
+    auto posts = Post::has<Image>("comments.images")->get();
+
+If you need even more power, you may use the `whereHas` and `orWhereHas` methods to define additional query constraints on your `has` queries, such as inspecting the content of a comment:
+
+    // Retrieve posts with at least one comment containing words like code%...
+    auto posts = Post::whereHas("comments", [](auto &query)
+    {
+        query.where("content", LIKE, "code%");
+    })->get();
+
+    // Retrieve posts with at least ten comments containing words like code%...
+    auto posts = Post::whereHas("comments", [](auto &query)
+    {
+        query.where("content", LIKE, "code%");
+    }, ">=", 10)->get();
+
+:::note
+TinyORM does not currently support querying for relationship existence across databases. The relationships must exist within the same database.
+:::
+
+#### Related template parameter
+
+All the `has` related methods are templated by the `Related` template parameter, it looks something like the following `has<Related>(..., const std::function<void(CallbackType<Related> &)> &callback = nullptr)`, you can pass a query callback to this parameter and on the base of the `Related` template argument will be decided whether `Orm::QueryBuilder` or `Orm::TinyBuilder<Related>` will be passed to a callback. As you can see this `Related` parameter exists because `Orm::TinyBuilder<Related>` needs it.
+
+The rule of thumbs are:
+
+ - if you don't pass the `Related` template parameter  or you pass `void` then `Orm::QueryBuilder` will be passed to the callback
+ - if you pass it, then `Orm::TinyBuilder<Related>` will be passed to the callback
+ - `Related` has to be of the same type as a relation name passed to the `has` related method
+ - you have to always pass the `Related` parameter in nested relations, you can not use nested relations with `Related = void`
+ - in nested relations, where you can pass more relation names using "dot" notation, `Related` has to be of the same type as the **last** relation name passed to the `has` related method like you can see in the nested example above or below
+
+### Querying Relationship Absence
+
+When retrieving model records, you may wish to limit your results based on the absence of a relationship. For example, imagine you want to retrieve all blog posts that **don't** have any comments. To do so, you may pass the name of the relationship to the `doesntHave` and `orDoesntHave` methods:
+
+    #include "models/post.hpp"
+
+    auto posts = Post::doesntHave("comments")->get();
+
+If you need even more power, you may use the `whereDoesntHave` and `orWhereDoesntHave` methods to add additional query constraints to your `doesntHave` queries, such as inspecting the content of a comment:
+
+    auto posts = Post::whereDoesntHave("comments", [](auto &query)
+    {
+        query.where("content", LIKE, "code%");
+    })->get();
+
+You may use "dot" notation to execute a query against a nested relationship. For example, the following query will retrieve all posts that have comments from authors that are not banned:
+
+    auto posts = Post::whereDoesntHave<Author>("comments.author",
+                                               [](auto &query)
+    {
+        query.where("banned", false);
+    })->get();
 
 ### One To One
 

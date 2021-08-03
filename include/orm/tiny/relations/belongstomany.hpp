@@ -81,9 +81,11 @@ namespace Orm::Tiny::Relations
         /*! Get the fully qualified "related key" for the relation. */
         QString getQualifiedRelatedPivotKeyName() const;
         /*! Get the fully qualified parent key name for the relation. */
-        QString getQualifiedParentKeyName() const;
+        QString getQualifiedParentKeyName() const override;
         /*! Get the fully qualified related key name for the relation. */
         QString getQualifiedRelatedKeyName() const;
+        /*! Get the key for comparing against the parent key in "has" query. */
+        QString getExistenceCompareKey() const override;
 
         /*! Get the intermediate table for the relationship. */
         inline const QString &getTable() const
@@ -415,6 +417,14 @@ namespace Orm::Tiny::Relations
         QVector<QVariant>
         getRelatedIds(QVector<PivotType> &&pivots) const;
 
+        /* Querying Relationship Existence/Absence */
+        /*! Add the constraints for a relationship query. */
+        std::unique_ptr<Builder<Related>>
+        getRelationExistenceQuery(
+                std::unique_ptr<Builder<Related>> &&query,
+                const Builder<Model> &parentQuery,
+                const QVector<Column> &columns = {ASTERISK}) const override;
+
         /*! The intermediate table for the relation. */
         QString m_table;
         /*! The foreign key of the parent model. */
@@ -611,33 +621,42 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QString
+    inline QString
     BelongsToMany<Model, Related, PivotType>::getQualifiedForeignPivotKeyName() const
     {
         return qualifyPivotColumn(m_foreignPivotKey);
     }
 
     template<class Model, class Related, class PivotType>
-    QString
+    inline QString
     BelongsToMany<Model, Related, PivotType>::getQualifiedRelatedPivotKeyName() const
     {
         return qualifyPivotColumn(m_relatedPivotKey);
     }
 
     template<class Model, class Related, class PivotType>
-    QString BelongsToMany<Model, Related, PivotType>::getQualifiedParentKeyName() const
+    inline QString
+    BelongsToMany<Model, Related, PivotType>::getQualifiedParentKeyName() const
     {
         return this->m_parent.qualifyColumn(m_parentKey);
     }
 
     template<class Model, class Related, class PivotType>
-    QString BelongsToMany<Model, Related, PivotType>::getQualifiedRelatedKeyName() const
+    inline QString
+    BelongsToMany<Model, Related, PivotType>::getQualifiedRelatedKeyName() const
     {
         return this->m_related->qualifyColumn(this->m_relatedKey);
     }
 
     template<class Model, class Related, class PivotType>
-    BelongsToMany<Model, Related, PivotType> &
+    inline QString
+    BelongsToMany<Model, Related, PivotType>::getExistenceCompareKey() const
+    {
+        return getQualifiedForeignPivotKeyName();
+    }
+
+    template<class Model, class Related, class PivotType>
+    inline BelongsToMany<Model, Related, PivotType> &
     BelongsToMany<Model, Related, PivotType>::as(const QString &accessor)
     {
         m_accessor = accessor;
@@ -1804,6 +1823,24 @@ namespace Orm::Tiny::Relations
             ids << std::move(pivot[m_relatedPivotKey]);
 
         return ids;
+    }
+
+    template<class Model, class Related, class PivotType>
+    std::unique_ptr<Builder<Related>>
+    BelongsToMany<Model, Related, PivotType>::getRelationExistenceQuery(
+            std::unique_ptr<Builder<Related>> &&query,
+            const Builder<Model> &parentQuery,
+            const QVector<Column> &columns) const
+    {
+        // CUR finish self query silverqx
+//        if (query->getQuery()->from == parentQuery.getQuery()->from)
+//            return this->getRelationExistenceQueryForSelfRelation(query, parentQuery,
+//                                                                  columns);
+
+        performJoin(*query);
+
+        return Relation<Model, Related>::getRelationExistenceQuery(
+                    std::move(query), parentQuery, columns);
     }
 
     template<class Model, class Related, class PivotType>

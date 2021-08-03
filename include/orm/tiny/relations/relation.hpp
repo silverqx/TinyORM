@@ -10,7 +10,7 @@
 #include <range/v3/action/unique.hpp>
 
 #include "orm/concepts.hpp"
-#include "orm/ormtypes.hpp"
+#include "orm/tiny/tinytypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -30,6 +30,12 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model;
 
+namespace Concerns
+{
+    template<typename Model>
+    class QueriesRelationships;
+}
+
 namespace Relations
 {
 
@@ -37,9 +43,19 @@ namespace Relations
     template<class Model, class Related>
     class Relation
     {
+        // Used by QueriesRelationships::getHasQueryByExistenceCheck()
+        friend Orm::Tiny::Concerns::QueriesRelationships<Model>;
+
+        /*! Model alias. */
         template<typename Derived>
         using BaseModel  = Orm::Tiny::Model<Derived>;
+        /*! Expression alias. */
+        using Expression = Orm::Query::Expression;
+        /*! JoinClause alias. */
         using JoinClause = Orm::Query::JoinClause;
+        /*! Alias for the QueriesRelationships callback type. */
+        template<typename HasRelated>
+        using CallbackType = Concerns::QueriesRelationshipsCallback<HasRelated>;
 
     protected:
         Relation(std::unique_ptr<Related> &&related, Model &parent,
@@ -80,6 +96,7 @@ namespace Relations
         { return m_query->get(columns); }
 
         /* Getters / Setters */
+        // CUR check all methods virtual, in child classes should be overriden silverqx
         /*! Get the underlying query for the relation. */
         inline Builder<Related> &getQuery() const
         { return *m_query; }
@@ -93,6 +110,9 @@ namespace Relations
         /*! Get the related model of the relation. */
         const Related &getRelated() const
         { return *m_related; }
+        /*! Get the related model of the relation. */
+        Related &getRelated()
+        { return *m_related; }
         /*! Get the name of the "created at" column. */
         const QString &createdAt() const
         { return m_parent.getCreatedAtColumn(); }
@@ -105,6 +125,10 @@ namespace Relations
         /*! Get the related key for the relationship. */
         inline const QString &getRelatedKeyName() const
         { return m_relatedKey; }
+        /*! Get the fully qualified parent key name. */
+        virtual QString getQualifiedParentKeyName() const;
+        /*! Get the key for comparing against the parent key in "has" query. */
+        virtual QString getExistenceCompareKey() const;
 
         /* Others */
         /*! Touch all of the related models for the relationship. */
@@ -582,6 +606,108 @@ namespace Relations
         /*! Lock the selected rows in the table. */
         const Relation &lock(QString &&value) const;
 
+        /* Querying Relationship Existence/Absence */
+        /*! Add a relationship count / exists condition to the query. */
+        template<typename HasRelated = void>
+        const Relation &
+        has(const QString &relation, const QString &comparison = GE, qint64 count = 1,
+            const QString &condition = AND,
+            const std::function<void(
+                CallbackType<HasRelated> &)> &callback = nullptr) const;
+
+        /*! Add a relationship count / exists condition to the query with an "or". */
+        template<typename HasRelated = void>
+        const Relation &
+        orHas(const QString &relation, const QString &comparison = GE,
+              qint64 count = 1) const;
+        /*! Add a relationship count / exists condition to the query. */
+        template<typename HasRelated = void>
+        const Relation &
+        doesntHave(const QString &relation, const QString &condition = AND,
+                   const std::function<void(
+                       CallbackType<HasRelated> &)> &callback = nullptr) const;
+        /*! Add a relationship count / exists condition to the query with an "or". */
+        template<typename HasRelated = void>
+        const Relation &
+        orDoesntHave(const QString &relation) const;
+
+        /*! Add a relationship count / exists condition to the query. */
+        template<typename HasRelated>
+        const Relation &
+        has(std::unique_ptr<Relation<Related, HasRelated>> &&relation,
+            const QString &comparison = GE, qint64 count = 1,
+            const QString &condition = AND,
+            const std::function<void(QueryBuilder &)> &callback = nullptr) const;
+        /*! Add a relationship count / exists condition to the query, prefer this over
+            above overload, void type to avoid ambiguity. */
+        template<typename HasRelated, typename = void>
+        const Relation &
+        has(std::unique_ptr<Relation<Related, HasRelated>> &&relation,
+            const QString &comparison = GE, qint64 count = 1,
+            const QString &condition = AND,
+            const std::function<void(
+                TinyBuilder<HasRelated> &)> &callback = nullptr) const;
+
+        /*! Add a relationship count / exists condition to the query. */
+#ifdef __clang__
+        template<typename HasRelated, typename Method,
+                 std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true>
+#else
+        template<typename HasRelated, typename Method>
+        requires std::is_member_function_pointer_v<Method>
+#endif
+        const Relation &
+        has(const Method relation, const QString &comparison = GE, qint64 count = 1,
+            const QString &condition = AND,
+            const std::function<void(
+                TinyBuilder<HasRelated> &)> &callback = nullptr) const;
+
+        /*! Add a relationship count / exists condition to the query with where
+            clauses. */
+        template<typename HasRelated = void>
+        const Relation &
+        whereHas(const QString &relation,
+                 const std::function<void(
+                     CallbackType<HasRelated> &)> &callback = nullptr,
+                 const QString &comparison = GE, qint64 count = 1) const;
+
+        /*! Add a relationship count / exists condition to the query with where
+            clauses and an "or". */
+        template<typename HasRelated = void>
+        const Relation &
+        orWhereHas(const QString &relation,
+                   const std::function<void(
+                       CallbackType<HasRelated> &)> &callback = nullptr,
+                   const QString &comparison = GE, qint64 count = 1) const;
+        /*! Add a relationship count / exists condition to the query with where
+            clauses. */
+        template<typename HasRelated = void>
+        const Relation &
+        whereDoesntHave(const QString &relation,
+                        const std::function<void(
+                            CallbackType<HasRelated> &)> &callback = nullptr) const;
+        /*! Add a relationship count / exists condition to the query with where
+            clauses and an "or". */
+        template<typename HasRelated = void>
+        const Relation &
+        orWhereDoesntHave(const QString &relation,
+                          const std::function<void(
+                              CallbackType<HasRelated> &)> &callback = nullptr) const;
+
+        /*! Add a relationship count / exists condition to the query with where
+            clauses. */
+#ifdef __clang__
+        template<typename HasRelated, typename Method,
+                 std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true>
+#else
+        template<typename HasRelated, typename Method>
+        requires std::is_member_function_pointer_v<Method>
+#endif
+        const Relation &
+        whereHas(const Method relation,
+                 const std::function<void(TinyBuilder<HasRelated> &)> &callback = nullptr,
+                 const QString &comparison = GE, qint64 count = 1) const;
+
         /* Others */
         /*! The textual representation of the Relation type. */
         virtual QString relationTypeName() const = 0;
@@ -594,6 +720,20 @@ namespace Relations
         /*! Get all of the primary keys for the vector of models. */
         QVector<QVariant>
         getKeys(const QVector<Model> &models, const QString &key = "") const;
+
+        /* Querying Relationship Existence/Absence */
+        /*! Add the constraints for an internal relationship existence query.
+            Essentially, these queries compare on column names like whereColumn. */
+        virtual std::unique_ptr<Builder<Related>>
+        getRelationExistenceQuery(
+                std::unique_ptr<Builder<Related>> &&query,
+                const Builder<Model> &parentQuery,
+                const QVector<Column> &columns = {ASTERISK}) const;
+        /*! Add the constraints for a relationship count query. */
+        std::unique_ptr<Builder<Related>>
+        getRelationExistenceCountQuery(
+                std::unique_ptr<Builder<Related>> &&query,
+                const Builder<Model> &parentQuery) const;
 
         /* During eager load, we secure m_parent to not become a dangling reference in
            EagerRelationStore::visited() by help of the dummyModel local variable.
@@ -648,6 +788,20 @@ namespace Relations
         constraints = previous;
 
         return relation;
+    }
+
+    template<class Model, class Related>
+    inline QString Relation<Model, Related>::getQualifiedParentKeyName() const
+    {
+        return m_parent.getQualifiedKeyName();
+    }
+
+    template<class Model, class Related>
+    inline QString Relation<Model, Related>::getExistenceCompareKey() const
+    {
+        throw RuntimeError(QStringLiteral("Method %1() is not implemented for '%2' "
+                                          "relation type.")
+                           .arg(__func__, relationTypeName()));
     }
 
     template<class Model, class Related>
@@ -1936,6 +2090,170 @@ namespace Relations
     }
 
     template<class Model, class Related>
+    template<typename HasRelated>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::has(
+            const QString &relation, const QString &comparison, const qint64 count,
+            const QString &condition,
+            const std::function<void(CallbackType<HasRelated> &)> &callback) const
+    {
+        m_query->template has<HasRelated>(relation, comparison, count, condition,
+                                          callback);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<typename HasRelated>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orHas(
+            const QString &relation, const QString &comparison, const qint64 count) const
+    {
+        m_query->template orHas<HasRelated>(relation, comparison, count);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<typename HasRelated>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::doesntHave(
+            const QString &relation, const QString &condition,
+            const std::function<void(CallbackType<HasRelated> &)> &callback) const
+    {
+        m_query->template doesntHave<HasRelated>(relation, condition, callback);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<typename HasRelated>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orDoesntHave(const QString &relation) const
+    {
+        m_query->template orDoesntHave<HasRelated>(relation);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<typename HasRelated>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::has(
+            std::unique_ptr<Relation<Related, HasRelated>> &&relation,
+            const QString &comparison, const qint64 count, const QString &condition,
+            const std::function<void(QueryBuilder &)> &callback) const
+    {
+        m_query->template has<HasRelated>(std::move(relation), comparison, count,
+                                          condition, callback);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<typename HasRelated, typename>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::has(
+            std::unique_ptr<Relation<Related, HasRelated>> &&relation,
+            const QString &comparison, const qint64 count, const QString &condition,
+            const std::function<void(TinyBuilder<HasRelated> &)> &callback) const
+    {
+        m_query->template has<HasRelated, void>(std::move(relation), comparison, count,
+                                                condition, callback);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+#ifdef __clang__
+    template<typename HasRelated, typename Method,
+             std::enable_if_t<std::is_member_function_pointer_v<Method>, bool>>
+#else
+    template<typename HasRelated, typename Method>
+    requires std::is_member_function_pointer_v<Method>
+#endif
+    const Relation<Model, Related> &
+    Relation<Model, Related>::has(
+            const Method relation, const QString &comparison, const qint64 count,
+            const QString &condition,
+            const std::function<void(TinyBuilder<HasRelated> &)> &callback) const
+    {
+        m_query->template has<HasRelated>(relation, comparison, count, condition,
+                                          callback);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<typename HasRelated>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::whereHas(
+            const QString &relation,
+            const std::function<void(CallbackType<HasRelated> &)> &callback,
+            const QString &comparison, const qint64 count) const
+    {
+        m_query->template whereHas<HasRelated>(relation, callback, comparison, count);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<typename HasRelated>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orWhereHas(
+            const QString &relation,
+            const std::function<void(CallbackType<HasRelated> &)> &callback,
+            const QString &comparison, const qint64 count) const
+    {
+        m_query->template orWhereHas<HasRelated>(relation, callback, comparison, count);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<typename HasRelated>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::whereDoesntHave(
+            const QString &relation,
+            const std::function<void(CallbackType<HasRelated> &)> &callback) const
+    {
+        m_query->template whereDoesntHave<HasRelated>(relation, callback);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+    template<typename HasRelated>
+    const Relation<Model, Related> &
+    Relation<Model, Related>::orWhereDoesntHave(
+            const QString &relation,
+            const std::function<void(CallbackType<HasRelated> &)> &callback) const
+    {
+        m_query->template orWhereDoesntHave<HasRelated>(relation, callback);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
+#ifdef __clang__
+    template<typename HasRelated, typename Method,
+             std::enable_if_t<std::is_member_function_pointer_v<Method>, bool>>
+#else
+    template<typename HasRelated, typename Method>
+    requires std::is_member_function_pointer_v<Method>
+#endif
+    const Relation<Model, Related> &
+    Relation<Model, Related>::whereHas(
+            const Method relation,
+            const std::function<void(TinyBuilder<HasRelated> &)> &callback,
+            const QString &comparison, const qint64 count) const
+    {
+        m_query->template whereHas<HasRelated>(relation, callback, comparison, count);
+
+        return *this;
+    }
+
+    template<class Model, class Related>
     QVector<QVariant>
     Relation<Model, Related>::getKeys(const QVector<Model> &models,
                                       const QString &key) const
@@ -1949,6 +2267,32 @@ namespace Relations
         using namespace ranges;
         return keys |= actions::sort(less {}, &QVariant::value<typename Model::KeyType>)
                        | actions::unique;
+    }
+
+    template<class Model, class Related>
+    std::unique_ptr<Builder<Related>>
+    Relation<Model, Related>::getRelationExistenceQuery(
+            std::unique_ptr<Builder<Related>> &&query, const Builder<Model> &,
+            const QVector<Column> &columns) const
+    {
+        query->select(columns).whereColumnEq(getQualifiedParentKeyName(),
+                                             getExistenceCompareKey());
+        return std::move(query);
+    }
+
+    template<class Model, class Related>
+    std::unique_ptr<Builder<Related>>
+    Relation<Model, Related>::getRelationExistenceCountQuery(
+            std::unique_ptr<Builder<Related>> &&query,
+            const Builder<Model> &parentQuery) const
+    {
+        // Ownership of a unique_ptr()
+        query = getRelationExistenceQuery(std::move(query), parentQuery,
+                                          {Expression("count(*)")});
+
+        query->getQuery().setBindings({}, BindingType::SELECT);
+
+        return std::move(query);
     }
 
 } // namespace Orm::Tiny::Relations

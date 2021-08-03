@@ -159,6 +159,10 @@ namespace Orm::Query::Grammars
         QString whereNotNull(const WhereConditionItem &where) const;
         /*! Compile a raw where clause. */
         QString whereRaw(const WhereConditionItem &where) const;
+        /*! Compile a "where exists" clause. */
+        QString whereExists(const WhereConditionItem &where) const;
+        /*! Compile a "where not exists" clause. */
+        QString whereNotExists(const WhereConditionItem &where) const;
 
         /*! Compile a insert values lists. */
         QStringList compileInsertToVector(const QVector<QVariantMap> &values) const;

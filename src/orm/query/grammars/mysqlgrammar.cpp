@@ -156,6 +156,8 @@ MySqlGrammar::getWhereMethod(const WhereType whereType) const
         getBind(&MySqlGrammar::whereNull),
         getBind(&MySqlGrammar::whereNotNull),
         getBind(&MySqlGrammar::whereRaw),
+        getBind(&MySqlGrammar::whereExists),
+        getBind(&MySqlGrammar::whereNotExists),
     };
 
     static const auto size = cached.size();

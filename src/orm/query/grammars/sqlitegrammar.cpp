@@ -137,6 +137,8 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
         getBind(&SQLiteGrammar::whereNull),
         getBind(&SQLiteGrammar::whereNotNull),
         getBind(&SQLiteGrammar::whereRaw),
+        getBind(&SQLiteGrammar::whereExists),
+        getBind(&SQLiteGrammar::whereNotExists),
     };
 
     static const auto size = cached.size();

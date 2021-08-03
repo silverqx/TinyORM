@@ -24,7 +24,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
-    // CUR return DatabaseConnection vs ConnectionInterface silverqx
+    // CUR1 return DatabaseConnection vs ConnectionInterface silverqx
     class SHAREDLIB_EXPORT DatabaseConnection :
             public ConnectionInterface,
             public Concerns::DetectsLostConnections

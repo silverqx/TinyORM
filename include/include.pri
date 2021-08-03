@@ -21,6 +21,7 @@ HEADERS += \
     $$PWD/orm/domainerror.hpp \
     $$PWD/orm/invalidargumenterror.hpp \
     $$PWD/orm/invalidformaterror.hpp \
+    $$PWD/orm/invalidtemplateargumenterror.hpp \
     $$PWD/orm/logicerror.hpp \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/macros.hpp \
@@ -55,6 +56,7 @@ HEADERS += \
     $$PWD/orm/tiny/concerns/guardsattributes.hpp \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \
     $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
+    $$PWD/orm/tiny/concerns/queriesrelationships.hpp \
     $$PWD/orm/tiny/massassignmenterror.hpp \
     $$PWD/orm/tiny/model.hpp \
     $$PWD/orm/tiny/modelnotfounderror.hpp \
@@ -70,6 +72,7 @@ HEADERS += \
     $$PWD/orm/tiny/relations/pivot.hpp \
     $$PWD/orm/tiny/relations/relation.hpp \
     $$PWD/orm/tiny/tinybuilder.hpp \
+    $$PWD/orm/tiny/tinytypes.hpp \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \
     $$PWD/orm/utils/attribute.hpp \

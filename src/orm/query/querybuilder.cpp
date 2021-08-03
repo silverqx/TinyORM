@@ -1,6 +1,7 @@
 #include "orm/query/querybuilder.hpp"
 
 #include "orm/databaseconnection.hpp"
+#include "orm/invalidargumenterror.hpp"
 #include "orm/query/joinclause.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -487,7 +488,7 @@ Builder &Builder::having(const Column &column, const QString &comparison,
     m_havings.append({column, value, comparison, condition, HavingType::BASIC});
 
     if (!value.canConvert<Expression>())
-        // CUR check flattenBindings, I already have flatBindingsForUpdateDelete() algo silverqx
+        // CUR1 check flattenBindings, I already have flatBindingsForUpdateDelete() algo silverqx
         addBinding(value, BindingType::HAVING);
 
     return *this;
@@ -667,6 +668,57 @@ QVector<QVariant> Builder::getBindings() const
     return flattenBindings;
 }
 
+Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
+{
+    if (!m_bindings.contains(type))
+        // TODO add hash which maps BindingType to the QString silverqx
+        throw InvalidArgumentError(QStringLiteral("Invalid binding type: %1")
+                                   .arg(static_cast<int>(type)));
+
+    m_bindings[type].append(binding);
+
+    return *this;
+}
+
+Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingType type)
+{
+    // CUR duplicate check, unify, add checkBindingsType() silverqx
+    if (!m_bindings.contains(type))
+        throw InvalidArgumentError(QStringLiteral("Invalid binding type: %1")
+                                   .arg(static_cast<int>(type)));
+
+    if (!bindings.isEmpty())
+        std::ranges::copy(bindings, std::back_inserter(m_bindings[type]));
+
+    return *this;
+}
+
+Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType type)
+{
+    if (!m_bindings.contains(type))
+        throw InvalidArgumentError(QStringLiteral("Invalid binding type: %1")
+                                   .arg(static_cast<int>(type)));
+
+    if (!bindings.isEmpty())
+        std::ranges::move(bindings, std::back_inserter(m_bindings[type]));
+
+    return *this;
+}
+
+Builder &Builder::setBindings(QVector<QVariant> &&bindings, const BindingType type)
+{
+    if (!m_bindings.contains(type))
+        throw InvalidArgumentError(QStringLiteral("Invalid binding type: %1")
+                                   .arg(static_cast<int>(type)));
+
+    auto &bindingsRef = m_bindings[type]; // clazy:exclude=detaching-member
+
+    bindingsRef.reserve(bindings.size());
+    bindingsRef = std::move(bindings);
+
+    return *this;
+}
+
 // TODO next revisit QSharedPointer, after few weeks I'm pretty sure that this can/should be std::unique_pre, like in the TinyBuilder, I need to check if more instances need to save this pointer at once, if don't then I have to change it silverqx
 QSharedPointer<Builder> Builder::newQuery() const
 {
@@ -702,6 +754,40 @@ Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> &query,
             query->getRawBindings().find(BindingType::WHERE).value();
 
     addBinding(whereBindings, BindingType::WHERE);
+
+    return *this;
+}
+
+// CUR add whereExists() silverqx
+// CUR also add exists() silverqx
+Builder &Builder::addWhereExistsQuery(const QSharedPointer<Builder> &query,
+                                      const QString &condition, const bool nope)
+{
+    const auto type = nope ? WhereType::NOT_EXISTS : WhereType::EXISTS;
+
+    m_wheres.append({.condition = condition, .type = type, .nestedQuery = query});
+
+    addBinding(query->getBindings(), BindingType::WHERE);
+
+    return *this;
+}
+
+Builder &Builder::mergeWheres(const QVector<WhereConditionItem> &wheres,
+                              const QVector<QVariant> &bindings)
+{
+    m_wheres += wheres;
+
+    m_bindings[BindingType::WHERE] += bindings;
+
+    return *this;
+}
+
+Builder &Builder::mergeWheres(QVector<WhereConditionItem> &&wheres,
+                              QVector<QVariant> &&bindings)
+{
+    std::ranges::move(wheres, std::back_inserter(m_wheres));
+
+    std::ranges::move(bindings, std::back_inserter(m_bindings[BindingType::WHERE]));
 
     return *this;
 }
@@ -747,44 +833,6 @@ bool Builder::invalidOperator(const QString &comparison) const
 
     return !m_operators.contains(comparison_) &&
             !m_grammar.getOperators().contains(comparison_);
-}
-
-Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
-{
-    if (!m_bindings.contains(type))
-        // TODO add hash which maps BindingType to the QString silverqx
-        throw RuntimeError(QStringLiteral("Invalid binding type: %1")
-                           .arg(static_cast<int>(type)));
-
-    m_bindings[type].append(binding);
-
-    return *this;
-}
-
-Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingType type)
-{
-    // TODO duplicate check, unify silverqx
-    if (!m_bindings.contains(type))
-        // TODO add hash which maps BindingType to the QString silverqx
-        throw RuntimeError(QStringLiteral("Invalid binding type: %1")
-                           .arg(static_cast<int>(type)));
-
-    if (!bindings.isEmpty())
-        std::ranges::copy(bindings, std::back_inserter(m_bindings[type]));
-
-    return *this;
-}
-
-Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType type)
-{
-    if (!m_bindings.contains(type))
-        throw RuntimeError(QStringLiteral("Invalid binding type: %1")
-                           .arg(static_cast<int>(type)));
-
-    if (!bindings.isEmpty())
-        std::ranges::move(bindings, std::back_inserter(m_bindings[type]));
-
-    return *this;
 }
 
 // TODO investigate extended lifetime of reference in cleanBindings(), important case 🤔 silverqx
@@ -1025,7 +1073,7 @@ Builder &Builder::whereInternal(const Column &column, const QString &comparison,
                      .condition = condition, .type = WhereType::BASIC});
 
     if (!value.canConvert<Expression>())
-        // CUR check flattenBindings, I already have flatBindingsForUpdateDelete() algo silverqx
+        // CUR1 check flattenBindings, I already have flatBindingsForUpdateDelete() algo silverqx
         addBinding(value, BindingType::WHERE);
 
     return *this;

@@ -5,9 +5,9 @@
 #include <optional>
 #include <stack>
 
-#include "orm/ormtypes.hpp"
 #include "orm/runtimeerror.hpp"
 #include "orm/tiny/relations/relation.hpp"
+#include "orm/tiny/tinytypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -15,14 +15,6 @@ namespace TINYORM_COMMON_NAMESPACE
 #endif
 namespace Orm::Tiny
 {
-    template<typename Model>
-    class Builder;
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    class Model;
-
-    template<typename Model>
-    using TinyBuilder = Builder<Model>;
 
     /*! The type in which are saved relationships. */
     template<typename ...AllRelations>
@@ -33,6 +25,20 @@ namespace Orm::Tiny
 namespace Concerns
 {
 
+    template<typename Model>
+    class QueriesRelationships;
+
+    // FEATURE concepts, stackoverflow how the hell should I check this silverqx
+//    template<typename Model, typename Method>
+//    concept RelationMethod = std::is_member_function_pointer_v<Method> &&
+//        (requires(Method m) {
+//            {std::invoke(m, Model())} -> std::convertible_to<std::unique_ptr<Relations::OneRelation>>;
+//        } ||
+//        requires(Method m) {
+//            {std::invoke(m, Model())} -> std::convertible_to<std::unique_ptr<Relations::ManyRelation>>;
+//        });
+
+    // FUTURE relationstore, cache results, eg. cache Relation instance and return copy of this cached Relation instance, Related parameter can be obtained from cached Relation instance silverqx
     template<typename Derived, typename ...AllRelations>
     class HasRelationStore
     {
@@ -44,6 +50,9 @@ namespace Concerns
             TOUCH_OWNERS,
             LAZY_RESULTS,
             BELONGSTOMANY_RELATED_TABLE,
+            QUERIES_RELATIONSHIPS_QUERY,
+            QUERIES_RELATIONSHIPS_TINY,
+            QUERIES_RELATIONSHIPS_TINY_NESTED,
         };
 
         /* Forward declarations */
@@ -53,7 +62,10 @@ namespace Concerns
         template<typename Related>
         class LazyRelationStore;
         class BelongsToManyRelatedTableStore;
+        template<typename Related>
+        class QueriesRelationshipsStore;
 
+    // CUR make all this private, so it will not be in the users CA and make model friend silverqx
     protected:
         // FUTURE try to rewrite this by templated class to avoid polymorfic class, like described here http://groups.di.unipi.it/~nids/docs/templates_vs_inheritance.html silverqx
         class BaseRelationStore
@@ -87,6 +99,7 @@ namespace Concerns
             const RelationStoreType m_storeType;
         };
 
+        // CUR reorder after commit all "Factory methods" and "Getters for Relation stores" move under stores like where is createQueriesRelationshipsStore() silverqx
         /* Factory methods for Relation stores */
         /*! Factory method to create an eager store. */
         BaseRelationStore &
@@ -116,6 +129,9 @@ namespace Concerns
         const LazyRelationStore<Related> &lazyStore() const;
         /*! Reference to the BelongsToMany related table name store. */
         const BelongsToManyRelatedTableStore &belongsToManyRelatedTableStore() const;
+        /*! Const reference to the QueriesRelationships store. */
+        template<typename Related = void>
+        const QueriesRelationshipsStore<Related> &queriesRelationshipsStore() const;
 
     private:
         /*! The store for loading eager relations. */
@@ -215,6 +231,65 @@ namespace Concerns
             void visited(const Method);
         };
 
+        /*! The store for obtaining a Relation instance for QueriesRelationships. */
+        template<typename Related>
+        class QueriesRelationshipsStore final : public BaseRelationStore
+        {
+            Q_DISABLE_COPY(QueriesRelationshipsStore)
+
+        public:
+            /*! QueriesRelationshipsStore constructor. */
+            QueriesRelationshipsStore(
+                    HasRelationStore &hasRelationStore,
+                    QueriesRelationships<Derived> &origin, const QString &comparison,
+                    qint64 count, const QString &condition,
+                    const std::function<
+                            void(QueriesRelationshipsCallback<Related> &)> &callback,
+                    const std::optional<std::reference_wrapper<
+                                        QStringList>> relations = std::nullopt);
+
+            /*! The QueriesRelationships instance to which the visited relation will be
+                dispatched. */
+            QueriesRelationships<Derived> &origin;
+            /*! Comparison operator, used during querying relationship exitence. */
+            const QString &comparison;
+            /*! Required number of records, used during querying relationship
+                exitence. */
+            const qint64 count;
+            /*! Condition operator, used during querying relationship exitence. */
+            const QString &condition;
+            /*! Builder callback, used during querying relationship exitence. */
+            const std::function<void(QueriesRelationshipsCallback<Related> &)> &callback;
+            /*! Nested relations for hasNested() method. */
+            std::optional<std::reference_wrapper<QStringList>> relations;
+
+            // CUR move visited above data member, in all stores silverqx
+            /*! Method called after visitation. */
+            template<typename RelatedFromMethod, typename Method>
+            void visited(const Method method);
+
+        protected:
+            /*! Store type initializer. */
+            constexpr static RelationStoreType initStoreType();
+
+            /*! Served store type, this class can handle two store types. */
+            thread_local constexpr static RelationStoreType STORE_TYPE = initStoreType();
+        };
+
+    protected:
+        /*! Factory method to create the QueriesRelationships store with a Tiny
+            callback. */
+        template<typename Related = void>
+        BaseRelationStore &
+        createQueriesRelationshipsStore(
+                QueriesRelationships<Derived> &origin, const QString &comparison,
+                qint64 count, const QString &condition,
+                const std::function<
+                        void(QueriesRelationshipsCallback<Related> &)> &callback,
+                const std::optional<std::reference_wrapper<
+                        QStringList>> relations = std::nullopt);
+
+    private:
         // BUG this is bad, disable Model's copy/assignment ctors if m_relationStore is not empty, or empty the m_relationStore on copy?, have to think about this 🤔 silverqx
         /*! The store where the values will be saved, before BaseRelationStore::visit()
             is called. */
@@ -258,7 +333,8 @@ namespace Concerns
     HasRelationStore<Derived, AllRelations...>::createTouchOwnersStore(
             const QString &relation)
     {
-        m_relationStore.push(std::make_shared<TouchOwnersRelationStore>(*this, relation));
+        m_relationStore.push(
+                    std::make_shared<TouchOwnersRelationStore>(*this, relation));
 
         return *m_relationStore.top();
     }
@@ -278,6 +354,22 @@ namespace Concerns
     HasRelationStore<Derived, AllRelations...>::createBelongsToManyRelatedTableStore()
     {
         m_relationStore.push(std::make_shared<BelongsToManyRelatedTableStore>(*this));
+
+        return *m_relationStore.top();
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Related>
+    typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
+    HasRelationStore<Derived, AllRelations...>::createQueriesRelationshipsStore(
+            QueriesRelationships<Derived> &origin, const QString &comparison,
+            const qint64 count, const QString &condition,
+            const std::function<void(QueriesRelationshipsCallback<Related> &)> &callback,
+            const std::optional<std::reference_wrapper<QStringList>> relations)
+    {
+        m_relationStore.push(std::make_shared<QueriesRelationshipsStore<Related>>(
+                                 *this, origin, comparison, count, condition, callback,
+                                 relations));
 
         return *m_relationStore.top();
     }
@@ -316,11 +408,21 @@ namespace Concerns
 
     template<typename Derived, typename ...AllRelations>
     inline const typename HasRelationStore<Derived, AllRelations...>
-    ::BelongsToManyRelatedTableStore &
+                          ::BelongsToManyRelatedTableStore &
     HasRelationStore<Derived, AllRelations...>::belongsToManyRelatedTableStore() const
     {
         return *std::static_pointer_cast<
                 const BelongsToManyRelatedTableStore>(m_relationStore.top());
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Related>
+    inline const typename HasRelationStore<Derived, AllRelations...>
+    ::template QueriesRelationshipsStore<Related> &
+    HasRelationStore<Derived, AllRelations...>::queriesRelationshipsStore() const
+    {
+        return *std::static_pointer_cast<
+                const QueriesRelationshipsStore<Related>>(m_relationStore.top());
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -340,13 +442,14 @@ namespace Concerns
                     *this);
     }
 
-
+    // CUR add constraint to also check Method return value, should be std::unique_ptr<Relation> silverqx
     template<typename Derived, typename ...AllRelations>
     template<typename Method>
     requires std::is_member_function_pointer_v<Method>
     void HasRelationStore<Derived, AllRelations...>::BaseRelationStore
                                                    ::operator()(const Method method)
     {
+        // CUR after commit make double switch, first level to avoid using Related duplicates, second level will be the same as now with using Related silverqx
         switch (getStoreType()) {
         case RelationStoreType::EAGER:
             static_cast<EagerRelationStore *>(this)->visited(method);
@@ -373,6 +476,27 @@ namespace Concerns
             static_cast<BelongsToManyRelatedTableStore *>(this)->visited(method);
             break;
 
+        case RelationStoreType::QUERIES_RELATIONSHIPS_QUERY:
+        {
+            using Related = typename std::invoke_result_t<Method, Derived>
+                                        ::element_type::RelatedType;
+
+            static_cast<QueriesRelationshipsStore<void> *>(this)
+                    ->template visited<Related>(method);
+        }
+            break;
+
+        case RelationStoreType::QUERIES_RELATIONSHIPS_TINY:
+        case RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED:
+        {
+            using Related = typename std::invoke_result_t<Method, Derived>
+                                        ::element_type::RelatedType;
+
+            static_cast<QueriesRelationshipsStore<Related> *>(this)
+                    ->template visited<Related>(method);
+        }
+            break;
+
         default:
             throw RuntimeError("Unknown store type.");
         }
@@ -397,6 +521,12 @@ namespace Concerns
     {
         using Related = typename std::invoke_result_t<Method, Derived>
                                     ::element_type::RelatedType;
+
+        // TODO static_assert() check silverqx
+//        static_assert (std::is_convertible_v<std::invoke_result_t<Method, Derived>,
+//                std::unique_ptr<Relations::OneRelation>> ||
+//                std::is_convertible_v<std::invoke_result_t<Method, Derived>,
+//                                std::unique_ptr<Relations::ManyRelation>>, "xyz");
 
         /*! Helping model for eager loads, because Relation::m_parent has to be
             reference (Relation::m_parent == dummyModel), this dummy model prevents
@@ -473,7 +603,6 @@ namespace Concerns
         : BaseRelationStore(hasRelationStore, RelationStoreType::LAZY_RESULTS)
     {}
 
-
     template<typename Derived, typename ...AllRelations>
     template<typename Related>
     template<typename Method>
@@ -505,6 +634,94 @@ namespace Concerns
             return;
 
         result = typename Relation::RelatedType().getTable();
+    }
+
+    /*
+       QueriesRelationshipsStore<Related> is templated by Related, because it needs to
+       save a reference to std::function() which takes as an argument a QueryBuilder & or
+       TinyBuilder<Related> &.
+       If the Related parameter is the void type, then it is served as
+       the QUERIES_RELATIONSHIPS_QUERY store type and will save a QueryBuilder &.
+       If the Related parameter is not void, then it is served as
+       the QUERIES_RELATIONSHIPS_TINY / QUERIES_RELATIONSHIPS_TINY_NESTED and will save
+       a TinyBuilder<Related> &.
+       The same is true for the factory method and store's getter method, if the Related
+       parameter is the void type, then the QUERIES_RELATIONSHIPS_QUERY store type
+       will be created / returned, ... 🙏🙌😎
+       The true is that design this was super challenge 💪🚀🔥.
+       Added a new store type QUERIES_RELATIONSHIPS_TINY_NESTED for nested relations for
+       hasNested() method, so don't be confused by QueriesRelationshipsStore::STORE_TYPE,
+       it only holds store type which can be handled by currently instantiated
+       QueriesRelationshipsStore (instantiated means template instance generated by
+       the compiler, not a class instance), because the QueriesRelationshipsStore class
+       can handle 3 store types, the nested store type is used on the base of ctor's
+       'relations' argument.
+    */
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Related>
+    HasRelationStore<Derived, AllRelations...>::QueriesRelationshipsStore<Related>
+                                              ::QueriesRelationshipsStore(
+            HasRelationStore &hasRelationStore,  QueriesRelationships<Derived> &origin,
+            const QString &comparison, const qint64 count, const QString &condition,
+            const std::function<void(QueriesRelationshipsCallback<Related> &)> &callback,
+            const std::optional<std::reference_wrapper<QStringList>> relations
+    )
+        : BaseRelationStore(hasRelationStore,
+                            relations
+                            ? RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED
+                            : STORE_TYPE)
+        , origin(origin)
+        , comparison(comparison)
+        , count(count)
+        , condition(condition)
+        , callback(callback)
+        , relations(relations)
+    {}
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Related>
+    template<typename RelatedFromMethod, typename Method>
+    void
+    HasRelationStore<Derived, AllRelations...>::QueriesRelationshipsStore<Related>
+                                              ::visited(const Method method)
+    {
+        // This check can be done for the QUERIES_RELATIONSHIPS_TINY store type only
+        if constexpr (!std::is_void_v<Related>)
+            static_assert (std::is_same_v<Related, RelatedFromMethod>,
+                    "How did this happen? Is a mystery 😎, a Related type has to be "
+                    "the same as a RelatedFromMethod.");
+
+        // We want to run a relationship query without any constrains
+        auto relationInstance =
+                Relations::Relation<Derived, RelatedFromMethod>::noConstraints(
+                    [this, &method]
+        {
+            return std::invoke(method, this->m_hasRelationStore.model());
+        });
+
+        // Nested store type, used by hasNested()
+        if (this->getStoreType() == RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED)
+            origin.template hasInternalVisited<RelatedFromMethod>(
+                        std::move(relationInstance), comparison, count, condition,
+                        *relations);
+        else
+            origin.template has<RelatedFromMethod>(
+                        std::move(relationInstance), comparison, count, condition,
+                        callback);
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    template<typename Related>
+    inline constexpr typename
+    HasRelationStore<Derived, AllRelations...>::RelationStoreType
+    HasRelationStore<Derived, AllRelations...>::QueriesRelationshipsStore<Related>
+                                              ::initStoreType()
+    {
+        if constexpr (std::is_void_v<Related>)
+            return RelationStoreType::QUERIES_RELATIONSHIPS_QUERY;
+        else
+            return RelationStoreType::QUERIES_RELATIONSHIPS_TINY;
     }
 
     template<typename Derived, typename ...AllRelations>

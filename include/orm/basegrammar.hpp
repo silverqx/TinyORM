@@ -166,7 +166,7 @@ namespace Query
         for (const auto &value : values)
             compiledParameters << parameter(value);
 
-        // CUR QString allocation 😟 solve everywhere 😭 silverqx
+        // CUR1 QString allocation 😟 solve everywhere 😭 silverqx
         return compiledParameters.join(COMMA);
     }
 

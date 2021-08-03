@@ -4,6 +4,7 @@
 
 #include <QString>
 
+#include <typeindex>
 #include <typeinfo>
 
 #ifdef __GNUG__
@@ -35,24 +36,32 @@ namespace Orm::Utils
     public:
         Type() = delete;
 
-        /*! Class name with or w/o a namespace and template parameters. */
+        /*! Class name with or w/o a namespace and w/o template parameters. */
         template<typename T>
         static QString classPureBasename(bool withNamespace = false);
-        /*! Class name with or w/o a namespace and template parameters. */
+        /*! Class name with or w/o a namespace and w/o template parameters. */
         template<typename T>
         static QString classPureBasename(const T &type, bool withNamespace = false);
+        /*! Class name with or w/o a namespace and w/o template parameters. */
+        static QString classPureBasename(
+                std::type_index typeIndex, bool withNamespace = false);
 
         /*! Return a pretty function name in the following format: Xyz::function. */
         static QString prettyFunction(const QString &function);
 
     private:
-        /*! Class name with or w/o a namespace and template parameters, common code. */
+        /*! Class name with or w/o a namespace and w/o template parameters, common
+            code. */
         static QString classPureBasenameInternal(
-                const std::type_info &typeInfo, bool withNamespace = false);
-        /*! Class name with or w/o a namespace and template parameters, msvc code. */
+                const std::type_info &typeInfo, bool withNamespace);
+        /*! Class name with or w/o a namespace and w/o template parameters, common
+            code. */
+        static QString classPureBasenameInternal(
+                const char *typeName, bool withNamespace);
+        /*! Class name with or w/o a namespace and w/o template parameters, msvc code. */
         static QString classPureBasenameMsvc(
                 const QString &className, bool withNamespace);
-        /*! Class name with or w/o a namespace and template parameters, gcc code. */
+        /*! Class name with or w/o a namespace and w/o template parameters, gcc code. */
         static QString classPureBasenameGcc(
                 const QString &className, bool withNamespace);
     };

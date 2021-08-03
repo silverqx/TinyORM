@@ -64,6 +64,8 @@ namespace Orm::Tiny::Relations
         /* Getters / Setters */
         /*! Get the name of the relationship. */
         QString getRelationName() const;
+        /*! Get the fully qualified foreign key of the relationship. */
+        QString getQualifiedForeignKeyName() const;
 
         /* Others */
         /*! The textual representation of the Relation type. */
@@ -79,6 +81,14 @@ namespace Orm::Tiny::Relations
 
         /*! Make a new related instance for the given model. */
         Related newRelatedInstanceFor(const Model &) const override;
+
+        /* Querying Relationship Existence/Absence */
+        /*! Add the constraints for a relationship query. */
+        std::unique_ptr<Builder<Related>>
+        getRelationExistenceQuery(
+                std::unique_ptr<Builder<Related>> &&query,
+                const Builder<Model> &parentQuery,
+                const QVector<Column> &columns = {ASTERISK}) const override;
 
         /*! The child model instance of the relation. */
         Model &m_child;
@@ -262,6 +272,12 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
+    inline QString BelongsTo<Model, Related>::getQualifiedForeignKeyName() const
+    {
+        return m_child.qualifyColumn(m_foreignKey);
+    }
+
+    template<class Model, class Related>
     QVector<QVariant>
     BelongsTo<Model, Related>::getEagerModelKeys(const QVector<Model> &models) const
     {
@@ -288,6 +304,23 @@ namespace Orm::Tiny::Relations
     BelongsTo<Model, Related>::newRelatedInstanceFor(const Model &) const
     {
         return this->m_related->newInstance();
+    }
+
+    template<class Model, class Related>
+    std::unique_ptr<Builder<Related>>
+    BelongsTo<Model, Related>::getRelationExistenceQuery(
+            std::unique_ptr<Builder<Related>> &&query,
+            const Builder<Model> &/*parentQuery*/,
+            const QVector<Column> &columns) const
+    {
+        // CUR finish self query silverqx
+//        if (query->getQuery()->from == parentQuery.getQuery()->from)
+//            return this->getRelationExistenceQueryForSelfRelation(query, parentQuery,
+//                                                                  columns);
+
+        query->select(columns).whereColumnEq(getQualifiedForeignKeyName(),
+                                             query->qualifyColumn(m_ownerKey));
+        return std::move(query);
     }
 
 } // namespace Orm::Tiny::Relations

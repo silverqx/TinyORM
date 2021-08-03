@@ -16,10 +16,13 @@
 using namespace Orm::Constants;
 
 using Orm::One;
+using Orm::QueryBuilder;
 using Orm::RuntimeError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::RelationNotFoundError;
 using Orm::Tiny::RelationNotLoadedError;
+using Orm::Tiny::Relations::Relation;
+using Orm::Tiny::TinyBuilder;
 
 using TestUtils::Databases;
 
@@ -34,9 +37,10 @@ private slots:
     void getRelation_EagerLoad_BelongsTo() const;
     void getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const;
     void getRelationValue_EagerLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const;
-    void getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const;
+    void
+    getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const;
     void getRelation_EagerLoad_Failed() const;
-    void EagerLoad_Failed() const;
+    void eagerLoad_Failed() const;
 
     void getRelationValue_LazyLoad_ManyAndOne() const;
     void getRelationValue_LazyLoad_BelongsTo() const;
@@ -84,6 +88,9 @@ private slots:
     void where_WithCallback() const;
     void orWhere_WithCallback() const;
 
+    void belongsToMany_allRelatedIds() const;
+
+    /* Default Models */
     void withoutDefaultModel_LazyLoad_HasOne() const;
     void withoutDefaultModel_LazyLoad_BelongsTo() const;
     void withoutDefaultModel_EagerLoad_HasOne() const;
@@ -99,7 +106,25 @@ private slots:
     void withDefaultModel_EagerLoad_Bool_BelongsTo() const;
     void withDefaultModel_EagerLoad_AttributesVector_BelongsTo() const;
 
-    void belongsToMany_allRelatedIds() const;
+    /* Querying Relationship Existence/Absence */
+    void has_Basic_QString_OnHasMany() const;
+    void has_Basic_UniquePtr_OnHasMany() const;
+    void has_Basic_MethodPointer_OnHasMany() const;
+
+    void has_Count_QString_OnHasMany() const;
+    void has_Count_UniquePtr_OnHasMany() const;
+    void has_Count_MethodPointer_OnHasMany() const;
+
+    void whereHas_Basic_QString_QueryBuilder_OnHasMany() const;
+    void whereHas_Basic_QString_TinyBuilder_OnHasMany() const;
+
+    void whereHas_Count_QString_QueryBuilder_OnHasMany() const;
+    void whereHas_Count_QString_TinyBuilder_OnHasMany() const;
+    void whereHas_Count_MethodPointer_TinyBuilder_OnHasMany() const;
+
+    void hasNested_Basic_OnHasMany() const;
+    void hasNested_Count_OnHasMany() const;
+    void hasNested_Count_TinyBuilder_OnHasMany() const;
 };
 
 void tst_Model_Relations::initTestCase_data() const
@@ -351,7 +376,7 @@ void tst_Model_Relations::getRelation_EagerLoad_Failed() const
                 RelationNotLoadedError);
 }
 
-void tst_Model_Relations::EagerLoad_Failed() const
+void tst_Model_Relations::eagerLoad_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1650,6 +1675,26 @@ void tst_Model_Relations::orWhere_WithCallback() const
     }
 }
 
+void tst_Model_Relations::belongsToMany_allRelatedIds() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(3);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    const auto relatedIds = torrent->tags()->allRelatedIds();
+
+    QCOMPARE(relatedIds.size(), 2);
+
+    const QVector<QVariant> expectedIds {2, 4};
+
+    for (const auto &relatedId : relatedIds)
+        QVERIFY(expectedIds.contains(relatedId));
+}
+
 void tst_Model_Relations::withoutDefaultModel_LazyLoad_HasOne() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -1872,24 +1917,276 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_BelongsTo(
     QCOMPARE((*torrent)["size"], QVariant(123));
 }
 
-void tst_Model_Relations::belongsToMany_allRelatedIds() const
+void tst_Model_Relations::has_Basic_QString_OnHasMany() const
 {
     QFETCH_GLOBAL(QString, connection);
 
     ConnectionOverride::connection = connection;
 
-    auto torrent = Torrent::find(3);
-    QVERIFY(torrent);
-    QVERIFY(torrent->exists);
+    auto torrents = Torrent::has("torrentFiles")->get();
 
-    const auto relatedIds = torrent->tags()->allRelatedIds();
+    const QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
 
-    QCOMPARE(relatedIds.size(), 2);
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
 
-    const QVector<QVariant> expectedIds {2, 4};
+void tst_Model_Relations::has_Basic_UniquePtr_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-    for (const auto &relatedId : relatedIds)
-        QVERIFY(expectedIds.contains(relatedId));
+    ConnectionOverride::connection = connection;
+
+    // Has to live long enough to avoid dangling reference
+    Torrent dummyModel;
+
+    // Ownership of a unique_ptr()
+    auto relation =
+            Relation<Torrent, TorrentPreviewableFile>::noConstraints(
+                [&dummyModel]()
+    {
+        return std::invoke(&Torrent::torrentFiles, dummyModel);
+    });
+
+    auto torrents = Torrent::has<TorrentPreviewableFile, void>(std::move(relation))
+                    ->get();
+
+    const QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::has_Basic_MethodPointer_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::has<TorrentPreviewableFile>(&Torrent::torrentFiles)
+                    ->get();
+
+    const QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::has_Count_QString_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::has("torrentFiles", ">", 1)
+                    ->get();
+
+    const QVector<QVariant> expectedIds {2, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::has_Count_UniquePtr_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Has to live long enough to avoid dangling reference
+    Torrent dummyModel;
+
+    // Ownership of a unique_ptr()
+    auto relation = Relation<Torrent, TorrentPreviewableFile>::noConstraints(
+                [&dummyModel]()
+    {
+        return std::invoke(&Torrent::torrentFiles, dummyModel);
+    });
+
+    auto torrents = Torrent::has<TorrentPreviewableFile, void>(std::move(relation),
+                                                               ">=", 2)
+                    ->get();
+
+    const QVector<QVariant> expectedIds {2, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::has_Count_MethodPointer_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::has<TorrentPreviewableFile>(&Torrent::torrentFiles, ">=", 2)
+                    ->get();
+
+    const QVector<QVariant> expectedIds {2, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::whereHas_Basic_QString_QueryBuilder_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::whereHas("torrentFiles", [](auto &query)
+    {
+        QVERIFY((std::is_same_v<decltype (query), QueryBuilder &>));
+
+        query.where("filepath", LIKE, "%_file2.mkv");
+    })
+            ->get();
+
+    const QVector<QVariant> expectedIds {2, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::whereHas_Basic_QString_TinyBuilder_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::whereHas<TorrentPreviewableFile>("torrentFiles",
+                                                              [](auto &query)
+    {
+        QVERIFY((std::is_same_v<decltype (query),
+                                TinyBuilder<TorrentPreviewableFile> &>));
+
+        query.where("filepath", LIKE, "%_file2.mkv");
+    })
+            ->get();
+
+    const QVector<QVariant> expectedIds {2, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::whereHas_Count_QString_QueryBuilder_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::whereHas("torrentFiles", [](auto &query)
+    {
+        QVERIFY((std::is_same_v<decltype (query), QueryBuilder &>));
+
+        query.where("progress", ">=", 870);
+    }, ">=", 2)
+            ->get();
+
+    const QVector<QVariant> expectedIds {2, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::whereHas_Count_QString_TinyBuilder_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::whereHas<TorrentPreviewableFile>("torrentFiles",
+                                                              [](auto &query)
+    {
+        QVERIFY((std::is_same_v<decltype (query),
+                                TinyBuilder<TorrentPreviewableFile> &>));
+
+        query.where("progress", ">=", 870);
+    }, ">=", 2)
+            ->get();
+
+    const QVector<QVariant> expectedIds {2, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::whereHas_Count_MethodPointer_TinyBuilder_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::whereHas<TorrentPreviewableFile>(&Torrent::torrentFiles,
+                                                              [](auto &query)
+    {
+        QVERIFY((std::is_same_v<decltype (query),
+                                TinyBuilder<TorrentPreviewableFile> &>));
+
+        query.where("progress", ">=", 870);
+    }, ">=", 2)
+            ->get();
+
+    const QVector<QVariant> expectedIds {2, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::hasNested_Basic_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::has<FilePropertyProperty>(
+                        "torrentFiles.fileProperty.filePropertyProperty")
+                    ->get();
+
+    const QVector<QVariant> expectedIds {2, 3, 4, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::hasNested_Count_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::has<FilePropertyProperty>(
+                        "torrentFiles.fileProperty.filePropertyProperty", ">=", 2)
+                    ->get();
+
+    const QVector<QVariant> expectedIds {3, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::hasNested_Count_TinyBuilder_OnHasMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::has<FilePropertyProperty>(
+                        "torrentFiles.fileProperty.filePropertyProperty", ">=", 2, AND,
+                        [](auto &query)
+    {
+        QVERIFY((std::is_same_v<decltype (query),
+                                TinyBuilder<FilePropertyProperty> &>));
+
+        query.where("value", ">=", 6);
+    })
+            ->get();
+
+    const QVector<QVariant> expectedIds {5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
 QTEST_MAIN(tst_Model_Relations)

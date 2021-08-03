@@ -2,6 +2,8 @@
 #include <QtSql/QSqlDriver>
 #include <QtTest>
 
+#include <typeinfo>
+
 #include "orm/db.hpp"
 #include "orm/query/querybuilder.hpp"
 

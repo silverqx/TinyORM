@@ -252,6 +252,8 @@ function seedTables(string $connection)
             [4, 3, 'test3_file1_property2', 4, '2021-01-04 14:51:23', '2021-01-04 17:46:31'],
             [5, 4, 'test4_file1_property1', 5, '2021-01-05 14:51:23', '2021-01-05 17:46:31'],
             [6, 5, 'test5_file1_property1', 6, '2021-01-06 14:51:23', '2021-01-06 17:46:31'],
+            [7, 5, 'test5_file1_property2', 7, '2021-01-07 14:51:23', '2021-01-07 17:46:31'],
+            [8, 5, 'test5_file1_property3', 8, '2021-01-08 14:51:23', '2021-01-08 17:46:31'],
         ]));
 
     Capsule::table('torrent_tags', null, $connection)->insert(

@@ -14,6 +14,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+    // CUR move all exception classes to exceptions folder and own exception NS? silverqx
     class SHAREDLIB_EXPORT InvalidArgumentError : public LogicError
     {
         using LogicError::LogicError;
