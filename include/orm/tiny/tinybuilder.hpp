@@ -1692,27 +1692,6 @@ namespace Orm::Tiny
         return *this;
     }
 
-    // CUR reorder this method, also check other methods when I will be up here silverqx
-    template<typename Model>
-    Column
-    Builder<Model>::getCreatedAtColumnForLatestOldest(Column column) const
-    {
-        /* Don't initialize column when user passed column expression, only when it
-           holds the QString type. */
-        if (std::holds_alternative<QString>(column) &&
-            std::get<QString>(column).isEmpty()
-        ) {
-            if (const auto &createdAtColumn = m_model.getCreatedAtColumn();
-                createdAtColumn.isEmpty()
-            )
-                column = CREATED_AT;
-            else
-                column = createdAtColumn;
-        }
-
-        return column;
-    }
-
     template<typename Model>
     Builder<Model> &
     Builder<Model>::limit(const int value)
@@ -2147,6 +2126,26 @@ namespace Orm::Tiny
             valuesUpdatedAtColumn->column = qualifiedUpdatedAtColumn;
 
         return values;
+    }
+
+    template<typename Model>
+    Column
+    Builder<Model>::getCreatedAtColumnForLatestOldest(Column column) const
+    {
+        /* Don't initialize column when user passed column expression, only when it
+           holds the QString type. */
+        if (std::holds_alternative<QString>(column) &&
+            std::get<QString>(column).isEmpty()
+        ) {
+            if (const auto &createdAtColumn = m_model.getCreatedAtColumn();
+                createdAtColumn.isEmpty()
+            )
+                column = CREATED_AT;
+            else
+                column = createdAtColumn;
+        }
+
+        return column;
     }
 
     // FEATURE scopes, anyway std::apply() do the same, will have to investigate it silverqx
