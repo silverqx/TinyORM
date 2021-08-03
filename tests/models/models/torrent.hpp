@@ -9,11 +9,13 @@
 #include "models/tagged.hpp"
 #include "models/torrentpeer.hpp"
 #include "models/torrentpreviewablefile.hpp"
+#include "models/user.hpp"
 
 using namespace Orm::Constants;
 
 //using Orm::AttributeItem;
 using Orm::Tiny::Model;
+using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;
@@ -24,8 +26,8 @@ using Orm::Tiny::Relations::Pivot;
 class TorrentPreviewableFile;
 
 class Torrent final :
-        public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Pivot>
-//        public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, Tagged>
+        public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, User, Pivot>
+//        public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, User, Tagged>
 {
     friend Model;
     using Model::Model;
@@ -36,7 +38,7 @@ public:
 
 //    explicit Torrent(const QVector<AttributeItem> &attributes = {});
 
-    /*! Get the previewable files associated with the torrent. */
+    /*! Get previewable files associated with the torrent. */
     std::unique_ptr<HasMany<Torrent, TorrentPreviewableFile>>
     torrentFiles()
     {
@@ -44,7 +46,7 @@ public:
 //        return hasMany<TorrentPreviewableFile>("torrent_id", ID);
     }
 
-    /*! Get the torrent peer associated with the torrent. */
+    /*! Get a torrent peer associated with the torrent. */
     std::unique_ptr<HasOne<Torrent, TorrentPeer>>
     torrentPeer()
     {
@@ -86,6 +88,13 @@ public:
 //                                  "tags");
     }
 
+    /*! Get a user that owns the torrent. */
+    std::unique_ptr<BelongsTo<Torrent, User>>
+    user()
+    {
+        return belongsTo<User>();
+    }
+
 private:
     /*! The name of the "created at" column. */
     inline static const QString CREATED_AT = Orm::CREATED_AT;
@@ -105,6 +114,7 @@ private:
         {"torrentFiles", [](auto &v) { v(&Torrent::torrentFiles); }},
         {"torrentPeer",  [](auto &v) { v(&Torrent::torrentPeer); }},
         {"tags",         [](auto &v) { v(&Torrent::tags); }},
+        {"user",         [](auto &v) { v(&Torrent::user); }},
     };
 
     /*! The relations to eager load on every query. */
@@ -113,6 +123,7 @@ private:
 //        "torrentPeer",
 //        "torrentFiles.fileProperty",
 //        "tags",
+//        "user",
     };
 
 #ifdef PROJECT_TINYORM_PLAYGROUND

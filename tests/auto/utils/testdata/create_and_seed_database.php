@@ -63,6 +63,39 @@ function createTables(string $connection)
 {
     $schema = Capsule::schema($connection);
 
+    $schema->create('users', function (Blueprint $table) {
+        $table->id();
+        $table->string('name')->unique();
+        $table->string('note')->nullable();
+    });
+
+    $schema->create('roles', function (Blueprint $table) {
+        $table->id();
+        $table->string('name')->unique();
+    });
+
+    $schema->create('role_user', function (Blueprint $table) {
+        $table->unsignedBigInteger('role_id');
+        $table->unsignedBigInteger('user_id');
+        $table->boolean('active')->default(1);
+
+        $table->primary(['role_id', 'user_id']);
+
+        $table->foreign('role_id')->references('id')->on('roles')
+            ->cascadeOnUpdate()->cascadeOnDelete();
+        $table->foreign('user_id')->references('id')->on('users')
+            ->cascadeOnUpdate()->cascadeOnDelete();
+    });
+
+    $schema->create('user_phones', function (Blueprint $table) {
+        $table->id();
+        $table->unsignedBigInteger('user_id');
+        $table->string('number')->unique();
+
+        $table->foreign('user_id')->references('id')->on('users')
+            ->cascadeOnUpdate()->cascadeOnDelete();
+    });
+
     $schema->create('settings', function (Blueprint $table) {
         $table->string('name')->default('')->unique();
         $table->string('value')->default('');
@@ -71,6 +104,7 @@ function createTables(string $connection)
 
     $schema->create('torrents', function (Blueprint $table) {
         $table->id();
+        $table->unsignedBigInteger('user_id')->nullable();
         $table->string('name')->unique()->comment('Torrent name');
         $table->unsignedBigInteger('size')->default('0');
         $table->unsignedSmallInteger('progress')->default('0');
@@ -78,6 +112,9 @@ function createTables(string $connection)
         $table->string('hash', 40);
         $table->string('note')->nullable();
         $table->timestamps();
+
+        $table->foreign('user_id')->references('id')->on('users')
+            ->cascadeOnUpdate()->cascadeOnDelete();
     });
 
     $schema->create('torrent_peers', function (Blueprint $table) {
@@ -162,38 +199,6 @@ function createTables(string $connection)
         $table->foreign('tag_id')->references('id')->on('torrent_tags')
             ->cascadeOnUpdate()->cascadeOnDelete();
     });
-
-    $schema->create('users', function (Blueprint $table) {
-        $table->id();
-        $table->string('name')->unique();
-    });
-
-    $schema->create('roles', function (Blueprint $table) {
-        $table->id();
-        $table->string('name')->unique();
-    });
-
-    $schema->create('role_user', function (Blueprint $table) {
-        $table->unsignedBigInteger('role_id');
-        $table->unsignedBigInteger('user_id');
-        $table->boolean('active')->default(1);
-
-        $table->primary(['role_id', 'user_id']);
-
-        $table->foreign('role_id')->references('id')->on('roles')
-            ->cascadeOnUpdate()->cascadeOnDelete();
-        $table->foreign('user_id')->references('id')->on('users')
-            ->cascadeOnUpdate()->cascadeOnDelete();
-    });
-
-    $schema->create('user_phones', function (Blueprint $table) {
-        $table->id();
-        $table->unsignedBigInteger('user_id');
-        $table->string('number')->unique();
-
-        $table->foreign('user_id')->references('id')->on('users')
-            ->cascadeOnUpdate()->cascadeOnDelete();
-    });
 }
 
 /**
@@ -204,14 +209,43 @@ function createTables(string $connection)
  */
 function seedTables(string $connection)
 {
+
+    Capsule::table('users', null, $connection)->insert(
+        combineValues(['id', 'name', 'note'], [
+            [1, 'andrej', null],
+            [2, 'silver', null],
+            [3, 'peter', 'no torrents no roles'],
+        ]));
+
+    Capsule::table('roles', null, $connection)->insert(
+        combineValues(['id', 'name'], [
+            [1, 'role one'],
+            [2, 'role two'],
+            [3, 'role three'],
+        ]));
+
+    Capsule::table('role_user', null, $connection)->insert(
+        combineValues(['role_id', 'user_id', 'active'], [
+            [1, 1, 1],
+            [2, 1, 0],
+            [3, 1, 1],
+            [2, 2, 1],
+        ]));
+
+    Capsule::table('user_phones', null, $connection)->insert(
+        combineValues(['id', 'user_id', 'number'], [
+            [1, 1, '914111000'],
+            [2, 2, '902555777'],
+            [3, 3, '905111999'],
+        ]));
     Capsule::table('torrents', null, $connection)->insert(
-        combineValues(['id', 'name', 'size', 'progress', 'added_on', 'hash', 'note', 'created_at', 'updated_at'], [
-            [1, 'test1', 11, 100, '2020-08-01 20:11:10', '1579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-01 14:51:23', '2021-01-01 18:46:31'],
-            [2, 'test2', 12, 200, '2020-08-02 20:11:10', '2579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-02 14:51:23', '2021-01-02 18:46:31'],
-            [3, 'test3', 13, 300, '2020-08-03 20:11:10', '3579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-03 14:51:23', '2021-01-03 18:46:31'],
-            [4, 'test4', 14, 400, '2020-08-04 20:11:10', '4579e3af2768cdf52ec84c1f320333f68401dc6e', 'after update revert updated_at', '2021-01-04 14:51:23', '2021-01-04 18:46:31'],
-            [5, 'test5', 15, 500, '2020-08-05 20:11:10', '5579e3af2768cdf52ec84c1f320333f68401dc6e', 'no peers',                       '2021-01-05 14:51:23', '2021-01-05 18:46:31'],
-            [6, 'test6', 16, 600, '2020-08-06 20:11:10', '6579e3af2768cdf52ec84c1f320333f68401dc6e', 'no files no peers',              '2021-01-06 14:51:23', '2021-01-06 18:46:31'],
+        combineValues(['id', 'user_id', 'name', 'size', 'progress', 'added_on', 'hash', 'note', 'created_at', 'updated_at'], [
+            [1, 1, 'test1', 11, 100, '2020-08-01 20:11:10', '1579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-01 14:51:23', '2021-01-01 18:46:31'],
+            [2, 1, 'test2', 12, 200, '2020-08-02 20:11:10', '2579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-02 14:51:23', '2021-01-02 18:46:31'],
+            [3, 1, 'test3', 13, 300, '2020-08-03 20:11:10', '3579e3af2768cdf52ec84c1f320333f68401dc6e', NULL, '2021-01-03 14:51:23', '2021-01-03 18:46:31'],
+            [4, 1, 'test4', 14, 400, '2020-08-04 20:11:10', '4579e3af2768cdf52ec84c1f320333f68401dc6e', 'after update revert updated_at', '2021-01-04 14:51:23', '2021-01-04 18:46:31'],
+            [5, 2, 'test5', 15, 500, '2020-08-05 20:11:10', '5579e3af2768cdf52ec84c1f320333f68401dc6e', 'no peers',                       '2021-01-05 14:51:23', '2021-01-05 18:46:31'],
+            [6, 2, 'test6', 16, 600, '2020-08-06 20:11:10', '6579e3af2768cdf52ec84c1f320333f68401dc6e', 'no files no peers',              '2021-01-06 14:51:23', '2021-01-06 18:46:31'],
         ]));
 
     Capsule::table('torrent_peers', null, $connection)->insert(
@@ -281,35 +315,6 @@ function seedTables(string $connection)
             [2, 2, 'blue',   1, '2021-02-12 12:41:28', '2021-02-12 22:17:11'],
             [3, 3, 'red',    2, '2021-02-13 12:41:28', '2021-02-13 22:17:11'],
             [4, 4, 'orange', 3, '2021-02-14 12:41:28', '2021-02-14 22:17:11'],
-        ]));
-
-    Capsule::table('users', null, $connection)->insert(
-        combineValues(['id', 'name'], [
-            [1, 'andrej'],
-            [2, 'silver'],
-            [3, 'peter'],
-        ]));
-
-    Capsule::table('roles', null, $connection)->insert(
-        combineValues(['id', 'name'], [
-            [1, 'role one'],
-            [2, 'role two'],
-            [3, 'role three'],
-        ]));
-
-    Capsule::table('role_user', null, $connection)->insert(
-        combineValues(['role_id', 'user_id', 'active'], [
-            [1, 1, 1],
-            [2, 1, 0],
-            [3, 1, 1],
-            [2, 2, 1],
-        ]));
-
-    Capsule::table('user_phones', null, $connection)->insert(
-        combineValues(['id', 'user_id', 'number'], [
-            [1, 1, '914111000'],
-            [2, 2, '902555777'],
-            [3, 3, '905111999'],
         ]));
 }
 

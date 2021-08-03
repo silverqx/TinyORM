@@ -81,7 +81,6 @@ namespace Relations {
     // FEATURE build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
     // FEATURE build systems, libuv example how it could look like https://github.com/libuv/libuv silverqx
     // CUR extract proxies to base classes, multi inhertance delirium 😎, I don't remember what this todo task means 😕, ohhh I already remembered, I wanted to move for every class (TinyBuilder, Model and Relation) move proxied to base class, so they will not visually distract class's api, I still think it is a good idea silverqx
-    // CUR torrent belongs to a user, update db seed, needed to update 7 tests silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public Concerns::HasRelationStore<Derived, AllRelations...>,

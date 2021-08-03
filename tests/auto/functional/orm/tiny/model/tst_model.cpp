@@ -475,7 +475,7 @@ void tst_Model::all_Columns() const
     {
         auto torrents = Torrent::all();
 
-        QCOMPARE(torrents.at(1).getAttributes().size(), 9);
+        QCOMPARE(torrents.at(1).getAttributes().size(), 10);
     }
     {
         auto torrents = Torrent::all({ID, NAME});
@@ -654,7 +654,7 @@ void tst_Model::findOrNew_Found() const
         auto torrent = Torrent::findOrNew(3);
 
         QVERIFY(torrent.exists);
-        QCOMPARE(torrent.getAttributes().size(), 9);
+        QCOMPARE(torrent.getAttributes().size(), 10);
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
     }
@@ -702,7 +702,7 @@ void tst_Model::findOrFail_Found() const
         auto torrent = Torrent::findOrFail(3);
 
         QVERIFY(torrent.exists);
-        QCOMPARE(torrent.getAttributes().size(), 9);
+        QCOMPARE(torrent.getAttributes().size(), 10);
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
     }
@@ -774,7 +774,7 @@ void tst_Model::firstOrNew_Found() const
         auto torrent = Torrent::firstOrNew({{NAME, "test3"}});
 
         QVERIFY(torrent.exists);
-        QCOMPARE(torrent.getAttributes().size(), 9);
+        QCOMPARE(torrent.getAttributes().size(), 10);
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
         QCOMPARE(torrent["size"], QVariant(13));
@@ -788,7 +788,7 @@ void tst_Model::firstOrNew_Found() const
                             {"progress", 313}});
 
         QVERIFY(torrent.exists);
-        QCOMPARE(torrent.getAttributes().size(), 9);
+        QCOMPARE(torrent.getAttributes().size(), 10);
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
         QCOMPARE(torrent["size"], QVariant(13));
@@ -834,7 +834,7 @@ void tst_Model::firstOrCreate_Found() const
         auto torrent = Torrent::firstOrCreate({{NAME, "test3"}});
 
         QVERIFY(torrent.exists);
-        QCOMPARE(torrent.getAttributes().size(), 9);
+        QCOMPARE(torrent.getAttributes().size(), 10);
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
         QCOMPARE(torrent["size"], QVariant(13));
@@ -852,7 +852,7 @@ void tst_Model::firstOrCreate_Found() const
                             {"hash", "0009e3af2768cdf52ec84c1f320333f68401dc60"}});
 
         QVERIFY(torrent.exists);
-        QCOMPARE(torrent.getAttributes().size(), 9);
+        QCOMPARE(torrent.getAttributes().size(), 10);
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
         QCOMPARE(torrent["size"], QVariant(13));

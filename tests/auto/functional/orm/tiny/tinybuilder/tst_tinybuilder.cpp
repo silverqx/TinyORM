@@ -83,7 +83,7 @@ void tst_TinyBuilder::get() const
         QCOMPARE(expectedIdNames.at(torrentId), torrent[NAME].value<QString>());
     }
 
-    QCOMPARE(torrents.at(1).getAttributes().size(), 9);
+    QCOMPARE(torrents.at(1).getAttributes().size(), 10);
 }
 
 void tst_TinyBuilder::get_Columns() const
@@ -134,7 +134,7 @@ void tst_TinyBuilder::firstOrFail_Found() const
         auto torrent = Torrent::whereEq(ID, 3)->firstOrFail();
 
         QVERIFY(torrent.exists);
-        QCOMPARE(torrent.getAttributes().size(), 9);
+        QCOMPARE(torrent.getAttributes().size(), 10);
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
     }
