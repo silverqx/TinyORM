@@ -71,8 +71,7 @@ private slots:
 private:
     /*! Create TinyBuilder instance for the given connection. */
     template<typename Model>
-    inline std::unique_ptr<TinyBuilder<Model>>
-    createTinyQuery() const;
+    std::unique_ptr<TinyBuilder<Model>> createTinyQuery() const;
 
     /*! Connection name used in this test case. */
     QString m_connection;
@@ -783,7 +782,7 @@ void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnBelongsToMany_NestedIn
 }
 
 template<typename Model>
-inline std::unique_ptr<TinyBuilder<Model>>
+std::unique_ptr<TinyBuilder<Model>>
 tst_MySql_TinyBuilder::createTinyQuery() const
 {
     return Model().on(m_connection);

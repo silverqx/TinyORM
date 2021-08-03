@@ -105,9 +105,7 @@ private slots:
 
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    inline QSharedPointer<QueryBuilder>
-    createQuery(const QString &connection) const
-    { return DB::connection(connection).query(); }
+    QSharedPointer<QueryBuilder> createQuery() const;
 
     /*! Connection name used in this test case. */
     QString m_connection;
@@ -245,9 +243,6 @@ void tst_SQLite_QueryBuilder::first_ColumnExpression() const
     QCOMPARE(firstLog.query,
              "select \"id\", name from \"torrents\" limit 1");
     QVERIFY(firstLog.boundValues.isEmpty());
-
-
-    auto builder = createQuery(m_connection);
 }
 
 void tst_SQLite_QueryBuilder::value() const
@@ -282,7 +277,7 @@ void tst_SQLite_QueryBuilder::value_ColumnExpression() const
 
 void tst_SQLite_QueryBuilder::select() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("torrents");
 
@@ -301,7 +296,7 @@ void tst_SQLite_QueryBuilder::select() const
 
 void tst_SQLite_QueryBuilder::select_ColumnExpression() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("torrents");
 
@@ -320,7 +315,7 @@ void tst_SQLite_QueryBuilder::select_ColumnExpression() const
 
 void tst_SQLite_QueryBuilder::addSelect() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("torrents");
 
@@ -339,7 +334,7 @@ void tst_SQLite_QueryBuilder::addSelect() const
 
 void tst_SQLite_QueryBuilder::addSelect_ColumnExpression() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("torrents");
 
@@ -359,7 +354,7 @@ void tst_SQLite_QueryBuilder::addSelect_ColumnExpression() const
 
 void tst_SQLite_QueryBuilder::distinct() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("torrents");
 
@@ -379,7 +374,7 @@ void tst_SQLite_QueryBuilder::distinct() const
 
 void tst_SQLite_QueryBuilder::from() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     const auto &from = builder->getFrom();
 
@@ -404,7 +399,7 @@ void tst_SQLite_QueryBuilder::from() const
 
 void tst_SQLite_QueryBuilder::from_TableWrappingQuotationMarks() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     const auto &from = builder->getFrom();
 
@@ -482,7 +477,7 @@ void tst_SQLite_QueryBuilder::from_TableWrappingQuotationMarks() const
 
 void tst_SQLite_QueryBuilder::from_WithPrefix() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     const auto prefix = QStringLiteral("xyz_");
     const auto table = QStringLiteral("table");
@@ -503,7 +498,7 @@ void tst_SQLite_QueryBuilder::from_WithPrefix() const
 
 void tst_SQLite_QueryBuilder::from_AliasWithPrefix() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     const auto &from = builder->getFrom();
 
@@ -538,7 +533,7 @@ void tst_SQLite_QueryBuilder::from_AliasWithPrefix() const
 
 void tst_SQLite_QueryBuilder::fromRaw() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     const auto &from = builder->getFrom();
 
@@ -553,7 +548,7 @@ void tst_SQLite_QueryBuilder::fromRaw() const
 
 void tst_SQLite_QueryBuilder::fromRaw_WithWhere() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     const auto &from = builder->getFrom();
 
@@ -572,7 +567,7 @@ void tst_SQLite_QueryBuilder::fromRaw_WithWhere() const
 
 void tst_SQLite_QueryBuilder::fromRaw_WithBindings_WithWhere() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     const auto &from = builder->getFrom();
 
@@ -593,7 +588,7 @@ void tst_SQLite_QueryBuilder::fromRaw_WithBindings_WithWhere() const
 
 void tst_SQLite_QueryBuilder::fromSub_QStringOverload() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->fromSub("select max(last_seen_at) as last_seen_at from \"user_sessions\"",
                      "sessions");
@@ -606,10 +601,10 @@ void tst_SQLite_QueryBuilder::fromSub_QStringOverload() const
 
 void tst_SQLite_QueryBuilder::fromSub_QueryBuilderOverload_WithWhere() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     // Ownership of the QSharedPointer<QueryBuilder>
-    auto subQuery = createQuery(m_connection);
+    auto subQuery = createQuery();
     subQuery->from("user_sessions")
             .select({ID, NAME})
             .where(ID, "<", 5);
@@ -628,7 +623,7 @@ void tst_SQLite_QueryBuilder::fromSub_QueryBuilderOverload_WithWhere() const
 
 void tst_SQLite_QueryBuilder::fromSub_CallbackOverload() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->fromSub([](auto &query)
     {
@@ -648,7 +643,7 @@ void tst_SQLite_QueryBuilder::fromSub_CallbackOverload() const
 
 void tst_SQLite_QueryBuilder::joinSub_QStringOverload() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("users")
             .joinSub("select id as files_id, \"user_id\", \"name\" "
@@ -664,10 +659,10 @@ void tst_SQLite_QueryBuilder::joinSub_QStringOverload() const
 
 void tst_SQLite_QueryBuilder::joinSub_QueryBuilderOverload_WithWhere() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     // Ownership of the QSharedPointer<QueryBuilder>
-    auto subQuery = createQuery(m_connection);
+    auto subQuery = createQuery();
     subQuery->from("user_sessions")
             .select({"id as files_id", "user_id", NAME})
             .where("user_id", "<", 5);
@@ -688,7 +683,7 @@ void tst_SQLite_QueryBuilder::joinSub_QueryBuilderOverload_WithWhere() const
 
 void tst_SQLite_QueryBuilder::joinSub_CallbackOverload() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("users")
             .joinSub([](auto &query)
@@ -713,7 +708,7 @@ void tst_SQLite_QueryBuilder::joinSub_CallbackOverload() const
 void tst_SQLite_QueryBuilder::where() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, "=", 3);
         QCOMPARE(builder->toSql(),
@@ -723,7 +718,7 @@ void tst_SQLite_QueryBuilder::where() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").whereEq(ID, 3);
         QCOMPARE(builder->toSql(),
@@ -733,7 +728,7 @@ void tst_SQLite_QueryBuilder::where() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").whereEq(ID, 3)
                 .whereEq(NAME, "test3");
@@ -744,7 +739,7 @@ void tst_SQLite_QueryBuilder::where() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, "!=", 3);
         QCOMPARE(builder->toSql(),
@@ -754,7 +749,7 @@ void tst_SQLite_QueryBuilder::where() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, "<>", 3);
         QCOMPARE(builder->toSql(),
@@ -764,7 +759,7 @@ void tst_SQLite_QueryBuilder::where() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, ">", 3);
         QCOMPARE(builder->toSql(),
@@ -774,7 +769,7 @@ void tst_SQLite_QueryBuilder::where() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, ">", 3)
                 .where(NAME, LIKE, "test%");
@@ -788,7 +783,7 @@ void tst_SQLite_QueryBuilder::where() const
 void tst_SQLite_QueryBuilder::where_WithVectorValue() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where({{ID, 3}});
         QCOMPARE(builder->toSql(),
@@ -798,7 +793,7 @@ void tst_SQLite_QueryBuilder::where_WithVectorValue() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where({{ID, 3}, {"size", 10, ">"}});
         QCOMPARE(builder->toSql(),
@@ -808,7 +803,7 @@ void tst_SQLite_QueryBuilder::where_WithVectorValue() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where({{ID, 3}, {"size", 10, ">"}})
                 .where({{"progress", 100, ">="}});
@@ -823,7 +818,7 @@ void tst_SQLite_QueryBuilder::where_WithVectorValue() const
 void tst_SQLite_QueryBuilder::orWhere() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, ">", 4)
                 .orWhere("progress", ">=", 300);
@@ -834,7 +829,7 @@ void tst_SQLite_QueryBuilder::orWhere() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, ">", 4)
                 .orWhereEq(NAME, "test3");
@@ -847,7 +842,7 @@ void tst_SQLite_QueryBuilder::orWhere() const
 
 void tst_SQLite_QueryBuilder::orWhere_ColumnExpression() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->select("*").from("torrents").where(Raw(ID), ">", 4)
             .orWhereEq(Raw("\"name\""), "test3");
@@ -859,7 +854,7 @@ void tst_SQLite_QueryBuilder::orWhere_ColumnExpression() const
 
 void tst_SQLite_QueryBuilder::orWhere_WithVectorValue() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->select("*").from("torrents").where({{ID, 3}, {"size", 10, ">"}})
             .orWhere({{"progress", 100, ">="}});
@@ -872,7 +867,7 @@ void tst_SQLite_QueryBuilder::orWhere_WithVectorValue() const
 
 void tst_SQLite_QueryBuilder::orWhere_WithVectorValue_ColumnExpression() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->select("*").from("torrents")
             .where({{Raw(ID), 3}, {Raw("\"size\""), 10, ">"}})
@@ -886,7 +881,7 @@ void tst_SQLite_QueryBuilder::orWhere_WithVectorValue_ColumnExpression() const
 
 void tst_SQLite_QueryBuilder::whereColumn() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->select("*").from("torrent_previewable_files")
             .whereColumn("filepath", "=", "note")
@@ -901,7 +896,7 @@ void tst_SQLite_QueryBuilder::whereColumn() const
 void tst_SQLite_QueryBuilder::orWhereColumn() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumnEq("filepath", "note")
@@ -914,7 +909,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumnEq("filepath", "note")
@@ -929,7 +924,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn() const
 
 void tst_SQLite_QueryBuilder::orWhereColumn_ColumnExpression() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->select("*").from("torrent_previewable_files")
             .whereColumnEq(Raw("filepath"), Raw("\"note\""))
@@ -944,7 +939,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_ColumnExpression() const
 void tst_SQLite_QueryBuilder::whereColumn_WithVectorValue() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumn({{"filepath", "note"},
@@ -957,7 +952,7 @@ void tst_SQLite_QueryBuilder::whereColumn_WithVectorValue() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumn({{"filepath", "note"},
@@ -973,7 +968,7 @@ void tst_SQLite_QueryBuilder::whereColumn_WithVectorValue() const
 void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", "note"},
@@ -987,7 +982,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", "note"},
@@ -1001,7 +996,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", "note"},
@@ -1017,7 +1012,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue() const
 
 void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue_ColumnExpression() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
             .orWhereColumn({{Raw("filepath"), Raw("\"note\"")},
@@ -1032,7 +1027,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue_ColumnExpression() c
 void tst_SQLite_QueryBuilder::whereIn() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").whereIn(ID, {2, 3, 4});
         QCOMPARE(builder->toSql(),
@@ -1042,7 +1037,7 @@ void tst_SQLite_QueryBuilder::whereIn() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, "=", 1)
                 .orWhereIn(ID, {2, 3, 4});
@@ -1057,7 +1052,7 @@ void tst_SQLite_QueryBuilder::whereIn() const
 void tst_SQLite_QueryBuilder::whereNotIn() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").whereNotIn(ID, {2, 3, 4});
         QCOMPARE(builder->toSql(),
@@ -1067,7 +1062,7 @@ void tst_SQLite_QueryBuilder::whereNotIn() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, "=", 1)
                 .orWhereNotIn(ID, {2, 3, 4});
@@ -1082,7 +1077,7 @@ void tst_SQLite_QueryBuilder::whereNotIn() const
 
 void tst_SQLite_QueryBuilder::whereNotIn_ColumnExpression() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->select("*").from("torrents").where(ID, "=", 1)
             .orWhereNotIn(Raw(ID), {2, 3, 4});
@@ -1095,7 +1090,7 @@ void tst_SQLite_QueryBuilder::whereNotIn_ColumnExpression() const
 void tst_SQLite_QueryBuilder::whereIn_Empty() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").whereIn(ID, {});
         QCOMPARE(builder->toSql(),
@@ -1105,7 +1100,7 @@ void tst_SQLite_QueryBuilder::whereIn_Empty() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, "=", 1)
                 .orWhereIn(ID, {});
@@ -1119,7 +1114,7 @@ void tst_SQLite_QueryBuilder::whereIn_Empty() const
 void tst_SQLite_QueryBuilder::WhereNotIn_Empty() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").whereNotIn(ID, {});
         QCOMPARE(builder->toSql(),
@@ -1129,7 +1124,7 @@ void tst_SQLite_QueryBuilder::WhereNotIn_Empty() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, "=", 1)
                 .orWhereNotIn(ID, {});
@@ -1143,7 +1138,7 @@ void tst_SQLite_QueryBuilder::WhereNotIn_Empty() const
 void tst_SQLite_QueryBuilder::whereIn_ValueExpression() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").whereIn(ID, {Raw(3)});
         QCOMPARE(builder->toSql(),
@@ -1153,7 +1148,7 @@ void tst_SQLite_QueryBuilder::whereIn_ValueExpression() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").whereEq(ID, 2)
                 .orWhereIn(ID, {Raw(3)});
@@ -1164,7 +1159,7 @@ void tst_SQLite_QueryBuilder::whereIn_ValueExpression() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrents").whereIn(NAME, {Raw("'xyz'")});
         QCOMPARE(builder->toSql(),
@@ -1177,7 +1172,7 @@ void tst_SQLite_QueryBuilder::whereIn_ValueExpression() const
 void tst_SQLite_QueryBuilder::whereNull() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereNull("seeds");
         QCOMPARE(builder->toSql(),
@@ -1187,7 +1182,7 @@ void tst_SQLite_QueryBuilder::whereNull() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 4)
                 .whereNull("seeds");
@@ -1199,7 +1194,7 @@ void tst_SQLite_QueryBuilder::whereNull() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 3)
                 .orWhereNull("seeds");
@@ -1214,7 +1209,7 @@ void tst_SQLite_QueryBuilder::whereNull() const
 void tst_SQLite_QueryBuilder::whereNotNull() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereNotNull("seeds");
         QCOMPARE(builder->toSql(),
@@ -1224,7 +1219,7 @@ void tst_SQLite_QueryBuilder::whereNotNull() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 4)
                 .whereNotNull("seeds");
@@ -1236,7 +1231,7 @@ void tst_SQLite_QueryBuilder::whereNotNull() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 3)
                 .orWhereNotNull("seeds");
@@ -1250,7 +1245,7 @@ void tst_SQLite_QueryBuilder::whereNotNull() const
 
 void tst_SQLite_QueryBuilder::whereNotNull_ColumnExpression() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->select("*").from("torrent_peers").whereEq(ID, 3)
             .orWhereNotNull(Raw("seeds"));
@@ -1263,7 +1258,7 @@ void tst_SQLite_QueryBuilder::whereNotNull_ColumnExpression() const
 void tst_SQLite_QueryBuilder::whereNull_WithVectorValue() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereNull({"seeds", "total_seeds"});
         QCOMPARE(builder->toSql(),
@@ -1274,7 +1269,7 @@ void tst_SQLite_QueryBuilder::whereNull_WithVectorValue() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 4)
                 .whereNull({"seeds", "total_seeds"});
@@ -1287,7 +1282,7 @@ void tst_SQLite_QueryBuilder::whereNull_WithVectorValue() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 3)
                 .orWhereNull({"seeds", "total_seeds"});
@@ -1303,7 +1298,7 @@ void tst_SQLite_QueryBuilder::whereNull_WithVectorValue() const
 void tst_SQLite_QueryBuilder::whereNotNull_WithVectorValue() const
 {
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereNotNull({"seeds",
                                                                  "total_seeds"});
@@ -1315,7 +1310,7 @@ void tst_SQLite_QueryBuilder::whereNotNull_WithVectorValue() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 4)
                 .whereNotNull({"seeds", "total_seeds"});
@@ -1328,7 +1323,7 @@ void tst_SQLite_QueryBuilder::whereNotNull_WithVectorValue() const
     }
 
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 3)
                 .orWhereNotNull({"seeds", "total_seeds"});
@@ -1343,7 +1338,7 @@ void tst_SQLite_QueryBuilder::whereNotNull_WithVectorValue() const
 
 void tst_SQLite_QueryBuilder::orderBy() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("torrents");
 
@@ -1367,7 +1362,7 @@ void tst_SQLite_QueryBuilder::orderBy() const
 
 void tst_SQLite_QueryBuilder::latestOldest() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("torrents");
 
@@ -1382,7 +1377,7 @@ void tst_SQLite_QueryBuilder::latestOldest() const
 
 void tst_SQLite_QueryBuilder::limitOffset() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("torrents");
 
@@ -1397,7 +1392,7 @@ void tst_SQLite_QueryBuilder::limitOffset() const
 
 void tst_SQLite_QueryBuilder::takeSkip() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("torrents");
 
@@ -1412,7 +1407,7 @@ void tst_SQLite_QueryBuilder::takeSkip() const
 
 void tst_SQLite_QueryBuilder::forPage() const
 {
-    auto builder = createQuery(m_connection);
+    auto builder = createQuery();
 
     builder->from("torrents");
 
@@ -1429,7 +1424,7 @@ void tst_SQLite_QueryBuilder::lock() const
 {
     // lock for update
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 4).lock();
         QCOMPARE(builder->toSql(),
@@ -1438,7 +1433,7 @@ void tst_SQLite_QueryBuilder::lock() const
                  QVector<QVariant>({QVariant(4)}));
     }
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 4).lockForUpdate();
         QCOMPARE(builder->toSql(),
@@ -1448,7 +1443,7 @@ void tst_SQLite_QueryBuilder::lock() const
     }
     // shared lock
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 4).lock(false);
         QCOMPARE(builder->toSql(),
@@ -1457,7 +1452,7 @@ void tst_SQLite_QueryBuilder::lock() const
                  QVector<QVariant>({QVariant(4)}));
     }
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 4).sharedLock();
         QCOMPARE(builder->toSql(),
@@ -1466,7 +1461,7 @@ void tst_SQLite_QueryBuilder::lock() const
                  QVector<QVariant>({QVariant(4)}));
     }
     {
-        auto builder = createQuery(m_connection);
+        auto builder = createQuery();
 
         builder->select("*").from("torrent_peers").whereEq(ID, 4)
                 .lock("lock in share mode");
@@ -1579,6 +1574,12 @@ void tst_SQLite_QueryBuilder::remove_WithExpression() const
     QCOMPARE(firstLog.query,
              "delete from \"torrents\" where \"torrents\".\"id\" = 2223");
     QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+QSharedPointer<QueryBuilder>
+tst_SQLite_QueryBuilder::createQuery() const
+{
+    return DB::connection(m_connection).query();
 }
 
 QTEST_MAIN(tst_SQLite_QueryBuilder)

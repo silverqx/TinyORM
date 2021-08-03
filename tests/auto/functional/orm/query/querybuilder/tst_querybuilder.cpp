@@ -38,9 +38,8 @@ private slots:
 
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    inline QSharedPointer<QueryBuilder>
-    createQuery(const QString &connection) const
-    { return DB::connection(connection).query(); }
+    QSharedPointer<QueryBuilder>
+    createQuery(const QString &connection) const;
 };
 
 void tst_QueryBuilder::initTestCase_data() const
@@ -317,6 +316,12 @@ void tst_QueryBuilder::limit() const
 
         QCOMPARE(query.size(), 4);
     }
+}
+
+QSharedPointer<QueryBuilder>
+tst_QueryBuilder::createQuery(const QString &connection) const
+{
+    return DB::connection(connection).query();
 }
 
 QTEST_MAIN(tst_QueryBuilder)

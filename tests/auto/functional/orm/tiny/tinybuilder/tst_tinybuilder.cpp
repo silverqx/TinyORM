@@ -41,9 +41,7 @@ private slots:
 private:
     /*! Create the TinyBuilder by template parameter. */
     template<typename Model>
-    inline static std::unique_ptr<TinyBuilder<Model>>
-    createQuery()
-    { return Model().query(); }
+    std::unique_ptr<TinyBuilder<Model>> createQuery() const;
 };
 
 void tst_TinyBuilder::initTestCase_data() const
@@ -304,6 +302,13 @@ void tst_TinyBuilder::update_SameValue() const
     QVERIFY(torrentVerify->exists);
     QVERIFY(torrentVerify->getAttribute(torrent->getUpdatedAtColumn()).toDateTime()
             >= timeBeforeUpdate);
+}
+
+template<typename Model>
+std::unique_ptr<TinyBuilder<Model>>
+tst_TinyBuilder::createQuery() const
+{
+    return Model().query();
 }
 
 QTEST_MAIN(tst_TinyBuilder)
