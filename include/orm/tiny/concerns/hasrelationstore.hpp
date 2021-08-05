@@ -324,8 +324,9 @@ namespace Concerns
     void HasRelationStore<Derived, AllRelations...>::BaseRelationStore
                                                    ::operator()(const Method method)
     {
-        // CUR after commit make double switch, first level to avoid using Related duplicates, second level will be the same as now with using Related silverqx
-        switch (getStoreType()) {
+        const auto storeType = getStoreType();
+
+        switch (storeType) {
         case RelationStoreType::EAGER:
             static_cast<EagerRelationStore *>(this)->visited(method);
             break;
@@ -338,37 +339,37 @@ namespace Concerns
             static_cast<PushRelationStore *>(this)->visited(method);
             break;
 
-        case RelationStoreType::LAZY_RESULTS:
-        {
-            using Related = typename std::invoke_result_t<Method, Derived>
-                                        ::element_type::RelatedType;
-
-            static_cast<LazyRelationStore<Related> *>(this)->visited(method);
-        }
-            break;
-
         case RelationStoreType::BELONGSTOMANY_RELATED_TABLE:
             static_cast<BelongsToManyRelatedTableStore *>(this)->visited(method);
             break;
 
+        case RelationStoreType::LAZY_RESULTS:
         case RelationStoreType::QUERIES_RELATIONSHIPS_QUERY:
-        {
-            using Related = typename std::invoke_result_t<Method, Derived>
-                                        ::element_type::RelatedType;
-
-            static_cast<QueriesRelationshipsStore<void> *>(this)
-                    ->template visited<Related>(method);
-        }
-            break;
-
         case RelationStoreType::QUERIES_RELATIONSHIPS_TINY:
         case RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED:
         {
             using Related = typename std::invoke_result_t<Method, Derived>
                                         ::element_type::RelatedType;
 
-            static_cast<QueriesRelationshipsStore<Related> *>(this)
-                    ->template visited<Related>(method);
+            switch (storeType) {
+            case RelationStoreType::LAZY_RESULTS:
+                static_cast<LazyRelationStore<Related> *>(this)->visited(method);
+                break;
+
+            case RelationStoreType::QUERIES_RELATIONSHIPS_QUERY:
+                static_cast<QueriesRelationshipsStore<void> *>(this)
+                        ->template visited<Related>(method);
+                break;
+
+            case RelationStoreType::QUERIES_RELATIONSHIPS_TINY:
+            case RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED:
+                static_cast<QueriesRelationshipsStore<Related> *>(this)
+                        ->template visited<Related>(method);
+                break;
+
+            default:
+                break;
+            }
         }
             break;
 
