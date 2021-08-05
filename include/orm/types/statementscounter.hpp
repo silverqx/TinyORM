@@ -1,3 +1,4 @@
+#pragma once
 #ifndef STATEMENTSCOUNTER_HPP
 #define STATEMENTSCOUNTER_HPP
 

@@ -60,6 +60,7 @@ HEADERS += \
     $$PWD/orm/tiny/massassignmenterror.hpp \
     $$PWD/orm/tiny/model.hpp \
     $$PWD/orm/tiny/modelnotfounderror.hpp \
+    $$PWD/orm/tiny/modelproxies.hpp \
     $$PWD/orm/tiny/relationnotfounderror.hpp \
     $$PWD/orm/tiny/relationnotloadederror.hpp \
     $$PWD/orm/tiny/relations/basepivot.hpp \
@@ -71,7 +72,9 @@ HEADERS += \
     $$PWD/orm/tiny/relations/hasoneormany.hpp \
     $$PWD/orm/tiny/relations/pivot.hpp \
     $$PWD/orm/tiny/relations/relation.hpp \
+    $$PWD/orm/tiny/relations/relationproxies.hpp \
     $$PWD/orm/tiny/tinybuilder.hpp \
+    $$PWD/orm/tiny/tinybuilderproxies.hpp \
     $$PWD/orm/tiny/tinytypes.hpp \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \

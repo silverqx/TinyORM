@@ -284,9 +284,9 @@ namespace Concerns
         template<typename Related = void>
         const QueriesRelationshipsStore<Related> &queriesRelationshipsStore() const;
 
-        /*! Static cast this to a child's instance type (CRTP). */
+        /*! Static cast this to a child's instance Model type. */
         Model<Derived, AllRelations...> &basemodel();
-        /*! Static cast this to a child's instance type (CRTP), const version. */
+        /*! Static cast this to a child's instance Model type, const version. */
         const Model<Derived, AllRelations...> &basemodel() const;
 
         /*! Static cast this to a child's instance type (CRTP). */

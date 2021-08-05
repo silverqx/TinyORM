@@ -93,9 +93,9 @@ namespace Concerns
         Derived &model();
         /*! Static cast this to a child's instance type (CRTP), const version. */
         const Derived &model() const;
-        /*! Static cast this to a child's instance type (CRTP). */
+        /*! Static cast this to a child's instance  Model type. */
         Model<Derived, AllRelations...> &basemodel();
-        /*! Static cast this to a child's instance type (CRTP), const version. */
+        /*! Static cast this to a child's instance Model type, const version. */
         const Model<Derived, AllRelations...> &basemodel() const;
     };
 

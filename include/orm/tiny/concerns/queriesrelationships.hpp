@@ -1,3 +1,4 @@
+#pragma once
 #ifndef QUERIESRELATIONSHIPS_HPP
 #define QUERIESRELATIONSHIPS_HPP
 
@@ -222,9 +223,9 @@ namespace Private
                                            qint64 count) const;
 
     private:
-        /*! Static cast this to a child's instance type (CRTP). */
+        /*! Static cast this to a child's instance TinyBuilder type. */
         TinyBuilder<Model> &query();
-        /*! Static cast this to a child's instance type (CRTP), const version. */
+        /*! Static cast this to a child's instance TinyBuilder type, const version. */
         const TinyBuilder<Model> &query() const;
 
         /*! Merge the where constraints from another query to the current query. */

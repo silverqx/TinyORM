@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ORM_CONCEPTS_HPP
 #define ORM_CONCEPTS_HPP
 
