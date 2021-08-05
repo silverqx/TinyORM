@@ -871,7 +871,6 @@ namespace Tiny
             const std::function<void(TinyBuilder<Model> &)> &callback,
             const QString &condition)
     {
-        // CUR maybe add getModel() silverqx
         // Ownership of a unique_ptr()
         auto query = builder().m_model.newQueryWithoutRelationships();
 
