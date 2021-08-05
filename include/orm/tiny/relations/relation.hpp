@@ -80,7 +80,6 @@ namespace Relations
         { return m_query->get(columns); }
 
         /* Getters / Setters */
-        // CUR check all methods virtual, in child classes should be overriden silverqx
         /*! Get the underlying query for the relation. */
         inline Builder<Related> &getQuery() const
         { return *m_query; }
