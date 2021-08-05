@@ -2,18 +2,18 @@
 #ifndef RELATIONNOTFOUNDERROR_H
 #define RELATIONNOTFOUNDERROR_H
 
-#include "orm/runtimeerror.hpp"
+#include "orm/exceptions/runtimeerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Tiny
+namespace Orm::Tiny::Exceptions
 {
 
     /*! Check whether the relation was defined in the u_relation data member, called
         from Model::validateUserRelation(). */
-    class SHAREDLIB_EXPORT RelationNotFoundError : public RuntimeError
+    class SHAREDLIB_EXPORT RelationNotFoundError : public Orm::Exceptions::RuntimeError
     {
     public:
         /*! Exception message will be generated on the base of this enum struct. */

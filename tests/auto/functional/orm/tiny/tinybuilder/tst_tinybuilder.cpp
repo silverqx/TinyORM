@@ -7,9 +7,9 @@
 
 #include "databases.hpp"
 
-using Orm::QueryError;
+using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
-using Orm::Tiny::ModelNotFoundError;
+using Orm::Tiny::Exceptions::ModelNotFoundError;
 
 template<typename Model>
 using TinyBuilder = Orm::Tiny::Builder<Model>;

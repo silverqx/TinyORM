@@ -2,7 +2,7 @@
 
 #include <QVector>
 
-#include "orm/sqlerror.hpp"
+#include "orm/exceptions/sqlerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
@@ -11,7 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Concerns
 {
 
-bool DetectsLostConnections::causedByLostConnection(const SqlError &e) const
+bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &e) const
 {
     // TODO verify this will be pain in the ass 😕 silverqx
     static const QVector<QString> lostMessagesCache {

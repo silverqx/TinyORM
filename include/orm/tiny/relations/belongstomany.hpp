@@ -10,9 +10,9 @@
 #include <range/v3/view/set_algorithm.hpp>
 #include <range/v3/view/transform.hpp>
 
-#include "orm/domainerror.hpp"
+#include "orm/exceptions/domainerror.hpp"
 #include "orm/macros.hpp"
-#include "orm/tiny/modelnotfounderror.hpp"
+#include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/utils/attribute.hpp"
 #include "orm/utils/type.hpp"
@@ -843,7 +843,8 @@ namespace Orm::Tiny::Relations
         if (model)
             return *model;
 
-        throw ModelNotFoundError(Utils::Type::classPureBasename<Related>(), {id});
+        throw Exceptions::ModelNotFoundError(
+                    Utils::Type::classPureBasename<Related>(), {id});
     }
 
     template<class Model, class Related, class PivotType>
@@ -909,7 +910,8 @@ namespace Orm::Tiny::Relations
         if (auto model = first(columns); model)
             return *model;
 
-        throw ModelNotFoundError(Utils::Type::classPureBasename<Related>());
+        throw Exceptions::ModelNotFoundError(
+                    Utils::Type::classPureBasename<Related>());
     }
 
     template<class Model, class Related, class PivotType>
@@ -1869,10 +1871,10 @@ namespace Orm::Tiny::Relations
                 QStringLiteral("You can not overwrite '%1' ID key; "
                                "original value : %2, your value : %3.");
 
-        throw DomainError(overwriteMessage.arg(
-                              qualifyPivotColumn(key),
-                              QString::number(original.value<KeyType>()),
-                              QString::number(overwrite.value<KeyType>())));
+        throw Orm::Exceptions::DomainError(
+                    overwriteMessage.arg(qualifyPivotColumn(key),
+                                         QString::number(original.value<KeyType>()),
+                                         QString::number(overwrite.value<KeyType>())));
     }
 
 } // namespace Orm::Tiny::Relations

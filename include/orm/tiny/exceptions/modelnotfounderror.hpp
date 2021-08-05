@@ -4,16 +4,16 @@
 
 #include <QVariant>
 
-#include "orm/runtimeerror.hpp"
+#include "orm/exceptions/runtimeerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Tiny
+namespace Orm::Tiny::Exceptions
 {
 
-    class SHAREDLIB_EXPORT ModelNotFoundError : public RuntimeError
+    class SHAREDLIB_EXPORT ModelNotFoundError : public Orm::Exceptions::RuntimeError
     {
     public:
         // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx

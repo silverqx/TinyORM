@@ -4,13 +4,13 @@
 
 #include <QtSql/QSqlError>
 
-#include "orm/runtimeerror.hpp"
+#include "orm/exceptions/runtimeerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Exceptions
 {
 
     class SHAREDLIB_EXPORT SqlError : public RuntimeError

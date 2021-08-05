@@ -18,11 +18,15 @@ HEADERS += \
     $$PWD/orm/databaseconnection.hpp \
     $$PWD/orm/databasemanager.hpp \
     $$PWD/orm/db.hpp \
-    $$PWD/orm/domainerror.hpp \
-    $$PWD/orm/invalidargumenterror.hpp \
-    $$PWD/orm/invalidformaterror.hpp \
-    $$PWD/orm/invalidtemplateargumenterror.hpp \
-    $$PWD/orm/logicerror.hpp \
+    $$PWD/orm/exceptions/domainerror.hpp \
+    $$PWD/orm/exceptions/invalidargumenterror.hpp \
+    $$PWD/orm/exceptions/invalidformaterror.hpp \
+    $$PWD/orm/exceptions/invalidtemplateargumenterror.hpp \
+    $$PWD/orm/exceptions/logicerror.hpp \
+    $$PWD/orm/exceptions/queryerror.hpp \
+    $$PWD/orm/exceptions/runtimeerror.hpp \
+    $$PWD/orm/exceptions/sqlerror.hpp \
+    $$PWD/orm/exceptions/sqltransactionerror.hpp \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/macros.hpp \
     $$PWD/orm/mysqlconnection.hpp \
@@ -39,8 +43,6 @@ HEADERS += \
     $$PWD/orm/query/processors/processor.hpp \
     $$PWD/orm/query/processors/sqliteprocessor.hpp \
     $$PWD/orm/query/querybuilder.hpp \
-    $$PWD/orm/queryerror.hpp \
-    $$PWD/orm/runtimeerror.hpp \
     $$PWD/orm/schema/grammars/mysqlschemagrammar.hpp \
     $$PWD/orm/schema/grammars/postgresschemagrammar.hpp \
     $$PWD/orm/schema/grammars/schemagrammar.hpp \
@@ -49,20 +51,18 @@ HEADERS += \
     $$PWD/orm/schema/postgresschemabuilder.hpp \
     $$PWD/orm/schema/schemabuilder.hpp \
     $$PWD/orm/schema/sqliteschemabuilder.hpp \
-    $$PWD/orm/sqlerror.hpp \
     $$PWD/orm/sqliteconnection.hpp \
-    $$PWD/orm/sqltransactionerror.hpp \
     $$PWD/orm/support/configurationoptionsparser.hpp \
     $$PWD/orm/tiny/concerns/guardsattributes.hpp \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \
     $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
     $$PWD/orm/tiny/concerns/queriesrelationships.hpp \
-    $$PWD/orm/tiny/massassignmenterror.hpp \
+    $$PWD/orm/tiny/exceptions/massassignmenterror.hpp \
+    $$PWD/orm/tiny/exceptions/modelnotfounderror.hpp \
+    $$PWD/orm/tiny/exceptions/relationnotfounderror.hpp \
+    $$PWD/orm/tiny/exceptions/relationnotloadederror.hpp \
     $$PWD/orm/tiny/model.hpp \
-    $$PWD/orm/tiny/modelnotfounderror.hpp \
     $$PWD/orm/tiny/modelproxies.hpp \
-    $$PWD/orm/tiny/relationnotfounderror.hpp \
-    $$PWD/orm/tiny/relationnotloadederror.hpp \
     $$PWD/orm/tiny/relations/basepivot.hpp \
     $$PWD/orm/tiny/relations/belongsto.hpp \
     $$PWD/orm/tiny/relations/belongstomany.hpp \

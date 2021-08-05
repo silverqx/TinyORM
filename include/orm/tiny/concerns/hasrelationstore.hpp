@@ -5,7 +5,7 @@
 #include <optional>
 #include <stack>
 
-#include "orm/runtimeerror.hpp"
+#include "orm/exceptions/runtimeerror.hpp"
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/tiny/tinytypes.hpp"
 
@@ -373,7 +373,7 @@ namespace Concerns
             break;
 
         default:
-            throw RuntimeError("Unknown store type.");
+            throw Orm::Exceptions::RuntimeError("Unknown store type.");
         }
     }
 

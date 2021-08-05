@@ -8,7 +8,11 @@ namespace TINYORM_COMMON_NAMESPACE
 #endif
 namespace Orm
 {
+
+namespace Exceptions
+{
     class SqlError;
+}
 
 namespace Concerns
 {
@@ -22,7 +26,7 @@ namespace Concerns
         DetectsLostConnections() = default;
 
         /*! Determine if the given exception was caused by a lost connection. */
-        bool causedByLostConnection(const SqlError &e) const;
+        bool causedByLostConnection(const Exceptions::SqlError &e) const;
     };
 
 } // namespace Orm::Concerns

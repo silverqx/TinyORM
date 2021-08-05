@@ -3,7 +3,7 @@
 #include <QRegularExpression>
 
 #include "orm/constants.hpp"
-#include "orm/runtimeerror.hpp"
+#include "orm/exceptions/runtimeerror.hpp"
 
 using namespace Orm::Constants;
 
@@ -31,7 +31,8 @@ QString Type::prettyFunction(const QString &function)
     QRegularExpression re(QStringLiteral(
                               "(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)(?:$|::<lambda)"));
 #else
-    throw RuntimeError("Unsupported compiler in Utils::Type::prettyFunction().");
+    throw Exceptions::RuntimeError(
+                "Unsupported compiler in Utils::Type::prettyFunction().");
 #endif
 
     const auto match = re.match(function);
@@ -69,7 +70,7 @@ Type::classPureBasenameInternal(const char *typeName, const bool withNamespace)
 
     return classPureBasenameGcc(typeNameDemangled, withNamespace);
 #else
-    throw RuntimeError(
+    throw Exceptions::RuntimeError(
                 "Unsupported compiler in Utils::Type::classPureBasenameInternal().");
 #endif
 }

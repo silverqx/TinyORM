@@ -4,14 +4,14 @@
 
 #include <stdexcept>
 
-#include "orm/logicerror.hpp"
+#include "orm/exceptions/logicerror.hpp"
 #include "orm/utils/export.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Exceptions
 {
 
     // CUR move all exception classes to exceptions folder and own exception NS? silverqx

@@ -2,19 +2,19 @@
 #ifndef MASSASSIGNMENTERROR_H
 #define MASSASSIGNMENTERROR_H
 
-#include "orm/runtimeerror.hpp"
+#include "orm/exceptions/runtimeerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Tiny
+namespace Orm::Tiny::Exceptions
 {
 
-    class SHAREDLIB_EXPORT MassAssignmentError : public RuntimeError
+    class SHAREDLIB_EXPORT MassAssignmentError : public Orm::Exceptions::RuntimeError
     {
     public:
-        using RuntimeError::RuntimeError;
+        using Orm::Exceptions::RuntimeError::RuntimeError;
     };
 
 } // namespace Orm::Tiny

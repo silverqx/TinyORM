@@ -10,7 +10,7 @@
 
 #include "orm/databaseconnection.hpp"
 #include "orm/tiny/concerns/queriesrelationships.hpp"
-#include "orm/tiny/modelnotfounderror.hpp"
+#include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/tinybuilderproxies.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -313,7 +313,8 @@ namespace Orm::Tiny
         if (model)
             return *model;
 
-        throw ModelNotFoundError(Utils::Type::classPureBasename<Model>(), {id});
+        throw Exceptions::ModelNotFoundError(
+                    Utils::Type::classPureBasename<Model>(), {id});
     }
 
     template<typename Model>
@@ -383,7 +384,8 @@ namespace Orm::Tiny
         if (model)
             return *model;
 
-        throw ModelNotFoundError(Utils::Type::classPureBasename<Model>());
+        throw Exceptions::ModelNotFoundError(
+                    Utils::Type::classPureBasename<Model>());
     }
 
     template<typename Model>
@@ -704,7 +706,7 @@ namespace Orm::Tiny
             const auto isSelectConstraint = relation.name.contains(COLON);
 
             if (isSelectConstraint && relation.constraints)
-                throw RuntimeError(
+                throw Orm::Exceptions::RuntimeError(
                         "Passing both 'Select constraint' and 'Lambda expression "
                         "constraint' to the Model::with() method is not allowed, use "
                         "only one of them.");

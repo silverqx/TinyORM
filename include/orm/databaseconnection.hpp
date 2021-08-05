@@ -11,9 +11,9 @@
 #include "orm/concerns/detectslostconnections.hpp"
 #include "orm/connectioninterface.hpp"
 #include "orm/connectors/connectorinterface.hpp"
+#include "orm/exceptions/queryerror.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/query/processors/processor.hpp"
-#include "orm/queryerror.hpp"
 #include "orm/schema/schemabuilder.hpp"
 #include "orm/schema/grammars/schemagrammar.hpp"
 
@@ -348,13 +348,13 @@ namespace Orm
         /*! Handle a query exception. */
         template<typename Return>
         Return handleQueryException(
-                const std::exception_ptr &ePtr, const QueryError &e,
+                const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
                 const QString &queryString, const QVector<QVariant> &bindings,
                 const RunCallback<Return> &callback) const;
         /*! Handle a query exception that occurred during query execution. */
         template<typename Return>
         Return tryAgainIfCausedByLostConnection(
-                const std::exception_ptr &ePtr, const QueryError &e,
+                const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
                 const QString &queryString, const QVector<QVariant> &bindings,
                 const RunCallback<Return> &callback) const;
 
@@ -487,7 +487,7 @@ namespace Orm
         try {
             result = runQueryCallback(queryString, bindings, callback);
 
-        }  catch (const QueryError &e) {
+        }  catch (const Exceptions::QueryError &e) {
             result = handleQueryException(std::current_exception(), e,
                                           queryString, bindings, callback);
         }
@@ -527,7 +527,7 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::handleQueryException(
-            const std::exception_ptr &ePtr, const QueryError &e,
+            const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
             const QString &queryString, const QVector<QVariant> &bindings,
             const RunCallback<Return> &callback) const
     {
@@ -542,7 +542,7 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::tryAgainIfCausedByLostConnection(
-            const std::exception_ptr &ePtr, const QueryError &e,
+            const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
             const QString &queryString, const QVector<QVariant> &bindings,
             const RunCallback<Return> &callback) const
     {

@@ -9,8 +9,8 @@
 #include "databases.hpp"
 
 using Orm::AttributeItem;
+using Orm::Exceptions::QueryError;
 using Orm::One;
-using Orm::QueryError;
 using Orm::Tiny::ConnectionOverride;
 
 using TestUtils::Databases;

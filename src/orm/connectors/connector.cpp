@@ -1,6 +1,6 @@
 #include "orm/connectors/connector.hpp"
 
-#include "orm/sqlerror.hpp"
+#include "orm/exceptions/sqlerror.hpp"
 #include "orm/support/configurationoptionsparser.hpp"
 #include "orm/utils/type.hpp"
 
@@ -22,7 +22,7 @@ Connector::createConnection(const QString &name, const QVariantHash &config,
 
     try {
         return createQSqlDatabaseConnection(name, config, options);
-    }  catch (const SqlError &e) {
+    }  catch (const Exceptions::SqlError &e) {
         return tryAgainIfCausedByLostConnection(std::current_exception(), e, name,
                                                 config, options);
     }
@@ -40,9 +40,10 @@ Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash 
                       : addQSqlDatabaseConnection(name, config, options);
 
     if (!db.open())
-        throw SqlError(QStringLiteral("Open databse connection in %1() failed.")
-                       .arg(__tiny_func__),
-                       db.lastError());
+        throw Exceptions::SqlError(
+                QStringLiteral("Open databse connection in %1() failed.")
+                .arg(__tiny_func__),
+                db.lastError());
 
     return db;
 }
@@ -88,8 +89,8 @@ Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &co
 
 QSqlDatabase
 Connector::tryAgainIfCausedByLostConnection(
-        const std::exception_ptr &ePtr, const SqlError &e, const QString &name,
-        const QVariantHash &config, const QString &options) const
+        const std::exception_ptr &ePtr, const Exceptions::SqlError &e,
+        const QString &name, const QVariantHash &config, const QString &options) const
 {
     if (causedByLostConnection(e))
         return createQSqlDatabaseConnection(name, config, options);

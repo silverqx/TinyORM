@@ -9,13 +9,13 @@
 
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
-#include "orm/invalidformaterror.hpp"
+#include "orm/exceptions/invalidformaterror.hpp"
 #include "orm/tiny/concerns/guardsattributes.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
-#include "orm/tiny/massassignmenterror.hpp"
+#include "orm/tiny/exceptions/massassignmenterror.hpp"
+#include "orm/tiny/exceptions/relationnotfounderror.hpp"
+#include "orm/tiny/exceptions/relationnotloadederror.hpp"
 #include "orm/tiny/modelproxies.hpp"
-#include "orm/tiny/relationnotfounderror.hpp"
-#include "orm/tiny/relationnotloadederror.hpp"
 #include "orm/tiny/relations/belongsto.hpp"
 #include "orm/tiny/relations/belongstomany.hpp"
 #include "orm/tiny/relations/hasone.hpp"
@@ -734,7 +734,7 @@ namespace Relations {
 
     private:
         /*! Alias for the enum struct RelationNotFoundError::From. */
-        using RelationFrom = RelationNotFoundError::From;
+        using RelationFrom = Exceptions::RelationNotFoundError::From;
 
         /* Eager load from TinyBuilder */
         /*! Invoke Model::eagerVisitor() to define template argument Related
@@ -1049,7 +1049,8 @@ namespace Relations {
         else if (std::holds_alternative<std::optional<Related>>(models))
             pushVisited<Related, One>();
         else
-            throw RuntimeError("this->pushStore().models holds unexpected alternative.");
+            throw Orm::Exceptions::RuntimeError(
+                    "this->pushStore().models holds unexpected alternative.");
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1126,8 +1127,8 @@ namespace Relations {
             )
                 relatedModel->touchOwners();
         } else
-            throw RuntimeError("Bad relation type passed to the "
-                               "Model::touchOwnersVisited().");
+            throw Orm::Exceptions::RuntimeError(
+                    "Bad relation type passed to the Model::touchOwnersVisited().");
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1169,7 +1170,7 @@ namespace Relations {
 //        mergeAttributesFromClassCasts();
 
         if (getKeyName().isEmpty())
-            throw RuntimeError("No primary key defined on model.");
+            throw Orm::Exceptions::RuntimeError("No primary key defined on model.");
 
         /* If the model doesn't exist, there is nothing to delete so we'll just return
            immediately and not do anything else. Otherwise, we will continue with a
@@ -1377,7 +1378,7 @@ namespace Relations {
                 setAttribute(key, std::move(attribute.value));
 
             else if (totallyGuarded)
-                throw MassAssignmentError(
+                throw Exceptions::MassAssignmentError(
                         QStringLiteral("Add '%1' to u_fillable data member to allow "
                                        "mass assignment on '%2'.")
                         .arg(key, Utils::Type::classPureBasename<Derived>()));
@@ -1401,7 +1402,7 @@ namespace Relations {
                 setAttribute(key, std::move(attribute.value));
 
             else if (totallyGuarded)
-                throw MassAssignmentError(
+                throw Exceptions::MassAssignmentError(
                         QStringLiteral("Add '%1' to u_fillable data member to allow "
                                        "mass assignment on '%2'.")
                         .arg(key, Utils::Type::classPureBasename<Derived>()));
@@ -1835,7 +1836,7 @@ namespace Relations {
         )
             return date;
 
-        throw InvalidFormatError(
+        throw Orm::Exceptions::InvalidFormatError(
                     QStringLiteral("Could not parse the datetime '%1' using "
                                    "the given format '%2'.")
                     .arg(value.value<QString>(), format));
@@ -1918,7 +1919,7 @@ namespace Relations {
     Model<Derived, AllRelations...>::getRelation(const QString &relation)
     {
         if (!relationLoaded(relation))
-            throw RelationNotLoadedError(
+            throw Exceptions::RelationNotLoadedError(
                     Orm::Utils::Type::classPureBasename<Derived>(), relation);
 
         return getRelationFromHash<Related, Container>(relation);
@@ -1931,7 +1932,7 @@ namespace Relations {
     Model<Derived, AllRelations...>::getRelation(const QString &relation)
     {
         if (!relationLoaded(relation))
-            throw RelationNotLoadedError(
+            throw Exceptions::RelationNotLoadedError(
                     Orm::Utils::Type::classPureBasename<Derived>(), relation);
 
         return getRelationFromHash<Related, Tag>(relation);
@@ -2734,7 +2735,7 @@ namespace Relations {
                 value.userType() == QMetaType::QDateTime
 #endif
             )
-                throw InvalidArgumentError(
+                throw Orm::Exceptions::InvalidArgumentError(
                         message.arg(Utils::Type::classPureBasename<Derived>()));
     }
 
@@ -2761,7 +2762,7 @@ namespace Relations {
             const QString &name, const RelationFrom from) const
     {
         if (!model().u_relations.contains(name))
-            throw RelationNotFoundError(
+            throw Exceptions::RelationNotFoundError(
                     Orm::Utils::Type::classPureBasename<Derived>(), name, from);
     }
 
@@ -2773,7 +2774,7 @@ namespace Relations {
     {
         if constexpr (std::is_same_v<Result, std::optional<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
-                throw RuntimeError(
+                throw Orm::Exceptions::RuntimeError(
                         QStringLiteral(
                             "The relation '%1' is many type relation, use "
                             "%2<%3>() method overload without an 'Orm::One' tag.")
@@ -2781,7 +2782,7 @@ namespace Relations {
                              Utils::Type::classPureBasename<Related>()));
         } else if constexpr (std::is_same_v<Result, QVector<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
-                throw RuntimeError(
+                throw Orm::Exceptions::RuntimeError(
                         QStringLiteral(
                             "The relation '%1' is one type relation, use "
                             "%2<%3, Orm::One>() method overload "
@@ -2789,7 +2790,8 @@ namespace Relations {
                         .arg(relation, source,
                              Utils::Type::classPureBasename<Related>()));
         } else
-            throw InvalidArgumentError("Unexpected 'Result' template argument.");
+            throw Orm::Exceptions::InvalidArgumentError(
+                    "Unexpected 'Result' template argument.");
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

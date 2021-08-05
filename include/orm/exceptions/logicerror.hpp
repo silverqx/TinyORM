@@ -1,8 +1,6 @@
 #pragma once
-#ifndef RUNTIMEERROR_H
-#define RUNTIMEERROR_H
-
-#include <QString>
+#ifndef LOGICERROR_H
+#define LOGICERROR_H
 
 #include <stdexcept>
 
@@ -12,17 +10,17 @@
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Exceptions
 {
 
-    class SHAREDLIB_EXPORT RuntimeError : public std::runtime_error
+    class SHAREDLIB_EXPORT LogicError : public std::logic_error
     {
     public:
-        explicit inline RuntimeError(const char *message)
-            : std::runtime_error(message)
+        explicit inline LogicError(const char *message)
+            : std::logic_error(message)
         {}
-        explicit inline RuntimeError(const QString &message)
-            : std::runtime_error(message.toUtf8().constData())
+        explicit inline LogicError(const QString &message)
+            : std::logic_error(message.toUtf8().constData())
         {}
 
         /*! Return exception message as a QString. */
@@ -39,4 +37,4 @@ namespace Orm
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // RUNTIMEERROR_H
+#endif // LOGICERROR_H

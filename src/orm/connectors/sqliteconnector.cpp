@@ -4,8 +4,8 @@
 #include <QtSql/QSqlQuery>
 
 #include "orm/constants.hpp"
-#include "orm/invalidargumenterror.hpp"
-#include "orm/queryerror.hpp"
+#include "orm/exceptions/invalidargumenterror.hpp"
+#include "orm/exceptions/queryerror.hpp"
 #include "orm/utils/type.hpp"
 
 using namespace Orm::Constants;
@@ -76,7 +76,7 @@ void SQLiteConnector::configureForeignKeyConstraints(
                    .arg(foreignKeyConstraints)))
         return;
 
-    throw QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const
@@ -91,7 +91,7 @@ void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const
         checkDatabaseExists = config["check_database_exists"].value<bool>();
 
     if (checkDatabaseExists && !QFile::exists(path))
-        throw InvalidArgumentError(
+        throw Exceptions::InvalidArgumentError(
                 QStringLiteral("SQLite Database file '%1' does not exist.").arg(path));
 }
 

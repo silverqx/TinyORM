@@ -51,8 +51,9 @@ QString Grammar::compileInsert(const QueryBuilder &query,
 QString Grammar::compileInsertOrIgnore(const QueryBuilder &,
                                        const QVector<QVariantMap> &) const
 {
-    throw RuntimeError("This database engine does not support inserting while "
-                       "ignoring errors.");
+    throw Exceptions::RuntimeError(
+                "This database engine does not support inserting while ignoring "
+                "errors.");
 }
 
 QString Grammar::compileUpdate(QueryBuilder &query,
@@ -193,7 +194,7 @@ QString Grammar::compileColumns(const QueryBuilder &query) const
     const auto &distinct = query.getDistinct();
 
     if (!std::holds_alternative<bool>(distinct))
-        throw RuntimeError(
+        throw Exceptions::RuntimeError(
                 QStringLiteral("Connection '%1' doesn't support defining more distinct "
                                "columns.")
                 .arg(query.getConnection().getName()));
@@ -298,8 +299,8 @@ QString Grammar::compileHaving(const HavingConditionItem &having) const
 
     T_UNLIKELY
     default:
-        throw RuntimeError(QStringLiteral("Unknown HavingType (%1).")
-                           .arg(static_cast<int>(having.type)));
+        throw Exceptions::RuntimeError(QStringLiteral("Unknown HavingType (%1).")
+                                       .arg(static_cast<int>(having.type)));
     }
 }
 

@@ -1,10 +1,10 @@
-#include "orm/tiny/relationnotloadederror.hpp"
+#include "orm/tiny/exceptions/relationnotloadederror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Tiny
+namespace Orm::Tiny::Exceptions
 {
 
 RelationNotLoadedError::RelationNotLoadedError(const QString &model,

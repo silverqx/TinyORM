@@ -2,13 +2,13 @@
 #ifndef INVALIDTEMPLATEARGUMENTERROR_HPP
 #define INVALIDTEMPLATEARGUMENTERROR_HPP
 
-#include "orm/invalidargumenterror.hpp"
+#include "orm/exceptions/invalidargumenterror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Exceptions
 {
 
     class SHAREDLIB_EXPORT InvalidTemplateArgumentError : public InvalidArgumentError

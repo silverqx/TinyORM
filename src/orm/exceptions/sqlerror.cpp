@@ -1,4 +1,4 @@
-#include "orm/sqlerror.hpp"
+#include "orm/exceptions/sqlerror.hpp"
 
 #include <QStringList>
 
@@ -10,7 +10,7 @@ using namespace Orm::Constants;
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Exceptions
 {
 
 SqlError::SqlError(const char *message, const QSqlError &error)

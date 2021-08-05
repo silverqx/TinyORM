@@ -1,4 +1,4 @@
-#include "orm/tiny/modelnotfounderror.hpp"
+#include "orm/tiny/exceptions/modelnotfounderror.hpp"
 
 #include "orm/constants.hpp"
 
@@ -8,7 +8,7 @@ using namespace Orm::Constants;
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Tiny
+namespace Orm::Tiny::Exceptions
 {
 
 ModelNotFoundError::ModelNotFoundError(const char *model,

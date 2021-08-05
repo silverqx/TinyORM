@@ -4,7 +4,7 @@
 
 #include <QVariant>
 
-#include "orm/sqlerror.hpp"
+#include "orm/exceptions/sqlerror.hpp"
 
 class QSqlQuery;
 
@@ -12,7 +12,7 @@ class QSqlQuery;
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Exceptions
 {
 
     class SHAREDLIB_EXPORT QueryError : public SqlError

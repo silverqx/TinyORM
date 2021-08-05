@@ -4,7 +4,7 @@
 #include <QtSql/QSqlQuery>
 
 #include "orm/constants.hpp"
-#include "orm/queryerror.hpp"
+#include "orm/exceptions/queryerror.hpp"
 #include "orm/utils/type.hpp"
 
 using namespace Orm::Constants;
@@ -73,7 +73,7 @@ void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
                    .arg(config["charset"].value<QString>())))
         return;
 
-    throw QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
@@ -95,7 +95,7 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
         if (query.exec(QStringLiteral("set time zone '%1'").arg(timezone)))
             return;
 
-    throw QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 void PostgresConnector::configureSchema(const QSqlDatabase &connection,
@@ -111,7 +111,7 @@ void PostgresConnector::configureSchema(const QSqlDatabase &connection,
     if (query.exec(QStringLiteral("set search_path to %1").arg(schema)))
         return;
 
-    throw QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 QString PostgresConnector::formatSchema(QStringList schema) const
@@ -138,7 +138,7 @@ void PostgresConnector::configureApplicationName(const QSqlDatabase &connection,
                    .arg(config["application_name"].value<QString>())))
         return;
 
-    throw QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 void PostgresConnector::configureSynchronousCommit(const QSqlDatabase &connection,
@@ -153,7 +153,7 @@ void PostgresConnector::configureSynchronousCommit(const QSqlDatabase &connectio
                    .arg(config["synchronous_commit"].value<QString>())))
         return;
 
-    throw QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 } // namespace Orm::Connectors

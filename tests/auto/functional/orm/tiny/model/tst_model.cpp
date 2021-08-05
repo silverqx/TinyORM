@@ -12,9 +12,9 @@
 
 using namespace Orm::Constants;
 
-using Orm::QueryError;
+using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
-using Orm::Tiny::ModelNotFoundError;
+using Orm::Tiny::Exceptions::ModelNotFoundError;
 
 using TestUtils::Databases;
 

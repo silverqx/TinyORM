@@ -13,7 +13,7 @@
 using namespace Orm::Constants;
 
 using Orm::Tiny::ConnectionOverride;
-using Orm::Tiny::MassAssignmentError;
+using Orm::Tiny::Exceptions::MassAssignmentError;
 
 using TestUtils::Databases;
 

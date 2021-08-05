@@ -9,6 +9,7 @@
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 
+#include "orm/exceptions/runtimeerror.hpp"
 #include "orm/tiny/relations/relationproxies.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -210,9 +211,10 @@ namespace Relations
     template<class Model, class Related>
     inline QString Relation<Model, Related>::getExistenceCompareKey() const
     {
-        throw RuntimeError(QStringLiteral("Method %1() is not implemented for '%2' "
-                                          "relation type.")
-                           .arg(__func__, relationTypeName()));
+        throw Orm::Exceptions::RuntimeError(
+                    QStringLiteral("Method %1() is not implemented for '%2' "
+                                   "relation type.")
+                    .arg(__func__, relationTypeName()));
     }
 
     template<class Model, class Related>

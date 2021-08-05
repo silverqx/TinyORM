@@ -15,12 +15,12 @@
 
 using namespace Orm::Constants;
 
+using Orm::Exceptions::RuntimeError;
 using Orm::One;
 using Orm::QueryBuilder;
-using Orm::RuntimeError;
 using Orm::Tiny::ConnectionOverride;
-using Orm::Tiny::RelationNotFoundError;
-using Orm::Tiny::RelationNotLoadedError;
+using Orm::Tiny::Exceptions::RelationNotFoundError;
+using Orm::Tiny::Exceptions::RelationNotLoadedError;
 using Orm::Tiny::Relations::Relation;
 using Orm::Tiny::TinyBuilder;
 

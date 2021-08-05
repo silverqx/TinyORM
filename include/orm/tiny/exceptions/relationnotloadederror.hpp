@@ -2,17 +2,17 @@
 #ifndef RELATIONNOTLOADEDERROR_H
 #define RELATIONNOTLOADEDERROR_H
 
-#include "orm/runtimeerror.hpp"
+#include "orm/exceptions/runtimeerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Tiny
+namespace Orm::Tiny::Exceptions
 {
 
     /*! Called from Model::getRelation(), when the relation was not loaded. */
-    class SHAREDLIB_EXPORT RelationNotLoadedError : public RuntimeError
+    class SHAREDLIB_EXPORT RelationNotLoadedError : public Orm::Exceptions::RuntimeError
     {
     public:
         RelationNotLoadedError(const QString &model, const QString &relation);

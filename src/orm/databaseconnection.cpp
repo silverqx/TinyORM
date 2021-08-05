@@ -2,10 +2,10 @@
 
 #include <QDateTime>
 
+#include "orm/exceptions/sqltransactionerror.hpp"
 #include "orm/logquery.hpp"
 #include "orm/macros.hpp"
 #include "orm/query/querybuilder.hpp"
-#include "orm/sqltransactionerror.hpp"
 #include "orm/utils/type.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -96,7 +96,7 @@ bool DatabaseConnection::beginTransaction()
         timer.start();
 
     if (!m_pretending && !getQtConnection().transaction())
-        throw SqlTransactionError(
+        throw Exceptions::SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2").arg(__tiny_func__,
                                                                     query),
                 getRawQtConnection().lastError());
@@ -132,7 +132,7 @@ bool DatabaseConnection::commit()
 
     // TODO rewrite transactions to DatabaseConnection::statement, so I have access to QSqlQuery for logQuery() silverqx
     if (!m_pretending && !getQtConnection().commit())
-        throw SqlTransactionError(
+        throw Exceptions::SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2").arg(__tiny_func__,
                                                                     query),
                 getRawQtConnection().lastError());
@@ -167,7 +167,7 @@ bool DatabaseConnection::rollBack()
         timer.start();
 
     if (!m_pretending && !getQtConnection().rollback())
-        throw SqlTransactionError(
+        throw Exceptions::SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2").arg(__tiny_func__,
                                                                     query),
                 getRawQtConnection().lastError());
@@ -205,7 +205,7 @@ bool DatabaseConnection::savepoint(const QString &id)
 
     // Execute a savepoint query
     if (!m_pretending && !savePoint.exec(query))
-        throw SqlTransactionError(
+        throw Exceptions::SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2")
                     .arg(__tiny_func__, query),
                 savePoint.lastError());
@@ -249,7 +249,7 @@ bool DatabaseConnection::rollbackToSavepoint(const QString &id)
 
     // Execute a rollback to savepoint query
     if (!m_pretending && !rollbackToSavepoint.exec(query))
-        throw SqlTransactionError(
+        throw Exceptions::SqlTransactionError(
                 QStringLiteral("Statement in %1() failed : %2")
                     .arg(__tiny_func__, query),
                 rollbackToSavepoint.lastError());
@@ -303,7 +303,7 @@ DatabaseConnection::select(const QString &queryString,
            to the exception QueryError(), which formats the error message to
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
-        throw QueryError(
+        throw Exceptions::QueryError(
                     QStringLiteral("Select statement in %1() failed.")
                         .arg(__tiny_func__),
                     query, bindings);
@@ -380,7 +380,7 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
            to the exception QueryError(), which formats the error message to
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
-        throw QueryError(
+        throw Exceptions::QueryError(
                     // TODO next use __tiny_func__ in similar statements/exceptions silverqx
                     QStringLiteral("Statement in %1() failed.").arg(__tiny_func__),
                     query, bindings);
@@ -419,7 +419,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
            to the exception QueryError(), which formats the error message to
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
-        throw QueryError(
+        throw Exceptions::QueryError(
                     QStringLiteral("Affecting statement in %1() failed.")
                         .arg(__tiny_func__),
                     query, bindings);
@@ -452,7 +452,7 @@ QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
            to the exception QueryError(), which formats the error message to
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
-        throw QueryError(
+        throw Exceptions::QueryError(
                     QStringLiteral("Statement in %1() failed.").arg(__tiny_func__),
                     query);
     });
@@ -470,7 +470,8 @@ QSqlDatabase DatabaseConnection::getQtConnection()
         /* This should never happen 🤔, do this check only when the QSqlDatabase
            connection was resolved by connection resolver. */
         if (!QSqlDatabase::contains(*m_qtConnection))
-            throw RuntimeError("Connection '" + *m_qtConnection + "' doesn't exist.");
+            throw Exceptions::RuntimeError(
+                    "Connection '" + *m_qtConnection + "' doesn't exist.");
     }
 
     // Return the connection from QSqlDatabase connection manager
@@ -589,7 +590,7 @@ DatabaseConnection::hitTransactionalCounters(const QElapsedTimer timer,
 
 bool DatabaseConnection::pingDatabase()
 {
-    throw RuntimeError(
+    throw Exceptions::RuntimeError(
                 QStringLiteral("The '%1' database driver doesn't support ping command.")
                 .arg(driverName()));
 }

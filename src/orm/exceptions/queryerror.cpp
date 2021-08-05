@@ -1,4 +1,4 @@
-#include "orm/queryerror.hpp"
+#include "orm/exceptions/queryerror.hpp"
 
 #include <QtSql/QSqlQuery>
 
@@ -8,7 +8,7 @@
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Exceptions
 {
 
 QueryError::QueryError(const char *message, const QSqlQuery &query,
@@ -23,12 +23,12 @@ QueryError::QueryError(const QString &message, const QSqlQuery &query,
     : QueryError(message.toUtf8().constData(), query, bindings)
 {}
 
-const QString &Orm::QueryError::getSql() const
+const QString &QueryError::getSql() const
 {
     return m_sql;
 }
 
-const QVector<QVariant> &Orm::QueryError::getBindings() const
+const QVector<QVariant> &QueryError::getBindings() const
 {
     return m_bindings;
 }

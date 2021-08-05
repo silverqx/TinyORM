@@ -1,11 +1,11 @@
 #include "databases.hpp"
 
 #include "orm/db.hpp"
-#include "orm/logicerror.hpp"
-#include "orm/runtimeerror.hpp"
+#include "orm/exceptions/logicerror.hpp"
+#include "orm/exceptions/runtimeerror.hpp"
 
-using Orm::LogicError;
-using Orm::RuntimeError;
+using Orm::Exceptions::LogicError;
+using Orm::Exceptions::RuntimeError;
 
 namespace TestUtils
 {

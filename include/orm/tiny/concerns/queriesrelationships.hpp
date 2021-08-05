@@ -4,7 +4,7 @@
 
 #include <stack>
 
-#include "orm/invalidtemplateargumenterror.hpp"
+#include "orm/exceptions/invalidtemplateargumenterror.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/tiny/tinytypes.hpp"
@@ -280,7 +280,7 @@ namespace Private
     {
         if (relation.contains(DOT)) {
             if constexpr (std::is_void_v<Related>)
-                throw InvalidArgumentError(
+                throw Orm::Exceptions::InvalidArgumentError(
                         "This has() overload doesn't support nested 'has' statements, "
                         "please use has() overload with 'std::function<void("
                         "TinyBuilder<Related> &)> &callback', what means pass <Related> "
@@ -595,7 +595,7 @@ namespace Private
         if (relations.size() >= 1)
             hasQuery->hasInternal(relations.takeFirst(), GE, 1, AND, relations);
         else
-            throw RuntimeError(
+            throw Orm::Exceptions::RuntimeError(
                     QStringLiteral(
                         "wtf, this should never happen :/, 'relations.size() == %1'.")
                     .arg(relations.size()));
@@ -684,7 +684,7 @@ namespace Private
         if (typeid (Related) == Private::HasNestedStore::STORE_TYPEID.top())
             return;
 
-        throw InvalidTemplateArgumentError(
+        throw Orm::Exceptions::InvalidTemplateArgumentError(
                 QStringLiteral(
                     "Bad template argument passed to the has() related method with "
                     "nested relations. Actual '<Related> = %1', expected '<Related> "

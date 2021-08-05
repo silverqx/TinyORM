@@ -2,13 +2,13 @@
 #ifndef INVALIDFORMATERROR_H
 #define INVALIDFORMATERROR_H
 
-#include "orm/logicerror.hpp"
+#include "orm/exceptions/logicerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm
+namespace Orm::Exceptions
 {
 
     class SHAREDLIB_EXPORT InvalidFormatError : public LogicError

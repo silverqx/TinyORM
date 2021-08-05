@@ -183,7 +183,7 @@ uint DatabaseManager::transactionLevel()
 DatabaseManager *DatabaseManager::instance()
 {
     if (!m_instance)
-        throw RuntimeError(
+        throw Exceptions::RuntimeError(
                 "The DatabaseManager instance has not been created yet, create it "
                 "by DB::create() method.");
 

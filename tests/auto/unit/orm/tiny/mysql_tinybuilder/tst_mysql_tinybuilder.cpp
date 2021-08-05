@@ -9,7 +9,7 @@
 
 using namespace Orm::Constants;
 
-using Orm::InvalidArgumentError;
+using Orm::Exceptions::InvalidArgumentError;
 using Orm::QueryBuilder;
 using Orm::Tiny::TinyBuilder;
 

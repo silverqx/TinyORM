@@ -13,6 +13,8 @@ SOURCES += \
     $$PWD/orm/databaseconnection.cpp \
     $$PWD/orm/databasemanager.cpp \
     $$PWD/orm/db.cpp \
+    $$PWD/orm/exceptions/queryerror.cpp \
+    $$PWD/orm/exceptions/sqlerror.cpp \
     $$PWD/orm/logquery.cpp \
     $$PWD/orm/mysqlconnection.cpp \
     $$PWD/orm/ormtypes.cpp \
@@ -28,7 +30,6 @@ SOURCES += \
     $$PWD/orm/query/processors/processor.cpp \
     $$PWD/orm/query/processors/sqliteprocessor.cpp \
     $$PWD/orm/query/querybuilder.cpp \
-    $$PWD/orm/queryerror.cpp \
     $$PWD/orm/schema/grammars/mysqlschemagrammar.cpp \
     $$PWD/orm/schema/grammars/postgresschemagrammar.cpp \
     $$PWD/orm/schema/grammars/schemagrammar.cpp \
@@ -37,13 +38,12 @@ SOURCES += \
     $$PWD/orm/schema/postgresschemabuilder.cpp \
     $$PWD/orm/schema/schemabuilder.cpp \
     $$PWD/orm/schema/sqliteschemabuilder.cpp \
-    $$PWD/orm/sqlerror.cpp \
     $$PWD/orm/sqliteconnection.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \
     $$PWD/orm/tiny/model.cpp \
-    $$PWD/orm/tiny/modelnotfounderror.cpp \
-    $$PWD/orm/tiny/relationnotfounderror.cpp \
-    $$PWD/orm/tiny/relationnotloadederror.cpp \
+    $$PWD/orm/tiny/exceptions/modelnotfounderror.cpp \
+    $$PWD/orm/tiny/exceptions/relationnotfounderror.cpp \
+    $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
     $$PWD/orm/tiny/relations/relation.cpp \
     $$PWD/orm/utils/attribute.cpp \
     $$PWD/orm/utils/string.cpp \

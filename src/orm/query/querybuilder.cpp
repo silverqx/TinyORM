@@ -1,7 +1,7 @@
 #include "orm/query/querybuilder.hpp"
 
 #include "orm/databaseconnection.hpp"
-#include "orm/invalidargumenterror.hpp"
+#include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/query/joinclause.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
@@ -520,8 +520,8 @@ Builder &Builder::orderBy(const Column &column, const QString &direction)
     const auto &directionLower = direction.toLower();
 
     if (directionLower != ASC && directionLower != DESC)
-        throw RuntimeError("Order direction must be \"asc\" or \"desc\", "
-                           "case is not important.");
+        throw Exceptions::RuntimeError(
+                "Order direction must be \"asc\" or \"desc\", case is not important.");
 
     m_orders.append({column, directionLower});
 
@@ -1079,8 +1079,9 @@ void Builder::checkBindingType(const BindingType type) const
         return;
 
     // TODO add hash which maps BindingType to the QString silverqx
-    throw InvalidArgumentError(QStringLiteral("Invalid binding type: %1")
-                               .arg(static_cast<int>(type)));
+    throw Exceptions::InvalidArgumentError(
+                QStringLiteral("Invalid binding type: %1")
+                .arg(static_cast<int>(type)));
 }
 
 } // namespace Orm

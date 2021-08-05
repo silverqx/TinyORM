@@ -1,10 +1,10 @@
-#include "orm/tiny/relationnotfounderror.hpp"
+#include "orm/tiny/exceptions/relationnotfounderror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {
 #endif
-namespace Orm::Tiny
+namespace Orm::Tiny::Exceptions
 {
 
 RelationNotFoundError::RelationNotFoundError(const QString &model,
