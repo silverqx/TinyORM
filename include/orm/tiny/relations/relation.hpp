@@ -50,8 +50,8 @@ namespace Relations
         /*! Related instance type passed to the relation. */
         using RelatedType = Related;
 
-        /*! Virtual destructor. */
-        inline virtual ~Relation() = default;
+        /*! Pure virtual destructor. */
+        virtual ~Relation() = 0;
 
         /*! Set the base constraints on the relation query. */
         virtual void addConstraints() const = 0;
@@ -157,6 +157,7 @@ namespace Relations
     class OneRelation
     {};
 
+    // CUR revisit silverqx
     /*! The tag for many type relation. */
     class ManyRelation
     {};
@@ -165,8 +166,12 @@ namespace Relations
     class PivotRelation
     {};
 
+    // CUR revisit silverqx
     template<class Model, class Related>
     bool Relation<Model, Related>::constraints = true;
+
+    template<class Model, class Related>
+    inline Relation<Model, Related>::~Relation() = default;
 
     template<class Model, class Related>
     Relation<Model, Related>::Relation(std::unique_ptr<Related> &&related, Model &parent,

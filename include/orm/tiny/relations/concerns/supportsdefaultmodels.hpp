@@ -24,8 +24,8 @@ namespace Concerns {
 //        using Callback      = std::function<void(Related &, const Model &)>;
 
     public:
-        /*! Virtual destructor. */
-        inline virtual ~SupportsDefaultModels() = default;
+        /*! Pure virtual destructor. */
+        virtual ~SupportsDefaultModels() = 0;
 
         /*! Return a new model instance in case the relationship does not exist. */
         Relation<Model, Related> &withDefault(bool value = true);
@@ -50,6 +50,9 @@ namespace Concerns {
         /*! Return cached reference to the base relation instance. */
         Relation<Model, Related> &relation();
     };
+
+    template<class Model, class Related>
+    inline SupportsDefaultModels<Model, Related>::~SupportsDefaultModels() = default;
 
     template<class Model, class Related>
     Relation<Model, Related> &

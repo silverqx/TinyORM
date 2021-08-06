@@ -20,8 +20,8 @@ namespace Orm::Query::Grammars
     public:
         /*! Default constructor. */
         Grammar() = default;
-        /*! Virtual destructor. */
-        inline virtual ~Grammar() = default;
+        /*! Pure virtual destructor. */
+        virtual ~Grammar() = 0;
 
         /*! Compile a select query into SQL. */
         QString compileSelect(QueryBuilder &query) const;
@@ -201,6 +201,8 @@ namespace Orm::Query::Grammars
         flatBindingsForUpdateDelete(const BindingsMap &bindings,
                                     const QVector<BindingType> &exclude) const;
     };
+
+    inline Grammar::~Grammar() = default;
 
     inline QString Grammar::compileInsertGetId(
             const QueryBuilder &query, const QVector<QVariantMap> &values,

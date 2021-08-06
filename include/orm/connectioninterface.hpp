@@ -58,8 +58,8 @@ namespace Grammars
     public:
         /*! Default constructor. */
         ConnectionInterface() = default;
-        /*! Virtual destructor. */
-        inline virtual ~ConnectionInterface() = default;
+        /*! Pure virtual destructor. */
+        virtual ~ConnectionInterface() = 0;
 
         /*! Begin a fluent query against a database table. */
         virtual QSharedPointer<QueryBuilder>
@@ -246,6 +246,8 @@ namespace Grammars
         /*! Set the table prefix and return the query grammar. */
         virtual BaseGrammar &withTablePrefix(BaseGrammar &grammar) const = 0;
     };
+
+    inline ConnectionInterface::~ConnectionInterface() = default;
 
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE

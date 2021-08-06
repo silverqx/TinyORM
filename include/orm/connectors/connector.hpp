@@ -18,8 +18,8 @@ namespace Orm::Connectors
     class Connector : public Concerns::DetectsLostConnections
     {
     public:
-        /*! Virtual destructor. */
-        inline virtual ~Connector() = default;
+        /*! Pure virtual destructor. */
+        virtual ~Connector() = 0;
 
         /*! Create a new QSqlDatabase connection, factory method. */
         QSqlDatabase
@@ -56,6 +56,8 @@ namespace Orm::Connectors
         /*! Error message used when connection configuration fails. */
         static const QString m_configureErrorMessage;
     };
+
+    inline Connector::~Connector() = default;
 
 } // namespace Orm::Connectors
 #ifdef TINYORM_COMMON_NAMESPACE

@@ -16,9 +16,8 @@ namespace Orm
     class ConnectionResolverInterface
     {
     public:
-        // TODO study, virtual dtor in abstract class multi inheritance silverqx
-        /*! Virtual destructor. */
-        inline virtual ~ConnectionResolverInterface() = default;
+        /*! Pure virtual destructor. */
+        virtual ~ConnectionResolverInterface() = 0;
 
         /*! Get a database connection instance. */
         virtual ConnectionInterface &connection(const QString &name = "") = 0;
@@ -29,6 +28,8 @@ namespace Orm
         /*! Set the default connection name. */
         virtual void setDefaultConnection(const QString &defaultConnection) = 0;
     };
+
+    inline ConnectionResolverInterface::~ConnectionResolverInterface() = default;
 
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE

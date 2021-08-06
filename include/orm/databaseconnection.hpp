@@ -41,8 +41,8 @@ namespace Orm
                 const std::function<Connectors::ConnectionName()> &connection,
                 const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
-        /*! Virtual destructor. */
-        inline virtual ~DatabaseConnection() = default;
+        /*! Pure virtual destructor. */
+        virtual ~DatabaseConnection() = 0;
 
         /*! Begin a fluent query against a database table. */
         QSharedPointer<QueryBuilder>
@@ -556,6 +556,8 @@ namespace Orm
 
         std::rethrow_exception(ePtr);
     }
+
+    inline DatabaseConnection::~DatabaseConnection() = default;
 
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE

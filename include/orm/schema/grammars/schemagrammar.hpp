@@ -19,12 +19,14 @@ namespace Orm::Schema::Grammars
     public:
         /*! Default constructor. */
         SchemaGrammar() = default;
-        /*! Virtual destructor. */
-        inline virtual ~SchemaGrammar() = default;
+        /*! Pure virtual destructor. */
+        virtual ~SchemaGrammar() = 0;
 
         /*! Compile the query to determine the list of columns. */
         virtual QString compileColumnListing(const QString &table = "") const = 0;
     };
+
+    inline SchemaGrammar::~SchemaGrammar() = default;
 
 } // namespace Orm::Schema::Grammars
 #ifdef TINYORM_COMMON_NAMESPACE

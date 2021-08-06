@@ -16,12 +16,14 @@ namespace Orm::Connectors
     class ConnectorInterface
     {
     public:
-        /*! Virtual destructor. */
-        inline virtual ~ConnectorInterface() = default;
+        /*! Pure virtual destructor. */
+        virtual ~ConnectorInterface() = 0;
 
         /*! Establish a database connection. */
         virtual ConnectionName connect(const QVariantHash &config) const = 0;
     };
+
+    inline ConnectorInterface::~ConnectorInterface() = default;
 
 } // namespace Orm::Connectors
 #ifdef TINYORM_COMMON_NAMESPACE
