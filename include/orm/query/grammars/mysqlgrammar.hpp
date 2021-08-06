@@ -16,6 +16,7 @@ namespace Orm::Query::Grammars
         Q_DISABLE_COPY(MySqlGrammar)
 
     public:
+        /*! Default constructor. */
         MySqlGrammar() = default;
 
         /*! Compile an insert statement into SQL. */

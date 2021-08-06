@@ -18,6 +18,7 @@ namespace Orm::Tiny::Relations
         friend Model<Pivot>;
         friend BasePivot<Pivot>;
 
+        /*! Inherit constructors. */
         using BasePivot<Pivot>::BasePivot;
 
     protected:

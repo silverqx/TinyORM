@@ -19,10 +19,13 @@ namespace Concerns
 
     class DetectsLostConnections
     {
+        /*! Deleted copy constructor. */
         DetectsLostConnections(const DetectsLostConnections &) = delete;
+        /*! Deleted copy assignment operator. */
         DetectsLostConnections &operator=(const DetectsLostConnections &) = delete;
 
     public:
+        /*! Default constructor. */
         DetectsLostConnections() = default;
 
         /*! Determine if the given exception was caused by a lost connection. */

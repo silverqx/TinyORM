@@ -36,10 +36,12 @@ namespace Query
         using QueryGrammar = Query::Grammars::Grammar;
 
     public:
+        /*! Constructor. */
         Builder(ConnectionInterface &connection, const QueryGrammar &grammar);
         // WARNING solve pure virtual dtor vs default silverqx
         /* Need to be the polymorphic type because of dynamic_cast<>
            in Grammar::concatenateWhereClauses(). */
+        /*! Default virtual destructor. */
         inline virtual ~Builder() = default;
 
         /*! Execute the query as a "select" statement. */

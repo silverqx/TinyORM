@@ -183,6 +183,7 @@ namespace Query
     class SHAREDLIB_EXPORT SyncChanges final : public std::map<QString, QVector<QVariant>>
     {
     public:
+        /*! Constructor. */
         SyncChanges();
 
         /*! Merge changes into the current instance. */

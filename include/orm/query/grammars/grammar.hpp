@@ -17,7 +17,9 @@ namespace Orm::Query::Grammars
         Q_DISABLE_COPY(Grammar)
 
     public:
+        /*! Default constructor. */
         Grammar() = default;
+        /*! Default virtual destructor. */
         inline virtual ~Grammar() = default;
 
         /*! Compile a select query into SQL. */

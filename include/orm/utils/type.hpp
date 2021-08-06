@@ -34,6 +34,8 @@ namespace Orm::Utils
         Q_DISABLE_COPY(Type)
 
     public:
+        // CUR below silverqx
+        /*! Deleted default constructor. */
         Type() = delete;
 
         /*! Class name with or w/o a namespace and w/o template parameters. */

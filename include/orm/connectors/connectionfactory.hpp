@@ -19,6 +19,7 @@ namespace Connectors
     class ConnectionFactory
     {
     public:
+        /*! Default constructor. */
         ConnectionFactory();
 
         /*! Establish a QSqlDatabase connection based on the configuration. */

@@ -16,7 +16,9 @@ namespace Orm::Schema::Grammars
         Q_DISABLE_COPY(SchemaGrammar)
 
     public:
+        /*! Default constructor. */
         SchemaGrammar() = default;
+        /*! Default virtual destructor. */
         inline virtual ~SchemaGrammar() = default;
 
         /*! Compile the query to determine the list of columns. */

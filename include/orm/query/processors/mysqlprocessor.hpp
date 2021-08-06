@@ -16,6 +16,7 @@ namespace Orm::Query::Processors
         Q_DISABLE_COPY(MySqlProcessor)
 
     public:
+        /*! Default constructor. */
         MySqlProcessor() = default;
 
         /*! Process the results of a column listing query. */

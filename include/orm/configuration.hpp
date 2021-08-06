@@ -13,6 +13,7 @@ namespace Orm
 
     struct Configuration
     {
+        /*! Inherit constructors. */
         using ConfigurationsType = QHash<QString, QVariantHash>;
 
         /*! Default Database Connection Name. */

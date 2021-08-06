@@ -16,6 +16,7 @@ namespace Orm::Query::Processors
         Q_DISABLE_COPY(SQLiteProcessor)
 
     public:
+        /*! Default constructor. */
         SQLiteProcessor() = default;
 
         /*! Process the results of a column listing query. */

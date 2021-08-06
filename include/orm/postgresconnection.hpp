@@ -16,10 +16,12 @@ namespace Orm
         Q_DISABLE_COPY(PostgresConnection)
 
     public:
+        /*! Constructor. */
         PostgresConnection(
                 const std::function<Connectors::ConnectionName()> &connection,
                 const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
+        /*! Default virtual destructor. */
         inline virtual ~PostgresConnection() = default;
 
         /*! Get a schema builder instance for the connection. */

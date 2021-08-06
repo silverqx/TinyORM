@@ -21,8 +21,9 @@ namespace Orm::Query::Processors
         Q_DISABLE_COPY(Processor)
 
     public:
-        // CUR add comments silverqx
+        /*! Default constructor. */
         Processor() = default;
+        /*! Default virtual destructor. */
         inline virtual ~Processor() = default;
 
         /*! Process the results of a column listing query. */

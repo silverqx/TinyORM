@@ -15,6 +15,7 @@ namespace Orm::Tiny::Exceptions
     class SHAREDLIB_EXPORT RelationNotLoadedError : public Orm::Exceptions::RuntimeError
     {
     public:
+        /*! Constructor. */
         RelationNotLoadedError(const QString &model, const QString &relation);
 
         /*! Get the affected TinyORM model. */

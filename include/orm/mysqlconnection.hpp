@@ -16,10 +16,12 @@ namespace Orm
         Q_DISABLE_COPY(MySqlConnection)
 
     public:
+        /*! Constructor. */
         MySqlConnection(
                 const std::function<Connectors::ConnectionName()> &connection,
                 const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
+        /*! Default virtual destructor. */
         inline virtual ~MySqlConnection() = default;
 
         /*! Get a schema builder instance for the connection. */

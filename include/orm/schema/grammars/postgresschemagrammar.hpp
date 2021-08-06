@@ -16,6 +16,7 @@ namespace Orm::Schema::Grammars
         Q_DISABLE_COPY(PostgresSchemaGrammar)
 
     public:
+        /*! Default constructor. */
         PostgresSchemaGrammar() = default;
 
         /*! Compile the query to determine the list of columns. */

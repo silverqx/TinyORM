@@ -22,12 +22,15 @@ namespace Grammars
     class SchemaGrammar;
 }
 
+    // CUR add doc comment for every class silverqx
     class SHAREDLIB_EXPORT SchemaBuilder
     {
         Q_DISABLE_COPY(SchemaBuilder)
 
     public:
+        /*! Constructor. */
         explicit SchemaBuilder(DatabaseConnection &connection);
+        /*! Default virtual destructor. */
         inline virtual ~SchemaBuilder() = default;
 
         /*! Get the column listing for a given table. */

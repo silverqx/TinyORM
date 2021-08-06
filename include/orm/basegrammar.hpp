@@ -38,7 +38,7 @@ namespace Query
     public:
         /*! Default constructor. */
         BaseGrammar() = default;
-        /*! Virtual destructor. */
+        /*! Default virtual destructor. */
         inline virtual ~BaseGrammar() = default;
 
         /*! Get the format for database stored dates. */

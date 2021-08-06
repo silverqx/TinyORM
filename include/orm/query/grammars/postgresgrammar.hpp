@@ -16,6 +16,7 @@ namespace Orm::Query::Grammars
         Q_DISABLE_COPY(PostgresGrammar)
 
     public:
+        /*! Default constructor. */
         PostgresGrammar() = default;
 
         /*! Compile an insert ignore statement into SQL. */

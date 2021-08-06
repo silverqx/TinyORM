@@ -16,6 +16,7 @@ namespace Orm
     {
     public:
         // TODO study, virtual dtor in abstract class multi inheritance silverqx
+        /*! Default virtual destructor. */
         inline virtual ~ConnectionResolverInterface() = default;
 
         /*! Get a database connection instance. */

@@ -35,10 +35,12 @@ namespace Orm
         /*! Default connection name. */
         static const char *defaultConnectionName;
 
+        /*! Constructor. */
         explicit DatabaseConnection(
                 const std::function<Connectors::ConnectionName()> &connection,
                 const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
+        /*! Default virtual destructor. */
         inline virtual ~DatabaseConnection() = default;
 
         /*! Begin a fluent query against a database table. */

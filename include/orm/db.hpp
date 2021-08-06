@@ -18,11 +18,6 @@ namespace Orm
 
         using ConfigurationsType = Orm::Configuration::ConfigurationsType;
 
-        /*! Prohibited DB's constructor. */
-        DB() = default;
-        /*! Prohibited DB's destructor. */
-        ~DB() = default;
-
         /*! Get the reference to the DatabaseManager. */
         static DatabaseManager &manager();
 
@@ -30,6 +25,11 @@ namespace Orm
         static DatabaseManager *m_manager;
 
     public:
+        /*! Deleted DB's default constructor. */
+        DB() = delete;
+        /*! Deleted DB's default destructor. */
+        ~DB() = delete;
+
         /* Proxy methods to the DatabaseManager */
         /*! Factory method to create DatabaseManager instance and register
             a new connection as default connection at once. */

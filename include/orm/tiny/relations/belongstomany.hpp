@@ -44,6 +44,7 @@ namespace Orm::Tiny::Relations
         using BaseModel = Orm::Tiny::Model<Derived>;
 
     protected:
+        /*! Protected constructor. */
         BelongsToMany(std::unique_ptr<Related> &&related, Model &parent,
                       const QString &table = "", const QString &foreignPivotKey = "",
                       const QString &relatedPivotKey = "", const QString &parentKey = "",

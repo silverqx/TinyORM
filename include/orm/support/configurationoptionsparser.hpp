@@ -25,6 +25,7 @@ namespace Support
     class ConfigurationOptionsParser
     {
     public:
+        /*! Constructor. */
         ConfigurationOptionsParser(const Connectors::Connector &connector);
 
         /*! Parse the database configuration, validate, prepare, and merge connection

@@ -18,8 +18,10 @@ namespace Orm::Tiny::Exceptions
     public:
         // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
         // TODO perf add overload ctor for QVector<quint64>, better QVector<Model::KeyType> silverqx
+        /*! const char * constructor. */
         explicit ModelNotFoundError(const char *model,
                                     const QVector<QVariant> &ids = {});
+        /*! QString constructor. */
         explicit ModelNotFoundError(const QString &model,
                                     const QVector<QVariant> &ids = {});
 

@@ -24,7 +24,9 @@ namespace Orm::Tiny::Exceptions
             BELONGS_TO_MANY = 1,
         };
 
+        /*! Constructor. */
         RelationNotFoundError(const QString &model, const QString &relation);
+        /*! Constructor. */
         RelationNotFoundError(const QString &model, const QString &relation, From from);
 
         /*! Get the affected TinyORM model. */

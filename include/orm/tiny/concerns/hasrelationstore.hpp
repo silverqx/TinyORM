@@ -72,10 +72,12 @@ namespace Concerns
         class BaseRelationStore
         {
         protected:
+            /*! Constructor. */
             BaseRelationStore(HasRelationStore &hasRelationStore,
                               const RelationStoreType storeType);
 
         public:
+            /*! Default virtual destructor. */
             inline virtual ~BaseRelationStore() = default;
 
             /*! Visit the given relation. */
@@ -105,6 +107,7 @@ namespace Concerns
             Q_DISABLE_COPY(EagerRelationStore)
 
         public:
+            /*! Constructor. */
             EagerRelationStore(
                     HasRelationStore &hasRelationStore,
                     const Tiny::TinyBuilder<Derived> &builder,
@@ -131,6 +134,7 @@ namespace Concerns
             Q_DISABLE_COPY(PushRelationStore)
 
         public:
+            /*! Constructor. */
             explicit PushRelationStore(HasRelationStore &hasRelationStore,
                                        RelationsType<AllRelations...> &models);
 
@@ -150,6 +154,7 @@ namespace Concerns
             Q_DISABLE_COPY(TouchOwnersRelationStore)
 
         public:
+            /*! Constructor. */
             explicit TouchOwnersRelationStore(HasRelationStore &hasRelationStore,
                                               const QString &relation);
 
@@ -169,6 +174,7 @@ namespace Concerns
             Q_DISABLE_COPY(LazyRelationStore)
 
         public:
+            /*! Constructor. */
             LazyRelationStore(HasRelationStore &hasRelationStore);
 
             /*! Method called after visitation. */
@@ -186,6 +192,7 @@ namespace Concerns
             Q_DISABLE_COPY(BelongsToManyRelatedTableStore)
 
         public:
+            /*! Constructor. */
             explicit BelongsToManyRelatedTableStore(HasRelationStore &hasRelationStore);
 
             /*! Method called after visitation. */

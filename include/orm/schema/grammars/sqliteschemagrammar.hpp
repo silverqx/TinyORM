@@ -16,6 +16,7 @@ namespace Orm::Schema::Grammars
         Q_DISABLE_COPY(SQLiteSchemaGrammar)
 
     public:
+        /*! Default constructor. */
         SQLiteSchemaGrammar() = default;
 
         /*! Compile the query to determine the list of columns. */

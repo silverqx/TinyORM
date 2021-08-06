@@ -29,6 +29,7 @@ namespace Orm::Tiny
         friend BuilderProxies<Model>;
 
     public:
+        /*! Constructor. */
         Builder(const QSharedPointer<QueryBuilder> query, Model &model);
 
         /*! Get the SQL representation of the query. */

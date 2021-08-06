@@ -22,6 +22,7 @@ namespace Orm::Tiny::Relations
     public:
         friend Model<PivotModel>;
 
+        /*! Inherit constructors. */
         using Model<PivotModel>::Model;
 
         /* AsPivot */

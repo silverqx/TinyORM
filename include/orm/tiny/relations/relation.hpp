@@ -42,6 +42,7 @@ namespace Relations
         using Expression = Orm::Query::Expression;
 
     protected:
+        /*! Protected constructor. */
         Relation(std::unique_ptr<Related> &&related, Model &parent,
                  const QString &relatedKey = "");
 
@@ -49,6 +50,7 @@ namespace Relations
         /*! Related instance type passed to the relation. */
         using RelatedType = Related;
 
+        /*! Default virtual destructor. */
         inline virtual ~Relation() = default;
 
         /*! Set the base constraints on the relation query. */

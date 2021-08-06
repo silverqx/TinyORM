@@ -16,6 +16,7 @@ namespace Orm::Tiny::Relations
     class HasOneOrMany : public Relation<Model, Related>
     {
     protected:
+        /*! Protected constructor. */
         HasOneOrMany(std::unique_ptr<Related> &&related, Model &parent,
                      const QString &foreignKey, const QString &localKey);
 

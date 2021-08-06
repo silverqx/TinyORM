@@ -22,6 +22,7 @@ namespace Concerns
     class GuardsAttributes
     {
     public:
+        /*! Default virtual destructor. */
         inline virtual ~GuardsAttributes() = default;
 
         /*! Get the fillable attributes for the model. */

@@ -54,7 +54,9 @@ namespace Grammars
         Q_DISABLE_COPY(ConnectionInterface)
 
     public:
+        /*! Default constructor. */
         ConnectionInterface() = default;
+        /*! Default virtual destructor. */
         inline virtual ~ConnectionInterface() = default;
 
         /*! Begin a fluent query against a database table. */

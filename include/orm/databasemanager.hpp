@@ -29,6 +29,7 @@ namespace Query
         using ConfigurationsType = Orm::Configuration::ConfigurationsType;
 
     public:
+        /*! Virtual destructor. */
         virtual ~DatabaseManager();
 
         /*! Factory method to create DatabaseManager instance and register a new connection as default connection at once. */

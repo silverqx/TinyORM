@@ -16,6 +16,7 @@ namespace Orm::Query::Grammars
         Q_DISABLE_COPY(SQLiteGrammar)
 
     public:
+        /*! Default constructor. */
         SQLiteGrammar() = default;
 
         /*! Compile an insert ignore statement into SQL. */

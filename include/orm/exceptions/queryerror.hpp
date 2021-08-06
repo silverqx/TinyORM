@@ -18,8 +18,10 @@ namespace Orm::Exceptions
     class SHAREDLIB_EXPORT QueryError : public SqlError
     {
     public:
+        /*! const char * constructor. */
         QueryError(const char *message, const QSqlQuery &query,
                    const QVector<QVariant> &bindings = {});
+        /*! QString constructor. */
         QueryError(const QString &message, const QSqlQuery &query,
                    const QVector<QVariant> &bindings = {});
 

@@ -22,6 +22,7 @@ namespace Orm::Tiny::Relations
             public Concerns::SupportsDefaultModels<Model, Related>
     {
     protected:
+        /*! Protected constructor. */
         BelongsTo(std::unique_ptr<Related> &&related, Model &child,
                   const QString &foreignKey, const QString &ownerKey,
                   const QString &relationName);
