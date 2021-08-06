@@ -2,6 +2,8 @@
 #ifndef LOGICERROR_H
 #define LOGICERROR_H
 
+#include <QString>
+
 #include <stdexcept>
 
 #include "orm/utils/export.hpp"

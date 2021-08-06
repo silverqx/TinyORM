@@ -1,5 +1,7 @@
 #include "orm/utils/string.hpp"
 
+#include <vector>
+
 #include "orm/constants.hpp"
 
 using namespace Orm::Constants;

@@ -2,6 +2,9 @@
 #ifndef ORM_CONCEPTS_HPP
 #define ORM_CONCEPTS_HPP
 
+#include <QString>
+#include <QVariant>
+
 namespace std
 {
     template<typename ..._Types>

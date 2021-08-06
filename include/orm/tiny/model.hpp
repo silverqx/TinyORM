@@ -82,7 +82,6 @@ namespace Relations {
     // FEATURE build systems, add docs on how to make a production build of the TinyORM library silverqx
     // FEATURE build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
     // FEATURE build systems, libuv example how it could look like https://github.com/libuv/libuv silverqx
-    // CUR try discard include.pri and move content to src.pri to have nicer structure in Projects view, instead of to have include-Headers/Sources it will be Headers/Sources silverqx
     // CUR reorder all methods in model class silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>

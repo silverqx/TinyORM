@@ -59,12 +59,14 @@ else {
 # Use Precompiled headers (PCH)
 # ---
 
-# TODO add possibility to control PCH by qmake CONFIG variable silverqx
-include(../include/pch.pri)
+precompile_header {
+    include(../include/pch.pri)
+}
 
 # TinyORM library header and source files
 # ---
 
+include(../include/include.pri)
 include(src.pri)
 
 # Default rules for deployment

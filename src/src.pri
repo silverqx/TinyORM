@@ -1,5 +1,3 @@
-include(../include/include.pri)
-
 SOURCES += \
     $$PWD/orm/basegrammar.cpp \
     $$PWD/orm/concerns/detectslostconnections.cpp \
