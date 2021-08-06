@@ -31,6 +31,18 @@ namespace Concerns
 namespace Relations
 {
 
+    /*! The tag for one type relation. */
+    class OneRelation
+    {};
+
+    /*! The tag for many type relation. */
+    class ManyRelation
+    {};
+
+    /*! The tag for the relation which contains pivot table, like many-to-many. */
+    class PivotRelation
+    {};
+
     /*! Base relations class. */
     template<class Model, class Related>
     class Relation : public RelationProxies<Model, Related>
@@ -153,20 +165,6 @@ namespace Relations
         static bool constraints;
     };
 
-    /*! The tag for one type relation. */
-    class OneRelation
-    {};
-
-    // CUR revisit silverqx
-    /*! The tag for many type relation. */
-    class ManyRelation
-    {};
-
-    /*! The tag for the relation which contains pivot table, like many-to-many. */
-    class PivotRelation
-    {};
-
-    // CUR revisit silverqx
     template<class Model, class Related>
     bool Relation<Model, Related>::constraints = true;
 
