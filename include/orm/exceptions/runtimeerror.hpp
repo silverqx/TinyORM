@@ -32,14 +32,6 @@ namespace Orm::Exceptions
         const QString m_message {what()};
     };
 
-    inline RuntimeError::RuntimeError(const char *message)
-        : std::runtime_error(message)
-    {}
-
-    inline RuntimeError::RuntimeError(const QString &message)
-        : std::runtime_error(message.toUtf8().constData())
-    {}
-
     inline const QString &RuntimeError::message() const
     {
         return m_message;

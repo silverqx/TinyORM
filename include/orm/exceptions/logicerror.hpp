@@ -30,15 +30,6 @@ namespace Orm::Exceptions
         const QString m_message {what()};
     };
 
-    // CUR move to cpp silverqx
-    inline LogicError::LogicError(const char *message)
-        : std::logic_error(message)
-    {}
-
-    inline LogicError::LogicError(const QString &message)
-        : std::logic_error(message.toUtf8().constData())
-    {}
-
     inline const QString &LogicError::message() const
     {
         return m_message;

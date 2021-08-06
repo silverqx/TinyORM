@@ -13,7 +13,9 @@ SOURCES += \
     $$PWD/orm/databaseconnection.cpp \
     $$PWD/orm/databasemanager.cpp \
     $$PWD/orm/db.cpp \
+    $$PWD/orm/exceptions/logicerror.cpp \
     $$PWD/orm/exceptions/queryerror.cpp \
+    $$PWD/orm/exceptions/runtimeerror.cpp \
     $$PWD/orm/exceptions/sqlerror.cpp \
     $$PWD/orm/logquery.cpp \
     $$PWD/orm/mysqlconnection.cpp \
