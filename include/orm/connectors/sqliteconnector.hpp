@@ -12,6 +12,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Connectors
 {
 
+    /*! SQLite connector. */
     class SQLiteConnector final : public ConnectorInterface, public Connector
     {
     public:

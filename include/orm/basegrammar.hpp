@@ -28,6 +28,7 @@ namespace Query
     concept Parametrize = std::same_as<T, QVariantMap> ||
                           std::same_as<T, QVector<QVariant>>;
 
+    /*! Base class for the database grammar. */
     class SHAREDLIB_EXPORT BaseGrammar
     {
         Q_DISABLE_COPY(BaseGrammar)

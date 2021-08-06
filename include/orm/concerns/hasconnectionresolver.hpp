@@ -15,6 +15,7 @@ namespace Orm
 namespace Concerns
 {
 
+    /*! Connection resolver. */
     class SHAREDLIB_EXPORT HasConnectionResolver
     {
     public:

@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Schema
 {
 
+    /*! SQLite schema repository class. */
     class SHAREDLIB_EXPORT SQLiteSchemaBuilder : public SchemaBuilder
     {
         Q_DISABLE_COPY(SQLiteSchemaBuilder)

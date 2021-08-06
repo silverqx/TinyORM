@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query::Processors
 {
 
+    /*! SQLite processor, process sql result. */
     class SHAREDLIB_EXPORT SQLiteProcessor : public Processor
     {
         Q_DISABLE_COPY(SQLiteProcessor)

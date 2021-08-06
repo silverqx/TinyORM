@@ -25,6 +25,7 @@ namespace Orm
 {
 
     // CUR1 return DatabaseConnection vs ConnectionInterface silverqx
+    /*! Database connection base class. */
     class SHAREDLIB_EXPORT DatabaseConnection :
             public ConnectionInterface,
             public Concerns::DetectsLostConnections

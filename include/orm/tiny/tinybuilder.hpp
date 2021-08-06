@@ -20,6 +20,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny
 {
 
+    /*! ORM Tiny builder. */
     template<typename Model>
     class Builder :
             public BuilderProxies<Model>,

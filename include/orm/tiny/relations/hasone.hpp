@@ -12,6 +12,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Relations
 {
 
+    /*! Has one relation. */
     template<class Model, class Related>
     class HasOne :
             public OneRelation,

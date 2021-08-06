@@ -13,6 +13,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Exceptions
 {
 
+    /*! Model not found exception. */
     class SHAREDLIB_EXPORT ModelNotFoundError : public Orm::Exceptions::RuntimeError
     {
     public:

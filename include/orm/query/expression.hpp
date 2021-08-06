@@ -14,6 +14,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
+    /*! Expression in sql query. */
     class SHAREDLIB_EXPORT Expression
     {
     public:

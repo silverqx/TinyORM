@@ -16,6 +16,8 @@ namespace Orm
 
 namespace Connectors
 {
+
+    /*! Database connection factory. */
     class ConnectionFactory
     {
     public:

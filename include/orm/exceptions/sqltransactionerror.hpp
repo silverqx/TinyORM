@@ -11,9 +11,10 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
+    /*! Sql transaction exception. */
     class SHAREDLIB_EXPORT SqlTransactionError : public SqlError
     {
-    public:
+        /*! Inherit constructors. */
         using SqlError::SqlError;
     };
 

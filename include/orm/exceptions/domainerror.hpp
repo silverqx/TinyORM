@@ -14,8 +14,10 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
+    /*! Domain exception. */
     class SHAREDLIB_EXPORT DomainError : public LogicError
     {
+        /*! Inherit constructors. */
         using LogicError::LogicError;
     };
 

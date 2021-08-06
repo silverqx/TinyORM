@@ -11,9 +11,10 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Exceptions
 {
 
+    /*! Mass assignment exception. */
     class SHAREDLIB_EXPORT MassAssignmentError : public Orm::Exceptions::RuntimeError
     {
-    public:
+        /*! Inherit constructors. */
         using Orm::Exceptions::RuntimeError::RuntimeError;
     };
 

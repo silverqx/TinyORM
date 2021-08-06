@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query::Processors
 {
 
+    /*! PostgreSql processor, process sql result. */
     class SHAREDLIB_EXPORT PostgresProcessor : public Processor
     {
         Q_DISABLE_COPY(PostgresProcessor)

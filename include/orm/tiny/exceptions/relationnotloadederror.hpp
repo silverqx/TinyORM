@@ -11,7 +11,8 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Exceptions
 {
 
-    /*! Called from Model::getRelation(), when the relation was not loaded. */
+    /*! Relation not loaded exception, called from Model::getRelation(), when
+        the relation was not loaded. */
     class SHAREDLIB_EXPORT RelationNotLoadedError : public Orm::Exceptions::RuntimeError
     {
     public:

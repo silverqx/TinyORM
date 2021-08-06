@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query::Grammars
 {
 
+    /*! SQLite grammar. */
     class SHAREDLIB_EXPORT SQLiteGrammar : public Grammar
     {
         Q_DISABLE_COPY(SQLiteGrammar)

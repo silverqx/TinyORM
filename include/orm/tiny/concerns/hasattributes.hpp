@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny
 {
 
+    /*! Model attributes. */
     template<typename Model>
     class HasAttributes
     {

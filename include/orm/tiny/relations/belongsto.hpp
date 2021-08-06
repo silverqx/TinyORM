@@ -15,6 +15,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Relations
 {
 
+    /*! Belongs to relation. */
     template<class Model, class Related>
     class BelongsTo :
             public OneRelation,

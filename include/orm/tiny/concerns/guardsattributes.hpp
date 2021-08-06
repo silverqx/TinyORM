@@ -18,6 +18,7 @@ namespace Orm::Tiny
 namespace Concerns
 {
 
+    /*! Guards attributes. */
     template<typename Derived, typename ...AllRelations>
     class GuardsAttributes
     {

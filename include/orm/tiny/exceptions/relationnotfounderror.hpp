@@ -11,8 +11,8 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Exceptions
 {
 
-    /*! Check whether the relation was defined in the u_relation data member, called
-        from Model::validateUserRelation(). */
+    /*! Relation not found exception, check whether the relation was defined
+        in the u_relation data member, called from Model::validateUserRelation(). */
     class SHAREDLIB_EXPORT RelationNotFoundError : public Orm::Exceptions::RuntimeError
     {
     public:

@@ -20,8 +20,9 @@ namespace Connectors
 namespace Support
 {
 
-    /*! Validate, prepare, and merge QSqlDatabase connection options, these are
-        the settings passed to the QSqlDatabase::setConnectOptions(). */
+    /*! QSqlDatabase connection configuration parser, validate, prepare, and merge
+        QSqlDatabase connection options, these are the settings passed
+        to the QSqlDatabase::setConnectOptions(). */
     class ConfigurationOptionsParser
     {
     public:

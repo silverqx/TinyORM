@@ -20,6 +20,7 @@ namespace Query
     class Builder;
 }
 
+    /*! Database manager. */
     class SHAREDLIB_EXPORT DatabaseManager final : public ConnectionResolverInterface
     {
         Q_DISABLE_COPY(DatabaseManager)

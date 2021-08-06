@@ -11,9 +11,10 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
+    /*! Invalid format exception. */
     class SHAREDLIB_EXPORT InvalidFormatError : public LogicError
     {
-    public:
+        /*! Inherit constructors. */
         using LogicError::LogicError;
     };
 

@@ -31,6 +31,7 @@ namespace Query
 
     // FEATURE subqueries, add support for subqueries, first in where() silverqx
     // TODO add inRandomOrder() silverqx
+    /*! Database query builder. */
     class SHAREDLIB_EXPORT Builder
     {
         using QueryGrammar = Query::Grammars::Grammar;

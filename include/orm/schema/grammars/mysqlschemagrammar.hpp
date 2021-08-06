@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Schema::Grammars
 {
 
+    /*! MySql schema grammar. */
     class SHAREDLIB_EXPORT MySqlSchemaGrammar : public SchemaGrammar
     {
         Q_DISABLE_COPY(MySqlSchemaGrammar)

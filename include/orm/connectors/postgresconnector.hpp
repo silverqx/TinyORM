@@ -14,6 +14,7 @@ namespace Orm::Connectors
 
     // FEATURE connectors, add some data member of support config options and if not contain throw silverqx
     // FEATURE postgres, add support for sslmode config option silverqx
+    /*! PostgreSql connector. */
     class PostgresConnector final : public ConnectorInterface, public Connector
     {
     public:

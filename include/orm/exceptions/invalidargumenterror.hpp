@@ -14,8 +14,10 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
+    /*! Invalid argument exception. */
     class SHAREDLIB_EXPORT InvalidArgumentError : public LogicError
     {
+        /*! Inherit constructors. */
         using LogicError::LogicError;
     };
 

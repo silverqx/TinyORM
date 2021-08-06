@@ -33,6 +33,7 @@ namespace Orm::Tiny::Relations
     template<typename PivotType>
     concept CustomPivot = !std::same_as<PivotType, Pivot>;
 
+    /*! Belongs to many relation. */
     template<class Model, class Related, class PivotType = Pivot>
     class BelongsToMany :
             public ManyRelation,

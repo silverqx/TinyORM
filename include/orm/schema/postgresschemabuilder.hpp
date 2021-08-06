@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Schema
 {
 
+    /*! PostgreSql schema repository class. */
     class SHAREDLIB_EXPORT PostgresSchemaBuilder : public SchemaBuilder
     {
         Q_DISABLE_COPY(PostgresSchemaBuilder)

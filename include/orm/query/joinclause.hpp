@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
+    /*! Join clause. */
     class SHAREDLIB_EXPORT JoinClause final : public Builder
     {
     public:

@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+    /*! PostgreSql database connection. */
     class SHAREDLIB_EXPORT PostgresConnection final : public DatabaseConnection
     {
         Q_DISABLE_COPY(PostgresConnection)

@@ -12,6 +12,7 @@ namespace Orm
 {
     class ConnectionInterface;
 
+    /*! Database connection resolver interface. */
     class ConnectionResolverInterface
     {
     public:

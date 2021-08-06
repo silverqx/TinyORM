@@ -17,6 +17,7 @@ namespace Exceptions
 namespace Concerns
 {
 
+    /*! Detect lost connection by passed exception message. */
     class DetectsLostConnections
     {
         /*! Deleted copy constructor. */

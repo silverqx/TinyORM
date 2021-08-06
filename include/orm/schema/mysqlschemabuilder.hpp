@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Schema
 {
 
+    /*! MySql schema repository class. */
     class SHAREDLIB_EXPORT MySqlSchemaBuilder : public SchemaBuilder
     {
         Q_DISABLE_COPY(MySqlSchemaBuilder)

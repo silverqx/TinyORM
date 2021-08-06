@@ -16,6 +16,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Query::Processors
 {
 
+    /*! Base processor class, process sql result. */
     class SHAREDLIB_EXPORT Processor
     {
         Q_DISABLE_COPY(Processor)

@@ -22,7 +22,7 @@ namespace Grammars
     class SchemaGrammar;
 }
 
-    // CUR add doc comment for every class silverqx
+    /*! Database schema repository base class. */
     class SHAREDLIB_EXPORT SchemaBuilder
     {
         Q_DISABLE_COPY(SchemaBuilder)

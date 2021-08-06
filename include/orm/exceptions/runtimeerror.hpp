@@ -15,6 +15,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
+    /*! Runtime exception. */
     class SHAREDLIB_EXPORT RuntimeError : public std::runtime_error
     {
     public:

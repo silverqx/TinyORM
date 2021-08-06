@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+    /*! SQLite database connection. */
     class SHAREDLIB_EXPORT SQLiteConnection final : public DatabaseConnection
     {
         Q_DISABLE_COPY(SQLiteConnection)

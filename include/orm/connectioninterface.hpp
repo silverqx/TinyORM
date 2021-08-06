@@ -37,6 +37,7 @@ namespace Processors
 namespace Schema
 {
     class SchemaBuilder;
+
 namespace Grammars
 {
     class SchemaGrammar;
@@ -49,6 +50,7 @@ namespace Grammars
     using SchemaBuilder  = Schema::SchemaBuilder;
     using SchemaGrammar  = Schema::Grammars::SchemaGrammar;
 
+    /*! Database connection interface. */
     class ConnectionInterface
     {
         Q_DISABLE_COPY(ConnectionInterface)

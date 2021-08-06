@@ -12,6 +12,7 @@ namespace Orm::Connectors
 {
     using ConnectionName = QString;
 
+    /*! Connectors interface class. */
     class ConnectorInterface
     {
     public:

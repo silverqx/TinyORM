@@ -7,6 +7,7 @@
 #endif
 #include <unordered_map>
 
+#include "orm/concepts.hpp"
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/exceptions/invalidformaterror.hpp"
@@ -83,6 +84,7 @@ namespace Relations {
     // FEATURE build systems, libuv example how it could look like https://github.com/libuv/libuv silverqx
     // CUR try discard include.pri and move content to src.pri to have nicer structure in Projects view, instead of to have include-Headers/Sources it will be Headers/Sources silverqx
     // CUR reorder all methods in model class silverqx
+    /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public ModelProxies<Derived, AllRelations...>,

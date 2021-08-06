@@ -12,6 +12,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Connectors
 {
 
+    /*! MySql connector. */
     class MySqlConnector final : public ConnectorInterface, public Connector
     {
     public:

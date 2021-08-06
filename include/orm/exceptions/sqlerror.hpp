@@ -13,6 +13,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
+    /*! SqlError exception, wrapper for the QSqlError. */
     class SHAREDLIB_EXPORT SqlError : public RuntimeError
     {
     public:

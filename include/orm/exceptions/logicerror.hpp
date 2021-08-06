@@ -13,6 +13,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
+    /*! Logic exception. */
     class SHAREDLIB_EXPORT LogicError : public std::logic_error
     {
     public:

@@ -14,6 +14,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Connectors
 {
 
+    /*! Connectors base class. */
     class Connector : public Concerns::DetectsLostConnections
     {
     public:

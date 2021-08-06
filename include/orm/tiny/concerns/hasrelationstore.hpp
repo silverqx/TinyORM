@@ -39,6 +39,8 @@ namespace Concerns
 //        });
 
     // FUTURE relationstore, cache results, eg. cache Relation instance and return copy of this cached Relation instance, Related parameter can be obtained from cached Relation instance silverqx
+    /*! Relation store, handles mapping from a relation name to the Model's relation
+        method, also calls visited method with Related parameter when needed. */
     template<typename Derived, typename ...AllRelations>
     class HasRelationStore
     {
@@ -69,6 +71,7 @@ namespace Concerns
         class QueriesRelationshipsStore;
 
         // FUTURE try to rewrite this by templated class to avoid polymorfic class, like described here http://groups.di.unipi.it/~nids/docs/templates_vs_inheritance.html silverqx
+        /*! Base class for relation stores. */
         class BaseRelationStore
         {
         protected:

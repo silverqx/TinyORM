@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm
 {
 
+    /*! Database configuration class. */
     struct Configuration
     {
         /*! Inherit constructors. */

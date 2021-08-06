@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Tiny::Relations
 {
 
+    /*! Has many relation. */
     template<class Model, class Related>
     class HasMany :
             public ManyRelation,

@@ -11,6 +11,7 @@ namespace TINYORM_COMMON_NAMESPACE
 namespace Orm::Schema::Grammars
 {
 
+    /*! PostgreSql schemma grammar. */
     class SHAREDLIB_EXPORT PostgresSchemaGrammar : public SchemaGrammar
     {
         Q_DISABLE_COPY(PostgresSchemaGrammar)

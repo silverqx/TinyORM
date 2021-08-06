@@ -55,12 +55,14 @@ namespace Query
 
     using BindingsMap = QMap<BindingType, QVector<QVariant>>;
 
+    /*! Aggregate item. */
     struct AggregateItem
     {
         QString         function;
         QVector<Column> columns;
     };
 
+    /*! Supported where clause types. */
     enum struct WhereType
     {
         UNDEFINED = -1,
@@ -76,6 +78,7 @@ namespace Query
         NOT_EXISTS,
     };
 
+    /*! Where clause item, primarily used in grammars to build sql query. */
     struct WhereConditionItem
     {
         Column                       column      {};
@@ -89,6 +92,7 @@ namespace Query
         QString                      sql         {};
     };
 
+    /*! Supported having types. */
     enum struct HavingType
     {
         UNDEFINED = -1,
@@ -96,6 +100,7 @@ namespace Query
         RAW,
     };
 
+    /*! Having clause item. */
     struct HavingConditionItem
     {
         Column     column     {};
@@ -106,6 +111,7 @@ namespace Query
         QString    sql        {};
     };
 
+    /*! Order by clause item. */
     struct OrderByItem
     {
         Column      column    {};
@@ -113,13 +119,8 @@ namespace Query
         QString     sql       {};
     };
 
+    /*! Update item. */
     struct SHAREDLIB_EXPORT UpdateItem
-    {
-        QString  column;
-        QVariant value;
-    };
-
-    struct ResultItem
     {
         QString  column;
         QVariant value;
@@ -127,16 +128,20 @@ namespace Query
 
     // TODO types, also divide types by namespace, eg AttributeItem is only used in the Orm::Tiny namespace, so an user can use 'using namespace Orm::Tiny' in model files, it is not possible now, because he has to use symbols from an Orm namespace too silverqx
     // TODO pretty print in the debugger silverqx
+    /*! Attribute item used in ORM models. */
     struct SHAREDLIB_EXPORT AttributeItem
     {
         QString  key;
         QVariant value;
 
+        /*! Converting operator to the UpdateItem. */
         operator UpdateItem() const;
     };
 
+    /*! Comparison operator for the AttributeItem. */
     SHAREDLIB_EXPORT bool operator==(const AttributeItem &lhs, const AttributeItem &rhs);
 
+    /*! Where value/attribute item. */
     struct SHAREDLIB_EXPORT WhereItem
     {
         Column   column;
@@ -144,9 +149,11 @@ namespace Query
         QString  comparison {EQ};
         QString  condition  {};
 
+        /*! Converting operator to the AttributeItem. */
         operator AttributeItem() const;
     };
 
+    /*! Where item to compare two columns, primarily used in vector overloads. */
     struct WhereColumnItem
     {
         Column  first;
@@ -180,7 +187,9 @@ namespace Query
         bool touch = true;
     };
 
-    class SHAREDLIB_EXPORT SyncChanges final : public std::map<QString, QVector<QVariant>>
+    /*! Result of the sync() related methods in belongs to many relation type. */
+    class SHAREDLIB_EXPORT SyncChanges final :
+            public std::map<QString, QVector<QVariant>>
     {
     public:
         /*! Constructor. */
@@ -257,12 +266,6 @@ namespace Query
     {
         return key.value<T>();
     }
-
-    // CUR make order in ormtypes, eg move this to concepts silverqx
-    /*! Concept for Model's AllRelations template parameter, AllRelations can not
-        contain actual model type declared in the Derived template parameter. */
-    template<typename Derived, typename ...AllRelations>
-    concept AllRelationsConcept = (!std::same_as<Derived, AllRelations> && ...);
 
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE
