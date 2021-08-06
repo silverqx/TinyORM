@@ -25,7 +25,7 @@ namespace Orm
         static DatabaseManager *m_manager;
 
     public:
-        /*! Deleted DB's default constructor. */
+        /*! Deleted DB's default constructor, this is a pure library class. */
         DB() = delete;
         /*! Deleted DB's default destructor. */
         ~DB() = delete;

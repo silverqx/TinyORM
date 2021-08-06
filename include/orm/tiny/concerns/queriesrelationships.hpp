@@ -36,6 +36,8 @@ namespace Private
 
         /*! Deleted constructor, this is a pure library class. */
         HasNestedStore() = delete;
+        /*! Deleted default destructor. */
+        ~HasNestedStore() = delete;
 
         /*! Arguments needed to save for the last relation in a hasNested(). */
         template<typename Related>
