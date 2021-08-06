@@ -33,10 +33,8 @@ namespace Orm::Tiny::Relations
         initRelation(QVector<Model> &models, const QString &relation) const override;
 
         /*! Match the eagerly loaded results to their parents. */
-        inline void match(QVector<Model> &models, QVector<Related> results,
-                          const QString &relation) const override
-        { this->template matchOneOrMany<std::optional<Related>>(models, results,
-                                                                relation); }
+        void match(QVector<Model> &models, QVector<Related> results,
+                   const QString &relation) const override;
 
         /*! Get the results of the relationship. */
         std::variant<QVector<Related>, std::optional<Related>>
@@ -44,8 +42,7 @@ namespace Orm::Tiny::Relations
 
         /* Others */
         /*! The textual representation of the Relation type. */
-        inline QString relationTypeName() const override
-        { return "HasOne"; };
+        QString relationTypeName() const override;
 
     protected:
         /*! Make a new related instance for the given model. */
@@ -87,6 +84,15 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
+    inline void
+    HasOne<Model, Related>::match(
+            QVector<Model> &models, QVector<Related> results,
+            const QString &relation) const
+    {
+        this->template matchOneOrMany<std::optional<Related>>(models, results, relation);
+    }
+
+    template<class Model, class Related>
     std::variant<QVector<Related>, std::optional<Related>>
     HasOne<Model, Related>::getResults() const
     {
@@ -100,6 +106,12 @@ namespace Orm::Tiny::Relations
         const auto first = this->m_query->first();
 
         return first ? first : this->getDefaultFor(this->m_parent);
+    }
+
+    template<class Model, class Related>
+    inline QString HasOne<Model, Related>::relationTypeName() const
+    {
+        return "HasOne";
     }
 
     template<class Model, class Related>

@@ -52,8 +52,7 @@ namespace Query
         QSqlQuery qtQuery(const QString &connection = "");
 
         /*! Create a new raw query expression. */
-        inline Query::Expression raw(const QVariant &value)
-        { return Query::Expression(value); }
+        Query::Expression raw(const QVariant &value);
 
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
@@ -302,6 +301,12 @@ namespace Query
         /*! Database Manager instance. */
         static DatabaseManager *m_instance;
     };
+
+    inline Query::Expression
+    DatabaseManager::raw(const QVariant &value)
+    {
+        return Query::Expression(value);
+    }
 
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE

@@ -28,11 +28,9 @@ namespace Orm::Tiny::Exceptions
         RelationNotFoundError(const QString &model, const QString &relation, From from);
 
         /*! Get the affected TinyORM model. */
-        inline const QString &getModel() const
-        { return m_model; }
+        const QString &getModel() const;
         /*! Get the name of the relation. */
-        inline const QString &getRelation() const
-        { return m_relation; }
+        const QString &getRelation() const;
 
     protected:
         /*! The name of the affected TinyORM model.. */
@@ -46,6 +44,18 @@ namespace Orm::Tiny::Exceptions
         /*! Format the error message. */
         QString formatMessage(const QString &model, const QString &relation) const;
     };
+
+    inline const QString &
+    RelationNotFoundError::getModel() const
+    {
+        return m_model;
+    }
+
+    inline const QString &
+    RelationNotFoundError::getRelation() const
+    {
+        return m_relation;
+    }
 
 } // namespace Orm::Tiny
 #ifdef TINYORM_COMMON_NAMESPACE

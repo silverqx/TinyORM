@@ -87,8 +87,7 @@ namespace Orm
         static QSqlQuery qtQuery(const QString &connection = "");
 
         /*! Create a new raw query expression. */
-        inline static Query::Expression raw(const QVariant &value)
-        { return Query::Expression(value); }
+        static Query::Expression raw(const QVariant &value);
 
         /*! Run a select statement against the database. */
         static QSqlQuery
@@ -261,6 +260,11 @@ namespace Orm
         /*! Reset the record modification state. */
         static void forgetRecordModificationState(const QString &connection = "");
     };
+
+    inline Query::Expression DB::raw(const QVariant &value)
+    {
+        return Query::Expression(value);
+    }
 
 } // namespace Orm
 

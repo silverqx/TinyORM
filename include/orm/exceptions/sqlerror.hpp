@@ -16,7 +16,9 @@ namespace Orm::Exceptions
     class SHAREDLIB_EXPORT SqlError : public RuntimeError
     {
     public:
+        /*! const char * constructor. */
         SqlError(const char *message, const QSqlError &error);
+        /*! QString constructor. */
         SqlError(const QString &message, const QSqlError &error);
 
         /*! Get the original Qt SQL error. */

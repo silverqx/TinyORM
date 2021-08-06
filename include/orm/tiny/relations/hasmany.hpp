@@ -31,9 +31,8 @@ namespace Orm::Tiny::Relations
         initRelation(QVector<Model> &models, const QString &relation) const override;
 
         /*! Match the eagerly loaded results to their parents. */
-        inline void match(QVector<Model> &models, QVector<Related> results,
-                          const QString &relation) const override
-        { this->template matchOneOrMany<QVector<Related>>(models, results, relation); }
+        void match(QVector<Model> &models, QVector<Related> results,
+                   const QString &relation) const override;
 
         /*! Get the results of the relationship. */
         std::variant<QVector<Related>, std::optional<Related>>
@@ -47,8 +46,7 @@ namespace Orm::Tiny::Relations
 
         /* Others */
         /*! The textual representation of the Relation type. */
-        inline QString relationTypeName() const override
-        { return "HasMany"; };
+        QString relationTypeName() const override;
     };
 
     template<class Model, class Related>
@@ -86,6 +84,15 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
+    inline void
+    HasMany<Model, Related>::match(
+            QVector<Model> &models,  QVector<Related> results,
+            const QString &relation) const
+    {
+        this->template matchOneOrMany<QVector<Related>>(models, results, relation);
+    }
+
+    template<class Model, class Related>
     std::variant<QVector<Related>, std::optional<Related>>
     HasMany<Model, Related>::getResults() const
     {
@@ -104,6 +111,12 @@ namespace Orm::Tiny::Relations
             const QVector<QVariant> &ids, const QVector<Column> &columns) const
     {
         return this->m_query->findMany(ids, columns);
+    }
+
+    template<class Model, class Related>
+    inline QString HasMany<Model, Related>::relationTypeName() const
+    {
+        return "HasMany";
     }
 
 } // namespace Orm::Tiny::Relations

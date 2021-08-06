@@ -395,7 +395,6 @@ namespace Orm
 #endif
     };
 
-    // TODO inline functions, do it like below silverqx
     inline QString DatabaseConnection::getTablePrefix() const
     {
         return m_tablePrefix;

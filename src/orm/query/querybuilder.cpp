@@ -223,7 +223,6 @@ Builder &Builder::addSelect(const QVector<Column> &columns)
     return *this;
 }
 
-// FUTURE when appropriate, move inline definitions outside class, check all inline to see what to do silverqx
 Builder &Builder::addSelect(const Column &column)
 {
     m_columns << column;

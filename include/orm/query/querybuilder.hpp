@@ -424,11 +424,9 @@ namespace Query
 
         /* Getters / Setters */
         /*! Get a database connection. */
-        inline ConnectionInterface &getConnection() const
-        { return m_connection; }
+        ConnectionInterface &getConnection() const;
         /*! Get the query grammar instance. */
-        inline const QueryGrammar &getGrammar() const
-        { return m_grammar; }
+        const QueryGrammar &getGrammar() const;
 
         /*! Get the current query value bindings as flattened QVector. */
         QVector<QVariant> getBindings() const;
@@ -461,38 +459,27 @@ namespace Query
         getDistinct() const;
         // TODO check up all code and return references when appropriate silverqx
         /*! Get the columns that should be returned. */
-        inline const QVector<Column> &getColumns() const
-        { return m_columns; }
+        const QVector<Column> &getColumns() const;
         /*! Set the columns that should be returned. */
-        inline Builder &setColumns(const QVector<Column> &columns)
-        { m_columns = columns; return *this; }
+        Builder &setColumns(const QVector<Column> &columns);
         /*! Get the table associated with the query builder. */
-        inline const std::variant<std::monostate, QString, Expression> &getFrom() const
-        { return m_from; }
+        const std::variant<std::monostate, QString, Expression> &getFrom() const;
         /*! Get the table joins for the query. */
-        inline const QVector<QSharedPointer<JoinClause>> &getJoins() const
-        { return m_joins; }
+        const QVector<QSharedPointer<JoinClause>> &getJoins() const;
         /*! Get the where constraints for the query. */
-        inline const QVector<WhereConditionItem> &getWheres() const
-        { return m_wheres; }
+        const QVector<WhereConditionItem> &getWheres() const;
         /*! Get the groupings for the query. */
-        inline const QVector<Column> &getGroups() const
-        { return m_groups; }
+        const QVector<Column> &getGroups() const;
         /*! Get the having constraints for the query. */
-        inline const QVector<HavingConditionItem> &getHavings() const
-        { return m_havings; }
+        const QVector<HavingConditionItem> &getHavings() const;
         /*! Get the orderings for the query. */
-        inline const QVector<OrderByItem> &getOrders() const
-        { return m_orders; }
+        const QVector<OrderByItem> &getOrders() const;
         /*! Get the maximum number of records to return. */
-        inline int getLimit() const
-        { return m_limit; }
+        int getLimit() const;
         /*! Get the number of records to skip. */
-        inline int getOffset() const
-        { return m_offset; }
+        int getOffset() const;
         /*! Get the row locking. */
-        inline const std::variant<std::monostate, bool, QString> &getLock() const
-        { return m_lock; }
+        const std::variant<std::monostate, bool, QString> &getLock() const;
 
         /* Other methods */
         /*! Get a new instance of the query builder. */
@@ -775,7 +762,7 @@ namespace Query
 
     // TODO docs silverqx
     template<SubQuery T>
-    inline Builder &Builder::selectSub(T &&query, const QString &as)
+    Builder &Builder::selectSub(T &&query, const QString &as)
     {
         auto [queryString, bindings] = createSub(std::forward<T>(query));
 
@@ -1093,6 +1080,16 @@ namespace Query
         return update(columns);
     }
 
+    inline ConnectionInterface &Builder::getConnection() const
+    {
+        return m_connection;
+    }
+
+    inline const Builder::QueryGrammar &Builder::getGrammar() const
+    {
+        return m_grammar;
+    }
+
     inline const BindingsMap &Builder::getRawBindings() const
     {
         return m_bindings;
@@ -1122,7 +1119,74 @@ namespace Query
         return std::get<QStringList>(m_distinct);
     }
 
-    inline QSharedPointer<Builder> Builder::forSubQuery() const
+    inline const QVector<Column> &
+    Builder::getColumns() const
+    {
+        return m_columns;
+    }
+
+    inline Builder &
+    Builder::setColumns(const QVector<Column> &columns)
+    {
+        m_columns = columns;
+
+        return *this;
+    }
+
+    inline const std::variant<std::monostate, QString, Expression> &
+    Builder::getFrom() const
+    {
+        return m_from;
+    }
+
+    inline const QVector<QSharedPointer<JoinClause>> &
+    Builder::getJoins() const
+    {
+        return m_joins;
+    }
+
+    inline const QVector<WhereConditionItem> &
+    Builder::getWheres() const
+    {
+        return m_wheres;
+    }
+
+    inline const QVector<Column> &
+    Builder::getGroups() const
+    {
+        return m_groups;
+    }
+
+    inline const QVector<HavingConditionItem> &
+    Builder::getHavings() const
+    {
+        return m_havings;
+    }
+
+    inline const QVector<OrderByItem> &
+    Builder::getOrders() const
+    {
+        return m_orders;
+    }
+
+    inline int Builder::getLimit() const
+    {
+        return m_limit;
+    }
+
+    inline int Builder::getOffset() const
+    {
+        return m_offset;
+    }
+
+    inline const std::variant<std::monostate, bool, QString> &
+    Builder::getLock() const
+    {
+        return m_lock;
+    }
+
+    inline QSharedPointer<Builder>
+    Builder::forSubQuery() const
     {
         return newQuery();
     }

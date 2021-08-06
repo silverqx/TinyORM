@@ -194,7 +194,7 @@ namespace Query
     protected:
         /*! Cast the given key to primary key type. */
         template<typename T>
-        inline T castKey(const QVariant &key) const { return key.value<T>(); }
+        T castKey(const QVariant &key) const;
 
     private:
         /*! All of the supported keys. */
@@ -251,6 +251,13 @@ namespace Query
         return *this;
     }
 
+    template<typename T>
+    inline T SyncChanges::castKey(const QVariant &key) const
+    {
+        return key.value<T>();
+    }
+
+    // CUR make order in ormtypes, eg move this to concepts silverqx
     /*! Concept for Model's AllRelations template parameter, AllRelations can not
         contain actual model type declared in the Derived template parameter. */
     template<typename Derived, typename ...AllRelations>

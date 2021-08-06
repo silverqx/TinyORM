@@ -16,21 +16,31 @@ namespace Orm::Exceptions
     class SHAREDLIB_EXPORT LogicError : public std::logic_error
     {
     public:
-        explicit inline LogicError(const char *message)
-            : std::logic_error(message)
-        {}
-        explicit inline LogicError(const QString &message)
-            : std::logic_error(message.toUtf8().constData())
-        {}
+        /*! const char * constructor. */
+        explicit LogicError(const char *message);
+        /*! QString constructor. */
+        explicit LogicError(const QString &message);
 
         /*! Return exception message as a QString. */
-        inline const QString &message() const
-        { return m_message; }
+        const QString &message() const;
 
     protected:
         /*! Exception message. */
         const QString m_message {what()};
     };
+
+    inline LogicError::LogicError(const char *message)
+        : std::logic_error(message)
+    {}
+
+    inline LogicError::LogicError(const QString &message)
+        : std::logic_error(message.toUtf8().constData())
+    {}
+
+    inline const QString &LogicError::message() const
+    {
+        return m_message;
+    }
 
 } // namespace Orm
 #ifdef TINYORM_COMMON_NAMESPACE

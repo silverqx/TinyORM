@@ -69,8 +69,7 @@ namespace Orm::Tiny::Relations
 
         /* Others */
         /*! The textual representation of the Relation type. */
-        inline QString relationTypeName() const override
-        { return "BelongsTo"; };
+        QString relationTypeName() const override;
 
     protected:
         /*! Gather the keys from a vector of related models. */
@@ -275,6 +274,12 @@ namespace Orm::Tiny::Relations
     inline QString BelongsTo<Model, Related>::getQualifiedForeignKeyName() const
     {
         return m_child.qualifyColumn(m_foreignKey);
+    }
+
+    template<class Model, class Related>
+    inline QString BelongsTo<Model, Related>::relationTypeName() const
+    {
+        return "BelongsTo";
     }
 
     template<class Model, class Related>

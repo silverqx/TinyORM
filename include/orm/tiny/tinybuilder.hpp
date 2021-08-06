@@ -141,25 +141,20 @@ namespace Orm::Tiny
         QVector<Model> hydrate(QSqlQuery &&result);
 
         /*! Get the model instance being queried. */
-        inline Model &getModel()
-        { return m_model; }
+        Model &getModel();
         /*! Get the underlying query builder instance. */
-        inline QueryBuilder &getQuery() const
-        { return *m_query; }
+        QueryBuilder &getQuery() const;
         // TODO now fix revisit silverqx
         // CUR this cant be const &, omg, OR can be? I can make copy immediatelly, but anyway it should be non-const non-ref silverqx
         /*! Get the underlying query builder instance as a QSharedPointer. */
-        inline const QSharedPointer<QueryBuilder> &
-        getQuerySharedPointer() const
-        { return m_query; }
+        const QSharedPointer<QueryBuilder> &
+        getQuerySharedPointer() const;
 
         /*! Get a database connection. */
-        inline ConnectionInterface &getConnection() const
-        { return m_query->getConnection(); }
+        ConnectionInterface &getConnection() const;
 
         /*! Get a base query builder instance. */
-        inline QueryBuilder &toBase() const
-        { return getQuery(); }
+        QueryBuilder &toBase() const;
         // FUTURE add Query Scopes feature silverqx
 //        { return $this->applyScopes()->getQuery(); }
 
@@ -678,6 +673,38 @@ namespace Orm::Tiny
         }
 
         return models;
+    }
+
+    template<typename Model>
+    inline Model &Builder<Model>::getModel()
+    {
+        return m_model;
+    }
+
+    template<typename Model>
+    inline QueryBuilder &Builder<Model>::getQuery() const
+    {
+        return *m_query;
+    }
+
+    template<typename Model>
+    inline const QSharedPointer<QueryBuilder> &
+    Builder<Model>::getQuerySharedPointer() const
+    {
+        return m_query;
+    }
+
+    template<typename Model>
+    inline ConnectionInterface &
+    Builder<Model>::getConnection() const
+    {
+        return m_query->getConnection();
+    }
+
+    template<typename Model>
+    inline QueryBuilder &Builder<Model>::toBase() const
+    {
+        return getQuery();
     }
 
     template<typename Model>
