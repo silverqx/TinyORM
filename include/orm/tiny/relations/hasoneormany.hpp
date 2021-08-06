@@ -388,7 +388,7 @@ namespace Orm::Tiny::Relations
             const Builder<Model> &parentQuery,
             const QVector<Column> &columns) const
     {
-        // CUR finish self query silverqx
+        // CUR1 finish self query silverqx
 //        if (query->getQuery()->from == parentQuery.getQuery()->from)
 //            return this->getRelationExistenceQueryForSelfRelation(query, parentQuery,
 //                                                                  columns);

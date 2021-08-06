@@ -751,8 +751,8 @@ Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> &query,
     return *this;
 }
 
-// CUR add whereExists() silverqx
-// CUR also add exists() silverqx
+// CUR1 add whereExists() silverqx
+// CUR1 also add exists() silverqx
 Builder &Builder::addWhereExistsQuery(const QSharedPointer<Builder> &query,
                                       const QString &condition, const bool nope)
 {

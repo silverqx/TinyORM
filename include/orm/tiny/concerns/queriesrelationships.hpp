@@ -564,7 +564,7 @@ namespace Private
 //        return $this->withoutGlobalScopes(
 //            $from->removedScopes()
 //        )->mergeWheres(
-        // CUR after all finished check if wheres and rawbindings can be moved instead of copied silverqx
+        // CUR1 after all finished check if wheres and rawbindings can be moved instead of copied silverqx
         return query().mergeWheres(from.getQuery().getWheres(),
                                    from.getQuery().getRawBindings()[BindingType::WHERE]);
     }

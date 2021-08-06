@@ -327,7 +327,7 @@ namespace Concerns
                     *this);
     }
 
-    // CUR add constraint to also check Method return value, should be std::unique_ptr<Relation> silverqx
+    // CUR1 add constraint to also check Method return value, should be std::unique_ptr<Relation> silverqx
     template<typename Derived, typename ...AllRelations>
     template<typename Method>
     requires std::is_member_function_pointer_v<Method>

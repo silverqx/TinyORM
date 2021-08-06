@@ -147,7 +147,7 @@ namespace Orm::Tiny
         /*! Get the underlying query builder instance. */
         QueryBuilder &getQuery() const;
         // TODO now fix revisit silverqx
-        // CUR this cant be const &, omg, OR can be? I can make copy immediatelly, but anyway it should be non-const non-ref silverqx
+        // CUR1 this cant be const &, omg, OR can be? I can make copy immediatelly, but anyway it should be non-const non-ref silverqx
         /*! Get the underlying query builder instance as a QSharedPointer. */
         const QSharedPointer<QueryBuilder> &
         getQuerySharedPointer() const;
