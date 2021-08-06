@@ -18,7 +18,7 @@ namespace Orm::Connectors
     class Connector : public Concerns::DetectsLostConnections
     {
     public:
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~Connector() = default;
 
         /*! Create a new QSqlDatabase connection, factory method. */

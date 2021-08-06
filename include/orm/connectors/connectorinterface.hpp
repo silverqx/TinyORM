@@ -16,7 +16,7 @@ namespace Orm::Connectors
     class ConnectorInterface
     {
     public:
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~ConnectorInterface() = default;
 
         /*! Establish a database connection. */

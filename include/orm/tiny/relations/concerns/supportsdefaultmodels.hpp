@@ -24,7 +24,7 @@ namespace Concerns {
 //        using Callback      = std::function<void(Related &, const Model &)>;
 
     public:
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~SupportsDefaultModels() = default;
 
         /*! Return a new model instance in case the relationship does not exist. */

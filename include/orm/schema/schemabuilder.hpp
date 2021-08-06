@@ -30,7 +30,7 @@ namespace Grammars
     public:
         /*! Constructor. */
         explicit SchemaBuilder(DatabaseConnection &connection);
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~SchemaBuilder() = default;
 
         /*! Get the column listing for a given table. */

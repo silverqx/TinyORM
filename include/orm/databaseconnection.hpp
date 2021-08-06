@@ -41,7 +41,7 @@ namespace Orm
                 const std::function<Connectors::ConnectionName()> &connection,
                 const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~DatabaseConnection() = default;
 
         /*! Begin a fluent query against a database table. */

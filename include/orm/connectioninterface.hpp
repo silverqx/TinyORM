@@ -58,7 +58,7 @@ namespace Grammars
     public:
         /*! Default constructor. */
         ConnectionInterface() = default;
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~ConnectionInterface() = default;
 
         /*! Begin a fluent query against a database table. */

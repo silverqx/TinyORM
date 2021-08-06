@@ -50,7 +50,7 @@ namespace Relations
         /*! Related instance type passed to the relation. */
         using RelatedType = Related;
 
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~Relation() = default;
 
         /*! Set the base constraints on the relation query. */

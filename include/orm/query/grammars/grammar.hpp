@@ -20,7 +20,7 @@ namespace Orm::Query::Grammars
     public:
         /*! Default constructor. */
         Grammar() = default;
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~Grammar() = default;
 
         /*! Compile a select query into SQL. */

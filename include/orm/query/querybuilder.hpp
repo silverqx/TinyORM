@@ -42,7 +42,7 @@ namespace Query
         // WARNING solve pure virtual dtor vs default silverqx
         /* Need to be the polymorphic type because of dynamic_cast<>
            in Grammar::concatenateWhereClauses(). */
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~Builder() = default;
 
         /*! Execute the query as a "select" statement. */

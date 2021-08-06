@@ -80,7 +80,7 @@ namespace Concerns
                               const RelationStoreType storeType);
 
         public:
-            /*! Default virtual destructor. */
+            /*! Virtual destructor. */
             inline virtual ~BaseRelationStore() = default;
 
             /*! Visit the given relation. */

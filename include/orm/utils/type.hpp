@@ -36,7 +36,7 @@ namespace Orm::Utils
     public:
         /*! Deleted default constructor, this is a pure library class. */
         Type() = delete;
-        /*! Deleted default destructor. */
+        /*! Deleted destructor. */
         ~Type() = delete;
 
         /*! Class name with or w/o a namespace and w/o template parameters. */

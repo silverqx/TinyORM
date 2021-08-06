@@ -19,7 +19,7 @@ namespace Orm::Schema::Grammars
     public:
         /*! Default constructor. */
         SchemaGrammar() = default;
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~SchemaGrammar() = default;
 
         /*! Compile the query to determine the list of columns. */

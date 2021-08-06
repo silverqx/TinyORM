@@ -27,7 +27,7 @@ namespace Orm
     public:
         /*! Deleted DB's default constructor, this is a pure library class. */
         DB() = delete;
-        /*! Deleted DB's default destructor. */
+        /*! Deleted DB's destructor. */
         ~DB() = delete;
 
         /* Proxy methods to the DatabaseManager */

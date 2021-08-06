@@ -24,7 +24,7 @@ namespace Orm::Query::Processors
     public:
         /*! Default constructor. */
         Processor() = default;
-        /*! Default virtual destructor. */
+        /*! Virtual destructor. */
         inline virtual ~Processor() = default;
 
         /*! Process the results of a column listing query. */
