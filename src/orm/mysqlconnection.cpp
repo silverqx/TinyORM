@@ -3,7 +3,7 @@
 #include <QtSql/QSqlDriver>
 
 #ifdef _MSC_VER
-#include "mysql.h"
+#include "mysql/mysql.h"
 #elif __GNUG__
 #include "mysql/mysql.h"
 #endif
