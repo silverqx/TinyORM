@@ -83,3 +83,4 @@ Thumbs.db
 /todos.xlsx
 conf.pri
 /CMakeUserPresets.json
+/vcpkg_installed/
