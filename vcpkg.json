@@ -1,11 +1,22 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
   "name": "tinyorm",
-  "version": "0.1.0",
+  "version-semver": "0.1.0",
   "description": "c++ orm library for the Qt framwork",
+  "homepage": "https://github.com/silverqx/TinyORM",
+  "documentation": "https://silverqx.github.io/TinyORM/",
+  "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
+  "supports": "!(uwp | arm | android | emscripten)",
   "dependencies": [
-    "libmysql",
     "range-v3"
-  ]
+  ],
+  "features": {
+    "mysql-ping": {
+      "description": "Install a MySQL client library to support the mysql_ping()",
+      "dependencies": [
+        "libmysql"
+      ]
+    }
+  }
 }
 
