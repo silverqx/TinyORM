@@ -2,11 +2,11 @@
 
 #include <QtSql/QSqlDriver>
 
-#ifdef _MSC_VER
-#include "mysql/mysql.h"
-#elif __GNUG__
-#include "mysql/mysql.h"
-#endif
+//#ifdef _MSC_VER
+//#include "mysql/mysql.h"
+//#elif __GNUG__
+//#include "mysql/mysql.h"
+//#endif
 
 #include "orm/query/grammars/mysqlgrammar.hpp"
 #include "orm/query/processors/mysqlprocessor.hpp"
@@ -55,59 +55,59 @@ bool MySqlConnection::isMaria()
 
 bool MySqlConnection::pingDatabase()
 {
-    auto qtConnection = getQtConnection();
+//    auto qtConnection = getQtConnection();
 
-    const auto getMysqlHandle = [&qtConnection]() -> MYSQL *
-    {
-        if (auto driverHandle = qtConnection.driver()->handle();
-            qstrcmp(driverHandle.typeName(), "MYSQL*") == 0
-        )
-            return *static_cast<MYSQL **>(driverHandle.data());
+//    const auto getMysqlHandle = [&qtConnection]() -> MYSQL *
+//    {
+//        if (auto driverHandle = qtConnection.driver()->handle();
+//            qstrcmp(driverHandle.typeName(), "MYSQL*") == 0
+//        )
+//            return *static_cast<MYSQL **>(driverHandle.data());
 
-        return nullptr;
-    };
+//        return nullptr;
+//    };
 
-    const auto mysqlPing = [getMysqlHandle]() -> bool
-    {
-        auto mysqlHandle = getMysqlHandle();
-        if (mysqlHandle == nullptr)
-            return false;
+//    const auto mysqlPing = [getMysqlHandle]() -> bool
+//    {
+//        auto mysqlHandle = getMysqlHandle();
+//        if (mysqlHandle == nullptr)
+//            return false;
 
-        const auto ping = mysql_ping(mysqlHandle);
-        const auto errNo = mysql_errno(mysqlHandle);
+//        const auto ping = mysql_ping(mysqlHandle);
+//        const auto errNo = mysql_errno(mysqlHandle);
 
-        /* So strange logic, because I want interpret CR_COMMANDS_OUT_OF_SYNC errno as
-           successful ping. */
-        if (ping != 0 && errNo == CR_COMMANDS_OUT_OF_SYNC) {
-            // TODO log to file, how often this happen silverqx
-            qWarning("mysql_ping() returned : CR_COMMANDS_OUT_OF_SYNC(%ud)", errNo);
-            return true;
-        }
-        else if (ping == 0)
-            return true;
-        else if (ping != 0)
-            return false;
-        else {
-            qWarning() << "Unknown behavior during mysql_ping(), this should never "
-                          "happen :/";
-            return false;
-        }
-    };
+//        /* So strange logic, because I want interpret CR_COMMANDS_OUT_OF_SYNC errno as
+//           successful ping. */
+//        if (ping != 0 && errNo == CR_COMMANDS_OUT_OF_SYNC) {
+//            // TODO log to file, how often this happen silverqx
+//            qWarning("mysql_ping() returned : CR_COMMANDS_OUT_OF_SYNC(%ud)", errNo);
+//            return true;
+//        }
+//        else if (ping == 0)
+//            return true;
+//        else if (ping != 0)
+//            return false;
+//        else {
+//            qWarning() << "Unknown behavior during mysql_ping(), this should never "
+//                          "happen :/";
+//            return false;
+//        }
+//    };
 
-    if (qtConnection.isOpen() && mysqlPing()) {
-        logConnected();
-        return true;
-    }
+//    if (qtConnection.isOpen() && mysqlPing()) {
+//        logConnected();
+//        return true;
+//    }
 
-    // The database connection was lost
-    logDisconnected();
+//    // The database connection was lost
+//    logDisconnected();
 
-    // Database connection have to be closed manually
-    // isOpen() check is called in MySQL driver
-    qtConnection.close();
+//    // Database connection have to be closed manually
+//    // isOpen() check is called in MySQL driver
+//    qtConnection.close();
 
-    // Reset in transaction state and the savepoints counter
-    resetTransactions();
+//    // Reset in transaction state and the savepoints counter
+//    resetTransactions();
 
     return false;
 }
