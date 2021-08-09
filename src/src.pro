@@ -52,9 +52,12 @@ win32-msvc* {
 exists(../conf.pri) {
     include(../conf.pri)
 }
-#else {
-#    error( "'conf.pri' for 'src' project does not exist. See an example configuration in 'conf.pri.example'." )
-#}
+else:is_vcpkg_build {
+    include(../qmake/vcpkgconf.pri)
+}
+else {
+    error( "'conf.pri' for 'src' project does not exist. See an example configuration in 'conf.pri.example'." )
+}
 
 # Use Precompiled headers (PCH)
 # ---
