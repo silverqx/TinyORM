@@ -1969,7 +1969,7 @@ namespace Tiny::Relations
         getQuery().template has<HasRelated>(std::move(relation), comparison, count,
                                             condition, callback);
 
-        return relation();
+        return this->relation();
     }
 
     template<class Model, class Related>
@@ -1983,7 +1983,7 @@ namespace Tiny::Relations
         getQuery().template has<HasRelated, void>(std::move(relation), comparison, count,
                                                   condition, callback);
 
-        return relation();
+        return this->relation();
     }
 
     template<class Model, class Related>
@@ -2003,7 +2003,7 @@ namespace Tiny::Relations
         getQuery().template has<HasRelated>(relation, comparison, count, condition,
                                             callback);
 
-        return relation();
+        return this->relation();
     }
 
     template<class Model, class Related>
@@ -2073,7 +2073,7 @@ namespace Tiny::Relations
     {
         getQuery().template whereHas<HasRelated>(relation, callback, comparison, count);
 
-        return relation();
+        return this->relation();
     }
 
     template<class Model, class Related>
