@@ -4,26 +4,30 @@
 win32-g++* {
 }
 else:win32-msvc* {
-    # includes
-    # MySQL C library is used by ORM and it uses mysql_ping()
-    INCLUDEPATH += $$quote(C:/Program Files/MySQL/MySQL Server 8.0/include)
+    # Includes
     # range-v3
     INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include)
     # boost
 #    INCLUDEPATH += $$quote(E:/c_libs/boost/boost_latest)
 
-    # libraries
-    # MySQL C library
-    LIBS += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.0/lib)
-    LIBS += -llibmysql
+    # Conditional dependencies
+    # MySQL C library is used by TinyORM and it uses mysql_ping()
+    mysql_ping {
+        INCLUDEPATH += $$quote(C:/Program Files/MySQL/MySQL Server 8.0/include)
+        LIBS += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.0/lib)
+        LIBS += -llibmysql
+    }
 }
 else:unix {
-    # includes
+    # Includes
     # range-v3
     INCLUDEPATH += $$quote(/home/xyz/vcpkg/installed/x64-linux/include)
 
-    # libraries
-    LIBS += -lmysqlclient
+    # Libraries
+    # MySQL C library
+    mysql_ping {
+        LIBS += -lmysqlclient
+    }
 
     # others
     clang: CONFIG *= use_lld_linker
