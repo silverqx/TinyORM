@@ -27,7 +27,7 @@ set(tiny_sqlite_db "${CMAKE_BINARY_DIR}/tests/q_tinyorm_test_1.sqlite3")
 create_sqlite_db("${tiny_sqlite_db}")
 
 target_compile_definitions(TinyUtils
-    PRIVATE TINYORM_SQLITE_DATABASE=${tiny_sqlite_db}
+    PRIVATE TINYORM_SQLITE_DATABASE="${tiny_sqlite_db}"
 )
 
 if(BUILD_SHARED_LIBS)
