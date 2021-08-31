@@ -12,7 +12,7 @@
   ],
   "features": {
     "mysql-ping": {
-      "description": "Install a MySQL client library to support the mysql_ping()",
+      "description": "Install a MySQL client library to support the mysql_ping() used by MySqlConnection::pingDatabase()",
       "dependencies": [
         "libmysql"
       ]
