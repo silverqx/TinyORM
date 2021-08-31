@@ -83,6 +83,18 @@ namespace Relations {
     // FEATURE build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
     // FEATURE build systems, libuv example how it could look like https://github.com/libuv/libuv silverqx
     // CUR1 reorder all methods in model class silverqx
+    // CUR move testdata to tests/ silverqx
+    // FUTURE cmake can generate export header file by GenerateExportHeader module, find way to use it, because I have own export header file, how to unify this? I don't know now silverqx
+    // CUR omg on unix is visibility of every symbol in dll public 😲, use -fvisibility and -fvisibility-inlines-hidden silverqx
+    // CUR try this clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
+    // CUR try clang-include-fixer at https://clang.llvm.org/extra/clang-include-fixer.html silverqx
+    // CUR try iwyu at https://include-what-you-use.org/ silverqx
+    // CUR enable /W4 on msvc silverqx
+    // CUR constraint Qt min version and also msvc min version silverqx
+    // CUR move testdata to tests/ folder or tests/scripts/ folder silverqx
+    // CUR remove from NOTES.txt 'system PATH to avoid run config. bug' after everything commited and tested on all supported OSes silverqx
+    // CUR unify one version number/file for cmake and qmake silverqx
+    // CUR generate pkg-config file on unix silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
@@ -1475,7 +1487,7 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newInstance(
-            const QVector<AttributeItem> &attributes, const bool exists)
+            const QVector<AttributeItem> &attributes, const bool exists_)
     {
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
@@ -1489,7 +1501,7 @@ namespace Relations {
 
         model.fill(attributes);
 
-        model.exists = exists;
+        model.exists = exists_;
         model.setTable(this->model().getTable());
 
         return model;
@@ -1498,7 +1510,7 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newInstance(
-            QVector<AttributeItem> &&attributes, const bool exists)
+            QVector<AttributeItem> &&attributes, const bool exists_)
     {
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
@@ -1512,7 +1524,7 @@ namespace Relations {
 
         model.fill(std::move(attributes));
 
-        model.exists = exists;
+        model.exists = exists_;
         model.setTable(this->model().getTable());
 
         return model;

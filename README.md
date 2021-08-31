@@ -1,4 +1,4 @@
-<h1><img src="https://github.com/silverqx/TinyORM/blob/main/resources/logo-optim.svg" width="34" height="34" alt="TinyORM Logo" align="center">&nbsp;TinyORM</h1>
+<h1><img src="https://github.com/silverqx/TinyORM/blob/main/resources/icons/logo-optim.svg" width="34" height="34" alt="TinyORM Logo" align="center">&nbsp;TinyORM</h1>
 
 [![silverqx.github.io][docs-badge]][docs]
 [![License MIT][license-badge]][license]

@@ -6,6 +6,8 @@
 #include <QVariant>
 #include <QVector>
 
+#include <variant>
+
 #if defined(__clang__) || (defined(_MSC_VER) && _MSC_VER <= 1928)
 #include <range/v3/algorithm/unique.hpp>
 #endif

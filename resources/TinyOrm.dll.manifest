@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" manifestVersion="1.0">
+  <!-- Indicate UAC compliance, with no need for elevated privileges (Win Vista and later) -->
+  <!-- Describes the minimum security permissions required for the application to run on the client computer -->
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+    <security>
+      <requestedPrivileges>
+        <!-- Identifies the security level at which the application requests to be executed -->
+        <!-- Requesting no additional permissions -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+
+  <!-- Declare support for various versions of Windows -->
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- Windows 10 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+    </application>
+  </compatibility>
+
+  <asmv3:application>
+    <!-- Enable long paths that exceed MAX_PATH in length -->
+    <asmv3:windowsSettings xmlns:ws16="http://schemas.microsoft.com/SMI/2016/WindowsSettings">
+      <ws16:longPathAware>true</ws16:longPathAware>
+    </asmv3:windowsSettings>
+
+    <!-- Force a process to use UTF-8 as the process code page -->
+    <asmv3:windowsSettings xmlns:ws19="http://schemas.microsoft.com/SMI/2019/WindowsSettings">
+      <ws19:activeCodePage>UTF-8</ws19:activeCodePage>
+    </asmv3:windowsSettings>
+
+    <!-- Segment heap is a modern heap implementation that will generally reduce your overall memory usage -->
+    <asmv3:windowsSettings xmlns:ws20="http://schemas.microsoft.com/SMI/2020/WindowsSettings">
+      <ws20:heapType>SegmentHeap</ws20:heapType>
+    </asmv3:windowsSettings>
+  </asmv3:application>
+</assembly>

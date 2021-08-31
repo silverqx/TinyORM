@@ -315,8 +315,6 @@ void tst_MySql_TinyBuilder::hasNested_Basic_OnHasMany() const
 
 void tst_MySql_TinyBuilder::hasNested_Count_OnHasMany() const
 {
-    auto builder = createTinyQuery<Torrent>();
-
     // Single nesting
     {
         auto builder = createTinyQuery<Torrent>();
@@ -361,8 +359,6 @@ void tst_MySql_TinyBuilder::hasNested_Count_OnHasMany() const
 
 void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnHasMany() const
 {
-    auto builder = createTinyQuery<Torrent>();
-
     // Single nesting
     {
         auto builder = createTinyQuery<Torrent>();

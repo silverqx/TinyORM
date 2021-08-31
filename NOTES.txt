@@ -1,7 +1,7 @@
 Todos to check in TinyOrm:
 --------------------------
 
- - QueryBuilder::insertGetId() allows insert with empty attributes, also Model::performInsert() 
+ - QueryBuilder::insertGetId() allows insert with empty attributes, also Model::performInsert()
    when incrementing == true, but all other insert methods don't, it's big inconsistency, unify it
 
 
@@ -33,6 +33,10 @@ void deleteModel()
 #    error Qt requires a C++11 compiler and yours does not seem to be that.
 #  endif
 #endif
+
+ - check this in cmake build:
+#include(GenerateExportHeader)
+#_test_compiler_hidden_visibility()
 
 
 Todo categories:
@@ -117,6 +121,54 @@ Get-ChildItem -Path *.cpp,*.hpp -Recurse | sls -Pattern ' (TODO|NOTE|FIXME|BUG|W
 Get-Content .\tmp.sql | sls -Pattern '^(Executed prepared query)' | Set-Content executed_queries.sql
 
 
+cmake build commands:
+---------------------
+
+vcvars64.ps1
+cd E:\c\qMedia\TinyOrm\TinyOrm-builds\build-cmake\
+cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds/build-cmake -GNinja `
+-DCMAKE_BUILD_TYPE:STRING=Debug `
+-DCMAKE_TOOLCHAIN_FILE:PATH=E:/c/qMedia/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+cmake --build . --target all
+
+ - generate Graphviz dependency image:
+
+cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds/build-cmake -GNinja `
+-DCMAKE_BUILD_TYPE:STRING=Debug `
+-DCMAKE_TOOLCHAIN_FILE:PATH=E:/c/qMedia/vcpkg/scripts/buildsystems/vcpkg.cmake `
+--graphviz=E:/c/qMedia/TinyOrm/TinyOrm-builds/build-cmake/graph/graph.dot; `
+`
+dot -Tpng -o .\graph\graph.png .\graph\graph.dot; `
+.\graph\graph.png
+
+ - running ctest
+
+E:\c\qMedia\TinyOrm\TinyOrm\tests\auto\utils\testdata\dotenv.ps1
+$env:Path = "E:\c\qMedia\TinyOrm\TinyOrm-builds\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake\tests\auto\utils;" + $env:Path
+ctest
+ctest --progress
+
+ - some debug output:
+
+cmake --trace-expand --trace-source=tests/auto/unit/orm/query/mysql_querybuilder/CMakeLists.txt -LA ..
+cmake -LA .
+
+ - full build command, not needed, I leave it here as a shortcut:
+
+cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds/build-cmake -GNinja `
+"-DCMAKE_BUILD_TYPE:STRING=Debug" `
+"-DCMAKE_PROJECT_INCLUDE_BEFORE:PATH=E:/Qt/Tools/QtCreator/share/qtcreator/package-manager/auto-setup.cmake" `
+"-DQT_QMAKE_EXECUTABLE:STRING=E:/Qt/5.15.2/msvc2019_64/bin/qmake.exe" `
+"-DCMAKE_PREFIX_PATH:STRING=E:/Qt/5.15.2/msvc2019_64" `
+"-DCMAKE_C_COMPILER:STRING=C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/bin/HostX64/x64/cl.exe" `
+"-DCMAKE_CXX_COMPILER:STRING=C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/bin/HostX64/x64/cl.exe" ` "-DCMAKE_TOOLCHAIN_FILE:PATH=E:/c/qMedia/vcpkg/scripts/buildsystems/vcpkg.cmake"
+
+ - system PATH to avoid run config. bug:
+
+PATH=E:\c\qMedia\TinyOrm\TinyOrm-builds\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake\tests\auto\utils;${PATH}
+
+
 constructor copy/move snippet:
 ------------------------------
 
@@ -149,7 +201,7 @@ Torrent &operator=(Torrent &&torrent)
 conversions:
 ------------
 
-Makes possible to assign QVector<AttributeItem> to the Model, 
+Makes possible to assign QVector<AttributeItem> to the Model,
 or implicitly converts a QVector<AttributeItem> to Model:
 
 Model(const QVector<AttributeItem> &attributes);
@@ -163,7 +215,7 @@ Model(std::initializer_list<AttributeItem> attributes)
 {}
 
 --
-Makes possible to assign the Model to the QVector<AttributeItem>, 
+Makes possible to assign the Model to the QVector<AttributeItem>,
 or converts the Model to the QVector<AttributeItem>:
 
 operator QVector<AttributeItem>() const;
