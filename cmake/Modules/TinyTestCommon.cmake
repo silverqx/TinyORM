@@ -15,6 +15,12 @@ function(tiny_configure_test name)
             VISIBILITY_INLINES_HIDDEN YES
     )
 
+    # Setup correct PATH env. variable, used by ctest command, needed to find TinyUtils
+    # and TinyOrm libraries in the build tree
+    set_property(TEST ${name} APPEND PROPERTY
+        ENVIRONMENT "PATH=${TINY_TESTS_ENV}"
+    )
+
     target_compile_features(${name} PRIVATE cxx_std_20)
 
     target_compile_definitions(${name}

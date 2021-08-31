@@ -56,4 +56,20 @@ macro(tiny_init_tiny_variables)
     # List of package dependencies for the package config
     set(tiny_package_dependencies)
 
+    # Setup correct PATH env. variable used by ctest command
+    if(BUILD_TESTS)
+        # For adjusting variables when running tests, we need to know what the correct
+        # variable is for separating entries in PATH-alike variables
+        if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+            set(TINY_PATH_SEPARATOR "\\;")
+        else()
+            set(TINY_PATH_SEPARATOR ":")
+        endif()
+
+        set(TINY_TESTS_ENV "${CMAKE_BINARY_DIR}${TINY_PATH_SEPARATOR}\
+${CMAKE_BINARY_DIR}/tests/auto/utils${TINY_PATH_SEPARATOR}$ENV{PATH}")
+
+        string(REPLACE ";" "\;" TINY_TESTS_ENV "${TINY_TESTS_ENV}")
+    endif()
+
 endmacro()
