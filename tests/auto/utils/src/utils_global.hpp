@@ -7,7 +7,7 @@
                       || defined(__NT__)
 #  define TINY_DECL_EXPORT __declspec(dllexport)
 #  define TINY_DECL_IMPORT __declspec(dllimport)
-#elif __GNU__ >= 4
+#elif __GNUG__ >= 4
 #  define TINY_DECL_EXPORT __attribute__((visibility("default")))
 #  define TINY_DECL_IMPORT __attribute__((visibility("default")))
 #else

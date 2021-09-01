@@ -118,12 +118,13 @@ function(tiny_qt_common target alias)
             -Wextra
             -Wcast-qual
             -Wcast-align
-            -Winvalid-pch
             -Woverloaded-virtual
             -Wold-style-cast
-            -Wnon-virtual-dtor
+#            -Wnon-virtual-dtor
             -pedantic
-            -pedantic-errors
+#            -pedantic-errors
+            # Reduce I/O operations
+            -pipe
         )
 
         # Clang 11 still doesn't support -Wstrict-null-sentinel
