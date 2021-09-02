@@ -38,10 +38,7 @@ function(tiny_qt_common target alias)
         $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
     )
 
-    # Platform specific configuration
-    # ---
-
-    # Windows
+    # Platform specific configurations
     # ---
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -92,15 +89,11 @@ function(tiny_qt_common target alias)
         )
     endif()
 
-    # TODO this is default on MSVC, but check -fexceptions during clang/gcc build tunning silverqx
-#    if(MSVC)
-#        target_compile_options(${target} INTERFACE /EHsc)
-#    else(MSVC)
-#        target_compile_options(${target} INTERFACE -fexceptions)
-#    endif(MSVC)
-
-    # Below is not tested
-    # ---
+    # Is safer to provide this explicitly, qmake do it for msvc too
+    # -fexceptions for linux is not needed, it is on by default
+    if(MSVC)
+        target_compile_options(${target} INTERFACE /EHsc)
+    endif(MSVC)
 
     # TODO verify silverqx
     if(MINGW)
@@ -120,9 +113,9 @@ function(tiny_qt_common target alias)
             -Wcast-align
             -Woverloaded-virtual
             -Wold-style-cast
-#            -Wnon-virtual-dtor
+            -Wnon-virtual-dtor
             -pedantic
-#            -pedantic-errors
+            -pedantic-errors
             # Reduce I/O operations
             -pipe
         )

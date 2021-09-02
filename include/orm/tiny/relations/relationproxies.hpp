@@ -35,6 +35,9 @@ namespace Tiny::Relations
         using CallbackType = Concerns::QueriesRelationshipsCallback<HasRelated>;
 
     public:
+        /*! Virtual destructor. */
+        inline virtual ~RelationProxies() = default;
+
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column) const;
 
