@@ -19,6 +19,7 @@ win32-msvc* {
     # strict-c++ does not enable -permissive- on MSVC
     QMAKE_CXXFLAGS += -guard:cf -bigobj -permissive- -Zc:ternary
     QMAKE_CXXFLAGS_DEBUG += -RTC1
-    QMAKE_LFLAGS += /guard:cf
+    QMAKE_CXXFLAGS_WARN_ON *= -WX
+    QMAKE_LFLAGS += /guard:cf /WX
     QMAKE_LFLAGS_RELEASE += /OPT:REF /OPT:ICF=5
 }
