@@ -1,5 +1,5 @@
 add_subdirectory(model)
-add_subdirectory(model_connection_independent)
+add_subdirectory(model_conn_indep)
 add_subdirectory(model_relations)
-add_subdirectory(relations_inserting_updating)
+add_subdirectory(relations_insrt_updt)
 add_subdirectory(tinybuilder)

@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
     model \
-    model_connection_independent \
+    model_conn_indep \
     model_relations \
-    relations_inserting_updating \
+    relations_insrt_updt \
     tinybuilder \
