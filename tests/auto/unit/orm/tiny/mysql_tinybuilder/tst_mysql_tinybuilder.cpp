@@ -429,12 +429,12 @@ void tst_MySql_TinyBuilder
                  TinyBuilder<TorrentPreviewableFile> &>));
 
         query.template whereHas<TorrentPreviewableFileProperty>(
-                    "fileProperty", [](auto &query)
+                    "fileProperty", [](auto &query1)
         {
-            QVERIFY((std::is_same_v<decltype (query),
+            QVERIFY((std::is_same_v<decltype (query1),
                      TinyBuilder<TorrentPreviewableFileProperty> &>));
 
-            query.where("size", ">", 1);
+            query1.where("size", ">", 1);
         });
     });
 

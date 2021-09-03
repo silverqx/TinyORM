@@ -267,7 +267,7 @@ void tst_Model_Relations
     QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
 
     // Expected tag IDs and pivot attribute 'active', tagId to active
-    std::unordered_map<int, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
+    std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
 
     for (auto *tag : tags) {
         QVERIFY(tag);
@@ -510,7 +510,7 @@ void tst_Model_Relations
     QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
 
     // Expected tag IDs and pivot attribute 'active', tagId to active
-    std::unordered_map<int, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
+    std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
 
     for (auto *tag : tags) {
         QVERIFY(tag);

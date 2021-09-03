@@ -230,8 +230,9 @@ namespace Relations {
 
         /*! Create a new pivot model instance. */
         template<typename PivotType = Relations::Pivot, typename Parent>
-        PivotType newPivot(const Parent &parent, const QVector<AttributeItem> &attributes,
-                           const QString &table, bool exists) const;
+        PivotType
+        newPivot(const Parent &parent, const QVector<AttributeItem> &attributes,
+                 const QString &table, bool exists) const;
 
         /*! Static cast this to a child's instance type (CRTP). */
         Derived &model();
@@ -1010,7 +1011,7 @@ namespace Relations {
         // Save model/s to the store to avoid passing variables to the visitor
         this->createPushStore(models).visit(relation);
 
-        const auto pushResult = this->pushStore().result;
+        const auto pushResult = this->pushStore().m_result;
 
         // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
@@ -1022,7 +1023,7 @@ namespace Relations {
     template<typename Related>
     void Model<Derived, AllRelations...>::pushVisited()
     {
-        const RelationsType<AllRelations...> &models = this->pushStore().models;
+        const RelationsType<AllRelations...> &models = this->pushStore().m_models;
 
         // Invoke pushVisited() on the base of hold alternative in the models
         if (std::holds_alternative<QVector<Related>>(models))
@@ -1040,13 +1041,13 @@ namespace Relations {
     {
         auto &pushStore = this->pushStore();
 
-        for (auto &model : std::get<QVector<Related>>(pushStore.models))
+        for (auto &model : std::get<QVector<Related>>(pushStore.m_models))
             if (!model.push()) {
-                pushStore.result = false;
+                pushStore.m_result = false;
                 return;
             }
 
-        pushStore.result = true;
+        pushStore.m_result = true;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1055,16 +1056,16 @@ namespace Relations {
     {
         auto &pushStore = this->pushStore();
 
-        auto &model = std::get<std::optional<Related>>(pushStore.models);
+        auto &model = std::get<std::optional<Related>>(pushStore.m_models);
         Q_ASSERT(model);
 
         // Skip a null model, consider it as success
         if (!model) {
-            pushStore.result = true;
+            pushStore.m_result = true;
             return;
         }
 
-        pushStore.result = model->push();
+        pushStore.m_result = model->push();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1085,7 +1086,7 @@ namespace Relations {
     template<typename Related, typename Relation>
     void Model<Derived, AllRelations...>::touchOwnersVisited(Relation &&relation)
     {
-        const auto &relationName = this->touchOwnersStore().relation;
+        const auto &relationName = this->touchOwnersStore().m_relation;
 
         relation->touch();
 
@@ -1535,14 +1536,14 @@ namespace Relations {
     PivotType
     Model<Derived, AllRelations...>::newPivot(
             const Parent &parent, const QVector<AttributeItem> &attributes,
-            const QString &table, const bool exists) const
+            const QString &table, const bool exists_) const
     {
         if constexpr (std::is_same_v<PivotType, Relations::Pivot>)
             return PivotType::template fromAttributes<Parent>(
-                        parent, attributes, table, exists);
+                        parent, attributes, table, exists_);
         else
             return PivotType::template fromRawAttributes<Parent>(
-                        parent, attributes, table, exists);
+                        parent, attributes, table, exists_);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1737,7 +1738,7 @@ namespace Relations {
         this->template createLazyStore<Related>().visit(relation);
 
         // Obtain result, related model/s
-        const auto lazyResult = this->template lazyStore<Related>().result;
+        const auto lazyResult = this->template lazyStore<Related>().m_result;
 
         // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
@@ -2896,7 +2897,7 @@ namespace Relations {
         this->createBelongsToManyRelatedTableStore().visit(relation);
 
         // NRVO kicks in
-        const auto relatedTable = this->belongsToManyRelatedTableStore().result;
+        const auto relatedTable = this->belongsToManyRelatedTableStore().m_result;
 
         // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();

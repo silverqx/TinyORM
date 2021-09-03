@@ -280,16 +280,16 @@ DatabaseConnection::select(const QString &queryString,
                            const QVector<QVariant> &bindings)
 {
     return run<QSqlQuery>(queryString, bindings,
-               [this](const QString &queryString, const QVector<QVariant> &bindings)
+               [this](const QString &queryString_, const QVector<QVariant> &bindings_)
                -> QSqlQuery
     {
         if (m_pretending)
             return getQtQuery();
 
         // Prepare QSqlQuery
-        auto query = prepareQuery(queryString);
+        auto query = prepareQuery(queryString_);
 
-        bindValues(query, prepareBindings(bindings));
+        bindValues(query, prepareBindings(bindings_));
 
         if (query.exec()) {
             // Query statements counter
@@ -306,7 +306,7 @@ DatabaseConnection::select(const QString &queryString,
         throw Exceptions::QueryError(
                     QStringLiteral("Select statement in %1() failed.")
                         .arg(__tiny_func__),
-                    query, bindings);
+                    query, bindings_);
     });
 }
 
@@ -355,16 +355,16 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
                                         const QVector<QVariant> &bindings)
 {
     return run<QSqlQuery>(queryString, bindings,
-               [this](const QString &queryString, const QVector<QVariant> &bindings)
+               [this](const QString &queryString_, const QVector<QVariant> &bindings_)
                -> QSqlQuery
     {
         if (m_pretending)
             return getQtQuery();
 
         // Prepare QSqlQuery
-        auto query = prepareQuery(queryString);
+        auto query = prepareQuery(queryString_);
 
-        bindValues(query, prepareBindings(bindings));
+        bindValues(query, prepareBindings(bindings_));
 
         if (query.exec()) {
             // Query statements counter
@@ -383,7 +383,7 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
         throw Exceptions::QueryError(
                     // TODO next use __tiny_func__ in similar statements/exceptions silverqx
                     QStringLiteral("Statement in %1() failed.").arg(__tiny_func__),
-                    query, bindings);
+                    query, bindings_);
     });
 }
 
@@ -392,16 +392,16 @@ DatabaseConnection::affectingStatement(const QString &queryString,
                                        const QVector<QVariant> &bindings)
 {
     return run<std::tuple<int, QSqlQuery>>(queryString, bindings,
-            [this](const QString &queryString, const QVector<QVariant> &bindings)
+            [this](const QString &queryString_, const QVector<QVariant> &bindings_)
             -> std::tuple<int, QSqlQuery>
     {
         if (m_pretending)
             return {0, getQtQuery()};
 
         // Prepare QSqlQuery
-        auto query = prepareQuery(queryString);
+        auto query = prepareQuery(queryString_);
 
-        bindValues(query, prepareBindings(bindings));
+        bindValues(query, prepareBindings(bindings_));
 
         if (query.exec()) {
             // Affecting statements counter
@@ -422,14 +422,14 @@ DatabaseConnection::affectingStatement(const QString &queryString,
         throw Exceptions::QueryError(
                     QStringLiteral("Affecting statement in %1() failed.")
                         .arg(__tiny_func__),
-                    query, bindings);
+                    query, bindings_);
     });
 }
 
 QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
 {
     return run<QSqlQuery>(queryString, {},
-               [this](const QString &queryString, const QVector<QVariant> &)
+               [this](const QString &queryString_, const QVector<QVariant> &)
                -> QSqlQuery
     {
         if (m_pretending)
@@ -438,7 +438,7 @@ QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
         // Prepare unprepared QSqlQuery 🙂
         auto query = getQtQuery();
 
-        if (query.exec(queryString)) {
+        if (query.exec(queryString_)) {
             // Query statements counter
             if (m_countingStatements)
                 ++m_statementsCounter.normal;

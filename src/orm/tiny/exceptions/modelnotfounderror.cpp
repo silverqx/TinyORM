@@ -32,13 +32,13 @@ QString ModelNotFoundError::formatMessage(const char *model,
     if (!ids.isEmpty()) {
         const auto joinIds = [&ids]
         {
-            QStringList result;
-            result.reserve(ids.size());
+            QStringList idsList;
+            idsList.reserve(ids.size());
 
             for (const auto &id : ids)
-                result << id.value<QString>();
+                idsList << id.value<QString>();
 
-            return result.join(COMMA);
+            return idsList.join(COMMA);
         };
 
         result += QStringLiteral(" with ids : %2").arg(joinIds());

@@ -114,6 +114,13 @@ function(tiny_qt_common target alias)
             -Woverloaded-virtual
             -Wold-style-cast
             -Wnon-virtual-dtor
+            -Wshadow
+            -Wundef
+            -Wfloat-equal
+            -Wformat-security
+            -Wdouble-promotion
+            -Wconversion
+            -Wzero-as-null-pointer-constant
             -pedantic
             -pedantic-errors
             # Reduce I/O operations
@@ -126,12 +133,6 @@ function(tiny_qt_common target alias)
         if(SNS_SUPPORT)
             target_compile_options(${target} INTERFACE -Wstrict-null-sentinel)
         endif()
-    endif()
-
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
-            OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang"
-    )
-        target_compile_options(${target} INTERFACE -Wno-range-loop-analysis)
     endif()
 
     # Use 64-bit off_t on 32-bit Linux, ensure 64bit offsets are used for filesystem

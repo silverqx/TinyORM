@@ -120,15 +120,16 @@ namespace Concerns
             template<typename Method>
             void visited(const Method method) const;
 
+        private:
             /*! The Tiny builder instance to which the visited relation will be
                 dispatched. */
-            const Tiny::TinyBuilder<Derived> &builder;
+            const Tiny::TinyBuilder<Derived> &m_builder;
             /*! Models on which to do an eager load, hydrated models that were obtained
                 from the database and these models will be passed as parameter
                 to the TinyBuilder. */
-            QVector<Derived> &models;
+            QVector<Derived> &m_models;
             /*! The WithItem that will be passed as parameter to the TinyBuilder. */
-            const WithItem &relation;
+            const WithItem &m_relation;
         };
 
         /*! The store for the Model push() method. */
@@ -146,9 +147,9 @@ namespace Concerns
             void visited(const Method) const;
 
             /*! Models to push, the reference to the relation in m_relations hash. */
-            RelationsType<AllRelations...> &models;
+            RelationsType<AllRelations...> &m_models;
             /*! The result of a push. */
-            bool result = false;
+            bool m_result = false;
         };
 
         /*! The store for touching owner's timestamps. */
@@ -167,7 +168,7 @@ namespace Concerns
 
             /*! Models to touch timestamps for, the reference to the relation name/key
                 in the m_relations hash. */
-            const QString &relation;
+            const QString &m_relation;
         };
 
         /*! The store for the lazy loading. */
@@ -186,7 +187,7 @@ namespace Concerns
 
             // TODO templated LazyRelationStore by Container too, QVector to Container silverqx
             /*! The result of lazy load. */
-            std::variant<QVector<Related>, std::optional<Related>> result;
+            std::variant<QVector<Related>, std::optional<Related>> m_result;
         };
 
         /*! The store to obtain the related table name for BelongsToMany relation. */
@@ -203,7 +204,7 @@ namespace Concerns
             void visited(const Method);
 
             /*! The related table name result. */
-            std::optional<QString> result;
+            std::optional<QString> m_result;
         };
 
         /*! The store for obtaining a Relation instance for QueriesRelationships. */
@@ -227,27 +228,29 @@ namespace Concerns
             template<typename RelatedFromMethod, typename Method>
             void visited(const Method method);
 
-            /*! The QueriesRelationships instance to which the visited relation will be
-                dispatched. */
-            QueriesRelationships<Derived> &origin;
-            /*! Comparison operator, used during querying relationship exitence. */
-            const QString &comparison;
-            /*! Required number of records, used during querying relationship
-                exitence. */
-            const qint64 count;
-            /*! Condition operator, used during querying relationship exitence. */
-            const QString &condition;
-            /*! Builder callback, used during querying relationship exitence. */
-            const std::function<void(QueriesRelationshipsCallback<Related> &)> &callback;
-            /*! Nested relations for hasNested() method. */
-            std::optional<std::reference_wrapper<QStringList>> relations;
-
         protected:
             /*! Store type initializer. */
             constexpr static RelationStoreType initStoreType();
 
             /*! Served store type, this class can handle two store types. */
             thread_local constexpr static RelationStoreType STORE_TYPE = initStoreType();
+
+        private:
+            /*! The QueriesRelationships instance to which the visited relation will be
+                dispatched. */
+            QueriesRelationships<Derived> &m_origin;
+            /*! Comparison operator, used during querying relationship exitence. */
+            const QString &m_comparison;
+            /*! Required number of records, used during querying relationship
+                exitence. */
+            const qint64 m_count;
+            /*! Condition operator, used during querying relationship exitence. */
+            const QString &m_condition;
+            /*! Builder callback, used during querying relationship exitence. */
+            const std::function<void(
+                    QueriesRelationshipsCallback<Related> &)> &m_callback;
+            /*! Nested relations for hasNested() method. */
+            std::optional<std::reference_wrapper<QStringList>> m_relations;
         };
 
         /* Factory methods for Relation stores */
@@ -402,9 +405,9 @@ namespace Concerns
             QVector<Derived> &models, const WithItem &relation
     )
         : BaseRelationStore(hasRelationStore, RelationStoreType::EAGER)
-        , builder(builder)
-        , models(models)
-        , relation(relation)
+        , m_builder(builder)
+        , m_models(models)
+        , m_relation(relation)
     {}
 
     template<typename Derived, typename ...AllRelations>
@@ -441,7 +444,8 @@ namespace Concerns
             return std::invoke(method, dummyModel);
         });
 
-        builder.eagerLoadRelationVisited(std::move(relationInstance), models, relation);
+        m_builder.eagerLoadRelationVisited(std::move(relationInstance),
+                                           m_models, m_relation);
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -450,7 +454,7 @@ namespace Concerns
             RelationsType<AllRelations...> &models
     )
         : BaseRelationStore(hasRelationStore, RelationStoreType::PUSH)
-        , models(models)
+        , m_models(models)
     {}
 
     template<typename Derived, typename ...AllRelations>
@@ -470,7 +474,7 @@ namespace Concerns
             HasRelationStore &hasRelationStore, const QString &relation
     )
         : BaseRelationStore(hasRelationStore, RelationStoreType::TOUCH_OWNERS)
-        , relation(relation)
+        , m_relation(relation)
     {}
 
     template<typename Derived, typename ...AllRelations>
@@ -503,8 +507,8 @@ namespace Concerns
     HasRelationStore<Derived, AllRelations...>::LazyRelationStore<Related>::visited(
             const Method method)
     {
-        result = std::invoke(method, this->m_hasRelationStore.model())
-                 ->getResults();
+        m_result = std::invoke(method, this->m_hasRelationStore.model())
+                ->getResults();
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -526,7 +530,7 @@ namespace Concerns
         if constexpr (!std::is_base_of_v<Relations::PivotRelation, Relation>)
             return;
 
-        result = typename Relation::RelatedType().getTable();
+        m_result = typename Relation::RelatedType().getTable();
     }
 
     /*
@@ -564,12 +568,12 @@ namespace Concerns
                             relations
                             ? RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED
                             : STORE_TYPE)
-        , origin(origin)
-        , comparison(comparison)
-        , count(count)
-        , condition(condition)
-        , callback(callback)
-        , relations(relations)
+        , m_origin(origin)
+        , m_comparison(comparison)
+        , m_count(count)
+        , m_condition(condition)
+        , m_callback(callback)
+        , m_relations(relations)
     {}
 
     template<typename Derived, typename ...AllRelations>
@@ -595,13 +599,13 @@ namespace Concerns
 
         // Nested store type, used by hasNested()
         if (this->getStoreType() == RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED)
-            origin.template hasInternalVisited<RelatedFromMethod>(
-                        std::move(relationInstance), comparison, count, condition,
-                        *relations);
+            m_origin.template hasInternalVisited<RelatedFromMethod>(
+                        std::move(relationInstance), m_comparison, m_count, m_condition,
+                        *m_relations);
         else
-            origin.template has<RelatedFromMethod>(
-                        std::move(relationInstance), comparison, count, condition,
-                        callback);
+            m_origin.template has<RelatedFromMethod>(
+                        std::move(relationInstance), m_comparison, m_count, m_condition,
+                        m_callback);
     }
 
     template<typename Derived, typename ...AllRelations>
