@@ -77,7 +77,7 @@ function(tiny_qt_common target alias)
 #            /external:anglebrackets /external:W0
 #            /Wall
 #            /W4 /wd4127
-            /W3 /w34100 /w34189 /w44996 /w44456 /w44457 /w44458 /wd4577 /wd4467
+            /WX /W3 /w34100 /w34189 /w44996 /w44456 /w44457 /w44458 /wd4577 /wd4467
         )
 
         target_link_options(${target} INTERFACE
@@ -85,6 +85,7 @@ function(tiny_qt_common target alias)
             $<$<NOT:$<CONFIG:Debug>>:/OPT:REF,ICF=5>
             # /OPT:REF,ICF does not support incremental linking
             $<$<CONFIG:RelWithDebInfo>:/INCREMENTAL:NO>
+            /WX
         )
     endif()
 

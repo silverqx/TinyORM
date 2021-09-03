@@ -85,16 +85,19 @@ namespace Relations {
     // CUR1 reorder all methods in model class silverqx
     // CUR move testdata to tests/ silverqx
     // FUTURE cmake can generate export header file by GenerateExportHeader module, find way to use it, because I have own export header file, how to unify this? I don't know now silverqx
-    // CUR omg on unix is visibility of every symbol in dll public 😲, use -fvisibility and -fvisibility-inlines-hidden silverqx
     // CUR try this clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
     // CUR try clang-include-fixer at https://clang.llvm.org/extra/clang-include-fixer.html silverqx
     // CUR try iwyu at https://include-what-you-use.org/ silverqx
     // CUR enable /W4 on msvc silverqx
     // CUR constraint Qt min version and also msvc min version silverqx
     // CUR move testdata to tests/ folder or tests/scripts/ folder silverqx
-    // CUR remove from NOTES.txt 'system PATH to avoid run config. bug' after everything commited and tested on all supported OSes silverqx
     // CUR unify one version number/file for cmake and qmake silverqx
     // CUR generate pkg-config file on unix silverqx
+    // CUR open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
+    // CUR use -isystem for qt headers and range-v3 in qmake build, cmake build does it by default, also related to unixconf.pri and Wno-deprecated-copy, https://stackoverflow.com/questions/30513594/how-to-include-qts-headers-with-isystem-system-headers-with-qmake-and-qt5 silverqx
+    // CUR qmake, also check QMAKE_LFLAGS_BSYMBOLIC_FUNC, bsymbolic_functions, reduce-relocations, reduce_relocations silverqx
+    // CUR cmake use gold linker option, https://github.com/frobware/c-hacks/blob/master/cmake/use-gold-linker.cmake silverqx
+    // CUR do not forget to add new compiler/linker flags also to qmake build silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
