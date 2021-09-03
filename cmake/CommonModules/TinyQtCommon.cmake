@@ -83,8 +83,7 @@ function(tiny_qt_common target alias)
         target_link_options(${target} INTERFACE
             /guard:cf
             $<$<NOT:$<CONFIG:Debug>>:/OPT:REF,ICF=5>
-            # TODO check silverqx
-            # Suppress linking warning due to /INCREMENTAL and /OPT:ICF being both ON
+            # /OPT:REF,ICF does not support incremental linking
             $<$<CONFIG:RelWithDebInfo>:/INCREMENTAL:NO>
         )
     endif()
