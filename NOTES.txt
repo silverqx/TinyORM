@@ -164,10 +164,9 @@ cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds/b
 "-DCMAKE_C_COMPILER:STRING=C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/bin/HostX64/x64/cl.exe" `
 "-DCMAKE_CXX_COMPILER:STRING=C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/bin/HostX64/x64/cl.exe" ` "-DCMAKE_TOOLCHAIN_FILE:PATH=E:/c/qMedia/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
- - system PATH to avoid run config. bug:
+ - put TinyOrm and TinyUtils libraries on the system path:
 
-PATH=E:\c\qMedia\TinyOrm\TinyOrm-builds\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake\tests\auto\utils;${PATH}
-
+$env:Path = "E:\c\qMedia\TinyOrm\TinyOrm-builds\build-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds\build-cmake\tests\auto\utils;" + $env:Path
 
 constructor copy/move snippet:
 ------------------------------
