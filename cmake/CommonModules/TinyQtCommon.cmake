@@ -73,11 +73,8 @@ function(tiny_qt_common target alias)
             # Standards-conforming behavior
             /Zc:wchar_t,rvalueCast,inline,strictStrings
             /Zc:throwingNew,referenceBinding,ternary
-#            /external:anglebrackets /external:W0 /external:templates-
-#            /external:anglebrackets /external:W0
-#            /Wall
-#            /W4 /wd4127
-            /WX /W3 /w34100 /w34189 /w44996 /w44456 /w44457 /w44458 /wd4577 /wd4467
+            /external:anglebrackets /external:W0
+            /WX /W4
         )
 
         target_link_options(${target} INTERFACE

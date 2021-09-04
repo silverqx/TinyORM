@@ -1804,9 +1804,9 @@ namespace Orm::Tiny::Relations
                 const bool touch) const
     {
         int affected = 0;
+        const auto idsAreEmpty = ids.isEmpty();
 
-        if (!std::is_same_v<PivotType, Pivot>
-            && !detachAll && !ids.isEmpty()
+        if (!detachAll && !idsAreEmpty && !std::is_same_v<PivotType, Pivot>
 //            && m_pivotWheres.isEmpty()
 //            && m_pivotWhereIns.isEmpty()
 //            && m_pivotWhereNulls.isEmpty()
@@ -1822,7 +1822,7 @@ namespace Orm::Tiny::Relations
                We'll return the numbers of affected rows when we do the deletes. */
             if (!detachAll) {
                 // Nothing to delete/detach
-                if (ids.isEmpty())
+                if (idsAreEmpty)
                     return 0;
 
                 query->whereIn(m_relatedPivotKey, ids);
