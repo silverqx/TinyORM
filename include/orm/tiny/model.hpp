@@ -89,7 +89,6 @@ namespace Relations {
     // CUR try clang-include-fixer at https://clang.llvm.org/extra/clang-include-fixer.html silverqx
     // CUR try iwyu at https://include-what-you-use.org/ silverqx
     // CUR constraint Qt min version and also msvc min version silverqx
-    // CUR move testdata to tests/ folder or tests/scripts/ folder silverqx
     // CUR unify one version number/file for cmake and qmake silverqx
     // CUR generate pkg-config file on unix silverqx
     // CUR open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
@@ -98,6 +97,7 @@ namespace Relations {
     // CUR don't forget about conf.pri in playground and also port all warnings and changes silverqx
     // CUR do not forget to add new compiler/linker flags also to qmake build silverqx
     // CUR use #pragma system_header when I will tune playground, https://docs.microsoft.com/en-us/cpp/preprocessor/system-header-pragma?view=msvc-160 silverqx
+    // CUR cmake, add support for multi-config generators silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

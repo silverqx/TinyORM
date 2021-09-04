@@ -73,8 +73,8 @@ Thumbs.db
 *.exe
 
 # Test's Database
-**/tests/**/testdata/vendor/
-**/tests/**/testdata/dotenv.ps1
+**/tests/testdata/vendor/
+**/tests/testdata/dotenv.ps1
 
 # others
 ~$*.xlsx
