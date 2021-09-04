@@ -94,10 +94,9 @@ namespace Relations {
     // CUR unify one version number/file for cmake and qmake silverqx
     // CUR generate pkg-config file on unix silverqx
     // CUR open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
-    // CUR use -isystem for qt headers and range-v3 in qmake build, cmake build does it by default, also related to unixconf.pri and Wno-deprecated-copy, https://stackoverflow.com/questions/30513594/how-to-include-qts-headers-with-isystem-system-headers-with-qmake-and-qt5 silverqx
     // CUR qmake, also check QMAKE_LFLAGS_BSYMBOLIC_FUNC, bsymbolic_functions, reduce-relocations, reduce_relocations silverqx
     // CUR cmake use gold linker option, https://github.com/frobware/c-hacks/blob/master/cmake/use-gold-linker.cmake silverqx
-    // CUR do not forget to add new compiler/linker flags also to qmake build silverqx
+    // CUR don't forget about conf.pri in playground and also port all warnings and changes silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

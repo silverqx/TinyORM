@@ -11,7 +11,7 @@ else:win32-msvc* {
 else:unix {
     # Includes
     # range-v3
-    INCLUDEPATH += $$quote(/home/xyz/vcpkg/installed/x64-linux/include)
+    QMAKE_CXXFLAGS += -isystem $$quote(/home/xyz/vcpkg/installed/x64-linux/include)
 
     # others
     clang: CONFIG *= use_lld_linker
