@@ -86,6 +86,7 @@ namespace Grammars
         /*! Start a new named transaction savepoint. */
         virtual bool savepoint(const QString &id) = 0;
 
+        // CUR size_t to std::size_t silverqx
         /*! Start a new named transaction savepoint. */
         virtual bool savepoint(size_t id) = 0;
 

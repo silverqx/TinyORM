@@ -254,7 +254,8 @@ bool DatabaseConnection::rollbackToSavepoint(const QString &id)
                     .arg(__tiny_func__, query),
                 rollbackToSavepoint.lastError());
 
-    m_savepoints = std::max<int>(0, m_savepoints - 1);
+    // CUR m_savepoints and size_t, look eg ConnectionInterface::savepoint(size_t) silverqx
+    m_savepoints = std::max<uint>(0, m_savepoints - 1);
 
     // Queries execution time counter / Query statements counter
     auto elapsed = hitTransactionalCounters(timer, countElapsed);

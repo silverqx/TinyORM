@@ -66,7 +66,7 @@ QVector<AttributeItem>
 removeDuplicitKeys(const QVector<AttributeItem> &attributes)
 {
     const auto size = attributes.size();
-    std::unordered_set<QString> added(size);
+    std::unordered_set<QString> added(static_cast<std::size_t>(size));
     QVector<AttributeItem> dedupedAttributes;
     dedupedAttributes.reserve(size);
 

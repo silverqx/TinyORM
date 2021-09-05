@@ -80,7 +80,7 @@ Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &co
     if (config.contains("password"))
         db.setPassword(config["password"].value<QString>());
     if (config.contains("port"))
-        db.setPort(config["port"].value<uint>());
+        db.setPort(config["port"].value<int>());
 
     db.setConnectOptions(options);
 

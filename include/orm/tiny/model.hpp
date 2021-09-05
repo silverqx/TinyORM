@@ -1773,7 +1773,7 @@ namespace Relations {
     Model<Derived, AllRelations...>::getDirtyHash() const
     {
         const auto size = m_attributes.size();
-        std::unordered_map<QString, int> dirtyHash(size);
+        std::unordered_map<QString, int> dirtyHash(static_cast<std::size_t>(size));
 
         for (auto i = 0; i < size; ++i)
             if (const auto &key = m_attributes.at(i).key;
@@ -2180,7 +2180,7 @@ namespace Relations {
 
         // Build attributes hash
         m_attributesHash.clear();
-        m_attributesHash.reserve(m_attributes.size());
+        m_attributesHash.reserve(static_cast<std::size_t>(m_attributes.size()));
 
         rehashAttributePositions(m_attributes, m_attributesHash);
 
