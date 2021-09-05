@@ -124,7 +124,7 @@ function(tiny_qt_common target alias)
             -pipe
         )
 
-        # Clang 11 still doesn't support -Wstrict-null-sentinel
+        # Clang 12 still doesn't support -Wstrict-null-sentinel
         include(CheckCXXCompilerFlag)
         check_cxx_compiler_flag(-Wstrict-null-sentinel SNS_SUPPORT)
         if(SNS_SUPPORT)

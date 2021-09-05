@@ -99,6 +99,7 @@ namespace Relations {
     // CUR use #pragma system_header when I will tune playground, https://docs.microsoft.com/en-us/cpp/preprocessor/system-header-pragma?view=msvc-160 silverqx
     // CUR cmake, add support for multi-config generators silverqx
     // CUR check  hide_symbols on unix playgrournd, does it has effect on non-lib? silverqx
+    // CUR qmake, use manifest and rc file from cmake build in qmake build silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
