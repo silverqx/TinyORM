@@ -474,6 +474,7 @@ namespace Orm
     {
         reconnectIfMissingConnection();
 
+        // CUR I'm able to get rid of TINYORM_DEBUG_SQL public macro, when I move line below, especially m_debugSql check to the cpp file, after that TINYORM_DEBUG_SQL will be private silverqx
         // Elapsed timer needed
         const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
 

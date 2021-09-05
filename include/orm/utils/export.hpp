@@ -1,7 +1,7 @@
 #pragma once
 #ifndef TINYORM_EXPORT_H
 #define TINYORM_EXPORT_H
-
+// BUG TINY_DECL_IMPORT should has visibility("hidden") ? silverqx
 #if defined(_MSC_VER) || defined(WIN64) || defined(_WIN64) || defined(__WIN64__) \
                       || defined(WIN32) || defined(_WIN32) || defined(__WIN32__) \
                       || defined(__NT__)

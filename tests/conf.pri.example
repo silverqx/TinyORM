@@ -13,7 +13,7 @@ else:unix {
     # range-v3
     QMAKE_CXXFLAGS += -isystem $$quote(/home/xyz/vcpkg/installed/x64-linux/include)
 
-    # others
+    # Use faster linkers
     clang: CONFIG *= use_lld_linker
     else: CONFIG *= use_gold_linker
 }
