@@ -135,7 +135,7 @@ function(tiny_qt_common target alias)
     # Use 64-bit off_t on 32-bit Linux, ensure 64bit offsets are used for filesystem
     # accesses for 32bit compilation
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SIZEOF_VOID_P EQUAL 4)
-      target_compile_definitions(${target} INTERFACE -D_FILE_OFFSET_BITS=64)
+        target_compile_definitions(${target} INTERFACE -D_FILE_OFFSET_BITS=64)
     endif()
 
 endfunction()

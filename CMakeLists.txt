@@ -88,10 +88,11 @@ target_compile_features(${TinyOrm_target} PUBLIC cxx_std_20)
 # TinyORM build options - target is needed
 # ---
 
-target_optional_compile_definitions(${TinyOrm_target} PUBLIC
-    FEATURE NAME MYSQL_PING DEFAULT OFF
-    DESCRIPTION "Enable MySQL ping on Orm::MySqlConnection"
-    ENABLED TINYORM_MYSQL_PING
+target_optional_compile_definitions(${TinyOrm_target}
+    PUBLIC
+        FEATURE NAME MYSQL_PING DEFAULT OFF
+        DESCRIPTION "Enable MySQL ping on Orm::MySqlConnection"
+        ENABLED TINYORM_MYSQL_PING
 )
 
 # Use Precompiled headers (PCH)
@@ -226,12 +227,33 @@ tiny_export_build_tree()
 # Some info output
 # ---
 
+set_package_properties(QT
+    PROPERTIES
+        URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/"
+        DESCRIPTION "Qt is a full development framework"
+        TYPE REQUIRED
+        PURPOSE "Provides SQL database layer by the QtSql module, QVariant, and QString"
+)
 set_package_properties(Qt${QT_VERSION_MAJOR}
     PROPERTIES
         URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/"
         DESCRIPTION "Qt is a full development framework"
         TYPE REQUIRED
         PURPOSE "Provides SQL database layer by the QtSql module, QVariant, and QString"
+)
+set_package_properties(Qt${QT_VERSION_MAJOR}Core
+    PROPERTIES
+        URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/qtcore-index.html"
+        DESCRIPTION "Core non-graphical classes used by other modules"
+        TYPE REQUIRED
+        PURPOSE "Provides QVariant, QString, and Qt containers"
+)
+set_package_properties(Qt${QT_VERSION_MAJOR}Sql
+    PROPERTIES
+        URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/qtsql-index.html"
+        DESCRIPTION "Classes for database integration using SQL"
+        TYPE REQUIRED
+        PURPOSE "Provides SQL database layer"
 )
 set_package_properties(range-v3
     PROPERTIES
