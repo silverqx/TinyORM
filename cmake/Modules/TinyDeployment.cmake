@@ -18,21 +18,35 @@ function(tiny_install_tinyorm)
     install(FILES AUTHOR LICENSE TYPE DOC)
     install(FILES NOTES.txt TYPE DOC RENAME NOTES)
     install(FILES README.md TYPE DOC RENAME README)
-    if (MSVC)
+    if(MSVC)
         install(FILES "$<TARGET_PDB_FILE:${TinyOrm_target}>" TYPE BIN OPTIONAL)
     endif()
 
-    # Generate and install a code to import targets from the Install Tree
+    set(tiny_config_package_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${TinyOrm_target}")
+
+    # TinyORM's package config needs the FindMySQL package module when the MYSQL_PING
+    # is enabled
+    set(tiny_cmake_module_path)
+    if(MYSQL_PING)
+        install(FILES "cmake/Modules/FindMySQL.cmake"
+            DESTINATION "${tiny_config_package_dir}/Modules"
+        )
+
+        set(tiny_cmake_module_path "\
+# To find the FindMySQL package module
+list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
+    endif()
+
+    # Generate and install a code that can be used to import targets from the Install Tree
     install(
         EXPORT TinyOrmTargets
         NAMESPACE TinyOrm::
-        # TODO var. ConfigPackageLocation in libtorrent, also use TinyOrm_target silverqx
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/TinyOrm"
     )
 
     # Install destination directories for the Install Tree
     set(BIN_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}/")
-    set(CONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/TinyOrm/")
+    set(CONFIG_INSTALL_DIR "${tiny_config_package_dir}/")
     set(DOC_INSTALL_DIR "${CMAKE_INSTALL_DOCDIR}/")
     set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/")
     set(LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/")
@@ -43,7 +57,7 @@ function(tiny_install_tinyorm)
     configure_package_config_file(
         "cmake/TinyOrmConfig.cmake.in"
         "cmake/TinyOrmConfig.cmake"
-        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/TinyOrm"
+        INSTALL_DESTINATION "${tiny_config_package_dir}"
         PATH_VARS
             BIN_INSTALL_DIR CONFIG_INSTALL_DIR DOC_INSTALL_DIR INCLUDE_INSTALL_DIR
             LIB_INSTALL_DIR
@@ -70,7 +84,7 @@ function(tiny_install_tinyorm)
         FILES
             "${PROJECT_BINARY_DIR}/cmake/TinyOrmConfig.cmake"
             "${PROJECT_BINARY_DIR}/cmake/TinyOrmConfigVersion.cmake"
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/TinyOrm"
+        DESTINATION "${tiny_config_package_dir}"
     )
 
 endfunction()
@@ -78,10 +92,21 @@ endfunction()
 # Create Package Config and Package Config Version files for the Build Tree and export it
 function(tiny_export_build_tree)
 
+    # TinyORM's package config needs the FindMySQL package module when the MYSQL_PING
+    # is enabled
+    set(tiny_cmake_module_path)
+    if(MYSQL_PING)
+        file(COPY "cmake/Modules/FindMySQL.cmake" DESTINATION "cmake/Modules")
+
+        set(tiny_cmake_module_path "\
+# To find the FindMySQL package module
+list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
+    endif()
+
     # Export Targets from the Build Tree
     export(
         EXPORT TinyOrmTargets
-        FILE "cmake/TinyOrmTargets.cmake"
+        FILE "TinyOrmTargets.cmake"
         NAMESPACE TinyOrm::
     )
 

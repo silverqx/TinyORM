@@ -31,7 +31,7 @@ macro(tiny_find_package package_name)
 
     find_package(${package_name} ${ARGN})
 
-    if (${package_name}_FOUND)
+    if(${package_name}_FOUND)
         set(args "${package_name}")
         # These arguments will be forwarded to the find_package() by find_dependency()
         list(APPEND args "${ARGN}")
@@ -59,35 +59,43 @@ function(tiny_generate_find_dependency_calls)
 
     string(REPLACE ";" "\n" find_dependency_calls "${find_dependency_calls}")
 
-    set(_find_dependency_calls ${find_dependency_calls} PARENT_SCOPE)
+    set(tiny_find_dependency_calls ${find_dependency_calls} PARENT_SCOPE)
 
 endfunction()
 
 # Add a simple build option which controls compile definition(s) for a target.
+#
 # Synopsis:
-# target_optional_compile_definitions(<target> [FEATURE]
+# target_optional_compile_definitions(<target> <scope> [FEATURE]
 #   NAME <name> DESCRIPTION <description> DEFAULT <default_value>
 #   [ENABLED [enabled_compile_definitions...]]
 #   [DISABLED [disabled_compile_defnitions...]]
 # )
-# NAME, DESCRIPTION and DEFAULT are passed to option() call
-# if FEATURE is given, they are passed to add_feature_info()
+#
+# NAME, DESCRIPTION and DEFAULT are passed to option() command.
+# If FEATURE is given, they are also passed to add_feature_info() command.
+# <scope> determines the scope for the following compile definitions.
 # ENABLED lists compile definitions that will be set on <target> when option is enabled,
-# DISABLED lists definitions that will be set otherwise
-function(target_optional_compile_definitions _target _scope)
+# DISABLED lists definitions that will be set otherwise.
+function(target_optional_compile_definitions target scope)
+
     set(options FEATURE)
     set(oneValueArgs NAME DESCRIPTION DEFAULT)
     set(multiValueArgs ENABLED DISABLED)
-    cmake_parse_arguments(TOCD ${options} "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-    option(${TOCD_NAME} "${TOCD_DESCRIPTION}" ${TOCD_DEFAULT})
-    if (${${TOCD_NAME}})
-        target_compile_definitions(${_target} ${_scope} ${TOCD_ENABLED})
+    cmake_parse_arguments(TINY ${options} "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    option(${TINY_NAME} "${TINY_DESCRIPTION}" ${TINY_DEFAULT})
+
+    if(${${TINY_NAME}})
+        target_compile_definitions(${target} ${scope} ${TINY_ENABLED})
     else()
-        target_compile_definitions(${_target} ${_scope} ${TOCD_DISABLED})
+        target_compile_definitions(${target} ${scope} ${TINY_DISABLED})
     endif()
-    if(${TOCD_FEATURE})
-        add_feature_info(${TOCD_NAME} ${TOCD_NAME} "${TOCD_DESCRIPTION}")
+
+    if(${TINY_FEATURE})
+        add_feature_info(${TINY_NAME} ${TINY_NAME} "${TINY_DESCRIPTION}")
     endif()
+
 endfunction()
 
 # Create an empty SQLite database file when does not exist

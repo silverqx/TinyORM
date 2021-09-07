@@ -1,7 +1,7 @@
 include(TinyHelpers)
 
 # Initialize CMake default variables by project options
-function(tiny_init_cmake_variables)
+macro(tiny_init_cmake_variables)
 
     set(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL)
     set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
@@ -10,7 +10,7 @@ function(tiny_init_cmake_variables)
     tiny_invert_bool(PRECOMPILE_HEADERS ${PRECOMPILE_HEADERS})
     set(CMAKE_DISABLE_PRECOMPILE_HEADERS ${PRECOMPILE_HEADERS})
 
-    if (EXPORT_PACKAGE_REGISTRY)
+    if(EXPORT_PACKAGE_REGISTRY)
         set(CMAKE_EXPORT_PACKAGE_REGISTRY YES)
     endif()
 
@@ -34,7 +34,7 @@ function(tiny_init_cmake_variables)
         )
     endif()
 
-endfunction()
+endmacro()
 
 # Initialize variable for append a major version number for Windows shared libraries
 function(tiny_init_target_version_ext target)

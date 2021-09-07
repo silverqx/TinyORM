@@ -89,7 +89,7 @@ target_compile_features(${TinyOrm_target} PUBLIC cxx_std_20)
 # ---
 
 target_optional_compile_definitions(${TinyOrm_target}
-    PUBLIC
+    PRIVATE
         FEATURE NAME MYSQL_PING DEFAULT OFF
         DESCRIPTION "Enable MySQL ping on Orm::MySqlConnection"
         ENABLED TINYORM_MYSQL_PING
@@ -220,7 +220,7 @@ tiny_install_tinyorm()
 tiny_export_build_tree()
 
 # Generate pkg-config file
-#if (NOT MSVC)
+#if(NOT MSVC)
 #	generate_and_install_pkg_config_file(torrent-rasterbar libtorrent-rasterbar)
 #endif()
 

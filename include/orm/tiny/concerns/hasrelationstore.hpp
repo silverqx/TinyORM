@@ -520,13 +520,6 @@ namespace Concerns
                             RelationStoreType::BELONGSTOMANY_RELATED_TABLE)
     {}
 
-/* Code generation warnings 4700-4999 can be disabled only this way, the suppress
-   doesn't work, it is described here:
-   https://docs.microsoft.com/en-us/cpp/preprocessor/warning?view=msvc-160 */
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4702)
-#endif
     template<typename Derived, typename ...AllRelations>
     template<typename Method>
     void HasRelationStore<Derived, AllRelations...>::BelongsToManyRelatedTableStore
@@ -539,9 +532,6 @@ namespace Concerns
 
         // TODO mystery, warning: C4702: unreachable code, I don't know what cause it, I think I'm missing some forward declaration of model in some other model, but who knows silverqx
         m_result = typename Relation::RelatedType().getTable();
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
     }
 
     /*

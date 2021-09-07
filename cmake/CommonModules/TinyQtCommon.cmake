@@ -74,7 +74,7 @@ function(tiny_qt_common target alias)
             /Zc:wchar_t,rvalueCast,inline,strictStrings
             /Zc:throwingNew,referenceBinding,ternary
             /external:anglebrackets /external:W0
-            /WX /W4
+            /WX /W4 /wd4702
         )
 
         target_link_options(${target} INTERFACE

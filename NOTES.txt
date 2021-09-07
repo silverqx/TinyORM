@@ -125,8 +125,8 @@ cmake build commands:
 ---------------------
 
 vcvars64.ps1
-cd E:\c\qMedia\TinyOrm\TinyOrm-builds\build-cmake\
-cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds/build-cmake -GNinja `
+cd E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-cmake\
+cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds-cmake/build-cmake -GNinja `
 -DCMAKE_BUILD_TYPE:STRING=Debug `
 -DCMAKE_TOOLCHAIN_FILE:PATH=E:/c/qMedia/vcpkg/scripts/buildsystems/vcpkg.cmake
 
@@ -134,10 +134,10 @@ cmake --build . --target all
 
  - generate Graphviz dependency image:
 
-cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds/build-cmake -GNinja `
+cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds-cmake/build-cmake -GNinja `
 -DCMAKE_BUILD_TYPE:STRING=Debug `
 -DCMAKE_TOOLCHAIN_FILE:PATH=E:/c/qMedia/vcpkg/scripts/buildsystems/vcpkg.cmake `
---graphviz=E:/c/qMedia/TinyOrm/TinyOrm-builds/build-cmake/graph/graph.dot; `
+--graphviz=E:/c/qMedia/TinyOrm/TinyOrm-builds-cmake/build-cmake/graph/graph.dot; `
 `
 dot -Tpng -o .\graph\graph.png .\graph\graph.dot; `
 .\graph\graph.png
@@ -145,7 +145,7 @@ dot -Tpng -o .\graph\graph.png .\graph\graph.dot; `
  - running ctest
 
 E:\c\qMedia\TinyOrm\TinyOrm\tests\auto\utils\testdata\dotenv.ps1
-$env:Path = "E:\c\qMedia\TinyOrm\TinyOrm-builds\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake\tests\auto\utils;" + $env:Path
+$env:Path = "E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake\tests\auto\utils;" + $env:Path
 ctest
 ctest --progress
 
@@ -156,7 +156,7 @@ cmake -LA .
 
  - full build command, not needed, I leave it here as a shortcut:
 
-cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds/build-cmake -GNinja `
+cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds-cmake/build-cmake -GNinja `
 "-DCMAKE_BUILD_TYPE:STRING=Debug" `
 "-DCMAKE_PROJECT_INCLUDE_BEFORE:PATH=E:/Qt/Tools/QtCreator/share/qtcreator/package-manager/auto-setup.cmake" `
 "-DQT_QMAKE_EXECUTABLE:STRING=E:/Qt/5.15.2/msvc2019_64/bin/qmake.exe" `
@@ -166,7 +166,7 @@ cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds/b
 
  - put TinyOrm and TinyUtils libraries on the system path:
 
-$env:Path = "E:\c\qMedia\TinyOrm\TinyOrm-builds\build-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds\build-cmake\tests\auto\utils;" + $env:Path
+$env:Path = "E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-cmake\tests\auto\utils;" + $env:Path
 
 constructor copy/move snippet:
 ------------------------------
