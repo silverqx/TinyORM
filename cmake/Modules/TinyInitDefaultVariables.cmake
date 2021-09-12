@@ -56,6 +56,9 @@ to avoid link a release type builds against a debug build")
 ")
     endif()
 
+    # Especially important for multi-config generators, I leave it to also kick-in for
+    # single-config generators
+    set(CMAKE_DEBUG_POSTFIX d)
 endmacro()
 
 # Initialize variable for append a major version number for Windows shared libraries
