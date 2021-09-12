@@ -43,9 +43,12 @@ feature_option(BUILD_SHARED_LIBS
     "Build using shared libraries" ON)
 feature_option(BUILD_TESTS
     "Build Qt tests" OFF)
-#    "Build Qt tests" ON)
 feature_option(EXPORT_PACKAGE_REGISTRY
     "Store the current build directory in the CMake User Package Registry" ON)
+feature_option_dependent(MATCH_EQUAL_EXPORTED_BUILDTREE
+    "Exported package configuration from the build tree is considered to match only \
+when the build type is equal" OFF
+    EXPORT_PACKAGE_REGISTRY OFF)
 feature_option(MSVC_RUNTIME_DYNAMIC
     "Use MSVC dynamic runtime library (-MD) instead of static (-MT)" ON)
 feature_option(PRECOMPILE_HEADERS
@@ -54,7 +57,7 @@ feature_option(VERBOSE_CONFIGURE
     "Show information about PACKAGES_FOUND and PACKAGES_NOT_FOUND in the configure \
 output" OFF)
 
-mark_as_advanced(EXPORT_PACKAGE_REGISTRY)
+mark_as_advanced(EXPORT_PACKAGE_REGISTRY MATCH_EQUAL_EXPORTED_BUILDTREE)
 
 # MSVC_PARALLEL option
 include(TinyMsvcParallel)
@@ -76,7 +79,6 @@ tiny_init_tiny_variables()
 include(TinySources)
 tiny_sources()
 
-set(TinyOrm_target TinyOrm)
 add_library(${TinyOrm_target}
     ${headers}
     ${sources}
@@ -128,8 +130,7 @@ endif()
 
 target_include_directories(${TinyOrm_target} PUBLIC
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
-    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/include>"
 )
 
 # TinyORM defines
@@ -161,7 +162,9 @@ endif()
 # ---
 
 include(TinyFileVersionAndManifest)
-tiny_file_version_and_manifest(${TinyOrm_target} "include/orm/")
+tiny_file_version_and_manifest(${TinyOrm_target} "include/orm/"
+    "${TINY_BUILD_GENDIR}/include/orm/"
+)
 
 # Resolve and link dependencies
 # ---
@@ -271,8 +274,7 @@ if(MYSQL_PING)
 endif()
 
 if(VERBOSE_CONFIGURE)
-    # TODO test with CMAKE_CONFIGURATION_TYPES, multi config generators silverqx
-    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if(NOT TINY_IS_MULTI_CONFIG AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
         message(STATUS "Disabling debug output")
     endif()
 

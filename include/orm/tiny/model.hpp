@@ -100,6 +100,8 @@ namespace Relations {
     // CUR cmake, add support for multi-config generators silverqx
     // CUR check  hide_symbols on unix playgrournd, does it has effect on non-lib? silverqx
     // CUR qmake, use manifest and rc file from cmake build in qmake build silverqx
+    // CUR export and then link against TinyOrm::TinyOrm and also -TinyOrm::CommonConfig-! ? silverqx
+    // CUR list(APPEND CMAKE_MODULE_PATH, MYSQL_PING, but also needed everytime silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

@@ -1,3 +1,8 @@
+set(TINY_BUILD_BUILDTREEDIR "${TINY_BUILD_GENDIR}/buildtree" CACHE INTERNAL
+    "Generated content in the build tree for the build tree")
+set(TINY_BUILD_INSTALLTREEDIR "${TINY_BUILD_GENDIR}/installtree" CACHE INTERNAL
+    "Generated content in the build tree for the install tree")
+
 # Create Package Config and Package Config Version files and install the TinyORM Project
 function(tiny_install_tinyorm)
 
@@ -7,12 +12,14 @@ function(tiny_install_tinyorm)
     install(
         TARGETS ${TinyOrm_target} ${CommonConfig_target}
         EXPORT TinyOrmTargets
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         LIBRARY ARCHIVE RUNTIME
     )
 
     # Install all other files
     install(DIRECTORY "include/orm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
-    install(DIRECTORY "${PROJECT_BINARY_DIR}/include/orm" TYPE INCLUDE)
+    install(DIRECTORY "${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/include/orm"
+        TYPE INCLUDE)
     file(GLOB tiny_docs "docs/*.mdx")
     install(FILES ${tiny_docs} DESTINATION "${CMAKE_INSTALL_DOCDIR}/mdx")
     install(FILES AUTHOR LICENSE TYPE DOC)
@@ -37,9 +44,15 @@ function(tiny_install_tinyorm)
 list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     endif()
 
+    # Helpers to match build configuration types for an Install Tree
+    install(FILES "cmake/TinyPackageConfigHelpers.cmake"
+        DESTINATION "${tiny_config_package_dir}/Modules"
+    )
+
     # Generate and install a code that can be used to import targets from the Install Tree
     install(
         EXPORT TinyOrmTargets
+        # TODO use @PROJECT_NAME@ for this, also in config files, and also don't forget set_and_check() variable names and also check_required_components(@PROJECT_NAME@) silverqx
         NAMESPACE TinyOrm::
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/TinyOrm"
     )
@@ -56,8 +69,9 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     # Configure Package Config file for the Install Tree
     configure_package_config_file(
         "cmake/TinyOrmConfig.cmake.in"
-        "cmake/TinyOrmConfig.cmake"
+        "${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfig.cmake"
         INSTALL_DESTINATION "${tiny_config_package_dir}"
+        # TODO future, do this like Qt is doing it, I'm missing Qt5Core_COMPILE_DEFINITIONS, Qt5Core_DEFINITIONS, Qt5Core_INCLUDE_DIRS, Qt5Core_LIBRARIES, also do the same for the build tree silverqx
         PATH_VARS
             BIN_INSTALL_DIR CONFIG_INSTALL_DIR DOC_INSTALL_DIR INCLUDE_INSTALL_DIR
             LIB_INSTALL_DIR
@@ -75,15 +89,30 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
 
     # Generate the Package Version file for the Package Config file for the Install Tree
     write_basic_package_version_file(
-        "cmake/TinyOrmConfigVersion.cmake"
+        "${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfigVersion.cmake.in"
         COMPATIBILITY SameMajorVersion
+    )
+
+    # Append build type requirements at the end of a generated package version file
+    file(READ "cmake/TinyConfigVersionBuildTypeReq.cmake.in" buildTypeReqTempalate)
+    file(APPEND
+        "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfigVersion.cmake.in"
+        "\n${buildTypeReqTempalate}"
+    )
+
+    get_property(cvf_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+    configure_file(
+        "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfigVersion.cmake.in"
+        "${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfigVersion.cmake"
+        @ONLY NEWLINE_STYLE LF
     )
 
     # Install Package Config and Package Config Verion files
     install(
         FILES
-            "${PROJECT_BINARY_DIR}/cmake/TinyOrmConfig.cmake"
-            "${PROJECT_BINARY_DIR}/cmake/TinyOrmConfigVersion.cmake"
+            "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfig.cmake"
+            "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfigVersion.cmake"
         DESTINATION "${tiny_config_package_dir}"
     )
 
@@ -102,6 +131,9 @@ function(tiny_export_build_tree)
 # To find the FindMySQL package module
 list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
     endif()
+
+    # Helpers to match build configuration types for a Build Tree
+    file(COPY "cmake/TinyPackageConfigHelpers.cmake" DESTINATION "cmake/Modules")
 
     # Export Targets from the Build Tree
     export(
@@ -123,8 +155,25 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
 
     # Generate the Package Version file for the Package Config file for the Build Tree
     write_basic_package_version_file(
-        "TinyOrmConfigVersion.cmake"
+        "${TINY_BUILD_BUILDTREEDIR}/TinyOrmConfigVersion.cmake.in"
         COMPATIBILITY SameMajorVersion
+    )
+
+    # Append build type requirements at the end of a generated package version file
+    file(READ "cmake/TinyBuildTreeConfigVersionBuildTypeReq.cmake.in"
+        buildTypeReqTempalate
+    )
+    file(APPEND
+        "${PROJECT_BINARY_DIR}/${TINY_BUILD_BUILDTREEDIR}/TinyOrmConfigVersion.cmake.in"
+        "\n${buildTypeReqTempalate}"
+    )
+
+    get_property(cvf_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+    configure_file(
+        "${PROJECT_BINARY_DIR}/${TINY_BUILD_BUILDTREEDIR}/TinyOrmConfigVersion.cmake.in"
+        "TinyOrmConfigVersion.cmake"
+        @ONLY NEWLINE_STYLE LF
     )
 
     # Store the current Build Tree in the CMake User Package Registry

@@ -16,7 +16,7 @@ macro(feature_option_dependent name description default depends force)
     string(CONCAT desc
         "${description} (default: ${default}; depends on condition: ${depends})")
 
-    CMAKE_DEPENDENT_OPTION(${name} "${desc}" "${default}" "${depends}" "${force}")
+    cmake_dependent_option(${name} "${desc}" "${default}" "${depends}" "${force}")
 
     add_feature_info(${name} ${name} "${desc}")
 

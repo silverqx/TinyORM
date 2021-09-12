@@ -32,7 +32,6 @@ function(tiny_configure_test name)
 
     target_include_directories(${name} PRIVATE
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     )
 
     if(TINY_INCLUDE_MODELS)

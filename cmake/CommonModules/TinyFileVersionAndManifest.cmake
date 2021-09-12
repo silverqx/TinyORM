@@ -1,5 +1,6 @@
 # Configure file version file and Windows resource and manifest files
-function(tiny_file_version_and_manifest target version_header_path)
+function(tiny_file_version_and_manifest target version_header_path_in
+        version_header_path_out)
 
     set(tiny_original_extension)
     set(tiny_original_filename)
@@ -26,16 +27,17 @@ function(tiny_file_version_and_manifest target version_header_path)
     endif()
 
     configure_file(
-        "${version_header_path}version.hpp.in"
+        "${version_header_path_in}version.hpp.in"
         # TODO finish, version.hpp to include files? and what about install/export? silverqx
-        "${version_header_path}version.hpp"
+        "${version_header_path_out}version.hpp"
         @ONLY NEWLINE_STYLE LF
     )
 
     # TODO are other sources private or public, so they are private, I checked, but anyway check how this whole target_sources() vs add_library()'s sources work, they have to be relative for sure, to be relocable packages, but they are relative to what, include path? silverqx
-#    target_sources(${target} PUBLIC
-#        "${PROJECT_BINARY_DIR}/${version_header_path}version.hpp")
-    target_sources(${target} PRIVATE "${version_header_path}version.hpp")
+    # TODO should be private or public? build vs install tree silverqx
+    target_sources(${target} PRIVATE
+        "${PROJECT_BINARY_DIR}/${version_header_path_out}version.hpp"
+    )
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         target_sources(${target} PRIVATE

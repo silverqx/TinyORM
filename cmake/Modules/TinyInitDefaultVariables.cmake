@@ -34,6 +34,28 @@ macro(tiny_init_cmake_variables)
         )
     endif()
 
+    # Avoid to link a release type builds against a debug build
+    set(CMAKE_MAP_IMPORTED_CONFIG_RELEASE Release RelWithDebInfo MinSizeRel "")
+    set(CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO RelWithDebInfo Release MinSizeRel "")
+    set(CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL MinSizeRel RelWithDebInfo Release "")
+    # MSVC runtime library crashes if you do not link a debug build against a debug build
+    if(MSVC)
+        set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG Debug "")
+    else()
+        set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG Debug RelWithDebInfo Release MinSizeRel "")
+    endif()
+
+    if(VERBOSE_CONFIGURE)
+        message(STATUS "TinyOrm: Set up defaults for CMAKE_MAP_IMPORTED_CONFIG_<CONFIG> \
+to avoid link a release type builds against a debug build")
+        message("
+ * CMAKE_MAP_IMPORTED_CONFIG_RELEASE        = ${CMAKE_MAP_IMPORTED_CONFIG_RELEASE}
+ * CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO = ${CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO}
+ * CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL     = ${CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL}
+ * CMAKE_MAP_IMPORTED_CONFIG_DEBUG          = ${CMAKE_MAP_IMPORTED_CONFIG_DEBUG}
+")
+    endif()
+
 endmacro()
 
 # Initialize variable for append a major version number for Windows shared libraries
@@ -71,5 +93,15 @@ ${CMAKE_BINARY_DIR}/tests/auto/utils${TINY_PATH_SEPARATOR}$ENV{PATH}")
 
         string(REPLACE ";" "\;" TINY_TESTS_ENV "${TINY_TESTS_ENV}")
     endif()
+
+    set(TinyOrm_target TinyOrm)
+
+    set(TINY_BUILD_GENDIR "${TinyOrm_target}_generated" CACHE INTERNAL
+        "Generated content in the build tree")
+
+    get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+    set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL
+        "True when using a multi-configuration generator")
+    unset(isMultiConfig)
 
 endmacro()

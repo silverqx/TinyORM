@@ -47,13 +47,14 @@ if(NOT CMAKE_PROPERTY_LIST)
 endif()
 
 # Print all target properties
-function(print_target_properties target)
+function(cs_print_target_properties target)
 
     if(NOT TARGET ${target})
       message(FATAL_ERROR "There is no target named '${target}'")
     endif()
 
     message(STATUS "Target properties for '${target}':")
+
     foreach(property ${CMAKE_PROPERTY_LIST})
         string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" property ${property})
 
@@ -68,4 +69,20 @@ function(print_target_properties target)
             message("${property} = ${value}")
         endif()
     endforeach()
+
+endfunction()
+
+# Print clearly visible notice message about passed variable
+function(p variable)
+    message("|||-- ${variable} : ${${variable}}")
+endfunction()
+
+# Print status message about a passed variable
+function(ps variable)
+    message(STATUS "${variable} : ${${variable}}")
+endfunction()
+
+# Print notice message about a passed variable
+function(pn variable)
+    message(NOTICE "${variable} : ${${variable}}")
 endfunction()

@@ -168,6 +168,24 @@ cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds-c
 
 $env:Path = "E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-cmake\tests\auto\utils;" + $env:Path
 
+
+CMake Guidelines:
+-----------------
+
+All are snake-case unless otherwise specified.
+
+ - variable names:
+   - global variables: tiny_
+   - local variables: preferred camelCase or snake-case
+   - function parameters: lowercase and optional tiny_ prefix
+   - cmake_parse_arguments: TINY_
+ - option variables: upper case without prefix
+ - cached variables: TINY_
+ - function names has the tiny_ prefix
+ - others
+   - TINYORM_ prefix is used for compile definitions
+
+
 constructor copy/move snippet:
 ------------------------------
 
