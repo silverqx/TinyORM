@@ -40,7 +40,7 @@ include(FeatureSummary)
 include(TinyInitDefaultVariables)
 include(TinyFeatureOptions)
 
-# Initialize default cmake variables on which options depend
+# Initialize default CMake variables on which options depend
 tiny_init_cmake_variables_pre()
 
 feature_option(BUILD_SHARED_LIBS
