@@ -4,16 +4,21 @@ project(TinyUtils
     VERSION 0.1.0.0
 )
 
-add_library(TinyUtils
+set(TinyUtils_target TinyUtils)
+add_library(${TinyUtils_target}
     src/databases.hpp
     src/utils_global.hpp
     src/databases.cpp
 )
-add_library(TinyOrm::TinyUtils ALIAS TinyUtils)
+add_library(TinyOrm::${TinyUtils_target} ALIAS TinyUtils)
 
-target_precompile_headers(TinyUtils PRIVATE $<$<COMPILE_LANGUAGE:CXX>:"pch.h">)
+target_precompile_headers(${TinyUtils_target} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:"pch.h">)
 
-set_target_properties(TinyUtils
+if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
+    target_compile_definitions(${TinyUtils_target} PRIVATE USING_PCH)
+endif()
+
+set_target_properties(${TinyUtils_target}
     PROPERTIES
         C_VISIBILITY_PRESET "hidden"
         CXX_VISIBILITY_PRESET "hidden"
@@ -26,21 +31,21 @@ set_target_properties(TinyUtils
 set(tiny_sqlite_db "${CMAKE_BINARY_DIR}/tests/q_tinyorm_test_1.sqlite3")
 create_sqlite_db("${tiny_sqlite_db}")
 
-target_compile_definitions(TinyUtils
+target_compile_definitions(${TinyUtils_target}
     PRIVATE TINYORM_SQLITE_DATABASE="${tiny_sqlite_db}"
 )
 
 if(BUILD_SHARED_LIBS)
-    target_compile_definitions(TinyUtils
+    target_compile_definitions(${TinyUtils_target}
         PRIVATE UTILS_BUILDING_SHARED
     )
 endif()
 
-target_include_directories(TinyUtils PUBLIC
+target_include_directories(${TinyUtils_target} PUBLIC
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
 )
 
-target_link_libraries(TinyUtils
+target_link_libraries(${TinyUtils_target}
     PUBLIC
         TinyOrm::TinyOrm
     PRIVATE

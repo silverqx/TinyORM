@@ -8,6 +8,10 @@ function(tiny_configure_test name)
         $<$<COMPILE_LANGUAGE:CXX>:"${CMAKE_SOURCE_DIR}/include/pch.h">
     )
 
+    if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
+        target_compile_definitions(${name} PRIVATE USING_PCH)
+    endif()
+
     set_target_properties(${name}
         PROPERTIES
             C_VISIBILITY_PRESET "hidden"

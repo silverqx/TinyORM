@@ -37,27 +37,35 @@ tiny_toolchain_requirement(MSVC ${minMsvcVersion})
 # ---
 
 include(FeatureSummary)
+include(TinyInitDefaultVariables)
 include(TinyFeatureOptions)
 
+# Initialize default cmake variables on which options depend
+tiny_init_cmake_variables_pre()
+
 feature_option(BUILD_SHARED_LIBS
-    "Build using shared libraries" ON)
+    "Build using shared libraries" ON
+)
 feature_option(BUILD_TESTS
-    "Build Qt tests" OFF)
-feature_option(EXPORT_PACKAGE_REGISTRY
-    "Store the current build directory in the CMake User Package Registry" ON)
+    "Build Qt tests" OFF
+)
+# Depends on tiny_init_cmake_variables_pre() call
 feature_option_dependent(MATCH_EQUAL_EXPORTED_BUILDTREE
     "Exported package configuration from the build tree is considered to match only \
 when the build type is equal" OFF
-    EXPORT_PACKAGE_REGISTRY OFF)
-feature_option(MSVC_RUNTIME_DYNAMIC
-    "Use MSVC dynamic runtime library (-MD) instead of static (-MT)" ON)
-feature_option(PRECOMPILE_HEADERS
-    "Enables support for the use of precompiled headers." ON)
+    CMAKE_EXPORT_PACKAGE_REGISTRY OFF
+)
+feature_option_dependent(MSVC_RUNTIME_DYNAMIC
+    "Use MSVC dynamic runtime library (-MD) instead of static (-MT), also considers \
+a Debug configuration (-MTd, -MDd)" ON
+    "MSVC;NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY" MSVC_RUNTIME_DYNAMIC-NOTFOUND
+)
 feature_option(VERBOSE_CONFIGURE
     "Show information about PACKAGES_FOUND and PACKAGES_NOT_FOUND in the configure \
-output" OFF)
+output" OFF
+)
 
-mark_as_advanced(EXPORT_PACKAGE_REGISTRY MATCH_EQUAL_EXPORTED_BUILDTREE)
+mark_as_advanced(MATCH_EQUAL_EXPORTED_BUILDTREE)
 
 # MSVC_PARALLEL option
 include(TinyMsvcParallel)
@@ -68,8 +76,7 @@ works on some older versions of Visual Studio). Setting to \
 ON lets the toolchain decide how many threads to use. Set to \
 OFF to disable /MP completely.")
 
-# Initialize Tiny and default cmake variables
-include(TinyInitDefaultVariables)
+# Initialize Tiny and default CMake variables
 tiny_init_cmake_variables()
 tiny_init_tiny_variables()
 
@@ -83,7 +90,7 @@ add_library(${TinyOrm_target}
     ${headers}
     ${sources}
 )
-add_library(TinyOrm::TinyOrm ALIAS ${TinyOrm_target})
+add_library(TinyOrm::${TinyOrm_target} ALIAS ${TinyOrm_target})
 
 target_compile_features(${TinyOrm_target} PUBLIC cxx_std_20)
 
@@ -102,7 +109,7 @@ target_optional_compile_definitions(${TinyOrm_target}
 
 target_precompile_headers(${TinyOrm_target} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:"pch.h">)
 
-if(PRECOMPILE_HEADERS)
+if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
     target_compile_definitions(${TinyOrm_target} PRIVATE USING_PCH)
 endif()
 
