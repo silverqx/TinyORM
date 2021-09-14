@@ -13,6 +13,7 @@ function(tiny_install_tinyorm)
         TARGETS ${TinyOrm_target} ${CommonConfig_target}
         EXPORT TinyOrmTargets
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        # TODO what about PUBLIC/PRIVATE_HEADERS? silverqx
         LIBRARY ARCHIVE RUNTIME
     )
 
@@ -52,9 +53,8 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     # Generate and install a code that can be used to import targets from the Install Tree
     install(
         EXPORT TinyOrmTargets
-        # TODO use @PROJECT_NAME@ for this, also in config files, and also don't forget set_and_check() variable names and also check_required_components(@PROJECT_NAME@) silverqx
-        NAMESPACE TinyOrm::
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/TinyOrm"
+        NAMESPACE ${TinyOrm_ns}::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${TinyOrm_ns}"
     )
 
     # Install destination directories for the Install Tree
@@ -80,11 +80,11 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     # Compatible Interface Requirement for the project's major version
     set_property(
         TARGET ${TinyOrm_target}
-        PROPERTY INTERFACE_TinyOrm_MAJOR_VERSION ${PROJECT_VERSION_MAJOR}
+        PROPERTY INTERFACE_${TinyOrm_target}_MAJOR_VERSION ${PROJECT_VERSION_MAJOR}
     )
     set_property(
         TARGET ${TinyOrm_target} APPEND PROPERTY
-        COMPATIBLE_INTERFACE_STRING TinyOrm_MAJOR_VERSION
+        COMPATIBLE_INTERFACE_STRING ${TinyOrm_target}_MAJOR_VERSION
     )
 
     # Generate the Package Version file for the Package Config file for the Install Tree
@@ -139,7 +139,7 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
     export(
         EXPORT TinyOrmTargets
         FILE "TinyOrmTargets.cmake"
-        NAMESPACE TinyOrm::
+        NAMESPACE ${TinyOrm_ns}::
     )
 
     # Configure Package Config file for the Build Tree
@@ -177,6 +177,6 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
     )
 
     # Store the current Build Tree in the CMake User Package Registry
-    export(PACKAGE TinyOrm)
+    export(PACKAGE ${TinyOrm_ns})
 
 endfunction()

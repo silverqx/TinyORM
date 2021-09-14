@@ -1,5 +1,5 @@
 # Config file for the @PROJECT_NAME@ package
-# It defines the @PROJECT_NAME@::@TinyOrm_target@ target to link against
+# It defines the @TinyOrm_ns@::@TinyOrm_target@ target to link against
 
 @PACKAGE_INIT@
 
@@ -54,7 +54,7 @@ else()
     set(tiny_map_debug Debug Debug RelWithDebInfo Release MinSizeRel)
 endif()
 
-set_target_properties(TinyOrm::@TinyOrm_target@ PROPERTIES
+set_target_properties(@TinyOrm_ns@::@TinyOrm_target@ PROPERTIES
     MAP_IMPORTED_CONFIG_RELEASE "${tiny_map_release}"
     MAP_IMPORTED_CONFIG_RELWITHDEBINFO "${tiny_map_relwithdebinfo}"
     MAP_IMPORTED_CONFIG_MINSIZEREL "${tiny_map_minsizerel}"
@@ -62,7 +62,8 @@ set_target_properties(TinyOrm::@TinyOrm_target@ PROPERTIES
 )
 
 message(DEBUG "Setting CMAKE_MAP_IMPORTED_CONFIG_<CONFIG> for the \
-TinyOrm::@TinyOrm_target@ target to avoid link a release type builds against a debug build
+@TinyOrm_ns@::@TinyOrm_target@ target to avoid link a release type builds against \
+a debug build
 
  * CMAKE_MAP_IMPORTED_CONFIG_RELEASE        = ${tiny_map_release}
  * CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO = ${tiny_map_relwithdebinfo}
@@ -75,7 +76,7 @@ unset(tiny_map_relwithdebinfo)
 unset(tiny_map_minsizerel)
 unset(tiny_map_debug)
 
-check_required_components(TinyOrm)
+check_required_components(@TinyOrm_ns@)
 
 list(POP_BACK CMAKE_MESSAGE_INDENT)
 message(CHECK_PASS "done")

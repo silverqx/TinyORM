@@ -90,7 +90,7 @@ add_library(${TinyOrm_target}
     ${headers}
     ${sources}
 )
-add_library(TinyOrm::${TinyOrm_target} ALIAS ${TinyOrm_target})
+add_library(${TinyOrm_ns}::${TinyOrm_target} ALIAS ${TinyOrm_target})
 
 target_compile_features(${TinyOrm_target} PUBLIC cxx_std_20)
 
@@ -123,7 +123,7 @@ set_target_properties(${TinyOrm_target}
         VISIBILITY_INLINES_HIDDEN YES
         VERSION ${PROJECT_VERSION}
         SOVERSION 0
-        EXPORT_NAME TinyOrm
+        EXPORT_NAME ${TinyOrm_ns}
 )
 
 # Append a major version number for Windows shared libraries only
@@ -178,10 +178,9 @@ tiny_file_version_and_manifest(${TinyOrm_target} "include/orm/"
 
 # Common configuration as interface library
 include(TinyQtCommon)
-set(CommonConfig_target CommonConfig)
 tiny_qt_common(${CommonConfig_target}
-    NAMESPACE TinyOrm
-    EXPORT NAME CommonConfig
+    NAMESPACE ${TinyOrm_ns}
+    EXPORT NAME ${CommonConfig_target}
 )
 
 # Unconditional dependencies
@@ -196,7 +195,7 @@ target_link_libraries(${TinyOrm_target}
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Sql
         range-v3::range-v3
-        TinyOrm::CommonConfig
+        ${TinyOrm_ns}::${CommonConfig_target}
 )
 
 # Conditional dependencies

@@ -4,13 +4,12 @@ project(TinyUtils
     VERSION 0.1.0.0
 )
 
-set(TinyUtils_target TinyUtils)
 add_library(${TinyUtils_target}
     src/databases.hpp
     src/utils_global.hpp
     src/databases.cpp
 )
-add_library(TinyOrm::${TinyUtils_target} ALIAS TinyUtils)
+add_library(${TinyOrm_ns}::${TinyUtils_target} ALIAS ${TinyUtils_target})
 
 target_precompile_headers(${TinyUtils_target} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:"pch.h">)
 
@@ -47,8 +46,7 @@ target_include_directories(${TinyUtils_target} PUBLIC
 
 target_link_libraries(${TinyUtils_target}
     PUBLIC
-        TinyOrm::TinyOrm
+        ${TinyOrm_ns}::${TinyOrm_target}
     PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
-        TinyOrm::CommonConfig
 )

@@ -92,8 +92,9 @@ DESTINATION is encountered")
     )
 
     if(VERBOSE_CONFIGURE)
-        message(STATUS "TinyOrm: Set up defaults for CMAKE_MAP_IMPORTED_CONFIG_<CONFIG> \
-to avoid link a release type builds against a debug build
+        message(STATUS "${TinyOrm_ns}: Set up defaults for \
+CMAKE_MAP_IMPORTED_CONFIG_<CONFIG> to avoid link a release type builds against a debug \
+build
 
  * CMAKE_MAP_IMPORTED_CONFIG_RELEASE        = ${CMAKE_MAP_IMPORTED_CONFIG_RELEASE}
  * CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO = ${CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO}
@@ -121,6 +122,14 @@ endfunction()
 # Initialize Tiny variables
 macro(tiny_init_tiny_variables)
 
+    # Top level project name, used for alias namespaces, CMAKE_MESSAGE_CONTEXT, or as
+    # a main package name
+    set(TinyOrm_ns ${CMAKE_PROJECT_NAME})
+    # Target names
+    set(CommonConfig_target CommonConfig)
+    set(TinyOrm_target TinyOrm)
+    set(TinyUtils_target TinyUtils)
+
     # List of package dependencies for the package config
     set(tiny_package_dependencies)
 
@@ -139,8 +148,6 @@ ${CMAKE_BINARY_DIR}/tests/auto/utils${TINY_PATH_SEPARATOR}$ENV{PATH}")
 
         string(REPLACE ";" "\;" TINY_TESTS_ENV "${TINY_TESTS_ENV}")
     endif()
-
-    set(TinyOrm_target TinyOrm)
 
     set(TINY_BUILD_GENDIR "${TinyOrm_target}_generated" CACHE INTERNAL
         "Generated content in the build tree")

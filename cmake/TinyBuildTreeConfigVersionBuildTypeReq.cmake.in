@@ -1,4 +1,4 @@
-list(APPEND CMAKE_MESSAGE_CONTEXT TinyOrm CVF)
+list(APPEND CMAKE_MESSAGE_CONTEXT @TinyOrm_ns@ CVF)
 
 message(DEBUG "${PACKAGE_FIND_NAME} ${PACKAGE_VERSION} package version file for \
 the Build Tree")
