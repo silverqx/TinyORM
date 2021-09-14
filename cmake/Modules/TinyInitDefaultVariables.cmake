@@ -105,7 +105,7 @@ build
 
 endmacro()
 
-# Initialize variable for append a major version number for Windows shared libraries
+# Initialize a variable for append a major version number for Windows shared libraries
 function(tiny_init_target_version_ext target)
 
     set(result OFF)
