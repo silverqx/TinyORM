@@ -14,8 +14,8 @@ function(tiny_install_tinyorm)
         TARGETS ${TinyOrm_target} ${CommonConfig_target}
         EXPORT TinyOrmTargets
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        # TODO what about PUBLIC/PRIVATE_HEADERS? silverqx
         LIBRARY ARCHIVE RUNTIME
+        # TODO test NAMELINK_ on unix silverqx
     )
 
     # Install all other files

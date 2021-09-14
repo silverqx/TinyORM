@@ -84,7 +84,7 @@ function(tiny_sources)
         utils/export.hpp
         utils/string.hpp
         utils/type.hpp
-#        version.hpp
+        version.hpp.in
     )
 
     set(sources
