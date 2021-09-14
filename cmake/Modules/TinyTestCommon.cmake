@@ -25,9 +25,6 @@ function(tiny_configure_test name)
         ENVIRONMENT "PATH=${TINY_TESTS_ENV}"
     )
 
-    # TODO not needed, check other not needed things silverqx
-    target_compile_features(${name} PRIVATE cxx_std_20)
-
     target_compile_definitions(${name}
         PRIVATE
             PROJECT_TINYORM_TEST
@@ -50,8 +47,6 @@ function(tiny_configure_test name)
             Qt${QT_VERSION_MAJOR}::Core
             Qt${QT_VERSION_MAJOR}::Sql
             Qt${QT_VERSION_MAJOR}::Test
-            # TODO do I need this? silverqx
-#            range-v3::range-v3
             ${TinyOrm_ns}::${TinyUtils_target}
             ${TinyOrm_ns}::${TinyOrm_target}
     )

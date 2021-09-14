@@ -92,8 +92,6 @@ add_library(${TinyOrm_target}
 )
 add_library(${TinyOrm_ns}::${TinyOrm_target} ALIAS ${TinyOrm_target})
 
-target_compile_features(${TinyOrm_target} PUBLIC cxx_std_20)
-
 # TinyORM build options - target is needed
 # ---
 
