@@ -1,3 +1,6 @@
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
+
 set(TINY_BUILD_BUILDTREEDIR "${TINY_BUILD_GENDIR}/buildtree" CACHE INTERNAL
     "Generated content in the build tree for the build tree")
 set(TINY_BUILD_INSTALLTREEDIR "${TINY_BUILD_GENDIR}/installtree" CACHE INTERNAL
@@ -5,8 +8,6 @@ set(TINY_BUILD_INSTALLTREEDIR "${TINY_BUILD_GENDIR}/installtree" CACHE INTERNAL
 
 # Create Package Config and Package Config Version files and install the TinyORM Project
 function(tiny_install_tinyorm)
-
-    include(GNUInstallDirs)
 
     # Install targets from the project and assign them to the export set
     install(
@@ -64,8 +65,6 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/")
     set(LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/")
 
-    # TODO stackoverflow, scope of includes in functions silverqx
-    include(CMakePackageConfigHelpers)
     # Configure Package Config file for the Install Tree
     configure_package_config_file(
         "cmake/TinyOrmConfig.cmake.in"
