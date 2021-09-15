@@ -1,0 +1,20 @@
+# MySQL
+export DB_MYSQL_HOST="127.0.0.1"
+export DB_MYSQL_PORT="3306"
+export DB_MYSQL_DATABASE=""
+export DB_MYSQL_USERNAME=""
+export DB_MYSQL_PASSWORD=""
+export DB_MYSQL_CHARSET="utf8mb4"
+export DB_MYSQL_COLLATION="utf8mb4_0900_ai_ci"
+
+# SQLite
+export DB_SQLITE_DATABASE=""
+
+# PostgreSQL
+export DB_PGSQL_HOST="127.0.0.1"
+export DB_PGSQL_PORT="5432"
+export DB_PGSQL_DATABASE=""
+export DB_PGSQL_SCHEMA="public"
+export DB_PGSQL_USERNAME=""
+export DB_PGSQL_PASSWORD=""
+export DB_PGSQL_CHARSET="utf8"

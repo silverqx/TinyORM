@@ -75,6 +75,7 @@ Thumbs.db
 # Test's Database
 **/tests/testdata/vendor/
 **/tests/testdata/dotenv.ps1
+**/tests/testdata/dotenv.sh
 
 # others
 ~$*.xlsx
