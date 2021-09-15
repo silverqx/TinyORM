@@ -313,6 +313,7 @@ namespace Relations
             keys.append(key.isEmpty() ? model.getKey()
                                       : model.getAttribute(key));
 
+        // BUG mingw64, this doesn't compile on mingw64 silverqx
         using namespace ranges;
         return keys |= actions::sort(less {}, &QVariant::value<typename Model::KeyType>)
                        | actions::unique;
