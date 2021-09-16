@@ -301,9 +301,11 @@ namespace Orm::Tiny::Relations
                 keys.append(value);
         }
 
-        // BUG mingw64, this doesn't compile on mingw64 silverqx
         using namespace ranges;
-        return keys |= actions::sort(less {}, &QVariant::value<typename Model::KeyType>)
+        return keys |= actions::sort(less {}, [](const auto key)
+        {
+            return key.template value<typename Model::KeyType>();
+        })
                        | actions::unique;
     }
 
