@@ -302,9 +302,9 @@ namespace Orm::Tiny::Relations
         }
 
         using namespace ranges;
-        return keys |= actions::sort(less {}, [](const auto key)
+        return keys |= actions::sort(less {}, [](const auto key_)
         {
-            return key.template value<typename Model::KeyType>();
+            return key_.template value<typename Model::KeyType>();
         })
                        | actions::unique;
     }
