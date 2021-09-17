@@ -315,7 +315,7 @@ namespace Relations
 
         // CUR range-v3, pred/proj param, should use reference? silverqx
         using namespace ranges;
-        return keys |= actions::sort(less {}, [](const auto key_)
+        return keys |= actions::sort(less {}, [](auto key_)
         {
             return key_.template value<typename Model::KeyType>();
         })
