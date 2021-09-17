@@ -88,24 +88,18 @@ namespace Relations {
     // CUR try this clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
     // CUR try clang-include-fixer at https://clang.llvm.org/extra/clang-include-fixer.html silverqx
     // CUR try iwyu at https://include-what-you-use.org/ silverqx
-    // CUR constraint Qt min version and also msvc min version silverqx
     // CUR unify one version number/file for cmake and qmake silverqx
     // CUR generate pkg-config file on unix silverqx
     // CUR open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
-    // CUR qmake, also check QMAKE_LFLAGS_BSYMBOLIC_FUNC, bsymbolic_functions, reduce-relocations, reduce_relocations silverqx
     // CUR cmake use gold linker option, https://github.com/frobware/c-hacks/blob/master/cmake/use-gold-linker.cmake silverqx
     // CUR don't forget about conf.pri in playground and also port all warnings and changes silverqx
     // CUR do not forget to add new compiler/linker flags also to qmake build silverqx
     // CUR use #pragma system_header when I will tune playground, https://docs.microsoft.com/en-us/cpp/preprocessor/system-header-pragma?view=msvc-160 silverqx
-    // CUR cmake, add support for multi-config generators silverqx
-    // CUR check  hide_symbols on unix playgrournd, does it has effect on non-lib? silverqx
+    // CUR check hide_symbols on unix playgrournd, does it has effect on non-lib? silverqx
     // CUR qmake, use manifest and rc file from cmake build in qmake build silverqx
-    // CUR export and then link against TinyOrm::TinyOrm and also -TinyOrm::CommonConfig-! ? silverqx
-    // CUR list(APPEND CMAKE_MODULE_PATH, MYSQL_PING, but also needed everytime silverqx
-    // BUG mingw64, TinyOrmPlayground seg fault at the end, but everything runs/passes correctly silverqx
-    // BUG mingw64, seg fault in some tests eg. tst_model, and completly freezes mingw64, shell works, but could execute tests again correctly silverqx
-    // BUG mingw64, .text section exhausted in debug build, -Wa,-mbig-obj didn't help, -flto helps, but again it can not find reference to WinMain, so I had to compile with -O1, then it is ok silverqx
-    // BUG mingw64, also problem with MYSQL_PING and header files, classic silverqx
+    // BUG mingw64, TinyOrmPlayground seg. fault at the end, but everything runs/passes correctly, but only when invoked from mintty terminal, when I run it from QtCreator that uses cmd I don't see any seg. fault silverqx
+    // BUG mingw64, seg fault in some tests eg. tst_model, and couldn't execute tests again, mingw64 shell works silverqx
+    // FUTURE mingw64, find out better solution for .text section exhausted in debug build, -Wa,-mbig-obj didn't help, -flto helps, but again it can not find reference to WinMain, so I had to compile with -O1, then it is ok silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

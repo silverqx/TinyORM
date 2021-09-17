@@ -55,6 +55,8 @@ function(tiny_build_type_requirements_build_tree cvf_is_multi_config
         message(DEBUG "MSVC = ${MSVC}")
         message(DEBUG "CMAKE_CURRENT_LIST_FILE = ${CMAKE_CURRENT_LIST_FILE}")
 
+        # TODO forbid MINGW64 vs UCRT64 vs MSVC mismatch on windows silverqx
+
         if(isMultiConfig)
             set(PACKAGE_VERSION "${PACKAGE_VERSION} single-config" PARENT_SCOPE)
             set(PACKAGE_VERSION_UNSUITABLE TRUE PARENT_SCOPE)

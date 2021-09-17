@@ -3,9 +3,12 @@
 #include <QtSql/QSqlDriver>
 
 #ifdef TINYORM_MYSQL_PING
+#  ifdef __MINGW32__
+#    include "mysql/errmsg.h"
+#  endif
 #  ifdef _MSC_VER
 #    include "mysql.h"
-#  elif __GNUG__
+#  elif defined(__GNUG__) || defined(__MINGW32__)
 #    include "mysql/mysql.h"
 #  endif
 #endif

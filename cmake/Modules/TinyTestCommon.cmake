@@ -25,6 +25,15 @@ function(tiny_configure_test name)
         ENVIRONMENT "PATH=${TINY_TESTS_ENV}"
     )
 
+    if(MINGW)
+        target_compile_options(${name}
+            PRIVATE
+                $<$<CONFIG:DEBUG>:-Wa,-mbig-obj>
+                # Avoid string table overflow
+                $<$<CONFIG:DEBUG>:-O1>
+        )
+    endif()
+
     target_compile_definitions(${name}
         PRIVATE
             PROJECT_TINYORM_TEST
