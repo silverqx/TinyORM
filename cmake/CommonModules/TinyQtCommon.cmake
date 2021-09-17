@@ -93,7 +93,6 @@ function(tiny_qt_common target alias)
         target_compile_options(${target} INTERFACE /EHsc)
     endif(MSVC)
 
-    # TODO verify silverqx
     if(MINGW)
         target_link_options(${target} INTERFACE
             $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:LINKER:--dynamicbase>
