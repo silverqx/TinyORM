@@ -37,10 +37,17 @@ function(tiny_file_version_and_manifest target version_header_path_in
     )
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        target_sources(${target} PRIVATE
-            "resources/${target}.rc"
-            "resources/${target}${tiny_original_extension}.manifest"
-        )
+        # Version Info Resource file
+        target_sources(${target} PRIVATE "resources/${target}.rc")
+
+        # Manifest (injected through the RC file on MinGW)
+        if(MINGW)
+            target_sources(${target} PRIVATE "resources/${target}_mingw.rc")
+        else()
+            target_sources(${target} PRIVATE
+                "resources/${target}${tiny_original_extension}.manifest"
+            )
+        endif()
     endif()
 
 endfunction()

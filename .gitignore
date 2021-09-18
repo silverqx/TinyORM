@@ -30,7 +30,7 @@ qrc_*.cpp
 Thumbs.db
 *.res
 *.rc
-!/resources/TinyOrm.rc
+!/resources/*.rc
 /.qmake.cache
 /.qmake.stash
 
