@@ -13,6 +13,15 @@ include(../../qmake/common.pri)
 
 CONFIG *= qt console testcase link_prl
 
+# Compiler and Linker options
+# ---
+
+win32-g++ {
+    QMAKE_CXXFLAGS_DEBUG += -Wa,-mbig-obj
+    # Avoid string table overflow
+    QMAKE_CXXFLAGS_DEBUG += -O1
+}
+
 # TinyORM defines
 # ---
 

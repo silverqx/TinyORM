@@ -1,9 +1,14 @@
 # Dependencies include and library paths
 # ---
 
-win32-g++* {
+win32-g++ {
+    # Libraries
+    # MySQL C library
+    mysql_ping {
+        LIBS += -lmysqlclient
+    }
 }
-else:win32-msvc* {
+else:win32-msvc {
     # Includes
     # range-v3
     INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include)
