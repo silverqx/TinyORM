@@ -71,13 +71,13 @@ mark_as_advanced(MATCH_EQUAL_EXPORTED_BUILDTREE)
 # TODO so this doesn't work, anyway it has to be refactored, use target_compile_options() instead of string(APPEND CMAKE_C_FLAGS silverqx
 # TODO make it dependend on cmake_disable_precompile_headers and MSVC silverqx
 # MSVC_PARALLEL option
-#include(TinyMsvcParallel)
-#tiny_msvc_parallel("\
-#Enables /MP flag for parallel builds using MSVC. Specify an \
-#integer value to control the number of threads used (Only \
-#works on some older versions of Visual Studio). Setting to \
-#ON lets the toolchain decide how many threads to use. Set to \
-#OFF to disable /MP completely.")
+include(TinyMsvcParallel)
+tiny_msvc_parallel("\
+Enables /MP flag for parallel builds using MSVC. Specify an \
+integer value to control the number of threads used (Only \
+works on some older versions of Visual Studio). Setting to \
+ON lets the toolchain decide how many threads to use. Set to \
+OFF to disable /MP completely.")
 
 # Initialize Tiny and default CMake variables
 tiny_init_cmake_variables()
