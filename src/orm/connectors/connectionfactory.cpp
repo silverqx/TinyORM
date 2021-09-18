@@ -140,18 +140,22 @@ ConnectionFactory::createQSqlDatabaseResolverWithoutHosts(
 std::unique_ptr<DatabaseConnection>
 ConnectionFactory::createConnection(
         const QString &driver,
-        const std::function<ConnectionName()> &connection,
+        std::function<ConnectionName()> &&connection,
         const QString &database, const QString &prefix,
         const QVariantHash &config) const
 {
     if (driver == "QMYSQL")
-        return std::make_unique<MySqlConnection>(connection, database, prefix, config);
+        return std::make_unique<MySqlConnection>(std::move(connection), database, prefix,
+                                                 config);
     else if (driver == "QPSQL")
-        return std::make_unique<PostgresConnection>(connection, database, prefix, config);
+        return std::make_unique<PostgresConnection>(std::move(connection), database,
+                                                    prefix, config);
     else if (driver == "QSQLITE")
-        return std::make_unique<SQLiteConnection>(connection, database, prefix, config);
+        return std::make_unique<SQLiteConnection>(std::move(connection), database,
+                                                  prefix, config);
 //    else if (driver == "SQLSRV")
-//        return std::make_unique<SqlServerConnection>(connection, database, prefix, config);
+//        return std::make_unique<SqlServerConnection>(std::move(connection), database,
+//                                                     prefix, config);
     else
         throw std::domain_error(
                 "Unsupported driver '" + driver.toStdString() + "'.");

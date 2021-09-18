@@ -59,7 +59,7 @@ namespace Connectors
         /*! Create a new connection instance. */
         std::unique_ptr<DatabaseConnection>
         createConnection(const QString &driver,
-                const std::function<ConnectionName()> &connection,
+                std::function<ConnectionName()> &&connection,
                 const QString &database, const QString &prefix = "",
                 const QVariantHash &config = {}) const;
 

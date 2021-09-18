@@ -40,7 +40,7 @@ DatabaseConnection::SAVEPOINT_NAMESPACE   = const_cast<char *>("tinyorm_savepoin
 
 // TODO err, may be configurable exceptions by config or compiler directive? (completely disable exceptions by directive) silverqx
 DatabaseConnection::DatabaseConnection(
-        const std::function<Connectors::ConnectionName()> &connection,
+        std::function<Connectors::ConnectionName()> &&connection,
         const QString &database, const QString &tablePrefix,
         const QVariantHash &config
 )

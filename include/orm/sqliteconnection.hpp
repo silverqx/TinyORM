@@ -19,7 +19,7 @@ namespace Orm
     public:
         /*! Constructor. */
         SQLiteConnection(
-                const std::function<Connectors::ConnectionName()> &connection,
+                std::function<Connectors::ConnectionName()> &&connection,
                 const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
         /*! Virtual destructor. */

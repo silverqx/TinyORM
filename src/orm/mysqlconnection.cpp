@@ -26,11 +26,11 @@ namespace Orm
 {
 
 MySqlConnection::MySqlConnection(
-        const std::function<Connectors::ConnectionName()> &connection,
+        std::function<Connectors::ConnectionName()> &&connection,
         const QString &database, const QString &tablePrefix,
         const QVariantHash &config
 )
-    : DatabaseConnection(connection, database, tablePrefix, config)
+    : DatabaseConnection(std::move(connection), database, tablePrefix, config)
 {
     /* We need to initialize a query grammar that is a very important part
        of the database abstraction, so we initialize it to the default value

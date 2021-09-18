@@ -38,7 +38,7 @@ namespace Orm
 
         /*! Constructor. */
         explicit DatabaseConnection(
-                const std::function<Connectors::ConnectionName()> &connection,
+                std::function<Connectors::ConnectionName()> &&connection,
                 const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
         /*! Pure virtual destructor. */
