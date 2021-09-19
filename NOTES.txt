@@ -186,6 +186,16 @@ All are snake-case unless otherwise specified.
    - TINYORM_ prefix is used for compile definitions
 
 
+UBSan:
+------
+
+QMAKE_CXXFLAGS += -O1 -fsanitize=undefined
+QMAKE_LFLAGS += -fsanitize=undefined
+
+QMAKE_CXXFLAGS += -O1 -fsanitize=nullability -fsanitize=float-divide-by-zero -fsanitize=unsigned-integer-overflow -fsanitize=implicit-conversion -fsanitize=local-bounds
+QMAKE_LFLAGS += -fsanitize=nullability -fsanitize=float-divide-by-zero -fsanitize=unsigned-integer-overflow -fsanitize=implicit-conversion -fsanitize=local-bounds
+
+
 constructor copy/move snippet:
 ------------------------------
 
