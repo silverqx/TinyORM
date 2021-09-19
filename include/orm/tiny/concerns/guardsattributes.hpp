@@ -2,6 +2,7 @@
 #ifndef GUARDSATTRIBUTES_HPP
 #define GUARDSATTRIBUTES_HPP
 
+#include "orm/concepts.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/utils/type.hpp"
 
@@ -23,9 +24,6 @@ namespace Concerns
     class GuardsAttributes
     {
     public:
-        /*! Virtual destructor. */
-        inline virtual ~GuardsAttributes() = default;
-
         /*! Get the fillable attributes for the model. */
         const QStringList &getFillable() const;
         /*! Set the fillable attributes for the model. */

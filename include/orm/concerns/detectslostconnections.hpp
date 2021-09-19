@@ -28,6 +28,8 @@ namespace Concerns
     public:
         /*! Default constructor. */
         DetectsLostConnections() = default;
+        /*! Virtual destructor, to pass -Weffc++. */
+        inline virtual ~DetectsLostConnections() = default;
 
         /*! Determine if the given exception was caused by a lost connection. */
         bool causedByLostConnection(const Exceptions::SqlError &e) const;
