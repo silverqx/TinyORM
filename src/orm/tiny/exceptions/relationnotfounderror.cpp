@@ -8,24 +8,17 @@ namespace Orm::Tiny::Exceptions
 {
 
 RelationNotFoundError::RelationNotFoundError(const QString &model,
-                                             const QString &relation)
-    : RuntimeError(formatMessage(model, relation))
-    , m_model(model)
-    , m_relation(relation)
-    , m_from(From::UNDEFINED)
-{}
-
-RelationNotFoundError::RelationNotFoundError(const QString &model,
                                              const QString &relation,
                                              const From from)
-    : RuntimeError(formatMessage(model, relation))
+    : RuntimeError(formatMessage(model, relation, from))
     , m_model(model)
     , m_relation(relation)
     , m_from(from)
 {}
 
 QString RelationNotFoundError::formatMessage(const QString &model,
-                                             const QString &relation) const
+                                             const QString &relation,
+                                             const From from) const
 {
     static const auto belongsToMessage =
             QStringLiteral(
@@ -35,7 +28,7 @@ QString RelationNotFoundError::formatMessage(const QString &model,
                 "to the 'Model::%2' method called from the '%1' model, the __func__ "
                 "predefined identifier is ideal for this.");
 
-    switch (m_from) {
+    switch (from) {
     case From::BELONGS_TO:
         return belongsToMessage.arg(model, "belongsTo", relation);
 

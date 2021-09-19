@@ -25,9 +25,8 @@ namespace Orm::Tiny::Exceptions
         };
 
         /*! Constructor. */
-        RelationNotFoundError(const QString &model, const QString &relation);
-        /*! Constructor. */
-        RelationNotFoundError(const QString &model, const QString &relation, From from);
+        RelationNotFoundError(const QString &model, const QString &relation,
+                              From from = From::UNDEFINED);
 
         /*! Get the affected TinyORM model. */
         const QString &getModel() const;
@@ -44,7 +43,8 @@ namespace Orm::Tiny::Exceptions
 
     private:
         /*! Format the error message. */
-        QString formatMessage(const QString &model, const QString &relation) const;
+        QString formatMessage(const QString &model, const QString &relation,
+                              const From from) const;
     };
 
     inline const QString &
