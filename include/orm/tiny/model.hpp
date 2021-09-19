@@ -51,6 +51,7 @@ namespace Relations {
 
     // TODO repeat, from time to time try to compile without microsoft extensions, QMAKE_CXXFLAGS *= -Za silverqx
     // TODO repeat, recompile without PCH silverqx
+    // TODO repeat, open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
     // TODO decide/unify when to use class/typename keywords for templates silverqx
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
@@ -90,7 +91,6 @@ namespace Relations {
     // CUR try iwyu at https://include-what-you-use.org/ silverqx
     // CUR unify one version number/file for cmake and qmake silverqx
     // CUR generate pkg-config file on unix silverqx
-    // CUR open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
     // CUR cmake use gold linker option, https://github.com/frobware/c-hacks/blob/master/cmake/use-gold-linker.cmake silverqx
     // CUR don't forget about conf.pri in playground and also port all warnings and changes silverqx
     // CUR do not forget to add new compiler/linker flags also to qmake build silverqx

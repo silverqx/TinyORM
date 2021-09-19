@@ -91,7 +91,7 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
         itBegin += findBeginWithoutNS();
 
     // Doesn't contain the namespace
-    else if (auto toBegin = className.lastIndexOf(QStringLiteral("::"));
+    else if (qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::"));
              toBegin == -1
     )
         itBegin += findBeginWithoutNS();
@@ -119,7 +119,7 @@ Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
 
     if (!withNamespace)
         // Have the namespace and :: found, +2 to point after
-        if (auto toBegin = className.lastIndexOf(QStringLiteral("::")); toBegin != -1)
+        if (qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::")); toBegin != -1)
             itBegin += toBegin + 2;
 
     // Find the end of the class name

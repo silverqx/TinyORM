@@ -17,7 +17,7 @@ QString toSnake(QString string)
 {
     // RegExp not used for performance reasons
     std::vector<int> positions;
-    positions.reserve(static_cast<std::size_t>(string.size() / 2 + 2));
+    positions.reserve(static_cast<std::size_t>(string.size() / 2) + 2);
 
     for (auto i = 0; i < string.size(); ++i) {
         const auto ch = string.at(i);
