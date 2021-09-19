@@ -78,13 +78,11 @@ namespace Relations {
     // CUR1 connection SSL support silverqx
     // BUG Qt sql drivers do not work with mysql json columns silverqx
     // CUR1 add Relations::Concerns::ComparesRelatedModels silverqx
-    // FEATURE build systems, add cmake build silverqx
     // FEATURE build systems, add autotools build silverqx
     // FEATURE build systems, add docs on how to make a production build of the TinyORM library silverqx
     // FEATURE build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
     // FEATURE build systems, libuv example how it could look like https://github.com/libuv/libuv silverqx
     // CUR1 reorder all methods in model class silverqx
-    // CUR move testdata to tests/ silverqx
     // FUTURE cmake can generate export header file by GenerateExportHeader module, find way to use it, because I have own export header file, how to unify this? I don't know now silverqx
     // CUR try this clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
     // CUR try clang-include-fixer at https://clang.llvm.org/extra/clang-include-fixer.html silverqx
