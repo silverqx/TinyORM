@@ -99,7 +99,7 @@ add_library(${TinyOrm_ns}::${TinyOrm_target} ALIAS ${TinyOrm_target})
 # ---
 
 target_optional_compile_definitions(${TinyOrm_target}
-    PRIVATE
+    PUBLIC
         FEATURE NAME MYSQL_PING DEFAULT OFF
         DESCRIPTION "Enable MySQL ping on Orm::MySqlConnection"
         ENABLED TINYORM_MYSQL_PING
