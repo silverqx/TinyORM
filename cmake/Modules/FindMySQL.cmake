@@ -19,18 +19,49 @@
 #     The mysql client library
 
 find_package(PkgConfig QUIET)
-pkg_check_modules(PC_MySQL QUIET mysqlclient)
+
+# TODO future, why it finds 'C:/Program Files/MySQL/MySQL Server 8.0/lib/libmysql.lib' on mingw and doesn't search mingw dirs first? silverqx
+# This hack fixes bug on the MinGW described above
+set(tmpCheckModules_mysql mysqlclient)
+set(tmpCheckModules_maria libmariadb)
+set(tmpFindPathSuffixes_mysql mysql)
+set(tmpFindPathSuffixes_maria mariadb)
+set(tmpFindLibraryNames_mysql libmysql mysql mysqlclient)
+set(tmpFindLibraryNames_maria libmariadb mariadb)
+
+# Prefer mariadb on MinGW as there is no mysqlclient library
+if(MINGW)
+    set(tmpCheckModules ${tmpCheckModules_maria})
+    set(tmpFindPathSuffixes ${tmpFindPathSuffixes_maria})
+    set(tmpFindLibraryNames ${tmpFindLibraryNames_maria})
+else()
+    set(tmpCheckModules ${tmpCheckModules_mysql} ${tmpCheckModules_maria})
+    set(tmpFindPathSuffixes ${tmpFindPathSuffixes_mysql} ${tmpFindPathSuffixes_maria})
+    set(tmpFindLibraryNames ${tmpFindLibraryNames_mysql} ${tmpFindLibraryNames_maria})
+endif()
+
+pkg_check_modules(PC_MySQL QUIET ${tmpCheckModules})
 
 find_path(MySQL_INCLUDE_DIR
     NAMES mysql.h
     HINTS ${PC_MySQL_INCLUDEDIR}
-    PATH_SUFFIXES mysql mariadb
+    PATH_SUFFIXES ${tmpFindPathSuffixes}
 )
 
 find_library(MySQL_LIBRARY
-    NAMES libmysql mysql mysqlclient libmariadb mariadb
+    NAMES ${tmpFindLibraryNames}
     HINTS ${PC_MySQL_LIBDIR}
 )
+
+unset(tmpFindLibraryNames)
+unset(tmpFindPathSuffixes)
+unset(tmpCheckModules)
+unset(tmpFindLibraryNames_maria)
+unset(tmpFindLibraryNames_mysql)
+unset(tmpFindPathSuffixes_maria)
+unset(tmpFindPathSuffixes_mysql)
+unset(tmpCheckModules_maria)
+unset(tmpCheckModules_mysql)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MySQL DEFAULT_MSG MySQL_LIBRARY MySQL_INCLUDE_DIR)
@@ -40,12 +71,12 @@ if(MySQL_FOUND)
     set(MySQL_LIBRARIES "${MySQL_LIBRARY}")
 
     if(NOT TARGET MySQL::MySQL)
-      add_library(MySQL::MySQL UNKNOWN IMPORTED)
-      set_target_properties(MySQL::MySQL
-          PROPERTIES
-              IMPORTED_LOCATION "${MySQL_LIBRARIES}"
-              INTERFACE_INCLUDE_DIRECTORIES "${MySQL_INCLUDE_DIRS}"
-      )
+        add_library(MySQL::MySQL UNKNOWN IMPORTED)
+        set_target_properties(MySQL::MySQL
+            PROPERTIES
+                IMPORTED_LOCATION "${MySQL_LIBRARIES}"
+                INTERFACE_INCLUDE_DIRECTORIES "${MySQL_INCLUDE_DIRS}"
+        )
     endif()
 endif()
 
