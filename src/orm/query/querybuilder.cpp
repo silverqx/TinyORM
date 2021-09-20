@@ -35,6 +35,9 @@ QSqlQuery Builder::first(const QVector<Column> &columns)
 {
     auto query = take(1).get(columns);
 
+    if (m_connection.pretending())
+        return query;
+
     query.first();
 
     return query;
@@ -50,7 +53,12 @@ QVariant Builder::value(const Column &column)
     else
         column_ = std::get<QString>(column);
 
-    return first({column}).value(column_);
+    const auto query = first({column});
+
+    if (m_connection.pretending())
+        return {};
+
+    return query.value(column_);
 }
 
 QVector<QVariant> Builder::pluck(const QString &column)
