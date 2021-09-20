@@ -42,6 +42,8 @@ include(TinyFeatureOptions)
 
 # Initialize default CMake variables on which options depend
 tiny_init_cmake_variables_pre()
+# Initialize Tiny variables, earlier init.
+tiny_init_tiny_variables_pre()
 
 feature_option(BUILD_SHARED_LIBS
     "Build using shared libraries" ON

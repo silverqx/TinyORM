@@ -119,8 +119,8 @@ function(tiny_init_target_version_ext target)
 
 endfunction()
 
-# Initialize Tiny variables
-macro(tiny_init_tiny_variables)
+# Initialize Tiny variables, earlier init.
+macro(tiny_init_tiny_variables_pre)
 
     # Top level project name, used for alias namespaces, CMAKE_MESSAGE_CONTEXT, or as
     # a main package name
@@ -129,6 +129,11 @@ macro(tiny_init_tiny_variables)
     set(CommonConfig_target CommonConfig)
     set(TinyOrm_target TinyOrm)
     set(TinyUtils_target TinyUtils)
+
+endmacro()
+
+# Initialize Tiny variables
+macro(tiny_init_tiny_variables)
 
     # List of package dependencies for the package config
     set(tiny_package_dependencies)
