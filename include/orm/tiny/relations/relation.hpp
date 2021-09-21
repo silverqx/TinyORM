@@ -33,15 +33,27 @@ namespace Relations
 
     /*! The tag for one type relation. */
     class OneRelation
-    {};
+    {
+    public:
+        /*! Pure virtual destructor. */
+        virtual ~OneRelation() = 0;
+    };
 
     /*! The tag for many type relation. */
     class ManyRelation
-    {};
+    {
+    public:
+        /*! Pure virtual destructor. */
+        virtual ~ManyRelation() = 0;
+    };
 
     /*! The tag for the relation which contains pivot table, like many-to-many. */
     class PivotRelation
-    {};
+    {
+    public:
+        /*! Pure virtual destructor. */
+        virtual ~PivotRelation() = 0;
+    };
 
     /*! Base relations class. */
     template<class Model, class Related>
@@ -164,6 +176,12 @@ namespace Relations
         /*! Indicates if the relation is adding constraints. */
         static bool constraints;
     };
+
+    inline OneRelation::~OneRelation() = default;
+
+    inline ManyRelation::~ManyRelation() = default;
+
+    inline PivotRelation::~PivotRelation() = default;
 
     template<class Model, class Related>
     bool Relation<Model, Related>::constraints = true;

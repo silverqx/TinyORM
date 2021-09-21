@@ -19,6 +19,10 @@ namespace Orm::Query
    of performance.
 */
 
+Expression::Expression()
+    : m_value()
+{}
+
 Expression::Expression(const QVariant &value)
     : m_value(value)
 {}

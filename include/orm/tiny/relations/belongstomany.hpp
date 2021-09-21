@@ -429,17 +429,17 @@ namespace Orm::Tiny::Relations
         QString m_relationName;
 
         /*! The name of the accessor to use for the "pivot" relationship. */
-        QString m_accessor {"pivot"};
+        QString m_accessor = QLatin1String("pivot");
         // BUG should be QSet, duplicates are not allowed, check all the containers 😭 and use proper containers where I did mistake, from the point of view of duplicates silverqx
         /*! The pivot table columns to retrieve. */
-        QStringList m_pivotColumns;
+        QStringList m_pivotColumns = {};
 
         /*! Indicates if timestamps are available on the pivot table. */
         bool m_withTimestamps = false;
         /*! The custom pivot table column for the created_at timestamp. */
-        QString m_pivotCreatedAt;
+        QString m_pivotCreatedAt = {};
         /*! The custom pivot table column for the updated_at timestamp. */
-        QString m_pivotUpdatedAt;
+        QString m_pivotUpdatedAt = {};
 
     private:
         /*! Throw domain exception, when a user tries to override ID key

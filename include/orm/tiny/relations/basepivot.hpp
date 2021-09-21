@@ -83,13 +83,13 @@ namespace Orm::Tiny::Relations
         /*! Indicates if the ID is auto-incrementing. */
         bool u_incrementing = false;
         /*! The attributes that aren't mass assignable. */
-        inline static QStringList u_guarded;
+        inline static QStringList u_guarded = {};
 
         /* AsPivot */
         /*! The name of the foreign key column. */
-        QString m_foreignKey;
+        QString m_foreignKey = {};
         /*! The name of the "other key" column. */
-        QString m_relatedKey;
+        QString m_relatedKey = {};
     };
 
     template<typename PivotModel>

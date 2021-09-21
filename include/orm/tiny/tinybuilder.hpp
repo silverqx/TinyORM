@@ -204,7 +204,7 @@ namespace Orm::Tiny
         /*! The model being queried. */
         Model m_model;
         /*! The relationships that should be eager loaded. */
-        QVector<WithItem> m_eagerLoad;
+        QVector<WithItem> m_eagerLoad = {};
     };
 
     template<typename Model>

@@ -109,7 +109,7 @@ private:
     QSharedPointer<QueryBuilder> createQuery() const;
 
     /*! Connection name used in this test case. */
-    QString m_connection;
+    QString m_connection = {};
 };
 
 void tst_SQLite_QueryBuilder::initTestCase()

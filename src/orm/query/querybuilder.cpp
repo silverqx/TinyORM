@@ -14,6 +14,14 @@ namespace Orm::Query
 Builder::Builder(ConnectionInterface &connection, const QueryGrammar &grammar)
     : m_connection(connection)
     , m_grammar(grammar)
+    , m_columns()
+    , m_from()
+    , m_joins()
+    , m_wheres()
+    , m_groups()
+    , m_havings()
+    , m_orders()
+    , m_lock()
 {}
 
 QSqlQuery

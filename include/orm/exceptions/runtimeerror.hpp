@@ -31,7 +31,7 @@ namespace Orm::Exceptions
     protected:
         // BUG FIXIT, this will be pain, verify all the const data member, they prevent generation of default copy/move assignment operators, you can not assign or move to the const data member silverqx
         /*! Exception message. */
-        const QString m_message {what()};
+        const QString m_message = what();
     };
 
     inline const QString &RuntimeError::message() const

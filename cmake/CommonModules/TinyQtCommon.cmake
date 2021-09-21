@@ -106,11 +106,11 @@ function(tiny_qt_common target alias)
         target_compile_options(${target} INTERFACE
             -Wall
             -Wextra
+            -Weffc++
             -Wcast-qual
             -Wcast-align
             -Woverloaded-virtual
             -Wold-style-cast
-            -Wnon-virtual-dtor
             -Wshadow
             -Wundef
             -Wfloat-equal

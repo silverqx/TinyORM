@@ -19,7 +19,7 @@ namespace Orm::Query
     {
     public:
         /*! Default constructor, needed by Q_DECLARE_METATYPE. */
-        Expression() = default;
+        Expression();
         /*! Destructor. */
         ~Expression() = default;
 

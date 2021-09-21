@@ -47,7 +47,7 @@ private slots:
 
 private:
     /*! Connection name used in this test case. */
-    QString m_connection;
+    QString m_connection = {};
 };
 
 void tst_Model_Connection_Independent::initTestCase()

@@ -29,7 +29,7 @@ namespace Orm::Exceptions
 
     protected:
         /*! Exception message. */
-        const QString m_message {what()};
+        const QString m_message = what();
     };
 
     inline const QString &LogicError::message() const

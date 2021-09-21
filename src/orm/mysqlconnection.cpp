@@ -31,6 +31,7 @@ MySqlConnection::MySqlConnection(
         const QVariantHash &config
 )
     : DatabaseConnection(std::move(connection), database, tablePrefix, config)
+    , m_isMaria(std::nullopt)
 {
     /* We need to initialize a query grammar that is a very important part
        of the database abstraction, so we initialize it to the default value

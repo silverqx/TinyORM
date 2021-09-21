@@ -18,10 +18,10 @@ namespace Orm
         using ConfigurationsType = QHash<QString, QVariantHash>;
 
         /*! Default Database Connection Name. */
-        QString defaultConnection;
+        QString defaultConnection = {};
 
         /*! Database Connections. */
-        ConfigurationsType connections;
+        ConfigurationsType connections = {};
     };
 
 } // namespace Orm

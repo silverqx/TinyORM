@@ -25,7 +25,7 @@ namespace Types
         /*! Executed query. */
         QString query;
         /*! Map of bound values. */
-        QVector<QVariant> boundValues {};
+        QVector<QVariant> boundValues = {};
         /*! Type of the query in log record. */
         Type type = Type::UNDEFINED;
         /*! Order of the query log record. */
