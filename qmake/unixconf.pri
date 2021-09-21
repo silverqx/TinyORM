@@ -13,11 +13,11 @@ for(module, QT) {
 QMAKE_CXXFLAGS_WARN_ON *= \
     -Wall \
     -Wextra \
+    -Weffc++ \
     -Wcast-qual \
     -Wcast-align \
     -Woverloaded-virtual \
     -Wold-style-cast \
-    -Wnon-virtual-dtor \
     -Wshadow \
     -Wundef \
     -Wfloat-equal \
