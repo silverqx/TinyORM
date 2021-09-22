@@ -15,7 +15,7 @@
 win32-g++|win32-clang-g++ {
     # Libraries
     # MySQL C library
-    # Find with pkg-config (preffered)
+    # Find with pkg-config (preferred)
     mysql_ping:!link_pkgconfig_off {
         CONFIG *= link_pkgconfig
         PKGCONFIG += libmariadb
@@ -50,7 +50,7 @@ else:unix {
 
     # Libraries
     # MySQL C library
-    # Find with pkg-config (preffered)
+    # Find with pkg-config (preferred)
     mysql_ping:!link_pkgconfig_off {
         CONFIG *= link_pkgconfig
         # Pick only one
