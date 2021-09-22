@@ -392,7 +392,7 @@ namespace Relations {
             const QString m_attribute;
             /*! The temporary cache used during operator->() call, to be able
                 to return the QVariant *. */
-            mutable QVariant m_attributeCache;
+            mutable QVariant m_attributeCache = {};
         };
 
         /*! Return modifiable attribute reference, can be used on the left-hand side
@@ -2412,7 +2412,6 @@ namespace Relations {
     )
         : m_model(model)
         , m_attribute(attribute)
-        , m_attributeCache()
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2440,6 +2439,10 @@ namespace Relations {
     inline const QVariant *
     Model<Derived, AllRelations...>::AttributeReference::operator->() const
     {
+        /* The reason why m_attributeCache exists and why QVariant * is returned:
+           The overload of operator -> must either return a raw pointer, or return
+           an object (by reference or by value) for which operator -> is in turn
+           overloaded. */
         m_attributeCache = value();
 
         return &m_attributeCache;
