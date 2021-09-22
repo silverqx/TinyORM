@@ -12,7 +12,7 @@ include(../qmake/common.pri)
 # TinyORM library specific configuration
 # ---
 
-CONFIG *= create_prl create_pc create_libtool
+CONFIG *= create_prl create_pc create_libtool link_pkgconfig
 
 # TinyORM defines
 # ---
@@ -29,6 +29,18 @@ CONFIG(shared, dll|shared|static|staticlib) | CONFIG(dll, dll|shared|static|stat
 # Enable code needed by tests, eg. connection overriding in the Model
 build_tests {
     DEFINES += TINYORM_TESTS_CODE
+}
+
+# TinyORM dependencies
+# ---
+
+mysql_ping {
+    mingw {
+        PKGCONFIG += libmariadb
+    }
+    else {
+        PKGCONFIG += mysqlclient libmariadb
+    }
 }
 
 # File version and Windows manifest
