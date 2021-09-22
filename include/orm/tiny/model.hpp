@@ -93,12 +93,10 @@ namespace Relations {
     // CUR don't forget about conf.pri in playground and also port all warnings and changes silverqx
     // CUR do not forget to add new compiler/linker flags also to qmake build silverqx
     // CUR use #pragma system_header when I will tune playground, https://docs.microsoft.com/en-us/cpp/preprocessor/system-header-pragma?view=msvc-160 silverqx
-    // CUR check hide_symbols on unix playgrournd, does it has effect on non-lib? silverqx
     // CUR qmake, use manifest and rc file from cmake build in qmake build silverqx
     // BUG mingw64, TinyOrmPlayground seg. fault at the end, but everything runs/passes correctly, but only when invoked from mintty terminal, when I run it from QtCreator that uses cmd I don't see any seg. fault silverqx
     // BUG mingw64, seg fault in some tests eg. tst_model, and couldn't execute tests again, mingw64 shell works silverqx
     // FUTURE mingw64, find out better solution for .text section exhausted in debug build, -Wa,-mbig-obj didn't help, -flto helps, but again it can not find reference to WinMain, so I had to compile with -O1, then it is ok silverqx
-    // TODO better mingw64 builds, compare cmake/qmake build commands silverqx
     // FUTURE tests, QtCreator Qt AutoTests how to pass -maxwarnings silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
