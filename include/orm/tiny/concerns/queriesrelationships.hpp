@@ -51,10 +51,10 @@ namespace Private
             const std::function<void(TinyBuilder<Related> &)> &callback;
         };
 
-        // BUG clang and thread_local silverqx
+        // BUG clang and thread_local, gcc on MinGW doesn't work too silverqx
         /*! Data member for nested stores. */
         template<typename Related>
-#ifndef __clang__
+#if !defined(__clang__) && !defined(__MINGW32__)
         thread_local
 #endif
         inline static
@@ -62,7 +62,7 @@ namespace Private
 
         /*! Stored Related type is used to avoid a cryptic message when a bad type-id
             was passed to the has() nested method. */
-#ifndef __clang__
+#if !defined(__clang__) && !defined(__MINGW32__)
         thread_local
 #endif
         inline static

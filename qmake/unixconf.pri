@@ -1,14 +1,17 @@
 # Treat Qt's headers as system headers
-QMAKE_CXXFLAGS += -isystem $$quote($$[QT_INSTALL_HEADERS])
+QMAKE_CXXFLAGS += -isystem $$shell_quote($$[QT_INSTALL_HEADERS])
 for(module, QT) {
     equals(module, "testlib") {
-        QMAKE_CXXFLAGS += -isystem $$quote($$[QT_INSTALL_HEADERS]/QtTest)
+        QMAKE_CXXFLAGS += -isystem $$shell_quote($$[QT_INSTALL_HEADERS]/QtTest)
     } else {
+        # Capitalize a first letter, result: -isystem .../include/QtCore
+        moduleList = $$split(module, )
         QMAKE_CXXFLAGS += \
-            -isystem "$$[QT_INSTALL_HEADERS]/Qt$$system("echo $$module |\
-                     sed 's/.*/\u&/'")"
+            -isystem $$shell_quote($$[QT_INSTALL_HEADERS]/Qt$$upper(\
+                     $$take_first(moduleList))$$join(moduleList, ))
     }
 }
+unset(moduleList)
 
 QMAKE_CXXFLAGS_WARN_ON *= \
     -Wall \

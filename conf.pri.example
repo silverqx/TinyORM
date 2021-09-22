@@ -1,12 +1,16 @@
 # Dependencies include and library paths
 # ---
 
-win32-g++ {
+# MinGW
+win32-g++|win32-clang-g++ {
     # Libraries
     # MySQL C library
     mysql_ping {
-        LIBS += -lmysqlclient
+        LIBS += -lmariadb
     }
+
+    # Use faster linker
+    QMAKE_LFLAGS *= -fuse-ld=lld
 }
 else:win32-msvc {
     # Includes

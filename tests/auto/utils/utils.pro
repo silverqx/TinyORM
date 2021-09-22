@@ -24,7 +24,7 @@ DEFINES += UTILS_BUILDING_SHARED
 win32:VERSION = 0.1.0.0
 else:VERSION = 0.1.0
 
-win32-msvc* {
+win32-msvc {
     QMAKE_TARGET_PRODUCT = Utils
     QMAKE_TARGET_DESCRIPTION = Utils library for TinyORM tests
     QMAKE_TARGET_COMPANY = Crystal Studio

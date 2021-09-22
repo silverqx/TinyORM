@@ -32,4 +32,4 @@ mysql_ping {
 # ---
 win32: include(winconf.pri)
 macx: include(macxconf.pri)
-unix:!macx: include(unixconf.pri)
+mingw|if(unix:!macx): include(unixconf.pri)
