@@ -28,9 +28,10 @@ function(tiny_configure_test name)
     if(MINGW)
         target_compile_options(${name}
             PRIVATE
-                $<$<CONFIG:DEBUG>:-Wa,-mbig-obj>
-                # Avoid string table overflow
-                $<$<CONFIG:DEBUG>:-O1>
+                $<$<AND:$<CXX_COMPILER_ID:GNU>,$<CONFIG:DEBUG>>:
+                    -Wa,-mbig-obj
+                    # Avoid string table overflow
+                    -O1>
         )
     endif()
 

@@ -62,6 +62,8 @@ function(tiny_qt_common target alias)
         target_compile_options(${target} INTERFACE
             # Suppress banner and info messages
             /nologo
+            # Is safer to provide this explicitly, qmake do it for msvc too
+            /EHsc
             /guard:cf
             /utf-8
             # Set by default by c++20 but from VS 16.11, can be removed when
@@ -87,15 +89,18 @@ function(tiny_qt_common target alias)
         )
     endif()
 
-    # Is safer to provide this explicitly, qmake do it for msvc too
-    # -fexceptions for linux is not needed, it is on by default
-    if(MSVC)
-        target_compile_options(${target} INTERFACE /EHsc)
-    endif(MSVC)
-
     if(MINGW)
+        target_compile_options(${target} INTERFACE
+            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
+                -Wno-ignored-attributes>
+        )
+
         target_link_options(${target} INTERFACE
-            $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:LINKER:--dynamicbase>
+            $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:
+                LINKER:--dynamicbase,--high-entropy-va,--nxcompat
+                LINKER:--default-image-base-high>
+            # Use faster linker ( GNU ld linker doesn't work with the Clang )
+            -fuse-ld=lld
         )
     endif()
 
@@ -104,6 +109,7 @@ function(tiny_qt_common target alias)
             OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang"
     )
         target_compile_options(${target} INTERFACE
+            # -fexceptions for linux is not needed, it is on by default
             -Wall
             -Wextra
             -Weffc++
