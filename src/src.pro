@@ -12,7 +12,9 @@ include(../qmake/common.pri)
 # TinyORM library specific configuration
 # ---
 
-CONFIG *= create_prl create_pc create_libtool link_pkgconfig
+CONFIG *= create_prl create_pc create_libtool
+
+!win32-msvc:!link_pkgconfig_off: CONFIG *= link_pkgconfig
 
 # TinyORM defines
 # ---
