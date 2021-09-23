@@ -90,8 +90,6 @@ namespace Relations {
     // CUR unify one version number/file for cmake and qmake silverqx
     // CUR generate pkg-config file on unix silverqx
     // CUR cmake use gold linker option, https://github.com/frobware/c-hacks/blob/master/cmake/use-gold-linker.cmake silverqx
-    // CUR don't forget about conf.pri in playground and also port all warnings and changes silverqx
-    // CUR do not forget to add new compiler/linker flags also to qmake build silverqx
     // CUR use #pragma system_header when I will tune playground, https://docs.microsoft.com/en-us/cpp/preprocessor/system-header-pragma?view=msvc-160 silverqx
     // CUR qmake, use manifest and rc file from cmake build in qmake build silverqx
     // BUG mingw64, TinyOrmPlayground seg. fault at the end, but everything runs/passes correctly, but only when invoked from mintty terminal, when I run it from QtCreator that uses cmd I don't see any seg. fault silverqx
