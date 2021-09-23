@@ -91,12 +91,11 @@ function(tiny_qt_common target alias)
 
     if(MINGW)
         target_compile_options(${target} INTERFACE
-            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-                -Wno-ignored-attributes>
+            $<$<CXX_COMPILER_ID:Clang,AppleClang>:-Wno-ignored-attributes>
         )
 
         target_link_options(${target} INTERFACE
-            $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:
+            $<$<CONFIG:Debug,RelWithDebInfo>:
                 LINKER:--dynamicbase,--high-entropy-va,--nxcompat
                 LINKER:--default-image-base-high>
             # Use faster linker ( GNU ld linker doesn't work with the Clang )
