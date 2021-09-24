@@ -174,6 +174,7 @@ endif()
 include(TinyFileVersionAndManifest)
 tiny_file_version_and_manifest(${TinyOrm_target} "include/orm/"
     "${TINY_BUILD_GENDIR}/include/orm/"
+    "${TINY_BUILD_GENDIR}/tmp/"
 )
 
 # Resolve and link dependencies

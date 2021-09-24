@@ -35,7 +35,7 @@ VS_VERSION_INFO VERSIONINFO
                 VALUE "CompanyName",      "Crystal Studio\0"
                 VALUE "FileDescription",  "TinyORM user-friendly ORM\0"
                 VALUE "FileVersion",      VER_FILEVERSION_STR
-                VALUE "InternalName",     "tinyorm\0"
+                VALUE "InternalName",     "TinyOrm\0"
                 VALUE "LegalCopyright",   "Copyright (©) 2021 Crystal Studio\0"
                 VALUE "ProductName",      "TinyORM\0"
                 VALUE "ProductVersion",   VER_PRODUCTVERSION_STR

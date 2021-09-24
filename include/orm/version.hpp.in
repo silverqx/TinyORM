@@ -20,9 +20,17 @@
      TINY_VERSION_MAJOR.TINY_VERSION_MINOR.TINY_VERSION_BUGFIX) TINY_VERSION_STATUS
 #endif
 
+// Versions Legend - M = Major, m = minor, p = patch, t = tweak, s = status
+
+// Format - M.m.p.t-s
 #define TINY_VERSION PROJECT_VERSION
+// Format - vM.m.p.t-s
 #define TINY_VERSION_2 "v" PROJECT_VERSION
 
-#define TINY_ORIGINAL_FILENAME "@tiny_original_filename@"
+// Format - MMmmpp
+#define TINY_VERSION_NUM \
+    (TINY_VERSION_MAJOR * 10000 + TINY_VERSION_MINOR * 100 + TINY_VERSION_BUGFIX)
+
+#define TINY_ORIGINAL_FILENAME "$<TARGET_FILE_NAME:@TinyOrm_target@>"
 
 #endif // ORMVERSION_HPP
