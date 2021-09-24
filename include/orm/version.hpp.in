@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORMVERSION_HPP
-#define ORMVERSION_HPP
+#ifndef ORM_VERSION_HPP
+#define ORM_VERSION_HPP
 
 #define TINY_VERSION_MAJOR @TinyOrm_VERSION_MAJOR@
 #define TINY_VERSION_MINOR @TinyOrm_VERSION_MINOR@
@@ -33,4 +33,4 @@
 
 #define TINY_ORIGINAL_FILENAME "$<TARGET_FILE_NAME:@TinyOrm_target@>"
 
-#endif // ORMVERSION_HPP
+#endif // ORM_VERSION_HPP
