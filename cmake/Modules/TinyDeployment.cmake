@@ -27,7 +27,7 @@ function(tiny_install_tinyorm)
     install(FILES AUTHOR LICENSE TYPE DOC)
     install(FILES NOTES.txt TYPE DOC RENAME NOTES)
     install(FILES README.md TYPE DOC RENAME README)
-    if(MSVC)
+    if(MSVC AND BUILD_SHARED_LIBS)
         install(FILES "$<TARGET_PDB_FILE:${TinyOrm_target}>" TYPE BIN OPTIONAL)
     endif()
 
