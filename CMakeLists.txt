@@ -129,9 +129,8 @@ set_target_properties(${TinyOrm_target}
         EXPORT_NAME ${TinyOrm_ns}
 )
 
-# Append a major version number for Windows shared libraries only
-tiny_init_target_version_ext(${TinyOrm_target})
-if(${TinyOrm_target}_VERSION_EXT)
+# Append a major version number for Windows/MinGW only
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set_property(
         TARGET ${TinyOrm_target}
         PROPERTY OUTPUT_NAME "${TinyOrm_target}${PROJECT_VERSION_MAJOR}"

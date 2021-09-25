@@ -105,20 +105,6 @@ build
 
 endmacro()
 
-# Initialize a variable for append a major version number for Windows shared libraries
-function(tiny_init_target_version_ext target)
-
-    set(result OFF)
-    get_target_property(target_type ${target} TYPE)
-
-    if(WIN32 AND target_type STREQUAL "SHARED_LIBRARY")
-        set(result ON)
-    endif()
-
-    set(${target}_VERSION_EXT ${result} PARENT_SCOPE)
-
-endfunction()
-
 # Initialize Tiny variables, earlier init.
 macro(tiny_init_tiny_variables_pre)
 
