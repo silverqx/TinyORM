@@ -45,18 +45,23 @@ DESTINATION is encountered")
     # TODO test on unix silverqx
 #    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
-    # Fix install prefix for the x64 toolchain
-    if(WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT
-            AND CMAKE_SIZEOF_VOID_P EQUAL 8
+    # Fix install prefix for the MinGW and x64 toolchain
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows"
+            AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT
     )
         get_property(help_string CACHE CMAKE_INSTALL_PREFIX PROPERTY HELPSTRING)
         if(NOT help_string)
             set(help_string "Install path prefix, prepended onto install directories")
         endif()
 
-        set(CMAKE_INSTALL_PREFIX "C:/Program Files/${PROJECT_NAME}"
-            CACHE PATH "${help_string}" FORCE
-        )
+        if(MINGW)
+            set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "${help_string}" FORCE)
+
+        elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set(CMAKE_INSTALL_PREFIX "C:/Program Files/${PROJECT_NAME}"
+                CACHE PATH "${help_string}" FORCE
+            )
+        endif()
     endif()
 
     # Avoid to link a release type builds against a debug build
