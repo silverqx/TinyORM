@@ -77,13 +77,16 @@ Thumbs.db
 **/tests/testdata/dotenv.ps1
 **/tests/testdata/dotenv.sh
 
+# CMake
+/CMakeLists.txt.user
+/CMakeUserPresets.json
+
 # others
 ~$*.xlsx
+conf.pri
 /exports*.txt
 /exports.xlsx
+/include/orm/version.hpp
 /todos.csv
 /todos.xlsx
-conf.pri
-/CMakeUserPresets.json
 /vcpkg_installed/
-/CMakeLists.txt.user

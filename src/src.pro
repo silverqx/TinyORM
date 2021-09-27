@@ -34,21 +34,18 @@ build_tests {
 # File version and Windows manifest
 # ---
 
-#TinyORM_VERSION_MAJOR = 0
-#TinyORM_VERSION_MINOR = 1
-#TinyORM_VERSION_PATCH = 0
-#TinyORM_VERSION_TWEAK = 0
-#QMAKE_SUBSTITUTES += ../include/orm/version.hpp.in
-
 win32:VERSION = 0.1.0.0
 else:VERSION = 0.1.0
+
+load(tiny_configure_version_header)
+tiny_configure_version_file($$quote(../include/orm/version.hpp.in))
 
 win32-msvc {
     QMAKE_TARGET_PRODUCT = TinyORM
     QMAKE_TARGET_DESCRIPTION = TinyORM user-friendly ORM
     QMAKE_TARGET_COMPANY = Crystal Studio
     QMAKE_TARGET_COPYRIGHT = Copyright (©) 2021 Crystal Studio
-#    RC_ICONS = images/TinyOrm.ico
+#    RC_ICONS = images/$${TARGET}.ico
     RC_LANG = 1033
 }
 

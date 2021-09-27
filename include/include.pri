@@ -82,3 +82,5 @@ HEADERS += \
     $$PWD/orm/utils/export.hpp \
     $$PWD/orm/utils/string.hpp \
     $$PWD/orm/utils/type.hpp \
+    $$PWD/orm/version.hpp \
+    $$PWD/orm/version.hpp.in \

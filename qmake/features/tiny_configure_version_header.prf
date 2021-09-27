@@ -1,0 +1,52 @@
+# Split the VERSION and assign values to <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK>
+defineTest(tiny_split_version) {
+    # 0 0 to make sure that there are at least three numbers
+    v = $$split(VERSION, '.') 0 0
+
+    $${TARGET}_VERSION_MAJOR = $$member(v, 0)
+    $${TARGET}_VERSION_MINOR = $$member(v, 1)
+    $${TARGET}_VERSION_PATCH = $$member(v, 2)
+    win32: $${TARGET}_VERSION_TWEAK = $$member(v, 3)
+    else: $${TARGET}_VERSION_TWEAK =
+
+    export($${TARGET}_VERSION_MAJOR)
+    export($${TARGET}_VERSION_MINOR)
+    export($${TARGET}_VERSION_PATCH)
+    export($${TARGET}_VERSION_TWEAK)
+}
+
+# Substitute variable values referenced as @<TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK>@
+# in the passed version.hpp.in header file and save an output to the same folder by
+# removing the .in file extenesion.
+defineTest(tiny_configure_version_file) {
+    # Santize input variable
+    endsWithIn = $$find(1, (\.in)$)
+    isEmpty(endsWithIn) {
+        error( "Version header filename passed to the configure_version_file() has\
+                to end with .in extension." )
+    }
+    exists(1) {
+        error( "Version header file $$1 passed to the configure_version_file() does not\
+                exists." )
+    }
+
+    versionFile = $$quote($$absolute_path($$1))
+    versionFileContent = $$cat($$quote($$1), blob)
+
+    for(versionToken, $$list(MAJOR MINOR PATCH TWEAK)) {
+        versionVariable = $${TARGET}_VERSION_$${versionToken}
+        versionValue    = $$eval($$versionVariable)
+        versionTemplate = @$${versionVariable}@
+
+        versionFileContent = $$replace(versionFileContent, $$versionTemplate, \
+                                       $$versionValue)
+    }
+
+    versionWriteFile = $$str_member($$versionFile, 0, -4)
+
+    !write_file($$versionWriteFile, versionFileContent) {
+        error( "Can not write to the file - $${versionWriteFile}." )
+    }
+}
+
+tiny_split_version()
