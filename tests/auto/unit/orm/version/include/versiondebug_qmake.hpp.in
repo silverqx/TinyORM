@@ -1,0 +1,10 @@
+#pragma once
+#ifndef TINYTESTS_VERSIONDEBUG_QMAKE_HPP
+#define TINYTESTS_VERSIONDEBUG_QMAKE_HPP
+
+#include \"orm/version.hpp\"
+#include \"version.hpp\"
+
+#define TINYORM_BUILD_TREE \"$${TINYORM_BUILD_TREE}\"
+
+#endif // TINYTESTS_VERSIONDEBUG_QMAKE_HPP

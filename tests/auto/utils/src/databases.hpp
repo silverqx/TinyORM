@@ -1,6 +1,6 @@
 #pragma once
-#ifndef DATABASES_H
-#define DATABASES_H
+#ifndef TINYUTILS_DATABASES_HPP
+#define TINYUTILS_DATABASES_HPP
 
 #include "orm/configuration.hpp"
 #include "orm/connectioninterface.hpp"
@@ -57,4 +57,5 @@ namespace TestUtils
     };
 
 }
-#endif // DATABASES_H
+
+#endif // TINYUTILS_DATABASES_HPP

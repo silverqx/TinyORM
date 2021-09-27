@@ -86,7 +86,6 @@ Thumbs.db
 conf.pri
 /exports*.txt
 /exports.xlsx
-/include/orm/version.hpp
 /todos.csv
 /todos.xlsx
 /vcpkg_installed/

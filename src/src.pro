@@ -31,14 +31,19 @@ build_tests {
     DEFINES += TINYORM_TESTS_CODE
 }
 
+# TinyORM library header and source files
+# ---
+
+include(../include/include.pri)
+include(src.pri)
+
 # File version and Windows manifest
 # ---
 
-win32:VERSION = 0.1.0.0
-else:VERSION = 0.1.0
-
-load(tiny_configure_version_header)
-tiny_configure_version_file($$quote(../include/orm/version.hpp.in))
+# Find version numbers in a version header file and assign them to the
+# <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
+load(tiny_version_numbers)
+tiny_version_numbers()
 
 win32-msvc {
     QMAKE_TARGET_PRODUCT = TinyORM
@@ -69,12 +74,6 @@ else {
 precompile_header {
     include(../include/pch.pri)
 }
-
-# TinyORM library header and source files
-# ---
-
-include(../include/include.pri)
-include(src.pri)
 
 # Deployment
 # ---

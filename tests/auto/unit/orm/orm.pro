@@ -4,3 +4,4 @@ SUBDIRS = \
     databaseconnection \
     query \
     tiny \
+    version \

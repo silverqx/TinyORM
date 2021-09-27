@@ -1,0 +1,46 @@
+# Find version numbers in a version header file and assign them to the
+# <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
+defineTest(tiny_version_numbers) {
+    versionHeader = $$find(HEADERS, ".+/version(.hpp)$")
+    exists(versionHeader)|isEmpty(versionHeader) {
+        error( "HEADERS does not contain a version header file version.hpp, needed\
+                in the tiny_version_numbers.prf." )
+    }
+    versionFileContent = $$cat($$quote($$absolute_path($$versionHeader)), lines)
+    versionTokens = MAJOR MINOR BUGFIX BUILD STATUS
+    regexpTokens = $$join(versionTokens, '|')
+    regexp = "_($${regexpTokens}) +([0-9]+|\"-{1}\w+\")"
+    versionLines = $$find(versionFileContent, $$regexp)
+    versionList =
+    hasStatus = false
+
+    for(versionLine, versionLines) {
+        splittedLine  = $$split(versionLine, ' ')
+        versionNumber = $$take_last(splittedLine)
+        versionNumber = $$replace(versionNumber, ' ', '')
+
+        for(versionToken, versionTokens) {
+            contains(versionLine, ".+_$${versionToken} .+") {
+                equals(versionToken, "STATUS") {
+                    versionNumber = $$replace(versionNumber, '"', '')
+                    hasStatus = true
+                }
+                versionList += $$versionNumber
+
+                $${TARGET}_VERSION_$${versionToken} = $$versionNumber
+                export($${TARGET}_VERSION_$${versionToken})
+            }
+        }
+    }
+
+    # Obtain version status
+    $$hasStatus: versionStatus = $$take_last(versionList)
+
+    # Use 3 numbers version on other platforms
+    !win32 {
+        $$take_last(versionList)
+    }
+
+    VERSION = $$join(versionList, '.')$$versionStatus
+    export(VERSION)
+}

@@ -18,18 +18,25 @@ include(../../../qmake/common.pri)
 # Build as shared library
 DEFINES += UTILS_BUILDING_SHARED
 
+# Utils library header and source files
+# ---
+
+include(src/src.pri)
+
 # File version and windows manifest
 # ---
 
-win32:VERSION = 0.1.0.0
-else:VERSION = 0.1.0
+# Find version numbers in a version header file and assign them to the
+# <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable
+load(tiny_version_numbers)
+tiny_version_numbers()
 
 win32-msvc {
-    QMAKE_TARGET_PRODUCT = Utils
+    QMAKE_TARGET_PRODUCT = TinyUtils
     QMAKE_TARGET_DESCRIPTION = Utils library for TinyORM tests
     QMAKE_TARGET_COMPANY = Crystal Studio
     QMAKE_TARGET_COPYRIGHT = Copyright (©) 2020 Crystal Studio
-#    RC_ICONS = images/utils.ico
+#    RC_ICONS = images/$${$$TARGET}.ico
     RC_LANG = 1033
 }
 
@@ -72,11 +79,6 @@ else:win32:CONFIG(debug, debug|release) {
 else:unix {
     LIBS += -L$$TINYORM_BUILD_TREE/src/ -lTinyOrm
 }
-
-# Utils library header and source files
-# ---
-
-include(src/src.pri)
 
 # Default rules for deployment
 # ---

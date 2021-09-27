@@ -97,6 +97,7 @@ namespace Relations {
     // FUTURE mingw64, find out better solution for .text section exhausted in debug build, -Wa,-mbig-obj didn't help, -flto helps, but again it can not find reference to WinMain, so I had to compile with -O1, then it is ok silverqx
     // FUTURE tests, QtCreator Qt AutoTests how to pass -maxwarnings silverqx
     // FUTURE constexpr, version header file, good example https://googleapis.dev/cpp/google-cloud-common/0.6.1/version_8h_source.html silverqx
+    // CUR rename header macro defines from _H to _HPP silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
