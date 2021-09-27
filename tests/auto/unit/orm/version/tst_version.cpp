@@ -181,16 +181,16 @@ tst_Version::getExeVersionString(const QString &fileName) const
     return {
         // Product Version
         QStringLiteral("%1.%2.%3.%4")
-                .arg((lpBuffer->dwProductVersionMS >> 16) & 0xffff)
-                .arg(lpBuffer->dwProductVersionMS & 0xffff)
-                .arg((lpBuffer->dwProductVersionLS >> 16) & 0xffff)
-                .arg(lpBuffer->dwProductVersionLS & 0xffff),
+                .arg(HIWORD(lpBuffer->dwProductVersionMS))
+                .arg(LOWORD(lpBuffer->dwProductVersionMS))
+                .arg(HIWORD(lpBuffer->dwProductVersionLS))
+                .arg(LOWORD(lpBuffer->dwProductVersionLS)),
         // File Version
         QStringLiteral("%1.%2.%3.%4")
-                .arg((lpBuffer->dwFileVersionMS >> 16) & 0xffff)
-                .arg(lpBuffer->dwFileVersionMS & 0xffff)
-                .arg((lpBuffer->dwFileVersionLS >> 16) & 0xffff)
-                .arg(lpBuffer->dwFileVersionLS & 0xffff),
+                .arg(HIWORD(lpBuffer->dwFileVersionMS))
+                .arg(LOWORD(lpBuffer->dwFileVersionMS))
+                .arg(HIWORD(lpBuffer->dwFileVersionLS))
+                .arg(LOWORD(lpBuffer->dwFileVersionLS)),
     };
 }
 
