@@ -15,7 +15,10 @@ message(DEBUG "PACKAGE_FIND_VERSION = ${PACKAGE_FIND_VERSION}")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules")
 
 include(TinyPackageConfigHelpers)
-tiny_build_type_requirements_build_tree("@cvf_is_multi_config@" "@CMAKE_BUILD_TYPE@" "@MATCH_EQUAL_EXPORTED_BUILDTREE@")
+tiny_build_type_requirements_build_tree(
+    PACKAGE_VERSION PACKAGE_VERSION_UNSUITABLE
+    "@cvf_is_multi_config@" "@CMAKE_BUILD_TYPE@" "@MATCH_EQUAL_EXPORTED_BUILDTREE@"
+)
 
 message(DEBUG "PACKAGE_VERSION = ${PACKAGE_VERSION}")
 message(DEBUG "PACKAGE_VERSION_EXACT = ${PACKAGE_VERSION_EXACT}")

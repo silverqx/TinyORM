@@ -6,15 +6,30 @@ list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules"
 )
 
+# Initialize Project Version
+# ---
+
+include(TinyHelpers)
+include(TinyInitDefaultVariables)
+
+# Initialize Tiny variables, early init.
+tiny_init_tiny_variables_pre()
+
+tiny_read_version(TINY_VERSION
+    TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
+    VERSION_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/include/orm/version.hpp"
+    PREFIX TINYORM
+)
+
 # Basic project and cmake build setup
 # ---
 
 # TODO add support for POSITION_INDEPENDENT_CODE silverqx
-project(TinyOrm
+project(${TinyOrm_ns}
     DESCRIPTION "c++ ORM library for Qt framework"
     HOMEPAGE_URL "https://silverqx.github.io/TinyORM/"
     LANGUAGES CXX
-    VERSION 0.1.0.0
+    VERSION ${TINY_VERSION}
 )
 
 # Specify the C++ standard
@@ -29,7 +44,6 @@ set(minMsvcVersion 19.28)
 set(minQtVersion 5.15.2)
 set(minRangeV3Version 0.11.0)
 
-include(TinyHelpers)
 # Make minimum toolchain version a requirement
 tiny_toolchain_requirement(MSVC ${minMsvcVersion})
 
@@ -37,13 +51,10 @@ tiny_toolchain_requirement(MSVC ${minMsvcVersion})
 # ---
 
 include(FeatureSummary)
-include(TinyInitDefaultVariables)
 include(TinyFeatureOptions)
 
 # Initialize default CMake variables on which options depend
 tiny_init_cmake_variables_pre()
-# Initialize Tiny variables, earlier init.
-tiny_init_tiny_variables_pre()
 
 feature_option(BUILD_SHARED_LIBS
     "Build using shared libraries" ON
@@ -89,11 +100,11 @@ tiny_init_tiny_variables()
 # ---
 
 include(TinySources)
-tiny_sources()
+tiny_sources(${TinyOrm_target}_headers ${TinyOrm_target}_sources)
 
 add_library(${TinyOrm_target}
-    ${headers}
-    ${sources}
+    ${${TinyOrm_target}_headers}
+    ${${TinyOrm_target}_sources}
 )
 add_library(${TinyOrm_ns}::${TinyOrm_target} ALIAS ${TinyOrm_target})
 
@@ -170,8 +181,8 @@ endif()
 # File version and Windows resource and manifest
 # ---
 
-include(TinyFileVersionAndManifest)
-tiny_file_version_and_manifest(${TinyOrm_target} "include/orm/"
+include(TinyResourceAndManifest)
+tiny_resource_and_manifest(${TinyOrm_target} "include/orm/"
     "${TINY_BUILD_GENDIR}/include/orm/"
     "${TINY_BUILD_GENDIR}/tmp/"
 )
@@ -223,7 +234,7 @@ endif()
 include(TinyDeployment)
 
 # Generate find_dependency calls for the TinyORM package config file
-tiny_generate_find_dependency_calls()
+tiny_generate_find_dependency_calls(tiny_find_dependency_calls)
 
 # Create Package Config and Config Package Version files and install the TinyORM Project
 tiny_install_tinyorm()

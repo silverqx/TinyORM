@@ -1,11 +1,11 @@
 # Set common variables and create interface-only library target so all other targets
 # will be able to link to, either directly or transitively, to consume common compile
 # options/definitions
-function(tiny_qt_common target alias)
+function(tiny_qt_common target)
 
     set(options EXPORT)
-    set(single_args NAMESPACE NAME)
-    cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "${single_args}" "")
+    set(oneValueArgs NAMESPACE NAME)
+    cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "${oneValueArgs}" "")
 
     add_library(${target} INTERFACE)
     add_library(${TINY_NAMESPACE}::${TINY_NAME} ALIAS ${target})

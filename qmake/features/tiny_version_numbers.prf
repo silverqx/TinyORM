@@ -1,4 +1,4 @@
-# Find version numbers in a version header file and assign them to the
+# Find version numbers in the version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
 defineTest(tiny_version_numbers) {
     versionHeader = $$find(HEADERS, ".+/version(.hpp)$")

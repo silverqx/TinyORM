@@ -1,8 +1,9 @@
 # Build configuration type requirements for an Install Tree
 # Build configurations are considered to match if both are "Debug" or neither
 # is "Debug", otherwise all other configurations can be matched freely.
-function(tiny_build_type_requirements_install_tree cvf_is_multi_config
-        cvf_config_build_type)
+function(tiny_build_type_requirements_install_tree
+        out_package_version out_package_version_unsuitable
+        cvf_is_multi_config cvf_config_build_type)
 
     message(DEBUG "cvf_is_multi_config = ${cvf_is_multi_config}")
 
@@ -16,8 +17,9 @@ function(tiny_build_type_requirements_install_tree cvf_is_multi_config
         message(DEBUG "CMAKE_CURRENT_LIST_FILE = ${CMAKE_CURRENT_LIST_FILE}")
 
         if(isMultiConfig)
-            set(PACKAGE_VERSION "${PACKAGE_VERSION} single-config" PARENT_SCOPE)
-            set(PACKAGE_VERSION_UNSUITABLE TRUE PARENT_SCOPE)
+            set(${out_package_version} "${${out_package_version}} single-config"
+                PARENT_SCOPE)
+            set(${out_package_version_unsuitable} TRUE PARENT_SCOPE)
             return()
 
         elseif(MSVC AND ((CMAKE_BUILD_TYPE STREQUAL "Debug"
@@ -25,10 +27,10 @@ function(tiny_build_type_requirements_install_tree cvf_is_multi_config
                 OR (NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
                     AND cvf_config_build_type STREQUAL "Debug"))
         )
-            set(PACKAGE_VERSION
-                "${PACKAGE_VERSION} single-config CMAKE_BUILD_TYPE=${cvf_config_build_type}"
+            set(${out_package_version}
+                "${${out_package_version}} single-config CMAKE_BUILD_TYPE=${cvf_config_build_type}"
                 PARENT_SCOPE)
-            set(PACKAGE_VERSION_UNSUITABLE TRUE PARENT_SCOPE)
+            set(${out_package_version_unsuitable} TRUE PARENT_SCOPE)
             return()
         endif()
     endif()
@@ -40,8 +42,9 @@ endfunction()
 # the MATCH_EQUAL_EXPORTED_BUILDTREE option is enabled or for MSVC, build
 # configurations are considered to match if both are "Debug" or neither
 # is "Debug", otherwise all other configurations can be matched freely.
-function(tiny_build_type_requirements_build_tree cvf_is_multi_config
-        cvf_config_build_type cvf_match_buildtree)
+function(tiny_build_type_requirements_build_tree
+        out_package_version out_package_version_unsuitable
+        cvf_is_multi_config cvf_config_build_type cvf_match_buildtree)
 
     message(DEBUG "cvf_is_multi_config = ${cvf_is_multi_config}")
 
@@ -58,8 +61,9 @@ function(tiny_build_type_requirements_build_tree cvf_is_multi_config
         # TODO forbid MINGW64 vs UCRT64 vs MSVC mismatch on windows silverqx
 
         if(isMultiConfig)
-            set(PACKAGE_VERSION "${PACKAGE_VERSION} single-config" PARENT_SCOPE)
-            set(PACKAGE_VERSION_UNSUITABLE TRUE PARENT_SCOPE)
+            set(${out_package_version} "${${out_package_version}} single-config"
+                PARENT_SCOPE)
+            set(${out_package_version_unsuitable} TRUE PARENT_SCOPE)
             return()
 
         elseif((cvf_match_buildtree
@@ -69,10 +73,10 @@ function(tiny_build_type_requirements_build_tree cvf_is_multi_config
                     OR (NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
                         AND cvf_config_build_type STREQUAL "Debug")))
         )
-            set(PACKAGE_VERSION
-                "${PACKAGE_VERSION} single-config CMAKE_BUILD_TYPE=${cvf_config_build_type}"
+            set(${out_package_version}
+                "${${out_package_version}} single-config CMAKE_BUILD_TYPE=${cvf_config_build_type}"
                 PARENT_SCOPE)
-            set(PACKAGE_VERSION_UNSUITABLE TRUE PARENT_SCOPE)
+            set(${out_package_version_unsuitable} TRUE PARENT_SCOPE)
             return()
         endif()
     endif()

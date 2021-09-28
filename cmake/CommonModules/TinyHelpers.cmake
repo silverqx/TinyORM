@@ -1,10 +1,10 @@
 # Invert a boolean variable value
-function(tiny_invert_bool variable value)
+function(tiny_invert_bool out_variable value)
 
     if(${value})
-        set(${variable} FALSE PARENT_SCOPE)
+        set(${out_variable} FALSE PARENT_SCOPE)
     else()
-        set(${variable} TRUE PARENT_SCOPE)
+        set(${out_variable} TRUE PARENT_SCOPE)
     endif()
 
 endfunction()
@@ -12,8 +12,8 @@ endfunction()
 # Make minimum toolchain version a requirement
 function(tiny_toolchain_requirement)
 
-    set(singleargs MSVC)
-    cmake_parse_arguments(PARSE_ARGV 0 TINY "" "${singleargs}" "")
+    set(oneValueArgs MSVC)
+    cmake_parse_arguments(PARSE_ARGV 0 TINY "" "${oneValueArgs}" "")
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_MSVC)
@@ -50,7 +50,7 @@ macro(tiny_find_package package_name)
 endmacro()
 
 # Generate find_dependency calls for the TinyORM package config file
-function(tiny_generate_find_dependency_calls)
+function(tiny_generate_find_dependency_calls out_dependency_calls)
 
     set(find_dependency_calls)
 
@@ -59,7 +59,7 @@ function(tiny_generate_find_dependency_calls)
 
     string(REPLACE ";" "\n" find_dependency_calls "${find_dependency_calls}")
 
-    set(tiny_find_dependency_calls ${find_dependency_calls} PARENT_SCOPE)
+    set(${out_dependency_calls} ${find_dependency_calls} PARENT_SCOPE)
 
 endfunction()
 
@@ -82,7 +82,9 @@ function(target_optional_compile_definitions target scope)
     set(options FEATURE)
     set(oneValueArgs NAME DESCRIPTION DEFAULT)
     set(multiValueArgs ENABLED DISABLED)
-    cmake_parse_arguments(TINY ${options} "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(PARSE_ARGV 2 TINY ${options} "${oneValueArgs}"
+        "${multiValueArgs}"
+    )
 
     option(${TINY_NAME} "${TINY_DESCRIPTION}" ${TINY_DEFAULT})
 
@@ -108,5 +110,62 @@ function(create_sqlite_db db_filepath)
     message(STATUS "Creating SQLite database at '${db_filepath}'")
 
     file(TOUCH "${db_filepath}")
+
+endfunction()
+
+# Find version numbers in the version header file, search following tokens
+# <PREFIX>_VERSION_<MAJOR,MINOR,BUGFIX,BUILD>
+function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
+
+    # Debug setup
+    list(APPEND CMAKE_MESSAGE_CONTEXT VersionHeader)
+    set(mainMessage "Reading Version Header for ${TinyOrm_ns}")
+    message(DEBUG ${mainMessage})
+    list(APPEND CMAKE_MESSAGE_INDENT "  ")
+
+    # Arguments
+    set(oneValueArgs VERSION_HEADER PREFIX)
+    cmake_parse_arguments(PARSE_ARGV 4 TINY "" "${oneValueArgs}" "")
+
+    # ---
+
+    file(STRINGS ${TINY_VERSION_HEADER} versionFileContent
+        REGEX "^#define ${TINY_PREFIX}.*_VERSION_[A-Z]+ +[0-9]+"
+    )
+
+    message(DEBUG "Version file content - ${versionFileContent}")
+
+    set(regexp ".+_MAJOR +([0-9]+);.+_MINOR +([0-9]+);.+_BUGFIX +([0-9]+);\
+.+_BUILD +([0-9]+)")
+    string(REGEX MATCHALL "${regexp}" match "${versionFileContent}")
+
+    if(NOT match)
+        message(FATAL_ERROR
+            "Could not detect project version number from ${versionHeader}")
+    endif()
+
+    message(DEBUG "Matched version string - ${match}")
+
+    set(version "${CMAKE_MATCH_1}.${CMAKE_MATCH_2}.${CMAKE_MATCH_3}.${CMAKE_MATCH_4}")
+
+    # ---
+
+    message(DEBUG "${out_version} - ${version}")
+    message(DEBUG "${out_major} - ${CMAKE_MATCH_1}")
+    message(DEBUG "${out_minor} - ${CMAKE_MATCH_2}")
+    message(DEBUG "${out_patch} - ${CMAKE_MATCH_3}")
+    message(DEBUG "${out_tweak} - ${CMAKE_MATCH_4}")
+
+    # Debug finish
+    list(POP_BACK CMAKE_MESSAGE_INDENT)
+    message(DEBUG "${mainMessage} - done")
+    list(POP_BACK CMAKE_MESSAGE_CONTEXT)
+
+    # Return values
+    set(${out_version} ${version} PARENT_SCOPE)
+    set(${out_major} ${CMAKE_MATCH_1} PARENT_SCOPE)
+    set(${out_minor} ${CMAKE_MATCH_2} PARENT_SCOPE)
+    set(${out_patch} ${CMAKE_MATCH_3} PARENT_SCOPE)
+    set(${out_tweak} ${CMAKE_MATCH_4} PARENT_SCOPE)
 
 endfunction()

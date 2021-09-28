@@ -1,6 +1,6 @@
 # TinyORM library header and source files
 # Create header and source files lists and return them
-function(tiny_sources)
+function(tiny_sources out_headers out_sources)
 
     set(headers
         basegrammar.hpp
@@ -84,7 +84,7 @@ function(tiny_sources)
         utils/export.hpp
         utils/string.hpp
         utils/type.hpp
-        version.hpp.in
+        version.hpp
     )
 
     set(sources
@@ -142,7 +142,7 @@ function(tiny_sources)
     list(TRANSFORM headers PREPEND "include/orm/")
     list(TRANSFORM sources PREPEND "src/orm/")
 
-    set(headers ${headers} PARENT_SCOPE)
-    set(sources ${sources} PARENT_SCOPE)
+    set(${out_headers} ${headers} PARENT_SCOPE)
+    set(${out_sources} ${sources} PARENT_SCOPE)
 
 endfunction()

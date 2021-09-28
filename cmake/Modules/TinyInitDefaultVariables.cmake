@@ -110,12 +110,12 @@ build
 
 endmacro()
 
-# Initialize Tiny variables, earlier init.
+# Initialize Tiny variables, early init.
 macro(tiny_init_tiny_variables_pre)
 
     # Top level project name, used for alias namespaces, CMAKE_MESSAGE_CONTEXT, or as
     # a main package name
-    set(TinyOrm_ns ${CMAKE_PROJECT_NAME})
+    set(TinyOrm_ns TinyOrm)
     # Target names
     set(CommonConfig_target CommonConfig)
     set(TinyOrm_target TinyOrm)
