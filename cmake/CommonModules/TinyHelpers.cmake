@@ -117,15 +117,15 @@ endfunction()
 # <PREFIX>_VERSION_<MAJOR,MINOR,BUGFIX,BUILD>
 function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
 
+    # Arguments
+    set(oneValueArgs VERSION_HEADER PREFIX HEADER_FOR)
+    cmake_parse_arguments(PARSE_ARGV 4 TINY "" "${oneValueArgs}" "")
+
     # Debug setup
     list(APPEND CMAKE_MESSAGE_CONTEXT VersionHeader)
-    set(mainMessage "Reading Version Header for ${TinyOrm_ns}")
+    set(mainMessage "Reading Version Header for ${TINY_HEADER_FOR}")
     message(DEBUG ${mainMessage})
     list(APPEND CMAKE_MESSAGE_INDENT "  ")
-
-    # Arguments
-    set(oneValueArgs VERSION_HEADER PREFIX)
-    cmake_parse_arguments(PARSE_ARGV 4 TINY "" "${oneValueArgs}" "")
 
     # ---
 

@@ -19,6 +19,7 @@ tiny_read_version(TINY_VERSION
     TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
     VERSION_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/include/orm/version.hpp"
     PREFIX TINYORM
+    HEADER_FOR "${TinyOrm_ns}"
 )
 
 # Basic project and cmake build setup
@@ -140,7 +141,7 @@ set_target_properties(${TinyOrm_target}
         EXPORT_NAME ${TinyOrm_ns}
 )
 
-# Append a major version number for Windows/MinGW only
+# Append a major version number for shared or static library on Windows/MinGW only
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set_property(
         TARGET ${TinyOrm_target}
@@ -181,10 +182,7 @@ endif()
 # ---
 
 include(TinyResourceAndManifest)
-tiny_resource_and_manifest(${TinyOrm_target} "include/orm/"
-    "${TINY_BUILD_GENDIR}/include/orm/"
-    "${TINY_BUILD_GENDIR}/tmp/"
-)
+tiny_resource_and_manifest(${TinyOrm_target} "${TINY_BUILD_GENDIR}/tmp/")
 
 # Resolve and link dependencies
 # ---

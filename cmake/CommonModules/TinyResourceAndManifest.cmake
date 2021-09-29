@@ -1,6 +1,5 @@
 # Configure Windows resource and manifest files
-function(tiny_resource_and_manifest target version_header_path_in
-        version_header_path_out tmp_folder_path)
+function(tiny_resource_and_manifest target tmp_folder_path)
 
     # Include Windows RC and manifest file for a shared library or executable
     get_target_property(target_type ${target} TYPE)
@@ -22,10 +21,6 @@ function(tiny_resource_and_manifest target version_header_path_in
     file(REAL_PATH "${tmp_folder_path}" tmp_folder_path
         BASE_DIRECTORY "${CMAKE_BINARY_DIR}"
     )
-
-    # OriginalFilename behavior:
-    # - append a major version number for Windows/MinGW shared and static library
-    # - append d for Debug configuration for shared and static library
 
     configure_file(
         "resources/${target}.rc.in"

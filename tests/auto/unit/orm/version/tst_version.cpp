@@ -5,8 +5,22 @@
 
 #include "fs.hpp"
 
-// TinyORM and TinyUtils version files
-#include "versiondebug_qmake.hpp"
+// TinyORM
+#include "orm/version.hpp"
+// TinyUtils
+#include "version.hpp"
+
+// Used by checkFileVersion_*() tests
+#if defined(_MSC_VER) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+#  ifdef TINYTEST_VERSION_IS_CMAKE
+#    include "versiondebug_cmake.hpp"
+#  elif defined(TINYTEST_VERSION_IS_QMAKE)
+#    include "versiondebug_qmake.hpp"
+#  endif
+#else
+#  define TINYTEST_VERSION_TINYORM_PATH
+#  define TINYTEST_VERSION_TINYUTILS_PATH
+#endif
 
 using namespace TestUtils;
 
@@ -21,6 +35,7 @@ private slots:
     void checkFileVersion_TinyOrm() const;
     void checkFileVersion_TinyUtils() const;
 
+#if defined(_MSC_VER)
 private:
     /*! Return value for the getExeVersionString(). */
     struct FileVersions
@@ -33,6 +48,7 @@ private:
 
     /*! Obtain a ProductVersion and FileVersion strings from an exe/dll. */
     FileVersions getExeVersionString(const QString &fileName) const;
+#endif
 };
 
 void tst_Version::versions_TinyOrm() const
@@ -108,12 +124,11 @@ void tst_Version::checkFileVersion_TinyOrm() const
 {
 #if !defined(_MSC_VER)
     QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
-#endif
-
-    const auto filePath = QStringLiteral("%1/src/debug/TinyOrm%2.dll")
-                          .arg(TINYORM_BUILD_TREE)
-                          .arg(TINYORM_VERSION_MAJOR);
-    const auto fileVersions = getExeVersionString(Fs::absolutePath(filePath));
+#elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+    QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
+#else
+    const auto fileVersions =
+            getExeVersionString(Fs::absolutePath(TINYTEST_VERSION_TINYORM_PATH));
 
     // Project and File Version strings
     const QString versionStr = QString::number(TINYORM_VERSION_MAJOR) + QChar('.') +
@@ -123,18 +138,18 @@ void tst_Version::checkFileVersion_TinyOrm() const
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
+#endif
 }
 
 void tst_Version::checkFileVersion_TinyUtils() const
 {
 #if !defined(_MSC_VER)
     QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
-#endif
-
-    const auto filePath = QStringLiteral("%1/tests/auto/utils/debug/utils%2.dll")
-                          .arg(TINYORM_BUILD_TREE)
-                          .arg(TINYUTILS_VERSION_MAJOR);
-    const auto fileVersions = getExeVersionString(Fs::absolutePath(filePath));
+#elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+    QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
+#else
+    const auto fileVersions =
+            getExeVersionString(Fs::absolutePath(TINYTEST_VERSION_TINYUTILS_PATH));
 
     // Project and File Version strings
     const QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR) + QChar('.') +
@@ -144,8 +159,11 @@ void tst_Version::checkFileVersion_TinyUtils() const
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
+#endif
 }
 
+// CUR test on mingw silverqx
+#if defined(_MSC_VER)
 tst_Version::FileVersions
 tst_Version::getExeVersionString(const QString &fileName) const
 {
@@ -193,6 +211,7 @@ tst_Version::getExeVersionString(const QString &fileName) const
                 .arg(LOWORD(lpBuffer->dwFileVersionLS)),
     };
 }
+#endif
 
 QTEST_MAIN(tst_Version)
 

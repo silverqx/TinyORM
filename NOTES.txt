@@ -182,8 +182,7 @@ All are snake-case unless otherwise specified.
  - option variables: upper case without prefix
  - cached variables: TINY_
  - function names has the tiny_ prefix
- - others
-   - TINYORM_ prefix is used for compile definitions
+ - compile definitions prefix by project eg. TINYORM_, TINYUTILS_
 
 
 UBSan:
