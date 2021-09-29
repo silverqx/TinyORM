@@ -1,24 +1,26 @@
 QT -= gui
 
 TEMPLATE = lib
+TARGET = TinyUtils
 
-# Utils library specific configuration
+# TinyUtils library specific configuration
 # ---
 
-CONFIG *= qt create_prl link_prl tinyorm_utils
+CONFIG *= qt create_prl link_prl
 
 # Common configuration
 # ---
 
 include(../../../qmake/common.pri)
 
-# Utils library defines
+# TinyUtils library defines
 # ---
 
+DEFINES += PROJECT_TINYUTILS
 # Build as shared library
 DEFINES += UTILS_BUILDING_SHARED
 
-# Utils library header and source files
+# TinyUtils library header and source files
 # ---
 
 include(src/src.pri)
@@ -71,13 +73,13 @@ include(../../../include/include.pri)
 # ---
 
 win32:CONFIG(release, debug|release) {
-    LIBS += -L$$TINYORM_BUILD_TREE/src/release/ -lTinyOrm
+    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/release/) -lTinyOrm
 }
 else:win32:CONFIG(debug, debug|release) {
-    LIBS += -L$$TINYORM_BUILD_TREE/src/debug/ -lTinyOrm
+    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/debug/) -lTinyOrm
 }
 else:unix {
-    LIBS += -L$$TINYORM_BUILD_TREE/src/ -lTinyOrm
+    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/) -lTinyOrm
 }
 
 # Default rules for deployment

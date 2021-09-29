@@ -1,17 +1,17 @@
-# utils library headers include path
+# TinyUtils library headers include path
 # ---
 
-INCLUDEPATH += $$quote($$PWD/utils/src)
+INCLUDEPATH += $$quote($$PWD/utils/src/)
 
-# Link against tests's utils library
+# Link against tests's TinyUtils library
 # ---
 
 win32:CONFIG(release, debug|release) {
-    LIBS += -L$$TINYORM_BUILD_TREE/tests/auto/utils/release/ -lutils0
+    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/tests/auto/utils/release/) -lTinyUtils
 }
 else:win32:CONFIG(debug, debug|release) {
-    LIBS += -L$$TINYORM_BUILD_TREE/tests/auto/utils/debug/ -lutils0
+    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/tests/auto/utils/debug/) -lTinyUtils
 }
 else:unix {
-    LIBS += -L$$TINYORM_BUILD_TREE/tests/auto/utils/ -lutils
+    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/tests/auto/utils/) -lTinyUtils
 }
