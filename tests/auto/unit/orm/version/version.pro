@@ -1,5 +1,5 @@
 include($$TINYORM_SOURCE_TREE/tests/qmake/common.pri)
-include($$TINYORM_SOURCE_TREE/tests/auto/utils.pri)
+include($$TINYORM_SOURCE_TREE/tests/qmake/utils.pri)
 
 HEADERS += \
     $$PWD/include/versiondebug_qmake.hpp.in \

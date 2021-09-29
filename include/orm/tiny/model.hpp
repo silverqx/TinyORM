@@ -100,7 +100,6 @@ namespace Relations {
     // CUR rename header macro defines from _H to _HPP silverqx
     // CUR unify utils lib name qmake/cmake silverqx
     // CUR move utils project to tests/ silverqx
-    // CUR move utils.pri to tests/qmake/ silverqx
     // BUG qmake impossible to add d postfix for dlls silverqx
     // BUG SemVer version cmake/qmake silverqx
     // CUR cmake/qmake SOVERSION silverqx

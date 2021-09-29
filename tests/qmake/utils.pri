@@ -1,7 +1,7 @@
 # TinyUtils library headers include path
 # ---
 
-INCLUDEPATH += $$quote($$PWD/utils/src/)
+INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tests/auto/utils/src/)
 
 # Link against tests's TinyUtils library
 # ---
