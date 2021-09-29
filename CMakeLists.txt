@@ -150,7 +150,6 @@ endif()
 
 target_include_directories(${TinyOrm_target} PUBLIC
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
-    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/include>"
 )
 
 # TinyORM defines
