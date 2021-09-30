@@ -24,7 +24,7 @@ win32-msvc {
     TINYTEST_VERSION_TINYORM_PATH = \
         $$quote($${TINYORM_BUILD_TREE}/src/$${TINY_RELEASE_TYPE}/TinyOrm0.dll)
     TINYTEST_VERSION_TINYUTILS_PATH = \
-        $$quote($${TINYORM_BUILD_TREE}/tests/auto/utils/$${TINY_RELEASE_TYPE}/TinyUtils0.dll)
+        $$quote($${TINYORM_BUILD_TREE}/tests/utils/$${TINY_RELEASE_TYPE}/TinyUtils0.dll)
 
     QMAKE_SUBSTITUTES += $$quote(include/versiondebug_qmake.hpp.in)
 
