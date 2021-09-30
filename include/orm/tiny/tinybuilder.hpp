@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TINYBUILDER_H
-#define TINYBUILDER_H
+#ifndef TINYBUILDER_HPP
+#define TINYBUILDER_HPP
 
 #include <QtSql/QSqlRecord>
 
@@ -928,4 +928,4 @@ namespace Orm::Tiny
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // TINYBUILDER_H
+#endif // TINYBUILDER_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TAGPROPERTY_H
-#define TAGPROPERTY_H
+#ifndef TAGPROPERTY_HPP
+#define TAGPROPERTY_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -15,4 +15,4 @@ class TagProperty final : public Model<TagProperty>
     QString u_table {"tag_properties"};
 };
 
-#endif // TAGPROPERTY_H
+#endif // TAGPROPERTY_HPP

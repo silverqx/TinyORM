@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UTILS_STRING_H
-#define UTILS_STRING_H
+#ifndef UTILS_STRING_HPP
+#define UTILS_STRING_HPP
 
 #include <QString>
 
@@ -26,4 +26,4 @@ namespace Orm::Utils::String
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // UTILS_STRING_H
+#endif // UTILS_STRING_HPP

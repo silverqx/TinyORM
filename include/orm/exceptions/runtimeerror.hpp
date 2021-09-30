@@ -1,6 +1,6 @@
 #pragma once
-#ifndef RUNTIMEERROR_H
-#define RUNTIMEERROR_H
+#ifndef RUNTIMEERROR_HPP
+#define RUNTIMEERROR_HPP
 
 #include <QString>
 
@@ -44,4 +44,4 @@ namespace Orm::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // RUNTIMEERROR_H
+#endif // RUNTIMEERROR_HPP

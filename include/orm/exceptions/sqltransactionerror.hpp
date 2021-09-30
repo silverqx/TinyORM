@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SQLTRANSACTIONERROR_H
-#define SQLTRANSACTIONERROR_H
+#ifndef SQLTRANSACTIONERROR_HPP
+#define SQLTRANSACTIONERROR_HPP
 
 #include "orm/exceptions/sqlerror.hpp"
 
@@ -23,4 +23,4 @@ namespace Orm::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // SQLTRANSACTIONERROR_H
+#endif // SQLTRANSACTIONERROR_HPP

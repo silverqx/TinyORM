@@ -1,6 +1,6 @@
 #pragma once
-#ifndef USER_H
-#define USER_H
+#ifndef USER_HPP
+#define USER_HPP
 
 #include <orm/tiny/model.hpp>
 
@@ -58,4 +58,4 @@ private:
     bool u_timestamps = false;
 };
 
-#endif // USER_H
+#endif // USER_HPP

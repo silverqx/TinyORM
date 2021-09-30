@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTPEEREAGER_H
-#define TORRENTPEEREAGER_H
+#ifndef TORRENTPEEREAGER_HPP
+#define TORRENTPEEREAGER_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -36,4 +36,4 @@ private:
     };
 };
 
-#endif // TORRENTPEEREAGER_H
+#endif // TORRENTPEEREAGER_HPP

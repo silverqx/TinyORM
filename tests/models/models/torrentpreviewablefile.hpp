@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTPREVIEWABLEFILE_H
-#define TORRENTPREVIEWABLEFILE_H
+#ifndef TORRENTPREVIEWABLEFILE_HPP
+#define TORRENTPREVIEWABLEFILE_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -114,4 +114,4 @@ private:
     QStringList u_touches {"torrent"};
 };
 
-#endif // TORRENTPREVIEWABLEFILE_H
+#endif // TORRENTPREVIEWABLEFILE_HPP

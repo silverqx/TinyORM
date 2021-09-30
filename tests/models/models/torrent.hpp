@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENT_H
-#define TORRENT_H
+#ifndef TORRENT_HPP
+#define TORRENT_HPP
 
 #include "orm/db.hpp"
 #include "orm/tiny/model.hpp"
@@ -178,4 +178,4 @@ private:
 // TODO finish this, move to base class and test eg in qvector, qhash, etc silverqx
 //QDebug operator<<(QDebug debug, const Torrent &c);
 
-#endif // TORRENT_H
+#endif // TORRENT_HPP

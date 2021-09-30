@@ -1,6 +1,6 @@
 #pragma once
-#ifndef POSTGRESPROCESSOR_H
-#define POSTGRESPROCESSOR_H
+#ifndef POSTGRESPROCESSOR_HPP
+#define POSTGRESPROCESSOR_HPP
 
 #include "orm/query/processors/processor.hpp"
 
@@ -29,4 +29,4 @@ namespace Orm::Query::Processors
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // POSTGRESPROCESSOR_H
+#endif // POSTGRESPROCESSOR_HPP

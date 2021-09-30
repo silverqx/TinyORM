@@ -1,6 +1,6 @@
 #pragma once
-#ifndef HASONEORMANY_H
-#define HASONEORMANY_H
+#ifndef HASONEORMANY_HPP
+#define HASONEORMANY_HPP
 
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/utils/attribute.hpp"
@@ -402,4 +402,4 @@ namespace Orm::Tiny::Relations
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // HASONEORMANY_H
+#endif // HASONEORMANY_HPP

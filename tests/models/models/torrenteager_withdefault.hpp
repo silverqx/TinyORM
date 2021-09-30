@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTEAGER_WITHDEFAULT_H
-#define TORRENTEAGER_WITHDEFAULT_H
+#ifndef TORRENTEAGER_WITHDEFAULT_HPP
+#define TORRENTEAGER_WITHDEFAULT_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -18,4 +18,4 @@ class TorrentEager_WithDefault final : public Model<TorrentEager_WithDefault>
     inline static QStringList u_dates {"added_on"};
 };
 
-#endif // TORRENTEAGER_WITHDEFAULT_H
+#endif // TORRENTEAGER_WITHDEFAULT_HPP

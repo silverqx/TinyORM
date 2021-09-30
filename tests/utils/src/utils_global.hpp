@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UTILS_GLOBAL_H
-#define UTILS_GLOBAL_H
+#ifndef UTILS_GLOBAL_HPP
+#define UTILS_GLOBAL_HPP
 
 #if defined(_MSC_VER) || defined(WIN64) || defined(_WIN64) || defined(__WIN64__) \
                       || defined(WIN32) || defined(_WIN32) || defined(__WIN32__) \
@@ -21,4 +21,4 @@
 #  define UTILS_EXPORT TINY_DECL_IMPORT
 #endif
 
-#endif // UTILS_GLOBAL_H
+#endif // UTILS_GLOBAL_HPP

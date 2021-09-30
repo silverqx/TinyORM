@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTEAGER_FAILED_H
-#define TORRENTEAGER_FAILED_H
+#ifndef TORRENTEAGER_FAILED_HPP
+#define TORRENTEAGER_FAILED_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -41,4 +41,4 @@ private:
     inline static QStringList u_dates {"added_on"};
 };
 
-#endif // TORRENTEAGER_FAILED_H
+#endif // TORRENTEAGER_FAILED_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SCHEMAGRAMMAR_H
-#define SCHEMAGRAMMAR_H
+#ifndef SCHEMAGRAMMAR_HPP
+#define SCHEMAGRAMMAR_HPP
 
 #include "orm/basegrammar.hpp"
 
@@ -33,4 +33,4 @@ namespace Orm::Schema::Grammars
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // SCHEMAGRAMMAR_H
+#endif // SCHEMAGRAMMAR_HPP

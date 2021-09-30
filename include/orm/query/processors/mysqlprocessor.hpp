@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MYSQLPROCESSOR_H
-#define MYSQLPROCESSOR_H
+#ifndef MYSQLPROCESSOR_HPP
+#define MYSQLPROCESSOR_HPP
 
 #include "orm/query/processors/processor.hpp"
 
@@ -29,4 +29,4 @@ namespace Orm::Query::Processors
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // MYSQLPROCESSOR_H
+#endif // MYSQLPROCESSOR_HPP

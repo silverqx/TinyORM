@@ -1,6 +1,6 @@
 #pragma once
-#ifndef PIVOT_H
-#define PIVOT_H
+#ifndef PIVOT_HPP
+#define PIVOT_HPP
 
 #include "orm/tiny/relations/basepivot.hpp"
 
@@ -33,4 +33,4 @@ namespace Orm::Tiny::Relations
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // PIVOT_H
+#endif // PIVOT_HPP

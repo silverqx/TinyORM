@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LOGICERROR_H
-#define LOGICERROR_H
+#ifndef LOGICERROR_HPP
+#define LOGICERROR_HPP
 
 #include <QString>
 
@@ -42,4 +42,4 @@ namespace Orm::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // LOGICERROR_H
+#endif // LOGICERROR_HPP

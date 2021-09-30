@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTPEER_H
-#define TORRENTPEER_H
+#ifndef TORRENTPEER_HPP
+#define TORRENTPEER_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -38,4 +38,4 @@ private:
     };
 };
 
-#endif // TORRENTPEER_H
+#endif // TORRENTPEER_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MYSQLGRAMMAR_H
-#define MYSQLGRAMMAR_H
+#ifndef MYSQLGRAMMAR_HPP
+#define MYSQLGRAMMAR_HPP
 
 #include "orm/query/grammars/grammar.hpp"
 
@@ -61,4 +61,4 @@ namespace Orm::Query::Grammars
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // MYSQLGRAMMAR_H
+#endif // MYSQLGRAMMAR_HPP

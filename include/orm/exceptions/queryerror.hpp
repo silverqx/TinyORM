@@ -1,6 +1,6 @@
 #pragma once
-#ifndef QUERYERROR_H
-#define QUERYERROR_H
+#ifndef QUERYERROR_HPP
+#define QUERYERROR_HPP
 
 #include <QVariant>
 
@@ -46,4 +46,4 @@ namespace Orm::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // QUERYERROR_H
+#endif // QUERYERROR_HPP

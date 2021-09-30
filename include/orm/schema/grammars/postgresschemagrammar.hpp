@@ -1,6 +1,6 @@
 #pragma once
-#ifndef POSTGRESSCHEMAGRAMMAR_H
-#define POSTGRESSCHEMAGRAMMAR_H
+#ifndef POSTGRESSCHEMAGRAMMAR_HPP
+#define POSTGRESSCHEMAGRAMMAR_HPP
 
 #include "orm/schema/grammars/schemagrammar.hpp"
 
@@ -29,4 +29,4 @@ namespace Orm::Schema::Grammars
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // POSTGRESSCHEMAGRAMMAR_H
+#endif // POSTGRESSCHEMAGRAMMAR_HPP

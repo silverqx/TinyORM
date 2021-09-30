@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORMTYPES_H
-#define ORMTYPES_H
+#ifndef ORMTYPES_HPP
+#define ORMTYPES_HPP
 
 #include <QSharedPointer>
 #include <QVariant>
@@ -280,4 +280,4 @@ Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem)
 Q_DECLARE_METATYPE(Orm::WhereConditionItem)
 #endif
 
-#endif // ORMTYPES_H
+#endif // ORMTYPES_HPP

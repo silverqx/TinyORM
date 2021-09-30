@@ -1,6 +1,6 @@
 #pragma once
-#ifndef HASCONNECTIONRESOLVER_H
-#define HASCONNECTIONRESOLVER_H
+#ifndef HASCONNECTIONRESOLVER_HPP
+#define HASCONNECTIONRESOLVER_HPP
 
 #include "orm/utils/export.hpp"
 
@@ -39,4 +39,4 @@ namespace Concerns
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // HASCONNECTIONRESOLVER_H
+#endif // HASCONNECTIONRESOLVER_HPP

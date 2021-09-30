@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BASEGRAMMAR_H
-#define BASEGRAMMAR_H
+#ifndef BASEGRAMMAR_HPP
+#define BASEGRAMMAR_HPP
 
 #include "orm/ormtypes.hpp"
 #include "orm/utils/export.hpp"
@@ -176,4 +176,4 @@ namespace Query
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // BASEGRAMMAR_H
+#endif // BASEGRAMMAR_HPP

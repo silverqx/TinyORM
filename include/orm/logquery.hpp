@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LOGQUERY_H
-#define LOGQUERY_H
+#ifndef LOGQUERY_HPP
+#define LOGQUERY_HPP
 
 #include <QString>
 #include <QVariant>
@@ -35,4 +35,4 @@ void logExecutedQuery(const QSqlQuery &query);
 }
 #endif
 
-#endif // LOGQUERY_H
+#endif // LOGQUERY_HPP

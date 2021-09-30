@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SQLITEPROCESSOR_H
-#define SQLITEPROCESSOR_H
+#ifndef SQLITEPROCESSOR_HPP
+#define SQLITEPROCESSOR_HPP
 
 #include "orm/query/processors/processor.hpp"
 
@@ -29,4 +29,4 @@ namespace Orm::Query::Processors
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // SQLITEPROCESSOR_H
+#endif // SQLITEPROCESSOR_HPP

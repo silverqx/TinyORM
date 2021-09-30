@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BELONGSTOMANY_H
-#define BELONGSTOMANY_H
+#ifndef BELONGSTOMANY_HPP
+#define BELONGSTOMANY_HPP
 
 #include <QDateTime>
 #include <QtSql/QSqlRecord>
@@ -1951,4 +1951,4 @@ namespace Orm::Tiny::Relations
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // BELONGSTOMANY_H
+#endif // BELONGSTOMANY_HPP

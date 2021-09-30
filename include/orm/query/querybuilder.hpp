@@ -1,6 +1,6 @@
 #pragma once
-#ifndef QUERYBUILDER_H
-#define QUERYBUILDER_H
+#ifndef QUERYBUILDER_HPP
+#define QUERYBUILDER_HPP
 
 #include <QtSql/QSqlQuery>
 
@@ -1207,4 +1207,4 @@ namespace Query
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // QUERYBUILDER_H
+#endif // QUERYBUILDER_HPP

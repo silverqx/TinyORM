@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BELONGSTO_H
-#define BELONGSTO_H
+#ifndef BELONGSTO_HPP
+#define BELONGSTO_HPP
 
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
@@ -338,4 +338,4 @@ namespace Orm::Tiny::Relations
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // BELONGSTO_H
+#endif // BELONGSTO_HPP

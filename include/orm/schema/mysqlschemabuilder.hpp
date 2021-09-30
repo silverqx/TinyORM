@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MYSQLSCHEMABUILDER_H
-#define MYSQLSCHEMABUILDER_H
+#ifndef MYSQLSCHEMABUILDER_HPP
+#define MYSQLSCHEMABUILDER_HPP
 
 #include "orm/schema/schemabuilder.hpp"
 
@@ -28,4 +28,4 @@ namespace Orm::Schema
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // MYSQLSCHEMABUILDER_H
+#endif // MYSQLSCHEMABUILDER_HPP

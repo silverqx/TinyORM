@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GRAMMAR_H
-#define GRAMMAR_H
+#ifndef GRAMMAR_HPP
+#define GRAMMAR_HPP
 
 #include "orm/basegrammar.hpp"
 
@@ -216,4 +216,4 @@ namespace Orm::Query::Grammars
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // GRAMMAR_H
+#endif // GRAMMAR_HPP

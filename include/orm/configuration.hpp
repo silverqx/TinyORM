@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+#ifndef CONFIGURATION_HPP
+#define CONFIGURATION_HPP
 
 #include <QVariantHash>
 
@@ -29,4 +29,4 @@ namespace Orm
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // CONFIGURATION_H
+#endif // CONFIGURATION_HPP

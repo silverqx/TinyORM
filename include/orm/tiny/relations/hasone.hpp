@@ -1,6 +1,6 @@
 #pragma once
-#ifndef HASONE_H
-#define HASONE_H
+#ifndef HASONE_HPP
+#define HASONE_HPP
 
 #include "orm/tiny/relations/concerns/supportsdefaultmodels.hpp"
 #include "orm/tiny/relations/hasoneormany.hpp"
@@ -130,4 +130,4 @@ namespace Orm::Tiny::Relations
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // HASONE_H
+#endif // HASONE_HPP

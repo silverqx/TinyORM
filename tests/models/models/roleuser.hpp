@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ROLEUSER_H
-#define ROLEUSER_H
+#ifndef ROLEUSER_HPP
+#define ROLEUSER_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -17,4 +17,4 @@ class RoleUser final : public BasePivot<RoleUser>
     bool u_timestamps = false;
 };
 
-#endif // ROLEUSER_H
+#endif // ROLEUSER_HPP

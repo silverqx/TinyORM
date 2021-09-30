@@ -1,6 +1,6 @@
 #pragma once
-#ifndef FILEPROPERTYPROPERTY_H
-#define FILEPROPERTYPROPERTY_H
+#ifndef FILEPROPERTYPROPERTY_HPP
+#define FILEPROPERTYPROPERTY_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -43,4 +43,4 @@ private:
     QStringList u_touches {"fileProperty"};
 };
 
-#endif // FILEPROPERTYPROPERTY_H
+#endif // FILEPROPERTYPROPERTY_HPP

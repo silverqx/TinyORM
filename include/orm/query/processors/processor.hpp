@@ -1,6 +1,6 @@
 #pragma once
-#ifndef PROCESSOR_H
-#define PROCESSOR_H
+#ifndef PROCESSOR_HPP
+#define PROCESSOR_HPP
 
 #include <QStringList>
 #include <QtGlobal>
@@ -36,4 +36,4 @@ namespace Orm::Query::Processors
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // PROCESSOR_H
+#endif // PROCESSOR_HPP

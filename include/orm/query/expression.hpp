@@ -1,6 +1,6 @@
 #pragma once
-#ifndef EXPRESSION_H
-#define EXPRESSION_H
+#ifndef EXPRESSION_HPP
+#define EXPRESSION_HPP
 
 #include <QVariant>
 #include <QVector>
@@ -68,4 +68,4 @@ Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Query::Expression)
 Q_DECLARE_METATYPE(Orm::Query::Expression)
 #endif
 
-#endif // EXPRESSION_H
+#endif // EXPRESSION_HPP

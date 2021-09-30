@@ -1,6 +1,6 @@
 #pragma once
-#ifndef RELATION_H
-#define RELATION_H
+#ifndef RELATION_HPP
+#define RELATION_HPP
 
 #include <QtSql/QSqlQuery>
 
@@ -372,4 +372,4 @@ namespace Relations
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // RELATION_H
+#endif // RELATION_HPP

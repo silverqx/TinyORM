@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SQLITESCHEMAGRAMMAR_H
-#define SQLITESCHEMAGRAMMAR_H
+#ifndef SQLITESCHEMAGRAMMAR_HPP
+#define SQLITESCHEMAGRAMMAR_HPP
 
 #include "orm/schema/grammars/schemagrammar.hpp"
 
@@ -29,4 +29,4 @@ namespace Orm::Schema::Grammars
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // SQLITESCHEMAGRAMMAR_H
+#endif // SQLITESCHEMAGRAMMAR_HPP

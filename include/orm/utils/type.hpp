@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UTILS_TYPE_H
-#define UTILS_TYPE_H
+#ifndef UTILS_TYPE_HPP
+#define UTILS_TYPE_HPP
 
 #include <QString>
 
@@ -90,4 +90,4 @@ namespace Orm::Utils
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // UTILS_TYPE_H
+#endif // UTILS_TYPE_HPP

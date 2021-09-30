@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ROLE_H
-#define ROLE_H
+#ifndef ROLE_HPP
+#define ROLE_HPP
 
 #include <orm/tiny/model.hpp>
 
@@ -47,4 +47,4 @@ private:
     bool u_timestamps = false;
 };
 
-#endif // ROLE_H
+#endif // ROLE_HPP

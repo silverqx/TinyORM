@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MODELNOTFOUNDERROR_H
-#define MODELNOTFOUNDERROR_H
+#ifndef MODELNOTFOUNDERROR_HPP
+#define MODELNOTFOUNDERROR_HPP
 
 #include <QVariant>
 
@@ -60,4 +60,4 @@ namespace Orm::Tiny::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // MODELNOTFOUNDERROR_H
+#endif // MODELNOTFOUNDERROR_HPP

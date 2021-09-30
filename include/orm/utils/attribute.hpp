@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ATTRIBUTE_H
-#define ATTRIBUTE_H
+#ifndef ATTRIBUTE_HPP
+#define ATTRIBUTE_HPP
 
 #include "orm/ormtypes.hpp"
 #include "orm/utils/export.hpp"
@@ -39,4 +39,4 @@ namespace Orm::Utils::Attribute
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // ATTRIBUTE_H
+#endif // ATTRIBUTE_HPP

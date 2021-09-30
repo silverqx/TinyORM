@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MYSQLSCHEMAGRAMMAR_H
-#define MYSQLSCHEMAGRAMMAR_H
+#ifndef MYSQLSCHEMAGRAMMAR_HPP
+#define MYSQLSCHEMAGRAMMAR_HPP
 
 #include "orm/schema/grammars/schemagrammar.hpp"
 
@@ -29,4 +29,4 @@ namespace Orm::Schema::Grammars
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // MYSQLSCHEMAGRAMMAR_H
+#endif // MYSQLSCHEMAGRAMMAR_HPP

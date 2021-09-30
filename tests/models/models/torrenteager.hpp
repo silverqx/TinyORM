@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTEAGER_H
-#define TORRENTEAGER_H
+#ifndef TORRENTEAGER_HPP
+#define TORRENTEAGER_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -73,4 +73,4 @@ private:
     inline static QStringList u_dates {"added_on"};
 };
 
-#endif // TORRENTEAGER_H
+#endif // TORRENTEAGER_HPP

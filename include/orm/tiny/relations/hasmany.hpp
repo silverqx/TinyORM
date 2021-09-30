@@ -1,6 +1,6 @@
 #pragma once
-#ifndef HASMANY_H
-#define HASMANY_H
+#ifndef HASMANY_HPP
+#define HASMANY_HPP
 
 #include "orm/tiny/relations/hasoneormany.hpp"
 
@@ -126,4 +126,4 @@ namespace Orm::Tiny::Relations
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // HASMANY_H
+#endif // HASMANY_HPP

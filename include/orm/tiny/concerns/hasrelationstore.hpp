@@ -1,6 +1,6 @@
 #pragma once
-#ifndef HASRELATIONSTORE_H
-#define HASRELATIONSTORE_H
+#ifndef HASRELATIONSTORE_HPP
+#define HASRELATIONSTORE_HPP
 
 #include <optional>
 #include <stack>
@@ -775,4 +775,4 @@ namespace Concerns
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // HASRELATIONSTORE_H
+#endif // HASRELATIONSTORE_HPP

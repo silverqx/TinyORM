@@ -1,6 +1,6 @@
 #pragma once
-#ifndef DOMAINERROR_H
-#define DOMAINERROR_H
+#ifndef DOMAINERROR_HPP
+#define DOMAINERROR_HPP
 
 #include <stdexcept>
 
@@ -26,4 +26,4 @@ namespace Orm::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // DOMAINERROR_H
+#endif // DOMAINERROR_HPP

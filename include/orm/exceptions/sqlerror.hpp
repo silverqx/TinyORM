@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SQLERROR_H
-#define SQLERROR_H
+#ifndef SQLERROR_HPP
+#define SQLERROR_HPP
 
 #include <QtSql/QSqlError>
 
@@ -41,4 +41,4 @@ namespace Orm::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // SQLERROR_H
+#endif // SQLERROR_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TAG_H
-#define TAG_H
+#ifndef TAG_HPP
+#define TAG_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -78,4 +78,4 @@ private:
     QStringList u_touches {"torrents"};
 };
 
-#endif // TAG_H
+#endif // TAG_HPP

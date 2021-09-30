@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MASSASSIGNMENTERROR_H
-#define MASSASSIGNMENTERROR_H
+#ifndef MASSASSIGNMENTERROR_HPP
+#define MASSASSIGNMENTERROR_HPP
 
 #include "orm/exceptions/runtimeerror.hpp"
 
@@ -23,4 +23,4 @@ namespace Orm::Tiny::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // MASSASSIGNMENTERROR_H
+#endif // MASSASSIGNMENTERROR_HPP

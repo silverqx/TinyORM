@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SQLITEGRAMMAR_H
-#define SQLITEGRAMMAR_H
+#ifndef SQLITEGRAMMAR_HPP
+#define SQLITEGRAMMAR_HPP
 
 #include "orm/query/grammars/grammar.hpp"
 
@@ -67,4 +67,4 @@ namespace Orm::Query::Grammars
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // SQLITEGRAMMAR_H
+#endif // SQLITEGRAMMAR_HPP

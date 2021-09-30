@@ -1,6 +1,6 @@
 #pragma once
-#ifndef DATABASECONNECTION_H
-#define DATABASECONNECTION_H
+#ifndef DATABASECONNECTION_HPP
+#define DATABASECONNECTION_HPP
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -565,4 +565,4 @@ namespace Orm
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // DATABASECONNECTION_H
+#endif // DATABASECONNECTION_HPP

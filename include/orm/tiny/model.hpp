@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef MODEL_HPP
+#define MODEL_HPP
 
 #ifdef __GNUG__
 #include <map>
@@ -97,9 +97,6 @@ namespace Relations {
     // FUTURE mingw64, find out better solution for .text section exhausted in debug build, -Wa,-mbig-obj didn't help, -flto helps, but again it can not find reference to WinMain, so I had to compile with -O1, then it is ok silverqx
     // FUTURE tests, QtCreator Qt AutoTests how to pass -maxwarnings silverqx
     // FUTURE constexpr, version header file, good example https://googleapis.dev/cpp/google-cloud-common/0.6.1/version_8h_source.html silverqx
-    // CUR rename header macro defines from _H to _HPP silverqx
-    // CUR unify utils lib name qmake/cmake silverqx
-    // CUR move utils project to tests/ silverqx
     // BUG qmake impossible to add d postfix for dlls silverqx
     // BUG SemVer version cmake/qmake silverqx
     // CUR cmake/qmake SOVERSION silverqx
@@ -3310,4 +3307,4 @@ namespace Relations {
 // TODO study, find out how to avoid pivot include at the end of Model's header file silverqx
 #include "orm/tiny/relations/pivot.hpp"
 
-#endif // MODEL_H
+#endif // MODEL_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SQLITESCHEMABUILDER_H
-#define SQLITESCHEMABUILDER_H
+#ifndef SQLITESCHEMABUILDER_HPP
+#define SQLITESCHEMABUILDER_HPP
 
 #include "orm/schema/schemabuilder.hpp"
 
@@ -25,4 +25,4 @@ namespace Orm::Schema
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // SQLITESCHEMABUILDER_H
+#endif // SQLITESCHEMABUILDER_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef INVALIDFORMATERROR_H
-#define INVALIDFORMATERROR_H
+#ifndef INVALIDFORMATERROR_HPP
+#define INVALIDFORMATERROR_HPP
 
 #include "orm/exceptions/logicerror.hpp"
 
@@ -23,4 +23,4 @@ namespace Orm::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // INVALIDFORMATERROR_H
+#endif // INVALIDFORMATERROR_HPP

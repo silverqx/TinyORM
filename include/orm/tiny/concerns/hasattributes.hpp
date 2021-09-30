@@ -1,6 +1,6 @@
 #pragma once
-#ifndef HASATTRIBUTES_H
-#define HASATTRIBUTES_H
+#ifndef HASATTRIBUTES_HPP
+#define HASATTRIBUTES_HPP
 
 #include "orm/ormtypes.hpp"
 
@@ -60,4 +60,4 @@ namespace Orm::Tiny
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // HASATTRIBUTES_H
+#endif // HASATTRIBUTES_HPP

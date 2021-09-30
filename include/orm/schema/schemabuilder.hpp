@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SCHEMABUILDER_H
-#define SCHEMABUILDER_H
+#ifndef SCHEMABUILDER_HPP
+#define SCHEMABUILDER_HPP
 
 #include <QStringList>
 #include <QtGlobal>
@@ -51,4 +51,4 @@ namespace Grammars
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // SCHEMABUILDER_H
+#endif // SCHEMABUILDER_HPP

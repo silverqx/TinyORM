@@ -1,6 +1,6 @@
 #pragma once
-#ifndef JOINCLAUSE_H
-#define JOINCLAUSE_H
+#ifndef JOINCLAUSE_HPP
+#define JOINCLAUSE_HPP
 
 #include "orm/query/querybuilder.hpp"
 
@@ -71,4 +71,4 @@ namespace Orm::Query
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // JOINCLAUSE_H
+#endif // JOINCLAUSE_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTPEEREAGER_NORELATIONS_H
-#define TORRENTPEEREAGER_NORELATIONS_H
+#ifndef TORRENTPEEREAGER_NORELATIONS_HPP
+#define TORRENTPEEREAGER_NORELATIONS_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -15,4 +15,4 @@ class TorrentPeerEager_NoRelations final : public Model<TorrentPeerEager_NoRelat
     QString u_table {"torrent_peers"};
 };
 
-#endif // TORRENTPEEREAGER_NORELATIONS_H
+#endif // TORRENTPEEREAGER_NORELATIONS_HPP

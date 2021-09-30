@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SETTING_H
-#define SETTING_H
+#ifndef SETTING_HPP
+#define SETTING_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -19,4 +19,4 @@ private:
     bool u_incrementing = false;
 };
 
-#endif // SETTING_H
+#endif // SETTING_HPP

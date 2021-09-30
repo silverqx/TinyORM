@@ -1,6 +1,6 @@
 #pragma once
-#ifndef RELATIONNOTFOUNDERROR_H
-#define RELATIONNOTFOUNDERROR_H
+#ifndef RELATIONNOTFOUNDERROR_HPP
+#define RELATIONNOTFOUNDERROR_HPP
 
 #include "orm/exceptions/runtimeerror.hpp"
 
@@ -64,4 +64,4 @@ namespace Orm::Tiny::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // RELATIONNOTFOUNDERROR_H
+#endif // RELATIONNOTFOUNDERROR_HPP

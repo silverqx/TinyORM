@@ -1,6 +1,6 @@
 #pragma once
-#ifndef POSTGRESSCHEMABUILDER_H
-#define POSTGRESSCHEMABUILDER_H
+#ifndef POSTGRESSCHEMABUILDER_HPP
+#define POSTGRESSCHEMABUILDER_HPP
 
 #include "orm/schema/schemabuilder.hpp"
 
@@ -33,4 +33,4 @@ namespace Orm::Schema
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // POSTGRESSCHEMABUILDER_H
+#endif // POSTGRESSCHEMABUILDER_HPP

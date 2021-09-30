@@ -1,6 +1,6 @@
 #pragma once
-#ifndef DATABASEMANAGER_H
-#define DATABASEMANAGER_H
+#ifndef DATABASEMANAGER_HPP
+#define DATABASEMANAGER_HPP
 
 #include <QtSql/QSqlQuery>
 
@@ -315,4 +315,4 @@ namespace Query
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // DATABASEMANAGER_H
+#endif // DATABASEMANAGER_HPP

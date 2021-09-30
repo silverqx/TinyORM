@@ -1,6 +1,6 @@
 #pragma once
-#ifndef INVALIDARGUMENTERROR_H
-#define INVALIDARGUMENTERROR_H
+#ifndef INVALIDARGUMENTERROR_HPP
+#define INVALIDARGUMENTERROR_HPP
 
 #include <stdexcept>
 
@@ -26,4 +26,4 @@ namespace Orm::Exceptions
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // INVALIDARGUMENTERROR_H
+#endif // INVALIDARGUMENTERROR_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef POSTGRESGRAMMAR_H
-#define POSTGRESGRAMMAR_H
+#ifndef POSTGRESGRAMMAR_HPP
+#define POSTGRESGRAMMAR_HPP
 
 #include "orm/query/grammars/grammar.hpp"
 
@@ -77,4 +77,4 @@ namespace Orm::Query::Grammars
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-#endif // POSTGRESGRAMMAR_H
+#endif // POSTGRESGRAMMAR_HPP
