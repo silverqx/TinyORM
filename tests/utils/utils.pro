@@ -6,12 +6,12 @@ TARGET = TinyUtils
 # TinyUtils library specific configuration
 # ---
 
-CONFIG *= qt create_prl link_prl
+CONFIG *= qt link_prl create_prl create_pc create_libtool
 
 # Common configuration
 # ---
 
-include(../../../qmake/common.pri)
+include(../../qmake/common.pri)
 
 # TinyUtils library defines
 # ---
@@ -45,12 +45,12 @@ win32-msvc {
 # User Configuration
 # ---
 
-exists(../../conf.pri) {
-    include(../../conf.pri)
+exists(../conf.pri) {
+    include(../conf.pri)
 }
 else {
-    error( "'tests/conf.pri' for 'tests/auto/utils' library does not exist. See an\
-            example configuration in 'tests/conf.pri.example'." )
+    error( "'tests/conf.pri' for 'tests/utils' library does not exist. See an example\
+            configuration in 'tests/conf.pri.example'." )
 }
 
 # Use Precompiled headers (PCH)
@@ -67,7 +67,7 @@ HEADERS += $$quote($$PWD/src/pch.h)
 # TinyORM library headers include path
 # ---
 
-include(../../../include/include.pri)
+include(../../include/include.pri)
 
 # Link against TinyORM library
 # ---

@@ -1,3 +1,7 @@
 TEMPLATE = subdirs
 
-SUBDIRS = auto
+SUBDIRS = \
+    auto \
+    utils \
+
+auto.depends = utils
