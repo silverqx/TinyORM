@@ -52,6 +52,7 @@ namespace Relations {
     // TODO repeat, from time to time try to compile without microsoft extensions, QMAKE_CXXFLAGS *= -Za silverqx
     // TODO repeat, recompile without PCH silverqx
     // TODO repeat, open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
+    // TODO repeat, clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
     // TODO decide/unify when to use class/typename keywords for templates silverqx
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
@@ -84,7 +85,6 @@ namespace Relations {
     // FEATURE build systems, libuv example how it could look like https://github.com/libuv/libuv silverqx
     // CUR1 reorder all methods in model class silverqx
     // FUTURE cmake can generate export header file by GenerateExportHeader module, find way to use it, because I have own export header file, how to unify this? I don't know now silverqx
-    // CUR try this clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
     // CUR try clang-include-fixer at https://clang.llvm.org/extra/clang-include-fixer.html silverqx
     // CUR try iwyu at https://include-what-you-use.org/ silverqx
     // CUR unify one version number/file for cmake and qmake silverqx
