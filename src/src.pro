@@ -34,25 +34,28 @@ build_tests {
 # TinyORM library header and source files
 # ---
 
+# tiny_version_numbers() depends on HEADERS (version.hpp)
 include(../include/include.pri)
 include(src.pri)
 
-# File version and Windows manifest
+# File version
 # ---
 
-# Find version numbers in a version header file and assign them to the
+# Find version numbers in the version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
 load(tiny_version_numbers)
 tiny_version_numbers()
 
-win32-msvc {
-    QMAKE_TARGET_PRODUCT = TinyORM
-    QMAKE_TARGET_DESCRIPTION = TinyORM user-friendly ORM
-    QMAKE_TARGET_COMPANY = Crystal Studio
-    QMAKE_TARGET_COPYRIGHT = Copyright (©) 2021 Crystal Studio
-#    RC_ICONS = images/$${TARGET}.ico
-    RC_LANG = 1033
-}
+# Windows resource and manifest files
+# ---
+
+# Find icons, Windows manifest on MinGW and orm/version.hpp
+RC_INCLUDEPATH = \
+    $$quote($$TINYORM_SOURCE_TREE/include/) \
+    $$quote($$TINYORM_SOURCE_TREE/resources/)
+
+load(tiny_resource_and_manifest)
+tiny_resource_and_manifest(../resources)
 
 # User Configuration
 # ---

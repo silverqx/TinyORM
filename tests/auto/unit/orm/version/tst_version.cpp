@@ -1,7 +1,9 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#if defined(_MSC_VER) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 #include <qt_windows.h>
+#endif
 
 #include "fs.hpp"
 

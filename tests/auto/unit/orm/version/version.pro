@@ -1,9 +1,7 @@
 include($$TINYORM_SOURCE_TREE/tests/qmake/common.pri)
 include($$TINYORM_SOURCE_TREE/tests/qmake/utils.pri)
 
-HEADERS += \
-    $$PWD/include/versiondebug_qmake.hpp.in \
-    $$OUT_PWD/include/versiondebug_qmake.hpp \
+HEADERS += $$PWD/include/versiondebug_qmake.hpp.in
 
 SOURCES = tst_version.cpp
 
@@ -27,6 +25,8 @@ win32-msvc {
         $$quote($${TINYORM_BUILD_TREE}/tests/utils/$${TINY_RELEASE_TYPE}/TinyUtils0.dll)
 
     QMAKE_SUBSTITUTES += $$quote(include/versiondebug_qmake.hpp.in)
+
+    HEADERS += $$OUT_PWD/include/versiondebug_qmake.hpp
 
     INCLUDEPATH += $$quote($$OUT_PWD/include/)
 

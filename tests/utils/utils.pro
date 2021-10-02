@@ -3,29 +3,33 @@ QT -= gui
 TEMPLATE = lib
 TARGET = TinyUtils
 
-# TinyUtils library specific configuration
-# ---
-
-CONFIG *= qt link_prl create_prl create_pc create_libtool
-
 # Common configuration
 # ---
 
 include(../../qmake/common.pri)
 
+# TinyUtils library specific configuration
+# ---
+
+CONFIG *= qt link_prl create_prl create_pc create_libtool
+
 # TinyUtils library defines
 # ---
 
 DEFINES += PROJECT_TINYUTILS
-# Build as shared library
-DEFINES += UTILS_BUILDING_SHARED
+
+# Build as the shared library
+CONFIG(shared, dll|shared|static|staticlib) | CONFIG(dll, dll|shared|static|staticlib) {
+    DEFINES += UTILS_BUILDING_SHARED
+}
 
 # TinyUtils library header and source files
 # ---
 
+# tiny_version_numbers() depends on HEADERS (version.hpp)
 include(src/src.pri)
 
-# File version and windows manifest
+# File version
 # ---
 
 # Find version numbers in a version header file and assign them to the
@@ -33,14 +37,16 @@ include(src/src.pri)
 load(tiny_version_numbers)
 tiny_version_numbers()
 
-win32-msvc {
-    QMAKE_TARGET_PRODUCT = TinyUtils
-    QMAKE_TARGET_DESCRIPTION = Utils library for TinyORM tests
-    QMAKE_TARGET_COMPANY = Crystal Studio
-    QMAKE_TARGET_COPYRIGHT = Copyright (©) 2020 Crystal Studio
-#    RC_ICONS = images/$${$$TARGET}.ico
-    RC_LANG = 1033
-}
+# Windows resource and manifest files
+# ---
+
+# Find orm/version.hpp
+RC_INCLUDEPATH = $$quote($$TINYORM_SOURCE_TREE/tests/utils/src/)
+# Find Windows manifest
+mingw: RC_INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tests/utils/resources/)
+
+load(tiny_resource_and_manifest)
+tiny_resource_and_manifest()
 
 # User Configuration
 # ---
@@ -56,13 +62,9 @@ else {
 # Use Precompiled headers (PCH)
 # ---
 
-PRECOMPILED_HEADER = $$quote($$PWD/src/pch.h)
-
-precompile_header:!isEmpty(PRECOMPILED_HEADER) {
-    DEFINES += USING_PCH
+precompile_header {
+    include($$PWD/src/pch.pri)
 }
-
-HEADERS += $$quote($$PWD/src/pch.h)
 
 # TinyORM library headers include path
 # ---
