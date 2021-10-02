@@ -59,7 +59,7 @@ Type::classPureBasenameInternal(const char *typeName, const bool withNamespace)
     return classPureBasenameMsvc(typeName, withNamespace);
 #elif __GNUG__
     // Demangle a type name
-    int status;
+    int status = 0;
     const auto typeNameDemangled_ = abi::__cxa_demangle(typeName, nullptr, nullptr,
                                                         &status);
     const QString typeNameDemangled(typeNameDemangled_);
