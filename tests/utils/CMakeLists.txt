@@ -72,8 +72,17 @@ if(BUILD_SHARED_LIBS)
     target_compile_definitions(${TinyUtils_target} PRIVATE UTILS_BUILDING_SHARED)
 endif()
 
-# File version and Windows resource and manifest
+# Windows resource and manifest files
 # ---
+
+# Find Windows manifest file
+if(MINGW)
+    tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\"")
+
+# To remove values from CMAKE_RC_FLAGS from the previous call
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    tiny_set_rc_flags()
+endif()
 
 tiny_resource_and_manifest(${TinyUtils_target} "${TINY_BUILD_GENDIR}/tmp/")
 

@@ -178,8 +178,13 @@ if(BUILD_TESTS)
     target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_TESTS_CODE)
 endif()
 
-# File version and Windows resource and manifest
+# Windows resource and manifest files
 # ---
+
+# Find icons, orm/version.hpp, and Windows manifest file for MinGW
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\"")
+endif()
 
 include(TinyResourceAndManifest)
 tiny_resource_and_manifest(${TinyOrm_target} "${TINY_BUILD_GENDIR}/tmp/")

@@ -169,3 +169,28 @@ function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
     set(${out_tweak} ${CMAKE_MATCH_4} PARENT_SCOPE)
 
 endfunction()
+
+# Set CMAKE_RC_FLAGS, it saves and restores original content of the CMAKE_RC_FLAGS
+# variable, so rc/windres compile commands will not be polluted with include paths from
+# previous calls
+macro(tiny_set_rc_flags)
+
+    # Remove RC flags from the previous call
+    if(NOT TINY_RC_FLAGS_BACKUP STREQUAL "")
+        foreach(toRemove ${TINY_RC_FLAGS_BACKUP})
+            string(REGEX REPLACE "${toRemove}" "" CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}")
+        endforeach()
+        unset(toRemove)
+    endif()
+
+    list(APPEND CMAKE_RC_FLAGS " ${ARGN}")
+    list(JOIN CMAKE_RC_FLAGS " " CMAKE_RC_FLAGS)
+
+    # Remove redundant whitespaces
+    string(REGEX REPLACE " +" " " CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}")
+    string(STRIP "${CMAKE_RC_FLAGS}" CMAKE_RC_FLAGS)
+
+    # Will be removed from the CMAKE_RC_FLAGS in a future call
+    set(TINY_RC_FLAGS_BACKUP "${ARGN}")
+
+endmacro()

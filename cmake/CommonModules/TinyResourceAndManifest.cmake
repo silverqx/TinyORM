@@ -33,23 +33,24 @@ function(tiny_resource_and_manifest target tmp_folder_path)
         INPUT "${tmp_folder_path}/${target}_genexp.rc.in"
         NEWLINE_STYLE UNIX
     )
-    # Copy ico file only when it exists (needed in RC file)
-    file(COPY "resources/icons"
-        DESTINATION "${tmp_folder_path}"
-        FILES_MATCHING PATTERN "${target}.ico"
-    )
 
-    # Version Info Resource file
+    # Needed in the RC file, MinGW does not define the _DEBUG macro
+    if(MINGW)
+        set_source_files_properties("${tmp_folder_path}/${target}.rc"
+            TARGET_DIRECTORY ${target}
+            PROPERTIES COMPILE_DEFINITIONS $<$<CONFIG:Debug>:_DEBUG>
+        )
+    endif()
+
+    # Windows Resource file
     target_sources(${target} PRIVATE
         "resources/${target}.rc.in"
         "${tmp_folder_path}/${target}_genexp.rc.in"
         "${tmp_folder_path}/${target}.rc"
     )
 
-    # Manifest (injected through the RC file on MinGW)
-    if(MINGW)
-        target_sources(${target} PRIVATE "resources/${target}_mingw.rc")
-    else()
+    # Manifest file (injected through the RC file on MinGW)
+    if(NOT MINGW)
         # Obtain extension by target type - .exe or .dll
         if(target_type STREQUAL "SHARED_LIBRARY")
             set(tiny_original_extension "${CMAKE_SHARED_LIBRARY_SUFFIX}")

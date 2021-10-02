@@ -40,7 +40,7 @@ tiny_version_numbers()
 # Windows resource and manifest files
 # ---
 
-# Find orm/version.hpp
+# Find version.hpp
 RC_INCLUDEPATH = $$quote($$TINYORM_SOURCE_TREE/tests/utils/src/)
 # Find Windows manifest
 mingw: RC_INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tests/utils/resources/)
