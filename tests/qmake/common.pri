@@ -49,25 +49,23 @@ include(../../include/include.pri)
 # Link against TinyORM library
 # ---
 
-win32:CONFIG(release, debug|release) {
+win32:CONFIG(release, debug|release): \
     LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/release/) -lTinyOrm
-}
-else:win32:CONFIG(debug, debug|release) {
+
+else:win32:CONFIG(debug, debug|release): \
     LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/debug/) -lTinyOrm
-}
-else:unix {
+
+else:unix: \
     LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/) -lTinyOrm
-}
 
 target.CONFIG += no_default_install
 
 # User Configuration
 # ---
 
-exists(../conf.pri) {
+exists(../conf.pri): \
     include(../conf.pri)
-}
-else {
+
+else: \
     error( "'tests/conf.pri' for 'tests' project does not exist. See an example\
             configuration in 'tests/conf.pri.example'." )
-}

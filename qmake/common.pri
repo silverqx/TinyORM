@@ -24,9 +24,7 @@ DEFINES += QT_STRICT_ITERATORS
 # ---
 
 # Enable MySQL ping on Orm::MySqlConnection
-mysql_ping {
-    DEFINES += TINYORM_MYSQL_PING
-}
+mysql_ping: DEFINES += TINYORM_MYSQL_PING
 
 # Platform specific configuration
 # ---

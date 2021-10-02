@@ -8,16 +8,13 @@ SOURCES = tst_version.cpp
 # Used by checkFileVersion_*() tests
 win32-msvc {
     DEFINES += TINYTEST_VERSION_IS_QMAKE
-    CONFIG(shared, static|shared) {
+    CONFIG(shared, static|shared): \
         DEFINES += TINYTEST_VERSION_IS_SHARED_BUILD
-    }
 
-    CONFIG(release, debug|release) {
+    CONFIG(release, debug|release): \
         TINY_RELEASE_TYPE = release
-    }
-    else:CONFIG(debug, debug|release) {
+    else:CONFIG(debug, debug|release): \
         TINY_RELEASE_TYPE = debug
-    }
 
     TINYTEST_VERSION_TINYORM_PATH = \
         $$quote($${TINYORM_BUILD_TREE}/src/$${TINY_RELEASE_TYPE}/TinyOrm0.dll)

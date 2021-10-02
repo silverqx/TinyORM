@@ -22,14 +22,12 @@ DEFINES += PROJECT_TINYORM
 DEFINES += TINYORM_DEBUG_SQL
 
 # Build as the shared library
-CONFIG(shared, dll|shared|static|staticlib) | CONFIG(dll, dll|shared|static|staticlib) {
+CONFIG(shared, dll|shared|static|staticlib) | CONFIG(dll, dll|shared|static|staticlib): \
     DEFINES += TINYORM_BUILDING_SHARED
-}
 
 # Enable code needed by tests, eg. connection overriding in the Model
-build_tests {
+build_tests: \
     DEFINES += TINYORM_TESTS_CODE
-}
 
 # TinyORM library header and source files
 # ---
@@ -87,13 +85,12 @@ CONFIG(release, debug|release) {
 # User Configuration
 # ---
 
-exists(../conf.pri) {
+exists(../conf.pri): \
     include(../conf.pri)
-}
-else:is_vcpkg_build {
+
+else:is_vcpkg_build: \
     include(../qmake/vcpkgconf.pri)
-}
-else {
+
+else: \
     error( "'conf.pri' for 'src' project does not exist. See an example configuration\
             in 'conf.pri.example' or call 'vcpkg install' in the project's root." )
-}
