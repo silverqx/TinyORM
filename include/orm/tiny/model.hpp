@@ -101,8 +101,6 @@ namespace Relations {
     // BUG SemVer version cmake/qmake silverqx
     // CUR cmake/qmake SOVERSION silverqx
     // CUR qmake unify all CONFIG(debug/relase, ...), modify tiny_configure_cmake_rc() writefile by build_pass config type silverqx
-    // CUR tst_version on mingw throws error silverqx
-    // CUR decide if tst_version checkFileVersion_*() tests will be enabled on mignw silverqx
     // CUR 0.1.0 vs 0.1.0.0 Product/FileVersion, investigate, also check versions in pc, prl, ... silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>

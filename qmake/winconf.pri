@@ -1,12 +1,13 @@
 # WinApi
 # ---
 
-# TODO stackoverflow can I pass NTDDI_WIN10_19H1 in /D instead of magic numbers? https://docs.microsoft.com/en-us/windows/win32/winprog/using-the-windows-headers silverqx
+# All have to be defined because of checks at the beginning of the qt_windows.h
 # Windows 10 1903 "19H1" - 0x0A000007
-DEFINES += NTDDI_VERSION=0x0A000007
-# Windows 10 - 0x0A00
-DEFINES += _WIN32_WINNT=0x0A00
-DEFINES += _WIN32_IE=0x0A00
+DEFINES += WINVER=_WIN32_WINNT_WIN10
+DEFINES += NTDDI_VERSION=NTDDI_WIN10_19H1
+DEFINES += _WIN32_WINNT=_WIN32_WINNT_WIN10
+# Internet Explorer 11
+DEFINES += _WIN32_IE=_WIN32_IE_IE110
 # Exclude unneeded header files
 DEFINES += WIN32_LEAN_AND_MEAN
 DEFINES += NOMINMAX

@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-#if defined(_MSC_VER) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+#if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 #include <qt_windows.h>
 #endif
 
@@ -13,7 +13,7 @@
 #include "version.hpp"
 
 // Used by checkFileVersion_*() tests
-#if defined(_MSC_VER) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+#if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 #  ifdef TINYTEST_VERSION_IS_CMAKE
 #    include "versiondebug_cmake.hpp"
 #  elif defined(TINYTEST_VERSION_IS_QMAKE)
@@ -37,7 +37,7 @@ private slots:
     void checkFileVersion_TinyOrm() const;
     void checkFileVersion_TinyUtils() const;
 
-#if defined(_MSC_VER)
+#ifdef _WIN32
 private:
     /*! Return value for the getExeVersionString(). */
     struct FileVersions
@@ -124,7 +124,7 @@ void tst_Version::versions_TinyUtils() const
 
 void tst_Version::checkFileVersion_TinyOrm() const
 {
-#if !defined(_MSC_VER)
+#if !defined(_WIN32)
     QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
 #elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
@@ -145,7 +145,7 @@ void tst_Version::checkFileVersion_TinyOrm() const
 
 void tst_Version::checkFileVersion_TinyUtils() const
 {
-#if !defined(_MSC_VER)
+#if !defined(_WIN32)
     QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
 #elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
@@ -165,7 +165,7 @@ void tst_Version::checkFileVersion_TinyUtils() const
 }
 
 // CUR test on mingw silverqx
-#if defined(_MSC_VER)
+#ifdef _WIN32
 tst_Version::FileVersions
 tst_Version::getExeVersionString(const QString &fileName) const
 {
@@ -187,7 +187,7 @@ tst_Version::getExeVersionString(const QString &fileName) const
     }
 
     // VerQueryValue
-    VS_FIXEDFILEINFO *lpBuffer = NULL;
+    VS_FIXEDFILEINFO *lpBuffer = nullptr;
     UINT uLen = 0;
 
     if (!VerQueryValue(lpData, QString("\\").toStdWString().c_str(),

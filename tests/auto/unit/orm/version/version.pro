@@ -6,7 +6,7 @@ HEADERS += $$PWD/include/versiondebug_qmake.hpp.in
 SOURCES = tst_version.cpp
 
 # Used by checkFileVersion_*() tests
-win32-msvc {
+win32 {
     DEFINES += TINYTEST_VERSION_IS_QMAKE
     CONFIG(shared, static|shared): \
         DEFINES += TINYTEST_VERSION_IS_SHARED_BUILD
