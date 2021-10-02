@@ -35,21 +35,11 @@ DEFINES += TINYORM_TESTS_CODE
 
 DEFINES += TINYORM_LINKING_SHARED
 
-# User Configuration
-# ---
-
-exists(../conf.pri) {
-    include(../conf.pri)
-}
-else {
-    error( "'tests/conf.pri' for 'tests' project does not exist. See an example\
-            configuration in 'tests/conf.pri.example'." )
-}
-
 # Use TinyORM's library precompiled headers (PCH)
 # ---
 
-include(../../include/pch.pri)
+precompile_header: \
+    include(../../include/pch.pri)
 
 # TinyORM library headers include path
 # ---
@@ -70,3 +60,14 @@ else:unix {
 }
 
 target.CONFIG += no_default_install
+
+# User Configuration
+# ---
+
+exists(../conf.pri) {
+    include(../conf.pri)
+}
+else {
+    error( "'tests/conf.pri' for 'tests' project does not exist. See an example\
+            configuration in 'tests/conf.pri.example'." )
+}

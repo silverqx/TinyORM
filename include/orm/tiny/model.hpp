@@ -104,7 +104,6 @@ namespace Relations {
     // CUR tst_version on mingw throws error silverqx
     // CUR decide if tst_version checkFileVersion_*() tests will be enabled on mignw silverqx
     // CUR 0.1.0 vs 0.1.0.0 Product/FileVersion, investigate, also check versions in pc, prl, ... silverqx
-    // CUR conf.pri in pro file bottom, so user can override everything silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

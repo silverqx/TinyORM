@@ -57,26 +57,11 @@ RC_INCLUDEPATH = \
 load(tiny_resource_and_manifest)
 tiny_resource_and_manifest(../resources)
 
-# User Configuration
-# ---
-
-exists(../conf.pri) {
-    include(../conf.pri)
-}
-else:is_vcpkg_build {
-    include(../qmake/vcpkgconf.pri)
-}
-else {
-    error( "'conf.pri' for 'src' project does not exist. See an example configuration\
-            in 'conf.pri.example' or call 'vcpkg install' in the project's root." )
-}
-
 # Use Precompiled headers (PCH)
 # ---
 
-precompile_header {
+precompile_header: \
     include(../include/pch.pri)
-}
 
 # Deployment
 # ---
@@ -97,4 +82,18 @@ CONFIG(release, debug|release): message( "Project is built in RELEASE mode." )
 CONFIG(release, debug|release) {
     message( "Disabling debug output." )
     DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
+# User Configuration
+# ---
+
+exists(../conf.pri) {
+    include(../conf.pri)
+}
+else:is_vcpkg_build {
+    include(../qmake/vcpkgconf.pri)
+}
+else {
+    error( "'conf.pri' for 'src' project does not exist. See an example configuration\
+            in 'conf.pri.example' or call 'vcpkg install' in the project's root." )
 }

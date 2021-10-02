@@ -48,23 +48,11 @@ mingw: RC_INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tests/utils/resources/)
 load(tiny_resource_and_manifest)
 tiny_resource_and_manifest()
 
-# User Configuration
-# ---
-
-exists(../conf.pri) {
-    include(../conf.pri)
-}
-else {
-    error( "'tests/conf.pri' for 'tests/utils' library does not exist. See an example\
-            configuration in 'tests/conf.pri.example'." )
-}
-
 # Use Precompiled headers (PCH)
 # ---
 
-precompile_header {
+precompile_header: \
     include($$PWD/src/pch.pri)
-}
 
 # TinyORM library headers include path
 # ---
@@ -124,4 +112,15 @@ build_tests {
 build_tests {
     QMAKE_CLEAN = $$TINYORM_SQLITE_DATABASE
     QMAKE_DISTCLEAN = $$TINYORM_SQLITE_DATABASE
+}
+
+# User Configuration
+# ---
+
+exists(../conf.pri) {
+    include(../conf.pri)
+}
+else {
+    error( "'tests/conf.pri' for 'tests/utils' library does not exist. See an example\
+            configuration in 'tests/conf.pri.example'." )
 }
