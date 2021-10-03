@@ -331,7 +331,6 @@ namespace Relations
             keys.append(key.isEmpty() ? model.getKey()
                                       : model.getAttribute(key));
 
-        // CUR range-v3, pred/proj param, should use reference? silverqx
         using namespace ranges;
         return keys |= actions::sort(less {}, [](auto key_)
         {

@@ -165,7 +165,6 @@ void tst_Version::checkFileVersion_TinyUtils() const
 #endif
 }
 
-// CUR test on mingw silverqx
 #ifdef _WIN32
 tst_Version::FileVersions
 tst_Version::getExeVersionString(const QString &fileName) const
