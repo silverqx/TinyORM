@@ -1,7 +1,6 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-// CUR try if during cross-compile on unix to windows with mingw is _WIN32 defined silverqx
 #if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 #include <qt_windows.h>
 #endif
