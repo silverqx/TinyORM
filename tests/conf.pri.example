@@ -9,12 +9,12 @@ win32-g++|win32-clang-g++ {
 else:win32-msvc {
     # Includes
     # range-v3
-    INCLUDEPATH += $$quote(E:/c/qMedia/vcpkg/installed/x64-windows/include)
+    INCLUDEPATH += $$quote(E:/c/qMedia/vcpkg/installed/x64-windows/include/)
 }
 else:unix {
     # Includes
     # range-v3
-    QMAKE_CXXFLAGS += -isystem $$quote(/home/xyz/vcpkg/installed/x64-linux/include)
+    QMAKE_CXXFLAGS += -isystem $$quote(/home/xyz/vcpkg/installed/x64-linux/include/)
 
     # Use faster linkers
     clang: CONFIG *= use_lld_linker

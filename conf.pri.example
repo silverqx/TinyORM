@@ -31,22 +31,22 @@ win32-g++|win32-clang-g++ {
 else:win32-msvc {
     # Includes
     # range-v3
-    INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include)
+    INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include/)
     # boost
-#    INCLUDEPATH += $$quote(E:/c_libs/boost/boost_latest)
+#    INCLUDEPATH += $$quote(E:/c_libs/boost/boost_latest/)
 
     # Conditional dependencies
     # MySQL C library is used by TinyORM and it uses mysql_ping()
     mysql_ping {
-        INCLUDEPATH += $$quote(C:/Program Files/MySQL/MySQL Server 8.0/include)
-        LIBS += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.0/lib)
+        INCLUDEPATH += $$quote(C:/Program Files/MySQL/MySQL Server 8.0/include/)
+        LIBS += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.0/lib/)
         LIBS += -llibmysql
     }
 }
 else:unix {
     # Includes
     # range-v3
-    QMAKE_CXXFLAGS += -isystem $$quote(/home/xyz/vcpkg/installed/x64-linux/include)
+    QMAKE_CXXFLAGS += -isystem $$quote(/home/xyz/vcpkg/installed/x64-linux/include/)
 
     # Libraries
     # MySQL C library
