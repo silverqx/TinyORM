@@ -67,8 +67,7 @@ LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src$$TINY_RELEASE_TYPE/) -lTinyOrm
 # Default rules for deployment
 # ---
 
-CONFIG(release, debug|release): \
-    target.CONFIG += no_default_install
+target.CONFIG += no_default_install
 
 # Create the SQLite database
 # ---
