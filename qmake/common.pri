@@ -31,3 +31,14 @@ mysql_ping: DEFINES += TINYORM_MYSQL_PING
 win32: include(winconf.pri)
 macx: include(macxconf.pri)
 mingw|if(unix:!macx): include(unixconf.pri)
+
+# Common Logic
+# ---
+
+debug_and_release: {
+    CONFIG(release, debug|release): \
+        TINY_RELEASE_TYPE = /release
+    else:CONFIG(debug, debug|release): \
+        TINY_RELEASE_TYPE = /debug
+}
+else: TINY_RELEASE_TYPE =

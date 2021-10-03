@@ -19,9 +19,9 @@ CONFIG *= qt link_prl create_prl create_pc create_libtool
 DEFINES += PROJECT_TINYUTILS
 
 # Build as the shared library
-CONFIG(shared, dll|shared|static|staticlib) | CONFIG(dll, dll|shared|static|staticlib) {
+CONFIG(shared, dll|shared|static|staticlib) | \
+CONFIG(dll, dll|shared|static|staticlib): \
     DEFINES += UTILS_BUILDING_SHARED
-}
 
 # TinyUtils library header and source files
 # ---
@@ -62,14 +62,7 @@ include(../../include/include.pri)
 # Link against TinyORM library
 # ---
 
-win32:CONFIG(release, debug|release): \
-    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/release/) -lTinyOrm
-
-else:win32:CONFIG(debug, debug|release): \
-    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/debug/) -lTinyOrm
-
-else:unix: \
-    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/) -lTinyOrm
+LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src$$TINY_RELEASE_TYPE/) -lTinyOrm
 
 # Default rules for deployment
 # ---

@@ -49,14 +49,7 @@ include(../../include/include.pri)
 # Link against TinyORM library
 # ---
 
-win32:CONFIG(release, debug|release): \
-    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/release/) -lTinyOrm
-
-else:win32:CONFIG(debug, debug|release): \
-    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/debug/) -lTinyOrm
-
-else:unix: \
-    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src/) -lTinyOrm
+LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src$$TINY_RELEASE_TYPE/) -lTinyOrm
 
 target.CONFIG += no_default_install
 
