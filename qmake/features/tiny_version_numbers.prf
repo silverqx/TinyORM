@@ -6,6 +6,7 @@ defineTest(tiny_version_numbers) {
         error( "HEADERS does not contain a version header file version.hpp, needed\
                 in the tiny_version_numbers.prf." )
     }
+
     versionFileContent = $$cat($$quote($$absolute_path($$versionHeader)), lines)
     versionTokens = MAJOR MINOR BUGFIX BUILD STATUS
     regexpTokens = $$join(versionTokens, '|')

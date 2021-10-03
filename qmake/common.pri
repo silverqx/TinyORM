@@ -37,8 +37,8 @@ mingw|if(unix:!macx): include(unixconf.pri)
 
 debug_and_release: {
     CONFIG(release, debug|release): \
-        TINY_RELEASE_TYPE = /release
+        TINY_RELEASE_TYPE = $$quote(/release)
     else:CONFIG(debug, debug|release): \
-        TINY_RELEASE_TYPE = /debug
+        TINY_RELEASE_TYPE = $$quote(/debug)
 }
 else: TINY_RELEASE_TYPE =

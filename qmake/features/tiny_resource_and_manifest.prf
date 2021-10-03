@@ -1,6 +1,7 @@
 # Include Windows resource and manifest files.
 defineTest(tiny_resource_and_manifest) {
-    # Relevant for shared library only
+    # Relevant for exe or shared library
+    !contains(TEMPLATE, ".*(lib|app)"): \
     !CONFIG(shared, dll|shared|static|staticlib): \
     CONFIG(dll, dll|shared|static|staticlib): \
         return()
@@ -23,11 +24,15 @@ defineTest(tiny_resource_and_manifest) {
     # Resource folder for the currently processed project
     resourcePath = $$tiny_get_resource_folder($$resourcesFolder)
 
+    # Target's extension
+    contains(TEMPLATE, ".*app"): targetExt = ".exe"
+    else:contains(TEMPLATE, ".*lib"): targetExt = ".dll"
+
     # On MSVC use EMBED and on MinGW injected through the RC file
     !mingw: \
         QMAKE_LFLAGS += \
             /MANIFEST:EMBED \
-            /MANIFESTINPUT:$$shell_quote($$resourcePath/$${TARGET}.dll.manifest)
+            /MANIFESTINPUT:$$shell_quote($$resourcePath/$${TARGET}$${targetExt}.manifest)
 
     export(DEFINES)
     export(RC_FILE)
