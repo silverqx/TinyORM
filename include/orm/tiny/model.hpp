@@ -87,11 +87,9 @@ namespace Relations {
     // FUTURE cmake can generate export header file by GenerateExportHeader module, find way to use it, because I have own export header file, how to unify this? I don't know now silverqx
     // CUR try clang-include-fixer at https://clang.llvm.org/extra/clang-include-fixer.html silverqx
     // CUR try iwyu at https://include-what-you-use.org/ silverqx
-    // CUR unify one version number/file for cmake and qmake silverqx
     // CUR generate pkg-config file on unix silverqx
     // CUR cmake use gold linker option, https://github.com/frobware/c-hacks/blob/master/cmake/use-gold-linker.cmake silverqx
     // CUR use #pragma system_header when I will tune playground, https://docs.microsoft.com/en-us/cpp/preprocessor/system-header-pragma?view=msvc-160 silverqx
-    // CUR qmake, use manifest and rc file from cmake build in qmake build silverqx
     // BUG mingw64, TinyOrmPlayground seg. fault at the end, but everything runs/passes correctly, but only when invoked from mintty terminal, when I run it from QtCreator that uses cmd I don't see any seg. fault silverqx
     // BUG mingw64, seg fault in some tests eg. tst_model, and couldn't execute tests again, mingw64 shell works silverqx
     // FUTURE mingw64, find out better solution for .text section exhausted in debug build, -Wa,-mbig-obj didn't help, -flto helps, but again it can not find reference to WinMain, so I had to compile with -O1, then it is ok silverqx
