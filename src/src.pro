@@ -48,13 +48,15 @@ tiny_version_numbers()
 # Windows resource and manifest files
 # ---
 
-# Find icons, Windows manifest on MinGW and orm/version.hpp
-RC_INCLUDEPATH = \
-    $$quote($$TINYORM_SOURCE_TREE/include/) \
-    $$quote($$TINYORM_SOURCE_TREE/resources/)
+win32 {
+    # Find icons, Windows manifest on MinGW and orm/version.hpp
+    RC_INCLUDEPATH = \
+        $$quote($$TINYORM_SOURCE_TREE/include/) \
+        $$quote($$TINYORM_SOURCE_TREE/resources/)
 
-load(tiny_resource_and_manifest)
-tiny_resource_and_manifest(../resources)
+    load(tiny_resource_and_manifest)
+    tiny_resource_and_manifest(../resources)
+}
 
 # Use Precompiled headers (PCH)
 # ---
