@@ -25,7 +25,9 @@ target_include_directories(version PRIVATE
     "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/include>"
 )
 
-target_link_libraries(version PRIVATE Version.lib)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_link_libraries(version PRIVATE Version.lib)
+endif()
 
 # Support a real TinyOrm/TinyUtils library filenames
 configure_file(
