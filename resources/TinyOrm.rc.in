@@ -51,5 +51,5 @@ VS_VERSION_INFO VERSIONINFO
 /* End of Version info */
 
 #ifdef __MINGW32__
-ISOLATIONAWARE_MANIFEST_RESOURCE_ID RT_MANIFEST "TinyOrm.dll.manifest"
+ISOLATIONAWARE_MANIFEST_RESOURCE_ID RT_MANIFEST "@TinyOrm_target@$<TARGET_FILE_SUFFIX:@TinyOrm_target@>.manifest"
 #endif

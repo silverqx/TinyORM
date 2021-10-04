@@ -10,8 +10,12 @@ defineTest(tiny_resource_and_manifest) {
     isEmpty(1): resourcesFolder = resources
     else: resourcesFolder = $$1
 
+    # Target's extension
+    contains(TEMPLATE, ".*app"): targetExt = ".exe"
+    else:contains(TEMPLATE, ".*lib"): targetExt = ".dll"
+
     # Windows Resource file
-    rcFile = $$tiny_configure_cmake_rc($$resourcesFolder)
+    rcFile = $$tiny_configure_cmake_rc($$resourcesFolder, $$targetExt)
 
     # Needed in the RC file, MinGW does not define _DEBUG macro
     mingw:CONFIG(debug, debug|release): DEFINES += _DEBUG
@@ -23,10 +27,6 @@ defineTest(tiny_resource_and_manifest) {
 
     # Resource folder for the currently processed project
     resourcePath = $$tiny_get_resource_folder($$resourcesFolder)
-
-    # Target's extension
-    contains(TEMPLATE, ".*app"): targetExt = ".exe"
-    else:contains(TEMPLATE, ".*lib"): targetExt = ".dll"
 
     # On MSVC use EMBED and on MinGW injected through the RC file
     !mingw: \
@@ -56,6 +56,7 @@ defineReplace(tiny_configure_cmake_rc) {
 
     rcFileContent ~= s/@$${TARGET}_target@/$$TARGET
     rcFileContent ~= s/\\$<TARGET_FILE_NAME:$$TARGET>/$$basename(QMAKE_RESOLVED_TARGET)
+    rcFileContent ~= s/\\$<TARGET_FILE_SUFFIX:$$TARGET>/$$2
 
     # Obtain a full filepath of the Windows RC file
     rcFilename = $$str_member($$rcFile, 0, -4)

@@ -99,6 +99,7 @@ namespace Relations {
     // BUG SemVer version cmake/qmake silverqx
     // CUR cmake/qmake SOVERSION silverqx
     // CUR 0.1.0 vs 0.1.0.0 Product/FileVersion, investigate, also check versions in pc, prl, ... silverqx
+    // CUR qmake check generated resources tmp/ folder and build_pass() silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
