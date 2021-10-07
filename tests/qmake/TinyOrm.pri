@@ -8,7 +8,7 @@ CONFIG(dll, dll|shared|static|staticlib): \
 # TinyORM library headers include path
 # ---
 
-include($$TINYORM_SOURCE_TREE/include/include.pri)
+INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/include/)
 
 # Link against TinyORM library
 # ---
