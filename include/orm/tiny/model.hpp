@@ -101,8 +101,6 @@ namespace Relations {
     // CUR 0.1.0 vs 0.1.0.0 Product/FileVersion, investigate, also check versions in pc, prl, ... silverqx
     // CUR qmake check generated resources tmp/ folder and build_pass() silverqx
     // CUR enable QT_ASCII_CAST_WARNINGS silverqx
-    // CUR utils.pri, tests/utils/ folder to TinyUtils silverqx
-    // CUR add qmake/TinyOrm.pri, user can include it in HIS conf.pri silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

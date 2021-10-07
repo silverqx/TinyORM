@@ -33,25 +33,19 @@ DEFINES += PROJECT_TINYORM_TEST
 # Enable code needed by tests, eg connection overriding in the Model
 DEFINES += TINYORM_TESTS_CODE
 
-CONFIG(shared, dll|shared|static|staticlib) | \
-CONFIG(dll, dll|shared|static|staticlib): \
-    DEFINES += TINYORM_LINKING_SHARED
+# Link against TinyORM library (also adds defines and include headers)
+# ---
+
+include($$TINYORM_SOURCE_TREE/qmake/TinyOrm.pri)
 
 # Use TinyORM's library precompiled headers (PCH)
 # ---
 
 precompile_header: \
-    include(../../include/pch.pri)
+    include($$TINYORM_SOURCE_TREE/include/pch.pri)
 
-# TinyORM library headers include path
+# Default rules for deployment
 # ---
-
-include(../../include/include.pri)
-
-# Link against TinyORM library
-# ---
-
-LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src$$TINY_RELEASE_TYPE/) -lTinyOrm
 
 target.CONFIG += no_default_install
 

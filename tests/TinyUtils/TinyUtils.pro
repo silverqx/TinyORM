@@ -56,22 +56,10 @@ unset(tinyRcIncludepath)
 precompile_header: \
     include($$PWD/src/pch.pri)
 
-# TinyORM library defines
+# Link against TinyORM library (also adds defines and include headers)
 # ---
 
-CONFIG(shared, dll|shared|static|staticlib) | \
-CONFIG(dll, dll|shared|static|staticlib): \
-    DEFINES += TINYORM_LINKING_SHARED
-
-# TinyORM library headers include path
-# ---
-
-include(../../include/include.pri)
-
-# Link against TinyORM library
-# ---
-
-LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src$$TINY_RELEASE_TYPE/) -lTinyOrm
+include($$TINYORM_SOURCE_TREE/qmake/TinyOrm.pri)
 
 # Default rules for deployment
 # ---
