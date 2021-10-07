@@ -2,6 +2,6 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
     auto \
-    utils \
+    TinyUtils \
 
-auto.depends = utils
+auto.depends = TinyUtils

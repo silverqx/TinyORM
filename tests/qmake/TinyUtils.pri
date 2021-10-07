@@ -8,9 +8,9 @@ CONFIG(dll, dll|shared|static|staticlib): \
 # TinyUtils library headers include path
 # ---
 
-INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tests/utils/src/)
+INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tests/TinyUtils/src/)
 
 # Link against tests's TinyUtils library
 # ---
 
-LIBS += $$quote(-L$$TINYORM_BUILD_TREE/tests/utils$$TINY_RELEASE_TYPE/) -lTinyUtils
+LIBS += $$quote(-L$$TINYORM_BUILD_TREE/tests/TinyUtils$$TINY_RELEASE_TYPE/) -lTinyUtils

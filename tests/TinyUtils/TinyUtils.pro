@@ -41,9 +41,9 @@ tiny_version_numbers()
 # ---
 
 # Find version.hpp
-tinyRcIncludepath = $$quote($$TINYORM_SOURCE_TREE/tests/utils/src/)
+tinyRcIncludepath = $$quote($$TINYORM_SOURCE_TREE/tests/TinyUtils/src/)
 # Find Windows manifest
-mingw: tinyRcIncludepath += $$quote($$TINYORM_SOURCE_TREE/tests/utils/resources/)
+mingw: tinyRcIncludepath += $$quote($$TINYORM_SOURCE_TREE/tests/TinyUtils/resources/)
 
 load(tiny_resource_and_manifest)
 tiny_resource_and_manifest($$tinyRcIncludepath)
@@ -120,5 +120,5 @@ exists(../conf.pri): \
     include(../conf.pri)
 
 else: \
-    error( "'tests/conf.pri' for 'tests/utils' library does not exist. See an example\
+    error( "'tests/conf.pri' for 'tests/TinyUtils' library does not exist. See an example\
             configuration in 'tests/conf.pri.example'." )
