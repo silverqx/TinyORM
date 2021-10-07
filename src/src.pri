@@ -1,3 +1,6 @@
+extern_constants: \
+    SOURCES += $$PWD/orm/constants_extern.cpp
+
 SOURCES += \
     $$PWD/orm/basegrammar.cpp \
     $$PWD/orm/concerns/detectslostconnections.cpp \
@@ -7,7 +10,6 @@ SOURCES += \
     $$PWD/orm/connectors/mysqlconnector.cpp \
     $$PWD/orm/connectors/postgresconnector.cpp \
     $$PWD/orm/connectors/sqliteconnector.cpp \
-    $$PWD/orm/constants.cpp \
     $$PWD/orm/databaseconnection.cpp \
     $$PWD/orm/databasemanager.cpp \
     $$PWD/orm/db.cpp \

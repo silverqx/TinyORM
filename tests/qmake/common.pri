@@ -3,15 +3,15 @@ QT -= gui
 
 TEMPLATE = app
 
-# Common configuration
-# ---
-
-include(../../qmake/common.pri)
-
 # Tests specific configuration
 # ---
 
 CONFIG *= qt console testcase link_prl
+
+# Common configuration
+# ---
+
+include(../../qmake/common.pri)
 
 # Compiler and Linker options
 # ---
@@ -22,18 +22,20 @@ win32-g++ {
     QMAKE_CXXFLAGS_DEBUG += -O1
 }
 
-# TinyORM defines
+# Tests defines
 # ---
 
 DEFINES += PROJECT_TINYORM_TEST
 
+# TinyORM library defines
+# ---
+
 # Enable code needed by tests, eg connection overriding in the Model
 DEFINES += TINYORM_TESTS_CODE
 
-# Other libraries defines
-# ---
-
-DEFINES += TINYORM_LINKING_SHARED
+CONFIG(shared, dll|shared|static|staticlib) | \
+CONFIG(dll, dll|shared|static|staticlib): \
+    DEFINES += TINYORM_LINKING_SHARED
 
 # Use TinyORM's library precompiled headers (PCH)
 # ---

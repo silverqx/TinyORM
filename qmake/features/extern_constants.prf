@@ -1,0 +1,10 @@
+CONFIG(static, dll|shared|static|staticlib) | \
+CONFIG(staticlib, dll|shared|static|staticlib): \
+    error( "extern constants (extern_constants CONFIG option) cause crashes with\
+            an archive library, please use \"CONFIG += inline_constants\" instead." )
+
+CONFIG -= inline_constants
+DEFINES -= TINYORM_INLINE_CONSTANTS
+
+CONFIG += extern_constants
+DEFINES += TINYORM_EXTERN_CONSTANTS

@@ -10,7 +10,7 @@
 namespace TestUtils
 {
 
-    class UTILS_EXPORT Databases
+    class TINYUTILS_EXPORT Databases
     {
         Q_DISABLE_COPY(Databases)
 

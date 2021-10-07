@@ -37,7 +37,7 @@ private slots:
     void checkFileVersion_TinyOrm() const;
     void checkFileVersion_TinyUtils() const;
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 private:
     /*! Return value for the getExeVersionString(). */
     struct FileVersions
@@ -164,7 +164,7 @@ void tst_Version::checkFileVersion_TinyUtils() const
 #endif
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 tst_Version::FileVersions
 tst_Version::getExeVersionString(const QString &fileName) const
 {

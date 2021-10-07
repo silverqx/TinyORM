@@ -1,5 +1,10 @@
 INCLUDEPATH += $$PWD
 
+extern_constants: \
+    HEADERS += $$PWD/orm/constants_extern.hpp
+else: \
+    HEADERS += $$PWD/orm/constants_inline.hpp
+
 HEADERS += \
     $$PWD/orm/basegrammar.hpp \
     $$PWD/orm/concepts.hpp \
@@ -80,6 +85,7 @@ HEADERS += \
     $$PWD/orm/types/statementscounter.hpp \
     $$PWD/orm/utils/attribute.hpp \
     $$PWD/orm/utils/export.hpp \
+    $$PWD/orm/utils/export_global.hpp \
     $$PWD/orm/utils/string.hpp \
     $$PWD/orm/utils/type.hpp \
     $$PWD/orm/version.hpp \

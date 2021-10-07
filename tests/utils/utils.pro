@@ -3,15 +3,15 @@ QT -= gui
 TEMPLATE = lib
 TARGET = TinyUtils
 
-# Common configuration
-# ---
-
-include(../../qmake/common.pri)
-
 # TinyUtils library specific configuration
 # ---
 
 CONFIG *= qt link_prl create_prl create_pc create_libtool
+
+# Common configuration
+# ---
+
+include(../../qmake/common.pri)
 
 # TinyUtils library defines
 # ---
@@ -21,7 +21,7 @@ DEFINES += PROJECT_TINYUTILS
 # Build as the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
-    DEFINES += UTILS_BUILDING_SHARED
+    DEFINES += TINYUTILS_BUILDING_SHARED
 
 # TinyUtils library header and source files
 # ---
@@ -40,21 +40,28 @@ tiny_version_numbers()
 # Windows resource and manifest files
 # ---
 
-win32 {
-    # Find version.hpp
-    RC_INCLUDEPATH = $$quote($$TINYORM_SOURCE_TREE/tests/utils/src/)
-    # Find Windows manifest
-    mingw: RC_INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tests/utils/resources/)
+# Find version.hpp
+tinyRcIncludepath = $$quote($$TINYORM_SOURCE_TREE/tests/utils/src/)
+# Find Windows manifest
+mingw: tinyRcIncludepath += $$quote($$TINYORM_SOURCE_TREE/tests/utils/resources/)
 
-    load(tiny_resource_and_manifest)
-    tiny_resource_and_manifest()
-}
+load(tiny_resource_and_manifest)
+tiny_resource_and_manifest($$tinyRcIncludepath)
+
+unset(tinyRcIncludepath)
 
 # Use Precompiled headers (PCH)
 # ---
 
 precompile_header: \
     include($$PWD/src/pch.pri)
+
+# TinyORM library defines
+# ---
+
+CONFIG(shared, dll|shared|static|staticlib) | \
+CONFIG(dll, dll|shared|static|staticlib): \
+    DEFINES += TINYORM_LINKING_SHARED
 
 # TinyORM library headers include path
 # ---

@@ -12,7 +12,7 @@ namespace TestUtils
 {
 
     /*! Utility functions related to the filesystem. */
-    class UTILS_EXPORT Fs final
+    class TINYUTILS_EXPORT Fs final
     {
         Q_DISABLE_COPY(Fs)
 

@@ -4,15 +4,15 @@ QT -= gui
 TEMPLATE = lib
 TARGET = TinyOrm
 
-# Common Configuration
-# ---
-
-include(../qmake/common.pri)
-
 # TinyORM library specific configuration
 # ---
 
 CONFIG *= create_prl create_pc create_libtool
+
+# Common Configuration
+# ---
+
+include(../qmake/common.pri)
 
 # TinyORM defines
 # ---
@@ -48,15 +48,12 @@ tiny_version_numbers()
 # Windows resource and manifest files
 # ---
 
-win32 {
-    # Find icons, Windows manifest on MinGW and orm/version.hpp
-    RC_INCLUDEPATH = \
-        $$quote($$TINYORM_SOURCE_TREE/include/) \
-        $$quote($$TINYORM_SOURCE_TREE/resources/)
-
-    load(tiny_resource_and_manifest)
-    tiny_resource_and_manifest(../resources)
-}
+# Find icons, Windows manifest on MinGW and orm/version.hpp
+load(tiny_resource_and_manifest)
+tiny_resource_and_manifest(                                                            \
+    $$quote($$TINYORM_SOURCE_TREE/include/) $$quote($$TINYORM_SOURCE_TREE/resources/), \
+    ../resources                                                                       \
+)
 
 # Use Precompiled headers (PCH)
 # ---

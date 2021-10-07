@@ -1,4 +1,4 @@
-#include "orm/constants.hpp"
+#include "orm/constants_extern.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

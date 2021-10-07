@@ -32,9 +32,10 @@ win32: include(winconf.pri)
 macx: include(macxconf.pri)
 mingw|if(unix:!macx): include(unixconf.pri)
 
-# Common Logic
+# Common Variables
 # ---
 
+# Folder by release type
 debug_and_release: {
     CONFIG(release, debug|release): \
         TINY_RELEASE_TYPE = $$quote(/release)
@@ -42,3 +43,17 @@ debug_and_release: {
         TINY_RELEASE_TYPE = $$quote(/debug)
 }
 else: TINY_RELEASE_TYPE =
+
+# Other
+# ---
+
+# Use extern constants for shared build
+CONFIG(shared, dll|shared|static|staticlib) | \
+CONFIG(dll, dll|shared|static|staticlib): \
+    # Support override because inline_constants can be used in the shared build too
+    !inline_constants: \
+        CONFIG += extern_constants
+
+# Archive library build
+else: \
+    CONFIG += inline_constants

@@ -1,14 +1,18 @@
 # Include Windows resource and manifest files.
 defineTest(tiny_resource_and_manifest) {
+    # Relevant for Windows build only
+    !win32: return()
     # Relevant for exe or shared library
     !contains(TEMPLATE, ".*(lib|app)"): \
+        return()
+    # Library archive does not need RC or manifest file
     !CONFIG(shared, dll|shared|static|staticlib): \
-    CONFIG(dll, dll|shared|static|staticlib): \
+    !CONFIG(dll, dll|shared|static|staticlib): \
         return()
 
     # Path to the resources folder, relative to the currently processed project
-    isEmpty(1): resourcesFolder = resources
-    else: resourcesFolder = $$1
+    isEmpty(2): resourcesFolder = resources
+    else: resourcesFolder = $$2
 
     # Target's extension
     contains(TEMPLATE, ".*app"): targetExt = ".exe"
@@ -20,6 +24,7 @@ defineTest(tiny_resource_and_manifest) {
     # Needed in the RC file, MinGW does not define _DEBUG macro
     mingw:CONFIG(debug, debug|release): DEFINES += _DEBUG
 
+    RC_INCLUDEPATH = $$1
     RC_FILE = $$rcFile
 
     # Manifest file
@@ -35,6 +40,7 @@ defineTest(tiny_resource_and_manifest) {
             /MANIFESTINPUT:$$shell_quote($$resourcePath/$${TARGET}$${targetExt}.manifest)
 
     export(DEFINES)
+    export(RC_INCLUDEPATH)
     export(RC_FILE)
     export(CONFIG)
     export(QMAKE_LFLAGS)
