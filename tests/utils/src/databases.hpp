@@ -5,7 +5,7 @@
 #include "orm/configuration.hpp"
 #include "orm/connectioninterface.hpp"
 
-#include "utils_global.hpp"
+#include "export.hpp"
 
 namespace TestUtils
 {

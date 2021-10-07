@@ -2,8 +2,8 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/databases.hpp \
+    $$PWD/export.hpp \
     $$PWD/fs.hpp \
-    $$PWD/utils_global.hpp \
     $$PWD/version.hpp \
 
 SOURCES += \

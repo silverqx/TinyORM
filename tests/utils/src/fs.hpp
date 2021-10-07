@@ -4,7 +4,7 @@
 
 #include <QtGlobal>
 
-#include "utils_global.hpp"
+#include "export.hpp"
 
 class QString;
 
