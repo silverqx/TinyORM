@@ -6,5 +6,5 @@ CONFIG(staticlib, dll|shared|static|staticlib): \
 CONFIG -= inline_constants
 DEFINES -= TINYORM_INLINE_CONSTANTS
 
-CONFIG += extern_constants
-DEFINES += TINYORM_EXTERN_CONSTANTS
+CONFIG *= extern_constants
+DEFINES *= TINYORM_EXTERN_CONSTANTS
