@@ -13,4 +13,5 @@ include($$TINYORM_SOURCE_TREE/include/include.pri)
 # Link against TinyORM library
 # ---
 
-LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src$$TINY_RELEASE_TYPE/) -lTinyOrm
+LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src$$TINY_RELEASE_TYPE/)
+LIBS += -lTinyOrm

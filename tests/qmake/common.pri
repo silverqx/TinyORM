@@ -36,7 +36,7 @@ DEFINES += TINYORM_TESTS_CODE
 # Link against TinyORM library (also adds defines and include headers)
 # ---
 
-include($$TINYORM_SOURCE_TREE/qmake/TinyOrm.pri)
+include(TinyOrm.pri)
 
 # Use TinyORM's library precompiled headers (PCH)
 # ---

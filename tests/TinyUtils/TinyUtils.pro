@@ -59,7 +59,7 @@ precompile_header: \
 # Link against TinyORM library (also adds defines and include headers)
 # ---
 
-include($$TINYORM_SOURCE_TREE/qmake/TinyOrm.pri)
+include($$TINYORM_SOURCE_TREE/tests/qmake/TinyOrm.pri)
 
 # Default rules for deployment
 # ---

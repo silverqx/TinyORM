@@ -10,6 +10,7 @@ HEADERS += \
     $$PWD/orm/concepts.hpp \
     $$PWD/orm/concerns/detectslostconnections.hpp \
     $$PWD/orm/concerns/hasconnectionresolver.hpp \
+    $$PWD/orm/config.hpp \
     $$PWD/orm/configuration.hpp \
     $$PWD/orm/connectioninterface.hpp \
     $$PWD/orm/connectionresolverinterface.hpp \
