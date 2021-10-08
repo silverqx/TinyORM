@@ -23,8 +23,8 @@ project(${TinyUtils_ns}
 
 add_library(${TinyUtils_target}
     src/databases.hpp
+    src/export.hpp
     src/fs.hpp
-    src/utils_global.hpp
     src/version.hpp
 
     src/databases.cpp
@@ -69,7 +69,12 @@ target_include_directories(${TinyUtils_target} PUBLIC
 # ---
 
 if(BUILD_SHARED_LIBS)
-    target_compile_definitions(${TinyUtils_target} PRIVATE UTILS_BUILDING_SHARED)
+    target_compile_definitions(${TinyUtils_target}
+        PRIVATE
+            TINYUTILS_BUILDING_SHARED
+        INTERFACE
+            TINYUTILS_LINKING_SHARED
+    )
 endif()
 
 # Windows resource and manifest files

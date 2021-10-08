@@ -2,7 +2,15 @@
 # Create header and source files lists and return them
 function(tiny_sources out_headers out_sources)
 
-    set(headers
+    set(headers)
+
+    if(TINY_EXTERN_CONSTANTS)
+        list(APPEND headers constants_extern.hpp)
+    else()
+        list(APPEND headers constants_inline.hpp)
+    endif()
+
+    list(APPEND headers
         basegrammar.hpp
         concepts.hpp
         concerns/detectslostconnections.hpp
@@ -82,12 +90,19 @@ function(tiny_sources out_headers out_sources)
         types/statementscounter.hpp
         utils/attribute.hpp
         utils/export.hpp
+        utils/export_global.hpp
         utils/string.hpp
         utils/type.hpp
         version.hpp
     )
 
-    set(sources
+    set(sources)
+
+    if(TINY_EXTERN_CONSTANTS)
+        list(APPEND sources constants_extern.cpp)
+    endif()
+
+    list(APPEND sources
         basegrammar.cpp
         concerns/detectslostconnections.cpp
         concerns/hasconnectionresolver.cpp
@@ -96,7 +111,6 @@ function(tiny_sources out_headers out_sources)
         connectors/mysqlconnector.cpp
         connectors/postgresconnector.cpp
         connectors/sqliteconnector.cpp
-        constants.cpp
         databaseconnection.cpp
         databasemanager.cpp
         db.cpp

@@ -63,6 +63,11 @@ feature_option(BUILD_SHARED_LIBS
 feature_option(BUILD_TESTS
     "Build Qt tests" OFF
 )
+feature_option_dependent(INLINE_CONSTANTS
+    "Use inline constants instead of extern constants in the shared build. \
+OFF is highly recommended for the shared build; is always ON for the static build" OFF
+    "BUILD_SHARED_LIBS" ON
+)
 # TODO make it also dependend on NOT isMultiConfig silverqx
 # Depends on tiny_init_cmake_variables_pre() call
 feature_option_dependent(MATCH_EQUAL_EXPORTED_BUILDTREE
@@ -171,6 +176,13 @@ if(BUILD_SHARED_LIBS)
         INTERFACE
             TINYORM_LINKING_SHARED
     )
+endif()
+
+# Specifies which global constant types will be used
+if(TINY_EXTERN_CONSTANTS)
+    target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_EXTERN_CONSTANTS)
+else()
+    target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_INLINE_CONSTANTS)
 endif()
 
 # Enable code needed by tests, eg. connection overriding in the Model

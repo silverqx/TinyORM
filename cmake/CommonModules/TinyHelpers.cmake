@@ -94,7 +94,7 @@ function(target_optional_compile_definitions target scope)
         target_compile_definitions(${target} ${scope} ${TINY_DISABLED})
     endif()
 
-    if(${TINY_FEATURE})
+    if(TINY_FEATURE)
         add_feature_info(${TINY_NAME} ${TINY_NAME} "${TINY_DESCRIPTION}")
     endif()
 

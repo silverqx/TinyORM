@@ -39,7 +39,6 @@ function(tiny_configure_test name)
         PRIVATE
             PROJECT_TINYORM_TEST
             TINYORM_TESTS_CODE
-            TINYORM_LINKING_SHARED
     )
 
     target_include_directories(${name} PRIVATE

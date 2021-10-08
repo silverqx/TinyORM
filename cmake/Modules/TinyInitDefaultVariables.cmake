@@ -162,4 +162,13 @@ ${CMAKE_BINARY_DIR}/tests/auto/utils${TINY_PATH_SEPARATOR}$ENV{PATH}")
         "True when using a multi-configuration generator")
     unset(isMultiConfig)
 
+    # Specifies which global constant types will be used
+    if(BUILD_SHARED_LIBS AND NOT INLINE_CONSTANTS)
+        set(TINY_EXTERN_CONSTANTS ON CACHE INTERNAL
+            "Determine whether the project will be built with extern constants")
+    else()
+        set(TINY_EXTERN_CONSTANTS OFF CACHE INTERNAL
+            "Determine whether the project will be built with extern constants")
+    endif()
+
 endmacro()
