@@ -1,3 +1,12 @@
+# Unsupported build types
+# ---
+win32-clang-g++: {
+    CONFIG(static, dll|shared|static|staticlib) | \
+    CONFIG(staticlib, dll|shared|static|staticlib): \
+        error( "MinGW clang static build is not supported, contains a problem with\
+                duplicit symbols, you can try to fix it :)." )
+}
+
 # Common Configuration ( also for tests )
 # ---
 

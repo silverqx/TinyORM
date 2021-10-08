@@ -1,3 +1,11 @@
+win32-clang-g++: {
+    CONFIG(shared, dll|shared|static|staticlib) | \
+    CONFIG(dll, dll|shared|static|staticlib): \
+        error( "inline constants (inline_constants CONFIG option) cause crashes with\
+                an shared library on MinGW clang, please use\
+                \"CONFIG += extern_constants\" instead." )
+}
+
 CONFIG -= extern_constants
 DEFINES -= TINYORM_EXTERN_CONSTANTS
 

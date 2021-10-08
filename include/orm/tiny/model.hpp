@@ -103,6 +103,7 @@ namespace Relations {
     // CUR enable QT_ASCII_CAST_WARNINGS silverqx
     // CUR autoconfigure qmake with qmake/TinyOrm.pri and TINY_ROOT_DIR and TINY_TINYORM_BUILDS_DIR silverqx
     // CUR rename export_global.hpp to export_common.hpp silverqx
+    // CUR RC file and manifest for tests silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

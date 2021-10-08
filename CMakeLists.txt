@@ -63,11 +63,6 @@ feature_option(BUILD_SHARED_LIBS
 feature_option(BUILD_TESTS
     "Build Qt tests" OFF
 )
-feature_option_dependent(INLINE_CONSTANTS
-    "Use inline constants instead of extern constants in the shared build. \
-OFF is highly recommended for the shared build; is always ON for the static build" OFF
-    "BUILD_SHARED_LIBS" ON
-)
 # TODO make it also dependend on NOT isMultiConfig silverqx
 # Depends on tiny_init_cmake_variables_pre() call
 feature_option_dependent(MATCH_EQUAL_EXPORTED_BUILDTREE
@@ -84,6 +79,14 @@ feature_option(VERBOSE_CONFIGURE
     "Show information about PACKAGES_FOUND and PACKAGES_NOT_FOUND in the configure \
 output" OFF
 )
+# MinGW clang shared build crashes with inline constants
+if(NOT MINGW OR NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR NOT BUILD_SHARED_LIBS)
+    feature_option_dependent(INLINE_CONSTANTS
+        "Use inline constants instead of extern constants in the shared build. \
+OFF is highly recommended for the shared build; is always ON for the static build" OFF
+        "BUILD_SHARED_LIBS" ON
+    )
+endif()
 
 mark_as_advanced(MATCH_EQUAL_EXPORTED_BUILDTREE)
 
@@ -101,6 +104,9 @@ OFF to disable /MP completely.")
 # Initialize Tiny and default CMake variables
 tiny_init_cmake_variables()
 tiny_init_tiny_variables()
+
+# Throw a fatal error for unsupported environments
+tiny_check_unsupported_build()
 
 # TinyORM library header and source files
 # ---

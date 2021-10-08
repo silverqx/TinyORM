@@ -164,11 +164,15 @@ ${CMAKE_BINARY_DIR}/tests/auto/utils${TINY_PATH_SEPARATOR}$ENV{PATH}")
 
     # Specifies which global constant types will be used
     if(BUILD_SHARED_LIBS AND NOT INLINE_CONSTANTS)
-        set(TINY_EXTERN_CONSTANTS ON CACHE INTERNAL
-            "Determine whether the project will be built with extern constants")
+        set(tinyExternConstants ON)
+        message(VERBOSE "Using extern constants")
     else()
-        set(TINY_EXTERN_CONSTANTS OFF CACHE INTERNAL
-            "Determine whether the project will be built with extern constants")
+        set(tinyExternConstants OFF)
+        message(VERBOSE "Using inline constants")
     endif()
+    set(TINY_EXTERN_CONSTANTS ${tinyExternConstants} CACHE INTERNAL
+        "Determine whether ${TinyOrm_target} library will be built with extern or inline \
+constants")
+    unset(tinyExternConstants)
 
 endmacro()
