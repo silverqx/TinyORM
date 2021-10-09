@@ -4,6 +4,7 @@
 # MinGW
 win32-g++|win32-clang-g++ {
     # Use faster linker
+    # CONFIG *= use_lld_linker does not work on MinGW
     QMAKE_LFLAGS *= -fuse-ld=lld
 }
 else:win32-msvc {

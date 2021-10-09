@@ -104,6 +104,9 @@ namespace Relations {
     // CUR autoconfigure qmake with qmake/TinyOrm.pri and TINY_ROOT_DIR and TINY_TINYORM_BUILDS_DIR silverqx
     // CUR rename export_global.hpp to export_common.hpp silverqx
     // CUR RC file and manifest for tests silverqx
+    // BUG qmake MinGW UCRT64 clang static build duplicit symbols, this is MinGW bug silverqx
+    // BUG qmake MinGW UCRT64 clang shared build with inline_constants cause crashes of 50% of tests, this will be MinGW clang or clang bug, on unix it works without problems silverqx
+    // BUG cmake MinGW UCRT64 clang static build builds, but cause problem with inline_constants ; shared build with inline_constants cause crashes of 50% of tests, like bug above, this will be MinGW clang or clang bug, on unix it works without problems silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

@@ -15,17 +15,29 @@
 win32-g++|win32-clang-g++ {
     # Libraries
     # MySQL C library
-    # Find with pkg-config (preferred)
-    mysql_ping:!link_pkgconfig_off {
+    # Find with the pkg-config (preferred), shared build only
+    mysql_ping:!link_pkgconfig_off: \
+    !CONFIG(static, dll|shared|static|staticlib): \
+    !CONFIG(staticlib, dll|shared|static|staticlib) {
         CONFIG *= link_pkgconfig
         PKGCONFIG += libmariadb
     }
-    # Or add manually (use only one)
-    mysql_ping {
+    # Static build
+    else:mysql_ping: \
+    !CONFIG(shared, dll|shared|static|staticlib): \
+    !CONFIG(dll, dll|shared|static|staticlib): \
+        LIBS += -lmariadb.dll
+
+    # Or add manually (use only one method, above or this manual method)
+    mysql_ping: {
+        # For shared build
         LIBS += -lmariadb
+        # For static build
+        LIBS += -lmariadb.dll
     }
 
     # Use faster linker
+    # CONFIG *= use_lld_linker does not work on MinGW
     QMAKE_LFLAGS *= -fuse-ld=lld
 }
 else:win32-msvc {
