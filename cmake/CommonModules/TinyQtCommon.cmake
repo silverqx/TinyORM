@@ -115,6 +115,8 @@ function(tiny_qt_common target)
             -Wall
             -Wextra
             -Weffc++
+            -Werror
+            -Wfatal-errors
             -Wcast-qual
             -Wcast-align
             -Woverloaded-virtual

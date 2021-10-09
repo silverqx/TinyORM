@@ -18,6 +18,8 @@ QMAKE_CXXFLAGS_WARN_ON *= \
     -Wall \
     -Wextra \
     -Weffc++ \
+    -Werror \
+    -Wfatal-errors \
     -Wcast-qual \
     -Wcast-align \
     -Woverloaded-virtual \
