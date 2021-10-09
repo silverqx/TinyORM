@@ -2,7 +2,7 @@
 #ifndef TINYORM_EXPORT_HPP
 #define TINYORM_EXPORT_HPP
 
-#include "orm/utils/export_global.hpp"
+#include "orm/utils/export_common.hpp"
 
 #if defined(TINYORM_BUILDING_SHARED)
 #  define SHAREDLIB_EXPORT TINY_DECL_EXPORT
