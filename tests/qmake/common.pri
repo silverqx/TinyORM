@@ -38,6 +38,20 @@ DEFINES += TINYORM_TESTS_CODE
 
 include(TinyOrm.pri)
 
+# Windows resource and manifest files
+# ---
+
+# Find Windows manifest
+mingw: tinyRcIncludepath += $$quote($$TINYORM_SOURCE_TREE/tests/resources/)
+
+load(tiny_resource_and_manifest)
+tiny_resource_and_manifest($$tinyRcIncludepath,     \
+    $$quote($$TINYORM_SOURCE_TREE/tests/resources), \
+    true                                            \
+)
+
+unset(tinyRcIncludepath)
+
 # Use TinyORM's library precompiled headers (PCH)
 # ---
 

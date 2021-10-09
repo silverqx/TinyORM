@@ -11,15 +11,19 @@ defineTest(tiny_resource_and_manifest) {
         return()
 
     # Path to the resources folder, relative to the currently processed project
-    isEmpty(2): resourcesFolder = resources
-    else: resourcesFolder = $$2
+    isEmpty(2): resourcesFolder = $$absolute_path(resources, $$_PRO_FILE_PWD_)
+    else: resourcesFolder = $$absolute_path($$2)
+
+    # Processing of RC file and manifest file for the test?
+    defined(3, var):$$3: isTest = true
+    else: isTest = false
 
     # Target's extension
     contains(TEMPLATE, ".*app"): targetExt = ".exe"
     else:contains(TEMPLATE, ".*lib"): targetExt = ".dll"
 
     # Windows Resource file
-    rcFile = $$tiny_configure_cmake_rc($$resourcesFolder, $$targetExt)
+    rcFile = $$tiny_configure_cmake_rc($$resourcesFolder, $$targetExt, $$isTest)
 
     # Needed in the RC file, MinGW does not define _DEBUG macro
     mingw:CONFIG(debug, debug|release): DEFINES += _DEBUG
@@ -30,14 +34,16 @@ defineTest(tiny_resource_and_manifest) {
     # Manifest file
     CONFIG -= embed_manifest_dll
 
-    # Resource folder for the currently processed project
-    resourcePath = $$tiny_get_resource_folder($$resourcesFolder)
+    # Use the same manifest file for all tests
+    $$isTest: manifestBasename = test
+    else: manifestBasename = $$TARGET
 
     # On MSVC use EMBED and on MinGW injected through the RC file
     !mingw: \
         QMAKE_LFLAGS += \
             /MANIFEST:EMBED \
-            /MANIFESTINPUT:$$shell_quote($$resourcePath/$${TARGET}$${targetExt}.manifest)
+            /MANIFESTINPUT:$$shell_quote($$shell_path(\
+                $$resourcesFolder/$${manifestBasename}$${targetExt}.manifest))
 
     export(DEFINES)
     export(RC_INCLUDEPATH)
@@ -49,10 +55,17 @@ defineTest(tiny_resource_and_manifest) {
 # Substitute cmake variables in the Windows RC file, is better to reuse existing Windows
 # RC file than manage two practically the same files.
 defineReplace(tiny_configure_cmake_rc) {
-    rcFile = $$absolute_path($$PWD/$$1/$${TARGET}.rc.in)
+    # All tests use the same test.rc.in file
+    defined(3, var):$$3: rcBasename = test
+    else: rcBasename = $$TARGET
+
+    # The same logic for the substitution token, is 'test' for tests and $$TARGET instead
+    token = $$rcBasename
+
+    rcFile = $$absolute_path($$1/$${rcBasename}.rc.in)
     exists(rcFile) {
-        error( "Windows RC file $$1 passed to the tiny_configure_cmake_rc() does not\
-                exists." )
+        error( "Windows RC file $$rcFile does not exists, the path passed to the\
+                tiny_configure_cmake_rc() was $${1}." )
     }
 
     rcFileContent = $$cat($$rcFile, blob)
@@ -60,7 +73,8 @@ defineReplace(tiny_configure_cmake_rc) {
     # Support OriginalFilename in the Windows RC file
     load(resolve_target)
 
-    rcFileContent ~= s/@$${TARGET}_target@/$$TARGET
+    # Substitute Cmake variable values referenced as @VAR@ and also generator expressions
+    rcFileContent ~= s/@$${token}_target@/$$TARGET
     rcFileContent ~= s/\\$<TARGET_FILE_NAME:$$TARGET>/$$basename(QMAKE_RESOLVED_TARGET)
     rcFileContent ~= s/\\$<TARGET_FILE_SUFFIX:$$TARGET>/$$2
 
@@ -74,15 +88,4 @@ defineReplace(tiny_configure_cmake_rc) {
     }
 
     return($$rcFilepath)
-}
-
-# Find resource folder for the currently processed project, needed because src.pro has
-# unusual location, is in the subfolder.
-defineReplace(tiny_get_resource_folder) {
-    folder = $$absolute_path($$1, $$_PRO_FILE_PWD_)
-
-    exists($$folder): return($$folder)
-
-    error( "Can not find the 'resources' folder for $$basename(_PRO_FILE_) project,\
-            expected folder location is $$_PRO_FILE_PWD_/resources." )
 }

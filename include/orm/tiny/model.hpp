@@ -107,6 +107,7 @@ namespace Relations {
     // BUG qmake MinGW UCRT64 clang static build duplicit symbols, this is MinGW bug silverqx
     // BUG qmake MinGW UCRT64 clang shared build with inline_constants cause crashes of 50% of tests, this will be MinGW clang or clang bug, on unix it works without problems silverqx
     // BUG cmake MinGW UCRT64 clang static build builds, but cause problem with inline_constants ; shared build with inline_constants cause crashes of 50% of tests, like bug above, this will be MinGW clang or clang bug, on unix it works without problems silverqx
+    // CUR qmake adds Microsoft.Windows.Common-Controls to the exe manifest, check it silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
