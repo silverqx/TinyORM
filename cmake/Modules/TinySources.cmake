@@ -90,7 +90,7 @@ function(tiny_sources out_headers out_sources)
         types/statementscounter.hpp
         utils/attribute.hpp
         utils/export.hpp
-        utils/export_global.hpp
+        utils/export_common.hpp
         utils/string.hpp
         utils/type.hpp
         version.hpp
