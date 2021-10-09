@@ -27,6 +27,7 @@ function(tiny_qt_common target)
         # Disables all the APIs deprecated before Qt 6.0.0
         QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
+        #QT_ASCII_CAST_WARNINGS
         #QT_NO_CAST_FROM_ASCII
         #QT_RESTRICTED_CAST_FROM_ASCII
         QT_NO_CAST_TO_ASCII
