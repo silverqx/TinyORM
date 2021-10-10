@@ -59,16 +59,24 @@ defineReplace(tiny_configure_cmake_rc) {
     defined(3, var):$$3: rcBasename = TinyTest
     else: rcBasename = $$TARGET
 
-    tiny_manifest_basename = $$rcBasename
-
-    # The same logic for the substitution token, is 'test' for tests and $$TARGET instead
-    token = $$rcBasename
-
     rcFile = $$absolute_path($$1/$${rcBasename}.rc.in)
     exists(rcFile) {
         error( "Windows RC file $$rcFile does not exists, the path passed to the\
                 tiny_configure_cmake_rc() was $${1}." )
     }
+
+    # Obtain a full filepath of the Windows RC file
+    rcFilename = $$str_member($$rcFile, 0, -4)
+    rcFilename = $$basename(rcFilename)
+    rcFilepath = $$quote($$OUT_PWD/tmp/$$rcFilename)
+
+    # Generate only one RC file, is not needed to generate for every build pass
+    build_pass: return($$rcFilepath)
+
+    tiny_manifest_basename = $$rcBasename
+
+    # The same logic for the substitution token, is 'test' for tests and $$TARGET instead
+    token = $$rcBasename
 
     rcFileContent = $$cat($$rcFile, blob)
 
@@ -80,11 +88,6 @@ defineReplace(tiny_configure_cmake_rc) {
     rcFileContent ~= s/@tiny_manifest_basename@/$$tiny_manifest_basename
     rcFileContent ~= s/\\$<TARGET_FILE_NAME:$$TARGET>/$$basename(QMAKE_RESOLVED_TARGET)
     rcFileContent ~= s/\\$<TARGET_FILE_SUFFIX:$$TARGET>/$$2
-
-    # Obtain a full filepath of the Windows RC file
-    rcFilename = $$str_member($$rcFile, 0, -4)
-    rcFilename = $$basename(rcFilename)
-    rcFilepath = $$quote($$OUT_PWD/tmp/$$rcFilename)
 
     !write_file($$rcFilepath, rcFileContent) {
         error( "Can not write to the file $${rcFilepath}." )

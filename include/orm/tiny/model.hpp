@@ -99,7 +99,6 @@ namespace Relations {
     // BUG SemVer version cmake/qmake silverqx
     // CUR cmake/qmake SOVERSION silverqx
     // CUR 0.1.0 vs 0.1.0.0 Product/FileVersion, investigate, also check versions in pc, prl, ... silverqx
-    // CUR qmake check generated resources tmp/ folder and build_pass() silverqx
     // CUR enable QT_ASCII_CAST_WARNINGS silverqx
     // CUR enable QT_NO_CAST_FROM_ASCII silverqx
     // CUR autoconfigure qmake with qmake/TinyOrm.pri and TINY_ROOT_DIR and TINY_TINYORM_BUILDS_DIR silverqx
