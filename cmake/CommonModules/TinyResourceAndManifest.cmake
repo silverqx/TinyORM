@@ -1,5 +1,9 @@
 # Configure Windows resource and manifest files
-function(tiny_resource_and_manifest target tmp_folder_path)
+function(tiny_resource_and_manifest target)
+
+    set(options TEST)
+    set(oneValueArgs OUTPUT_DIR RESOURCES_DIR)
+    cmake_parse_arguments(PARSE_ARGV 1 TINY ${options} "${oneValueArgs}" "")
 
     # Include Windows RC and manifest file for a shared library or executable
     get_target_property(target_type ${target} TYPE)
@@ -12,31 +16,54 @@ function(tiny_resource_and_manifest target tmp_folder_path)
         return()
     endif()
 
+    # Initialize variables
     set(tiny_original_extension)
-    if(NOT tmp_folder_path)
-        set(tmp_folder_path "tmp/")
+    if(NOT TINY_OUTPUT_DIR)
+        set(TINY_OUTPUT_DIR "tmp/")
     endif()
 
-    # The path is relative to the build tree, an absolute path will not be touched
-    file(REAL_PATH "${tmp_folder_path}" tmp_folder_path
-        BASE_DIRECTORY "${CMAKE_BINARY_DIR}"
+    if(NOT DEFINED TINY_RESOURCES_DIR)
+        set(TINY_RESOURCES_DIR "resources")
+    endif()
+
+    # Absolute paths will not be touched
+    file(REAL_PATH "${TINY_OUTPUT_DIR}" TINY_OUTPUT_DIR
+        BASE_DIRECTORY "${PROJECT_BINARY_DIR}"
+    )
+    file(REAL_PATH "${TINY_RESOURCES_DIR}" TINY_RESOURCES_DIR
+        BASE_DIRECTORY "${PROJECT_SOURCE_DIR}"
     )
 
+    # All tests use the same TinyTest.rc.in file
+    if(TINY_TEST)
+        set(rcBasename TinyTest)
+
+        # Used for icon basename
+        set(TinyTest_icon ${rcBasename})
+        # Test's RC file has a common substitution token for all tests
+        set(TinyTest_target ${target})
+    else()
+        set(rcBasename ${target})
+    endif()
+
+    set(tiny_manifest_basename ${rcBasename})
+
+    # Start configuring
     configure_file(
-        "resources/${target}.rc.in"
-        "${tmp_folder_path}/${target}_genexp.rc.in"
+        "${TINY_RESOURCES_DIR}/${rcBasename}.rc.in"
+        "${TINY_OUTPUT_DIR}/${rcBasename}_genexp.rc.in"
         @ONLY NEWLINE_STYLE LF
     )
 
     # To support an OriginalFilename in Windows RC file for multi-config generators
-    file(GENERATE OUTPUT "${tmp_folder_path}/${target}.rc"
-        INPUT "${tmp_folder_path}/${target}_genexp.rc.in"
+    file(GENERATE OUTPUT "${TINY_OUTPUT_DIR}/${rcBasename}.rc"
+        INPUT "${TINY_OUTPUT_DIR}/${rcBasename}_genexp.rc.in"
         NEWLINE_STYLE UNIX
     )
 
     # Needed in the RC file, MinGW does not define the _DEBUG macro
     if(MINGW)
-        set_source_files_properties("${tmp_folder_path}/${target}.rc"
+        set_source_files_properties("${TINY_OUTPUT_DIR}/${rcBasename}.rc"
             TARGET_DIRECTORY ${target}
             PROPERTIES COMPILE_DEFINITIONS $<$<CONFIG:Debug>:_DEBUG>
         )
@@ -44,9 +71,9 @@ function(tiny_resource_and_manifest target tmp_folder_path)
 
     # Windows Resource file
     target_sources(${target} PRIVATE
-        "resources/${target}.rc.in"
-        "${tmp_folder_path}/${target}_genexp.rc.in"
-        "${tmp_folder_path}/${target}.rc"
+        "${TINY_RESOURCES_DIR}/${rcBasename}.rc.in"
+        "${TINY_OUTPUT_DIR}/${rcBasename}_genexp.rc.in"
+        "${TINY_OUTPUT_DIR}/${rcBasename}.rc"
     )
 
     # Manifest file (injected through the RC file on MinGW)
@@ -59,7 +86,7 @@ function(tiny_resource_and_manifest target tmp_folder_path)
         endif()
 
         target_sources(${target} PRIVATE
-            "resources/${target}${tiny_original_extension}.manifest"
+            "${TINY_RESOURCES_DIR}/${tiny_manifest_basename}${tiny_original_extension}.manifest"
         )
     endif()
 

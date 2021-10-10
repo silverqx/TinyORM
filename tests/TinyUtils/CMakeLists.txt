@@ -89,7 +89,9 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     tiny_set_rc_flags()
 endif()
 
-tiny_resource_and_manifest(${TinyUtils_target} "${TINY_BUILD_GENDIR}/tmp/")
+tiny_resource_and_manifest(${TinyUtils_target}
+    OUTPUT_DIR "${TINY_BUILD_GENDIR}/tmp/"
+)
 
 # Resolve and link dependencies
 # ---

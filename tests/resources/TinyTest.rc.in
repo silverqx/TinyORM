@@ -1,10 +1,10 @@
 #pragma code_page(65001) // UTF-8
 
-//IDI_ICON1 ICON "icons/test.ico"
+//IDI_ICON1 ICON "icons/@TinyTest_icon@.ico"
 
 #include <windows.h>
 
-#define VER_ORIGINALFILENAME_STR    "$<TARGET_FILE_NAME:@test_target@>\0"
+#define VER_ORIGINALFILENAME_STR    "$<TARGET_FILE_NAME:@TinyTest_target@>\0"
 
 #ifdef _DEBUG
 #  define VER_DEBUG                 VS_FF_DEBUG
@@ -24,10 +24,10 @@ VS_VERSION_INFO VERSIONINFO
             BLOCK "040904B0"
             BEGIN
                 VALUE "CompanyName",      "Crystal Studio\0"
-                VALUE "FileDescription",  "@test_target@ QtTest for TinyORM\0"
-                VALUE "InternalName",     "@test_target@\0"
+                VALUE "FileDescription",  "@TinyTest_target@ QtTest for TinyORM\0"
+                VALUE "InternalName",     "@TinyTest_target@\0"
                 VALUE "LegalCopyright",   "Copyright (©) 2021 Crystal Studio\0"
-                VALUE "ProductName",      "@test_target@ QtTest\0"
+                VALUE "ProductName",      "@TinyTest_target@ QtTest\0"
                 VALUE "OriginalFilename", VER_ORIGINALFILENAME_STR
             END
         END
@@ -40,5 +40,5 @@ VS_VERSION_INFO VERSIONINFO
 /* End of Version info */
 
 #ifdef __MINGW32__
-CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "test$<TARGET_FILE_SUFFIX:@test_target@>.manifest"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "@tiny_manifest_basename@$<TARGET_FILE_SUFFIX:@TinyTest_target@>.manifest"
 #endif

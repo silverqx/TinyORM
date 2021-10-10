@@ -1,3 +1,5 @@
+include(TinyResourceAndManifest)
+
 # Configure passed auto test
 function(tiny_configure_test name)
 
@@ -58,6 +60,19 @@ function(tiny_configure_test name)
             Qt${QT_VERSION_MAJOR}::Test
             ${TinyOrm_ns}::${TinyUtils_target}
             ${TinyOrm_ns}::${TinyOrm_target}
+    )
+
+    # Windows resource and manifest files
+    # ---
+
+    # Find Windows manifest file for MinGW
+    if(MINGW)
+        tiny_set_rc_flags("-I \"${CMAKE_SOURCE_DIR}/tests/resources\"")
+    endif()
+
+    tiny_resource_and_manifest(${name}
+        OUTPUT_DIR "${TINY_BUILD_GENDIR}/tmp/"
+        TEST RESOURCES_DIR "${CMAKE_SOURCE_DIR}/tests/resources"
     )
 
 endfunction()
