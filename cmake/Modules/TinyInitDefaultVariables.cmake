@@ -154,7 +154,7 @@ ${CMAKE_BINARY_DIR}/tests/auto/utils${TINY_PATH_SEPARATOR}$ENV{PATH}")
         string(REPLACE ";" "\;" TINY_TESTS_ENV "${TINY_TESTS_ENV}")
     endif()
 
-    set(TINY_BUILD_GENDIR "${TinyOrm_target}_generated" CACHE INTERNAL
+    set(TINY_BUILD_GENDIR "${TinyOrm_ns}_generated" CACHE INTERNAL
         "Generated content in the build tree")
 
     get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
