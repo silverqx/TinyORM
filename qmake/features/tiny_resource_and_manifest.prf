@@ -35,7 +35,7 @@ defineTest(tiny_resource_and_manifest) {
     CONFIG -= embed_manifest_dll
 
     # Use the same manifest file for all tests
-    $$isTest: manifestBasename = test
+    $$isTest: manifestBasename = TinyTest
     else: manifestBasename = $$TARGET
 
     # On MSVC use EMBED and on MinGW injected through the RC file
@@ -56,8 +56,10 @@ defineTest(tiny_resource_and_manifest) {
 # RC file than manage two practically the same files.
 defineReplace(tiny_configure_cmake_rc) {
     # All tests use the same test.rc.in file
-    defined(3, var):$$3: rcBasename = test
+    defined(3, var):$$3: rcBasename = TinyTest
     else: rcBasename = $$TARGET
+
+    tiny_manifest_basename = $$rcBasename
 
     # The same logic for the substitution token, is 'test' for tests and $$TARGET instead
     token = $$rcBasename
@@ -75,6 +77,7 @@ defineReplace(tiny_configure_cmake_rc) {
 
     # Substitute Cmake variable values referenced as @VAR@ and also generator expressions
     rcFileContent ~= s/@$${token}_target@/$$TARGET
+    rcFileContent ~= s/@tiny_manifest_basename@/$$tiny_manifest_basename
     rcFileContent ~= s/\\$<TARGET_FILE_NAME:$$TARGET>/$$basename(QMAKE_RESOLVED_TARGET)
     rcFileContent ~= s/\\$<TARGET_FILE_SUFFIX:$$TARGET>/$$2
 
