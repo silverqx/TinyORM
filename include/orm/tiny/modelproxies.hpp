@@ -2,10 +2,10 @@
 #ifndef MODELPROXIES_HPP
 #define MODELPROXIES_HPP
 
+#include <QtSql/QSqlQuery>
+
 #include "orm/concepts.hpp"
 #include "orm/tiny/tinytypes.hpp"
-
-class QSqlQuery;
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
