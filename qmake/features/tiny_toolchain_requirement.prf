@@ -1,0 +1,9 @@
+!versionAtLeast(QMAKE_MSC_VER, $$replace(tinyMinMsvcVersion, \., "")): \
+    error( "Minimum required MSVC version was not satisfied, required version\
+            >=$${tinyMinMsvcVersion}, your version is $${QMAKE_MSC_VER}, upgrade\
+            Visual Studio." )
+
+!versionAtLeast(QT_VERSION, $$tinyMinQtVersion): \
+    message( "Minimum recommended Qt Framework version was not satisfied, recommended\
+              version >=$${tinyMinQtVersion}, your version is $${QT_VERSION}, upgrade\
+              Qt Framework.")

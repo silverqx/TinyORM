@@ -7,6 +7,13 @@ win32-clang-g++: {
                 duplicit symbols, you can try to fix it :)." )
 }
 
+# Version requirements - older vesions may work, but you are on your own
+tinyMinMsvcVersion = 19.28 # 16.8/16.9
+tinyMinQtVersion = 5.15.2
+
+# Make minimum toolchain version a requirement
+load(tiny_toolchain_requirement)
+
 # Common Configuration ( also for tests )
 # ---
 

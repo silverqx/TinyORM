@@ -2338,5 +2338,4 @@ namespace Relations
 } // namespace TINYORM_COMMON_NAMESPACE
 #endif
 
-
 #endif // MODELPROXIES_HPP

@@ -40,8 +40,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_AUTOMOC ON)
 
-# Version requirements - older vesions may work, but you are on your own
-set(minMsvcVersion 19.28)
+# Version requirements - older versions may work, but you are on your own
+set(minMsvcVersion 19.28) # 16.8/16.9
 set(minQtVersion 5.15.2)
 set(minRangeV3Version 0.11.0)
 
