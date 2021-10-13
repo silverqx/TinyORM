@@ -1,4 +1,4 @@
-!versionAtLeast(QMAKE_MSC_VER, $$replace(tinyMinMsvcVersion, \., "")): \
+win32-msvc:!versionAtLeast(QMAKE_MSC_VER, $$replace(tinyMinMsvcVersion, \., "")): \
     error( "Minimum required MSVC version was not satisfied, required version\
             >=$${tinyMinMsvcVersion}, your version is $${QMAKE_MSC_VER}, upgrade\
             Visual Studio." )
