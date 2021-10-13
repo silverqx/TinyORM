@@ -32,8 +32,6 @@ QMAKE_CXXFLAGS_WARN_ON *= \
     -Wconversion \
     -Wzero-as-null-pointer-constant \
     -Winvalid-pch \
-#    -Wno-pragma-once-outside-header \
-#    -Wno-pragma-system-header-outside-header \
     -pedantic \
     -pedantic-errors \
 

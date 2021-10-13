@@ -70,7 +70,6 @@ namespace Relations {
     // TODO model missing methods EloquentCollection::toQuery() silverqx
     // TODO model missing methods Model::whereRow() silverqx
     // FEATURE EloquentCollection, solve how to implement, also look at Eloquent's Custom Collections silverqx
-    // TODO perf add pragma once to every header file, have branch pragma-once, but I can't get rid of the clang warning -Wpragma-once-outside-header in every file, I tried everything 😞 silverqx
     // FUTURE try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
     // FUTURE include every stl dependency in header files silverqx
     // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
