@@ -14,6 +14,21 @@ CONFIG *= create_prl create_pc create_libtool
 
 include(../qmake/common.pri)
 
+# Version requirements
+# ---
+# Older vesions may work, but you are on your own
+# Req - requirement, throws error
+# Rec - recommended, shows message
+
+# 16.10/16.11 (1929) - to support #pragma system_header
+tinyMinReqMsvc  = 19.29
+tinyMinRecClang = 12
+tinyMinRecGCC   = 10.2
+tinyMinRecQt    = 5.15.2
+
+# Make minimum toolchain version a requirement
+load(tiny_toolchain_requirement)
+
 # TinyORM defines
 # ---
 

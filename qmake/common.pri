@@ -7,16 +7,6 @@ win32-clang-g++: {
                 duplicit symbols, you can try to fix it :)." )
 }
 
-# Version requirements - older vesions may work, but you are on your own
-# 16.10/16.11 (1929) - to support #pragma system_header
-tinyMinMsvcVersion = 19.29
-tinyMinClangVersion = 12
-tinyMinGCCVersion = 10.2
-tinyMinQtVersion = 5.15.2
-
-# Make minimum toolchain version a requirement
-load(tiny_toolchain_requirement)
-
 # Common Configuration ( also for tests )
 # ---
 
