@@ -2,6 +2,9 @@
 #ifndef CONNECTOR_HPP
 #define CONNECTOR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QtSql/QSqlDatabase>
 #include <QVariantHash>
 

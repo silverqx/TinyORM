@@ -2,6 +2,9 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #ifdef __GNUG__
 #include <map>
 #endif
@@ -89,7 +92,6 @@ namespace Relations {
     // CUR try iwyu at https://include-what-you-use.org/ silverqx
     // CUR generate pkg-config file on unix silverqx
     // CUR cmake use gold linker option, https://github.com/frobware/c-hacks/blob/master/cmake/use-gold-linker.cmake silverqx
-    // FUTURE use #pragma system_header, when clang/gcc change its own #pragma clang/gcc system_header to #pragma system_header, because now I would have to add at the beginning of every file big ifdef block because of that, problem is that you can not put it to its own file or use preprocessor macro for that becasuse #pragma system_header must be physically in a file where it operates, MS implemented it correctly whithout its own prefix :/ silverqx
     // BUG mingw64, TinyOrmPlayground seg. fault at the end, but everything runs/passes correctly, but only when invoked from mintty terminal, when I run it from QtCreator that uses cmd I don't see any seg. fault silverqx
     // BUG mingw64, seg fault in some tests eg. tst_model, and couldn't execute tests again, mingw64 shell works silverqx
     // FUTURE mingw64, find out better solution for .text section exhausted in debug build, -Wa,-mbig-obj didn't help, -flto helps, but again it can not find reference to WinMain, so I had to compile with -O1, then it is ok silverqx

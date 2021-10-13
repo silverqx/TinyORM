@@ -2,6 +2,9 @@
 #ifndef INVALIDTEMPLATEARGUMENTERROR_HPP
 #define INVALIDTEMPLATEARGUMENTERROR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/exceptions/invalidargumenterror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

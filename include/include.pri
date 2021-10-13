@@ -35,6 +35,7 @@ HEADERS += \
     $$PWD/orm/exceptions/sqltransactionerror.hpp \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/macros.hpp \
+    $$PWD/orm/macros/system_header.hpp \
     $$PWD/orm/mysqlconnection.hpp \
     $$PWD/orm/ormtypes.hpp \
     $$PWD/orm/postgresconnection.hpp \

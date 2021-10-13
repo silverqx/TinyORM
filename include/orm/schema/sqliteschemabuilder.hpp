@@ -2,6 +2,9 @@
 #ifndef SQLITESCHEMABUILDER_HPP
 #define SQLITESCHEMABUILDER_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/schema/schemabuilder.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

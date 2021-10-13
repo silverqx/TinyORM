@@ -2,6 +2,9 @@
 #ifndef SQLITEPROCESSOR_HPP
 #define SQLITEPROCESSOR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/query/processors/processor.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

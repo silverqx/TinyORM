@@ -2,6 +2,9 @@
 #ifndef ORMTYPES_HPP
 #define ORMTYPES_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QSharedPointer>
 #include <QVariant>
 #include <QVector>

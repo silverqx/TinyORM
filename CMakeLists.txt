@@ -41,7 +41,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
 
 # Version requirements - older versions may work, but you are on your own
-set(minMsvcVersion 19.28) # 16.8/16.9
+# 16.10/16.11 (1929) to support pragma system_header
+set(minMsvcVersion 19.29)
 set(minQtVersion 5.15.2)
 set(minRangeV3Version 0.11.0)
 

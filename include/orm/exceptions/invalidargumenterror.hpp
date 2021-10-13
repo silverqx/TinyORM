@@ -2,6 +2,9 @@
 #ifndef INVALIDARGUMENTERROR_HPP
 #define INVALIDARGUMENTERROR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <stdexcept>
 
 #include "orm/exceptions/logicerror.hpp"

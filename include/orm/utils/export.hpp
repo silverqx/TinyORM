@@ -2,6 +2,9 @@
 #ifndef TINYORM_EXPORT_HPP
 #define TINYORM_EXPORT_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/utils/export_common.hpp"
 
 #if defined(TINYORM_BUILDING_SHARED)

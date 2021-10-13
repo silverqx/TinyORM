@@ -1,6 +1,9 @@
 #ifndef RELATIONPROXIES_HPP
 #define RELATIONPROXIES_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/concepts.hpp"
 #include "orm/tiny/tinytypes.hpp"
 

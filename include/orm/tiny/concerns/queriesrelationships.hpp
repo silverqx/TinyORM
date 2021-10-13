@@ -2,6 +2,9 @@
 #ifndef QUERIESRELATIONSHIPS_HPP
 #define QUERIESRELATIONSHIPS_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <stack>
 
 #include "orm/exceptions/invalidtemplateargumenterror.hpp"

@@ -2,6 +2,9 @@
 #ifndef PROCESSOR_HPP
 #define PROCESSOR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QStringList>
 #include <QtGlobal>
 

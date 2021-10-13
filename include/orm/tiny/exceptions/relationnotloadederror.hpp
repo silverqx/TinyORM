@@ -2,6 +2,9 @@
 #ifndef RELATIONNOTLOADEDERROR_HPP
 #define RELATIONNOTLOADEDERROR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/exceptions/runtimeerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

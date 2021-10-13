@@ -2,6 +2,9 @@
 #ifndef TINYBUILDER_HPP
 #define TINYBUILDER_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QtSql/QSqlRecord>
 
 #include <range/v3/algorithm/contains.hpp>

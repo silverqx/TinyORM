@@ -1,6 +1,9 @@
 #ifndef TINYBUILDERPROXIES_HPP
 #define TINYBUILDERPROXIES_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/concepts.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/utils/attribute.hpp"

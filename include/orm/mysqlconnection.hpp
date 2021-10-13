@@ -2,6 +2,9 @@
 #ifndef MYSQLCONNECTION_HPP
 #define MYSQLCONNECTION_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/databaseconnection.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

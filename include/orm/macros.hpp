@@ -2,6 +2,9 @@
 #ifndef ORM_MACROS_HPP
 #define ORM_MACROS_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #ifndef __has_cpp_attribute
 #  define T_LIKELY
 #elif __has_cpp_attribute(likely) >= 201803L

@@ -2,6 +2,9 @@
 #ifndef GUARDSATTRIBUTES_HPP
 #define GUARDSATTRIBUTES_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/concepts.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/utils/type.hpp"

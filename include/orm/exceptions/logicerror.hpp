@@ -2,6 +2,9 @@
 #ifndef LOGICERROR_HPP
 #define LOGICERROR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QString>
 
 #include <stdexcept>

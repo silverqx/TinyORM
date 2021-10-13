@@ -2,6 +2,9 @@
 #ifndef RELATION_HPP
 #define RELATION_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QtSql/QSqlQuery>
 
 #include <optional>

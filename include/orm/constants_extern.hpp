@@ -2,6 +2,9 @@
 #ifndef ORM_CONSTANTS_EXTERN_HPP
 #define ORM_CONSTANTS_EXTERN_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QString>
 
 #include "orm/utils/export.hpp"

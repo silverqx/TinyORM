@@ -2,6 +2,9 @@
 #ifndef CONNECTORINTERFACE_HPP
 #define CONNECTORINTERFACE_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QVariantHash>
 
 #ifdef TINYORM_COMMON_NAMESPACE

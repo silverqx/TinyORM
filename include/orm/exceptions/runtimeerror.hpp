@@ -2,6 +2,9 @@
 #ifndef RUNTIMEERROR_HPP
 #define RUNTIMEERROR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QString>
 
 #include <stdexcept>

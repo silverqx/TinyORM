@@ -2,6 +2,9 @@
 #ifndef SQLTRANSACTIONERROR_HPP
 #define SQLTRANSACTIONERROR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/exceptions/sqlerror.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

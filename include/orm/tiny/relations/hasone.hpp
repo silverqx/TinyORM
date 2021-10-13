@@ -2,6 +2,9 @@
 #ifndef HASONE_HPP
 #define HASONE_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/tiny/relations/concerns/supportsdefaultmodels.hpp"
 #include "orm/tiny/relations/hasoneormany.hpp"
 

@@ -2,6 +2,9 @@
 #ifndef BASEGRAMMAR_HPP
 #define BASEGRAMMAR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/ormtypes.hpp"
 #include "orm/utils/export.hpp"
 

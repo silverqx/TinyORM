@@ -2,6 +2,9 @@
 #ifndef SCHEMABUILDER_HPP
 #define SCHEMABUILDER_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QStringList>
 #include <QtGlobal>
 

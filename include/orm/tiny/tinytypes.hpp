@@ -2,6 +2,9 @@
 #ifndef TINYTYPES_HPP
 #define TINYTYPES_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/ormtypes.hpp"
 
 // CUR after commit move all common types here and remove all unneded forward declarations in Tiny ns silverqx

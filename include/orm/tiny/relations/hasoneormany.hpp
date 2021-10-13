@@ -2,6 +2,9 @@
 #ifndef HASONEORMANY_HPP
 #define HASONEORMANY_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/utils/attribute.hpp"
 

@@ -2,6 +2,9 @@
 #ifndef QUERYERROR_HPP
 #define QUERYERROR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QVariant>
 
 #include "orm/exceptions/sqlerror.hpp"

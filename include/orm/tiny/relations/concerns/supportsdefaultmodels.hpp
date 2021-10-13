@@ -2,6 +2,9 @@
 #ifndef SUPPORTSDEFAULTMODELS_HPP
 #define SUPPORTSDEFAULTMODELS_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 // FEATURE orm types, only AttributeItem used silverqx
 #include "orm/ormtypes.hpp"
 

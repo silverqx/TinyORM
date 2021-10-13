@@ -2,6 +2,9 @@
 #ifndef HASATTRIBUTES_HPP
 #define HASATTRIBUTES_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/ormtypes.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

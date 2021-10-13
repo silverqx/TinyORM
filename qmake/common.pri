@@ -8,7 +8,8 @@ win32-clang-g++: {
 }
 
 # Version requirements - older vesions may work, but you are on your own
-tinyMinMsvcVersion = 19.28 # 16.8/16.9
+# 16.10/16.11 (1929) - to support #pragma system_header
+tinyMinMsvcVersion = 19.29
 tinyMinQtVersion = 5.15.2
 
 # Make minimum toolchain version a requirement

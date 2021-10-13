@@ -2,6 +2,9 @@
 #ifndef MODELNOTFOUNDERROR_HPP
 #define MODELNOTFOUNDERROR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QVariant>
 
 #include "orm/exceptions/runtimeerror.hpp"

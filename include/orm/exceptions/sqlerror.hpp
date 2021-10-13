@@ -2,6 +2,9 @@
 #ifndef SQLERROR_HPP
 #define SQLERROR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QtSql/QSqlError>
 
 #include "orm/exceptions/runtimeerror.hpp"

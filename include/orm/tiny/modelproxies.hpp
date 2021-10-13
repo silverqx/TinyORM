@@ -2,6 +2,9 @@
 #ifndef MODELPROXIES_HPP
 #define MODELPROXIES_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QtSql/QSqlQuery>
 
 #include "orm/concepts.hpp"

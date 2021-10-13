@@ -2,6 +2,9 @@
 #ifndef STATEMENTSCOUNTER_HPP
 #define STATEMENTSCOUNTER_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE
 {

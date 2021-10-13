@@ -2,6 +2,9 @@
 #ifndef DOMAINERROR_HPP
 #define DOMAINERROR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <stdexcept>
 
 #include "orm/exceptions/logicerror.hpp"

@@ -2,6 +2,9 @@
 #ifndef ORM_CONSTANTS_INLINE_HPP
 #define ORM_CONSTANTS_INLINE_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QString>
 
 #ifdef TINYORM_COMMON_NAMESPACE

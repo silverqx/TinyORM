@@ -2,6 +2,9 @@
 #ifndef UTILS_STRING_HPP
 #define UTILS_STRING_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QString>
 
 #include "orm/utils/export.hpp"

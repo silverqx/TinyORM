@@ -2,6 +2,9 @@
 #ifndef HASMANY_HPP
 #define HASMANY_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/tiny/relations/hasoneormany.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

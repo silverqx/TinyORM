@@ -2,6 +2,9 @@
 #ifndef EXPRESSION_HPP
 #define EXPRESSION_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QVariant>
 #include <QVector>
 

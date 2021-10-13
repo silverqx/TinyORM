@@ -2,6 +2,9 @@
 #ifndef CONNECTIONFACTORY_HPP
 #define CONNECTIONFACTORY_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <memory>
 
 #include "orm/connectors/connectorinterface.hpp"

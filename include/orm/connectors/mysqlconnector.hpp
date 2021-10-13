@@ -2,6 +2,9 @@
 #ifndef MYSQLCONNECTOR_HPP
 #define MYSQLCONNECTOR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/connectors/connector.hpp"
 #include "orm/connectors/connectorinterface.hpp"
 

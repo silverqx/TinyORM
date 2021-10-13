@@ -2,6 +2,9 @@
 #ifndef CONFIGURATIONOPTIONSPARSER_HPP
 #define CONFIGURATIONOPTIONSPARSER_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QString>
 #include <QVariantHash>
 

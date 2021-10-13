@@ -2,6 +2,9 @@
 #ifndef ORM_CONCEPTS_HPP
 #define ORM_CONCEPTS_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QString>
 #include <QVariant>
 

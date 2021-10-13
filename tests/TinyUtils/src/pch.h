@@ -1,5 +1,8 @@
 /* This file can't be included in the project, it's for a precompiled header. */
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 /* Add C includes here */
 
 #if defined __cplusplus

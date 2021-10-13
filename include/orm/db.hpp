@@ -2,6 +2,9 @@
 #ifndef DB_HPP
 #define DB_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/databasemanager.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

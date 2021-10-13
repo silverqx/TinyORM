@@ -2,6 +2,9 @@
 #ifndef BELONGSTOMANY_HPP
 #define BELONGSTOMANY_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QDateTime>
 #include <QtSql/QSqlRecord>
 

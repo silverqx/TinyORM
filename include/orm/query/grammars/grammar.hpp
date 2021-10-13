@@ -2,6 +2,9 @@
 #ifndef GRAMMAR_HPP
 #define GRAMMAR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/basegrammar.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

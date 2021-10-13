@@ -2,6 +2,9 @@
 #ifndef UTILS_TYPE_HPP
 #define UTILS_TYPE_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QString>
 
 #include <typeindex>

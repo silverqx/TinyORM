@@ -2,6 +2,9 @@
 #ifndef TINYORM_EXPORT_GLOBAL_HPP
 #define TINYORM_EXPORT_GLOBAL_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 // BUG TINY_DECL_IMPORT should has visibility("hidden") ? silverqx
 #if defined(_MSC_VER) || defined(WIN64) || defined(_WIN64) || defined(__WIN64__) \
                       || defined(WIN32) || defined(_WIN32) || defined(__WIN32__) \

@@ -2,6 +2,9 @@
 #ifndef MYSQLGRAMMAR_HPP
 #define MYSQLGRAMMAR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/query/grammars/grammar.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE

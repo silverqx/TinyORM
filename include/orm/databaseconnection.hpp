@@ -2,6 +2,9 @@
 #ifndef DATABASECONNECTION_HPP
 #define DATABASECONNECTION_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QtSql/QSqlDatabase>

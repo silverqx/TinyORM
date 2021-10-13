@@ -2,6 +2,9 @@
 #ifndef POSTGRESCONNECTOR_HPP
 #define POSTGRESCONNECTOR_HPP
 
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
 #include "orm/connectors/connector.hpp"
 #include "orm/connectors/connectorinterface.hpp"
 
