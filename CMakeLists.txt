@@ -41,14 +41,27 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_AUTOMOC ON)
 
-# Version requirements - older versions may work, but you are on your own
+# Version requirements
+# ---
+# Older vesions may work, but you are on your own
+# Req - requirement, throws error
+# Rec - recommended, shows message
+
+# Compilers
 # 16.10/16.11 (1929) to support pragma system_header
-set(minMsvcVersion 19.29)
-set(minQtVersion 5.15.2)
+set(minReqMsvcVersion  19.29)
+set(minRecGCCVersion   10.2)
+set(minRecClangVersion 12)
+# Packages
+set(minQtVersion      5.15.2)
 set(minRangeV3Version 0.11.0)
 
 # Make minimum toolchain version a requirement
-tiny_toolchain_requirement(MSVC ${minMsvcVersion})
+tiny_toolchain_requirement(
+    MSVC ${minReqMsvcVersion}
+    GCC ${minRecGCCVersion}
+    CLANG ${minRecClangVersion}
+)
 
 # TinyORM build options
 # ---

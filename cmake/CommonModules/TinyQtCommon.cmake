@@ -70,7 +70,7 @@ function(tiny_qt_common target)
             /guard:cf
             /utf-8
             # Set by default by c++20 but from VS 16.11, can be removed when
-            # minMsvcVersion will be >= 16.11
+            # minMsvcReqVersion will be >= 16.11
             /permissive-
             /bigobj
             # Has to be enabled explicitly
