@@ -58,8 +58,8 @@ set(minRangeV3Version 0.11.0)
 
 # Make minimum toolchain version a requirement
 tiny_toolchain_requirement(
-    MSVC ${minReqMsvcVersion}
-    GCC ${minRecGCCVersion}
+    MSVC  ${minReqMsvcVersion}
+    GCC   ${minRecGCCVersion}
     CLANG ${minRecClangVersion}
 )
 
