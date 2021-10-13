@@ -4,16 +4,6 @@ QT -= gui
 TEMPLATE = lib
 TARGET = TinyOrm
 
-# TinyORM library specific configuration
-# ---
-
-CONFIG *= create_prl create_pc create_libtool
-
-# Common Configuration
-# ---
-
-include(../qmake/common.pri)
-
 # Version requirements
 # ---
 # Older vesions may work, but you are on your own
@@ -28,6 +18,16 @@ tinyMinRecQt    = 5.15.2
 
 # Make minimum toolchain version a requirement
 load(tiny_toolchain_requirement)
+
+# TinyORM library specific configuration
+# ---
+
+CONFIG *= create_prl create_pc create_libtool
+
+# Common Configuration
+# ---
+
+include(../qmake/common.pri)
 
 # TinyORM defines
 # ---
