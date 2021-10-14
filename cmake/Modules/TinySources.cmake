@@ -39,6 +39,7 @@ function(tiny_sources out_headers out_sources)
         exceptions/sqltransactionerror.hpp
         logquery.hpp
         macros.hpp
+        macros/systemheader.hpp
         mysqlconnection.hpp
         ormtypes.hpp
         postgresconnection.hpp
