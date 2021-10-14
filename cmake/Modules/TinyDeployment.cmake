@@ -20,8 +20,6 @@ function(tiny_install_tinyorm)
 
     # Install all other files
     install(DIRECTORY "include/orm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
-    install(DIRECTORY "${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/include/orm"
-        TYPE INCLUDE)
     file(GLOB tiny_docs "docs/*.mdx")
     install(FILES ${tiny_docs} DESTINATION "${CMAKE_INSTALL_DOCDIR}/mdx")
     install(FILES AUTHOR LICENSE TYPE DOC)
