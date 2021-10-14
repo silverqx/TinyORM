@@ -149,7 +149,7 @@ macro(tiny_init_tiny_variables)
         endif()
 
         set(TINY_TESTS_ENV "${CMAKE_BINARY_DIR}${TINY_PATH_SEPARATOR}\
-${CMAKE_BINARY_DIR}/tests/auto/utils${TINY_PATH_SEPARATOR}$ENV{PATH}")
+${CMAKE_BINARY_DIR}/tests/TinyUtils${TINY_PATH_SEPARATOR}$ENV{PATH}")
 
         string(REPLACE ";" "\;" TINY_TESTS_ENV "${TINY_TESTS_ENV}")
     endif()
