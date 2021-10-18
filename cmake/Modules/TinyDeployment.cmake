@@ -1,5 +1,6 @@
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
+include(TinyHelpers)
 
 set(TINY_BUILD_BUILDTREEDIR "${TINY_BUILD_GENDIR}/buildtree" CACHE INTERNAL
     "Generated content in the build tree for the build tree")
@@ -18,6 +19,29 @@ function(tiny_install_tinyorm)
         # TODO test NAMELINK_ on unix silverqx
     )
 
+    if(TINY_VCPKG)
+        set(tiny_config_package_dir "${CMAKE_INSTALL_DATADIR}/cmake/${TinyOrm_ns}")
+    else()
+        set(tiny_config_package_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${TinyOrm_ns}")
+    endif()
+
+    # Generate and install a code that can be used to import targets from the Install Tree
+    install(
+        EXPORT TinyOrmTargets
+        NAMESPACE ${TinyOrm_ns}::
+        DESTINATION "${tiny_config_package_dir}"
+    )
+
+    if(MSVC AND BUILD_SHARED_LIBS)
+        install(FILES "$<TARGET_PDB_FILE:${TinyOrm_target}>" TYPE BIN OPTIONAL)
+    endif()
+
+    # Do not install Package config, config version, header, doc. and cmake helper files
+    # when installing for VCPKG Debug configuration
+    if(TINY_VCPKG AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+        return()
+    endif()
+
     # Install all other files
     install(DIRECTORY "include/orm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
     file(GLOB tiny_docs "docs/*.mdx")
@@ -25,11 +49,6 @@ function(tiny_install_tinyorm)
     install(FILES AUTHOR LICENSE TYPE DOC)
     install(FILES NOTES.txt TYPE DOC RENAME NOTES)
     install(FILES README.md TYPE DOC RENAME README)
-    if(MSVC AND BUILD_SHARED_LIBS)
-        install(FILES "$<TARGET_PDB_FILE:${TinyOrm_target}>" TYPE BIN OPTIONAL)
-    endif()
-
-    set(tiny_config_package_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${TinyOrm_target}")
 
     # TinyORM's package config needs the FindMySQL package module when the MYSQL_PING
     # is enabled
@@ -49,12 +68,11 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
         DESTINATION "${tiny_config_package_dir}/Modules"
     )
 
-    # Generate and install a code that can be used to import targets from the Install Tree
-    install(
-        EXPORT TinyOrmTargets
-        NAMESPACE ${TinyOrm_ns}::
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${TinyOrm_ns}"
-    )
+    # Used in the Package Config and Config Version files
+    get_property(cvf_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+    tiny_to_bool(cvf_is_multi_config ${cvf_is_multi_config})
+
+    tiny_to_bool(cvf_is_vcpkg ${TINY_VCPKG})
 
     # Install destination directories for the Install Tree
     set(BIN_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}/")
@@ -97,8 +115,6 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
         "\n${buildTypeReqTempalate}"
     )
 
-    get_property(cvf_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-
     configure_file(
         "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfigVersion.cmake.in"
         "${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfigVersion.cmake"
@@ -139,6 +155,9 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
         NAMESPACE ${TinyOrm_ns}::
     )
 
+    get_property(cvf_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+    tiny_to_bool(cvf_is_multi_config ${cvf_is_multi_config})
+
     # Configure Package Config file for the Build Tree
     configure_package_config_file(
         "cmake/TinyOrmBuildTreeConfig.cmake.in"
@@ -164,8 +183,6 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
         "${PROJECT_BINARY_DIR}/${TINY_BUILD_BUILDTREEDIR}/TinyOrmConfigVersion.cmake.in"
         "\n${buildTypeReqTempalate}"
     )
-
-    get_property(cvf_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 
     configure_file(
         "${PROJECT_BINARY_DIR}/${TINY_BUILD_BUILDTREEDIR}/TinyOrmConfigVersion.cmake.in"

@@ -5,19 +5,15 @@
 
 list(APPEND CMAKE_MESSAGE_CONTEXT @TinyOrm_target@ CF)
 
-# Information about build type used in the info message
-get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-if(isMultiConfig)
-    set(tiny_build_type " Multi-Config")
-else()
-    set(tiny_build_type " @CMAKE_BUILD_TYPE@")
-endif()
-unset(isMultiConfig)
+# Information about build type/s, used in the info message
+include("${CMAKE_CURRENT_LIST_DIR}/Modules/TinyPackageConfigHelpers.cmake")
+tiny_get_build_types(tiny_build_type @cvf_is_multi_config@ @cvf_is_vcpkg@)
 
 # Info message about found package
 message(STATUS "Found package ${CMAKE_FIND_PACKAGE_NAME} \
 ${${CMAKE_FIND_PACKAGE_NAME}_VERSION}${tiny_build_type} (requested \
 ${${CMAKE_FIND_PACKAGE_NAME}_FIND_VERSION_COMPLETE}) at ${CMAKE_CURRENT_LIST_FILE}")
+unset(tiny_build_type)
 
 message(CHECK_START "Configuring @PROJECT_NAME@ package")
 list(APPEND CMAKE_MESSAGE_INDENT "  ")

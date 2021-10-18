@@ -148,10 +148,22 @@ macro(tiny_init_tiny_variables)
             set(TINY_PATH_SEPARATOR ":")
         endif()
 
-        set(TINY_TESTS_ENV "${CMAKE_BINARY_DIR}${TINY_PATH_SEPARATOR}\
-${CMAKE_BINARY_DIR}/tests/TinyUtils${TINY_PATH_SEPARATOR}$ENV{PATH}")
+        # Escaped environment path
+        string(REPLACE ";" "\;" TINY_TESTS_ENV "$ENV{PATH}")
 
-        string(REPLACE ";" "\;" TINY_TESTS_ENV "${TINY_TESTS_ENV}")
+        # Prepend VCPKG environment (installed folder)
+        if(TINY_VCPKG)
+            string(PREPEND TINY_TESTS_ENV "\
+$<SHELL_PATH:${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}$<$<CONFIG:Debug>:/debug>/\
+${CMAKE_INSTALL_BINDIR}>${TINY_PATH_SEPARATOR}\
+$<SHELL_PATH:${CMAKE_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPARATOR}")
+
+        # Prepend TinyOrm and TinyUtils library folders
+        else()
+            string(PREPEND TINY_TESTS_ENV "\
+$<SHELL_PATH:${CMAKE_BINARY_DIR}>${TINY_PATH_SEPARATOR}\
+$<SHELL_PATH:${CMAKE_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPARATOR}")
+        endif()
     endif()
 
     set(TINY_BUILD_GENDIR "${TinyOrm_ns}_generated" CACHE INTERNAL
@@ -161,6 +173,11 @@ ${CMAKE_BINARY_DIR}/tests/TinyUtils${TINY_PATH_SEPARATOR}$ENV{PATH}")
     set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL
         "True when using a multi-configuration generator")
     unset(isMultiConfig)
+
+    # Provide default value if not set
+    if(NOT TINY_VCPKG)
+        set(TINY_VCPKG FALSE)
+    endif()
 
     # Specifies which global constant types will be used
     if(BUILD_SHARED_LIBS AND NOT INLINE_CONSTANTS)

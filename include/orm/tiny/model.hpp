@@ -108,6 +108,12 @@ namespace Relations {
     // BUG cmake MinGW UCRT64 clang static build builds, but cause problem with inline_constants ; shared build with inline_constants cause crashes of 50% of tests, like bug above, this will be MinGW clang or clang bug, on unix it works without problems silverqx
     // FUTURE linux, add linker version script https://github.com/sailfishos/qtbase/commit/72ba0079c3967bdfa26acdce78ce6cb98b30c27b?view=parallel https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html https://stackoverflow.com/questions/41061220/where-do-object-file-version-references-come-from silverqx
     // TODO Visual Studio memory analyzer https://docs.microsoft.com/en-us/visualstudio/profiling/memory-usage-without-debugging2?view=vs-2019 silverqx
+    // CUR rc /nologo silverqx
+    // CUR cmake check all list vars. passed to functions silverqx
+    // CUR cmake use CVF_UNPARSED_ARGUMENTS for all cmake_parse_arguments() silverqx
+    // CUR QLibraryInfo to TinyORM silverqx
+    // CUR qmake/cmake print path against which package was exe linked for silverqx
+    // CUR TP check provided env. vars, if not provided print nice message silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

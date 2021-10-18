@@ -6,18 +6,17 @@
 list(APPEND CMAKE_MESSAGE_CONTEXT @TinyOrm_target@ CF)
 
 # Information about build type used in the info message
-get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-if(isMultiConfig)
+if(@cvf_is_multi_config@)
     set(tiny_build_type " Multi-Config")
 else()
     set(tiny_build_type " @CMAKE_BUILD_TYPE@")
 endif()
-unset(isMultiConfig)
 
 # Info message about found package
 message(STATUS "Found package ${CMAKE_FIND_PACKAGE_NAME} \
 ${${CMAKE_FIND_PACKAGE_NAME}_VERSION}${tiny_build_type} (requested \
 ${${CMAKE_FIND_PACKAGE_NAME}_FIND_VERSION_COMPLETE}) at ${CMAKE_CURRENT_LIST_FILE}")
+unset(tiny_build_type)
 
 # Info message about matching build type
 if(NOT isMultiConfig)

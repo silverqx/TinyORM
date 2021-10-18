@@ -56,24 +56,26 @@ function(tiny_resource_and_manifest target)
     )
 
     # To support an OriginalFilename in Windows RC file for multi-config generators
-    file(GENERATE OUTPUT "${TINY_OUTPUT_DIR}/${rcBasename}.rc"
+    file(GENERATE OUTPUT "${TINY_OUTPUT_DIR}/${rcBasename}-$<CONFIG>.rc"
         INPUT "${TINY_OUTPUT_DIR}/${rcBasename}_genexp.rc.in"
         NEWLINE_STYLE UNIX
     )
 
     # Needed in the RC file, MinGW does not define the _DEBUG macro
     if(MINGW)
-        set_source_files_properties("${TINY_OUTPUT_DIR}/${rcBasename}.rc"
+        # TODO ask if is planned support for genex in the filepath silverqx
+        set_source_files_properties("${TINY_OUTPUT_DIR}/${rcBasename}-Debug.rc"
             TARGET_DIRECTORY ${target}
             PROPERTIES COMPILE_DEFINITIONS $<$<CONFIG:Debug>:_DEBUG>
         )
     endif()
 
+    # TODO multi-config and empty $<CONFIG>, why silverqx
     # Windows Resource file
     target_sources(${target} PRIVATE
         "${TINY_RESOURCES_DIR}/${rcBasename}.rc.in"
         "${TINY_OUTPUT_DIR}/${rcBasename}_genexp.rc.in"
-        "${TINY_OUTPUT_DIR}/${rcBasename}.rc"
+        "$<$<BOOL:$<CONFIG>>:${TINY_OUTPUT_DIR}/${rcBasename}-$<CONFIG>.rc>"
     )
 
     # Manifest file (injected through the RC file on MinGW)

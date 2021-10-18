@@ -9,6 +9,17 @@ function(tiny_invert_bool out_variable value)
 
 endfunction()
 
+# Convert to a boolean value
+function(tiny_to_bool out_variable value)
+
+    if(${value})
+        set(${out_variable} TRUE PARENT_SCOPE)
+    else()
+        set(${out_variable} FALSE PARENT_SCOPE)
+    endif()
+
+endfunction()
+
 # Make minimum toolchain version a requirement
 function(tiny_toolchain_requirement)
 
