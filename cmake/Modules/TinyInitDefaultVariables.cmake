@@ -130,6 +130,11 @@ macro(tiny_init_tiny_variables_pre)
     set(TinyOrm_target TinyOrm)
     set(TinyUtils_target TinyUtils)
 
+    get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+    set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL
+        "True when using a multi-configuration generator")
+    unset(isMultiConfig)
+
 endmacro()
 
 # Initialize Tiny variables
@@ -168,11 +173,6 @@ $<SHELL_PATH:${CMAKE_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPARATOR}")
 
     set(TINY_BUILD_GENDIR "${TinyOrm_ns}_generated" CACHE INTERNAL
         "Generated content in the build tree")
-
-    get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-    set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL
-        "True when using a multi-configuration generator")
-    unset(isMultiConfig)
 
     # Provide default value if not set
     if(NOT TINY_VCPKG)

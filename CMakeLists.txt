@@ -78,12 +78,11 @@ feature_option(BUILD_SHARED_LIBS
 feature_option(BUILD_TESTS
     "Build Qt tests" OFF
 )
-# TODO make it also dependend on NOT isMultiConfig silverqx
 # Depends on tiny_init_cmake_variables_pre() call
 feature_option_dependent(MATCH_EQUAL_EXPORTED_BUILDTREE
     "Exported package configuration from the build tree is considered to match only \
 when the build type is equal" OFF
-    CMAKE_EXPORT_PACKAGE_REGISTRY OFF
+    "CMAKE_EXPORT_PACKAGE_REGISTRY;NOT TINY_IS_MULTI_CONFIG" OFF
 )
 feature_option_dependent(MSVC_RUNTIME_DYNAMIC
     "Use MSVC dynamic runtime library (-MD) instead of static (-MT), also considers \
