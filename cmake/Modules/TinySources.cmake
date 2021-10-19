@@ -37,8 +37,11 @@ function(tiny_sources out_headers out_sources)
         exceptions/runtimeerror.hpp
         exceptions/sqlerror.hpp
         exceptions/sqltransactionerror.hpp
+        libraryinfo.hpp
         logquery.hpp
         macros.hpp
+        macros/archdetect.hpp
+        macros/compilerdetect.hpp
         macros/systemheader.hpp
         mysqlconnection.hpp
         ormtypes.hpp
@@ -119,6 +122,7 @@ function(tiny_sources out_headers out_sources)
         exceptions/queryerror.cpp
         exceptions/runtimeerror.cpp
         exceptions/sqlerror.cpp
+        libraryinfo.cpp
         logquery.cpp
         mysqlconnection.cpp
         ormtypes.cpp

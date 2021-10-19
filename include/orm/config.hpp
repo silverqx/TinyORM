@@ -11,4 +11,9 @@ TINY_SYSTEM_HEADER
 #  define TINYORM_EXTERN_CONSTANTS
 #endif
 
+// Debug build
+#if !defined(TINYORM_NO_DEBUG) && !defined(TINYORM_DEBUG)
+#  define TINYORM_DEBUG
+#endif
+
 #endif // ORM_CONFIG_HPP

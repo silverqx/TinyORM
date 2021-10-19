@@ -8,7 +8,7 @@ CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
     # Support override because inline_constants can be used in the shared build too
     !inline_constants: \
-        CONFIG += extern_constants
+        CONFIG *= extern_constants
 
 # Archive library build
 else: \
@@ -18,9 +18,14 @@ else: \
 # ---
 
 # Log queries with a time measurement
-DEFINES += TINYORM_DEBUG_SQL
+DEFINES *= TINYORM_DEBUG_SQL
+
+# Release build
+CONFIG(release, debug|release): DEFINES *= TINYORM_NO_DEBUG
+# Debug build
+CONFIG(debug, debug|release): DEFINES *= TINYORM_DEBUG
 
 # Link with the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
-    DEFINES += TINYORM_LINKING_SHARED
+    DEFINES *= TINYORM_LINKING_SHARED

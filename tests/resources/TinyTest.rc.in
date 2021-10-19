@@ -6,10 +6,10 @@
 
 #define VER_ORIGINALFILENAME_STR    "$<TARGET_FILE_NAME:@TinyTest_target@>\0"
 
-#ifdef _DEBUG
-#  define VER_DEBUG                 VS_FF_DEBUG
-#else
+#ifdef TINYORM_NO_DEBUG
 #  define VER_DEBUG                 0
+#else
+#  define VER_DEBUG                 VS_FF_DEBUG
 #endif
 
 VS_VERSION_INFO VERSIONINFO

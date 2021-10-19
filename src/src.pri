@@ -17,6 +17,7 @@ SOURCES += \
     $$PWD/orm/exceptions/queryerror.cpp \
     $$PWD/orm/exceptions/runtimeerror.cpp \
     $$PWD/orm/exceptions/sqlerror.cpp \
+    $$PWD/orm/libraryinfo.cpp \
     $$PWD/orm/logquery.cpp \
     $$PWD/orm/mysqlconnection.cpp \
     $$PWD/orm/ormtypes.cpp \

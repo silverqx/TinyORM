@@ -186,6 +186,10 @@ target_compile_definitions(${TinyOrm_target}
         PROJECT_TINYORM
         # Log queries with a time measurement
         TINYORM_DEBUG_SQL
+        # Release build
+        $<$<NOT:$<CONFIG:Debug>>:TINYORM_NO_DEBUG>
+        # Debug build
+        $<$<CONFIG:Debug>:TINYORM_DEBUG>
 )
 
 if(BUILD_SHARED_LIBS)
@@ -331,7 +335,7 @@ endif()
 
 if(VERBOSE_CONFIGURE)
     if(NOT TINY_IS_MULTI_CONFIG AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-        message(STATUS "Disabling debug output")
+        message(STATUS "Disabled debug output and assert")
     endif()
 
     feature_summary(WHAT ALL)

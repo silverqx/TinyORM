@@ -33,8 +33,11 @@ HEADERS += \
     $$PWD/orm/exceptions/runtimeerror.hpp \
     $$PWD/orm/exceptions/sqlerror.hpp \
     $$PWD/orm/exceptions/sqltransactionerror.hpp \
+    $$PWD/orm/libraryinfo.hpp \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/macros.hpp \
+    $$PWD/orm/macros/archdetect.hpp \
+    $$PWD/orm/macros/compilerdetect.hpp \
     $$PWD/orm/macros/systemheader.hpp \
     $$PWD/orm/mysqlconnection.hpp \
     $$PWD/orm/ormtypes.hpp \

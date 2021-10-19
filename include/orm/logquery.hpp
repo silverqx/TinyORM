@@ -20,14 +20,14 @@ QString parseExecutedQuery(const QSqlQuery &query);
 /*! Get pretended query with replaced placeholders ( ideal for logging ). */
 QString parseExecutedQueryForPretend(QString query, const QVector<QVariant> &bindings);
 
-#ifdef QT_DEBUG
+#if !defined(TINYORM_NO_DEBUG)
 /*! Log the last executed query to the debug output. */
 [[maybe_unused]]
 void logExecutedQuery(const QSqlQuery &query);
 #endif
 
 #ifndef LOG_EXECUTED_QUERY
-#  ifdef QT_DEBUG
+#  if !defined(TINYORM_NO_DEBUG)
 #    define LOG_EXECUTED_QUERY(query) logExecutedQuery(query)
 #  else
 #    define LOG_EXECUTED_QUERY(query) qt_noop()

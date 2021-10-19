@@ -123,7 +123,7 @@ build
     set(TINY_RC_FLAGS_BACKUP "")
 
     # Add -nologo to the CMAKE_RC_FLAGS if it does not already contain it
-    if(NOT CMAKE_RC_FLAGS MATCHES " *[-/]nologo *")
+    if(MSVC AND NOT CMAKE_RC_FLAGS MATCHES " *[-/]nologo *")
         get_property(help_string CACHE CMAKE_RC_FLAGS PROPERTY HELPSTRING)
         if(NOT help_string)
             set(help_string "Flags for Windows Resource Compiler during all build types.")

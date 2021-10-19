@@ -89,13 +89,8 @@ win32-msvc:CONFIG(debug, debug|release) {
 # ---
 
 CONFIG(debug, debug|release):!build_pass: message( "Project is built in DEBUG mode." )
-CONFIG(release, debug|release):!build_pass: message( "Project is built in RELEASE mode." )
-
-# Disable debug output in release mode
-CONFIG(release, debug|release) {
-    !build_pass: message( "Disabling debug output." )
-    DEFINES += QT_NO_DEBUG_OUTPUT
-}
+CONFIG(release, debug|release):!build_pass: \
+    message( "Project is built in RELEASE mode (disabled debug output and assert)." )
 
 # User Configuration
 # ---
