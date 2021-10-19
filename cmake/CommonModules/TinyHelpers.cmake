@@ -250,3 +250,22 @@ inline constants :/.")
     endif()
 
 endfunction()
+
+# Print a VERBOSE message against which library is project linking
+function(tiny_print_linking_against target)
+
+    if(TINY_IS_MULTI_CONFIG)
+        return()
+    endif()
+
+    string(TOUPPER ${CMAKE_BUILD_TYPE} buildType)
+
+    if(WIN32 AND BUILD_SHARED_LIBS)
+        get_target_property(libraryFilepath ${target} IMPORTED_IMPLIB_${buildType})
+    else()
+        get_target_property(libraryFilepath ${target} IMPORTED_LOCATION_${buildType})
+    endif()
+
+    message(VERBOSE "Linking against ${target} at ${libraryFilepath}")
+
+endfunction()
