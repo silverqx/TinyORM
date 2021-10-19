@@ -7,7 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include <QVersionNumber>
 
-#include "orm/utils/export.hpp"
+#include "orm/macros/export.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

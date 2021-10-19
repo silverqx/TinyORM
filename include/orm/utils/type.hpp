@@ -14,7 +14,7 @@ TINY_SYSTEM_HEADER
 #include <cxxabi.h>
 #endif
 
-#include "orm/utils/export.hpp"
+#include "orm/macros/export.hpp"
 
 #ifdef __GNUG__
 #  define __tiny_func__ Orm::Utils::Type::prettyFunction(__PRETTY_FUNCTION__)

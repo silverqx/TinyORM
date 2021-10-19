@@ -42,6 +42,8 @@ function(tiny_sources out_headers out_sources)
         macros.hpp
         macros/archdetect.hpp
         macros/compilerdetect.hpp
+        macros/export.hpp
+        macros/export_common.hpp
         macros/systemheader.hpp
         mysqlconnection.hpp
         ormtypes.hpp
@@ -93,8 +95,6 @@ function(tiny_sources out_headers out_sources)
         types/log.hpp
         types/statementscounter.hpp
         utils/attribute.hpp
-        utils/export.hpp
-        utils/export_common.hpp
         utils/string.hpp
         utils/type.hpp
         version.hpp

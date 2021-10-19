@@ -109,7 +109,6 @@ namespace Relations {
     // FUTURE linux, add linker version script https://github.com/sailfishos/qtbase/commit/72ba0079c3967bdfa26acdce78ce6cb98b30c27b?view=parallel https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html https://stackoverflow.com/questions/41061220/where-do-object-file-version-references-come-from silverqx
     // TODO Visual Studio memory analyzer https://docs.microsoft.com/en-us/visualstudio/profiling/memory-usage-without-debugging2?view=vs-2019 silverqx
     // CUR replace all TINYORM_COMMON_NAMESPACE and Orm namespace with macros silverqx
-    // CUR move export.hpp to macros/ silverqx
     // CUR cmake rename TinyQtCommon to TinyCommon silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>

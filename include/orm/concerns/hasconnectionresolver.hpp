@@ -5,7 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/utils/export.hpp"
+#include "orm/macros/export.hpp"
 
 #ifdef TINYORM_COMMON_NAMESPACE
 namespace TINYORM_COMMON_NAMESPACE

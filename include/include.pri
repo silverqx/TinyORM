@@ -38,6 +38,8 @@ HEADERS += \
     $$PWD/orm/macros.hpp \
     $$PWD/orm/macros/archdetect.hpp \
     $$PWD/orm/macros/compilerdetect.hpp \
+    $$PWD/orm/macros/export.hpp \
+    $$PWD/orm/macros/export_common.hpp \
     $$PWD/orm/macros/systemheader.hpp \
     $$PWD/orm/mysqlconnection.hpp \
     $$PWD/orm/ormtypes.hpp \
@@ -89,8 +91,6 @@ HEADERS += \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \
     $$PWD/orm/utils/attribute.hpp \
-    $$PWD/orm/utils/export.hpp \
-    $$PWD/orm/utils/export_common.hpp \
     $$PWD/orm/utils/string.hpp \
     $$PWD/orm/utils/type.hpp \
     $$PWD/orm/version.hpp \

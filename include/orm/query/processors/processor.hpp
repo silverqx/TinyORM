@@ -8,7 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QStringList>
 #include <QtGlobal>
 
-#include "orm/utils/export.hpp"
+#include "orm/macros/export.hpp"
 
 class QSqlQuery;
 

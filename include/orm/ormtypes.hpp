@@ -17,7 +17,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/constants.hpp"
 #include "orm/query/expression.hpp"
-#include "orm/utils/export.hpp"
+#include "orm/macros/export.hpp"
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
 /* 👆 I have good idea hot to do that, public types will be tinytypes.hpp and private will be
