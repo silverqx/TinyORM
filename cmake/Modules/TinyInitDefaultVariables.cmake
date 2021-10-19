@@ -96,6 +96,12 @@ DESTINATION is encountered")
         CMAKE_MAP_IMPORTED_CONFIG_DEBUG
     )
 
+    unset(debug_helpString)
+    unset(minSizeRel_helpString)
+    unset(relWithDebInfo_helpString)
+    unset(release_helpString)
+    unset(helpStringTemplate)
+
     if(VERBOSE_CONFIGURE)
         message(STATUS "${TinyOrm_ns}: Set up defaults for \
 CMAKE_MAP_IMPORTED_CONFIG_<CONFIG> to avoid link a release type builds against a debug \

@@ -6,6 +6,11 @@ function(tiny_configure_test name)
     set(options INCLUDE_MODELS)
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "" "")
 
+    if(DEFINED TINY_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
+${TINY_UNPARSED_ARGUMENTS}")
+    endif()
+
     target_precompile_headers(${name} PRIVATE
         $<$<COMPILE_LANGUAGE:CXX>:"${CMAKE_SOURCE_DIR}/include/pch.h">
     )

@@ -195,11 +195,9 @@ endfunction()
 # Information about build type/s, used in the info message
 function(tiny_get_build_types out_build_types cvf_is_multi_config cvf_is_vcpkg)
 
-#    if(cvf_is_vcpkg AND NOT cvf_is_multi_config)
-        tiny_printable_configurations(tinyPrintableConfigurations
-            "${TINY_${CMAKE_FIND_PACKAGE_NAME}_FOUND_CONFIGURATIONS}"
-        )
-#    endif()
+    tiny_printable_configurations(tinyPrintableConfigurations
+        "${TINY_${CMAKE_FIND_PACKAGE_NAME}_FOUND_CONFIGURATIONS}"
+    )
 
     if(cvf_is_vcpkg)
         set(tiny_build_type " Vcpkg[${tinyPrintableConfigurations}]")

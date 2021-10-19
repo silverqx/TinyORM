@@ -5,6 +5,11 @@ function(tiny_resource_and_manifest target)
     set(oneValueArgs OUTPUT_DIR RESOURCES_DIR)
     cmake_parse_arguments(PARSE_ARGV 1 TINY ${options} "${oneValueArgs}" "")
 
+    if(DEFINED TINY_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
+${TINY_UNPARSED_ARGUMENTS}")
+    endif()
+
     # Include Windows RC and manifest file for a shared library or executable
     get_target_property(target_type ${target} TYPE)
 

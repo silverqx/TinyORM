@@ -26,6 +26,11 @@ function(tiny_toolchain_requirement)
     set(oneValueArgs MSVC GCC CLANG)
     cmake_parse_arguments(PARSE_ARGV 0 TINY "" "${oneValueArgs}" "")
 
+    if(DEFINED TINY_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
+${TINY_UNPARSED_ARGUMENTS}")
+    endif()
+
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_MSVC)
             message(FATAL_ERROR "Minimum required MSVC version was not satisfied, \
@@ -76,6 +81,8 @@ macro(tiny_find_package package_name)
         list(APPEND tiny_package_dependencies "${args}")
     endif()
 
+    unset(args)
+
 endmacro()
 
 # Generate find_dependency calls for the TinyORM package config file
@@ -115,6 +122,11 @@ function(target_optional_compile_definitions target scope)
         "${multiValueArgs}"
     )
 
+    if(DEFINED TINY_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
+${TINY_UNPARSED_ARGUMENTS}")
+    endif()
+
     option(${TINY_NAME} "${TINY_DESCRIPTION}" ${TINY_DEFAULT})
 
     if(${${TINY_NAME}})
@@ -148,7 +160,12 @@ function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
 
     # Arguments
     set(oneValueArgs VERSION_HEADER PREFIX HEADER_FOR)
-    cmake_parse_arguments(PARSE_ARGV 4 TINY "" "${oneValueArgs}" "")
+    cmake_parse_arguments(PARSE_ARGV 5 TINY "" "${oneValueArgs}" "")
+
+    if(DEFINED TINY_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
+${TINY_UNPARSED_ARGUMENTS}")
+    endif()
 
     # Debug setup
     list(APPEND CMAKE_MESSAGE_CONTEXT VersionHeader)
