@@ -116,6 +116,18 @@ build
     # Used to save and restore original content of the CMAKE_RC_FLAGS variable
     set(TINY_RC_FLAGS_BACKUP "")
 
+    # Add -nologo to the CMAKE_RC_FLAGS if it does not already contain it
+    if(NOT CMAKE_RC_FLAGS MATCHES " *[-/]nologo *")
+        get_property(help_string CACHE CMAKE_RC_FLAGS PROPERTY HELPSTRING)
+        if(NOT help_string)
+            set(help_string "Flags for Windows Resource Compiler during all build types.")
+        endif()
+
+        set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} -nologo" CACHE STRING ${help_string} FORCE)
+    endif()
+
+    unset(help_string)
+
 endmacro()
 
 # Initialize Tiny variables, early init.
