@@ -17,17 +17,14 @@ TINY_SYSTEM_HEADER
 
 #include "orm/constants.hpp"
 #include "orm/query/expression.hpp"
-#include "orm/macros/export.hpp"
 
 // TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
 /* 👆 I have good idea hot to do that, public types will be tinytypes.hpp and private will be
    types.hpp, and divide it as most as possible when needed, so eg Reconnector type to
    types/reconnectortype.hpp. */
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
     using namespace Orm::Constants;
@@ -273,9 +270,8 @@ namespace Query
     }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #ifdef TINYORM_COMMON_NAMESPACE
 Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem)

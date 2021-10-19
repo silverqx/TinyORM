@@ -5,10 +5,10 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+#include "orm/macros/commonnamespace.hpp"
+
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 namespace Types
@@ -46,8 +46,7 @@ namespace Types
     using Log = Types::Log;
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // LOG_HPP

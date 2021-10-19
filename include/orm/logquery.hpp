@@ -8,12 +8,11 @@ TINY_SYSTEM_HEADER
 #include <QString>
 #include <QVariant>
 
+#include "orm/macros/commonnamespace.hpp"
+
 class QSqlQuery;
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
 
 /*! Get the last executed query with replaced placeholders ( ideal for logging ). */
 QString parseExecutedQuery(const QSqlQuery &query);
@@ -34,8 +33,6 @@ void logExecutedQuery(const QSqlQuery &query);
 #  endif
 #endif
 
-#ifdef TINYORM_COMMON_NAMESPACE
-}
-#endif
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // LOGQUERY_HPP

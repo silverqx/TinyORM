@@ -7,10 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include "orm/schema/grammars/schemagrammar.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Schema::Grammars
 {
 
@@ -28,8 +26,7 @@ namespace Orm::Schema::Grammars
     };
 
 } // namespace Orm::Schema::Grammars
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // SQLITESCHEMAGRAMMAR_HPP

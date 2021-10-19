@@ -6,10 +6,8 @@
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/remove_if.hpp>
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Utils::Attribute
 {
 
@@ -124,6 +122,5 @@ joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
 }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

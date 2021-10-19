@@ -1,9 +1,7 @@
 #include "orm/tiny/exceptions/relationnotloadederror.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Tiny::Exceptions
 {
 
@@ -23,6 +21,5 @@ QString RelationNotLoadedError::formatMessage(const QString &model,
 }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

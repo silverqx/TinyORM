@@ -8,12 +8,9 @@ TINY_SYSTEM_HEADER
 #include <stdexcept>
 
 #include "orm/exceptions/logicerror.hpp"
-#include "orm/macros/export.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Exceptions
 {
 
@@ -25,8 +22,7 @@ namespace Orm::Exceptions
     };
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // INVALIDARGUMENTERROR_HPP

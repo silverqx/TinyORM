@@ -9,12 +9,11 @@ TINY_SYSTEM_HEADER
 
 #include <stdexcept>
 
+#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Exceptions
 {
 
@@ -41,8 +40,7 @@ namespace Orm::Exceptions
     }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // LOGICERROR_HPP

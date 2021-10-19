@@ -6,10 +6,8 @@
 
 using namespace Orm::Constants;
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Exceptions
 {
 
@@ -63,6 +61,5 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error) con
 }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

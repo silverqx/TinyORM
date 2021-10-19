@@ -1,9 +1,7 @@
 #include "orm/schema/grammars/postgresschemagrammar.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Schema::Grammars
 {
 
@@ -15,6 +13,5 @@ QString PostgresSchemaGrammar::compileColumnListing(const QString &) const
 }
 
 } // namespace Orm::Schema::Grammars
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

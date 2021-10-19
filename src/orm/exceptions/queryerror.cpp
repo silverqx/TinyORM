@@ -4,10 +4,8 @@
 
 #include "orm/logquery.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Exceptions
 {
 
@@ -48,6 +46,5 @@ QString QueryError::formatMessage(const char *message, const QSqlQuery &query)
 }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

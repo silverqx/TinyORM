@@ -4,10 +4,8 @@
 #include "orm/support/configurationoptionsparser.hpp"
 #include "orm/utils/type.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Connectors
 {
 
@@ -99,6 +97,5 @@ Connector::tryAgainIfCausedByLostConnection(
 }
 
 } // namespace Orm::Connectors
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

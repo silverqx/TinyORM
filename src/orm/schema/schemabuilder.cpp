@@ -2,10 +2,8 @@
 
 #include "orm/databaseconnection.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Schema
 {
 
@@ -24,6 +22,5 @@ QStringList SchemaBuilder::getColumnListing(const QString &table) const
 }
 
 } // namespace Orm::Schema
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

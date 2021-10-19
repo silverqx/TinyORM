@@ -1,9 +1,7 @@
 #include "orm/schema/grammars/sqliteschemagrammar.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Schema::Grammars
 {
 
@@ -18,6 +16,5 @@ QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const
 }
 
 } // namespace Orm::Schema::Grammars
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

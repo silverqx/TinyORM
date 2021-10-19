@@ -3,11 +3,8 @@
 #include <QDebug>
 #include <QtSql/QSqlQuery>
 
-// TODO not a good place for this file, move it to the utils or support silverqx
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+// CUR not a good place for this file, move it to the utils or support silverqx
+TINYORM_BEGIN_COMMON_NAMESPACE
 
 QString parseExecutedQuery(const QSqlQuery &query)
 {
@@ -77,6 +74,4 @@ void logExecutedQuery(const QSqlQuery &query)
                        << parseExecutedQuery(query);
 }
 
-#ifdef TINYORM_COMMON_NAMESPACE
-}
-#endif
+TINYORM_END_COMMON_NAMESPACE

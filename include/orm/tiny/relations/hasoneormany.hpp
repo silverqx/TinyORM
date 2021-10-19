@@ -8,10 +8,8 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/utils/attribute.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Tiny::Relations
 {
 
@@ -401,8 +399,7 @@ namespace Orm::Tiny::Relations
     }
 
 } // namespace Orm::Tiny::Relations
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // HASONEORMANY_HPP

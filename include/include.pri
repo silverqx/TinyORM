@@ -37,6 +37,7 @@ HEADERS += \
     $$PWD/orm/logquery.hpp \
     $$PWD/orm/macros.hpp \
     $$PWD/orm/macros/archdetect.hpp \
+    $$PWD/orm/macros/commonnamespace.hpp \
     $$PWD/orm/macros/compilerdetect.hpp \
     $$PWD/orm/macros/export.hpp \
     $$PWD/orm/macros/export_common.hpp \

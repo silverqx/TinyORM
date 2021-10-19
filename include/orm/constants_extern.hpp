@@ -7,12 +7,11 @@ TINY_SYSTEM_HEADER
 
 #include <QString>
 
+#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 /*! Namespace constains common chars and strings. */
 namespace Orm::Constants
 {
@@ -73,8 +72,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString B_AND;
 
 } // namespace Orm::Constants
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // ORM_CONSTANTS_EXTERN_HPP

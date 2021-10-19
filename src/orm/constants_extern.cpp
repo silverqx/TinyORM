@@ -1,9 +1,7 @@
 #include "orm/constants_extern.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Constants
 {
 
@@ -63,6 +61,5 @@ namespace Orm::Constants
     const QString B_AND    = QStringLiteral("&");
 
 } // namespace Orm::Constants
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

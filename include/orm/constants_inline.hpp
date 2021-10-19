@@ -7,10 +7,10 @@ TINY_SYSTEM_HEADER
 
 #include <QString>
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+#include "orm/macros/commonnamespace.hpp"
+
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 /*! Namespace constains common chars and strings. */
 namespace Orm::Constants
 {
@@ -71,8 +71,7 @@ namespace Orm::Constants
     inline const QString B_AND = QStringLiteral("&");
 
 } // namespace Orm::Constants
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // ORM_CONSTANTS_INLINE_HPP

@@ -7,10 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include "orm/schema/schemabuilder.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Schema
 {
 
@@ -24,8 +22,7 @@ namespace Orm::Schema
     };
 
 } // namespace Orm::Schema
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // SQLITESCHEMABUILDER_HPP

@@ -8,14 +8,13 @@ TINY_SYSTEM_HEADER
 #include <QStringList>
 #include <QtGlobal>
 
+#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
 class QSqlQuery;
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Query::Processors
 {
 
@@ -35,8 +34,7 @@ namespace Orm::Query::Processors
     };
 
 } // namespace Orm::Query::Processors
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // PROCESSOR_HPP

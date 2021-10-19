@@ -6,12 +6,9 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/ormtypes.hpp"
-#include "orm/macros/export.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Utils::Attribute
 {
     /*! Convert a AttributeItem QVector to QVariantMap. */
@@ -38,8 +35,7 @@ namespace Orm::Utils::Attribute
                              const QVector<AttributeItem> &values,
                              const QString &keyName);
 } // namespace Orm::Utils::Attribute
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // ATTRIBUTE_HPP

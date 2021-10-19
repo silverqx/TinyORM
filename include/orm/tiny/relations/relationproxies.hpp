@@ -4,15 +4,13 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <QtSql/QSqlQuery>
+
 #include "orm/concepts.hpp"
 #include "orm/tiny/tinytypes.hpp"
 
-class QSqlQuery;
+TINYORM_BEGIN_COMMON_NAMESPACE
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
 namespace Orm
 {
 
@@ -35,7 +33,8 @@ namespace Tiny::Relations
         using JoinClause = Orm::Query::JoinClause;
         /*! Alias for the QueriesRelationships callback type. */
         template<typename HasRelated>
-        using CallbackType = Concerns::QueriesRelationshipsCallback<HasRelated>;
+        using CallbackType = Orm::Tiny::Concerns
+                                      ::QueriesRelationshipsCallback<HasRelated>;
 
     public:
         /*! Virtual destructor. */
@@ -2112,8 +2111,7 @@ namespace Tiny::Relations
 
 } // namespace Orm::Tiny::Relations
 } // namespace Orm::Tiny
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // RELATIONPROXIES_HPP

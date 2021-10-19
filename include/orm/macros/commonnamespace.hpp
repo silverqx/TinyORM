@@ -1,0 +1,17 @@
+#pragma once
+#ifndef ORM_COMMONNAMESPACE_HPP
+#define ORM_COMMONNAMESPACE_HPP
+
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
+// User defined namespace
+#ifdef TINYORM_COMMON_NAMESPACE
+#  define TINYORM_BEGIN_COMMON_NAMESPACE namespace TINYORM_COMMON_NAMESPACE {
+#  define TINYORM_END_COMMON_NAMESPACE }
+#else
+#  define TINYORM_BEGIN_COMMON_NAMESPACE
+#  define TINYORM_END_COMMON_NAMESPACE
+#endif
+
+#endif // ORM_COMMONNAMESPACE_HPP

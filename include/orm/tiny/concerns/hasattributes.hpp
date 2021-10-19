@@ -7,10 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include "orm/ormtypes.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Tiny
 {
 
@@ -59,8 +57,7 @@ namespace Orm::Tiny
     { return m_attributes; }
 
 } // namespace Orm::Tiny
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // HASATTRIBUTES_HPP

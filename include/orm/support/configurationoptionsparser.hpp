@@ -8,10 +8,10 @@ TINY_SYSTEM_HEADER
 #include <QString>
 #include <QVariantHash>
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+#include "orm/macros/commonnamespace.hpp"
+
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 
@@ -55,8 +55,7 @@ namespace Support
 
 } // namespace Orm::Support
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // CONFIGURATIONOPTIONSPARSER_HPP

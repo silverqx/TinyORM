@@ -4,10 +4,8 @@
 #include "orm/macros.hpp"
 #include "orm/query/joinclause.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Query::Grammars
 {
 
@@ -551,6 +549,5 @@ Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
 }
 
 } // namespace Orm::Query::Grammars
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

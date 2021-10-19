@@ -7,10 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include "orm/tiny/relations/basepivot.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Tiny::Relations
 {
 
@@ -32,8 +30,7 @@ namespace Orm::Tiny::Relations
     };
 
 } // namespace Orm::Tiny::Relations
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // PIVOT_HPP

@@ -22,10 +22,8 @@
 #define TINYORM_BUILD_STR "TinyORM " TINYORM_VERSION_STR " (" ARCH_FULL SHARED_STRING \
                           DEBUG_STRING " build; by " TINYORM_COMPILER_STRING ")"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 
@@ -50,6 +48,5 @@ QVersionNumber LibraryInfo::version() noexcept
 }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

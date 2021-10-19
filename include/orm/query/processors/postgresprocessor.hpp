@@ -7,10 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include "orm/query/processors/processor.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Query::Processors
 {
 
@@ -28,8 +26,7 @@ namespace Orm::Query::Processors
     };
 
 } // namespace Orm::Query::Processors
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // POSTGRESPROCESSOR_HPP

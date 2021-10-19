@@ -8,10 +8,8 @@ TINY_SYSTEM_HEADER
 #include "orm/connectors/connector.hpp"
 #include "orm/connectors/connectorinterface.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Connectors
 {
 
@@ -57,9 +55,7 @@ namespace Orm::Connectors
     };
 
 } // namespace Orm::Connectors
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
 
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // POSTGRESCONNECTOR_HPP

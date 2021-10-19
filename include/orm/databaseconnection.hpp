@@ -20,10 +20,8 @@ TINY_SYSTEM_HEADER
 #include "orm/schema/schemabuilder.hpp"
 #include "orm/schema/grammars/schemagrammar.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 
@@ -563,8 +561,7 @@ namespace Orm
     inline DatabaseConnection::~DatabaseConnection() = default;
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // DATABASECONNECTION_HPP

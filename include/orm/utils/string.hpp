@@ -7,12 +7,11 @@ TINY_SYSTEM_HEADER
 
 #include <QString>
 
+#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Utils::String
 {
     /*! Convert a string to snake case. */
@@ -25,8 +24,7 @@ namespace Orm::Utils::String
     SHAREDLIB_EXPORT bool isNumber(const QString &string);
 
 } // namespace Orm::Utils::String
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // UTILS_STRING_HPP

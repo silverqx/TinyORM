@@ -12,10 +12,8 @@ TINY_SYSTEM_HEADER
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/connectors/connectionfactory.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 namespace Query
@@ -314,8 +312,7 @@ namespace Query
     }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // DATABASEMANAGER_HPP

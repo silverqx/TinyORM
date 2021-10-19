@@ -5,10 +5,8 @@
 #include "orm/schema/grammars/sqliteschemagrammar.hpp"
 #include "orm/schema/sqliteschemabuilder.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 
@@ -61,6 +59,5 @@ std::unique_ptr<QueryProcessor> SQLiteConnection::getDefaultPostProcessor() cons
 }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

@@ -10,10 +10,8 @@ TINY_SYSTEM_HEADER
 #include "orm/concepts.hpp"
 #include "orm/tiny/tinytypes.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 
@@ -2337,8 +2335,7 @@ namespace Relations
 
 } // namespace Orm::Tiny
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // MODELPROXIES_HPP

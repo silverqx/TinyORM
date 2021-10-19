@@ -3,10 +3,8 @@
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/databaseconnection.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 
@@ -695,6 +693,5 @@ DatabaseManager::refreshQtConnections(const QString &name)
 }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

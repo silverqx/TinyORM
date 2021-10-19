@@ -4,10 +4,8 @@
 
 #include "orm/exceptions/sqlerror.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Concerns
 {
 
@@ -57,6 +55,5 @@ bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &
 }
 
 } // namespace Orm::Concerns
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

@@ -8,16 +8,16 @@ TINY_SYSTEM_HEADER
 #include <QString>
 #include <QVariant>
 
+#include "orm/macros/commonnamespace.hpp"
+
 namespace std
 {
     template<typename ..._Types>
     class variant;
 }
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 
@@ -68,8 +68,7 @@ namespace Query
                              std::convertible_to<T, QString>;
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // ORM_CONCEPTS_HPP

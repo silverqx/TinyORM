@@ -7,10 +7,8 @@
 #include "orm/schema/grammars/postgresschemagrammar.hpp"
 #include "orm/schema/postgresschemabuilder.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 
@@ -63,6 +61,5 @@ std::unique_ptr<QueryProcessor> PostgresConnection::getDefaultPostProcessor() co
 }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

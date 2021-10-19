@@ -13,10 +13,8 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/tinytypes.hpp"
 #include "orm/utils/type.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Tiny::Concerns
 {
 
@@ -701,8 +699,7 @@ namespace Private
     }
 
 } // namespace Orm::Tiny::Concerns
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // QUERIESRELATIONSHIPS_HPP

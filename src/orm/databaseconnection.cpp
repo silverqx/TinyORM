@@ -8,10 +8,8 @@
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/type.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 
@@ -1051,6 +1049,5 @@ QueryGrammar &DatabaseConnection::getQueryGrammar()
 }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

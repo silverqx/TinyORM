@@ -2,10 +2,8 @@
 
 #include "orm/query/querybuilder.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Query::Grammars
 {
 
@@ -185,6 +183,5 @@ QString SQLiteGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) const
 }
 
 } // namespace Orm::Query::Grammars
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

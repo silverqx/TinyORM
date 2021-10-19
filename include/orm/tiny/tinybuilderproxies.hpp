@@ -4,16 +4,13 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <QtSql/QSqlQuery>
+
 #include "orm/concepts.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/utils/attribute.hpp"
 
-class QSqlQuery;
-
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
@@ -1432,8 +1429,7 @@ namespace Tiny
 
 } // namespace Orm::Tiny
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // TINYBUILDERPROXIES_HPP

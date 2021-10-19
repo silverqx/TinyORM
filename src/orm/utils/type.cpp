@@ -7,10 +7,8 @@
 
 using namespace Orm::Constants;
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Utils
 {
 
@@ -134,6 +132,5 @@ Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
 }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE

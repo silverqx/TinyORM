@@ -9,10 +9,7 @@ TINY_SYSTEM_HEADER
 #include "orm/ormtypes.hpp"
 #include "orm/utils/type.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny
 {
@@ -398,8 +395,7 @@ namespace Concerns
 
 } // namespace Orm::Tiny::Concerns
 } // namespace Orm::Tiny
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // GUARDSATTRIBUTES_HPP

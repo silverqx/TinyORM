@@ -8,10 +8,8 @@ TINY_SYSTEM_HEADER
 // FEATURE orm types, only AttributeItem used silverqx
 #include "orm/ormtypes.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Tiny::Relations
 {
     template<class Model, class Related>
@@ -136,8 +134,7 @@ namespace Concerns {
 
 } // namespace Orm::Tiny::Relations::Concerns
 } // namespace Orm::Tiny::Relations
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // SUPPORTSDEFAULTMODELS_HPP

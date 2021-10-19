@@ -8,12 +8,11 @@ TINY_SYSTEM_HEADER
 #include <QVariant>
 #include <QVector>
 
+#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Query
 {
 
@@ -61,9 +60,8 @@ namespace Orm::Query
     }
 
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #ifdef TINYORM_COMMON_NAMESPACE
 Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Query::Expression)

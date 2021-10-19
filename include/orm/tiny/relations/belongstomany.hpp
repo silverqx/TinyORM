@@ -20,10 +20,8 @@ TINY_SYSTEM_HEADER
 #include "orm/utils/attribute.hpp"
 #include "orm/utils/type.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Tiny::Relations
 {
     class Pivot;
@@ -1950,8 +1948,7 @@ namespace Orm::Tiny::Relations
     }
 
 } // namespace Orm::Tiny::Relations
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // BELONGSTOMANY_HPP

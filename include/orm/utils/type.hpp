@@ -14,6 +14,7 @@ TINY_SYSTEM_HEADER
 #include <cxxabi.h>
 #endif
 
+#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
 #ifdef __GNUG__
@@ -24,10 +25,8 @@ TINY_SYSTEM_HEADER
 #  define __tiny_func__ __FUNCTION__
 #endif
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Utils
 {
 
@@ -89,8 +88,7 @@ namespace Orm::Utils
     }
 
 } // namespace Orm::Utils
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // UTILS_TYPE_HPP

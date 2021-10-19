@@ -27,10 +27,8 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/tinybuilder.hpp"
 #include "orm/utils/string.hpp"
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm
 {
 
@@ -108,8 +106,8 @@ namespace Relations {
     // BUG cmake MinGW UCRT64 clang static build builds, but cause problem with inline_constants ; shared build with inline_constants cause crashes of 50% of tests, like bug above, this will be MinGW clang or clang bug, on unix it works without problems silverqx
     // FUTURE linux, add linker version script https://github.com/sailfishos/qtbase/commit/72ba0079c3967bdfa26acdce78ce6cb98b30c27b?view=parallel https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html https://stackoverflow.com/questions/41061220/where-do-object-file-version-references-come-from silverqx
     // TODO Visual Studio memory analyzer https://docs.microsoft.com/en-us/visualstudio/profiling/memory-usage-without-debugging2?view=vs-2019 silverqx
-    // CUR replace all TINYORM_COMMON_NAMESPACE and Orm namespace with macros silverqx
     // CUR cmake rename TinyQtCommon to TinyCommon silverqx
+    // BUG parseExecutedQuery() is not in NS silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
@@ -3310,9 +3308,8 @@ namespace Relations {
 
 } // namespace Orm::Tiny
 } // namespace Orm
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 // TODO study, find out how to avoid pivot include at the end of Model's header file silverqx
 #include "orm/tiny/relations/pivot.hpp"

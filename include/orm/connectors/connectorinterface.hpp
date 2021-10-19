@@ -7,10 +7,10 @@ TINY_SYSTEM_HEADER
 
 #include <QVariantHash>
 
-#ifdef TINYORM_COMMON_NAMESPACE
-namespace TINYORM_COMMON_NAMESPACE
-{
-#endif
+#include "orm/macros/commonnamespace.hpp"
+
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace Orm::Connectors
 {
     using ConnectionName = QString;
@@ -29,8 +29,7 @@ namespace Orm::Connectors
     inline ConnectorInterface::~ConnectorInterface() = default;
 
 } // namespace Orm::Connectors
-#ifdef TINYORM_COMMON_NAMESPACE
-} // namespace TINYORM_COMMON_NAMESPACE
-#endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // CONNECTORINTERFACE_HPP
