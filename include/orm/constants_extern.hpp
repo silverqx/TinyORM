@@ -78,6 +78,8 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString P5432;
     SHAREDLIB_EXPORT extern const QString ROOT;
     SHAREDLIB_EXPORT extern const QString UTC;
+    SHAREDLIB_EXPORT extern const QString LOCAL;
+    SHAREDLIB_EXPORT extern const QString SYSTEM;
     SHAREDLIB_EXPORT extern const QString PUBLIC;
     SHAREDLIB_EXPORT extern const QString UTF8;
     SHAREDLIB_EXPORT extern const QString UTF8MB4;
