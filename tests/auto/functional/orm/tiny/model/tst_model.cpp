@@ -310,11 +310,11 @@ void tst_Model::save_Update_WithNullValue() const
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    if (DB::connection(connection).driverName() != "QSQLITE")
+    if (DB::connection(connection).driverName() != QSQLITE)
         QCOMPARE(peerVerify->getAttribute("total_seeds"),
                  QVariant(QMetaType(QMetaType::Int)));
 #else
-    if (DB::connection(connection).driverName() != "QSQLITE")
+    if (DB::connection(connection).driverName() != QSQLITE)
         QCOMPARE(peerVerify->getAttribute("total_seeds"), QVariant(QVariant::Int));
 #endif
 

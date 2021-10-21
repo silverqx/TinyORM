@@ -13,6 +13,8 @@
 #endif
 #include "orm/utils/type.hpp"
 
+using QueryUtils = Orm::Utils::Query;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
@@ -815,7 +817,7 @@ void DatabaseConnection::logQuery(
            connectionName.isEmpty() ? ""
                                     : QStringLiteral(", %1").arg(connectionName)
                                       .toUtf8().constData(),
-           Orm::Utils::Query::parseExecutedQuery(query).toUtf8().constData());
+           QueryUtils::parseExecutedQuery(query).toUtf8().constData());
 #endif
 }
 
@@ -837,8 +839,8 @@ void DatabaseConnection::logQueryForPretend(
 
     qDebug("Pretended prepared query (%s) : %s",
            connectionName.isEmpty() ? "" : connectionName.toUtf8().constData(),
-           Orm::Utils::Query
-              ::parseExecutedQueryForPretend(query, bindings).toUtf8().constData());
+           QueryUtils::parseExecutedQueryForPretend(query,
+                                                    bindings).toUtf8().constData());
 #endif
 }
 

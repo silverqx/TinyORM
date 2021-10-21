@@ -1,9 +1,12 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include "orm/constants.hpp"
 #include "orm/databasemanager.hpp"
 
 #include "databases.hpp"
+
+using namespace Orm::Constants;
 
 using Orm::DatabaseManager;
 
@@ -21,7 +24,7 @@ void tst_DatabaseManager::removeConnection_Connected() const
     const auto connectionName =
             "tinyorm_mysql_tests-tst_DatabaseMannager-removeConnection_Connected";
     const auto databaseName = qEnvironmentVariable("DB_MYSQL_DATABASE", "");
-    const auto driverName = "QMYSQL";
+    const auto driverName = QMYSQL;
 
     // Create database connection
     // Ownership of a unique_ptr()
@@ -60,7 +63,7 @@ void tst_DatabaseManager::removeConnection_NotConnected() const
 
     // Ownership of a unique_ptr()
     auto db = DatabaseManager::create({
-        {"driver", "QMYSQL"},
+        {"driver", QMYSQL},
         {"host",   "example.com"},
     }, connectionName);
 

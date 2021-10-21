@@ -32,11 +32,11 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
 
     const auto driver = config["driver"].value<QString>();
 
-    if (driver == "QMYSQL")
+    if (driver == QMYSQL)
         return std::make_unique<MySqlConnector>();
-    else if (driver == "QPSQL")
+    else if (driver == QPSQL)
         return std::make_unique<PostgresConnector>();
-    else if (driver == "QSQLITE")
+    else if (driver == QSQLITE)
         return std::make_unique<SQLiteConnector>();
 //    else if (driver == "SQLSRV")
 //        return std::make_unique<SqlServerConnector>();
@@ -142,13 +142,13 @@ ConnectionFactory::createConnection(
         const QString &database, const QString &prefix,
         const QVariantHash &config) const
 {
-    if (driver == "QMYSQL")
+    if (driver == QMYSQL)
         return std::make_unique<MySqlConnection>(std::move(connection), database, prefix,
                                                  config);
-    else if (driver == "QPSQL")
+    else if (driver == QPSQL)
         return std::make_unique<PostgresConnection>(std::move(connection), database,
                                                     prefix, config);
-    else if (driver == "QSQLITE")
+    else if (driver == QSQLITE)
         return std::make_unique<SQLiteConnection>(std::move(connection), database,
                                                   prefix, config);
 //    else if (driver == "SQLSRV")

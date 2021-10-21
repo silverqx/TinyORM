@@ -192,7 +192,7 @@ void Builder::truncate()
     for (const auto &[sql, bindings] : m_grammar.compileTruncate(*this))
         /* Postgres doesn't execute truncate statement as prepared query:
            https://www.postgresql.org/docs/13/sql-prepare.html */
-        if (m_connection.driverName() == "QPSQL")
+        if (m_connection.driverName() == QPSQL)
             m_connection.unprepared(sql);
         else
             m_connection.statement(sql, bindings);

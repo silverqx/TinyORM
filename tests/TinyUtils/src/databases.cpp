@@ -1,8 +1,11 @@
 #include "databases.hpp"
 
+#include "orm/constants.hpp"
 #include "orm/db.hpp"
 #include "orm/exceptions/logicerror.hpp"
 #include "orm/exceptions/runtimeerror.hpp"
+
+using namespace Orm::Constants;
 
 using Orm::Exceptions::LogicError;
 using Orm::Exceptions::RuntimeError;
@@ -87,7 +90,7 @@ std::pair<std::reference_wrapper<const QVariantHash>, bool>
 Databases::mysqlConfiguration()
 {
     static const QVariantHash config {
-        {"driver",    "QMYSQL"},
+        {"driver",    QMYSQL},
         {"host",      qEnvironmentVariable("DB_MYSQL_HOST",     "127.0.0.1")},
         {"port",      qEnvironmentVariable("DB_MYSQL_PORT",     "3306")},
         {"database",  qEnvironmentVariable("DB_MYSQL_DATABASE", "")},
@@ -124,7 +127,7 @@ std::pair<std::reference_wrapper<const QVariantHash>, bool>
 Databases::sqliteConfiguration()
 {
     static const QVariantHash config {
-        {"driver",    "QSQLITE"},
+        {"driver",    QSQLITE},
         {"database",  qEnvironmentVariable("DB_SQLITE_DATABASE",
                                            TINYORM_SQLITE_DATABASE)},
         {"foreign_key_constraints", qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS",
@@ -143,7 +146,7 @@ std::pair<std::reference_wrapper<const QVariantHash>, bool>
 Databases::postgresConfiguration()
 {
     static const QVariantHash config {
-        {"driver",   "QPSQL"},
+        {"driver",   QPSQL},
         {"host",     qEnvironmentVariable("DB_PGSQL_HOST",     "127.0.0.1")},
         {"port",     qEnvironmentVariable("DB_PGSQL_PORT",     "5432")},
         {"database", qEnvironmentVariable("DB_PGSQL_DATABASE", "")},

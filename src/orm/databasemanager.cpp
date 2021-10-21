@@ -273,7 +273,7 @@ QStringList DatabaseManager::supportedDrivers() const
 {
     // FUTURE add method to not only supported drivers, but also check if driver is available/loadable by qsqldatabase silverqx
     // aaaaaaaaaaaaaachjo 🤔😁 -- 4 months later, looks much better, right?
-    return {"QMYSQL", "QPSQL", "QSQLITE"};
+    return {QMYSQL, QPSQL, QSQLITE};
 }
 
 QStringList DatabaseManager::connectionNames() const

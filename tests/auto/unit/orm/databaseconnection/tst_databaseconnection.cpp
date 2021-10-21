@@ -6,6 +6,8 @@
 
 #include "databases.hpp"
 
+using namespace Orm::Constants;
+
 using Orm::MySqlConnection;
 
 using TestUtils::Databases;
@@ -46,7 +48,7 @@ void tst_DatabaseConnection::pingDatabase() const
     auto &connection_ = DB::connection(connection);
 
     if (const auto driverName = connection_.driverName();
-        driverName != "QMYSQL"
+        driverName != QMYSQL
     )
         QSKIP(QStringLiteral("The '%1' database driver doesn't support ping command.")
               .arg(driverName).toUtf8().constData(), );
@@ -70,7 +72,7 @@ void tst_DatabaseConnection::isNotMaria_OnMySqlConnection() const
     auto &connection_ = DB::connection(connection);
 
     if (const auto driverName = connection_.driverName();
-        driverName != "QMYSQL"
+        driverName != QMYSQL
     )
         QSKIP(QStringLiteral("The '%1' database driver doesn't implement isMaria() "
                              "method.")

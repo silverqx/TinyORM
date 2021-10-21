@@ -4,6 +4,8 @@
 
 #include "orm/utils/query.hpp"
 
+using QueryUtils = Orm::Utils::Query;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Exceptions
@@ -37,7 +39,7 @@ QString QueryError::formatMessage(const char *message, const QSqlQuery &query)
     QString result(SqlError::formatMessage(message, query.lastError()));
 
     // Also append executed query
-    if (const auto executedQuery = Orm::Utils::Query::parseExecutedQuery(query);
+    if (const auto executedQuery = QueryUtils::parseExecutedQuery(query);
         !executedQuery.isEmpty()
     )
         result += QStringLiteral(", SQL: %1").arg(executedQuery);

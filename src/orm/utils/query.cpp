@@ -76,7 +76,7 @@ QString Query::parseExecutedQueryForPretend(QString query,
 void Query::logExecutedQuery(const QSqlQuery &query)
 {
     qDebug().noquote() << QStringLiteral("Executed Query :")
-                       << Orm::Utils::Query::parseExecutedQuery(query);
+                       << Query::parseExecutedQuery(query);
 }
 #else
 void Query::logExecutedQuery(const QSqlQuery &)
