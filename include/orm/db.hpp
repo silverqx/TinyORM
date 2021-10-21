@@ -1,6 +1,6 @@
 #pragma once
-#ifndef DB_HPP
-#define DB_HPP
+#ifndef ORM_DB_HPP
+#define ORM_DB_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -279,4 +279,4 @@ using DB = Orm::DB;
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // DB_HPP
+#endif // ORM_DB_HPP

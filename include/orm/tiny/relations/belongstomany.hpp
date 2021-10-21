@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BELONGSTOMANY_HPP
-#define BELONGSTOMANY_HPP
+#ifndef ORM_BELONGSTOMANY_HPP
+#define ORM_BELONGSTOMANY_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -1951,4 +1951,4 @@ namespace Orm::Tiny::Relations
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // BELONGSTOMANY_HPP
+#endif // ORM_BELONGSTOMANY_HPP

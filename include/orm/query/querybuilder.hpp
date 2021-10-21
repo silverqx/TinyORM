@@ -1,6 +1,6 @@
 #pragma once
-#ifndef QUERYBUILDER_HPP
-#define QUERYBUILDER_HPP
+#ifndef ORM_QUERYBUILDER_HPP
+#define ORM_QUERYBUILDER_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -1206,4 +1206,4 @@ namespace Query
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // QUERYBUILDER_HPP
+#endif // ORM_QUERYBUILDER_HPP

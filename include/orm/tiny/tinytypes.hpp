@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TINYTYPES_HPP
-#define TINYTYPES_HPP
+#ifndef ORM_TINYTYPES_HPP
+#define ORM_TINYTYPES_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -29,4 +29,4 @@ namespace Concerns
 } // namespace Orm::Tiny::Concerns
 } // namespace Orm::Tiny
 
-#endif // TINYTYPES_HPP
+#endif // ORM_TINYTYPES_HPP

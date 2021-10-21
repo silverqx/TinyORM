@@ -1,6 +1,6 @@
 #pragma once
-#ifndef JOINCLAUSE_HPP
-#define JOINCLAUSE_HPP
+#ifndef ORM_JOINCLAUSE_HPP
+#define ORM_JOINCLAUSE_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -71,4 +71,4 @@ namespace Orm::Query
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // JOINCLAUSE_HPP
+#endif // ORM_JOINCLAUSE_HPP

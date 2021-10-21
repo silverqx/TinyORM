@@ -1,6 +1,6 @@
 #pragma once
-#ifndef HASATTRIBUTES_HPP
-#define HASATTRIBUTES_HPP
+#ifndef ORM_HASATTRIBUTES_HPP
+#define ORM_HASATTRIBUTES_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -60,4 +60,4 @@ namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // HASATTRIBUTES_HPP
+#endif // ORM_HASATTRIBUTES_HPP

@@ -1,5 +1,5 @@
-#ifndef RELATIONPROXIES_HPP
-#define RELATIONPROXIES_HPP
+#ifndef ORM_RELATIONPROXIES_HPP
+#define ORM_RELATIONPROXIES_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -2114,4 +2114,4 @@ namespace Tiny::Relations
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // RELATIONPROXIES_HPP
+#endif // ORM_RELATIONPROXIES_HPP

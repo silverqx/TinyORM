@@ -1,6 +1,6 @@
 #pragma once
-#ifndef DOMAINERROR_HPP
-#define DOMAINERROR_HPP
+#ifndef ORM_DOMAINERROR_HPP
+#define ORM_DOMAINERROR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -25,4 +25,4 @@ namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // DOMAINERROR_HPP
+#endif // ORM_DOMAINERROR_HPP

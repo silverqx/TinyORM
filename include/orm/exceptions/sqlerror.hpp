@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SQLERROR_HPP
-#define SQLERROR_HPP
+#ifndef ORM_SQLERROR_HPP
+#define ORM_SQLERROR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -41,4 +41,4 @@ namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // SQLERROR_HPP
+#endif // ORM_SQLERROR_HPP

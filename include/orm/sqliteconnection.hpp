@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SQLITECONNECTION_HPP
-#define SQLITECONNECTION_HPP
+#ifndef ORM_SQLITECONNECTION_HPP
+#define ORM_SQLITECONNECTION_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -42,4 +42,4 @@ namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // SQLITECONNECTION_HPP
+#endif // ORM_SQLITECONNECTION_HPP

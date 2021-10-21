@@ -1,6 +1,6 @@
 #pragma once
-#ifndef RELATION_HPP
-#define RELATION_HPP
+#ifndef ORM_RELATION_HPP
+#define ORM_RELATION_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -371,4 +371,4 @@ namespace Relations
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // RELATION_HPP
+#endif // ORM_RELATION_HPP

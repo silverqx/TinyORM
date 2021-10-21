@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MYSQLCONNECTION_HPP
-#define MYSQLCONNECTION_HPP
+#ifndef ORM_MYSQLCONNECTION_HPP
+#define ORM_MYSQLCONNECTION_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -51,4 +51,4 @@ namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // MYSQLCONNECTION_HPP
+#endif // ORM_MYSQLCONNECTION_HPP

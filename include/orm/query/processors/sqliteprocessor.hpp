@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SQLITEPROCESSOR_HPP
-#define SQLITEPROCESSOR_HPP
+#ifndef ORM_SQLITEPROCESSOR_HPP
+#define ORM_SQLITEPROCESSOR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -29,4 +29,4 @@ namespace Orm::Query::Processors
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // SQLITEPROCESSOR_HPP
+#endif // ORM_SQLITEPROCESSOR_HPP

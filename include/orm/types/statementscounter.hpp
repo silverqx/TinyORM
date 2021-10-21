@@ -1,6 +1,6 @@
 #pragma once
-#ifndef STATEMENTSCOUNTER_HPP
-#define STATEMENTSCOUNTER_HPP
+#ifndef ORM_STATEMENTSCOUNTER_HPP
+#define ORM_STATEMENTSCOUNTER_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -33,4 +33,4 @@ namespace Types
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // STATEMENTSCOUNTER_HPP
+#endif // ORM_STATEMENTSCOUNTER_HPP

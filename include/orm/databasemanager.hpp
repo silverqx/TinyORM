@@ -1,6 +1,6 @@
 #pragma once
-#ifndef DATABASEMANAGER_HPP
-#define DATABASEMANAGER_HPP
+#ifndef ORM_DATABASEMANAGER_HPP
+#define ORM_DATABASEMANAGER_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -321,4 +321,4 @@ namespace Query
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // DATABASEMANAGER_HPP
+#endif // ORM_DATABASEMANAGER_HPP

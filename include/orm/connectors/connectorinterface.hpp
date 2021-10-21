@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CONNECTORINTERFACE_HPP
-#define CONNECTORINTERFACE_HPP
+#ifndef ORM_CONNECTORINTERFACE_HPP
+#define ORM_CONNECTORINTERFACE_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -32,4 +32,4 @@ namespace Orm::Connectors
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // CONNECTORINTERFACE_HPP
+#endif // ORM_CONNECTORINTERFACE_HPP

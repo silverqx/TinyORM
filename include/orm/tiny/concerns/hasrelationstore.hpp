@@ -1,6 +1,6 @@
 #pragma once
-#ifndef HASRELATIONSTORE_HPP
-#define HASRELATIONSTORE_HPP
+#ifndef ORM_HASRELATIONSTORE_HPP
+#define ORM_HASRELATIONSTORE_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -775,4 +775,4 @@ namespace Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // HASRELATIONSTORE_HPP
+#endif // ORM_HASRELATIONSTORE_HPP

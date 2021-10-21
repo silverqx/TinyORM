@@ -1,6 +1,6 @@
 #pragma once
-#ifndef POSTGRESPROCESSOR_HPP
-#define POSTGRESPROCESSOR_HPP
+#ifndef ORM_POSTGRESPROCESSOR_HPP
+#define ORM_POSTGRESPROCESSOR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -29,4 +29,4 @@ namespace Orm::Query::Processors
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // POSTGRESPROCESSOR_HPP
+#endif // ORM_POSTGRESPROCESSOR_HPP

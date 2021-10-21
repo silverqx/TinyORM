@@ -1,6 +1,6 @@
 #pragma once
-#ifndef PROCESSOR_HPP
-#define PROCESSOR_HPP
+#ifndef ORM_PROCESSOR_HPP
+#define ORM_PROCESSOR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -37,4 +37,4 @@ namespace Orm::Query::Processors
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // PROCESSOR_HPP
+#endif // ORM_PROCESSOR_HPP

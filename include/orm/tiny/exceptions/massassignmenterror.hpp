@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MASSASSIGNMENTERROR_HPP
-#define MASSASSIGNMENTERROR_HPP
+#ifndef ORM_MASSASSIGNMENTERROR_HPP
+#define ORM_MASSASSIGNMENTERROR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -23,4 +23,4 @@ namespace Orm::Tiny::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // MASSASSIGNMENTERROR_HPP
+#endif // ORM_MASSASSIGNMENTERROR_HPP

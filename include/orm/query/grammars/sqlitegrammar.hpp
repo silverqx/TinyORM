@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SQLITEGRAMMAR_HPP
-#define SQLITEGRAMMAR_HPP
+#ifndef ORM_SQLITEGRAMMAR_HPP
+#define ORM_SQLITEGRAMMAR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -67,4 +67,4 @@ namespace Orm::Query::Grammars
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // SQLITEGRAMMAR_HPP
+#endif // ORM_SQLITEGRAMMAR_HPP

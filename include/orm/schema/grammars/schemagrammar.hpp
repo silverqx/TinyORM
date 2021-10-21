@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SCHEMAGRAMMAR_HPP
-#define SCHEMAGRAMMAR_HPP
+#ifndef ORM_SCHEMAGRAMMAR_HPP
+#define ORM_SCHEMAGRAMMAR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -33,4 +33,4 @@ namespace Orm::Schema::Grammars
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // SCHEMAGRAMMAR_HPP
+#endif // ORM_SCHEMAGRAMMAR_HPP

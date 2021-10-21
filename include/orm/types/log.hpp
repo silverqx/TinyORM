@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LOG_HPP
-#define LOG_HPP
+#ifndef ORM_LOG_HPP
+#define ORM_LOG_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -49,4 +49,4 @@ namespace Types
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // LOG_HPP
+#endif // ORM_LOG_HPP

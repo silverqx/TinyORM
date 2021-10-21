@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TINYBUILDER_HPP
-#define TINYBUILDER_HPP
+#ifndef ORM_TINYBUILDER_HPP
+#define ORM_TINYBUILDER_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -928,4 +928,4 @@ namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // TINYBUILDER_HPP
+#endif // ORM_TINYBUILDER_HPP

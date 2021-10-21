@@ -1,6 +1,6 @@
 #pragma once
-#ifndef EXPRESSION_HPP
-#define EXPRESSION_HPP
+#ifndef ORM_EXPRESSION_HPP
+#define ORM_EXPRESSION_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -69,4 +69,4 @@ Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Query::Expression)
 Q_DECLARE_METATYPE(Orm::Query::Expression)
 #endif
 
-#endif // EXPRESSION_HPP
+#endif // ORM_EXPRESSION_HPP

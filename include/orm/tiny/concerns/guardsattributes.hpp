@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GUARDSATTRIBUTES_HPP
-#define GUARDSATTRIBUTES_HPP
+#ifndef ORM_GUARDSATTRIBUTES_HPP
+#define ORM_GUARDSATTRIBUTES_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -398,4 +398,4 @@ namespace Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // GUARDSATTRIBUTES_HPP
+#endif // ORM_GUARDSATTRIBUTES_HPP

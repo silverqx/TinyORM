@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MODELPROXIES_HPP
-#define MODELPROXIES_HPP
+#ifndef ORM_MODELPROXIES_HPP
+#define ORM_MODELPROXIES_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -2338,4 +2338,4 @@ namespace Relations
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // MODELPROXIES_HPP
+#endif // ORM_MODELPROXIES_HPP

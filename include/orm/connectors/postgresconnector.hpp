@@ -1,6 +1,6 @@
 #pragma once
-#ifndef POSTGRESCONNECTOR_HPP
-#define POSTGRESCONNECTOR_HPP
+#ifndef ORM_POSTGRESCONNECTOR_HPP
+#define ORM_POSTGRESCONNECTOR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -58,4 +58,4 @@ namespace Orm::Connectors
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // POSTGRESCONNECTOR_HPP
+#endif // ORM_POSTGRESCONNECTOR_HPP

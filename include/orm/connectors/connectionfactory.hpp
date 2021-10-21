@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CONNECTIONFACTORY_HPP
-#define CONNECTIONFACTORY_HPP
+#ifndef ORM_CONNECTIONFACTORY_HPP
+#define ORM_CONNECTIONFACTORY_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -75,4 +75,4 @@ namespace Connectors
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // CONNECTIONFACTORY_HPP
+#endif // ORM_CONNECTIONFACTORY_HPP

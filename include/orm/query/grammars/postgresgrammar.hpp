@@ -1,6 +1,6 @@
 #pragma once
-#ifndef POSTGRESGRAMMAR_HPP
-#define POSTGRESGRAMMAR_HPP
+#ifndef ORM_POSTGRESGRAMMAR_HPP
+#define ORM_POSTGRESGRAMMAR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -77,4 +77,4 @@ namespace Orm::Query::Grammars
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // POSTGRESGRAMMAR_HPP
+#endif // ORM_POSTGRESGRAMMAR_HPP

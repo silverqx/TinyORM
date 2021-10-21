@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BASEPIVOT_HPP
-#define BASEPIVOT_HPP
+#ifndef ORM_BASEPIVOT_HPP
+#define ORM_BASEPIVOT_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -273,4 +273,4 @@ namespace Orm::Tiny::Relations
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // BASEPIVOT_HPP
+#endif // ORM_BASEPIVOT_HPP

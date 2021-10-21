@@ -1,6 +1,6 @@
 #pragma once
-#ifndef QUERYERROR_HPP
-#define QUERYERROR_HPP
+#ifndef ORM_QUERYERROR_HPP
+#define ORM_QUERYERROR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -46,4 +46,4 @@ namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // QUERYERROR_HPP
+#endif // ORM_QUERYERROR_HPP

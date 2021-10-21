@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BASEGRAMMAR_HPP
-#define BASEGRAMMAR_HPP
+#ifndef ORM_BASEGRAMMAR_HPP
+#define ORM_BASEGRAMMAR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -175,4 +175,4 @@ namespace Query
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // BASEGRAMMAR_HPP
+#endif // ORM_BASEGRAMMAR_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MYSQLPROCESSOR_HPP
-#define MYSQLPROCESSOR_HPP
+#ifndef ORM_MYSQLPROCESSOR_HPP
+#define ORM_MYSQLPROCESSOR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -29,4 +29,4 @@ namespace Orm::Query::Processors
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // MYSQLPROCESSOR_HPP
+#endif // ORM_MYSQLPROCESSOR_HPP

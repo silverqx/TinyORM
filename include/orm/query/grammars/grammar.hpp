@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GRAMMAR_HPP
-#define GRAMMAR_HPP
+#ifndef ORM_GRAMMAR_HPP
+#define ORM_GRAMMAR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -216,4 +216,4 @@ namespace Orm::Query::Grammars
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // GRAMMAR_HPP
+#endif // ORM_GRAMMAR_HPP

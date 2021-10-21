@@ -1,6 +1,6 @@
 #pragma once
-#ifndef RUNTIMEERROR_HPP
-#define RUNTIMEERROR_HPP
+#ifndef ORM_RUNTIMEERROR_HPP
+#define ORM_RUNTIMEERROR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -44,4 +44,4 @@ namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // RUNTIMEERROR_HPP
+#endif // ORM_RUNTIMEERROR_HPP
