@@ -16,7 +16,9 @@
 
 using namespace Orm::Constants;
 
+#ifdef TINYORM_DEBUG_SQL
 using QueryUtils = Orm::Utils::Query;
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
