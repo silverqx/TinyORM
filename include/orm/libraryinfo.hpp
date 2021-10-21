@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_LIBRARYINFO_H
-#define ORM_LIBRARYINFO_H
+#ifndef ORM_LIBRARYINFO_HPP
+#define ORM_LIBRARYINFO_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -39,4 +39,4 @@ namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_LIBRARYINFO_H
+#endif // ORM_LIBRARYINFO_HPP

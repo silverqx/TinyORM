@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_ARCHDETECT_H
-#define ORM_ARCHDETECT_H
+#ifndef ORM_ARCHDETECT_HPP
+#define ORM_ARCHDETECT_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -107,4 +107,4 @@ TINY_SYSTEM_HEADER
 #define ARCH_FULL ARCH_PROCESSOR "-" ARCH_ENDIANNESS "-" ARCH_POINTER ARCH_COORD_TYPE \
                   ARCH_ABI
 
-#endif // ORM_ARCHDETECT_H
+#endif // ORM_ARCHDETECT_HPP
