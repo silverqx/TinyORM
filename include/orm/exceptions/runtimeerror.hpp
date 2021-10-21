@@ -21,7 +21,6 @@ namespace Orm::Exceptions
     class SHAREDLIB_EXPORT RuntimeError : public std::runtime_error
     {
     public:
-        // CUR make all this ctors char * noexcept silverqx
         /*! const char * constructor. */
         explicit RuntimeError(const char *message);
         /*! QString constructor. */

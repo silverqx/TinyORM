@@ -164,7 +164,6 @@ Databases::postgresConfiguration()
     // Environment variables was defined
     if (config.find(host_).value().template value<QString>() != H127001
         && !config.find(database_).value().template value<QString>().isEmpty()
-        // CUR check compare QSLiteral silverqx
         && config.find(username_)
                  .value().template value<QString>() != QStringLiteral("postgres")
         && config.find(password_).value().template value<QString>() != ""

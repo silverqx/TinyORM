@@ -3,7 +3,6 @@
 #include <QDebug>
 #include <QtSql/QSqlQuery>
 
-// CUR not a good place for this file, move it to the utils or support silverqx
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Utils
