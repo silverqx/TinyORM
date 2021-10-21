@@ -104,7 +104,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
                 LINKER:--dynamicbase,--high-entropy-va,--nxcompat
                 LINKER:--default-image-base-high>
             # Use faster linker ( GNU ld linker doesn't work with the Clang )
-            -fuse-ld=lld
+            LINKER:-fuse-ld=lld
         )
     endif()
 
