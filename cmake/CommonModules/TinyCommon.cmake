@@ -130,6 +130,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
             -Wdouble-promotion
             -Wconversion
             -Wzero-as-null-pointer-constant
+            -Wuninitialized
             -pedantic
             -pedantic-errors
             # Reduce I/O operations

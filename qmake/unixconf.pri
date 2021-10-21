@@ -20,6 +20,7 @@ QMAKE_CXXFLAGS_WARN_ON *= \
     -Weffc++ \
     -Werror \
     -Wfatal-errors \
+    -Winvalid-pch \
     -Wcast-qual \
     -Wcast-align \
     -Woverloaded-virtual \
@@ -31,7 +32,7 @@ QMAKE_CXXFLAGS_WARN_ON *= \
     -Wdouble-promotion \
     -Wconversion \
     -Wzero-as-null-pointer-constant \
-    -Winvalid-pch \
+    -Wuninitialized \
     -pedantic \
     -pedantic-errors \
 
