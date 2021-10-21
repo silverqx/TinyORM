@@ -1,6 +1,6 @@
 #pragma once
-#ifndef INVALIDFORMATERROR_HPP
-#define INVALIDFORMATERROR_HPP
+#ifndef ORM_INVALIDFORMATERROR_HPP
+#define ORM_INVALIDFORMATERROR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -23,4 +23,4 @@ namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // INVALIDFORMATERROR_HPP
+#endif // ORM_INVALIDFORMATERROR_HPP

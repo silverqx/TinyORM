@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORMTYPES_HPP
-#define ORMTYPES_HPP
+#ifndef ORM_ORMTYPES_HPP
+#define ORM_ORMTYPES_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -279,4 +279,4 @@ Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem)
 Q_DECLARE_METATYPE(Orm::WhereConditionItem)
 #endif
 
-#endif // ORMTYPES_HPP
+#endif // ORM_ORMTYPES_HPP
