@@ -27,10 +27,10 @@ std::unique_ptr<ConnectorInterface>
 ConnectionFactory::createConnector(const QVariantHash &config) const
 {
     // This method is public, so I left this check here
-    if (!config.contains("driver"))
+    if (!config.contains(driver_))
         throw std::domain_error("A 'driver' configuration parameter must be specified.");
 
-    const auto driver = config["driver"].value<QString>();
+    const auto driver = config[driver_].value<QString>();
 
     if (driver == QMYSQL)
         return std::make_unique<MySqlConnector>();
@@ -53,25 +53,25 @@ ConnectionFactory::parseConfig(QVariantHash &config, const QString &name) const
 
     normalizeDriverName(config);
 
-    if (!config.contains("database"))
-        config.insert("database", QString(""));
+    if (!config.contains(database_))
+        config.insert(database_, QString(""));
 
-    if (!config.contains("prefix"))
-        config.insert("prefix", QString(""));
+    if (!config.contains(prefix_))
+        config.insert(prefix_, QString(""));
 
-    if (!config.contains("options"))
-        config.insert("options", QVariantHash());
+    if (!config.contains(options_))
+        config.insert(options_, QVariantHash());
 
     return config;
 }
 
 void ConnectionFactory::normalizeDriverName(QVariantHash &config) const
 {
-    if (!config.contains("driver"))
-        config.insert("driver", QString(""));
+    if (!config.contains(driver_))
+        config.insert(driver_, QString(""));
 
     else {
-        auto &driver = config["driver"];
+        auto &driver = config[driver_];
 
         driver = driver.value<QString>().toUpper();
     }
@@ -81,15 +81,15 @@ std::unique_ptr<DatabaseConnection>
 ConnectionFactory::createSingleConnection(QVariantHash &config) const
 {
     return createConnection(
-                config["driver"].value<QString>(), createQSqlDatabaseResolver(config),
-                config["database"].value<QString>(), config["prefix"].value<QString>(),
+                config[driver_].value<QString>(), createQSqlDatabaseResolver(config),
+                config[database_].value<QString>(), config[prefix_].value<QString>(),
                 config);
 }
 
 std::function<ConnectionName()>
 ConnectionFactory::createQSqlDatabaseResolver(QVariantHash &config) const
 {
-    return config.contains("host")
+    return config.contains(host_)
             ? createQSqlDatabaseResolverWithHosts(config)
             : createQSqlDatabaseResolverWithoutHosts(config);
 }
@@ -111,7 +111,7 @@ ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &confi
            will be successful. */
         for (const auto &host : hosts)
             try {
-                configCopy["host"] = host;
+                configCopy[host_] = host;
 
                 return createConnector(configCopy)->connect(configCopy);
 
@@ -161,11 +161,11 @@ ConnectionFactory::createConnection(
 
 QStringList ConnectionFactory::parseHosts(const QVariantHash &config) const
 {
-    if (!config.contains("host"))
+    if (!config.contains(host_))
         // TODO now unify exception, std::domain_error is for user code, create own exceptions and use InvalidArgumentError, or runtime/logic error silverqx
         throw std::domain_error("Database 'host' configuration parameter is required.");
 
-    const auto hosts = config["host"].value<QStringList>();
+    const auto hosts = config[host_].value<QStringList>();
 
     validateHosts(hosts);
 

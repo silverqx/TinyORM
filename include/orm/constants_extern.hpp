@@ -46,12 +46,41 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString CREATED_AT;
     SHAREDLIB_EXPORT extern const QString UPDATED_AT;
     SHAREDLIB_EXPORT extern const QString PARENTH_ONE;
+
     SHAREDLIB_EXPORT extern const QString QMYSQL;
     SHAREDLIB_EXPORT extern const QString QPSQL;
     SHAREDLIB_EXPORT extern const QString QSQLITE;
     SHAREDLIB_EXPORT extern const QString MYSQL_;
     SHAREDLIB_EXPORT extern const QString POSTGRESQL;
     SHAREDLIB_EXPORT extern const QString SQLITE;
+
+    SHAREDLIB_EXPORT extern const QString driver_;
+    SHAREDLIB_EXPORT extern const QString host_;
+    SHAREDLIB_EXPORT extern const QString port_;
+    SHAREDLIB_EXPORT extern const QString database_;
+    SHAREDLIB_EXPORT extern const QString schema_;
+    SHAREDLIB_EXPORT extern const QString username_;
+    SHAREDLIB_EXPORT extern const QString password_;
+    SHAREDLIB_EXPORT extern const QString charset_;
+    SHAREDLIB_EXPORT extern const QString collation_;
+    SHAREDLIB_EXPORT extern const QString timezone_;
+    SHAREDLIB_EXPORT extern const QString prefix_;
+    SHAREDLIB_EXPORT extern const QString options_;
+    SHAREDLIB_EXPORT extern const QString strict_;
+
+    SHAREDLIB_EXPORT extern const QString isolation_level;
+    SHAREDLIB_EXPORT extern const QString foreign_key_constraints;
+    SHAREDLIB_EXPORT extern const QString check_database_exists;
+
+    SHAREDLIB_EXPORT extern const QString H127001;
+    SHAREDLIB_EXPORT extern const QString LOCALHOST;
+    SHAREDLIB_EXPORT extern const QString P3306;
+    SHAREDLIB_EXPORT extern const QString P5432;
+    SHAREDLIB_EXPORT extern const QString ROOT;
+    SHAREDLIB_EXPORT extern const QString UTC;
+    SHAREDLIB_EXPORT extern const QString PUBLIC;
+    SHAREDLIB_EXPORT extern const QString UTF8;
+    SHAREDLIB_EXPORT extern const QString UTF8MB4;
 
     // Comparison/logical/search operators
     SHAREDLIB_EXPORT extern const QString EQ;

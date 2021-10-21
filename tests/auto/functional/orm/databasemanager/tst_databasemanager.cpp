@@ -30,15 +30,15 @@ void tst_DatabaseManager::removeConnection_Connected() const
     // Ownership of a unique_ptr()
     auto db = DatabaseManager::create({
         {connectionName, {
-            {"driver",    driverName},
-            {"host",      qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
-            {"port",      qEnvironmentVariable("DB_MYSQL_PORT", "3306")},
-            {"database",  databaseName},
-            {"username",  qEnvironmentVariable("DB_MYSQL_USERNAME", "root")},
-            {"password",  qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
-            {"charset",   qEnvironmentVariable("DB_MYSQL_CHARSET", "utf8mb4")},
-            {"collation", qEnvironmentVariable("DB_MYSQL_COLLATION",
-                                               "utf8mb4_0900_ai_ci")},
+            {driver_,    driverName},
+            {host_,      qEnvironmentVariable("DB_MYSQL_HOST", H127001)},
+            {port_,      qEnvironmentVariable("DB_MYSQL_PORT", P3306)},
+            {database_,  databaseName},
+            {username_,  qEnvironmentVariable("DB_MYSQL_USERNAME", ROOT)},
+            {password_,  qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
+            {charset_,   qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
+            {collation_, qEnvironmentVariable("DB_MYSQL_COLLATION",
+                                              QStringLiteral("utf8mb4_0900_ai_ci"))},
         }},
     // Don't setup any default connection
     }, "");
@@ -63,8 +63,8 @@ void tst_DatabaseManager::removeConnection_NotConnected() const
 
     // Ownership of a unique_ptr()
     auto db = DatabaseManager::create({
-        {"driver", QMYSQL},
-        {"host",   "example.com"},
+        {driver_, QMYSQL},
+        {host_,   "example.com"},
     }, connectionName);
 
     QVERIFY(db->removeConnection(connectionName));

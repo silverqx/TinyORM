@@ -25,7 +25,7 @@ SQLiteConnector::connect(const QVariantHash &config) const
     /* SQLite supports "in-memory" databases that only last as long as the owning
        connection does. These are useful for tests or for short lifetime store
        querying. In-memory databases may only have a single open connection. */
-    if (config["database"] == ":memory:") {
+    if (config[database_] == ":memory:") {
         // sqlite :memory: driver
         createConnection(name, config, options);
 
@@ -62,11 +62,12 @@ void SQLiteConnector::configureForeignKeyConstraints(
         const QSqlDatabase &connection, const QVariantHash &config) const
 {
     // This ensures default SQLite behavior
-    if (!config.contains("foreign_key_constraints"))
+    if (!config.contains(foreign_key_constraints))
         return;
 
     const auto foreignKeyConstraints =
-            config["foreign_key_constraints"].value<bool>() ? "ON" : "OFF";
+            config[foreign_key_constraints].value<bool>() ? QStringLiteral("ON")
+                                                          : QStringLiteral("OFF");
 
     QSqlQuery query(connection);
     // FEATURE schema builder, use DatabaseConnection::statement(), to set recordsHaveBeenModied to true, foreign key constraints silverqx
@@ -79,14 +80,14 @@ void SQLiteConnector::configureForeignKeyConstraints(
 
 void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const
 {
-    const auto path = config["database"].value<QString>();
+    const auto path = config[database_].value<QString>();
 
     // Default behavior is to check database existence
     bool checkDatabaseExists = true;
-    if (const auto &configCheckDatabase = config["check_database_exists"];
+    if (const auto &configCheckDatabase = config[check_database_exists];
         configCheckDatabase.isValid() && !configCheckDatabase.isNull()
     )
-        checkDatabaseExists = config["check_database_exists"].value<bool>();
+        checkDatabaseExists = config[check_database_exists].value<bool>();
 
     if (checkDatabaseExists && !QFile::exists(path))
         throw Exceptions::InvalidArgumentError(

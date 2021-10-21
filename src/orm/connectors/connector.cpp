@@ -1,8 +1,11 @@
 #include "orm/connectors/connector.hpp"
 
+#include "orm/constants.hpp"
 #include "orm/exceptions/sqlerror.hpp"
 #include "orm/support/configurationoptionsparser.hpp"
 #include "orm/utils/type.hpp"
+
+using namespace Orm::Constants;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -67,18 +70,18 @@ Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &co
 {
     QSqlDatabase db;
 
-    db = QSqlDatabase::addDatabase(config["driver"].value<QString>(), name);
+    db = QSqlDatabase::addDatabase(config[driver_].value<QString>(), name);
 
-    db.setHostName(config["host"].value<QString>());
+    db.setHostName(config[host_].value<QString>());
 
-    if (config.contains("database"))
-        db.setDatabaseName(config["database"].value<QString>());
-    if (config.contains("username"))
-        db.setUserName(config["username"].value<QString>());
-    if (config.contains("password"))
-        db.setPassword(config["password"].value<QString>());
-    if (config.contains("port"))
-        db.setPort(config["port"].value<int>());
+    if (config.contains(database_))
+        db.setDatabaseName(config[database_].value<QString>());
+    if (config.contains(username_))
+        db.setUserName(config[username_].value<QString>());
+    if (config.contains(password_))
+        db.setPassword(config[password_].value<QString>());
+    if (config.contains(port_))
+        db.setPort(config[port_].value<int>());
 
     db.setConnectOptions(options);
 

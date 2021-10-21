@@ -25,9 +25,9 @@ PostgresSchemaBuilder::parseSchemaAndTable(const QString &table) const
 {
     QString schema;
 
-    if (m_connection.getConfig().contains("schema")) {
+    if (m_connection.getConfig().contains(schema_)) {
         auto table_ = table.split(DOT);
-        auto schemaConfig = m_connection.getConfig("schema").value<QStringList>();
+        auto schemaConfig = m_connection.getConfig(schema_).value<QStringList>();
 
         // table was specified with the schema, like schema.table, so use this schema
         if (schemaConfig.contains(table_.at(0)))
@@ -40,7 +40,7 @@ PostgresSchemaBuilder::parseSchemaAndTable(const QString &table) const
 
     // Default schema
     if (schema.isEmpty())
-        schema = "public";
+        schema = PUBLIC;
 
     return {std::move(schema), table};
 }

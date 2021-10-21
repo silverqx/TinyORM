@@ -158,7 +158,7 @@ private:
 
     /*! The attributes that aren't mass assignable. */
 //    inline static QStringList u_guarded {
-//        "password",
+//        password_,
 //    };
 
     /*! Indicates if the model should be timestamped. */

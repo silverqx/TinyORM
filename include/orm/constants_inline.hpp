@@ -45,12 +45,44 @@ namespace Orm::Constants
     inline const QString CREATED_AT  = QStringLiteral("created_at");
     inline const QString UPDATED_AT  = QStringLiteral("updated_at");
     inline const QString PARENTH_ONE = QStringLiteral("(%1)");
+
     inline const QString QMYSQL      = QStringLiteral("QMYSQL");
     inline const QString QPSQL       = QStringLiteral("QPSQL");
     inline const QString QSQLITE     = QStringLiteral("QSQLITE");
     inline const QString MYSQL_      = QStringLiteral("MySQL");
     inline const QString POSTGRESQL  = QStringLiteral("PostgreSQL");
     inline const QString SQLITE      = QStringLiteral("SQLite");
+
+    inline const QString driver_     = QStringLiteral("driver");
+    inline const QString host_       = QStringLiteral("host");
+    inline const QString port_       = QStringLiteral("port");
+    inline const QString database_   = QStringLiteral("database");
+    inline const QString schema_     = QStringLiteral("schema");
+    inline const QString username_   = QStringLiteral("username");
+    inline const QString password_   = QStringLiteral("password");
+    inline const QString charset_    = QStringLiteral("charset");
+    inline const QString collation_  = QStringLiteral("collation");
+    inline const QString timezone_   = QStringLiteral("timezone");
+    inline const QString prefix_     = QStringLiteral("prefix");
+    inline const QString options_    = QStringLiteral("options");
+    inline const QString strict_     = QStringLiteral("strict");
+
+    inline const QString
+    isolation_level         = QStringLiteral("isolation_level");
+    inline const QString
+    foreign_key_constraints = QStringLiteral("foreign_key_constraints");
+    inline const QString
+    check_database_exists   = QStringLiteral("check_database_exists");
+
+    inline const QString H127001   = QStringLiteral("127.0.0.1");
+    inline const QString LOCALHOST = QStringLiteral("localhost");
+    inline const QString P3306     = QStringLiteral("3306");
+    inline const QString P5432     = QStringLiteral("5432");
+    inline const QString ROOT      = QStringLiteral("root");
+    inline const QString UTC       = QStringLiteral("UTC");
+    inline const QString PUBLIC    = QStringLiteral("public");
+    inline const QString UTF8      = QStringLiteral("utf8");
+    inline const QString UTF8MB4   = QStringLiteral("utf8mb4");
 
     // Comparison/logical/search operators
     inline const QString EQ    = QStringLiteral("=");

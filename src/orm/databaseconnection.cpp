@@ -5,6 +5,7 @@
 #include <QDebug>
 #endif
 
+#include "orm/constants.hpp"
 #include "orm/exceptions/sqltransactionerror.hpp"
 #include "orm/macros.hpp"
 #include "orm/query/querybuilder.hpp"
@@ -12,6 +13,8 @@
 #include "orm/utils/query.hpp"
 #endif
 #include "orm/utils/type.hpp"
+
+using namespace Orm::Constants;
 
 using QueryUtils = Orm::Utils::Query;
 
@@ -60,7 +63,7 @@ DatabaseConnection::DatabaseConnection(
     , m_postProcessor(nullptr)
     , m_statementsCounter()
     , m_connectionName(getConfig(NAME).value<QString>())
-    , m_hostName(getConfig(QStringLiteral("host")).value<QString>())
+    , m_hostName(getConfig(host_).value<QString>())
 {}
 
 QSharedPointer<QueryBuilder>

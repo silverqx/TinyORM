@@ -79,13 +79,13 @@ void MySqlConnector::parseConfigOptions(QVariantHash &options) const
 void MySqlConnector::configureIsolationLevel(const QSqlDatabase &connection,
                                              const QVariantHash &config) const
 {
-    if (!config.contains("isolation_level"))
+    if (!config.contains(isolation_level))
         return;
 
     QSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("SET SESSION TRANSACTION ISOLATION LEVEL %1;")
-                   .arg(config["isolation_level"].value<QString>())))
+                   .arg(config[isolation_level].value<QString>())))
         return;
 
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
@@ -94,13 +94,13 @@ void MySqlConnector::configureIsolationLevel(const QSqlDatabase &connection,
 void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
                                        const QVariantHash &config) const
 {
-    if (!config.contains("charset"))
+    if (!config.contains(charset_))
         return;
 
     QSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set names '%1'%2;")
-                   .arg(config["charset"].value<QString>(), getCollation(config))))
+                   .arg(config[charset_].value<QString>(), getCollation(config))))
         return;
 
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
@@ -108,21 +108,21 @@ void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
 
 QString MySqlConnector::getCollation(const QVariantHash &config) const
 {
-    return config.contains("collation")
-            ? QStringLiteral(" collate '%1'").arg(config["collation"].value<QString>())
+    return config.contains(collation_)
+            ? QStringLiteral(" collate '%1'").arg(config[collation_].value<QString>())
             : "";
 }
 
 void MySqlConnector::configureTimezone(const QSqlDatabase &connection,
                                        const QVariantHash &config) const
 {
-    if (!config.contains("timezone"))
+    if (!config.contains(timezone_))
         return;
 
     QSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set time_zone=\"%1\";")
-                   .arg(config["timezone"].value<QString>())))
+                   .arg(config[timezone_].value<QString>())))
         return;
 
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
@@ -135,9 +135,9 @@ void MySqlConnector::setModes(const QSqlDatabase &connection,
 
         setCustomModes(connection, config);
 
-    else if (config.contains("strict")) {
+    else if (config.contains(strict_)) {
 
-        if (config["strict"].value<bool>()) {
+        if (config[strict_].value<bool>()) {
             QSqlQuery query(connection);
             if (query.exec(strictMode(connection, config)))
                 return;

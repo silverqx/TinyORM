@@ -62,13 +62,13 @@ void PostgresConnector::parseConfigOptions(QVariantHash &) const
 void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
                                           const QVariantHash &config) const
 {
-    if (!config.contains("charset"))
+    if (!config.contains(charset_))
         return;
 
     QSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set names '%1'")
-                   .arg(config["charset"].value<QString>())))
+                   .arg(config[charset_].value<QString>())))
         return;
 
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
@@ -77,14 +77,14 @@ void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
 void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
                                           const QVariantHash &config) const
 {
-    if (!config.contains("timezone"))
+    if (!config.contains(timezone_))
         return;
 
     QSqlQuery query(connection);
 
     static const QStringList local {"local", "default"};
 
-    const auto timezone = config["timezone"].value<QString>();
+    const auto timezone = config[timezone_].value<QString>();
 
     if (local.contains(timezone, Qt::CaseInsensitive)) {
         if (query.exec(QStringLiteral("set time zone %1").arg(timezone)))
@@ -99,12 +99,12 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
 void PostgresConnector::configureSchema(const QSqlDatabase &connection,
                                         const QVariantHash &config) const
 {
-    if (!config.contains("schema"))
+    if (!config.contains(schema_))
         return;
 
     QSqlQuery query(connection);
 
-    const auto schema = formatSchema(config["schema"].value<QStringList>());
+    const auto schema = formatSchema(config[schema_].value<QStringList>());
 
     if (query.exec(QStringLiteral("set search_path to %1").arg(schema)))
         return;

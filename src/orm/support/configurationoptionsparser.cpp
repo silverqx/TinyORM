@@ -20,7 +20,7 @@ QString
 ConfigurationOptionsParser::parseConfiguration(const QVariantHash &config) const
 {
     // Get options from a user configuration
-    const auto &configOptions = config.find("options").value();
+    const auto &configOptions = config.find(options_).value();
 
     // Validate options type in the connection configuration
     validateConfigOptions(configOptions);
