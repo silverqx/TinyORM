@@ -1,4 +1,4 @@
-#include "orm/logquery.hpp"
+#include "orm/utils/query.hpp"
 
 #include <QDebug>
 #include <QtSql/QSqlQuery>

@@ -9,7 +9,7 @@
 #include "orm/macros.hpp"
 #include "orm/query/querybuilder.hpp"
 #ifdef TINYORM_DEBUG_SQL
-#include "orm/logquery.hpp"
+#include "orm/utils/query.hpp"
 #endif
 #include "orm/utils/type.hpp"
 

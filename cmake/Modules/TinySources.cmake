@@ -38,7 +38,6 @@ function(tiny_sources out_headers out_sources)
         exceptions/sqlerror.hpp
         exceptions/sqltransactionerror.hpp
         libraryinfo.hpp
-        logquery.hpp
         macros.hpp
         macros/archdetect.hpp
         macros/compilerdetect.hpp
@@ -95,6 +94,7 @@ function(tiny_sources out_headers out_sources)
         types/log.hpp
         types/statementscounter.hpp
         utils/attribute.hpp
+        utils/query.hpp
         utils/string.hpp
         utils/type.hpp
         version.hpp
@@ -123,7 +123,6 @@ function(tiny_sources out_headers out_sources)
         exceptions/runtimeerror.cpp
         exceptions/sqlerror.cpp
         libraryinfo.cpp
-        logquery.cpp
         mysqlconnection.cpp
         ormtypes.cpp
         postgresconnection.cpp
@@ -154,6 +153,7 @@ function(tiny_sources out_headers out_sources)
         tiny/exceptions/relationnotloadederror.cpp
         tiny/relations/relation.cpp
         utils/attribute.cpp
+        utils/query.cpp
         utils/string.cpp
         utils/type.cpp
     )

@@ -2,7 +2,7 @@
 
 #include <QtSql/QSqlQuery>
 
-#include "orm/logquery.hpp"
+#include "orm/utils/query.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

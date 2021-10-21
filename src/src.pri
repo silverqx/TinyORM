@@ -18,7 +18,6 @@ SOURCES += \
     $$PWD/orm/exceptions/runtimeerror.cpp \
     $$PWD/orm/exceptions/sqlerror.cpp \
     $$PWD/orm/libraryinfo.cpp \
-    $$PWD/orm/logquery.cpp \
     $$PWD/orm/mysqlconnection.cpp \
     $$PWD/orm/ormtypes.cpp \
     $$PWD/orm/postgresconnection.cpp \
@@ -49,5 +48,6 @@ SOURCES += \
     $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
     $$PWD/orm/tiny/relations/relation.cpp \
     $$PWD/orm/utils/attribute.cpp \
+    $$PWD/orm/utils/query.cpp \
     $$PWD/orm/utils/string.cpp \
     $$PWD/orm/utils/type.cpp \

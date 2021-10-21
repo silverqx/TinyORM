@@ -34,7 +34,6 @@ HEADERS += \
     $$PWD/orm/exceptions/sqlerror.hpp \
     $$PWD/orm/exceptions/sqltransactionerror.hpp \
     $$PWD/orm/libraryinfo.hpp \
-    $$PWD/orm/logquery.hpp \
     $$PWD/orm/macros.hpp \
     $$PWD/orm/macros/archdetect.hpp \
     $$PWD/orm/macros/commonnamespace.hpp \
@@ -92,6 +91,7 @@ HEADERS += \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \
     $$PWD/orm/utils/attribute.hpp \
+    $$PWD/orm/utils/query.hpp \
     $$PWD/orm/utils/string.hpp \
     $$PWD/orm/utils/type.hpp \
     $$PWD/orm/version.hpp \
