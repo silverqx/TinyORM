@@ -159,9 +159,10 @@ namespace Grammars
 
         /*! Get the database connection name. */
         virtual const QString &getName() const = 0;
-
         /*! Get the name of the connected database. */
         virtual const QString &getDatabaseName() const = 0;
+        /*! Get the host name of the connected database. */
+        virtual const QString &getHostName() const = 0;
 
         /*! Set the query grammar to the default implementation. */
         virtual void useDefaultQueryGrammar() = 0;
@@ -224,6 +225,8 @@ namespace Grammars
         /* Others */
         /*! Return the connection's driver name. */
         virtual QString driverName() = 0;
+        /*! Return the connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        virtual const QString &driverNamePrintable() = 0;
 
         /*! Execute the given callback in "dry run" mode. */
         virtual QVector<Log>

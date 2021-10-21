@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UTILS_STRING_HPP
-#define UTILS_STRING_HPP
+#ifndef ORM_UTILS_STRING_HPP
+#define ORM_UTILS_STRING_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -27,4 +27,4 @@ namespace Orm::Utils::String
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // UTILS_STRING_HPP
+#endif // ORM_UTILS_STRING_HPP

@@ -45,6 +45,12 @@ namespace Orm::Constants
     inline const QString CREATED_AT  = QStringLiteral("created_at");
     inline const QString UPDATED_AT  = QStringLiteral("updated_at");
     inline const QString PARENTH_ONE = QStringLiteral("(%1)");
+    inline const QString QMYSQL      = QStringLiteral("QMYSQL");
+    inline const QString QPSQL       = QStringLiteral("QPSQL");
+    inline const QString QSQLITE     = QStringLiteral("QSQLITE");
+    inline const QString MYSQL_      = QStringLiteral("MySQL");
+    inline const QString POSTGRESQL  = QStringLiteral("PostgreSQL");
+    inline const QString SQLITE      = QStringLiteral("SQLite");
 
     // Comparison/logical/search operators
     inline const QString EQ    = QStringLiteral("=");

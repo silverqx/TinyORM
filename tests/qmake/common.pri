@@ -27,11 +27,15 @@ win32-g++ {
 
 DEFINES += PROJECT_TINYORM_TEST
 
+# Disable debug output in release mode
+CONFIG(release, debug|release): \
+    DEFINES *= QT_NO_DEBUG_OUTPUT
+
 # TinyORM library defines
 # ---
 
 # Enable code needed by tests, eg connection overriding in the Model
-DEFINES += TINYORM_TESTS_CODE
+DEFINES *= TINYORM_TESTS_CODE
 
 # Link against TinyORM library (also adds defines and include headers)
 # ---

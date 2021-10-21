@@ -30,19 +30,20 @@ DEFINES *= QT_NO_CAST_FROM_BYTEARRAY
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES *= QT_STRICT_ITERATORS
 
-# Disable debug output in release mode
-CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
-
 # TinyORM defines
 # ---
-
-# Enable MySQL ping on Orm::MySqlConnection
-mysql_ping: DEFINES *= TINYORM_MYSQL_PING
 
 # Release build
 CONFIG(release, debug|release): DEFINES *= TINYORM_NO_DEBUG
 # Debug build
 CONFIG(debug, debug|release): DEFINES *= TINYORM_DEBUG
+
+# Enable MySQL ping on Orm::MySqlConnection
+mysql_ping: DEFINES *= TINYORM_MYSQL_PING
+
+# Log queries with a time measurement
+CONFIG(release, debug|release): DEFINES *= TINYORM_NO_DEBUG_SQL
+CONFIG(debug, debug|release): DEFINES *= TINYORM_DEBUG_SQL
 
 # Platform specific configuration
 # ---

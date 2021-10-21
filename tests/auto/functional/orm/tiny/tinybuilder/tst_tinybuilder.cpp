@@ -252,8 +252,6 @@ void tst_TinyBuilder::update() const
     QCOMPARE(affectedRevert, 1);
     QVERIFY(queryRevert.isActive());
     QCOMPARE(torrent->getAttribute("progress"), progressOriginal);
-    qDebug() << torrent->getAttribute(updatedAtColumn);
-    qDebug() << updatedAtOriginal;
     /* Needed to convert toDateTime() because TinyBuilder::update() set update_at
        attribute as QString. */
     QCOMPARE(torrent->getAttribute(updatedAtColumn).toDateTime(),

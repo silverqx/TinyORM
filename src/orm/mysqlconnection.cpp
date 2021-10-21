@@ -1,5 +1,8 @@
 #include "orm/mysqlconnection.hpp"
 
+#ifdef TINYORM_MYSQL_PING
+#include <QDebug>
+#endif
 #include <QtSql/QSqlDriver>
 
 #ifdef TINYORM_MYSQL_PING

@@ -6,7 +6,10 @@
 // CUR not a good place for this file, move it to the utils or support silverqx
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-QString parseExecutedQuery(const QSqlQuery &query)
+namespace Orm::Utils
+{
+
+QString Query::parseExecutedQuery(const QSqlQuery &query)
 {
     auto executedQuery = query.executedQuery();
     if (executedQuery.isEmpty())
@@ -42,7 +45,8 @@ QString parseExecutedQuery(const QSqlQuery &query)
     return executedQuery;
 }
 
-QString parseExecutedQueryForPretend(QString query, const QVector<QVariant> &bindings)
+QString Query::parseExecutedQueryForPretend(QString query,
+                                            const QVector<QVariant> &bindings)
 {
     QString boundValue;
 
@@ -68,10 +72,17 @@ QString parseExecutedQueryForPretend(QString query, const QVector<QVariant> &bin
     return query;
 }
 
-void logExecutedQuery(const QSqlQuery &query)
+#if !defined(TINYORM_NO_DEBUG)
+void Query::logExecutedQuery(const QSqlQuery &query)
 {
     qDebug().noquote() << QStringLiteral("Executed Query :")
-                       << parseExecutedQuery(query);
+                       << Orm::Utils::Query::parseExecutedQuery(query);
 }
+#else
+void Query::logExecutedQuery(const QSqlQuery &)
+{}
+#endif
+
+} // namespace Orm::Utils
 
 TINYORM_END_COMMON_NAMESPACE

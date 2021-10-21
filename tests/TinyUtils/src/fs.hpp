@@ -2,8 +2,6 @@
 #ifndef TINYUTILS_FS_HPP
 #define TINYUTILS_FS_HPP
 
-#include <QtGlobal>
-
 #include "export.hpp"
 
 class QString;

@@ -237,6 +237,12 @@ namespace Query
         /* Others */
         /*! Return the connection's driver name. */
         QString driverName(const QString &connection = "");
+        /*! Return the connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        const QString &driverNamePrintable(const QString &connection = "");
+        /*! Return the name of the connected database. */
+        const QString &databaseName(const QString &connection = "");
+        /*! Return the host name of the connected database. */
+        const QString &hostName(const QString &connection = "");
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */

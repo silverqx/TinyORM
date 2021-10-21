@@ -397,6 +397,21 @@ QString DB::driverName(const QString &connection)
     return manager().connection(connection).driverName();
 }
 
+const QString &DB::driverNamePrintable(const QString &connection)
+{
+    return manager().connection(connection).driverNamePrintable();
+}
+
+const QString &DB::databaseName(const QString &connection)
+{
+    return manager().connection(connection).getDatabaseName();
+}
+
+const QString &DB::hostName(const QString &connection)
+{
+    return manager().connection(connection).getHostName();
+}
+
 QVector<Log>
 DB::pretend(const std::function<void()> &callback, const QString &connection)
 {

@@ -242,6 +242,12 @@ namespace Orm
         /* Others */
         /*! Return the connection's driver name. */
         static QString driverName(const QString &connection = "");
+        /*! Return the connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        static const QString &driverNamePrintable(const QString &connection = "");
+        /*! Return the name of the connected database. */
+        static const QString &databaseName(const QString &connection = "");
+        /*! Return the host name of the connected database. */
+        static const QString &hostName(const QString &connection = "");
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */

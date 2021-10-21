@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ATTRIBUTE_HPP
-#define ATTRIBUTE_HPP
+#ifndef ORM_UTILS_ATTRIBUTE_HPP
+#define ORM_UTILS_ATTRIBUTE_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -38,4 +38,4 @@ namespace Orm::Utils::Attribute
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ATTRIBUTE_HPP
+#endif // ORM_UTILS_ATTRIBUTE_HPP

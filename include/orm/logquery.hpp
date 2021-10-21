@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LOGQUERY_HPP
-#define LOGQUERY_HPP
+#ifndef ORM_UTILS_QUERY_HPP
+#define ORM_UTILS_QUERY_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -9,30 +9,47 @@ TINY_SYSTEM_HEADER
 #include <QVariant>
 
 #include "orm/macros/commonnamespace.hpp"
+#include "orm/macros/export.hpp"
 
 class QSqlQuery;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-/*! Get the last executed query with replaced placeholders ( ideal for logging ). */
-QString parseExecutedQuery(const QSqlQuery &query);
-/*! Get pretended query with replaced placeholders ( ideal for logging ). */
-QString parseExecutedQueryForPretend(QString query, const QVector<QVariant> &bindings);
+namespace Orm::Utils
+{
 
-#if !defined(TINYORM_NO_DEBUG)
-/*! Log the last executed query to the debug output. */
-[[maybe_unused]]
-void logExecutedQuery(const QSqlQuery &query);
-#endif
+    /*! Library class for database query. */
+    class SHAREDLIB_EXPORT Query
+    {
+        Q_DISABLE_COPY(Query)
+
+    public:
+        /*! Deleted default constructor, this is a pure library class. */
+        Query() = delete;
+        /*! Deleted destructor. */
+        ~Query() = delete;
+
+        /*! Get the last executed query with replaced placeholders (ideal for logging). */
+        static QString parseExecutedQuery(const QSqlQuery &query);
+        /*! Get pretended query with replaced placeholders ( ideal for logging ). */
+        static QString
+        parseExecutedQueryForPretend(QString query, const QVector<QVariant> &bindings);
+
+        /*! Log the last executed query to the debug output. */
+        [[maybe_unused]]
+        static void logExecutedQuery(const QSqlQuery &query);
+    };
+
+} // namespace Orm::Utils
+
+TINYORM_END_COMMON_NAMESPACE
 
 #ifndef LOG_EXECUTED_QUERY
 #  if !defined(TINYORM_NO_DEBUG)
-#    define LOG_EXECUTED_QUERY(query) logExecutedQuery(query)
+#    define LOG_EXECUTED_QUERY(query) Orm::Utils::Query::logExecutedQuery(query)
 #  else
 #    define LOG_EXECUTED_QUERY(query) qt_noop()
 #  endif
 #endif
 
-TINYORM_END_COMMON_NAMESPACE
-
-#endif // LOGQUERY_HPP
+#endif // ORM_UTILS_QUERY_HPP

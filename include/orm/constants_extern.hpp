@@ -46,6 +46,12 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString CREATED_AT;
     SHAREDLIB_EXPORT extern const QString UPDATED_AT;
     SHAREDLIB_EXPORT extern const QString PARENTH_ONE;
+    SHAREDLIB_EXPORT extern const QString QMYSQL;
+    SHAREDLIB_EXPORT extern const QString QPSQL;
+    SHAREDLIB_EXPORT extern const QString QSQLITE;
+    SHAREDLIB_EXPORT extern const QString MYSQL_;
+    SHAREDLIB_EXPORT extern const QString POSTGRESQL;
+    SHAREDLIB_EXPORT extern const QString SQLITE;
 
     // Comparison/logical/search operators
     SHAREDLIB_EXPORT extern const QString EQ;

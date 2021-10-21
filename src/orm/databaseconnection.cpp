@@ -1,11 +1,16 @@
 #include "orm/databaseconnection.hpp"
 
 #include <QDateTime>
+#if defined(TINYORM_DEBUG_SQL) || defined(TINYORM_MYSQL_PING)
+#include <QDebug>
+#endif
 
 #include "orm/exceptions/sqltransactionerror.hpp"
-#include "orm/logquery.hpp"
 #include "orm/macros.hpp"
 #include "orm/query/querybuilder.hpp"
+#ifdef TINYORM_DEBUG_SQL
+#include "orm/logquery.hpp"
+#endif
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -53,6 +58,7 @@ DatabaseConnection::DatabaseConnection(
     , m_postProcessor(nullptr)
     , m_statementsCounter()
     , m_connectionName(getConfig(NAME).value<QString>())
+    , m_hostName(getConfig(QStringLiteral("host")).value<QString>())
 {}
 
 QSharedPointer<QueryBuilder>
@@ -809,7 +815,7 @@ void DatabaseConnection::logQuery(
            connectionName.isEmpty() ? ""
                                     : QStringLiteral(", %1").arg(connectionName)
                                       .toUtf8().constData(),
-           parseExecutedQuery(query).toUtf8().constData());
+           Orm::Utils::Query::parseExecutedQuery(query).toUtf8().constData());
 #endif
 }
 
@@ -831,7 +837,8 @@ void DatabaseConnection::logQueryForPretend(
 
     qDebug("Pretended prepared query (%s) : %s",
            connectionName.isEmpty() ? "" : connectionName.toUtf8().constData(),
-           parseExecutedQueryForPretend(query, bindings).toUtf8().constData());
+           Orm::Utils::Query
+              ::parseExecutedQueryForPretend(query, bindings).toUtf8().constData());
 #endif
 }
 
@@ -897,6 +904,28 @@ size_t DatabaseConnection::getQueryLogOrder()
 QString DatabaseConnection::driverName()
 {
     return getQtConnection().driverName();
+}
+
+namespace
+{
+    using DriverNameMapType = std::unordered_map<QString, const QString &>;
+
+    Q_GLOBAL_STATIC_WITH_ARGS(DriverNameMapType, DRIVER_NAME_MAP, ({
+                                  {QMYSQL,  MYSQL_},
+                                  {QPSQL,   POSTGRESQL},
+                                  {QSQLITE, SQLITE}
+                              }));
+}
+
+const QString &DatabaseConnection::driverNamePrintable()
+{
+    if (m_driverNamePrintable)
+        return *m_driverNamePrintable;
+
+    // Cache
+    m_driverNamePrintable = DRIVER_NAME_MAP->at(driverName());
+
+    return *m_driverNamePrintable;
 }
 
 QVector<Log>
@@ -1002,8 +1031,11 @@ void DatabaseConnection::logDisconnected()
     // Reset connected flag
     m_connectedLogged = false;
 
-    qWarning() << "No active database connection, torrent additions / removes will "
-                  "not be commited";
+    qWarning("%s database disconnected (%s, %s@%s)",
+             driverNamePrintable().toUtf8().constData(),
+             m_connectionName.toUtf8().constData(),
+             m_hostName.toUtf8().constData(),
+             m_database.toUtf8().constData());
 }
 
 void DatabaseConnection::logConnected()
@@ -1015,7 +1047,11 @@ void DatabaseConnection::logConnected()
     // Reset disconnected flag
     m_disconnectedLogged = false;
 
-    qInfo() << "Database connected";
+    qInfo("%s database connected (%s, %s@%s)",
+          driverNamePrintable().toUtf8().constData(),
+          m_connectionName.toUtf8().constData(),
+          m_hostName.toUtf8().constData(),
+          m_database.toUtf8().constData());
 }
 
 QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)

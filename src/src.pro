@@ -33,17 +33,15 @@ include(../qmake/common.pri)
 # ---
 
 DEFINES += PROJECT_TINYORM
-# Log queries with a time measurement
-DEFINES += TINYORM_DEBUG_SQL
 
 # Build as the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
-    DEFINES += TINYORM_BUILDING_SHARED
+    DEFINES *= TINYORM_BUILDING_SHARED
 
 # Enable code needed by tests, eg. connection overriding in the Model
 build_tests: \
-    DEFINES += TINYORM_TESTS_CODE
+    DEFINES *= TINYORM_TESTS_CODE
 
 # TinyORM library header and source files
 # ---
@@ -89,8 +87,7 @@ win32-msvc:CONFIG(debug, debug|release) {
 # ---
 
 CONFIG(debug, debug|release):!build_pass: message( "Project is built in DEBUG mode." )
-CONFIG(release, debug|release):!build_pass: \
-    message( "Project is built in RELEASE mode (disabled debug output and assert)." )
+CONFIG(release, debug|release):!build_pass: message( "Project is built in RELEASE mode." )
 
 # User Configuration
 # ---

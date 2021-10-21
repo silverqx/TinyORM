@@ -17,15 +17,15 @@ else: \
 # TinyORM defines
 # ---
 
-# Log queries with a time measurement
-DEFINES *= TINYORM_DEBUG_SQL
-
-# Release build
-CONFIG(release, debug|release): DEFINES *= TINYORM_NO_DEBUG
-# Debug build
-CONFIG(debug, debug|release): DEFINES *= TINYORM_DEBUG
-
 # Link with the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
     DEFINES *= TINYORM_LINKING_SHARED
+
+# Release build
+CONFIG(release, debug|release): \
+    DEFINES *= TINYORM_NO_DEBUG
+
+# Log queries with a time measurement in debug build
+CONFIG(release, debug|release): \
+    DEFINES *= TINYORM_NO_DEBUG_SQL

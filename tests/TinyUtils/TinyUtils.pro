@@ -23,6 +23,10 @@ CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
     DEFINES += TINYUTILS_BUILDING_SHARED
 
+# Disable debug output in release mode
+CONFIG(release, debug|release): \
+    DEFINES *= QT_NO_DEBUG_OUTPUT
+
 # TinyUtils library header and source files
 # ---
 

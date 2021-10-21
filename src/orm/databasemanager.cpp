@@ -602,6 +602,24 @@ QString DatabaseManager::driverName(const QString &connection)
     return this->connection(connection).driverName();
 }
 
+const QString &
+DatabaseManager::driverNamePrintable(const QString &connection)
+{
+    return this->connection(connection).driverNamePrintable();
+}
+
+const QString &
+DatabaseManager::databaseName(const QString &connection)
+{
+    return this->connection(connection).getDatabaseName();
+}
+
+const QString &
+DatabaseManager::hostName(const QString &connection)
+{
+    return this->connection(connection).getHostName();
+}
+
 QVector<Log>
 DatabaseManager::pretend(const std::function<void()> &callback,
                          const QString &connection)

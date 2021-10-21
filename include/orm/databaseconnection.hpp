@@ -5,7 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QtSql/QSqlDatabase>
 
@@ -150,6 +149,8 @@ namespace Orm
         const QString &getName() const override;
         /*! Get the name of the connected database. */
         const QString &getDatabaseName() const override;
+        /*! Get the host name of the connected database. */
+        const QString &getHostName() const override;
 
         /*! Set the query grammar to the default implementation. */
         void useDefaultQueryGrammar() override;
@@ -241,6 +242,8 @@ namespace Orm
         /* Others */
         /*! Return the connection's driver name. */
         QString driverName() override;
+        /*! Return the connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        const QString &driverNamePrintable() override;
 
         /*! Execute the given callback in "dry run" mode. */
         QVector<Log>
@@ -289,9 +292,9 @@ namespace Orm
         /*! Reset in transaction state and savepoints. */
         DatabaseConnection &resetTransactions();
 
-        /*! Log database disconnected, examined during MySQL ping. */
+        /*! Log database disconnected, invoked during MySQL ping. */
         void logDisconnected();
-        /*! Log database connected, examined during MySQL ping. */
+        /*! Log database connected, invoked during MySQL ping. */
         void logConnected();
 
         /*! Execute the given callback in "dry run" mode. */
@@ -372,9 +375,9 @@ namespace Orm
         /*! Get the query grammar used by the connection. */
         QueryGrammar &getQueryGrammar();
 
-        /*! The flag for the database was disconnected. */
+        /*! The flag for the database was disconnected, used during MySQL ping. */
         bool m_disconnectedLogged = false;
-        /*! The flag for the database was connected. */
+        /*! The flag for the database was connected, used during MySQL ping. */
         bool m_connectedLogged = false;
         /*! The connection is in the transaction state. */
         bool m_inTransaction = false;
@@ -383,6 +386,8 @@ namespace Orm
 
         /*! Connection name, obtained from the connection configuration. */
         QString m_connectionName;
+        /*! Host name, obtained from the connection configuration. */
+        QString m_hostName;
 
         /* Logging */
         /*! Indicates whether queries are being logged (private intentionally). */
@@ -397,6 +402,9 @@ namespace Orm
         /*! Indicates whether logging of sql queries is enabled. */
         const bool m_debugSql = false;
 #endif
+
+        /*! Connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        std::optional<std::reference_wrapper<const QString>> m_driverNamePrintable = {};
     };
 
     inline QString DatabaseConnection::getTablePrefix() const
@@ -429,6 +437,11 @@ namespace Orm
     inline const QString &DatabaseConnection::getDatabaseName() const
     {
         return m_database;
+    }
+
+    inline const QString &DatabaseConnection::getHostName() const
+    {
+        return m_hostName;
     }
 
     inline std::shared_ptr<QVector<Log>>

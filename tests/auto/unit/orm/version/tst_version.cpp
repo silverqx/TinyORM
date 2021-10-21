@@ -172,7 +172,7 @@ tst_Version::getExeVersionString(const QString &fileName) const
     DWORD dwHandle = 1;
     DWORD dwLen = GetFileVersionInfoSize(fileName.toStdWString().c_str(), &dwHandle);
     if (dwLen == 0) {
-        qDebug() << "Error in GetFileVersionInfoSize().";
+        qWarning() << "Error in GetFileVersionInfoSize().";
         return {};
     }
 
@@ -181,7 +181,7 @@ tst_Version::getExeVersionString(const QString &fileName) const
     if (!GetFileVersionInfo(fileName.toStdWString().c_str(), dwHandle, dwLen,
                             static_cast<LPVOID>(lpData))) {
         delete[] lpData;
-        qDebug() << "Error in GetFileVersionInfo().";
+        qWarning() << "Error in GetFileVersionInfo().";
         return {};
     }
 
@@ -193,7 +193,7 @@ tst_Version::getExeVersionString(const QString &fileName) const
                        reinterpret_cast<LPVOID *>(&lpBuffer), &uLen)
     ) {
         delete[] lpData;
-        qDebug() << "Error in VerQueryValue().";
+        qWarning() << "Error in VerQueryValue().";
         return {};
     }
 

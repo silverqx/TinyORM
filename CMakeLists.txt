@@ -184,12 +184,15 @@ target_include_directories(${TinyOrm_target} PUBLIC
 target_compile_definitions(${TinyOrm_target}
     PUBLIC
         PROJECT_TINYORM
-        # Log queries with a time measurement
-        TINYORM_DEBUG_SQL
         # Release build
         $<$<NOT:$<CONFIG:Debug>>:TINYORM_NO_DEBUG>
+        # Do not log queries
+        $<$<NOT:$<CONFIG:Debug>>:TINYORM_NO_DEBUG_SQL>
+    PRIVATE
         # Debug build
         $<$<CONFIG:Debug>:TINYORM_DEBUG>
+        # Log queries with a time measurement
+        $<$<CONFIG:Debug>:TINYORM_DEBUG_SQL>
 )
 
 if(BUILD_SHARED_LIBS)

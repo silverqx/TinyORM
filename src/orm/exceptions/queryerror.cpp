@@ -37,7 +37,7 @@ QString QueryError::formatMessage(const char *message, const QSqlQuery &query)
     QString result(SqlError::formatMessage(message, query.lastError()));
 
     // Also append executed query
-    if (const auto executedQuery = parseExecutedQuery(query);
+    if (const auto executedQuery = Orm::Utils::Query::parseExecutedQuery(query);
         !executedQuery.isEmpty()
     )
         result += QStringLiteral(", SQL: %1").arg(executedQuery);
