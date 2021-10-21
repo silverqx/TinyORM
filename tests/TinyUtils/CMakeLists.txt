@@ -68,6 +68,12 @@ target_include_directories(${TinyUtils_target} PUBLIC
 # TinyUtils defines
 # ---
 
+target_compile_definitions(${TinyUtils_target}
+    PRIVATE
+        # Disable debug output in release mode
+        $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
+)
+
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(${TinyUtils_target}
         PRIVATE

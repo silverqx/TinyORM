@@ -46,6 +46,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
         PRIVATE
             PROJECT_TINYORM_TEST
             TINYORM_TESTS_CODE
+            # Disable debug output in release mode
+            $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
     )
 
     target_include_directories(${name} PRIVATE

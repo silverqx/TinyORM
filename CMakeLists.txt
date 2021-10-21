@@ -234,8 +234,8 @@ tiny_resource_and_manifest(${TinyOrm_target}
 # ---
 
 # Common configuration as interface library
-include(TinyQtCommon)
-tiny_qt_common(${CommonConfig_target}
+include(TinyCommon)
+tiny_common(${CommonConfig_target}
     NAMESPACE ${TinyOrm_ns}
     EXPORT NAME ${CommonConfig_target}
 )

@@ -1,7 +1,7 @@
 # Set common variables and create interface-only library target so all other targets
 # will be able to link to, either directly or transitively, to consume common compile
 # options/definitions
-function(tiny_qt_common target)
+function(tiny_common target)
 
     set(options EXPORT)
     set(oneValueArgs NAMESPACE NAME)
@@ -39,9 +39,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
         QT_NO_CAST_FROM_BYTEARRAY
         QT_USE_QSTRINGBUILDER
         QT_STRICT_ITERATORS
-
-        # Disable debug output in release mode
-        $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
     )
 
     # Platform specific configurations
