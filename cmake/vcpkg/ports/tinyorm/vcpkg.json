@@ -1,0 +1,52 @@
+{
+  "name": "tinyorm",
+  "version-semver": "0.1.0",
+  "description": "C++ orm library for the Qt framwork",
+  "homepage": "https://github.com/silverqx/TinyORM",
+  "documentation": "https://silverqx.github.io/TinyORM/",
+  "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
+  "supports": "!(uwp | arm | android | emscripten)",
+  "dependencies": [
+    "range-v3",
+    "qt5-base",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ],
+  "default-features": [
+    "mysqlplugin",
+    "postgresqlplugin",
+    "mysqlping"
+  ],
+  "features": {
+    "mysqlplugin": {
+      "description": "Build the sql plugin for connecting to MySQL databases",
+      "dependencies": [
+        {
+          "name": "qt5-base",
+          "features": ["mysqlplugin"]
+        }
+      ]
+    },
+    "postgresqlplugin": {
+      "description": "Build the sql plugin for connecting to PostgreSQL databases",
+      "dependencies": [
+        {
+          "name": "qt5-base",
+          "features": ["postgresqlplugin"]
+        }
+      ]
+    },
+    "mysqlping": {
+      "description": "Install a MySQL client library to support the mysql_ping()",
+      "dependencies": [
+        "libmysql"
+      ]
+    }
+  }
+}
