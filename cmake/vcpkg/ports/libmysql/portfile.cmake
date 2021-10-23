@@ -19,7 +19,7 @@ vcpkg_from_github(
         system-libs.patch
         rename-version.patch
         export-cmake-targets.patch
-        005-added-limits-include.patch
+        004-added-limits-include.patch
 )
 
 file(REMOVE_RECURSE ${SOURCE_PATH}/include/boost_1_70_0)
