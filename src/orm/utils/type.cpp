@@ -88,15 +88,19 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
     if (withNamespace)
         itBegin += findBeginWithoutNS();
 
-    // Doesn't contain the namespace
-    else if (qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::"));
+    // Do not include the namespace in the result
+    // Block needed to pass clang-tidy bugprone-branch-clone
+    else {
+        // Doesn't contain the namespace
+        if (qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::"));
              toBegin == -1
-    )
-        itBegin += findBeginWithoutNS();
+        )
+            itBegin += findBeginWithoutNS();
 
-    // Have the namespace and :: found, +2 to point after
-    else
-        itBegin += toBegin + 2;
+        // Have the namespace (:: found), +2 to point after
+        else
+            itBegin += toBegin + 2;
+    }
 
     // Find the end of the class name
     auto itEnd = std::find_if(itBegin, className.cend(),
