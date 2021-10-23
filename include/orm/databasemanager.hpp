@@ -99,7 +99,7 @@ namespace Query
         /*! Rollback to a named transaction savepoint. */
         bool rollbackToSavepoint(std::size_t id);
         /*! Get the number of active transactions. */
-        uint transactionLevel();
+        std::size_t transactionLevel();
 
         /* DatabaseManager */
         /*! Obtain a database connection instance, for now it's singleton. */

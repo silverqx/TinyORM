@@ -97,7 +97,7 @@ namespace Grammars
         virtual bool rollbackToSavepoint(std::size_t id) = 0;
 
         /*! Get the number of active transactions. */
-        virtual uint transactionLevel() const = 0;
+        virtual std::size_t transactionLevel() const = 0;
 
         /*! Run a select statement and return a single result. */
         virtual QSqlQuery

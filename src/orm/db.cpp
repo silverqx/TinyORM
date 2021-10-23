@@ -186,7 +186,7 @@ bool DB::rollbackToSavepoint(const std::size_t id, const QString &connection)
     return manager().connection(connection).rollbackToSavepoint(id);
 }
 
-uint DB::transactionLevel(const QString &connection)
+size_t DB::transactionLevel(const QString &connection)
 {
     return manager().connection(connection).transactionLevel();
 }

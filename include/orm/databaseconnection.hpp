@@ -77,7 +77,7 @@ namespace Orm
         /*! Rollback to a named transaction savepoint. */
         bool rollbackToSavepoint(std::size_t id) override;
         /*! Get the number of active transactions. */
-        uint transactionLevel() const override;
+        std::size_t transactionLevel() const override;
 
         /*! Run a select statement against the database. */
         QSqlQuery
@@ -382,7 +382,7 @@ namespace Orm
         /*! The connection is in the transaction state. */
         bool m_inTransaction = false;
         /*! Active savepoints counter. */
-        uint m_savepoints = 0;
+        std::size_t m_savepoints = 0;
 
         /*! Connection name, obtained from the connection configuration. */
         QString m_connectionName;
@@ -418,7 +418,7 @@ namespace Orm
         return Query::Expression(value);
     }
 
-    inline uint DatabaseConnection::transactionLevel() const
+    inline std::size_t DatabaseConnection::transactionLevel() const
     {
         return m_savepoints;
     }

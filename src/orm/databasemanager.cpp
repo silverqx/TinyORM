@@ -177,7 +177,7 @@ bool DatabaseManager::rollbackToSavepoint(const std::size_t id)
     return connection().rollbackToSavepoint(id);
 }
 
-uint DatabaseManager::transactionLevel()
+size_t DatabaseManager::transactionLevel()
 {
     return connection().transactionLevel();
 }

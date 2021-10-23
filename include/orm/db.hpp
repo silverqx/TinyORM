@@ -133,7 +133,7 @@ namespace Orm
         static bool rollbackToSavepoint(std::size_t id,
                                         const QString &connection = "");
         /*! Get the number of active transactions. */
-        static uint transactionLevel(const QString &connection = "");
+        static std::size_t transactionLevel(const QString &connection = "");
 
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */
