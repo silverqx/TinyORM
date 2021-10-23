@@ -125,12 +125,12 @@ namespace Orm
         /*! Start a new named transaction savepoint. */
         static bool savepoint(const QString &id, const QString &connection = "");
         /*! Start a new named transaction savepoint. */
-        static bool savepoint(size_t id, const QString &connection = "");
+        static bool savepoint(std::size_t id, const QString &connection = "");
         /*! Rollback to a named transaction savepoint. */
         static bool rollbackToSavepoint(const QString &id,
                                         const QString &connection = "");
         /*! Rollback to a named transaction savepoint. */
-        static bool rollbackToSavepoint(size_t id,
+        static bool rollbackToSavepoint(std::size_t id,
                                         const QString &connection = "");
         /*! Get the number of active transactions. */
         static uint transactionLevel(const QString &connection = "");

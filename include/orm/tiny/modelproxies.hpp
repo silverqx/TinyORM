@@ -956,7 +956,7 @@ namespace Relations
     // FEATURE dilemma primarykey, id should be Derived::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
     // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
     template<typename Derived, typename ...AllRelations>
-    size_t
+    std::size_t
     ModelProxies<Derived, AllRelations...>::destroy(const QVector<QVariant> &ids)
     {
         if (ids.isEmpty())
@@ -978,7 +978,7 @@ namespace Relations
     }
 
     template<typename Derived, typename ...AllRelations>
-    size_t
+    std::size_t
     ModelProxies<Derived, AllRelations...>::destroy(const QVariant &id)
     {
         return destroy(QVector<QVariant> {id});

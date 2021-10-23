@@ -162,7 +162,7 @@ bool DatabaseManager::savepoint(const QString &id)
     return connection().savepoint(id);
 }
 
-bool DatabaseManager::savepoint(const size_t id)
+bool DatabaseManager::savepoint(const std::size_t id)
 {
     return connection().savepoint(id);
 }
@@ -172,7 +172,7 @@ bool DatabaseManager::rollbackToSavepoint(const QString &id)
     return connection().rollbackToSavepoint(id);
 }
 
-bool DatabaseManager::rollbackToSavepoint(const size_t id)
+bool DatabaseManager::rollbackToSavepoint(const std::size_t id)
 {
     return connection().rollbackToSavepoint(id);
 }
@@ -592,7 +592,7 @@ bool DatabaseManager::logging(const QString &connection)
     return this->connection(connection).logging();
 }
 
-size_t DatabaseManager::getQueryLogOrder()
+std::size_t DatabaseManager::getQueryLogOrder()
 {
     return DatabaseConnection::getQueryLogOrder();
 }

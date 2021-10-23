@@ -71,11 +71,11 @@ namespace Orm
         /*! Start a new named transaction savepoint. */
         bool savepoint(const QString &id) override;
         /*! Start a new named transaction savepoint. */
-        bool savepoint(size_t id) override;
+        bool savepoint(std::size_t id) override;
         /*! Rollback to a named transaction savepoint. */
         bool rollbackToSavepoint(const QString &id) override;
         /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(size_t id) override;
+        bool rollbackToSavepoint(std::size_t id) override;
         /*! Get the number of active transactions. */
         uint transactionLevel() const override;
 

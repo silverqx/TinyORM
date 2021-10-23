@@ -243,7 +243,7 @@ bool DatabaseConnection::savepoint(const QString &id)
     return true;
 }
 
-bool DatabaseConnection::savepoint(const size_t id)
+bool DatabaseConnection::savepoint(const std::size_t id)
 {
     return savepoint(QString::number(id));
 }
@@ -288,7 +288,7 @@ bool DatabaseConnection::rollbackToSavepoint(const QString &id)
     return true;
 }
 
-bool DatabaseConnection::rollbackToSavepoint(const size_t id)
+bool DatabaseConnection::rollbackToSavepoint(const std::size_t id)
 {
     return rollbackToSavepoint(QString::number(id));
 }
@@ -903,7 +903,7 @@ void DatabaseConnection::enableQueryLog()
     m_loggingQueries = true;
 }
 
-size_t DatabaseConnection::getQueryLogOrder()
+std::size_t DatabaseConnection::getQueryLogOrder()
 {
     return m_queryLogId;
 }

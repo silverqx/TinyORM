@@ -87,15 +87,14 @@ namespace Grammars
         /*! Start a new named transaction savepoint. */
         virtual bool savepoint(const QString &id) = 0;
 
-        // CUR size_t to std::size_t silverqx
         /*! Start a new named transaction savepoint. */
-        virtual bool savepoint(size_t id) = 0;
+        virtual bool savepoint(std::size_t id) = 0;
 
         /*! Rollback to a named transaction savepoint. */
         virtual bool rollbackToSavepoint(const QString &id) = 0;
 
         /*! Rollback to a named transaction savepoint. */
-        virtual bool rollbackToSavepoint(size_t id) = 0;
+        virtual bool rollbackToSavepoint(std::size_t id) = 0;
 
         /*! Get the number of active transactions. */
         virtual uint transactionLevel() const = 0;

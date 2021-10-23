@@ -93,11 +93,11 @@ namespace Query
         /*! Start a new named transaction savepoint. */
         bool savepoint(const QString &id);
         /*! Start a new named transaction savepoint. */
-        bool savepoint(size_t id);
+        bool savepoint(std::size_t id);
         /*! Rollback to a named transaction savepoint. */
         bool rollbackToSavepoint(const QString &id);
         /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(size_t id);
+        bool rollbackToSavepoint(std::size_t id);
         /*! Get the number of active transactions. */
         uint transactionLevel();
 
