@@ -1166,7 +1166,7 @@ namespace Orm::Tiny::Relations
             const QVariant &id, const QVector<AttributeItem> &attributes,
             const bool touch) const
     {
-        attach(QVector {id}, attributes, touch);
+        attach(QVector<QVariant> {id}, attributes, touch);
     }
 
     template<class Model, class Related, class PivotType>
@@ -1174,7 +1174,8 @@ namespace Orm::Tiny::Relations
             const Related &model, const QVector<AttributeItem> &attributes,
             const bool touch) const
     {
-        attach(QVector {model.getAttribute(this->m_relatedKey)}, attributes, touch);
+        attach(QVector<QVariant> {model.getAttribute(this->m_relatedKey)},
+               attributes, touch);
     }
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
@@ -1294,14 +1295,14 @@ namespace Orm::Tiny::Relations
     int BelongsToMany<Model, Related, PivotType>::detach(
             const QVariant &id, const bool touch) const
     {
-        return detach(QVector {id}, touch);
+        return detach(QVector<QVariant> {id}, touch);
     }
 
     template<class Model, class Related, class PivotType>
     inline int BelongsToMany<Model, Related, PivotType>::detach(
             const Related &model, const bool touch) const
     {
-        return detach(QVector {model.getAttribute(this->m_relatedKey)}, touch);
+        return detach(QVector<QVariant> {model.getAttribute(this->m_relatedKey)}, touch);
     }
 
     template<class Model, class Related, class PivotType>
@@ -1427,17 +1428,13 @@ namespace Orm::Tiny::Relations
         QVector<Column> mergedColumns;
         std::ranges::move(aliasedPivotColumns(), std::back_inserter(mergedColumns));
 
-        // Merge aliasedPivotColumns into columns
+        // Merge aliasedPivotColumns and columns
         for (auto &&column : columns) {
             // Avoid duplicates, expressions are not checked
-            if (std::holds_alternative<QString>(column))
-                if (const auto &column_ = std::get<QString>(column);
-                    /* Here can be aliasedPivotColumns_.contains(), but I use
-                       result.contains(), which also prevents duplicates in columns
-                       variable. */
-                    mergedColumns.contains(column_)
-                )
-                    continue;
+            if (std::holds_alternative<QString>(column)
+                && mergedColumns.contains(column)
+            )
+                continue;
 
             mergedColumns << Column(std::move(column));
         }
