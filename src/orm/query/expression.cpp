@@ -21,6 +21,7 @@ Expression::Expression()
     : m_value()
 {}
 
+// NOLINTNEXTLINE(modernize-pass-by-value)
 Expression::Expression(const QVariant &value)
     : m_value(value)
 {}

@@ -49,7 +49,7 @@ private:
     };
 
     /*! Obtain a ProductVersion and FileVersion strings from an exe/dll. */
-    FileVersions getExeVersionString(const QString &fileName) const;
+    [[nodiscard]] FileVersions getExeVersionString(const QString &fileName) const;
 #endif
 };
 
@@ -177,7 +177,7 @@ tst_Version::getExeVersionString(const QString &fileName) const
     }
 
     // GetFileVersionInfo
-    LPBYTE lpData = new BYTE[dwLen];
+    auto *lpData = new BYTE[dwLen];
     if (!GetFileVersionInfo(fileName.toStdWString().c_str(), dwHandle, dwLen,
                             static_cast<LPVOID>(lpData))) {
         delete[] lpData;

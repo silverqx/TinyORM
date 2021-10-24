@@ -38,7 +38,7 @@ private slots:
 
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    QSharedPointer<QueryBuilder>
+    [[nodiscard]] QSharedPointer<QueryBuilder>
     createQuery(const QString &connection) const;
 };
 

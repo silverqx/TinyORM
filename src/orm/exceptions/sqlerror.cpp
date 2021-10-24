@@ -20,6 +20,7 @@ SqlError::SqlError(const QString &message, const QSqlError &error)
     : SqlError(message.toUtf8().constData(), error)
 {}
 
+// NOLINTNEXTLINE(modernize-pass-by-value)
 SqlError::SqlError(const QString &message, const QSqlError &error, const int)
     : RuntimeError(message.toUtf8().constData())
     , m_sqlError(error)

@@ -1,5 +1,5 @@
 ---
-Checks:            '-*,bugprone-*,clang-*,concurrency-*,cppcoreguidelines-init-variables,cppcoreguidelines-pro-type-member-init,cppcoreguidelines-slicing,modernize-return-braced-init-list'
+Checks:            '-*,bugprone-*,clang-*,concurrency-*,cppcoreguidelines-init-variables,cppcoreguidelines-pro-type-member-init,cppcoreguidelines-slicing,modernize-avoid-*,modernize-concat-nested-namespaces,modernize-deprecated-*,modernize-loop-convert,modernize-make-*,modernize-pass-by-value,modernize-raw-string-literal,modernize-redundant-void-arg,modernize-replace-*,modernize-return-braced-init-list,modernize-shrink-to-fit,modernize-unary-static-assert,modernize-use-auto,modernize-use-bool-literals,modernize-use-default-member-init,modernize-use-emplace,modernize-use-equals-*,modernize-use-nodiscard,modernize-use-noexcept,modernize-use-nullptr,modernize-use-override,modernize-use-transparent-functors,modernize-use-uncaught-exceptions,modernize-use-using'
 WarningsAsErrors:  ''
 HeaderFilterRegex: ''
 FormatStyle:       none

@@ -14,15 +14,9 @@ QString Query::parseExecutedQuery(const QSqlQuery &query)
     if (executedQuery.isEmpty())
         executedQuery = query.lastQuery();
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    const auto boundValues = query.boundValues();
-#else
-    const auto boundValues = query.boundValues().values(); // clazy:exclude=inefficient-qlist
-#endif
+    QString boundValue;
 
-    for (int i = 0; i < boundValues.size(); ++i) {
-        const auto boundValueRaw = boundValues.at(i);
-        QString boundValue;
+    for (auto &&boundValueRaw : query.boundValues()) {
 
         if (boundValueRaw.isNull())
             boundValue = "null";

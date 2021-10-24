@@ -97,41 +97,48 @@ QString PostgresGrammar::compileUpdateColumns(const QVector<UpdateItem> &values)
 const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
 PostgresGrammar::getCompileMap() const
 {
-    using std::placeholders::_1;
-    // Needed, because some compileXx() methods are overloaded
-    const auto getBind = [this](auto &&func)
+    /* Needed, because some compileXx() methods are overloaded, this way I will capture
+       'this' reference and the compileMethod rvalue reference in the following lambda
+       and simply save std::function<> in the SelectComponentValue's compileMethod data
+       member. */
+    const auto bind = [this](auto &&compileMethod)
     {
-        return std::bind(std::forward<decltype (func)>(func), this, _1);
+        return [this,
+                compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
+               (const auto &query)
+        {
+            return std::invoke(compileMethod, this, query);
+        };
     };
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     static const QMap<SelectComponentType, SelectComponentValue> cached {
-        {SelectComponentType::AGGREGATE, {getBind(&PostgresGrammar::compileAggregate),
+        {SelectComponentType::AGGREGATE, {bind(&PostgresGrammar::compileAggregate),
                         [this]
                         (const auto &query)
                         { return shouldCompileAggregate(query.getAggregate()); }}},
-        {SelectComponentType::COLUMNS,   {getBind(&PostgresGrammar::compileColumns),
+        {SelectComponentType::COLUMNS,   {bind(&PostgresGrammar::compileColumns),
                         [this]
                         (const auto &query) { return shouldCompileColumns(query); }}},
-        {SelectComponentType::FROM,      {getBind(&PostgresGrammar::compileFrom),
+        {SelectComponentType::FROM,      {bind(&PostgresGrammar::compileFrom),
                         [this]
                         (const auto &query)
                         { return shouldCompileFrom(query.getFrom()); }}},
-        {SelectComponentType::JOINS,     {getBind(&PostgresGrammar::compileJoins),
+        {SelectComponentType::JOINS,     {bind(&PostgresGrammar::compileJoins),
                         [](const auto &query) { return !query.getJoins().isEmpty(); }}},
-        {SelectComponentType::WHERES,    {getBind(&PostgresGrammar::compileWheres),
+        {SelectComponentType::WHERES,    {bind(&PostgresGrammar::compileWheres),
                         [](const auto &query) { return !query.getWheres().isEmpty(); }}},
-        {SelectComponentType::GROUPS,    {getBind(&PostgresGrammar::compileGroups),
+        {SelectComponentType::GROUPS,    {bind(&PostgresGrammar::compileGroups),
                         [](const auto &query) { return !query.getGroups().isEmpty(); }}},
-        {SelectComponentType::HAVINGS,   {getBind(&PostgresGrammar::compileHavings),
+        {SelectComponentType::HAVINGS,   {bind(&PostgresGrammar::compileHavings),
                         [](const auto &query) { return !query.getHavings().isEmpty(); }}},
-        {SelectComponentType::ORDERS,    {getBind(&PostgresGrammar::compileOrders),
+        {SelectComponentType::ORDERS,    {bind(&PostgresGrammar::compileOrders),
                         [](const auto &query) { return !query.getOrders().isEmpty(); }}},
-        {SelectComponentType::LIMIT,     {getBind(&PostgresGrammar::compileLimit),
+        {SelectComponentType::LIMIT,     {bind(&PostgresGrammar::compileLimit),
                         [](const auto &query) { return query.getLimit() > -1; }}},
-        {SelectComponentType::OFFSET,    {getBind(&PostgresGrammar::compileOffset),
+        {SelectComponentType::OFFSET,    {bind(&PostgresGrammar::compileOffset),
                         [](const auto &query) { return query.getOffset() > -1; }}},
-        {SelectComponentType::LOCK,      {getBind(&PostgresGrammar::compileLock),
+        {SelectComponentType::LOCK,      {bind(&PostgresGrammar::compileLock),
                         [](const auto &query) { return query.getLock().index() != 0; }}},
     };
 
@@ -141,26 +148,34 @@ PostgresGrammar::getCompileMap() const
 const std::function<QString(const WhereConditionItem &)> &
 PostgresGrammar::getWhereMethod(const WhereType whereType) const
 {
-    using std::placeholders::_1;
-    const auto getBind = [this](auto &&func)
+    /* Needed, because some compileXx() methods are overloaded, this way I will capture
+       'this' reference and the compileMethod rvalue reference in the following lambda
+       and simply save std::function<> in the SelectComponentValue's compileMethod data
+       member. */
+    const auto bind = [this](auto &&compileMethod)
     {
-        return std::bind(std::forward<decltype (func)>(func), this, _1);
+        return [this,
+                compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
+               (const auto &query)
+        {
+            return std::invoke(compileMethod, this, query);
+        };
     };
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     // An order has to be the same as in enum struct WhereType
     // FUTURE QHash would has faster lookup, I should choose QHash, fix also another Grammars silverx
     static const QVector<std::function<QString(const WhereConditionItem &)>> cached {
-        getBind(&PostgresGrammar::whereBasic),
-        getBind(&PostgresGrammar::whereNested),
-        getBind(&PostgresGrammar::whereColumn),
-        getBind(&PostgresGrammar::whereIn),
-        getBind(&PostgresGrammar::whereNotIn),
-        getBind(&PostgresGrammar::whereNull),
-        getBind(&PostgresGrammar::whereNotNull),
-        getBind(&PostgresGrammar::whereRaw),
-        getBind(&PostgresGrammar::whereExists),
-        getBind(&PostgresGrammar::whereNotExists),
+        bind(&PostgresGrammar::whereBasic),
+        bind(&PostgresGrammar::whereNested),
+        bind(&PostgresGrammar::whereColumn),
+        bind(&PostgresGrammar::whereIn),
+        bind(&PostgresGrammar::whereNotIn),
+        bind(&PostgresGrammar::whereNull),
+        bind(&PostgresGrammar::whereNotNull),
+        bind(&PostgresGrammar::whereRaw),
+        bind(&PostgresGrammar::whereExists),
+        bind(&PostgresGrammar::whereNotExists),
     };
 
     static const auto size = cached.size();

@@ -23,7 +23,7 @@ namespace Connectors
     {
     public:
         /*! Default constructor. */
-        ConnectionFactory();
+        ConnectionFactory() = default;
 
         /*! Establish a QSqlDatabase connection based on the configuration. */
         std::unique_ptr<DatabaseConnection>

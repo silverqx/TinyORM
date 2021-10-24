@@ -5,24 +5,28 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
+// NOLINTNEXTLINE(modernize-pass-by-value)
 JoinClause::JoinClause(const Builder &query, const QString &type, const QString &table)
     : Builder(query.getConnection(), query.getGrammar())
     , m_type(type)
     , m_table(table)
 {}
 
+// NOLINTNEXTLINE(modernize-pass-by-value)
 JoinClause::JoinClause(const Builder &query, const QString &type, const Expression &table)
     : Builder(query.getConnection(), query.getGrammar())
     , m_type(type)
     , m_table(table)
 {}
 
+// NOLINTNEXTLINE(modernize-pass-by-value)
 JoinClause::JoinClause(const Builder &query, const QString &type, Expression &&table)
     : Builder(query.getConnection(), query.getGrammar())
     , m_type(type)
     , m_table(std::move(table))
 {}
 
+// NOLINTNEXTLINE(modernize-pass-by-value)
 JoinClause::JoinClause(const Builder &query, const QString &type, const JoinTable &table)
     : Builder(query.getConnection(), query.getGrammar())
     , m_type(type)

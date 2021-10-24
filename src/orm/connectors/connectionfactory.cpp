@@ -12,9 +12,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Connectors
 {
 
-ConnectionFactory::ConnectionFactory()
-{}
-
 std::unique_ptr<DatabaseConnection>
 ConnectionFactory::make(QVariantHash &config, const QString &name) const
 {

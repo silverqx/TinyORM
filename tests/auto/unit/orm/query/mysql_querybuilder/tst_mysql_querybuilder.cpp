@@ -145,7 +145,7 @@ private slots:
 
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    QSharedPointer<QueryBuilder> createQuery() const;
+    [[nodiscard]] QSharedPointer<QueryBuilder> createQuery() const;
 
     /*! Connection name used in this test case. */
     QString m_connection = {};
