@@ -41,6 +41,6 @@ QString RelationNotFoundError::formatMessage(const QString &model,
     }
 }
 
-} // namespace Orm
+} // namespace Orm::Tiny::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE

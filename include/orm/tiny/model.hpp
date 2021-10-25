@@ -2009,7 +2009,7 @@ namespace Relations {
            format and transform it into a Container of pointers to related models,
            so a user can directly modify these models and push or save them
            afterward. */
-        using namespace ranges;
+        namespace views = ranges::views;
         return std::get<QVector<Related>>(relationVariant)
                 | views::transform([](Related &model) -> Related * { return &model; })
                 | ranges::to<Container<Related *>>();

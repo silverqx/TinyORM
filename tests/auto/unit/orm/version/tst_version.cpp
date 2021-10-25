@@ -24,7 +24,7 @@
 #  define TINYTEST_VERSION_TINYUTILS_PATH
 #endif
 
-using namespace TestUtils;
+using TestUtils::Fs;
 
 class tst_Version : public QObject
 {

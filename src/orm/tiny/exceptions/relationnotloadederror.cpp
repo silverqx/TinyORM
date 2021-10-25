@@ -20,6 +20,6 @@ QString RelationNotLoadedError::formatMessage(const QString &model,
             .arg(relation, model);
 }
 
-} // namespace Orm
+} // namespace Orm::Tiny::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE

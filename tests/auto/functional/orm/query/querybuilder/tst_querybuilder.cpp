@@ -9,7 +9,8 @@
 
 #include "databases.hpp"
 
-using namespace Orm::Constants;
+using Orm::Constants::ID;
+using Orm::Constants::NAME;
 
 using QueryBuilder = Orm::Query::Builder;
 

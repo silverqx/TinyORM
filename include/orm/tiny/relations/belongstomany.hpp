@@ -1455,8 +1455,7 @@ namespace Orm::Tiny::Relations
 
         columns.removeDuplicates();
 
-        using namespace ranges;
-        return columns | views::transform([this](const auto &column)
+        return columns | ranges::views::transform([this](const auto &column)
         {
             return QString("%1 as pivot_%2").arg(qualifyPivotColumn(column), column);
         })

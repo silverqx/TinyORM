@@ -35,6 +35,6 @@ Expression::operator QVariant() const
     return QVariant::fromValue(*this);
 }
 
-} // namespace Orm
+} // namespace Orm::Query
 
 TINYORM_END_COMMON_NAMESPACE

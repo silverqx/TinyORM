@@ -4,7 +4,7 @@
 
 #include "orm/constants.hpp"
 
-using namespace Orm::Constants;
+using Orm::Constants::COMMA;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -61,6 +61,6 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error) con
     return result;
 }
 
-} // namespace Orm
+} // namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE

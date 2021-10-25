@@ -47,6 +47,6 @@ QString QueryError::formatMessage(const char *message, const QSqlQuery &query)
     return result;
 }
 
-} // namespace Orm
+} // namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE

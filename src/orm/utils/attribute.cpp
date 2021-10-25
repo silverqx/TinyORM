@@ -90,11 +90,9 @@ joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
                          const QVector<AttributeItem> &values,
                          const QString &keyName)
 {
-    using namespace ranges;
-
     // Remove the primary key from attributes
     auto attributesFiltered =
-            attributes | views::remove_if([&keyName](const WhereItem &value)
+            attributes | ranges::views::remove_if([&keyName](const WhereItem &value)
     {
         /* AttributeItem or more precise TinyORM attributes as such, can not contain
            expression in the column name.
@@ -107,7 +105,7 @@ joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
 
     // Attributes which already exist in 'attributes' will be removed from 'values'
     auto valuesFiltered =
-            values | views::remove_if(
+            values | ranges::views::remove_if(
                 [&attributesFiltered](const AttributeItem &value)
     {
         return ranges::contains(attributesFiltered, true,
@@ -121,6 +119,6 @@ joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
     return attributesFiltered + valuesFiltered;
 }
 
-} // namespace Orm
+} // namespace Orm::Utils::Attribute
 
 TINYORM_END_COMMON_NAMESPACE

@@ -4,7 +4,9 @@
 
 #include "orm/constants.hpp"
 
-using namespace Orm::Constants;
+using Orm::Constants::MINUS;
+using Orm::Constants::PLUS;
+using Orm::Constants::UNDERSCORE;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -67,6 +69,6 @@ bool isNumber(const QString &string)
     return nonDigit == string.cend();
 }
 
-} // namespace Orm
+} // namespace Orm::Utils::String
 
 TINYORM_END_COMMON_NAMESPACE

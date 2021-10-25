@@ -5,7 +5,7 @@
 
 #include "orm/constants.hpp"
 
-using namespace Orm::Constants;
+using Orm::Constants::NAME;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

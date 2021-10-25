@@ -6,8 +6,12 @@
 
 #include "databases.hpp"
 
-using namespace Orm::Constants;
-
+using Orm::Constants::ASC;
+using Orm::Constants::DESC;
+using Orm::Constants::ID;
+using Orm::Constants::LEFT;
+using Orm::Constants::LIKE;
+using Orm::Constants::NAME;
 using Orm::Query::Expression;
 
 using QueryBuilder = Orm::Query::Builder;

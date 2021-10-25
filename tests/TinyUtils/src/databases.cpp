@@ -5,8 +5,33 @@
 #include "orm/exceptions/logicerror.hpp"
 #include "orm/exceptions/runtimeerror.hpp"
 
-using namespace Orm::Constants;
-
+using Orm::Constants::database_;
+using Orm::Constants::driver_;
+using Orm::Constants::charset_;
+using Orm::Constants::check_database_exists;
+using Orm::Constants::collation_;
+using Orm::Constants::foreign_key_constraints;
+using Orm::Constants::H127001;
+using Orm::Constants::host_;
+using Orm::Constants::isolation_level;
+using Orm::Constants::options_;
+using Orm::Constants::P3306;
+using Orm::Constants::P5432;
+using Orm::Constants::password_;
+using Orm::Constants::port_;
+using Orm::Constants::prefix_;
+using Orm::Constants::PUBLIC;
+using Orm::Constants::QMYSQL;
+using Orm::Constants::QPSQL;
+using Orm::Constants::QSQLITE;
+using Orm::Constants::ROOT;
+using Orm::Constants::schema_;
+using Orm::Constants::strict_;
+using Orm::Constants::timezone_;
+using Orm::Constants::username_;
+using Orm::Constants::UTC;
+using Orm::Constants::UTF8;
+using Orm::Constants::UTF8MB4;
 using Orm::Exceptions::LogicError;
 using Orm::Exceptions::RuntimeError;
 

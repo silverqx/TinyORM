@@ -6,8 +6,19 @@
 
 #include "databases.hpp"
 
-using namespace Orm::Constants;
-
+using Orm::Constants::charset_;
+using Orm::Constants::collation_;
+using Orm::Constants::database_;
+using Orm::Constants::driver_;
+using Orm::Constants::H127001;
+using Orm::Constants::host_;
+using Orm::Constants::P3306;
+using Orm::Constants::password_;
+using Orm::Constants::port_;
+using Orm::Constants::QMYSQL;
+using Orm::Constants::ROOT;
+using Orm::Constants::username_;
+using Orm::Constants::UTF8MB4;
 using Orm::DatabaseManager;
 
 class tst_DatabaseManager : public QObject

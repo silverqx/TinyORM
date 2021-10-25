@@ -5,7 +5,6 @@
 #include <QDebug>
 #endif
 
-#include "orm/constants.hpp"
 #include "orm/exceptions/sqltransactionerror.hpp"
 #include "orm/macros.hpp"
 #include "orm/query/querybuilder.hpp"
@@ -13,8 +12,6 @@
 #include "orm/utils/query.hpp"
 #endif
 #include "orm/utils/type.hpp"
-
-using namespace Orm::Constants;
 
 #ifdef TINYORM_DEBUG_SQL
 using QueryUtils = Orm::Utils::Query;
@@ -921,7 +918,7 @@ namespace
                                   {QPSQL,   POSTGRESQL},
                                   {QSQLITE, SQLITE}
                               }));
-}
+} // namespace
 
 const QString &DatabaseConnection::driverNamePrintable()
 {

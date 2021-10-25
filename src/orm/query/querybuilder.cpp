@@ -117,7 +117,7 @@ namespace
 
         return flattenValues;
     };
-}
+} // namespace
 
 // TEST for insert silverqx
 std::optional<QSqlQuery>
@@ -1097,6 +1097,6 @@ void Builder::checkBindingType(const BindingType type) const
                 .arg(static_cast<int>(type)));
 }
 
-} // namespace Orm
+} // namespace Orm::Query
 
 TINYORM_END_COMMON_NAMESPACE

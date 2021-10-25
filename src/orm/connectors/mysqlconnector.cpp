@@ -7,7 +7,13 @@
 #include "orm/exceptions/queryerror.hpp"
 #include "orm/utils/type.hpp"
 
-using namespace Orm::Constants;
+using Orm::Constants::charset_;
+using Orm::Constants::collation_;
+using Orm::Constants::COMMA;
+using Orm::Constants::isolation_level;
+using Orm::Constants::NAME;
+using Orm::Constants::strict_;
+using Orm::Constants::timezone_;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

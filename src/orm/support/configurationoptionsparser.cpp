@@ -5,7 +5,9 @@
 #include "orm/connectors/connector.hpp"
 #include "orm/constants.hpp"
 
-using namespace Orm::Constants;
+using Orm::Constants::EQ_C;
+using Orm::Constants::options_;
+using Orm::Constants::SEMICOLON;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

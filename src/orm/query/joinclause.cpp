@@ -68,6 +68,6 @@ QSharedPointer<Builder> JoinClause::forSubQuery() const
     return Builder::newQuery();
 }
 
-} // namespace Orm
+} // namespace Orm::Query
 
 TINYORM_END_COMMON_NAMESPACE

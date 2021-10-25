@@ -5,7 +5,12 @@
 #include "orm/support/configurationoptionsparser.hpp"
 #include "orm/utils/type.hpp"
 
-using namespace Orm::Constants;
+using Orm::Constants::database_;
+using Orm::Constants::driver_;
+using Orm::Constants::host_;
+using Orm::Constants::password_;
+using Orm::Constants::port_;
+using Orm::Constants::username_;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

@@ -10,8 +10,6 @@
 
 #include "databases.hpp"
 
-using namespace Orm::Constants;
-
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::MassAssignmentError;
 

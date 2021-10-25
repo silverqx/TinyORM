@@ -485,9 +485,8 @@ namespace Orm::Tiny
     Builder<Model>::without(const QVector<QString> &relations)
     {
         // Remove relations in the "relations" vector from m_eagerLoad vector
-        using namespace ranges;
-        m_eagerLoad = m_eagerLoad | views::remove_if(
-                          [&relations](const WithItem &with)
+        m_eagerLoad = m_eagerLoad
+                      | ranges::views::remove_if([&relations](const WithItem &with)
         {
             return relations.contains(with.name);
         })

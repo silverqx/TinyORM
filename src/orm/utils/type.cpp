@@ -5,7 +5,9 @@
 #include "orm/constants.hpp"
 #include "orm/exceptions/runtimeerror.hpp"
 
-using namespace Orm::Constants;
+using Orm::Constants::ASTERISK_C;
+using Orm::Constants::LT_C;
+using Orm::Constants::SPACE;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -135,6 +137,6 @@ Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
     return QStringView(itBegin, itEnd).toString();
 }
 
-} // namespace Orm
+} // namespace Orm::Utils
 
 TINYORM_END_COMMON_NAMESPACE

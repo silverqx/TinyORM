@@ -332,12 +332,11 @@ namespace Relations
             keys.append(key.isEmpty() ? model.getKey()
                                       : model.getAttribute(key));
 
-        using namespace ranges;
-        return keys |= actions::sort(less {}, [](auto key_)
+        return keys |= ranges::actions::sort(ranges::less {}, [](auto key_)
         {
             return key_.template value<typename Model::KeyType>();
         })
-                       | actions::unique;
+                | ranges::actions::unique;
     }
 
     template<class Model, class Related>

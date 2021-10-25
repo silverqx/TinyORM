@@ -6,8 +6,7 @@
 
 #include "databases.hpp"
 
-using namespace Orm::Constants;
-
+using Orm::Constants::QMYSQL;
 using Orm::MySqlConnection;
 
 using TestUtils::Databases;

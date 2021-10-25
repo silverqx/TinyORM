@@ -13,8 +13,6 @@
 
 #include "databases.hpp"
 
-using namespace Orm::Constants;
-
 using Orm::Exceptions::RuntimeError;
 using Orm::One;
 using Orm::QueryBuilder;
