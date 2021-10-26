@@ -1,7 +1,7 @@
 #include "orm/query/processors/mysqlprocessor.hpp"
 
-#include <QtSql/QSqlQuery>
 #include <QVariant>
+#include <QtSql/QSqlQuery>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

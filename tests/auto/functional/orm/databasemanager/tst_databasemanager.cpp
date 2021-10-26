@@ -33,7 +33,8 @@ private slots:
 void tst_DatabaseManager::removeConnection_Connected() const
 {
     const auto connectionName =
-            "tinyorm_mysql_tests-tst_DatabaseMannager-removeConnection_Connected";
+            QStringLiteral(
+                "tinyorm_mysql_tests-tst_DatabaseMannager-removeConnection_Connected");
     const auto databaseName = qEnvironmentVariable("DB_MYSQL_DATABASE", "");
     const auto driverName = QMYSQL;
 
@@ -70,7 +71,7 @@ void tst_DatabaseManager::removeConnection_Connected() const
 
 void tst_DatabaseManager::removeConnection_NotConnected() const
 {
-    const auto connectionName = "dummy_connection";
+    const auto connectionName = QStringLiteral("dummy_connection");
 
     // Ownership of a unique_ptr()
     auto db = DatabaseManager::create({

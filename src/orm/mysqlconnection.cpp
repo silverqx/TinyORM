@@ -77,7 +77,7 @@ bool MySqlConnection::pingDatabase()
 
     const auto mysqlPing = [getMysqlHandle]() -> bool
     {
-        auto mysqlHandle = getMysqlHandle();
+        auto *mysqlHandle = getMysqlHandle();
         if (mysqlHandle == nullptr)
             return false;
 
@@ -91,15 +91,15 @@ bool MySqlConnection::pingDatabase()
             qWarning("mysql_ping() returned : CR_COMMANDS_OUT_OF_SYNC(%ud)", errNo);
             return true;
         }
-        else if (ping == 0)
+
+        if (ping == 0)
             return true;
-        else if (ping != 0)
+        if (ping != 0)
             return false;
-        else {
-            qWarning() << "Unknown behavior during mysql_ping(), this should never "
-                          "happen :/";
-            return false;
-        }
+
+        qWarning() << "Unknown behavior during mysql_ping(), this should never "
+                      "happen :/";
+        return false;
     };
 
     if (qtConnection.isOpen() && mysqlPing()) {

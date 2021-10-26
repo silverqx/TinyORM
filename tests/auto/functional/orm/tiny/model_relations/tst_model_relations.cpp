@@ -1396,7 +1396,7 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
             torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     auto filepathOriginal =
             filesOriginal.first()->getAttribute("filepath");
-    auto peerOriginal =
+    auto *peerOriginal =
             torrent->getRelationValue<TorrentPeer, One>("torrentPeer");
     auto seedsOriginal =
             peerOriginal->getAttribute("seeds");
@@ -1447,7 +1447,7 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
     auto filesRefreshed =
             torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     auto filepathRefreshed = filesRefreshed.first()->getAttribute("filepath");
-    auto peerRefreshed =
+    auto *peerRefreshed =
             torrent->getRelationValue<TorrentPeer, One>("torrentPeer");
     auto seedsRefreshed = peerRefreshed->getAttribute("seeds");
     QVERIFY(filepathOriginal == filepathRefreshed);

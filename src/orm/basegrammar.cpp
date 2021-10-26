@@ -61,7 +61,8 @@ QString BaseGrammar::wrapTable(const FromClause &table) const
 {
     if (std::holds_alternative<std::monostate>(table))
         throw Exceptions::RuntimeError("std::monostate in wrapTable().");
-    else if (std::holds_alternative<Expression>(table))
+
+    if (std::holds_alternative<Expression>(table))
         return getValue(std::get<Expression>(table)).value<QString>();
 
     return wrapTable(std::get<QString>(table));

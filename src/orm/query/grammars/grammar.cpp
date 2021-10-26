@@ -524,10 +524,10 @@ QString Grammar::removeLeadingBoolean(QString statement) const
        whitespaces before. */
     if (statement.startsWith(QLatin1String("and ")))
         return statement.mid(firstChar(4));
-    else if (statement.startsWith(QLatin1String("or ")))
+    if (statement.startsWith(QLatin1String("or ")))
         return statement.mid(firstChar(3));
-    else
-        return statement;
+
+    return statement;
 }
 
 QVector<std::reference_wrapper<const QVariant>>

@@ -56,11 +56,11 @@ bool isNumber(const QString &string)
     if (string.isEmpty())
         return false;
 
-    auto itBegin = string.cbegin();
+    const auto *itBegin = string.cbegin();
     if (string.front() == PLUS || string.front() == MINUS)
         ++itBegin;
 
-    const auto nonDigit = std::find_if(itBegin, string.cend(),
+    const auto *nonDigit = std::find_if(itBegin, string.cend(),
                                        [](const auto &ch)
     {
         return !std::isdigit(ch.toLatin1());

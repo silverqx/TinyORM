@@ -31,14 +31,17 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
 
     if (driver == QMYSQL)
         return std::make_unique<MySqlConnector>();
-    else if (driver == QPSQL)
+
+    if (driver == QPSQL)
         return std::make_unique<PostgresConnector>();
-    else if (driver == QSQLITE)
+
+    if (driver == QSQLITE)
         return std::make_unique<SQLiteConnector>();
-//    else if (driver == "SQLSRV")
+
+//    if (driver == "SQLSRV")
 //        return std::make_unique<SqlServerConnector>();
-    else
-        throw std::domain_error(
+
+    throw std::domain_error(
                 "Unsupported driver '" + driver.toStdString() + "'.");
 }
 
@@ -142,17 +145,17 @@ ConnectionFactory::createConnection(
     if (driver == QMYSQL)
         return std::make_unique<MySqlConnection>(std::move(connection), database, prefix,
                                                  config);
-    else if (driver == QPSQL)
+    if (driver == QPSQL)
         return std::make_unique<PostgresConnection>(std::move(connection), database,
                                                     prefix, config);
-    else if (driver == QSQLITE)
+    if (driver == QSQLITE)
         return std::make_unique<SQLiteConnection>(std::move(connection), database,
                                                   prefix, config);
-//    else if (driver == "SQLSRV")
+//    if (driver == "SQLSRV")
 //        return std::make_unique<SqlServerConnection>(std::move(connection), database,
 //                                                     prefix, config);
-    else
-        throw std::domain_error(
+
+    throw std::domain_error(
                 "Unsupported driver '" + driver.toStdString() + "'.");
 }
 

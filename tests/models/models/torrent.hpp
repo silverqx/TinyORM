@@ -2,6 +2,7 @@
 #ifndef TORRENT_HPP
 #define TORRENT_HPP
 
+#include "orm/db.hpp"
 #include "orm/tiny/model.hpp"
 
 #include "models/tag.hpp"

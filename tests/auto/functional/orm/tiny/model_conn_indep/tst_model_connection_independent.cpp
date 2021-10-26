@@ -82,7 +82,7 @@ void tst_Model_Connection_Independent::subscriptOperator_OnLhs() const
     QCOMPARE(torrent->getAttribute(NAME), QVariant("test2"));
     QCOMPARE(torrent->getAttribute("size"), QVariant(12));
 
-    const auto name = "test2 operator[]";
+    const auto name = QStringLiteral("test2 operator[]");
     const auto size = 112;
     (*torrent)[NAME] = name;
     (*torrent)["size"] = size;
@@ -114,7 +114,7 @@ void tst_Model_Connection_Independent
     QCOMPARE(torrent3->getAttribute(NAME), torrent2->getAttribute(NAME));
 
     // Some more testing
-    const auto name = "test2 operator[]";
+    const auto name = QStringLiteral("test2 operator[]");
 
     attributeReference = name;
     (*torrent3)[NAME] = attributeReference;
@@ -137,8 +137,8 @@ void tst_Model_Connection_Independent::defaultAttributeValues() const
         QCOMPARE(torrent.getAttributes().size(), 3);
     }
     {
-        const auto name = "test22";
-        const auto note = "Torrent::instance()";
+        const auto name = QStringLiteral("test22");
+        const auto note = QStringLiteral("Torrent::instance()");
 
         auto torrent = TorrentEager::instance({
             {NAME, name},
@@ -155,8 +155,8 @@ void tst_Model_Connection_Independent::defaultAttributeValues() const
         QCOMPARE(torrent.getAttributes().size(), 5);
     }
     {
-        const auto name = "test22";
-        const auto note = "Torrent::instance()";
+        const auto name = QStringLiteral("test22");
+        const auto note = QStringLiteral("Torrent::instance()");
 
         TorrentEager torrent {
             {NAME, name},

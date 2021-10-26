@@ -1,7 +1,7 @@
 #include "orm/query/processors/sqliteprocessor.hpp"
 
-#include <QtSql/QSqlQuery>
 #include <QVariant>
+#include <QtSql/QSqlQuery>
 
 #include "orm/constants.hpp"
 

@@ -1,7 +1,7 @@
 #include "orm/connectors/mysqlconnector.hpp"
 
-#include <QtSql/QSqlQuery>
 #include <QVersionNumber>
+#include <QtSql/QSqlQuery>
 
 #include "orm/constants.hpp"
 #include "orm/exceptions/queryerror.hpp"
@@ -137,30 +137,33 @@ void MySqlConnector::configureTimezone(const QSqlDatabase &connection,
 void MySqlConnector::setModes(const QSqlDatabase &connection,
                               const QVariantHash &config) const
 {
-    if (config.contains("modes"))
-
+    // Custom modes defined
+    if (config.contains("modes")) {
         setCustomModes(connection, config);
-
-    else if (config.contains(strict_)) {
-
-        if (config[strict_].value<bool>()) {
-            QSqlQuery query(connection);
-            if (query.exec(strictMode(connection, config)))
-                return;
-
-            throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__),
-                                         query);
-        }
-        else {
-            QSqlQuery query(connection);
-            if (query.exec(
-                    QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'")))
-                return;
-
-            throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__),
-                                         query);
-        }
+        return;
     }
+
+    // No strict defined
+    if (!config.contains(strict_))
+        return;
+
+    QSqlQuery query(connection);
+
+    // Enable strict mode
+    if (config[strict_].value<bool>()) {
+        if (query.exec(strictMode(connection, config)))
+            return;
+
+        throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__),
+                                     query);
+    }
+
+    // Set defaults, no strict mode
+    if (query.exec(QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'")))
+        return;
+
+    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__),
+                                 query);
 }
 
 QString MySqlConnector::strictMode(const QSqlDatabase &connection,
@@ -173,11 +176,11 @@ QString MySqlConnector::strictMode(const QSqlDatabase &connection,
         return QStringLiteral("set session sql_mode='ONLY_FULL_GROUP_BY,"
                               "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,"
                               "ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'");
-    else
-        return QStringLiteral("set session sql_mode='ONLY_FULL_GROUP_BY,"
-                              "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,"
-                              "ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,"
-                              "NO_ENGINE_SUBSTITUTION'");
+
+    return QStringLiteral("set session sql_mode='ONLY_FULL_GROUP_BY,"
+                          "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,"
+                          "ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,"
+                          "NO_ENGINE_SUBSTITUTION'");
 }
 
 QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,

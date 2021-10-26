@@ -84,7 +84,7 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
     };
 
     // Find the beginning of the class name
-    auto itBegin = className.cbegin();
+    const auto *itBegin = className.cbegin();
 
     // Include the namespace in the result
     if (withNamespace)
@@ -105,7 +105,7 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
     }
 
     // Find the end of the class name
-    auto itEnd = std::find_if(itBegin, className.cend(),
+    const auto *itEnd = std::find_if(itBegin, className.cend(),
                               [](const QChar ch)
     {
         // The class name can end with < or space, anything else
@@ -119,7 +119,7 @@ QString
 Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
 {
     // Find the beginning of the class name
-    auto itBegin = className.cbegin();
+    const auto *itBegin = className.cbegin();
 
     if (!withNamespace)
         // Have the namespace and :: found, +2 to point after
@@ -127,7 +127,7 @@ Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
             itBegin += toBegin + 2;
 
     // Find the end of the class name
-    auto itEnd = std::find_if(itBegin, className.cend(),
+    const auto *itEnd = std::find_if(itBegin, className.cend(),
                               [](const QChar ch)
     {
         // The class name can end with <, * or space, anything else
