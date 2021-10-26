@@ -5,8 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtSql/QSqlDatabase>
 #include <QVariantHash>
+#include <QtSql/QSqlDatabase>
 
 #include "orm/concerns/detectslostconnections.hpp"
 

@@ -16,8 +16,8 @@ TINY_SYSTEM_HEADER
 #include "orm/exceptions/queryerror.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/query/processors/processor.hpp"
-#include "orm/schema/schemabuilder.hpp"
 #include "orm/schema/grammars/schemagrammar.hpp"
+#include "orm/schema/schemabuilder.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

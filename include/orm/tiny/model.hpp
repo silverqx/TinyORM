@@ -22,8 +22,8 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/modelproxies.hpp"
 #include "orm/tiny/relations/belongsto.hpp"
 #include "orm/tiny/relations/belongstomany.hpp"
-#include "orm/tiny/relations/hasone.hpp"
 #include "orm/tiny/relations/hasmany.hpp"
+#include "orm/tiny/relations/hasone.hpp"
 #include "orm/tiny/tinybuilder.hpp"
 #include "orm/utils/string.hpp"
 
@@ -1901,19 +1901,22 @@ namespace Relations {
         if (attribute == original)
             return true;
         // TODO next solve how to work with null values and what to do with invalid/unknown values silverqx
-        else if (!attribute.isValid() || attribute.isNull())
+        if (!attribute.isValid() || attribute.isNull())
             return false;
+
         // This check ignores milliseconds in the QDateTime attribute
-        else if (isDateAttribute(key))
+        if (isDateAttribute(key))
             return fromDateTime(attribute) == fromDateTime(original);
-//        else if (hasCast(key, ['object', 'collection']))
+
+//        if (hasCast(key, ['object', 'collection']))
 //            return castAttribute(key, attribute) == castAttribute(key, original);
-//        else if (hasCast(key, ['real', 'float', 'double'])) {
+//        if (hasCast(key, ['real', 'float', 'double'])) {
 //            if (($attribute === null && $original !== null) || ($attribute !== null && $original === null))
 //                return false;
 
 //            return abs($this->castAttribute($key, $attribute) - $this->castAttribute($key, $original)) < PHP_FLOAT_EPSILON * 4;
-//        } elseif ($this->hasCast($key, static::$primitiveCastTypes)) {
+//        }
+//        if ($this->hasCast($key, static::$primitiveCastTypes)) {
 //            return $this->castAttribute($key, $attribute) ===
 //                   $this->castAttribute($key, $original);
 //        }
