@@ -1427,7 +1427,7 @@ namespace Tiny
         return builder().getQuery();
     }
 
-} // namespace Orm::Tiny
+} // namespace Tiny
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE

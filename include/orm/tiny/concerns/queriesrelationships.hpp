@@ -35,11 +35,6 @@ namespace Private
         template<typename T>
         friend class Tiny::Concerns::QueriesRelationships;
 
-        /*! Deleted constructor, this is a pure library class. */
-        HasNestedStore() = delete;
-        /*! Deleted destructor. */
-        ~HasNestedStore() = delete;
-
         /*! Arguments needed to save for the last relation in a hasNested(). */
         template<typename Related>
         struct NestedStore
@@ -68,8 +63,14 @@ namespace Private
 #endif
         inline static
         std::stack<std::type_index> STORE_TYPEID = {};
+
+    public:
+        /*! Deleted constructor, this is a pure library class. */
+        HasNestedStore() = delete;
+        /*! Deleted destructor. */
+        ~HasNestedStore() = delete;
     };
-}
+} // namespace Private
 
     /*! Queries Relationship Existence/Absence with nesting support. */
     template<typename Model>

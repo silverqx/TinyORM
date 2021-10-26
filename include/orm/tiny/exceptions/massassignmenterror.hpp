@@ -19,7 +19,7 @@ namespace Orm::Tiny::Exceptions
         using Orm::Exceptions::RuntimeError::RuntimeError;
     };
 
-} // namespace Orm::Tiny
+} // namespace Orm::Tiny::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 

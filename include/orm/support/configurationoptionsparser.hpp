@@ -30,7 +30,7 @@ namespace Support
     {
     public:
         /*! Constructor. */
-        ConfigurationOptionsParser(const Connectors::Connector &connector);
+        explicit ConfigurationOptionsParser(const Connectors::Connector &connector);
 
         /*! Parse the database configuration, validate, prepare, and merge connection
             options. */
@@ -53,7 +53,7 @@ namespace Support
         const Connectors::Connector &m_connector;
     };
 
-} // namespace Orm::Support
+} // namespace Support
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE

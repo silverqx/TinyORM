@@ -41,7 +41,7 @@ namespace Orm::Query
         Expression &operator=(Expression &&) = default;
 
         /*! Converting operator, QVariant(Expression). */
-        operator QVariant() const;
+        operator QVariant() const; // NOLINT(google-explicit-constructor)
 
         /*! Obtain expression's value. */
         const QVariant &getValue() const;
@@ -59,7 +59,7 @@ namespace Orm::Query
         return m_value;
     }
 
-} // namespace Orm
+} // namespace Orm::Query
 
 TINYORM_END_COMMON_NAMESPACE
 

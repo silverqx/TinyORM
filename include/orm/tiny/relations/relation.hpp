@@ -365,7 +365,7 @@ namespace Relations
         return std::move(query);
     }
 
-} // namespace Orm::Tiny::Relations
+} // namespace Relations
 } // namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE

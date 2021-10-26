@@ -40,7 +40,7 @@ namespace Orm::Exceptions
         return m_message;
     }
 
-} // namespace Orm
+} // namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 

@@ -19,7 +19,7 @@ namespace Orm::Exceptions
         using InvalidArgumentError::InvalidArgumentError;
     };
 
-} // namespace Orm
+} // namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 

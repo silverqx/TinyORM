@@ -56,7 +56,7 @@ namespace Orm::Tiny::Exceptions
         return m_ids;
     }
 
-} // namespace Orm::Tiny
+} // namespace Orm::Tiny::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 

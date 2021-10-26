@@ -33,7 +33,7 @@ namespace Processors
 {
     class Processor;
 }
-} // Orm::Query
+} // namespace Query
 
 namespace Schema
 {
@@ -43,7 +43,7 @@ namespace Grammars
 {
     class SchemaGrammar;
 }
-} // Orm::Schema
+} // namespace Schema
 
     using QueryBuilder   = Query::Builder;
     using QueryGrammar   = Query::Grammars::Grammar;

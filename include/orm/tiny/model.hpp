@@ -107,6 +107,12 @@ namespace Relations {
     // FUTURE linux, add linker version script https://github.com/sailfishos/qtbase/commit/72ba0079c3967bdfa26acdce78ce6cb98b30c27b?view=parallel https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html https://stackoverflow.com/questions/41061220/where-do-object-file-version-references-come-from silverqx
     // TODO Visual Studio memory analyzer https://docs.microsoft.com/en-us/visualstudio/profiling/memory-usage-without-debugging2?view=vs-2019 silverqx
     // CUR fix all modernize-pass-by-value silverqx
+    // CUR check all virtual ~dtor() and change it to ~dtor() override where appropriate silverqx
+    // CUR also move all inline ~dtor() outside class silverqx
+    // CUR use final instead of override in final classes silverqx
+    // CUR solve using ns_name::name in header files silverqx
+    // CUR use using inside classes where appropriate silverqx
+    // CUR explicitly define all virtual dtors silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
@@ -150,10 +156,10 @@ namespace Relations {
 
         /*! Create a new TinORM model instance from attributes
             (converting constructor). */
-        Model(const QVector<AttributeItem> &attributes);
+        explicit Model(const QVector<AttributeItem> &attributes);
         /*! Create a new TinORM model instance from attributes
             (converting constructor). */
-        Model(QVector<AttributeItem> &&attributes);
+        explicit Model(QVector<AttributeItem> &&attributes);
 
         /*! Create a new TinORM model instance from attributes
             (list initialization). */
@@ -386,11 +392,12 @@ namespace Relations {
             /*! Accesses the contained value. */
             QVariant operator*() const;
             /*! Converting operator to the QVariant type. */
-            operator QVariant() const;
+            operator QVariant() const; // NOLINT(google-explicit-constructor)
 
         private:
             /*! AttributeReference's private constructor. */
             AttributeReference(Model<Derived, AllRelations...> &model,
+                               // NOLINTNEXTLINE(modernize-pass-by-value)
                                const QString &attribute);
 
             /*! The model on which is an attribute set. */
@@ -2415,7 +2422,9 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...>::AttributeReference::AttributeReference(
-            Model<Derived, AllRelations...> &model, const QString &attribute
+            Model<Derived, AllRelations...> &model,
+            // NOLINTNEXTLINE(modernize-pass-by-value)
+            const QString &attribute
     )
         : m_model(model)
         , m_attribute(attribute)
@@ -3305,7 +3314,7 @@ namespace Relations {
         return Derived::u_guarded;
     }
 
-} // namespace Orm::Tiny
+} // namespace Tiny
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE

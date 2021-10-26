@@ -21,7 +21,7 @@ namespace Orm::Schema::Grammars
         /*! Default constructor. */
         SchemaGrammar() = default;
         /*! Pure virtual destructor. */
-        virtual ~SchemaGrammar() = 0;
+        ~SchemaGrammar() override = 0;
 
         /*! Compile the query to determine the list of columns. */
         virtual QString compileColumnListing(const QString &table = "") const = 0;

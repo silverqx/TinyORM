@@ -20,6 +20,8 @@ namespace Orm::Query::Grammars
     public:
         /*! Default constructor. */
         PostgresGrammar() = default;
+        /*! Virtual destructor. */
+        inline ~PostgresGrammar() override = default;
 
         /*! Compile an insert ignore statement into SQL. */
         QString compileInsertOrIgnore(const QueryBuilder &query,

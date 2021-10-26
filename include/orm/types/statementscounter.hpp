@@ -25,7 +25,7 @@ namespace Types
         int transactional = -1;
     };
 
-} // namespace Orm::Types
+} // namespace Types
 
     using StatementsCounter = Types::StatementsCounter;
 

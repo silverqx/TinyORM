@@ -132,7 +132,7 @@ namespace Concerns {
         return cached;
     }
 
-} // namespace Orm::Tiny::Relations::Concerns
+} // namespace Concerns
 } // namespace Orm::Tiny::Relations
 
 TINYORM_END_COMMON_NAMESPACE

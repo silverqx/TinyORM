@@ -20,6 +20,8 @@ namespace Orm::Schema::Grammars
     public:
         /*! Default constructor. */
         PostgresSchemaGrammar() = default;
+        /*! Virtual destructor. */
+        inline ~PostgresSchemaGrammar() override = default;
 
         /*! Compile the query to determine the list of columns. */
         QString compileColumnListing(const QString &table = "") const override;

@@ -1201,7 +1201,7 @@ namespace Query
         return *this;
     }
 
-} // namespace Orm::Query
+} // namespace Query
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE

@@ -60,7 +60,7 @@ namespace Orm::Tiny::Exceptions
         return m_relation;
     }
 
-} // namespace Orm::Tiny
+} // namespace Orm::Tiny::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 

@@ -20,6 +20,8 @@ namespace Orm::Query::Processors
     public:
         /*! Default constructor. */
         PostgresProcessor() = default;
+        /*! Virtual destructor. */
+        inline ~PostgresProcessor() override = default;
 
         /*! Process the results of a column listing query. */
         QStringList processColumnListing(QSqlQuery &query) const override;

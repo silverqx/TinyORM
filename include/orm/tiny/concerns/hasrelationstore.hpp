@@ -180,7 +180,7 @@ namespace Concerns
 
         public:
             /*! Constructor. */
-            LazyRelationStore(HasRelationStore &hasRelationStore);
+            explicit LazyRelationStore(HasRelationStore &hasRelationStore);
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -770,7 +770,7 @@ namespace Concerns
         return static_cast<const Derived &>(*this);
     }
 
-} // namespace Orm::Tiny::Concerns
+} // namespace Concerns
 } // namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE

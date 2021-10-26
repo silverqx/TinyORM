@@ -20,7 +20,7 @@ namespace Orm::Connectors
     {
     public:
         /*! Pure virtual destructor. */
-        virtual ~Connector() = 0;
+        ~Connector() override = 0;
 
         /*! Create a new QSqlDatabase connection, factory method. */
         QSqlDatabase

@@ -70,7 +70,7 @@ namespace Connectors
         void validateHosts(const QStringList &hosts) const;
     };
 
-} // namespace Orm::Connectors
+} // namespace Connectors
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE

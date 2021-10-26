@@ -41,7 +41,7 @@ namespace Types
         int affected = -1;
     };
 
-} // namespace Orm::Types
+} // namespace Types
 
     using Log = Types::Log;
 

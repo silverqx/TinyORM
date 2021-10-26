@@ -18,8 +18,10 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/export.hpp"
 
 #ifdef __GNUG__
+// NOLINTNEXTLINE(bugprone-reserved-identifier)
 #  define __tiny_func__ Orm::Utils::Type::prettyFunction(__PRETTY_FUNCTION__)
 #elif _MSC_VER
+// NOLINTNEXTLINE(bugprone-reserved-identifier)
 #  define __tiny_func__ Orm::Utils::Type::prettyFunction(__FUNCTION__)
 #else
 #  define __tiny_func__ __FUNCTION__

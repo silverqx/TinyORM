@@ -12,7 +12,7 @@ TINY_SYSTEM_HEADER
 
 namespace std
 {
-    template<typename ..._Types>
+    template<typename ...Types>
     class variant;
 }
 

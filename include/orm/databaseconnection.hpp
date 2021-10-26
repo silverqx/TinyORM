@@ -42,7 +42,7 @@ namespace Orm
                 const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
         /*! Pure virtual destructor. */
-        virtual ~DatabaseConnection() = 0;
+        ~DatabaseConnection() override = 0;
 
         /*! Begin a fluent query against a database table. */
         QSharedPointer<QueryBuilder>

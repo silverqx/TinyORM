@@ -32,7 +32,7 @@ namespace Query
 
     public:
         /*! Virtual destructor. */
-        virtual ~DatabaseManager();
+        ~DatabaseManager() final;
 
         /*! Factory method to create DatabaseManager instance and register a new connection as default connection at once. */
         static std::unique_ptr<DatabaseManager>
@@ -106,7 +106,7 @@ namespace Query
         static DatabaseManager *instance();
 
         /*! Get a database connection instance. */
-        ConnectionInterface &connection(const QString &name = "") override;
+        ConnectionInterface &connection(const QString &name = "") final;
         /*! Register a connection with the manager. */
         DatabaseManager &
         addConnection(const QVariantHash &config,
@@ -127,9 +127,9 @@ namespace Query
         QStringList openedConnectionNames() const;
 
         /*! Get the default connection name. */
-        const QString &getDefaultConnection() const override;
+        const QString &getDefaultConnection() const final;
         /*! Set the default connection name. */
-        void setDefaultConnection(const QString &defaultConnection) override;
+        void setDefaultConnection(const QString &defaultConnection) final;
 
         // TODO duplicate, extract to some internal types silverqx
         /*! Reconnector lambda type. */

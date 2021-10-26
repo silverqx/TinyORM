@@ -42,7 +42,7 @@ namespace Orm::Exceptions
         const QVector<QVariant> m_bindings;
     };
 
-} // namespace Orm
+} // namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 

@@ -26,7 +26,7 @@ namespace Concerns
             std::conditional_t<std::is_void_v<Related>, QueryBuilder,
                                TinyBuilder<Related>>;
 
-} // namespace Orm::Tiny::Concerns
+} // namespace Concerns
 } // namespace Orm::Tiny
 
 #endif // ORM_TINYTYPES_HPP

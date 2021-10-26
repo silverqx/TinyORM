@@ -85,8 +85,8 @@ namespace Query
     {
         Column                       column      {};
         QVariant                     value       {};
-        QString                      comparison  {EQ};
-        QString                      condition   {AND};
+        QString                      comparison  {Orm::Constants::EQ};
+        QString                      condition   {Orm::Constants::AND};
         WhereType                    type        {WhereType::UNDEFINED};
         QSharedPointer<QueryBuilder> nestedQuery {nullptr};
         QVector<QVariant>            values      {};
@@ -107,8 +107,8 @@ namespace Query
     {
         Column     column     {};
         QVariant   value      {};
-        QString    comparison {EQ};
-        QString    condition  {AND};
+        QString    comparison {Orm::Constants::EQ};
+        QString    condition  {Orm::Constants::AND};
         HavingType type       {HavingType::UNDEFINED};
         QString    sql        {};
     };
@@ -117,7 +117,7 @@ namespace Query
     struct OrderByItem
     {
         Column      column    {};
-        QString     direction {ASC};
+        QString     direction {Orm::Constants::ASC};
         QString     sql       {};
     };
 
@@ -137,7 +137,7 @@ namespace Query
         QVariant value;
 
         /*! Converting operator to the UpdateItem. */
-        operator UpdateItem() const;
+        explicit operator UpdateItem() const;
     };
 
     /*! Comparison operator for the AttributeItem. */
@@ -148,11 +148,11 @@ namespace Query
     {
         Column   column;
         QVariant value;
-        QString  comparison {EQ};
+        QString  comparison {Orm::Constants::EQ};
         QString  condition  {};
 
         /*! Converting operator to the AttributeItem. */
-        operator AttributeItem() const;
+        operator AttributeItem() const; // NOLINT(google-explicit-constructor)
     };
 
     /*! Where item to compare two columns, primarily used in vector overloads. */
@@ -160,7 +160,7 @@ namespace Query
     {
         Column  first;
         Column  second;
-        QString comparison {EQ};
+        QString comparison {Orm::Constants::EQ};
         QString condition  {};
     };
 

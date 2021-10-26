@@ -2109,8 +2109,8 @@ namespace Tiny::Relations
         return getQuery().getQuery();
     }
 
-} // namespace Orm::Tiny::Relations
-} // namespace Orm::Tiny
+} // namespace Tiny::Relations
+} // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 

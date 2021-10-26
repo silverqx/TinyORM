@@ -34,6 +34,7 @@ namespace Orm::Utils::Attribute
     joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
                              const QVector<AttributeItem> &values,
                              const QString &keyName);
+
 } // namespace Orm::Utils::Attribute
 
 TINYORM_END_COMMON_NAMESPACE

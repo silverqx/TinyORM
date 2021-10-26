@@ -19,6 +19,9 @@ namespace Orm::Query
         /*! Join table type. */
         using JoinTable = FromClause;
 
+        /*! Virtual destructor. */
+        inline ~JoinClause() override = default;
+
         /*! Constructor with the table as QString. */
         JoinClause(const Builder &query, const QString &type, const QString &table);
         /*! Constructor with the table as Expression. */
@@ -42,11 +45,11 @@ namespace Orm::Query
         getTable() const;
 
         /*! Get a new instance of the join clause builder. */
-        QSharedPointer<Builder> newQuery() const override;
+        QSharedPointer<Builder> newQuery() const final;
 
     protected:
         /*! Create a new query instance for a sub-query. */
-        QSharedPointer<Builder> forSubQuery() const override;
+        QSharedPointer<Builder> forSubQuery() const final;
 
     private:
         /*! The type of join being performed. */

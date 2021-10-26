@@ -37,7 +37,7 @@ namespace Orm::Exceptions
         const QSqlError m_sqlError;
     };
 
-} // namespace Orm
+} // namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 

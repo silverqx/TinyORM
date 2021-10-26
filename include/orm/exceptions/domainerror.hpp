@@ -21,7 +21,7 @@ namespace Orm::Exceptions
         using LogicError::LogicError;
     };
 
-} // namespace Orm
+} // namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 

@@ -393,7 +393,7 @@ namespace Concerns
         return static_cast<const Model<Derived, AllRelations...> &>(*this);
     }
 
-} // namespace Orm::Tiny::Concerns
+} // namespace Concerns
 } // namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE

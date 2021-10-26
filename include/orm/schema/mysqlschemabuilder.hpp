@@ -20,6 +20,9 @@ namespace Orm::Schema
     public:
         using SchemaBuilder::SchemaBuilder;
 
+        /*! Virtual destructor. */
+        inline ~MySqlSchemaBuilder() override = default;
+
         /*! Get the column listing for a given table. */
         QStringList getColumnListing(const QString &table) const override;
     };

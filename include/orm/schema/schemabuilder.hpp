@@ -47,7 +47,7 @@ namespace Grammars
         const SchemaGrammar &m_grammar;
     };
 
-} // namespace Orm::Schema
+} // namespace Schema
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE

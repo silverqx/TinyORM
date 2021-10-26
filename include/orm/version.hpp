@@ -14,6 +14,7 @@ TINY_SYSTEM_HEADER
 // Should be empty for stable releases, and use hypen before for SemVer compatibility!
 #define TINYORM_VERSION_STATUS ""
 
+// NOLINTNEXTLINE(bugprone-reserved-identifier)
 #define TINYORM__STRINGIFY(x) #x
 #define TINYORM_STRINGIFY(x) TINYORM__STRINGIFY(x)
 

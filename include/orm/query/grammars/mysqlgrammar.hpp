@@ -20,6 +20,8 @@ namespace Orm::Query::Grammars
     public:
         /*! Default constructor. */
         MySqlGrammar() = default;
+        /*! Virtual destructor. */
+        inline ~MySqlGrammar() override = default;
 
         /*! Compile an insert statement into SQL. */
         QString compileInsert(const QueryBuilder &query,

@@ -14,7 +14,7 @@ namespace Orm
 namespace Query
 {
     class Expression;
-}
+} // namespace Query
 
     /*! QString container concept (QStringList or QVector<QString>). */
     template<typename T>

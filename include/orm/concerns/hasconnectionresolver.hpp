@@ -35,7 +35,7 @@ namespace Concerns
         inline static ConnectionResolverInterface *m_resolver = nullptr;
     };
 
-} // namespace Orm::Concerns
+} // namespace Concerns
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE

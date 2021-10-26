@@ -20,6 +20,8 @@ namespace Orm::Query::Processors
     public:
         /*! Default constructor. */
         MySqlProcessor() = default;
+        /*! Virtual destructor. */
+        inline ~MySqlProcessor() override = default;
 
         /*! Process the results of a column listing query. */
         QStringList processColumnListing(QSqlQuery &query) const override;

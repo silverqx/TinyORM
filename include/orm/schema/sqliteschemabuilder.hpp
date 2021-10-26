@@ -19,6 +19,9 @@ namespace Orm::Schema
 
     public:
         using SchemaBuilder::SchemaBuilder;
+
+        /*! Virtual destructor. */
+        inline ~SQLiteSchemaBuilder() override = default;
     };
 
 } // namespace Orm::Schema

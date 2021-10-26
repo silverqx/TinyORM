@@ -20,6 +20,8 @@ namespace Orm::Query::Processors
     public:
         /*! Default constructor. */
         SQLiteProcessor() = default;
+        /*! Virtual destructor. */
+        inline ~SQLiteProcessor() override = default;
 
         /*! Process the results of a column listing query. */
         QStringList processColumnListing(QSqlQuery &query) const override;

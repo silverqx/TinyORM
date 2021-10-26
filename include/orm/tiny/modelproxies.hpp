@@ -2333,7 +2333,7 @@ namespace Relations
         return Model<Derived, AllRelations...>::query();
     }
 
-} // namespace Orm::Tiny
+} // namespace Tiny
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
