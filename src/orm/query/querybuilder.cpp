@@ -735,7 +735,7 @@ QSharedPointer<Builder> Builder::newQuery() const
 QSharedPointer<Builder> Builder::forNestedWhere() const
 {
     // Ownership of the QSharedPointer
-    const auto query = newQuery();
+    auto query = newQuery();
 
     query->setFrom(m_from);
 

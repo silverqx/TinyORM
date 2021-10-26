@@ -23,7 +23,7 @@ namespace Orm::Connectors
 ConnectionName
 MySqlConnector::connect(const QVariantHash &config) const
 {
-    const auto name = config[NAME].value<QString>();
+    auto name = config[NAME].value<QString>();
 
     /* We need to grab the QSqlDatabse options that should be used while making
        the brand new connection instance. The QSqlDatabase options control various

@@ -21,7 +21,7 @@ namespace Orm::Connectors
 ConnectionName
 SQLiteConnector::connect(const QVariantHash &config) const
 {
-    const auto name = config[NAME].value<QString>();
+    auto name = config[NAME].value<QString>();
 
     const auto options = getOptions(config);
 

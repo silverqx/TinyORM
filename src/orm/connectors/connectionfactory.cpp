@@ -165,7 +165,7 @@ QStringList ConnectionFactory::parseHosts(const QVariantHash &config) const
         // TODO now unify exception, std::domain_error is for user code, create own exceptions and use InvalidArgumentError, or runtime/logic error silverqx
         throw std::domain_error("Database 'host' configuration parameter is required.");
 
-    const auto hosts = config[host_].value<QStringList>();
+    auto hosts = config[host_].value<QStringList>();
 
     validateHosts(hosts);
 

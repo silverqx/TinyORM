@@ -8,7 +8,7 @@ namespace TestUtils
 
 QString Fs::cleanPath(const QString &path)
 {
-    const auto ret = path.trimmed();
+    auto ret = path.trimmed();
 
     if (ret.isEmpty())
         return ret;
