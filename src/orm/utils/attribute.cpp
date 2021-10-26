@@ -82,7 +82,7 @@ removeDuplicitKeys(const QVector<AttributeItem> &attributes)
     }
 
     // Reverse order
-    return QVector<AttributeItem>(dedupedAttributes.crbegin(), dedupedAttributes.crend());
+    return {dedupedAttributes.crbegin(), dedupedAttributes.crend()};
 }
 
 QVector<AttributeItem>

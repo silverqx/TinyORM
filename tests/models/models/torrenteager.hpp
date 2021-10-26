@@ -7,9 +7,8 @@
 #include "models/torrentpeereager_norelations.hpp"
 #include "models/torrentpreviewablefileeager.hpp"
 
-using namespace Orm::Constants;
-
 using Orm::AttributeItem;
+using Orm::Constants::NAME;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;

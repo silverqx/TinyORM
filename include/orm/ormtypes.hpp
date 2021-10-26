@@ -27,6 +27,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
+    // NOLINTNEXTLINE(google-build-using-namespace)
     using namespace Orm::Constants;
 
 namespace Query

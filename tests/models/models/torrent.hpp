@@ -2,7 +2,6 @@
 #ifndef TORRENT_HPP
 #define TORRENT_HPP
 
-#include "orm/db.hpp"
 #include "orm/tiny/model.hpp"
 
 #include "models/tag.hpp"
@@ -11,9 +10,8 @@
 #include "models/torrentpreviewablefile.hpp"
 #include "models/user.hpp"
 
-using namespace Orm::Constants;
-
 //using Orm::AttributeItem;
+using Orm::Constants::ID;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::BelongsToMany;

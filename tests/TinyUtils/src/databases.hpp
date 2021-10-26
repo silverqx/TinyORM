@@ -56,6 +56,6 @@ namespace TestUtils
         inline static bool m_initialized = false;
     };
 
-}
+} // namespace TestUtils
 
 #endif // TINYUTILS_DATABASES_HPP

@@ -107,7 +107,9 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     BelongsTo<Model, Related>::BelongsTo(
             std::unique_ptr<Related> &&related, Model &child,
+            // NOLINTNEXTLINE(modernize-pass-by-value)
             const QString &foreignKey, const QString &ownerKey,
+            // NOLINTNEXTLINE(modernize-pass-by-value)
             const QString &relationName
     )
         : Relation<Model, Related>(std::move(related), child)

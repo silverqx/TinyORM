@@ -24,7 +24,7 @@ namespace Orm::Query::Grammars
         /*! Default constructor. */
         Grammar() = default;
         /*! Pure virtual destructor. */
-        virtual ~Grammar() = 0;
+        ~Grammar() override = 0;
 
         /*! Compile a select query into SQL. */
         QString compileSelect(QueryBuilder &query) const;

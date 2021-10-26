@@ -7,8 +7,6 @@
 #include "models/torrenteager_withdefault.hpp"
 #include "models/torrentpreviewablefilepropertyeager.hpp"
 
-using namespace Orm::Constants;
-
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::HasOne;

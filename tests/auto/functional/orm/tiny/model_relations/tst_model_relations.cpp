@@ -13,6 +13,10 @@
 
 #include "databases.hpp"
 
+using Orm::Constants::AND;
+using Orm::Constants::CREATED_AT;
+using Orm::Constants::LIKE;
+using Orm::Constants::UPDATED_AT;
 using Orm::Exceptions::RuntimeError;
 using Orm::One;
 using Orm::QueryBuilder;

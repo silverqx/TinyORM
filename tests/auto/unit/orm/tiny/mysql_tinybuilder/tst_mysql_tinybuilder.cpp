@@ -7,6 +7,9 @@
 
 #include "databases.hpp"
 
+using Orm::Constants::AND;
+using Orm::Constants::LIKE;
+using Orm::Constants::OR;
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::QueryBuilder;
 using Orm::Tiny::TinyBuilder;

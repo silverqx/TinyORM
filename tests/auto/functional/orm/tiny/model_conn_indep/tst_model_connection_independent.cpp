@@ -11,6 +11,7 @@
 #include "databases.hpp"
 
 using Orm::Tiny::ConnectionOverride;
+using Orm::Constants::CREATED_AT;
 using Orm::Tiny::Exceptions::MassAssignmentError;
 
 using TestUtils::Databases;

@@ -457,8 +457,11 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     BelongsToMany<Model, Related, PivotType>::BelongsToMany(
             std::unique_ptr<Related> &&related, Model &parent,
+            // NOLINTNEXTLINE(modernize-pass-by-value)
             const QString &table, const QString &foreignPivotKey,
+            // NOLINTNEXTLINE(modernize-pass-by-value)
             const QString &relatedPivotKey, const QString &parentKey,
+            // NOLINTNEXTLINE(modernize-pass-by-value)
             const QString &relatedKey, const QString &relationName
     )
         : Relation<Model, Related>(std::move(related), parent, relatedKey)
@@ -1320,7 +1323,7 @@ namespace Orm::Tiny::Relations
         if (hasPivotColumn(updatedAt()))
             addTimestampsToAttachment(attributes, true);
 
-        int updated;
+        int updated = -1;
         std::tie(updated, std::ignore) =
                 newPivotStatementForId(id)->update(
                     Utils::Attribute::convertVectorToUpdateItem(

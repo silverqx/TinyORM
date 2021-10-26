@@ -1,8 +1,6 @@
 include($$TINYORM_SOURCE_TREE/tests/qmake/common.pri)
 include($$TINYORM_SOURCE_TREE/tests/qmake/TinyUtils.pri)
 
-HEADERS += $$PWD/include/versiondebug_qmake.hpp.in
-
 SOURCES = tst_version.cpp
 
 # Used by checkFileVersion_*() tests

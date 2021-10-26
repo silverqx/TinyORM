@@ -6,8 +6,7 @@
 
 #include "models/roleuser.hpp"
 
-using namespace Orm::Constants;
-
+using Orm::Constants::NAME;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::Pivot;

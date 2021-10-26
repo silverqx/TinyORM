@@ -113,6 +113,7 @@ namespace Relations {
     // CUR solve using ns_name::name in header files silverqx
     // CUR use using inside classes where appropriate silverqx
     // CUR explicitly define all virtual dtors silverqx
+    // CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

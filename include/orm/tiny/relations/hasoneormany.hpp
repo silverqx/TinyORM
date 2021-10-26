@@ -118,6 +118,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     HasOneOrMany<Model, Related>::HasOneOrMany(
             std::unique_ptr<Related> &&related, Model &parent,
+            // NOLINTNEXTLINE(modernize-pass-by-value)
             const QString &foreignKey, const QString &localKey
     )
         : Relation<Model, Related>(std::move(related), parent)

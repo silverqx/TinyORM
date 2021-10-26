@@ -29,6 +29,6 @@ namespace TestUtils
         static QString absolutePath(const QString &path);
     };
 
-}
+} // namespace TestUtils
 
 #endif // TINYUTILS_FS_HPP

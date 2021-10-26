@@ -10,6 +10,9 @@
 
 #include "databases.hpp"
 
+using Orm::Constants::CREATED_AT;
+using Orm::Constants::QSQLITE;
+using Orm::Constants::UPDATED_AT;
 using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
