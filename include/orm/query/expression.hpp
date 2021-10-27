@@ -64,8 +64,10 @@ namespace Orm::Query
 TINYORM_END_COMMON_NAMESPACE
 
 #ifdef TINYORM_COMMON_NAMESPACE
+// NOLINTNEXTLINE(performance-no-int-to-ptr)
 Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Query::Expression)
 #else
+// NOLINTNEXTLINE(performance-no-int-to-ptr)
 Q_DECLARE_METATYPE(Orm::Query::Expression)
 #endif
 

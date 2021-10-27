@@ -148,12 +148,12 @@ namespace Relations {
         /*! Model's copy constructor. */
         inline Model(const Model &) = default;
         /*! Model's move constructor. */
-        inline Model(Model &&) = default;
+        inline Model(Model &&) noexcept = default;
 
         /*! Model's copy assignment operator. */
         inline Model &operator=(const Model &) = default;
         /*! Model's move assignment operator. */
-        inline Model &operator=(Model &&) = default;
+        inline Model &operator=(Model &&) noexcept = default;
 
         /*! Create a new TinORM model instance from attributes
             (converting constructor). */
@@ -233,7 +233,7 @@ namespace Relations {
         std::unique_ptr<TinyBuilder<Derived>> newQueryWithoutRelationships();
         /*! Create a new Tiny query builder for the model. */
         std::unique_ptr<TinyBuilder<Derived>>
-        newTinyBuilder(const QSharedPointer<QueryBuilder> query);
+        newTinyBuilder(const QSharedPointer<QueryBuilder> &query);
 
         /*! Create a new model instance that is existing. */
         Derived newFromBuilder(const QVector<AttributeItem> &attributes = {},
@@ -1462,10 +1462,13 @@ namespace Relations {
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newModelQuery()
     {
+        // Ownership of the QSharedPointer<QueryBuilder>
+        const auto query = newBaseQueryBuilder();
+
         /* Model is passed to the TinyBuilder ctor, because of that setModel()
            isn't used here. Can't be const because of passed non-const model
            to the TinyBuilder. */
-        return newTinyBuilder(newBaseQueryBuilder());
+        return newTinyBuilder(query);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1478,7 +1481,7 @@ namespace Relations {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newTinyBuilder(
-            const QSharedPointer<QueryBuilder> query)
+            const QSharedPointer<QueryBuilder> &query)
     {
         return std::make_unique<TinyBuilder<Derived>>(query, model());
     }
@@ -1966,7 +1969,7 @@ namespace Relations {
         /* Finally, we will just assume this date is in the format used by default on
            the database connection and use that format to create the QDateTime object
            that is returned back out to the developers after we convert it here. */
-        if (const auto date = QDateTime::fromString(value.value<QString>(), format);
+        if (auto date = QDateTime::fromString(value.value<QString>(), format);
             date.isValid()
         )
             return date;
@@ -2926,7 +2929,7 @@ namespace Relations {
         this->createBelongsToManyRelatedTableStore().visit(relation);
 
         // NRVO kicks in
-        const auto relatedTable = this->belongsToManyRelatedTableStore().m_result;
+        auto relatedTable = this->belongsToManyRelatedTableStore().m_result;
 
         // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
