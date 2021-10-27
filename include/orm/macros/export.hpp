@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_EXPORT_HPP
-#define ORM_EXPORT_HPP
+#ifndef ORM_MACROS_EXPORT_HPP
+#define ORM_MACROS_EXPORT_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -18,4 +18,4 @@ TINY_SYSTEM_HEADER
 #  define SHAREDLIB_EXPORT
 #endif
 
-#endif // ORM_EXPORT_HPP
+#endif // ORM_MACROS_EXPORT_HPP

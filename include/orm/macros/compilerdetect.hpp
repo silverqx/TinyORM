@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_COMPILERDETECT_HPP
-#define ORM_COMPILERDETECT_HPP
+#ifndef ORM_MACROS_COMPILERDETECT_HPP
+#define ORM_MACROS_COMPILERDETECT_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -32,4 +32,4 @@ TINY_SYSTEM_HEADER
 #  define TINYORM_COMPILER_STRING "<unknown compiler>"
 #endif
 
-#endif // ORM_COMPILERDETECT_HPP
+#endif // ORM_MACROS_COMPILERDETECT_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_MODEL_HPP
-#define ORM_MODEL_HPP
+#ifndef ORM_TINY_MODEL_HPP
+#define ORM_TINY_MODEL_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -3329,4 +3329,4 @@ TINYORM_END_COMMON_NAMESPACE
 // TODO study, find out how to avoid pivot include at the end of Model's header file silverqx
 #include "orm/tiny/relations/pivot.hpp"
 
-#endif // ORM_MODEL_HPP
+#endif // ORM_TINY_MODEL_HPP

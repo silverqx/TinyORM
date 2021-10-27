@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_MYSQLGRAMMAR_HPP
-#define ORM_MYSQLGRAMMAR_HPP
+#ifndef ORM_QUERY_GRAMMARS_MYSQLGRAMMAR_HPP
+#define ORM_QUERY_GRAMMARS_MYSQLGRAMMAR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -63,4 +63,4 @@ namespace Orm::Query::Grammars
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_MYSQLGRAMMAR_HPP
+#endif // ORM_QUERY_GRAMMARS_MYSQLGRAMMAR_HPP

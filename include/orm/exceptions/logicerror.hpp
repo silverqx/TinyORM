@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_LOGICERROR_HPP
-#define ORM_LOGICERROR_HPP
+#ifndef ORM_EXCEPTIONS_LOGICERROR_HPP
+#define ORM_EXCEPTIONS_LOGICERROR_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -43,4 +43,4 @@ namespace Orm::Exceptions
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_LOGICERROR_HPP
+#endif // ORM_EXCEPTIONS_LOGICERROR_HPP

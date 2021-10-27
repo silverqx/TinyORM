@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_EXPORT_GLOBAL_HPP
-#define ORM_EXPORT_GLOBAL_HPP
+#ifndef ORM_MACROS_EXPORT_COMMON_HPP
+#define ORM_MACROS_EXPORT_COMMON_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -19,4 +19,4 @@ TINY_SYSTEM_HEADER
 #  define TINY_DECL_IMPORT
 #endif
 
-#endif // ORM_EXPORT_GLOBAL_HPP
+#endif // ORM_MACROS_EXPORT_COMMON_HPP
