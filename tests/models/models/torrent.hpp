@@ -24,6 +24,7 @@ using Orm::Tiny::Relations::Pivot;
 
 class TorrentPreviewableFile;
 
+// NOLINTNEXTLINE(misc-no-recursion)
 class Torrent final :
         public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, User, Pivot>
 //        public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, User, Tagged>

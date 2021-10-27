@@ -13,6 +13,7 @@ using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;
 using Orm::Tiny::Relations::Pivot;
 
+// NOLINTNEXTLINE(misc-no-recursion)
 class User final : public Model<User, Phone, Role, Torrent, Pivot>
 {
     friend Model;

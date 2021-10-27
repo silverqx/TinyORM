@@ -27,6 +27,7 @@ const QString &BaseGrammar::getDateFormat() const
     return cachedFormat;
 }
 
+// NOLINTNEXTLINE(misc-no-recursion)
 QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const
 {
     /* If the value being wrapped has a column alias we will need to separate out
@@ -52,6 +53,7 @@ QString BaseGrammar::wrap(const Column &value) const
             : wrap(std::get<QString>(value));
 }
 
+// NOLINTNEXTLINE(misc-no-recursion)
 QString BaseGrammar::wrapTable(const QString &table) const
 {
     return wrap(QStringLiteral("%1%2").arg(m_tablePrefix, table), true);
@@ -106,6 +108,7 @@ QString BaseGrammar::parameter(const QVariant &value) const
                                : QStringLiteral("?");
 }
 
+// NOLINTNEXTLINE(misc-no-recursion)
 QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAlias) const
 {
     auto segments = getSegmentsFromFrom(value);
@@ -128,6 +131,7 @@ QString BaseGrammar::wrapValue(QString value) const
                                                       QStringLiteral("\"\"")));
 }
 
+// NOLINTNEXTLINE(misc-no-recursion)
 QString BaseGrammar::wrapSegments(QStringList segments) const
 {
     const auto size = segments.size();

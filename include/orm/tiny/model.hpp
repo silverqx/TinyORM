@@ -380,10 +380,11 @@ namespace Relations {
 
         public:
             /*! Assign a value of the QVariant to the referenced attribute. */
-            const AttributeReference &operator=(const QVariant &value) const;
+            const AttributeReference & // NOLINT(misc-unconventional-assign-operator)
+            operator=(const QVariant &value) const;
             /*! Assign a value of another attribute reference to the referenced
                 attribute. */
-            const AttributeReference &
+            const AttributeReference & // NOLINT(misc-unconventional-assign-operator)
             operator=(const AttributeReference &attributeReference) const;
 
             /*! Accesses the contained value, only const member functions. */
@@ -2437,6 +2438,7 @@ namespace Relations {
         , m_attribute(attribute)
     {}
 
+    // NOLINTNEXTLINE(misc-unconventional-assign-operator)
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const typename Model<Derived, AllRelations...>::AttributeReference &
     Model<Derived, AllRelations...>::AttributeReference::operator=(
@@ -2447,6 +2449,7 @@ namespace Relations {
         return *this;
     }
 
+    // NOLINTNEXTLINE(misc-unconventional-assign-operator)
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const typename Model<Derived, AllRelations...>::AttributeReference &
     Model<Derived, AllRelations...>::AttributeReference::operator=(

@@ -13,6 +13,7 @@ using Orm::Tiny::Relations::HasOne;
 class Torrent;
 class TorrentPreviewableFileProperty;
 
+// NOLINTNEXTLINE(misc-no-recursion)
 class TorrentPreviewableFile final :
         public Model<TorrentPreviewableFile, Torrent, TorrentPreviewableFileProperty>
 {
