@@ -82,7 +82,7 @@ namespace Concerns
         /*! The attributes that are mass assignable. */
         inline static QStringList u_fillable;
         /*! The attributes that aren't mass assignable. */
-        inline static QStringList u_guarded {ASTERISK};
+        inline static QStringList u_guarded {ASTERISK}; // NOLINT(cppcoreguidelines-interfaces-global-init)
         /*! Indicates if all mass assignment is enabled. */
         inline static bool m_unguarded = false;
         /*! The actual columns that exist on the database and can be guarded. */

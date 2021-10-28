@@ -725,9 +725,9 @@ namespace Relations {
 
         /* HasTimestamps */
         /*! The name of the "created at" column. */
-        inline static const QString CREATED_AT = Constants::CREATED_AT;
+        inline static const QString CREATED_AT = Constants::CREATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
         /*! The name of the "updated at" column. */
-        inline static const QString UPDATED_AT = Constants::UPDATED_AT;
+        inline static const QString UPDATED_AT = Constants::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
         /*! Indicates if the model should be timestamped. */
         bool u_timestamps = true;
 

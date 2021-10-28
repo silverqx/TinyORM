@@ -177,6 +177,7 @@ tst_Version::getExeVersionString(const QString &fileName) const
         return {};
     }
 
+    // BUG do I have here memory leaks? silverqx
     // GetFileVersionInfo
     auto *lpData = new BYTE[dwLen];
     if (!GetFileVersionInfo(fileName.toStdWString().c_str(), dwHandle, dwLen,
