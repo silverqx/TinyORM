@@ -19,6 +19,9 @@ namespace Orm::Connectors
     class PostgresConnector final : public ConnectorInterface, public Connector
     {
     public:
+        /*! Virtual destructor. */
+        inline ~PostgresConnector() final = default;
+
         /*! Establish a database connection. */
         ConnectionName connect(const QVariantHash &config) const override;
 

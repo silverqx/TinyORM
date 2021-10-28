@@ -30,6 +30,9 @@ namespace Orm::Tiny::Relations
                   const QString &relationName);
 
     public:
+        /*! Virtual destructor. */
+        inline ~BelongsTo() override = default;
+
         /*! Instantiate and initialize a new BelongsTo instance. */
         static std::unique_ptr<BelongsTo<Model, Related>>
         instance(std::unique_ptr<Related> &&related,

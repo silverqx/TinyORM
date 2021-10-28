@@ -20,7 +20,7 @@ namespace Orm::Query
         using JoinTable = FromClause;
 
         /*! Virtual destructor. */
-        inline ~JoinClause() override = default;
+        inline ~JoinClause() final = default;
 
         /*! Constructor with the table as QString. */
         JoinClause(const Builder &query, const QString &type, const QString &table);

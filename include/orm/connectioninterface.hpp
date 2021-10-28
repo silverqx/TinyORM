@@ -60,7 +60,7 @@ namespace Grammars
         /*! Default constructor. */
         ConnectionInterface() = default;
         /*! Pure virtual destructor. */
-        virtual ~ConnectionInterface() = 0;
+        inline virtual ~ConnectionInterface() = 0;
 
         /*! Begin a fluent query against a database table. */
         virtual QSharedPointer<QueryBuilder>
@@ -251,7 +251,7 @@ namespace Grammars
         virtual BaseGrammar &withTablePrefix(BaseGrammar &grammar) const = 0;
     };
 
-    inline ConnectionInterface::~ConnectionInterface() = default;
+    ConnectionInterface::~ConnectionInterface() = default;
 
 } // namespace Orm
 

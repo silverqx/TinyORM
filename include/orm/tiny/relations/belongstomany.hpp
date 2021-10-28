@@ -53,6 +53,9 @@ namespace Orm::Tiny::Relations
                       const QString &relatedKey = "", const QString &relationName = "");
 
     public:
+        /*! Virtual destructor. */
+        inline ~BelongsToMany() override = default;
+
         /*! Instantiate and initialize a new BelongsToMany instance. */
         static std::unique_ptr<BelongsToMany<Model, Related, PivotType>>
         instance(std::unique_ptr<Related> &&related, Model &parent,

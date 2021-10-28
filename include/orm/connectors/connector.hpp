@@ -20,7 +20,7 @@ namespace Orm::Connectors
     {
     public:
         /*! Pure virtual destructor. */
-        ~Connector() override = 0;
+        inline ~Connector() override = 0;
 
         /*! Create a new QSqlDatabase connection, factory method. */
         QSqlDatabase
@@ -58,7 +58,7 @@ namespace Orm::Connectors
         static const QString m_configureErrorMessage;
     };
 
-    inline Connector::~Connector() = default;
+    Connector::~Connector() = default;
 
 } // namespace Orm::Connectors
 

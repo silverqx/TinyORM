@@ -81,8 +81,8 @@ namespace Concerns
                               RelationStoreType storeType);
 
         public:
-            /*! Virtual destructor. */
-            inline virtual ~BaseRelationStore() = default;
+            /*! Pure virtual destructor. */
+            inline virtual ~BaseRelationStore() = 0;
 
             /*! Visit the given relation. */
             void visit(const QString &relation);
@@ -116,6 +116,8 @@ namespace Concerns
                     HasRelationStore &hasRelationStore,
                     const Tiny::TinyBuilder<Derived> &builder,
                     QVector<Derived> &models, const WithItem &relation);
+            /*! Virtual destructor. */
+            inline ~EagerRelationStore() final = default;
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -142,6 +144,8 @@ namespace Concerns
             /*! Constructor. */
             explicit PushRelationStore(HasRelationStore &hasRelationStore,
                                        RelationsType<AllRelations...> &models);
+            /*! Virtual destructor. */
+            inline ~PushRelationStore() final = default;
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -162,6 +166,8 @@ namespace Concerns
             /*! Constructor. */
             explicit TouchOwnersRelationStore(HasRelationStore &hasRelationStore,
                                               const QString &relation);
+            /*! Virtual destructor. */
+            inline ~TouchOwnersRelationStore() final = default;
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -181,6 +187,8 @@ namespace Concerns
         public:
             /*! Constructor. */
             explicit LazyRelationStore(HasRelationStore &hasRelationStore);
+            /*! Virtual destructor. */
+            inline ~LazyRelationStore() final = default;
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -199,6 +207,8 @@ namespace Concerns
         public:
             /*! Constructor. */
             explicit BelongsToManyRelatedTableStore(HasRelationStore &hasRelationStore);
+            /*! Virtual destructor. */
+            inline ~BelongsToManyRelatedTableStore() final = default;
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -224,6 +234,8 @@ namespace Concerns
                             void(QueriesRelationshipsCallback<Related> &)> &callback,
                     std::optional<std::reference_wrapper<
                             QStringList>> relations = std::nullopt);
+            /*! Virtual destructor. */
+            inline ~QueriesRelationshipsStore() final = default;
 
             /*! Method called after visitation. */
             template<typename RelatedFromMethod, typename Method>
@@ -313,6 +325,10 @@ namespace Concerns
             is called. */
         std::stack<std::shared_ptr<BaseRelationStore>> m_relationStore;
     };
+
+    template<typename Derived, typename ...AllRelations>
+    HasRelationStore<Derived, AllRelations...>::BaseRelationStore
+                                              ::~BaseRelationStore() = default;
 
     template<typename Derived, typename ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::BaseRelationStore::BaseRelationStore(

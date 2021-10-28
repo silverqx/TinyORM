@@ -20,13 +20,13 @@ namespace Orm::Connectors
     {
     public:
         /*! Pure virtual destructor. */
-        virtual ~ConnectorInterface() = 0;
+        inline virtual ~ConnectorInterface() = 0;
 
         /*! Establish a database connection. */
         virtual ConnectionName connect(const QVariantHash &config) const = 0;
     };
 
-    inline ConnectorInterface::~ConnectorInterface() = default;
+    ConnectorInterface::~ConnectorInterface() = default;
 
 } // namespace Orm::Connectors
 

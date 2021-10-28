@@ -37,7 +37,7 @@ namespace Relations
     {
     public:
         /*! Pure virtual destructor. */
-        virtual ~OneRelation() = 0;
+        inline virtual ~OneRelation() = 0;
     };
 
     /*! The tag for many type relation. */
@@ -45,7 +45,7 @@ namespace Relations
     {
     public:
         /*! Pure virtual destructor. */
-        virtual ~ManyRelation() = 0;
+        inline virtual ~ManyRelation() = 0;
     };
 
     /*! The tag for the relation which contains pivot table, like many-to-many. */
@@ -53,7 +53,7 @@ namespace Relations
     {
     public:
         /*! Pure virtual destructor. */
-        virtual ~PivotRelation() = 0;
+        inline virtual ~PivotRelation() = 0;
     };
 
     /*! Base relations class. */
@@ -76,7 +76,7 @@ namespace Relations
         using RelatedType = Related;
 
         /*! Pure virtual destructor. */
-        virtual ~Relation() = 0;
+        inline ~Relation() override = 0;
 
         /*! Set the base constraints on the relation query. */
         virtual void addConstraints() const = 0;
@@ -178,17 +178,17 @@ namespace Relations
         static bool constraints;
     };
 
-    inline OneRelation::~OneRelation() = default;
+    OneRelation::~OneRelation() = default;
 
-    inline ManyRelation::~ManyRelation() = default;
+    ManyRelation::~ManyRelation() = default;
 
-    inline PivotRelation::~PivotRelation() = default;
+    PivotRelation::~PivotRelation() = default;
 
     template<class Model, class Related>
     bool Relation<Model, Related>::constraints = true;
 
     template<class Model, class Related>
-    inline Relation<Model, Related>::~Relation() = default;
+    Relation<Model, Related>::~Relation() = default;
 
     template<class Model, class Related>
     Relation<Model, Related>::Relation(std::unique_ptr<Related> &&related, Model &parent,

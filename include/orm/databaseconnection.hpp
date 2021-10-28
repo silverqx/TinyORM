@@ -42,7 +42,7 @@ namespace Orm
                 const QString &database = "", const QString &tablePrefix = "",
                 const QVariantHash &config = {});
         /*! Pure virtual destructor. */
-        ~DatabaseConnection() override = 0;
+        inline ~DatabaseConnection() override = 0;
 
         /*! Begin a fluent query against a database table. */
         QSharedPointer<QueryBuilder>
@@ -570,7 +570,7 @@ namespace Orm
         std::rethrow_exception(ePtr);
     }
 
-    inline DatabaseConnection::~DatabaseConnection() = default;
+    DatabaseConnection::~DatabaseConnection() = default;
 
 } // namespace Orm
 

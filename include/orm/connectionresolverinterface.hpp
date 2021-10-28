@@ -20,7 +20,7 @@ namespace Orm
     {
     public:
         /*! Pure virtual destructor. */
-        virtual ~ConnectionResolverInterface() = 0;
+        inline virtual ~ConnectionResolverInterface() = 0;
 
         /*! Get a database connection instance. */
         virtual ConnectionInterface &connection(const QString &name = "") = 0;
@@ -32,7 +32,7 @@ namespace Orm
         virtual void setDefaultConnection(const QString &defaultConnection) = 0;
     };
 
-    inline ConnectionResolverInterface::~ConnectionResolverInterface() = default;
+    ConnectionResolverInterface::~ConnectionResolverInterface() = default;
 
 } // namespace Orm
 

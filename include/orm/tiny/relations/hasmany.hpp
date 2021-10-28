@@ -24,6 +24,9 @@ namespace Orm::Tiny::Relations
                 const QString &foreignKey, const QString &localKey);
 
     public:
+        /*! Virtual destructor. */
+        inline ~HasMany() override = default;
+
         /*! Instantiate and initialize a new HasMany instance. */
         static std::unique_ptr<HasMany<Model, Related>>
         instance(std::unique_ptr<Related> &&related, Model &parent,

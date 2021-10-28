@@ -17,6 +17,9 @@ namespace Orm::Connectors
     class SQLiteConnector final : public ConnectorInterface, public Connector
     {
     public:
+        /*! Virtual destructor. */
+        inline ~SQLiteConnector() final = default;
+
         /*! Establish a database connection. */
         ConnectionName connect(const QVariantHash &config) const override;
 

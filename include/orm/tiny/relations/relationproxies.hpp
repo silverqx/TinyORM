@@ -37,8 +37,8 @@ namespace Tiny::Relations
                                       ::QueriesRelationshipsCallback<HasRelated>;
 
     public:
-        /*! Virtual destructor. */
-        inline virtual ~RelationProxies() = default;
+        /*! Pure virtual destructor. */
+        inline virtual ~RelationProxies() = 0;
 
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column) const;
@@ -637,6 +637,9 @@ namespace Tiny::Relations
         /*! Get the base QueryBuilder driving the TinyBuilder. */
         QueryBuilder &getBaseQuery() const;
     };
+
+    template<class Model, class Related>
+    RelationProxies<Model, Related>::~RelationProxies() = default;
 
     template<class Model, class Related>
     QVariant

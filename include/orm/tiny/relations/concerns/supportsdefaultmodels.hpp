@@ -26,7 +26,7 @@ namespace Concerns {
 
     public:
         /*! Pure virtual destructor. */
-        virtual ~SupportsDefaultModels() = 0;
+        inline virtual ~SupportsDefaultModels() = 0;
 
         /*! Return a new model instance in case the relationship does not exist. */
         Relation<Model, Related> &withDefault(bool value = true);
@@ -53,7 +53,7 @@ namespace Concerns {
     };
 
     template<class Model, class Related>
-    inline SupportsDefaultModels<Model, Related>::~SupportsDefaultModels() = default;
+    SupportsDefaultModels<Model, Related>::~SupportsDefaultModels() = default;
 
     template<class Model, class Related>
     Relation<Model, Related> &

@@ -21,13 +21,13 @@ namespace Orm::Schema::Grammars
         /*! Default constructor. */
         SchemaGrammar() = default;
         /*! Pure virtual destructor. */
-        ~SchemaGrammar() override = 0;
+        inline ~SchemaGrammar() override = 0;
 
         /*! Compile the query to determine the list of columns. */
         virtual QString compileColumnListing(const QString &table = "") const = 0;
     };
 
-    inline SchemaGrammar::~SchemaGrammar() = default;
+    SchemaGrammar::~SchemaGrammar() = default;
 
 } // namespace Orm::Schema::Grammars
 

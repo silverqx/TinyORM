@@ -24,7 +24,7 @@ namespace Orm::Query::Grammars
         /*! Default constructor. */
         Grammar() = default;
         /*! Pure virtual destructor. */
-        ~Grammar() override = 0;
+        inline ~Grammar() override = 0;
 
         /*! Compile a select query into SQL. */
         QString compileSelect(QueryBuilder &query) const;
@@ -38,7 +38,7 @@ namespace Orm::Query::Grammars
         compileInsertOrIgnore(const QueryBuilder &query,
                               const QVector<QVariantMap> &values) const;
         /*! Compile an insert and get ID statement into SQL. */
-        virtual QString
+        inline virtual QString
         compileInsertGetId(const QueryBuilder &query,
                            const QVector<QVariantMap> &values,
                            const QString &sequence) const;
@@ -205,9 +205,9 @@ namespace Orm::Query::Grammars
                                     const QVector<BindingType> &exclude) const;
     };
 
-    inline Grammar::~Grammar() = default;
+    Grammar::~Grammar() = default;
 
-    inline QString Grammar::compileInsertGetId(
+    QString Grammar::compileInsertGetId(
             const QueryBuilder &query, const QVector<QVariantMap> &values,
             const QString &/*unused*/) const
     {

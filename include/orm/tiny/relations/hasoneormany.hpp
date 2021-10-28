@@ -23,6 +23,9 @@ namespace Orm::Tiny::Relations
                      const QString &foreignKey, const QString &localKey);
 
     public:
+        /*! Pure virtual destructor. */
+        inline ~HasOneOrMany() override = 0;
+
         /*! Set the base constraints on the relation query. */
         void addConstraints() const override;
 
@@ -114,6 +117,9 @@ namespace Orm::Tiny::Relations
         /*! The count of self joins. */
         inline static int selfJoinCount = 0;
     };
+
+    template<class Model, class Related>
+    HasOneOrMany<Model, Related>::~HasOneOrMany() = default;
 
     template<class Model, class Related>
     HasOneOrMany<Model, Related>::HasOneOrMany(
