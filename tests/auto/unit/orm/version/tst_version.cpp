@@ -177,12 +177,11 @@ tst_Version::getExeVersionString(const QString &fileName) const
         return {};
     }
 
-    // BUG do I have here memory leaks? silverqx
     // GetFileVersionInfo
-    auto *lpData = new BYTE[dwLen];
+    // NOLINTNEXTLINE(modernize-avoid-c-arrays)
+    auto lpData = std::make_unique<BYTE[]>(dwLen);
     if (!GetFileVersionInfo(fileName.toStdWString().c_str(), dwHandle, dwLen,
-                            static_cast<LPVOID>(lpData))) {
-        delete[] lpData;
+                            static_cast<LPVOID>(lpData.get()))) {
         qWarning() << "Error in GetFileVersionInfo().";
         return {};
     }
@@ -191,10 +190,9 @@ tst_Version::getExeVersionString(const QString &fileName) const
     VS_FIXEDFILEINFO *lpBuffer = nullptr;
     UINT uLen = 0;
 
-    if (!VerQueryValue(lpData, QString("\\").toStdWString().c_str(),
+    if (!VerQueryValue(lpData.get(), QString("\\").toStdWString().c_str(),
                        reinterpret_cast<LPVOID *>(&lpBuffer), &uLen)
     ) {
-        delete[] lpData;
         qWarning() << "Error in VerQueryValue().";
         return {};
     }
