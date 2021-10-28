@@ -51,7 +51,7 @@ namespace Orm::Connectors
 
     private:
         /*! The default QSqlDatabase connection options for the SQLiteConnector. */
-        inline static const QVariantHash m_options = {};
+        inline static const QVariantHash m_options;
     };
 
 } // namespace Orm::Connectors

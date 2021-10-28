@@ -17,14 +17,14 @@ namespace Orm
     /*! Database configuration class. */
     struct Configuration
     {
-        /*! Inherit constructors. */
+        /*! Type used for Database Connections. */
         using ConfigurationsType = QHash<QString, QVariantHash>;
 
         /*! Default Database Connection Name. */
-        QString defaultConnection = {};
+        QString defaultConnection;
 
         /*! Database Connections. */
-        ConfigurationsType connections = {};
+        ConfigurationsType connections;
     };
 
 } // namespace Orm

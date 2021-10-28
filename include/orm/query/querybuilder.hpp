@@ -653,25 +653,25 @@ namespace Query
         /*! Indicates if the query returns distinct results. */
         std::variant<bool, QStringList> m_distinct = false;
         /*! The columns that should be returned. */
-        QVector<Column> m_columns = {};
+        QVector<Column> m_columns;
         /*! The table which the query is targeting. */
-        FromClause m_from = {};
+        FromClause m_from;
         /*! The table joins for the query. */
-        QVector<QSharedPointer<JoinClause>> m_joins = {};
+        QVector<QSharedPointer<JoinClause>> m_joins;
         /*! The where constraints for the query. */
-        QVector<WhereConditionItem> m_wheres = {};
+        QVector<WhereConditionItem> m_wheres;
         /*! The groupings for the query. */
-        QVector<Column> m_groups = {};
+        QVector<Column> m_groups;
         /*! The having constraints for the query. */
-        QVector<HavingConditionItem> m_havings = {};
+        QVector<HavingConditionItem> m_havings;
         /*! The orderings for the query. */
-        QVector<OrderByItem> m_orders = {};
+        QVector<OrderByItem> m_orders;
         /*! The maximum number of records to return. */
         int m_limit = -1;
         /*! The number of records to skip. */
         int m_offset = -1;
         /*! Indicates whether row locking is being used. */
-        std::variant<std::monostate, bool, QString> m_lock = {};
+        std::variant<std::monostate, bool, QString> m_lock;
     };
 
     template<typename T>

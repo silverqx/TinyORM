@@ -44,9 +44,9 @@ private:
     struct FileVersions
     {
         /*! ProductVersion. */
-        const QString productVersion = "";
+        const QString productVersion;
         /*! FileVersion. */
-        const QString fileVersion = "";
+        const QString fileVersion;
     };
 
     /*! Obtain a ProductVersion and FileVersion strings from an exe/dll. */

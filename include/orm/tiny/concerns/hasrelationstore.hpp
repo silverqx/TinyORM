@@ -188,7 +188,7 @@ namespace Concerns
 
             // TODO templated LazyRelationStore by Container too, QVector to Container silverqx
             /*! The result of lazy load. */
-            std::variant<QVector<Related>, std::optional<Related>> m_result = {};
+            std::variant<QVector<Related>, std::optional<Related>> m_result;
         };
 
         /*! The store to obtain the related table name for BelongsToMany relation. */
@@ -311,7 +311,7 @@ namespace Concerns
         // BUG this is bad, disable Model's copy/assignment ctors if m_relationStore is not empty, or empty the m_relationStore on copy?, have to think about this 🤔 silverqx
         /*! The store where the values will be saved, before BaseRelationStore::visit()
             is called. */
-        std::stack<std::shared_ptr<BaseRelationStore>> m_relationStore = {};
+        std::stack<std::shared_ptr<BaseRelationStore>> m_relationStore;
     };
 
     template<typename Derived, typename ...AllRelations>

@@ -304,7 +304,7 @@ namespace Query
         /*! The active connection instances. */
         std::unordered_map<QString, std::unique_ptr<DatabaseConnection>> m_connections;
         /*! The callback to be executed to reconnect to a database. */
-        ReconnectorType m_reconnector;
+        ReconnectorType m_reconnector = nullptr;
 
     private:
         /*! Database Manager instance. */

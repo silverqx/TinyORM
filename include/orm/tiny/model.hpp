@@ -46,7 +46,7 @@ namespace Relations {
     {
         /*! The connection to use in the Model, this data member is picked up
             in the Model::getConnectionName(). */
-        inline static QString connection = "";
+        inline static QString connection;
     };
 #endif
 
@@ -407,7 +407,7 @@ namespace Relations {
             const QString m_attribute;
             /*! The temporary cache used during operator->() call, to be able
                 to return the QVariant *. */
-            mutable QVariant m_attributeCache = {};
+            mutable QVariant m_attributeCache;
         };
 
         /*! Return modifiable attribute reference, can be used on the left-hand side
@@ -670,62 +670,62 @@ namespace Relations {
                                const QVector<AttributeItem> &attributes);
 
         /*! The table associated with the model. */
-        QString u_table = "";
+        QString u_table;
         /*! The connection name for the model. */
-        QString u_connection = "";
+        QString u_connection;
         /*! Indicates if the model's ID is auto-incrementing. */
         bool u_incrementing = true;
         /*! The primary key associated with the table. */
         QString u_primaryKey = ID;
 
         /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations = {};
+        QHash<QString, RelationVisitor> u_relations;
         // TODO detect (best at compile time) circular eager relation problem, the exception which happens during this problem is stackoverflow in QRegularExpression silverqx
         /*! The relations to eager load on every query. */
-        QVector<QString> u_with = {};
+        QVector<QString> u_with;
         /*! The relationship counts that should be eager loaded on every query. */
 //        QVector<WithItem> u_withCount;
 
         /* HasAttributes */
         /*! The model's default values for attributes. */
-        inline static const QVector<AttributeItem> u_attributes = {};
+        inline static const QVector<AttributeItem> u_attributes;
         /*! The model's attributes (insert order). */
-        QVector<AttributeItem> m_attributes = {};
+        QVector<AttributeItem> m_attributes;
         /*! The model attribute's original state (insert order).
             On the model from many-to-many relation also contains all pivot values,
             that is normal (insert order). */
-        QVector<AttributeItem> m_original = {};
+        QVector<AttributeItem> m_original;
         /*! The changed model attributes (insert order). */
-        QVector<AttributeItem> m_changes = {};
+        QVector<AttributeItem> m_changes;
 
         /* Don't want to use std::reference_wrapper to attributes, because if a copy
            of the model is made, all references would be invalidated. */
         /*! The model's attributes hash (for fast lookup). */
-        std::unordered_map<QString, int> m_attributesHash = {};
+        std::unordered_map<QString, int> m_attributesHash;
         /*! The model attribute's original state (for fast lookup). */
-        std::unordered_map<QString, int> m_originalHash = {};
+        std::unordered_map<QString, int> m_originalHash;
         /*! The changed model attributes (for fast lookup). */
-        std::unordered_map<QString, int> m_changesHash = {};
+        std::unordered_map<QString, int> m_changesHash;
 
         // TODO add support for 'U' like in PHP to support unix timestamp, I will have to manually check if u_dateFormat contains 'U' and use QDateTime::fromSecsSinceEpoch() silverqx
         /*! The storage format of the model's date columns. */
-        inline static QString u_dateFormat = "";
+        inline static QString u_dateFormat;
         /*! The attributes that should be mutated to dates. @deprecated */
-        inline static QStringList u_dates = {};
+        inline static QStringList u_dates;
 
         /* HasRelationships */
         // BUG std::unordered_map prevents to compile on GCC, if I comment out std::optional<AllRelations>... in the RelationsType<AllRelations...>, or I change it to the QHash, then it compile, I'm absolutelly lost why this is happening 😞😭, I can't change to the QHash because of 25734deb, I have created simple test project gcc_trivial_bug_test in merydeye-gentoo, but std::map works so it is a big win, because now I can compile whole project on gcc ✨🚀 silverqx
         /*! The loaded relationships for the model. */
 #ifdef __GNUG__
-        std::map<QString, RelationsType<AllRelations...>> m_relations = {};
+        std::map<QString, RelationsType<AllRelations...>> m_relations;
 #else
-        std::unordered_map<QString, RelationsType<AllRelations...>> m_relations = {};
+        std::unordered_map<QString, RelationsType<AllRelations...>> m_relations;
 #endif
         /*! The relationships that should be touched on save. */
-        QStringList u_touches = {};
+        QStringList u_touches;
         // CUR1 use sets instead of QStringList where appropriate silverqx
         /*! Currently loaded Pivot relation names. */
-        std::unordered_set<QString> m_pivots = {};
+        std::unordered_set<QString> m_pivots;
 
         /* HasTimestamps */
         /*! The name of the "created at" column. */
