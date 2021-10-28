@@ -45,7 +45,7 @@ namespace Orm::Tiny::Exceptions
     private:
         /*! Format the error message. */
         QString formatMessage(const QString &model, const QString &relation,
-                              const From from) const;
+                              From from) const;
     };
 
     inline const QString &

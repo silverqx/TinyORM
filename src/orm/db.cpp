@@ -11,7 +11,7 @@ DatabaseManager *DB::m_manager = nullptr;
 
 DatabaseManager &DB::manager()
 {
-    if (!m_manager)
+    if (m_manager == nullptr)
         m_manager = DatabaseManager::instance();
 
     return *m_manager;
@@ -55,7 +55,7 @@ void DB::disconnect(const QString &name)
     manager().disconnect(name);
 }
 
-const QStringList DB::supportedDrivers()
+QStringList DB::supportedDrivers()
 {
     return manager().supportedDrivers();
 }

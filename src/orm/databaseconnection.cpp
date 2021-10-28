@@ -443,7 +443,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
 QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
 {
     return run<QSqlQuery>(queryString, {},
-               [this](const QString &queryString_, const QVector<QVariant> &)
+               [this](const QString &queryString_, const QVector<QVariant> &/*unused*/)
                -> QSqlQuery
     {
         if (m_pretending)

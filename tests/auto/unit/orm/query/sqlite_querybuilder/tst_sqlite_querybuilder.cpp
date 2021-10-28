@@ -109,6 +109,7 @@ private slots:
     void remove() const;
     void remove_WithExpression() const;
 
+// NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
     [[nodiscard]] QSharedPointer<QueryBuilder> createQuery() const;

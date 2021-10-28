@@ -68,6 +68,7 @@ private slots:
     void hasNested_Count_TinyBuilder_OnBelongsToMany_NestedAsLast() const;
     void hasNested_Count_TinyBuilder_OnBelongsToMany_NestedInMiddle() const;
 
+// NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create TinyBuilder instance for the given connection. */
     template<typename Model>

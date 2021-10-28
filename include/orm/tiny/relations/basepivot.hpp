@@ -194,7 +194,7 @@ namespace Orm::Tiny::Relations
         // FEATURE events silverqx
 //        fireModelEvent("deleted", false);
 
-        return affected > 0 ? true : false;
+        return affected > 0;
     }
 
     template<typename PivotModel>

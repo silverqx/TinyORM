@@ -46,8 +46,8 @@ QString Grammar::compileInsert(const QueryBuilder &query,
                 compileInsertToVector(values).join(COMMA));
 }
 
-QString Grammar::compileInsertOrIgnore(const QueryBuilder &,
-                                       const QVector<QVariantMap> &) const
+QString Grammar::compileInsertOrIgnore(const QueryBuilder &/*unused*/,
+                                       const QVector<QVariantMap> &/*unused*/) const
 {
     throw Exceptions::RuntimeError(
                 "This database engine does not support inserting while ignoring "
@@ -214,7 +214,7 @@ QString Grammar::compileWheres(const QueryBuilder &query) const
 {
     const auto sql = compileWheresToVector(query);
 
-    if (sql.size() > 0)
+    if (!sql.isEmpty())
         return concatenateWhereClauses(query, sql);
 
     return {};
@@ -455,7 +455,7 @@ Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
 }
 
 QString
-Grammar::compileUpdateWithoutJoins(const QueryBuilder &, const QString &table,
+Grammar::compileUpdateWithoutJoins(const QueryBuilder &/*unused*/, const QString &table,
                                    const QString &columns, const QString &wheres) const
 {
     // The table argument is already wrapped
@@ -473,7 +473,7 @@ Grammar::compileUpdateWithJoins(const QueryBuilder &query, const QString &table,
 }
 
 QString
-Grammar::compileDeleteWithoutJoins(const QueryBuilder &, const QString &table,
+Grammar::compileDeleteWithoutJoins(const QueryBuilder &/*unused*/, const QString &table,
                                    const QString &wheres) const
 {
     // The table argument is already wrapped

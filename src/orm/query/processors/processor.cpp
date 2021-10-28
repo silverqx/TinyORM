@@ -8,7 +8,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Processors
 {
 
-QStringList Processor::processColumnListing(QSqlQuery &) const
+QStringList Processor::processColumnListing(QSqlQuery &/*unused*/) const
 {
     throw Exceptions::RuntimeError(QStringLiteral("Method %1() is not implemented.")
                                    .arg(__tiny_func__));

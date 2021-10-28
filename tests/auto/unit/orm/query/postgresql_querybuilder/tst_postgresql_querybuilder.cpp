@@ -109,6 +109,7 @@ private slots:
     void remove() const;
     void remove_WithExpression() const;
 
+// NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
     [[nodiscard]] QSharedPointer<QueryBuilder> createQuery() const;
@@ -398,7 +399,7 @@ void tst_PostgreSQL_QueryBuilder::distinct_on() const
         const QStringList distinctList {"location", "time"};
         builder->distinct(distinctList);
 
-        auto &distinct = std::get<QStringList>(builder->getDistinct());
+        const auto &distinct = std::get<QStringList>(builder->getDistinct());
         QCOMPARE(distinct, distinctList);
         QCOMPARE(builder->toSql(),
                  "select distinct on (\"location\", \"time\") * from \"torrents\"");

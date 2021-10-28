@@ -38,6 +38,7 @@ private slots:
     void checkFileVersion_TinyUtils() const;
 
 #if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+// NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Return value for the getExeVersionString(). */
     struct FileVersions

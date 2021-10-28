@@ -198,7 +198,8 @@ void Builder::truncate()
             m_connection.statement(sql, bindings);
 }
 
-QVariant Builder::aggregate(const QString &function, const QVector<Column> &columns)
+QVariant Builder::aggregate(const QString &function,
+                            const QVector<Column> &columns) const
 {
     auto resultsQuery = cloneWithout({PropertyType::COLUMNS})
                         .cloneWithoutBindings({BindingType::SELECT})
@@ -751,7 +752,7 @@ Expression Builder::raw(const QVariant &value) const
 Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> &query,
                                       const QString &condition)
 {
-    if (!(query->m_wheres.size() > 0))
+    if (query->m_wheres.isEmpty())
         return *this;
 
     m_wheres.append({.column = {}, .condition = condition, .type = WhereType::NESTED,

@@ -1136,7 +1136,7 @@ void tst_Model::update() const
 
     auto torrent = Torrent::find(4);
 
-    auto &updatedAtColumn = torrent->getUpdatedAtColumn();
+    const auto &updatedAtColumn = torrent->getUpdatedAtColumn();
 
     auto progressOriginal = torrent->getAttribute("progress");
     auto updatedAtOriginal = torrent->getAttribute(updatedAtColumn);
@@ -1208,7 +1208,7 @@ void tst_Model::update_SameValue() const
     auto torrent = Torrent::find(3);
     QVERIFY(torrent->exists);
 
-    auto &updatedAtColumn = torrent->getUpdatedAtColumn();
+    const auto &updatedAtColumn = torrent->getUpdatedAtColumn();
     auto updatedAt = torrent->getAttribute(updatedAtColumn);
 
     /* Doesn't send update query to the database, this is different from

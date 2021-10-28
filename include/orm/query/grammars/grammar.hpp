@@ -209,7 +209,7 @@ namespace Orm::Query::Grammars
 
     inline QString Grammar::compileInsertGetId(
             const QueryBuilder &query, const QVector<QVariantMap> &values,
-            const QString &) const
+            const QString &/*unused*/) const
     {
         return compileInsert(query, values);
     }

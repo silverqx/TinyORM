@@ -211,17 +211,16 @@ namespace Orm
 
         /* Logging */
         /*! Log a query into the connection's query log. */
-        void logQuery(const QSqlQuery &query,
-                      const std::optional<qint64> elapsed) const;
+        void logQuery(const QSqlQuery &query, std::optional<qint64> elapsed) const;
         /*! Log a query into the connection's query log. */
         void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
-                      const std::optional<qint64> elapsed) const;
+                      std::optional<qint64> elapsed) const;
         /*! Log a query into the connection's query log in the pretending mode. */
         void logQueryForPretend(const QString &query,
                                 const QVector<QVariant> &bindings) const;
         /*! Log a transaction query into the connection's query log. */
         void logTransactionQuery(const QString &query,
-                                 const std::optional<qint64> elapsed) const;
+                                 std::optional<qint64> elapsed) const;
         /*! Log a transaction query into the connection's query log
             in the pretending mode. */
         void logTransactionQueryForPretend(const QString &query) const;
@@ -367,7 +366,7 @@ namespace Orm
 
         /*! Count transactional queries execution time and statements counter. */
         std::optional<qint64>
-        hitTransactionalCounters(const QElapsedTimer timer, bool countElapsed);
+        hitTransactionalCounters(QElapsedTimer timer, bool countElapsed);
         /*! Convert a named bindings map to the positional bindings vector. */
         QVector<QVariant>
         convertNamedToPositionalBindings(QVariantMap &&bindings) const;

@@ -49,7 +49,7 @@ namespace Orm::Tiny::Relations
 
     protected:
         /*! Make a new related instance for the given model. */
-        Related newRelatedInstanceFor(const Model &) const override;
+        Related newRelatedInstanceFor(const Model &/*unused*/) const override;
     };
 
     template<class Model, class Related>

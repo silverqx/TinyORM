@@ -44,6 +44,7 @@ private slots:
     void with_WithSelectConstraint_QueryWithoutRelatedTable() const;
     void with_BelongsToMany_WithSelectConstraint_QualifiedColumnsForRelatedTable() const;
 
+// NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
     QString m_connection = {};

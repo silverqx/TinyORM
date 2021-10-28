@@ -102,24 +102,24 @@ namespace Query
 
         /* Select */
         /*! Retrieve the "count" result of the query. */
-        quint64 count(const QVector<Column> &columns = {ASTERISK});
+        quint64 count(const QVector<Column> &columns = {ASTERISK}) const;
         /*! Retrieve the "count" result of the query. */
         template<typename = void>
         quint64 count(const Column &column);
         /*! Retrieve the minimum value of a given column. */
-        QVariant min(const Column &column);
+        QVariant min(const Column &column) const;
         /*! Retrieve the maximum value of a given column. */
-        QVariant max(const Column &column);
+        QVariant max(const Column &column) const;
         /*! Retrieve the sum of the values of a given column. */
-        QVariant sum(const Column &column);
+        QVariant sum(const Column &column) const;
         /*! Retrieve the average of the values of a given column. */
-        QVariant avg(const Column &column);
+        QVariant avg(const Column &column) const;
         /*! Alias for the "avg" method. */
-        QVariant average(const Column &column);
+        QVariant average(const Column &column) const;
 
         /*! Execute an aggregate function on the database. */
         QVariant aggregate(const QString &function,
-                           const QVector<Column> &columns = {ASTERISK});
+                           const QVector<Column> &columns = {ASTERISK}) const;
 
         /*! Set the columns to be selected. */
         Builder &select(const QVector<Column> &columns = {ASTERISK});
@@ -653,25 +653,25 @@ namespace Query
         /*! Indicates if the query returns distinct results. */
         std::variant<bool, QStringList> m_distinct = false;
         /*! The columns that should be returned. */
-        QVector<Column> m_columns;
+        QVector<Column> m_columns = {};
         /*! The table which the query is targeting. */
-        FromClause m_from;
+        FromClause m_from = {};
         /*! The table joins for the query. */
-        QVector<QSharedPointer<JoinClause>> m_joins;
+        QVector<QSharedPointer<JoinClause>> m_joins = {};
         /*! The where constraints for the query. */
-        QVector<WhereConditionItem> m_wheres;
+        QVector<WhereConditionItem> m_wheres = {};
         /*! The groupings for the query. */
-        QVector<Column> m_groups;
+        QVector<Column> m_groups = {};
         /*! The having constraints for the query. */
-        QVector<HavingConditionItem> m_havings;
+        QVector<HavingConditionItem> m_havings = {};
         /*! The orderings for the query. */
-        QVector<OrderByItem> m_orders;
+        QVector<OrderByItem> m_orders = {};
         /*! The maximum number of records to return. */
         int m_limit = -1;
         /*! The number of records to skip. */
         int m_offset = -1;
         /*! Indicates whether row locking is being used. */
-        std::variant<std::monostate, bool, QString> m_lock;
+        std::variant<std::monostate, bool, QString> m_lock = {};
     };
 
     template<typename T>
@@ -705,7 +705,7 @@ namespace Query
         return result;
     }
 
-    inline quint64 Builder::count(const QVector<Column> &columns)
+    inline quint64 Builder::count(const QVector<Column> &columns) const
     {
         return aggregate(QStringLiteral("count"), columns).template value<quint64>();
     }
@@ -716,17 +716,17 @@ namespace Query
         return aggregate(QStringLiteral("count"), {column}).template value<quint64>();
     }
 
-    inline QVariant Builder::min(const Column &column)
+    inline QVariant Builder::min(const Column &column) const
     {
         return aggregate(QStringLiteral("min"), {column});
     }
 
-    inline QVariant Builder::max(const Column &column)
+    inline QVariant Builder::max(const Column &column) const
     {
         return aggregate(QStringLiteral("max"), {column});
     }
 
-    inline QVariant Builder::sum(const Column &column)
+    inline QVariant Builder::sum(const Column &column) const
     {
         auto result = aggregate(QStringLiteral("sum"), {column});
 
@@ -736,12 +736,12 @@ namespace Query
         return result;
     }
 
-    inline QVariant Builder::avg(const Column &column)
+    inline QVariant Builder::avg(const Column &column) const
     {
         return aggregate(QStringLiteral("avg"), {column});
     }
 
-    inline QVariant Builder::average(const Column &column)
+    inline QVariant Builder::average(const Column &column) const
     {
         return avg(column);
     }

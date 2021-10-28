@@ -44,14 +44,13 @@ bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &
         "SSL: Connection timed out",
     };
 
-    for (const auto databaseError = e.getSqlError().databaseText();
-         const auto &lostMessage : lostMessagesCache
-    )
+    return std::ranges::any_of(lostMessagesCache,
+                               [databaseError = e.getSqlError().databaseText()]
+                               (const auto &lostMessage)
+    {
         // found
-        if (databaseError.indexOf(lostMessage, 0, Qt::CaseInsensitive) >= 0)
-            return true;
-
-    return false;
+        return databaseError.indexOf(lostMessage, 0, Qt::CaseInsensitive) >= 0;
+    });
 }
 
 } // namespace Orm::Concerns

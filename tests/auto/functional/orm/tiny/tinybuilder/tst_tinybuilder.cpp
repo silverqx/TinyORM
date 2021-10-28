@@ -38,6 +38,7 @@ private slots:
     void update_Failed() const;
     void update_SameValue() const;
 
+// NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create the TinyBuilder by template parameter. */
     template<typename Model>
@@ -175,7 +176,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QVERIFY(torrent4_1);
     QVERIFY(torrent4_1->exists);
 
-    auto &updatedAtColumn = torrent4_1->getUpdatedAtColumn();
+    const auto &updatedAtColumn = torrent4_1->getUpdatedAtColumn();
 
     auto sizeOriginal = torrent4_1->getAttribute("size");
     auto progressOriginal = torrent4_1->getAttribute("progress");
@@ -224,7 +225,7 @@ void tst_TinyBuilder::update() const
 
     auto torrent = Torrent::find(4);
 
-    auto &updatedAtColumn = torrent->getUpdatedAtColumn();
+    const auto &updatedAtColumn = torrent->getUpdatedAtColumn();
 
     auto progressOriginal = torrent->getAttribute("progress");
     auto updatedAtOriginal = torrent->getAttribute(updatedAtColumn);

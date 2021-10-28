@@ -42,7 +42,7 @@ SQLiteGrammar::compileTruncate(const QueryBuilder &query) const
     };
 }
 
-QString SQLiteGrammar::compileLock(const QueryBuilder &) const
+QString SQLiteGrammar::compileLock(const QueryBuilder &/*unused*/) const
 {
     return QLatin1String("");
 }

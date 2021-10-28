@@ -575,7 +575,7 @@ namespace Tiny::Relations
         requires std::is_member_function_pointer_v<Method>
 #endif
         const Relation<Model, Related> &
-        has(const Method relation, const QString &comparison = GE, qint64 count = 1,
+        has(Method relation, const QString &comparison = GE, qint64 count = 1,
             const QString &condition = AND,
             const std::function<void(
                 TinyBuilder<HasRelated> &)> &callback = nullptr) const;
@@ -622,7 +622,7 @@ namespace Tiny::Relations
         requires std::is_member_function_pointer_v<Method>
 #endif
         const Relation<Model, Related> &
-        whereHas(const Method relation,
+        whereHas(Method relation,
                  const std::function<void(
                      TinyBuilder<HasRelated> &)> &callback = nullptr,
                  const QString &comparison = GE, qint64 count = 1) const;

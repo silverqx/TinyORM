@@ -59,7 +59,7 @@ PostgresConnector::getConnectorOptions() const
     return m_options;
 }
 
-void PostgresConnector::parseConfigOptions(QVariantHash &) const
+void PostgresConnector::parseConfigOptions(QVariantHash &/*unused*/) const
 {}
 
 void PostgresConnector::configureEncoding(const QSqlDatabase &connection,

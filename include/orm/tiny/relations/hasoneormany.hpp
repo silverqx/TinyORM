@@ -297,7 +297,7 @@ namespace Orm::Tiny::Relations
     {
         QVector<Related> instances;
 
-        for (auto &record : records)
+        for (const auto &record : records)
             instances << create(record);
 
         return instances;

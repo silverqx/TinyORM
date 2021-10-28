@@ -82,7 +82,7 @@ namespace Orm::Tiny::Relations
         buildDictionary(const QVector<Related> &results) const;
 
         /*! Make a new related instance for the given model. */
-        Related newRelatedInstanceFor(const Model &) const override;
+        Related newRelatedInstanceFor(const Model &/*unused*/) const override;
 
         /* Querying Relationship Existence/Absence */
         /*! Add the constraints for a relationship query. */
@@ -313,7 +313,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     inline Related
-    BelongsTo<Model, Related>::newRelatedInstanceFor(const Model &) const
+    BelongsTo<Model, Related>::newRelatedInstanceFor(const Model &/*unused*/) const
     {
         return this->m_related->newInstance();
     }

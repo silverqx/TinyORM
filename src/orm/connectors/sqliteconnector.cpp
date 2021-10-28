@@ -58,7 +58,7 @@ SQLiteConnector::getConnectorOptions() const
     return m_options;
 }
 
-void SQLiteConnector::parseConfigOptions(QVariantHash &) const
+void SQLiteConnector::parseConfigOptions(QVariantHash &/*unused*/) const
 {}
 
 void SQLiteConnector::configureForeignKeyConstraints(

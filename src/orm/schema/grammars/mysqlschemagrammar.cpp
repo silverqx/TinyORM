@@ -5,7 +5,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Schema::Grammars
 {
 
-QString MySqlSchemaGrammar::compileColumnListing(const QString &) const
+QString MySqlSchemaGrammar::compileColumnListing(const QString &/*unused*/) const
 {
     return "select `column_name` as `column_name` "
            "from `information_schema`.`columns` "

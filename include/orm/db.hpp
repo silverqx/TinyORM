@@ -61,7 +61,7 @@ namespace Orm
         static void disconnect(const QString &name = "");
 
         /*! Get all of the support drivers. */
-        static const QStringList supportedDrivers();
+        static QStringList supportedDrivers();
         /*! Returns a list containing the names of all connections. */
         static QStringList connectionNames();
         /*! Returns a list containing the names of opened connections. */

@@ -609,7 +609,7 @@ namespace Relations
         requires std::is_member_function_pointer_v<Method>
 #endif
         static std::unique_ptr<TinyBuilder<Derived>>
-        has(const Method relation, const QString &comparison = GE, qint64 count = 1,
+        has(Method relation, const QString &comparison = GE, qint64 count = 1,
             const QString &condition = AND,
             const std::function<void(TinyBuilder<Related> &)> &callback = nullptr);
 
@@ -654,7 +654,7 @@ namespace Relations
         requires std::is_member_function_pointer_v<Method>
 #endif
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereHas(const Method relation,
+        whereHas(Method relation,
                  const std::function<void(TinyBuilder<Related> &)> &callback = nullptr,
                  const QString &comparison = GE, qint64 count = 1);
 

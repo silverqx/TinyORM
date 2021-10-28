@@ -184,12 +184,12 @@ size_t DatabaseManager::transactionLevel()
 
 DatabaseManager *DatabaseManager::instance()
 {
-    if (!m_instance)
-        throw Exceptions::RuntimeError(
-                "The DatabaseManager instance has not been created yet, create it "
-                "by DB::create() method.");
+    if (m_instance != nullptr)
+        return m_instance;
 
-    return m_instance;
+    throw Exceptions::RuntimeError(
+            "The DatabaseManager instance has not been created yet, create it "
+            "by DB::create() method.");
 }
 
 ConnectionInterface &DatabaseManager::connection(const QString &name)
@@ -287,7 +287,7 @@ QStringList DatabaseManager::openedConnectionNames() const
     // TODO overflow, add check code https://stackoverflow.com/questions/22184403/how-to-cast-the-size-t-to-double-or-int-c/22184657#22184657 silverqx
     names.reserve(static_cast<int>(m_connections.size()));
 
-    for (auto &connection : m_connections)
+    for (const auto &connection : m_connections)
         names << connection.first;
 
     return names;
@@ -344,13 +344,11 @@ DatabaseConnection &DatabaseManager::resetElapsedCounter(const QString &connecti
 
 bool DatabaseManager::anyCountingElapsed()
 {
-    const auto connections = openedConnectionNames();
-
-    for (const auto &connectionName : connections)
-        if (connection(connectionName).countingElapsed())
-            return true;
-
-    return false;
+    return std::ranges::any_of(openedConnectionNames(),
+                               [this](const auto &connectionName)
+    {
+        return connection(connectionName).countingElapsed();
+    });
 }
 
 void DatabaseManager::enableAllElapsedCounters()
@@ -466,13 +464,11 @@ DatabaseConnection &DatabaseManager::resetStatementsCounter(const QString &conne
 
 bool DatabaseManager::anyCountingStatements()
 {
-    const auto connections = openedConnectionNames();
-
-    for (const auto &connectionName : connections)
-        if (connection(connectionName).countingStatements())
-            return true;
-
-    return false;
+    return std::ranges::any_of(openedConnectionNames(),
+                               [this](const auto &connectionName)
+    {
+        return connection(connectionName).countingStatements();
+    });
 }
 
 void DatabaseManager::enableAllStatementCounters()

@@ -78,7 +78,7 @@ namespace Concerns
         protected:
             /*! Constructor. */
             BaseRelationStore(HasRelationStore &hasRelationStore,
-                              const RelationStoreType storeType);
+                              RelationStoreType storeType);
 
         public:
             /*! Virtual destructor. */
@@ -91,7 +91,7 @@ namespace Concerns
                 method, an enter point of the visitation. */
             template<typename Method>
             requires std::is_member_function_pointer_v<Method>
-            void operator()(const Method method);
+            void operator()(Method method);
 
         protected:
             /*! Currently held store type. */
@@ -119,7 +119,7 @@ namespace Concerns
 
             /*! Method called after visitation. */
             template<typename Method>
-            void visited(const Method method) const;
+            void visited(Method method) const;
 
         private:
             /*! The Tiny builder instance to which the visited relation will be
@@ -145,7 +145,7 @@ namespace Concerns
 
             /*! Method called after visitation. */
             template<typename Method>
-            void visited(const Method) const;
+            void visited(Method /*unused*/) const;
 
             /*! Models to push, the reference to the relation in m_relations hash. */
             RelationsType<AllRelations...> &m_models;
@@ -165,7 +165,7 @@ namespace Concerns
 
             /*! Method called after visitation. */
             template<typename Method>
-            void visited(const Method method) const;
+            void visited(Method method) const;
 
             /*! Models to touch timestamps for, the reference to the relation name/key
                 in the m_relations hash. */
@@ -184,7 +184,7 @@ namespace Concerns
 
             /*! Method called after visitation. */
             template<typename Method>
-            void visited(const Method method);
+            void visited(Method method);
 
             // TODO templated LazyRelationStore by Container too, QVector to Container silverqx
             /*! The result of lazy load. */
@@ -202,7 +202,7 @@ namespace Concerns
 
             /*! Method called after visitation. */
             template<typename Method>
-            void visited(const Method);
+            void visited(Method /*unused*/);
 
             /*! The related table name result. */
             std::optional<QString> m_result = std::nullopt;
@@ -222,12 +222,12 @@ namespace Concerns
                     qint64 count, const QString &condition,
                     const std::function<
                             void(QueriesRelationshipsCallback<Related> &)> &callback,
-                    const std::optional<std::reference_wrapper<
-                                        QStringList>> relations = std::nullopt);
+                    std::optional<std::reference_wrapper<
+                            QStringList>> relations = std::nullopt);
 
             /*! Method called after visitation. */
             template<typename RelatedFromMethod, typename Method>
-            void visited(const Method method);
+            void visited(Method method);
 
         protected:
             /*! Store type initializer. */
@@ -278,7 +278,7 @@ namespace Concerns
                 qint64 count, const QString &condition,
                 const std::function<
                         void(QueriesRelationshipsCallback<Related> &)> &callback,
-                const std::optional<std::reference_wrapper<
+                std::optional<std::reference_wrapper<
                         QStringList>> relations = std::nullopt);
 
         /*! Release the ownership and destroy the top relation store on the stack. */
@@ -461,7 +461,7 @@ namespace Concerns
     template<typename Derived, typename ...AllRelations>
     template<typename Method>
     void HasRelationStore<Derived, AllRelations...>::PushRelationStore::visited(
-            const Method) const
+            const Method /*unused*/) const
     {
         using Related = typename std::invoke_result_t<Method, Derived>
                                     ::element_type::RelatedType;
@@ -524,7 +524,7 @@ namespace Concerns
     template<typename Derived, typename ...AllRelations>
     template<typename Method>
     void HasRelationStore<Derived, AllRelations...>::BelongsToManyRelatedTableStore
-                                                   ::visited(const Method)
+                                                   ::visited(const Method /*unused*/)
     {
         using Relation = typename std::invoke_result_t<Method, Derived>::element_type;
 

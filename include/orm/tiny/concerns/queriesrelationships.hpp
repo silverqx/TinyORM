@@ -141,7 +141,7 @@ namespace Private
         requires std::is_member_function_pointer_v<Method>
 #endif
         TinyBuilder<Model> &
-        has(const Method relation, const QString &comparison = GE, qint64 count = 1,
+        has(Method relation, const QString &comparison = GE, qint64 count = 1,
             const QString &condition = AND,
             const std::function<void(TinyBuilder<Related> &)> &callback = nullptr);
 
@@ -186,7 +186,7 @@ namespace Private
         requires std::is_member_function_pointer_v<Method>
 #endif
         TinyBuilder<Model> &
-        whereHas(const Method relation,
+        whereHas(Method relation,
                  const std::function<void(TinyBuilder<Related> &)> &callback = nullptr,
                  const QString &comparison = GE, qint64 count = 1);
 
@@ -202,7 +202,7 @@ namespace Private
         /*! Get the "has relation" base query instance. */
         template<typename Related, typename Method>
         std::unique_ptr<Relation<Related>>
-        getRelationWithoutConstraints(const Method method);
+        getRelationWithoutConstraints(Method method);
 
         /*! Add the "has" condition where clause to the query. */
         template<typename Related>
@@ -596,13 +596,13 @@ namespace Private
         // Ownership of a unique_ptr()
         const auto hasQuery = getHasQueryByExistenceCheck(comparison, count, *relation);
 
-        if (relations.size() >= 1)
-            hasQuery->hasInternal(relations.takeFirst(), GE, 1, AND, relations);
-        else
+        if (relations.isEmpty())
             throw Orm::Exceptions::RuntimeError(
                     QStringLiteral(
                         "wtf, this should never happen :/, 'relations.size() == %1'.")
                     .arg(relations.size()));
+
+        hasQuery->hasInternal(relations.takeFirst(), GE, 1, AND, relations);
 
         addHasWhere(*hasQuery, *relation, comparison, count, condition);
     }

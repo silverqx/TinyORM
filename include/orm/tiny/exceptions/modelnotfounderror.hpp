@@ -30,7 +30,7 @@ namespace Orm::Tiny::Exceptions
         /*! Get the affected TinyORM model. */
         const QString &getModel() const;
         /*! Get the affected TinyORM model IDs. */
-        const QVector<QVariant> getIds() const;
+        QVector<QVariant> getIds() const;
 
     protected:
         /*! Name of the affected TinyORM model. */
@@ -50,7 +50,7 @@ namespace Orm::Tiny::Exceptions
         return m_model;
     }
 
-    inline const QVector<QVariant>
+    inline QVector<QVariant>
     ModelNotFoundError::getIds() const
     {
         return m_ids;

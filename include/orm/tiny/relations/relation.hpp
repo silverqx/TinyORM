@@ -342,7 +342,7 @@ namespace Relations
     template<class Model, class Related>
     std::unique_ptr<Builder<Related>>
     Relation<Model, Related>::getRelationExistenceQuery(
-            std::unique_ptr<Builder<Related>> &&query, const Builder<Model> &,
+            std::unique_ptr<Builder<Related>> &&query, const Builder<Model> &/*unused*/,
             const QVector<Column> &columns) const
     {
         query->select(columns).whereColumnEq(getQualifiedParentKeyName(),

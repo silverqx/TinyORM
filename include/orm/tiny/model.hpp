@@ -182,13 +182,12 @@ namespace Relations {
 
         /* Operations on a model instance */
         /*! Save the model to the database. */
-        bool save(const SaveOptions options = {});
+        bool save(SaveOptions options = {});
         /*! Save the model and all of its relationships. */
         bool push();
 
         /*! Update records in the database. */
-        bool update(const QVector<AttributeItem> &attributes,
-                    const SaveOptions options = {});
+        bool update(const QVector<AttributeItem> &attributes, SaveOptions options = {});
 
         /*! Delete the model from the database. */
         bool remove();
@@ -278,7 +277,7 @@ namespace Relations {
         /*! Get the value indicating whether the IDs are incrementing. */
         bool getIncrementing() const;
         /*! Set whether IDs are incrementing. */
-        Derived &setIncrementing(const bool value);
+        Derived &setIncrementing(bool value);
 
         /* Others */
         /*! Qualify the given column name by the model's table. */
@@ -664,7 +663,7 @@ namespace Relations {
         /*! Perform a model insert operation. */
         bool performUpdate(TinyBuilder<Derived> &query);
         /*! Perform any actions that are necessary after the model is saved. */
-        void finishSave(const SaveOptions options = {});
+        void finishSave(SaveOptions options = {});
 
         /*! Insert the given attributes and set the ID on the model. */
         quint64 insertAndSetId(const TinyBuilder<Derived> &query,
@@ -790,8 +789,8 @@ namespace Relations {
         /*! Throw exception if correct getRelation/Value() method was not used, to avoid
             std::bad_variant_access. */
         template<typename Result, typename Related, typename T>
-        void checkRelationType(
-                const T &result, const QString &relation, const QString &source) const;
+        void checkRelationType(const T &relationVariant, const QString &relation,
+                               const QString &source) const;
 
         /*! Guess the relationship name for belongsTo/belongsToMany. */
         template<typename Related>
@@ -828,8 +827,8 @@ namespace Relations {
                 const QString &relation, Concerns::QueriesRelationships<Derived> &origin,
                 const QString &comparison, qint64 count, const QString &condition,
                 const std::function<void(
-                    Concerns::QueriesRelationshipsCallback<Related> &)> &callback,
-                const std::optional<std::reference_wrapper<
+                        Concerns::QueriesRelationshipsCallback<Related> &)> &callback,
+                std::optional<std::reference_wrapper<
                         QStringList>> relations = std::nullopt);
 
         /* Others */
@@ -1682,7 +1681,7 @@ namespace Relations {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, template<typename> typename Container>
-    const Container<Related *>
+    const Container<Related *> // NOLINT(readability-const-return-type)
     Model<Derived, AllRelations...>::getRelationValue(const QString &relation)
     {
         /*! If the key already exists in the relationships hash, it just means the
@@ -1869,16 +1868,15 @@ namespace Relations {
            already contains any attributes. If it does we will just return that this
            count is greater than zero. Else, we need to check specific attributes. */
         if (attributes.isEmpty())
-            return changes.size() > 0;
+            return !changes.empty();
 
         /* Here we will spin through every attribute and see if this is in the hash of
            dirty attributes. If it is, we will return true and if we make it through
            all of the attributes for the entire vector we will return false at end. */
-        for (const auto &attribute : attributes)
-            if (changes.contains(attribute))
-                return true;
-
-        return false;
+        return std::ranges::any_of(attributes, [&changes](const auto &attribute)
+        {
+            return changes.contains(attribute);
+        });
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2054,7 +2052,7 @@ namespace Relations {
     // TODO solve different behavior like Eloquent getRelation() silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, template<typename> typename Container>
-    const Container<Related *>
+    const Container<Related *> // NOLINT(readability-const-return-type)
     Model<Derived, AllRelations...>::getRelation(const QString &relation)
     {
         if (!relationLoaded(relation))
@@ -3276,14 +3274,10 @@ namespace Relations {
     template<typename ClassToCheck>
     bool Model<Derived, AllRelations...>::isIgnoringTouch()
     {
-        if (!ClassToCheck().usesTimestamps()
-            || ClassToCheck::getUpdatedAtColumn().isEmpty()
-        )
-            return true;
-
         // FUTURE implement withoutTouching() and related data member $ignoreOnTouch silverqx
 
-        return false;
+        return !ClassToCheck().usesTimestamps()
+                || ClassToCheck::getUpdatedAtColumn().isEmpty();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
