@@ -623,7 +623,7 @@ namespace Query
         const QVector<QString> m_operators {
             EQ, LT, GT, LE, GE, NE_, NE, "<=>",
             LIKE, "like binary", NLIKE, ILIKE,
-            B_AND, B_OR, "^", "<<", ">>",
+            B_AND, B_OR, "^", "<<", ">>", "&~",
             "rlike", "not rlike", "regexp", "not regexp",
             "~", "~*", "!~", "!~*", "similar to",
             "not similar to", "not ilike", "~~*", "!~~*",
