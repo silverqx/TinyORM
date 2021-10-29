@@ -20,6 +20,8 @@ DatabaseManager::~DatabaseManager() = default;
 // FUTURE add support for ::read and ::write db connections silverx
 // TODO implement RepositoryFactory silverqx
 DatabaseManager::DatabaseManager(const QString &defaultConnection)
+    // To pass Weffc++ and has to be here because of forward declaration in unique_ptr
+    // NOLINTNEXTLINE(readability-redundant-member-init)
     : m_connections()
 {
     m_config.defaultConnection = defaultConnection;
