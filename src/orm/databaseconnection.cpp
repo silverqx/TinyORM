@@ -25,7 +25,7 @@ namespace Orm
 const char *
 DatabaseConnection::defaultConnectionName = const_cast<char *>("tinyorm_default");
 const char *
-DatabaseConnection::SAVEPOINT_NAMESPACE   = const_cast<char *>("tinyorm_savepoint");
+DatabaseConnection::savepointNamespace   = const_cast<char *>("tinyorm_savepoint");
 
 /*!
     \class DatabaseConnection
@@ -208,7 +208,7 @@ bool DatabaseConnection::savepoint(const QString &id)
     Q_ASSERT(m_inTransaction);
 
     auto savePoint = getQtQuery();
-    const auto query = QStringLiteral("SAVEPOINT %1_%2").arg(SAVEPOINT_NAMESPACE, id);
+    const auto query = QStringLiteral("SAVEPOINT %1_%2").arg(savepointNamespace, id);
 
     // Elapsed timer needed
     const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
@@ -252,7 +252,7 @@ bool DatabaseConnection::rollbackToSavepoint(const QString &id)
 
     auto rollbackToSavepoint = getQtQuery();
     const auto query = QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2")
-                       .arg(SAVEPOINT_NAMESPACE, id);
+                       .arg(savepointNamespace, id);
 
     // Elapsed timer needed
     const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
@@ -913,6 +913,7 @@ namespace
 {
     using DriverNameMapType = std::unordered_map<QString, const QString &>;
 
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
     Q_GLOBAL_STATIC_WITH_ARGS(DriverNameMapType, DRIVER_NAME_MAP, ({
                                   {QMYSQL,  MYSQL_},
                                   {QPSQL,   POSTGRESQL},

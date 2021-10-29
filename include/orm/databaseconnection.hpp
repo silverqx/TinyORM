@@ -35,6 +35,8 @@ namespace Orm
     public:
         /*! Default connection name. */
         static const char *defaultConnectionName;
+        /*! Namespace prefix for MySQL savepoints. */
+        static const char *savepointNamespace;
 
         /*! Constructor. */
         explicit DatabaseConnection(
@@ -345,9 +347,6 @@ namespace Orm
         bool m_pretending = false;
 
     private:
-        /*! Namespace prefix for MySQL savepoints. */
-        static const char *SAVEPOINT_NAMESPACE;
-
         /*! Prepare an SQL statement and return the query object. */
         QSqlQuery prepareQuery(const QString &queryString);
 
