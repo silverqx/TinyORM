@@ -13,16 +13,37 @@
 
 #include "databases.hpp"
 
+using Models::FilePropertyProperty;
+using Models::Tag;
+using Models::Tagged;
+using Models::Torrent;
+using Models::TorrentEager;
+using Models::TorrentEager_Failed;
+using Models::TorrentEager_WithDefault;
+using Models::TorrentPeer;
+using Models::TorrentPeerEager;
+using Models::TorrentPeerEager_NoRelations;
+using Models::TorrentPreviewableFile;
+using Models::TorrentPreviewableFileEager;
+using Models::TorrentPreviewableFileEager_WithDefault;
+using Models::TorrentPreviewableFileProperty;
+using Models::TorrentPreviewableFilePropertyEager;
+
 using Orm::Constants::AND;
 using Orm::Constants::CREATED_AT;
+using Orm::Constants::ID;
+using Orm::Constants::NAME;
 using Orm::Constants::LIKE;
 using Orm::Constants::UPDATED_AT;
+
 using Orm::Exceptions::RuntimeError;
 using Orm::One;
 using Orm::QueryBuilder;
+
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::RelationNotFoundError;
 using Orm::Tiny::Exceptions::RelationNotLoadedError;
+using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 using Orm::Tiny::TinyBuilder;
 

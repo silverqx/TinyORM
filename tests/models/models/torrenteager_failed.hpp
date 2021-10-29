@@ -6,6 +6,9 @@
 
 #include "models/torrentpreviewablefileeager.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasMany;
 
@@ -40,5 +43,7 @@ private:
     /*! The attributes that should be mutated to dates. @deprecated */
     inline static QStringList u_dates {"added_on"};
 };
+
+} // namespace Models
 
 #endif // TORRENTEAGER_FAILED_HPP

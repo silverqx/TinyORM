@@ -4,7 +4,7 @@
 //    : Model(attributes)
 //{}
 
-//QDebug operator<<(QDebug debug, const Torrent &c)
+//QDebug operator<<(QDebug debug, const Models::Torrent &c)
 //{
 //    QDebugStateSaver saver(debug);
 //    debug.nospace() << c.getAttribute(ID) << ", "

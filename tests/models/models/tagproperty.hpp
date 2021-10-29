@@ -4,6 +4,9 @@
 
 #include "orm/tiny/model.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Model;
 
 class TagProperty final : public Model<TagProperty>
@@ -14,5 +17,7 @@ class TagProperty final : public Model<TagProperty>
     /*! The table associated with the model. */
     QString u_table {"tag_properties"};
 };
+
+} // namespace Models
 
 #endif // TAGPROPERTY_HPP

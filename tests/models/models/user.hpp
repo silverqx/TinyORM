@@ -2,16 +2,22 @@
 #ifndef USER_HPP
 #define USER_HPP
 
-#include <orm/tiny/model.hpp>
+#include "orm/tiny/model.hpp"
 
 #include "models/phone.hpp"
 #include "models/role.hpp"
 #include "models/torrent.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;
 using Orm::Tiny::Relations::Pivot;
+
+class Phone;
+class Role;
 
 // NOLINTNEXTLINE(misc-no-recursion)
 class User final : public Model<User, Phone, Role, Torrent, Pivot>
@@ -58,5 +64,7 @@ private:
     /*! Indicates if the model should be timestamped. */
     bool u_timestamps = false;
 };
+
+} // namespace Models
 
 #endif // USER_HPP

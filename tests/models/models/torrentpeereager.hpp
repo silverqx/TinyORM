@@ -6,6 +6,9 @@
 
 #include "models/torrenteager.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Relations::BelongsTo;
 
 class TorrentPeerEager final : public Model<TorrentPeerEager, TorrentEager>
@@ -18,7 +21,7 @@ public:
     std::unique_ptr<BelongsTo<TorrentPeerEager, TorrentEager>>
     torrent()
     {
-        return belongsTo<TorrentEager>({}, {}, __func__);
+        return belongsTo<TorrentEager>({}, {}, static_cast<const char *>(__func__));
     }
 
 private:
@@ -35,5 +38,7 @@ private:
         "torrent",
     };
 };
+
+} // namespace Models
 
 #endif // TORRENTPEEREAGER_HPP

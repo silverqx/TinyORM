@@ -4,6 +4,9 @@
 
 #include "orm/tiny/model.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Model;
 
 class Torrent_TotallyGuarded final : public Model<Torrent_TotallyGuarded>
@@ -24,7 +27,7 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute>
     QString u_table {"torrents"};
 
     /*! The attributes that are mass assignable. */
-    inline static QStringList u_fillable {
+    inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         Orm::NAME,
         "size",
         "progress",
@@ -35,7 +38,7 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute>
     };
 
     /*! The attributes that aren't mass assignable. */
-    inline static QStringList u_guarded {
+    inline static const QStringList u_guarded { // NOLINT(cppcoreguidelines-interfaces-global-init)
         Orm::CREATED_AT,
     };
 };
@@ -65,5 +68,7 @@ class Torrent_GuardableColumn final :
     /*! The attributes that aren't mass assignable. */
     inline static QStringList u_guarded {"xyz"};
 };
+
+} // namespace Models
 
 #endif // MASSASSIGNMENTMODELS_HPP

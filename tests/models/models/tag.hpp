@@ -6,6 +6,10 @@
 
 #include "models/tagged.hpp"
 #include "models/tagproperty.hpp"
+#include "models/torrent.hpp"
+
+namespace Models
+{
 
 using Orm::Constants::NAME;
 using Orm::Tiny::Model;
@@ -15,6 +19,7 @@ using Orm::Tiny::Relations::Pivot;
 
 class Torrent;
 
+// NOLINTNEXTLINE(misc-no-recursion)
 class Tag final : public Model<Tag, Torrent, TagProperty, Tagged>
 //class Tag final : public Model<Tag, Torrent, TagProperty, Pivot>
 {
@@ -68,7 +73,7 @@ private:
     };
 
     /*! The attributes that are mass assignable. */
-    inline static QStringList u_fillable {
+    inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         NAME,
         "note",
     };
@@ -76,5 +81,7 @@ private:
     /*! All of the relationships to be touched. */
     QStringList u_touches {"torrents"};
 };
+
+} // namespace Models
 
 #endif // TAG_HPP

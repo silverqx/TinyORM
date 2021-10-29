@@ -107,9 +107,9 @@ namespace Relations {
     // FUTURE linux, add linker version script https://github.com/sailfishos/qtbase/commit/72ba0079c3967bdfa26acdce78ce6cb98b30c27b?view=parallel https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html https://stackoverflow.com/questions/41061220/where-do-object-file-version-references-come-from silverqx
     // TODO Visual Studio memory analyzer https://docs.microsoft.com/en-us/visualstudio/profiling/memory-usage-without-debugging2?view=vs-2019 silverqx
     // CUR fix all modernize-pass-by-value silverqx
-    // CUR solve using ns_name::name in header files silverqx
     // CUR use using inside classes where appropriate silverqx
     // CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
+    // CUR make global static const silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

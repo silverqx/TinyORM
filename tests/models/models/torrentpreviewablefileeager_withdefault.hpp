@@ -7,6 +7,9 @@
 #include "models/torrenteager_withdefault.hpp"
 #include "models/torrentpreviewablefilepropertyeager.hpp"
 
+namespace Models
+{
+
 using Orm::Constants::NAME;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsTo;
@@ -25,7 +28,8 @@ public:
                               TorrentEager_WithDefault>>
     torrent()
     {
-        return belongsTo<TorrentEager_WithDefault>("", "", __func__);
+        return belongsTo<TorrentEager_WithDefault>(
+                    {}, {}, static_cast<const char *>(__func__));
     }
 
     /*! Get a torrent that owns the previewable file. */
@@ -34,7 +38,8 @@ public:
     torrent_WithBoolDefault()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsTo<TorrentEager_WithDefault>("", "", __func__);
+        auto relation = belongsTo<TorrentEager_WithDefault>(
+                            {}, {}, static_cast<const char *>(__func__));
 
         relation->withDefault();
 
@@ -47,7 +52,8 @@ public:
     torrent_WithVectorDefaults()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsTo<TorrentEager_WithDefault>("", "", __func__);
+        auto relation = belongsTo<TorrentEager_WithDefault>(
+                            {}, {}, static_cast<const char *>(__func__));
 
         relation->withDefault({{NAME, "default_torrent_name"}, {"size", 123}});
 
@@ -121,5 +127,7 @@ private:
         "note",
     };
 };
+
+} // namespace Models
 
 #endif // TORRENTPREVIEWABLEFILEEAGER_WITHDEFAULT_HPP

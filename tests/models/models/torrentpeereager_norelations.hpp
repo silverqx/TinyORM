@@ -4,6 +4,9 @@
 
 #include "orm/tiny/model.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Model;
 
 class TorrentPeerEager_NoRelations final : public Model<TorrentPeerEager_NoRelations>
@@ -14,5 +17,7 @@ class TorrentPeerEager_NoRelations final : public Model<TorrentPeerEager_NoRelat
     /*! The table associated with the model. */
     QString u_table {"torrent_peers"};
 };
+
+} // namespace Models
 
 #endif // TORRENTPEEREAGER_NORELATIONS_HPP

@@ -7,6 +7,11 @@
 
 #include "databases.hpp"
 
+using Models::Torrent;
+
+using Orm::Constants::ID;
+using Orm::Constants::NAME;
+
 using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;

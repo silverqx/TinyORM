@@ -4,6 +4,9 @@
 
 #include "orm/tiny/model.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Relations::BasePivot;
 
 class Tagged final : public BasePivot<Tagged>
@@ -22,5 +25,7 @@ class Tagged final : public BasePivot<Tagged>
 
     // FUTURE u_connection and u_table can't be overriden, the same is true in Eloquent, add support to be able to override these silveqx
 };
+
+} // namespace Models
 
 #endif // TAGGED_HPP

@@ -4,6 +4,9 @@
 
 #include "orm/tiny/model.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Model;
 
 class TorrentPreviewableFilePropertyEager final :
@@ -18,5 +21,7 @@ class TorrentPreviewableFilePropertyEager final :
     /*! Indicates if the model should be timestamped. */
     bool u_timestamps = false;
 };
+
+} // namespace Models
 
 #endif // TORRENTPREVIEWABLEFILEPROPERTYEAGER_HPP

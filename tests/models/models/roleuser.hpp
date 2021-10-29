@@ -4,6 +4,9 @@
 
 #include "orm/tiny/model.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Relations::BasePivot;
 
 class RoleUser final : public BasePivot<RoleUser>
@@ -16,5 +19,7 @@ class RoleUser final : public BasePivot<RoleUser>
     /*! Indicates if the model should be timestamped. */
     bool u_timestamps = false;
 };
+
+} // namespace Models
 
 #endif // ROLEUSER_HPP

@@ -6,6 +6,9 @@
 
 #include "models/torrentpreviewablefileproperty.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Relations::BelongsTo;
 
 class TorrentPreviewableFileProperty;
@@ -22,8 +25,8 @@ public:
     std::unique_ptr<BelongsTo<FilePropertyProperty, TorrentPreviewableFileProperty>>
     fileProperty()
     {
-        return belongsTo<TorrentPreviewableFileProperty>("file_property_id", {},
-                                                         __func__);
+        return belongsTo<TorrentPreviewableFileProperty>(
+                    "file_property_id", {}, static_cast<const char *>(__func__));
     }
 
 private:
@@ -43,5 +46,7 @@ private:
     /*! All of the relationships to be touched. */
     QStringList u_touches {"fileProperty"};
 };
+
+} // namespace Models
 
 #endif // FILEPROPERTYPROPERTY_HPP

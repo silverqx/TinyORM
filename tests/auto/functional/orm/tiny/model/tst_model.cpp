@@ -10,9 +10,18 @@
 
 #include "databases.hpp"
 
+using Models::Setting;
+using Models::Torrent;
+using Models::Torrent_GuardableColumn;
+using Models::TorrentPeer;
+using Models::TorrentPreviewableFile;
+
 using Orm::Constants::CREATED_AT;
+using Orm::Constants::ID;
+using Orm::Constants::NAME;
 using Orm::Constants::QSQLITE;
 using Orm::Constants::UPDATED_AT;
+
 using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;

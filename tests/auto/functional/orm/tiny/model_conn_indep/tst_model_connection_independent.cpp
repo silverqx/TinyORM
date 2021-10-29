@@ -10,8 +10,17 @@
 
 #include "databases.hpp"
 
-using Orm::Tiny::ConnectionOverride;
+using Models::Torrent;
+using Models::Torrent_AllowedMassAssignment;
+using Models::Torrent_GuardedAttribute;
+using Models::Torrent_TotallyGuarded;
+using Models::TorrentEager;
+
 using Orm::Constants::CREATED_AT;
+using Orm::Constants::ID;
+using Orm::Constants::NAME;
+
+using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::MassAssignmentError;
 
 using TestUtils::Databases;

@@ -4,6 +4,9 @@
 
 #include "orm/tiny/model.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Model;
 
 class TorrentEager_WithDefault final : public Model<TorrentEager_WithDefault>
@@ -17,5 +20,7 @@ class TorrentEager_WithDefault final : public Model<TorrentEager_WithDefault>
     /*! The attributes that should be mutated to dates. @deprecated */
     inline static QStringList u_dates {"added_on"};
 };
+
+} // namespace Models
 
 #endif // TORRENTEAGER_WITHDEFAULT_HPP

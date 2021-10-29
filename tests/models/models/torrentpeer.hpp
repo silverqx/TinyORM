@@ -6,10 +6,14 @@
 
 #include "models/torrent.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Relations::BelongsTo;
 
 class Torrent;
 
+// NOLINTNEXTLINE(misc-no-recursion)
 class TorrentPeer final : public Model<TorrentPeer, Torrent>
 {
     friend Model;
@@ -37,5 +41,7 @@ private:
 //        "torrent",
     };
 };
+
+} // namespace Models
 
 #endif // TORRENTPEER_HPP

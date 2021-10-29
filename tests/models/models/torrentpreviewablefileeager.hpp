@@ -6,6 +6,9 @@
 
 #include "models/torrentpreviewablefilepropertyeager.hpp"
 
+namespace Models
+{
+
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
 
@@ -47,5 +50,7 @@ private:
         "note",
     };
 };
+
+} // namespace Models
 
 #endif // TORRENTPREVIEWABLEFILEEAGER_HPP

@@ -7,6 +7,9 @@
 #include "models/torrentpeereager_norelations.hpp"
 #include "models/torrentpreviewablefileeager.hpp"
 
+namespace Models
+{
+
 using Orm::AttributeItem;
 using Orm::Constants::NAME;
 using Orm::Tiny::Model;
@@ -59,7 +62,7 @@ private:
     };
 
     /*! The attributes that are mass assignable. */
-    inline static QStringList u_fillable {
+    inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         NAME,
         "size",
         "progress",
@@ -71,5 +74,7 @@ private:
     /*! The attributes that should be mutated to dates. @deprecated */
     inline static QStringList u_dates {"added_on"};
 };
+
+} // namespace Models
 
 #endif // TORRENTEAGER_HPP
