@@ -20,6 +20,7 @@ DatabaseManager::~DatabaseManager() = default;
 // FUTURE add support for ::read and ::write db connections silverx
 // TODO implement RepositoryFactory silverqx
 DatabaseManager::DatabaseManager(const QString &defaultConnection)
+    : m_connections()
 {
     m_config.defaultConnection = defaultConnection;
 

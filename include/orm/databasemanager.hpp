@@ -298,9 +298,9 @@ namespace Query
         DatabaseConnection &refreshQtConnections(const QString &name);
 
         /*! The database connection factory instance. */
-        const Connectors::ConnectionFactory m_factory;
+        const Connectors::ConnectionFactory m_factory {};
         /*! Database configuration. */
-        Configuration m_config;
+        Configuration m_config {};
         /*! The active connection instances. */
         std::unordered_map<QString, std::unique_ptr<DatabaseConnection>> m_connections;
         /*! The callback to be executed to reconnect to a database. */

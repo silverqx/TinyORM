@@ -402,7 +402,8 @@ namespace Orm
 #endif
 
         /*! Connection's driver name in printable format eg. QMYSQL -> MySQL. */
-        std::optional<std::reference_wrapper<const QString>> m_driverNamePrintable;
+        std::optional<std::reference_wrapper<
+                const QString>> m_driverNamePrintable = std::nullopt;
     };
 
     inline QString DatabaseConnection::getTablePrefix() const
