@@ -54,6 +54,7 @@ namespace Relations {
     // TODO repeat, recompile without PCH silverqx
     // TODO repeat, open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
     // TODO repeat, clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
+    // TODO repeat, merge changes from latest Eloquent silverqx
     // TODO decide/unify when to use class/typename keywords for templates silverqx
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
@@ -110,6 +111,8 @@ namespace Relations {
     // CUR use using inside classes where appropriate silverqx
     // CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
     // CUR make global static const silverqx
+    // CUR make all * to *const silverqx
+    // CUR merge changes from latest Eloquent silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
