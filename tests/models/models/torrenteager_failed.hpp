@@ -41,6 +41,7 @@ private:
     };
 
     /*! The attributes that should be mutated to dates. @deprecated */
+    thread_local
     inline static QStringList u_dates {"added_on"};
 };
 

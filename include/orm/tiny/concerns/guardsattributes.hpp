@@ -80,12 +80,16 @@ namespace Concerns
         fillableFromArray(QVector<AttributeItem> &&attributes) const;
 
         /*! The attributes that are mass assignable. */
+        thread_local
         inline static QStringList u_fillable;
         /*! The attributes that aren't mass assignable. */
+        thread_local
         inline static QStringList u_guarded {ASTERISK}; // NOLINT(cppcoreguidelines-interfaces-global-init)
         /*! Indicates if all mass assignment is enabled. */
+        thread_local
         inline static bool m_unguarded = false;
         /*! The actual columns that exist on the database and can be guarded. */
+        thread_local
         inline static QHash<QString, QStringList> m_guardableColumns;
 
     private:

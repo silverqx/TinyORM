@@ -310,7 +310,7 @@ namespace Query
 
     private:
         /*! Database Manager instance. */
-        static DatabaseManager *m_instance;
+        inline static DatabaseManager *m_instance = nullptr;
     };
 
     inline Query::Expression

@@ -7,8 +7,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
-DatabaseManager *DB::m_manager = nullptr;
-
 DatabaseManager &DB::manager()
 {
     if (m_manager == nullptr)

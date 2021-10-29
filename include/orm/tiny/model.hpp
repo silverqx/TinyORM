@@ -46,6 +46,7 @@ namespace Relations {
     {
         /*! The connection to use in the Model, this data member is picked up
             in the Model::getConnectionName(). */
+        thread_local
         inline static QString connection;
     };
 #endif
@@ -109,6 +110,7 @@ namespace Relations {
     // TODO Visual Studio memory analyzer https://docs.microsoft.com/en-us/visualstudio/profiling/memory-usage-without-debugging2?view=vs-2019 silverqx
     // CUR fix all modernize-pass-by-value silverqx
     // CUR use using inside classes where appropriate silverqx
+    // CUR I'm still not comfortable with using Orm::Constants, inside/outside namespace in cpp/hpp files silverqx
     // CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
     // CUR make global static const silverqx
     // CUR make all * to *const silverqx
@@ -714,8 +716,10 @@ namespace Relations {
 
         // TODO add support for 'U' like in PHP to support unix timestamp, I will have to manually check if u_dateFormat contains 'U' and use QDateTime::fromSecsSinceEpoch() silverqx
         /*! The storage format of the model's date columns. */
+        thread_local
         inline static QString u_dateFormat;
         /*! The attributes that should be mutated to dates. @deprecated */
+        thread_local
         inline static QStringList u_dates;
 
         /* HasRelationships */

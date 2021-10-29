@@ -339,6 +339,7 @@ namespace Orm
         bool m_recordsModified = false;
         /*! All of the queries run against the connection. */
         std::shared_ptr<QVector<Log>> m_queryLog = nullptr;
+        // CUR atomic inc/dec? investigate how m_queryLogId works silverqx
         /*! ID of the query log record. */
         inline static std::size_t m_queryLogId = 0;
 

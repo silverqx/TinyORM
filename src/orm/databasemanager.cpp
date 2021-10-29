@@ -8,7 +8,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
-DatabaseManager *DatabaseManager::m_instance = nullptr;
 const char *
 DatabaseManager::defaultConnectionName = const_cast<char *>("tinyorm_default");
 

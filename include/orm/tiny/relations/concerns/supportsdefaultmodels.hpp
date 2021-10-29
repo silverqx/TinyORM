@@ -127,6 +127,7 @@ namespace Concerns {
     inline Relation<Model, Related> &
     SupportsDefaultModels<Model, Related>::relation()
     {
+        thread_local
         static auto &cached = dynamic_cast<Relation<Model, Related> &>(*this);
 
         return cached;

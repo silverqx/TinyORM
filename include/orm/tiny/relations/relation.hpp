@@ -175,7 +175,8 @@ namespace Relations
         /*! The TinyORM TinyBuilder instance. */
         std::unique_ptr<Builder<Related>> m_query;
         /*! Indicates if the relation is adding constraints. */
-        static bool constraints;
+        thread_local
+        inline static bool constraints = true;
     };
 
     OneRelation::~OneRelation() = default;
@@ -183,9 +184,6 @@ namespace Relations
     ManyRelation::~ManyRelation() = default;
 
     PivotRelation::~PivotRelation() = default;
-
-    template<class Model, class Related>
-    bool Relation<Model, Related>::constraints = true;
 
     template<class Model, class Related>
     Relation<Model, Related>::~Relation() = default;

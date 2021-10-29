@@ -23,7 +23,7 @@ namespace Orm
         static DatabaseManager &manager();
 
         /*! Pointer to the DatabaseManager. */
-        static DatabaseManager *m_manager;
+        inline static DatabaseManager *m_manager = nullptr;
 
     public:
         /*! Deleted DB's default constructor, this is a pure library class. */

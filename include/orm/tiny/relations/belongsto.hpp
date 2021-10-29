@@ -104,6 +104,7 @@ namespace Orm::Tiny::Relations
         /*! The name of the relationship. */
         QString m_relationName;
         /*! The count of self joins. */
+        thread_local
         inline static int selfJoinCount = 0;
     };
 
