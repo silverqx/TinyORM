@@ -211,7 +211,11 @@ namespace Query
 
     private:
         /*! All of the supported keys. */
-        inline static QVector<QString> SyncKeys {"attached", "detached", "updated"};
+        inline static const QVector<QString> SyncKeys {
+            QStringLiteral("attached"),
+            QStringLiteral("detached"),
+            QStringLiteral("updated")
+        };
     };
 
     template<typename KeyType>
