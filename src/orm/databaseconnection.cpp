@@ -51,16 +51,10 @@ DatabaseConnection::DatabaseConnection(
         // NOLINTNEXTLINE(modernize-pass-by-value)
         const QString &database, const QString &tablePrefix, const QVariantHash &config
 )
-    : m_qtConnection(std::nullopt)
-    , m_qtConnectionResolver(std::move(connection))
+    : m_qtConnectionResolver(std::move(connection))
     , m_database(database)
     , m_tablePrefix(tablePrefix)
     , m_config(config)
-    , m_reconnector(nullptr)
-    , m_queryGrammar(nullptr)
-    , m_schemaGrammar(nullptr)
-    , m_postProcessor(nullptr)
-    , m_statementsCounter()
     , m_connectionName(getConfig(NAME).value<QString>())
     , m_hostName(getConfig(host_).value<QString>())
 {}

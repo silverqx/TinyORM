@@ -20,6 +20,7 @@ namespace Orm
         /*! Type used for Database Connections. */
         using ConfigurationsType = QHash<QString, QVariantHash>;
 
+        // CUR better naming silverqx
         /*! Default Database Connection Name. */
         QString defaultConnection;
 

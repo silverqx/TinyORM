@@ -683,14 +683,14 @@ DatabaseManager::configuration(QString name)
 }
 
 std::unique_ptr<DatabaseConnection>
-DatabaseManager::configure(std::unique_ptr<DatabaseConnection> connection) const
+DatabaseManager::configure(std::unique_ptr<DatabaseConnection> &&connection) const
 {
     /* Here we'll set a reconnector lambda. This reconnector can be any callable
        so we will set a Closure to reconnect from this manager with the name of
        the connection, which will allow us to reconnect from OUR connections. */
     connection->setReconnector(m_reconnector);
 
-    return connection;
+    return std::move(connection);
 }
 
 DatabaseConnection &

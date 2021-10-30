@@ -113,6 +113,12 @@ namespace Relations {
     // CUR make global static const silverqx
     // CUR make all * to *const silverqx
     // CUR merge changes from latest Eloquent silverqx
+    // CUR unfinished instantiation, DatabaseManager::create() allow to create more instances, so m_instance is useless silverqx
+    // CUR DB/DatabaseManager/DatabaseConnection all have defaultConnectionName, merge them? silverqx
+    // CUR remove SHAREDLIB_EXPORT on classes in header files only silverqx
+    // CUR mingw and pragma system_header ignored outside include file silverqx
+    // CUR init all inline static {}, verify whether default ctor is called during dyn. init. silverqx
+    // CUR TLS, clang linux crashes, gcc mingw lld.ld doesn't compile (duplicit tls), clang mingw stdlib works silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

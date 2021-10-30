@@ -303,7 +303,7 @@ namespace Orm
         withFreshQueryLog(const std::function<QVector<Log>()> &callback);
 
         /*! The active QSqlDatabase connection name. */
-        std::optional<Connectors::ConnectionName> m_qtConnection;
+        std::optional<Connectors::ConnectionName> m_qtConnection = std::nullopt;
         /*! The QSqlDatabase connection resolver. */
         std::function<Connectors::ConnectionName()> m_qtConnectionResolver;
         /*! The name of the connected database. */
@@ -313,14 +313,14 @@ namespace Orm
         /*! The database connection configuration options. */
         const QVariantHash m_config;
         /*! The reconnector instance for the connection. */
-        ReconnectorType m_reconnector;
+        ReconnectorType m_reconnector = nullptr;
 
         /*! The query grammar implementation. */
-        std::unique_ptr<QueryGrammar> m_queryGrammar;
+        std::unique_ptr<QueryGrammar> m_queryGrammar = nullptr;
         /*! The schema grammar implementation. */
-        std::unique_ptr<SchemaGrammar> m_schemaGrammar;
+        std::unique_ptr<SchemaGrammar> m_schemaGrammar = nullptr;
         /*! The query post processor implementation. */
-        std::unique_ptr<QueryProcessor> m_postProcessor;
+        std::unique_ptr<QueryProcessor> m_postProcessor = nullptr;
 
         /* Queries execution time counter */
         /*! Indicates whether queries elapsed time are being counted. */
@@ -332,7 +332,7 @@ namespace Orm
         /*! Indicates whether executed queries are being counted. */
         bool m_countingStatements = false;
         /*! Counts executed statements on current connection. */
-        StatementsCounter m_statementsCounter;
+        StatementsCounter m_statementsCounter {};
 
         /* Logging */
         /*! Indicates if changes have been made to the database. */

@@ -34,11 +34,13 @@ namespace Query
         /*! Virtual destructor. */
         ~DatabaseManager() final;
 
-        /*! Factory method to create DatabaseManager instance and register a new connection as default connection at once. */
+        /*! Factory method to create DatabaseManager instance and register a new
+            connection as default connection at once. */
         static std::unique_ptr<DatabaseManager>
         create(const QVariantHash &config,
                const QString &connection = QLatin1String(defaultConnectionName));
-        /*! Factory method to create DatabaseManager instance and set connections at once. */
+        /*! Factory method to create DatabaseManager instance and set connections
+            at once. */
         static std::unique_ptr<DatabaseManager>
         create(const ConfigurationsType &configs,
                const QString &defaultConnection = QLatin1String(defaultConnectionName));
@@ -292,7 +294,7 @@ namespace Query
 
         /*! Prepare the database connection instance. */
         std::unique_ptr<DatabaseConnection>
-        configure(std::unique_ptr<DatabaseConnection> connection) const;
+        configure(std::unique_ptr<DatabaseConnection> &&connection) const;
 
         /*! Refresh an underlying QSqlDatabase connection on a given connection. */
         DatabaseConnection &refreshQtConnections(const QString &name);
