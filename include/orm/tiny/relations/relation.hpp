@@ -13,6 +13,7 @@ TINY_SYSTEM_HEADER
 #include <range/v3/action/unique.hpp>
 
 #include "orm/exceptions/runtimeerror.hpp"
+#include "orm/macros/threadlocal.hpp"
 #include "orm/tiny/relations/relationproxies.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -175,7 +176,7 @@ namespace Relations
         /*! The TinyORM TinyBuilder instance. */
         std::unique_ptr<Builder<Related>> m_query;
         /*! Indicates if the relation is adding constraints. */
-        thread_local
+        T_THREAD_LOCAL
         inline static bool constraints = true;
     };
 

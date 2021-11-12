@@ -9,6 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/databaseconnection.hpp"
 #include "orm/macros/commonnamespace.hpp"
+#include "orm/macros/threadlocal.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -39,7 +40,7 @@ namespace Orm::Support
 
     private:
         /*! Database connections for the current thread. */
-        thread_local
+        T_THREAD_LOCAL
         inline static ConnectionsType m_connections;
     };
 

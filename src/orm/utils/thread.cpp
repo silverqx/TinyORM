@@ -1,8 +1,14 @@
 #include "orm/utils/thread.hpp"
 
+#include <QString>
+
 #if !defined(__clang__) && \
     !defined(TINYORM_NO_DEBUG) && defined(_MSC_VER) && !defined(Q_OS_WINRT)
 #include <qt_windows.h>
+#endif
+
+#if defined(Q_OS_LINUX) && !defined(QT_LINUXBASE)
+#include <sys/prctl.h>
 #endif
 
 // CUR test on gcc/clang and add needed includes silverqx
@@ -55,7 +61,7 @@ namespace
     void setCurrentThreadName(const char *name)
     {
 #  if defined(Q_OS_LINUX) && !defined(QT_LINUXBASE)
-        prctl(PR_SET_NAME, (unsigned long) name, 0, 0, 0);
+        prctl(PR_SET_NAME, reinterpret_cast<unsigned long>(name), 0, 0, 0);
 #  elif defined(Q_OS_MAC)
         pthread_setname_np(name);
 #  elif defined(Q_OS_QNX)

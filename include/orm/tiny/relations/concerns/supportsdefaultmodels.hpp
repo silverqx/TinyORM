@@ -5,6 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/macros/threadlocal.hpp"
 // FEATURE orm types, only AttributeItem used silverqx
 #include "orm/ormtypes.hpp"
 
@@ -127,7 +128,7 @@ namespace Concerns {
     inline Relation<Model, Related> &
     SupportsDefaultModels<Model, Related>::relation()
     {
-        thread_local
+        T_THREAD_LOCAL
         static auto &cached = dynamic_cast<Relation<Model, Related> &>(*this);
 
         return cached;

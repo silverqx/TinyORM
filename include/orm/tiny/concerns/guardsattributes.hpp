@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/concepts.hpp"
+#include "orm/macros/threadlocal.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/utils/type.hpp"
 
@@ -80,16 +81,16 @@ namespace Concerns
         fillableFromArray(QVector<AttributeItem> &&attributes) const;
 
         /*! The attributes that are mass assignable. */
-        thread_local
+        T_THREAD_LOCAL
         inline static QStringList u_fillable;
         /*! The attributes that aren't mass assignable. */
-        thread_local
+        T_THREAD_LOCAL
         inline static QStringList u_guarded {ASTERISK}; // NOLINT(cppcoreguidelines-interfaces-global-init)
         /*! Indicates if all mass assignment is enabled. */
-        thread_local
+        T_THREAD_LOCAL
         inline static bool m_unguarded = false;
         /*! The actual columns that exist on the database and can be guarded. */
-        thread_local
+        T_THREAD_LOCAL
         inline static QHash<QString, QStringList> m_guardableColumns;
 
     private:

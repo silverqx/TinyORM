@@ -44,6 +44,7 @@ function(tiny_sources out_headers out_sources)
         macros/export.hpp
         macros/export_common.hpp
         macros/systemheader.hpp
+        macros/threadlocal.hpp
         mysqlconnection.hpp
         ormtypes.hpp
         postgresconnection.hpp

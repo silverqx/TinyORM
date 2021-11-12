@@ -5,6 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <QtGlobal>
+
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
@@ -26,10 +28,12 @@ namespace Orm::Utils
 
         /*! Set thread name for debugger, -1 for a current thread. */
         static void nameThreadForDebugging(
-                    const QString &threadName, quint64 threadId = -1);
+                    const QString &threadName,
+                    quint64 threadId = static_cast<quint64>(-1));
         /*! Set thread name for debugger, -1 for a current thread. */
         static void nameThreadForDebugging(
-                    const char *threadName, quint64 threadId = -1);
+                    const char *threadName,
+                    quint64 threadId = static_cast<quint64>(-1));
     };
 
 } // namespace Orm::Utils

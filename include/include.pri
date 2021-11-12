@@ -41,6 +41,7 @@ HEADERS += \
     $$PWD/orm/macros/export.hpp \
     $$PWD/orm/macros/export_common.hpp \
     $$PWD/orm/macros/systemheader.hpp \
+    $$PWD/orm/macros/threadlocal.hpp \
     $$PWD/orm/mysqlconnection.hpp \
     $$PWD/orm/ormtypes.hpp \
     $$PWD/orm/postgresconnection.hpp \

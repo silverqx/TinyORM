@@ -46,7 +46,7 @@ namespace Relations {
     {
         /*! The connection to use in the Model, this data member is picked up
             in the Model::getConnectionName(). */
-        thread_local
+        T_THREAD_LOCAL
         inline static QString connection;
     };
 #endif
@@ -131,6 +131,7 @@ namespace Relations {
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
     // CUR u_guarded in Pivot/BasePivot and TLS silverqx
     // CUR rename m_db to m_dm in tinyplay silverqx
+    // CUR move T_LIKELY to likely.hpp from macros.hpp silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
@@ -705,7 +706,7 @@ namespace Relations {
 
         /* HasAttributes */
         /*! The model's default values for attributes. */
-        thread_local
+        T_THREAD_LOCAL
         inline static QVector<AttributeItem> u_attributes;
         /*! The model's attributes (insert order). */
         QVector<AttributeItem> m_attributes;
@@ -727,10 +728,10 @@ namespace Relations {
 
         // TODO add support for 'U' like in PHP to support unix timestamp, I will have to manually check if u_dateFormat contains 'U' and use QDateTime::fromSecsSinceEpoch() silverqx
         /*! The storage format of the model's date columns. */
-        thread_local
+        T_THREAD_LOCAL
         inline static QString u_dateFormat;
         /*! The attributes that should be mutated to dates. @deprecated */
-        thread_local
+        T_THREAD_LOCAL
         inline static QStringList u_dates;
 
         /* HasRelationships */
@@ -2439,7 +2440,7 @@ namespace Relations {
     const QStringList &
     Model<Derived, AllRelations...>::getDates() const
     {
-        thread_local
+        T_THREAD_LOCAL
         static const QStringList &dates = getDatesInternal();
 
         return dates;

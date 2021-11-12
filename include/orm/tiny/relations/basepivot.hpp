@@ -84,7 +84,7 @@ namespace Orm::Tiny::Relations
         /*! Indicates if the ID is auto-incrementing. */
         bool u_incrementing = false;
         /*! The attributes that aren't mass assignable. */
-        thread_local
+        T_THREAD_LOCAL
         inline static QStringList u_guarded;
 
         /* AsPivot */

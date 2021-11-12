@@ -8,6 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QVariantHash>
 
 #include "orm/macros/commonnamespace.hpp"
+#include "orm/macros/threadlocal.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -29,16 +30,16 @@ namespace Orm::Support
 
         /*! Default Database Connection Name, used as default value in method declarations
             only. */
-        thread_local
+        T_THREAD_LOCAL
         inline static QString defaultConnectionName = QStringLiteral("tinyorm_default");
 
         // CUR better naming silverqx
         /*! Currently set Default Database Connection Name in a current thread. */
-        thread_local
+        T_THREAD_LOCAL
         inline static QString defaultConnection;
 
         /*! Default namespace prefix for MySQL savepoints in a current thread. */
-        thread_local
+        T_THREAD_LOCAL
         inline static
         QString defaultSavepointNamespace = QStringLiteral("tinyorm_savepoint");
 
@@ -53,7 +54,7 @@ namespace Orm::Support
 
     private:
         /*! Database connection configurations. */
-        thread_local
+        T_THREAD_LOCAL
         inline static ConfigurationsType m_configurations;
     };
 

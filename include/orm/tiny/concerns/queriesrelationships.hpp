@@ -50,13 +50,13 @@ namespace Private
         // BUG clang and thread_local, gcc on MinGW doesn't work too silverqx
         /*! Data member for nested stores. */
         template<typename Related>
-        thread_local
+        T_THREAD_LOCAL
         inline static
         std::stack<std::shared_ptr<NestedStore<Related>>> STORE;
 
         /*! Stored Related type is used to avoid a cryptic message when a bad type-id
             was passed to the has() nested method. */
-        thread_local
+        T_THREAD_LOCAL
         inline static
         std::stack<std::type_index> STORE_TYPEID;
 
