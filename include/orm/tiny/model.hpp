@@ -120,7 +120,6 @@ namespace Relations {
     // CUR remove SHAREDLIB_EXPORT on classes in header files only silverqx
     // CUR mingw and pragma system_header ignored outside include file silverqx
     // CUR init all inline static {}, verify whether default ctor is called during dyn. init. silverqx
-    // CUR TLS, clang linux crashes, gcc mingw lld.ld doesn't compile (duplicit tls), clang mingw stdlib works silverqx
     // CUR order/prettify/add section names for DM and DatabaseConnection silverqx
     // CUR unify inherit ctors silverqx
     // CUR caught exceptions in tinyplay when threading enabled, they should match with non-threading version silverqx
@@ -129,7 +128,6 @@ namespace Relations {
     // CUR add NL \n to constants silverqx
     // CUR check Caught expected exception with message in tinyplay silverqx
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
-    // CUR u_guarded in Pivot/BasePivot and TLS silverqx
     // CUR rename m_db to m_dm in tinyplay silverqx
     // CUR move T_LIKELY to likely.hpp from macros.hpp silverqx
     /*! Base model class. */
