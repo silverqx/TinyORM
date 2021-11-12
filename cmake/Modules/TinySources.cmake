@@ -38,11 +38,11 @@ function(tiny_sources out_headers out_sources)
         exceptions/sqlerror.hpp
         exceptions/sqltransactionerror.hpp
         libraryinfo.hpp
-        macros.hpp
         macros/archdetect.hpp
         macros/compilerdetect.hpp
         macros/export.hpp
         macros/export_common.hpp
+        macros/likely.hpp
         macros/systemheader.hpp
         macros/threadlocal.hpp
         mysqlconnection.hpp

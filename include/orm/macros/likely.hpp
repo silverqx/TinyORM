@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_MACROS_HPP
-#define ORM_MACROS_HPP
+#ifndef ORM_MACROS_LIKELY_HPP
+#define ORM_MACROS_LIKELY_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -21,4 +21,4 @@ TINY_SYSTEM_HEADER
 #  define T_UNLIKELY
 #endif
 
-#endif // ORM_MACROS_HPP
+#endif // ORM_MACROS_LIKELY_HPP

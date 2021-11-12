@@ -34,12 +34,12 @@ HEADERS += \
     $$PWD/orm/exceptions/sqlerror.hpp \
     $$PWD/orm/exceptions/sqltransactionerror.hpp \
     $$PWD/orm/libraryinfo.hpp \
-    $$PWD/orm/macros.hpp \
     $$PWD/orm/macros/archdetect.hpp \
     $$PWD/orm/macros/commonnamespace.hpp \
     $$PWD/orm/macros/compilerdetect.hpp \
     $$PWD/orm/macros/export.hpp \
     $$PWD/orm/macros/export_common.hpp \
+    $$PWD/orm/macros/likely.hpp \
     $$PWD/orm/macros/systemheader.hpp \
     $$PWD/orm/macros/threadlocal.hpp \
     $$PWD/orm/mysqlconnection.hpp \

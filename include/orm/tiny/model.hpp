@@ -112,13 +112,11 @@ namespace Relations {
     // CUR use using inside classes where appropriate silverqx
     // CUR I'm still not comfortable with using Orm::Constants, inside/outside namespace in cpp/hpp files silverqx
     // CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
-    // CUR make global static const silverqx
     // CUR make all * to *const silverqx
     // CUR merge changes from latest Eloquent silverqx
     // CUR unfinished instantiation, DatabaseManager::create() allow to create more instances, so m_instance is useless silverqx
     // CUR DB/DatabaseManager/DatabaseConnection all have defaultConnectionName, merge them? silverqx
     // CUR remove SHAREDLIB_EXPORT on classes in header files only silverqx
-    // CUR mingw and pragma system_header ignored outside include file silverqx
     // CUR init all inline static {}, verify whether default ctor is called during dyn. init. silverqx
     // CUR order/prettify/add section names for DM and DatabaseConnection silverqx
     // CUR unify inherit ctors silverqx
@@ -129,8 +127,6 @@ namespace Relations {
     // CUR check Caught expected exception with message in tinyplay silverqx
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
     // CUR rename m_db to m_dm in tinyplay silverqx
-    // CUR move T_LIKELY to likely.hpp from macros.hpp silverqx
-    // CUR mingw threads mthreads exceptions silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

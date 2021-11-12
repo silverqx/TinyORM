@@ -1,7 +1,7 @@
 #include "orm/query/grammars/grammar.hpp"
 
 #include "orm/databaseconnection.hpp"
-#include "orm/macros.hpp"
+#include "orm/macros/likely.hpp"
 #include "orm/query/joinclause.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

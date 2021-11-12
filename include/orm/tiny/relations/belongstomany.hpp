@@ -14,7 +14,7 @@ TINY_SYSTEM_HEADER
 #include <range/v3/view/transform.hpp>
 
 #include "orm/exceptions/domainerror.hpp"
-#include "orm/macros.hpp"
+#include "orm/macros/likely.hpp"
 #include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/utils/attribute.hpp"

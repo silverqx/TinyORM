@@ -7,7 +7,7 @@
 
 #include "orm/configuration.hpp"
 #include "orm/exceptions/sqltransactionerror.hpp"
-#include "orm/macros.hpp"
+#include "orm/macros/likely.hpp"
 #include "orm/query/querybuilder.hpp"
 #ifdef TINYORM_DEBUG_SQL
 #include "orm/utils/query.hpp"
