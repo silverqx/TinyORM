@@ -121,6 +121,16 @@ namespace Relations {
     // CUR mingw and pragma system_header ignored outside include file silverqx
     // CUR init all inline static {}, verify whether default ctor is called during dyn. init. silverqx
     // CUR TLS, clang linux crashes, gcc mingw lld.ld doesn't compile (duplicit tls), clang mingw stdlib works silverqx
+    // CUR order/prettify/add section names for DM and DatabaseConnection silverqx
+    // CUR unify inherit ctors silverqx
+    // CUR caught exceptions in tinyplay when threading enabled, they should match with non-threading version silverqx
+    // CUR divide tinyplay and all test to smaller TU so decreas memory usage during compilation, and also compilation times overall because it will recompile only small TU silverqx
+    // CUR cmake/qmake run tests in parallel for tests that allow it silverqx
+    // CUR add NL \n to constants silverqx
+    // CUR check Caught expected exception with message in tinyplay silverqx
+    // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
+    // CUR u_guarded in Pivot/BasePivot and TLS silverqx
+    // CUR rename m_db to m_dm in tinyplay silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
@@ -695,7 +705,8 @@ namespace Relations {
 
         /* HasAttributes */
         /*! The model's default values for attributes. */
-        inline static const QVector<AttributeItem> u_attributes;
+        thread_local
+        inline static QVector<AttributeItem> u_attributes;
         /*! The model's attributes (insert order). */
         QVector<AttributeItem> m_attributes;
         /*! The model attribute's original state (insert order).
@@ -2428,6 +2439,7 @@ namespace Relations {
     const QStringList &
     Model<Derived, AllRelations...>::getDates() const
     {
+        thread_local
         static const QStringList &dates = getDatesInternal();
 
         return dates;

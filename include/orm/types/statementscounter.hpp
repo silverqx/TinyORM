@@ -14,9 +14,10 @@ namespace Orm
 namespace Types
 {
 
-    /*! Counts executed statements in a current connection. */
+    /*! Executed statements counter. */
     struct StatementsCounter
     {
+        // CUR qint64 silverqx
         /*! Normal select statements. */
         int normal = -1;
         /*! Affecting statements (UPDATE, INSERT, DELETE). */

@@ -18,7 +18,6 @@ class TorrentEager_WithDefault final : public Model<TorrentEager_WithDefault>
     QString u_table {"torrents"};
 
     /*! The attributes that should be mutated to dates. @deprecated */
-    thread_local
     inline static QStringList u_dates {"added_on"};
 };
 

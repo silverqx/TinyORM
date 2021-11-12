@@ -11,6 +11,7 @@ TINY_SYSTEM_HEADER
 #include "orm/connectioninterface.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/connectors/connectionfactory.hpp"
+#include "orm/support/databaseconnectionsmap.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -28,22 +29,29 @@ namespace Query
 
         friend class DB;
 
-        using ConfigurationsType = Orm::Configuration::ConfigurationsType;
+        /*! Type for the Database Configuration. */
+        using Configuration = Orm::Support::DatabaseConfiguration;
+        /*! Type used for Database Connections map. */
+        using ConfigurationsType = Configuration::ConfigurationsType;
 
     public:
         /*! Virtual destructor. */
         ~DatabaseManager() final;
 
+        /*! Factory method to create DatabaseManager instance and set a default connection
+            at once. */
+        static std::unique_ptr<DatabaseManager>
+        create(const QString &defaultConnection = Configuration::defaultConnectionName);
         /*! Factory method to create DatabaseManager instance and register a new
             connection as default connection at once. */
         static std::unique_ptr<DatabaseManager>
         create(const QVariantHash &config,
-               const QString &connection = QLatin1String(defaultConnectionName));
+               const QString &connection = Configuration::defaultConnectionName);
         /*! Factory method to create DatabaseManager instance and set connections
             at once. */
         static std::unique_ptr<DatabaseManager>
         create(const ConfigurationsType &configs,
-               const QString &defaultConnection = QLatin1String(defaultConnectionName));
+               const QString &defaultConnection = Configuration::defaultConnectionName);
 
         /* Proxy methods to the DatabaseConnection */
         /*! Begin a fluent query against a database table for the connection. */
@@ -57,7 +65,7 @@ namespace Query
         QSqlQuery qtQuery(const QString &connection = "");
 
         /*! Create a new raw query expression. */
-        Query::Expression raw(const QVariant &value);
+        inline Query::Expression raw(const QVariant &value);
 
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
@@ -112,14 +120,21 @@ namespace Query
         /*! Register a connection with the manager. */
         DatabaseManager &
         addConnection(const QVariantHash &config,
-                      const QString &name = QLatin1String(defaultConnectionName));
+                      const QString &name = Configuration::defaultConnectionName);
+        /*! Register connections with the manager. */
+        DatabaseManager &
+        addConnections(const ConfigurationsType &configs);
+        /*! Register connections with the manager and also set a default connection. */
+        DatabaseManager &
+        addConnections(const ConfigurationsType &configs,
+                       const QString &defaultConnection);
         /*! Remove the given connection from the manager. */
-        bool removeConnection(QString name = "");
+        bool removeConnection(const QString &name = "");
 
         /*! Reconnect to the given database. */
-        ConnectionInterface &reconnect(QString name = "");
+        ConnectionInterface &reconnect(const QString &name = "");
         /*! Disconnect from the given database. */
-        void disconnect(QString name = "") const;
+        void disconnect(const QString &name = "") const;
 
         /*! Get all of the support drivers. */
         QStringList supportedDrivers() const;
@@ -132,6 +147,8 @@ namespace Query
         const QString &getDefaultConnection() const final;
         /*! Set the default connection name. */
         void setDefaultConnection(const QString &defaultConnection) final;
+        /*! Reset the default connection name. */
+        void resetDefaultConnection() final;
 
         // TODO duplicate, extract to some internal types silverqx
         /*! Reconnector lambda type. */
@@ -264,20 +281,22 @@ namespace Query
         /*! Reset the record modification state. */
         void forgetRecordModificationState(const QString &connection = "");
 
-    protected:
-        /*! Default connection name. */
-        static const char *defaultConnectionName;
-
+    private:
+        /*! Private constructor to create DatabaseManager instance and set a default
+            connection at once. */
         explicit DatabaseManager(
-                const QString &defaultConnection = QLatin1String(defaultConnectionName));
-
+                const QString &defaultConnection = Configuration::defaultConnectionName);
+        /*! Private constructor to create DatabaseManager instance and register a new
+            connection as default connection at once. */
         explicit DatabaseManager(
                 const QVariantHash &config,
-                const QString &name = QLatin1String(defaultConnectionName),
-                const QString &defaultConnection = QLatin1String(defaultConnectionName));
+                const QString &name = Configuration::defaultConnectionName,
+                const QString &defaultConnection = Configuration::defaultConnectionName);
+        /*! Private constructor to create DatabaseManager instance and set connections
+            at once. */
         explicit DatabaseManager(
                 const ConfigurationsType &configs,
-                const QString &defaultConnection = QLatin1String(defaultConnectionName));
+                const QString &defaultConnection = Configuration::defaultConnectionName);
 
         /*! Setup the default database connection reconnector. */
         DatabaseManager &setupDefaultReconnector();
@@ -290,7 +309,7 @@ namespace Query
         makeConnection(const QString &name);
 
         /*! Get the configuration for a connection. */
-        QVariantHash &configuration(QString name);
+        QVariantHash &configuration(const QString &name);
 
         /*! Prepare the database connection instance. */
         std::unique_ptr<DatabaseConnection>
@@ -299,21 +318,23 @@ namespace Query
         /*! Refresh an underlying QSqlDatabase connection on a given connection. */
         DatabaseConnection &refreshQtConnections(const QString &name);
 
+        /*! Throw exception if DatabaseManager instance already exists. */
+        static void checkInstance();
+
         /*! The database connection factory instance. */
         const Connectors::ConnectionFactory m_factory {};
         /*! Database configuration. */
-        Configuration m_config {};
-        /*! The active connection instances. */
-        std::unordered_map<QString, std::unique_ptr<DatabaseConnection>> m_connections;
+        Configuration m_configuration {};
+        /*! Active database connection instances for the current thread. */
+        Support::DatabaseConnectionsMap m_connections {};
         /*! The callback to be executed to reconnect to a database. */
         ReconnectorType m_reconnector = nullptr;
 
-    private:
-        /*! Database Manager instance. */
+        /*! Pointer to the Database Manager instance. */
         inline static DatabaseManager *m_instance = nullptr;
     };
 
-    inline Query::Expression
+    Query::Expression
     DatabaseManager::raw(const QVariant &value)
     {
         return Query::Expression(value);

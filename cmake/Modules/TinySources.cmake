@@ -68,6 +68,7 @@ function(tiny_sources out_headers out_sources)
         schema/sqliteschemabuilder.hpp
         sqliteconnection.hpp
         support/configurationoptionsparser.hpp
+        support/databaseconnectionsmap.hpp
         tiny/concerns/guardsattributes.hpp
         tiny/concerns/hasattributes.hpp
         tiny/concerns/hasrelationstore.hpp
@@ -96,6 +97,7 @@ function(tiny_sources out_headers out_sources)
         utils/attribute.hpp
         utils/query.hpp
         utils/string.hpp
+        utils/thread.hpp
         utils/type.hpp
         version.hpp
     )
@@ -155,6 +157,7 @@ function(tiny_sources out_headers out_sources)
         utils/attribute.cpp
         utils/query.cpp
         utils/string.cpp
+        utils/thread.cpp
         utils/type.cpp
     )
 

@@ -11,24 +11,77 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm
+namespace Orm::Support
 {
 
+    // CUR move to support silverqx
     /*! Database configuration class. */
-    struct Configuration
+    class DatabaseConfiguration
     {
-        /*! Type used for Database Connections. */
+        Q_DISABLE_COPY(DatabaseConfiguration)
+
+    public:
+        /*! Type used for Database Connections map. */
         using ConfigurationsType = QHash<QString, QVariantHash>;
 
-        // CUR better naming silverqx
-        /*! Default Database Connection Name. */
-        QString defaultConnection;
+        /*! Default constructor. */
+        DatabaseConfiguration() = default;
 
-        /*! Database Connections. */
-        ConfigurationsType connections;
+        /*! Default Database Connection Name, used as default value in method declarations
+            only. */
+        thread_local
+        inline static QString defaultConnectionName = QStringLiteral("tinyorm_default");
+
+        // CUR better naming silverqx
+        /*! Currently set Default Database Connection Name in a current thread. */
+        thread_local
+        inline static QString defaultConnection;
+
+        /*! Default namespace prefix for MySQL savepoints in a current thread. */
+        thread_local
+        inline static
+        QString defaultSavepointNamespace = QStringLiteral("tinyorm_savepoint");
+
+        /*! Return a reference to the database connection configurations map. */
+        inline ConfigurationsType &operator*();
+        /*! Return a reference to the database connection configurations map. */
+        inline const ConfigurationsType &operator*() const;
+        /*! Return a reference to the database connection configurations map. */
+        inline ConfigurationsType &get();
+        /*! Return a reference to the database connection configurations map. */
+        inline const ConfigurationsType &get() const;
+
+    private:
+        /*! Database connection configurations. */
+        thread_local
+        inline static ConfigurationsType m_configurations;
     };
 
-} // namespace Orm
+    DatabaseConfiguration::ConfigurationsType &
+    DatabaseConfiguration::operator*()
+    {
+        return m_configurations;
+    }
+
+    const DatabaseConfiguration::ConfigurationsType &
+    DatabaseConfiguration::operator*() const
+    {
+        return m_configurations;
+    }
+
+    DatabaseConfiguration::ConfigurationsType &
+    DatabaseConfiguration::get()
+    {
+        return m_configurations;
+    }
+
+    const DatabaseConfiguration::ConfigurationsType &
+    DatabaseConfiguration::get() const
+    {
+        return m_configurations;
+    }
+
+} // namespace Orm::Support
 
 TINYORM_END_COMMON_NAMESPACE
 

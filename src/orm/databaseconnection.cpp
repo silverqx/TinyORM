@@ -5,6 +5,7 @@
 #include <QDebug>
 #endif
 
+#include "orm/configuration.hpp"
 #include "orm/exceptions/sqltransactionerror.hpp"
 #include "orm/macros.hpp"
 #include "orm/query/querybuilder.hpp"
@@ -21,11 +22,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
-
-const char *
-DatabaseConnection::defaultConnectionName = const_cast<char *>("tinyorm_default");
-const char *
-DatabaseConnection::savepointNamespace   = const_cast<char *>("tinyorm_savepoint");
 
 /*!
     \class DatabaseConnection
@@ -55,6 +51,7 @@ DatabaseConnection::DatabaseConnection(
     , m_database(database)
     , m_tablePrefix(tablePrefix)
     , m_config(config)
+    , m_savepointNamespace(Orm::Support::DatabaseConfiguration::defaultSavepointNamespace)
     , m_connectionName(getConfig(NAME).value<QString>())
     , m_hostName(getConfig(host_).value<QString>())
 {}
@@ -202,7 +199,7 @@ bool DatabaseConnection::savepoint(const QString &id)
     Q_ASSERT(m_inTransaction);
 
     auto savePoint = getQtQuery();
-    const auto query = QStringLiteral("SAVEPOINT %1_%2").arg(savepointNamespace, id);
+    const auto query = QStringLiteral("SAVEPOINT %1_%2").arg(m_savepointNamespace, id);
 
     // Elapsed timer needed
     const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
@@ -246,7 +243,7 @@ bool DatabaseConnection::rollbackToSavepoint(const QString &id)
 
     auto rollbackToSavepoint = getQtQuery();
     const auto query = QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2")
-                       .arg(savepointNamespace, id);
+                       .arg(m_savepointNamespace, id);
 
     // Elapsed timer needed
     const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
@@ -969,8 +966,8 @@ DatabaseConnection::withFreshQueryLog(const std::function<QVector<Log>()> &callb
        we'll enable query logging. The query log will also get cleared so we will
        have a new log of all the queries that will be executed. */
     const auto loggingQueries = m_loggingQueries;
-    const auto queryLogId = m_queryLogId;
-    m_queryLogId = 0;
+    const auto queryLogId = m_queryLogId.load();
+    m_queryLogId.store(0);
 
     enableQueryLog();
 
@@ -991,7 +988,7 @@ DatabaseConnection::withFreshQueryLog(const std::function<QVector<Log>()> &callb
     // Restore
     m_queryLog.swap(m_queryLogForPretend);
     m_loggingQueries = loggingQueries;
-    m_queryLogId = queryLogId;
+    m_queryLogId.store(queryLogId);
 
     // NRVO kicks in
     return result;

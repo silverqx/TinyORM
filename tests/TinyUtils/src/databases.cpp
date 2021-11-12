@@ -47,7 +47,7 @@ namespace TestUtils
 
 const QStringList &Databases::createConnections(const QStringList &connections)
 {
-    checkInitialized();
+    throwIfConnectionsInitialized();
 
     // Ownership of a unique_ptr()
     /* The default connection is empty for tests, there is no default connection
@@ -65,8 +65,9 @@ QString Databases::createConnection(const QString &connection)
     const auto &connections = createConnections({connection});
 
     if (connections.size() > 1)
-        throw RuntimeError("Returned more than one connection in "
-                           "Databases::createConnection() method.");
+        throw RuntimeError(
+                "Returned more than one connection in Databases::createConnection() "
+                "method.");
 
     if (!connections.isEmpty())
         return connections.first();
@@ -198,13 +199,16 @@ Databases::postgresConfiguration()
     return {std::cref(config), false};
 }
 
-void Databases::checkInitialized()
+void Databases::throwIfConnectionsInitialized()
 {
-    if (m_initialized)
+    /*! Determines whether connections were initialized. */
+    static bool initialized = false;
+
+    if (initialized)
         throw LogicError("Databases::createConnections/createConnection methods "
                          "can be called only once.");
 
-    m_initialized = true;
+    initialized = true;
 }
 
 } // namespace TestUtils

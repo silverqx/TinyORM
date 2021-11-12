@@ -246,7 +246,8 @@ namespace Concerns
             constexpr static RelationStoreType initStoreType();
 
             /*! Served store type, this class can handle two store types. */
-            thread_local constexpr static RelationStoreType STORE_TYPE = initStoreType();
+            thread_local
+            constexpr static RelationStoreType STORE_TYPE = initStoreType();
 
         private:
             /*! The QueriesRelationships instance to which the visited relation will be

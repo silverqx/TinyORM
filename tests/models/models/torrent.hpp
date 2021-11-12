@@ -174,7 +174,6 @@ private:
 //    inline static QString u_dateFormat {"yyyy-MM-dd HH:mm:ss"};
 
     /*! The attributes that should be mutated to dates. @deprecated */
-    thread_local
     inline static QStringList u_dates {"added_on"};
 
     /*! All of the relationships to be touched. */

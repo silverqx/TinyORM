@@ -50,4 +50,5 @@ SOURCES += \
     $$PWD/orm/utils/attribute.cpp \
     $$PWD/orm/utils/query.cpp \
     $$PWD/orm/utils/string.cpp \
+    $$PWD/orm/utils/thread.cpp \
     $$PWD/orm/utils/type.cpp \

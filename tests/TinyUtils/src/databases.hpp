@@ -14,7 +14,9 @@ namespace TestUtils
     {
         Q_DISABLE_COPY(Databases)
 
-        using ConfigurationsType = Orm::Configuration::ConfigurationsType;
+        /*! Type used for Database Connections map. */
+        using ConfigurationsType = Orm::Support::DatabaseConfiguration
+                                               ::ConfigurationsType;
 
     public:
         /*! MySQL connection name. */
@@ -49,11 +51,8 @@ namespace TestUtils
         static std::pair<std::reference_wrapper<const QVariantHash>, bool>
         postgresConfiguration();
 
-        /*! Throw exception when connections were already initialized. */
-        static void checkInitialized();
-
-        /*! Determines whether connections were initialized. */
-        inline static bool m_initialized = false;
+        /*! Throw exception when database connections were already initialized. */
+        static void throwIfConnectionsInitialized();
     };
 
 } // namespace TestUtils

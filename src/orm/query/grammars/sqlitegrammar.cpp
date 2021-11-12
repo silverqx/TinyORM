@@ -89,6 +89,7 @@ SQLiteGrammar::getCompileMap() const
     };
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
+    thread_local
     static const QMap<SelectComponentType, SelectComponentValue> cached {
         {SelectComponentType::AGGREGATE, {bind(&SQLiteGrammar::compileAggregate),
                         [this]
@@ -141,6 +142,7 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     // An order has to be the same as in enum struct WhereType
+    thread_local
     static const QVector<std::function<QString(const WhereConditionItem &)>> cached {
         bind(&SQLiteGrammar::whereBasic),
         bind(&SQLiteGrammar::whereNested),
@@ -154,6 +156,7 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
         bind(&SQLiteGrammar::whereNotExists),
     };
 
+    thread_local
     static const auto size = cached.size();
 
     // Check if whereType is in the range, just for sure 😏

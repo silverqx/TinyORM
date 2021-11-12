@@ -65,6 +65,7 @@ HEADERS += \
     $$PWD/orm/schema/sqliteschemabuilder.hpp \
     $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/support/configurationoptionsparser.hpp \
+    $$PWD/orm/support/databaseconnectionsmap.hpp \
     $$PWD/orm/tiny/concerns/guardsattributes.hpp \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \
     $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
@@ -93,5 +94,6 @@ HEADERS += \
     $$PWD/orm/utils/attribute.hpp \
     $$PWD/orm/utils/query.hpp \
     $$PWD/orm/utils/string.hpp \
+    $$PWD/orm/utils/thread.hpp \
     $$PWD/orm/utils/type.hpp \
     $$PWD/orm/version.hpp \

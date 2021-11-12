@@ -33,11 +33,6 @@ namespace Orm
         Q_DISABLE_COPY(DatabaseConnection)
 
     public:
-        /*! Default connection name. */
-        static const char *defaultConnectionName;
-        /*! Namespace prefix for MySQL savepoints. */
-        static const char *savepointNamespace;
-
         /*! Constructor. */
         explicit DatabaseConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
@@ -51,7 +46,7 @@ namespace Orm
         table(const QString &table, const QString &as = "") override;
 
         /*! Get the table prefix for the connection. */
-        QString getTablePrefix() const override;
+        inline QString getTablePrefix() const override;
         /*! Set the table prefix in use by the connection. */
         DatabaseConnection &setTablePrefix(const QString &prefix) override;
         /*! Set the table prefix and return the query grammar. */
@@ -61,7 +56,7 @@ namespace Orm
         QSharedPointer<QueryBuilder> query() override;
 
         /*! Get a new raw query expression. */
-        Query::Expression raw(const QVariant &value) const override;
+        inline Query::Expression raw(const QVariant &value) const override;
 
         // TODO next transaction method with callback silverqx
         /*! Start a new database transaction. */
@@ -79,7 +74,7 @@ namespace Orm
         /*! Rollback to a named transaction savepoint. */
         bool rollbackToSavepoint(std::size_t id) override;
         /*! Get the number of active transactions. */
-        std::size_t transactionLevel() const override;
+        inline std::size_t transactionLevel() const override;
 
         /*! Run a select statement against the database. */
         QSqlQuery
@@ -123,7 +118,7 @@ namespace Orm
         /*! Get underlying database connection without executing any reconnect logic. */
         QSqlDatabase getRawQtConnection() const;
         /*! Get the connection resolver for an underlying database connection. */
-        const std::function<Connectors::ConnectionName()> &
+        inline const std::function<Connectors::ConnectionName()> &
         getQtConnectionResolver() const;
         /*! Set the connection resolver for an underlying database connection. */
         DatabaseConnection &setQtConnectionResolver(
@@ -148,11 +143,11 @@ namespace Orm
         void disconnect();
 
         /*! Get the database connection name. */
-        const QString &getName() const override;
+        inline const QString &getName() const override;
         /*! Get the name of the connected database. */
-        const QString &getDatabaseName() const override;
+        inline const QString &getDatabaseName() const override;
         /*! Get the host name of the connected database. */
-        const QString &getHostName() const override;
+        inline const QString &getHostName() const override;
 
         /*! Set the query grammar to the default implementation. */
         void useDefaultQueryGrammar() override;
@@ -190,7 +185,7 @@ namespace Orm
         DatabaseConnection &enableElapsedCounter() override;
         /*! Disable counting queries execution time on the current connection. */
         DatabaseConnection &disableElapsedCounter() override;
-        /*! Obtain queries execution time. */
+        /*! Obtain queries execution time, -1 when disabled. */
         qint64 getElapsedCounter() const override;
         /*! Obtain and reset queries execution time. */
         qint64 takeElapsedCounter() override;
@@ -204,7 +199,7 @@ namespace Orm
         DatabaseConnection &enableStatementsCounter() override;
         /*! Disable counting the number of executed queries on the current connection. */
         DatabaseConnection &disableStatementsCounter() override;
-        /*! Obtain the number of executed queries. */
+        /*! Obtain the number of executed queries, all counters are -1 when disabled. */
         const StatementsCounter &getStatementsCounter() const override;
         /*! Obtain and reset the number of executed queries. */
         StatementsCounter takeStatementsCounter() override;
@@ -228,15 +223,15 @@ namespace Orm
         void logTransactionQueryForPretend(const QString &query) const;
 
         /*! Get the connection query log. */
-        std::shared_ptr<QVector<Log>> getQueryLog() const override;
+        inline std::shared_ptr<QVector<Log>> getQueryLog() const override;
         /*! Clear the query log. */
         void flushQueryLog() override;
         /*! Enable the query log on the connection. */
         void enableQueryLog() override;
         /*! Disable the query log on the connection. */
-        void disableQueryLog() override;
+        inline void disableQueryLog() override;
         /*! Determine whether we're logging queries. */
-        bool logging() const override;
+        inline bool logging() const override;
         /*! The current order value for a query log record. */
         static std::size_t getQueryLogOrder();
 
@@ -253,14 +248,20 @@ namespace Orm
         QVector<Log>
         pretend(const std::function<void(ConnectionInterface &)> &callback) override;
         /*! Determine if the connection is in a "dry run". */
-        bool pretending() const override;
+        inline bool pretending() const override;
 
         /*! Check if any records have been modified. */
-        bool getRecordsHaveBeenModified() const override;
+        inline bool getRecordsHaveBeenModified() const override;
         /*! Indicate if any records have been modified. */
-        void recordsHaveBeenModified(bool value = true) override;
+        inline void recordsHaveBeenModified(bool value = true) override;
         /*! Reset the record modification state. */
-        void forgetRecordModificationState() override;
+        inline void forgetRecordModificationState() override;
+
+        /*! Get namespace prefix for MySQL savepoints. */
+        inline const QString &getSavepointNamespace() const override;
+        /*! Set namespace prefix for MySQL savepoints. */
+        inline DatabaseConnection &
+        setSavepointNamespace(const QString &savepointNamespace) override;
 
     protected:
         // NOTE api different, getDefaultQueryGrammar() can not be non-pure because it contains pure virtual member function silverqx
@@ -339,13 +340,14 @@ namespace Orm
         bool m_recordsModified = false;
         /*! All of the queries run against the connection. */
         std::shared_ptr<QVector<Log>> m_queryLog = nullptr;
-        // CUR atomic inc/dec? investigate how m_queryLogId works silverqx
         /*! ID of the query log record. */
-        inline static std::size_t m_queryLogId = 0;
+        inline static std::atomic<std::size_t> m_queryLogId = 0;
 
         /* Others */
         /*! Indicates if the connection is in a "dry run". */
         bool m_pretending = false;
+        /*! Namespace prefix for MySQL savepoints. */
+        QString m_savepointNamespace;
 
     private:
         /*! Prepare an SQL statement and return the query object. */
@@ -407,77 +409,90 @@ namespace Orm
                 const QString>> m_driverNamePrintable = std::nullopt;
     };
 
-    inline QString DatabaseConnection::getTablePrefix() const
+    QString DatabaseConnection::getTablePrefix() const
     {
         return m_tablePrefix;
     }
 
-    inline Query::Expression
+    Query::Expression
     DatabaseConnection::raw(const QVariant &value) const
     {
         return Query::Expression(value);
     }
 
-    inline std::size_t DatabaseConnection::transactionLevel() const
+    std::size_t DatabaseConnection::transactionLevel() const
     {
         return m_savepoints;
     }
 
-    inline const std::function<Connectors::ConnectionName()> &
+    const std::function<Connectors::ConnectionName()> &
     DatabaseConnection::getQtConnectionResolver() const
     {
         return m_qtConnectionResolver;
     }
 
-    inline const QString &DatabaseConnection::getName() const
+    const QString &DatabaseConnection::getName() const
     {
         return m_connectionName;
     }
 
-    inline const QString &DatabaseConnection::getDatabaseName() const
+    const QString &DatabaseConnection::getDatabaseName() const
     {
         return m_database;
     }
 
-    inline const QString &DatabaseConnection::getHostName() const
+    const QString &DatabaseConnection::getHostName() const
     {
         return m_hostName;
     }
 
-    inline std::shared_ptr<QVector<Log>>
+    std::shared_ptr<QVector<Log>>
     DatabaseConnection::getQueryLog() const
     {
         return m_queryLog;
     }
 
-    inline void DatabaseConnection::disableQueryLog()
+    void DatabaseConnection::disableQueryLog()
     {
         m_loggingQueries = false;
     }
 
-    inline bool DatabaseConnection::logging() const
+    bool DatabaseConnection::logging() const
     {
         return m_loggingQueries;
     }
 
-    inline bool DatabaseConnection::pretending() const
+    bool DatabaseConnection::pretending() const
     {
         return m_pretending;
     }
 
-    inline bool DatabaseConnection::getRecordsHaveBeenModified() const
+    bool DatabaseConnection::getRecordsHaveBeenModified() const
     {
         return m_recordsModified;
     }
 
-    inline void DatabaseConnection::recordsHaveBeenModified(const bool value)
+    void DatabaseConnection::recordsHaveBeenModified(const bool value)
     {
         m_recordsModified = value;
     }
 
-    inline void DatabaseConnection::forgetRecordModificationState()
+    void DatabaseConnection::forgetRecordModificationState()
     {
         m_recordsModified = false;
+    }
+
+    const QString &DatabaseConnection::getSavepointNamespace() const
+    {
+        return m_savepointNamespace;
+    }
+
+    DatabaseConnection &
+    DatabaseConnection::setSavepointNamespace(const QString &savepointNamespace)
+    {
+        m_savepointNamespace = savepointNamespace;
+
+        return *this;
     }
 
     template<typename Return>

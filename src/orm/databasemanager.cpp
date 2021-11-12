@@ -1,15 +1,11 @@
 #include "orm/databasemanager.hpp"
 
 #include "orm/concerns/hasconnectionresolver.hpp"
-#include "orm/databaseconnection.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
-
-const char *
-DatabaseManager::defaultConnectionName = const_cast<char *>("tinyorm_default");
 
 /* This is needed because of the std::unique_ptr is used in the m_connections
    data member 😲, and when this dtor is not defined in the cpp, it will be
@@ -19,18 +15,16 @@ DatabaseManager::~DatabaseManager() = default;
 // FUTURE add support for ::read and ::write db connections silverx
 // TODO implement RepositoryFactory silverqx
 DatabaseManager::DatabaseManager(const QString &defaultConnection)
-    // To pass Weffc++ and has to be here because of forward declaration in unique_ptr
-    // NOLINTNEXTLINE(readability-redundant-member-init)
-    : m_connections()
 {
-    m_config.defaultConnection = defaultConnection;
+    Configuration::defaultConnection = defaultConnection;
 
     // Set up the DatabaseManager as a connection resolver
     Concerns::HasConnectionResolver::setConnectionResolver(this);
 
     setupDefaultReconnector();
 
-    // TODO prevent more instances??, or eg add allowMoreInstances data member to override this behavior (or allowMoreInstances compile directive?, in that case would be possible to use #ifdef for ::instance() static method 🤔) silverqx
+    /* Only one instance of DatabaseManager can exist, so this is ok (secured by
+       checkInstance() in create() method. */
     m_instance = this;
 }
 
@@ -45,7 +39,7 @@ DatabaseManager::DatabaseManager(const ConfigurationsType &configs,
                                  const QString &defaultConnection)
     : DatabaseManager(defaultConnection)
 {
-    m_config.connections = configs;
+    (*m_configuration) = configs;
 }
 
 DatabaseManager &DatabaseManager::setupDefaultReconnector()
@@ -58,10 +52,21 @@ DatabaseManager &DatabaseManager::setupDefaultReconnector()
     return *this;
 }
 
-// TODO add 'createLazy = true' paramater, add support to create eager connection silverqx
+std::unique_ptr<DatabaseManager>
+DatabaseManager::create(const QString &defaultConnection)
+{
+    checkInstance();
+
+    return std::unique_ptr<DatabaseManager>(
+                new DatabaseManager(defaultConnection));
+}
+
+// CUR add 'createLazy = true' paramater / or open = false?, add support to create eager connection silverqx
 std::unique_ptr<DatabaseManager>
 DatabaseManager::create(const QVariantHash &config, const QString &connection)
 {
+    checkInstance();
+
     return std::unique_ptr<DatabaseManager>(
                 new DatabaseManager(config, connection, connection));
 }
@@ -70,6 +75,8 @@ std::unique_ptr<DatabaseManager>
 DatabaseManager::create(const ConfigurationsType &configs,
                         const QString &defaultConnection)
 {
+    checkInstance();
+
     return std::unique_ptr<DatabaseManager>(
                 new DatabaseManager(configs, defaultConnection));
 }
@@ -196,75 +203,105 @@ ConnectionInterface &DatabaseManager::connection(const QString &name)
 
     /* If we haven't created this connection, we'll create it based on the provided
        config. Once we've created the connections we will configure it. */
-    m_connections.try_emplace(connectionName,
-                              configure(makeConnection(connectionName)));
+    (*m_connections).try_emplace(connectionName,
+                                 configure(makeConnection(connectionName)));
 
-    return *m_connections[connectionName];
+    return *(*m_connections)[connectionName];
 }
 
 DatabaseManager &
 DatabaseManager::addConnection(const QVariantHash &config, const QString &name)
 {
-    m_config.connections.insert(name, config);
+    if ((*m_configuration).contains(name))
+        throw Exceptions::RuntimeError(
+                QStringLiteral("The database connection '%1' already exists.").arg(name));
+
+    (*m_configuration).insert(name, config);
 
     return *this;
 }
 
-bool DatabaseManager::removeConnection(QString name)
+DatabaseManager &
+DatabaseManager::addConnections(const ConfigurationsType &configs)
 {
-    if (name.isEmpty())
-        name = getDefaultConnection();
+    for (auto itConfig = configs.cbegin(); itConfig != configs.cend(); ++itConfig)
+        addConnection(itConfig.value(), itConfig.key());
+
+    return *this;
+}
+
+DatabaseManager &
+DatabaseManager::addConnections(const ConfigurationsType &configs,
+                                const QString &defaultConnection)
+{
+    addConnections(configs);
+
+    Configuration::defaultConnection = defaultConnection;
+
+    return *this;
+}
+
+bool DatabaseManager::removeConnection(const QString &name)
+{
+    const auto &name_ = parseConnectionName(name);
 
     // Connection with this name doesn't exist
-    if (!connectionNames().contains(name))
+    if (!connectionNames().contains(name_))
         return false;
 
+    /* If currently removed connection is the default connection, then reset default
+       connection. */
+    const auto resetDefaultConnection_ = [this, &name]
+    {
+        if (Configuration::defaultConnection == name)
+            resetDefaultConnection();
+    };
+
     // Not connected
-    if (!m_connections.contains(name)) {
-        m_config.connections.remove(name);
+    if (!(*m_connections).contains(name_)) {
+        (*m_configuration).remove(name_);
+        resetDefaultConnection_();
         return true;
     }
 
     // Disconnect first to be nice 😁 and safe 😂
-    m_connections.find(name)->second->disconnect();
+    (*m_connections).find(name_)->second->disconnect();
 
     /* If connection was not removed, return false and don't remove Qt's database
        connection and also don't remove connection configuration. */
-    if (m_connections.erase(name) == 0)
+    if ((*m_connections).erase(name_) == 0)
         return false;
 
     // Remove Qt's database connection
-    QSqlDatabase::removeDatabase(name);
+    QSqlDatabase::removeDatabase(name_);
     // Also remove configuration
-    m_config.connections.remove(name);
+    (*m_configuration).remove(name_);
 
-    // If connection was the default connection, then reset default connection
-    if (m_config.defaultConnection == name)
-        setDefaultConnection("");
+    resetDefaultConnection_();
 
     return true;
 }
 
-ConnectionInterface &DatabaseManager::reconnect(QString name)
+ConnectionInterface &DatabaseManager::reconnect(const QString &name)
 {
-    if (name.isEmpty())
-        name = getDefaultConnection();
+    const auto &name_ = parseConnectionName(name);
 
-    disconnect(name);
+    disconnect(name_);
 
-    if (!m_connections.contains(name))
-        return connection(name);
+    if (!(*m_connections).contains(name_))
+        return connection(name_);
 
-    return refreshQtConnections(name);
+    return refreshQtConnections(name_);
 }
 
-void DatabaseManager::disconnect(QString name) const
+void DatabaseManager::disconnect(const QString &name) const
 {
-    if (name.isEmpty())
-        name = getDefaultConnection();
+    const auto &name_ = parseConnectionName(name);
 
-    if (m_connections.contains(name))
-        m_connections.find(name)->second->disconnect();
+    if (!(*m_connections).contains(name_))
+        return;
+
+    (*m_connections).find(name_)->second->disconnect();
 }
 
 QStringList DatabaseManager::supportedDrivers() const
@@ -276,16 +313,16 @@ QStringList DatabaseManager::supportedDrivers() const
 
 QStringList DatabaseManager::connectionNames() const
 {
-    return m_config.connections.keys();
+    return (*m_configuration).keys();
 }
 
 QStringList DatabaseManager::openedConnectionNames() const
 {
     QStringList names;
     // TODO overflow, add check code https://stackoverflow.com/questions/22184403/how-to-cast-the-size-t-to-double-or-int-c/22184657#22184657 silverqx
-    names.reserve(static_cast<int>(m_connections.size()));
+    names.reserve(static_cast<int>((*m_connections).size()));
 
-    for (const auto &connection : m_connections)
+    for (const auto &connection : (*m_connections))
         names << connection.first;
 
     return names;
@@ -294,12 +331,17 @@ QStringList DatabaseManager::openedConnectionNames() const
 const QString &
 DatabaseManager::getDefaultConnection() const
 {
-    return m_config.defaultConnection;
+    return Configuration::defaultConnection;
 }
 
 void DatabaseManager::setDefaultConnection(const QString &defaultConnection)
 {
-    m_config.defaultConnection = defaultConnection;
+    Configuration::defaultConnection = defaultConnection;
+}
+
+void DatabaseManager::resetDefaultConnection()
+{
+    Configuration::defaultConnection = Configuration::defaultConnectionName;
 }
 
 DatabaseManager &
@@ -663,18 +705,17 @@ DatabaseManager::makeConnection(const QString &name)
 /* Can not be const because I'm modifying the Configuration (QVariantHash)
    in ConnectionFactory. */
 QVariantHash &
-DatabaseManager::configuration(QString name)
+DatabaseManager::configuration(const QString &name)
 {
-    if (name.isEmpty())
-        name = getDefaultConnection();
+    const auto &name_ = parseConnectionName(name);
 
     /* Get the database connection configuration by the given name.
        If the configuration doesn't exist, we'll throw an exception and bail. */
-    if (!m_config.connections.contains(name))
+    if (!(*m_configuration).contains(name_))
         throw std::invalid_argument(
-                "Database connection '" + name.toStdString() + "' not configured.");
+                "Database connection '" + name_.toStdString() + "' not configured.");
 
-    return m_config.connections[name]; // clazy:exclude=detaching-member
+    return (*m_configuration)[name_]; // clazy:exclude=detaching-member
 
     // TODO add ConfigurationUrlParser silverqx
 //    return (new ConfigurationUrlParser)
@@ -695,13 +736,24 @@ DatabaseManager::configure(std::unique_ptr<DatabaseConnection> &&connection) con
 DatabaseConnection &
 DatabaseManager::refreshQtConnections(const QString &name)
 {
+    const auto &name_ = parseConnectionName(name);
+
     /* Make OUR new connection and copy the connection resolver from this new
        connection to the current connection, this ensure that the connection
        will be resolved/connected again lazily. */
-    auto fresh = makeConnection(name);
+    auto fresh = configure(makeConnection(name_));
 
-    return m_connections[name]->setQtConnectionResolver(
+    return (*m_connections)[name_]->setQtConnectionResolver(
                 fresh->getQtConnectionResolver());
+}
+
+void DatabaseManager::checkInstance()
+{
+    if (m_instance == nullptr)
+        return;
+
+    throw Exceptions::RuntimeError(
+            "Only one instance of DatabaseManager is allowed per process.");
 }
 
 } // namespace Orm

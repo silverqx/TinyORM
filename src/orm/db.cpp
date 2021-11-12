@@ -16,6 +16,12 @@ DatabaseManager &DB::manager()
 }
 
 std::unique_ptr<DatabaseManager>
+DB::create(const QString &defaultConnection)
+{
+    return DatabaseManager::create(defaultConnection);
+}
+
+std::unique_ptr<DatabaseManager>
 DB::create(const QVariantHash &config, const QString &connection)
 {
     return DatabaseManager::create(config, connection);
@@ -36,6 +42,18 @@ DatabaseManager &
 DB::addConnection(const QVariantHash &config, const QString &name)
 {
     return manager().addConnection(config, name);
+}
+
+DatabaseManager &
+DB::addConnections(const ConfigurationsType &configs)
+{
+    return manager().addConnections(configs);
+}
+
+DatabaseManager &
+DB::addConnections(const ConfigurationsType &configs, const QString &defaultConnection)
+{
+    return manager().addConnections(configs, defaultConnection);
 }
 
 bool DB::removeConnection(const QString &name)
@@ -76,6 +94,11 @@ const QString &DB::getDefaultConnection()
 void DB::setDefaultConnection(const QString &defaultConnection)
 {
     manager().setDefaultConnection(defaultConnection);
+}
+
+void DB::resetDefaultConnection()
+{
+    manager().resetDefaultConnection();
 }
 
 DatabaseManager &

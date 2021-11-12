@@ -119,7 +119,6 @@ private:
     };
 
     /*! The attributes that are mass assignable. */
-    thread_local
     inline static QStringList u_fillable {
         "file_index",
         "filepath",

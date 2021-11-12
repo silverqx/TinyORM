@@ -25,8 +25,8 @@ namespace Orm::Tiny::Relations
     protected:
         /*! Indicates if the ID is auto-incrementing. */
         bool u_incrementing = false;
-        /*! The attributes that aren't mass assignable. */
-        inline static QStringList u_guarded;
+
+        /* "inline static QStringList u_guarded" is empty. */
     };
 
 } // namespace Orm::Tiny::Relations

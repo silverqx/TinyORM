@@ -30,6 +30,9 @@ namespace Orm
 
         /*! Set the default connection name. */
         virtual void setDefaultConnection(const QString &defaultConnection) = 0;
+
+        /*! Reset the default connection name to a default value. */
+        virtual void resetDefaultConnection() = 0;
     };
 
     ConnectionResolverInterface::~ConnectionResolverInterface() = default;

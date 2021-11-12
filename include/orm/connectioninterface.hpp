@@ -249,6 +249,12 @@ namespace Grammars
         virtual DatabaseConnection &setTablePrefix(const QString &prefix) = 0;
         /*! Set the table prefix and return the query grammar. */
         virtual BaseGrammar &withTablePrefix(BaseGrammar &grammar) const = 0;
+
+        /*! Get namespace prefix for MySQL savepoints. */
+        virtual const QString &getSavepointNamespace() const = 0;
+        /*! Set namespace prefix for MySQL savepoints. */
+        virtual DatabaseConnection &
+        setSavepointNamespace(const QString &savepointNamespace) = 0;
     };
 
     ConnectionInterface::~ConnectionInterface() = default;

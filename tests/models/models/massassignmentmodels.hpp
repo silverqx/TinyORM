@@ -53,7 +53,6 @@ class Torrent_AllowedMassAssignment final :
     QString u_table {"torrents"};
 
     /*! The attributes that aren't mass assignable. */
-    thread_local
     inline static QStringList u_guarded {}; // disabled
 };
 
@@ -67,7 +66,6 @@ class Torrent_GuardableColumn final :
     QString u_table {"torrents"};
 
     /*! The attributes that aren't mass assignable. */
-    thread_local
     inline static QStringList u_guarded {"xyz"};
 };
 

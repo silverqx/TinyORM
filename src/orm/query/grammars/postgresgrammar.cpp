@@ -112,6 +112,7 @@ PostgresGrammar::getCompileMap() const
     };
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
+    thread_local
     static const QMap<SelectComponentType, SelectComponentValue> cached {
         {SelectComponentType::AGGREGATE, {bind(&PostgresGrammar::compileAggregate),
                         [this]
@@ -165,6 +166,7 @@ PostgresGrammar::getWhereMethod(const WhereType whereType) const
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     // An order has to be the same as in enum struct WhereType
     // FUTURE QHash would has faster lookup, I should choose QHash, fix also another Grammars silverx
+    thread_local
     static const QVector<std::function<QString(const WhereConditionItem &)>> cached {
         bind(&PostgresGrammar::whereBasic),
         bind(&PostgresGrammar::whereNested),
@@ -178,6 +180,7 @@ PostgresGrammar::getWhereMethod(const WhereType whereType) const
         bind(&PostgresGrammar::whereNotExists),
     };
 
+    thread_local
     static const auto size = cached.size();
 
     // Check if whereType is in the range, just for sure 😏

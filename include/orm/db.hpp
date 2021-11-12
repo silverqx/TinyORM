@@ -17,7 +17,10 @@ namespace Orm
     {
         Q_DISABLE_COPY(DB)
 
-        using ConfigurationsType = Orm::Configuration::ConfigurationsType;
+        /*! Type for the Database Configuration. */
+        using Configuration = Orm::Support::DatabaseConfiguration;
+        /*! Type used for Database Connections map. */
+        using ConfigurationsType = Configuration::ConfigurationsType;
 
         /*! Get the reference to the DatabaseManager. */
         static DatabaseManager &manager();
@@ -32,26 +35,34 @@ namespace Orm
         ~DB() = delete;
 
         /* Proxy methods to the DatabaseManager */
+        /*! Factory method to create DatabaseManager instance and set a default connection
+            at once. */
+        static std::unique_ptr<DatabaseManager>
+        create(const QString &defaultConnection = Configuration::defaultConnectionName);
         /*! Factory method to create DatabaseManager instance and register
             a new connection as default connection at once. */
         static std::unique_ptr<DatabaseManager>
         create(const QVariantHash &config,
-               const QString &connection =
-               QLatin1String(DatabaseManager::defaultConnectionName));
+               const QString &connection = Configuration::defaultConnectionName);
         /*! Factory method to create DatabaseManager instance and set connections
             at once. */
         static std::unique_ptr<DatabaseManager>
         create(const ConfigurationsType &configs,
-               const QString &defaultConnection =
-               QLatin1String(DatabaseManager::defaultConnectionName));
+               const QString &defaultConnection = Configuration::defaultConnectionName);
 
         /*! Get a database connection instance. */
         static ConnectionInterface &connection(const QString &name = "");
         /*! Register a connection with the manager. */
         static DatabaseManager &
         addConnection(const QVariantHash &config,
-                      const QString &name =
-                      QLatin1String(DatabaseManager::defaultConnectionName));
+                      const QString &name = Configuration::defaultConnectionName);
+        /*! Register connections with the manager. */
+        static DatabaseManager &
+        addConnections(const ConfigurationsType &configs);
+        /*! Register connections with the manager and also set a default connection. */
+        static DatabaseManager &
+        addConnections(const ConfigurationsType &configs,
+                       const QString &defaultConnection);
         /*! Remove the given connection from the manager. */
         static bool removeConnection(const QString &name = "");
 
@@ -71,6 +82,8 @@ namespace Orm
         static const QString &getDefaultConnection();
         /*! Set the default connection name. */
         static void setDefaultConnection(const QString &defaultConnection);
+        /*! Reset the default connection name. */
+        static void resetDefaultConnection();
 
         /*! Set the database reconnector callback. */
         static DatabaseManager &setReconnector(

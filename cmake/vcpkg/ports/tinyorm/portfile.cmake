@@ -15,7 +15,6 @@ vcpkg_check_features(
 
 vcpkg_cmake_configure(
     SOURCE_PATH ${SOURCE_PATH}
-    PREFER_NINJA
     OPTIONS
         -DBUILD_TESTS:BOOL=OFF
         -DMATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=ON
