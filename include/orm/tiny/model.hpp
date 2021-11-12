@@ -130,6 +130,7 @@ namespace Relations {
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
     // CUR rename m_db to m_dm in tinyplay silverqx
     // CUR move T_LIKELY to likely.hpp from macros.hpp silverqx
+    // CUR mingw threads mthreads exceptions silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
