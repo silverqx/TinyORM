@@ -25,8 +25,10 @@ namespace Orm::Tiny::Relations
     protected:
         /*! Indicates if the ID is auto-incrementing. */
         bool u_incrementing = false;
-
-        /* "inline static QStringList u_guarded" is empty. */
+        /*! The attributes that aren't mass assignable, by default all attributes are
+            mass assignable for Pivots. */
+        T_THREAD_LOCAL
+        inline static QStringList u_guarded;
     };
 
 } // namespace Orm::Tiny::Relations
