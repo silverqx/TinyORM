@@ -15,7 +15,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Support
 {
 
-    // CUR move to support silverqx
     /*! Database configuration class. */
     class DatabaseConfiguration
     {
@@ -33,7 +32,6 @@ namespace Orm::Support
         T_THREAD_LOCAL
         inline static QString defaultConnectionName = QStringLiteral("tinyorm_default");
 
-        // CUR better naming silverqx
         /*! Currently set Default Database Connection Name in a current thread. */
         T_THREAD_LOCAL
         inline static QString defaultConnection;

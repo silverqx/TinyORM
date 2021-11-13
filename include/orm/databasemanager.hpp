@@ -7,10 +7,10 @@ TINY_SYSTEM_HEADER
 
 #include <QtSql/QSqlQuery>
 
-#include "orm/configuration.hpp"
 #include "orm/connectioninterface.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/connectors/connectionfactory.hpp"
+#include "orm/support/databaseconfiguration.hpp"
 #include "orm/support/databaseconnectionsmap.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

@@ -11,7 +11,6 @@ HEADERS += \
     $$PWD/orm/concerns/detectslostconnections.hpp \
     $$PWD/orm/concerns/hasconnectionresolver.hpp \
     $$PWD/orm/config.hpp \
-    $$PWD/orm/configuration.hpp \
     $$PWD/orm/connectioninterface.hpp \
     $$PWD/orm/connectionresolverinterface.hpp \
     $$PWD/orm/connectors/connectionfactory.hpp \
@@ -66,6 +65,7 @@ HEADERS += \
     $$PWD/orm/schema/sqliteschemabuilder.hpp \
     $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/support/configurationoptionsparser.hpp \
+    $$PWD/orm/support/databaseconfiguration.hpp \
     $$PWD/orm/support/databaseconnectionsmap.hpp \
     $$PWD/orm/tiny/concerns/guardsattributes.hpp \
     $$PWD/orm/tiny/concerns/hasattributes.hpp \

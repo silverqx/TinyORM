@@ -15,7 +15,6 @@ function(tiny_sources out_headers out_sources)
         concepts.hpp
         concerns/detectslostconnections.hpp
         concerns/hasconnectionresolver.hpp
-        configuration.hpp
         connectioninterface.hpp
         connectionresolverinterface.hpp
         connectors/connectionfactory.hpp
@@ -69,6 +68,7 @@ function(tiny_sources out_headers out_sources)
         schema/sqliteschemabuilder.hpp
         sqliteconnection.hpp
         support/configurationoptionsparser.hpp
+        support/databaseconfiguration.hpp
         support/databaseconnectionsmap.hpp
         tiny/concerns/guardsattributes.hpp
         tiny/concerns/hasattributes.hpp
