@@ -114,8 +114,6 @@ namespace Relations {
     // CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
     // CUR make all * to *const silverqx
     // CUR merge changes from latest Eloquent silverqx
-    // CUR unfinished instantiation, DatabaseManager::create() allow to create more instances, so m_instance is useless silverqx
-    // CUR DB/DatabaseManager/DatabaseConnection all have defaultConnectionName, merge them? silverqx
     // CUR caught exceptions in tinyplay when threading enabled, they should match with non-threading version silverqx
     // CUR divide tinyplay and all test to smaller TU so decreas memory usage during compilation, and also compilation times overall because it will recompile only small TU silverqx
     // CUR cmake/qmake run tests in parallel for tests that allow it silverqx
