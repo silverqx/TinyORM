@@ -125,7 +125,7 @@ namespace Relations {
     // CUR check Caught expected exception with message in tinyplay silverqx
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
     // CUR rename m_db to m_dm in tinyplay silverqx
-    // CUR docs pivot/basepivot include in examples silverqx
+    // CUR docs create empty project to test docs examples, I need to test many-to-many examples, I did some changes in docs silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

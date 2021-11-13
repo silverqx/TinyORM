@@ -410,6 +410,7 @@ Many-to-many relationships are defined by writing a method that returns the resu
     #define USER_H
 
     #include <orm/tiny/model.hpp>
+    #include <orm/tiny/relations/pivot.hpp>
 
     #include "models/role.hpp"
 
@@ -474,12 +475,13 @@ To define the "inverse" of a many-to-many relationship, you should define a meth
     #define ROLE_H
 
     #include <orm/tiny/model.hpp>
-
-    class User; // Forward declaration to avoid cyclic dependency
+    #include <orm/tiny/relations/pivot.hpp>
 
     using Orm::Tiny::Model;
     using Orm::Tiny::Relations::BelongsToMany;
     using Orm::Tiny::Relations::Pivot;
+
+    class User; // Forward declaration to avoid cyclic dependency
 
     class Role final : public Model<Role, User, Pivot>
     {
@@ -525,8 +527,6 @@ Notice that each `Role` model we retrieve has automatically assigned a `pivot` r
 
 By default, only the model keys will be present on the `pivot` model. If your intermediate table contains extra attributes, you must specify them when defining the relationship:
 
-    using Orm::Tiny::Relations::BelongsToMany;
-
     // Ownership of a unique_ptr()
     auto relation = belongsToMany<Role>();
 
@@ -535,8 +535,6 @@ By default, only the model keys will be present on the `pivot` model. If your in
     return relation;
 
 If you would like your intermediate table to have `created_at` and `updated_at` timestamps that are automatically maintained by TinyORM, call the `withTimestamps` method when defining the relationship:
-
-    using Orm::Tiny::Relations::BelongsToMany;
 
     // Ownership of a unique_ptr()
     auto relation = belongsToMany<Role>();
@@ -554,8 +552,6 @@ Intermediate tables that utilize TinyORM's automatically maintained timestamps a
 As noted previously, attributes from the intermediate table may be accessed on models via the `pivot` relation name. However, you are free to customize the name of this relation to better reflect its purpose within your application.
 
 For example, if your application contains users that may subscribe to podcasts, you likely have a many-to-many relationship between users and podcasts. If this is the case, you may wish to rename your intermediate table relation name to `subscription` instead of `pivot`. This can be done using the `as` method when defining the relationship:
-
-    using Orm::Tiny::Relations::BelongsToMany;
 
     // Ownership of a unique_ptr()
     auto relation = belongsToMany<Podcast>();
@@ -590,6 +586,7 @@ Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePi
     #define USER_H
 
     #include <orm/tiny/model.hpp>
+    #include <orm/tiny/relations/pivot.hpp>
 
     #include "models/role.hpp"
 
@@ -645,13 +642,12 @@ You have to pass a custom pivot type to the `AllRelations` template parameter pa
 
     #include <orm/tiny/model.hpp>
 
-    class User; // Forward declaration to avoid cyclic dependency
-
     #include "models/roleuser.hpp"
 
     using Orm::Tiny::Model;
     using Orm::Tiny::Relations::BelongsToMany;
-    using Orm::Tiny::Relations::Pivot;
+
+    class User; // Forward declaration to avoid cyclic dependency
 
     class Role final : public Model<Role, User, RoleUser>
     {
