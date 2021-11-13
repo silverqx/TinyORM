@@ -123,7 +123,6 @@ namespace Relations {
     // CUR caught exceptions in tinyplay when threading enabled, they should match with non-threading version silverqx
     // CUR divide tinyplay and all test to smaller TU so decreas memory usage during compilation, and also compilation times overall because it will recompile only small TU silverqx
     // CUR cmake/qmake run tests in parallel for tests that allow it silverqx
-    // CUR add NL \n to constants silverqx
     // CUR check Caught expected exception with message in tinyplay silverqx
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
     // CUR rename m_db to m_dm in tinyplay silverqx
