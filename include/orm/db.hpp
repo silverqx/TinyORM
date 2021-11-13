@@ -252,10 +252,10 @@ namespace Orm
         /*! The current order value for a query log record. */
         static std::size_t getQueryLogOrder();
 
-        /* Others */
+        /* Getters */
         /*! Return the connection's driver name. */
         static QString driverName(const QString &connection = "");
-        /*! Return the connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
         static const QString &driverNamePrintable(const QString &connection = "");
         /*! Return the name of the connected database. */
         static const QString &databaseName(const QString &connection = "");

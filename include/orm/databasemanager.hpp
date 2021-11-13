@@ -253,10 +253,10 @@ namespace Query
         /*! The current order value for a query log record. */
         std::size_t getQueryLogOrder();
 
-        /* Others */
+        /* Getters */
         /*! Return the connection's driver name. */
         QString driverName(const QString &connection = "");
-        /*! Return the connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
         const QString &driverNamePrintable(const QString &connection = "");
         /*! Return the name of the connected database. */
         const QString &databaseName(const QString &connection = "");

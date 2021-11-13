@@ -142,13 +142,6 @@ namespace Orm
         /*! Disconnect from the underlying Qt's connection. */
         void disconnect();
 
-        /*! Get the database connection name. */
-        inline const QString &getName() const override;
-        /*! Get the name of the connected database. */
-        inline const QString &getDatabaseName() const override;
-        /*! Get the host name of the connected database. */
-        inline const QString &getHostName() const override;
-
         /*! Set the query grammar to the default implementation. */
         void useDefaultQueryGrammar() override;
         /*! Get the query grammar used by the connection. */
@@ -235,12 +228,19 @@ namespace Orm
         /*! The current order value for a query log record. */
         static std::size_t getQueryLogOrder();
 
-        /* Others */
+        /* Getters */
         /*! Return the connection's driver name. */
         QString driverName() override;
-        /*! Return the connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
         const QString &driverNamePrintable() override;
+        /*! Get the database connection name. */
+        inline const QString &getName() const override;
+        /*! Get the name of the connected database. */
+        inline const QString &getDatabaseName() const override;
+        /*! Get the host name of the connected database. */
+        inline const QString &getHostName() const override;
 
+        /* Others */
         /*! Execute the given callback in "dry run" mode. */
         QVector<Log>
         pretend(const std::function<void()> &callback) override;
@@ -431,21 +431,6 @@ namespace Orm
         return m_qtConnectionResolver;
     }
 
-    const QString &DatabaseConnection::getName() const
-    {
-        return m_connectionName;
-    }
-
-    const QString &DatabaseConnection::getDatabaseName() const
-    {
-        return m_database;
-    }
-
-    const QString &DatabaseConnection::getHostName() const
-    {
-        return m_hostName;
-    }
-
     std::shared_ptr<QVector<Log>>
     DatabaseConnection::getQueryLog() const
     {
@@ -460,6 +445,21 @@ namespace Orm
     bool DatabaseConnection::logging() const
     {
         return m_loggingQueries;
+    }
+
+    const QString &DatabaseConnection::getName() const
+    {
+        return m_connectionName;
+    }
+
+    const QString &DatabaseConnection::getDatabaseName() const
+    {
+        return m_database;
+    }
+
+    const QString &DatabaseConnection::getHostName() const
+    {
+        return m_hostName;
     }
 
     bool DatabaseConnection::pretending() const

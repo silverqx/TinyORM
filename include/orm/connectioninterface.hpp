@@ -156,13 +156,6 @@ namespace Grammars
         /*! Check database connection and show warnings when the state changed. */
         virtual bool pingDatabase() = 0;
 
-        /*! Get the database connection name. */
-        virtual const QString &getName() const = 0;
-        /*! Get the name of the connected database. */
-        virtual const QString &getDatabaseName() const = 0;
-        /*! Get the host name of the connected database. */
-        virtual const QString &getHostName() const = 0;
-
         /*! Set the query grammar to the default implementation. */
         virtual void useDefaultQueryGrammar() = 0;
         /*! Get the query grammar used by the connection. */
@@ -221,12 +214,19 @@ namespace Grammars
         /*! Determine whether we're logging queries. */
         virtual bool logging() const = 0;
 
-        /* Others */
+        /* Getters */
         /*! Return the connection's driver name. */
         virtual QString driverName() = 0;
-        /*! Return the connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
         virtual const QString &driverNamePrintable() = 0;
+        /*! Get the database connection name. */
+        virtual const QString &getName() const = 0;
+        /*! Get the name of the connected database. */
+        virtual const QString &getDatabaseName() const = 0;
+        /*! Get the host name of the connected database. */
+        virtual const QString &getHostName() const = 0;
 
+        /* Others */
         /*! Execute the given callback in "dry run" mode. */
         virtual QVector<Log>
         pretend(const std::function<void()> &callback) = 0;

@@ -116,8 +116,6 @@ namespace Relations {
     // CUR merge changes from latest Eloquent silverqx
     // CUR unfinished instantiation, DatabaseManager::create() allow to create more instances, so m_instance is useless silverqx
     // CUR DB/DatabaseManager/DatabaseConnection all have defaultConnectionName, merge them? silverqx
-    // CUR init all inline static {}, verify whether default ctor is called during dyn. init. silverqx
-    // CUR order/prettify/add section names for DM and DatabaseConnection silverqx
     // CUR caught exceptions in tinyplay when threading enabled, they should match with non-threading version silverqx
     // CUR divide tinyplay and all test to smaller TU so decreas memory usage during compilation, and also compilation times overall because it will recompile only small TU silverqx
     // CUR cmake/qmake run tests in parallel for tests that allow it silverqx
