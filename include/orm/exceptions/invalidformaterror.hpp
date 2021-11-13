@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! Invalid format exception. */
-    class SHAREDLIB_EXPORT InvalidFormatError : public LogicError
+    class InvalidFormatError : public LogicError
     {
         /*! Inherit constructors. */
         using LogicError::LogicError;

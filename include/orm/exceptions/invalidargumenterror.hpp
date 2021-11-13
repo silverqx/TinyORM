@@ -15,7 +15,7 @@ namespace Orm::Exceptions
 {
 
     /*! Invalid argument exception. */
-    class SHAREDLIB_EXPORT InvalidArgumentError : public LogicError
+    class InvalidArgumentError : public LogicError
     {
         /*! Inherit constructors. */
         using LogicError::LogicError;

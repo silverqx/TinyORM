@@ -15,7 +15,7 @@ namespace Orm::Exceptions
 {
 
     /*! Domain exception. */
-    class SHAREDLIB_EXPORT DomainError : public LogicError
+    class DomainError : public LogicError
     {
         /*! Inherit constructors. */
         using LogicError::LogicError;

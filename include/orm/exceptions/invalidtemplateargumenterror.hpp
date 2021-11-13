@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! Invalid template argument exception. */
-    class SHAREDLIB_EXPORT InvalidTemplateArgumentError : public InvalidArgumentError
+    class InvalidTemplateArgumentError : public InvalidArgumentError
     {
         /*! Inherit constructors. */
         using InvalidArgumentError::InvalidArgumentError;

@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! Sql transaction exception. */
-    class SHAREDLIB_EXPORT SqlTransactionError : public SqlError
+    class SqlTransactionError : public SqlError
     {
         /*! Inherit constructors. */
         using SqlError::SqlError;

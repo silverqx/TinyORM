@@ -13,7 +13,7 @@ namespace Orm::Tiny::Exceptions
 {
 
     /*! Mass assignment exception. */
-    class SHAREDLIB_EXPORT MassAssignmentError : public Orm::Exceptions::RuntimeError
+    class MassAssignmentError : public Orm::Exceptions::RuntimeError
     {
         /*! Inherit constructors. */
         using Orm::Exceptions::RuntimeError::RuntimeError;
