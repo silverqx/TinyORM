@@ -19,7 +19,7 @@ namespace Orm::Query::Grammars
 
     public:
         /*! Default constructor. */
-        SQLiteGrammar() = default;
+        inline SQLiteGrammar() = default;
         /*! Virtual destructor. */
         inline ~SQLiteGrammar() override = default;
 

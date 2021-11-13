@@ -19,7 +19,7 @@ namespace Orm::Query::Grammars
 
     public:
         /*! Default constructor. */
-        MySqlGrammar() = default;
+        inline MySqlGrammar() = default;
         /*! Virtual destructor. */
         inline ~MySqlGrammar() override = default;
 

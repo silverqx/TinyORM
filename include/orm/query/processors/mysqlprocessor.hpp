@@ -19,7 +19,7 @@ namespace Orm::Query::Processors
 
     public:
         /*! Default constructor. */
-        MySqlProcessor() = default;
+        inline MySqlProcessor() = default;
         /*! Virtual destructor. */
         inline ~MySqlProcessor() override = default;
 

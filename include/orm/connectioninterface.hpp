@@ -58,7 +58,7 @@ namespace Grammars
 
     public:
         /*! Default constructor. */
-        ConnectionInterface() = default;
+        inline ConnectionInterface() = default;
         /*! Pure virtual destructor. */
         inline virtual ~ConnectionInterface() = 0;
 

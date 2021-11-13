@@ -22,7 +22,7 @@ namespace Orm::Query::Grammars
 
     public:
         /*! Default constructor. */
-        Grammar() = default;
+        inline Grammar() = default;
         /*! Pure virtual destructor. */
         inline ~Grammar() override = 0;
 

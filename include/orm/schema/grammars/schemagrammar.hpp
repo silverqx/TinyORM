@@ -19,7 +19,7 @@ namespace Orm::Schema::Grammars
 
     public:
         /*! Default constructor. */
-        SchemaGrammar() = default;
+        inline SchemaGrammar() = default;
         /*! Pure virtual destructor. */
         inline ~SchemaGrammar() override = 0;
 

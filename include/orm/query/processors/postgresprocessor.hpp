@@ -19,7 +19,7 @@ namespace Orm::Query::Processors
 
     public:
         /*! Default constructor. */
-        PostgresProcessor() = default;
+        inline PostgresProcessor() = default;
         /*! Virtual destructor. */
         inline ~PostgresProcessor() override = default;
 

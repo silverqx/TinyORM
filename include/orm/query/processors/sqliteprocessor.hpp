@@ -19,7 +19,7 @@ namespace Orm::Query::Processors
 
     public:
         /*! Default constructor. */
-        SQLiteProcessor() = default;
+        inline SQLiteProcessor() = default;
         /*! Virtual destructor. */
         inline ~SQLiteProcessor() override = default;
 

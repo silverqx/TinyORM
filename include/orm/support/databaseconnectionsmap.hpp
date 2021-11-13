@@ -23,7 +23,7 @@ namespace Orm::Support
 
     public:
         /*! Default constructor. */
-        DatabaseConnectionsMap() = default;
+        inline DatabaseConnectionsMap() = default;
 
         /*! Type used to store database connections. */
         using ConnectionsType = std::unordered_map<QString,

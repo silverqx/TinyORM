@@ -19,7 +19,7 @@ namespace Orm::Query::Grammars
 
     public:
         /*! Default constructor. */
-        PostgresGrammar() = default;
+        inline PostgresGrammar() = default;
         /*! Virtual destructor. */
         inline ~PostgresGrammar() override = default;
 

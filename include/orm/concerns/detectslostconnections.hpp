@@ -25,7 +25,7 @@ namespace Concerns
     {
     public:
         /*! Default constructor. */
-        DetectsLostConnections() = default;
+        inline DetectsLostConnections() = default;
         /*! Virtual destructor, to pass -Weffc++. */
         inline virtual ~DetectsLostConnections() = default;
 

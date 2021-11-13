@@ -26,7 +26,7 @@ namespace Orm::Support
         using ConfigurationsType = QHash<QString, QVariantHash>;
 
         /*! Default constructor. */
-        DatabaseConfiguration() = default;
+        inline DatabaseConfiguration() = default;
 
         /*! Default Database Connection Name, used as default value in method declarations
             only. */

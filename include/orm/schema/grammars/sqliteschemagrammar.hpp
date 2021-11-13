@@ -19,7 +19,7 @@ namespace Orm::Schema::Grammars
 
     public:
         /*! Default constructor. */
-        SQLiteSchemaGrammar() = default;
+        inline SQLiteSchemaGrammar() = default;
         /*! Virtual destructor. */
         inline ~SQLiteSchemaGrammar() override = default;
 

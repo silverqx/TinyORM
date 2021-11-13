@@ -19,7 +19,7 @@ namespace Orm::Schema::Grammars
 
     public:
         /*! Default constructor. */
-        MySqlSchemaGrammar() = default;
+        inline MySqlSchemaGrammar() = default;
         /*! Virtual destructor. */
         inline ~MySqlSchemaGrammar() override = default;
 

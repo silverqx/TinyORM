@@ -19,7 +19,7 @@ namespace Orm::Schema::Grammars
 
     public:
         /*! Default constructor. */
-        PostgresSchemaGrammar() = default;
+        inline PostgresSchemaGrammar() = default;
         /*! Virtual destructor. */
         inline ~PostgresSchemaGrammar() override = default;
 
