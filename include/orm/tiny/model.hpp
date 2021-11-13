@@ -116,7 +116,6 @@ namespace Relations {
     // CUR merge changes from latest Eloquent silverqx
     // CUR unfinished instantiation, DatabaseManager::create() allow to create more instances, so m_instance is useless silverqx
     // CUR DB/DatabaseManager/DatabaseConnection all have defaultConnectionName, merge them? silverqx
-    // CUR remove SHAREDLIB_EXPORT on classes in header files only silverqx
     // CUR init all inline static {}, verify whether default ctor is called during dyn. init. silverqx
     // CUR order/prettify/add section names for DM and DatabaseConnection silverqx
     // CUR unify inherit ctors silverqx
@@ -126,6 +125,7 @@ namespace Relations {
     // CUR check Caught expected exception with message in tinyplay silverqx
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
     // CUR rename m_db to m_dm in tinyplay silverqx
+    // CUR docs pivot/basepivot include in examples silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
@@ -3338,8 +3338,5 @@ namespace Relations {
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
-
-// TODO study, find out how to avoid pivot include at the end of Model's header file silverqx
-#include "orm/tiny/relations/pivot.hpp"
 
 #endif // ORM_TINY_MODEL_HPP
