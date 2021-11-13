@@ -18,6 +18,7 @@ namespace Orm::Schema
         Q_DISABLE_COPY(SQLiteSchemaBuilder)
 
     public:
+        /*! Inherit constructors. */
         using SchemaBuilder::SchemaBuilder;
 
         /*! Virtual destructor. */

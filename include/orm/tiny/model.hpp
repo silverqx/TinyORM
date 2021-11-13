@@ -118,13 +118,11 @@ namespace Relations {
     // CUR DB/DatabaseManager/DatabaseConnection all have defaultConnectionName, merge them? silverqx
     // CUR init all inline static {}, verify whether default ctor is called during dyn. init. silverqx
     // CUR order/prettify/add section names for DM and DatabaseConnection silverqx
-    // CUR unify inherit ctors silverqx
     // CUR caught exceptions in tinyplay when threading enabled, they should match with non-threading version silverqx
     // CUR divide tinyplay and all test to smaller TU so decreas memory usage during compilation, and also compilation times overall because it will recompile only small TU silverqx
     // CUR cmake/qmake run tests in parallel for tests that allow it silverqx
     // CUR check Caught expected exception with message in tinyplay silverqx
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
-    // CUR rename m_db to m_dm in tinyplay silverqx
     // CUR docs create empty project to test docs examples, I need to test many-to-many examples, I did some changes in docs silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>

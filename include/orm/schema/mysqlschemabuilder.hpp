@@ -18,6 +18,7 @@ namespace Orm::Schema
         Q_DISABLE_COPY(MySqlSchemaBuilder)
 
     public:
+        /*! Inherit constructors. */
         using SchemaBuilder::SchemaBuilder;
 
         /*! Virtual destructor. */
