@@ -3,6 +3,7 @@
 #define TAG_HPP
 
 #include "orm/tiny/model.hpp"
+#include "orm/tiny/relations/pivot.hpp"
 
 #include "models/tagged.hpp"
 #include "models/tagproperty.hpp"
