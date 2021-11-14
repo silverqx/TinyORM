@@ -6,6 +6,7 @@
 
 #include "models/torrentpreviewablefile.hpp"
 
+// Has to be after torrentpreviewablefile.hpp
 #include "models/filepropertyproperty.hpp"
 
 namespace Models

@@ -4,6 +4,7 @@
 
 #include "orm/db.hpp"
 #include "orm/tiny/model.hpp"
+#include "orm/tiny/relations/pivot.hpp"
 
 #include "models/tag.hpp"
 #include "models/tagged.hpp"

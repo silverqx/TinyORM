@@ -3,6 +3,7 @@
 #define USER_HPP
 
 #include "orm/tiny/model.hpp"
+#include "orm/tiny/relations/pivot.hpp"
 
 #include "models/phone.hpp"
 #include "models/role.hpp"

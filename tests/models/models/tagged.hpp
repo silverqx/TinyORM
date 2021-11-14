@@ -12,10 +12,10 @@ using Orm::Tiny::Relations::BasePivot;
 
 class Tagged final : public BasePivot<Tagged>
 {
-    friend Model<Tagged>;
-    friend BasePivot<Tagged>;
+    friend Model;
+    friend BasePivot;
 
-    using BasePivot<Tagged>::BasePivot;
+    using BasePivot::BasePivot;
 
     /*! The table associated with the model. */
     QString u_table {"tag_torrent"};
