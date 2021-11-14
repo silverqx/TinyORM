@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TAG_HPP
-#define TAG_HPP
+#ifndef MODELS_TAG_HPP
+#define MODELS_TAG_HPP
 
 #include "orm/tiny/model.hpp"
 #include "orm/tiny/relations/pivot.hpp"
@@ -85,4 +85,4 @@ private:
 
 } // namespace Models
 
-#endif // TAG_HPP
+#endif // MODELS_TAG_HPP

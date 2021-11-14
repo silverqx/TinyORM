@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ROLE_HPP
-#define ROLE_HPP
+#ifndef MODELS_ROLE_HPP
+#define MODELS_ROLE_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -52,4 +52,4 @@ private:
 
 } // namespace Models
 
-#endif // ROLE_HPP
+#endif // MODELS_ROLE_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SETTING_HPP
-#define SETTING_HPP
+#ifndef MODELS_SETTING_HPP
+#define MODELS_SETTING_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -24,4 +24,4 @@ private:
 
 } // namespace Models
 
-#endif // SETTING_HPP
+#endif // MODELS_SETTING_HPP

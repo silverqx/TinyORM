@@ -1,6 +1,6 @@
 #pragma once
-#ifndef PHONE_HPP
-#define PHONE_HPP
+#ifndef MODELS_PHONE_HPP
+#define MODELS_PHONE_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -43,4 +43,4 @@ private:
 
 } // namespace Models
 
-#endif // PHONE_HPP
+#endif // MODELS_PHONE_HPP

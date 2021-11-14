@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TAGPROPERTY_HPP
-#define TAGPROPERTY_HPP
+#ifndef MODELS_TAGPROPERTY_HPP
+#define MODELS_TAGPROPERTY_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -20,4 +20,4 @@ class TagProperty final : public Model<TagProperty>
 
 } // namespace Models
 
-#endif // TAGPROPERTY_HPP
+#endif // MODELS_TAGPROPERTY_HPP

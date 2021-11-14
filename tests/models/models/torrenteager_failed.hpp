@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTEAGER_FAILED_HPP
-#define TORRENTEAGER_FAILED_HPP
+#ifndef MODELS_TORRENTEAGER_FAILED_HPP
+#define MODELS_TORRENTEAGER_FAILED_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -46,4 +46,4 @@ private:
 
 } // namespace Models
 
-#endif // TORRENTEAGER_FAILED_HPP
+#endif // MODELS_TORRENTEAGER_FAILED_HPP

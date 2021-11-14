@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MASSASSIGNMENTMODELS_HPP
-#define MASSASSIGNMENTMODELS_HPP
+#ifndef MODELS_MASSASSIGNMENTMODELS_HPP
+#define MODELS_MASSASSIGNMENTMODELS_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -71,4 +71,4 @@ class Torrent_GuardableColumn final :
 
 } // namespace Models
 
-#endif // MASSASSIGNMENTMODELS_HPP
+#endif // MODELS_MASSASSIGNMENTMODELS_HPP

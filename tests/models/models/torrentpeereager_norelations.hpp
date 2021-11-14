@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTPEEREAGER_NORELATIONS_HPP
-#define TORRENTPEEREAGER_NORELATIONS_HPP
+#ifndef MODELS_TORRENTPEEREAGER_NORELATIONS_HPP
+#define MODELS_TORRENTPEEREAGER_NORELATIONS_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -20,4 +20,4 @@ class TorrentPeerEager_NoRelations final : public Model<TorrentPeerEager_NoRelat
 
 } // namespace Models
 
-#endif // TORRENTPEEREAGER_NORELATIONS_HPP
+#endif // MODELS_TORRENTPEEREAGER_NORELATIONS_HPP

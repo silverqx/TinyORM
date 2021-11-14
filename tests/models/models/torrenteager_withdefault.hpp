@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTEAGER_WITHDEFAULT_HPP
-#define TORRENTEAGER_WITHDEFAULT_HPP
+#ifndef MODELS_TORRENTEAGER_WITHDEFAULT_HPP
+#define MODELS_TORRENTEAGER_WITHDEFAULT_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -23,4 +23,4 @@ class TorrentEager_WithDefault final : public Model<TorrentEager_WithDefault>
 
 } // namespace Models
 
-#endif // TORRENTEAGER_WITHDEFAULT_HPP
+#endif // MODELS_TORRENTEAGER_WITHDEFAULT_HPP

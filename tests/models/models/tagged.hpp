@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TAGGED_HPP
-#define TAGGED_HPP
+#ifndef MODELS_TAGGED_HPP
+#define MODELS_TAGGED_HPP
 
 #include "orm/tiny/model.hpp"
 #include "orm/tiny/relations/basepivot.hpp"
@@ -29,4 +29,4 @@ class Tagged final : public BasePivot<Tagged>
 
 } // namespace Models
 
-#endif // TAGGED_HPP
+#endif // MODELS_TAGGED_HPP

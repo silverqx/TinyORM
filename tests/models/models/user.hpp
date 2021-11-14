@@ -1,6 +1,6 @@
 #pragma once
-#ifndef USER_HPP
-#define USER_HPP
+#ifndef MODELS_USER_HPP
+#define MODELS_USER_HPP
 
 #include "orm/tiny/model.hpp"
 #include "orm/tiny/relations/pivot.hpp"
@@ -68,4 +68,4 @@ private:
 
 } // namespace Models
 
-#endif // USER_HPP
+#endif // MODELS_USER_HPP

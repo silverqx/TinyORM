@@ -1,6 +1,6 @@
 #pragma once
-#ifndef FILEPROPERTYPROPERTY_HPP
-#define FILEPROPERTYPROPERTY_HPP
+#ifndef MODELS_FILEPROPERTYPROPERTY_HPP
+#define MODELS_FILEPROPERTYPROPERTY_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -49,4 +49,4 @@ private:
 
 } // namespace Models
 
-#endif // FILEPROPERTYPROPERTY_HPP
+#endif // MODELS_FILEPROPERTYPROPERTY_HPP

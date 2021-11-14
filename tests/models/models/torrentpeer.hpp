@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTPEER_HPP
-#define TORRENTPEER_HPP
+#ifndef MODELS_TORRENTPEER_HPP
+#define MODELS_TORRENTPEER_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -44,4 +44,4 @@ private:
 
 } // namespace Models
 
-#endif // TORRENTPEER_HPP
+#endif // MODELS_TORRENTPEER_HPP

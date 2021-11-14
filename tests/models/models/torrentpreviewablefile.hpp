@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTPREVIEWABLEFILE_HPP
-#define TORRENTPREVIEWABLEFILE_HPP
+#ifndef MODELS_TORRENTPREVIEWABLEFILE_HPP
+#define MODELS_TORRENTPREVIEWABLEFILE_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -121,4 +121,4 @@ private:
 
 } // namespace Models
 
-#endif // TORRENTPREVIEWABLEFILE_HPP
+#endif // MODELS_TORRENTPREVIEWABLEFILE_HPP

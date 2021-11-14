@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ROLEUSER_HPP
-#define ROLEUSER_HPP
+#ifndef MODELS_ROLEUSER_HPP
+#define MODELS_ROLEUSER_HPP
 
 #include "orm/tiny/relations/basepivot.hpp"
 
@@ -22,4 +22,4 @@ class RoleUser final : public BasePivot<RoleUser>
 
 } // namespace Models
 
-#endif // ROLEUSER_HPP
+#endif // MODELS_ROLEUSER_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTPEEREAGER_HPP
-#define TORRENTPEEREAGER_HPP
+#ifndef MODELS_TORRENTPEEREAGER_HPP
+#define MODELS_TORRENTPEEREAGER_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -41,4 +41,4 @@ private:
 
 } // namespace Models
 
-#endif // TORRENTPEEREAGER_HPP
+#endif // MODELS_TORRENTPEEREAGER_HPP

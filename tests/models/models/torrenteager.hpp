@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TORRENTEAGER_HPP
-#define TORRENTEAGER_HPP
+#ifndef MODELS_TORRENTEAGER_HPP
+#define MODELS_TORRENTEAGER_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -77,4 +77,4 @@ private:
 
 } // namespace Models
 
-#endif // TORRENTEAGER_HPP
+#endif // MODELS_TORRENTEAGER_HPP
