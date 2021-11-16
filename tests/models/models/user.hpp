@@ -62,7 +62,7 @@ private:
         {"torrents", [](auto &v) { v(&User::torrents); }},
     };
 
-    /*! Indicates if the model should be timestamped. */
+    /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;
 };
 

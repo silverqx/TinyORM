@@ -104,9 +104,9 @@ public:
 
 private:
     /*! The name of the "created at" column. */
-    inline static const QString CREATED_AT = Orm::CREATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
+    inline static const QString &CREATED_AT = Orm::CREATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
     /*! The name of the "updated at" column. */
-    inline static const QString UPDATED_AT = Orm::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
+    inline static const QString &UPDATED_AT = Orm::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
 
     /*! The table associated with the model. */
     QString u_table {"torrents"};
@@ -168,14 +168,14 @@ private:
 //        password_,
 //    };
 
-    /*! Indicates if the model should be timestamped. */
+    /*! Indicates whether the model should be timestamped. */
 //    bool u_timestamps = true;
 
     /*! The storage format of the model's date columns. */
 //    inline static QString u_dateFormat {"yyyy-MM-dd HH:mm:ss"};
 
     /*! The attributes that should be mutated to dates. @deprecated */
-    inline static QStringList u_dates {"added_on"};
+    inline static const QStringList u_dates {"added_on"};
 
     /*! All of the relationships to be touched. */
 //    QStringList u_touches {"tags"};

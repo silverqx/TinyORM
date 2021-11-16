@@ -120,6 +120,7 @@ namespace Relations {
     // CUR check Caught expected exception with message in tinyplay silverqx
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
     // CUR docs create empty project to test docs examples, I need to test many-to-many examples, I did some changes in docs silverqx
+    // CUR divide Query Builder and TinyOrm to own packages? think about it 🤔 silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
@@ -738,10 +739,10 @@ namespace Relations {
 
         /* HasTimestamps */
         /*! The name of the "created at" column. */
-        inline static const QString CREATED_AT = Constants::CREATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
+        inline static const QString &CREATED_AT = Constants::CREATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
         /*! The name of the "updated at" column. */
-        inline static const QString UPDATED_AT = Constants::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
-        /*! Indicates if the model should be timestamped. */
+        inline static const QString &UPDATED_AT = Constants::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
+        /*! Indicates whether the model should be timestamped. */
         bool u_timestamps = true;
 
     private:
@@ -2428,10 +2429,9 @@ namespace Relations {
     const QStringList &
     Model<Derived, AllRelations...>::getDates() const
     {
-        T_THREAD_LOCAL
-        static const QStringList &dates = getDatesInternal();
+        static const QStringList cached = getDatesInternal();
 
-        return dates;
+        return cached;
     }
 
     /* Model::AttributeReference - begin */
@@ -2992,10 +2992,7 @@ namespace Relations {
         if (!usesTimestamps())
             return Derived::u_dates;
 
-        // It can be static, doesn't matter anyway
-        static const QStringList &defaults = timestampColumnNames();
-
-        auto dates = Derived::u_dates + defaults;
+        auto dates = Derived::u_dates + timestampColumnNames();
 
         dates.removeDuplicates();
 

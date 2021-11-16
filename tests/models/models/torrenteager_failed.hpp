@@ -41,7 +41,7 @@ private:
     };
 
     /*! The attributes that should be mutated to dates. @deprecated */
-    inline static QStringList u_dates {"added_on"};
+    inline static const QStringList u_dates {"added_on"};
 };
 
 } // namespace Models

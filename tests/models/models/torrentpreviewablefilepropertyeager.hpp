@@ -18,7 +18,7 @@ class TorrentPreviewableFilePropertyEager final :
     /*! The table associated with the model. */
     QString u_table {"torrent_previewable_file_properties"};
 
-    /*! Indicates if the model should be timestamped. */
+    /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;
 };
 

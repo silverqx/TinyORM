@@ -56,7 +56,7 @@ private:
 //        "torrentFile",
     };
 
-    /*! Indicates if the model should be timestamped. */
+    /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;
 
     /*! All of the relationships to be touched. */
