@@ -16,7 +16,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     class Relation;
 
-namespace Concerns {
+namespace Concerns
+{
 
     /*! Default models. */
     template<class Model, class Related>

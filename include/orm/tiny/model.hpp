@@ -36,7 +36,8 @@ namespace Orm
 
 namespace Tiny
 {
-namespace Relations {
+namespace Relations
+{
     class IsPivotModel;
 }
 
