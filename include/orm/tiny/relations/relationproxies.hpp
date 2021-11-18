@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ORM_RELATIONPROXIES_HPP
 #define ORM_RELATIONPROXIES_HPP
 

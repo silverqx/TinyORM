@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ORM_TINYBUILDERPROXIES_HPP
 #define ORM_TINYBUILDERPROXIES_HPP
 
