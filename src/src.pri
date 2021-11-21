@@ -48,6 +48,7 @@ SOURCES += \
     $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
     $$PWD/orm/tiny/relations/relation.cpp \
     $$PWD/orm/utils/attribute.cpp \
+    $$PWD/orm/utils/fs.cpp \
     $$PWD/orm/utils/query.cpp \
     $$PWD/orm/utils/string.cpp \
     $$PWD/orm/utils/thread.cpp \

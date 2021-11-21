@@ -93,6 +93,7 @@ HEADERS += \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \
     $$PWD/orm/utils/attribute.hpp \
+    $$PWD/orm/utils/fs.hpp \
     $$PWD/orm/utils/query.hpp \
     $$PWD/orm/utils/string.hpp \
     $$PWD/orm/utils/thread.hpp \

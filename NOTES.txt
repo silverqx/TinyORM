@@ -123,6 +123,10 @@ Get-ChildItem -Path *.cpp,*.hpp -Recurse | sls -Pattern ' (TODO|NOTE|FIXME|BUG|W
  - filter out executed queries:
 Get-Content .\tmp.sql | sls -Pattern '^(Executed prepared query)' | Set-Content executed_queries.sql
 
+ - run InvokeXTimes.ps1 on Linux:
+. ~/.TinyOrmPlayground
+export LD_LIBRARY_PATH=../../../TinyOrm/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_5_15_2_GCC_64bit_ccache-Debug/src
+pwsh -NoLogo -NoProfile -File InvokeXTimes.ps1 2 ../../../TinyOrmPlayground/TinyOrmPlayground-builds-qmake/build-TinyOrmPlayground-Desktop_Qt_5_15_2_GCC_64bit_ccache-Debug/TinyOrmPlayground
 
 cmake build commands:
 ---------------------

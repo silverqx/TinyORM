@@ -96,6 +96,7 @@ function(tiny_sources out_headers out_sources)
         types/log.hpp
         types/statementscounter.hpp
         utils/attribute.hpp
+        utils/fs.hpp
         utils/query.hpp
         utils/string.hpp
         utils/thread.hpp
@@ -156,6 +157,7 @@ function(tiny_sources out_headers out_sources)
         tiny/exceptions/relationnotloadederror.cpp
         tiny/relations/relation.cpp
         utils/attribute.cpp
+        utils/fs.cpp
         utils/query.cpp
         utils/string.cpp
         utils/thread.cpp
