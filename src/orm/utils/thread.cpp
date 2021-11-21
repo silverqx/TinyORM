@@ -11,8 +11,6 @@
 #include <sys/prctl.h>
 #endif
 
-// CUR test on gcc/clang and add needed includes silverqx
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Utils
@@ -23,10 +21,9 @@ namespace
 #if !defined(__clang__) && \
     !defined(TINYORM_NO_DEBUG) && defined(_MSC_VER) && !defined(Q_OS_WINRT)
 
-// CUR check on mingw silverqx
-//#ifndef Q_OS_WIN64
-//#  define ULONG_PTR DWORD
-//#endif
+#ifndef Q_OS_WIN64
+#  define ULONG_PTR DWORD
+#endif
 
     struct tagTHREADNAME_INFO
     {
@@ -75,7 +72,6 @@ namespace
 void Thread::nameThreadForDebugging([[maybe_unused]] const QString &threadName,
                                     [[maybe_unused]] const quint64 threadId)
 {
-// CUR add mingw support silverqx
 #if !defined(__clang__) && \
     !defined(TINYORM_NO_DEBUG) && defined(Q_CC_MSVC) && !defined(Q_OS_WINRT)
     setCurrentThreadName(HANDLE(-1), threadName.toLocal8Bit().constData());
