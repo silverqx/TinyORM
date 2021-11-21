@@ -115,10 +115,8 @@ namespace Relations
     // CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
     // CUR make all * to *const silverqx
     // CUR merge changes from latest Eloquent silverqx
-    // CUR caught exceptions in tinyplay when threading enabled, they should match with non-threading version silverqx
     // CUR divide tinyplay and all test to smaller TU so decreas memory usage during compilation, and also compilation times overall because it will recompile only small TU silverqx
     // CUR cmake/qmake run tests in parallel for tests that allow it silverqx
-    // CUR check Caught expected exception with message in tinyplay silverqx
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
     // CUR docs create empty project to test docs examples, I need to test many-to-many examples, I did some changes in docs silverqx
     // CUR divide Query Builder and TinyOrm to own packages? think about it 🤔 silverqx
