@@ -120,6 +120,7 @@ namespace Relations
     // CUR docs create empty project to test docs examples, I need to test many-to-many examples, I did some changes in docs silverqx
     // CUR divide Query Builder and TinyOrm to own packages? think about it 🤔 silverqx
     // BUG clang on mingw inline static initialization with another static in the same class defined line before, all other compilers (on linux too) works silverqx
+    // CUR unify default/non-default ctors comment silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
