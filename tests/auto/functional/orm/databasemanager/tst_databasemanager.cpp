@@ -4,6 +4,8 @@
 #include "orm/constants.hpp"
 #include "orm/databasemanager.hpp"
 
+#include "databases.hpp"
+
 using Orm::Constants::charset_;
 using Orm::Constants::collation_;
 using Orm::Constants::database_;
@@ -43,6 +45,16 @@ void tst_DatabaseManager::initTestCase()
 
 void tst_DatabaseManager::removeConnection_Connected() const
 {
+    // Skip autotest if all env. variables are empty
+    const std::vector<const char *> envVariables {
+        "DB_MYSQL_HOST", "DB_MYSQL_PORT", "DB_MYSQL_DATABASE", "DB_MYSQL_USERNAME",
+        "DB_MYSQL_PASSWORD", "DB_MYSQL_CHARSET", "DB_MYSQL_COLLATION"
+    };
+
+    if (TestUtils::Databases::allEnvVariablesEmpty(envVariables))
+        QSKIP("Autotest skipped because DB_MYSQL_* environment variables for MySQL "
+              "connection were not defined.", );
+
     const auto connectionName =
             QStringLiteral(
                 "tinyorm_mysql_tests-tst_DatabaseMannager-removeConnection_Connected");
