@@ -75,6 +75,15 @@ QString Databases::createConnection(const QString &connection)
     return {};
 }
 
+bool Databases::allEnvVariablesEmpty(const std::vector<const char *> &envVariables)
+{
+    return std::all_of(envVariables.cbegin(), envVariables.cend(),
+                       [](const auto *envVariable)
+    {
+        return qEnvironmentVariableIsEmpty(envVariable);
+    });
+}
+
 const Databases::ConfigurationsType &
 Databases::getConfigurations(const QStringList &connections)
 {
@@ -138,15 +147,17 @@ Databases::mysqlConfiguration()
 //                                 {"MYSQL_OPT_READ_TIMEOUT", 10}}},
     };
 
-    // Environment variables was defined
-    if (config.find(host_).value().template value<QString>() != H127001
-        && !config.find(database_).value().template value<QString>().isEmpty()
-        && config.find(username_).value().template value<QString>() != ROOT
-        && config.find(password_).value().template value<QString>() != ""
-    )
-        return {std::cref(config), true};
+    // Environment variables were undefined
+    const std::vector<const char *> envVariables {
+        "DB_MYSQL_HOST", "DB_MYSQL_PORT", "DB_MYSQL_DATABASE", "DB_MYSQL_USERNAME",
+        "DB_MYSQL_PASSWORD", "DB_MYSQL_CHARSET", "DB_MYSQL_COLLATION"
+    };
 
-    return {std::cref(config), false};
+    if (allEnvVariablesEmpty(envVariables))
+        return {std::cref(config), false};
+
+    // Environment variables was defined
+    return {std::cref(config), true};
 }
 
 std::pair<std::reference_wrapper<const QVariantHash>, bool>
@@ -161,11 +172,16 @@ Databases::sqliteConfiguration()
         {check_database_exists,   true},
     };
 
-    // Environment variables was defined
-    if (!config.find(database_).value().template value<QString>().isEmpty())
-        return {std::cref(config), true};
+    // Environment variables were undefined
+    const std::vector<const char *> envVariables {
+        "DB_SQLITE_DATABASE", "DB_SQLITE_FOREIGN_KEYS"
+    };
 
-    return {std::cref(config), false};
+    if (allEnvVariablesEmpty(envVariables))
+        return {std::cref(config), false};
+
+    // Environment variables was defined
+    return {std::cref(config), true};
 }
 
 std::pair<std::reference_wrapper<const QVariantHash>, bool>
@@ -187,16 +203,17 @@ Databases::postgresConfiguration()
         {options_,  QVariantHash()},
     };
 
-    // Environment variables was defined
-    if (config.find(host_).value().template value<QString>() != H127001
-        && !config.find(database_).value().template value<QString>().isEmpty()
-        && config.find(username_)
-                 .value().template value<QString>() != QStringLiteral("postgres")
-        && config.find(password_).value().template value<QString>() != ""
-    )
-        return {std::cref(config), true};
+    // Environment variables were undefined
+    const std::vector<const char *> envVariables {
+        "DB_PGSQL_HOST", "DB_PGSQL_PORT", "DB_PGSQL_DATABASE", "DB_PGSQL_SCHEMA",
+        "DB_PGSQL_USERNAME", "DB_PGSQL_PASSWORD", "DB_PGSQL_CHARSET"
+    };
 
-    return {std::cref(config), false};
+    if (allEnvVariablesEmpty(envVariables))
+        return {std::cref(config), false};
+
+    // Environment variables was defined
+    return {std::cref(config), true};
 }
 
 void Databases::throwIfConnectionsInitialized()

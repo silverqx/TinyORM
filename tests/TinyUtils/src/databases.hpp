@@ -32,6 +32,9 @@ namespace TestUtils
         /*! Create database connection. */
         static QString createConnection(const QString &connection);
 
+        /*! Check whether all env. variables are empty. */
+        static bool allEnvVariablesEmpty(const std::vector<const char *> &envVariables);
+
     private:
         /*! Obtain configurations for the given connection names. */
         static const ConfigurationsType &
