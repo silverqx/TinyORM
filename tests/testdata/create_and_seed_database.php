@@ -4,12 +4,13 @@ require_once 'vendor/autoload.php';
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Arr;
 
 /**
  * Combine Insert statement values with columns.
  *
- * @param array $columns
- * @param array $values
+ * @param array $columns Array of keys to be used
+ * @param array $values  Array of values to be used
  *
  * @return array
  */
@@ -34,32 +35,105 @@ function combineValues(array $columns, array $values): array
  * Drop all tables for the given connection.
  *
  * @param string $connection The connection name
+ *
  * @return void
  */
-function dropAllTables(string $connection)
+function dropAllTables(string $connection): void
 {
     Capsule::schema($connection)->dropAllTables();
 }
 
 /**
- * Add all configuration connections to the capsule.
+ * Check whether all env. variables are undefined.
+ *
+ * @param array $envVariables Environment variables to check
+ *
+ * @return bool
+ */
+function allEnvVariablesEmpty(array $envVariables): bool
+{
+    return collect($envVariables)->every(function (string $envVariable) {
+        return false === \getenv($envVariable);
+    });
+}
+
+/**
+ * Remove configurations for which env. variables were not passed.
+ *
+ * @param array $configs Configurations array to process
+ *
+ * @return void
+ */
+function removeUnusedConfigs(array &$configs): void
+{
+    foreach (array_keys($configs) as $connectionName)
+        switch ($connectionName) {
+            case 'mysql':
+            {
+                $envVariables = [
+                    'DB_MYSQL_HOST', 'DB_MYSQL_PORT', 'DB_MYSQL_DATABASE', 'DB_MYSQL_USERNAME',
+                    'DB_MYSQL_PASSWORD', 'DB_MYSQL_CHARSET', 'DB_MYSQL_COLLATION'
+                ];
+
+                if (allEnvVariablesEmpty($envVariables))
+                    Arr::forget($configs, 'mysql');
+
+                break;
+            }
+
+            case 'sqlite': {
+                $envVariables = ['DB_SQLITE_DATABASE'];
+
+                if (allEnvVariablesEmpty($envVariables))
+                    Arr::forget($configs, 'sqlite');
+
+                break;
+            }
+
+            case 'pgsql':
+            {
+                $envVariables = [
+                    'DB_MYSQL_HOST', 'DB_MYSQL_PORT', 'DB_MYSQL_DATABASE', 'DB_PGSQL_SCHEMA',
+                    'DB_MYSQL_USERNAME', 'DB_MYSQL_PASSWORD', 'DB_MYSQL_CHARSET'
+                ];
+
+                if (allEnvVariablesEmpty($envVariables))
+                    Arr::forget($configs, 'pgsql');
+
+                break;
+            }
+
+            default:
+                throw new RuntimeException("Unknown connection name '$connectionName'.");
+        }
+}
+
+/**
+ * Add all configuration connections to the capsule and connect to the database.
  *
  * @param Capsule $capsule
- * @param array   $configs
+ * @param array   $configs Configurations to add and connect
+ *
+ * @return void
  */
-function addConnections(Capsule $capsule, array $configs = [])
+function addConnections(Capsule $capsule, array $configs = []): void
 {
-    foreach ($configs as $name => $config)
+    foreach ($configs as $name => $config) {
         $capsule->addConnection($config, $name);
+
+        // Create database connection eagerly
+        $capsule->getConnection($name)->statement('select 1 + 1');
+    }
 }
 
 /**
  * Create all tables for the given connection.
  *
  * @param string $connection The connection name
+ *
  * @return void
  */
-function createTables(string $connection)
+function createTables(string $connection): void
 {
     $schema = Capsule::schema($connection);
 
@@ -205,9 +279,10 @@ function createTables(string $connection)
  * Seed all tables with data.
  *
  * @param string $connection The connection name
+ *
  * @return void
  */
-function seedTables(string $connection)
+function seedTables(string $connection): void
 {
 
     Capsule::table('users', null, $connection)->insert(
@@ -326,7 +401,8 @@ function seedTables(string $connection)
  *
  * @return void
  */
-function fixSequences() {
+function fixSequences(): void
+{
     $sequences = [
         'torrents_id_seq'                            => 7,
         'torrent_peers_id_seq'                       => 5,
@@ -350,9 +426,10 @@ function fixSequences() {
  * Create and seed all tables for all connections.
  *
  * @param array $connections Connection names
+ *
  * @return void
  */
-function createAndSeedTables(array $connections)
+function createAndSeedTables(array $connections): void
 {
     foreach ($connections as $connection) {
         dropAllTables($connection);
@@ -364,6 +441,7 @@ function createAndSeedTables(array $connections)
     }
 }
 
+/* Main Code */
 $capsule = new Capsule;
 
 $capsule->setAsGlobal();
@@ -405,5 +483,9 @@ $configs = [
     ],
 ];
 
+// Remove configurations for which env. variables were not defined
+removeUnusedConfigs($configs);
+// Create database connections first so when any connection fails then no data will be seeded
 addConnections($capsule, $configs);
+
 createAndSeedTables(array_keys($configs));
