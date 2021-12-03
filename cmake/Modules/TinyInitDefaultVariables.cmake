@@ -153,6 +153,26 @@ macro(tiny_init_tiny_variables_pre)
         "True when using a multi-configuration generator")
     unset(isMultiConfig)
 
+    # Allow using an environment variable VCPKG_ROOT instead of CMAKE_TOOLCHAIN_FILE
+    # command-line option
+    if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+        set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            CACHE STRING "Path to toolchain file supplied to cmake.")
+    endif()
+    # GitHub Actions defines VCPKG_INSTALLATION_ROOT instead of VCPKG_ROOT
+    if(DEFINED ENV{VCPKG_INSTALLATION_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+        set(CMAKE_TOOLCHAIN_FILE
+            "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            CACHE STRING "Path to toolchain file supplied to cmake.")
+    endif()
+
+    # Vcpkg CMake integration ignores VCPKG_DEFAULT_TRIPLET env. variable, but acceppts
+    # VCPKG_TARGET_TRIPLET command-line option
+    if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
+        set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING
+            "Change the default triplet for CMake Integration.")
+    endif()
+
 endmacro()
 
 # Initialize Tiny variables
