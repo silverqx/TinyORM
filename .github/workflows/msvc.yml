@@ -169,9 +169,13 @@ jobs:
       env:
         DOWNLOAD_QMYSQL_DLLS: ${{ secrets.DOWNLOAD_QMYSQL_DLLS }}
 
-    - name: vcpkg set default triplet to x64-windows
-      run: >-
-        Write-Output 'VCPKG_DEFAULT_TRIPLET=x64-windows' |
+    - name: vcpkg set-up environment
+      run: |
+        Write-Output "VCPKG_ROOT=${env:VCPKG_INSTALLATION_ROOT}" | `
+        Out-File -FilePath $env:GITHUB_ENV -Append
+        Write-Output 'VCPKG_DEFAULT_TRIPLET=x64-windows' | `
+        Out-File -FilePath $env:GITHUB_ENV -Append
+        Write-Output 'VCPKG_MAX_CONCURRENCY=2' | `
         Out-File -FilePath $env:GITHUB_ENV -Append
 
     - name: Visual Studio 2019 pwsh shell setup
@@ -181,6 +185,12 @@ jobs:
 
     - name: TinyORM cmake configure (msvc-cmake-debug)
       run: >-
+        echo $env:VCPKG_ROOT
+
+        echo $env:VCPKG_DEFAULT_TRIPLET
+
+        echo $env:VCPKG_MAX_CONCURRENCY
+
         cmake
         -S .
         -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
