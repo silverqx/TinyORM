@@ -1,0 +1,215 @@
+name: MSVC
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - gh-actions
+
+jobs:
+
+  build:
+    name: cmake build / ctest
+
+    runs-on: windows-2019
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: PostgreSQL start service
+      run: |
+        Set-Service -Name postgresql-x64-14 -StartupType Manual
+        Start-Service postgresql-x64-14
+
+    - name: PostgreSQL add on the $env:Path
+      run: |
+        Write-Output "$env:PGBIN" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+    - name: PostgreSQL check service status
+      run: |
+        $pgsqlService = Get-Service postgresql-x64-14
+        Write-Output $pgsqlService
+        $pgsqlService.status.ToString() -ceq "Running" `
+        -or $(throw 'postgresql-x64-14 service is not running') > $null
+        pg_isready.exe
+
+    - name: PostgreSQL create TinyORM user
+      run: >-
+        psql.exe
+        --command="CREATE USER ${env:DB_PGSQL_USERNAME} PASSWORD '${env:DB_PGSQL_PASSWORD}'"
+      env:
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+
+    - name: PostgreSQL create TinyORM database
+      run: |
+        createdb.exe --owner=$env:DB_PGSQL_USERNAME $env:DB_PGSQL_DATABASE
+      env:
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+
+    - name: Remove C:\mysql\bin from $env:Path
+      run: |
+        Rename-Item -Path C:\mysql -NewName C:\mysql.bak
+
+    - name: choco install mysql (MySQL 8)
+      run: >-
+        choco install mysql -y --no-progress
+        --params "/port:3306 /serviceName:MySQL
+        /dataLocation:'$(Resolve-Path ${{ runner.workspace }}/../)'"
+
+        Write-Output 'C:\tools\mysql\current\lib;C:\tools\mysql\current\bin' |
+        Out-File -FilePath $env:GITHUB_PATH -Append
+
+    - name: MySQL change TinyORM password
+      run: >-
+        mysql.exe --host=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME --skip-password
+        --execute="ALTER USER '${env:DB_MYSQL_USERNAME}'@'${env:DB_MYSQL_HOST}'
+        IDENTIFIED BY '${env:DB_MYSQL_PASSWORD}';"
+      env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: MySQL check service status
+      run: |
+        $mysqlService = Get-Service MySQL
+        Write-Output $mysqlService
+        $mysqlService.status.ToString() -ceq "Running" `
+        -or $(throw 'MySQL service is not running') > $null
+        mysqladmin.exe --bind-address=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME `
+        --password=$env:DB_MYSQL_PASSWORD ping
+      env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: MySQL create TinyORM database
+      run: >-
+        echo "
+        create database if not exists $env:DB_MYSQL_DATABASE
+        default character set utf8mb4
+        default collate utf8mb4_0900_ai_ci;" |
+        mysql.exe --host=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME
+        --password=$env:DB_MYSQL_PASSWORD
+      env:
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: SQLite create TinyORM database
+      run: |
+        touch "$env:DB_SQLITE_DATABASE"
+      env:
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+
+    - name: PHP enable PDO extensions (pdo_mysql, pdo_pgsql, pdo_sqlite)
+      run: |
+        Add-Content -Path "${env:PHPROOT}/php.ini" -Value `
+        "[PHP]
+        extension=pdo_mysql
+        extension=pdo_pgsql
+        extension=pdo_sqlite
+        "
+
+    - name: testdata composer install (illuminate/database)
+      uses: "ramsey/composer-install@v1"
+      with:
+        composer-options: >-
+          --working-dir=${{ github.workspace }}/tests/testdata
+          --prefer-dist --optimize-autoloader
+
+    - name: Create and Seed tables (MySQL, PostgreSQL, SQLite)
+      working-directory: tests/testdata
+      run: |
+        php.exe ./create_and_seed_database.php
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+
+    - name: TinyORM create build folder (msvc-cmake-debug)
+      run: |
+        mkdir -p ../TinyORM-builds-cmake/build-msvc-cmake-debug
+
+    - name: Qt 5.15.2 install base components
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: 5.15.2
+        arch: win64_msvc2019_64
+        setup-python: false
+        extra: --external 7z.exe
+        dir: '${{ runner.workspace }}/../'
+
+    - name: QMYSQL install driver dlls (Qt 5.15.2)
+      working-directory: ${{ runner.temp }}
+      run: >-
+        $response = Invoke-WebRequest -Uri $env:DOWNLOAD_QMYSQL_DLLS
+
+        $filename = [System.Net.Mime.ContentDisposition]::new(
+        $response.Headers['Content-Disposition']).FileName
+
+        $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath $filename
+
+        $response | Select-Object -ExpandProperty Content |
+        Set-Content -Path $filepath -AsByteStream
+
+        7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $filepath
+      env:
+        DOWNLOAD_QMYSQL_DLLS: ${{ secrets.DOWNLOAD_QMYSQL_DLLS }}
+
+    - name: vcpkg set default triplet to x64-windows
+      run: >-
+        Write-Output 'VCPKG_DEFAULT_TRIPLET=x64-windows' |
+        Out-File -FilePath $env:GITHUB_ENV -Append
+
+    - name: Visual Studio 2019 pwsh shell setup
+      uses: egor-tensin/vs-shell@v2
+      with:
+        arch: x64
+
+    - name: TinyORM cmake configure (msvc-cmake-debug)
+      run: >-
+        cmake
+        -S .
+        -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
+        -G Ninja
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_BUILD_TYPE:BOOL=Debug
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D CMAKE_VERBOSE_MAKEFILE:BOOL=OFF
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D MYSQL_PING:BOOL=ON
+        -D BUILD_TESTS:BOOL=ON
+
+    - name: TinyORM cmake build ✨ (msvc-cmake-debug)
+      run: >-
+        cmake --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
+
+    - name: TinyORM execute ctest 🔥
+      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug
+      run: ctest
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}

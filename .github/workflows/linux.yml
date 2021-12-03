@@ -1,0 +1,213 @@
+name: Linux
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - gh-actions
+
+jobs:
+
+  build:
+    name: cmake build / ctest
+
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        compiler:
+          - key: clang13
+            apt: [ clang-13, lld, g++-11 ]
+            command: clang++-13
+
+          - key: gcc11
+            apt: [ g++-11 ]
+            command: g++-11
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: PostgreSQL start service
+      run: |
+        sudo systemctl start postgresql.service
+
+    - name: PostgreSQL check service status
+      run: |
+        sudo systemctl status postgresql.service
+        pg_isready
+
+    - name: PostgreSQL create TinyORM user
+      run: >-
+        sudo -u postgres
+        psql --command="CREATE USER $DB_PGSQL_USERNAME PASSWORD '$DB_PGSQL_PASSWORD'"
+      env:
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+
+    - name: PostgreSQL create TinyORM database
+      run: |
+        sudo -u postgres createdb --owner=$DB_PGSQL_USERNAME $DB_PGSQL_DATABASE
+      env:
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+
+    - name: MySQL start service
+      run: |
+        sudo systemctl start mysql.service
+
+    - name: MySQL change TinyORM password
+      run: >-
+        mysql --host=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD_DEFAULT
+        --execute="ALTER USER '$DB_MYSQL_USERNAME'@'$DB_MYSQL_HOST'
+        IDENTIFIED BY '$DB_MYSQL_PASSWORD';"
+      env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_PASSWORD_DEFAULT: ${{ secrets.DB_MYSQL_PASSWORD_DEFAULT }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: MySQL check service status
+      run: >-
+        sudo systemctl status mysql.service
+
+        mysqladmin --bind-address=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME
+        --password=$DB_MYSQL_PASSWORD ping
+      env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: MySQL create TinyORM database
+      run: >-
+        echo "
+        create database if not exists $DB_MYSQL_DATABASE
+        default character set utf8mb4
+        default collate utf8mb4_0900_ai_ci;" |
+        mysql --host=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD
+      env:
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: SQLite create TinyORM database
+      run: |
+        touch "$DB_SQLITE_DATABASE"
+      env:
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+
+    - name: PHP disable Xdebug
+      run: |
+        sudo phpdismod -s cli xdebug
+
+    - name: testdata composer install (illuminate/database)
+      uses: "ramsey/composer-install@v1"
+      with:
+        composer-options: >-
+          --working-dir=${{ github.workspace }}/tests/testdata
+          --prefer-dist --optimize-autoloader
+
+    - name: Create and Seed tables (MySQL, PostgreSQL, SQLite)
+      working-directory: tests/testdata
+      run: |
+        php ./create_and_seed_database.php
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+
+    - name: add-apt-repository gcc 11 and Qt 5.15.2
+      run: |
+        sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        sudo add-apt-repository -y ppa:beineri/opt-qt-5.15.2-focal
+
+    - name: add-apt-repository Clang 13
+      if: ${{ matrix.compiler.key == 'clang13' }}
+      run: |
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo add-apt-repository -y "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"
+
+    - name: apt update
+      run: |
+        sudo apt update
+
+    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, Qt 5.15.2 base, and ccache
+      run: |
+        sudo apt install -y ${{ join(matrix.compiler.apt, ' ') }} qt515base ccache
+
+    - name: ninja install latest version
+      uses: seanmiddleditch/gha-setup-ninja@master
+      with:
+        destination: ${{ runner.workspace }}/../ninja-build
+
+    - name: TinyORM create build folder (${{ matrix.compiler.key }}-cmake-debug)
+      run: |
+        mkdir -p ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+
+    - name: ccache setup 🕺
+      uses: Chocobo1/setup-ccache-action@v1
+      with:
+        install_ccache: false
+        update_packager_index: false
+        ccache_options: |
+          compression = false
+          max_size = 3G
+
+    # Doesn't work in the manifest mode, I'm using header library only (range-v3) so does not matter
+    # for now, I leave it here anyway.
+    - name: vcpkg set default triplet to x64-linux-dynamic
+      run: |
+        echo 'VCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/.github/resources/vcpkg-custom-triplets' \
+        >> $GITHUB_ENV
+        echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
+
+    - name: TinyORM cmake configure (${{ matrix.compiler.key }}-cmake-debug)
+      run: >-
+        source .github/resources/qt5env.sh
+
+        cmake
+        -S .
+        -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+        -G Ninja
+        -D CMAKE_CXX_COMPILER:FILEPATH="${{ env.ccache_symlinks_path }}/${{ matrix.compiler.command }}"
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_BUILD_TYPE:BOOL=Debug
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D MYSQL_PING:BOOL=ON
+        -D BUILD_TESTS:BOOL=ON
+
+    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
+      run: >-
+        source .github/resources/qt5env.sh
+
+        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+        --target all --parallel 2
+
+    - name: TinyORM execute ctest 🔥
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+      run: ctest
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}

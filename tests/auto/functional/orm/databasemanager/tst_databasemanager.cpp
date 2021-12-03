@@ -7,18 +7,19 @@
 #include "databases.hpp"
 
 using Orm::Constants::charset_;
-using Orm::Constants::collation_;
 using Orm::Constants::database_;
 using Orm::Constants::driver_;
 using Orm::Constants::H127001;
 using Orm::Constants::host_;
-using Orm::Constants::P3306;
+using Orm::Constants::P5432;
 using Orm::Constants::password_;
 using Orm::Constants::port_;
-using Orm::Constants::QMYSQL;
-using Orm::Constants::ROOT;
+using Orm::Constants::PUBLIC;
+using Orm::Constants::QPSQL;
+using Orm::Constants::schema_;
 using Orm::Constants::username_;
-using Orm::Constants::UTF8MB4;
+using Orm::Constants::UTF8;
+
 using Orm::DatabaseManager;
 using Orm::Support::DatabaseConfiguration;
 
@@ -47,32 +48,32 @@ void tst_DatabaseManager::removeConnection_Connected() const
 {
     // Skip autotest if all env. variables are empty
     const std::vector<const char *> envVariables {
-        "DB_MYSQL_HOST", "DB_MYSQL_PORT", "DB_MYSQL_DATABASE", "DB_MYSQL_USERNAME",
-        "DB_MYSQL_PASSWORD", "DB_MYSQL_CHARSET", "DB_MYSQL_COLLATION"
+        "DB_PGSQL_HOST", "DB_PGSQL_PORT", "DB_PGSQL_DATABASE", "DB_PGSQL_SCHEMA",
+        "DB_PGSQL_USERNAME", "DB_PGSQL_PASSWORD", "DB_PGSQL_CHARSET"
     };
 
     if (TestUtils::Databases::allEnvVariablesEmpty(envVariables))
-        QSKIP("Autotest skipped because DB_MYSQL_* environment variables for MySQL "
+        QSKIP("Autotest skipped because DB_PGSQL_* environment variables for PostgreSQL "
               "connection were not defined.", );
 
     const auto connectionName =
             QStringLiteral(
-                "tinyorm_mysql_tests-tst_DatabaseMannager-removeConnection_Connected");
-    const auto databaseName = qEnvironmentVariable("DB_MYSQL_DATABASE", "");
-    const auto driverName = QMYSQL;
+                "tinyorm_pgsql_tests-tst_DatabaseMannager-removeConnection_Connected");
+    const auto databaseName = qEnvironmentVariable("DB_PGSQL_DATABASE", "");
+    const auto driverName = QPSQL;
 
     // Create database connection
     m_dm->addConnections({
         {connectionName, {
-            {driver_,    driverName},
-            {host_,      qEnvironmentVariable("DB_MYSQL_HOST", H127001)},
-            {port_,      qEnvironmentVariable("DB_MYSQL_PORT", P3306)},
-            {database_,  databaseName},
-            {username_,  qEnvironmentVariable("DB_MYSQL_USERNAME", ROOT)},
-            {password_,  qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
-            {charset_,   qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
-            {collation_, qEnvironmentVariable("DB_MYSQL_COLLATION",
-                                              QStringLiteral("utf8mb4_0900_ai_ci"))},
+            {driver_,   driverName},
+            {host_,     qEnvironmentVariable("DB_PGSQL_HOST", H127001)},
+            {port_,     qEnvironmentVariable("DB_PGSQL_PORT", P5432)},
+            {database_, databaseName},
+            {schema_,   qEnvironmentVariable("DB_PGSQL_SCHEMA", PUBLIC)},
+            {username_, qEnvironmentVariable("DB_PGSQL_USERNAME",
+                                             QStringLiteral("postgres"))},
+            {password_, qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},
+            {charset_,  qEnvironmentVariable("DB_PGSQL_CHARSET", UTF8)},
         }},
     // Don't setup any default connection
     }, "");
@@ -103,10 +104,12 @@ void tst_DatabaseManager::removeConnection_Connected() const
 
 void tst_DatabaseManager::removeConnection_NotConnected() const
 {
-    const auto connectionName = QStringLiteral("dummy_connection");
+    const auto connectionName =
+            QStringLiteral(
+                "tinyorm_pgsql_tests-tst_DatabaseMannager-removeConnection_NotConnected");
 
     m_dm->addConnection({
-        {driver_, QMYSQL},
+        {driver_, QPSQL},
         {host_,   "example.com"},
     }, connectionName);
 

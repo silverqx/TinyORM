@@ -5,3 +5,5 @@ core.eol=lf
 *.ico binary
 *.qm binary
 *.icns binary
+*.dll binary
+*.pdb binary

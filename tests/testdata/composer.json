@@ -4,12 +4,17 @@
     "description": "Create and seed databases for TinyORM tests.",
     "keywords": [
         "database",
-        "seed"
+        "seed",
+        "tinyorm"
     ],
     "license": "MIT",
     "require": {
         "php": "^8.0",
-        "ext-pdo": "*",
+        "ext-pdo": "^8.0",
+        "ext-pdo_mysql": "^8.0",
+        "ext-pdo_pgsql": "^8.0",
+        "ext-pdo_sqlite": "^8.0",
+
         "illuminate/database": "^8.33"
     }
 }

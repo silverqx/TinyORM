@@ -121,6 +121,8 @@ namespace Relations
     // CUR divide Query Builder and TinyOrm to own packages? think about it 🤔 silverqx
     // BUG clang on mingw inline static initialization with another static in the same class defined line before, all other compilers (on linux too) works silverqx
     // CUR unify default/non-default ctors comment silverqx
+    // CUR discard common settings in tests/conf.pri, then qmake project will compile only if /conf.pri will be set, less manual configurations for users is still better silverqx
+    // CUR cmake when MYSQL_PING is on and QMYSQL driver is not build ctest fails, fail configure? I don't knwo how I will solve this for now, also fix qmake silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

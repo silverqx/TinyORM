@@ -145,6 +145,11 @@ ${TINY_UNPARSED_ARGUMENTS}")
         endif()
     endif()
 
+    # Use faster lld linker on Clang
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        target_link_options(${target} INTERFACE -fuse-ld=lld)
+    endif()
+
     # Use 64-bit off_t on 32-bit Linux, ensure 64bit offsets are used for filesystem
     # accesses for 32bit compilation
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SIZEOF_VOID_P EQUAL 4)

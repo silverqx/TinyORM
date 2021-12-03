@@ -5,6 +5,7 @@ require_once 'vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Combine Insert statement values with columns.
@@ -93,8 +94,8 @@ function removeUnusedConfigs(array &$configs): void
             case 'pgsql':
             {
                 $envVariables = [
-                    'DB_MYSQL_HOST', 'DB_MYSQL_PORT', 'DB_MYSQL_DATABASE', 'DB_PGSQL_SCHEMA',
-                    'DB_MYSQL_USERNAME', 'DB_MYSQL_PASSWORD', 'DB_MYSQL_CHARSET'
+                    'DB_PGSQL_HOST', 'DB_PGSQL_PORT', 'DB_PGSQL_DATABASE', 'DB_PGSQL_SCHEMA',
+                    'DB_PGSQL_USERNAME', 'DB_PGSQL_PASSWORD', 'DB_PGSQL_CHARSET'
                 ];
 
                 if (allEnvVariablesEmpty($envVariables))
@@ -489,3 +490,5 @@ removeUnusedConfigs($configs);
 addConnections($capsule, $configs);
 
 createAndSeedTables(array_keys($configs));
+
+//var_dump(Capsule::connection('mysql')->table('torrents')->get()->toArray());
