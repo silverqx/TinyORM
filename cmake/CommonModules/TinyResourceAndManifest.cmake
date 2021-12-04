@@ -80,10 +80,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     target_sources(${target} PRIVATE
         "${TINY_RESOURCES_DIR}/${rcBasename}.rc.in"
         "${TINY_OUTPUT_DIR}/${rcBasename}_genexp.rc.in"
-        # Leaks to compilation commands database and then makes problems during
-        # clang-tidy check, so I comment it out, it does not show in the Project Explorer
-        # anyway so does not matter.
-#        "$<$<BOOL:$<CONFIG>>:${TINY_OUTPUT_DIR}/${rcBasename}-$<CONFIG>.rc>"
+        "$<$<BOOL:$<CONFIG>>:${TINY_OUTPUT_DIR}/${rcBasename}-$<CONFIG>.rc>"
     )
 
     # Manifest file (injected through the RC file on MinGW)
