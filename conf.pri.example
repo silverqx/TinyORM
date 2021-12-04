@@ -11,8 +11,16 @@
 # Gentoo - emerge dev-cpp/range-v3
 # Ubuntu - apt install librange-v3-dev
 
+# ccache
+# Arch   - pacman -S ccache
+# Gentoo - emerge dev-util/ccache
+# Ubuntu - apt install ccache
+
 # MinGW
 win32-g++|win32-clang-g++ {
+    # Enable ccache wrapper
+    CONFIG *= tiny_ccache
+
     # Libraries
     # MySQL C library
     # Find with the pkg-config (preferred), shared build only

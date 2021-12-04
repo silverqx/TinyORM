@@ -1,0 +1,7 @@
+# MinGW
+win32-g++|win32-clang-g++ {
+    ccache_prefix = ccache
+
+    for(tool, $$list(QMAKE_CC QMAKE_CXX QMAKE_LINK QMAKE_LINK_SHLIB QMAKE_LINK_C)): \
+        $$tool = $$ccache_prefix $$eval($$tool)
+}
