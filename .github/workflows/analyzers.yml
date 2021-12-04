@@ -87,4 +87,4 @@ jobs:
 
     - name: TinyORM execute clang-tidy 🔥
       working-directory: ../TinyORM-builds-cmake/build-clang13-cmake-debug
-      run: run-clang-tidy-13
+      run: run-clang-tidy-13 '.+\.cpp$'
