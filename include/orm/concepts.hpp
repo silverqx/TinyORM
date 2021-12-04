@@ -13,7 +13,7 @@ TINY_SYSTEM_HEADER
 namespace std
 {
     template<typename ...Types>
-    class variant;
+    class variant; // NOLINT(bugprone-forwarding-reference-overload)
 }
 
 TINYORM_BEGIN_COMMON_NAMESPACE

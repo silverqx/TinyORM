@@ -123,6 +123,7 @@ namespace Relations
     // CUR unify default/non-default ctors comment silverqx
     // CUR discard common settings in tests/conf.pri, then qmake project will compile only if /conf.pri will be set, less manual configurations for users is still better silverqx
     // CUR cmake when MYSQL_PING is on and QMYSQL driver is not build ctest fails, fail configure? I don't knwo how I will solve this for now, also fix qmake silverqx
+    // CUR clang-tidy fix cppcoreguidelines-pro-bounds-array-to-pointer-decay and cppcoreguidelines-pro-bounds-constant-array-index silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

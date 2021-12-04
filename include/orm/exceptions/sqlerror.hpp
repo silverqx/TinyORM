@@ -27,8 +27,9 @@ namespace Orm::Exceptions
         const QSqlError &getSqlError() const;
 
     protected:
-        /*! Internal ctor for use from descendants to avoid an error message formatting. */
-        SqlError(const QString &message, const QSqlError &error, int);
+        /*! Internal ctor for use from descendants to avoid an error message
+            formatting. */
+        SqlError(const QString &message, const QSqlError &error, int /*unused*/);
 
         /*! Format the Qt SQL error message. */
         QString formatMessage(const char *message, const QSqlError &error) const;

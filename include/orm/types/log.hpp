@@ -2,6 +2,8 @@
 #ifndef ORM_LOG_HPP
 #define ORM_LOG_HPP
 
+#include <QVariant>
+
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
