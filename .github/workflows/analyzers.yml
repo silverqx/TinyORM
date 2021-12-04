@@ -1,0 +1,90 @@
+name: Analyzers
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - gh-actions
+
+jobs:
+
+  clang-tidy:
+    name: clang-tidy
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: add-apt-repository gcc 11 and Qt 5.15.2
+      run: |
+        sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        sudo add-apt-repository -y ppa:beineri/opt-qt-5.15.2-focal
+
+    - name: add-apt-repository Clang 13
+      run: |
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo add-apt-repository -y "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"
+
+    - name: apt update
+      run: |
+        sudo apt update
+
+    - name: apt install clang-13, lld, g++-11, clang-tidy-13, Qt 5.15.2 base, and ccache
+      run: |
+        sudo apt install -y clang-13 lld g++-11 clang-tidy-13 qt515base ccache
+
+    - name: ninja install latest version
+      uses: seanmiddleditch/gha-setup-ninja@master
+      with:
+        destination: ${{ runner.workspace }}/../ninja-build
+
+    - name: TinyORM create build folder (clang13-cmake-debug)
+      run: |
+        mkdir -p ../TinyORM-builds-cmake/build-clang13-cmake-debug
+
+    - name: ccache setup 🕺
+      uses: Chocobo1/setup-ccache-action@v1
+      with:
+        install_ccache: false
+        update_packager_index: false
+        ccache_options: |
+          compression = false
+          max_size = 3G
+
+    - name: vcpkg set-up environment
+      run: |
+        echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+        echo 'VCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/.github/resources/vcpkg-custom-triplets' \
+        >> $GITHUB_ENV
+        echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
+        echo 'VCPKG_MAX_CONCURRENCY=2' >> $GITHUB_ENV
+
+    - name: TinyORM cmake configure (clang13-cmake-debug)
+      run: >-
+        source .github/resources/qt5env.sh
+
+        cmake
+        -S .
+        -B ../TinyORM-builds-cmake/build-clang13-cmake-debug
+        -G Ninja
+        -D CMAKE_CXX_COMPILER_LAUNCHER=/usr/bin/ccache
+        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-13
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON
+        -D CMAKE_BUILD_TYPE:BOOL=Debug
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D MYSQL_PING:BOOL=ON
+        -D BUILD_TESTS:BOOL=ON
+
+    - name: TinyORM cmake build ✨ (clang13-cmake-debug)
+      run: |
+        source .github/resources/qt5env.sh
+        cmake --build ../TinyORM-builds-cmake/build-clang13-cmake-debug --target all --parallel 2
+
+    - name: TinyORM execute clang-tidy 🔥
+      working-directory: ../TinyORM-builds-cmake/build-clang13-cmake-debug
+      run: run-clang-tidy-13
