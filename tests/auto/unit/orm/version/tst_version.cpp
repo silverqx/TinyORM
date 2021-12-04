@@ -24,7 +24,9 @@
 #  define TINYTEST_VERSION_TINYUTILS_PATH
 #endif
 
+#if defined(_WIN32)
 using TestUtils::Fs;
+#endif
 
 class tst_Version : public QObject
 {

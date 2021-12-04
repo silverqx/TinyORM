@@ -58,7 +58,7 @@ namespace
     void setCurrentThreadName(const char *name)
     {
 #  if defined(Q_OS_LINUX) && !defined(QT_LINUXBASE)
-        prctl(PR_SET_NAME, reinterpret_cast<unsigned long>(name), 0, 0, 0);
+        prctl(PR_SET_NAME, reinterpret_cast<quint64>(name), 0, 0, 0);
 #  elif defined(Q_OS_MAC)
         pthread_setname_np(name);
 #  elif defined(Q_OS_QNX)

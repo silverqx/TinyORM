@@ -60,8 +60,8 @@ Type::classPureBasenameInternal(const char *typeName, const bool withNamespace)
 #elif __GNUG__
     // Demangle a type name
     int status = 0;
-    const auto typeNameDemangled_ = abi::__cxa_demangle(typeName, nullptr, nullptr,
-                                                        &status);
+    auto *const typeNameDemangled_ = abi::__cxa_demangle(typeName, nullptr, nullptr,
+                                                         &status);
     const QString typeNameDemangled(typeNameDemangled_);
     // CUR check by valgrind silverqx
     free(typeNameDemangled_);
