@@ -73,6 +73,9 @@ namespace Orm::Utils
         /*! Class name with or w/o a namespace and w/o template parameters, gcc code. */
         static QString classPureBasenameGcc(
                 const QString &className, bool withNamespace);
+
+        /*! Throw when abi::__cxa_demangle() status < 0. */
+        static void throwIfDemangleStatusFailed(int status);
     };
 
     template<typename T>

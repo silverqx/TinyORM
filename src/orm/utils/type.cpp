@@ -2,12 +2,22 @@
 
 #include <QRegularExpression>
 
+#if !defined(_MSC_VER)
+#include <memory>
+#endif
+
 #include "orm/constants.hpp"
+#if !defined(_MSC_VER)
 #include "orm/exceptions/runtimeerror.hpp"
+#endif
 
 using Orm::Constants::ASTERISK_C;
 using Orm::Constants::LT_C;
 using Orm::Constants::SPACE;
+
+#if !defined(_MSC_VER)
+using Orm::Exceptions::RuntimeError;
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -31,7 +41,7 @@ QString Type::prettyFunction(const QString &function)
     QRegularExpression re(QStringLiteral(
                               "(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)(?:$|::<lambda)"));
 #else
-    throw Exceptions::RuntimeError(
+    throw RuntimeError(
                 "Unsupported compiler in Utils::Type::prettyFunction().");
 #endif
 
@@ -60,17 +70,17 @@ Type::classPureBasenameInternal(const char *typeName, const bool withNamespace)
 #elif __GNUG__
     // Demangle a type name
     int status = 0;
-    auto *const typeNameDemangled_ = abi::__cxa_demangle(typeName, nullptr, nullptr,
-                                                         &status);
-    const QString typeNameDemangled(typeNameDemangled_);
-    // CUR check by valgrind silverqx
-    free(typeNameDemangled_);
+    std::unique_ptr<char, decltype (std::free) &> typeNameDemangled_(
+        abi::__cxa_demangle(typeName, nullptr, nullptr, &status), std::free);
 
-    // CUR throw on status != 0 silverqx
+    // Throw when abi::__cxa_demangle() status < 0
+    throwIfDemangleStatusFailed(status);
+
+    const QString typeNameDemangled(typeNameDemangled_.get());
 
     return classPureBasenameGcc(typeNameDemangled, withNamespace);
 #else
-    throw Exceptions::RuntimeError(
+    throw RuntimeError(
                 "Unsupported compiler in Utils::Type::classPureBasenameInternal().");
 #endif
 }
@@ -123,18 +133,38 @@ Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
 
     if (!withNamespace)
         // Have the namespace and :: found, +2 to point after
-        if (qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::")); toBegin != -1)
+        if (qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::"));
+            toBegin != -1
+        )
             itBegin += toBegin + 2;
 
     // Find the end of the class name
     const auto *itEnd = std::find_if(itBegin, className.cend(),
-                              [](const QChar ch)
+                                     [](const QChar ch)
     {
         // The class name can end with <, * or space, anything else
         return ch == LT_C || ch == SPACE || ch == ASTERISK_C;
     });
 
     return QStringView(itBegin, itEnd).toString();
+}
+
+void Type::throwIfDemangleStatusFailed(const int status)
+{
+    switch (status) {
+    case -1:
+        throw RuntimeError(
+                    "A memory allocation failure occurred in abi::__cxa_demangle().");
+    case -2:
+        throw RuntimeError(
+                    "mangled_name argument for abi::__cxa_demangle() is not a valid "
+                    "name under the C++ ABI mangling rules.");
+    case -3:
+        throw RuntimeError(
+                    "One of the arguments for abi::__cxa_demangle() is invalid.");
+    default:
+        break;
+    }
 }
 
 } // namespace Orm::Utils
