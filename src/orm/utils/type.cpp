@@ -62,6 +62,30 @@ Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withN
     return classPureBasenameInternal(typeInfo.name(), withNamespace);
 }
 
+#ifdef __GNUG__
+namespace
+{
+    /*! Throw when abi::__cxa_demangle() status < 0. */
+    void throwIfDemangleStatusFailed(int status)
+    {
+        switch (status) {
+        case -1:
+            throw RuntimeError(
+                        "A memory allocation failure occurred in abi::__cxa_demangle().");
+        case -2:
+            throw RuntimeError(
+                        "mangled_name argument for abi::__cxa_demangle() is not a valid "
+                        "name under the C++ ABI mangling rules.");
+        case -3:
+            throw RuntimeError(
+                        "One of the arguments for abi::__cxa_demangle() is invalid.");
+        default:
+            break;
+        }
+    }
+} // namespace
+#endif
+
 QString
 Type::classPureBasenameInternal(const char *typeName, const bool withNamespace)
 {
@@ -147,24 +171,6 @@ Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
     });
 
     return QStringView(itBegin, itEnd).toString();
-}
-
-void Type::throwIfDemangleStatusFailed(const int status)
-{
-    switch (status) {
-    case -1:
-        throw RuntimeError(
-                    "A memory allocation failure occurred in abi::__cxa_demangle().");
-    case -2:
-        throw RuntimeError(
-                    "mangled_name argument for abi::__cxa_demangle() is not a valid "
-                    "name under the C++ ABI mangling rules.");
-    case -3:
-        throw RuntimeError(
-                    "One of the arguments for abi::__cxa_demangle() is invalid.");
-    default:
-        break;
-    }
 }
 
 } // namespace Orm::Utils
