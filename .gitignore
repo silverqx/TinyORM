@@ -85,6 +85,7 @@ Thumbs.db
 # others
 ~$*.xlsx
 conf.pri
+/compile_commands.json
 /exports*.txt
 /exports.xlsx
 /todos.csv
