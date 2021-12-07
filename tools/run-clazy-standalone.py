@@ -1,0 +1,1 @@
+E:/dotfiles/python/run-clazy-standalone.py
