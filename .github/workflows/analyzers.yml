@@ -98,17 +98,17 @@ jobs:
         URL_CLAZY_STANDALONE_LINUX_X64: ${{ secrets.URL_CLAZY_STANDALONE_LINUX_X64 }}
 
     - name: TinyORM execute clang-tidy 🔥
-      working-directory: ../TinyORM-builds-cmake/build-clang13-cmake-debug
       run: |
         echo 'TINY_CLANG_TIDY_EXECUTED=true' >> $GITHUB_ENV
-        run-clang-tidy-13 '.+\.cpp$'
+
+        ln -s ../TinyORM-builds-cmake/build-clang13-cmake-debug/compile_commands.json \
+        compile_commands.json
+
+        run-clang-tidy-13 '(?:src\/|tests\/).+\/(?!mocs_)[\w_\-\+]+\.cpp$'
 
     - name: TinyORM execute clazy-standalone 🚀
       if: env.TINY_CLANG_TIDY_EXECUTED == 'true' && (success() || failure())
       run: |
-        ln -s ../TinyORM-builds-cmake/build-clang13-cmake-debug/compile_commands.json \
-        compile_commands.json
-
         checks=\
         'level0,level1,level2,'\
         `# Manual checks`\
@@ -128,5 +128,6 @@ jobs:
         'no-copyable-polymorphic,no-ctor-missing-parent-argument,no-function-args-by-ref,'\
         'no-qstring-allocations,no-rule-of-three'
 
-        tools/run-clazy-standalone -checks="$checks" -header-filter='orm/.+\.(h|hpp)$' '.+\.cpp$'
+        tools/run-clazy-standalone -checks="$checks" -header-filter='orm/.+\.(h|hpp)$' \
+        '(?:src\/|tests\/).+\/(?!mocs_)[\w_\-\+]+\.cpp$'
 
