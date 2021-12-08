@@ -128,8 +128,5 @@ jobs:
         'no-copyable-polymorphic,no-ctor-missing-parent-argument,no-function-args-by-ref,'\
         'no-qstring-allocations,no-rule-of-three'
 
-        find . -path './src/orm/*.cpp' -or \
-        \( -path './tests/*.cpp' -and -not -path '*/models/torrent.cpp' \) | \
-        xargs clazy-standalone \
-        --checks="$checks" \
-        --header-filter='orm/.+\.(h|hpp)$' -p ./compile_commands.json
+        tools/run-clazy-standalone -checks="$checks" -header-filter='orm/.+\.(h|hpp)$' '.+\.cpp$'
+
