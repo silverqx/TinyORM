@@ -601,7 +601,7 @@ Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePi
 
     public:
         /*! The roles that belong to the user. */
-        std::unique_ptr<BelongsToMany<User, Role>>
+        std::unique_ptr<BelongsToMany<User, Role, RoleUser>>
         roles()
         {
             return belongsToMany<Role, RoleUser>();
