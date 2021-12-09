@@ -117,13 +117,11 @@ namespace Relations
     // CUR merge changes from latest Eloquent silverqx
     // CUR cmake/qmake run tests in parallel for tests that allow it silverqx
     // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
-    // CUR docs create empty project to test docs examples, I need to test many-to-many examples, I did some changes in docs silverqx
     // CUR divide Query Builder and TinyOrm to own packages? think about it 🤔 silverqx
     // BUG clang on mingw inline static initialization with another static in the same class defined line before, all other compilers (on linux too) works silverqx
     // CUR unify default/non-default ctors comment silverqx
     // CUR discard common settings in tests/conf.pri, then qmake project will compile only if /conf.pri will be set, less manual configurations for users is still better silverqx
     // CUR cmake when MYSQL_PING is on and QMYSQL driver is not build ctest fails, fail configure? I don't knwo how I will solve this for now, also fix qmake silverqx
-    // CUR docs unify .hpp includes and _H macro guards silverqx
     // BUG docs many-to-many examples contain queries with created_at in pivot table, but pivot doesn't contain timestamp columns silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
