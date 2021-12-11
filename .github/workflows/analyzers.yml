@@ -1,4 +1,4 @@
-name: Analyzers
+name: Clang Tidy/Clazy
 
 on:
   pull_request:

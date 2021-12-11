@@ -1,4 +1,4 @@
-name: MSVC
+name: MSVC 2019
 
 on:
   pull_request:
