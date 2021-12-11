@@ -177,6 +177,30 @@ cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds-c
 $env:Path = "E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-cmake\tests\auto\utils;" + $env:Path
 
 
+TinyORM docs github pages:
+--------------------------
+
+- npm run clear
+
+Clear a Docusaurus site's generated assets, caches, build artifacts.
+We recommend running this command before reporting bugs, after upgrading versions, or anytime you have issues with your Docusaurus site.
+
+- deploy:
+
+.\dotenv.ps1
+npm run deploy; echo "Algolia Rebuild"; sleep 30; .\algolia_rebuild.ps1
+
+- local development:
+
+npm start
+npm start -- --no-open
+
+- update Algolia index by DocSearch:
+
+.\dotenv.ps1
+.\algolia_rebuild.ps1
+
+
 CMake Guidelines:
 -----------------
 
