@@ -73,6 +73,6 @@ CONFIG(dll, dll|shared|static|staticlib): \
     !inline_constants: \
         CONFIG += extern_constants
 
-# Archive library build
+# Archive library build (static build)
 else: \
     CONFIG += inline_constants
