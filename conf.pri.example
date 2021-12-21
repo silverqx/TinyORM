@@ -52,8 +52,6 @@ else:win32-msvc {
     # Includes
     # range-v3
     INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include/)
-    # boost
-#    INCLUDEPATH += $$quote(E:/c_libs/boost/boost_latest/)
 
     # Conditional dependencies
     # MySQL C library is used by TinyORM and it uses mysql_ping()
