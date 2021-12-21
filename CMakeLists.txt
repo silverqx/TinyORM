@@ -76,7 +76,7 @@ feature_option(BUILD_SHARED_LIBS
     "Build using shared libraries" ON
 )
 feature_option(BUILD_TESTS
-    "Build Qt tests" OFF
+    "Build TinyORM unit tests" OFF
 )
 # Depends on tiny_init_cmake_variables_pre() call
 feature_option_dependent(MATCH_EQUAL_EXPORTED_BUILDTREE
@@ -139,7 +139,8 @@ add_library(${TinyOrm_ns}::${TinyOrm_target} ALIAS ${TinyOrm_target})
 
 target_optional_compile_definitions(${TinyOrm_target}
     PUBLIC
-        FEATURE NAME MYSQL_PING DEFAULT OFF
+        FEATURE NAME MYSQL_PING
+        DEFAULT OFF
         DESCRIPTION "Enable MySQL ping on Orm::MySqlConnection"
         ENABLED TINYORM_MYSQL_PING
 )
