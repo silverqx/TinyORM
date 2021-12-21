@@ -58,14 +58,14 @@ A database connection is resolved lazily, which means that the connection config
 
 #### SQLite Configuration
 
-SQLite databases are contained within a single file on your filesystem. You can create a new SQLite database using the `touch` command in your terminal: `touch database.sqlite`. After the database has been created, you may configure SQLite database connection:
+SQLite databases are contained within a single file on your filesystem. You can create a new SQLite database using the `touch` command in your terminal: `touch database.sqlite3`. After the database has been created, you may configure SQLite database connection:
 
     #include <orm/db.hpp>
 
     // Ownership of a unique_ptr()
     auto manager = DB::create({
         {"driver",    "QSQLITE"},
-        {"database",  qEnvironmentVariable("DB_DATABASE", "/absolute/path/to/database.sqlite")},
+        {"database",  qEnvironmentVariable("DB_DATABASE", "/absolute/path/to/database.sqlite3")},
         {"foreign_key_constraints", qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
         {"check_database_exists",   true},
     });
