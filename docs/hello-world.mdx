@@ -1,0 +1,542 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+description: Hello world example created in the terminal and QtCreator IDE.
+---
+
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import {
+    shell,
+    application, bash, pwsh,
+    bash_label, pwsh_label
+} from '@theme/constants'
+import {
+    applicationFolder,
+    applicationFolderPath,
+    convertToCmakeEnvVariable,
+    rootFolderPath
+} from '@theme/utils/rootFolderUtils'
+
+# Hello world
+
+- [Introduction](#introduction)
+- [Prepare SQLite 3 database](#prepare-sqlite-3-database)
+- [Install dependencies](#install-dependencies)
+    - [Using vcpkg.json](#using-vcpkg-json)
+    - [Using vcpkg install](#using-vcpkg-install)
+- [Hello world with CMake](#hello-world-with-cmake)
+    - [Source code](#source-code)
+    - [CMake project](#cmake-project)
+    - [Build Hello world](#build-hello-world-cmake)
+    - [Execute Hello world](#execute-hello-world-cmake)
+- [Hello world with qmake](#hello-world-with-qmake)
+    - [qmake project](#qmake-project)
+    - [Build Hello world](#build-hello-world-qmake)
+    - [Execute Hello world](#execute-hello-world-qmake)
+
+## Introduction
+
+We try to create simplest working application in the terminal with the `CMake` and in the `QtCreator` IDE with the `qmake`.
+
+The `HelloWorld` example also expects the following [folders structure](building.mdx#folders-structure), let's create them.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ${applicationFolderPath(pwsh)}
+mkdir HelloWorld/HelloWorld
+cd HelloWorld`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ${applicationFolderPath(bash)}
+mkdir -p HelloWorld/HelloWorld
+cd HelloWorld`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+## Prepare SQLite 3 database
+
+Simplest will be to demonstrate the `HelloWorld` example with the `SQLite 3` database.
+
+To create and insert two rows into the `SQLite 3` database, execute the following command in the terminal.
+
+```bash
+sqlite3 HelloWorld.sqlite3 "
+create table posts(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name VARCHAR NOT NULL);
+insert into posts values(1, 'First Post');
+insert into posts values(2, 'Second Post');
+select * from posts;"
+```
+
+## Install dependencies
+
+First, install the `vcpkg` package manager as is described [here](building.mdx#vcpkg).
+
+The `range-v3` library is a required dependency because `TinyORM` uses the `range-v3` library in header files, so you have to install it before you can use `TinyORM`.
+
+There are two ways to install the `range-v3` library using `vcpkg`.
+
+#### Using vcpkg.json <small>(manifest mode)</small> {#using-vcpkg-json}
+
+Create a `vcpkg.json` file with the following content. `CMake` example below uses this method.
+
+```bash
+cd HelloWorld
+vim vcpkg.json
+```
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "tinyorm-hello-world",
+  "version-semver": "0.1.0",
+  "description": "HelloWorld example with TinyORM library.",
+  "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
+  "supports": "!(uwp | arm | android | emscripten)",
+  "dependencies": [
+    "range-v3"
+  ]
+}
+```
+
+:::note
+Only `CMake` via the `toolchain file` supports this method.
+:::
+
+#### Using vcpkg install <small>(manually)</small> {#using-vcpkg-install}
+
+This method can be used with both `CMake` and `qmake`.
+
+```bash
+cd ../../vcpkg
+
+vcpkg search range-v3
+vcpkg install range-v3
+vcpkg list
+```
+
+## Hello world with CMake
+
+Let's start in the `HelloWorld` project folder.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ${applicationFolderPath(pwsh)}/HelloWorld/HelloWorld`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ${applicationFolderPath(bash)}/HelloWorld/HelloWorld`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+### Source code
+
+Create `main.cpp` source file.
+
+```bash
+vim main.cpp
+```
+
+:::tip
+To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>.
+:::
+
+And paste the following code.
+
+```
+#include <QDebug>
+
+#ifdef _WIN32
+#include <qt_windows.h>
+#endif
+
+#include <orm/db.hpp>
+
+int main(int /*unused*/, char */*unused*/[])
+{
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+//    SetConsoleOutputCP(1250);
+#endif
+
+    // Ownership of a unique_ptr()
+    auto manager = DB::create({
+        {"driver",   "QSQLITE"},
+        {"database", qEnvironmentVariable("DB_DATABASE", "HelloWorld.sqlite3")},
+        {"check_database_exists", true},
+    });
+
+    auto posts = DB::select("select * from posts");
+
+    while(posts.next())
+        qDebug() << posts.value("id").toULongLong() << posts.value("name").toString();
+}
+```
+
+### CMake project
+
+Create `CMakeLists.txt` file with the following content.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-cmake'>
+{`cmake_minimum_required(VERSION VERSION 3.20...3.21 FATAL_ERROR)\n
+project(HelloWorld LANGUAGES CXX)\n
+# build tree
+list(APPEND CMAKE_PREFIX_PATH "${convertToCmakeEnvVariable(pwsh, applicationFolderPath(pwsh))}/TinyORM/TinyORM-builds-cmake/build-debug")\n
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)\n
+add_executable(HelloWorld
+  main.cpp
+)\n
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt\${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
+find_package(TinyOrm 0.1.0 CONFIG REQUIRED)\n
+target_link_libraries(HelloWorld
+    PRIVATE
+        Qt\${QT_VERSION_MAJOR}::Core
+        TinyOrm::TinyOrm
+)`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-cmake'>
+{`cmake_minimum_required(VERSION VERSION 3.20...3.21 FATAL_ERROR)\n
+project(HelloWorld LANGUAGES CXX)\n
+# build tree
+list(APPEND CMAKE_PREFIX_PATH "${convertToCmakeEnvVariable(bash, applicationFolderPath(bash))}/TinyORM/TinyORM-builds-cmake/build-debug")\n
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)\n
+add_executable(HelloWorld
+  main.cpp
+)\n
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt\${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
+find_package(TinyOrm 0.1.0 CONFIG REQUIRED)\n
+target_link_libraries(HelloWorld
+    PRIVATE
+        Qt\${QT_VERSION_MAJOR}::Core
+        TinyOrm::TinyOrm
+)`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+### Build Hello world {#build-hello-world-cmake}
+
+Create a folder for the `CMake` build.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ..
+mkdir HelloWorld-builds-cmake/build-debug\n
+cd HelloWorld-builds-cmake/build-debug`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ..
+mkdir -p HelloWorld-builds-cmake/build-debug\n
+cd HelloWorld-builds-cmake/build-debug`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+Now you are ready to configure `HelloWorld` `CMake` application.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cmake.exe \`
+-S "${applicationFolderPath(pwsh)}/HelloWorld/HelloWorld" \`
+-B "${applicationFolderPath(pwsh)}/HelloWorld/HelloWorld-builds-cmake/build-debug" \`
+-G 'Ninja' \`
+-D CMAKE_BUILD_TYPE:STRING='Debug' \`
+-D CMAKE_TOOLCHAIN_FILE:FILEPATH="${rootFolderPath(pwsh)}/vcpkg/scripts/buildsystems/vcpkg.cmake" \`
+-D CMAKE_INSTALL_PREFIX:PATH="${rootFolderPath(pwsh)}/tmp/HelloWorld"`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cmake \\
+-S "${applicationFolderPath(bash)}/HelloWorld/HelloWorld" \\
+-B "${applicationFolderPath(bash)}/HelloWorld/HelloWorld-builds-cmake/build-debug" \\
+-G 'Ninja' \\
+-D CMAKE_BUILD_TYPE:STRING='Debug' \\
+-D CMAKE_TOOLCHAIN_FILE:FILEPATH="${rootFolderPath(bash)}/vcpkg/scripts/buildsystems/vcpkg.cmake" \\
+-D CMAKE_INSTALL_PREFIX:PATH="${rootFolderPath(bash)}/tmp/TinyORM"`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+And build.
+
+```bash
+cmake --build . --target all
+```
+
+### Execute Hello world {#execute-hello-world-cmake}
+
+Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so `HelloWorld` application can find it during execution, as is described [here](building.mdx#tinyorm-on-path-cmake).
+
+<Tabs groupId={shell} name='tinyorm-on-path'>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`$env:Path = "${applicationFolderPath(pwsh, false)}\\TinyORM\\TinyORM-builds-cmake\\build-debug;" + $env:Path`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`export LD_LIBRARY_PATH=${applicationFolderPath(bash)}/TinyORM/TinyORM-builds-cmake/build-debug\${PATH:+:}$PATH`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building.mdx#allow-symbolic-links-unprivileged).
+
+<Tabs groupId={shell} name='tinyorm-on-path'>
+<TabItem value={pwsh} label={pwsh_label}>
+
+```powershell
+New-Item -ItemType SymbolicLink -Target ../../HelloWorld.sqlite3 -Name HelloWorld.sqlite3
+# Or simply copy
+Copy-Item ../../HelloWorld.sqlite3 .
+```
+
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+```bash
+ln -s ../../HelloWorld.sqlite3 .
+```
+
+</TabItem>
+</Tabs>
+
+Execute `HelloWorld` example.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+
+```powershell
+.\HelloWorld.exe
+```
+
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+```bash
+./HelloWorld
+```
+
+</TabItem>
+</Tabs>
+
+
+The output will look like this.
+
+```less
+Executed prepared query (6ms, -1 results, 0 affected, tinyorm_default) : select * from posts
+1 "First Post"
+2 "Second Post"
+```
+
+## Hello world with qmake
+
+Create a folder for the `qmake` build.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ${applicationFolderPath(pwsh)}/HelloWorld\n
+mkdir HelloWorld-builds-qmake`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ${applicationFolderPath(bash)}/HelloWorld\n
+mkdir HelloWorld-builds-qmake`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+The [`source code`](#source-code) is the same as for the `HelloWorld CMake` example.
+
+### qmake project
+
+Create `HelloWorld.pro` qmake file with the following content.
+
+```bash
+cd HelloWorld
+vim HelloWorld.pro
+```
+
+<Tabs groupId={shell} name='tinyorm-on-path'>
+<TabItem value={pwsh} label={pwsh_label}>
+
+```qmake
+QT *= core sql
+QT -= gui
+
+TEMPLATE = app
+
+CONFIG *= console c++2a strict_c++ warn_on utf8_source link_prl hide_symbols silent
+CONFIG -= c++11 app_bundle
+
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+
+DEFINES *= QT_NO_CAST_TO_ASCII
+DEFINES *= QT_NO_CAST_FROM_BYTEARRAY
+DEFINES *= QT_USE_QSTRINGBUILDER
+DEFINES *= QT_STRICT_ITERATORS
+
+SOURCES += \
+    main.cpp
+
+# Link against TinyORM library
+# ---
+TINY_MAIN_DIR = $$quote($$PWD/../../TinyORM)
+TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake)
+
+# Configure TinyORM library
+include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
+
+# TinyORM header files
+INCLUDEPATH += $$quote($$TINY_MAIN_DIR/TinyORM/include/)
+
+# TinyORM library path
+LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
+LIBS += -lTinyOrm
+
+# vcpkg - range-v3
+# ---
+INCLUDEPATH += $$quote(../../../../vcpkg/installed/x64-windows/include/)
+```
+
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+```qmake
+QT *= core sql
+QT -= gui
+
+TEMPLATE = app
+
+CONFIG *= console c++2a strict_c++ warn_on utf8_source link_prl hide_symbols silent
+CONFIG -= c++11 app_bundle
+
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+
+DEFINES *= QT_NO_CAST_TO_ASCII
+DEFINES *= QT_NO_CAST_FROM_BYTEARRAY
+DEFINES *= QT_USE_QSTRINGBUILDER
+DEFINES *= QT_STRICT_ITERATORS
+
+SOURCES += \
+    main.cpp
+
+# Link against TinyORM library
+# ---
+TINY_MAIN_DIR = $$quote($$PWD/../../TinyORM)
+TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake)
+
+# Configure TinyORM library
+include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
+
+# TinyORM header files
+QMAKE_CXXFLAGS += -isystem $$quote($$TINY_MAIN_DIR/TinyORM/include/)
+
+# TinyORM library path
+LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
+LIBS += -lTinyOrm
+
+# vcpkg - range-v3
+# ---
+QMAKE_CXXFLAGS += -isystem $$quote(../../../../vcpkg/installed/x64-linux/include/)
+```
+
+:::tip
+On Linux `-isystem` marks the directory as a system directory, it prevents warnings.
+:::
+
+:::tip
+On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes, `#include <file>`.
+:::
+
+</TabItem>
+</Tabs>
+
+### Build Hello world {#build-hello-world-qmake}
+
+:::tip
+I recommend creating a new `Session` in the `QtCreator IDE` as is described [here](building.mdx#open-qtcreator-ide).
+:::
+
+Now you can open the `HelloWorld.pro` project in the `QtCreator IDE`.
+
+This will open the `Configure Project` tab, select some kit and update build folder paths to meet our [folders structure](building.mdx#folders-structure) or like you want.
+
+<img src={require('./assets/img/hello-world/qmake-configure_project.png').default}
+    alt='HelloWorld - QtCreator - Configure Project' width='760' />
+
+You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open `Project Settings` tab and select `Build` in the left sidebar to open the `Build Settings`, it should look similar to the following picture.
+
+Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used.
+
+<img src={require('./assets/img/hello-world/qmake-build_settings.png').default}
+    alt='HelloWorld - QtCreator - Build Settings' width='760' />
+
+Everything is ready to build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to build the project.
+
+### Execute Hello world qmake
+
+The `QtCreator` takes care about all the necessary configuration, sets up the built environment correctly and also prepends dependency libraries on the path on Windows and on the `LD_LIBRARY_PATH` on Linux.
+
+Only one thing you might want to change is to run the `HelloWorld` example in the new terminal window. To do so, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open the `Project Settings` tab and select `Run` in the left sidebar to open the `Run Settings`, then in the `Run` section select the `Run in terminal` checkbox.
+
+Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building.mdx#allow-symbolic-links-unprivileged).
+
+<Tabs groupId={shell} name='tinyorm-on-path'>
+<TabItem value={pwsh} label={pwsh_label}>
+
+```powershell
+cd ../HelloWorld-builds-qmake/build-HelloWorld-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug
+
+New-Item -ItemType SymbolicLink -Target ../../HelloWorld.sqlite3 -Name HelloWorld.sqlite3
+# Or simply copy
+Copy-Item ../../HelloWorld.sqlite3 .
+```
+
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+```bash
+cd ../HelloWorld-builds-qmake/build-HelloWorld-Desktop_Qt_5_15_2_GCC_64bit-Debug
+
+ln -s ../../HelloWorld.sqlite3 .
+```
+
+</TabItem>
+</Tabs>
+
+To execute the `HelloWorld` example press <kbd>Ctrl</kbd> + <kbd>r</kbd>.
+
+The output will look like this.
+
+```less
+Executed prepared query (6ms, -1 results, 0 affected, tinyorm_default) : select * from posts
+1 "First Post"
+2 "Second Post"
+```
