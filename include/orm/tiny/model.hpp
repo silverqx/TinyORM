@@ -123,6 +123,8 @@ namespace Relations
     // CUR discard common settings in tests/conf.pri, then qmake project will compile only if /conf.pri will be set, less manual configurations for users is still better silverqx
     // CUR cmake when MYSQL_PING is on and QMYSQL driver is not build ctest fails, fail configure? I don't knwo how I will solve this for now, also fix qmake silverqx
     // BUG docs many-to-many examples contain queries with created_at in pivot table, but pivot doesn't contain timestamp columns silverqx
+    // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
+    // CUR docs IdealImage silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
