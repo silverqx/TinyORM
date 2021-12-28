@@ -706,3 +706,18 @@ auto t3 = Torrent::find(1)->torrentFiles()->groupBy(s3, DB::raw(s2)).toSql();
 qDebug() << t3;
 auto t4 = Torrent::find(1)->torrentFiles()->groupBy(std::move(s3), DB::raw(s2)).toSql();
 qDebug() << t4;
+
+
+InvokeXTimes:
+-------------
+
+- 100 times run
+  - 28. dec 2021
+    - Qt 5.15.2 ; msvc 16.11.8 x64
+      - debug build
+All AutoTests Execution time : 792519ms
+All AutoTests Average Execution time : 7925ms
+    - Qt 6.2.1 ; msvc 16.11.8 x64
+      - debug build
+All AutoTests Execution time : 986531ms
+All AutoTests Average Execution time : 9865ms
