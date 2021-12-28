@@ -124,10 +124,18 @@ Get-ChildItem -Path *.cpp,*.hpp -Recurse | sls -Pattern ' (TODO|NOTE|FIXME|BUG|W
  - filter out executed queries:
 Get-Content .\tmp.sql | sls -Pattern '^(Executed prepared query)' | Set-Content executed_queries.sql
 
- - run InvokeXTimes.ps1 on Linux:
-. ~/.TinyOrmPlayground
+ - TinyOrmPlayground - run InvokeXTimes.ps1 on Linux:
+stp && sq5
 export LD_LIBRARY_PATH=../../../TinyOrm/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_5_15_2_GCC_64bit_ccache-Debug/src
 pwsh -NoLogo -NoProfile -File InvokeXTimes.ps1 2 ../../../TinyOrmPlayground/TinyOrmPlayground-builds-qmake/build-TinyOrmPlayground-Desktop_Qt_5_15_2_GCC_64bit_ccache-Debug/TinyOrmPlayground
+
+ - TinyORM - run InvokeXTimes.ps1 on Linux:
+stp && sq5 && cdtq && cd build-TinyOrm-Desktop_Qt_5_15_2_GCC_64bit_ccache-Debug
+export LD_LIBRARY_PATH=./src:./tests/TinyUtils${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+export PATH=$HOME/Code/c/TinyORM/tools:$PATH
+InvokeXTimes.ps1
+pwsh -NoLogo -NoProfile -File InvokeXTimes.ps1 100
+
 
 cmake build commands:
 ---------------------
@@ -713,11 +721,23 @@ InvokeXTimes:
 
 - 100 times run
   - 28. dec 2021
-    - Qt 5.15.2 ; msvc 16.11.8 x64
-      - debug build
+    - Windows 10:
+      - Qt 5.15.2 ; msvc 16.11.8 x64
+        - debug build
 All AutoTests Execution time : 792519ms
 All AutoTests Average Execution time : 7925ms
-    - Qt 6.2.1 ; msvc 16.11.8 x64
-      - debug build
+
+      - Qt 6.2.1 ; msvc 16.11.8 x64
+        - debug build
 All AutoTests Execution time : 986531ms
 All AutoTests Average Execution time : 9865ms
+
+    - Gentoo:
+      - Qt 5.15.2 ; GCC 11.2 x64 ccache
+        - debug build
+All AutoTests Execution time : 519138ms
+All AutoTests Average Execution time : 5191ms
+      - Qt 6.2.2 ; GCC 11.2 x64 ccache
+        - debug build
+All AutoTests Execution time : 546585ms
+All AutoTests Average Execution time : 5466ms
