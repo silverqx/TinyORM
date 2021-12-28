@@ -17,6 +17,15 @@ Set-StrictMode -Version 3.0
 $Script:TotalElapsed = 0
 $Script:AverageElapsed = 0
 
+function Get-Tests {
+    if ($PSVersionTable.Platform -ceq 'Unix') {
+        return find . -type f -and -executable -and -not -name '*.sh' -and -not -name 'lib*.so*'
+    }
+    else {
+        return Get-ChildItem -Path *.exe -Recurse
+    }
+}
+
 function Get-Elapsed {
     [OutputType([int])]
     Param(
@@ -71,13 +80,6 @@ function Write-HighlightedOutput {
     Write-Host "$($elapsed)ms" -ForegroundColor DarkGreen
 }
 
-if ($PSVersionTable.Platform -ceq 'Unix') {
-    $tests = find . -type f -and -executable -and -not -name '*.sh' -and -not -name 'lib*.so*'
-}
-else {
-    $tests = Get-ChildItem -Path *.exe -Recurse
-}
-
 for ($i = 1; $i -le $Count; $i++) {
     if ($i -gt 1) {
         Write-Host
@@ -87,7 +89,7 @@ for ($i = 1; $i -le $Count; $i++) {
 
     $testsElapsed = 0
 
-    foreach ($test in $tests) {
+    foreach ($test in Get-Tests) {
         $testOutput = & $test -silent
 
         if ($LASTEXITCODE -ne 0) {
