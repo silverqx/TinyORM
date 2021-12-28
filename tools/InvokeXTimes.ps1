@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 Param(
     [Parameter(Position = 0, Mandatory = $false,
         HelpMessage = 'Specifies how many times all AutoTests should be invoked.')]
@@ -69,7 +71,12 @@ function Write-HighlightedOutput {
     Write-Host "$($elapsed)ms" -ForegroundColor DarkGreen
 }
 
-$tests = Get-ChildItem -Path *.exe -Recurse
+if ($PSVersionTable.Platform -ceq 'Unix') {
+    $tests = find . -type f -and -executable -and -not -name '*.sh' -and -not -name 'lib*.so*'
+}
+else {
+    $tests = Get-ChildItem -Path *.exe -Recurse
+}
 
 for ($i = 1; $i -le $Count; $i++) {
     if ($i -gt 1) {
