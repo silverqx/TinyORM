@@ -407,7 +407,7 @@ As the last thing, do not forget to add `TinyOrm0d.dll` on the path on Windows a
 </TabItem>
 </Tabs>
 
-Now you can try the [`HelloWorld CMake`](hello-world.mdx#) example.
+Now you can try the [`HelloWorld CMake`](hello-world.mdx#hello-world-with-cmake) example.
 
 ## Building with qmake
 
@@ -509,7 +509,7 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | ----------------------------------- | ------- | ----------- |
 | `build_tests`                       | `OFF`   | Build TinyORM unit tests. |
 | `inline_constants`                  | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: <code>CONFIG(shared\|dll)</code></small> |
-| `link_pkgconfig_off`                | `OFF`   | Link against `libmariadb` with `PKGCONFIG`.<br/>Used only in the `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `libmariadb`, [source](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L27).<br/><small>Available when: <code>(win32-g++\|win32-clang-g++):mysql:!static:!staticlib</code></small> |
+| `link_pkgconfig_off`                | `OFF`   | Link against `libmariadb` with `PKGCONFIG`.<br/>Used only in the `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L27).<br/><small>Available when: <code>(win32-g++\|win32-clang-g++):mysql:!static:!staticlib</code></small> |
 | `mysql_ping`                        | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
 
 </APITable>
