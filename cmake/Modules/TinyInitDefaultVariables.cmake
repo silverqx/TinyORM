@@ -203,9 +203,16 @@ $<SHELL_PATH:${CMAKE_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPARATOR}")
 
         # Prepend TinyOrm and TinyUtils library folders
         else()
-            string(PREPEND TINY_TESTS_ENV "\
+            # Multi-config generators have different folders structure
+            if(TINY_IS_MULTI_CONFIG)
+                string(PREPEND TINY_TESTS_ENV "\
+$<SHELL_PATH:${CMAKE_BINARY_DIR}/$<CONFIG>>${TINY_PATH_SEPARATOR}\
+$<SHELL_PATH:${CMAKE_BINARY_DIR}/tests/${TinyUtils_ns}/$<CONFIG>>${TINY_PATH_SEPARATOR}")
+            else()
+                string(PREPEND TINY_TESTS_ENV "\
 $<SHELL_PATH:${CMAKE_BINARY_DIR}>${TINY_PATH_SEPARATOR}\
 $<SHELL_PATH:${CMAKE_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPARATOR}")
+            endif()
         endif()
     endif()
 

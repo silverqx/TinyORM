@@ -15,7 +15,7 @@
 // Used by checkFileVersion_*() tests
 #if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 #  ifdef TINYTEST_VERSION_IS_CMAKE
-#    include "versiondebug_cmake.hpp"
+#    include TINYTEST_VERSION_VERSIONDEBUG
 #  elif defined(TINYTEST_VERSION_IS_QMAKE)
 #    include "versiondebug_qmake.hpp"
 #  endif

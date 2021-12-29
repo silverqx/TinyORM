@@ -35,11 +35,19 @@ configure_file(
     "${TINY_BUILD_GENDIR}/tmp/versiondebug_cmake.hpp.genexp"
     @ONLY NEWLINE_STYLE LF
 )
-file(GENERATE OUTPUT "${TINY_BUILD_GENDIR}/include/versiondebug_cmake.hpp"
+file(GENERATE OUTPUT "${TINY_BUILD_GENDIR}/include/versiondebug_cmake-$<CONFIG>.hpp"
     INPUT "${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/tmp/versiondebug_cmake.hpp.genexp"
     NEWLINE_STYLE UNIX
 )
 
+# Pass generated filename to the tst_version.cpp source file (used in #include directive)
+set_source_files_properties("tst_version.cpp"
+    TARGET_DIRECTORY version
+    PROPERTIES
+        COMPILE_DEFINITIONS
+            TINYTEST_VERSION_VERSIONDEBUG="versiondebug_cmake-$<CONFIG>.hpp"
+)
+
 target_sources(version PRIVATE
-    "${TINY_BUILD_GENDIR}/include/versiondebug_cmake.hpp"
+    "$<$<BOOL:$<CONFIG>>:${TINY_BUILD_GENDIR}/include/versiondebug_cmake-$<CONFIG>.hpp>"
 )
