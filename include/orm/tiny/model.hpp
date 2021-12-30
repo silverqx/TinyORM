@@ -125,7 +125,6 @@ namespace Relations
     // BUG docs many-to-many examples contain queries with created_at in pivot table, but pivot doesn't contain timestamp columns silverqx
     // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
     // CUR docs IdealImage silverqx
-    // CUR tls, add DISABLE_THREAD_LOCAL macro and qmake/cmake options, an user will be able to forcefully disable the TLS wrappers silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

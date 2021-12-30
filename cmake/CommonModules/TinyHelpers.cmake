@@ -115,10 +115,10 @@ endfunction()
 # DISABLED lists definitions that will be set otherwise.
 function(target_optional_compile_definitions target scope)
 
-    set(options FEATURE)
+    set(options ADVANCED FEATURE)
     set(oneValueArgs NAME DESCRIPTION DEFAULT)
     set(multiValueArgs ENABLED DISABLED)
-    cmake_parse_arguments(PARSE_ARGV 2 TINY ${options} "${oneValueArgs}"
+    cmake_parse_arguments(PARSE_ARGV 2 TINY "${options}" "${oneValueArgs}"
         "${multiValueArgs}"
     )
 
@@ -137,6 +137,10 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     if(TINY_FEATURE)
         add_feature_info(${TINY_NAME} ${TINY_NAME} "${TINY_DESCRIPTION}")
+    endif()
+
+    if(TINY_ADVANCED)
+        mark_as_advanced(${TINY_NAME})
     endif()
 
 endfunction()

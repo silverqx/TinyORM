@@ -1,0 +1,2 @@
+CONFIG *= disable_thread_local
+DEFINES *= TINYORM_DISABLE_THREAD_LOCAL

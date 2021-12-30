@@ -145,6 +145,14 @@ target_optional_compile_definitions(${TinyOrm_target}
         ENABLED TINYORM_MYSQL_PING
 )
 
+target_optional_compile_definitions(${TinyOrm_target}
+    PUBLIC
+        ADVANCED FEATURE NAME DISABLE_THREAD_LOCAL
+        DEFAULT OFF
+        DESCRIPTION "Remove all thread_local storage duration specifiers"
+        ENABLED TINYORM_DISABLE_THREAD_LOCAL
+)
+
 # Use Precompiled headers (PCH)
 # ---
 
