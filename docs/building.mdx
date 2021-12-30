@@ -230,10 +230,11 @@ But a special situation is when you are building your application / library and 
 | `TINYORM_NO_DEBUG`                | Defined in the release build. |
 | `TINYORM_DEBUG_SQL`               | Defined in the debug build. |
 | `TINYORM_NO_DEBUG_SQL`            | Defined in the release build. |
-| `TINYORM_MYSQL_PING`              | Enable `Orm::MySqlConnection::pingDatabase()` method.<br/><small>Defined when [`MYSQL_PING`](#MYSQL_PING) <small>(qmake)</small> / [`mysql_ping`](#mysql_ping) <small>(cmake)</small> configuration `build option` is enabled.</small> |
+| `TINYORM_MYSQL_PING`              | Enable `Orm::MySqlConnection::pingDatabase()` method.<br/><small>Defined when [`mysql_ping`](#mysql_ping) <small>(qmake)</small> / [`MYSQL_PING`](#MYSQL_PING) <small>(cmake)</small> configuration `build option` is enabled.</small> |
 | `TINYORM_EXTERN_CONSTANTS`        | Defined when extern constants are used.<br/><small>Described at [`qmake`](#inline_constants) / [`CMake`](#INLINE_CONSTANTS) how it works.</small> |
 | `TINYORM_INLINE_CONSTANTS`        | Defined when global inline constants are used.<br/><small>Defined when [`inline_constants`](#inline_constants) <small>(qmake)</small> / [`INLINE_CONSTANTS`](#INLINE_CONSTANTS) <small>(cmake)</small> configuration `build option` is enabled.</small> |
 | `TINYORM_TESTS_CODE`              | Enable code needed by unit tests, eg. connection overriding in the `Orm::Tiny::Model`.<br/><small>Defined when [`build_tests`](#build_tests) <small>(qmake)</small> / [`BUILD_TESTS`](#BUILD_TESTS) <small>(cmake)</small> configuration `build option` is enabled.</small> |
+| `TINYORM_DISABLE_THREAD_LOCAL`    | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables threading support.<br/><small>Defined when [`disable_thread_local`](#disable_thread_local) <small>(qmake)</small> / [`DISABLE_THREAD_LOCAL`](#DISABLE_THREAD_LOCAL) <small>(cmake)</small> configuration `build option` is enabled.</small> |
 
 </APITable>
 </div>
@@ -335,10 +336,22 @@ CMake multi-config generators like `Ninja Multi-Config` or `Visual Studio 16 201
 | `BUILD_SHARED_LIBS`               | `ON`    | Build as a shared/static library. |
 | `BUILD_TESTS`                     | `OFF`   | Build TinyORM unit tests. |
 | `INLINE_CONSTANTS`                | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: `BUILD_SHARED_LIBS`</small> |
-| <small>`MATCH_EQUAL_EXPORTED_BUILDTREE`</small> | `OFF` | Exported package configuration from the build tree is considered to match only when `the build type` of application/library that is linking against the TinyORM library __is equal__.<br/><small>Available when:<br/>`CMAKE_EXPORT_PACKAGE_REGISTRY AND NOT TINY_IS_MULTI_CONFIG`</small> |
 | `MSVC_RUNTIME_DYNAMIC`            | `ON`    | Use MSVC dynamic runtime library (`-MD`) instead of static (`-MT`), also considers a Debug configuration (`-MTd`, `-MDd`).<br/><small>Available when: `MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY`</small> |
 | `MYSQL_PING`                      | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
 | `VERBOSE_CONFIGURE`               | `OFF`   | Show information about `PACKAGES_FOUND` / `PACKAGES_NOT_FOUND` in the CMake configure output. |
+
+</APITable>
+</div>
+
+Advanced `TinyORM` options.
+
+<div id='apitable-build-options'>
+<APITable>
+
+| Option Name                       | Default | Description |
+| --------------------------------- | ------- | ----------- |
+| `DISABLE_THREAD_LOCAL`            | `OFF`   | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables threading support. |
+| <small>`MATCH_EQUAL_EXPORTED_BUILDTREE`</small> | `OFF` | Exported package configuration from the build tree is considered to match only when `the build type` of application/library that is linking against the TinyORM library __is equal__.<br/><small>Available when:<br/>`CMAKE_EXPORT_PACKAGE_REGISTRY AND NOT TINY_IS_MULTI_CONFIG`</small> |
 
 </APITable>
 </div>
@@ -508,6 +521,7 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `CONFIG` <small>Option Name</small> | Default | Description |
 | ----------------------------------- | ------- | ----------- |
 | `build_tests`                       | `OFF`   | Build TinyORM unit tests. |
+| `disable_thread_local`              | `OFF`   | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables threading support. |
 | `inline_constants`                  | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: <code>CONFIG(shared\|dll)</code></small> |
 | `link_pkgconfig_off`                | `OFF`   | Link against `libmariadb` with `PKGCONFIG`.<br/>Used only in the `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L27).<br/><small>Available when: <code>(win32-g++\|win32-clang-g++):mysql:!static:!staticlib</code></small> |
 | `mysql_ping`                        | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
