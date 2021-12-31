@@ -1,11 +1,11 @@
 INCLUDEPATH += $$PWD
 
 extern_constants: \
-    HEADERS += $$PWD/orm/constants_extern.hpp
+    headersList += $$PWD/orm/constants_extern.hpp
 else: \
-    HEADERS += $$PWD/orm/constants_inline.hpp
+    headersList += $$PWD/orm/constants_inline.hpp
 
-HEADERS += \
+headersList += \
     $$PWD/orm/basegrammar.hpp \
     $$PWD/orm/concepts.hpp \
     $$PWD/orm/concerns/detectslostconnections.hpp \
@@ -67,29 +67,6 @@ HEADERS += \
     $$PWD/orm/support/configurationoptionsparser.hpp \
     $$PWD/orm/support/databaseconfiguration.hpp \
     $$PWD/orm/support/databaseconnectionsmap.hpp \
-    $$PWD/orm/tiny/concerns/guardsattributes.hpp \
-    $$PWD/orm/tiny/concerns/hasattributes.hpp \
-    $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
-    $$PWD/orm/tiny/concerns/queriesrelationships.hpp \
-    $$PWD/orm/tiny/exceptions/massassignmenterror.hpp \
-    $$PWD/orm/tiny/exceptions/modelnotfounderror.hpp \
-    $$PWD/orm/tiny/exceptions/relationnotfounderror.hpp \
-    $$PWD/orm/tiny/exceptions/relationnotloadederror.hpp \
-    $$PWD/orm/tiny/model.hpp \
-    $$PWD/orm/tiny/modelproxies.hpp \
-    $$PWD/orm/tiny/relations/basepivot.hpp \
-    $$PWD/orm/tiny/relations/belongsto.hpp \
-    $$PWD/orm/tiny/relations/belongstomany.hpp \
-    $$PWD/orm/tiny/relations/concerns/supportsdefaultmodels.hpp \
-    $$PWD/orm/tiny/relations/hasmany.hpp \
-    $$PWD/orm/tiny/relations/hasone.hpp \
-    $$PWD/orm/tiny/relations/hasoneormany.hpp \
-    $$PWD/orm/tiny/relations/pivot.hpp \
-    $$PWD/orm/tiny/relations/relation.hpp \
-    $$PWD/orm/tiny/relations/relationproxies.hpp \
-    $$PWD/orm/tiny/tinybuilder.hpp \
-    $$PWD/orm/tiny/tinybuilderproxies.hpp \
-    $$PWD/orm/tiny/tinytypes.hpp \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \
     $$PWD/orm/utils/attribute.hpp \
@@ -99,3 +76,33 @@ HEADERS += \
     $$PWD/orm/utils/thread.hpp \
     $$PWD/orm/utils/type.hpp \
     $$PWD/orm/version.hpp \
+
+!disable_orm: \
+    headersList += \
+        $$PWD/orm/tiny/concerns/guardsattributes.hpp \
+        $$PWD/orm/tiny/concerns/hasattributes.hpp \
+        $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
+        $$PWD/orm/tiny/concerns/queriesrelationships.hpp \
+        $$PWD/orm/tiny/exceptions/massassignmenterror.hpp \
+        $$PWD/orm/tiny/exceptions/modelnotfounderror.hpp \
+        $$PWD/orm/tiny/exceptions/relationnotfounderror.hpp \
+        $$PWD/orm/tiny/exceptions/relationnotloadederror.hpp \
+        $$PWD/orm/tiny/model.hpp \
+        $$PWD/orm/tiny/modelproxies.hpp \
+        $$PWD/orm/tiny/relations/basepivot.hpp \
+        $$PWD/orm/tiny/relations/belongsto.hpp \
+        $$PWD/orm/tiny/relations/belongstomany.hpp \
+        $$PWD/orm/tiny/relations/concerns/supportsdefaultmodels.hpp \
+        $$PWD/orm/tiny/relations/hasmany.hpp \
+        $$PWD/orm/tiny/relations/hasone.hpp \
+        $$PWD/orm/tiny/relations/hasoneormany.hpp \
+        $$PWD/orm/tiny/relations/pivot.hpp \
+        $$PWD/orm/tiny/relations/relation.hpp \
+        $$PWD/orm/tiny/relations/relationproxies.hpp \
+        $$PWD/orm/tiny/tinybuilder.hpp \
+        $$PWD/orm/tiny/tinybuilderproxies.hpp \
+        $$PWD/orm/tiny/tinytypes.hpp \
+
+HEADERS += $$sorted(headersList)
+
+unset(headersList)

@@ -70,29 +70,6 @@ function(tiny_sources out_headers out_sources)
         support/configurationoptionsparser.hpp
         support/databaseconfiguration.hpp
         support/databaseconnectionsmap.hpp
-        tiny/concerns/guardsattributes.hpp
-        tiny/concerns/hasattributes.hpp
-        tiny/concerns/hasrelationstore.hpp
-        tiny/concerns/queriesrelationships.hpp
-        tiny/exceptions/massassignmenterror.hpp
-        tiny/exceptions/modelnotfounderror.hpp
-        tiny/exceptions/relationnotfounderror.hpp
-        tiny/exceptions/relationnotloadederror.hpp
-        tiny/model.hpp
-        tiny/modelproxies.hpp
-        tiny/relations/basepivot.hpp
-        tiny/relations/belongsto.hpp
-        tiny/relations/belongstomany.hpp
-        tiny/relations/concerns/supportsdefaultmodels.hpp
-        tiny/relations/hasmany.hpp
-        tiny/relations/hasone.hpp
-        tiny/relations/hasoneormany.hpp
-        tiny/relations/pivot.hpp
-        tiny/relations/relation.hpp
-        tiny/relations/relationproxies.hpp
-        tiny/tinybuilder.hpp
-        tiny/tinybuilderproxies.hpp
-        tiny/tinytypes.hpp
         types/log.hpp
         types/statementscounter.hpp
         utils/attribute.hpp
@@ -103,6 +80,34 @@ function(tiny_sources out_headers out_sources)
         utils/type.hpp
         version.hpp
     )
+
+    if(ORM)
+        list(APPEND headers
+            tiny/concerns/guardsattributes.hpp
+            tiny/concerns/hasattributes.hpp
+            tiny/concerns/hasrelationstore.hpp
+            tiny/concerns/queriesrelationships.hpp
+            tiny/exceptions/massassignmenterror.hpp
+            tiny/exceptions/modelnotfounderror.hpp
+            tiny/exceptions/relationnotfounderror.hpp
+            tiny/exceptions/relationnotloadederror.hpp
+            tiny/model.hpp
+            tiny/modelproxies.hpp
+            tiny/relations/basepivot.hpp
+            tiny/relations/belongsto.hpp
+            tiny/relations/belongstomany.hpp
+            tiny/relations/concerns/supportsdefaultmodels.hpp
+            tiny/relations/hasmany.hpp
+            tiny/relations/hasone.hpp
+            tiny/relations/hasoneormany.hpp
+            tiny/relations/pivot.hpp
+            tiny/relations/relation.hpp
+            tiny/relations/relationproxies.hpp
+            tiny/tinybuilder.hpp
+            tiny/tinybuilderproxies.hpp
+            tiny/tinytypes.hpp
+        )
+    endif()
 
     set(sources)
 
@@ -151,11 +156,6 @@ function(tiny_sources out_headers out_sources)
         schema/sqliteschemabuilder.cpp
         sqliteconnection.cpp
         support/configurationoptionsparser.cpp
-        tiny/model.cpp
-        tiny/exceptions/modelnotfounderror.cpp
-        tiny/exceptions/relationnotfounderror.cpp
-        tiny/exceptions/relationnotloadederror.cpp
-        tiny/relations/relation.cpp
         utils/attribute.cpp
         utils/fs.cpp
         utils/query.cpp
@@ -163,6 +163,19 @@ function(tiny_sources out_headers out_sources)
         utils/thread.cpp
         utils/type.cpp
     )
+
+    if(ORM)
+        list(APPEND sources
+            tiny/exceptions/modelnotfounderror.cpp
+            tiny/exceptions/relationnotfounderror.cpp
+            tiny/exceptions/relationnotloadederror.cpp
+            tiny/model.cpp
+            tiny/relations/relation.cpp
+        )
+    endif()
+
+    list(SORT headers)
+    list(SORT sources)
 
     list(TRANSFORM headers PREPEND "include/orm/")
     list(TRANSFORM sources PREPEND "src/orm/")

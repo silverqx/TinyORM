@@ -149,8 +149,18 @@ target_optional_compile_definitions(${TinyOrm_target}
     PUBLIC
         ADVANCED FEATURE NAME DISABLE_THREAD_LOCAL
         DEFAULT OFF
-        DESCRIPTION "Remove all thread_local storage duration specifiers"
+        DESCRIPTION "Remove all the thread_local storage duration specifiers \
+(disables threading support)"
         ENABLED TINYORM_DISABLE_THREAD_LOCAL
+)
+
+target_optional_compile_definitions(${TinyOrm_target}
+    PUBLIC
+        ADVANCED FEATURE NAME ORM
+        DEFAULT ON
+        DESCRIPTION "Controls the compilation of all ORM-related source code, when this \
+option is disabled, then only the query builder without ORM is compiled."
+        DISABLED TINYORM_DISABLE_ORM
 )
 
 # Use Precompiled headers (PCH)

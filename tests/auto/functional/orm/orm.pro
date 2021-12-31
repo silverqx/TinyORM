@@ -1,6 +1,13 @@
 TEMPLATE = subdirs
 
-SUBDIRS = \
+subdirsList = \
     databasemanager \
     query \
-    tiny \
+
+!disable_orm: \
+    subdirsList += \
+        tiny \
+
+SUBDIRS = $$sorted(subdirsList)
+
+unset(subdirsList)

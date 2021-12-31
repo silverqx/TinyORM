@@ -224,13 +224,14 @@ But a special situation is when you are building your application / library and 
 
 | C Macro Name                      | Description |
 | --------------------------------- | ----------- |
-| `TINYORM_LINKING_SHARED`          | <u>__Must__</u> be defined when you are linking against `TinyORM` shared build (`dll` library). |
+| `TINYORM_LINKING_SHARED`          | <u>__Must__</u> be defined when you are linking against `TinyORM` shared build (`dll` library), exported classes and functions will be tagged with `__declspec(dllimport)` on `msvc` and `visibility("default")` on `GCC >= 4`. |
 | `TINYORM_BUILDING_SHARED`         | Defined when `TinyORM` is built as a `dll` library (shared build). |
 | `TINYORM_DEBUG`                   | Defined in the debug build. |
 | `TINYORM_NO_DEBUG`                | Defined in the release build. |
 | `TINYORM_DEBUG_SQL`               | Defined in the debug build. |
 | `TINYORM_NO_DEBUG_SQL`            | Defined in the release build. |
 | `TINYORM_MYSQL_PING`              | Enable `Orm::MySqlConnection::pingDatabase()` method.<br/><small>Defined when [`mysql_ping`](#mysql_ping) <small>(qmake)</small> / [`MYSQL_PING`](#MYSQL_PING) <small>(cmake)</small> configuration `build option` is enabled.</small> |
+| `TINYORM_DISABLE_ORM`             | Controls the compilation of all `ORM-related` source code, when this macro  is `defined`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests.<br/><small>Defined when [`disable_orm`](#disable_orm) <small>(qmake)</small> / [`ORM`](#ORM) <small>(cmake)</small> configuration `build option` is enabled <small>(qmake)</small> / disabled <small>(cmake)</small>.</small> |
 | `TINYORM_EXTERN_CONSTANTS`        | Defined when extern constants are used.<br/><small>Described at [`qmake`](#inline_constants) / [`CMake`](#INLINE_CONSTANTS) how it works.</small> |
 | `TINYORM_INLINE_CONSTANTS`        | Defined when global inline constants are used.<br/><small>Defined when [`inline_constants`](#inline_constants) <small>(qmake)</small> / [`INLINE_CONSTANTS`](#INLINE_CONSTANTS) <small>(cmake)</small> configuration `build option` is enabled.</small> |
 | `TINYORM_TESTS_CODE`              | Enable code needed by unit tests, eg. connection overriding in the `Orm::Tiny::Model`.<br/><small>Defined when [`build_tests`](#build_tests) <small>(qmake)</small> / [`BUILD_TESTS`](#BUILD_TESTS) <small>(cmake)</small> configuration `build option` is enabled.</small> |
@@ -338,6 +339,7 @@ CMake multi-config generators like `Ninja Multi-Config` or `Visual Studio 16 201
 | `INLINE_CONSTANTS`                | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: `BUILD_SHARED_LIBS`</small> |
 | `MSVC_RUNTIME_DYNAMIC`            | `ON`    | Use MSVC dynamic runtime library (`-MD`) instead of static (`-MT`), also considers a Debug configuration (`-MTd`, `-MDd`).<br/><small>Available when: `MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY`</small> |
 | `MYSQL_PING`                      | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
+| `ORM`                             | `ON`    | Controls the compilation of all `ORM-related` source code, when this option is `disabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
 | `VERBOSE_CONFIGURE`               | `OFF`   | Show information about `PACKAGES_FOUND` / `PACKAGES_NOT_FOUND` in the CMake configure output. |
 
 </APITable>
@@ -522,6 +524,7 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | ----------------------------------- | ------- | ----------- |
 | `build_tests`                       | `OFF`   | Build TinyORM unit tests. |
 | `disable_thread_local`              | `OFF`   | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables threading support. |
+| `disable_orm`                       | `OFF`   | Controls the compilation of all `ORM-related` source code, when this option is `enabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
 | `inline_constants`                  | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: <code>CONFIG(shared\|dll)</code></small> |
 | `link_pkgconfig_off`                | `OFF`   | Link against `libmariadb` with `PKGCONFIG`.<br/>Used only in the `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L27).<br/><small>Available when: <code>(win32-g++\|win32-clang-g++):mysql:!static:!staticlib</code></small> |
 | `mysql_ping`                        | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |

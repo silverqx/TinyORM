@@ -125,6 +125,7 @@ namespace Relations
     // BUG docs many-to-many examples contain queries with created_at in pivot table, but pivot doesn't contain timestamp columns silverqx
     // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
     // CUR docs IdealImage silverqx
+    // CUR docs, add all the implemented features summary somewhere silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

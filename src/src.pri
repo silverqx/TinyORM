@@ -1,7 +1,7 @@
 extern_constants: \
-    SOURCES += $$PWD/orm/constants_extern.cpp
+    sourcesList += $$PWD/orm/constants_extern.cpp
 
-SOURCES += \
+sourcesList += \
     $$PWD/orm/basegrammar.cpp \
     $$PWD/orm/concerns/detectslostconnections.cpp \
     $$PWD/orm/concerns/hasconnectionresolver.cpp \
@@ -42,14 +42,21 @@ SOURCES += \
     $$PWD/orm/schema/sqliteschemabuilder.cpp \
     $$PWD/orm/sqliteconnection.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \
-    $$PWD/orm/tiny/model.cpp \
-    $$PWD/orm/tiny/exceptions/modelnotfounderror.cpp \
-    $$PWD/orm/tiny/exceptions/relationnotfounderror.cpp \
-    $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
-    $$PWD/orm/tiny/relations/relation.cpp \
     $$PWD/orm/utils/attribute.cpp \
     $$PWD/orm/utils/fs.cpp \
     $$PWD/orm/utils/query.cpp \
     $$PWD/orm/utils/string.cpp \
     $$PWD/orm/utils/thread.cpp \
     $$PWD/orm/utils/type.cpp \
+
+!disable_orm: \
+    sourcesList += \
+        $$PWD/orm/tiny/exceptions/modelnotfounderror.cpp \
+        $$PWD/orm/tiny/exceptions/relationnotfounderror.cpp \
+        $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
+        $$PWD/orm/tiny/model.cpp \
+        $$PWD/orm/tiny/relations/relation.cpp \
+
+SOURCES += $$sorted(sourcesList)
+
+unset(sourcesList)

@@ -1,0 +1,2 @@
+CONFIG *= disable_orm
+DEFINES *= TINYORM_DISABLE_ORM

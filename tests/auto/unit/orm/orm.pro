@@ -1,7 +1,14 @@
 TEMPLATE = subdirs
 
-SUBDIRS = \
+subdirsList = \
     databaseconnection \
     query \
-    tiny \
     version \
+
+!disable_orm: \
+    subdirsList += \
+        tiny \
+
+SUBDIRS = $$sorted(subdirsList)
+
+unset(subdirsList)

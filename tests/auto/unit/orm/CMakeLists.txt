@@ -1,4 +1,8 @@
 add_subdirectory(databaseconnection)
 add_subdirectory(query)
-add_subdirectory(tiny)
+
+if(ORM)
+    add_subdirectory(tiny)
+endif()
+
 add_subdirectory(version)
