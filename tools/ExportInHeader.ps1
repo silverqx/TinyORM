@@ -1,3 +1,7 @@
+#!/usr/bin/env pwsh
+
+# Detect SHAREDLIB_EXPORT in header files
+
 Set-StrictMode -Version 3.0
 
 $hppFiles = Get-ChildItem -Path ..\include\*.hpp -Recurse
