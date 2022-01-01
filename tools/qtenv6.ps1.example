@@ -1,0 +1,4 @@
+Write-Host 'Setting up environment for Qt 6.2.2 usage...' -ForegroundColor Magenta
+$env:Path = '<your_path_here>\Qt\6.2.2\msvc2019_64\bin;' + $env:Path
+. <your_path_here>\dotfiles\bin\vcvars64.ps1
+
