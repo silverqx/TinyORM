@@ -312,7 +312,7 @@ namespace Orm::Tiny
             return *model;
 
         throw Exceptions::ModelNotFoundError(
-                    Utils::Type::classPureBasename<Model>(), {id});
+                    Orm::Utils::Type::classPureBasename<Model>(), {id});
     }
 
     template<typename Model>
@@ -350,8 +350,8 @@ namespace Orm::Tiny
             return *instance;
 
         return newModelInstance(
-                    Utils::Attribute::joinAttributesForFirstOr(attributes, values,
-                                                               m_model.getKeyName()));
+                    TinyUtils::Attribute::joinAttributesForFirstOr(
+                        attributes, values, m_model.getKeyName()));
     }
 
     template<typename Model>
@@ -365,8 +365,8 @@ namespace Orm::Tiny
 
         auto newInstance =
                 newModelInstance(
-                    Utils::Attribute::joinAttributesForFirstOr(attributes, values,
-                                                               m_model.getKeyName()));
+                    TinyUtils::Attribute::joinAttributesForFirstOr(
+                        attributes, values, m_model.getKeyName()));
 
         newInstance.save();
 
@@ -383,7 +383,7 @@ namespace Orm::Tiny
             return *model;
 
         throw Exceptions::ModelNotFoundError(
-                    Utils::Type::classPureBasename<Model>());
+                    Orm::Utils::Type::classPureBasename<Model>());
     }
 
     template<typename Model>

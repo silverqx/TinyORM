@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_UTILS_ATTRIBUTE_HPP
-#define ORM_UTILS_ATTRIBUTE_HPP
+#ifndef ORM_TINY_UTILS_ATTRIBUTE_HPP
+#define ORM_TINY_UTILS_ATTRIBUTE_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -9,7 +9,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Utils::Attribute
+namespace Orm::Tiny::Utils::Attribute
 {
     /*! Convert a AttributeItem QVector to QVariantMap. */
     SHAREDLIB_EXPORT QVariantMap
@@ -35,8 +35,8 @@ namespace Orm::Utils::Attribute
                              const QVector<AttributeItem> &values,
                              const QString &keyName);
 
-} // namespace Orm::Utils::Attribute
+} // namespace Orm::Tiny::Utils::Attribute
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_UTILS_ATTRIBUTE_HPP
+#endif // ORM_TINY_UTILS_ATTRIBUTE_HPP

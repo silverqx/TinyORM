@@ -325,8 +325,9 @@ namespace Concerns
     QString
     GuardsAttributes<Derived, AllRelations...>::getKeyForGuardableHash() const
     {
-        return QStringLiteral("%1-%2").arg(model().getConnectionName(),
-                                           Utils::Type::classPureBasename<Derived>());
+        return QStringLiteral("%1-%2").arg(
+                    model().getConnectionName(),
+                    Orm::Utils::Type::classPureBasename<Derived>());
     }
 
     template<typename Derived, typename ...AllRelations>

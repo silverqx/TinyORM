@@ -9,7 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/concepts.hpp"
 #include "orm/ormtypes.hpp"
-#include "orm/utils/attribute.hpp"
+#include "orm/tiny/utils/attribute.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -23,6 +23,7 @@ namespace Query
 
 namespace Tiny
 {
+    namespace TinyUtils = Orm::Tiny::Utils;
 
     template<typename Model>
     class Builder;
@@ -437,14 +438,14 @@ namespace Tiny
     std::optional<QSqlQuery>
     BuilderProxies<Model>::insert(const QVector<AttributeItem> &values) const
     {
-        return toBase().insert(Utils::Attribute::convertVectorToMap(values));
+        return toBase().insert(TinyUtils::Attribute::convertVectorToMap(values));
     }
 
     template<typename Model>
     std::optional<QSqlQuery>
     BuilderProxies<Model>::insert(const QVector<QVector<AttributeItem>> &values) const
     {
-        return toBase().insert(Utils::Attribute::convertVectorsToMaps(values));
+        return toBase().insert(TinyUtils::Attribute::convertVectorsToMaps(values));
     }
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
@@ -453,7 +454,7 @@ namespace Tiny
     BuilderProxies<Model>::insertGetId(const QVector<AttributeItem> &values,
                                        const QString &sequence) const
     {
-        return toBase().insertGetId(Utils::Attribute::convertVectorToMap(values),
+        return toBase().insertGetId(TinyUtils::Attribute::convertVectorToMap(values),
                                     sequence);
     }
 
@@ -461,7 +462,8 @@ namespace Tiny
     std::tuple<int, std::optional<QSqlQuery>>
     BuilderProxies<Model>::insertOrIgnore(const QVector<AttributeItem> &values) const
     {
-        return toBase().insertOrIgnore(Utils::Attribute::convertVectorToMap(values));
+        return toBase().insertOrIgnore(
+                    TinyUtils::Attribute::convertVectorToMap(values));
     }
 
     template<typename Model>
@@ -469,7 +471,8 @@ namespace Tiny
     BuilderProxies<Model>::insertOrIgnore(
             const QVector<QVector<AttributeItem>> &values) const
     {
-        return toBase().insertOrIgnore(Utils::Attribute::convertVectorsToMaps(values));
+        return toBase().insertOrIgnore(
+                    TinyUtils::Attribute::convertVectorsToMaps(values));
     }
 
     template<typename Model>

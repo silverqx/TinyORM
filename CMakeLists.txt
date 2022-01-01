@@ -122,16 +122,10 @@ tiny_init_tiny_variables()
 # Throw a fatal error for unsupported environments
 tiny_check_unsupported_build()
 
-# TinyORM library header and source files
+# TinyORM library
 # ---
 
-include(TinySources)
-tiny_sources(${TinyOrm_target}_headers ${TinyOrm_target}_sources)
-
-add_library(${TinyOrm_target}
-    ${${TinyOrm_target}_headers}
-    ${${TinyOrm_target}_sources}
-)
+add_library(${TinyOrm_target})
 add_library(${TinyOrm_ns}::${TinyOrm_target} ALIAS ${TinyOrm_target})
 
 # TinyORM build options - target is needed
@@ -161,6 +155,17 @@ target_optional_compile_definitions(${TinyOrm_target}
         DESCRIPTION "Controls the compilation of all ORM-related source code, when this \
 option is disabled, then only the query builder without ORM is compiled."
         DISABLED TINYORM_DISABLE_ORM
+)
+
+# TinyORM library header and source files
+# ---
+
+include(TinySources)
+tiny_sources(${TinyOrm_target}_headers ${TinyOrm_target}_sources)
+
+target_sources(${TinyOrm_target} PRIVATE
+    ${${TinyOrm_target}_headers}
+    ${${TinyOrm_target}_sources}
 )
 
 # Use Precompiled headers (PCH)

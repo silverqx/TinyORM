@@ -1,4 +1,4 @@
-#include "orm/utils/string.hpp"
+#include "orm/tiny/utils/string.hpp"
 
 #include <vector>
 
@@ -10,7 +10,7 @@ using Orm::Constants::UNDERSCORE;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Utils::String
+namespace Orm::Tiny::Utils::String
 {
 
 QString toSnake(QString string)
@@ -69,6 +69,6 @@ bool isNumber(const QString &string)
     return nonDigit == string.cend();
 }
 
-} // namespace Orm::Utils::String
+} // namespace Orm::Tiny::Utils::String
 
 TINYORM_END_COMMON_NAMESPACE

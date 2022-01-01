@@ -27,13 +27,15 @@ namespace Orm::Utils
         ~Thread() = delete;
 
         /*! Set thread name for debugger, -1 for a current thread. */
+        [[maybe_unused]]
         static void nameThreadForDebugging(
-                    const QString &threadName,
-                    quint64 threadId = static_cast<quint64>(-1));
+                const QString &threadName,
+                quint64 threadId = static_cast<quint64>(-1));
         /*! Set thread name for debugger, -1 for a current thread. */
+        [[maybe_unused]]
         static void nameThreadForDebugging(
-                    const char *threadName,
-                    quint64 threadId = static_cast<quint64>(-1));
+                const char *threadName,
+                quint64 threadId = static_cast<quint64>(-1));
     };
 
 } // namespace Orm::Utils

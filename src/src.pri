@@ -42,10 +42,8 @@ sourcesList += \
     $$PWD/orm/schema/sqliteschemabuilder.cpp \
     $$PWD/orm/sqliteconnection.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \
-    $$PWD/orm/utils/attribute.cpp \
     $$PWD/orm/utils/fs.cpp \
     $$PWD/orm/utils/query.cpp \
-    $$PWD/orm/utils/string.cpp \
     $$PWD/orm/utils/thread.cpp \
     $$PWD/orm/utils/type.cpp \
 
@@ -56,6 +54,8 @@ sourcesList += \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
         $$PWD/orm/tiny/model.cpp \
         $$PWD/orm/tiny/relations/relation.cpp \
+        $$PWD/orm/tiny/utils/attribute.cpp \
+        $$PWD/orm/tiny/utils/string.cpp \
 
 SOURCES += $$sorted(sourcesList)
 

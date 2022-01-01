@@ -27,6 +27,7 @@ namespace Orm::Utils
         ~Fs() = delete;
 
         /*! Resolve ~ home prefix to the full filepath. */
+        [[maybe_unused]]
         static QString resolveHome(QString filepath);
     };
 

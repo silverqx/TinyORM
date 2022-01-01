@@ -25,7 +25,7 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/relations/hasmany.hpp"
 #include "orm/tiny/relations/hasone.hpp"
 #include "orm/tiny/tinybuilder.hpp"
-#include "orm/utils/string.hpp"
+#include "orm/tiny/utils/string.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -126,6 +126,7 @@ namespace Relations
     // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
     // CUR docs IdealImage silverqx
     // CUR docs, add all the implemented features summary somewhere silverqx
+    // CUR move LOG_EXECUTED_QUERY to macros/logExe... silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
@@ -1398,7 +1399,7 @@ namespace Relations
                 throw Exceptions::MassAssignmentError(
                         QStringLiteral("Add '%1' to u_fillable data member to allow "
                                        "mass assignment on '%2'.")
-                        .arg(key, Utils::Type::classPureBasename<Derived>()));
+                        .arg(key, Orm::Utils::Type::classPureBasename<Derived>()));
 
         return model();
     }
@@ -1422,7 +1423,7 @@ namespace Relations
                 throw Exceptions::MassAssignmentError(
                         QStringLiteral("Add '%1' to u_fillable data member to allow "
                                        "mass assignment on '%2'.")
-                        .arg(key, Utils::Type::classPureBasename<Derived>()));
+                        .arg(key, Orm::Utils::Type::classPureBasename<Derived>()));
         }
 
         return model();
@@ -1645,7 +1646,8 @@ namespace Relations
         if (table.isEmpty())
             const_cast<QString &>(model().u_table) =
                 QStringLiteral("%1s").arg(
-                    Utils::String::toSnake(Utils::Type::classPureBasename<Derived>()));
+                    TinyUtils::String::toSnake(
+                        Orm::Utils::Type::classPureBasename<Derived>()));
 
         return table;
     }
@@ -1973,7 +1975,7 @@ namespace Relations
            and format a Carbon object from this timestamp. This allows flexibility
            when defining your date fields as they might be UNIX timestamps here. */
         if (value.canConvert<QString>() &&
-            Utils::String::isNumber(value.value<QString>())
+            TinyUtils::String::isNumber(value.value<QString>())
         )
             // TODO switch ms accuracy? For the u_dateFormat too? silverqx
             return QDateTime::fromSecsSinceEpoch(value.value<qint64>());
@@ -2212,7 +2214,7 @@ namespace Relations
             const bool sync)
     {
         m_attributes.reserve(attributes.size());
-        m_attributes = Utils::Attribute::removeDuplicitKeys(attributes);
+        m_attributes = TinyUtils::Attribute::removeDuplicitKeys(attributes);
 
         // Build attributes hash
         m_attributesHash.clear();
@@ -2587,8 +2589,8 @@ namespace Relations
     QString Model<Derived, AllRelations...>::getForeignKey() const
     {
         return QStringLiteral("%1_%2").arg(
-                    Utils::String::toSnake(
-                        Utils::Type::classPureBasename<Derived>()),
+                    TinyUtils::String::toSnake(
+                        Orm::Utils::Type::classPureBasename<Derived>()),
                     getKeyName());
     }
 
@@ -2859,8 +2861,8 @@ namespace Relations
     template<typename Related>
     QString Model<Derived, AllRelations...>::guessBelongsToRelationInternal() const
     {
-        // TODO reliability, also add Utils::String::studly silverqx
-        auto relation = Utils::Type::classPureBasename<Related>();
+        // TODO reliability, also add Orm::Tiny::Utils::String::studly silverqx
+        auto relation = Orm::Utils::Type::classPureBasename<Related>();
 
         relation[0] = relation[0].toLower();
 
@@ -2876,9 +2878,9 @@ namespace Relations
            just sort the models and join them together to get the table name. */
         QStringList segments {
             // The table name of the current model instance
-            Utils::Type::classPureBasename<Derived>(),
+            Orm::Utils::Type::classPureBasename<Derived>(),
             // The table name of the related model instance
-            Utils::Type::classPureBasename<Related>(),
+            Orm::Utils::Type::classPureBasename<Related>(),
         };
 
         /* Now that we have the model names in the vector, we can just sort them and
@@ -2987,7 +2989,7 @@ namespace Relations
 #endif
             )
                 throw Orm::Exceptions::InvalidArgumentError(
-                        message.arg(Utils::Type::classPureBasename<Derived>()));
+                        message.arg(Orm::Utils::Type::classPureBasename<Derived>()));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -3027,7 +3029,7 @@ namespace Relations
                             "The relation '%1' is many type relation, use "
                             "%2<%3>() method overload without an 'Orm::One' tag.")
                         .arg(relation, source,
-                             Utils::Type::classPureBasename<Related>()));
+                             Orm::Utils::Type::classPureBasename<Related>()));
         } else if constexpr (std::is_same_v<Result, QVector<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::RuntimeError(
@@ -3036,7 +3038,7 @@ namespace Relations
                             "%2<%3, Orm::One>() method overload "
                             "with an 'Orm::One' tag.")
                         .arg(relation, source,
-                             Utils::Type::classPureBasename<Related>()));
+                             Orm::Utils::Type::classPureBasename<Related>()));
         } else
             throw Orm::Exceptions::InvalidArgumentError(
                     "Unexpected 'Result' template argument.");
@@ -3148,7 +3150,7 @@ namespace Relations
 
         if (!dirty.isEmpty()) {
             model().setKeysForSaveQuery(query).update(
-                        Utils::Attribute::convertVectorToUpdateItem(dirty));
+                        TinyUtils::Attribute::convertVectorToUpdateItem(dirty));
 
             syncChanges();
 

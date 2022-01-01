@@ -690,9 +690,9 @@ namespace Private
                     "nested relations. Actual '<Related> = %1', expected '<Related> "
                     "= %2', <Related> has to be of the same type as the 'last' "
                     "relation name passed to the has() related method.")
-                .arg(Utils::Type::classPureBasename(
+                .arg(Orm::Utils::Type::classPureBasename(
                          Private::HasNestedStore::STORE_TYPEID.top()),
-                     Utils::Type::classPureBasename<Related>()));
+                     Orm::Utils::Type::classPureBasename<Related>()));
     }
 
 } // namespace Orm::Tiny::Concerns

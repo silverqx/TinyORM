@@ -234,9 +234,9 @@ namespace Orm::Tiny::Relations
 
         // Get singularizes snake-case table name
         if (table.isEmpty())
-            return Utils::String::singular(
-                        Utils::String::toSnake(
-                            Utils::Type::classPureBasename<PivotModel>()));
+            return TinyUtils::String::singular(
+                        TinyUtils::String::toSnake(
+                            Orm::Utils::Type::classPureBasename<PivotModel>()));
 
         return table;
     }

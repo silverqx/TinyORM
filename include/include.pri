@@ -69,10 +69,8 @@ headersList += \
     $$PWD/orm/support/databaseconnectionsmap.hpp \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \
-    $$PWD/orm/utils/attribute.hpp \
     $$PWD/orm/utils/fs.hpp \
     $$PWD/orm/utils/query.hpp \
-    $$PWD/orm/utils/string.hpp \
     $$PWD/orm/utils/thread.hpp \
     $$PWD/orm/utils/type.hpp \
     $$PWD/orm/version.hpp \
@@ -102,6 +100,8 @@ headersList += \
         $$PWD/orm/tiny/tinybuilder.hpp \
         $$PWD/orm/tiny/tinybuilderproxies.hpp \
         $$PWD/orm/tiny/tinytypes.hpp \
+        $$PWD/orm/tiny/utils/attribute.hpp \
+        $$PWD/orm/tiny/utils/string.hpp \
 
 HEADERS += $$sorted(headersList)
 

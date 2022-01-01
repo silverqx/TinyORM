@@ -113,6 +113,7 @@ endfunction()
 # <scope> determines the scope for the following compile definitions.
 # ENABLED lists compile definitions that will be set on <target> when option is enabled,
 # DISABLED lists definitions that will be set otherwise.
+# ADVANCED calls mark_as_advanced(<NAME>) command.
 function(target_optional_compile_definitions target scope)
 
     set(options ADVANCED FEATURE)

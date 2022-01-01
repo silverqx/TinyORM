@@ -1,4 +1,4 @@
-#include "orm/utils/attribute.hpp"
+#include "orm/tiny/utils/attribute.hpp"
 
 #include <unordered_set>
 
@@ -8,7 +8,7 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Utils::Attribute
+namespace Orm::Tiny::Utils::Attribute
 {
 
 QVariantMap
@@ -119,6 +119,6 @@ joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
     return attributesFiltered + valuesFiltered;
 }
 
-} // namespace Orm::Utils::Attribute
+} // namespace Orm::Tiny::Utils::Attribute
 
 TINYORM_END_COMMON_NAMESPACE

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_UTILS_STRING_HPP
-#define ORM_UTILS_STRING_HPP
+#ifndef ORM_TINY_UTILS_STRING_HPP
+#define ORM_TINY_UTILS_STRING_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -12,7 +12,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Utils::String
+namespace Orm::Tiny::Utils::String
 {
     /*! Convert a string to snake case. */
     SHAREDLIB_EXPORT QString toSnake(QString string);
@@ -23,8 +23,8 @@ namespace Orm::Utils::String
     /*! Check if the given string is the number, signed or unsigned. */
     SHAREDLIB_EXPORT bool isNumber(const QString &string);
 
-} // namespace Orm::Utils::String
+} // namespace Orm::Tiny::Utils::String
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_UTILS_STRING_HPP
+#endif // ORM_TINY_UTILS_STRING_HPP

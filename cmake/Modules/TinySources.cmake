@@ -72,10 +72,8 @@ function(tiny_sources out_headers out_sources)
         support/databaseconnectionsmap.hpp
         types/log.hpp
         types/statementscounter.hpp
-        utils/attribute.hpp
         utils/fs.hpp
         utils/query.hpp
-        utils/string.hpp
         utils/thread.hpp
         utils/type.hpp
         version.hpp
@@ -106,6 +104,8 @@ function(tiny_sources out_headers out_sources)
             tiny/tinybuilder.hpp
             tiny/tinybuilderproxies.hpp
             tiny/tinytypes.hpp
+            tiny/utils/attribute.hpp
+            tiny/utils/string.hpp
         )
     endif()
 
@@ -156,10 +156,8 @@ function(tiny_sources out_headers out_sources)
         schema/sqliteschemabuilder.cpp
         sqliteconnection.cpp
         support/configurationoptionsparser.cpp
-        utils/attribute.cpp
         utils/fs.cpp
         utils/query.cpp
-        utils/string.cpp
         utils/thread.cpp
         utils/type.cpp
     )
@@ -171,6 +169,8 @@ function(tiny_sources out_headers out_sources)
             tiny/exceptions/relationnotloadederror.cpp
             tiny/model.cpp
             tiny/relations/relation.cpp
+            tiny/utils/attribute.cpp
+            tiny/utils/string.cpp
         )
     endif()
 

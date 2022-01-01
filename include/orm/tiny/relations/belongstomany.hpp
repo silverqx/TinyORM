@@ -17,13 +17,15 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/likely.hpp"
 #include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/relations/relation.hpp"
-#include "orm/utils/attribute.hpp"
+#include "orm/tiny/utils/attribute.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny::Relations
 {
+    namespace TinyUtils = Orm::Tiny::Utils;
+
     class Pivot;
 
     /*! TinyORM's 'Pivot' class. */
@@ -913,7 +915,7 @@ namespace Orm::Tiny::Relations
             return *model;
 
         throw Exceptions::ModelNotFoundError(
-                    Utils::Type::classPureBasename<Related>(), {id});
+                    Orm::Utils::Type::classPureBasename<Related>(), {id});
     }
 
     template<class Model, class Related, class PivotType>
@@ -950,8 +952,8 @@ namespace Orm::Tiny::Relations
             return *instance;
 
         return this->m_related->newInstance(
-                    Utils::Attribute::joinAttributesForFirstOr(attributes, values,
-                                                               this->m_relatedKey));
+                    TinyUtils::Attribute::joinAttributesForFirstOr(
+                        attributes, values, this->m_relatedKey));
     }
 
     template<class Model, class Related, class PivotType>
@@ -966,7 +968,7 @@ namespace Orm::Tiny::Relations
             return *instance;
 
         // NOTE api different, Eloquent doen't use values argument silverqx
-        return create(Utils::Attribute::joinAttributesForFirstOr(
+        return create(TinyUtils::Attribute::joinAttributesForFirstOr(
                           attributes, values, this->m_relatedKey),
                       pivotValues, touch);
     }
@@ -980,7 +982,7 @@ namespace Orm::Tiny::Relations
             return *model;
 
         throw Exceptions::ModelNotFoundError(
-                    Utils::Type::classPureBasename<Related>());
+                    Orm::Utils::Type::classPureBasename<Related>());
     }
 
     template<class Model, class Related, class PivotType>
@@ -1150,8 +1152,9 @@ namespace Orm::Tiny::Relations
             /* Here we will insert the attachment records into the pivot table. Once
                we have inserted the records, we will touch the relationships if
                necessary and the function will return. */
-            newPivotStatement()->insert(Utils::Attribute::convertVectorsToMaps(
-                                            formatAttachRecords(ids, attributes)));
+            newPivotStatement()->insert(
+                    TinyUtils::Attribute::convertVectorsToMaps(
+                        formatAttachRecords(ids, attributes)));
         else
             attachUsingCustomClass(ids, attributes);
 
@@ -1195,8 +1198,9 @@ namespace Orm::Tiny::Relations
             /* Here we will insert the attachment records into the pivot table. Once
                we have inserted the records, we will touch the relationships if
                necessary and the function will return. */
-            newPivotStatement()->insert(Utils::Attribute::convertVectorsToMaps(
-                                            formatAttachRecords(idsWithAttributes)));
+            newPivotStatement()->insert(
+                    TinyUtils::Attribute::convertVectorsToMaps(
+                        formatAttachRecords(idsWithAttributes)));
         else
             attachUsingCustomClass(idsWithAttributes);
 
@@ -1329,7 +1333,7 @@ namespace Orm::Tiny::Relations
         int updated = -1;
         std::tie(updated, std::ignore) =
                 newPivotStatementForId(id)->update(
-                    Utils::Attribute::convertVectorToUpdateItem(
+                    TinyUtils::Attribute::convertVectorToUpdateItem(
                         castAttributes(attributes)));
 
         /* It will not touch if attributes size is 0, because this function is called
@@ -1794,7 +1798,7 @@ namespace Orm::Tiny::Relations
     QString BelongsToMany<Model, Related, PivotType>::guessInverseRelation() const
     {
         // FEATURE relations, add parent touches (eg parentTouchesName) to the Model::belongsToMany factory method silverqx
-        auto relation = Utils::Type::classPureBasename<Model>();
+        auto relation = Orm::Utils::Type::classPureBasename<Model>();
 
         relation[0] = relation[0].toLower();
 

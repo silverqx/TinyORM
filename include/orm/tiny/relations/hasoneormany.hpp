@@ -6,12 +6,13 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/tiny/relations/relation.hpp"
-#include "orm/utils/attribute.hpp"
+#include "orm/tiny/utils/attribute.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny::Relations
 {
+    namespace TinyUtils = Orm::Tiny::Utils;
 
     /*! Has one/many relation base class. */
     template<class Model, class Related>
@@ -196,8 +197,8 @@ namespace Orm::Tiny::Relations
 
         auto newInstance =
                 this->m_related->newInstance(
-                    Utils::Attribute::joinAttributesForFirstOr(attributes, values,
-                                                               this->m_relatedKey));
+                    TinyUtils::Attribute::joinAttributesForFirstOr(
+                        attributes, values, this->m_relatedKey));
 
         setForeignAttributesForCreate(newInstance);
 
@@ -215,8 +216,8 @@ namespace Orm::Tiny::Relations
         if (instance)
             return *instance;
 
-        return create(Utils::Attribute::joinAttributesForFirstOr(attributes, values,
-                                                                 this->m_relatedKey));
+        return create(TinyUtils::Attribute::joinAttributesForFirstOr(
+                          attributes, values, this->m_relatedKey));
     }
 
     template<class Model, class Related>
