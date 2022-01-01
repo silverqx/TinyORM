@@ -137,6 +137,16 @@ InvokeXTimes.ps1
 pwsh -NoLogo -NoProfile -File InvokeXTimes.ps1 100
 
 
+Powershell Clang analyzers:
+---------------------------
+
+qa-lint-tinyorm-qt5.ps1 is tailor-made for TinyORM project.
+
+qa-clang-tidy.ps1, qa-clazy-standalone.ps1, qa-clazy-standalone-st.ps1 are more general, they can be used with any project, "-st" script calls raw clazy-standalone.exe.
+
+run-clang-tidy.ps1, run-clazy-standalone.ps1 are raw Powershell wrappers around python run-clang-tidy/run-clazy-standalone.py python scripts.
+
+
 cmake build commands:
 ---------------------
 

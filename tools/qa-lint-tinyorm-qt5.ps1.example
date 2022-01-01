@@ -1,0 +1,15 @@
+#!/usr/bin/env pwsh
+
+Param(
+    [Parameter(HelpMessage = 'Skip Clang Tidy analyzes.')]
+    [switch] $SkipClangTidy,
+
+    [Parameter(HelpMessage = 'Skip Clazy standalone analyzes.')]
+    [switch] $SkipClazy
+)
+
+Set-StrictMode -Version 3.0
+
+E:\dotfiles\bin\Lint-TinyORM.ps1 `
+    -BuildPath '<your_path_here>\TinyOrm\TinyOrm-builds-cmake\build-lint-qt5' `
+    -SkipClangTidy:$SkipClangTidy -SkipClazy:$SkipClazy
