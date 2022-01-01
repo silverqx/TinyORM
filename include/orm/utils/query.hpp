@@ -44,12 +44,4 @@ namespace Orm::Utils
 
 TINYORM_END_COMMON_NAMESPACE
 
-#ifndef LOG_EXECUTED_QUERY
-#  if !defined(TINYORM_NO_DEBUG)
-#    define LOG_EXECUTED_QUERY(query) Orm::Utils::Query::logExecutedQuery(query)
-#  else
-#    define LOG_EXECUTED_QUERY(query) qt_noop()
-#  endif
-#endif
-
 #endif // ORM_UTILS_QUERY_HPP

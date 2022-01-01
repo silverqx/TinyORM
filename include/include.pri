@@ -39,6 +39,7 @@ headersList += \
     $$PWD/orm/macros/export.hpp \
     $$PWD/orm/macros/export_common.hpp \
     $$PWD/orm/macros/likely.hpp \
+    $$PWD/orm/macros/logexecutedquery.hpp \
     $$PWD/orm/macros/systemheader.hpp \
     $$PWD/orm/macros/threadlocal.hpp \
     $$PWD/orm/mysqlconnection.hpp \

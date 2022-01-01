@@ -42,6 +42,7 @@ function(tiny_sources out_headers out_sources)
         macros/export.hpp
         macros/export_common.hpp
         macros/likely.hpp
+        macros/logexecutedquery.hpp
         macros/systemheader.hpp
         macros/threadlocal.hpp
         mysqlconnection.hpp

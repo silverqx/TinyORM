@@ -126,7 +126,7 @@ namespace Relations
     // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
     // CUR docs IdealImage silverqx
     // CUR docs, add all the implemented features summary somewhere silverqx
-    // CUR move LOG_EXECUTED_QUERY to macros/logExe... silverqx
+    // CUR unify macro prefix T_ vs TINY_ vs TINYORM_ vs nothing 😲😕 silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
