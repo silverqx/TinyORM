@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 
-# Detect SHAREDLIB_EXPORT in header files
+# Detect SHAREDLIB_EXPORT in header files that don't have a cpp file
 
 Set-StrictMode -Version 3.0
 
