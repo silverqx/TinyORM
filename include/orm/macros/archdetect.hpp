@@ -5,6 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <QtGlobal>
+
 // main part: processor type
 #if defined(Q_PROCESSOR_ALPHA)
 #  define ARCH_PROCESSOR "alpha"
