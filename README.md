@@ -8,7 +8,9 @@
 [![silverqx.github.io][docs-badge]][docs]
 [![License MIT][license-badge]][license]
 
-TinyORM is a modern ORM library heavily inspired by Laravel's Eloquent ORM that makes interacting with a database extremely simple.
+TinyORM is a modern ORM library that makes interacting with a database extremely simple.
+
+The code is well tested with the unit and functional tests. Almost all the query builder methods are unit tested. The TinyORM's query builder code and the code which is responsible for obtaining relationships, is tested by functional tests against all supported databases. For now, the code coverage is not ideal but is good enough to guarantee API and behavior compatibility.
 
 ## Documentation
 
@@ -17,6 +19,10 @@ Whole library is documented as markdown documents:
 [![silverqx.github.io][docs-badge]][docs]
 
 - [Documentation: Index](/docs/README.mdx#prologue)
+- [Dependencies](/docs/dependencies.mdx#dependencies)
+- [Supported Compilers](/docs/supported-compilers.mdx#supported-compilers)
+- [Building](/docs/building.mdx#building)
+- [Hello world](/docs/hello-world.mdx#hello-world)
 - [Dependencies](/docs/dependencies.mdx#dependencies)
 - [Database: Getting Started](/docs/database.mdx#database-getting-started)
 - [Database: Query Builder](/docs/query-builder.mdx#database-query-builder)
