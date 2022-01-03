@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_LOG_HPP
-#define ORM_LOG_HPP
+#ifndef ORM_TYPES_LOG_HPP
+#define ORM_TYPES_LOG_HPP
 
 #include <QVariant>
 
@@ -51,4 +51,4 @@ namespace Types
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_LOG_HPP
+#endif // ORM_TYPES_LOG_HPP
