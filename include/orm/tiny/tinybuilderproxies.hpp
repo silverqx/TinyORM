@@ -8,7 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QtSql/QSqlQuery>
 
 #include "orm/concepts.hpp"
-#include "orm/ormtypes.hpp"
+#include "orm/tiny/tinytypes.hpp"
 #include "orm/tiny/utils/attribute.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

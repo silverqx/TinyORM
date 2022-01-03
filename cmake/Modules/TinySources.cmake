@@ -135,7 +135,6 @@ function(tiny_sources out_headers out_sources)
         exceptions/sqlerror.cpp
         libraryinfo.cpp
         mysqlconnection.cpp
-        ormtypes.cpp
         postgresconnection.cpp
         query/expression.cpp
         query/grammars/grammar.cpp
@@ -171,6 +170,7 @@ function(tiny_sources out_headers out_sources)
             tiny/exceptions/relationnotloadederror.cpp
             tiny/model.cpp
             tiny/relations/relation.cpp
+            tiny/tinytypes.cpp
             tiny/types/syncchanges.cpp
             tiny/utils/attribute.cpp
             tiny/utils/string.cpp

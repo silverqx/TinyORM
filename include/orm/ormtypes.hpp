@@ -119,37 +119,19 @@ namespace Query
     };
 
     /*! Update item. */
-    struct SHAREDLIB_EXPORT UpdateItem
+    struct UpdateItem
     {
         QString  column;
         QVariant value;
     };
 
-    // TODO types, also divide types by namespace, eg AttributeItem is only used in the Orm::Tiny namespace, so an user can use 'using namespace Orm::Tiny' in model files, it is not possible now, because he has to use symbols from an Orm namespace too silverqx
-    // TODO pretty print in the debugger silverqx
-    /*! Attribute item used in ORM models. */
-    struct SHAREDLIB_EXPORT AttributeItem
-    {
-        QString  key;
-        QVariant value;
-
-        /*! Converting operator to the UpdateItem. */
-        explicit operator UpdateItem() const;
-    };
-
-    /*! Comparison operator for the AttributeItem. */
-    SHAREDLIB_EXPORT bool operator==(const AttributeItem &lhs, const AttributeItem &rhs);
-
     /*! Where value/attribute item. */
-    struct SHAREDLIB_EXPORT WhereItem
+    struct WhereItem
     {
         Column   column;
         QVariant value;
         QString  comparison {Orm::Constants::EQ};
         QString  condition  {};
-
-        /*! Converting operator to the AttributeItem. */
-        operator AttributeItem() const; // NOLINT(google-explicit-constructor)
     };
 
     /*! Where item to compare two columns, primarily used in vector overloads. */
@@ -159,31 +141,6 @@ namespace Query
         Column  second;
         QString comparison {Orm::Constants::EQ};
         QString condition  {};
-    };
-
-    // TODO types, belongs to Orm::Tiny namespace silverqx
-    /*! Eager load relation item. */
-    struct WithItem
-    {
-        QString name;
-        std::function<void(QueryBuilder &)> constraints {nullptr};
-    };
-
-//    SHAREDLIB_EXPORT bool operator==(const WithItem &lhs, const WithItem &rhs);
-
-    /*! Tag for Model::getRelation() family methods to return Related type
-        directly ( not container type ). */
-    struct SHAREDLIB_EXPORT One {};
-    /*! Tag for Model::getRelationshipFromMethod() to return QVector<Related>
-        type ( 'Many' relation types ), only internal type for now, used as the template
-        tag in the Model::pushVisited. */
-    struct Many {};
-
-    /*! Options parameter type used in Model save() method. */
-    struct SHAREDLIB_EXPORT SaveOptions
-    {
-        /*! Indicates if timestamps of parent models should be touched. */
-        bool touch = true;
     };
 
 } // namespace Orm

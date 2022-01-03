@@ -5,6 +5,7 @@
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/remove_if.hpp>
+#include <range/v3/view/transform.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -92,14 +93,20 @@ joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
 {
     // Remove the primary key from attributes
     auto attributesFiltered =
-            attributes | ranges::views::remove_if([&keyName](const WhereItem &value)
+            attributes | ranges::views::remove_if([&keyName](const WhereItem &attribute)
     {
         /* AttributeItem or more precise TinyORM attributes as such, can not contain
            expression in the column name.
            Of course, I could obtain the QString value from the expression and
            compare it, but I will not support that intentionally, instead
            the std::bad_variant_access exception will be thrown. */
-        return keyName == std::get<QString>(value.column);
+        return keyName == std::get<QString>(attribute.column);
+    })
+            | ranges::views::transform([](const WhereItem &attribute)
+    {
+        /* AttributeItem or more precise TinyORM attributes as such, can not contain
+           expression in the column name. */
+        return AttributeItem {std::get<QString>(attribute.column), attribute.value};
     })
             | ranges::to<QVector<AttributeItem>>();
 

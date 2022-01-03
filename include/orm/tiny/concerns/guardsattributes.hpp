@@ -7,7 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/concepts.hpp"
 #include "orm/macros/threadlocal.hpp"
-#include "orm/ormtypes.hpp"
+#include "orm/tiny/tinytypes.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

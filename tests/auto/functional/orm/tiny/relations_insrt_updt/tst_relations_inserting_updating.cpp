@@ -13,11 +13,11 @@ using Models::Tagged;
 using Models::Torrent;
 using Models::TorrentPreviewableFile;
 
-using Orm::AttributeItem;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Exceptions::QueryError;
 using Orm::One;
+using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
 
 using TestUtils::Databases;

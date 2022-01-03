@@ -19,7 +19,6 @@ sourcesList += \
     $$PWD/orm/exceptions/sqlerror.cpp \
     $$PWD/orm/libraryinfo.cpp \
     $$PWD/orm/mysqlconnection.cpp \
-    $$PWD/orm/ormtypes.cpp \
     $$PWD/orm/postgresconnection.cpp \
     $$PWD/orm/query/expression.cpp \
     $$PWD/orm/query/grammars/grammar.cpp \
@@ -54,6 +53,7 @@ sourcesList += \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
         $$PWD/orm/tiny/model.cpp \
         $$PWD/orm/tiny/relations/relation.cpp \
+        $$PWD/orm/tiny/tinytypes.cpp \
         $$PWD/orm/tiny/types/syncchanges.cpp \
         $$PWD/orm/tiny/utils/attribute.cpp \
         $$PWD/orm/tiny/utils/string.cpp \

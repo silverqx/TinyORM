@@ -10,8 +10,8 @@
 namespace Models
 {
 
-using Orm::AttributeItem;
 using Orm::Constants::NAME;
+using Orm::Tiny::AttributeItem;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;

@@ -6,8 +6,8 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/macros/threadlocal.hpp"
-// FEATURE orm types, only AttributeItem used silverqx
-#include "orm/ormtypes.hpp"
+// FEATURE tiny types, only AttributeItem used silverqx
+#include "orm/tiny/tinytypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -23,7 +23,7 @@ namespace Concerns
     template<class Model, class Related>
     class SupportsDefaultModels
     {
-        using AttributeItem = Orm::AttributeItem;
+        using AttributeItem = Orm::Tiny::AttributeItem;
 //        using Callback      = std::function<void(Related &, const Model &)>;
 
     public:
