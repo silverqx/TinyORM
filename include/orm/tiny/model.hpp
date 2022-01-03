@@ -130,9 +130,9 @@ namespace Relations
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
             public ModelProxies<Derived, AllRelations...>,
-            public Concerns::HasRelationStore<Derived, AllRelations...>,
+            public Tiny::Concerns::HasRelationStore<Derived, AllRelations...>,
             public Orm::Concerns::HasConnectionResolver,
-            public Concerns::GuardsAttributes<Derived, AllRelations...>
+            public Tiny::Concerns::GuardsAttributes<Derived, AllRelations...>
     {
         // Helps to avoid 'friend Derived' declarations in models
         friend Concerns::GuardsAttributes<Derived, AllRelations...>;

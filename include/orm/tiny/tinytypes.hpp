@@ -1,11 +1,13 @@
 #pragma once
-#ifndef ORM_TINYTYPES_HPP
-#define ORM_TINYTYPES_HPP
+#ifndef ORM_TINY_TINYTYPES_HPP
+#define ORM_TINY_TINYTYPES_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
 #include "orm/ormtypes.hpp"
+
+TINYORM_BEGIN_COMMON_NAMESPACE
 
 // CUR after commit move all common types here and remove all unneded forward declarations in Tiny ns silverqx
 // CUR also replace ormtypes.hpp by tinytypes.hpp where appropriate and remove unneeded ormtypes.hpp silverqx
@@ -29,4 +31,6 @@ namespace Concerns
 } // namespace Concerns
 } // namespace Orm::Tiny
 
-#endif // ORM_TINYTYPES_HPP
+TINYORM_END_COMMON_NAMESPACE
+
+#endif // ORM_TINY_TINYTYPES_HPP

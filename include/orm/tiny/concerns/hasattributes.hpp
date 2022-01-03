@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_HASATTRIBUTES_HPP
-#define ORM_HASATTRIBUTES_HPP
+#ifndef ORM_TINY_CONCERNS_HASATTRIBUTES_HPP
+#define ORM_TINY_CONCERNS_HASATTRIBUTES_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -9,7 +9,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny
+namespace Orm::Tiny::Concerns
 {
 
     /*! Model attributes. */
@@ -56,8 +56,8 @@ namespace Orm::Tiny
     const QVector<AttributeItem> &HasAttributes<Model>::getAttributes() const
     { return m_attributes; }
 
-} // namespace Orm::Tiny
+} // namespace Orm::Tiny::Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_HASATTRIBUTES_HPP
+#endif // ORM_TINY_CONCERNS_HASATTRIBUTES_HPP
