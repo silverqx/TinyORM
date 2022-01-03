@@ -17,6 +17,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/likely.hpp"
 #include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/relations/relation.hpp"
+#include "orm/tiny/types/syncchanges.hpp"
 #include "orm/tiny/utils/attribute.hpp"
 #include "orm/utils/type.hpp"
 

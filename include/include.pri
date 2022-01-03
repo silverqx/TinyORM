@@ -101,6 +101,7 @@ headersList += \
         $$PWD/orm/tiny/tinybuilder.hpp \
         $$PWD/orm/tiny/tinybuilderproxies.hpp \
         $$PWD/orm/tiny/tinytypes.hpp \
+        $$PWD/orm/tiny/types/syncchanges.hpp \
         $$PWD/orm/tiny/utils/attribute.hpp \
         $$PWD/orm/tiny/utils/string.hpp \
 

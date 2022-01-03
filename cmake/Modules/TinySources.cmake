@@ -105,6 +105,7 @@ function(tiny_sources out_headers out_sources)
             tiny/tinybuilder.hpp
             tiny/tinybuilderproxies.hpp
             tiny/tinytypes.hpp
+            tiny/types/syncchanges.hpp
             tiny/utils/attribute.hpp
             tiny/utils/string.hpp
         )
@@ -170,6 +171,7 @@ function(tiny_sources out_headers out_sources)
             tiny/exceptions/relationnotloadederror.cpp
             tiny/model.cpp
             tiny/relations/relation.cpp
+            tiny/types/syncchanges.cpp
             tiny/utils/attribute.cpp
             tiny/utils/string.cpp
         )

@@ -54,6 +54,7 @@ sourcesList += \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
         $$PWD/orm/tiny/model.cpp \
         $$PWD/orm/tiny/relations/relation.cpp \
+        $$PWD/orm/tiny/types/syncchanges.cpp \
         $$PWD/orm/tiny/utils/attribute.cpp \
         $$PWD/orm/tiny/utils/string.cpp \
 
