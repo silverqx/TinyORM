@@ -409,6 +409,8 @@ namespace Orm
                 const QString>> m_driverNamePrintable = std::nullopt;
     };
 
+    DatabaseConnection::~DatabaseConnection() = default;
+
     QString DatabaseConnection::getTablePrefix() const
     {
         return m_tablePrefix;
@@ -585,8 +587,6 @@ namespace Orm
 
         std::rethrow_exception(ePtr);
     }
-
-    DatabaseConnection::~DatabaseConnection() = default;
 
 } // namespace Orm
 
