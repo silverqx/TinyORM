@@ -25,12 +25,6 @@ namespace Tiny
 {
     namespace TinyUtils = Orm::Tiny::Utils;
 
-    template<typename Model>
-    class Builder;
-
-    template<typename Model>
-    using TinyBuilder = Builder<Model>;
-
     /*! Contains proxy methods to the QueryBuilder. */
     template<typename Model>
     class BuilderProxies
