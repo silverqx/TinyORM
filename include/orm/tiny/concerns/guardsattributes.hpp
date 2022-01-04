@@ -26,7 +26,7 @@ namespace Concerns
     {
     public:
         /*! Get the fillable attributes for the model. */
-        const QStringList &getFillable() const;
+        inline const QStringList &getFillable() const;
         /*! Set the fillable attributes for the model. */
         Derived &fillable(const QStringList &fillable);
         /*! Set the fillable attributes for the model. */
@@ -39,7 +39,7 @@ namespace Concerns
         Derived &mergeFillable(QStringList &&fillable);
 
         /*! Get the guarded attributes for the model. */
-        const QStringList &getGuarded() const;
+        inline const QStringList &getGuarded() const;
         /*! Set the guarded attributes for the model. */
         Derived &guard(const QStringList &guarded);
         /*! Set the guarded attributes for the model. */
@@ -56,7 +56,7 @@ namespace Concerns
         /*! Enable the mass assignment restrictions. */
         static void reguard();
         /*! Determine if the current state is "unguarded". */
-        static bool isUnguarded();
+        inline static bool isUnguarded();
         /*! Run the given callable while being unguarded. */
         static void unguarded(const std::function<void()> &callback);
 
@@ -95,13 +95,13 @@ namespace Concerns
 
     private:
         /*! Static cast this to a child's instance type (CRTP). */
-        Derived &model();
+        inline Derived &model();
         /*! Static cast this to a child's instance type (CRTP), const version. */
-        const Derived &model() const;
+        inline const Derived &model() const;
         /*! Static cast this to a child's instance  Model type. */
-        Model<Derived, AllRelations...> &basemodel();
+        inline Model<Derived, AllRelations...> &basemodel();
         /*! Static cast this to a child's instance Model type, const version. */
-        const Model<Derived, AllRelations...> &basemodel() const;
+        inline const Model<Derived, AllRelations...> &basemodel() const;
     };
 
     /* These methods may look a little strange because they are non-static, but it is
@@ -111,7 +111,7 @@ namespace Concerns
        to be static. ✌ */
 
     template<typename Derived, typename ...AllRelations>
-    inline const QStringList &
+    const QStringList &
     GuardsAttributes<Derived, AllRelations...>::getFillable() const
     {
         return basemodel().getFillableInternal();
@@ -163,7 +163,7 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline const QStringList &
+    const QStringList &
     GuardsAttributes<Derived, AllRelations...>::getGuarded() const
     {
         return basemodel().getGuardedInternal();
@@ -227,7 +227,7 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline bool GuardsAttributes<Derived, AllRelations...>::isUnguarded()
+    bool GuardsAttributes<Derived, AllRelations...>::isUnguarded()
     {
         return m_unguarded;
     }
@@ -369,7 +369,7 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline Derived &
+    Derived &
     GuardsAttributes<Derived, AllRelations...>::model()
     {
         // Can not be cached with static because a copy can be made
@@ -378,14 +378,14 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline const Derived &
+    const Derived &
     GuardsAttributes<Derived, AllRelations...>::model() const
     {
         return static_cast<const Derived &>(*this);
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline Model<Derived, AllRelations...> &
+    Model<Derived, AllRelations...> &
     GuardsAttributes<Derived, AllRelations...>::basemodel()
     {
         // Can not be cached with static because a copy can be made
@@ -393,7 +393,7 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline const Model<Derived, AllRelations...> &
+    const Model<Derived, AllRelations...> &
     GuardsAttributes<Derived, AllRelations...>::basemodel() const
     {
         return static_cast<const Model<Derived, AllRelations...> &>(*this);
