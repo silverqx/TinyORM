@@ -1623,7 +1623,9 @@ namespace Relations
     inline Derived &
     Model<Derived, AllRelations...>::setConnection(const QString &name)
     {
-        model().u_connection = name; return model();
+        model().u_connection = name;
+
+        return model();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
