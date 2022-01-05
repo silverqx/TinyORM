@@ -651,9 +651,10 @@ namespace Relations
 #endif
                 const QVector<WithItem> &onlyRelations);
 
+        /* HasRelationships */
         /*! The reference to the u_relations hash. */
         const QHash<QString, RelationVisitor> &
-        getRelationsRawMapInternal() const;
+        getUserRelationsRawMap() const;
 
         /* HasAttributes */
         /*! Get the u_dateFormat attribute from the Derived model. */
@@ -665,13 +666,13 @@ namespace Relations
 
         /* GuardsAttributes */
         /*! Get the u_fillable attributes from the Derived model. */
-        inline QStringList &getFillableInternal();
+        inline QStringList &getUserFillable();
         /*! Get the u_fillable attributes from the Derived model. */
-        inline const QStringList &getFillableInternal() const;
+        inline const QStringList &getUserFillable() const;
         /*! Get the u_guarded attributes from the Derived model. */
-        inline QStringList &getGuardedInternal();
+        inline QStringList &getUserGuarded();
         /*! Get the u_guarded attributes from the Derived model. */
-        inline const QStringList &getGuardedInternal() const;
+        inline const QStringList &getUserGuarded() const;
 
         /* HasTimestamps */
         /*! Get the u_timestamps attribute from the Derived model. */
@@ -2351,17 +2352,19 @@ namespace Relations
                 || ClassToCheck::getUpdatedAtColumn().isEmpty();
     }
 
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QHash<QString,
-                       typename Model<Derived, AllRelations...>::RelationVisitor> &
-    Model<Derived, AllRelations...>::getRelationsRawMapInternal() const
-    {
-        return model().u_relations;
-    }
-
     /* Getters for u_ data members defined in the Derived models, helps to avoid
        'friend GuardsAttributes/HasTimestamps' declarations in models when a u_ data
        members are private/protected. */
+
+    /* HasRelationships */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    inline const QHash<QString,
+                       typename Model<Derived, AllRelations...>::RelationVisitor> &
+    Model<Derived, AllRelations...>::getUserRelationsRawMap() const
+    {
+        return model().u_relations;
+    }
 
     /* HasAttributes */
 
@@ -2390,28 +2393,28 @@ namespace Relations
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QStringList &
-    Model<Derived, AllRelations...>::getFillableInternal()
+    Model<Derived, AllRelations...>::getUserFillable()
     {
         return Derived::u_fillable;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
-    Model<Derived, AllRelations...>::getFillableInternal() const
+    Model<Derived, AllRelations...>::getUserFillable() const
     {
         return Derived::u_fillable;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QStringList &
-    Model<Derived, AllRelations...>::getGuardedInternal()
+    Model<Derived, AllRelations...>::getUserGuarded()
     {
         return Derived::u_guarded;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
-    Model<Derived, AllRelations...>::getGuardedInternal() const
+    Model<Derived, AllRelations...>::getUserGuarded() const
     {
         return Derived::u_guarded;
     }

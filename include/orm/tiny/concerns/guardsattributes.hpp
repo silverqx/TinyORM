@@ -114,14 +114,14 @@ namespace Concerns
     const QStringList &
     GuardsAttributes<Derived, AllRelations...>::getFillable() const
     {
-        return basemodel().getFillableInternal();
+        return basemodel().getUserFillable();
     }
 
     template<typename Derived, typename ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::fillable(const QStringList &fillable)
     {
-        basemodel().getFillableInternal() = fillable;
+        basemodel().getUserFillable() = fillable;
 
         return model();
     }
@@ -130,7 +130,7 @@ namespace Concerns
     Derived &
     GuardsAttributes<Derived, AllRelations...>::fillable(QStringList &&fillable)
     {
-        basemodel().getFillableInternal() = std::move(fillable);
+        basemodel().getUserFillable() = std::move(fillable);
 
         return model();
     }
@@ -140,7 +140,7 @@ namespace Concerns
     GuardsAttributes<Derived, AllRelations...>::mergeFillable(
             const QStringList &fillable)
     {
-        auto &fillable_ = basemodel().getFillableInternal();
+        auto &fillable_ = basemodel().getUserFillable();
 
         for (const auto &value : fillable)
             if (!fillable_.contains(value))
@@ -153,7 +153,7 @@ namespace Concerns
     Derived &
     GuardsAttributes<Derived, AllRelations...>::mergeFillable(QStringList &&fillable)
     {
-        auto &fillable_ = basemodel().getFillableInternal();
+        auto &fillable_ = basemodel().getUserFillable();
 
         for (auto &value : fillable)
             if (!fillable_.contains(value))
@@ -166,14 +166,14 @@ namespace Concerns
     const QStringList &
     GuardsAttributes<Derived, AllRelations...>::getGuarded() const
     {
-        return basemodel().getGuardedInternal();
+        return basemodel().getUserGuarded();
     }
 
     template<typename Derived, typename ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::guard(const QStringList &guarded)
     {
-        basemodel().getGuardedInternal() = guarded;
+        basemodel().getUserGuarded() = guarded;
 
         return model();
     }
@@ -182,7 +182,7 @@ namespace Concerns
     Derived &
     GuardsAttributes<Derived, AllRelations...>::guard(QStringList &&guarded)
     {
-        basemodel().getGuardedInternal() = std::move(guarded);
+        basemodel().getUserGuarded() = std::move(guarded);
 
         return model();
     }
@@ -191,7 +191,7 @@ namespace Concerns
     Derived &
     GuardsAttributes<Derived, AllRelations...>::mergeGuarded(const QStringList &guarded)
     {
-        auto &guarded_ = basemodel().getGuardedInternal();
+        auto &guarded_ = basemodel().getUserGuarded();
 
         for (const auto &value : guarded)
             if (!guarded_.contains(value))
@@ -204,7 +204,7 @@ namespace Concerns
     Derived &
     GuardsAttributes<Derived, AllRelations...>::mergeGuarded(QStringList &&guarded)
     {
-        auto &guarded_ = basemodel().getGuardedInternal();
+        auto &guarded_ = basemodel().getUserGuarded();
 
         for (auto &value : guarded)
             if (!guarded_.contains(value))
@@ -259,7 +259,7 @@ namespace Concerns
         if (m_unguarded)
             return true;
 
-        const auto &fillable = basemodel().getFillableInternal();
+        const auto &fillable = basemodel().getUserFillable();
 
         /* If the key is in the "fillable" vector, we can of course assume that it's
            a fillable attribute. Otherwise, we will check the guarded vector when
@@ -284,7 +284,7 @@ namespace Concerns
     bool
     GuardsAttributes<Derived, AllRelations...>::isGuarded(const QString &key) const
     {
-        const auto &guarded = basemodel().getGuardedInternal();
+        const auto &guarded = basemodel().getUserGuarded();
 
         if (guarded.isEmpty())
             return false;
@@ -300,8 +300,8 @@ namespace Concerns
     template<typename Derived, typename ...AllRelations>
     bool GuardsAttributes<Derived, AllRelations...>::totallyGuarded() const
     {
-        return basemodel().getFillableInternal().isEmpty()
-                && basemodel().getGuardedInternal() == QStringList {ASTERISK};
+        return basemodel().getUserFillable().isEmpty()
+                && basemodel().getUserGuarded() == QStringList {ASTERISK};
     }
 
     template<typename Derived, typename ...AllRelations>
@@ -335,7 +335,7 @@ namespace Concerns
     GuardsAttributes<Derived, AllRelations...>::fillableFromArray(
             const QVector<AttributeItem> &attributes) const
     {
-        const auto &fillable = basemodel().getFillableInternal();
+        const auto &fillable = basemodel().getUserFillable();
 
         if (fillable.isEmpty() || m_unguarded)
             return attributes;
@@ -354,7 +354,7 @@ namespace Concerns
     GuardsAttributes<Derived, AllRelations...>::fillableFromArray(
             QVector<AttributeItem> &&attributes) const
     {
-        const auto &fillable = basemodel().getFillableInternal();
+        const auto &fillable = basemodel().getUserFillable();
 
         if (fillable.isEmpty() || m_unguarded)
             return std::move(attributes);

@@ -343,7 +343,7 @@ namespace Concerns
     void HasRelationStore<Derived, AllRelations...>::BaseRelationStore
                                                    ::visit(const QString &relation)
     {
-        std::invoke(m_hasRelationStore.basemodel().getRelationsRawMapInternal()
+        std::invoke(m_hasRelationStore.basemodel().getUserRelationsRawMap()
                     .find(relation).value(),
                     *this);
     }
