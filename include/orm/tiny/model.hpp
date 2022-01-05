@@ -10,12 +10,13 @@ TINY_SYSTEM_HEADER
 #endif
 #include <unordered_map>
 
-#include "orm/concepts.hpp"
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/exceptions/invalidformaterror.hpp"
 #include "orm/tiny/concerns/guardsattributes.hpp"
+#include "orm/tiny/concerns/hasattributes.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
+#include "orm/tiny/concerns/hastimestamps.hpp"
 #include "orm/tiny/exceptions/massassignmenterror.hpp"
 #include "orm/tiny/exceptions/relationnotfounderror.hpp"
 #include "orm/tiny/exceptions/relationnotloadederror.hpp"
@@ -25,7 +26,6 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/relations/hasmany.hpp"
 #include "orm/tiny/relations/hasone.hpp"
 #include "orm/tiny/tinybuilder.hpp"
-#include "orm/tiny/utils/string.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -126,16 +126,25 @@ namespace Relations
     // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
     // CUR docs IdealImage silverqx
     // CUR docs, add all the implemented features summary somewhere silverqx
+    // CUR use AllRelationsConcept everywhere silverqx
+    // CUR export dll paths in Invoke- ps1 scripts, also check dotenv and source if needed and add dotenv example to tools/ silverqx
+    // CUR crtpModel and crtpBaseModel preprocessor partial silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
-            public ModelProxies<Derived, AllRelations...>,
-            public Tiny::Concerns::HasRelationStore<Derived, AllRelations...>,
             public Orm::Concerns::HasConnectionResolver,
-            public Tiny::Concerns::GuardsAttributes<Derived, AllRelations...>
+            public Tiny::Concerns::HasAttributes<Derived, AllRelations...>,
+            public Tiny::Concerns::GuardsAttributes<Derived, AllRelations...>,
+            public Tiny::Concerns::HasTimestamps<Derived, AllRelations...>,
+            public Tiny::Concerns::HasRelationStore<Derived, AllRelations...>,
+            public ModelProxies<Derived, AllRelations...>
     {
-        // Helps to avoid 'friend Derived' declarations in models
+        // To access getUserXx() methods
         friend Concerns::GuardsAttributes<Derived, AllRelations...>;
+        // To access getUserXx() methods
+        friend Concerns::HasAttributes<Derived, AllRelations...>;
+        // To access getUserXx() methods
+        friend Concerns::HasTimestamps<Derived, AllRelations...>;
         // Used by BaseRelationStore::visit() and also by visted methods
         friend Concerns::HasRelationStore<Derived, AllRelations...>;
         // Used by QueriesRelationships::has()
@@ -299,40 +308,6 @@ namespace Relations
         bool exists = false;
 
         /* HasAttributes */
-        /*! Set a given attribute on the model. */
-        Derived &setAttribute(const QString &key, QVariant value);
-        /*! Set a vector of model attributes. No checking is done. */
-        Derived &setRawAttributes(const QVector<AttributeItem> &attributes,
-                                  bool sync = false);
-        /*! Sync the original attributes with the current. */
-        Derived &syncOriginal();
-        /*! Get all of the current attributes on the model (insert order). */
-        const QVector<AttributeItem> &getAttributes() const;
-        /*! Get all of the current attributes on the model (for fast lookup). */
-        const std::unordered_map<QString, int> &getAttributesHash() const;
-        /*! Get an attribute from the model. */
-        QVariant getAttribute(const QString &key) const;
-        /*! Get a plain attribute (not a relationship). */
-        QVariant getAttributeValue(const QString &key) const;
-        /*! Get an attribute from the m_attributes vector. */
-        QVariant getAttributeFromArray(const QString &key) const;
-        /*! Get the model's original attribute value (transformed). */
-        QVariant getOriginal(const QString &key,
-                             const QVariant &defaultValue = {}) const;
-        /*! Get the model's original attribute values (transformed and insert order). */
-        QVector<AttributeItem> getOriginals() const;
-        /*! Get the model's original attributes hash (for fast lookup). */
-        const std::unordered_map<QString, int> &getOriginalsHash() const;
-        /*! Get the model's raw original attribute value. */
-        QVariant getRawOriginal(const QString &key,
-                                const QVariant &defaultValue = {}) const;
-        /*! Get the model's raw original attribute values (insert order). */
-        const QVector<AttributeItem> &getRawOriginals() const;
-        /*! Unset an attribute on the model, returns the number of attributes removed. */
-        Derived &unsetAttribute(const AttributeItem &value);
-        /*! Unset an attribute on the model. */
-        Derived &unsetAttribute(const QString &key);
-
         /*! Get a relationship for Many types relation. */
         template<typename Related,
                  template<typename> typename Container = QVector>
@@ -342,95 +317,6 @@ namespace Relations
         template<typename Related, typename Tag> requires std::same_as<Tag, One>
         Related *
         getRelationValue(const QString &relation);
-
-        /*! Get the attributes that have been changed since last sync
-            (insert order). */
-        QVector<AttributeItem> getDirty() const;
-        /*! Get the attributes that have been changed since last sync
-            (for fast lookup). */
-        std::unordered_map<QString, int> getDirtyHash() const;
-        /*! Determine if the model or any of the given attribute(s) have
-            been modified. */
-        bool isDirty(const QStringList &attributes = {}) const;
-        /*! Determine if the model or any of the given attribute(s) have
-            been modified. */
-        bool isDirty(const QString &attribute) const;
-        /*! Determine if the model and all the given attribute(s) have
-            remained the same. */
-        bool isClean(const QStringList &attributes = {}) const;
-        /*! Determine if the model and all the given attribute(s) have
-            remained the same. */
-        bool isClean(const QString &attribute) const;
-
-        /*! Get the attributes that were changed (insert order). */
-        const QVector<AttributeItem> &getChanges() const;
-        /*! Get the attributes that were changed (for fast lookup). */
-        const std::unordered_map<QString, int> &getChangesHash() const;
-        /*! Determine if the model and all the given attribute(s) have
-            remained the same. */
-        bool wasChanged(const QStringList &attributes = {}) const;
-        /*! Determine if the model and all the given attribute(s) have
-            remained the same. */
-        bool wasChanged(const QString &attribute) const;
-
-        /*! Get the format for database stored dates. */
-        const QString &getDateFormat() const;
-        /*! Set the date format used by the model. */
-        Derived &setDateFormat(const QString &format);
-        /*! Convert a DateTime to a storable string. */
-        QVariant fromDateTime(const QVariant &value) const;
-        /*! Convert a DateTime to a storable string. */
-        QString fromDateTime(const QDateTime &value) const;
-        /*! Get the attributes that should be converted to dates. */
-        const QStringList &getDates() const;
-
-        /*! Proxy for an attribute element used in the operator[] &. */
-        class AttributeReference
-        {
-            friend Model<Derived, AllRelations...>;
-
-        public:
-            /*! Assign a value of the QVariant to the referenced attribute. */
-            const AttributeReference & // NOLINT(misc-unconventional-assign-operator)
-            operator=(const QVariant &value) const;
-            /*! Assign a value of another attribute reference to the referenced
-                attribute. */
-            const AttributeReference & // NOLINT(misc-unconventional-assign-operator)
-            operator=(const AttributeReference &attributeReference) const;
-
-            /*! Accesses the contained value, only const member functions. */
-            const QVariant *operator->() const;
-            /*! Accesses the contained value. */
-            QVariant value() const;
-            /*! Accesses the contained value. */
-            QVariant operator*() const;
-            /*! Converting operator to the QVariant type. */
-            operator QVariant() const; // NOLINT(google-explicit-constructor)
-
-        private:
-            /*! AttributeReference's private constructor. */
-            AttributeReference(Model<Derived, AllRelations...> &model,
-                               // NOLINTNEXTLINE(modernize-pass-by-value)
-                               const QString &attribute);
-
-            /*! The model on which is an attribute set. */
-            Model<Derived, AllRelations...> &m_model;
-            /*! Attribute key name. */
-            const QString m_attribute;
-            /*! The temporary cache used during operator->() call, to be able
-                to return the QVariant *. */
-            mutable QVariant m_attributeCache;
-        };
-
-        /*! Return modifiable attribute reference, can be used on the left-hand side
-            of an assignment operator. */
-        AttributeReference operator[](const QString &attribute) &;
-        /*! Return an attribute by the given key. */
-        QVariant operator[](const QString &attribute) const &;
-        /*! Return an attribute by the given key. */
-        QVariant operator[](const QString &attribute) &&;
-        /*! Return an attribute by the given key. */
-        QVariant operator[](const QString &attribute) const &&;
 
         /* HasRelationships */
         /*! Get a specified relationship. */
@@ -454,14 +340,16 @@ namespace Relations
         Derived &setRelation(const QString &relation, QVector<Related> &&models);
         /*! Set the given relationship on the model. */
         template<typename Related>
-        Derived &setRelation(const QString &relation, const std::optional<Related> &model);
+        Derived &setRelation(const QString &relation,
+                             const std::optional<Related> &model);
         /*! Set the given relationship on the model. */
         template<typename Related>
         Derived &setRelation(const QString &relation, std::optional<Related> &&model);
         /*! Set the given relationship on the model. */
         template<typename Related>
         requires std::is_base_of_v<Relations::IsPivotModel, Related>
-        Derived &setRelation(const QString &relation, const std::optional<Related> &model);
+        Derived &setRelation(const QString &relation,
+                             const std::optional<Related> &model);
         /*! Set the given relationship on the model. */
         template<typename Related>
         requires std::is_base_of_v<Relations::IsPivotModel, Related>
@@ -518,36 +406,6 @@ namespace Relations
         Derived &unsetRelation(const QString &relation);
 
         /* HasTimestamps */
-        /*! Update the model's update timestamp. */
-        bool touch();
-        /*! Update the creation and update timestamps. */
-        void updateTimestamps();
-
-        /*! Set the value of the "created at" attribute. */
-        Derived &setCreatedAt(const QDateTime &value);
-        /*! Set the value of the "updated at" attribute. */
-        Derived &setUpdatedAt(const QDateTime &value);
-
-        /*! Get a fresh timestamp for the model. */
-        QDateTime freshTimestamp() const;
-        /*! Get a fresh timestamp for the model. */
-        QString freshTimestampString() const;
-
-        /*! Determine if the model uses timestamps. */
-        bool usesTimestamps() const;
-        /*! Set the value of the u_timestamps attribute. */
-        Derived &setUseTimestamps(bool value);
-
-        /*! Get the name of the "created at" column. */
-        static const QString &getCreatedAtColumn();
-        /*! Get the name of the "updated at" column. */
-        static const QString &getUpdatedAtColumn();
-
-        /*! Get the fully qualified "created at" column. */
-        QString getQualifiedCreatedAtColumn() const;
-        /*! Get the fully qualified "updated at" column. */
-        QString getQualifiedUpdatedAtColumn() const;
-
         /*! Determine if the given model is ignoring touches. */
         template<typename ClassToCheck = Derived>
         static bool isIgnoringTouch();
@@ -562,12 +420,6 @@ namespace Relations
         QSharedPointer<QueryBuilder> newBaseQueryBuilder() const;
 
         /* HasAttributes */
-        /*! Transform a raw model value using mutators, casts, etc. */
-        QVariant transformModelValue(const QString &key, const QVariant &value) const;
-        /*! Get the model's original attribute values. */
-        QVariant getOriginalWithoutRewindingModel(
-                const QString &key, const QVariant &defaultValue = {}) const;
-
         /*! Get a relationship value from a method. */
         template<class Related,
                  template<typename> typename Container = QVector>
@@ -577,28 +429,6 @@ namespace Relations
         template<class Related, typename Tag> requires std::same_as<Tag, One>
         Related *
         getRelationshipFromMethod(const QString &relation);
-
-        /*! Determine if any of the given attributes were changed. */
-        bool hasChanges(const std::unordered_map<QString, int> &changes,
-                        const QStringList &attributes = {}) const;
-        /*! Sync the changed attributes. */
-        Derived &syncChanges();
-
-        /*! Determine if the new and old values for a given key are equivalent. */
-        bool originalIsEquivalent(const QString &key) const;
-
-        /*! Determine if the given attribute is a date. */
-        bool isDateAttribute(const QString &key) const;
-        /*! Return a timestamp as DateTime object. */
-        QDateTime asDateTime(const QVariant &value) const;
-        /*! Obtain timestamp column names. */
-        const QStringList &timestampColumnNames() const;
-
-        /*! Rehash attribute positions from the given index. */
-        void rehashAttributePositions(
-                const QVector<AttributeItem> &attributes,
-                std::unordered_map<QString, int> &attributesHash,
-                int from = 0);
 
         /* HasRelationships */
         /*! Create a new model instance for a related model. */
@@ -698,36 +528,6 @@ namespace Relations
         /*! The relationship counts that should be eager loaded on every query. */
 //        QVector<WithItem> u_withCount;
 
-        /* HasAttributes */
-        /*! The model's default values for attributes. */
-        T_THREAD_LOCAL
-        inline static QVector<AttributeItem> u_attributes;
-        /*! The model's attributes (insert order). */
-        QVector<AttributeItem> m_attributes;
-        /*! The model attribute's original state (insert order).
-            On the model from many-to-many relation also contains all pivot values,
-            that is normal (insert order). */
-        QVector<AttributeItem> m_original;
-        /*! The changed model attributes (insert order). */
-        QVector<AttributeItem> m_changes;
-
-        /* Don't want to use std::reference_wrapper to attributes, because if a copy
-           of the model is made, all references would be invalidated. */
-        /*! The model's attributes hash (for fast lookup). */
-        std::unordered_map<QString, int> m_attributesHash;
-        /*! The model attribute's original state (for fast lookup). */
-        std::unordered_map<QString, int> m_originalHash;
-        /*! The changed model attributes (for fast lookup). */
-        std::unordered_map<QString, int> m_changesHash;
-
-        // TODO add support for 'U' like in PHP to support unix timestamp, I will have to manually check if u_dateFormat contains 'U' and use QDateTime::fromSecsSinceEpoch() silverqx
-        /*! The storage format of the model's date columns. */
-        T_THREAD_LOCAL
-        inline static QString u_dateFormat;
-        /*! The attributes that should be mutated to dates. @deprecated */
-        T_THREAD_LOCAL
-        inline static QStringList u_dates;
-
         /* HasRelationships */
         // BUG std::unordered_map prevents to compile on GCC, if I comment out std::optional<AllRelations>... in the RelationsType<AllRelations...>, or I change it to the QHash, then it compile, I'm absolutelly lost why this is happening 😞😭, I can't change to the QHash because of 25734deb, I have created simple test project gcc_trivial_bug_test in merydeye-gentoo, but std::map works so it is a big win, because now I can compile whole project on gcc ✨🚀 silverqx
         /*! The loaded relationships for the model. */
@@ -747,8 +547,6 @@ namespace Relations
         inline static const QString &CREATED_AT = Constants::CREATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
         /*! The name of the "updated at" column. */
         inline static const QString &UPDATED_AT = Constants::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
-        /*! Indicates whether the model should be timestamped. */
-        bool u_timestamps = true;
 
     private:
         /*! Alias for the enum struct RelationNotFoundError::From. */
@@ -767,18 +565,12 @@ namespace Relations
         getRelatedTableForBelongsToManyWithVisitor(const QString &relation);
 
         /* HasAttributes */
-        /*! Get all of the current attributes on the model. */
-        const QVector<AttributeItem> &getRawAttributes() const;
-
         /*! Throw InvalidArgumentError if attributes passed to the constructor contain
             some value, which will cause access of some data member in a derived
             instance. */
         void throwIfCRTPctorProblem(const QVector<AttributeItem> &attributes) const;
         /*! The QDateTime attribute detected, causes CRTP ctor problem. */
         void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes) const;
-
-        /*! Get the attributes that should be converted to dates. */
-        QStringList getDatesInternal() const;
 
         /* HasRelationships */
         /*! Throw exception if a relation is not defined. */
@@ -863,17 +655,33 @@ namespace Relations
         const QHash<QString, RelationVisitor> &
         getRelationsRawMapInternal() const;
 
+        /* HasAttributes */
+        /*! Get the u_dateFormat attribute from the Derived model. */
+        inline QString &getUserDateFormat();
+        /*! Get the u_dateFormat attribute from the Derived model. */
+        inline const QString &getUserDateFormat() const;
+        /*! Get the u_dates attribute from the Derived model. */
+        inline static const QStringList &getUserDates();
+
         /* GuardsAttributes */
-        /* Getters for u_ data members defined in the Derived models, helps to avoid
-           'friend Derived' declarations in models. */
-        /*! Get the fillable attributes for the model. */
-        QStringList &getFillableInternal();
-        /*! Get the fillable attributes for the model. */
-        const QStringList &getFillableInternal() const;
-        /*! Get the guarded attributes for the model. */
-        QStringList &getGuardedInternal();
-        /*! Get the guarded attributes for the model. */
-        const QStringList &getGuardedInternal() const;
+        /*! Get the u_fillable attributes from the Derived model. */
+        inline QStringList &getFillableInternal();
+        /*! Get the u_fillable attributes from the Derived model. */
+        inline const QStringList &getFillableInternal() const;
+        /*! Get the u_guarded attributes from the Derived model. */
+        inline QStringList &getGuardedInternal();
+        /*! Get the u_guarded attributes from the Derived model. */
+        inline const QStringList &getGuardedInternal() const;
+
+        /* HasTimestamps */
+        /*! Get the u_timestamps attribute from the Derived model. */
+        inline bool &getUserTimestamps();
+        /*! Get the u_timestamps attribute from the Derived model. */
+        inline bool getUserTimestamps() const;
+        /*! Get the CREATED_AT attribute from the Derived model. */
+        inline static const QString &getUserCreatedAtColumn();
+        /*! Get the UPDATED_AT attribute from the Derived model. */
+        inline static const QString &getUserUpdatedAtColumn();
     };
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -885,7 +693,7 @@ namespace Relations
         // Default Attribute Values
         fill(Derived::u_attributes);
 
-        syncOriginal();
+        this->syncOriginal();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -985,7 +793,7 @@ namespace Relations
            that is already in this database using the current IDs in this "where"
            clause to only update this model. Otherwise, we'll just insert them. */
         if (exists)
-            saved = isDirty() ? performUpdate(*query) : true;
+            saved = this->isDirty() ? performUpdate(*query) : true;
 
         // If the model is brand new, we'll insert it into our database and set the
         // ID attribute on the model to the value of the newly inserted row's ID
@@ -1250,13 +1058,13 @@ namespace Relations
         if (!exists)
             return model();
 
-        setRawAttributes(model().setKeysForSelectQuery(*newQueryWithoutScopes())
-                         .firstOrFail().getRawAttributes());
+        this->setRawAttributes(model().setKeysForSelectQuery(*newQueryWithoutScopes())
+                               .firstOrFail().getRawAttributes());
 
         // And reload them again, refresh relations
         load(getLoadedRelationsWithoutPivot());
 
-        syncOriginal();
+        this->syncOriginal();
 
         return model();
     }
@@ -1392,7 +1200,7 @@ namespace Relations
             if (auto &key = attribute.key;
                 this->isFillable(key)
             )
-                setAttribute(key, std::move(attribute.value));
+                this->setAttribute(key, std::move(attribute.value));
 
             else if (totallyGuarded)
                 throw Exceptions::MassAssignmentError(
@@ -1416,7 +1224,7 @@ namespace Relations
             if (auto &key = attribute.key;
                 this->isFillable(key)
             )
-                setAttribute(key, std::move(attribute.value));
+                this->setAttribute(key, std::move(attribute.value));
 
             else if (totallyGuarded)
                 throw Exceptions::MassAssignmentError(
@@ -1671,7 +1479,7 @@ namespace Relations
     inline QVariant
     Model<Derived, AllRelations...>::getKey() const
     {
-        return getAttribute(getKeyName());
+        return this->getAttribute(getKeyName());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1788,241 +1596,6 @@ namespace Relations
         checkRelationType<Result, Related>(lazyResult, relation, "getRelationValue");
 
         return std::get<Result>(lazyResult);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
-    Model<Derived, AllRelations...>::getDirty() const
-    {
-        QVector<AttributeItem> dirty;
-
-        for (const auto &attribute : getAttributes())
-            if (const auto &key = attribute.key;
-                !originalIsEquivalent(key)
-            )
-                dirty.append({key, attribute.value});
-
-        return dirty;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::unordered_map<QString, int>
-    Model<Derived, AllRelations...>::getDirtyHash() const
-    {
-        const auto size = m_attributes.size();
-        std::unordered_map<QString, int> dirtyHash(static_cast<std::size_t>(size));
-
-        for (auto i = 0; i < size; ++i)
-            if (const auto &key = m_attributes.at(i).key;
-                !originalIsEquivalent(key)
-            )
-                dirtyHash.emplace(m_attributes.at(i).key, i);
-
-        return dirtyHash;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline bool
-    Model<Derived, AllRelations...>::isDirty(const QStringList &attributes) const
-    {
-        return hasChanges(getDirtyHash(), attributes);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline bool
-    Model<Derived, AllRelations...>::isDirty(const QString &attribute) const
-    {
-        return hasChanges(getDirtyHash(), QStringList {attribute});
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline bool
-    Model<Derived, AllRelations...>::isClean(const QStringList &attributes) const
-    {
-        return !isDirty(attributes);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline bool
-    Model<Derived, AllRelations...>::isClean(const QString &attribute) const
-    {
-        return !isDirty(attribute);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QVector<AttributeItem> &
-    Model<Derived, AllRelations...>::getChanges() const
-    {
-        return m_changes;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const std::unordered_map<QString, int> &
-    Model<Derived, AllRelations...>::getChangesHash() const
-    {
-        return m_changesHash;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline bool
-    Model<Derived, AllRelations...>::wasChanged(const QStringList &attributes) const
-    {
-        return hasChanges(getChangesHash(), attributes);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline bool
-    Model<Derived, AllRelations...>::wasChanged(const QString &attribute) const
-    {
-        return hasChanges(getChangesHash(), QStringList {attribute});
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool Model<Derived, AllRelations...>::hasChanges(
-            const std::unordered_map<QString, int> &changes,
-            const QStringList &attributes) const
-    {
-        /* If no specific attributes were provided, we will just see if the dirty hash
-           already contains any attributes. If it does we will just return that this
-           count is greater than zero. Else, we need to check specific attributes. */
-        if (attributes.isEmpty())
-            return !changes.empty();
-
-        /* Here we will spin through every attribute and see if this is in the hash of
-           dirty attributes. If it is, we will return true and if we make it through
-           all of the attributes for the entire vector we will return false at end. */
-        return std::ranges::any_of(attributes, [&changes](const auto &attribute)
-        {
-            return changes.contains(attribute);
-        });
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::syncChanges()
-    {
-        m_changes = getDirty();
-
-        rehashAttributePositions(m_changes, m_changesHash);
-
-        return model();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool
-    Model<Derived, AllRelations...>::originalIsEquivalent(const QString &key) const
-    {
-        if (!m_originalHash.contains(key))
-            return false;
-
-        const auto attribute = getAttributeFromArray(key);
-        const auto original = getRawOriginal(key);
-
-        // Takes into account also milliseconds for the QDateTime attribute
-        if (attribute == original)
-            return true;
-        // TODO next solve how to work with null values and what to do with invalid/unknown values silverqx
-        if (!attribute.isValid() || attribute.isNull())
-            return false;
-
-        // This check ignores milliseconds in the QDateTime attribute
-        if (isDateAttribute(key))
-            return fromDateTime(attribute) == fromDateTime(original);
-
-//        if (hasCast(key, ['object', 'collection']))
-//            return castAttribute(key, attribute) == castAttribute(key, original);
-//        if (hasCast(key, ['real', 'float', 'double'])) {
-//            if (($attribute === null && $original !== null) || ($attribute !== null && $original === null))
-//                return false;
-
-//            return abs($this->castAttribute($key, $attribute) - $this->castAttribute($key, $original)) < PHP_FLOAT_EPSILON * 4;
-//        }
-//        if ($this->hasCast($key, static::$primitiveCastTypes)) {
-//            return $this->castAttribute($key, $attribute) ===
-//                   $this->castAttribute($key, $original);
-//        }
-
-//        return is_numeric($attribute) && is_numeric($original)
-//               && strcmp((string) $attribute, (string) $original) === 0;
-
-        return false;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool Model<Derived, AllRelations...>::isDateAttribute(const QString &key) const
-    {
-        // FEATURE castable silverqx
-        /* I don't have support for castable attributes, this solution is temporary. */
-        return getDates().contains(key);
-    }
-
-    // TODO would be good to make it the c++ way, make overload for every type, asDateTime() is protected, so I have full control over it, but I leave it for now, because there will be more methods which will use this method in the future, and it will be more clear later on silverqx
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QDateTime
-    Model<Derived, AllRelations...>::asDateTime(const QVariant &value) const
-    {
-        /* If this value is already a QDateTime instance, we shall just return it as is.
-           This prevents us having to re-parse a QDateTime instance when we know
-           it already is one. */
-        if (
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            value.typeId() == QMetaType::QDateTime
-#else
-            value.userType() == QMetaType::QDateTime
-#endif
-        )
-            return value.value<QDateTime>();
-
-        /* If this value is an integer, we will assume it is a UNIX timestamp's value
-           and format a Carbon object from this timestamp. This allows flexibility
-           when defining your date fields as they might be UNIX timestamps here. */
-        if (value.canConvert<QString>() &&
-            TinyUtils::String::isNumber(value.value<QString>())
-        )
-            // TODO switch ms accuracy? For the u_dateFormat too? silverqx
-            return QDateTime::fromSecsSinceEpoch(value.value<qint64>());
-
-        const auto &format = getDateFormat();
-
-        /* Finally, we will just assume this date is in the format used by default on
-           the database connection and use that format to create the QDateTime object
-           that is returned back out to the developers after we convert it here. */
-        if (auto date = QDateTime::fromString(value.value<QString>(), format);
-            date.isValid()
-        )
-            return date;
-
-        throw Orm::Exceptions::InvalidFormatError(
-                    QStringLiteral("Could not parse the datetime '%1' using "
-                                   "the given format '%2'.")
-                    .arg(value.value<QString>(), format));
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QStringList &
-    Model<Derived, AllRelations...>::timestampColumnNames() const
-    {
-        /* Fuckin static, it works like is described here:
-           https://stackoverflow.com/questions/2737013/static-variables-in-static-method-in-base-class-and-inheritance. */
-        static const QStringList cached {
-            getCreatedAtColumn(),
-            getUpdatedAtColumn(),
-        };
-
-        return cached;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    void Model<Derived, AllRelations...>::rehashAttributePositions(
-            const QVector<AttributeItem> &attributes,
-            std::unordered_map<QString, int> &attributesHash,
-            const int from)
-    {
-        /* This member function is universal and can be used for m_attributes,
-           m_changes and m_original and it associated unordered_maps m_attributesHash,
-           m_changesHash and m_originalHash. */
-        for (auto i = from; i < attributes.size(); ++i)
-            // 'i' is the position
-            attributesHash[attributes.at(i).key] = i;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2173,410 +1746,6 @@ namespace Relations
             return column;
 
         return QStringLiteral("%1.%2").arg(model().getTable(), column);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::setAttribute(
-            const QString &key, QVariant value)
-    {
-        /* If an attribute is listed as a "date", we'll convert it from a DateTime
-           instance into a form proper for storage on the database tables using
-           the connection grammar's date format. We will auto set the values. */
-        if (value.isValid() && !value.isNull() && (isDateAttribute(key) ||
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            value.typeId() == QMetaType::QDateTime
-#else
-            value.userType() == QMetaType::QDateTime
-#endif
-        ))
-            value = fromDateTime(value);
-
-        // Found
-        if (const auto attribute = m_attributesHash.find(key);
-            attribute != m_attributesHash.end()
-        )
-            m_attributes[attribute->second].value.swap(value);
-
-        // Not Found
-        else {
-            auto position = m_attributes.size();
-
-            m_attributes.append({key, value});
-            m_attributesHash.emplace(key, position);
-        }
-
-        return model();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::setRawAttributes(
-            const QVector<AttributeItem> &attributes,
-            const bool sync)
-    {
-        m_attributes.reserve(attributes.size());
-        m_attributes = TinyUtils::Attribute::removeDuplicitKeys(attributes);
-
-        // Build attributes hash
-        m_attributesHash.clear();
-        m_attributesHash.reserve(static_cast<std::size_t>(m_attributes.size()));
-
-        rehashAttributePositions(m_attributes, m_attributesHash);
-
-        if (sync)
-            syncOriginal();
-
-        return model();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::syncOriginal()
-    {
-        m_original = getAttributes();
-
-        rehashAttributePositions(m_original, m_originalHash);
-
-        return model();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QVector<AttributeItem> &
-    Model<Derived, AllRelations...>::getAttributes() const
-    {
-        // FEATURE castable silverqx
-//        mergeAttributesFromClassCasts();
-
-        // TODO attributes, getAttributes() doesn't apply transformModelValue() on attributes, worth considering to make getRawAttributes() to return raw and getAttributes() to return transformed values, after this changes would be this api different than Eloquent silverqx
-        return m_attributes;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const std::unordered_map<QString, int> &
-    Model<Derived, AllRelations...>::getAttributesHash() const
-    {
-        // FEATURE castable silverqx
-//        mergeAttributesFromClassCasts();
-
-        return m_attributesHash;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant Model<Derived, AllRelations...>::getAttribute(const QString &key) const
-    {
-        if (key.isEmpty() || key.isNull())
-            return {};
-
-        /* If the attribute exists in the attribute hash or has a "get" mutator we will
-           get the attribute's value. Otherwise, we will proceed as if the developers
-           are asking for a relationship's value. This covers both types of values. */
-        if (m_attributesHash.contains(key)
-//            || array_key_exists($key, $this->casts)
-//            || hasGetMutator(key)
-//            || isClassCastable(key)
-        )
-            return getAttributeValue(key);
-
-        // FUTURE add getRelationValue() overload without Related template argument, after that I will be able to use it here, Related template parameter will be obtained by the visitor, I think this task is impossible to do silverqx
-        // NOTE api different silverqx
-        return {};
-//        return $this->getRelationValue($key);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
-    Model<Derived, AllRelations...>::getAttributeValue(const QString &key) const
-    {
-        return transformModelValue(key, getAttributeFromArray(key));
-    }
-
-    // TODO candidate for optional const reference, to be able return null value and use reference at the same time silverqx
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
-    Model<Derived, AllRelations...>::getAttributeFromArray(const QString &key) const
-    {
-        // Not found
-        if (!m_attributesHash.contains(key))
-            return {};
-
-        return m_attributes.at(m_attributesHash.at(key)).value;
-    }
-
-    // NOTE api different silverqx
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
-    Model<Derived, AllRelations...>::getOriginal(
-            const QString &key, const QVariant &defaultValue) const
-    {
-        return Derived().setRawAttributes(m_original, true)
-                .getOriginalWithoutRewindingModel(key, defaultValue);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
-    Model<Derived, AllRelations...>::getOriginals() const
-    {
-        QVector<AttributeItem> originals;
-        originals.reserve(m_original.size());
-
-        for (const auto &original : m_original) {
-            const auto &key = original.key;
-
-            originals.append({key, transformModelValue(key, original.value)});
-        }
-
-        return originals;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const std::unordered_map<QString, int> &
-    Model<Derived, AllRelations...>::getOriginalsHash() const
-    {
-        return m_originalHash;
-    }
-
-    // NOTE api different silverqx
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
-    Model<Derived, AllRelations...>::getRawOriginal(
-            const QString &key, const QVariant &defaultValue) const
-    {
-        // Found
-        if (m_originalHash.contains(key))
-            return m_original.at(m_originalHash.at(key)).value;
-
-        // Not found, return the default value
-        return defaultValue;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QVector<AttributeItem> &
-    Model<Derived, AllRelations...>::getRawOriginals() const
-    {
-        return m_original;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::unsetAttribute(const AttributeItem &value)
-    {
-        const auto &key = value.key;
-
-        // Not found
-        if (!m_attributesHash.contains(key))
-            return model();
-
-        const auto position = m_attributesHash.at(key);
-
-        // FUTURE all the operations on this containers should be synchronized silverqx
-        m_attributes.removeAt(position);
-        m_attributesHash.erase(key);
-
-        // Rehash attributes, but only attributes which were shifted
-        rehashAttributePositions(m_attributes, m_attributesHash, position);
-
-        return model();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::unsetAttribute(const QString &key)
-    {
-        // Not found
-        if (!m_attributesHash.contains(key))
-            return model();
-
-        const auto position = m_attributesHash.at(key);
-
-        m_attributes.removeAt(position);
-        m_attributesHash.erase(key);
-
-        // Rehash attributes, but only attributes which were shifted
-        rehashAttributePositions(m_attributes, m_attributesHash, position);
-
-        return model();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QString &
-    Model<Derived, AllRelations...>::getDateFormat() const
-    {
-        return Derived::u_dateFormat.isEmpty()
-                ? getConnection().getQueryGrammar().getDateFormat()
-                : Derived::u_dateFormat;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::setDateFormat(const QString &format)
-    {
-        Derived::u_dateFormat = format;
-
-        return model();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
-    Model<Derived, AllRelations...>::fromDateTime(const QVariant &value) const
-    {
-        if (value.isNull())
-            return value;
-
-        return asDateTime(value).toString(getDateFormat());
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QString
-    Model<Derived, AllRelations...>::fromDateTime(const QDateTime &value) const
-    {
-        if (value.isValid())
-            return value.toString(getDateFormat());
-
-        return {};
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QStringList &
-    Model<Derived, AllRelations...>::getDates() const
-    {
-        static const QStringList cached = getDatesInternal();
-
-        return cached;
-    }
-
-    /* Model::AttributeReference - begin */
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Model<Derived, AllRelations...>::AttributeReference::AttributeReference(
-            Model<Derived, AllRelations...> &model,
-            // NOLINTNEXTLINE(modernize-pass-by-value)
-            const QString &attribute
-    )
-        : m_model(model)
-        , m_attribute(attribute)
-    {}
-
-    // NOLINTNEXTLINE(misc-unconventional-assign-operator)
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    const typename Model<Derived, AllRelations...>::AttributeReference &
-    Model<Derived, AllRelations...>::AttributeReference::operator=(
-            const QVariant &value) const
-    {
-        m_model.setAttribute(m_attribute, value);
-
-        return *this;
-    }
-
-    // NOLINTNEXTLINE(misc-unconventional-assign-operator)
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    const typename Model<Derived, AllRelations...>::AttributeReference &
-    Model<Derived, AllRelations...>::AttributeReference::operator=(
-            const AttributeReference &attributeReference) const
-    {
-        m_model.setAttribute(m_attribute, attributeReference.value());
-
-        return *this;
-    }
-
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QVariant *
-    Model<Derived, AllRelations...>::AttributeReference::operator->() const
-    {
-        /* The reason why m_attributeCache exists and why QVariant * is returned:
-           The overload of operator -> must either return a raw pointer, or return
-           an object (by reference or by value) for which operator -> is in turn
-           overloaded. */
-        m_attributeCache = value();
-
-        return &m_attributeCache;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QVariant
-    Model<Derived, AllRelations...>::AttributeReference::value() const
-    {
-        return m_model.getAttribute(m_attribute);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QVariant
-    Model<Derived, AllRelations...>::AttributeReference::operator*() const
-    {
-        return value();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline Model<Derived, AllRelations...>::AttributeReference::operator QVariant() const
-    {
-        return value();
-    }
-
-    /* Model::AttributeReference - end */
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline typename Model<Derived, AllRelations...>::AttributeReference
-    Model<Derived, AllRelations...>::operator[](const QString &attribute) &
-    {
-        return AttributeReference(*this, attribute);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QVariant
-    Model<Derived, AllRelations...>::operator[](const QString &attribute) const &
-    {
-        return getAttribute(attribute);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QVariant
-    Model<Derived, AllRelations...>::operator[](const QString &attribute) &&
-    {
-        return getAttribute(attribute);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QVariant
-    Model<Derived, AllRelations...>::operator[](const QString &attribute) const &&
-    {
-        return getAttribute(attribute);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant Model<Derived, AllRelations...>::transformModelValue(
-            const QString &key,
-            const QVariant &value) const
-    {
-        /* Qt's SQLite driver doesn't apply any logic on the returned types, it returns
-           them without type detection, and it is logical, because SQLite only supports
-           numeric and string types, it doesn't distinguish datetime type or any other
-           types.
-           Qt's MySql driver behaves differently, QVariant already contains the QDateTime
-           values, because Qt's MySQL driver returns QDateTime when the value from
-           the database is datetime, the same is true for all other types, Qt's driver
-           detects it and creates QVariant with proper types. */
-
-        if (!value.isValid() || value.isNull())
-            return value;
-
-        /* If the attribute is listed as a date, we will convert it to a QDateTime
-           instance on retrieval, which makes it quite convenient to work with
-           date fields without having to create a mutator for each property. */
-        if (getDates().contains(key))
-            return asDateTime(value);
-
-        return value;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVariant
-    Model<Derived, AllRelations...>::getOriginalWithoutRewindingModel(
-            const QString &key, const QVariant &defaultValue) const
-    {
-        // Found
-        if (m_originalHash.contains(key))
-            return transformModelValue(key, m_original.at(m_originalHash.at(key)).value);
-
-        // Not found, return the default value
-        return defaultValue;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2957,13 +2126,6 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QVector<AttributeItem> &
-    Model<Derived, AllRelations...>::getRawAttributes() const
-    {
-        return m_attributes;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
     inline void Model<Derived, AllRelations...>::throwIfCRTPctorProblem(
             const QVector<AttributeItem> &attributes) const
     {
@@ -2991,20 +2153,6 @@ namespace Relations
             )
                 throw Orm::Exceptions::InvalidArgumentError(
                         message.arg(Orm::Utils::Type::classPureBasename<Derived>()));
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QStringList
-    Model<Derived, AllRelations...>::getDatesInternal() const
-    {
-        if (!usesTimestamps())
-            return Derived::u_dates;
-
-        auto dates = Derived::u_dates + timestampColumnNames();
-
-        dates.removeDuplicates();
-
-        return dates;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -3067,9 +2215,9 @@ namespace Relations
     {
         // Found
         if (const auto keyName = getKeyName();
-            m_originalHash.contains(keyName)
+            this->m_originalHash.contains(keyName)
         )
-            return m_original.at(m_originalHash.at(keyName)).value;
+            return this->m_original.at(this->m_originalHash.at(keyName)).value;
 
         // Not found, return the primary key value
         return getKey();
@@ -3099,13 +2247,13 @@ namespace Relations
         /* First we'll need to create a fresh query instance and touch the creation and
            update timestamps on this model, which are maintained by us for developer
            convenience. After, we will just continue saving these model instances. */
-        if (usesTimestamps())
-            updateTimestamps();
+        if (this->usesTimestamps())
+            this->updateTimestamps();
 
         /* If the model has an incrementing key, we can use the "insertGetId" method on
            the query builder, which will give us back the final inserted ID for this
            table from the database. Not all tables have to be incrementing though. */
-        const auto &attributes = getAttributes();
+        const auto &attributes = this->getAttributes();
 
         if (getIncrementing())
             insertAndSetId(query, attributes);
@@ -3141,19 +2289,19 @@ namespace Relations
         /* First we need to create a fresh query instance and touch the creation and
            update timestamp on the model which are maintained by us for developer
            convenience. Then we will just continue saving the model instances. */
-        if (usesTimestamps())
-            updateTimestamps();
+        if (this->usesTimestamps())
+            this->updateTimestamps();
 
         /* Once we have run the update operation, we will fire the "updated" event for
            this model instance. This will allow developers to hook into these after
            models are updated, giving them a chance to do any special processing. */
-        const auto dirty = getDirty();
+        const auto dirty = this->getDirty();
 
         if (!dirty.isEmpty()) {
             model().setKeysForSaveQuery(query).update(
                         TinyUtils::Attribute::convertVectorToUpdateItem(dirty));
 
-            syncChanges();
+            this->syncChanges();
 
 //            fireModelEvent("updated", false);
         }
@@ -3166,10 +2314,10 @@ namespace Relations
     {
 //        fireModelEvent('saved', false);
 
-        if (isDirty() && options.touch)
+        if (this->isDirty() && options.touch)
             touchOwners();
 
-        syncOriginal();
+        this->syncOriginal();
     }
 
     // FEATURE dilemma primarykey, add support for Derived::KeyType silverqx
@@ -3185,106 +2333,14 @@ namespace Relations
         // NOTE api different, Eloquent doesn't check like below and returns void instead silverqx
         // When insert was successful
         if (id != 0)
-            setAttribute(keyName, id);
+            this->setAttribute(keyName, id);
 
         /* QSqlQuery returns an invalid QVariant if can't obtain last inserted id,
            which is converted to 0. */
         return id;
     }
 
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool Model<Derived, AllRelations...>::touch()
-    {
-        if (!usesTimestamps())
-            return false;
-
-        updateTimestamps();
-
-        return save();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    void Model<Derived, AllRelations...>::updateTimestamps()
-    {
-        const auto time = freshTimestamp();
-
-        const QString &updatedAtColumn = getUpdatedAtColumn();
-
-        if (!updatedAtColumn.isEmpty() && !isDirty(updatedAtColumn))
-            setUpdatedAt(time);
-
-        const QString &createdAtColumn = getCreatedAtColumn();
-
-        if (!exists && !createdAtColumn.isEmpty() && !isDirty(createdAtColumn))
-            setCreatedAt(time);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::setCreatedAt(const QDateTime &value)
-    {
-        return setAttribute(getCreatedAtColumn(), value);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::setUpdatedAt(const QDateTime &value)
-    {
-        return setAttribute(getUpdatedAtColumn(), value);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QDateTime
-    Model<Derived, AllRelations...>::freshTimestamp() const
-    {
-        return QDateTime::currentDateTime();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QString Model<Derived, AllRelations...>::freshTimestampString() const
-    {
-        return fromDateTime(freshTimestamp());
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline bool Model<Derived, AllRelations...>::usesTimestamps() const
-    {
-        return model().u_timestamps;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline Derived &
-    Model<Derived, AllRelations...>::setUseTimestamps(const bool value)
-    {
-        model().u_timestamps = value;
-
-        return model();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QString &
-    Model<Derived, AllRelations...>::getCreatedAtColumn()
-    {
-        return Derived::CREATED_AT;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QString &
-    Model<Derived, AllRelations...>::getUpdatedAtColumn()
-    {
-        return Derived::UPDATED_AT;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QString Model<Derived, AllRelations...>::getQualifiedCreatedAtColumn() const
-    {
-        return qualifyColumn(getCreatedAtColumn());
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QString Model<Derived, AllRelations...>::getQualifiedUpdatedAtColumn() const
-    {
-        return qualifyColumn(getUpdatedAtColumn());
-    }
-
+    // CUR move to hasTimestamps silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename ClassToCheck>
     bool Model<Derived, AllRelations...>::isIgnoringTouch()
@@ -3303,34 +2359,90 @@ namespace Relations
         return model().u_relations;
     }
 
+    /* Getters for u_ data members defined in the Derived models, helps to avoid
+       'friend GuardsAttributes/HasTimestamps' declarations in models when a u_ data
+       members are private/protected. */
+
+    /* HasAttributes */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString &
+    Model<Derived, AllRelations...>::getUserDateFormat()
+    {
+        return Derived::u_dateFormat;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QString &
+    Model<Derived, AllRelations...>::getUserDateFormat() const
+    {
+        return Derived::u_dateFormat;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QStringList &
+    Model<Derived, AllRelations...>::getUserDates()
+    {
+        return Derived::u_dates;
+    }
+
     /* GuardsAttributes */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QStringList &
+    QStringList &
     Model<Derived, AllRelations...>::getFillableInternal()
     {
         return Derived::u_fillable;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QStringList &
+    const QStringList &
     Model<Derived, AllRelations...>::getFillableInternal() const
     {
         return Derived::u_fillable;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QStringList &
+    QStringList &
     Model<Derived, AllRelations...>::getGuardedInternal()
     {
         return Derived::u_guarded;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QStringList &
+    const QStringList &
     Model<Derived, AllRelations...>::getGuardedInternal() const
     {
         return Derived::u_guarded;
+    }
+
+    /* HasTimestamps */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool &
+    Model<Derived, AllRelations...>::getUserTimestamps()
+    {
+        return model().u_timestamps;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool Model<Derived, AllRelations...>::getUserTimestamps() const
+    {
+        return model().u_timestamps;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QString &
+    Model<Derived, AllRelations...>::getUserCreatedAtColumn()
+    {
+        return Derived::CREATED_AT;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QString &
+    Model<Derived, AllRelations...>::getUserUpdatedAtColumn()
+    {
+        return Derived::UPDATED_AT;
     }
 
 } // namespace Tiny
