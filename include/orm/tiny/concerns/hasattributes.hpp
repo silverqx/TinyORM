@@ -454,10 +454,12 @@ namespace Concerns
     QVector<AttributeItem>
     HasAttributes<Derived, AllRelations...>::getDirty() const
     {
-        // CUR reserve silverqx
-        QVector<AttributeItem> dirty;
+        const auto &attributes = getAttributes();
 
-        for (const auto &attribute : getAttributes())
+        QVector<AttributeItem> dirty;
+        dirty.reserve(attributes.size());
+
+        for (const auto &attribute : attributes)
             if (const auto &key = attribute.key;
                 !originalIsEquivalent(key)
             )
