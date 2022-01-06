@@ -53,12 +53,6 @@ namespace Relations
     };
 #endif
 
-    // TODO repeat, from time to time try to compile without microsoft extensions, QMAKE_CXXFLAGS *= -Za silverqx
-    // TODO repeat, recompile without PCH silverqx
-    // TODO repeat, open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
-    // TODO repeat, clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
-    // TODO repeat, merge changes from latest Eloquent silverqx
-    // TODO decide/unify when to use class/typename keywords for templates silverqx
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
     // TODO model missing methods Comparing Models silverqx
@@ -71,61 +65,6 @@ namespace Relations
     // TODO model missing methods Model::saveOrFail() silverqx
     // TODO model missing methods EloquentCollection::toQuery() silverqx
     // TODO model missing methods Model::whereRow() silverqx
-    // FEATURE EloquentCollection, solve how to implement, also look at Eloquent's Custom Collections silverqx
-    // FUTURE try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
-    // FUTURE include every stl dependency in header files silverqx
-    // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
-    // TODO QueryBuilder::updateOrInsert() silverqx
-    // FEATURE code coverage silverqx
-    // FEATURE CI/CD silverqx
-    // TODO perf, run TinyOrmPlayground 30 times with disabled terminal output and calculate sum value of execution times to compare perf silverqx
-    // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
-    // CUR1 connection SSL support silverqx
-    // BUG Qt sql drivers do not work with mysql json columns silverqx
-    // CUR1 add Relations::Concerns::ComparesRelatedModels silverqx
-    // FEATURE build systems, add autotools build silverqx
-    // FEATURE build systems, add docs on how to make a production build of the TinyORM library silverqx
-    // FEATURE build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
-    // FEATURE build systems, libuv example how it could look like https://github.com/libuv/libuv silverqx
-    // FUTURE cmake can generate export header file by GenerateExportHeader module, find way to use it, because I have own export header file, how to unify this? I don't know now silverqx
-    // CUR try clang-include-fixer at https://clang.llvm.org/extra/clang-include-fixer.html silverqx
-    // CUR try iwyu at https://include-what-you-use.org/ silverqx
-    // CUR generate pkg-config file on unix silverqx
-    // CUR cmake use gold linker option, https://github.com/frobware/c-hacks/blob/master/cmake/use-gold-linker.cmake silverqx
-    // BUG mingw64, TinyOrmPlayground seg. fault at the end, but everything runs/passes correctly, but only when invoked from mintty terminal, when I run it from QtCreator that uses cmd I don't see any seg. fault silverqx
-    // BUG mingw64, seg fault in some tests eg. tst_model, and couldn't execute tests again, mingw64 shell works silverqx
-    // FUTURE mingw64, find out better solution for .text section exhausted in debug build, -Wa,-mbig-obj didn't help, -flto helps, but again it can not find reference to WinMain, so I had to compile with -O1, then it is ok silverqx
-    // FUTURE tests, QtCreator Qt AutoTests how to pass -maxwarnings silverqx
-    // FUTURE constexpr, version header file, good example https://googleapis.dev/cpp/google-cloud-common/0.6.1/version_8h_source.html silverqx
-    // BUG qmake impossible to add d postfix for dlls silverqx
-    // BUG SemVer version cmake/qmake silverqx
-    // CUR cmake/qmake SOVERSION silverqx
-    // CUR 0.1.0 vs 0.1.0.0 Product/FileVersion, investigate, also check versions in pc, prl, ... silverqx
-    // CUR enable QT_ASCII_CAST_WARNINGS silverqx
-    // CUR enable QT_NO_CAST_FROM_ASCII silverqx
-    // CUR autoconfigure qmake with qmake/TinyOrm.pri and TINY_ROOT_DIR and TINY_TINYORM_BUILDS_DIR silverqx
-    // BUG qmake MinGW UCRT64 clang static build duplicit symbols, this is MinGW bug silverqx
-    // BUG qmake MinGW UCRT64 clang shared build with inline_constants cause crashes of 50% of tests, this will be MinGW clang or clang bug, on unix it works without problems silverqx
-    // BUG cmake MinGW UCRT64 clang static build builds, but cause problem with inline_constants ; shared build with inline_constants cause crashes of 50% of tests, like bug above, this will be MinGW clang or clang bug, on unix it works without problems silverqx
-    // FUTURE linux, add linker version script https://github.com/sailfishos/qtbase/commit/72ba0079c3967bdfa26acdce78ce6cb98b30c27b?view=parallel https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html https://stackoverflow.com/questions/41061220/where-do-object-file-version-references-come-from silverqx
-    // TODO Visual Studio memory analyzer https://docs.microsoft.com/en-us/visualstudio/profiling/memory-usage-without-debugging2?view=vs-2019 silverqx
-    // CUR fix all modernize-pass-by-value silverqx
-    // CUR use using inside classes where appropriate silverqx
-    // CUR I'm still not comfortable with using Orm::Constants, inside/outside namespace in cpp/hpp files silverqx
-    // CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
-    // CUR make all * to *const silverqx
-    // CUR merge changes from latest Eloquent silverqx
-    // CUR cmake/qmake run tests in parallel for tests that allow it silverqx
-    // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
-    // FUTURE divide Query Builder and TinyOrm to own packages (dlls)? think about it 🤔 silverqx
-    // BUG clang on mingw inline static initialization with another static in the same class defined line before, all other compilers (on linux too) works silverqx
-    // CUR unify default/non-default ctors comment silverqx
-    // CUR cmake when MYSQL_PING is on and QMYSQL driver is not build ctest fails, fail configure? I don't knwo how I will solve this for now, also fix qmake silverqx
-    // BUG docs many-to-many examples contain queries with created_at in pivot table, but pivot doesn't contain timestamp columns silverqx
-    // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
-    // CUR docs IdealImage silverqx
-    // CUR docs, add all the implemented features summary somewhere silverqx
-    // CUR export dll paths in Invoke- ps1 scripts, also check dotenv and source if needed and add dotenv example to tools/ silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :
@@ -2493,3 +2432,61 @@ namespace Relations
 TINYORM_END_COMMON_NAMESPACE
 
 #endif // ORM_TINY_MODEL_HPP
+
+// TODO repeat, from time to time try to compile without microsoft extensions, QMAKE_CXXFLAGS *= -Za silverqx
+// TODO repeat, recompile without PCH silverqx
+// TODO repeat, open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
+// TODO repeat, clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
+// TODO repeat, merge changes from latest Eloquent silverqx
+// TODO decide/unify when to use class/typename keywords for templates silverqx
+// FEATURE EloquentCollection, solve how to implement, also look at Eloquent's Custom Collections silverqx
+// FUTURE try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
+// FUTURE include every stl dependency in header files silverqx
+// FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
+// FEATURE code coverage silverqx
+// TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
+// CUR1 connection SSL support silverqx
+// BUG Qt sql drivers do not work with mysql json columns silverqx
+// CUR1 add Relations::Concerns::ComparesRelatedModels silverqx
+// FEATURE build systems, add docs on how to make a production build of the TinyORM library silverqx
+// FEATURE build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
+// FEATURE build systems, libuv example how it could look like https://github.com/libuv/libuv silverqx
+// FUTURE cmake can generate export header file by GenerateExportHeader module, find way to use it, because I have own export header file, how to unify this? I don't know now silverqx
+// CUR try clang-include-fixer at https://clang.llvm.org/extra/clang-include-fixer.html silverqx
+// CUR try iwyu at https://include-what-you-use.org/ silverqx
+// CUR generate pkg-config file on unix silverqx
+// CUR cmake use gold linker option, https://github.com/frobware/c-hacks/blob/master/cmake/use-gold-linker.cmake silverqx
+// BUG mingw64, TinyOrmPlayground seg. fault at the end, but everything runs/passes correctly, but only when invoked from mintty terminal, when I run it from QtCreator that uses cmd I don't see any seg. fault silverqx
+// BUG mingw64, seg fault in some tests eg. tst_model, and couldn't execute tests again, mingw64 shell works silverqx
+// FUTURE mingw64, find out better solution for .text section exhausted in debug build, -Wa,-mbig-obj didn't help, -flto helps, but again it can not find reference to WinMain, so I had to compile with -O1, then it is ok silverqx
+// FUTURE tests, QtCreator Qt AutoTests how to pass -maxwarnings silverqx
+// FUTURE constexpr, version header file, good example https://googleapis.dev/cpp/google-cloud-common/0.6.1/version_8h_source.html silverqx
+// BUG qmake impossible to add d postfix for dlls silverqx
+// BUG SemVer version cmake/qmake silverqx
+// CUR cmake/qmake SOVERSION silverqx
+// CUR 0.1.0 vs 0.1.0.0 Product/FileVersion, investigate, also check versions in pc, prl, ... silverqx
+// CUR enable QT_ASCII_CAST_WARNINGS silverqx
+// CUR enable QT_NO_CAST_FROM_ASCII silverqx
+// CUR autoconfigure qmake with qmake/TinyOrm.pri and TINY_ROOT_DIR and TINY_TINYORM_BUILDS_DIR silverqx
+// BUG qmake MinGW UCRT64 clang static build duplicit symbols, this is MinGW bug silverqx
+// BUG qmake MinGW UCRT64 clang shared build with inline_constants cause crashes of 50% of tests, this will be MinGW clang or clang bug, on unix it works without problems silverqx
+// BUG cmake MinGW UCRT64 clang static build builds, but cause problem with inline_constants ; shared build with inline_constants cause crashes of 50% of tests, like bug above, this will be MinGW clang or clang bug, on unix it works without problems silverqx
+// FUTURE linux, add linker version script https://github.com/sailfishos/qtbase/commit/72ba0079c3967bdfa26acdce78ce6cb98b30c27b?view=parallel https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html https://stackoverflow.com/questions/41061220/where-do-object-file-version-references-come-from silverqx
+// TODO Visual Studio memory analyzer https://docs.microsoft.com/en-us/visualstudio/profiling/memory-usage-without-debugging2?view=vs-2019 silverqx
+// CUR fix all modernize-pass-by-value silverqx
+// CUR use using inside classes where appropriate silverqx
+// CUR I'm still not comfortable with using Orm::Constants, inside/outside namespace in cpp/hpp files silverqx
+// CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
+// CUR make all * to *const silverqx
+// CUR merge changes from latest Eloquent silverqx
+// CUR cmake/qmake run tests in parallel for tests that allow it silverqx
+// CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
+// FUTURE divide Query Builder and TinyOrm to own packages (dlls)? think about it 🤔 silverqx
+// BUG clang on mingw inline static initialization with another static in the same class defined line before, all other compilers (on linux too) works silverqx
+// CUR unify default/non-default ctors comment silverqx
+// CUR cmake when MYSQL_PING is on and QMYSQL driver is not build ctest fails, fail configure? I don't knwo how I will solve this for now, also fix qmake silverqx
+// BUG docs many-to-many examples contain queries with created_at in pivot table, but pivot doesn't contain timestamp columns silverqx
+// CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
+// CUR docs IdealImage silverqx
+// CUR docs, add all the implemented features summary somewhere silverqx
+// CUR export dll paths in Invoke- ps1 scripts, also check dotenv and source if needed and add dotenv example to tools/ silverqx
