@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_CONFIGURATION_HPP
-#define ORM_CONFIGURATION_HPP
+#ifndef ORM_SUPPORT_CONFIGURATION_HPP
+#define ORM_SUPPORT_CONFIGURATION_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -84,4 +84,4 @@ namespace Orm::Support
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_CONFIGURATION_HPP
+#endif // ORM_SUPPORT_CONFIGURATION_HPP

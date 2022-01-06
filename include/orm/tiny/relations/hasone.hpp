@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_HASONE_HPP
-#define ORM_HASONE_HPP
+#ifndef ORM_TINY_RELATIONS_HASONE_HPP
+#define ORM_TINY_RELATIONS_HASONE_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -132,4 +132,4 @@ namespace Orm::Tiny::Relations
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_HASONE_HPP
+#endif // ORM_TINY_RELATIONS_HASONE_HPP

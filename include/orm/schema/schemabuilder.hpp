@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_SCHEMABUILDER_HPP
-#define ORM_SCHEMABUILDER_HPP
+#ifndef ORM_SCHEMA_SCHEMABUILDER_HPP
+#define ORM_SCHEMA_SCHEMABUILDER_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -52,4 +52,4 @@ namespace Grammars
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_SCHEMABUILDER_HPP
+#endif // ORM_SCHEMA_SCHEMABUILDER_HPP

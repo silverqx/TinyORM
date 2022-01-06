@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_BELONGSTO_HPP
-#define ORM_BELONGSTO_HPP
+#ifndef ORM_TINY_RELATIONS_BELONGSTO_HPP
+#define ORM_TINY_RELATIONS_BELONGSTO_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -343,4 +343,4 @@ namespace Orm::Tiny::Relations
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_BELONGSTO_HPP
+#endif // ORM_TINY_RELATIONS_BELONGSTO_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_PIVOT_HPP
-#define ORM_PIVOT_HPP
+#ifndef ORM_TINY_RELATIONS_PIVOT_HPP
+#define ORM_TINY_RELATIONS_PIVOT_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -35,4 +35,4 @@ namespace Orm::Tiny::Relations
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_PIVOT_HPP
+#endif // ORM_TINY_RELATIONS_PIVOT_HPP

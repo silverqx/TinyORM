@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_HASONEORMANY_HPP
-#define ORM_HASONEORMANY_HPP
+#ifndef ORM_TINY_RELATIONS_HASONEORMANY_HPP
+#define ORM_TINY_RELATIONS_HASONEORMANY_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -411,4 +411,4 @@ namespace Orm::Tiny::Relations
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_HASONEORMANY_HPP
+#endif // ORM_TINY_RELATIONS_HASONEORMANY_HPP
