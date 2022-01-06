@@ -209,8 +209,8 @@ namespace Relations
         newPivot(const Parent &parent, const QVector<AttributeItem> &attributes,
                  const QString &table, bool exists) const;
 
-        /* Static cast this to a child's instance type (CRTP). */
-        TINY_CRTP_MODEL
+        /* Static cast this to a child's instance type (CRTP) */
+        TINY_CRTP_MODEL_DECLARATIONS
 
         /* Getters / Setters */
         /*! Get the current connection name for the model. */
@@ -1139,20 +1139,8 @@ namespace Relations
                         parent, attributes, table, exists_);
     }
 
-    /* Static cast this to a child's instance type (CRTP). */
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::model()
-    {
-        // Can not be cached with static because a copy can be made
-        return static_cast<Derived &>(*this);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    const Derived &Model<Derived, AllRelations...>::model() const
-    {
-        return static_cast<const Derived &>(*this);
-    }
+    /* Static cast this to a child's instance type (CRTP) */
+    TINY_CRTP_MODEL_DEFINITIONS(Model)
 
     /* Getters / Setters */
 
@@ -2496,3 +2484,4 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR docs IdealImage silverqx
 // CUR docs, add all the implemented features summary somewhere silverqx
 // CUR export dll paths in Invoke- ps1 scripts, also check dotenv and source if needed and add dotenv example to tools/ silverqx
+// TODO cache static_cast<>(*this) in the model()/basemodel() CRTP as a class data member std::optional<std::reference_wrapper<Derived>> m_model = std::nullopt, but I will have to create copy ctor to set m_model {std::nullopt}, the same for other similar model() methods like Model::model(), then I can to check if (m_model) and return right away and I will call static_cast or dynamic_cast only once for every instance, it is casted everytime now 😟 silverqx

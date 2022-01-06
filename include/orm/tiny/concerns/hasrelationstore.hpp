@@ -314,8 +314,8 @@ namespace Concerns
         inline const QueriesRelationshipsStore<Related> &
         queriesRelationshipsStore() const;
 
-        /* Static cast this to a child's instance type (CRTP). */
-        TINY_CRTP_MODEL_WITH_BASE
+        /* Static cast this to a child's instance type (CRTP) */
+        TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
 
         // BUG this is bad, disable Model's copy/assignment ctors if m_relationStore is not empty, or empty the m_relationStore on copy?, have to think about this 🤔 silverqx
         /*! The store where the values will be saved, before BaseRelationStore::visit()
@@ -754,33 +754,8 @@ namespace Concerns
                 const QueriesRelationshipsStore<Related>>(m_relationStore.top());
     }
 
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &
-    HasRelationStore<Derived, AllRelations...>::model()
-    {
-        return static_cast<Derived &>(*this);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    const Derived &
-    HasRelationStore<Derived, AllRelations...>::model() const
-    {
-        return static_cast<const Derived &>(*this);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Model<Derived, AllRelations...> &
-    HasRelationStore<Derived, AllRelations...>::basemodel()
-    {
-        return static_cast<Model<Derived, AllRelations...> &>(*this);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    const Model<Derived, AllRelations...> &
-    HasRelationStore<Derived, AllRelations...>::basemodel() const
-    {
-        return static_cast<const Model<Derived, AllRelations...> &>(*this);
-    }
+    /* Static cast this to a child's instance type (CRTP) */
+    TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasRelationStore)
 
 } // namespace Concerns
 } // namespace Orm::Tiny

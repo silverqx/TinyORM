@@ -217,8 +217,8 @@ namespace Concerns
     private:
         QStringList getDatesInternal() const;
 
-        /* Static cast this to a child's instance type (CRTP). */
-        TINY_CRTP_MODEL_WITH_BASE
+        /* Static cast this to a child's instance type (CRTP) */
+        TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
     };
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -885,35 +885,8 @@ namespace Concerns
         return dates;
     }
 
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &
-    HasAttributes<Derived, AllRelations...>::model()
-    {
-        // Can not be cached with static because a copy can be made
-        return static_cast<Derived &>(*this);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    const Derived &
-    HasAttributes<Derived, AllRelations...>::model() const
-    {
-        return static_cast<const Derived &>(*this);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Model<Derived, AllRelations...> &
-    HasAttributes<Derived, AllRelations...>::basemodel()
-    {
-        // Can not be cached with static because a copy can be made
-        return static_cast<Model<Derived, AllRelations...> &>(*this);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    const Model<Derived, AllRelations...> &
-    HasAttributes<Derived, AllRelations...>::basemodel() const
-    {
-        return static_cast<const Model<Derived, AllRelations...> &>(*this);
-    }
+    /* Static cast this to a child's instance type (CRTP) */
+    TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasAttributes)
 
 } // namespace Concerns
 } // namespace Orm::Tiny

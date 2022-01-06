@@ -5,14 +5,35 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#define TINY_CRTP_MODEL_WITH_BASE                                                 \
-        /*! Static cast this to a child's instance type (CRTP). */                \
-        inline Derived &model();                                                  \
-        /*! Static cast this to a child's instance type (CRTP), const version. */ \
-        inline const Derived &model() const;                                      \
+#include "orm/tiny/macros/crtpmodel.hpp"
+
+/*! CRTP declarations for model()/basemodel() methods. */
+#define TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS                                    \
+        TINY_CRTP_MODEL_DECLARATIONS                                              \
         /*! Static cast this to a child's instance Model type. */                 \
         inline Model<Derived, AllRelations...> &basemodel();                      \
         /*! Static cast this to a child's instance Model type, const version. */  \
         inline const Model<Derived, AllRelations...> &basemodel() const;
+
+/*! CRTP definitions for model()/basemodel() methods. */
+#define TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(Class)                              \
+    TINY_CRTP_MODEL_DEFINITIONS(Class)                                            \
+                                                                                  \
+    template<typename Derived, AllRelationsConcept ...AllRelations>               \
+    Model<Derived, AllRelations...> &                                             \
+    /* NOLINTNEXTLINE(bugprone-macro-parentheses) */                              \
+    Class<Derived, AllRelations...>::basemodel()                                  \
+    {                                                                             \
+        /* Can not be cached with static because a copy can be made */            \
+        return static_cast<Model<Derived, AllRelations...> &>(*this);             \
+    }                                                                             \
+                                                                                  \
+    template<typename Derived, AllRelationsConcept ...AllRelations>               \
+    const Model<Derived, AllRelations...> &                                       \
+    /* NOLINTNEXTLINE(bugprone-macro-parentheses) */                              \
+    Class<Derived, AllRelations...>::basemodel() const                            \
+    {                                                                             \
+        return static_cast<const Model<Derived, AllRelations...> &>(*this);       \
+    }
 
 #endif // ORM_TINY_MACROS_CRTPMODELWITHBASE_HPP
