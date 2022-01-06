@@ -91,6 +91,8 @@ function(tiny_sources out_headers out_sources)
             tiny/exceptions/modelnotfounderror.hpp
             tiny/exceptions/relationnotfounderror.hpp
             tiny/exceptions/relationnotloadederror.hpp
+            tiny/macros/crtpmodel.hpp
+            tiny/macros/crtpmodelwithbase.hpp
             tiny/model.hpp
             tiny/modelproxies.hpp
             tiny/relations/basepivot.hpp

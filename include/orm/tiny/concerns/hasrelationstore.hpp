@@ -9,6 +9,7 @@ TINY_SYSTEM_HEADER
 #include <stack>
 
 #include "orm/exceptions/runtimeerror.hpp"
+#include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/tiny/tinytypes.hpp"
 
@@ -313,15 +314,8 @@ namespace Concerns
         inline const QueriesRelationshipsStore<Related> &
         queriesRelationshipsStore() const;
 
-        /*! Static cast this to a child's instance Model type. */
-        inline Model<Derived, AllRelations...> &basemodel();
-        /*! Static cast this to a child's instance Model type, const version. */
-        inline const Model<Derived, AllRelations...> &basemodel() const;
-
-        /*! Static cast this to a child's instance type (CRTP). */
-        inline Derived &model();
-        /*! Static cast this to a child's instance type (CRTP), const version. */
-        inline const Derived &model() const;
+        /* Static cast this to a child's instance type (CRTP). */
+        TINY_CRTP_MODEL_WITH_BASE
 
         // BUG this is bad, disable Model's copy/assignment ctors if m_relationStore is not empty, or empty the m_relationStore on copy?, have to think about this 🤔 silverqx
         /*! The store where the values will be saved, before BaseRelationStore::visit()
@@ -761,20 +755,6 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    Model<Derived, AllRelations...> &
-    HasRelationStore<Derived, AllRelations...>::basemodel()
-    {
-        return static_cast<Model<Derived, AllRelations...> &>(*this);
-    }
-
-    template<typename Derived, typename ...AllRelations>
-    const Model<Derived, AllRelations...> &
-    HasRelationStore<Derived, AllRelations...>::basemodel() const
-    {
-        return static_cast<const Model<Derived, AllRelations...> &>(*this);
-    }
-
-    template<typename Derived, typename ...AllRelations>
     Derived &
     HasRelationStore<Derived, AllRelations...>::model()
     {
@@ -786,6 +766,20 @@ namespace Concerns
     HasRelationStore<Derived, AllRelations...>::model() const
     {
         return static_cast<const Derived &>(*this);
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    Model<Derived, AllRelations...> &
+    HasRelationStore<Derived, AllRelations...>::basemodel()
+    {
+        return static_cast<Model<Derived, AllRelations...> &>(*this);
+    }
+
+    template<typename Derived, typename ...AllRelations>
+    const Model<Derived, AllRelations...> &
+    HasRelationStore<Derived, AllRelations...>::basemodel() const
+    {
+        return static_cast<const Model<Derived, AllRelations...> &>(*this);
     }
 
 } // namespace Concerns

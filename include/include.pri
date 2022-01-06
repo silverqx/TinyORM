@@ -87,6 +87,8 @@ headersList += \
         $$PWD/orm/tiny/exceptions/modelnotfounderror.hpp \
         $$PWD/orm/tiny/exceptions/relationnotfounderror.hpp \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.hpp \
+        $$PWD/orm/tiny/macros/crtpmodel.hpp \
+        $$PWD/orm/tiny/macros/crtpmodelwithbase.hpp \
         $$PWD/orm/tiny/model.hpp \
         $$PWD/orm/tiny/modelproxies.hpp \
         $$PWD/orm/tiny/relations/basepivot.hpp \

@@ -8,6 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QDateTime>
 
 #include "orm/concepts.hpp"
+#include "orm/tiny/macros/crtpmodelwithbase.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -61,14 +62,8 @@ namespace Concerns
         bool u_timestamps = true;
 
     private:
-        /*! Static cast this to a child's instance type (CRTP). */
-        inline Derived &model();
-        /*! Static cast this to a child's instance type (CRTP), const version. */
-        inline const Derived &model() const;
-        /*! Static cast this to a child's instance Model type. */
-        inline Model<Derived, AllRelations...> &basemodel();
-        /*! Static cast this to a child's instance Model type, const version. */
-        inline const Model<Derived, AllRelations...> &basemodel() const;
+        /* Static cast this to a child's instance type (CRTP). */
+        TINY_CRTP_MODEL_WITH_BASE
     };
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

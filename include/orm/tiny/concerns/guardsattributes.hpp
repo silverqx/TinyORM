@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/concepts.hpp"
 #include "orm/macros/threadlocal.hpp"
+#include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/tinytypes.hpp"
 #include "orm/utils/type.hpp"
 
@@ -94,14 +95,8 @@ namespace Concerns
         inline static QHash<QString, QStringList> m_guardableColumns;
 
     private:
-        /*! Static cast this to a child's instance type (CRTP). */
-        inline Derived &model();
-        /*! Static cast this to a child's instance type (CRTP), const version. */
-        inline const Derived &model() const;
-        /*! Static cast this to a child's instance Model type. */
-        inline Model<Derived, AllRelations...> &basemodel();
-        /*! Static cast this to a child's instance Model type, const version. */
-        inline const Model<Derived, AllRelations...> &basemodel() const;
+        /* Static cast this to a child's instance type (CRTP). */
+        TINY_CRTP_MODEL_WITH_BASE
     };
 
     /* These methods may look a little strange because they are non-static, but it is

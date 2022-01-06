@@ -11,6 +11,7 @@ TINY_SYSTEM_HEADER
 #include "orm/exceptions/invalidformaterror.hpp"
 #include "orm/macros/threadlocal.hpp"
 #include "orm/ormtypes.hpp"
+#include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/utils/attribute.hpp"
 #include "orm/tiny/utils/string.hpp"
 
@@ -216,14 +217,8 @@ namespace Concerns
     private:
         QStringList getDatesInternal() const;
 
-        /*! Static cast this to a child's instance type (CRTP). */
-        inline Derived &model();
-        /*! Static cast this to a child's instance type (CRTP), const version. */
-        inline const Derived &model() const;
-        /*! Static cast this to a child's instance Model type. */
-        inline Model<Derived, AllRelations...> &basemodel();
-        /*! Static cast this to a child's instance Model type, const version. */
-        inline const Model<Derived, AllRelations...> &basemodel() const;
+        /* Static cast this to a child's instance type (CRTP). */
+        TINY_CRTP_MODEL_WITH_BASE
     };
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

@@ -20,6 +20,7 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/exceptions/massassignmenterror.hpp"
 #include "orm/tiny/exceptions/relationnotfounderror.hpp"
 #include "orm/tiny/exceptions/relationnotloadederror.hpp"
+#include "orm/tiny/macros/crtpmodel.hpp"
 #include "orm/tiny/modelproxies.hpp"
 #include "orm/tiny/relations/belongsto.hpp"
 #include "orm/tiny/relations/belongstomany.hpp"
@@ -273,10 +274,8 @@ namespace Relations
         newPivot(const Parent &parent, const QVector<AttributeItem> &attributes,
                  const QString &table, bool exists) const;
 
-        /*! Static cast this to a child's instance type (CRTP). */
-        inline Derived &model();
-        /*! Static cast this to a child's instance type (CRTP), const version. */
-        inline const Derived &model() const;
+        /* Static cast this to a child's instance type (CRTP). */
+        TINY_CRTP_MODEL
 
         /* Getters / Setters */
         /*! Get the current connection name for the model. */
