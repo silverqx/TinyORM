@@ -9,8 +9,6 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-// CUR after commit move all common types here and remove all unneded forward declarations in Tiny ns silverqx
-// CUR also replace ormtypes.hpp by tinytypes.hpp where appropriate and remove unneeded ormtypes.hpp silverqx
 namespace Orm
 {
 namespace Tiny
@@ -22,7 +20,6 @@ namespace Tiny
     template<typename Model>
     using TinyBuilder = Builder<Model>;
 
-    // TODO types, also divide types by namespace, eg AttributeItem is only used in the Orm::Tiny namespace, so an user can use 'using namespace Orm::Tiny' in model files, it is not possible now, because he has to use symbols from an Orm namespace too silverqx
     // TODO pretty print in the debugger silverqx
     /*! Attribute item used in ORM models. */
     struct SHAREDLIB_EXPORT AttributeItem
