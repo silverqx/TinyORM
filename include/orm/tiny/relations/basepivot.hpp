@@ -53,7 +53,7 @@ namespace Orm::Tiny::Relations
         /*! Delete the pivot model record from the database. */
         bool remove();
         /*! Delete the pivot model record from the database (alias). */
-        bool deleteModel();
+        inline bool deleteModel();
 
         /*! Set the keys for a save update query. */
         TinyBuilder<PivotModel> &
@@ -199,7 +199,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<typename PivotModel>
-    inline bool BasePivot<PivotModel>::deleteModel()
+    bool BasePivot<PivotModel>::deleteModel()
     {
         return this->model().remove();
     }

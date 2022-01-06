@@ -37,8 +37,8 @@ namespace Orm::Tiny::Relations
         initRelation(QVector<Model> &models, const QString &relation) const override;
 
         /*! Match the eagerly loaded results to their parents. */
-        void match(QVector<Model> &models, QVector<Related> results,
-                   const QString &relation) const override;
+        inline void match(QVector<Model> &models, QVector<Related> results,
+                          const QString &relation) const override;
 
         /*! Get the results of the relationship. */
         std::variant<QVector<Related>, std::optional<Related>>
@@ -52,7 +52,7 @@ namespace Orm::Tiny::Relations
 
         /* Others */
         /*! The textual representation of the Relation type. */
-        QString relationTypeName() const override;
+        inline QString relationTypeName() const override;
     };
 
     template<class Model, class Related>
@@ -90,8 +90,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    inline void
-    HasMany<Model, Related>::match(
+    void HasMany<Model, Related>::match(
             QVector<Model> &models,  QVector<Related> results,
             const QString &relation) const
     {
@@ -120,7 +119,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    inline QString HasMany<Model, Related>::relationTypeName() const
+    QString HasMany<Model, Related>::relationTypeName() const
     {
         return "HasMany";
     }

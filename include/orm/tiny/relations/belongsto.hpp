@@ -47,7 +47,7 @@ namespace Orm::Tiny::Relations
         /*! Dissociate previously associated model from the given parent. */
         Model &dissociate() const;
         /*! Alias of "dissociate" method. */
-        Model &disassociate() const;
+        inline Model &disassociate() const;
 
         /* Basic operations */
         /*! Set the base constraints on the relation query. */
@@ -69,13 +69,13 @@ namespace Orm::Tiny::Relations
 
         /* Getters / Setters */
         /*! Get the name of the relationship. */
-        QString getRelationName() const;
+        inline QString getRelationName() const;
         /*! Get the fully qualified foreign key of the relationship. */
-        QString getQualifiedForeignKeyName() const;
+        inline QString getQualifiedForeignKeyName() const;
 
         /* Others */
         /*! The textual representation of the Relation type. */
-        QString relationTypeName() const override;
+        inline QString relationTypeName() const override;
 
     protected:
         /*! Gather the keys from a vector of related models. */
@@ -85,7 +85,7 @@ namespace Orm::Tiny::Relations
         buildDictionary(const QVector<Related> &results) const;
 
         /*! Make a new related instance for the given model. */
-        Related newRelatedInstanceFor(const Model &/*unused*/) const override;
+        inline Related newRelatedInstanceFor(const Model &/*unused*/) const override;
 
         /* Querying Relationship Existence/Absence */
         /*! Add the constraints for a relationship query. */
@@ -176,7 +176,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    inline Model &BelongsTo<Model, Related>::disassociate() const
+    Model &BelongsTo<Model, Related>::disassociate() const
     {
         return dissociate();
     }
@@ -274,19 +274,19 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    inline QString BelongsTo<Model, Related>::getRelationName() const
+    QString BelongsTo<Model, Related>::getRelationName() const
     {
         return m_relationName;
     }
 
     template<class Model, class Related>
-    inline QString BelongsTo<Model, Related>::getQualifiedForeignKeyName() const
+    QString BelongsTo<Model, Related>::getQualifiedForeignKeyName() const
     {
         return m_child.qualifyColumn(m_foreignKey);
     }
 
     template<class Model, class Related>
-    inline QString BelongsTo<Model, Related>::relationTypeName() const
+    QString BelongsTo<Model, Related>::relationTypeName() const
     {
         return "BelongsTo";
     }
@@ -316,7 +316,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    inline Related
+    Related
     BelongsTo<Model, Related>::newRelatedInstanceFor(const Model &/*unused*/) const
     {
         return this->m_related->newInstance();

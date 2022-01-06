@@ -243,7 +243,7 @@ namespace Relations
 
         /* Model Instance methods */
         /*! Get a new query builder for the model's table. */
-        std::unique_ptr<TinyBuilder<Derived>> newQuery();
+        inline std::unique_ptr<TinyBuilder<Derived>> newQuery();
         /*! Get a new query builder that doesn't have any global scopes. */
         std::unique_ptr<TinyBuilder<Derived>> newQueryWithoutScopes();
         /*! Get a new query builder that doesn't have any global scopes or
@@ -259,7 +259,7 @@ namespace Relations
         Derived newFromBuilder(const QVector<AttributeItem> &attributes = {},
                                const std::optional<QString> &connection = std::nullopt);
         /*! Create a new instance of the given model. */
-        Derived newInstance();
+        inline Derived newInstance();
         /*! Create a new instance of the given model. */
         Derived newInstance(const QVector<AttributeItem> &attributes,
                             bool exists = false);
@@ -274,31 +274,31 @@ namespace Relations
                  const QString &table, bool exists) const;
 
         /*! Static cast this to a child's instance type (CRTP). */
-        Derived &model();
+        inline Derived &model();
         /*! Static cast this to a child's instance type (CRTP), const version. */
-        const Derived &model() const;
+        inline const Derived &model() const;
 
         /* Getters / Setters */
         /*! Get the current connection name for the model. */
         const QString &getConnectionName() const;
         /*! Get the database connection for the model. */
-        ConnectionInterface &getConnection() const;
+        inline ConnectionInterface &getConnection() const;
         /*! Set the connection associated with the model. */
-        Derived &setConnection(const QString &name);
+        inline Derived &setConnection(const QString &name);
         /*! Set the table associated with the model. */
-        Derived &setTable(const QString &value);
+        inline Derived &setTable(const QString &value);
         /*! Get the table associated with the model. */
         const QString &getTable() const;
         /*! Get the primary key for the model. */
-        const QString &getKeyName() const;
+        inline const QString &getKeyName() const;
         /*! Get the table qualified key name. */
-        QString getQualifiedKeyName() const;
+        inline QString getQualifiedKeyName() const;
         /*! Get the value of the model's primary key. */
-        QVariant getKey() const;
+        inline QVariant getKey() const;
         /*! Get the value indicating whether the IDs are incrementing. */
-        bool getIncrementing() const;
+        inline bool getIncrementing() const;
         /*! Set whether IDs are incrementing. */
-        Derived &setIncrementing(bool value);
+        inline Derived &setIncrementing(bool value);
 
         /* Others */
         /*! Qualify the given column name by the model's table. */
@@ -381,11 +381,12 @@ namespace Relations
         void touchOwners();
 
         /*! Get the relationships that are touched on save. */
-        const QStringList &getTouchedRelations() const;
+        inline const QStringList &getTouchedRelations() const;
         /*! Determine if the model touches a given relation. */
-        bool touches(const QString &relation) const;
+        inline bool touches(const QString &relation) const;
 
         /*! Get all the loaded relations for the instance. */
+        inline
 #ifdef __GNUG__
         const std::map<QString, RelationsType<AllRelations...>> &
 #else
@@ -393,6 +394,7 @@ namespace Relations
 #endif
         getRelations() const;
         /*! Get all the loaded relations for the instance. */
+        inline
 #ifdef __GNUG__
         std::map<QString, RelationsType<AllRelations...>> &
 #else
@@ -437,23 +439,23 @@ namespace Relations
 
         /*! Instantiate a new HasOne relationship. */
         template<typename Related>
-        std::unique_ptr<Relations::HasOne<Derived, Related>>
+        inline std::unique_ptr<Relations::HasOne<Derived, Related>>
         newHasOne(std::unique_ptr<Related> &&related, Derived &parent,
                   const QString &foreignKey, const QString &localKey) const;
         /*! Instantiate a new BelongsTo relationship. */
         template<typename Related>
-        std::unique_ptr<Relations::BelongsTo<Derived, Related>>
+        inline std::unique_ptr<Relations::BelongsTo<Derived, Related>>
         newBelongsTo(std::unique_ptr<Related> &&related,
                      Derived &child, const QString &foreignKey,
                      const QString &ownerKey, const QString &relation) const;
         /*! Instantiate a new HasMany relationship. */
         template<typename Related>
-        std::unique_ptr<Relations::HasMany<Derived, Related>>
+        inline std::unique_ptr<Relations::HasMany<Derived, Related>>
         newHasMany(std::unique_ptr<Related> &&related, Derived &parent,
                    const QString &foreignKey, const QString &localKey) const;
         /*! Instantiate a new BelongsToMany relationship. */
         template<typename Related, typename PivotType>
-        std::unique_ptr<Relations::BelongsToMany<Derived, Related, PivotType>>
+        inline std::unique_ptr<Relations::BelongsToMany<Derived, Related, PivotType>>
         newBelongsToMany(std::unique_ptr<Related> &&related, Derived &parent,
                          const QString &table, const QString &foreignPivotKey,
                          const QString &relatedPivotKey, const QString &parentKey,
@@ -498,7 +500,7 @@ namespace Relations
         TinyBuilder<Derived> &
         setKeysForSelectQuery(TinyBuilder<Derived> &query);
         /*! Get the primary key value for a select query. */
-        QVariant getKeyForSelectQuery() const;
+        inline QVariant getKeyForSelectQuery() const;
 
         /*! Perform a model insert operation. */
         bool performInsert(const TinyBuilder<Derived> &query);
@@ -568,7 +570,8 @@ namespace Relations
         /*! Throw InvalidArgumentError if attributes passed to the constructor contain
             some value, which will cause access of some data member in a derived
             instance. */
-        void throwIfCRTPctorProblem(const QVector<AttributeItem> &attributes) const;
+        inline void
+        throwIfCRTPctorProblem(const QVector<AttributeItem> &attributes) const;
         /*! The QDateTime attribute detected, causes CRTP ctor problem. */
         void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes) const;
 
@@ -653,7 +656,7 @@ namespace Relations
 
         /* HasRelationships */
         /*! The reference to the u_relations hash. */
-        const QHash<QString, RelationVisitor> &
+        inline const QHash<QString, RelationVisitor> &
         getUserRelationsRawMap() const;
 
         /* HasAttributes */
@@ -1255,7 +1258,7 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline std::unique_ptr<TinyBuilder<Derived>>
+    std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newQuery()
     {
         return newQueryWithoutScopes();
@@ -1326,7 +1329,7 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline Derived
+    Derived
     Model<Derived, AllRelations...>::newInstance()
     {
         return newInstance({});
@@ -1394,14 +1397,14 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline Derived &Model<Derived, AllRelations...>::model()
+    Derived &Model<Derived, AllRelations...>::model()
     {
         // Can not be cached with static because a copy can be made
         return static_cast<Derived &>(*this);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const Derived &Model<Derived, AllRelations...>::model() const
+    const Derived &Model<Derived, AllRelations...>::model() const
     {
         return static_cast<const Derived &>(*this);
     }
@@ -1422,14 +1425,14 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline ConnectionInterface &
+    ConnectionInterface &
     Model<Derived, AllRelations...>::getConnection() const
     {
         return m_resolver->connection(getConnectionName());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline Derived &
+    Derived &
     Model<Derived, AllRelations...>::setConnection(const QString &name)
     {
         model().u_connection = name;
@@ -1438,7 +1441,7 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline Derived &
+    Derived &
     Model<Derived, AllRelations...>::setTable(const QString &value)
     {
         model().u_table = value;
@@ -1463,28 +1466,28 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QString &
+    const QString &
     Model<Derived, AllRelations...>::getKeyName() const
     {
         return model().u_primaryKey;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QString
+    QString
     Model<Derived, AllRelations...>::getQualifiedKeyName() const
     {
         return qualifyColumn(getKeyName());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QVariant
+    QVariant
     Model<Derived, AllRelations...>::getKey() const
     {
         return this->getAttribute(getKeyName());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline bool
+    bool
     Model<Derived, AllRelations...>::getIncrementing() const
     {
         return model().u_incrementing;
@@ -1773,14 +1776,14 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QStringList &
+    const QStringList &
     Model<Derived, AllRelations...>::getTouchedRelations() const
     {
         return model().u_touches;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline bool
+    bool
     Model<Derived, AllRelations...>::touches(const QString &relation) const
     {
         return getTouchedRelations().contains(relation);
@@ -1788,9 +1791,9 @@ namespace Relations
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
 #ifdef __GNUG__
-    inline const std::map<QString, RelationsType<AllRelations...>> &
+    const std::map<QString, RelationsType<AllRelations...>> &
 #else
-    inline const std::unordered_map<QString, RelationsType<AllRelations...>> &
+    const std::unordered_map<QString, RelationsType<AllRelations...>> &
 #endif
     Model<Derived, AllRelations...>::getRelations() const
     {
@@ -1799,9 +1802,9 @@ namespace Relations
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
 #ifdef __GNUG__
-    inline std::map<QString, RelationsType<AllRelations...>> &
+    std::map<QString, RelationsType<AllRelations...>> &
 #else
-    inline std::unordered_map<QString, RelationsType<AllRelations...>> &
+    std::unordered_map<QString, RelationsType<AllRelations...>> &
 #endif
     Model<Derived, AllRelations...>::getRelations()
     {
@@ -1839,7 +1842,7 @@ namespace Relations
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    inline std::unique_ptr<Relations::HasOne<Derived, Related>>
+    std::unique_ptr<Relations::HasOne<Derived, Related>>
     Model<Derived, AllRelations...>::newHasOne(
             std::unique_ptr<Related> &&related, Derived &parent,
             const QString &foreignKey, const QString &localKey) const
@@ -1850,7 +1853,7 @@ namespace Relations
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    inline std::unique_ptr<Relations::BelongsTo<Derived, Related>>
+    std::unique_ptr<Relations::BelongsTo<Derived, Related>>
     Model<Derived, AllRelations...>::newBelongsTo(
             std::unique_ptr<Related> &&related, Derived &child,
             const QString &foreignKey, const QString &ownerKey,
@@ -1862,7 +1865,7 @@ namespace Relations
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    inline std::unique_ptr<Relations::HasMany<Derived, Related>>
+    std::unique_ptr<Relations::HasMany<Derived, Related>>
     Model<Derived, AllRelations...>::newHasMany(
             std::unique_ptr<Related> &&related, Derived &parent,
             const QString &foreignKey, const QString &localKey) const
@@ -1873,7 +1876,7 @@ namespace Relations
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename PivotType>
-    inline std::unique_ptr<Relations::BelongsToMany<Derived, Related, PivotType>>
+    std::unique_ptr<Relations::BelongsToMany<Derived, Related, PivotType>>
     Model<Derived, AllRelations...>::newBelongsToMany(
             std::unique_ptr<Related> &&related, Derived &parent, const QString &table,
             const QString &foreignPivotKey, const QString &relatedPivotKey,
@@ -2127,7 +2130,7 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline void Model<Derived, AllRelations...>::throwIfCRTPctorProblem(
+    void Model<Derived, AllRelations...>::throwIfCRTPctorProblem(
             const QVector<AttributeItem> &attributes) const
     {
         throwIfQDateTimeAttribute(attributes);
@@ -2232,7 +2235,7 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline QVariant Model<Derived, AllRelations...>::getKeyForSelectQuery() const
+    QVariant Model<Derived, AllRelations...>::getKeyForSelectQuery() const
     {
         // Currently is the implementation exactly the same, so I can call it
         return getKeyForSaveQuery();
@@ -2359,8 +2362,7 @@ namespace Relations
     /* HasRelationships */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    inline const QHash<QString,
-                       typename Model<Derived, AllRelations...>::RelationVisitor> &
+    const QHash<QString, typename Model<Derived, AllRelations...>::RelationVisitor> &
     Model<Derived, AllRelations...>::getUserRelationsRawMap() const
     {
         return model().u_relations;

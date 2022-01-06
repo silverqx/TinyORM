@@ -87,37 +87,37 @@ namespace Orm::Tiny::Relations
         /*! Qualify the given column name by the pivot table. */
         QString qualifyPivotColumn(const QString &column) const;
         /*! Get the fully qualified foreign key for the relation. */
-        QString getQualifiedForeignPivotKeyName() const;
+        inline QString getQualifiedForeignPivotKeyName() const;
         /*! Get the fully qualified "related key" for the relation. */
-        QString getQualifiedRelatedPivotKeyName() const;
+        inline QString getQualifiedRelatedPivotKeyName() const;
         /*! Get the fully qualified parent key name for the relation. */
-        QString getQualifiedParentKeyName() const override;
+        inline QString getQualifiedParentKeyName() const override;
         /*! Get the fully qualified related key name for the relation. */
-        QString getQualifiedRelatedKeyName() const;
+        inline QString getQualifiedRelatedKeyName() const;
         /*! Get the key for comparing against the parent key in "has" query. */
-        QString getExistenceCompareKey() const override;
+        inline QString getExistenceCompareKey() const override;
 
         /*! Get the intermediate table for the relationship. */
-        const QString &getTable() const;
+        inline const QString &getTable() const;
         /*! Get the foreign key for the relation. */
-        const QString &getForeignPivotKeyName() const;
+        inline const QString &getForeignPivotKeyName() const;
         /*! Get the "related key" for the relation. */
-        const QString &getRelatedPivotKeyName() const;
+        inline const QString &getRelatedPivotKeyName() const;
         /*! Get the parent key for the relationship. */
-        const QString &getParentKeyName() const;
+        inline const QString &getParentKeyName() const;
         /*! Get the relationship name for the relationship. */
-        const QString &getRelationName() const;
+        inline const QString &getRelationName() const;
 
         /*! Get the name of the pivot accessor for this relationship. */
-        const QString &getPivotAccessor() const;
+        inline const QString &getPivotAccessor() const;
         /*! Specify the custom pivot accessor to use for the relationship. */
-        BelongsToMany &as(const QString &accessor);
+        inline BelongsToMany &as(const QString &accessor);
 
         /*! Get the pivot columns for this relationship. */
-        const QStringList &getPivotColumns() const;
+        inline const QStringList &getPivotColumns() const;
 
         /*! Determine if the 'pivot' model uses timestamps. */
-        bool usesTimestamps() const;
+        inline bool usesTimestamps() const;
         /*! Specify that the pivot table has creation and update timestamps. */
         BelongsToMany &withTimestamps(const QString &createdAt = "",
                                       const QString &updatedAt = "");
@@ -135,10 +135,10 @@ namespace Orm::Tiny::Relations
         /*! Set the columns on the pivot table to retrieve. */
         BelongsToMany &withPivot(const QStringList &columns);
         /*! Set the columns on the pivot table to retrieve. */
-        BelongsToMany &withPivot(const QString &column);
+        inline BelongsToMany &withPivot(const QString &column);
 
         /*! Determine whether the given column is defined as a pivot column. */
-        bool hasPivotColumn(const QString &column) const;
+        inline bool hasPivotColumn(const QString &column) const;
 
         /*! Create a new existing pivot model instance. */
         PivotType newExistingPivot(const QVector<AttributeItem> &attributes = {}) const;
@@ -155,7 +155,7 @@ namespace Orm::Tiny::Relations
         newPivotStatementForId(const QVector<QVariant> &ids) const;
         /*! Get a new pivot statement for a given "other" / "related" ID. */
         QSharedPointer<QueryBuilder>
-        newPivotStatementForId(const QVariant &id) const;
+        inline newPivotStatementForId(const QVariant &id) const;
 
         /* TinyBuilder proxy methods */
         /*! Find a model by its primary key. */
@@ -246,11 +246,11 @@ namespace Orm::Tiny::Relations
                     const QVector<AttributeItem> &attributes = {},
                     bool touch = true) const;
         /*! Attach a model to the parent. */
-        void
+        inline void
         attach(const QVariant &id, const QVector<AttributeItem> &attributes = {},
                bool touch = true) const;
         /*! Attach a model to the parent. */
-        void
+        inline void
         attach(const Related &model, const QVector<AttributeItem> &attributes = {},
                bool touch = true) const;
         /*! Attach models to the parent. */
@@ -278,12 +278,12 @@ namespace Orm::Tiny::Relations
         /*! Detach models from the relationship. */
         int detach(bool touch = true) const;
         /*! Detach models from the relationship. */
-        int detach(const QVector<std::reference_wrapper<Related>> &models,
-                   bool touch = true) const;
+        inline int detach(const QVector<std::reference_wrapper<Related>> &models,
+                          bool touch = true) const;
         /*! Detach model from the relationship. */
         int detach(const QVariant &id, bool touch = true) const;
         /*! Detach model from the relationship. */
-        int detach(const Related &model, bool touch = true) const;
+        inline int detach(const Related &model, bool touch = true) const;
 
         /*! Update an existing pivot record on the table. */
         int updateExistingPivot(const QVariant &id,
@@ -306,7 +306,7 @@ namespace Orm::Tiny::Relations
         QVector<QVariant> allRelatedIds() const;
 
         /*! The textual representation of the Relation type. */
-        QString relationTypeName() const override;
+        inline QString relationTypeName() const override;
 
     protected:
         /*! Set the join clause for the relation query. */
@@ -623,70 +623,70 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    inline QString
+    QString
     BelongsToMany<Model, Related, PivotType>::getQualifiedForeignPivotKeyName() const
     {
         return qualifyPivotColumn(m_foreignPivotKey);
     }
 
     template<class Model, class Related, class PivotType>
-    inline QString
+    QString
     BelongsToMany<Model, Related, PivotType>::getQualifiedRelatedPivotKeyName() const
     {
         return qualifyPivotColumn(m_relatedPivotKey);
     }
 
     template<class Model, class Related, class PivotType>
-    inline QString
+    QString
     BelongsToMany<Model, Related, PivotType>::getQualifiedParentKeyName() const
     {
         return this->m_parent.qualifyColumn(m_parentKey);
     }
 
     template<class Model, class Related, class PivotType>
-    inline QString
+    QString
     BelongsToMany<Model, Related, PivotType>::getQualifiedRelatedKeyName() const
     {
         return this->m_related->qualifyColumn(this->m_relatedKey);
     }
 
     template<class Model, class Related, class PivotType>
-    inline QString
+    QString
     BelongsToMany<Model, Related, PivotType>::getExistenceCompareKey() const
     {
         return getQualifiedForeignPivotKeyName();
     }
 
     template<class Model, class Related, class PivotType>
-    inline const QString &
+    const QString &
     BelongsToMany<Model, Related, PivotType>::getTable() const
     {
         return m_table;
     }
 
     template<class Model, class Related, class PivotType>
-    inline const QString &
+    const QString &
     BelongsToMany<Model, Related, PivotType>::getForeignPivotKeyName() const
     {
         return m_foreignPivotKey;
     }
 
     template<class Model, class Related, class PivotType>
-    inline const QString &
+    const QString &
     BelongsToMany<Model, Related, PivotType>::getRelatedPivotKeyName() const
     {
         return m_relatedPivotKey;
     }
 
     template<class Model, class Related, class PivotType>
-    inline const QString &
+    const QString &
     BelongsToMany<Model, Related, PivotType>::getParentKeyName() const
     {
         return m_parentKey;
     }
 
     template<class Model, class Related, class PivotType>
-    inline const QString &
+    const QString &
     BelongsToMany<Model, Related, PivotType>::getRelationName() const
     {
         return m_relationName;
@@ -700,7 +700,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    inline BelongsToMany<Model, Related, PivotType> &
+    BelongsToMany<Model, Related, PivotType> &
     BelongsToMany<Model, Related, PivotType>::as(const QString &accessor)
     {
         m_accessor = accessor;
@@ -709,15 +709,14 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    inline const QStringList &
+    const QStringList &
     BelongsToMany<Model, Related, PivotType>::getPivotColumns() const
     {
         return m_pivotColumns;
     }
 
     template<class Model, class Related, class PivotType>
-    inline bool
-    BelongsToMany<Model, Related, PivotType>::usesTimestamps() const
+    bool BelongsToMany<Model, Related, PivotType>::usesTimestamps() const
     {
         return m_withTimestamps;
     }
@@ -800,15 +799,14 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    inline BelongsToMany<Model, Related, PivotType> &
+    BelongsToMany<Model, Related, PivotType> &
     BelongsToMany<Model, Related, PivotType>::withPivot(const QString &column)
     {
         return withPivot(QStringList {column});
     }
 
     template<class Model, class Related, class PivotType>
-    inline bool
-    BelongsToMany<Model, Related, PivotType>::hasPivotColumn(
+    bool BelongsToMany<Model, Related, PivotType>::hasPivotColumn(
             const QString &column) const
     {
         return m_pivotColumns.contains(column);
@@ -878,7 +876,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    inline QSharedPointer<QueryBuilder>
+    QSharedPointer<QueryBuilder>
     BelongsToMany<Model, Related, PivotType>::newPivotStatementForId(
             const QVariant &id) const
     {
@@ -1172,7 +1170,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    inline void BelongsToMany<Model, Related, PivotType>::attach(
+    void BelongsToMany<Model, Related, PivotType>::attach(
             const QVariant &id, const QVector<AttributeItem> &attributes,
             const bool touch) const
     {
@@ -1180,7 +1178,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    inline void BelongsToMany<Model, Related, PivotType>::attach(
+    void BelongsToMany<Model, Related, PivotType>::attach(
             const Related &model, const QVector<AttributeItem> &attributes,
             const bool touch) const
     {
@@ -1295,7 +1293,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    inline int BelongsToMany<Model, Related, PivotType>::detach(
+    int BelongsToMany<Model, Related, PivotType>::detach(
             const QVector<std::reference_wrapper<Related>> &models,
             const bool touch) const
     {
@@ -1310,7 +1308,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    inline int BelongsToMany<Model, Related, PivotType>::detach(
+    int BelongsToMany<Model, Related, PivotType>::detach(
             const Related &model, const bool touch) const
     {
         return detach(QVector<QVariant> {model.getAttribute(this->m_relatedKey)}, touch);
@@ -1391,7 +1389,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    inline QString
+    QString
     BelongsToMany<Model, Related, PivotType>::relationTypeName() const
     {
         return "BelongsToMany";

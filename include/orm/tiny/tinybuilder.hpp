@@ -35,9 +35,9 @@ namespace Orm::Tiny
         Builder(const QSharedPointer<QueryBuilder> &query, Model &model);
 
         /*! Get the SQL representation of the query. */
-        QString toSql() const;
+        inline QString toSql() const;
         /*! Get the current query value bindings as flattened QVector. */
-        QVector<QVariant> getBindings() const;
+        inline QVector<QVariant> getBindings() const;
 
         /*! Execute the query as a "select" statement. */
         QVector<Model> get(const QVector<Column> &columns = {ASTERISK});
@@ -144,20 +144,20 @@ namespace Orm::Tiny
         QVector<Model> hydrate(QSqlQuery &&result);
 
         /*! Get the model instance being queried. */
-        Model &getModel();
+        inline Model &getModel();
         /*! Get the underlying query builder instance. */
-        QueryBuilder &getQuery() const;
+        inline QueryBuilder &getQuery() const;
         // TODO now fix revisit silverqx
         // CUR1 this cant be const &, omg, OR can be? I can make copy immediatelly, but anyway it should be non-const non-ref silverqx
         /*! Get the underlying query builder instance as a QSharedPointer. */
-        const QSharedPointer<QueryBuilder> &
+        inline const QSharedPointer<QueryBuilder> &
         getQuerySharedPointer() const;
 
         /*! Get a database connection. */
-        ConnectionInterface &getConnection() const;
+        inline ConnectionInterface &getConnection() const;
 
         /*! Get a base query builder instance. */
-        QueryBuilder &toBase() const;
+        inline QueryBuilder &toBase() const;
         // FUTURE add Query Scopes feature silverqx
 //        { return $this->applyScopes()->getQuery(); }
 
@@ -165,7 +165,7 @@ namespace Orm::Tiny
 //        QSqlQuery explain() const;
 
         /*! Qualify the given column name by the model's table. */
-        QString qualifyColumn(const QString &column) const;
+        inline QString qualifyColumn(const QString &column) const;
 
     protected:
         /*! Expression alias. */
@@ -218,13 +218,13 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    inline QString Builder<Model>::toSql() const
+    QString Builder<Model>::toSql() const
     {
         return toBase().toSql();
     }
 
     template<typename Model>
-    inline QVector<QVariant> Builder<Model>::getBindings() const
+    QVector<QVariant> Builder<Model>::getBindings() const
     {
         return toBase().getBindings();
     }
@@ -678,39 +678,39 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    inline Model &Builder<Model>::getModel()
+    Model &Builder<Model>::getModel()
     {
         return m_model;
     }
 
     template<typename Model>
-    inline QueryBuilder &Builder<Model>::getQuery() const
+    QueryBuilder &Builder<Model>::getQuery() const
     {
         return *m_query;
     }
 
     template<typename Model>
-    inline const QSharedPointer<QueryBuilder> &
+    const QSharedPointer<QueryBuilder> &
     Builder<Model>::getQuerySharedPointer() const
     {
         return m_query;
     }
 
     template<typename Model>
-    inline ConnectionInterface &
+    ConnectionInterface &
     Builder<Model>::getConnection() const
     {
         return m_query->getConnection();
     }
 
     template<typename Model>
-    inline QueryBuilder &Builder<Model>::toBase() const
+    QueryBuilder &Builder<Model>::toBase() const
     {
         return getQuery();
     }
 
     template<typename Model>
-    inline QString Builder<Model>::qualifyColumn(const QString &column) const
+    QString Builder<Model>::qualifyColumn(const QString &column) const
     {
         return m_model.qualifyColumn(column);
     }

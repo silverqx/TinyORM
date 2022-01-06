@@ -95,7 +95,7 @@ namespace Concerns
 
         protected:
             /*! Currently held store type. */
-            RelationStoreType getStoreType() const;
+            inline RelationStoreType getStoreType() const;
 
             /*! Reference to the parent HasRelationStore instance. */
             HasRelationStore &m_hasRelationStore;
@@ -299,27 +299,29 @@ namespace Concerns
 
         /* Getters for Relation stores */
         /*! Reference to the push store. */
-        PushRelationStore &pushStore();
+        inline PushRelationStore &pushStore();
         /*! Cont reference to the touch owners relation store. */
-        const TouchOwnersRelationStore &touchOwnersStore() const;
+        inline const TouchOwnersRelationStore &touchOwnersStore() const;
         /*! Const reference to the lazy store. */
         template<typename Related>
-        const LazyRelationStore<Related> &lazyStore() const;
+        inline const LazyRelationStore<Related> &lazyStore() const;
         /*! Reference to the BelongsToMany related table name store. */
-        const BelongsToManyRelatedTableStore &belongsToManyRelatedTableStore() const;
+        inline const BelongsToManyRelatedTableStore &
+        belongsToManyRelatedTableStore() const;
         /*! Const reference to the QueriesRelationships store. */
         template<typename Related = void>
-        const QueriesRelationshipsStore<Related> &queriesRelationshipsStore() const;
+        inline const QueriesRelationshipsStore<Related> &
+        queriesRelationshipsStore() const;
 
         /*! Static cast this to a child's instance Model type. */
-        Model<Derived, AllRelations...> &basemodel();
+        inline Model<Derived, AllRelations...> &basemodel();
         /*! Static cast this to a child's instance Model type, const version. */
-        const Model<Derived, AllRelations...> &basemodel() const;
+        inline const Model<Derived, AllRelations...> &basemodel() const;
 
         /*! Static cast this to a child's instance type (CRTP). */
-        Derived &model();
+        inline Derived &model();
         /*! Static cast this to a child's instance type (CRTP), const version. */
-        const Derived &model() const;
+        inline const Derived &model() const;
 
         // BUG this is bad, disable Model's copy/assignment ctors if m_relationStore is not empty, or empty the m_relationStore on copy?, have to think about this 🤔 silverqx
         /*! The store where the values will be saved, before BaseRelationStore::visit()
@@ -410,7 +412,7 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline typename HasRelationStore<Derived, AllRelations...>::RelationStoreType
+    typename HasRelationStore<Derived, AllRelations...>::RelationStoreType
     HasRelationStore<Derived, AllRelations...>::BaseRelationStore::getStoreType() const
     {
         return m_storeType;
@@ -629,7 +631,7 @@ namespace Concerns
 
     template<typename Derived, typename ...AllRelations>
     template<typename Related>
-    inline constexpr typename
+    constexpr typename
     HasRelationStore<Derived, AllRelations...>::RelationStoreType
     HasRelationStore<Derived, AllRelations...>::QueriesRelationshipsStore<Related>
                                               ::initStoreType()
@@ -715,15 +717,14 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline typename HasRelationStore<Derived, AllRelations...>::PushRelationStore &
+    typename HasRelationStore<Derived, AllRelations...>::PushRelationStore &
     HasRelationStore<Derived, AllRelations...>::pushStore()
     {
         return *std::static_pointer_cast<PushRelationStore>(m_relationStore.top());
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline const typename HasRelationStore<Derived, AllRelations...>
-                          ::TouchOwnersRelationStore &
+    const typename HasRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore &
     HasRelationStore<Derived, AllRelations...>::touchOwnersStore() const
     {
         return *std::static_pointer_cast<
@@ -732,8 +733,8 @@ namespace Concerns
 
     template<typename Derived, typename ...AllRelations>
     template<typename Related>
-    inline const typename HasRelationStore<Derived, AllRelations...>
-                          ::template LazyRelationStore<Related> &
+    const typename HasRelationStore<Derived, AllRelations...>
+                   ::template LazyRelationStore<Related> &
     HasRelationStore<Derived, AllRelations...>::lazyStore() const
     {
         return *std::static_pointer_cast<
@@ -741,8 +742,8 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline const typename HasRelationStore<Derived, AllRelations...>
-                          ::BelongsToManyRelatedTableStore &
+    const typename HasRelationStore<Derived, AllRelations...>
+                   ::BelongsToManyRelatedTableStore &
     HasRelationStore<Derived, AllRelations...>::belongsToManyRelatedTableStore() const
     {
         return *std::static_pointer_cast<
@@ -751,8 +752,8 @@ namespace Concerns
 
     template<typename Derived, typename ...AllRelations>
     template<typename Related>
-    inline const typename HasRelationStore<Derived, AllRelations...>
-    ::template QueriesRelationshipsStore<Related> &
+    const typename HasRelationStore<Derived, AllRelations...>
+                   ::template QueriesRelationshipsStore<Related> &
     HasRelationStore<Derived, AllRelations...>::queriesRelationshipsStore() const
     {
         return *std::static_pointer_cast<
@@ -760,28 +761,28 @@ namespace Concerns
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline Model<Derived, AllRelations...> &
+    Model<Derived, AllRelations...> &
     HasRelationStore<Derived, AllRelations...>::basemodel()
     {
         return static_cast<Model<Derived, AllRelations...> &>(*this);
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline const Model<Derived, AllRelations...> &
+    const Model<Derived, AllRelations...> &
     HasRelationStore<Derived, AllRelations...>::basemodel() const
     {
         return static_cast<const Model<Derived, AllRelations...> &>(*this);
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline Derived &
+    Derived &
     HasRelationStore<Derived, AllRelations...>::model()
     {
         return static_cast<Derived &>(*this);
     }
 
     template<typename Derived, typename ...AllRelations>
-    inline const Derived &
+    const Derived &
     HasRelationStore<Derived, AllRelations...>::model() const
     {
         return static_cast<const Derived &>(*this);

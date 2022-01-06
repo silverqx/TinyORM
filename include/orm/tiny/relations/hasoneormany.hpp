@@ -35,11 +35,11 @@ namespace Orm::Tiny::Relations
 
         /* Getters / Setters */
         /*! Get the key value of the parent's local key. */
-        QVariant getParentKey() const;
+        inline QVariant getParentKey() const;
         /*! Get the fully qualified parent key name. */
-        QString getQualifiedParentKeyName() const override;
+        inline QString getQualifiedParentKeyName() const override;
         /*! Get the key for comparing against the parent key in "has" query. */
-        QString getExistenceCompareKey() const override;
+        inline QString getExistenceCompareKey() const override;
 
         /* TinyBuilder proxy methods */
         /*! Find a model by its primary key or return a new instance of the related
@@ -95,7 +95,7 @@ namespace Orm::Tiny::Relations
         /*! Get the plain foreign key. */
         QString getForeignKeyName() const;
         /*! Get the foreign key for the relationship. */
-        const QString &getQualifiedForeignKeyName() const;
+        inline const QString &getQualifiedForeignKeyName() const;
 
         /* Inserting operations on the relationship */
         /*! Set the foreign ID for creating a related model. */
@@ -154,19 +154,19 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    inline QVariant HasOneOrMany<Model, Related>::getParentKey() const
+    QVariant HasOneOrMany<Model, Related>::getParentKey() const
     {
         return this->m_parent.getAttribute(m_localKey);
     }
 
     template<class Model, class Related>
-    inline QString HasOneOrMany<Model, Related>::getQualifiedParentKeyName() const
+    QString HasOneOrMany<Model, Related>::getQualifiedParentKeyName() const
     {
         return this->m_parent.qualifyColumn(m_localKey);
     }
 
     template<class Model, class Related>
-    inline QString HasOneOrMany<Model, Related>::getExistenceCompareKey() const
+    QString HasOneOrMany<Model, Related>::getExistenceCompareKey() const
     {
         return getQualifiedForeignKeyName();
     }
@@ -376,7 +376,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    inline const QString &
+    const QString &
     HasOneOrMany<Model, Related>::getQualifiedForeignKeyName() const
     {
         /* Foreign key is already qualified, it is done in Model::hasMany/hasOne() and

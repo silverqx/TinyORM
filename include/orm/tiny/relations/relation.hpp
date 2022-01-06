@@ -100,41 +100,41 @@ namespace Relations
         getResults() const = 0;
 
         /*! Get the relationship for eager loading. */
-        QVector<Related> getEager() const;
+        inline QVector<Related> getEager() const;
         /*! Execute the query as a "select" statement. */
-        virtual QVector<Related>
+        inline virtual QVector<Related>
         get(const QVector<Column> &columns = {ASTERISK}) const;
 
         /* Getters / Setters */
         /*! Get the underlying query for the relation. */
-        Builder<Related> &getQuery() const;
+        inline Builder<Related> &getQuery() const;
         /*! Get the base QueryBuilder driving the TinyBuilder. */
-        QueryBuilder &getBaseQuery() const;
+        inline QueryBuilder &getBaseQuery() const;
 
         /*! Get the parent model of the relation. */
-        const Model &getParent() const;
+        inline const Model &getParent() const;
         /*! Get the related model of the relation. */
-        const Related &getRelated() const;
+        inline const Related &getRelated() const;
         /*! Get the related model of the relation. */
-        Related &getRelated();
+        inline Related &getRelated();
         /*! Get the name of the "created at" column. */
-        const QString &createdAt() const;
+        inline const QString &createdAt() const;
         /*! Get the name of the "updated at" column. */
-        const QString &updatedAt() const;
+        inline const QString &updatedAt() const;
         /*! Get the name of the related model's "updated at" column. */
-        const QString &relatedUpdatedAt() const;
+        inline const QString &relatedUpdatedAt() const;
         /*! Get the related key for the relationship. */
-        const QString &getRelatedKeyName() const;
+        inline const QString &getRelatedKeyName() const;
         /*! Get the fully qualified parent key name. */
-        virtual QString getQualifiedParentKeyName() const;
+        inline virtual QString getQualifiedParentKeyName() const;
         /*! Get the key for comparing against the parent key in "has" query. */
-        virtual QString getExistenceCompareKey() const;
+        inline virtual QString getExistenceCompareKey() const;
 
         /* Others */
         /*! Touch all of the related models for the relationship. */
         virtual void touch() const;
         /*! Run a raw update against the base query. */
-        std::tuple<int, QSqlQuery>
+        inline std::tuple<int, QSqlQuery>
         rawUpdate(const QVector<UpdateItem> &values = {}) const;
 
         /*! The textual representation of the Relation type. */
@@ -142,7 +142,7 @@ namespace Relations
 
     protected:
         /*! Initialize a Relation instance. */
-        void init() const;
+        inline void init() const;
 
         /*! Get all of the primary keys for the vector of models. */
         QVector<QVariant>
@@ -213,81 +213,81 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    inline QVector<Related>
+    QVector<Related>
     Relation<Model, Related>::getEager() const
     {
         return get();
     }
 
     template<class Model, class Related>
-    inline QVector<Related>
+    QVector<Related>
     Relation<Model, Related>::get(const QVector<Column> &columns) const
     {
         return m_query->get(columns);
     }
 
     template<class Model, class Related>
-    inline Builder<Related> &Relation<Model, Related>::getQuery() const
+    Builder<Related> &Relation<Model, Related>::getQuery() const
     {
         return *m_query;
     }
 
     template<class Model, class Related>
-    inline QueryBuilder &Relation<Model, Related>::getBaseQuery() const
+    QueryBuilder &Relation<Model, Related>::getBaseQuery() const
     {
         return m_query->getQuery();
     }
 
     template<class Model, class Related>
-    inline const Model &Relation<Model, Related>::getParent() const
+    const Model &Relation<Model, Related>::getParent() const
     {
         return m_parent;
     }
 
     template<class Model, class Related>
-    inline const Related &Relation<Model, Related>::getRelated() const
+    const Related &Relation<Model, Related>::getRelated() const
     {
         return *m_related;
     }
 
     template<class Model, class Related>
-    inline Related &Relation<Model, Related>::getRelated()
+    Related &Relation<Model, Related>::getRelated()
     {
         return *m_related;
     }
 
     template<class Model, class Related>
-    inline const QString &Relation<Model, Related>::createdAt() const
+    const QString &Relation<Model, Related>::createdAt() const
     {
         return m_parent.getCreatedAtColumn();
     }
 
     template<class Model, class Related>
-    inline const QString &Relation<Model, Related>::updatedAt() const
+    const QString &Relation<Model, Related>::updatedAt() const
     {
         return m_parent.getUpdatedAtColumn();
     }
 
     template<class Model, class Related>
-    inline const QString &Relation<Model, Related>::relatedUpdatedAt() const
+    const QString &Relation<Model, Related>::relatedUpdatedAt() const
     {
         return m_related->getUpdatedAtColumn();
     }
 
     template<class Model, class Related>
-    inline const QString &Relation<Model, Related>::getRelatedKeyName() const
+    const QString &Relation<Model, Related>::getRelatedKeyName() const
     {
         return m_relatedKey;
     }
 
     template<class Model, class Related>
-    inline QString Relation<Model, Related>::getQualifiedParentKeyName() const
+    QString Relation<Model, Related>::getQualifiedParentKeyName() const
     {
         return m_parent.getQualifiedKeyName();
     }
 
     template<class Model, class Related>
-    inline QString Relation<Model, Related>::getExistenceCompareKey() const
+    QString Relation<Model, Related>::getExistenceCompareKey() const
     {
         throw Orm::Exceptions::RuntimeError(
                     QStringLiteral("Method %1() is not implemented for '%2' "
@@ -308,7 +308,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    inline std::tuple<int, QSqlQuery>
+    std::tuple<int, QSqlQuery>
     Relation<Model, Related>::rawUpdate(const QVector<UpdateItem> &values) const
     {
         // FEATURE scopes silverqx
@@ -316,7 +316,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    inline void Relation<Model, Related>::init() const
+    void Relation<Model, Related>::init() const
     {
         addConstraints();
     }

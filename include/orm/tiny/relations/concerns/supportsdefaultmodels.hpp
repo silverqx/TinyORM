@@ -51,7 +51,7 @@ namespace Concerns
 
     private:
         /*! Return cached reference to the base relation instance. */
-        Relation<Model, Related> &relation();
+        inline Relation<Model, Related> &relation();
     };
 
     template<class Model, class Related>
@@ -126,7 +126,7 @@ namespace Concerns
     }
 
     template<class Model, class Related>
-    inline Relation<Model, Related> &
+    Relation<Model, Related> &
     SupportsDefaultModels<Model, Related>::relation()
     {
         T_THREAD_LOCAL

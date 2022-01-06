@@ -21,9 +21,9 @@ namespace Orm::Tiny::Exceptions
         RelationNotLoadedError(const QString &model, const QString &relation);
 
         /*! Get the affected TinyORM model. */
-        const QString &getModel() const;
+        inline const QString &getModel() const;
         /*! Get the name of the relation. */
-        const QString &getRelation() const;
+        inline const QString &getRelation() const;
 
     protected:
         /*! The name of the affected TinyORM model.. */
@@ -36,13 +36,13 @@ namespace Orm::Tiny::Exceptions
         QString formatMessage(const QString &model, const QString &relation) const;
     };
 
-    inline const QString &
+    const QString &
     RelationNotLoadedError::getModel() const
     {
         return m_model;
     }
 
-    inline const QString &
+    const QString &
     RelationNotLoadedError::getRelation() const
     {
         return m_relation;
