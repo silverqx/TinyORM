@@ -18,7 +18,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny::Concerns
 {
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasRelationStore;
 
     template<typename Model>

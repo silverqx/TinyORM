@@ -22,7 +22,7 @@ namespace Concerns
 {
 
     /*! Guards attributes. */
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     class GuardsAttributes
     {
     public:
@@ -105,14 +105,14 @@ namespace Concerns
        from the Model::ctor all of the u_xx mass asignment related data members have
        to be static. ✌ */
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
     GuardsAttributes<Derived, AllRelations...>::getFillable() const
     {
         return basemodel().getUserFillable();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::fillable(const QStringList &fillable)
     {
@@ -121,7 +121,7 @@ namespace Concerns
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::fillable(QStringList &&fillable)
     {
@@ -130,7 +130,7 @@ namespace Concerns
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::mergeFillable(
             const QStringList &fillable)
@@ -144,7 +144,7 @@ namespace Concerns
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::mergeFillable(QStringList &&fillable)
     {
@@ -157,14 +157,14 @@ namespace Concerns
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
     GuardsAttributes<Derived, AllRelations...>::getGuarded() const
     {
         return basemodel().getUserGuarded();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::guard(const QStringList &guarded)
     {
@@ -173,7 +173,7 @@ namespace Concerns
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::guard(QStringList &&guarded)
     {
@@ -182,7 +182,7 @@ namespace Concerns
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::mergeGuarded(const QStringList &guarded)
     {
@@ -195,7 +195,7 @@ namespace Concerns
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::mergeGuarded(QStringList &&guarded)
     {
@@ -208,27 +208,27 @@ namespace Concerns
         return model();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void GuardsAttributes<Derived, AllRelations...>::unguard(const bool state)
     {
         // NOTE api different, Eloquent use late static binding for unguarded silverqx
         m_unguarded = state;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void GuardsAttributes<Derived, AllRelations...>::reguard()
     {
         m_unguarded = false;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool GuardsAttributes<Derived, AllRelations...>::isUnguarded()
     {
         return m_unguarded;
     }
 
     // NOTE api different, Eloquent returns whatever callback returns silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void GuardsAttributes<Derived, AllRelations...>::unguarded(
             const std::function<void()> &callback)
     {
@@ -247,7 +247,7 @@ namespace Concerns
         reguard();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
     GuardsAttributes<Derived, AllRelations...>::isFillable(const QString &key) const
     {
@@ -275,7 +275,7 @@ namespace Concerns
 //                && !key.startsWith(UNDERSCORE);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
     GuardsAttributes<Derived, AllRelations...>::isGuarded(const QString &key) const
     {
@@ -292,14 +292,14 @@ namespace Concerns
                 || !isGuardableColumn(key);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool GuardsAttributes<Derived, AllRelations...>::totallyGuarded() const
     {
         return basemodel().getUserFillable().isEmpty()
                 && basemodel().getUserGuarded() == QStringList {ASTERISK};
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
     GuardsAttributes<Derived, AllRelations...>::isGuardableColumn(
             const QString &key) const
@@ -316,7 +316,7 @@ namespace Concerns
         return m_guardableColumns[guardableKey].contains(key);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QString
     GuardsAttributes<Derived, AllRelations...>::getKeyForGuardableHash() const
     {
@@ -325,7 +325,7 @@ namespace Concerns
                     Orm::Utils::Type::classPureBasename<Derived>());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<AttributeItem>
     GuardsAttributes<Derived, AllRelations...>::fillableFromArray(
             const QVector<AttributeItem> &attributes) const
@@ -344,7 +344,7 @@ namespace Concerns
         return result;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<AttributeItem>
     GuardsAttributes<Derived, AllRelations...>::fillableFromArray(
             QVector<AttributeItem> &&attributes) const
@@ -363,7 +363,7 @@ namespace Concerns
         return result;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     GuardsAttributes<Derived, AllRelations...>::model()
     {
@@ -372,14 +372,14 @@ namespace Concerns
         return static_cast<Derived &>(*this);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const Derived &
     GuardsAttributes<Derived, AllRelations...>::model() const
     {
         return static_cast<const Derived &>(*this);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...> &
     GuardsAttributes<Derived, AllRelations...>::basemodel()
     {
@@ -387,7 +387,7 @@ namespace Concerns
         return static_cast<Model<Derived, AllRelations...> &>(*this);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const Model<Derived, AllRelations...> &
     GuardsAttributes<Derived, AllRelations...>::basemodel() const
     {

@@ -127,9 +127,7 @@ namespace Relations
     // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
     // CUR docs IdealImage silverqx
     // CUR docs, add all the implemented features summary somewhere silverqx
-    // CUR use AllRelationsConcept everywhere silverqx
     // CUR export dll paths in Invoke- ps1 scripts, also check dotenv and source if needed and add dotenv example to tools/ silverqx
-    // CUR crtpModel and crtpBaseModel preprocessor partial silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

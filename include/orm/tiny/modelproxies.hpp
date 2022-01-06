@@ -32,7 +32,7 @@ namespace Relations
 }
 
     /*! Contains proxy methods to the TinyBuilder. */
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     class ModelProxies
     {
         /*! JoinClause alias. */
@@ -663,20 +663,20 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>> query();
     };
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant ModelProxies<Derived, AllRelations...>::value(const Column &column)
     {
         return query()->value(column);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<QVariant>
     ModelProxies<Derived, AllRelations...>::pluck(const QString &column)
     {
         return query()->pluck(column);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename T>
     std::map<T, QVariant>
     ModelProxies<Derived, AllRelations...>::pluck(const QString &column,
@@ -685,7 +685,7 @@ namespace Relations
         return query()->template pluck<T>(column, key);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     ModelProxies<Derived, AllRelations...>::find(const QVariant &id,
                                                  const QVector<Column> &columns)
@@ -693,7 +693,7 @@ namespace Relations
         return query()->find(id, columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::findOrNew(const QVariant &id,
                                                       const QVector<Column> &columns)
@@ -701,7 +701,7 @@ namespace Relations
         return query()->findOrNew(id, columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::findOrFail(const QVariant &id,
                                                        const QVector<Column> &columns)
@@ -709,7 +709,7 @@ namespace Relations
         return query()->findOrFail(id, columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<Derived>
     ModelProxies<Derived, AllRelations...>::findMany(const QVector<QVariant> &ids,
                                                      const QVector<Column> &columns)
@@ -717,14 +717,14 @@ namespace Relations
         return query()->findMany(ids, columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     ModelProxies<Derived, AllRelations...>::first(const QVector<Column> &columns)
     {
         return query()->first(columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::firstOrNew(
             const QVector<WhereItem> &attributes,
@@ -733,7 +733,7 @@ namespace Relations
         return query()->firstOrNew(attributes, values);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::firstOrCreate(
             const QVector<WhereItem> &attributes,
@@ -742,14 +742,14 @@ namespace Relations
         return query()->firstOrCreate(attributes, values);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::firstOrFail(const QVector<Column> &columns)
     {
         return query()->firstOrFail(columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     ModelProxies<Derived, AllRelations...>::firstWhere(
             const Column &column, const QString &comparison,
@@ -758,7 +758,7 @@ namespace Relations
         return where(column, comparison, value, condition)->first();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     ModelProxies<Derived, AllRelations...>::firstWhereEq(
             const Column &column, const QVariant &value, const QString &condition)
@@ -766,7 +766,7 @@ namespace Relations
         return where(column, EQ, value, condition)->first();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereKey(const QVariant &id)
     {
@@ -777,7 +777,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereKey(const QVector<QVariant> &ids)
     {
@@ -788,7 +788,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereKeyNot(const QVariant &id)
     {
@@ -799,7 +799,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereKeyNot(const QVector<QVariant> &ids)
     {
@@ -810,7 +810,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::with(const QVector<WithItem> &relations)
@@ -822,7 +822,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::with(const QString &relation)
@@ -830,7 +830,7 @@ namespace Relations
         return with(QVector<WithItem> {{relation}});
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::with(const QVector<QString> &relations)
     {
@@ -841,7 +841,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::with(QVector<QString> &&relations)
     {
@@ -852,7 +852,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::without(const QVector<QString> &relations)
     {
@@ -863,14 +863,14 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::without(const QString &relation)
     {
         return without(QVector<QString> {relation});
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::withOnly(const QVector<WithItem> &relations)
     {
@@ -881,14 +881,14 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::withOnly(const QString &relation)
     {
         return withOnly(QVector<WithItem> {{relation}});
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::create(
             const QVector<AttributeItem> &attributes)
@@ -896,14 +896,14 @@ namespace Relations
         return query()->create(attributes);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::create(QVector<AttributeItem> &&attributes)
     {
         return query()->create(std::move(attributes));
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::updateOrCreate(
             const QVector<WhereItem> &attributes, const QVector<AttributeItem> &values)
@@ -911,7 +911,7 @@ namespace Relations
         return query()->updateOrCreate(attributes, values);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<QSqlQuery>
     ModelProxies<Derived, AllRelations...>::insert(
             const QVector<AttributeItem> &values)
@@ -919,7 +919,7 @@ namespace Relations
         return query()->insert(values);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<QSqlQuery>
     ModelProxies<Derived, AllRelations...>::insert(
             const QVector<QVector<AttributeItem>> &values)
@@ -928,7 +928,7 @@ namespace Relations
     }
 
     // FEATURE dilemma primarykey, Derived::KeyType vs QVariant silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     quint64
     ModelProxies<Derived, AllRelations...>::insertGetId(
             const QVector<AttributeItem> &values, const QString &sequence)
@@ -936,7 +936,7 @@ namespace Relations
         return query()->insertGetId(values, sequence);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::tuple<int, std::optional<QSqlQuery>>
     ModelProxies<Derived, AllRelations...>::insertOrIgnore(
             const QVector<AttributeItem> &values)
@@ -944,7 +944,7 @@ namespace Relations
         return query()->insertOrIgnore(values);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::tuple<int, std::optional<QSqlQuery>>
     ModelProxies<Derived, AllRelations...>::insertOrIgnore(
             const QVector<QVector<AttributeItem>> &values)
@@ -955,7 +955,7 @@ namespace Relations
     // TODO cpp check all int types and use std::size_t where appropriate silverqx
     // FEATURE dilemma primarykey, id should be Derived::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
     // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::size_t
     ModelProxies<Derived, AllRelations...>::destroy(const QVector<QVariant> &ids)
     {
@@ -977,63 +977,63 @@ namespace Relations
         return count;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::size_t
     ModelProxies<Derived, AllRelations...>::destroy(const QVariant &id)
     {
         return destroy(QVector<QVariant> {id});
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void ModelProxies<Derived, AllRelations...>::truncate()
     {
         query()->truncate();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     quint64 ModelProxies<Derived, AllRelations...>::count(const QVector<Column> &columns)
     {
         return query()->count(columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename>
     quint64 ModelProxies<Derived, AllRelations...>::count(const Column &column)
     {
         return query()->count(QVector<Column> {column});
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant ModelProxies<Derived, AllRelations...>::min(const Column &column)
     {
         return query()->min(column);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant ModelProxies<Derived, AllRelations...>::max(const Column &column)
     {
         return query()->max(column);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant ModelProxies<Derived, AllRelations...>::sum(const Column &column)
     {
         return query()->sum(column);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant ModelProxies<Derived, AllRelations...>::avg(const Column &column)
     {
         return query()->avg(column);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant ModelProxies<Derived, AllRelations...>::average(const Column &column)
     {
         return query()->avg(column);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     ModelProxies<Derived, AllRelations...>::aggregate(const QString &function,
                                                const QVector<Column> &columns)
@@ -1041,7 +1041,7 @@ namespace Relations
         return query()->aggregate(function, columns);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::select(const QVector<Column> &columns)
     {
@@ -1052,7 +1052,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::select(const Column &column)
     {
@@ -1063,7 +1063,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::addSelect(const QVector<Column> &columns)
     {
@@ -1074,7 +1074,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::addSelect(const Column &column)
     {
@@ -1085,7 +1085,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<Queryable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::select(T &&query, const QString &as)
@@ -1097,7 +1097,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<Queryable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::addSelect(T &&query, const QString &as)
@@ -1109,7 +1109,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::selectSub(T &&query, const QString &as)
@@ -1121,7 +1121,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::selectRaw(
             const QString &expression, const QVector<QVariant> &bindings)
@@ -1133,7 +1133,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::distinct()
     {
@@ -1144,7 +1144,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::distinct(const QStringList &columns)
     {
@@ -1155,7 +1155,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::distinct(QStringList &&columns)
     {
@@ -1166,7 +1166,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::join(
@@ -1180,7 +1180,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::join(
@@ -1194,7 +1194,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::joinWhere(
@@ -1208,7 +1208,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::leftJoin(
@@ -1222,7 +1222,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::leftJoin(
@@ -1235,7 +1235,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::leftJoinWhere(
@@ -1249,7 +1249,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::rightJoin(
@@ -1263,7 +1263,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::rightJoin(
@@ -1276,7 +1276,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::rightJoinWhere(
@@ -1290,7 +1290,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::crossJoin(
@@ -1304,7 +1304,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::crossJoin(
@@ -1317,7 +1317,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::joinSub(
@@ -1333,7 +1333,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::joinSub(
@@ -1348,7 +1348,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::leftJoinSub(
@@ -1362,7 +1362,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::leftJoinSub(
@@ -1376,7 +1376,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::rightJoinSub(
@@ -1390,7 +1390,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::rightJoinSub(
@@ -1404,7 +1404,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<WhereValue T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::where(
@@ -1418,7 +1418,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<WhereValue T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhere(
@@ -1431,7 +1431,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<WhereValue T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereEq(
@@ -1444,7 +1444,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<WhereValue T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereEq(
@@ -1457,7 +1457,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::where(
             const std::function<void(TinyBuilder<Derived> &)> &callback,
@@ -1470,7 +1470,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhere(
             const std::function<void(TinyBuilder<Derived> &)> &callback)
@@ -1482,7 +1482,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::where(const QVector<WhereItem> &values,
                                                   const QString &condition)
@@ -1496,7 +1496,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhere(const QVector<WhereItem> &values)
     {
@@ -1507,7 +1507,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereColumn(
             const QVector<WhereColumnItem> &values, const QString &condition)
@@ -1519,7 +1519,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereColumn(
             const QVector<WhereColumnItem> &values)
@@ -1531,7 +1531,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereColumn(
             const Column &first, const QString &comparison,
@@ -1544,7 +1544,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereColumn(
             const Column &first, const QString &comparison, const Column &second)
@@ -1556,7 +1556,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereColumnEq(
             const Column &first, const Column &second, const QString &condition)
@@ -1568,7 +1568,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereColumnEq(
             const Column &first, const Column &second)
@@ -1580,7 +1580,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereIn(
             const Column &column, const QVector<QVariant> &values,
@@ -1593,7 +1593,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereIn(
             const Column &column, const QVector<QVariant> &values)
@@ -1605,7 +1605,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereNotIn(
             const Column &column, const QVector<QVariant> &values,
@@ -1618,7 +1618,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereNotIn(
             const Column &column, const QVector<QVariant> &values)
@@ -1630,7 +1630,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereNull(
             const QVector<Column> &columns, const QString &condition, const bool nope)
@@ -1642,7 +1642,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereNull(const QVector<Column> &columns)
     {
@@ -1653,7 +1653,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereNotNull(
             const QVector<Column> &columns, const QString &condition)
@@ -1665,7 +1665,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereNotNull(
             const QVector<Column> &columns)
@@ -1677,7 +1677,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereNull(
             const Column &column, const QString &condition, const bool nope)
@@ -1689,7 +1689,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereNull(const Column &column)
     {
@@ -1700,7 +1700,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereNotNull(
             const Column &column, const QString &condition)
@@ -1712,7 +1712,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereNotNull(const Column &column)
     {
@@ -1723,7 +1723,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<Queryable C, WhereValue V>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::where(
@@ -1738,7 +1738,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<Queryable C, WhereValue V>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhere(
@@ -1751,7 +1751,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<Queryable C, WhereValue V>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereEq(
@@ -1764,7 +1764,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<Queryable C, WhereValue V>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereEq(C &&column, V &&value)
@@ -1776,7 +1776,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<WhereValueSubQuery T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereSub(
@@ -1790,7 +1790,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereRaw(
             const QString &sql, const QVector<QVariant> &bindings,
@@ -1803,7 +1803,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereRaw(
             const QString &sql, const QVector<QVariant> &bindings)
@@ -1815,7 +1815,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::groupBy(const QVector<Column> &groups)
     {
@@ -1826,7 +1826,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::groupBy(const Column &group)
     {
@@ -1837,7 +1837,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::groupByRaw(
             const QString &sql, const QVector<QVariant> &bindings)
@@ -1849,7 +1849,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<ColumnConcept ...Args>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::groupBy(Args &&...groups)
@@ -1861,7 +1861,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::having(
             const Column &column, const QString &comparison,
@@ -1874,7 +1874,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orHaving(
             const Column &column, const QString &comparison, const QVariant &value)
@@ -1886,7 +1886,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::havingRaw(
             const QString &sql, const QVector<QVariant> &bindings,
@@ -1899,7 +1899,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orHavingRaw(
             const QString &sql, const QVector<QVariant> &bindings)
@@ -1911,7 +1911,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orderBy(const Column &column,
                                                     const QString &direction)
@@ -1923,7 +1923,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orderByDesc(const Column &column)
     {
@@ -1934,7 +1934,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<Queryable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orderBy(T &&query, const QString &direction)
@@ -1946,7 +1946,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<Queryable T>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orderByDesc(T &&query)
@@ -1958,7 +1958,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orderByRaw(
             const QString &sql, const QVector<QVariant> &bindings)
@@ -1970,7 +1970,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::latest(const Column &column)
     {
@@ -1981,7 +1981,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::oldest(const Column &column)
     {
@@ -1992,7 +1992,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::reorder()
     {
@@ -2003,7 +2003,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::reorder(const Column &column,
                                                     const QString &direction)
@@ -2015,7 +2015,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::limit(const int value)
     {
@@ -2026,7 +2026,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::take(const int value)
     {
@@ -2037,7 +2037,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::offset(const int value)
     {
@@ -2048,7 +2048,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::skip(const int value)
     {
@@ -2059,7 +2059,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::forPage(const int page, const int perPage)
     {
@@ -2070,7 +2070,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::lockForUpdate()
     {
@@ -2081,7 +2081,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::sharedLock()
     {
@@ -2092,7 +2092,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::lock(const bool value)
     {
@@ -2103,7 +2103,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::lock(const char *value)
     {
@@ -2114,7 +2114,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::lock(const QString &value)
     {
@@ -2125,7 +2125,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::lock(QString &&value)
     {
@@ -2136,7 +2136,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::has(
@@ -2151,7 +2151,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orHas(
@@ -2164,7 +2164,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::doesntHave(
@@ -2178,7 +2178,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orDoesntHave(const QString &relation)
@@ -2190,7 +2190,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::has(
@@ -2210,7 +2210,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::has(
@@ -2226,7 +2226,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
 #ifdef __clang__
     template<typename Related, typename Method,
              std::enable_if_t<std::is_member_function_pointer_v<Method>, bool>>
@@ -2247,7 +2247,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereHas(
@@ -2262,7 +2262,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereHas(
@@ -2277,7 +2277,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereDoesntHave(
@@ -2291,7 +2291,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereDoesntHave(
@@ -2305,7 +2305,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
 #ifdef __clang__
     template<typename Related, typename Method,
              std::enable_if_t<std::is_member_function_pointer_v<Method>, bool>>
@@ -2326,7 +2326,7 @@ namespace Relations
         return builder;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::query()
     {

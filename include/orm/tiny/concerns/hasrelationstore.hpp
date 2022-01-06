@@ -43,7 +43,7 @@ namespace Concerns
     // FUTURE relationstore, cache results, eg. cache Relation instance and return copy of this cached Relation instance, Related parameter can be obtained from cached Relation instance silverqx
     /*! Relation store, handles mapping from a relation name to the Model's relation
         method, also calls visited method with Related parameter when needed. */
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasRelationStore
     {
         // Used by Model, all is private to not pollute user's CA in model classes
@@ -323,11 +323,11 @@ namespace Concerns
         std::stack<std::shared_ptr<BaseRelationStore>> m_relationStore;
     };
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::BaseRelationStore
                                               ::~BaseRelationStore() = default;
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::BaseRelationStore::BaseRelationStore(
             HasRelationStore &hasRelationStore, const RelationStoreType storeType
     )
@@ -335,7 +335,7 @@ namespace Concerns
         , m_storeType(storeType)
     {}
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationStore<Derived, AllRelations...>::BaseRelationStore
                                                    ::visit(const QString &relation)
     {
@@ -345,7 +345,7 @@ namespace Concerns
     }
 
     // CUR1 add constraint to also check Method return value, should be std::unique_ptr<Relation> silverqx
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Method>
     requires std::is_member_function_pointer_v<Method>
     void HasRelationStore<Derived, AllRelations...>::BaseRelationStore
@@ -405,14 +405,14 @@ namespace Concerns
         }
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::RelationStoreType
     HasRelationStore<Derived, AllRelations...>::BaseRelationStore::getStoreType() const
     {
         return m_storeType;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::EagerRelationStore::EagerRelationStore(
             HasRelationStore &hasRelationStore,
             const Tiny::TinyBuilder<Derived> &builder,
@@ -424,7 +424,7 @@ namespace Concerns
         , m_relation(relation)
     {}
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Method>
     void HasRelationStore<Derived, AllRelations...>::EagerRelationStore::visited(
             const Method method) const
@@ -462,7 +462,7 @@ namespace Concerns
                                            m_models, m_relation);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::PushRelationStore::PushRelationStore(
             HasRelationStore &hasRelationStore,
             RelationsType<AllRelations...> &models
@@ -471,7 +471,7 @@ namespace Concerns
         , m_models(models)
     {}
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Method>
     void HasRelationStore<Derived, AllRelations...>::PushRelationStore::visited(
             const Method /*unused*/) const
@@ -482,7 +482,7 @@ namespace Concerns
         this->m_hasRelationStore.basemodel().template pushVisited<Related>();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore
                                               ::TouchOwnersRelationStore(
             HasRelationStore &hasRelationStore, const QString &relation
@@ -491,7 +491,7 @@ namespace Concerns
         , m_relation(relation)
     {}
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Method>
     void HasRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore::visited(
             const Method method) const
@@ -505,7 +505,7 @@ namespace Concerns
                 .template touchOwnersVisited<Related>(std::move(relationInstance));
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     HasRelationStore<Derived, AllRelations...>::LazyRelationStore<Related>
                                               ::LazyRelationStore(
@@ -514,7 +514,7 @@ namespace Concerns
         : BaseRelationStore(hasRelationStore, RelationStoreType::LAZY_RESULTS)
     {}
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     template<typename Method>
     void
@@ -525,7 +525,7 @@ namespace Concerns
                 ->getResults();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::BelongsToManyRelatedTableStore
                                               ::BelongsToManyRelatedTableStore(
             HasRelationStore &hasRelationStore
@@ -534,7 +534,7 @@ namespace Concerns
                             RelationStoreType::BELONGSTOMANY_RELATED_TABLE)
     {}
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Method>
     void HasRelationStore<Derived, AllRelations...>::BelongsToManyRelatedTableStore
                                                    ::visited(const Method /*unused*/)
@@ -570,7 +570,7 @@ namespace Concerns
        'relations' argument.
     */
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     HasRelationStore<Derived, AllRelations...>::QueriesRelationshipsStore<Related>
                                               ::QueriesRelationshipsStore(
@@ -591,7 +591,7 @@ namespace Concerns
         , m_relations(relations)
     {}
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     template<typename RelatedFromMethod, typename Method>
     void
@@ -623,7 +623,7 @@ namespace Concerns
                         m_callback);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     constexpr typename
     HasRelationStore<Derived, AllRelations...>::RelationStoreType
@@ -636,7 +636,7 @@ namespace Concerns
             return RelationStoreType::QUERIES_RELATIONSHIPS_TINY;
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createEagerStore(
             const Tiny::TinyBuilder<Derived> &builder, QVector<Derived> &models,
@@ -648,7 +648,7 @@ namespace Concerns
         return *m_relationStore.top();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createPushStore(
             RelationsType<AllRelations...> &models)
@@ -658,7 +658,7 @@ namespace Concerns
         return *m_relationStore.top();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createTouchOwnersStore(
             const QString &relation)
@@ -669,7 +669,7 @@ namespace Concerns
         return *m_relationStore.top();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createLazyStore()
@@ -679,7 +679,7 @@ namespace Concerns
         return *m_relationStore.top();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createBelongsToManyRelatedTableStore()
     {
@@ -688,7 +688,7 @@ namespace Concerns
         return *m_relationStore.top();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createQueriesRelationshipsStore(
@@ -704,20 +704,20 @@ namespace Concerns
         return *m_relationStore.top();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationStore<Derived, AllRelations...>::resetRelationStore()
     {
         m_relationStore.pop();
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::PushRelationStore &
     HasRelationStore<Derived, AllRelations...>::pushStore()
     {
         return *std::static_pointer_cast<PushRelationStore>(m_relationStore.top());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const typename HasRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore &
     HasRelationStore<Derived, AllRelations...>::touchOwnersStore() const
     {
@@ -725,7 +725,7 @@ namespace Concerns
                 const TouchOwnersRelationStore>(m_relationStore.top());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     const typename HasRelationStore<Derived, AllRelations...>
                    ::template LazyRelationStore<Related> &
@@ -735,7 +735,7 @@ namespace Concerns
                 const LazyRelationStore<Related>>(m_relationStore.top());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const typename HasRelationStore<Derived, AllRelations...>
                    ::BelongsToManyRelatedTableStore &
     HasRelationStore<Derived, AllRelations...>::belongsToManyRelatedTableStore() const
@@ -744,7 +744,7 @@ namespace Concerns
                 const BelongsToManyRelatedTableStore>(m_relationStore.top());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     const typename HasRelationStore<Derived, AllRelations...>
                    ::template QueriesRelationshipsStore<Related> &
@@ -754,28 +754,28 @@ namespace Concerns
                 const QueriesRelationshipsStore<Related>>(m_relationStore.top());
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     HasRelationStore<Derived, AllRelations...>::model()
     {
         return static_cast<Derived &>(*this);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const Derived &
     HasRelationStore<Derived, AllRelations...>::model() const
     {
         return static_cast<const Derived &>(*this);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...> &
     HasRelationStore<Derived, AllRelations...>::basemodel()
     {
         return static_cast<Model<Derived, AllRelations...> &>(*this);
     }
 
-    template<typename Derived, typename ...AllRelations>
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const Model<Derived, AllRelations...> &
     HasRelationStore<Derived, AllRelations...>::basemodel() const
     {
