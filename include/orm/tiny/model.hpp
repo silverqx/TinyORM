@@ -288,6 +288,7 @@ namespace Relations
         /*! Get the default foreign key name for the model. */
         QString getForeignKey() const;
 
+        /* Relationships factory methods */
         /*! Define a one-to-one relationship. */
         template<typename Related>
         std::unique_ptr<Relations::HasOne<Derived, Related>>
@@ -367,10 +368,23 @@ namespace Relations
         Related *
         getRelationshipFromMethod(const QString &relation);
 
-        /*! Create a new model instance for a related model. */
-        template<typename Related>
-        std::unique_ptr<Related> newRelatedInstance() const;
+        /*! Set the entire relations hash on the model. */
+        Derived &setRelations(
+#ifdef __GNUG__
+                const std::map<QString, RelationsType<AllRelations...>> &relations);
+#else
+                const std::unordered_map<QString,
+                                         RelationsType<AllRelations...>> &relations);
+#endif
+        /*! Set the entire relations hash on the model. */
+        Derived &setRelations(
+#ifdef __GNUG__
+                std::map<QString, RelationsType<AllRelations...>> &&relations);
+#else
+                std::unordered_map<QString, RelationsType<AllRelations...>> &&relations);
+#endif
 
+        /* Relationships factory methods */
         /*! Instantiate a new HasOne relationship. */
         template<typename Related>
         inline std::unique_ptr<Relations::HasOne<Derived, Related>>
@@ -395,6 +409,10 @@ namespace Relations
                          const QString &relatedPivotKey, const QString &parentKey,
                          const QString &relatedKey, const QString &relation) const;
 
+        /*! Create a new model instance for a related model. */
+        template<typename Related>
+        std::unique_ptr<Related> newRelatedInstance() const;
+
         /*! Guess the "belongs to" relationship name. */
         template<typename Related>
         QString guessBelongsToRelation() const;
@@ -404,22 +422,6 @@ namespace Relations
         /*! Get the joining table name for a many-to-many relation. */
         template<typename Related>
         QString pivotTableName() const;
-
-        /*! Set the entire relations hash on the model. */
-        Derived &setRelations(
-#ifdef __GNUG__
-                const std::map<QString, RelationsType<AllRelations...>> &relations);
-#else
-                const std::unordered_map<QString,
-                                         RelationsType<AllRelations...>> &relations);
-#endif
-        /*! Set the entire relations hash on the model. */
-        Derived &setRelations(
-#ifdef __GNUG__
-                std::map<QString, RelationsType<AllRelations...>> &&relations);
-#else
-                std::unordered_map<QString, RelationsType<AllRelations...>> &&relations);
-#endif
 
         /* Operations on a model instance */
         /*! Perform the actual delete query on this model instance. */
@@ -1416,6 +1418,8 @@ namespace Relations
                     getKeyName());
     }
 
+    /* Relationships factory methods */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     std::unique_ptr<Relations::HasOne<Derived, Related>>
@@ -1643,17 +1647,34 @@ namespace Relations
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Related>
-    std::unique_ptr<Related>
-    Model<Derived, AllRelations...>::newRelatedInstance() const
+    Derived &
+    Model<Derived, AllRelations...>::setRelations(
+#ifdef __GNUG__
+            const std::map<QString, RelationsType<AllRelations...>> &relations)
+#else
+            const std::unordered_map<QString, RelationsType<AllRelations...>> &relations)
+#endif
     {
-        auto instance = std::make_unique<Related>();
+        m_relations = relations;
 
-        if (instance->getConnectionName().isEmpty())
-            instance->setConnection(getConnectionName());
-
-        return instance;
+        return model();
     }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    Model<Derived, AllRelations...>::setRelations(
+#ifdef __GNUG__
+            std::map<QString, RelationsType<AllRelations...>> &&relations)
+#else
+            std::unordered_map<QString, RelationsType<AllRelations...>> &&relations)
+#endif
+    {
+        m_relations = std::move(relations);
+
+        return model();
+    }
+
+    /* Relationships factory methods */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
@@ -1701,6 +1722,19 @@ namespace Relations
         return Relations::BelongsToMany<Derived, Related, PivotType>::instance(
                     std::move(related), parent, table, foreignPivotKey,
                     relatedPivotKey, parentKey, relatedKey, relation);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related>
+    std::unique_ptr<Related>
+    Model<Derived, AllRelations...>::newRelatedInstance() const
+    {
+        auto instance = std::make_unique<Related>();
+
+        if (instance->getConnectionName().isEmpty())
+            instance->setConnection(getConnectionName());
+
+        return instance;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1754,34 +1788,6 @@ namespace Relations
         segments.sort(Qt::CaseInsensitive);
 
         return segments.join(UNDERSCORE).toLower();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::setRelations(
-#ifdef __GNUG__
-            const std::map<QString, RelationsType<AllRelations...>> &relations)
-#else
-            const std::unordered_map<QString, RelationsType<AllRelations...>> &relations)
-#endif
-    {
-        m_relations = relations;
-
-        return model();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &
-    Model<Derived, AllRelations...>::setRelations(
-#ifdef __GNUG__
-            std::map<QString, RelationsType<AllRelations...>> &&relations)
-#else
-            std::unordered_map<QString, RelationsType<AllRelations...>> &&relations)
-#endif
-    {
-        m_relations = std::move(relations);
-
-        return model();
     }
 
     /* Operations on a model instance */
