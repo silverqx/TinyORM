@@ -21,9 +21,6 @@ namespace Orm::Tiny
 {
     namespace TinyUtils = Orm::Tiny::Utils;
 
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    class Model;
-
 namespace Concerns
 {
 

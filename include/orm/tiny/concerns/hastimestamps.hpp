@@ -12,12 +12,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny
-{
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    class Model;
-
-namespace Concerns
+namespace Orm::Tiny::Concerns
 {
 
     /*! Model timestamps. */
@@ -183,8 +178,7 @@ namespace Concerns
     /* Static cast this to a child's instance type (CRTP) */
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasTimestamps)
 
-} // namespace Concerns
-} // namespace Orm::Tiny
+} // namespace Orm::Tiny::Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 

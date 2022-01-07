@@ -5,7 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/concepts.hpp"
 #include "orm/macros/threadlocal.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/tinytypes.hpp"
@@ -13,12 +12,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny
-{
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    class Model;
-
-namespace Concerns
+namespace Orm::Tiny::Concerns
 {
 
     /*! Guards attributes. */
@@ -366,8 +360,7 @@ namespace Concerns
     /* Static cast this to a child's instance type (CRTP) */
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(GuardsAttributes)
 
-} // namespace Concerns
-} // namespace Orm::Tiny
+} // namespace Orm::Tiny::Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 

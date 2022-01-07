@@ -7,7 +7,6 @@ TINY_SYSTEM_HEADER
 
 #include <QtSql/QSqlQuery>
 
-#include "orm/concepts.hpp"
 #include "orm/tiny/tinytypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -22,9 +21,6 @@ namespace Query
 
 namespace Tiny
 {
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    class Model;
-
 namespace Relations
 {
     template<class Model, class Related>

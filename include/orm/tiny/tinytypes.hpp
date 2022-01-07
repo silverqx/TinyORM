@@ -5,6 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/concepts.hpp"
 #include "orm/ormtypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -19,6 +20,15 @@ namespace Tiny
 
     template<typename Model>
     using TinyBuilder = Builder<Model>;
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    class Model;
+
+    /*! The type in which the relationships are stored. */
+    template<AllRelationsConcept ...AllRelations>
+    using RelationsType = std::variant<std::monostate,
+                                       QVector<AllRelations>...,
+                                       std::optional<AllRelations>...>;
 
     // TODO pretty print in the debugger silverqx
     /*! Attribute item used in ORM models. */
@@ -63,13 +73,11 @@ namespace Tiny
 
 namespace Concerns
 {
-
     /*! QueriesRelationships builder type passed to the callback. */
     template<typename Related>
     using QueriesRelationshipsCallback =
             std::conditional_t<std::is_void_v<Related>, QueryBuilder,
                                TinyBuilder<Related>>;
-
 } // namespace Concerns
 } // namespace Tiny
 

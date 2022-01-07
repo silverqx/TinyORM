@@ -84,6 +84,7 @@ function(tiny_sources out_headers out_sources)
         list(APPEND headers
             tiny/concerns/guardsattributes.hpp
             tiny/concerns/hasattributes.hpp
+            tiny/concerns/hasrelationships.hpp
             tiny/concerns/hasrelationstore.hpp
             tiny/concerns/hastimestamps.hpp
             tiny/concerns/queriesrelationships.hpp

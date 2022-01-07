@@ -80,6 +80,7 @@ headersList += \
     headersList += \
         $$PWD/orm/tiny/concerns/guardsattributes.hpp \
         $$PWD/orm/tiny/concerns/hasattributes.hpp \
+        $$PWD/orm/tiny/concerns/hasrelationships.hpp \
         $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
         $$PWD/orm/tiny/concerns/hastimestamps.hpp \
         $$PWD/orm/tiny/concerns/queriesrelationships.hpp \

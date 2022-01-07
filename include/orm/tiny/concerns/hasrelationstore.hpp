@@ -5,27 +5,18 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <optional>
 #include <stack>
 
-#include "orm/exceptions/runtimeerror.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/relations/relation.hpp"
-#include "orm/tiny/tinytypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny
+namespace Orm::Tiny::Concerns
 {
 
-    /*! The type in which are saved relationships. */
-    template<typename ...AllRelations>
-    using RelationsType = std::variant<std::monostate,
-                                       QVector<AllRelations>...,
-                                       std::optional<AllRelations>...>;
-
-namespace Concerns
-{
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    class HasRelationships;
 
     template<typename Model>
     class QueriesRelationships;
@@ -46,8 +37,8 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasRelationStore
     {
-        // Used by Model, all is private to not pollute user's CA in model classes
-        friend Model<Derived, AllRelations...>;
+        // To access createXyzStore(), xyzStore() getters, resetRelationStore(), ...
+        friend HasRelationships<Derived, AllRelations...>;
 
         /*! Type of data saved in the relation store. */
         enum struct RelationStoreType
@@ -339,7 +330,7 @@ namespace Concerns
     void HasRelationStore<Derived, AllRelations...>::BaseRelationStore
                                                    ::visit(const QString &relation)
     {
-        std::invoke(m_hasRelationStore.basemodel().getUserRelationsRawMap()
+        std::invoke(m_hasRelationStore.basemodel().getUserRelations()
                     .find(relation).value(),
                     *this);
     }
@@ -757,8 +748,7 @@ namespace Concerns
     /* Static cast this to a child's instance type (CRTP) */
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasRelationStore)
 
-} // namespace Concerns
-} // namespace Orm::Tiny
+} // namespace Orm::Tiny::Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 
