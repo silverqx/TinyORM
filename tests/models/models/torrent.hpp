@@ -136,7 +136,7 @@ private:
 #ifdef PROJECT_TINYORM_PLAYGROUND
     // I leave the initializer here to be clearly visible
     /*! The connection name for the model. */
-    QString u_connection {DB::getDefaultConnection() == "mysql"
+    QString u_connection {DB::getDefaultConnection() == "mysql" // BUG play, multi-thread? silverqx
                           ? "mysql_alt"
                           : DB::getDefaultConnection()};
 #endif
