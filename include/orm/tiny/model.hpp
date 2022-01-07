@@ -213,11 +213,6 @@ namespace Orm::Tiny
         /*! Qualify the given column name by the model's table. */
         QString qualifyColumn(const QString &column) const;
 
-        /* HasTimestamps */
-        /*! Determine if the given model is ignoring touches. */
-        template<typename ClassToCheck = Derived>
-        static bool isIgnoringTouch();
-
         /* Data members */
         /*! Indicates if the model exists. */
         bool exists = false;
@@ -957,19 +952,6 @@ namespace Orm::Tiny
             return column;
 
         return QStringLiteral("%1.%2").arg(model().getTable(), column);
-    }
-
-    /* HasTimestamps */
-
-    // CUR move to hasTimestamps silverqx
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename ClassToCheck>
-    bool Model<Derived, AllRelations...>::isIgnoringTouch()
-    {
-        // FUTURE implement withoutTouching() and related data member $ignoreOnTouch silverqx
-
-        return !ClassToCheck().usesTimestamps() ||
-                ClassToCheck::getUpdatedAtColumn().isEmpty();
     }
 
     /* protected */

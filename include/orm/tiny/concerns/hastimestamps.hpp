@@ -32,6 +32,10 @@ namespace Concerns
         /*! Update the creation and update timestamps. */
         void updateTimestamps();
 
+        /*! Determine if the given model is ignoring touches. */
+        template<typename ModelToCheck = Derived>
+        static bool isIgnoringTouch();
+
         /*! Set the value of the "created at" attribute. */
         Derived &setCreatedAt(const QDateTime &value);
         /*! Set the value of the "updated at" attribute. */
@@ -95,6 +99,16 @@ namespace Concerns
             !basemodel().isDirty(createdAtColumn)
         )
             setCreatedAt(time);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename ModelToCheck>
+    bool HasTimestamps<Derived, AllRelations...>::isIgnoringTouch()
+    {
+        // FUTURE implement withoutTouching() and related data member $ignoreOnTouch silverqx
+
+        return !ModelToCheck().usesTimestamps() ||
+                ModelToCheck::getUpdatedAtColumn().isEmpty();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
