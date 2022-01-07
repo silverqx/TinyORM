@@ -25,7 +25,7 @@ namespace Orm::Tiny
     template<typename Model>
     class Builder :
             public BuilderProxies<Model>,
-            public Orm::Tiny::Concerns::QueriesRelationships<Model>
+            public Concerns::QueriesRelationships<Model>
     {
         // Used by TinyBuilderProxies::where/latest/oldest/update()
         friend BuilderProxies<Model>;
