@@ -296,7 +296,7 @@ namespace Relations
     {
         const auto &model = getRelated();
 
-        // CUR verify, use :: not . silverqx
+        // CUR verify, use Related::? not . silverqx
         if (!model.isIgnoringTouch())
             rawUpdate({
                 {model.getUpdatedAtColumn(), model.freshTimestampString()}
