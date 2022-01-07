@@ -15,23 +15,14 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/macros/crtpmodel.hpp"
 #include "orm/tiny/modelproxies.hpp"
 #include "orm/tiny/tinybuilder.hpp"
+#ifdef TINYORM_TESTS_CODE
+#include "orm/tiny/types/connectionoverride.hpp"
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny
 {
-
-    // TMP move to types silverqx
-#ifdef TINYORM_TESTS_CODE
-    /*! Used by tests to override connection in the Model. */
-    struct ConnectionOverride
-    {
-        /*! The connection to use in the Model, this data member is picked up
-            in the Model::getConnectionName(). */
-        T_THREAD_LOCAL
-        inline static QString connection;
-    };
-#endif
 
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx

@@ -110,6 +110,7 @@ function(tiny_sources out_headers out_sources)
             tiny/tinybuilderproxies.hpp
             tiny/tinyconcepts.hpp
             tiny/tinytypes.hpp
+            tiny/types/connectionoverride.hpp
             tiny/types/syncchanges.hpp
             tiny/utils/attribute.hpp
             tiny/utils/string.hpp
