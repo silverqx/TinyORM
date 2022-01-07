@@ -18,9 +18,9 @@ namespace std
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+// TMP divide concepts to orm and tiny concepts silverqx
 namespace Orm
 {
-
 namespace Query
 {
     class Builder;
