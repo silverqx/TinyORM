@@ -19,7 +19,7 @@ Param(
 
 Set-StrictMode -Version 3.0
 
-$Script:TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|CUR1) '
+$Script:TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|CUR1|TMP) '
 
 Get-ChildItem -Path $Path -Include $Include -Recurse | `
     Select-String -Pattern $Script:TodoKeywordsPattern -CaseSensitive | `
