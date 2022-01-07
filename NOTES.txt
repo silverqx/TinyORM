@@ -726,8 +726,8 @@ auto t4 = Torrent::find(1)->torrentFiles()->groupBy(std::move(s3), DB::raw(s2)).
 qDebug() << t4;
 
 
-InvokeXTimes:
--------------
+Invoke-Tests.ps1:
+-----------------
 
 - 100 times run
   - 28. dec 2021
