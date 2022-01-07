@@ -294,13 +294,12 @@ namespace Relations
     template<class Model, class Related>
     void Relation<Model, Related>::touch() const
     {
-        const auto &model = getRelated();
+        if (Related::isIgnoringTouch())
+            return;
 
-        // CUR verify, use Related::? not . silverqx
-        if (!model.isIgnoringTouch())
-            rawUpdate({
-                {model.getUpdatedAtColumn(), model.freshTimestampString()}
-            });
+        rawUpdate({
+            {Related::getUpdatedAtColumn(), getRelated().freshTimestampString()}
+        });
     }
 
     template<class Model, class Related>

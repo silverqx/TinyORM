@@ -968,9 +968,8 @@ namespace Orm::Tiny
     {
         // FUTURE implement withoutTouching() and related data member $ignoreOnTouch silverqx
 
-        // CUR also enhance, add if constexpr silverqx
-        return !ClassToCheck().usesTimestamps()
-                || ClassToCheck::getUpdatedAtColumn().isEmpty();
+        return !ClassToCheck().usesTimestamps() ||
+                ClassToCheck::getUpdatedAtColumn().isEmpty();
     }
 
     /* protected */
