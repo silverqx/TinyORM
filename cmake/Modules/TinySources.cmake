@@ -12,7 +12,6 @@ function(tiny_sources out_headers out_sources)
 
     list(APPEND headers
         basegrammar.hpp
-        concepts.hpp
         concerns/detectslostconnections.hpp
         concerns/hasconnectionresolver.hpp
         connectioninterface.hpp
@@ -46,6 +45,7 @@ function(tiny_sources out_headers out_sources)
         macros/systemheader.hpp
         macros/threadlocal.hpp
         mysqlconnection.hpp
+        ormconcepts.hpp
         ormtypes.hpp
         postgresconnection.hpp
         query/expression.hpp
@@ -108,6 +108,7 @@ function(tiny_sources out_headers out_sources)
             tiny/relations/relationproxies.hpp
             tiny/tinybuilder.hpp
             tiny/tinybuilderproxies.hpp
+            tiny/tinyconcepts.hpp
             tiny/tinytypes.hpp
             tiny/types/syncchanges.hpp
             tiny/utils/attribute.hpp

@@ -5,8 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/concepts.hpp"
 #include "orm/ormtypes.hpp"
+#include "orm/tiny/tinyconcepts.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

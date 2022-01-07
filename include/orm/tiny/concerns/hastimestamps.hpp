@@ -6,13 +6,20 @@
 TINY_SYSTEM_HEADER
 
 #include <QDateTime>
+#include <QStringList>
 
-#include "orm/concepts.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
+#include "orm/tiny/tinyconcepts.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny::Concerns
+namespace Orm::Tiny
+{
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    class Model;
+
+namespace Concerns
 {
 
     /*! Model timestamps. */
@@ -178,7 +185,8 @@ namespace Orm::Tiny::Concerns
     /* Static cast this to a child's instance type (CRTP) */
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasTimestamps)
 
-} // namespace Orm::Tiny::Concerns
+} // namespace Concerns
+} // namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE
 

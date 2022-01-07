@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_CONCEPTS_HPP
-#define ORM_CONCEPTS_HPP
+#ifndef ORM_ORMCONCEPTS_HPP
+#define ORM_ORMCONCEPTS_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -18,7 +18,6 @@ namespace std
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-// TMP divide concepts to orm and tiny concepts silverqx
 namespace Orm
 {
 namespace Query
@@ -27,11 +26,6 @@ namespace Query
     class Expression;
 }
     using QueryBuilder = Query::Builder;
-
-    /*! Concept for Model's AllRelations template parameter, AllRelations can not
-        contain actual model type declared in the Derived template parameter. */
-    template<typename Derived, typename ...AllRelations>
-    concept AllRelationsConcept = (!std::same_as<Derived, AllRelations> && ...);
 
     /*! Concept for a queryable parameter. */
     template<typename T>
@@ -71,4 +65,4 @@ namespace Query
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_CONCEPTS_HPP
+#endif // ORM_ORMCONCEPTS_HPP

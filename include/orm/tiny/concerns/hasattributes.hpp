@@ -7,7 +7,6 @@ TINY_SYSTEM_HEADER
 
 #include <QDateTime>
 
-#include "orm/concepts.hpp"
 #include "orm/exceptions/invalidformaterror.hpp"
 #include "orm/macros/threadlocal.hpp"
 #include "orm/ormtypes.hpp"

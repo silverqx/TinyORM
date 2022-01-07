@@ -7,7 +7,6 @@ else: \
 
 headersList += \
     $$PWD/orm/basegrammar.hpp \
-    $$PWD/orm/concepts.hpp \
     $$PWD/orm/concerns/detectslostconnections.hpp \
     $$PWD/orm/concerns/hasconnectionresolver.hpp \
     $$PWD/orm/config.hpp \
@@ -43,6 +42,7 @@ headersList += \
     $$PWD/orm/macros/systemheader.hpp \
     $$PWD/orm/macros/threadlocal.hpp \
     $$PWD/orm/mysqlconnection.hpp \
+    $$PWD/orm/ormconcepts.hpp \
     $$PWD/orm/ormtypes.hpp \
     $$PWD/orm/postgresconnection.hpp \
     $$PWD/orm/query/expression.hpp \
@@ -104,6 +104,7 @@ headersList += \
         $$PWD/orm/tiny/relations/relationproxies.hpp \
         $$PWD/orm/tiny/tinybuilder.hpp \
         $$PWD/orm/tiny/tinybuilderproxies.hpp \
+        $$PWD/orm/tiny/tinyconcepts.hpp \
         $$PWD/orm/tiny/tinytypes.hpp \
         $$PWD/orm/tiny/types/syncchanges.hpp \
         $$PWD/orm/tiny/utils/attribute.hpp \
