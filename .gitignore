@@ -71,6 +71,9 @@ Thumbs.db
 # Jetbrains generated files
 .idea/
 
+# Visual Studio Code
+.vscode/
+
 # Binaries
 *.dll
 *.exe
