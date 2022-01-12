@@ -261,8 +261,8 @@ begin {
 
         process {
             # Value of env. variable, set to the $null value if env. variable doesn't exist
-            $variableValue = Get-Item $Script:envVariable -ErrorAction SilentlyContinue | `
-                Select-Object -ExpandProperty Value
+            $variableValue = Get-Item $Script:envVariable -ErrorAction SilentlyContinue
+                | Select-Object -ExpandProperty Value
 
             # Obtain paths to add and excluded paths
             $pathsToAdd, $pathsExcluded = Initialize-Paths -VariableValue $variableValue

@@ -46,8 +46,8 @@ function Initialize-DBEnvironment {
         return
     }
 
-    $dotenv = Get-ChildItem -Path $PSScriptRoot/.. -Include 'dotenv.ps1' -Recurse -File | `
-        Select-Object -First 1 -ExpandProperty FullName
+    $dotenv = Get-ChildItem -Path $PSScriptRoot/.. -Include 'dotenv.ps1' -Recurse -File
+        | Select-Object -First 1 -ExpandProperty FullName
 
     if ($null -eq $dotenv) {
         Write-Verbose "dotenv.ps1 file not found, look at tests/testdata/dotenv.example.ps1."
