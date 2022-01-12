@@ -1,17 +1,19 @@
 #!/usr/bin/env pwsh
 
 Param(
-    [Parameter(Position = 0, Mandatory = $true,
-        HelpMessage = 'Specifies todo tasks to find on each line. The pattern value is treated as a regular expression.')]
+    [Parameter(Position = 0, Mandatory,
+        HelpMessage = 'Specifies todo tasks to find on each line. The pattern value is treated ' +
+            'as a regular expression.')]
     [ValidateNotNullOrEmpty()]
     [string[]] $Pattern,
 
-    [Parameter(Position = 1, Mandatory = $false,
-        HelpMessage = 'Specifies an array of one or more string patterns to be matched as the cmdlet gets child items.')]
+    [Parameter(Position = 1,
+        HelpMessage = 'Specifies an array of one or more string patterns to be matched as the ' +
+            'cmdlet gets child items.')]
     [ValidateNotNullOrEmpty()]
     [string[]] $Include = @('*.cpp', '*.hpp'),
 
-    [Parameter(Position = 2, Mandatory = $false,
+    [Parameter(Position = 2,
         HelpMessage = 'Specifies the path to the project folder, is pwd by default.')]
     [ValidateNotNullOrEmpty()]
     [string] $Path = $($(Get-Location).Path) + '\*'

@@ -8,10 +8,12 @@ Param(
     [string[]] $Path = $($(Get-Location).Path),
 
     [Parameter(Position = 1, ValueFromPipelinebyPropertyName,
-        HelpMessage = 'Specifies the environment variable to which to add a Path, is env:PATH by default.')]
+        HelpMessage = 'Specifies the environment variable to which to add a Path, is env:PATH ' +
+            'by default.')]
     [string] $Variable,
 
-    [Parameter(HelpMessage = 'Add a Path to the LD_LIBRARY_PATH environment variable (Variable parameter has higher priority).')]
+    [Parameter(HelpMessage = 'Add a Path to the LD_LIBRARY_PATH environment variable (Variable ' +
+        'parameter has higher priority).')]
     [switch] $LibraryPath,
 
     [Parameter(HelpMessage = 'Restore original path values for all changed environment variables.')]
@@ -28,6 +30,8 @@ begin {
         $Global:TinyBackedUpVariables = @()
     }
     $Script:Slashes = $null
+
+    . $PSScriptRoot\private\Common.ps1
 
     function Initialize-EnvVariable {
         [OutputType([string[]])]
@@ -77,7 +81,8 @@ begin {
 
         # Backup to global variable
         if (Test-Path $Script:envVariable) {
-            Set-Variable -Scope global -Name $globalName -Value (Get-Item $Script:envVariable).Value
+            Set-Variable -Scope global -Name $globalName `
+                -Value (Get-Item $Script:envVariable).Value
         }
         # Env. variable to back up is empty, so set global variable to $null
         else {
@@ -104,83 +109,141 @@ begin {
         Param()
 
         foreach ($variable in $Global:TinyBackedUpVariables) {
-            Set-Item -Path "env:$variable" -Value (Get-Variable -Scope global "Tiny_$variable").Value
+            Set-Item -Path "env:$variable" `
+                -Value (Get-Variable -Scope global "Tiny_$variable").Value
 
             Redo-GlobalState -Variable $variable
         }
 
         Remove-Variable -Scope global -Name 'TinyBackedUpVariables' -ErrorAction SilentlyContinue
+
+        Write-Host 'Restored' -ForegroundColor DarkGreen
     }
 
-    # Get slashes by platform
-    function Get-Slashes {
-        [OutputType([string])]
-        Param()
-
-        # Cached value
-        if ($Script:Slashes) {
-            return $Script:Slashes
-        }
-
-        $platform = $PSVersionTable.Platform
-
-        switch ($platform) {
-            'Win32NT' {
-                return $Script:Slashes = '\\/'
-            }
-            'Unix' {
-                return $Script:Slashes = '/'
-            }
-            Default {
-                throw "$platform platform is not supported."
-            }
-        }
-    }
-
-    function Get-PathToMatch {
-        [OutputType([string])]
-        Param(
-            [Parameter(Position = 0, Mandatory, ValueFromPipeline, ValueFromPipelinebyPropertyName,
-                HelpMessage = "Specifies a path to modify to the match pattern.")]
-            [ValidateNotNullOrEmpty()]
-            [string]
-            $Path
-        )
-
-        $slashes = Get-Slashes
-
-        $pathToMatch = $Path `
-            -replace "[$slashes]+(?![$slashes]*$)", "[$slashes]+" `
-            -replace "[$slashes]+$", ''
-
-        $separator = [IO.Path]::PathSeparator
-
-        return "(?:^|$separator)$pathToMatch[$slashes]*(?:$|$separator)"
-    }
-
-    function Get-FullPath {
-        [CmdletBinding()]
+    # Obtain paths to add and excluded paths
+    function Initialize-Paths {
+        [CmdletBinding(PositionalBinding = $false)]
         [OutputType([string[]])]
         Param(
-            [Parameter(Position = 0, Mandatory, ValueFromPipeline, ValueFromPipelinebyPropertyName,
-                HelpMessage = "Specifies a path to normalize.")]
-            [string[]]
-            $Path
+            [Parameter(Mandatory,
+                HelpMessage = 'Specifies a value of env. variable, set to the $null value if ' +
+                    "env. variable doesn't exist.")]
+            [AllowEmptyString()]
+            [string]
+            $VariableValue
         )
 
-        process {
-            [string[]] $normalized = @()
+        # Check if paths to add are already on the $Script:envVariable ($env:$Variable)
+        $pathsToAdd = @()
+        $pathsExcluded = @()
+        if (-not ($VariableValue -eq '')) {
 
-            foreach ($p in $Path) {
-                $normalized += [System.IO.Path]::GetFullPath(($p -replace "[$(Get-Slashes)]+$", ''))
+            foreach ($pathToAdd in $Path) {
+                $pathToMatch = Get-PathToMatch -Path $pathToAdd
+
+                $pathToAddNormalized = $(Get-FullPath -Path $pathToAdd)
+
+                if ($VariableValue -notmatch $pathToMatch) {
+                    $pathsToAdd += $pathToAddNormalized
+                }
+                else {
+                    $pathsExcluded += $pathToAddNormalized
+                }
             }
+        }
+        # When env. variable value is empty then add all Paths
+        else {
+            $pathsToAdd = Get-FullPath -Path $Path
+        }
 
-            return $normalized
+        return $pathsToAdd, $pathsExcluded
+    }
+
+    # Get final paths to add to the env. variable
+    function Join-PathsToAdd {
+        [CmdletBinding(PositionalBinding = $false)]
+        [OutputType([string])]
+        Param(
+            [Parameter(Mandatory,
+                HelpMessage = 'Specifies a value of env. variable, set to the $null value if ' +
+                    "env. variable doesn't exist.")]
+            [AllowEmptyString()]
+            [string]
+            $VariableValue,
+
+            [Parameter(Mandatory,
+                HelpMessage = 'Specifies added paths to the env. variable.')]
+            [AllowEmptyCollection()]
+            [string[]]
+            $PathsToAdd
+        )
+
+        $pathsJoined = $PathsToAdd -join [IO.Path]::PathSeparator
+
+        # Env. variable value is empty
+        if ($VariableValue -eq '') {
+            $pathsFinal = $pathsJoined
+        }
+        # Prepend vs Append
+        elseif ($Append) {
+            $pathsFinal = $($VariableValue, $pathsJoined)
+        }
+        else {
+            $pathsFinal = $($pathsJoined, $VariableValue)
+        }
+
+        return $pathsFinal -join [IO.Path]::PathSeparator
+    }
+
+    function Write-Result {
+        [CmdletBinding(PositionalBinding=$false)]
+        [OutputType([void])]
+        Param(
+            [Parameter(Mandatory,
+                HelpMessage = 'Specifies a value of env. variable, set to the $null value if ' +
+                    "env. variable doesn't exist.")]
+            [AllowEmptyString()]
+            [string]
+            $VariableValue,
+
+            [Parameter(Mandatory,
+                HelpMessage = "Specifies added paths to the env. variable.")]
+            [AllowEmptyCollection()]
+            [string[]]
+            $PathsToAdd,
+
+            [Parameter(Mandatory,
+                HelpMessage = 'Specifies excluded paths from the env. variable (if already ' +
+                    'contains).')]
+            [AllowEmptyCollection()]
+            [string[]]
+            $PathsExcluded
+        )
+
+        $added = $Append ? 'appended' : 'prepended'
+
+        if ($VariableValue -eq '') {
+            Write-Host "All paths were $added." -ForegroundColor DarkGreen
+            return
+        }
+
+        if ($PathsToAdd.Length -gt 0) {
+            $addedCapital = $Append ? 'Appended' : 'Prepended'
+            $pathsToAddJoined = $PathsToAdd -join ', '
+
+            Write-Host "$($addedCapital): " -ForegroundColor DarkGreen -NoNewline
+            Write-Host $pathsToAddJoined
+        }
+
+        if ($PathsExcluded.Length -gt 0) {
+            $pathsExcludedJoined = $PathsExcluded -join ', '
+
+            Write-Host "Already contains: $pathsExcludedJoined" -ForegroundColor DarkGray
         }
     }
 
     function Export-Path {
-        [CmdletBinding()]
+        [CmdletBinding(PositionalBinding = $false)]
         [OutputType([void])]
         Param(
             [Parameter(Position = 0, Mandatory, ValueFromPipeline, ValueFromPipelinebyPropertyName,
@@ -189,52 +252,35 @@ begin {
             $Path
         )
 
+        begin {
+            Write-Host
+            Write-Host "Updating `$$Script:envVariable environment variable..." `
+                -ForegroundColor DarkBlue
+            Write-Host
+        }
+
         process {
-            # Value of env. variable
-            if (Test-Path $Script:envVariable) {
-                $variableValue = Get-Item $Script:envVariable | Select-Object -ExpandProperty Value
-            }
-            # Set to empty value if env. variable doesn't exist
-            else {
-                $variableValue = ''
-            }
+            # Value of env. variable, set to the $null value if env. variable doesn't exist
+            $variableValue = Get-Item $Script:envVariable -ErrorAction SilentlyContinue | `
+                Select-Object -ExpandProperty Value
 
-            # Check if paths to add are already on the $Script:envVariable ($env:$Variable)
-            $pathsToAdd = @()
-            if (-not ($variableValue -eq '')) {
-                foreach ($pathToAdd in $Path) {
-                    $pathToMatch = Get-PathToMatch -Path $pathToAdd
-
-                    if ($variableValue -notmatch $pathToMatch) {
-                        $pathsToAdd += Get-FullPath -Path $pathToAdd
-                    }
-                }
-            }
-            # When env. variable value is empty then add all Paths
-            else {
-                $pathsToAdd = Get-FullPath -Path $Path
-            }
+            # Obtain paths to add and excluded paths
+            $pathsToAdd, $pathsExcluded = Initialize-Paths -VariableValue $variableValue
 
             # Nothing to add
             if ($pathsToAdd.Length -eq 0) {
                 return
             }
 
-            $pathsJoined = $pathsToAdd -join [IO.Path]::PathSeparator
+            # Get final paths to add to the env. variable
+            $pathsFinal = Join-PathsToAdd -VariableValue $variableValue -PathsToAdd $pathsToAdd
 
-            # Env. variable value is empty
-            if (-not $variableValue) {
-                $pathsFinal = $pathsJoined
-            }
-            # Prepend vs Append
-            elseif ($Append) {
-                $pathsFinal = $($variableValue, $pathsJoined)
-            }
-            else {
-                $pathsFinal = $($pathsJoined, $variableValue)
-            }
+            Set-Item -Path $Script:envVariable -Value $pathsFinal
+        }
 
-            Set-Item -Path $Script:envVariable -Value ($pathsFinal -join [IO.Path]::PathSeparator)
+        end {
+            Write-Result -VariableValue $variableValue -PathsToAdd $pathsToAdd `
+                -PathsExcluded $pathsExcluded
         }
     }
 

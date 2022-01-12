@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 
 Param(
-    [Parameter(Position = 0, Mandatory = $false,
+    [Parameter(Position = 0, 
         HelpMessage = 'Specifies the path to the cmake build folder, is pwd by default.')]
     [ValidateNotNullOrEmpty()]
     [string] $BuildPath = $($(Get-Location).Path),
