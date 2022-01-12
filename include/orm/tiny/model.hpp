@@ -1256,7 +1256,6 @@ TINYORM_END_COMMON_NAMESPACE
 
 #endif // ORM_TINY_MODEL_HPP
 
-// TODO release, from time to time try to compile without microsoft extensions, QMAKE_CXXFLAGS *= -Za silverqx
 // TODO release, recompile without PCH silverqx
 // TODO release, open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
 // TODO release, clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
