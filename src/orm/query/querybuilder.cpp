@@ -494,7 +494,7 @@ Builder &Builder::having(const Column &column, const QString &comparison,
     m_havings.append({column, value, comparison, condition, HavingType::BASIC});
 
     if (!value.canConvert<Expression>())
-        // CUR1 check flattenBindings, I already have flatBindingsForUpdateDelete() algo silverqx
+        // CUR1 check flattenBindings, I already have flatBindingsForUpdateDelete() algorithm silverqx
         addBinding(value, BindingType::HAVING);
 
     return *this;

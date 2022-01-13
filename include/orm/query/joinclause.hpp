@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_JOINCLAUSE_HPP
-#define ORM_JOINCLAUSE_HPP
+#ifndef ORM_QUERY_JOINCLAUSE_HPP
+#define ORM_QUERY_JOINCLAUSE_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -39,9 +39,9 @@ namespace Orm::Query
                          const QString &second);
 
         /*! Get the type of join being performed. */
-        const QString &getType() const;
+        inline const QString &getType() const;
         /*! Get the table the join clause is joining to. */
-        const std::variant<std::monostate, QString, Expression> &
+        inline const std::variant<std::monostate, QString, Expression> &
         getTable() const;
 
         /*! Get a new instance of the join clause builder. */
@@ -58,13 +58,13 @@ namespace Orm::Query
         const JoinTable m_table;
     };
 
-    inline const QString &
+    const QString &
     JoinClause::getType() const
     {
         return m_type;
     }
 
-    inline const std::variant<std::monostate, QString, Expression> &
+    const std::variant<std::monostate, QString, Expression> &
     JoinClause::getTable() const
     {
         return m_table;
@@ -74,4 +74,4 @@ namespace Orm::Query
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_JOINCLAUSE_HPP
+#endif // ORM_QUERY_JOINCLAUSE_HPP

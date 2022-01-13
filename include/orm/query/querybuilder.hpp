@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_QUERYBUILDER_HPP
-#define ORM_QUERYBUILDER_HPP
+#ifndef ORM_QUERY_QUERYBUILDER_HPP
+#define ORM_QUERY_QUERYBUILDER_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -29,7 +29,6 @@ namespace Query
     concept Remove = std::convertible_to<T, quint64> ||
                      std::same_as<T, Query::Expression>;
 
-    // FEATURE subqueries, add support for subqueries, first in where() silverqx
     // TODO add inRandomOrder() silverqx
     // TODO QueryBuilder::updateOrInsert() silverqx
     /*! Database query builder. */
@@ -1207,4 +1206,4 @@ namespace Query
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_QUERYBUILDER_HPP
+#endif // ORM_QUERY_QUERYBUILDER_HPP

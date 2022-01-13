@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_EXPRESSION_HPP
-#define ORM_EXPRESSION_HPP
+#ifndef ORM_QUERY_EXPRESSION_HPP
+#define ORM_QUERY_EXPRESSION_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -9,7 +9,6 @@ TINY_SYSTEM_HEADER
 #include <QVector>
 
 #include "orm/macros/commonnamespace.hpp"
-#include "orm/macros/export.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -17,7 +16,7 @@ namespace Orm::Query
 {
 
     /*! Expression in sql query. */
-    class SHAREDLIB_EXPORT Expression
+    class Expression
     {
     public:
         /*! Default constructor, needed by Q_DECLARE_METATYPE. */
@@ -26,9 +25,9 @@ namespace Orm::Query
         inline ~Expression() = default;
 
         /*! Converting constructor from QVariant type. */
-        explicit Expression(const QVariant &value);
+        inline explicit Expression(const QVariant &value);
         /*! Converting constructor from QVariant type. */
-        explicit Expression(QVariant &&value);
+        inline explicit Expression(QVariant &&value);
 
         /*! Copy constructor. */
         inline Expression(const Expression &) = default;
@@ -41,10 +40,10 @@ namespace Orm::Query
         inline Expression &operator=(Expression &&) = default;
 
         /*! Converting operator, QVariant(Expression). */
-        operator QVariant() const; // NOLINT(google-explicit-constructor)
+        inline operator QVariant() const; // NOLINT(google-explicit-constructor)
 
         /*! Obtain expression's value. */
-        const QVariant &getValue() const;
+        inline const QVariant &getValue() const;
 
         /*! Equality operator, the inequality operator is automatically generated. */
         inline bool operator==(const Expression &) const = default;
@@ -54,7 +53,21 @@ namespace Orm::Query
         QVariant m_value {};
     };
 
-    inline const QVariant &Expression::getValue() const
+    // NOLINTNEXTLINE(modernize-pass-by-value)
+    Expression::Expression(const QVariant &value)
+        : m_value(value)
+    {}
+
+    Expression::Expression(QVariant &&value)
+        : m_value(std::move(value))
+    {}
+
+    Expression::operator QVariant() const
+    {
+        return QVariant::fromValue(*this);
+    }
+
+    const QVariant &Expression::getValue() const
     {
         return m_value;
     }
@@ -71,4 +84,4 @@ Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Query::Expression)
 Q_DECLARE_METATYPE(Orm::Query::Expression)
 #endif
 
-#endif // ORM_EXPRESSION_HPP
+#endif // ORM_QUERY_EXPRESSION_HPP
