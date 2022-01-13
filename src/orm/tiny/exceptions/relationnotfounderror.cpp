@@ -28,10 +28,10 @@ QString RelationNotFoundError::formatMessage(const QString &model,
 
     switch (from) {
     case From::BELONGS_TO:
-        return belongsToMessage.arg(model, "belongsTo", relation);
+        return belongsToMessage.arg(model, QStringLiteral("belongsTo"), relation);
 
     case From::BELONGS_TO_MANY:
-        return belongsToMessage.arg(model, "belongsToMany", relation);
+        return belongsToMessage.arg(model, QStringLiteral("belongsToMany"), relation);
 
     default:
         return QStringLiteral(

@@ -37,9 +37,9 @@ namespace Orm::Exceptions
         QString formatMessage(const char *message, const QSqlQuery &query);
 
         /*! The SQL for the query. */
-        const QString m_sql;
+        QString m_sql;
         /*! The bindings for the query. */
-        const QVector<QVariant> m_bindings;
+        QVector<QVariant> m_bindings;
     };
 
 } // namespace Orm::Exceptions

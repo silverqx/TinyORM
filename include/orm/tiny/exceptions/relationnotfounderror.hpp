@@ -36,11 +36,11 @@ namespace Orm::Tiny::Exceptions
 
     protected:
         /*! The name of the affected TinyORM model.. */
-        const QString m_model;
+        QString m_model;
         /*! The name of the relation. */
-        const QString m_relation;
+        QString m_relation;
         /*! Exception message will be generated on the base of this data member. */
-        const From m_from;
+        From m_from;
 
     private:
         /*! Format the error message. */

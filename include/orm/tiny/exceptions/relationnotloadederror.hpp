@@ -27,9 +27,9 @@ namespace Orm::Tiny::Exceptions
 
     protected:
         /*! The name of the affected TinyORM model.. */
-        const QString m_model;
+        QString m_model;
         /*! The name of the relation. */
-        const QString m_relation;
+        QString m_relation;
 
     private:
         /*! Format the error message. */
