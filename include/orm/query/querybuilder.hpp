@@ -92,7 +92,7 @@ namespace Query
         std::tuple<int, QSqlQuery> remove();
         /*! Delete records from the database. */
         template<Remove T>
-        std::tuple<int, QSqlQuery> deleteRow(T &&id);
+        inline std::tuple<int, QSqlQuery> deleteRow(T &&id);
         /*! Delete records from the database. */
         template<Remove T>
         std::tuple<int, QSqlQuery> remove(T &&id);
@@ -102,20 +102,20 @@ namespace Query
 
         /* Select */
         /*! Retrieve the "count" result of the query. */
-        quint64 count(const QVector<Column> &columns = {ASTERISK}) const;
+        inline quint64 count(const QVector<Column> &columns = {ASTERISK}) const;
         /*! Retrieve the "count" result of the query. */
         template<typename = void>
-        quint64 count(const Column &column);
+        inline quint64 count(const Column &column);
         /*! Retrieve the minimum value of a given column. */
-        QVariant min(const Column &column) const;
+        inline QVariant min(const Column &column) const;
         /*! Retrieve the maximum value of a given column. */
-        QVariant max(const Column &column) const;
+        inline QVariant max(const Column &column) const;
         /*! Retrieve the sum of the values of a given column. */
-        QVariant sum(const Column &column) const;
+        inline QVariant sum(const Column &column) const;
         /*! Retrieve the average of the values of a given column. */
-        QVariant avg(const Column &column) const;
+        inline QVariant avg(const Column &column) const;
         /*! Alias for the "avg" method. */
-        QVariant average(const Column &column) const;
+        inline QVariant average(const Column &column) const;
 
         /*! Execute an aggregate function on the database. */
         QVariant aggregate(const QString &function,
@@ -132,7 +132,7 @@ namespace Query
 
         /*! Set a select subquery on the query. */
         template<Queryable T>
-        Builder &select(T &&query, const QString &as);
+        inline Builder &select(T &&query, const QString &as);
         /*! Add a select subquery to the query. */
         template<Queryable T>
         Builder &addSelect(T &&query, const QString &as);
@@ -167,76 +167,92 @@ namespace Query
 
         /*! Add a join clause to the query. */
         template<JoinTable T>
-        Builder &join(T &&table, const QString &first, const QString &comparison,
-                      const QVariant &second, const QString &type = INNER,
-                      bool where = false);
+        inline Builder &
+        join(T &&table, const QString &first, const QString &comparison,
+             const QVariant &second, const QString &type = INNER, bool where = false);
         /*! Add an advanced join clause to the query. */
         template<JoinTable T>
-        Builder &join(T &&table, const std::function<void(JoinClause &)> &callback,
-                      const QString &type = INNER);
+        inline Builder &
+        join(T &&table, const std::function<void(JoinClause &)> &callback,
+             const QString &type = INNER);
         /*! Add a "join where" clause to the query. */
         template<JoinTable T>
-        Builder &joinWhere(T &&table, const QString &first, const QString &comparison,
-                           const QVariant &second, const QString &type = INNER);
+        inline Builder &
+        joinWhere(T &&table, const QString &first, const QString &comparison,
+                  const QVariant &second, const QString &type = INNER);
 
         /*! Add a left join to the query. */
         template<JoinTable T>
-        Builder &leftJoin(T &&table, const QString &first, const QString &comparison,
-                          const QVariant &second);
+        inline Builder &
+        leftJoin(T &&table, const QString &first, const QString &comparison,
+                 const QVariant &second);
         /*! Add an advanced left join to the query. */
         template<JoinTable T>
-        Builder &leftJoin(T &&table, const std::function<void(JoinClause &)> &callback);
+        inline Builder &
+        leftJoin(T &&table, const std::function<void(JoinClause &)> &callback);
         /*! Add a "join where" clause to the query. */
         template<JoinTable T>
-        Builder &leftJoinWhere(T &&table, const QString &first,
-                               const QString &comparison, const QVariant &second);
+        inline Builder &
+        leftJoinWhere(T &&table, const QString &first, const QString &comparison,
+                      const QVariant &second);
 
         /*! Add a right join to the query. */
         template<JoinTable T>
-        Builder &rightJoin(T &&table, const QString &first, const QString &comparison,
-                           const QVariant &second);
+        inline Builder &
+        rightJoin(T &&table, const QString &first, const QString &comparison,
+                  const QVariant &second);
         /*! Add an advanced right join to the query. */
         template<JoinTable T>
-        Builder &rightJoin(T &&table, const std::function<void(JoinClause &)> &callback);
+        inline Builder &
+        rightJoin(T &&table, const std::function<void(JoinClause &)> &callback);
         /*! Add a "right join where" clause to the query. */
         template<JoinTable T>
-        Builder &rightJoinWhere(T &&table, const QString &first,
-                                const QString &comparison, const QVariant &second);
+        inline Builder &
+        rightJoinWhere(T &&table, const QString &first, const QString &comparison,
+                       const QVariant &second);
 
         /*! Add a "cross join" clause to the query. */
         template<JoinTable T>
-        Builder &crossJoin(T &&table, const QString &first, const QString &comparison,
-                           const QVariant &second);
+        inline Builder &
+        crossJoin(T &&table, const QString &first, const QString &comparison,
+                  const QVariant &second);
         /*! Add an advanced "cross join" clause to the query. */
         template<JoinTable T>
-        Builder &crossJoin(T &&table, const std::function<void(JoinClause &)> &callback);
+        inline Builder &
+        crossJoin(T &&table, const std::function<void(JoinClause &)> &callback);
 
         /*! Add a subquery join clause to the query. */
         template<SubQuery T>
-        Builder &joinSub(T &&query, const QString &as, const QString &first,
-                         const QString &comparison, const QVariant &second,
-                         const QString &type = INNER, bool where = false);
+        inline Builder &
+        joinSub(T &&query, const QString &as, const QString &first,
+                const QString &comparison, const QVariant &second,
+                const QString &type = INNER, bool where = false);
         /*! Add a subquery join clause to the query. */
         template<SubQuery T>
-        Builder &joinSub(T &&query, const QString &as,
-                         const std::function<void(JoinClause &)> &callback,
-                         const QString &type = INNER);
+        inline Builder &
+        joinSub(T &&query, const QString &as,
+                const std::function<void(JoinClause &)> &callback,
+                const QString &type = INNER);
         /*! Add a subquery left join to the query. */
         template<SubQuery T>
-        Builder &leftJoinSub(T &&query, const QString &as, const QString &first,
-                             const QString &comparison, const QVariant &second);
+        inline Builder &
+        leftJoinSub(T &&query, const QString &as, const QString &first,
+                    const QString &comparison, const QVariant &second);
         /*! Add a subquery left join to the query. */
         template<SubQuery T>
-        Builder &leftJoinSub(T &&query, const QString &as,
-                             const std::function<void(JoinClause &)> &callback);
+        inline Builder &
+        leftJoinSub(T &&query, const QString &as,
+                    const std::function<void(JoinClause &)> &callback);
         /*! Add a subquery right join to the query. */
         template<SubQuery T>
-        Builder &rightJoinSub(T &&query, const QString &as, const QString &first,
-                              const QString &comparison, const QVariant &second);
+        inline Builder &
+        rightJoinSub(T &&query, const QString &as, const QString &first,
+                     const QString &comparison, const QVariant &second);
         /*! Add a subquery right join to the query. */
         template<SubQuery T>
-        Builder &rightJoinSub(T &&query, const QString &as,
-                              const std::function<void(JoinClause &)> &callback);
+        inline Builder &
+        rightJoinSub(T &&query, const QString &as,
+                     const std::function<void(JoinClause &)> &callback);
 
         /*! Add a basic where clause to the query. */
         template<WhereValue T>
@@ -321,13 +337,13 @@ namespace Query
                        const QString &condition = AND);
         /*! Add an "or where" clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
-        Builder &orWhere(C &&column, const QString &comparison, V &&value);
+        inline Builder &orWhere(C &&column, const QString &comparison, V &&value);
         /*! Add a basic equal where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
-        Builder &whereEq(C &&column, V &&value, const QString &condition = AND);
+        inline Builder &whereEq(C &&column, V &&value, const QString &condition = AND);
         /*! Add an equal "or where" clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
-        Builder &orWhereEq(C &&column, V &&value);
+        inline Builder &orWhereEq(C &&column, V &&value);
 
         /*! Add a full sub-select to the "where" clause. */
         template<WhereValueSubQuery T>
@@ -346,7 +362,7 @@ namespace Query
         Builder &groupBy(const Column &group);
         /*! Add a "group by" clause to the query. */
         template<ColumnConcept ...Args>
-        Builder &groupBy(Args &&...groups);
+        inline Builder &groupBy(Args &&...groups);
 
         /*! Add a raw "groupBy" clause to the query. */
         Builder &groupByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
@@ -374,7 +390,7 @@ namespace Query
         Builder &orderBy(T &&query, const QString &direction = ASC);
         /*! Add a descending "order by" clause to the query with a subquery ordering. */
         template<Queryable T>
-        Builder &orderByDesc(T &&query);
+        inline Builder &orderByDesc(T &&query);
 
         /*! Add a raw "order by" clause to the query. */
         Builder &orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
@@ -426,14 +442,14 @@ namespace Query
 
         /* Getters / Setters */
         /*! Get a database connection. */
-        ConnectionInterface &getConnection() const;
+        inline ConnectionInterface &getConnection() const;
         /*! Get the query grammar instance. */
-        const QueryGrammar &getGrammar() const;
+        inline const QueryGrammar &getGrammar() const;
 
         /*! Get the current query value bindings as flattened QVector. */
         QVector<QVariant> getBindings() const;
         /*! Get the raw map of bindings. */
-        const BindingsMap &getRawBindings() const;
+        inline const BindingsMap &getRawBindings() const;
         /*! Add a binding to the query. */
         Builder &addBinding(const QVariant &binding,
                             BindingType type = BindingType::WHERE);
@@ -448,40 +464,38 @@ namespace Query
                              BindingType type = BindingType::WHERE);
 
         /*! Get an aggregate function and column to be run. */
-        const std::optional<AggregateItem> &getAggregate() const;
+        inline const std::optional<AggregateItem> &getAggregate() const;
         /*! Check if the query returns distinct results. */
-        const std::variant<bool, QStringList> &
-        getDistinct() const;
+        inline const std::variant<bool, QStringList> &getDistinct() const;
         /*! Check if the query returns distinct results. */
         template<typename T> requires std::same_as<T, bool>
-        bool getDistinct() const;
+        inline bool getDistinct() const;
         /*! Check if the query returns distinct results. */
         template<typename T> requires std::same_as<T, QStringList>
-        const QStringList &
-        getDistinct() const;
+        inline const QStringList &getDistinct() const;
         // TODO check up all code and return references when appropriate silverqx
         /*! Get the columns that should be returned. */
-        const QVector<Column> &getColumns() const;
+        inline const QVector<Column> &getColumns() const;
         /*! Set the columns that should be returned. */
-        Builder &setColumns(const QVector<Column> &columns);
+        inline Builder &setColumns(const QVector<Column> &columns);
         /*! Get the table associated with the query builder. */
-        const std::variant<std::monostate, QString, Expression> &getFrom() const;
+        inline const FromClause &getFrom() const;
         /*! Get the table joins for the query. */
-        const QVector<QSharedPointer<JoinClause>> &getJoins() const;
+        inline const QVector<QSharedPointer<JoinClause>> &getJoins() const;
         /*! Get the where constraints for the query. */
-        const QVector<WhereConditionItem> &getWheres() const;
+        inline const QVector<WhereConditionItem> &getWheres() const;
         /*! Get the groupings for the query. */
-        const QVector<Column> &getGroups() const;
+        inline const QVector<Column> &getGroups() const;
         /*! Get the having constraints for the query. */
-        const QVector<HavingConditionItem> &getHavings() const;
+        inline const QVector<HavingConditionItem> &getHavings() const;
         /*! Get the orderings for the query. */
-        const QVector<OrderByItem> &getOrders() const;
+        inline const QVector<OrderByItem> &getOrders() const;
         /*! Get the maximum number of records to return. */
-        int getLimit() const;
+        inline int getLimit() const;
         /*! Get the number of records to skip. */
-        int getOffset() const;
+        inline int getOffset() const;
         /*! Get the row locking. */
-        const std::variant<std::monostate, bool, QString> &getLock() const;
+        inline const std::variant<std::monostate, bool, QString> &getLock() const;
 
         /* Other methods */
         /*! Get a new instance of the query builder. */
@@ -570,7 +584,7 @@ namespace Query
                 std::is_invocable_v<T, Orm::QueryBuilder &>;
 
         /*! Create a new query instance for a sub-query. */
-        virtual QSharedPointer<Builder> forSubQuery() const;
+        inline virtual QSharedPointer<Builder> forSubQuery() const;
 
         /*! Prepend the database name if the given query is on another database. */
         Builder &prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const;
@@ -588,7 +602,7 @@ namespace Query
         QSqlQuery runSelect();
 
         /*! Set the table which the query is targeting. */
-        Builder &setFrom(const FromClause &from);
+        inline Builder &setFrom(const FromClause &from);
 
         /*! Add a join clause to the query, common code. */
         Builder &joinInternal(
@@ -705,28 +719,28 @@ namespace Query
         return result;
     }
 
-    inline quint64 Builder::count(const QVector<Column> &columns) const
+    quint64 Builder::count(const QVector<Column> &columns) const
     {
         return aggregate(QStringLiteral("count"), columns).template value<quint64>();
     }
 
     template<typename>
-    inline quint64 Builder::count(const Column &column)
+    quint64 Builder::count(const Column &column)
     {
         return aggregate(QStringLiteral("count"), {column}).template value<quint64>();
     }
 
-    inline QVariant Builder::min(const Column &column) const
+    QVariant Builder::min(const Column &column) const
     {
         return aggregate(QStringLiteral("min"), {column});
     }
 
-    inline QVariant Builder::max(const Column &column) const
+    QVariant Builder::max(const Column &column) const
     {
         return aggregate(QStringLiteral("max"), {column});
     }
 
-    inline QVariant Builder::sum(const Column &column) const
+    QVariant Builder::sum(const Column &column) const
     {
         auto result = aggregate(QStringLiteral("sum"), {column});
 
@@ -736,18 +750,18 @@ namespace Query
         return result;
     }
 
-    inline QVariant Builder::avg(const Column &column) const
+    QVariant Builder::avg(const Column &column) const
     {
         return aggregate(QStringLiteral("avg"), {column});
     }
 
-    inline QVariant Builder::average(const Column &column) const
+    QVariant Builder::average(const Column &column) const
     {
         return avg(column);
     }
 
     template<Queryable T>
-    inline Builder &Builder::select(T &&query, const QString &as)
+    Builder &Builder::select(T &&query, const QString &as)
     {
         return selectSub(std::forward<T>(query), as);
     }
@@ -774,7 +788,7 @@ namespace Query
     }
 
     template<Remove T>
-    inline std::tuple<int, QSqlQuery> Builder::deleteRow(T &&id)
+    std::tuple<int, QSqlQuery> Builder::deleteRow(T &&id)
     {
         return remove(std::forward<T>(id));
     }
@@ -804,7 +818,7 @@ namespace Query
     }
 
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::join(T &&table, const QString &first, const QString &comparison,
                   const QVariant &second, const QString &type, const bool where)
     {
@@ -815,7 +829,7 @@ namespace Query
 
     // FUTURE joinSub, missing where param, also in joinSub silverqx
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::join(T &&table, const std::function<void(JoinClause &)> &callback,
                   const QString &type)
     {
@@ -825,7 +839,7 @@ namespace Query
     }
 
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::joinWhere(T &&table, const QString &first, const QString &comparison,
                        const QVariant &second, const QString &type)
     {
@@ -833,7 +847,7 @@ namespace Query
     }
 
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::leftJoin(T &&table, const QString &first, const QString &comparison,
                       const QVariant &second)
     {
@@ -841,14 +855,14 @@ namespace Query
     }
 
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::leftJoin(T &&table, const std::function<void(JoinClause &)> &callback)
     {
         return join(std::forward<T>(table), callback, LEFT);
     }
 
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::leftJoinWhere(T &&table, const QString &first, const QString &comparison,
                            const QVariant &second)
     {
@@ -856,7 +870,7 @@ namespace Query
     }
 
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::rightJoin(T &&table, const QString &first, const QString &comparison,
                        const QVariant &second)
     {
@@ -864,14 +878,14 @@ namespace Query
     }
 
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::rightJoin(T &&table, const std::function<void(JoinClause &)> &callback)
     {
         return join(table, callback, RIGHT);
     }
 
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::rightJoinWhere(T &&table, const QString &first, const QString &comparison,
                             const QVariant &second)
     {
@@ -881,7 +895,7 @@ namespace Query
     // TODO docs missing example, because of different api silverqx
     // NOTE api different silverqx
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::crossJoin(T &&table, const QString &first, const QString &comparison,
                        const QVariant &second)
     {
@@ -889,14 +903,14 @@ namespace Query
     }
 
     template<JoinTable T>
-    inline Builder &
+    Builder &
     Builder::crossJoin(T &&table, const std::function<void(JoinClause &)> &callback)
     {
         return join(table, callback, CROSS);
     }
 
     template<SubQuery T>
-    inline Builder &
+    Builder &
     Builder::joinSub(T &&query, const QString &as, const QString &first,
                      const QString &comparison, const QVariant &second,
                      const QString &type, const bool where)
@@ -906,7 +920,7 @@ namespace Query
     }
 
     template<SubQuery T>
-    inline Builder &
+    Builder &
     Builder::joinSub(T &&query, const QString &as,
                      const std::function<void(JoinClause &)> &callback,
                      const QString &type)
@@ -915,7 +929,7 @@ namespace Query
     }
 
     template<SubQuery T>
-    inline Builder &
+    Builder &
     Builder::leftJoinSub(T &&query, const QString &as, const QString &first,
                          const QString &comparison, const QVariant &second)
     {
@@ -923,7 +937,7 @@ namespace Query
     }
 
     template<SubQuery T>
-    inline Builder &
+    Builder &
     Builder::leftJoinSub(T &&query, const QString &as,
                          const std::function<void(JoinClause &)> &callback)
     {
@@ -931,7 +945,7 @@ namespace Query
     }
 
     template<SubQuery T>
-    inline Builder &
+    Builder &
     Builder::rightJoinSub(T &&query, const QString &as, const QString &first,
                           const QString &comparison, const QVariant &second)
     {
@@ -939,7 +953,7 @@ namespace Query
     }
 
     template<SubQuery T>
-    inline Builder &
+    Builder &
     Builder::rightJoinSub(T &&query, const QString &as,
                           const std::function<void(JoinClause &)> &callback)
     {
@@ -1000,19 +1014,19 @@ namespace Query
     }
 
     template<Queryable C, WhereValue V>
-    inline Builder &Builder::orWhere(C &&column, const QString &comparison, V &&value)
+    Builder &Builder::orWhere(C &&column, const QString &comparison, V &&value)
     {
         return where(std::forward<C>(column), comparison, std::forward<V>(value), OR);
     }
 
     template<Queryable C, WhereValue V>
-    inline Builder &Builder::whereEq(C &&column, V &&value, const QString &condition)
+    Builder &Builder::whereEq(C &&column, V &&value, const QString &condition)
     {
         return where(std::forward<C>(column), EQ, std::forward<V>(value), condition);
     }
 
     template<Queryable C, WhereValue V>
-    inline Builder &Builder::orWhereEq(C &&column, V &&value)
+    Builder &Builder::orWhereEq(C &&column, V &&value)
     {
         return where(std::forward<C>(column), EQ, std::forward<V>(value), OR);
     }
@@ -1033,7 +1047,7 @@ namespace Query
     }
 
     template<ColumnConcept ...Args>
-    inline Builder &Builder::groupBy(Args &&...groups)
+    Builder &Builder::groupBy(Args &&...groups)
     {
         return groupBy(QVector<Column> {std::forward<Args>(groups)...});
     }
@@ -1049,7 +1063,7 @@ namespace Query
     }
 
     template<Queryable T>
-    inline Builder &Builder::orderByDesc(T &&query)
+    Builder &Builder::orderByDesc(T &&query)
     {
         return orderBy(std::forward<T>(query), DESC);
     }
@@ -1082,52 +1096,52 @@ namespace Query
         return update(columns);
     }
 
-    inline ConnectionInterface &Builder::getConnection() const
+    ConnectionInterface &Builder::getConnection() const
     {
         return m_connection;
     }
 
-    inline const Builder::QueryGrammar &Builder::getGrammar() const
+    const Builder::QueryGrammar &Builder::getGrammar() const
     {
         return m_grammar;
     }
 
-    inline const BindingsMap &Builder::getRawBindings() const
+    const BindingsMap &Builder::getRawBindings() const
     {
         return m_bindings;
     }
 
-    inline const std::optional<AggregateItem> &Builder::getAggregate() const
+    const std::optional<AggregateItem> &Builder::getAggregate() const
     {
         return m_aggregate;
     }
 
-    inline const std::variant<bool, QStringList> &
+    const std::variant<bool, QStringList> &
     Builder::getDistinct() const
     {
         return m_distinct;
     }
 
     template<typename T> requires std::same_as<T, bool>
-    inline bool Builder::getDistinct() const
+    bool Builder::getDistinct() const
     {
         return std::get<bool>(m_distinct);
     }
 
     template<typename T> requires std::same_as<T, QStringList>
-    inline const QStringList &
+    const QStringList &
     Builder::getDistinct() const
     {
         return std::get<QStringList>(m_distinct);
     }
 
-    inline const QVector<Column> &
+    const QVector<Column> &
     Builder::getColumns() const
     {
         return m_columns;
     }
 
-    inline Builder &
+    Builder &
     Builder::setColumns(const QVector<Column> &columns)
     {
         m_columns = columns;
@@ -1135,65 +1149,65 @@ namespace Query
         return *this;
     }
 
-    inline const std::variant<std::monostate, QString, Expression> &
+    const FromClause &
     Builder::getFrom() const
     {
         return m_from;
     }
 
-    inline const QVector<QSharedPointer<JoinClause>> &
+    const QVector<QSharedPointer<JoinClause>> &
     Builder::getJoins() const
     {
         return m_joins;
     }
 
-    inline const QVector<WhereConditionItem> &
+    const QVector<WhereConditionItem> &
     Builder::getWheres() const
     {
         return m_wheres;
     }
 
-    inline const QVector<Column> &
+    const QVector<Column> &
     Builder::getGroups() const
     {
         return m_groups;
     }
 
-    inline const QVector<HavingConditionItem> &
+    const QVector<HavingConditionItem> &
     Builder::getHavings() const
     {
         return m_havings;
     }
 
-    inline const QVector<OrderByItem> &
+    const QVector<OrderByItem> &
     Builder::getOrders() const
     {
         return m_orders;
     }
 
-    inline int Builder::getLimit() const
+    int Builder::getLimit() const
     {
         return m_limit;
     }
 
-    inline int Builder::getOffset() const
+    int Builder::getOffset() const
     {
         return m_offset;
     }
 
-    inline const std::variant<std::monostate, bool, QString> &
+    const std::variant<std::monostate, bool, QString> &
     Builder::getLock() const
     {
         return m_lock;
     }
 
-    inline QSharedPointer<Builder>
+    QSharedPointer<Builder>
     Builder::forSubQuery() const
     {
         return newQuery();
     }
 
-    inline Builder &
+    Builder &
     Builder::setFrom(const FromClause &from)
     {
         m_from = from;
