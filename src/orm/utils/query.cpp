@@ -8,6 +8,12 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Utils
 {
 
+namespace
+{
+    const auto null_SL    = QStringLiteral("null"); // clazy:exclude=non-pod-global-static
+    const auto INVALID_SL = QStringLiteral("INVALID"); // clazy:exclude=non-pod-global-static
+}
+
 QString Query::parseExecutedQuery(const QSqlQuery &query)
 {
     auto executedQuery = query.executedQuery();
@@ -19,9 +25,9 @@ QString Query::parseExecutedQuery(const QSqlQuery &query)
     for (auto &&boundValueRaw : query.boundValues()) {
 
         if (boundValueRaw.isNull())
-            boundValue = "null";
+            boundValue = null_SL;
         else if (!boundValueRaw.isValid())
-            boundValue = "INVALID";
+            boundValue = INVALID_SL;
         else
             // Support for string quoting
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -32,7 +38,7 @@ QString Query::parseExecutedQuery(const QSqlQuery &query)
                          ? QStringLiteral("\"%1\"").arg(boundValueRaw.value<QString>())
                          : boundValueRaw.value<QString>();
 
-        executedQuery.replace(executedQuery.indexOf('?'), 1, boundValue);
+        executedQuery.replace(executedQuery.indexOf(QChar('?')), 1, boundValue);
     }
 
     return executedQuery;
@@ -46,9 +52,9 @@ QString Query::parseExecutedQueryForPretend(QString query,
     for (const auto &bindingRaw : bindings) {
 
         if (bindingRaw.isNull())
-            boundValue = "null";
+            boundValue = null_SL;
         else if (!bindingRaw.isValid())
-            boundValue = "INVALID";
+            boundValue = INVALID_SL;
         else
             // Support for string quoting
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -59,7 +65,7 @@ QString Query::parseExecutedQueryForPretend(QString query,
                          ? QStringLiteral("\"%1\"").arg(bindingRaw.value<QString>())
                          : bindingRaw.value<QString>();
 
-        query.replace(query.indexOf('?'), 1, boundValue);
+        query.replace(query.indexOf(QChar('?')), 1, boundValue);
     }
 
     return query;
