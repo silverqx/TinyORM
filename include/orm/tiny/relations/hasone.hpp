@@ -107,8 +107,8 @@ namespace Orm::Tiny::Relations
         )
             return this->getDefaultFor(this->m_parent);
 
-        // NRVO should kick in, I leave it const
-        const auto first = this->m_query->first();
+        // NRVO should kick in
+        auto first = this->m_query->first();
 
         return first ? first : this->getDefaultFor(this->m_parent);
     }

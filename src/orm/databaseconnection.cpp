@@ -51,7 +51,7 @@ DatabaseConnection::DatabaseConnection(
     , m_database(database)
     , m_tablePrefix(tablePrefix)
     , m_config(config)
-    , m_savepointNamespace(Orm::Support::DatabaseConfiguration::defaultSavepointNamespace)
+    , m_savepointNamespace(Support::DatabaseConfiguration::defaultSavepointNamespace)
     , m_connectionName(getConfig(NAME).value<QString>())
     , m_hostName(getConfig(host_).value<QString>())
 {}
@@ -102,8 +102,8 @@ bool DatabaseConnection::beginTransaction()
 
     if (!m_pretending && !getQtConnection().transaction())
         throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2").arg(__tiny_func__,
-                                                                    query),
+                QStringLiteral("Statement in %1() failed : %2")
+                    .arg(__tiny_func__, query),
                 getRawQtConnection().lastError());
 
     m_inTransaction = true;
@@ -138,8 +138,8 @@ bool DatabaseConnection::commit()
     // TODO rewrite transactions to DatabaseConnection::statement, so I have access to QSqlQuery for logQuery() silverqx
     if (!m_pretending && !getQtConnection().commit())
         throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2").arg(__tiny_func__,
-                                                                    query),
+                QStringLiteral("Statement in %1() failed : %2")
+                    .arg(__tiny_func__, query),
                 getRawQtConnection().lastError());
 
     m_inTransaction = false;
@@ -173,8 +173,8 @@ bool DatabaseConnection::rollBack()
 
     if (!m_pretending && !getQtConnection().rollback())
         throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2").arg(__tiny_func__,
-                                                                    query),
+                QStringLiteral("Statement in %1() failed : %2")
+                    .arg(__tiny_func__, query),
                 getRawQtConnection().lastError());
 
     m_inTransaction = false;
@@ -534,8 +534,6 @@ QSqlQuery DatabaseConnection::getQtQuery()
 QVector<QVariant>
 DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
 {
-//    const auto &grammar = getQueryGrammar();
-
     for (auto &binding : bindings) {
         // Nothing to convert
         if (!binding.isValid() || binding.isNull())
@@ -995,7 +993,7 @@ DatabaseConnection::withFreshQueryLog(const std::function<QVector<Log>()> &callb
     /* Now we'll execute this callback and capture the result. Once it has been
        executed we will restore original values and give back the value of the callback
        so the original callers can have the results. */
-    const auto result = std::invoke(callback);
+    auto result = std::invoke(callback);
 
     // Restore
     m_queryLog.swap(m_queryLogForPretend);
@@ -1033,6 +1031,7 @@ void DatabaseConnection::logDisconnected()
 {
     if (m_disconnectedLogged)
         return;
+
     m_disconnectedLogged = true;
 
     // Reset connected flag
@@ -1049,6 +1048,7 @@ void DatabaseConnection::logConnected()
 {
     if (m_connectedLogged)
         return;
+
     m_connectedLogged = true;
 
     // Reset disconnected flag
