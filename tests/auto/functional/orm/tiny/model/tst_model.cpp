@@ -22,6 +22,7 @@ using Orm::Constants::NAME;
 using Orm::Constants::QSQLITE;
 using Orm::Constants::UPDATED_AT;
 
+using Orm::DB;
 using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;

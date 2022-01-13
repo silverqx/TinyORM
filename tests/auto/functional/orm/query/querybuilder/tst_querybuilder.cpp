@@ -11,6 +11,7 @@
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::DB;
 
 using QueryBuilder = Orm::Query::Builder;
 

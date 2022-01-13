@@ -20,6 +20,8 @@ using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 
+using Orm::DB;
+
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::MassAssignmentError;
 

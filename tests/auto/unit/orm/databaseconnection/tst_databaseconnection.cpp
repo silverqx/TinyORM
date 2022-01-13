@@ -7,6 +7,7 @@
 #include "databases.hpp"
 
 using Orm::Constants::QMYSQL;
+using Orm::DB;
 using Orm::MySqlConnection;
 
 using TestUtils::Databases;

@@ -32,6 +32,9 @@ using Orm::Constants::username_;
 using Orm::Constants::UTC;
 using Orm::Constants::UTF8;
 using Orm::Constants::UTF8MB4;
+
+using Orm::DB;
+
 using Orm::Exceptions::LogicError;
 using Orm::Exceptions::RuntimeError;
 

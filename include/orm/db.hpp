@@ -288,8 +288,6 @@ namespace Orm
 
 } // namespace Orm
 
-using DB = Orm::DB;
-
 TINYORM_END_COMMON_NAMESPACE
 
 #endif // ORM_DB_HPP
