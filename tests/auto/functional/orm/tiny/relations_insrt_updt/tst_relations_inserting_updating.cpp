@@ -17,6 +17,7 @@ using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Exceptions::QueryError;
 using Orm::One;
+
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
 
