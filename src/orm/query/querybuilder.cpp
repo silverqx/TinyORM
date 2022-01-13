@@ -14,6 +14,8 @@ Builder::Builder(ConnectionInterface &connection, const QueryGrammar &grammar)
     , m_grammar(grammar)
 {}
 
+/* Retrieving results */
+
 QSqlQuery
 Builder::get(const QVector<Column> &columns)
 {
@@ -92,12 +94,6 @@ QString Builder::toSql()
     return m_grammar.compileSelect(*this);
 }
 
-std::optional<QSqlQuery>
-Builder::insert(const QVariantMap &values)
-{
-    return insert(QVector<QVariantMap> {values});
-}
-
 namespace
 {
     const auto flatValuesForInsert = [](const auto &values)
@@ -110,6 +106,8 @@ namespace
         return flattenValues;
     };
 } // namespace
+
+/* Insert, Update, Delete */
 
 // TEST for insert silverqx
 std::optional<QSqlQuery>
@@ -126,6 +124,12 @@ Builder::insert(const QVector<QVariantMap> &values)
 
     return m_connection.insert(m_grammar.compileInsert(*this, values),
                                cleanBindings(flatValuesForInsert(values)));
+}
+
+std::optional<QSqlQuery>
+Builder::insert(const QVariantMap &values)
+{
+    return insert(QVector<QVariantMap> {values});
 }
 
 // FEATURE dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
@@ -189,6 +193,8 @@ void Builder::truncate()
         else
             m_connection.statement(sql, bindings);
 }
+
+/* Select */
 
 QVariant Builder::aggregate(const QString &function,
                             const QVector<Column> &columns) const
@@ -615,6 +621,8 @@ Builder &Builder::forPage(const int page, const int perPage)
     return offset((page - 1) * perPage).limit(perPage);
 }
 
+/* Pessimistic Locking */
+
 Builder &Builder::lockForUpdate()
 {
     return lock(true);
@@ -659,6 +667,8 @@ Builder &Builder::lock(QString &&value)
 
     return *this;
 }
+
+/* Getters / Setters */
 
 QVector<QVariant> Builder::getBindings() const
 {
@@ -718,6 +728,8 @@ Builder &Builder::setBindings(QVector<QVariant> &&bindings, const BindingType ty
 
     return *this;
 }
+
+/* Other methods */
 
 // TODO next revisit QSharedPointer, after few weeks I'm pretty sure that this can/should be std::unique_pre, like in the TinyBuilder, I need to check if more instances need to save this pointer at once, if don't then I have to change it silverqx
 QSharedPointer<Builder> Builder::newQuery() const
@@ -827,6 +839,8 @@ Builder Builder::cloneWithoutBindings(
     return copy;
 }
 
+/* protected */
+
 bool Builder::invalidOperator(const QString &comparison) const
 {
     const auto comparison_ = comparison.toLower();
@@ -912,7 +926,7 @@ Builder::onceWithColumns(
     if (original.isEmpty())
         m_columns = columns;
 
-    const auto result = std::invoke(callback);
+    auto result = std::invoke(callback);
 
     // After running the callback, the columns are reset to the original value
     m_columns = original;
@@ -977,6 +991,8 @@ QString Builder::stripTableForPluck(const QString &column) const
     return column.split(as).last().trimmed();
 }
 
+/* Getters / Setters */
+
 Builder &Builder::setAggregate(const QString &function, const QVector<Column> &columns)
 {
 // TODO clang13 doesn't support in_place construction of aggregates in std::optional.emplace() 😲, gcc and msvc are ok silverqx
@@ -994,6 +1010,8 @@ Builder &Builder::setAggregate(const QString &function, const QVector<Column> &c
 
     return *this;
 }
+
+/* private */
 
 QSqlQuery Builder::runSelect()
 {

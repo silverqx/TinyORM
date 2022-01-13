@@ -44,6 +44,7 @@ namespace Query
         /*! Virtual destructor. */
         inline virtual ~Builder() = default;
 
+        /* Retrieving results */
         /*! Execute the query as a "select" statement. */
         QSqlQuery get(const QVector<Column> &columns = {ASTERISK});
         /*! Execute a query for a single record by ID. */
@@ -66,21 +67,21 @@ namespace Query
 //        { dd($this->toSql(), $this->getBindings()); }
 
         /* Insert, Update, Delete */
-        /*! Insert a new record into the database. */
-        std::optional<QSqlQuery>
-        insert(const QVariantMap &values);
         /*! Insert new records into the database. */
         std::optional<QSqlQuery>
         insert(const QVector<QVariantMap> &values);
+        /*! Insert a new record into the database. */
+        std::optional<QSqlQuery>
+        insert(const QVariantMap &values);
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVariantMap &values, const QString &sequence = "");
 
-        /*! Insert a new record into the database while ignoring errors. */
-        std::tuple<int, std::optional<QSqlQuery>>
-        insertOrIgnore(const QVariantMap &values);
         /*! Insert new records into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVector<QVariantMap> &values);
+        /*! Insert a new record into the database while ignoring errors. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVariantMap &values);
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
@@ -688,6 +689,8 @@ namespace Query
         std::variant<std::monostate, bool, QString> m_lock {};
     };
 
+    /* Retrieving results */
+
     template<typename T>
     std::map<T, QVariant>
     Builder::pluck(const QString &column, const QString &key)
@@ -718,6 +721,29 @@ namespace Query
 
         return result;
     }
+
+    /* Insert, Update, Delete */
+
+    template<Remove T>
+    std::tuple<int, QSqlQuery> Builder::deleteRow(T &&id)
+    {
+        return remove(std::forward<T>(id));
+    }
+
+    template<Remove T>
+    std::tuple<int, QSqlQuery> Builder::remove(T &&id)
+    {
+        /* If an ID is passed to the method, we will set the where clause to check the
+           ID to let developers to simply and quickly remove a single row from this
+           database without manually specifying the "where" clauses on the query.
+           m_from will be wrapped in the Grammar. */
+        where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)), EQ,
+              std::forward<T>(id), AND);
+
+        return remove();
+    }
+
+    /* Select */
 
     quint64 Builder::count(const QVector<Column> &columns) const
     {
@@ -785,25 +811,6 @@ namespace Query
         return selectRaw(QStringLiteral("(%1) as %2").arg(queryString,
                                                           m_grammar.wrap(as)),
                          bindings);
-    }
-
-    template<Remove T>
-    std::tuple<int, QSqlQuery> Builder::deleteRow(T &&id)
-    {
-        return remove(std::forward<T>(id));
-    }
-
-    template<Remove T>
-    std::tuple<int, QSqlQuery> Builder::remove(T &&id)
-    {
-        /* If an ID is passed to the method, we will set the where clause to check the
-           ID to let developers to simply and quickly remove a single row from this
-           database without manually specifying the "where" clauses on the query.
-           m_from will be wrapped in the Grammar. */
-        where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)), EQ,
-              std::forward<T>(id), AND);
-
-        return remove();
     }
 
     template<SubQuery T>
@@ -1096,6 +1103,8 @@ namespace Query
         return update(columns);
     }
 
+    /* Getters / Setters */
+
     ConnectionInterface &Builder::getConnection() const
     {
         return m_connection;
@@ -1201,11 +1210,15 @@ namespace Query
         return m_lock;
     }
 
+    /* protected */
+
     QSharedPointer<Builder>
     Builder::forSubQuery() const
     {
         return newQuery();
     }
+
+    /* private */
 
     Builder &
     Builder::setFrom(const FromClause &from)
