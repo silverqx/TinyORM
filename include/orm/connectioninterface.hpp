@@ -106,8 +106,7 @@ namespace Grammars
 
         /*! Run a select statement against the database. */
         virtual QSqlQuery
-        select(const QString &queryString,
-               const QVector<QVariant> &bindings = {}) = 0;
+        select(const QString &queryString, const QVector<QVariant> &bindings = {}) = 0;
 
         /*! Run a select statement against the database. */
         virtual QSqlQuery
@@ -119,18 +118,15 @@ namespace Grammars
 
         /*! Run an insert statement against the database. */
         virtual QSqlQuery
-        insert(const QString &queryString,
-               const QVector<QVariant> &bindings = {}) = 0;
+        insert(const QString &queryString, const QVector<QVariant> &bindings = {}) = 0;
 
         /*! Run an update statement against the database. */
         virtual std::tuple<int, QSqlQuery>
-        update(const QString &queryString,
-               const QVector<QVariant> &bindings = {}) = 0;
+        update(const QString &queryString, const QVector<QVariant> &bindings = {}) = 0;
 
         /*! Run a delete statement against the database. */
         virtual std::tuple<int, QSqlQuery>
-        remove(const QString &queryString,
-               const QVector<QVariant> &bindings = {}) = 0;
+        remove(const QString &queryString, const QVector<QVariant> &bindings = {}) = 0;
 
         /*! Execute an SQL statement and return the boolean result. */
         virtual QSqlQuery

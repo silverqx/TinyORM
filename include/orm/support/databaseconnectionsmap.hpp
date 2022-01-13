@@ -26,8 +26,8 @@ namespace Orm::Support
         inline DatabaseConnectionsMap() = default;
 
         /*! Type used to store database connections. */
-        using ConnectionsType = std::unordered_map<QString,
-                                                   std::unique_ptr<DatabaseConnection>>;
+        using ConnectionsType =
+                std::unordered_map<QString, std::unique_ptr<DatabaseConnection>>;
 
         /*! Return a reference to the database connections map. */
         inline ConnectionsType &operator*();

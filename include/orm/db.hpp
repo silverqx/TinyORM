@@ -29,9 +29,9 @@ namespace Orm
         inline static DatabaseManager *m_manager = nullptr;
 
     public:
-        /*! Deleted DB's default constructor, this is a pure library class. */
+        /*! Deleted default constructor, this is a pure library class. */
         DB() = delete;
-        /*! Deleted DB's destructor. */
+        /*! Deleted destructor. */
         ~DB() = delete;
 
         /* Proxy methods to the DatabaseManager */
@@ -101,7 +101,7 @@ namespace Orm
         static QSqlQuery qtQuery(const QString &connection = "");
 
         /*! Create a new raw query expression. */
-        static Query::Expression raw(const QVariant &value);
+        inline static Query::Expression raw(const QVariant &value);
 
         /*! Run a select statement against the database. */
         static QSqlQuery
@@ -281,7 +281,7 @@ namespace Orm
         static void forgetRecordModificationState(const QString &connection = "");
     };
 
-    inline Query::Expression DB::raw(const QVariant &value)
+    Query::Expression DB::raw(const QVariant &value)
     {
         return Query::Expression(value);
     }

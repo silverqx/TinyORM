@@ -154,7 +154,6 @@ function(tiny_sources out_headers out_sources)
         query/querybuilder.cpp
         schema/grammars/mysqlschemagrammar.cpp
         schema/grammars/postgresschemagrammar.cpp
-        schema/grammars/schemagrammar.cpp
         schema/grammars/sqliteschemagrammar.cpp
         schema/mysqlschemabuilder.cpp
         schema/postgresschemabuilder.cpp

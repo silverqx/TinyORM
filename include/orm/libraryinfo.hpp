@@ -15,14 +15,15 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
+    /*! Library class that provides information about TinyORM library. */
     class SHAREDLIB_EXPORT LibraryInfo
     {
         Q_DISABLE_COPY(LibraryInfo)
 
     public:
-        /*! Deleted DB's default constructor, this is a pure library class. */
+        /*! Deleted default constructor, this is a pure library class. */
         LibraryInfo() = delete;
-        /*! Deleted DB's destructor. */
+        /*! Deleted destructor. */
         ~LibraryInfo() = delete;
 
         /*! Return a string describing how this version of TinyORM library was built. */

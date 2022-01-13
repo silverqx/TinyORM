@@ -61,7 +61,7 @@ namespace Private
         std::stack<std::type_index> STORE_TYPEID;
 
     public:
-        /*! Deleted constructor, this is a pure library class. */
+        /*! Deleted default constructor, this is a pure library class. */
         HasNestedStore() = delete;
         /*! Deleted destructor. */
         ~HasNestedStore() = delete;

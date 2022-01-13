@@ -18,7 +18,11 @@ namespace Orm
     /*! Database connection resolver interface. */
     class ConnectionResolverInterface
     {
+        Q_DISABLE_COPY(ConnectionResolverInterface)
+
     public:
+        /*! Default constructor. */
+        inline ConnectionResolverInterface() = default;
         /*! Pure virtual destructor. */
         inline virtual ~ConnectionResolverInterface() = 0;
 

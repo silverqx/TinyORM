@@ -27,8 +27,6 @@ namespace Query
     {
         Q_DISABLE_COPY(DatabaseManager)
 
-        friend class DB;
-
         /*! Type for the Database Configuration. */
         using Configuration = Orm::Support::DatabaseConfiguration;
         /*! Type used for Database Connections map. */

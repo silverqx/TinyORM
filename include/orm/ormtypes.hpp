@@ -35,7 +35,7 @@ namespace Query
     /*! Type for the database column. */
     using Column = std::variant<QString, Query::Expression>;
 
-    /*! From clause defined in the QueryBuilder. */
+    /*! Type for the from clause. */
     using FromClause = std::variant<std::monostate, QString, Query::Expression>;
 
     /*! Binding types. */
@@ -52,6 +52,7 @@ namespace Query
         UNIONORDER,
     };
 
+    /*! Type for the query value bindings. */
     using BindingsMap = QMap<BindingType, QVector<QVariant>>;
 
     /*! Aggregate item. */

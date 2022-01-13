@@ -2,6 +2,7 @@
 #ifndef ORM_VERSION_HPP
 #define ORM_VERSION_HPP
 
+// Excluded for the Resource compiler
 #ifndef RC_INVOKED
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER

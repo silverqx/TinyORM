@@ -38,8 +38,8 @@ JoinClause &JoinClause::on(const QString &first, const QString &comparison,
 {
     /* On clauses can be chained, e.g.
 
-       $join->on('contacts.user_id', '=', 'users.id')
-            ->on('contacts.info_id', '=', 'info.id')
+       join.on("contacts.user_id", "=", "users.id")
+           .on("contacts.info_id", "=", "info.id")
 
        will produce the following SQL:
 

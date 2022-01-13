@@ -32,7 +32,6 @@ sourcesList += \
     $$PWD/orm/query/querybuilder.cpp \
     $$PWD/orm/schema/grammars/mysqlschemagrammar.cpp \
     $$PWD/orm/schema/grammars/postgresschemagrammar.cpp \
-    $$PWD/orm/schema/grammars/schemagrammar.cpp \
     $$PWD/orm/schema/grammars/sqliteschemagrammar.cpp \
     $$PWD/orm/schema/mysqlschemabuilder.cpp \
     $$PWD/orm/schema/postgresschemabuilder.cpp \

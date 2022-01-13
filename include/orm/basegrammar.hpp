@@ -74,7 +74,7 @@ namespace Query
         QVariant getValue(const Expression &expression) const;
 
         /*! Get the grammar's table prefix. */
-        QString getTablePrefix() const;
+        inline QString getTablePrefix() const;
         /*! Set the grammar's table prefix. */
         BaseGrammar &setTablePrefix(const QString &prefix);
 
@@ -84,7 +84,7 @@ namespace Query
     protected:
         /*! Convert the vector of column names into a delimited string. */
         template<ColumnContainer T>
-        QString columnize(const T &columns) const;
+        inline QString columnize(const T &columns) const;
 
         /*! Create query parameter place-holders for the vector. */
         template<Parametrize Container>
@@ -117,12 +117,12 @@ namespace Query
     };
 
     template<ColumnContainer T>
-    inline QString BaseGrammar::columnize(const T &columns) const
+    QString BaseGrammar::columnize(const T &columns) const
     {
         return columnizeInternal(wrapArray(columns));
     }
 
-    inline QString BaseGrammar::getTablePrefix() const
+    QString BaseGrammar::getTablePrefix() const
     {
         return m_tablePrefix;
     }

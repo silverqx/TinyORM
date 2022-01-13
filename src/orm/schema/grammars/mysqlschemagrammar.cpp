@@ -7,9 +7,9 @@ namespace Orm::Schema::Grammars
 
 QString MySqlSchemaGrammar::compileColumnListing(const QString &/*unused*/) const
 {
-    return "select `column_name` as `column_name` "
-           "from `information_schema`.`columns` "
-           "where `table_schema` = ? and `table_name` = ?";
+    return QStringLiteral("select `column_name` as `column_name` "
+                          "from `information_schema`.`columns` "
+                          "where `table_schema` = ? and `table_name` = ?");
 }
 
 } // namespace Orm::Schema::Grammars

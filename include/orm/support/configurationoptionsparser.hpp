@@ -28,6 +28,8 @@ namespace Support
         to the QSqlDatabase::setConnectOptions(). */
     class ConfigurationOptionsParser
     {
+        Q_DISABLE_COPY(ConfigurationOptionsParser)
+
     public:
         /*! Constructor. */
         explicit ConfigurationOptionsParser(const Connectors::Connector &connector);
@@ -35,6 +37,7 @@ namespace Support
         /*! Parse the database configuration, validate, prepare, and merge connection
             options. */
         QString parseConfiguration(const QVariantHash &config) const;
+
     protected:
         /*! Validate the 'options' configuration type, has to be the QString or
             QVariantHash. */
@@ -42,6 +45,7 @@ namespace Support
         /*! Prepare options for parseConfigOptions() function, convert to
             the QVariantHash if needed. */
         QVariantHash prepareConfigOptions(const QVariant &options) const;
+
         /*! Merge the TinyORM connector options with user's provided connection
             options defined in the config. */
         QVariantHash mergeOptions(const QVariantHash &connectortOptions,
