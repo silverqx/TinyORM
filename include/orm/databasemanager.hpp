@@ -148,9 +148,6 @@ namespace Query
         /*! Reset the default connection name. */
         void resetDefaultConnection() final;
 
-        // TODO duplicate, extract to some internal types silverqx
-        /*! Reconnector lambda type. */
-        using ReconnectorType = std::function<void(const DatabaseConnection &)>;
         /*! Set the database reconnector callback. */
         DatabaseManager &setReconnector(const ReconnectorType &reconnector);
 

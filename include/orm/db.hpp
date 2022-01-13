@@ -86,8 +86,7 @@ namespace Orm
         static void resetDefaultConnection();
 
         /*! Set the database reconnector callback. */
-        static DatabaseManager &setReconnector(
-                const DatabaseManager::ReconnectorType &reconnector);
+        static DatabaseManager &setReconnector(const ReconnectorType &reconnector);
 
         /* Proxy methods to the DatabaseConnection */
         /*! Begin a fluent query against a database table for the connection. */

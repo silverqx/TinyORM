@@ -160,9 +160,6 @@ namespace Orm
         /*! Get the query post processor used by the connection. */
         const QueryProcessor &getPostProcessor() const override;
 
-        // TODO duplicate, extract to some internal types silverqx
-        /*! Reconnector lambda type. */
-        using ReconnectorType = std::function<void(const DatabaseConnection &)>;
         /*! Set the reconnect instance on the connection. */
         DatabaseConnection &setReconnector(const ReconnectorType &reconnector);
 

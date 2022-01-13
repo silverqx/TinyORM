@@ -14,10 +14,7 @@ TINY_SYSTEM_HEADER
 #include "orm/constants.hpp"
 #include "orm/query/expression.hpp"
 
-// TODO divide OrmTypes to internal and types which user will / may need, so divide to two files silverqx
-/* 👆 I have good idea hot to do that, public types will be tinytypes.hpp and private will be
-   types.hpp, and divide it as most as possible when needed, so eg Reconnector type to
-   types/reconnectortype.hpp. */
+// TODO types, divide to public/private silverqx
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -26,11 +23,16 @@ namespace Orm
     // NOLINTNEXTLINE(google-build-using-namespace)
     using namespace Orm::Constants;
 
+    class DatabaseConnection;
+
 namespace Query
 {
     class Builder;
 }
     using QueryBuilder = Query::Builder;
+
+    /*! Reconnector lambda type. */
+    using ReconnectorType = std::function<void(const DatabaseConnection &)>;
 
     /*! Type for the database column. */
     using Column = std::variant<QString, Query::Expression>;

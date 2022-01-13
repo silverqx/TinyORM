@@ -102,7 +102,7 @@ void DB::resetDefaultConnection()
 }
 
 DatabaseManager &
-DB::setReconnector(const DatabaseManager::ReconnectorType &reconnector)
+DB::setReconnector(const ReconnectorType &reconnector)
 {
     return manager().setReconnector(reconnector);
 }
