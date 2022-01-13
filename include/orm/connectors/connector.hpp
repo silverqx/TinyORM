@@ -18,7 +18,11 @@ namespace Orm::Connectors
     /*! Connectors base class. */
     class Connector : public Concerns::DetectsLostConnections
     {
+        Q_DISABLE_COPY(Connector)
+
     public:
+        /*! Default constructor. */
+        inline Connector() = default;
         /*! Pure virtual destructor. */
         inline ~Connector() override = 0;
 

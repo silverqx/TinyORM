@@ -18,7 +18,11 @@ namespace Orm::Connectors
     /*! PostgreSql connector. */
     class PostgresConnector final : public ConnectorInterface, public Connector
     {
+        Q_DISABLE_COPY(PostgresConnector)
+
     public:
+        /*! Default constructor. */
+        inline PostgresConnector() = default;
         /*! Virtual destructor. */
         inline ~PostgresConnector() final = default;
 

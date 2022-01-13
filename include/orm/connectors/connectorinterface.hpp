@@ -18,7 +18,11 @@ namespace Orm::Connectors
     /*! Connectors interface class. */
     class ConnectorInterface
     {
+        Q_DISABLE_COPY(ConnectorInterface)
+
     public:
+        /*! Default constructor. */
+        inline ConnectorInterface() = default;
         /*! Pure virtual destructor. */
         inline virtual ~ConnectorInterface() = 0;
 
