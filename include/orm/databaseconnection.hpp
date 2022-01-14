@@ -101,6 +101,7 @@ namespace Schema
         /*! Get the number of active transactions. */
         inline std::size_t transactionLevel() const;
 
+        /* Running SQL Queries */
         /*! Run a select statement against the database. */
         QSqlQuery
         select(const QString &queryString,
@@ -476,6 +477,8 @@ namespace Schema
         return *this;
     }
 
+    /* protected */
+
     template<typename Return>
     Return
     DatabaseConnection::run(
@@ -535,6 +538,8 @@ namespace Schema
            it took to execute and log the query SQL, bindings and time in our memory. */
         return std::invoke(callback, queryString, bindings);
     }
+
+    /* private */
 
     template<typename Return>
     Return

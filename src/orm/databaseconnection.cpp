@@ -280,6 +280,8 @@ bool DatabaseConnection::rollbackToSavepoint(const std::size_t id)
     return rollbackToSavepoint(QString::number(id));
 }
 
+/* Running SQL Queries */
+
 QSqlQuery
 DatabaseConnection::select(const QString &queryString,
                            const QVector<QVariant> &bindings)
@@ -894,6 +896,8 @@ DatabaseConnection::withFreshQueryLog(const std::function<QVector<Log>()> &callb
     return result;
 }
 
+/* protected */
+
 void DatabaseConnection::useDefaultQueryGrammar()
 {
     m_queryGrammar = getDefaultQueryGrammar();
@@ -965,6 +969,8 @@ void DatabaseConnection::logConnected()
           m_hostName.toUtf8().constData(),
           m_database.toUtf8().constData());
 }
+
+/* private */
 
 QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
 {
