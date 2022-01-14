@@ -5,12 +5,12 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QElapsedTimer>
 #include <QtSql/QSqlDatabase>
 
 #include "orm/concerns/countsqueries.hpp"
 #include "orm/concerns/detectslostconnections.hpp"
 #include "orm/concerns/logsqueries.hpp"
+#include "orm/concerns/managestransactions.hpp"
 #include "orm/connectors/connectorinterface.hpp"
 #include "orm/exceptions/queryerror.hpp"
 #include "orm/query/grammars/grammar.hpp"
@@ -52,10 +52,14 @@ namespace Schema
     /*! Database connection base class. */
     class SHAREDLIB_EXPORT DatabaseConnection :
             public Concerns::DetectsLostConnections,
+            public Concerns::ManagesTransactions,
             public Concerns::LogsQueries,
             public Concerns::CountsQueries
     {
         Q_DISABLE_COPY(DatabaseConnection)
+
+        // To access shouldCountElapsed() method
+        friend Concerns::ManagesTransactions;
 
     public:
         /*! Constructor. */
@@ -82,24 +86,6 @@ namespace Schema
 
         /*! Get a new raw query expression. */
         inline Query::Expression raw(const QVariant &value) const;
-
-        // TODO next transaction method with callback silverqx
-        /*! Start a new database transaction. */
-        bool beginTransaction();
-        /*! Commit the active database transaction. */
-        bool commit();
-        /*! Rollback the active database transaction. */
-        bool rollBack();
-        /*! Start a new named transaction savepoint. */
-        bool savepoint(const QString &id);
-        /*! Start a new named transaction savepoint. */
-        bool savepoint(std::size_t id);
-        /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(const QString &id);
-        /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(std::size_t id);
-        /*! Get the number of active transactions. */
-        inline std::size_t transactionLevel() const;
 
         /* Running SQL Queries */
         /*! Run a select statement against the database. */
@@ -216,12 +202,6 @@ namespace Schema
         /*! Reset the record modification state. */
         inline void forgetRecordModificationState();
 
-        /*! Get namespace prefix for MySQL savepoints. */
-        inline const QString &getSavepointNamespace() const;
-        /*! Set namespace prefix for MySQL savepoints. */
-        inline DatabaseConnection &
-        setSavepointNamespace(const QString &savepointNamespace);
-
     protected:
         /*! Set the query grammar to the default implementation. */
         void useDefaultQueryGrammar();
@@ -257,14 +237,12 @@ namespace Schema
         /*! Reconnect to the database if a PDO connection is missing. */
         void reconnectIfMissingConnection() const;
 
-        /*! Reset in transaction state and savepoints. */
-        DatabaseConnection &resetTransactions();
-
         /*! Log database disconnected, invoked during MySQL ping. */
         void logDisconnected();
         /*! Log database connected, invoked during MySQL ping. */
         void logConnected();
 
+    protected:
         /*! The active QSqlDatabase connection name. */
         std::optional<Connectors::ConnectionName> m_qtConnection = std::nullopt;
         /*! The QSqlDatabase connection resolver. */
@@ -288,8 +266,6 @@ namespace Schema
         /* Others */
         /*! Indicates if the connection is in a "dry run". */
         bool m_pretending = false;
-        /*! Namespace prefix for MySQL savepoints. */
-        QString m_savepointNamespace;
 
     private:
         /*! Prepare an SQL statement and return the query object. */
@@ -308,21 +284,13 @@ namespace Schema
                 const QString &queryString, const QVector<QVariant> &bindings,
                 const RunCallback<Return> &callback) const;
 
-        /*! Count transactional queries execution time and statements counter. */
-        std::optional<qint64>
-        hitTransactionalCounters(QElapsedTimer timer, bool countElapsed);
-        /*! Convert a named bindings map to the positional bindings vector. */
-        QVector<QVariant>
-        convertNamedToPositionalBindings(QVariantMap &&bindings) const;
+        /*! Determine if the elapsed time for queries should be counted. */
+        inline bool shouldCountElapsed() const;
 
         /*! The flag for the database was disconnected, used during MySQL ping. */
         bool m_disconnectedLogged = false;
         /*! The flag for the database was connected, used during MySQL ping. */
         bool m_connectedLogged = false;
-        /*! The connection is in the transaction state. */
-        bool m_inTransaction = false;
-        /*! Active savepoints counter. */
-        std::size_t m_savepoints = 0;
 
         /*! Connection name, obtained from the connection configuration. */
         QString m_connectionName;
@@ -355,11 +323,6 @@ namespace Schema
     DatabaseConnection::raw(const QVariant &value) const
     {
         return Query::Expression(value);
-    }
-
-    std::size_t DatabaseConnection::transactionLevel() const
-    {
-        return m_savepoints;
     }
 
     const std::function<Connectors::ConnectionName()> &
@@ -403,19 +366,6 @@ namespace Schema
         m_recordsModified = false;
     }
 
-    const QString &DatabaseConnection::getSavepointNamespace() const
-    {
-        return m_savepointNamespace;
-    }
-
-    DatabaseConnection &
-    DatabaseConnection::setSavepointNamespace(const QString &savepointNamespace)
-    {
-        m_savepointNamespace = savepointNamespace;
-
-        return *this;
-    }
-
     /* protected */
 
     template<typename Return>
@@ -427,7 +377,7 @@ namespace Schema
         reconnectIfMissingConnection();
 
         // Elapsed timer needed
-        const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
+        const auto countElapsed = shouldCountElapsed();
 
         QElapsedTimer timer;
         if (countElapsed)
@@ -488,11 +438,10 @@ namespace Schema
             const RunCallback<Return> &callback) const
     {
         // FUTURE add info about in transaction into the exception that it was a reason why connection was not reconnected/recovered silverqx
-        if (m_inTransaction)
+        if (inTransaction())
             std::rethrow_exception(ePtr);
 
-        return tryAgainIfCausedByLostConnection(ePtr, e, queryString, bindings,
-                                                callback);
+        return tryAgainIfCausedByLostConnection(ePtr, e, queryString, bindings, callback);
     }
 
     template<typename Return>
@@ -509,6 +458,11 @@ namespace Schema
         }
 
         std::rethrow_exception(ePtr);
+    }
+
+    bool DatabaseConnection::shouldCountElapsed() const
+    {
+        return !m_pretending && (m_debugSql || m_countingElapsed);
     }
 
 } // namespace Orm

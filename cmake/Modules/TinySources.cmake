@@ -16,6 +16,7 @@ function(tiny_sources out_headers out_sources)
         concerns/detectslostconnections.hpp
         concerns/hasconnectionresolver.hpp
         concerns/logsqueries.hpp
+        concerns/managestransactions.hpp
         connectionresolverinterface.hpp
         connectors/connectionfactory.hpp
         connectors/connector.hpp
@@ -130,6 +131,7 @@ function(tiny_sources out_headers out_sources)
         concerns/detectslostconnections.cpp
         concerns/hasconnectionresolver.cpp
         concerns/logsqueries.cpp
+        concerns/managestransactions.cpp
         connectors/connectionfactory.cpp
         connectors/connector.cpp
         connectors/mysqlconnector.cpp

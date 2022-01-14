@@ -5,7 +5,9 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtGlobal>
+#include <QElapsedTimer>
+
+#include <optional>
 
 #include "orm/macros/export.hpp"
 #include "orm/types/statementscounter.hpp"
@@ -24,6 +26,9 @@ namespace Concerns
     class SHAREDLIB_EXPORT CountsQueries
     {
         Q_DISABLE_COPY(CountsQueries)
+
+        // To access hitTransactionalCounters() method
+        friend class ManagesTransactions;
 
     public:
         /*! Default constructor. */
@@ -73,6 +78,10 @@ namespace Concerns
         StatementsCounter m_statementsCounter {};
 
     private:
+        /*! Count transactional queries execution time and statements counter. */
+        std::optional<qint64>
+        hitTransactionalCounters(QElapsedTimer timer, bool countElapsed);
+
         /*! Dynamic cast *this to the DatabaseConnection & derived type. */
         DatabaseConnection &databaseConnection();
     };

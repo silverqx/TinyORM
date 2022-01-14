@@ -1,13 +1,11 @@
 #include "orm/databaseconnection.hpp"
 
 #include <QDateTime>
-#if defined(TINYORM_DEBUG_SQL) || defined(TINYORM_MYSQL_PING)
+#if defined(TINYORM_MYSQL_PING)
 #include <QDebug>
 #endif
 
-#include "orm/exceptions/sqltransactionerror.hpp"
 #include "orm/query/querybuilder.hpp"
-#include "orm/support/databaseconfiguration.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -45,7 +43,6 @@ DatabaseConnection::DatabaseConnection(
     , m_database(database)
     , m_tablePrefix(tablePrefix)
     , m_config(config)
-    , m_savepointNamespace(Support::DatabaseConfiguration::defaultSavepointNamespace)
     , m_connectionName(getConfig(NAME).value<QString>())
     , m_hostName(getConfig(host_).value<QString>())
 {}
@@ -79,199 +76,6 @@ BaseGrammar &DatabaseConnection::withTablePrefix(BaseGrammar &grammar) const
 QSharedPointer<QueryBuilder> DatabaseConnection::query()
 {
     return QSharedPointer<QueryBuilder>::create(*this, *m_queryGrammar);
-}
-
-bool DatabaseConnection::beginTransaction()
-{
-    Q_ASSERT(m_inTransaction == false);
-
-    static const auto query = QStringLiteral("START TRANSACTION");
-
-    // Elapsed timer needed
-    const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
-
-    QElapsedTimer timer;
-    if (countElapsed)
-        timer.start();
-
-    if (!m_pretending && !getQtConnection().transaction())
-        throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__tiny_func__, query),
-                getRawQtConnection().lastError());
-
-    m_inTransaction = true;
-
-    // Queries execution time counter / Query statements counter
-    auto elapsed = hitTransactionalCounters(timer, countElapsed);
-
-    /* Once we have run the transaction query we will calculate the time
-       that it took to run and then log the query and execution time.
-       We'll log time in milliseconds. */
-    if (m_pretending)
-        logTransactionQueryForPretend(query);
-    else
-        logTransactionQuery(query, std::move(elapsed));
-
-    return true;
-}
-
-bool DatabaseConnection::commit()
-{
-    Q_ASSERT(m_inTransaction);
-
-    static const auto query = QStringLiteral("COMMIT");
-
-    // Elapsed timer needed
-    const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
-
-    QElapsedTimer timer;
-    if (countElapsed)
-        timer.start();
-
-    // TODO rewrite transactions to DatabaseConnection::statement, so I have access to QSqlQuery for logQuery() silverqx
-    if (!m_pretending && !getQtConnection().commit())
-        throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__tiny_func__, query),
-                getRawQtConnection().lastError());
-
-    m_inTransaction = false;
-
-    // Queries execution time counter / Query statements counter
-    auto elapsed = hitTransactionalCounters(timer, countElapsed);
-
-    /* Once we have run the transaction query we will calculate the time
-       that it took to run and then log the query and execution time.
-       We'll log time in milliseconds. */
-    if (m_pretending)
-        logTransactionQueryForPretend(query);
-    else
-        logTransactionQuery(query, std::move(elapsed));
-
-    return true;
-}
-
-bool DatabaseConnection::rollBack()
-{
-    Q_ASSERT(m_inTransaction);
-
-    static const auto query = QStringLiteral("ROLLBACK");
-
-    // Elapsed timer needed
-    const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
-
-    QElapsedTimer timer;
-    if (countElapsed)
-        timer.start();
-
-    if (!m_pretending && !getQtConnection().rollback())
-        throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__tiny_func__, query),
-                getRawQtConnection().lastError());
-
-    m_inTransaction = false;
-
-    // Queries execution time counter / Query statements counter
-    auto elapsed = hitTransactionalCounters(timer, countElapsed);
-
-    /* Once we have run the transaction query we will calculate the time
-       that it took to run and then log the query and execution time.
-       We'll log time in milliseconds. */
-    if (m_pretending)
-        logTransactionQueryForPretend(query);
-    else
-        logTransactionQuery(query, std::move(elapsed));
-
-    return true;
-}
-
-bool DatabaseConnection::savepoint(const QString &id)
-{
-    // TODO rewrite savepoint() and rollBack() with a new m_connection.statement() API silverqx
-    Q_ASSERT(m_inTransaction);
-
-    auto savePoint = getQtQuery();
-    const auto query = QStringLiteral("SAVEPOINT %1_%2").arg(m_savepointNamespace, id);
-
-    // Elapsed timer needed
-    const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
-
-    QElapsedTimer timer;
-    if (countElapsed)
-        timer.start();
-
-    // Execute a savepoint query
-    if (!m_pretending && !savePoint.exec(query))
-        throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__tiny_func__, query),
-                savePoint.lastError());
-
-    ++m_savepoints;
-
-    // Queries execution time counter / Query statements counter
-    auto elapsed = hitTransactionalCounters(timer, countElapsed);
-
-    /* Once we have run the transaction query we will calculate the time
-       that it took to run and then log the query and execution time.
-       We'll log time in milliseconds. */
-    if (m_pretending)
-        logTransactionQueryForPretend(query);
-    else
-        logTransactionQuery(query, std::move(elapsed));
-
-    return true;
-}
-
-bool DatabaseConnection::savepoint(const std::size_t id)
-{
-    return savepoint(QString::number(id));
-}
-
-bool DatabaseConnection::rollbackToSavepoint(const QString &id)
-{
-    Q_ASSERT(m_inTransaction);
-    Q_ASSERT(m_savepoints > 0);
-
-    auto rollbackToSavepoint = getQtQuery();
-    const auto query = QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2")
-                       .arg(m_savepointNamespace, id);
-
-    // Elapsed timer needed
-    const auto countElapsed = !m_pretending && (m_debugSql || m_countingElapsed);
-
-    QElapsedTimer timer;
-    if (countElapsed)
-        timer.start();
-
-    // Execute a rollback to savepoint query
-    if (!m_pretending && !rollbackToSavepoint.exec(query))
-        throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__tiny_func__, query),
-                rollbackToSavepoint.lastError());
-
-    m_savepoints = std::max<std::size_t>(0, m_savepoints - 1);
-
-    // Queries execution time counter / Query statements counter
-    auto elapsed = hitTransactionalCounters(timer, countElapsed);
-
-    /* Once we have run the transaction query we will calculate the time
-       that it took to run and then log the query and execution time.
-       We'll log time in milliseconds. */
-    if (m_pretending)
-        logTransactionQueryForPretend(query);
-    else
-        logTransactionQuery(query, std::move(elapsed));
-
-    return true;
-}
-
-bool DatabaseConnection::rollbackToSavepoint(const std::size_t id)
-{
-    return rollbackToSavepoint(QString::number(id));
 }
 
 /* Running SQL Queries */
@@ -578,27 +382,6 @@ void DatabaseConnection::bindValues(QSqlQuery &query,
     }
 }
 
-std::optional<qint64>
-DatabaseConnection::hitTransactionalCounters(const QElapsedTimer timer,
-                                             const bool countElapsed)
-{
-    std::optional<qint64> elapsed;
-
-    if (countElapsed) {
-        // Hit elapsed timer
-        elapsed = timer.elapsed();
-
-        // Queries execution time counter
-        m_elapsedCounter += *elapsed;
-    }
-
-    // Query statements counter
-    if (m_countingStatements)
-        ++m_statementsCounter.transactional;
-
-    return elapsed;
-}
-
 bool DatabaseConnection::pingDatabase()
 {
     throw Exceptions::RuntimeError(
@@ -771,16 +554,9 @@ void DatabaseConnection::reconnectIfMissingConnection() const
     }
 }
 
-DatabaseConnection &DatabaseConnection::resetTransactions()
-{
-    m_savepoints = 0;
-    m_inTransaction = false;
-
-    return *this;
-}
-
 void DatabaseConnection::logDisconnected()
 {
+#ifdef TINYORM_MYSQL_PING
     if (m_disconnectedLogged)
         return;
 
@@ -794,10 +570,12 @@ void DatabaseConnection::logDisconnected()
              m_connectionName.toUtf8().constData(),
              m_hostName.toUtf8().constData(),
              m_database.toUtf8().constData());
+#endif
 }
 
 void DatabaseConnection::logConnected()
 {
+#ifdef TINYORM_MYSQL_PING
     if (m_connectedLogged)
         return;
 
@@ -806,11 +584,14 @@ void DatabaseConnection::logConnected()
     // Reset disconnected flag
     m_disconnectedLogged = false;
 
+    /* I still don't know if it's a good idea to log this to the console by default,
+       it's a very important log message though. */
     qInfo("%s database connected (%s, %s@%s)",
           driverNamePrintable().toUtf8().constData(),
           m_connectionName.toUtf8().constData(),
           m_hostName.toUtf8().constData(),
           m_database.toUtf8().constData());
+#endif
 }
 
 /* private */
@@ -826,18 +607,6 @@ QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
     query.prepare(queryString);
 
     return query;
-}
-
-QVector<QVariant>
-DatabaseConnection::convertNamedToPositionalBindings(QVariantMap &&bindings) const
-{
-    QVector<QVariant> result;
-    result.reserve(bindings.size());
-
-    for (auto &&binding : bindings)
-        result << std::move(binding);
-
-    return result;
 }
 
 } // namespace Orm

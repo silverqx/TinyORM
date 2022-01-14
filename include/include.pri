@@ -11,6 +11,7 @@ headersList += \
     $$PWD/orm/concerns/detectslostconnections.hpp \
     $$PWD/orm/concerns/hasconnectionresolver.hpp \
     $$PWD/orm/concerns/logsqueries.hpp \
+    $$PWD/orm/concerns/managestransactions.hpp \
     $$PWD/orm/config.hpp \
     $$PWD/orm/connectionresolverinterface.hpp \
     $$PWD/orm/connectors/connectionfactory.hpp \

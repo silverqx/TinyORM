@@ -1,5 +1,9 @@
 #include "orm/concerns/logsqueries.hpp"
 
+#if defined(TINYORM_DEBUG_SQL)
+#include <QDebug>
+#endif
+
 #include "orm/databaseconnection.hpp"
 #include "orm/macros/likely.hpp"
 #ifdef TINYORM_DEBUG_SQL
@@ -166,6 +170,18 @@ LogsQueries::withFreshQueryLog(const std::function<QVector<Log>()> &callback)
 }
 
 /* private */
+
+QVector<QVariant>
+LogsQueries::convertNamedToPositionalBindings(QVariantMap &&bindings) const
+{
+    QVector<QVariant> result;
+    result.reserve(bindings.size());
+
+    for (auto &&binding : bindings)
+        result << std::move(binding);
+
+    return result;
+}
 
 const DatabaseConnection &LogsQueries::databaseConnection() const
 {

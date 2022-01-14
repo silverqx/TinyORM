@@ -7,6 +7,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Concerns
 {
 
+/* public */
+
 bool CountsQueries::countingElapsed() const
 {
     return m_countingElapsed;
@@ -105,6 +107,29 @@ DatabaseConnection &CountsQueries::resetStatementsCounter()
     m_statementsCounter.transactional = 0;
 
     return databaseConnection();
+}
+
+/* private */
+
+std::optional<qint64>
+CountsQueries::hitTransactionalCounters(const QElapsedTimer timer,
+                                        const bool countElapsed)
+{
+    std::optional<qint64> elapsed;
+
+    if (countElapsed) {
+        // Hit elapsed timer
+        elapsed = timer.elapsed();
+
+        // Queries execution time counter
+        m_elapsedCounter += *elapsed;
+    }
+
+    // Query statements counter
+    if (m_countingStatements)
+        ++m_statementsCounter.transactional;
+
+    return elapsed;
 }
 
 DatabaseConnection &CountsQueries::databaseConnection()

@@ -7,6 +7,9 @@ TINY_SYSTEM_HEADER
 
 #include <QtSql/QSqlQuery>
 
+#include <memory>
+#include <optional>
+
 #include "orm/macros/export.hpp"
 #include "orm/types/log.hpp"
 
@@ -72,6 +75,10 @@ namespace Concerns
         inline static std::atomic<std::size_t> m_queryLogId = 0;
 
     private:
+        /*! Convert a named bindings map to the positional bindings vector. */
+        QVector<QVariant>
+        convertNamedToPositionalBindings(QVariantMap &&bindings) const;
+
         /*! Dynamic cast *this to the DatabaseConnection & derived type. */
         const DatabaseConnection &databaseConnection() const;
 
