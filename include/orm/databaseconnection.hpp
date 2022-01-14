@@ -240,7 +240,6 @@ namespace Schema
         /*! Reconnect to the database if a PDO connection is missing. */
         void reconnectIfMissingConnection() const;
 
-    protected:
         /*! The active QSqlDatabase connection name. */
         std::optional<Connectors::ConnectionName> m_qtConnection = std::nullopt;
         /*! The QSqlDatabase connection resolver. */
