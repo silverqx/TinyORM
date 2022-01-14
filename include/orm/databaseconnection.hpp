@@ -60,6 +60,9 @@ namespace Schema
 
         // To access shouldCountElapsed() method
         friend Concerns::ManagesTransactions;
+        // TODO stackoverflow, changes friend declaration ABI compatibility?, if not following can be wrapped in ifdef TINYORM_MYSQL_PING silverqx
+        // To access logConnected()/logDisconnected() methods
+        friend class MySqlConnection;
 
     public:
         /*! Constructor. */
@@ -237,11 +240,6 @@ namespace Schema
         /*! Reconnect to the database if a PDO connection is missing. */
         void reconnectIfMissingConnection() const;
 
-        /*! Log database disconnected, invoked during MySQL ping. */
-        void logDisconnected();
-        /*! Log database connected, invoked during MySQL ping. */
-        void logConnected();
-
     protected:
         /*! The active QSqlDatabase connection name. */
         std::optional<Connectors::ConnectionName> m_qtConnection = std::nullopt;
@@ -286,6 +284,11 @@ namespace Schema
 
         /*! Determine if the elapsed time for queries should be counted. */
         inline bool shouldCountElapsed() const;
+
+        /*! Log database connected, invoked during MySQL ping. */
+        void logConnected();
+        /*! Log database disconnected, invoked during MySQL ping. */
+        void logDisconnected();
 
         /*! The flag for the database was disconnected, used during MySQL ping. */
         bool m_disconnectedLogged = false;

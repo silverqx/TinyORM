@@ -554,23 +554,19 @@ void DatabaseConnection::reconnectIfMissingConnection() const
     }
 }
 
-void DatabaseConnection::logDisconnected()
+/* private */
+
+QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
 {
-#ifdef TINYORM_MYSQL_PING
-    if (m_disconnectedLogged)
-        return;
+    // Prepare query string
+    auto query = getQtQuery();
 
-    m_disconnectedLogged = true;
+    // TODO solve setForwardOnly() in DatabaseConnection class, again this problem 🤔 silverqx
+//    query.setForwardOnly(m_forwardOnly);
 
-    // Reset connected flag
-    m_connectedLogged = false;
+    query.prepare(queryString);
 
-    qWarning("%s database disconnected (%s, %s@%s)",
-             driverNamePrintable().toUtf8().constData(),
-             m_connectionName.toUtf8().constData(),
-             m_hostName.toUtf8().constData(),
-             m_database.toUtf8().constData());
-#endif
+    return query;
 }
 
 void DatabaseConnection::logConnected()
@@ -594,19 +590,23 @@ void DatabaseConnection::logConnected()
 #endif
 }
 
-/* private */
-
-QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
+void DatabaseConnection::logDisconnected()
 {
-    // Prepare query string
-    auto query = getQtQuery();
+#ifdef TINYORM_MYSQL_PING
+    if (m_disconnectedLogged)
+        return;
 
-    // TODO solve setForwardOnly() in DatabaseConnection class, again this problem 🤔 silverqx
-//    query.setForwardOnly(m_forwardOnly);
+    m_disconnectedLogged = true;
 
-    query.prepare(queryString);
+    // Reset connected flag
+    m_connectedLogged = false;
 
-    return query;
+    qWarning("%s database disconnected (%s, %s@%s)",
+             driverNamePrintable().toUtf8().constData(),
+             m_connectionName.toUtf8().constData(),
+             m_hostName.toUtf8().constData(),
+             m_database.toUtf8().constData());
+#endif
 }
 
 } // namespace Orm
