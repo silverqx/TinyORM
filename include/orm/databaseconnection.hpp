@@ -7,17 +7,16 @@ TINY_SYSTEM_HEADER
 
 #include <QElapsedTimer>
 #include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlQuery>
 
 #include "orm/concerns/countsqueries.hpp"
 #include "orm/concerns/detectslostconnections.hpp"
+#include "orm/concerns/logsqueries.hpp"
 #include "orm/connectors/connectorinterface.hpp"
 #include "orm/exceptions/queryerror.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/query/processors/processor.hpp"
 #include "orm/schema/grammars/schemagrammar.hpp"
 #include "orm/schema/schemabuilder.hpp"
-#include "orm/types/log.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -53,6 +52,7 @@ namespace Schema
     /*! Database connection base class. */
     class SHAREDLIB_EXPORT DatabaseConnection :
             public Concerns::DetectsLostConnections,
+            public Concerns::LogsQueries,
             public Concerns::CountsQueries
     {
         Q_DISABLE_COPY(DatabaseConnection)
@@ -187,35 +187,6 @@ namespace Schema
         /*! Get the configuration for the current connection. */
         const QVariantHash &getConfig() const;
 
-        /* Logging */
-        /*! Log a query into the connection's query log. */
-        void logQuery(const QSqlQuery &query, std::optional<qint64> elapsed) const;
-        /*! Log a query into the connection's query log. */
-        void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
-                      std::optional<qint64> elapsed) const;
-        /*! Log a query into the connection's query log in the pretending mode. */
-        void logQueryForPretend(const QString &query,
-                                const QVector<QVariant> &bindings) const;
-        /*! Log a transaction query into the connection's query log. */
-        void logTransactionQuery(const QString &query,
-                                 std::optional<qint64> elapsed) const;
-        /*! Log a transaction query into the connection's query log
-            in the pretending mode. */
-        void logTransactionQueryForPretend(const QString &query) const;
-
-        /*! Get the connection query log. */
-        inline std::shared_ptr<QVector<Log>> getQueryLog() const;
-        /*! Clear the query log. */
-        void flushQueryLog();
-        /*! Enable the query log on the connection. */
-        void enableQueryLog();
-        /*! Disable the query log on the connection. */
-        inline void disableQueryLog();
-        /*! Determine whether we're logging queries. */
-        inline bool logging() const;
-        /*! The current order value for a query log record. */
-        static std::size_t getQueryLogOrder();
-
         /* Getters */
         /*! Return the connection's driver name. */
         QString driverName();
@@ -294,10 +265,6 @@ namespace Schema
         /*! Log database connected, invoked during MySQL ping. */
         void logConnected();
 
-        /*! Execute the given callback in "dry run" mode. */
-        QVector<Log>
-        withFreshQueryLog(const std::function<QVector<Log>()> &callback);
-
         /*! The active QSqlDatabase connection name. */
         std::optional<Connectors::ConnectionName> m_qtConnection = std::nullopt;
         /*! The QSqlDatabase connection resolver. */
@@ -317,14 +284,6 @@ namespace Schema
         std::unique_ptr<SchemaGrammar> m_schemaGrammar = nullptr;
         /*! The query post processor implementation. */
         std::unique_ptr<QueryProcessor> m_postProcessor = nullptr;
-
-        /* Logging */
-        /*! Indicates if changes have been made to the database. */
-        bool m_recordsModified = false;
-        /*! All of the queries run against the connection. */
-        std::shared_ptr<QVector<Log>> m_queryLog = nullptr;
-        /*! ID of the query log record. */
-        inline static std::atomic<std::size_t> m_queryLogId = 0;
 
         /* Others */
         /*! Indicates if the connection is in a "dry run". */
@@ -370,12 +329,6 @@ namespace Schema
         /*! Host name, obtained from the connection configuration. */
         QString m_hostName;
 
-        /* Logging */
-        /*! Indicates whether queries are being logged (private intentionally). */
-        bool m_loggingQueries = false;
-        /*! All of the queries run against the connection. */
-        std::shared_ptr<QVector<Log>> m_queryLogForPretend = nullptr;
-
 #ifdef TINYORM_DEBUG_SQL
         /*! Indicates whether logging of sql queries is enabled. */
         const bool m_debugSql = true;
@@ -413,22 +366,6 @@ namespace Schema
     DatabaseConnection::getQtConnectionResolver() const
     {
         return m_qtConnectionResolver;
-    }
-
-    std::shared_ptr<QVector<Log>>
-    DatabaseConnection::getQueryLog() const
-    {
-        return m_queryLog;
-    }
-
-    void DatabaseConnection::disableQueryLog()
-    {
-        m_loggingQueries = false;
-    }
-
-    bool DatabaseConnection::logging() const
-    {
-        return m_loggingQueries;
     }
 
     const QString &DatabaseConnection::getName() const

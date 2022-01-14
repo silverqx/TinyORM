@@ -6,6 +6,7 @@ sourcesList += \
     $$PWD/orm/concerns/countsqueries.cpp \
     $$PWD/orm/concerns/detectslostconnections.cpp \
     $$PWD/orm/concerns/hasconnectionresolver.cpp \
+    $$PWD/orm/concerns/logsqueries.cpp \
     $$PWD/orm/connectors/connectionfactory.cpp \
     $$PWD/orm/connectors/connector.cpp \
     $$PWD/orm/connectors/mysqlconnector.cpp \
