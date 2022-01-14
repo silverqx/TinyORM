@@ -5,9 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtSql/QSqlQuery>
-
-#include "orm/connectioninterface.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/connectors/connectionfactory.hpp"
 #include "orm/support/databaseconfiguration.hpp"
@@ -114,7 +111,7 @@ namespace Query
         static DatabaseManager *instance();
 
         /*! Get a database connection instance. */
-        ConnectionInterface &connection(const QString &name = "") final;
+        DatabaseConnection &connection(const QString &name = "") final;
         /*! Register a connection with the manager. */
         DatabaseManager &
         addConnection(const QVariantHash &config,
@@ -130,7 +127,7 @@ namespace Query
         bool removeConnection(const QString &name = "");
 
         /*! Reconnect to the given database. */
-        ConnectionInterface &reconnect(const QString &name = "");
+        DatabaseConnection &reconnect(const QString &name = "");
         /*! Disconnect from the given database. */
         void disconnect(const QString &name = "") const;
 
@@ -265,7 +262,7 @@ namespace Query
                 const QString &connection = "");
         /*! Execute the given callback in "dry run" mode. */
         QVector<Log>
-        pretend(const std::function<void(ConnectionInterface &)> &callback,
+        pretend(const std::function<void(DatabaseConnection &)> &callback,
                 const QString &connection = "");
 
         /*! Check if any records have been modified. */

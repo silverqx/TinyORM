@@ -9,7 +9,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
-Builder::Builder(ConnectionInterface &connection, const QueryGrammar &grammar)
+Builder::Builder(DatabaseConnection &connection, const QueryGrammar &grammar)
     : m_connection(connection)
     , m_grammar(grammar)
 {}

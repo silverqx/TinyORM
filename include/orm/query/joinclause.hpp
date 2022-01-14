@@ -16,7 +16,7 @@ namespace Orm::Query
     class SHAREDLIB_EXPORT JoinClause final : public Builder
     {
     public:
-        /*! Join table type. */
+        /*! Type for the Join table (FromClause). */
         using JoinTable = FromClause;
 
         /*! Virtual destructor. */

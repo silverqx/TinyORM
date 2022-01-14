@@ -13,7 +13,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
-    class ConnectionInterface;
+    class DatabaseConnection;
 
     /*! Database connection resolver interface. */
     class ConnectionResolverInterface
@@ -27,7 +27,7 @@ namespace Orm
         inline virtual ~ConnectionResolverInterface() = 0;
 
         /*! Get a database connection instance. */
-        virtual ConnectionInterface &connection(const QString &name = "") = 0;
+        virtual DatabaseConnection &connection(const QString &name = "") = 0;
 
         /*! Get the default connection name. */
         virtual const QString &getDefaultConnection() const = 0;

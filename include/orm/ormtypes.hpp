@@ -31,7 +31,7 @@ namespace Query
 }
     using QueryBuilder = Query::Builder;
 
-    /*! Reconnector lambda type. */
+    /*! Type for the DatabaseConnection Reconnector (lambda). */
     using ReconnectorType = std::function<void(const DatabaseConnection &)>;
 
     /*! Type for the database column. */

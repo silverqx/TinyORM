@@ -33,7 +33,7 @@ DB::create(const ConfigurationsType &configs, const QString &defaultConnection)
     return DatabaseManager::create(configs, defaultConnection);
 }
 
-ConnectionInterface &DB::connection(const QString &name)
+DatabaseConnection &DB::connection(const QString &name)
 {
     return manager().connection(name);
 }
@@ -61,7 +61,7 @@ bool DB::removeConnection(const QString &name)
     return manager().removeConnection(name);
 }
 
-ConnectionInterface &DB::reconnect(const QString &name)
+DatabaseConnection &DB::reconnect(const QString &name)
 {
     return manager().reconnect(name);
 }
@@ -440,7 +440,7 @@ DB::pretend(const std::function<void()> &callback, const QString &connection)
 }
 
 QVector<Log>
-DB::pretend(const std::function<void(ConnectionInterface &)> &callback,
+DB::pretend(const std::function<void(DatabaseConnection &)> &callback,
             const QString &connection)
 {
     return manager().connection(connection).pretend(callback);

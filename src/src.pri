@@ -3,6 +3,7 @@ extern_constants: \
 
 sourcesList += \
     $$PWD/orm/basegrammar.cpp \
+    $$PWD/orm/concerns/countsqueries.cpp \
     $$PWD/orm/concerns/detectslostconnections.cpp \
     $$PWD/orm/concerns/hasconnectionresolver.cpp \
     $$PWD/orm/connectors/connectionfactory.cpp \

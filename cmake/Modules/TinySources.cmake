@@ -12,9 +12,9 @@ function(tiny_sources out_headers out_sources)
 
     list(APPEND headers
         basegrammar.hpp
+        concerns/countsqueries.hpp
         concerns/detectslostconnections.hpp
         concerns/hasconnectionresolver.hpp
-        connectioninterface.hpp
         connectionresolverinterface.hpp
         connectors/connectionfactory.hpp
         connectors/connector.hpp
@@ -125,6 +125,7 @@ function(tiny_sources out_headers out_sources)
 
     list(APPEND sources
         basegrammar.cpp
+        concerns/countsqueries.cpp
         concerns/detectslostconnections.cpp
         concerns/hasconnectionresolver.cpp
         connectors/connectionfactory.cpp

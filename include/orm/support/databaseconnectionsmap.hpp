@@ -8,7 +8,6 @@ TINY_SYSTEM_HEADER
 #include <unordered_map>
 
 #include "orm/databaseconnection.hpp"
-#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/threadlocal.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

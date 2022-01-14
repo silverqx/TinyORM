@@ -51,7 +51,7 @@ namespace Orm
                const QString &defaultConnection = Configuration::defaultConnectionName);
 
         /*! Get a database connection instance. */
-        static ConnectionInterface &connection(const QString &name = "");
+        static DatabaseConnection &connection(const QString &name = "");
         /*! Register a connection with the manager. */
         static DatabaseManager &
         addConnection(const QVariantHash &config,
@@ -67,7 +67,7 @@ namespace Orm
         static bool removeConnection(const QString &name = "");
 
         /*! Reconnect to the given database. */
-        static ConnectionInterface &reconnect(const QString &name = "");
+        static DatabaseConnection &reconnect(const QString &name = "");
         /*! Disconnect from the given database. */
         static void disconnect(const QString &name = "");
 
@@ -268,7 +268,7 @@ namespace Orm
                 const QString &connection = "");
         /*! Execute the given callback in "dry run" mode. */
         static QVector<Log>
-        pretend(const std::function<void(ConnectionInterface &)> &callback,
+        pretend(const std::function<void(DatabaseConnection &)> &callback,
                 const QString &connection = "");
 
         /*! Check if any records have been modified. */

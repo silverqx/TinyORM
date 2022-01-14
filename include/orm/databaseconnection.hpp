@@ -7,28 +7,53 @@ TINY_SYSTEM_HEADER
 
 #include <QElapsedTimer>
 #include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
 
-#include <optional>
-
+#include "orm/concerns/countsqueries.hpp"
 #include "orm/concerns/detectslostconnections.hpp"
-#include "orm/connectioninterface.hpp"
 #include "orm/connectors/connectorinterface.hpp"
 #include "orm/exceptions/queryerror.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/query/processors/processor.hpp"
 #include "orm/schema/grammars/schemagrammar.hpp"
 #include "orm/schema/schemabuilder.hpp"
+#include "orm/types/log.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
 
-    // CUR1 return DatabaseConnection vs ConnectionInterface silverqx
+namespace Query
+{
+namespace Grammars
+{
+    class Grammar;
+}
+namespace Processors
+{
+    class Processor;
+}
+} // namespace Query
+
+namespace Schema
+{
+    class SchemaBuilder;
+}
+
+    /*! QueryGrammar alias. */
+    using QueryGrammar   = Query::Grammars::Grammar;
+    /*! QueryProcessor alias. */
+    using QueryProcessor = Query::Processors::Processor;
+    /*! SchemaBuilder alias. */
+    using SchemaBuilder  = Schema::SchemaBuilder;
+    /*! SchemaGrammar alias. */
+    using SchemaGrammar  = Schema::Grammars::SchemaGrammar;
+
     /*! Database connection base class. */
     class SHAREDLIB_EXPORT DatabaseConnection :
-            public ConnectionInterface,
-            public Concerns::DetectsLostConnections
+            public Concerns::DetectsLostConnections,
+            public Concerns::CountsQueries
     {
         Q_DISABLE_COPY(DatabaseConnection)
 
@@ -43,75 +68,75 @@ namespace Orm
 
         /*! Begin a fluent query against a database table. */
         QSharedPointer<QueryBuilder>
-        table(const QString &table, const QString &as = "") override;
+        table(const QString &table, const QString &as = "");
 
         /*! Get the table prefix for the connection. */
-        inline QString getTablePrefix() const override;
+        inline QString getTablePrefix() const;
         /*! Set the table prefix in use by the connection. */
-        DatabaseConnection &setTablePrefix(const QString &prefix) override;
+        DatabaseConnection &setTablePrefix(const QString &prefix);
         /*! Set the table prefix and return the query grammar. */
-        BaseGrammar &withTablePrefix(BaseGrammar &grammar) const override;
+        BaseGrammar &withTablePrefix(BaseGrammar &grammar) const;
 
         /*! Get a new query builder instance. */
-        QSharedPointer<QueryBuilder> query() override;
+        QSharedPointer<QueryBuilder> query();
 
         /*! Get a new raw query expression. */
-        inline Query::Expression raw(const QVariant &value) const override;
+        inline Query::Expression raw(const QVariant &value) const;
 
         // TODO next transaction method with callback silverqx
         /*! Start a new database transaction. */
-        bool beginTransaction() override;
+        bool beginTransaction();
         /*! Commit the active database transaction. */
-        bool commit() override;
+        bool commit();
         /*! Rollback the active database transaction. */
-        bool rollBack() override;
+        bool rollBack();
         /*! Start a new named transaction savepoint. */
-        bool savepoint(const QString &id) override;
+        bool savepoint(const QString &id);
         /*! Start a new named transaction savepoint. */
-        bool savepoint(std::size_t id) override;
+        bool savepoint(std::size_t id);
         /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(const QString &id) override;
+        bool rollbackToSavepoint(const QString &id);
         /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(std::size_t id) override;
+        bool rollbackToSavepoint(std::size_t id);
         /*! Get the number of active transactions. */
-        inline std::size_t transactionLevel() const override;
+        inline std::size_t transactionLevel() const;
 
         /*! Run a select statement against the database. */
         QSqlQuery
         select(const QString &queryString,
-               const QVector<QVariant> &bindings = {}) override;
+               const QVector<QVariant> &bindings = {});
         /*! Run a select statement against the database. */
         QSqlQuery
         selectFromWriteConnection(const QString &queryString,
-                                  const QVector<QVariant> &bindings = {}) override;
+                                  const QVector<QVariant> &bindings = {});
         /*! Run a select statement and return a single result. */
         QSqlQuery
         selectOne(const QString &queryString,
-                  const QVector<QVariant> &bindings = {}) override;
+                  const QVector<QVariant> &bindings = {});
         /*! Run an insert statement against the database. */
         QSqlQuery
         insert(const QString &queryString,
-               const QVector<QVariant> &bindings = {}) override;
+               const QVector<QVariant> &bindings = {});
         /*! Run an update statement against the database. */
         std::tuple<int, QSqlQuery>
         update(const QString &queryString,
-               const QVector<QVariant> &bindings = {}) override;
+               const QVector<QVariant> &bindings = {});
         /*! Run a delete statement against the database. */
         std::tuple<int, QSqlQuery>
         remove(const QString &queryString,
-               const QVector<QVariant> &bindings = {}) override;
+               const QVector<QVariant> &bindings = {});
 
         /*! Execute an SQL statement, should be used for DDL queries, internally calls
             DatabaseConnection::recordsHaveBeenModified(). */
         QSqlQuery statement(const QString &queryString,
-                            const QVector<QVariant> &bindings = {}) override;
+                            const QVector<QVariant> &bindings = {});
         /*! Run an SQL statement and get the number of rows affected. */
         std::tuple<int, QSqlQuery>
         affectingStatement(const QString &queryString,
-                           const QVector<QVariant> &bindings = {}) override;
+                           const QVector<QVariant> &bindings = {});
 
         /*! Run a raw, unprepared query against the database. */
-        QSqlQuery unprepared(const QString &queryString) override;
+        QSqlQuery unprepared(const QString &queryString);
 
         /*! Get underlying database connection (QSqlDatabase). */
         QSqlDatabase getQtConnection();
@@ -125,40 +150,33 @@ namespace Orm
                 const std::function<Connectors::ConnectionName()> &resolver);
 
         /*! Get a new QSqlQuery instance for the current connection. */
-        QSqlQuery getQtQuery() override;
+        QSqlQuery getQtQuery();
 
         /*! Prepare the query bindings for execution. */
         QVector<QVariant>
-        prepareBindings(QVector<QVariant> bindings) const override;
+        prepareBindings(QVector<QVariant> bindings) const;
         /*! Bind values to their parameters in the given statement. */
         void bindValues(QSqlQuery &query,
                         const QVector<QVariant> &bindings) const;
 
         /*! Check database connection and show warnings when the state changed. */
-        bool pingDatabase() override;
+        virtual bool pingDatabase();
 
         /*! Reconnect to the database. */
         void reconnect() const;
         /*! Disconnect from the underlying Qt's connection. */
         void disconnect();
 
-        /*! Set the query grammar to the default implementation. */
-        void useDefaultQueryGrammar() override;
         /*! Get the query grammar used by the connection. */
-        const QueryGrammar &getQueryGrammar() const override;
-
-        /*! Set the schema grammar to the default implementation. */
-        void useDefaultSchemaGrammar() override;
+        const QueryGrammar &getQueryGrammar() const;
+        /*! Get the query grammar used by the connection. */
+        QueryGrammar &getQueryGrammar();
         /*! Get the schema grammar used by the connection. */
-        const SchemaGrammar &getSchemaGrammar() const override;
-
+        const SchemaGrammar &getSchemaGrammar() const;
         /*! Get a schema builder instance for the connection. */
-        std::unique_ptr<SchemaBuilder> getSchemaBuilder() override;
-
-        /*! Set the query post processor to the default implementation. */
-        void useDefaultPostProcessor() override;
+        virtual std::unique_ptr<SchemaBuilder> getSchemaBuilder();
         /*! Get the query post processor used by the connection. */
-        const QueryProcessor &getPostProcessor() const override;
+        const QueryProcessor &getPostProcessor() const;
 
         /*! Set the reconnect instance on the connection. */
         DatabaseConnection &setReconnector(const ReconnectorType &reconnector);
@@ -167,34 +185,6 @@ namespace Orm
         QVariant getConfig(const QString &option) const;
         /*! Get the configuration for the current connection. */
         const QVariantHash &getConfig() const;
-
-        /* Queries execution time counter */
-        /*! Determine whether we're counting queries execution time. */
-        bool countingElapsed() const override;
-        /*! Enable counting queries execution time on the current connection. */
-        DatabaseConnection &enableElapsedCounter() override;
-        /*! Disable counting queries execution time on the current connection. */
-        DatabaseConnection &disableElapsedCounter() override;
-        /*! Obtain queries execution time, -1 when disabled. */
-        qint64 getElapsedCounter() const override;
-        /*! Obtain and reset queries execution time. */
-        qint64 takeElapsedCounter() override;
-        /*! Reset queries execution time. */
-        DatabaseConnection &resetElapsedCounter() override;
-
-        /* Queries executed counter */
-        /*! Determine whether we're counting the number of executed queries. */
-        bool countingStatements() const override;
-        /*! Enable counting the number of executed queries on the current connection. */
-        DatabaseConnection &enableStatementsCounter() override;
-        /*! Disable counting the number of executed queries on the current connection. */
-        DatabaseConnection &disableStatementsCounter() override;
-        /*! Obtain the number of executed queries, all counters are -1 when disabled. */
-        const StatementsCounter &getStatementsCounter() const override;
-        /*! Obtain and reset the number of executed queries. */
-        StatementsCounter takeStatementsCounter() override;
-        /*! Reset the number of executed queries. */
-        DatabaseConnection &resetStatementsCounter() override;
 
         /* Logging */
         /*! Log a query into the connection's query log. */
@@ -213,54 +203,61 @@ namespace Orm
         void logTransactionQueryForPretend(const QString &query) const;
 
         /*! Get the connection query log. */
-        inline std::shared_ptr<QVector<Log>> getQueryLog() const override;
+        inline std::shared_ptr<QVector<Log>> getQueryLog() const;
         /*! Clear the query log. */
-        void flushQueryLog() override;
+        void flushQueryLog();
         /*! Enable the query log on the connection. */
-        void enableQueryLog() override;
+        void enableQueryLog();
         /*! Disable the query log on the connection. */
-        inline void disableQueryLog() override;
+        inline void disableQueryLog();
         /*! Determine whether we're logging queries. */
-        inline bool logging() const override;
+        inline bool logging() const;
         /*! The current order value for a query log record. */
         static std::size_t getQueryLogOrder();
 
         /* Getters */
         /*! Return the connection's driver name. */
-        QString driverName() override;
+        QString driverName();
         /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
-        const QString &driverNamePrintable() override;
+        const QString &driverNamePrintable();
         /*! Get the database connection name. */
-        inline const QString &getName() const override;
+        inline const QString &getName() const;
         /*! Get the name of the connected database. */
-        inline const QString &getDatabaseName() const override;
+        inline const QString &getDatabaseName() const;
         /*! Get the host name of the connected database. */
-        inline const QString &getHostName() const override;
+        inline const QString &getHostName() const;
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */
         QVector<Log>
-        pretend(const std::function<void()> &callback) override;
+        pretend(const std::function<void()> &callback);
         /*! Execute the given callback in "dry run" mode. */
         QVector<Log>
-        pretend(const std::function<void(ConnectionInterface &)> &callback) override;
+        pretend(const std::function<void(DatabaseConnection &)> &callback);
         /*! Determine if the connection is in a "dry run". */
-        inline bool pretending() const override;
+        inline bool pretending() const;
 
         /*! Check if any records have been modified. */
-        inline bool getRecordsHaveBeenModified() const override;
+        inline bool getRecordsHaveBeenModified() const;
         /*! Indicate if any records have been modified. */
-        inline void recordsHaveBeenModified(bool value = true) override;
+        inline void recordsHaveBeenModified(bool value = true);
         /*! Reset the record modification state. */
-        inline void forgetRecordModificationState() override;
+        inline void forgetRecordModificationState();
 
         /*! Get namespace prefix for MySQL savepoints. */
-        inline const QString &getSavepointNamespace() const override;
+        inline const QString &getSavepointNamespace() const;
         /*! Set namespace prefix for MySQL savepoints. */
         inline DatabaseConnection &
-        setSavepointNamespace(const QString &savepointNamespace) override;
+        setSavepointNamespace(const QString &savepointNamespace);
 
     protected:
+        /*! Set the query grammar to the default implementation. */
+        void useDefaultQueryGrammar();
+        /*! Set the schema grammar to the default implementation. */
+        void useDefaultSchemaGrammar();
+        /*! Set the query post processor to the default implementation. */
+        void useDefaultPostProcessor();
+
         // NOTE api different, getDefaultQueryGrammar() can not be non-pure because it contains pure virtual member function silverqx
         /*! Get the default query grammar instance. */
         virtual std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const = 0;
@@ -320,18 +317,6 @@ namespace Orm
         /*! The query post processor implementation. */
         std::unique_ptr<QueryProcessor> m_postProcessor = nullptr;
 
-        /* Queries execution time counter */
-        /*! Indicates whether queries elapsed time are being counted. */
-        bool m_countingElapsed = false;
-        /*! Queries elpased time counter. */
-        qint64 m_elapsedCounter = -1;
-
-        /* Queries executed counter */
-        /*! Indicates whether executed queries are being counted. */
-        bool m_countingStatements = false;
-        /*! Counts executed statements on current connection. */
-        StatementsCounter m_statementsCounter {};
-
         /* Logging */
         /*! Indicates if changes have been made to the database. */
         bool m_recordsModified = false;
@@ -369,9 +354,6 @@ namespace Orm
         /*! Convert a named bindings map to the positional bindings vector. */
         QVector<QVariant>
         convertNamedToPositionalBindings(QVariantMap &&bindings) const;
-
-        /*! Get the query grammar used by the connection. */
-        QueryGrammar &getQueryGrammar();
 
         /*! The flag for the database was disconnected, used during MySQL ping. */
         bool m_disconnectedLogged = false;

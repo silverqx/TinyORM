@@ -7,7 +7,6 @@ TINY_SYSTEM_HEADER
 
 #include <QtSql/QSqlQuery>
 
-#include <optional>
 #include <unordered_set>
 
 #include "orm/ormconcepts.hpp"
@@ -16,11 +15,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm
-{
-
-    class ConnectionInterface;
-namespace Query
+namespace Orm::Query
 {
     class JoinClause;
 
@@ -38,7 +33,7 @@ namespace Query
 
     public:
         /*! Constructor. */
-        Builder(ConnectionInterface &connection, const QueryGrammar &grammar);
+        Builder(DatabaseConnection &connection, const QueryGrammar &grammar);
         /* Need to be the polymorphic type because of dynamic_cast<>
            in Grammar::concatenateWhereClauses(). */
         /*! Virtual destructor. */
@@ -443,7 +438,7 @@ namespace Query
 
         /* Getters / Setters */
         /*! Get a database connection. */
-        inline ConnectionInterface &getConnection() const;
+        inline DatabaseConnection &getConnection() const;
         /*! Get the query grammar instance. */
         inline const QueryGrammar &getGrammar() const;
 
@@ -645,7 +640,7 @@ namespace Query
         };
 
         /*! The database connection instance. */
-        ConnectionInterface &m_connection;
+        DatabaseConnection &m_connection;
         /*! The database query grammar instance. */
         const QueryGrammar &m_grammar;
 
@@ -1105,7 +1100,7 @@ namespace Query
 
     /* Getters / Setters */
 
-    ConnectionInterface &Builder::getConnection() const
+    DatabaseConnection &Builder::getConnection() const
     {
         return m_connection;
     }
@@ -1228,8 +1223,7 @@ namespace Query
         return *this;
     }
 
-} // namespace Query
-} // namespace Orm
+} // namespace Orm::Query
 
 TINYORM_END_COMMON_NAMESPACE
 

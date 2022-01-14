@@ -197,7 +197,7 @@ DatabaseManager *DatabaseManager::instance()
             "by DB::create() method.");
 }
 
-ConnectionInterface &DatabaseManager::connection(const QString &name)
+DatabaseConnection &DatabaseManager::connection(const QString &name)
 {
     const auto &connectionName = parseConnectionName(name);
 
@@ -282,7 +282,7 @@ bool DatabaseManager::removeConnection(const QString &name)
     return true;
 }
 
-ConnectionInterface &DatabaseManager::reconnect(const QString &name)
+DatabaseConnection &DatabaseManager::reconnect(const QString &name)
 {
     const auto &name_ = parseConnectionName(name);
 
@@ -664,7 +664,7 @@ DatabaseManager::pretend(const std::function<void()> &callback,
 }
 
 QVector<Log>
-DatabaseManager::pretend(const std::function<void(ConnectionInterface &)> &callback,
+DatabaseManager::pretend(const std::function<void(DatabaseConnection &)> &callback,
                          const QString &connection)
 {
     return this->connection(connection).pretend(callback);

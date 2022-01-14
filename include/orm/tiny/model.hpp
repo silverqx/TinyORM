@@ -189,7 +189,7 @@ namespace Orm::Tiny
         /*! Get the current connection name for the model. */
         const QString &getConnectionName() const;
         /*! Get the database connection for the model. */
-        inline ConnectionInterface &getConnection() const;
+        inline DatabaseConnection &getConnection() const;
         /*! Set the connection associated with the model. */
         inline Derived &setConnection(const QString &name);
         /*! Set the table associated with the model. */
@@ -856,7 +856,7 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    ConnectionInterface &
+    DatabaseConnection &
     Model<Derived, AllRelations...>::getConnection() const
     {
         return m_resolver->connection(getConnectionName());

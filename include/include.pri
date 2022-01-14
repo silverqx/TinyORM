@@ -7,10 +7,10 @@ else: \
 
 headersList += \
     $$PWD/orm/basegrammar.hpp \
+    $$PWD/orm/concerns/countsqueries.hpp \
     $$PWD/orm/concerns/detectslostconnections.hpp \
     $$PWD/orm/concerns/hasconnectionresolver.hpp \
     $$PWD/orm/config.hpp \
-    $$PWD/orm/connectioninterface.hpp \
     $$PWD/orm/connectionresolverinterface.hpp \
     $$PWD/orm/connectors/connectionfactory.hpp \
     $$PWD/orm/connectors/connector.hpp \

@@ -154,7 +154,7 @@ namespace Orm::Tiny
         getQuerySharedPointer() const;
 
         /*! Get a database connection. */
-        inline ConnectionInterface &getConnection() const;
+        inline DatabaseConnection &getConnection() const;
 
         /*! Get a base query builder instance. */
         inline QueryBuilder &toBase() const;
@@ -697,7 +697,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    ConnectionInterface &
+    DatabaseConnection &
     Builder<Model>::getConnection() const
     {
         return m_query->getConnection();

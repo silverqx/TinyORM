@@ -632,19 +632,14 @@ void DatabaseConnection::disconnect()
     m_qtConnectionResolver = nullptr;
 }
 
-void DatabaseConnection::useDefaultQueryGrammar()
-{
-    m_queryGrammar = getDefaultQueryGrammar();
-}
-
 const QueryGrammar &DatabaseConnection::getQueryGrammar() const
 {
     return *m_queryGrammar;
 }
 
-void DatabaseConnection::useDefaultSchemaGrammar()
+QueryGrammar &DatabaseConnection::getQueryGrammar()
 {
-    m_schemaGrammar = getDefaultSchemaGrammar();
+    return *m_queryGrammar;
 }
 
 const SchemaGrammar &DatabaseConnection::getSchemaGrammar() const
@@ -658,11 +653,6 @@ std::unique_ptr<SchemaBuilder> DatabaseConnection::getSchemaBuilder()
         useDefaultSchemaGrammar();
 
     return std::make_unique<SchemaBuilder>(*this);
-}
-
-void DatabaseConnection::useDefaultPostProcessor()
-{
-    m_postProcessor = getDefaultPostProcessor();
 }
 
 const QueryProcessor &DatabaseConnection::getPostProcessor() const
@@ -687,106 +677,6 @@ const QVariantHash &
 DatabaseConnection::getConfig() const
 {
     return m_config;
-}
-
-bool DatabaseConnection::countingElapsed() const
-{
-    return m_countingElapsed;
-}
-
-DatabaseConnection &DatabaseConnection::enableElapsedCounter()
-{
-    m_countingElapsed = true;
-    m_elapsedCounter = 0;
-
-    return *this;
-}
-
-DatabaseConnection &DatabaseConnection::disableElapsedCounter()
-{
-    m_countingElapsed = false;
-    m_elapsedCounter = -1;
-
-    return *this;
-}
-
-qint64 DatabaseConnection::getElapsedCounter() const
-{
-    return m_elapsedCounter;
-}
-
-qint64 DatabaseConnection::takeElapsedCounter()
-{
-    if (!m_countingElapsed)
-        return -1;
-
-    const auto elapsed = m_elapsedCounter;
-
-    m_elapsedCounter = 0;
-
-    return elapsed;
-}
-
-DatabaseConnection &DatabaseConnection::resetElapsedCounter()
-{
-    m_elapsedCounter = 0;
-
-    return *this;
-}
-
-bool DatabaseConnection::countingStatements() const
-{
-    return m_countingStatements;
-}
-
-DatabaseConnection &DatabaseConnection::enableStatementsCounter()
-{
-    m_countingStatements = true;
-
-    m_statementsCounter.normal        = 0;
-    m_statementsCounter.affecting     = 0;
-    m_statementsCounter.transactional = 0;
-
-    return *this;
-}
-
-DatabaseConnection &DatabaseConnection::disableStatementsCounter()
-{
-    m_countingStatements = false;
-
-    m_statementsCounter.normal        = -1;
-    m_statementsCounter.affecting     = -1;
-    m_statementsCounter.transactional = -1;
-
-    return *this;
-}
-
-const StatementsCounter &DatabaseConnection::getStatementsCounter() const
-{
-    return m_statementsCounter;
-}
-
-StatementsCounter DatabaseConnection::takeStatementsCounter()
-{
-    if (!m_countingStatements)
-        return {};
-
-    const auto counter = m_statementsCounter;
-
-    m_statementsCounter.normal        = 0;
-    m_statementsCounter.affecting     = 0;
-    m_statementsCounter.transactional = 0;
-
-    return counter;
-}
-
-DatabaseConnection &DatabaseConnection::resetStatementsCounter()
-{
-    m_statementsCounter.normal        = 0;
-    m_statementsCounter.affecting     = 0;
-    m_statementsCounter.transactional = 0;
-
-    return *this;
 }
 
 void DatabaseConnection::logQuery(
@@ -952,7 +842,7 @@ DatabaseConnection::pretend(const std::function<void()> &callback)
 }
 
 QVector<Log>
-DatabaseConnection::pretend(const std::function<void(ConnectionInterface &)> &callback)
+DatabaseConnection::pretend(const std::function<void(DatabaseConnection &)> &callback)
 {
     return withFreshQueryLog([this, &callback]
     {
@@ -1002,6 +892,21 @@ DatabaseConnection::withFreshQueryLog(const std::function<QVector<Log>()> &callb
 
     // NRVO kicks in
     return result;
+}
+
+void DatabaseConnection::useDefaultQueryGrammar()
+{
+    m_queryGrammar = getDefaultQueryGrammar();
+}
+
+void DatabaseConnection::useDefaultSchemaGrammar()
+{
+    m_schemaGrammar = getDefaultSchemaGrammar();
+}
+
+void DatabaseConnection::useDefaultPostProcessor()
+{
+    m_postProcessor = getDefaultPostProcessor();
 }
 
 std::unique_ptr<QueryProcessor> DatabaseConnection::getDefaultPostProcessor() const
@@ -1084,11 +989,6 @@ DatabaseConnection::convertNamedToPositionalBindings(QVariantMap &&bindings) con
         result << std::move(binding);
 
     return result;
-}
-
-QueryGrammar &DatabaseConnection::getQueryGrammar()
-{
-    return *m_queryGrammar;
 }
 
 } // namespace Orm
