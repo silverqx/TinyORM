@@ -684,6 +684,8 @@ namespace Orm::Query
         std::variant<std::monostate, bool, QString> m_lock {};
     };
 
+    /* public */
+
     /* Retrieving results */
 
     template<typename T>

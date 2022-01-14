@@ -389,6 +389,8 @@ namespace Schema
                 const QString>> m_driverNamePrintable = std::nullopt;
     };
 
+    /* public */
+
     DatabaseConnection::~DatabaseConnection() = default;
 
     QString DatabaseConnection::getTablePrefix() const

@@ -41,6 +41,8 @@ namespace Orm
     for savepoint. This makes it clear at a glance what is happening.
 */
 
+/* public */
+
 // TODO err, may be configurable exceptions by config or compiler directive? (completely disable exceptions by directive) silverqx
 DatabaseConnection::DatabaseConnection(
         std::function<Connectors::ConnectionName()> &&connection,

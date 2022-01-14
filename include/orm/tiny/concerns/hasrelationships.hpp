@@ -333,6 +333,8 @@ namespace Concerns
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
     };
 
+    /* public */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, template<typename> typename Container>
     const Container<Related *> // NOLINT(readability-const-return-type)

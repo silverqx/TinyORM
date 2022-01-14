@@ -320,6 +320,8 @@ namespace Orm::Tiny
         inline static const QString &getUserUpdatedAtColumn();
     };
 
+    /* public */
+
     /* Constructors */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
