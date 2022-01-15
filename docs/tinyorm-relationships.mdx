@@ -758,8 +758,8 @@ In most situations, you should use [logical groups](query-builder.mdx#logical-gr
     user->posts()
         ->where([](auto &query)
         {
-            return query.whereEq("active", 1)
-                        .orWhere("votes", ">=", 100);
+            query.whereEq("active", 1)
+                 .orWhere("votes", ">=", 100);
         })
         .get();
 

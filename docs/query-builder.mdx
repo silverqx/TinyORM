@@ -342,7 +342,7 @@ If you need to group an "or" condition within parentheses, you may pass a lambda
                      .orWhere([](auto &query)
                      {
                          query.whereEq("name", "Abigail")
-                             .where("votes", ">", 50);
+                              .where("votes", ">", 50);
                      })
                      .get();
 
@@ -467,7 +467,7 @@ Sometimes you may need to group several "where" clauses within parentheses in or
                      .where([](auto &query)
                      {
                          query.where("votes", ">", 100)
-                             .orWhere("title", "=", "Admin");
+                              .orWhere("title", "=", "Admin");
                      })
                      .get();
 
