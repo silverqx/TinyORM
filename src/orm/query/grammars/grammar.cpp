@@ -141,8 +141,7 @@ bool Grammar::shouldCompileColumns(const QueryBuilder &query) const
     return !query.getAggregate() && !query.getColumns().isEmpty();
 }
 
-bool Grammar::shouldCompileFrom(
-        const std::variant<std::monostate, QString, Query::Expression> &from) const
+bool Grammar::shouldCompileFrom(const FromClause &from) const
 {
     return !std::holds_alternative<std::monostate>(from) ||
             (std::holds_alternative<QString>(from) &&
