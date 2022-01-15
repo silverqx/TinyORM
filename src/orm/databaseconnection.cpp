@@ -119,15 +119,6 @@ DatabaseConnection::select(const QString &queryString,
 }
 
 QSqlQuery
-DatabaseConnection::selectFromWriteConnection(const QString &queryString,
-                                              const QVector<QVariant> &bindings)
-{
-    // This member function is used from the schema builders/post-processors only
-    // FEATURE read/write connection silverqx
-    return select(queryString, bindings/*, false*/);
-}
-
-QSqlQuery
 DatabaseConnection::selectOne(const QString &queryString,
                               const QVector<QVariant> &bindings)
 {
@@ -136,27 +127,6 @@ DatabaseConnection::selectOne(const QString &queryString,
     query.first();
 
     return query;
-}
-
-QSqlQuery
-DatabaseConnection::insert(const QString &queryString,
-                           const QVector<QVariant> &bindings)
-{
-    return statement(queryString, bindings);
-}
-
-std::tuple<int, QSqlQuery>
-DatabaseConnection::update(const QString &queryString,
-                           const QVector<QVariant> &bindings)
-{
-    return affectingStatement(queryString, bindings);
-}
-
-std::tuple<int, QSqlQuery>
-DatabaseConnection::remove(const QString &queryString,
-                           const QVector<QVariant> &bindings)
-{
-    return affectingStatement(queryString, bindings);
 }
 
 QSqlQuery DatabaseConnection::statement(const QString &queryString,
@@ -275,6 +245,8 @@ QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
     });
 }
 
+/* Obtain connection instance */
+
 QSqlDatabase DatabaseConnection::getQtConnection()
 {
     if (!m_qtConnection) {
@@ -288,15 +260,11 @@ QSqlDatabase DatabaseConnection::getQtConnection()
            connection was resolved by connection resolver. */
         if (!QSqlDatabase::contains(*m_qtConnection))
             throw Exceptions::RuntimeError(
-                    "Connection '" + *m_qtConnection + "' doesn't exist.");
+                    QStringLiteral("Connection '%1' doesn't exist.")
+                    .arg(*m_qtConnection));
     }
 
     // Return the connection from QSqlDatabase connection manager
-    return QSqlDatabase::database(*m_qtConnection);
-}
-
-QSqlDatabase DatabaseConnection::getRawQtConnection() const
-{
     return QSqlDatabase::database(*m_qtConnection);
 }
 
@@ -411,32 +379,12 @@ void DatabaseConnection::disconnect()
     m_qtConnectionResolver = nullptr;
 }
 
-const QueryGrammar &DatabaseConnection::getQueryGrammar() const
-{
-    return *m_queryGrammar;
-}
-
-QueryGrammar &DatabaseConnection::getQueryGrammar()
-{
-    return *m_queryGrammar;
-}
-
-const SchemaGrammar &DatabaseConnection::getSchemaGrammar() const
-{
-    return *m_schemaGrammar;
-}
-
 std::unique_ptr<SchemaBuilder> DatabaseConnection::getSchemaBuilder()
 {
     if (!m_schemaGrammar)
         useDefaultSchemaGrammar();
 
     return std::make_unique<SchemaBuilder>(*this);
-}
-
-const QueryProcessor &DatabaseConnection::getPostProcessor() const
-{
-    return *m_postProcessor;
 }
 
 DatabaseConnection &
@@ -452,11 +400,7 @@ QVariant DatabaseConnection::getConfig(const QString &option) const
     return m_config.value(option);
 }
 
-const QVariantHash &
-DatabaseConnection::getConfig() const
-{
-    return m_config;
-}
+/* Getters */
 
 QString DatabaseConnection::driverName()
 {
@@ -582,11 +526,9 @@ void DatabaseConnection::logConnected()
 
     /* I still don't know if it's a good idea to log this to the console by default,
        it's a very important log message though. */
-    qInfo("%s database connected (%s, %s@%s)",
-          driverNamePrintable().toUtf8().constData(),
-          m_connectionName.toUtf8().constData(),
-          m_hostName.toUtf8().constData(),
-          m_database.toUtf8().constData());
+    qInfo().noquote()
+            << QStringLiteral("%1 database connected (%2, %3@%4)")
+               .arg(driverNamePrintable(), m_connectionName, m_hostName, m_database);
 #endif
 }
 
@@ -601,11 +543,9 @@ void DatabaseConnection::logDisconnected()
     // Reset connected flag
     m_connectedLogged = false;
 
-    qWarning("%s database disconnected (%s, %s@%s)",
-             driverNamePrintable().toUtf8().constData(),
-             m_connectionName.toUtf8().constData(),
-             m_hostName.toUtf8().constData(),
-             m_database.toUtf8().constData());
+    qWarning().noquote()
+            << QStringLiteral("%1 database disconnected (%2, %3@%4)")
+               .arg(driverNamePrintable(), m_connectionName, m_hostName, m_database);
 #endif
 }
 

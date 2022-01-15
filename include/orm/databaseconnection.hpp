@@ -96,7 +96,7 @@ namespace Schema
         select(const QString &queryString,
                const QVector<QVariant> &bindings = {});
         /*! Run a select statement against the database. */
-        QSqlQuery
+        inline QSqlQuery
         selectFromWriteConnection(const QString &queryString,
                                   const QVector<QVariant> &bindings = {});
         /*! Run a select statement and return a single result. */
@@ -104,15 +104,15 @@ namespace Schema
         selectOne(const QString &queryString,
                   const QVector<QVariant> &bindings = {});
         /*! Run an insert statement against the database. */
-        QSqlQuery
+        inline QSqlQuery
         insert(const QString &queryString,
                const QVector<QVariant> &bindings = {});
         /*! Run an update statement against the database. */
-        std::tuple<int, QSqlQuery>
+        inline std::tuple<int, QSqlQuery>
         update(const QString &queryString,
                const QVector<QVariant> &bindings = {});
         /*! Run a delete statement against the database. */
-        std::tuple<int, QSqlQuery>
+        inline std::tuple<int, QSqlQuery>
         remove(const QString &queryString,
                const QVector<QVariant> &bindings = {});
 
@@ -128,10 +128,11 @@ namespace Schema
         /*! Run a raw, unprepared query against the database. */
         QSqlQuery unprepared(const QString &queryString);
 
+        /* Obtain connection instance */
         /*! Get underlying database connection (QSqlDatabase). */
         QSqlDatabase getQtConnection();
         /*! Get underlying database connection without executing any reconnect logic. */
-        QSqlDatabase getRawQtConnection() const;
+        inline QSqlDatabase getRawQtConnection() const;
         /*! Get the connection resolver for an underlying database connection. */
         inline const std::function<Connectors::ConnectionName()> &
         getQtConnectionResolver() const;
@@ -158,15 +159,15 @@ namespace Schema
         void disconnect();
 
         /*! Get the query grammar used by the connection. */
-        const QueryGrammar &getQueryGrammar() const;
+        inline const QueryGrammar &getQueryGrammar() const;
         /*! Get the query grammar used by the connection. */
-        QueryGrammar &getQueryGrammar();
+        inline QueryGrammar &getQueryGrammar();
         /*! Get the schema grammar used by the connection. */
-        const SchemaGrammar &getSchemaGrammar() const;
+        inline const SchemaGrammar &getSchemaGrammar() const;
         /*! Get a schema builder instance for the connection. */
         virtual std::unique_ptr<SchemaBuilder> getSchemaBuilder();
         /*! Get the query post processor used by the connection. */
-        const QueryProcessor &getPostProcessor() const;
+        inline const QueryProcessor &getPostProcessor() const;
 
         /*! Set the reconnect instance on the connection. */
         DatabaseConnection &setReconnector(const ReconnectorType &reconnector);
@@ -174,7 +175,7 @@ namespace Schema
         /*! Get an option from the configuration options. */
         QVariant getConfig(const QString &option) const;
         /*! Get the configuration for the current connection. */
-        const QVariantHash &getConfig() const;
+        inline const QVariantHash &getConfig() const;
 
         /* Getters */
         /*! Return the connection's driver name. */
@@ -327,11 +328,77 @@ namespace Schema
         return Query::Expression(value);
     }
 
+    /* Running SQL Queries */
+
+    QSqlQuery
+    DatabaseConnection::selectFromWriteConnection(const QString &queryString,
+                                                  const QVector<QVariant> &bindings)
+    {
+        // This member function is used from the schema builders/post-processors only
+        // FEATURE read/write connection silverqx
+        return select(queryString, bindings/*, false*/);
+    }
+
+    QSqlQuery
+    DatabaseConnection::insert(const QString &queryString,
+                               const QVector<QVariant> &bindings)
+    {
+        return statement(queryString, bindings);
+    }
+
+    std::tuple<int, QSqlQuery>
+    DatabaseConnection::update(const QString &queryString,
+                               const QVector<QVariant> &bindings)
+    {
+        return affectingStatement(queryString, bindings);
+    }
+
+    std::tuple<int, QSqlQuery>
+    DatabaseConnection::remove(const QString &queryString,
+                               const QVector<QVariant> &bindings)
+    {
+        return affectingStatement(queryString, bindings);
+    }
+
+    /* Obtain connection instance */
+
+    QSqlDatabase DatabaseConnection::getRawQtConnection() const
+    {
+        return QSqlDatabase::database(*m_qtConnection);
+    }
+
     const std::function<Connectors::ConnectionName()> &
     DatabaseConnection::getQtConnectionResolver() const
     {
         return m_qtConnectionResolver;
     }
+
+    const QueryGrammar &DatabaseConnection::getQueryGrammar() const
+    {
+        return *m_queryGrammar;
+    }
+
+    QueryGrammar &DatabaseConnection::getQueryGrammar()
+    {
+        return *m_queryGrammar;
+    }
+
+    const SchemaGrammar &DatabaseConnection::getSchemaGrammar() const
+    {
+        return *m_schemaGrammar;
+    }
+
+    const QueryProcessor &DatabaseConnection::getPostProcessor() const
+    {
+        return *m_postProcessor;
+    }
+
+    const QVariantHash &DatabaseConnection::getConfig() const
+    {
+        return m_config;
+    }
+
+    /* Getters */
 
     const QString &DatabaseConnection::getName() const
     {
