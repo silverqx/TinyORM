@@ -21,6 +21,8 @@ bool ManagesTransactions::beginTransaction()
 {
     Q_ASSERT(m_inTransaction == false);
 
+    databaseConnection().reconnectIfMissingConnection();
+
     static const auto query = QStringLiteral("START TRANSACTION");
 
     // Elapsed timer needed
