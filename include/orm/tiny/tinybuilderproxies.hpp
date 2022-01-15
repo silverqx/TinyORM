@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include <QtSql/QSqlQuery>
 
+#include "orm/ormconcepts.hpp"
 #include "orm/tiny/tinytypes.hpp"
 #include "orm/tiny/utils/attribute.hpp"
 
@@ -22,7 +23,6 @@ namespace Query
 
 namespace Tiny
 {
-    namespace TinyUtils = Orm::Tiny::Utils;
 
     /*! Contains proxy methods to the QueryBuilder. */
     template<typename Model>

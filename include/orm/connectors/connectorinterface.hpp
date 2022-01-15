@@ -13,7 +13,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Connectors
 {
-    /*! Type for the Connectio name (QString). */
+    /*! Type for the Connection name (QString). */
     using ConnectionName = QString;
 
     /*! Connectors interface class. */

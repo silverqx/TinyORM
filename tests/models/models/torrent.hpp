@@ -40,7 +40,7 @@ class Torrent final :
     using Model::Model;
 
 public:
-    /*! The "type" of the primary key ID. */
+    /*! Type used for the primary key ID. */
     using KeyType = quint64;
 
 //    explicit Torrent(const QVector<AttributeItem> &attributes = {});
