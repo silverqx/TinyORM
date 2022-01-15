@@ -524,6 +524,7 @@ Builder &Builder::havingRaw(const QString &sql, const QVector<QVariant> &binding
     return *this;
 }
 
+// TODO stackoverflow, I think all of these kind of methods should be inline silverqx
 Builder &Builder::orHavingRaw(const QString &sql, const QVector<QVariant> &bindings)
 {
     return havingRaw(sql, bindings, OR);
