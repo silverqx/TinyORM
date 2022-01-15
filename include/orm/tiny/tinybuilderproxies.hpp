@@ -23,6 +23,7 @@ namespace Query
 
 namespace Tiny
 {
+    namespace TinyUtils = Orm::Tiny::Utils;
 
     /*! Contains proxy methods to the QueryBuilder. */
     template<typename Model>
