@@ -29,10 +29,17 @@ namespace Tiny
     template<typename Model>
     class BuilderProxies
     {
+        Q_DISABLE_COPY(BuilderProxies)
+
         /*! JoinClause alias. */
         using JoinClause = Orm::Query::JoinClause;
 
     public:
+        /*! Default constructor. */
+        inline BuilderProxies() = default;
+        /*! Default destructor. */
+        inline ~BuilderProxies() = default;
+
         /* Insert, Update, Delete */
         /*! Insert a new record into the database. */
         std::optional<QSqlQuery>

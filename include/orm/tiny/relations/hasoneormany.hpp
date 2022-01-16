@@ -18,6 +18,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     class HasOneOrMany : public Relation<Model, Related>
     {
+        Q_DISABLE_COPY(HasOneOrMany)
+
     protected:
         /*! Protected constructor. */
         HasOneOrMany(std::unique_ptr<Related> &&related, Model &parent,

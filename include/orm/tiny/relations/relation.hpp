@@ -32,6 +32,8 @@ namespace Relations
     template<class Model, class Related>
     class Relation : public RelationProxies<Model, Related>
     {
+        Q_DISABLE_COPY(Relation)
+
         // Used by QueriesRelationships::getHasQueryByExistenceCheck()
         friend Orm::Tiny::Concerns::QueriesRelationships<Model>;
 

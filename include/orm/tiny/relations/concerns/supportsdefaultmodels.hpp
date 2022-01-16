@@ -23,10 +23,14 @@ namespace Concerns
     template<class Model, class Related>
     class SupportsDefaultModels
     {
+        Q_DISABLE_COPY(SupportsDefaultModels)
+
         using AttributeItem = Orm::Tiny::AttributeItem;
 //        using Callback      = std::function<void(Related &, const Model &)>;
 
     public:
+        /*! Default constructor. */
+        inline SupportsDefaultModels() = default;
         /*! Pure virtual destructor. */
         inline virtual ~SupportsDefaultModels() = 0;
 

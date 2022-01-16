@@ -30,6 +30,8 @@ namespace Tiny::Relations
     template<class Model, class Related>
     class RelationProxies
     {
+        Q_DISABLE_COPY(RelationProxies)
+
         /*! JoinClause alias. */
         using JoinClause = Orm::Query::JoinClause;
         /*! Alias for the QueriesRelationships callback type. */
@@ -38,6 +40,8 @@ namespace Tiny::Relations
                                       ::QueriesRelationshipsCallback<HasRelated>;
 
     public:
+        /*! Default constructor. */
+        inline RelationProxies() = default;
         /*! Pure virtual destructor. */
         inline virtual ~RelationProxies() = 0;
 

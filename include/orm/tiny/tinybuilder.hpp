@@ -27,6 +27,8 @@ namespace Orm::Tiny
             public BuilderProxies<Model>,
             public Concerns::QueriesRelationships<Model>
     {
+        Q_DISABLE_COPY(Builder)
+
         // Used by TinyBuilderProxies::where/latest/oldest/update()
         friend BuilderProxies<Model>;
 

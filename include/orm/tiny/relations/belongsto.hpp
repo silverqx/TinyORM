@@ -23,6 +23,8 @@ namespace Orm::Tiny::Relations
             public Relation<Model, Related>,
             public Concerns::SupportsDefaultModels<Model, Related>
     {
+        Q_DISABLE_COPY(BelongsTo)
+
     protected:
         /*! Protected constructor. */
         BelongsTo(std::unique_ptr<Related> &&related, Model &child,

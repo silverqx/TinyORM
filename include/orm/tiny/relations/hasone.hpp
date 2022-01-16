@@ -20,6 +20,8 @@ namespace Orm::Tiny::Relations
             public HasOneOrMany<Model, Related>,
             public Concerns::SupportsDefaultModels<Model, Related>
     {
+        Q_DISABLE_COPY(HasOne)
+
     protected:
         /*! Protected constructor. */
         HasOne(std::unique_ptr<Related> &&related, Model &parent,

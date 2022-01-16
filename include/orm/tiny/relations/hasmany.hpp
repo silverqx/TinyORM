@@ -18,6 +18,8 @@ namespace Orm::Tiny::Relations
             public ManyRelation,
             public HasOneOrMany<Model, Related>
     {
+        Q_DISABLE_COPY(HasMany)
+
     protected:
         /*! Protected constructor. */
         HasMany(std::unique_ptr<Related> &&related, Model &parent,

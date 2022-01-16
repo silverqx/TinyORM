@@ -44,6 +44,8 @@ namespace Orm::Tiny::Relations
             public Relation<Model, Related>,
             public PivotRelation
     {
+        Q_DISABLE_COPY(BelongsToMany)
+
         /*! Model alias. */
         template<typename Derived>
         using BaseModel = Orm::Tiny::Model<Derived>;

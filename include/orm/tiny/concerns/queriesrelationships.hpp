@@ -72,6 +72,8 @@ namespace Private
     template<typename Model>
     class QueriesRelationships
     {
+        Q_DISABLE_COPY(QueriesRelationships)
+
         // Used by HasRelationStore::QueriesRelationshipsStore::visited()
         friend typename Model::template ModelTypeApply<HasRelationStore>;
         // Used by QueriesRelationships::hasInternalVisited()
@@ -90,6 +92,11 @@ namespace Private
         using Relation = Orm::Tiny::Relations::Relation<Model, Related>;
 
     public:
+        /*! Default constructor. */
+        inline QueriesRelationships() = default;
+        /*! Default destructor. */
+        inline ~QueriesRelationships() = default;
+
         /*! Add a relationship count / exists condition to the query. */
         template<typename Related = void>
         TinyBuilder<Model> &
