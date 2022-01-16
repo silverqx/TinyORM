@@ -104,6 +104,7 @@ headersList += \
         $$PWD/orm/tiny/relations/pivot.hpp \
         $$PWD/orm/tiny/relations/relation.hpp \
         $$PWD/orm/tiny/relations/relationproxies.hpp \
+        $$PWD/orm/tiny/relations/relationtypes.hpp \
         $$PWD/orm/tiny/tinybuilder.hpp \
         $$PWD/orm/tiny/tinybuilderproxies.hpp \
         $$PWD/orm/tiny/tinyconcepts.hpp \

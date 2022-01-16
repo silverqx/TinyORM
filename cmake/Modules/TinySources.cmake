@@ -108,6 +108,7 @@ function(tiny_sources out_headers out_sources)
             tiny/relations/pivot.hpp
             tiny/relations/relation.hpp
             tiny/relations/relationproxies.hpp
+            tiny/relations/relationtypes.hpp
             tiny/tinybuilder.hpp
             tiny/tinybuilderproxies.hpp
             tiny/tinyconcepts.hpp

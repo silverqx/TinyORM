@@ -112,6 +112,15 @@ Maintenance:
    - compile with Qt6, I have still problem with clazy
 
 
+RegExs:
+-------
+
+ - const data members:
+(?<![\(\)])(const) +.* +\bm_.*\b( +.*)?;$
+ - const data member references:
+(?<![\(\)])(const) +.* +&\bm_.*\b( +.*)?;$
+
+
 Powershell commands:
 --------------------
 

@@ -13,6 +13,7 @@ TINY_SYSTEM_HEADER
 #include "orm/exceptions/runtimeerror.hpp"
 #include "orm/macros/threadlocal.hpp"
 #include "orm/tiny/relations/relationproxies.hpp"
+#include "orm/tiny/relations/relationtypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -26,30 +27,6 @@ namespace Concerns
 
 namespace Relations
 {
-
-    /*! The tag for one type relation. */
-    class OneRelation
-    {
-    public:
-        /*! Pure virtual destructor. */
-        inline virtual ~OneRelation() = 0;
-    };
-
-    /*! The tag for many type relation. */
-    class ManyRelation
-    {
-    public:
-        /*! Pure virtual destructor. */
-        inline virtual ~ManyRelation() = 0;
-    };
-
-    /*! The tag for the relation which contains pivot table, like many-to-many. */
-    class PivotRelation
-    {
-    public:
-        /*! Pure virtual destructor. */
-        inline virtual ~PivotRelation() = 0;
-    };
 
     /*! Base relations class. */
     template<class Model, class Related>
