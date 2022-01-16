@@ -1656,8 +1656,7 @@ void tst_Model_Relations::where_WithCallback() const
     auto files = Torrent::find(5)->torrentFiles()
                  ->where([](auto &query)
     {
-        return query.whereEq(ID, 6)
-                .orWhereEq("file_index", 2);
+        query.whereEq(ID, 6).orWhereEq("file_index", 2);
     })
                  .get();
 
@@ -1682,8 +1681,7 @@ void tst_Model_Relations::orWhere_WithCallback() const
                  ->where("progress", ">", 990)
                  .orWhere([](auto &query)
     {
-        return query.whereEq(ID, 8)
-                .whereEq("file_index", 2);
+        query.whereEq(ID, 8).whereEq("file_index", 2);
     })
                  .get();
 
