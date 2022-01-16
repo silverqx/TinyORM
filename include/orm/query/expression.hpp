@@ -21,7 +21,7 @@ namespace Orm::Query
     public:
         /*! Default constructor, needed by Q_DECLARE_METATYPE. */
         inline Expression() = default;
-        /*! Destructor. */
+        /*! Default destructor. */
         inline ~Expression() = default;
 
         /*! Converting constructor from QVariant type. */
