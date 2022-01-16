@@ -135,7 +135,7 @@ namespace Concerns
             /*! The model on which is an attribute set. */
             Model<Derived, AllRelations...> &m_model;
             /*! Attribute key name. */
-            const QString m_attribute;
+            QString m_attribute;
             /*! The temporary cache used during operator->() call, to be able
                 to return the QVariant *. */
             mutable QVariant m_attributeCache;
