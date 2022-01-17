@@ -22,8 +22,16 @@ Param(
 Set-StrictMode -Version 3.0
 
 $Script:TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|CUR1|TMP) '
+$Script:InFolders = `
+    (@($(Get-Location).Path, '(include|src|tests)') -join [IO.Path]::DirectorySeparatorChar) + `
+    [IO.Path]::DirectorySeparatorChar
+
+if ($PSVersionTable.Platform -eq 'Win32NT') {
+    $Script:InFolders = $Script:InFolders -replace '\\', '\\'
+}
 
 Get-ChildItem -Path $Path -Include $Include -Recurse
+    | Where-Object DirectoryName -Match "^$Script:InFolders"
     | Select-String -Pattern $Script:TodoKeywordsPattern -CaseSensitive
     | Select-Object -Property `
         @{
