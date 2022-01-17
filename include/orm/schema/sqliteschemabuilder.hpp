@@ -13,7 +13,7 @@ namespace Orm::Schema
 {
 
     /*! SQLite schema repository class. */
-    class SHAREDLIB_EXPORT SQLiteSchemaBuilder : public SchemaBuilder
+    class SQLiteSchemaBuilder : public SchemaBuilder
     {
         Q_DISABLE_COPY(SQLiteSchemaBuilder)
 

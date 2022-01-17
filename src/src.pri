@@ -39,7 +39,6 @@ sourcesList += \
     $$PWD/orm/schema/mysqlschemabuilder.cpp \
     $$PWD/orm/schema/postgresschemabuilder.cpp \
     $$PWD/orm/schema/schemabuilder.cpp \
-    $$PWD/orm/schema/sqliteschemabuilder.cpp \
     $$PWD/orm/sqliteconnection.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \
     $$PWD/orm/utils/fs.cpp \
@@ -52,8 +51,6 @@ sourcesList += \
         $$PWD/orm/tiny/exceptions/modelnotfounderror.cpp \
         $$PWD/orm/tiny/exceptions/relationnotfounderror.cpp \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
-        $$PWD/orm/tiny/model.cpp \
-        $$PWD/orm/tiny/relations/relation.cpp \
         $$PWD/orm/tiny/tinytypes.cpp \
         $$PWD/orm/tiny/types/syncchanges.cpp \
         $$PWD/orm/tiny/utils/attribute.cpp \
