@@ -882,8 +882,8 @@ namespace Orm::Tiny::Concerns
         case CopyMoveTemplateType::MOVE:
             return message.arg(QStringLiteral("move"), className);
         default:
-            Q_ASSERT("Bad type in relationStoreCopyMoveTemplate().");
-            break;
+            // This should never happen 🤔
+            qFatal("Bad type in relationStoreCopyMoveTemplate().");
         }
 #endif
         return "";
