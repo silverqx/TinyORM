@@ -39,6 +39,16 @@ namespace Orm::Query
         /*! Virtual destructor. */
         inline virtual ~Builder() = default;
 
+        /*! Copy constructor. */
+        inline Builder(const Builder &) = default;
+        /*! Deleted copy assignment operator (class constains reference and const). */
+        inline Builder &operator=(const Builder &) = delete;
+
+        /*! Move constructor. */
+        inline Builder(Builder &&) = default;
+        /*! Deleted move assignment operator (class constains reference and const). */
+        inline Builder &operator=(Builder &&) = delete;
+
         /* Retrieving results */
         /*! Execute the query as a "select" statement. */
         QSqlQuery get(const QVector<Column> &columns = {ASTERISK});

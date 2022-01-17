@@ -19,6 +19,16 @@ namespace Orm::Query
         /*! Type for the Join table (FromClause). */
         using JoinTable = FromClause;
 
+        /*! Copy constructor. */
+        inline JoinClause(const JoinClause &) = default;
+        /*! Deleted copy assignment operator (class constains reference and const). */
+        inline JoinClause &operator=(const JoinClause &) = delete;
+
+        /*! Move constructor. */
+        inline JoinClause(JoinClause &&) = default;
+        /*! Deleted move assignment operator (class constains reference and const). */
+        inline JoinClause &operator=(JoinClause &&) = delete;
+
         /*! Virtual destructor. */
         inline ~JoinClause() final = default;
 
