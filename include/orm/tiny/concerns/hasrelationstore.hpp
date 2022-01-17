@@ -67,6 +67,8 @@ namespace Orm::Tiny::Concerns
         /*! Base class for relation stores. */
         class BaseRelationStore
         {
+            Q_DISABLE_COPY(BaseRelationStore)
+
         protected:
             /*! Constructor. */
             BaseRelationStore(HasRelationStore &hasRelationStore,
