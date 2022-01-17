@@ -24,6 +24,13 @@ namespace Types
             in the Model::getConnectionName(). */
         T_THREAD_LOCAL
         inline static QString connection;
+
+        /*! Deleted default constructor. */
+        ConnectionOverride() = delete;
+        /*! Deleted destructor. */
+        ~ConnectionOverride() = delete;
+
+        Q_DISABLE_COPY(ConnectionOverride)
     };
 
 } // namespace Types

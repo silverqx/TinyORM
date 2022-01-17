@@ -21,9 +21,13 @@ namespace Connectors
     /*! Database connection factory. */
     class ConnectionFactory
     {
+        Q_DISABLE_COPY(ConnectionFactory)
+
     public:
         /*! Default constructor. */
         inline ConnectionFactory() = default;
+        /*! Default destructor. */
+        ~ConnectionFactory() = default;
 
         /*! Establish a QSqlDatabase connection based on the configuration. */
         std::unique_ptr<DatabaseConnection>
