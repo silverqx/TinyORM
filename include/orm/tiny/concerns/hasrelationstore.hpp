@@ -9,6 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/relations/relation.hpp"
+#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -39,6 +40,21 @@ namespace Orm::Tiny::Concerns
     {
         // To access createXyzStore(), xyzStore() getters, resetRelationStore(), ...
         friend HasRelationships<Derived, AllRelations...>;
+
+        /*! Default constructor. */
+        inline HasRelationStore() = default;
+        /*! Default destructor. */
+        inline ~HasRelationStore() = default;
+
+        /*! Copy constructor. */
+        inline HasRelationStore(const HasRelationStore &other);
+        /*! Copy assignment operator. */
+        inline HasRelationStore &operator=(const HasRelationStore &other);
+
+        /*! Move constructor. */
+        inline HasRelationStore(HasRelationStore &&other) noexcept;
+        /*! Move assignment operator. */
+        inline HasRelationStore &operator=(HasRelationStore &&other) noexcept;
 
         /*! Type of data saved in the relation store. */
         enum struct RelationStoreType
@@ -307,14 +323,25 @@ namespace Orm::Tiny::Concerns
         inline const QueriesRelationshipsStore<Related> &
         queriesRelationshipsStore() const;
 
+        /*! Type of the template message to generate. */
+        enum struct CopyMoveTemplateType
+        {
+            COPY,
+            MOVE,
+        };
+        /*! Template message for the Q_ASSERT_X() check in copy/move constructors. */
+        static QString
+        relationStoreCopyMoveTemplate(CopyMoveTemplateType type);
+
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
 
-        // BUG this is bad, disable Model's copy/assignment ctors if m_relationStore is not empty, or empty the m_relationStore on copy?, have to think about this 🤔 silverqx
         /*! The store where the values will be saved, before BaseRelationStore::visit()
             is called. */
         std::stack<std::shared_ptr<BaseRelationStore>> m_relationStore;
     };
+
+    /* BaseRelationStore */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::BaseRelationStore
@@ -405,6 +432,8 @@ namespace Orm::Tiny::Concerns
         return m_storeType;
     }
 
+    /* EagerRelationStore */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::EagerRelationStore::EagerRelationStore(
             HasRelationStore &hasRelationStore,
@@ -455,6 +484,8 @@ namespace Orm::Tiny::Concerns
                                            m_models, m_relation);
     }
 
+    /* PushRelationStore */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::PushRelationStore::PushRelationStore(
             HasRelationStore &hasRelationStore,
@@ -474,6 +505,8 @@ namespace Orm::Tiny::Concerns
 
         this->m_hasRelationStore.basemodel().template pushVisited<Related>();
     }
+
+    /* TouchOwnersRelationStore */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore
@@ -498,6 +531,8 @@ namespace Orm::Tiny::Concerns
                 .template touchOwnersVisited<Related>(std::move(relationInstance));
     }
 
+    /* LazyRelationStore */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     HasRelationStore<Derived, AllRelations...>::LazyRelationStore<Related>
@@ -517,6 +552,8 @@ namespace Orm::Tiny::Concerns
         m_result = std::invoke(method, this->m_hasRelationStore.model())
                 ->getResults();
     }
+
+    /* BelongsToManyRelatedTableStore */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::BelongsToManyRelatedTableStore
@@ -540,6 +577,8 @@ namespace Orm::Tiny::Concerns
         // TODO mystery, warning: C4702: unreachable code, I don't know what cause it, I think I'm missing some forward declaration of model in some other model, but who knows silverqx
         m_result = typename Relation::RelatedType().getTable();
     }
+
+    /* QueriesRelationshipsStore */
 
     /*
        QueriesRelationshipsStore<Related> is templated by Related, because it needs to
@@ -627,6 +666,83 @@ namespace Orm::Tiny::Concerns
             return RelationStoreType::QUERIES_RELATIONSHIPS_QUERY;
         else
             return RelationStoreType::QUERIES_RELATIONSHIPS_TINY;
+    }
+
+    /* HasRelationStore */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    HasRelationStore<Derived, AllRelations...>::HasRelationStore(
+#ifdef TINYORM_DEBUG
+                const HasRelationStore &other)
+    {
+        // This is real porn 😂
+        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
+                   "Relation store copy constructor",
+                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::COPY)
+                   .toUtf8().constData());
+
+        m_relationStore = {};
+    }
+#else
+                const HasRelationStore &/*unused*/)
+        : m_relationStore()
+    {}
+#endif
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    HasRelationStore<Derived, AllRelations...> &
+    HasRelationStore<Derived, AllRelations...>::operator=(
+#ifdef TINYORM_DEBUG
+                const HasRelationStore &other)
+    {
+        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
+                   "Relation store copy assignment",
+                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::COPY)
+                   .toUtf8().constData());
+#else
+                const HasRelationStore &/*unused*/)
+    {
+#endif
+        m_relationStore = {};
+
+        return *this;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    HasRelationStore<Derived, AllRelations...>::HasRelationStore(
+#ifdef TINYORM_DEBUG
+                HasRelationStore &&other) noexcept
+    {
+        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
+                   "Relation store move constructor",
+                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::MOVE)
+                   .toUtf8().constData());
+
+        m_relationStore = {};
+    }
+#else
+                HasRelationStore &&/*unused*/) noexcept
+        : m_relationStore()
+    {}
+#endif
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    HasRelationStore<Derived, AllRelations...> &
+    HasRelationStore<Derived, AllRelations...>::operator=(
+#ifdef TINYORM_DEBUG
+                HasRelationStore &&other) noexcept
+    {
+        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
+                   "Relation store move assignment",
+                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::MOVE)
+                   .toUtf8().constData());
+#else
+                HasRelationStore &&/*unused*/) noexcept
+    {
+#endif
+        m_relationStore = {};
+
+        return *this;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -745,6 +861,32 @@ namespace Orm::Tiny::Concerns
     {
         return *std::static_pointer_cast<
                 const QueriesRelationshipsStore<Related>>(m_relationStore.top());
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString
+    HasRelationStore<Derived, AllRelations...>::relationStoreCopyMoveTemplate(
+                const CopyMoveTemplateType type)
+    {
+#ifdef TINYORM_DEBUG
+        const auto message =
+                QStringLiteral(
+                    "You can not %1 the %2 model in the middle of any relation store "
+                    "operation.");
+
+        const auto className = Orm::Utils::Type::classPureBasename<Derived>();
+
+        switch (type) {
+        case CopyMoveTemplateType::COPY:
+            return message.arg(QStringLiteral("copy"), className);
+        case CopyMoveTemplateType::MOVE:
+            return message.arg(QStringLiteral("move"), className);
+        default:
+            Q_ASSERT("Bad type in relationStoreCopyMoveTemplate().");
+            break;
+        }
+#endif
+        return "";
     }
 
     /* Static cast this to a child's instance type (CRTP) */
