@@ -63,7 +63,7 @@ void MySqlConnector::parseConfigOptions(QVariantHash &options) const
 {
     // This connection options are banned
     static const QVariantHash banned {
-        // We have our reconnector
+        // We have our own reconnector
         {QStringLiteral("MYSQL_OPT_RECONNECT"), 1},
     };
 
@@ -72,11 +72,13 @@ void MySqlConnector::parseConfigOptions(QVariantHash &options) const
         const auto &key = itOption.key();
         const auto &value = itOption.value();
 
+        // BUG rewrite silverqx
         if (options.contains(key) && options[key] == value)
-            throw std::domain_error(
-                    "The connection option '" + value.value<QString>().toStdString() +
-                    "' is not allowed in the TinyORM, TinyORM uses its own "
-                    "reconnector.");
+            throw Exceptions::RuntimeError(
+                    QStringLiteral(
+                        "The connection option '%1' is not allowed in the TinyORM, "
+                        "TinyORM uses its own reconnector.")
+                    .arg(key));
 
         ++itOption;
     }

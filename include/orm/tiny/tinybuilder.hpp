@@ -737,7 +737,7 @@ namespace Orm::Tiny
             const auto isSelectConstraint = relation.name.contains(COLON);
 
             if (isSelectConstraint && relation.constraints)
-                throw Orm::Exceptions::RuntimeError(
+                throw Orm::Exceptions::InvalidArgumentError(
                         "Passing both 'Select constraint' and 'Lambda expression "
                         "constraint' to the Model::with() method is not allowed, use "
                         "only one of them.");

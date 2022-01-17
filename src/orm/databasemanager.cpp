@@ -1,6 +1,7 @@
 #include "orm/databasemanager.hpp"
 
 #include "orm/concerns/hasconnectionresolver.hpp"
+#include "orm/exceptions/invalidargumenterror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -213,8 +214,9 @@ DatabaseManager &
 DatabaseManager::addConnection(const QVariantHash &config, const QString &name)
 {
     if ((*m_configuration).contains(name))
-        throw Exceptions::RuntimeError(
-                QStringLiteral("The database connection '%1' already exists.").arg(name));
+        throw Exceptions::InvalidArgumentError(
+                QStringLiteral("The database connection '%1' already exists.")
+                .arg(name));
 
     (*m_configuration).insert(name, config);
 

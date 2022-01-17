@@ -240,7 +240,8 @@ QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
-                    QStringLiteral("Statement in %1() failed.").arg(functionName),
+                    QStringLiteral("Unprepared statement in %1() failed.")
+                        .arg(functionName),
                     query);
     });
 }
@@ -360,7 +361,9 @@ bool DatabaseConnection::pingDatabase()
 void DatabaseConnection::reconnect() const
 {
     if (!m_reconnector)
-        throw std::runtime_error("Lost connection and no reconnector available.");
+        throw Exceptions::RuntimeError(
+                QStringLiteral("Lost connection and no reconnector available in %1.")
+                .arg(__tiny_func__));
 
     std::invoke(m_reconnector, *this);
 }

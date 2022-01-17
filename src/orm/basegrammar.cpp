@@ -1,6 +1,7 @@
 #include "orm/basegrammar.hpp"
 
 #include "orm/exceptions/runtimeerror.hpp"
+#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -62,7 +63,9 @@ QString BaseGrammar::wrapTable(const QString &table) const
 QString BaseGrammar::wrapTable(const FromClause &table) const
 {
     if (std::holds_alternative<std::monostate>(table))
-        throw Exceptions::RuntimeError("std::monostate in wrapTable().");
+        throw Exceptions::RuntimeError(
+                QStringLiteral("Unexpected std::monostate value in %1().")
+                .arg(__tiny_func__));
 
     if (std::holds_alternative<Expression>(table))
         return getValue(std::get<Expression>(table)).value<QString>();

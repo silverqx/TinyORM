@@ -1,9 +1,8 @@
 #include "orm/support/configurationoptionsparser.hpp"
 
-#include <stdexcept>
-
 #include "orm/connectors/connector.hpp"
 #include "orm/constants.hpp"
+#include "orm/exceptions/runtimeerror.hpp"
 
 using Orm::Constants::EQ_C;
 using Orm::Constants::options_;
@@ -53,9 +52,9 @@ ConfigurationOptionsParser::validateConfigOptions(const QVariant &options) const
 #endif
         && !options.canConvert<QVariantHash>()
     )
-        throw std::domain_error(
-                "The unsupported 'options' type in the connection configuration "
-                "has to be QString or QVariantHash.");
+        throw Exceptions::RuntimeError(
+                "Passed unsupported 'options' type in the connection configuration, "
+                "it has to be the QString or QVariantHash type.");
 }
 
 QVariantHash

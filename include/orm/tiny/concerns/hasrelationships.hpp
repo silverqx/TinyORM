@@ -14,7 +14,7 @@ TINY_SYSTEM_HEADER
 
 #include <range/v3/algorithm/contains.hpp>
 
-#include "orm/exceptions/invalidargumenterror.hpp"
+#include "orm/exceptions/invalidtemplateargumenterror.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
 #include "orm/tiny/exceptions/relationnotfounderror.hpp"
 #include "orm/tiny/exceptions/relationnotloadederror.hpp"
@@ -931,7 +931,7 @@ namespace Concerns
     {
         if constexpr (std::is_same_v<Result, std::optional<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
-                throw Orm::Exceptions::RuntimeError(
+                throw Orm::Exceptions::InvalidTemplateArgumentError(
                         QStringLiteral(
                             "The relation '%1' is many type relation, use "
                             "%2<%3>() method overload without an 'Orm::One' tag.")
@@ -939,15 +939,14 @@ namespace Concerns
                              Orm::Utils::Type::classPureBasename<Related>()));
         } else if constexpr (std::is_same_v<Result, QVector<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
-                throw Orm::Exceptions::RuntimeError(
+                throw Orm::Exceptions::InvalidTemplateArgumentError(
                         QStringLiteral(
                             "The relation '%1' is one type relation, use "
-                            "%2<%3, Orm::One>() method overload "
-                            "with an 'Orm::One' tag.")
+                            "%2<%3, Orm::One>() method overload with an 'Orm::One' tag.")
                         .arg(relation, source,
                              Orm::Utils::Type::classPureBasename<Related>()));
         } else
-            throw Orm::Exceptions::InvalidArgumentError(
+            throw Orm::Exceptions::InvalidTemplateArgumentError(
                     "Unexpected 'Result' template argument.");
     }
 
@@ -1126,7 +1125,7 @@ namespace Concerns
             )
                 relatedModel->touchOwners();
         } else
-            throw Orm::Exceptions::RuntimeError(
+            throw Orm::Exceptions::InvalidTemplateArgumentError(
                     "Bad relation type passed to the Model::touchOwnersVisited().");
     }
 

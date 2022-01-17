@@ -47,7 +47,7 @@ Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash 
 
     if (!db.open())
         throw Exceptions::SqlError(
-                QStringLiteral("Open databse connection in %1() failed.")
+                QStringLiteral("Failed to open database connection in %1().")
                 .arg(__tiny_func__),
                 db.lastError());
 

@@ -2,7 +2,6 @@
 
 #include "orm/constants.hpp"
 #include "orm/db.hpp"
-#include "orm/exceptions/logicerror.hpp"
 #include "orm/exceptions/runtimeerror.hpp"
 
 using Orm::Constants::database_;
@@ -35,7 +34,6 @@ using Orm::Constants::UTF8MB4;
 
 using Orm::DB;
 
-using Orm::Exceptions::LogicError;
 using Orm::Exceptions::RuntimeError;
 
 namespace TestUtils
@@ -225,8 +223,8 @@ void Databases::throwIfConnectionsInitialized()
     static bool initialized = false;
 
     if (initialized)
-        throw LogicError("Databases::createConnections/createConnection methods "
-                         "can be called only once.");
+        throw RuntimeError("Databases::createConnections/createConnection methods "
+                           "can be called only once.");
 
     initialized = true;
 }

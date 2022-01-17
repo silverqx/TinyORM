@@ -117,8 +117,12 @@ RegExs:
 
  - const data members:
 (?<![\(\)])(const) +.* +\bm_.*\b( +.*)?;$
+(?<![\(\)])(const) +.* +\bm_.*\b +=
+(?<![\(\)])(const) +.* +\bm_.*\b +{
  - const data member references:
 (?<![\(\)])(const) +.* +&\bm_.*\b( +.*)?;$
+ - all exceptions:
+throw (.*::)?\w+(E|_error)
 
 
 Powershell commands:
