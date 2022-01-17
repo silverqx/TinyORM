@@ -640,14 +640,7 @@ namespace Orm::Query
         void checkBindingType(BindingType type) const;
 
         /*! All of the available clause operators. */
-        const QVector<QString> m_operators {
-            EQ, LT, GT, LE, GE, NE_, NE, "<=>",
-            LIKE, "like binary", NLIKE, ILIKE,
-            B_AND, B_OR, "^", "<<", ">>", "&~",
-            "rlike", "not rlike", "regexp", "not regexp",
-            "~", "~*", "!~", "!~*", "similar to",
-            "not similar to", "not ilike", "~~*", "!~~*",
-        };
+        static const QVector<QString> &getOperators();
 
         /*! The database connection instance. */
         DatabaseConnection &m_connection;

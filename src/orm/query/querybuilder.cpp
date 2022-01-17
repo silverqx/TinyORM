@@ -848,7 +848,7 @@ bool Builder::invalidOperator(const QString &comparison) const
 {
     const auto comparison_ = comparison.toLower();
 
-    return !m_operators.contains(comparison_) &&
+    return !getOperators().contains(comparison_) &&
             !m_grammar.getOperators().contains(comparison_);
 }
 
@@ -1109,6 +1109,20 @@ void Builder::checkBindingType(const BindingType type) const
     throw Exceptions::InvalidArgumentError(
                 QStringLiteral("Invalid binding type: %1")
                 .arg(static_cast<int>(type)));
+}
+
+const QVector<QString> &Builder::getOperators()
+{
+    static const QVector<QString> cachedOperators {
+        EQ, LT, GT, LE, GE, NE_, NE, "<=>",
+        LIKE, "like binary", NLIKE, ILIKE,
+        B_AND, B_OR, "^", "<<", ">>", "&~",
+        "rlike", "not rlike", "regexp", "not regexp",
+        "~", "~*", "!~", "!~*", "similar to",
+        "not similar to", "not ilike", "~~*", "!~~*",
+    };
+
+    return cachedOperators;
 }
 
 } // namespace Orm::Query
