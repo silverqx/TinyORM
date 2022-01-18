@@ -25,7 +25,8 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
 {
     // This method is public, so I left this check here
     if (!config.contains(driver_))
-        throw std::domain_error("A 'driver' configuration parameter must be specified.");
+        throw Exceptions::RuntimeError(
+                "A 'driver' configuration parameter must be specified.");
 
     const auto driver = config[driver_].value<QString>();
 
@@ -41,8 +42,8 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
 //    if (driver == "SQLSRV")
 //        return std::make_unique<SqlServerConnector>();
 
-    throw std::domain_error(
-                "Unsupported driver '" + driver.toStdString() + "'.");
+    throw Exceptions::RuntimeError(QStringLiteral("Unsupported driver '%1'.")
+                                   .arg(driver));
 }
 
 QVariantHash &
@@ -155,15 +156,15 @@ ConnectionFactory::createConnection(
 //        return std::make_unique<SqlServerConnection>(std::move(connection), database,
 //                                                     prefix, config);
 
-    throw std::domain_error(
-                "Unsupported driver '" + driver.toStdString() + "'.");
+    throw Exceptions::RuntimeError(QStringLiteral("Unsupported driver '%1'.")
+                                   .arg(driver));
 }
 
 QStringList ConnectionFactory::parseHosts(const QVariantHash &config) const
 {
     if (!config.contains(host_))
-        // TODO now unify exception, std::domain_error is for user code, create own exceptions and use InvalidArgumentError, or runtime/logic error silverqx
-        throw std::domain_error("Database 'host' configuration parameter is required.");
+        throw Exceptions::RuntimeError(
+                "Database 'host' configuration parameter is required.");
 
     auto hosts = config[host_].value<QStringList>();
 
@@ -176,8 +177,9 @@ void ConnectionFactory::validateHosts(const QStringList &hosts) const
 {
     for (const auto &host : hosts)
         if (host.isEmpty())
-            throw std::domain_error("Database 'host' configuration parameter "
-                                        "can not contain empty value.");
+            throw Exceptions::RuntimeError(
+                    "Database 'host' configuration parameter can not contain empty "
+                    "value.");
 }
 
 } // namespace Orm::Connectors

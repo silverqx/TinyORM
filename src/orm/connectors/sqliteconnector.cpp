@@ -4,7 +4,6 @@
 #include <QtSql/QSqlQuery>
 
 #include "orm/constants.hpp"
-#include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/exceptions/queryerror.hpp"
 #include "orm/utils/type.hpp"
 
@@ -93,7 +92,7 @@ void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const
         checkDatabaseExists = config[check_database_exists].value<bool>();
 
     if (checkDatabaseExists && !QFile::exists(path))
-        throw Exceptions::InvalidArgumentError(
+        throw Exceptions::RuntimeError(
                 QStringLiteral("SQLite Database file '%1' does not exist.").arg(path));
 }
 

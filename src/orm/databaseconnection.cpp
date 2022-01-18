@@ -162,7 +162,6 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
-                    // TODO next use __tiny_func__ in similar statements/exceptions silverqx
                     QStringLiteral("Statement in %1() failed.").arg(functionName),
                     query, bindings_);
     });
