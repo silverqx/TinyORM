@@ -163,9 +163,6 @@ namespace Orm::Tiny
         // FUTURE add Query Scopes feature silverqx
 //        { return $this->applyScopes()->getQuery(); }
 
-        /*! Explains the query. */
-//        QSqlQuery explain() const;
-
         /*! Qualify the given column name by the model's table. */
         inline QString qualifyColumn(const QString &column) const;
 
@@ -716,14 +713,6 @@ namespace Orm::Tiny
     {
         return m_model.qualifyColumn(column);
     }
-
-    // BUG Qt sql driver does not support to call EXPLAIN as a prepared statement silverqx
-//    template<typename Model>
-//    QSqlQuery Builder<Model>::explain() const
-//    {
-//        return getConnection().select(QStringLiteral("EXPLAIN %1").arg(toSql()),
-//                                      getBindings());
-//    }
 
     template<typename Model>
     QVector<WithItem>
