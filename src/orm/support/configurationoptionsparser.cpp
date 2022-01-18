@@ -60,9 +60,12 @@ ConfigurationOptionsParser::validateConfigOptions(const QVariant &options) const
 QVariantHash
 ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options) const
 {
-    // CUR verify, I have qt5/6 macros across whole app for this silverqx
     // Input is already validated, so I can be sure that options key is QVariantHash
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    if (options.typeId() != QMetaType::QString)
+#else
     if (options.userType() != QMetaType::QString)
+#endif
         return options.value<QVariantHash>();
 
     // Convert to the QVariantHash
