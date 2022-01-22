@@ -33,11 +33,11 @@ begin {
 
     . $PSScriptRoot\private\Common.ps1
 
-    function Initialize-EnvVariable {
+    function Get-EnvVariable {
         [OutputType([string[]])]
         Param()
 
-        # Initialize by passed Variable value
+        # Get by passed Variable value
         if ($Variable) {
             if ($Variable.StartsWith('env:')) {
                 return $Variable, ($Variable.TrimStart('env:'))
@@ -48,7 +48,7 @@ begin {
 
         $platform = $PSVersionTable.Platform
 
-        # Initialize by platform defaults
+        # Get by platform defaults
         switch ($platform) {
             'Win32NT' {
                 return 'env:Path', 'Path'
@@ -121,7 +121,7 @@ begin {
     }
 
     # Obtain paths to add and excluded paths
-    function Initialize-Paths {
+    function Get-Paths {
         [CmdletBinding(PositionalBinding = $false)]
         [OutputType([string[]])]
         Param(
@@ -265,7 +265,7 @@ begin {
                 | Select-Object -ExpandProperty Value
 
             # Obtain paths to add and excluded paths
-            $pathsToAdd, $pathsExcluded = Initialize-Paths -VariableValue $variableValue
+            $pathsToAdd, $pathsExcluded = Get-Paths -VariableValue $variableValue
 
             # Nothing to add
             if ($pathsToAdd.Length -eq 0) {
@@ -289,7 +289,7 @@ begin {
         exit 0
     }
 
-    $Script:envVariable, $Script:envVariableRaw = Initialize-EnvVariable
+    $Script:envVariable, $Script:envVariableRaw = Get-EnvVariable
 }
 
 process {

@@ -100,9 +100,11 @@ This is laravel/framework version, not laravel/laravel version:
  - I have cloned repository at - E:\htdocs\laravel-src-master
  - based on Laravel v8.26.1
  - upgrade to Laravel v8.41.0 ( 15.5.2021, but I didn't merged/reflected new changes to TinyORM )
+ - upgrade to Laravel v8.80.0 ( 19.1.2021, upgrade from v8.41.0 )
  - compare URLs (remove after merge):
    - https://github.com/laravel/framework/compare/v8.26.1...v8.41.0
-   - https://github.com/laravel/framework/compare/v8.41.0...v8.68.1
+   - https://github.com/laravel/framework/compare/v8.41.0...v8.80.0
+
 
 Maintenance:
 ------------
