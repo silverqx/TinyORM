@@ -57,8 +57,7 @@ unset(tinyRcIncludepath)
 # Use Precompiled headers (PCH)
 # ---
 
-precompile_header: \
-    include($$PWD/src/pch.pri)
+include($$PWD/src/pch.pri)
 
 # Link against TinyORM library (also adds defines and include headers)
 # ---

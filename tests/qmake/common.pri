@@ -59,8 +59,7 @@ unset(tinyRcIncludepath)
 # Use TinyORM's library precompiled headers (PCH)
 # ---
 
-precompile_header: \
-    include($$TINYORM_SOURCE_TREE/include/pch.pri)
+include($$TINYORM_SOURCE_TREE/include/pch.pri)
 
 # Default rules for deployment
 # ---

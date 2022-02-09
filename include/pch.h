@@ -13,9 +13,9 @@
 #include <QVariant>
 #include <QVector>
 
+#include <algorithm>
 #include <array>
 #include <bitset>
-#include <algorithm>
 #include <cassert>
 #include <cfloat>
 #include <cmath>

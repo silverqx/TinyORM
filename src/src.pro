@@ -71,8 +71,7 @@ tiny_resource_and_manifest(                                                     
 # Use Precompiled headers (PCH)
 # ---
 
-precompile_header: \
-    include(../include/pch.pri)
+include(../include/pch.pri)
 
 # Deployment
 # ---

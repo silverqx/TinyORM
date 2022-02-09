@@ -2,5 +2,7 @@
 # ---
 
 PRECOMPILED_HEADER = $$quote($$PWD/pch.h)
+HEADERS += $$PRECOMPILED_HEADER
 
-DEFINES *= USING_PCH
+precompile_header: \
+    DEFINES *= USING_PCH
