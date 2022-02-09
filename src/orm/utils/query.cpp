@@ -78,7 +78,7 @@ void Query::logExecutedQuery(const QSqlQuery &query)
                        << Query::parseExecutedQuery(query);
 }
 #else
-void Query::logExecutedQuery(const QSqlQuery &)
+void Query::logExecutedQuery(const QSqlQuery &/*unused*/)
 {}
 #endif
 
