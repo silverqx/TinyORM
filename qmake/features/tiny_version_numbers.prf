@@ -1,7 +1,7 @@
 # Find version numbers in the version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
 defineTest(tiny_version_numbers) {
-    versionHeader = $$find(HEADERS, ".+/version(.hpp)$")
+    versionHeader = $$find(HEADERS, "(?:.*\/)?version\.h(?:pp)?$")
     exists(versionHeader)|isEmpty(versionHeader) {
         error( "HEADERS does not contain a version header file version.hpp, needed\
                 in the tiny_version_numbers.prf." )
