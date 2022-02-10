@@ -35,16 +35,16 @@ namespace Query
 
         /*! Factory method to create DatabaseManager instance and set a default connection
             at once. */
-        static std::unique_ptr<DatabaseManager>
+        static std::shared_ptr<DatabaseManager>
         create(const QString &defaultConnection = Configuration::defaultConnectionName);
         /*! Factory method to create DatabaseManager instance and register a new
             connection as default connection at once. */
-        static std::unique_ptr<DatabaseManager>
+        static std::shared_ptr<DatabaseManager>
         create(const QVariantHash &config,
                const QString &connection = Configuration::defaultConnectionName);
         /*! Factory method to create DatabaseManager instance and set connections
             at once. */
-        static std::unique_ptr<DatabaseManager>
+        static std::shared_ptr<DatabaseManager>
         create(const ConfigurationsType &configs,
                const QString &defaultConnection = Configuration::defaultConnectionName);
 
@@ -107,8 +107,10 @@ namespace Query
         std::size_t transactionLevel();
 
         /* DatabaseManager */
-        /*! Obtain a database connection instance, for now it's singleton. */
-        static DatabaseManager *instance();
+        /*! Obtain a shared pointer to the DatabaseManager. */
+        static std::shared_ptr<DatabaseManager> instance();
+        /*! Obtain a reference to the DatabaseManager. */
+        static DatabaseManager &reference();
 
         /*! Get a database connection instance. */
         DatabaseConnection &connection(const QString &name = "") final;
@@ -322,8 +324,8 @@ namespace Query
         /*! The callback to be executed to reconnect to a database. */
         ReconnectorType m_reconnector = nullptr;
 
-        /*! Pointer to the Database Manager instance. */
-        inline static DatabaseManager *m_instance = nullptr;
+        /*! Shared pointer to the DatabaseManager instance. */
+        static std::shared_ptr<DatabaseManager> m_instance;
     };
 
     Query::Expression

@@ -2018,7 +2018,8 @@ void tst_Model_Relations::has_Count_UniquePtr_OnHasMany() const
     Torrent dummyModel;
 
     // Ownership of a unique_ptr()
-    auto relation = Relation<Torrent, TorrentPreviewableFile>::noConstraints(
+    auto relation =
+            Relation<Torrent, TorrentPreviewableFile>::noConstraints(
                 [&dummyModel]()
     {
         return std::invoke(&Torrent::torrentFiles, dummyModel);

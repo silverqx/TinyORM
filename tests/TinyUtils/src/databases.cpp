@@ -50,7 +50,7 @@ const QStringList &Databases::createConnections(const QStringList &connections)
 {
     throwIfConnectionsInitialized();
 
-    // Ownership of a unique_ptr()
+    // Ownership of a shared_ptr()
     /* The default connection is empty for tests, there is no default connection
        because it can produce hard to find bugs, I have to be explicit about
        the connection which will be used. */

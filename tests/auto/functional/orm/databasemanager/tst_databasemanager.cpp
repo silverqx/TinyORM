@@ -36,7 +36,7 @@ private slots:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! The Database Manager used in this test case. */
-    std::unique_ptr<DatabaseManager> m_dm {};
+    std::shared_ptr<DatabaseManager> m_dm {};
 };
 
 void tst_DatabaseManager::initTestCase()

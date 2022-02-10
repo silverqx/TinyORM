@@ -22,12 +22,6 @@ namespace Orm
         /*! Type used for Database Connections map. */
         using ConfigurationsType = Configuration::ConfigurationsType;
 
-        /*! Get the reference to the DatabaseManager. */
-        static DatabaseManager &manager();
-
-        /*! Pointer to the DatabaseManager. */
-        inline static DatabaseManager *m_manager = nullptr;
-
     public:
         /*! Deleted default constructor, this is a pure library class. */
         DB() = delete;
@@ -37,16 +31,16 @@ namespace Orm
         /* Proxy methods to the DatabaseManager */
         /*! Factory method to create DatabaseManager instance and set a default connection
             at once. */
-        static std::unique_ptr<DatabaseManager>
+        static std::shared_ptr<DatabaseManager>
         create(const QString &defaultConnection = Configuration::defaultConnectionName);
         /*! Factory method to create DatabaseManager instance and register
             a new connection as default connection at once. */
-        static std::unique_ptr<DatabaseManager>
+        static std::shared_ptr<DatabaseManager>
         create(const QVariantHash &config,
                const QString &connection = Configuration::defaultConnectionName);
         /*! Factory method to create DatabaseManager instance and set connections
             at once. */
-        static std::unique_ptr<DatabaseManager>
+        static std::shared_ptr<DatabaseManager>
         create(const ConfigurationsType &configs,
                const QString &defaultConnection = Configuration::defaultConnectionName);
 
@@ -278,6 +272,13 @@ namespace Orm
                                             const QString &connection = "");
         /*! Reset the record modification state. */
         static void forgetRecordModificationState(const QString &connection = "");
+
+    private:
+        /*! Get a reference to the DatabaseManager. */
+        static DatabaseManager &manager();
+
+        /*! Pointer to the DatabaseManager. */
+        static std::shared_ptr<DatabaseManager> m_manager;
     };
 
     Query::Expression DB::raw(const QVariant &value)

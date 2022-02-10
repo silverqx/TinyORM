@@ -2,32 +2,28 @@
 
 #include <QSharedPointer>
 
+#include "orm/macros/likely.hpp"
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
 
-DatabaseManager &DB::manager()
-{
-    if (m_manager == nullptr)
-        m_manager = DatabaseManager::instance();
+std::shared_ptr<DatabaseManager> DB::m_manager;
 
-    return *m_manager;
-}
-
-std::unique_ptr<DatabaseManager>
+std::shared_ptr<DatabaseManager>
 DB::create(const QString &defaultConnection)
 {
     return DatabaseManager::create(defaultConnection);
 }
 
-std::unique_ptr<DatabaseManager>
+std::shared_ptr<DatabaseManager>
 DB::create(const QVariantHash &config, const QString &connection)
 {
     return DatabaseManager::create(config, connection);
 }
 
-std::unique_ptr<DatabaseManager>
+std::shared_ptr<DatabaseManager>
 DB::create(const ConfigurationsType &configs, const QString &defaultConnection)
 {
     return DatabaseManager::create(configs, defaultConnection);
@@ -459,6 +455,15 @@ void DB::recordsHaveBeenModified(const bool value, const QString &connection)
 void DB::forgetRecordModificationState(const QString &connection)
 {
     manager().connection(connection).forgetRecordModificationState();
+}
+
+DatabaseManager &DB::manager()
+{
+    if (m_manager) T_LIKELY
+        return *m_manager;
+
+    else T_UNLIKELY
+        return *(m_manager = DatabaseManager::instance());
 }
 
 } // namespace Orm
