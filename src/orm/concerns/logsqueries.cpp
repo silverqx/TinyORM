@@ -1,6 +1,6 @@
 #include "orm/concerns/logsqueries.hpp"
 
-#if defined(TINYORM_DEBUG_SQL)
+#ifdef TINYORM_DEBUG_SQL
 #include <QDebug>
 #endif
 
@@ -28,6 +28,10 @@ void LogsQueries::logQueryForPretend(
         m_queryLog->append({query, bindings, Log::Type::NORMAL, ++m_queryLogId});
 
 #ifdef TINYORM_DEBUG_SQL
+    // Debugging SQL queries is disabled
+    if (!m_debugSql)
+        return;
+
     const auto &connectionName = databaseConnection().getName();
 
     qDebug("Pretended prepared query (%s) : %s",
@@ -45,10 +49,13 @@ void LogsQueries::logTransactionQuery(
                             elapsed ? *elapsed : -1});
 
 #ifdef TINYORM_DEBUG_SQL
+    // Debugging SQL queries is disabled
+    if (!m_debugSql)
+        return;
+
     const auto &connectionName = databaseConnection().getName();
 
-    qDebug("%s transaction query (%llims%s) : %s",
-           QStringLiteral("Executed").toUtf8().constData(),
+    qDebug("Executed transaction query (%llims%s) : %s",
            elapsed ? *elapsed : -1,
            connectionName.isEmpty() ? ""
                                     : QStringLiteral(", %1").arg(connectionName)
@@ -63,10 +70,13 @@ void LogsQueries::logTransactionQueryForPretend(const QString &query) const
         m_queryLog->append({query, {}, Log::Type::TRANSACTION, ++m_queryLogId});
 
 #ifdef TINYORM_DEBUG_SQL
+    // Debugging SQL queries is disabled
+    if (!m_debugSql)
+        return;
+
     const auto &connectionName = databaseConnection().getName();
 
-    qDebug("%s transaction query (%s) : %s",
-           QStringLiteral("Pretended").toUtf8().constData(),
+    qDebug("Pretended transaction query (%s) : %s",
            connectionName.isEmpty() ? "" : connectionName.toUtf8().constData(),
            query.toUtf8().constData());
 #endif
