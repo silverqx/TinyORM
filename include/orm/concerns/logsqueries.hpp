@@ -35,10 +35,10 @@ namespace Concerns
         inline virtual ~LogsQueries() = default;
 
         /*! Log a query into the connection's query log. */
-        void logQuery(const QSqlQuery &query, std::optional<qint64> elapsed) const;
+        inline void logQuery(const QSqlQuery &query, std::optional<qint64> elapsed) const;
         /*! Log a query into the connection's query log. */
-        void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
-                      std::optional<qint64> elapsed) const;
+        inline void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
+                             std::optional<qint64> elapsed) const;
         /*! Log a query into the connection's query log in the pretending mode. */
         void logQueryForPretend(const QString &query,
                                 const QVector<QVariant> &bindings) const;
@@ -62,6 +62,14 @@ namespace Concerns
         /*! The current order value for a query log record. */
         inline static std::size_t getQueryLogOrder();
 
+        /*! Determine whether debugging SQL queries is enabled/disabled (logging
+            to the console using qDebug()). */
+        inline bool debugSql() const;
+        /*! Disable debugging SQL queries (logging to the console using qDebug()). */
+        inline void disableDebugSql();
+        /*! Enable debugging SQL queries (logging to the console using qDebug()). */
+        inline void enableDebugSql();
+
     protected:
         /*! Execute the given callback in "dry run" mode. */
         QVector<Log>
@@ -74,7 +82,19 @@ namespace Concerns
         /*! ID of the query log record. */
         inline static std::atomic<std::size_t> m_queryLogId = 0;
 
+#ifdef TINYORM_DEBUG_SQL
+        /*! Indicates whether logging of sql queries is enabled. */
+        bool m_debugSql = true;
+#else
+        /*! Indicates whether logging of sql queries is enabled. */
+        bool m_debugSql = false;
+#endif
+
     private:
+        /*! Log a query into the connection's query log. */
+        void logQueryInternal(const QSqlQuery &query,
+                              std::optional<qint64> elapsed) const;
+
         /*! Convert a named bindings map to the positional bindings vector. */
         QVector<QVariant>
         convertNamedToPositionalBindings(QVariantMap &&bindings) const;
@@ -89,6 +109,19 @@ namespace Concerns
     };
 
     /* public */
+
+    void LogsQueries::logQuery(
+            const QSqlQuery &queryResult, std::optional<qint64> elapsed) const
+    {
+        logQueryInternal(queryResult, elapsed);
+    }
+
+    void LogsQueries::logQuery(
+            const std::tuple<int, QSqlQuery> &queryResult,
+            std::optional<qint64> elapsed) const
+    {
+        logQueryInternal(std::get<1>(queryResult), elapsed);
+    }
 
     std::shared_ptr<QVector<Log>> LogsQueries::getQueryLog() const
     {
@@ -108,6 +141,21 @@ namespace Concerns
     std::size_t LogsQueries::getQueryLogOrder()
     {
         return m_queryLogId;
+    }
+
+    bool LogsQueries::debugSql() const
+    {
+        return m_debugSql;
+    }
+
+    void LogsQueries::disableDebugSql()
+    {
+        m_debugSql = false;
+    }
+
+    void LogsQueries::enableDebugSql()
+    {
+        m_debugSql = true;
     }
 
 } // namespace Concerns

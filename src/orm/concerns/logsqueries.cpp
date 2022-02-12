@@ -21,47 +21,6 @@ namespace Orm::Concerns
 
 /* public */
 
-void LogsQueries::logQuery(
-        const QSqlQuery &query,
-        const std::optional<qint64> elapsed = std::nullopt) const
-{
-    if (m_loggingQueries && m_queryLog) {
-        auto executedQuery = query.executedQuery();
-        if (executedQuery.isEmpty())
-            executedQuery = query.lastQuery();
-
-        m_queryLog->append({std::move(executedQuery),
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-                            query.boundValues(),
-#else
-                            convertNamedToPositionalBindings(query.boundValues()),
-#endif
-                            Log::Type::NORMAL, ++m_queryLogId,
-                            elapsed ? *elapsed : -1, query.size(),
-                            query.numRowsAffected()});
-    }
-
-#ifdef TINYORM_DEBUG_SQL
-    const auto &connectionName = databaseConnection().getName();
-
-    qDebug("Executed prepared query (%llims, %i results, %i affected%s) : %s",
-           elapsed ? *elapsed : -1,
-           query.size(),
-           query.numRowsAffected(),
-           connectionName.isEmpty() ? ""
-                                    : QStringLiteral(", %1").arg(connectionName)
-                                      .toUtf8().constData(),
-           QueryUtils::parseExecutedQuery(query).toUtf8().constData());
-#endif
-}
-
-void LogsQueries::logQuery(
-        const std::tuple<int, QSqlQuery> &queryResult,
-        const std::optional<qint64> elapsed) const
-{
-    logQuery(std::get<1>(queryResult), elapsed);
-}
-
 void LogsQueries::logQueryForPretend(
         const QString &query, const QVector<QVariant> &bindings) const
 {
@@ -170,6 +129,44 @@ LogsQueries::withFreshQueryLog(const std::function<QVector<Log>()> &callback)
 }
 
 /* private */
+
+void LogsQueries::logQueryInternal(
+        const QSqlQuery &query,
+        const std::optional<qint64> elapsed = std::nullopt) const
+{
+    if (m_loggingQueries && m_queryLog) {
+        auto executedQuery = query.executedQuery();
+        if (executedQuery.isEmpty())
+            executedQuery = query.lastQuery();
+
+        m_queryLog->append({std::move(executedQuery),
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                            query.boundValues(),
+#else
+                            convertNamedToPositionalBindings(query.boundValues()),
+#endif
+                            Log::Type::NORMAL, ++m_queryLogId,
+                            elapsed ? *elapsed : -1, query.size(),
+                            query.numRowsAffected()});
+    }
+
+#ifdef TINYORM_DEBUG_SQL
+    // Debugging SQL queries is disabled
+    if (!m_debugSql)
+        return;
+
+    const auto &connectionName = databaseConnection().getName();
+
+    qDebug("Executed prepared query (%llims, %i results, %i affected%s) : %s",
+           elapsed ? *elapsed : -1,
+           query.size(),
+           query.numRowsAffected(),
+           connectionName.isEmpty() ? ""
+                                    : QStringLiteral(", %1").arg(connectionName)
+                                      .toUtf8().constData(),
+           QueryUtils::parseExecutedQuery(query).toUtf8().constData());
+#endif
+}
 
 QVector<QVariant>
 LogsQueries::convertNamedToPositionalBindings(QVariantMap &&bindings) const

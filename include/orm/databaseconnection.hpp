@@ -300,14 +300,6 @@ namespace Schema
         /*! Host name, obtained from the connection configuration. */
         QString m_hostName;
 
-#ifdef TINYORM_DEBUG_SQL
-        /*! Indicates whether logging of sql queries is enabled. */
-        const bool m_debugSql = true;
-#else
-        /*! Indicates whether logging of sql queries is enabled. */
-        const bool m_debugSql = false;
-#endif
-
         /*! Connection's driver name in printable format eg. QMYSQL -> MySQL. */
         std::optional<std::reference_wrapper<
                 const QString>> m_driverNamePrintable = std::nullopt;
