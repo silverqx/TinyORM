@@ -168,7 +168,7 @@ int main(int /*unused*/, char */*unused*/[])
 //    SetConsoleOutputCP(1250);
 #endif
 
-    // Ownership of a unique_ptr()
+    // Ownership of a shared_ptr()
     auto manager = DB::create({
         {"driver",   "QSQLITE"},
         {"database", qEnvironmentVariable("DB_DATABASE", "HelloWorld.sqlite3")},

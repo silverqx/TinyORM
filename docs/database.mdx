@@ -31,7 +31,7 @@ You can create and configure new database connection by `create` method provided
 
     #include <orm/db.hpp>
 
-    // Ownership of a unique_ptr()
+    // Ownership of a shared_ptr()
     auto manager = DB::create({
         {"driver",    "QMYSQL"},
         {"host",      qEnvironmentVariable("DB_HOST", "127.0.0.1")},
@@ -62,7 +62,7 @@ SQLite databases are contained within a single file on your filesystem. You can 
 
     #include <orm/db.hpp>
 
-    // Ownership of a unique_ptr()
+    // Ownership of a shared_ptr()
     auto manager = DB::create({
         {"driver",    "QSQLITE"},
         {"database",  qEnvironmentVariable("DB_DATABASE", "/absolute/path/to/database.sqlite3")},
@@ -167,7 +167,7 @@ You can configure multiple database connections at once during `DatabaseManager`
 
     #include <orm/db.hpp>
 
-    // Ownership of a unique_ptr()
+    // Ownership of a shared_ptr()
     auto manager = DB::create({
         {"mysql", {
             {"driver",    "QMYSQL"},
