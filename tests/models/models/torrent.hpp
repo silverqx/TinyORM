@@ -17,6 +17,7 @@ namespace Models
 
 //using Orm::AttributeItem;
 using Orm::Constants::ID;
+using Orm::Constants::NAME;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::BelongsToMany;
