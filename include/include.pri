@@ -29,6 +29,7 @@ headersList += \
     $$PWD/orm/exceptions/invalidformaterror.hpp \
     $$PWD/orm/exceptions/invalidtemplateargumenterror.hpp \
     $$PWD/orm/exceptions/logicerror.hpp \
+    $$PWD/orm/exceptions/ormerror.hpp \
     $$PWD/orm/exceptions/queryerror.hpp \
     $$PWD/orm/exceptions/runtimeerror.hpp \
     $$PWD/orm/exceptions/sqlerror.hpp \

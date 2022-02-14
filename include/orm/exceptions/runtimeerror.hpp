@@ -9,6 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include <stdexcept>
 
+#include "orm/exceptions/ormerror.hpp"
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
@@ -18,7 +19,9 @@ namespace Orm::Exceptions
 {
 
     /*! Runtime exception. */
-    class SHAREDLIB_EXPORT RuntimeError : public std::runtime_error
+    class SHAREDLIB_EXPORT RuntimeError :
+            public std::runtime_error,
+            public OrmError
     {
     public:
         /*! const char * constructor. */
