@@ -727,8 +727,9 @@ DatabaseManager::configuration(const QString &name)
     /* Get the database connection configuration by the given name.
        If the configuration doesn't exist, we'll throw an exception and bail. */
     if (!(*m_configuration).contains(name_))
-        throw std::invalid_argument(
-                "Database connection '" + name_.toStdString() + "' not configured.");
+        throw Exceptions::InvalidArgumentError(
+                QStringLiteral("Database connection '%1' not configured.")
+                .arg(name_));
 
     return (*m_configuration)[name_]; // clazy:exclude=detaching-member
 
