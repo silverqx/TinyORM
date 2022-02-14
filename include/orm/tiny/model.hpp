@@ -1315,3 +1315,7 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR export dll paths in Invoke- ps1 scripts, also check dotenv and source if needed and add dotenv example to tools/ silverqx
 // TODO cache static_cast<>(*this) in the model()/basemodel() CRTP as a class data member std::optional<std::reference_wrapper<Derived>> m_model = std::nullopt, but I will have to create copy ctor to set m_model {std::nullopt}, the same for other similar model() methods like Model::model(), then I can to check if (m_model) and return right away and I will call static_cast or dynamic_cast only once for every instance, it is casted everytime now 😟 silverqx
 // CUR rename USING_PCH to TINY_USING_PCH or TINYORM_USING_PCH/TINYUTILS_USING_PCH? silverqx
+// CUR docs threading DB one per whole app, DatabaseConnection has to be used from thread where it was created silverqx
+// CUR docs exceptions, which methods throw which exceptions, so user know which exception classes to define in a catch blocks silverqx
+// CUR Belongs To Many firstOrNew, firstOrCreate, and updateOrCreate Methods, revisit first and second argument silverqx
+// CUR add attribute to touch() method silverqx
