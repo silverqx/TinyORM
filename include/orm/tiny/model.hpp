@@ -1133,13 +1133,12 @@ namespace Orm::Tiny
     {
         static const auto message = QStringLiteral(
             "Attributes passed to the '%1' model's constructor can't contain the "
-            "QDateTime attribute, to create a '%1' model instance with attributes "
-            "that contain the QDateTime attribute use %1::instance() "
-            "method instead.");
+            "QDateTime attribute, to create a '%1' model instance with attributes that "
+            "contain the QDateTime attribute use the %1::instance() method instead "
+            "or convert the '%2' QDateTime attribute to QString.");
 
-        for (const auto &attribute : attributes)
-            if (const auto &value = attribute.value;
-                value.isValid() && !value.isNull() &&
+        for (const auto &[key, value] : attributes)
+            if (value.isValid() && !value.isNull() &&
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 value.typeId() == QMetaType::QDateTime
 #else
@@ -1147,7 +1146,7 @@ namespace Orm::Tiny
 #endif
             )
                 throw Orm::Exceptions::InvalidArgumentError(
-                        message.arg(Orm::Utils::Type::classPureBasename<Derived>()));
+                        message.arg(Orm::Utils::Type::classPureBasename<Derived>(), key));
     }
 
     /* Getters for u_ data members defined in the Derived models, helps to avoid
