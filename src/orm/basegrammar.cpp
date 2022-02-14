@@ -63,6 +63,7 @@ QString BaseGrammar::wrapTable(const QString &table) const
 QString BaseGrammar::wrapTable(const FromClause &table) const
 {
     if (std::holds_alternative<std::monostate>(table))
+        // Not InvalidArgumentError because table argument was not passed by user
         throw Exceptions::RuntimeError(
                 QStringLiteral("Unexpected std::monostate value in %1().")
                 .arg(__tiny_func__));
