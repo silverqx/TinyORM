@@ -26,7 +26,7 @@ TINY_SYSTEM_HEADER
 #  define __tiny_func__ \
     Orm::Utils::Type::prettyFunction(static_cast<const char *>(__FUNCTION__))
 #else
-#  define __tiny_func__ __FUNCTION__
+#  define __tiny_func__ QString {__FUNCTION__}
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
