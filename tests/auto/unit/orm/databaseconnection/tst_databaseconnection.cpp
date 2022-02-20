@@ -50,8 +50,7 @@ private:
 
 void tst_DatabaseConnection::initTestCase_data() const
 {
-    const auto &connections = Databases::createConnections({Databases::MYSQL});
-//    const auto &connections = Databases::createConnections();
+    const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
@@ -121,10 +120,18 @@ void tst_DatabaseConnection::transaction_Commit() const
 
     DB::beginTransaction(connection);
 
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(DB::connection(connection).inTransaction());
+
     auto id = builder->from("users").insertGetId({{NAME, nameValue},
                                                   {"note", noteValue}});
 
     DB::commit(connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(!DB::connection(connection).inTransaction());
 
     // Check data after commit
     auto query = builder->from("users").find(id);
@@ -149,10 +156,18 @@ void tst_DatabaseConnection::transaction_RollBack() const
 
     DB::beginTransaction(connection);
 
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(DB::connection(connection).inTransaction());
+
     auto id = builder->from("users").insertGetId({{NAME, nameValue},
                                                   {"note", noteValue}});
 
     DB::rollBack(connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(!DB::connection(connection).inTransaction());
 
     // Check data after commit
     auto query = builder->from("users").find(id);
@@ -187,10 +202,18 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
 
         DB::beginTransaction(connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         id1 = builder->from("users").insertGetId({{NAME, nameValue},
                                                   {"note", noteValue}});
 
         DB::commit(connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(!DB::connection(connection).inTransaction());
 
         // Check data after commit
         auto query = builder->from("users").find(id1);
@@ -209,10 +232,18 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
 
         DB::beginTransaction(connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         id2 = builder->from("users").insertGetId({{NAME, nameValue},
                                                   {"note", noteValue}});
 
         DB::commit(connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(!DB::connection(connection).inTransaction());
 
         // Check data after commit
         auto query = builder->from("users").find(id2);
@@ -242,10 +273,18 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
 
         DB::beginTransaction(connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         auto id = builder->from("users").insertGetId({{NAME, nameValue},
                                                       {"note", noteValue}});
 
         DB::rollBack(connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(!DB::connection(connection).inTransaction());
 
         // Check data after commit
         auto query = builder->from("users").find(id);
@@ -266,10 +305,18 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
 
         DB::beginTransaction(connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         auto id = builder->from("users").insertGetId({{NAME, nameValue},
                                                       {"note", noteValue}});
 
         DB::rollBack(connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(!DB::connection(connection).inTransaction());
 
         // Check data after commit
         auto query = builder->from("users").find(id);
@@ -302,20 +349,36 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
 
     DB::beginTransaction(connection);
 
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(DB::connection(connection).inTransaction());
+
     idsSuccess << builder->from("users").insertGetId({{NAME, nameValues.at(0)},
                                                       {"note", noteValue}});
 
     DB::savepoint(1, connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 1);
+    QVERIFY(DB::connection(connection).inTransaction());
 
     idsSuccess << builder->from("users").insertGetId({{NAME, nameValues.at(1)},
                                                       {"note", noteValue}});
 
     DB::savepoint(2, connection);
 
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 2);
+    QVERIFY(DB::connection(connection).inTransaction());
+
     idsSuccess << builder->from("users").insertGetId({{NAME, nameValues.at(2)},
                                                       {"note", noteValue}});
 
     DB::commit(connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(!DB::connection(connection).inTransaction());
 
     QVERIFY(idsSuccess.size() == 3);
 
@@ -373,22 +436,42 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
 
     DB::beginTransaction(connection);
 
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(DB::connection(connection).inTransaction());
+
     idsSuccess << builder->from("users").insertGetId({{NAME, nameValuesSuccess.at(0)},
                                                       {"note", noteValue}});
 
     DB::savepoint(1, connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 1);
+    QVERIFY(DB::connection(connection).inTransaction());
 
     idsFailed << builder->from("users").insertGetId({{NAME, nameValuesFailed.at(0)},
                                                      {"note", noteValue}});
 
     DB::rollbackToSavepoint(1, connection);
 
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(DB::connection(connection).inTransaction());
+
     DB::savepoint(2, connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 1);
+    QVERIFY(DB::connection(connection).inTransaction());
 
     idsSuccess << builder->from("users").insertGetId({{NAME, nameValuesSuccess.at(1)},
                                                       {"note", noteValue}});
 
     DB::commit(connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(!DB::connection(connection).inTransaction());
 
     QVERIFY(idsSuccess.size() == 2);
     QVERIFY(idsFailed.size() == 1);
@@ -443,28 +526,60 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
 
     DB::beginTransaction(connection);
 
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(DB::connection(connection).inTransaction());
+
     DB::savepoint(0, connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 1);
+    QVERIFY(DB::connection(connection).inTransaction());
 
     idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(0)},
                                                      {"note", noteValue}});
 
     DB::rollbackToSavepoint(0, connection);
 
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(DB::connection(connection).inTransaction());
+
     DB::savepoint(1, connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 1);
+    QVERIFY(DB::connection(connection).inTransaction());
 
     idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(1)},
                                                      {"note", noteValue}});
 
     DB::rollbackToSavepoint(1, connection);
 
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(DB::connection(connection).inTransaction());
+
     DB::savepoint(2, connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 1);
+    QVERIFY(DB::connection(connection).inTransaction());
 
     idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(2)},
                                                      {"note", noteValue}});
 
     DB::rollbackToSavepoint(2, connection);
 
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(DB::connection(connection).inTransaction());
+
     DB::commit(connection);
+
+    // Check transaction status
+    QVERIFY(DB::connection(connection).transactionLevel() == 0);
+    QVERIFY(!DB::connection(connection).inTransaction());
 
     QVERIFY(idsFailed.size() == 3);
 
@@ -504,28 +619,60 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
 
         DB::beginTransaction(connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         DB::savepoint(0, connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 1);
+        QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(0)},
                                                          {"note", noteValue}});
 
         DB::rollbackToSavepoint(0, connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         DB::savepoint(1, connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 1);
+        QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(1)},
                                                          {"note", noteValue}});
 
         DB::rollbackToSavepoint(1, connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         DB::savepoint(2, connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 1);
+        QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(2)},
                                                          {"note", noteValue}});
 
         DB::rollbackToSavepoint(2, connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         DB::commit(connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(!DB::connection(connection).inTransaction());
 
         QVERIFY(idsFailed.size() == 3);
 
@@ -560,28 +707,60 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
 
         DB::beginTransaction(connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         DB::savepoint(0, connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 1);
+        QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(0)},
                                                          {"note", noteValue}});
 
         DB::rollbackToSavepoint(0, connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         DB::savepoint(1, connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 1);
+        QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(1)},
                                                          {"note", noteValue}});
 
         DB::rollbackToSavepoint(1, connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         DB::savepoint(2, connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 1);
+        QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(2)},
                                                          {"note", noteValue}});
 
         DB::rollbackToSavepoint(2, connection);
 
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(DB::connection(connection).inTransaction());
+
         DB::commit(connection);
+
+        // Check transaction status
+        QVERIFY(DB::connection(connection).transactionLevel() == 0);
+        QVERIFY(!DB::connection(connection).inTransaction());
 
         QVERIFY(idsFailed.size() == 3);
 

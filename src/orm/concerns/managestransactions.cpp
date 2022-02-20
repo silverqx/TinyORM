@@ -77,7 +77,7 @@ bool ManagesTransactions::commit()
                     .arg(__tiny_func__, query),
                 databaseConnection().getRawQtConnection().lastError());
 
-    m_inTransaction = false;
+    resetTransactions();
 
     // Queries execution time counter / Query statements counter
     auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
@@ -114,7 +114,7 @@ bool ManagesTransactions::rollBack()
                     .arg(__tiny_func__, query),
                 databaseConnection().getRawQtConnection().lastError());
 
-    m_inTransaction = false;
+    resetTransactions();
 
     // Queries execution time counter / Query statements counter
     auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
