@@ -7,6 +7,9 @@
 namespace Models
 {
 
+using Orm::Constants::NAME;
+using Orm::Constants::SIZE;
+
 using Orm::Tiny::Model;
 
 class Torrent_TotallyGuarded final : public Model<Torrent_TotallyGuarded>
@@ -28,18 +31,18 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute>
 
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
-        Orm::NAME,
-        "size",
+        NAME,
+        SIZE,
         "progress",
         "added_on",
         "hash",
         "note",
-        Orm::UPDATED_AT,
+        UPDATED_AT,
     };
 
     /*! The attributes that aren't mass assignable. */
     inline static const QStringList u_guarded { // NOLINT(cppcoreguidelines-interfaces-global-init)
-        Orm::CREATED_AT,
+        CREATED_AT,
     };
 };
 

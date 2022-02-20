@@ -9,6 +9,8 @@
 namespace Models
 {
 
+using Orm::Constants::SIZE;
+
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
 
@@ -42,10 +44,10 @@ private:
     };
 
     /*! The attributes that are mass assignable. */
-    inline static QStringList u_fillable {
+    inline static QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         "file_index",
         "filepath",
-        "size",
+        SIZE,
         "progress",
         "note",
     };

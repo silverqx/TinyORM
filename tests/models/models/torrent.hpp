@@ -18,6 +18,8 @@ namespace Models
 //using Orm::AttributeItem;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::SIZE;
+
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::BelongsToMany;
@@ -147,7 +149,7 @@ private:
 
     /*! The model's default values for attributes. */
 //    inline static const QVector<AttributeItem> u_attributes {
-//        {"size",     0},
+//        {SIZE,       0},
 //        {"progress", 0},
 //        {"added_on", QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)},
 //    };
@@ -156,12 +158,12 @@ private:
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         ID,
         NAME,
-        "size",
+        SIZE,
         "progress",
         "added_on",
         "hash",
         "note",
-        Orm::UPDATED_AT,
+        UPDATED_AT,
     };
 
     /*! The attributes that aren't mass assignable. */

@@ -34,6 +34,7 @@ using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::LIKE;
+using Orm::Constants::SIZE;
 using Orm::Constants::UPDATED_AT;
 
 using Orm::Exceptions::RuntimeError;
@@ -1815,7 +1816,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_HasOne() co
     QCOMPARE(fileProperty->getAttributes().size(), 3);
     QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
     QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
-    QCOMPARE((*fileProperty)["size"], QVariant(321));
+    QCOMPARE((*fileProperty)[SIZE], QVariant(321));
 }
 
 void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_BelongsTo() const
@@ -1853,7 +1854,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_BelongsTo()
     QCOMPARE(typeid (Torrent *), typeid (torrent));
     QCOMPARE(torrent->getAttributes().size(), 2);
     QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
-    QCOMPARE((*torrent)["size"], QVariant(123));
+    QCOMPARE((*torrent)[SIZE], QVariant(123));
 }
 
 void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_HasOne() const
@@ -1895,7 +1896,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_HasOne() c
     QCOMPARE(fileProperty->getAttributes().size(), 3);
     QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
     QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
-    QCOMPARE((*fileProperty)["size"], QVariant(321));
+    QCOMPARE((*fileProperty)[SIZE], QVariant(321));
 }
 
 void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_BelongsTo() const
@@ -1935,7 +1936,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_BelongsTo(
     QCOMPARE(typeid (TorrentEager_WithDefault *), typeid (torrent));
     QCOMPARE(torrent->getAttributes().size(), 2);
     QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
-    QCOMPARE((*torrent)["size"], QVariant(123));
+    QCOMPARE((*torrent)[SIZE], QVariant(123));
 }
 
 void tst_Model_Relations::has_Basic_QString_OnHasMany() const

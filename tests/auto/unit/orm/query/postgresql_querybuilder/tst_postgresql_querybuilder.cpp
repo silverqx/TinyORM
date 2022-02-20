@@ -12,6 +12,7 @@ using Orm::Constants::ID;
 using Orm::Constants::LEFT;
 using Orm::Constants::LIKE;
 using Orm::Constants::NAME;
+using Orm::Constants::SIZE;
 
 using Orm::DB;
 using Orm::Query::Expression;
@@ -333,7 +334,7 @@ void tst_PostgreSQL_QueryBuilder::addSelect() const
     QCOMPARE(builder->toSql(),
              "select \"id\", \"name\" from \"torrents\"");
 
-    builder->addSelect("size");
+    builder->addSelect(SIZE);
     QCOMPARE(builder->toSql(),
              "select \"id\", \"name\", \"size\" from \"torrents\"");
 
@@ -377,7 +378,7 @@ void tst_PostgreSQL_QueryBuilder::distinct() const
     QCOMPARE(builder->toSql(),
              "select distinct * from \"torrents\"");
 
-    builder->select({NAME, "size"});
+    builder->select({NAME, SIZE});
     QCOMPARE(builder->toSql(),
              "select distinct \"name\", \"size\" from \"torrents\"");
 }
@@ -406,7 +407,7 @@ void tst_PostgreSQL_QueryBuilder::distinct_on() const
         QCOMPARE(builder->toSql(),
                  "select distinct on (\"location\", \"time\") * from \"torrents\"");
 
-        builder->select({NAME, "size"});
+        builder->select({NAME, SIZE});
         QCOMPARE(builder->toSql(),
                  "select distinct on (\"location\", \"time\") \"name\", \"size\" "
                  "from \"torrents\"");
@@ -845,7 +846,7 @@ void tst_PostgreSQL_QueryBuilder::where_WithVectorValue() const
     {
         auto builder = createQuery();
 
-        builder->select("*").from("torrents").where({{ID, 3}, {"size", 10, ">"}});
+        builder->select("*").from("torrents").where({{ID, 3}, {SIZE, 10, ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?)");
         QCOMPARE(builder->getBindings(),
@@ -855,7 +856,7 @@ void tst_PostgreSQL_QueryBuilder::where_WithVectorValue() const
     {
         auto builder = createQuery();
 
-        builder->select("*").from("torrents").where({{ID, 3}, {"size", 10, ">"}})
+        builder->select("*").from("torrents").where({{ID, 3}, {SIZE, 10, ">"}})
                 .where({{"progress", 100, ">="}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?) "
@@ -906,7 +907,7 @@ void tst_PostgreSQL_QueryBuilder::orWhere_WithVectorValue() const
 {
     auto builder = createQuery();
 
-    builder->select("*").from("torrents").where({{ID, 3}, {"size", 10, ">"}})
+    builder->select("*").from("torrents").where({{ID, 3}, {SIZE, 10, ">"}})
             .orWhere({{"progress", 100, ">="}});
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?) or "
@@ -935,7 +936,7 @@ void tst_PostgreSQL_QueryBuilder::whereColumn() const
 
     builder->select("*").from("torrent_previewable_files")
             .whereColumn("filepath", "=", "note")
-            .whereColumn("size", ">=", "progress");
+            .whereColumn(SIZE, ">=", "progress");
     QCOMPARE(builder->toSql(),
              "select * from \"torrent_previewable_files\" "
              "where \"filepath\" = \"note\" "
@@ -951,7 +952,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumnEq("filepath", "note")
-                .orWhereColumnEq("size", "progress");
+                .orWhereColumnEq(SIZE, "progress");
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where \"filepath\" = \"note\" "
@@ -965,7 +966,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumnEq("filepath", "note")
-                .orWhereColumn("size", ">", "progress");
+                .orWhereColumn(SIZE, ">", "progress");
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where \"filepath\" = \"note\" "
@@ -981,7 +982,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn_ColumnExpression() const
 
     builder->select("*").from("torrent_previewable_files")
             .whereColumnEq(Raw("filepath"), Raw("\"note\""))
-            .orWhereColumn(Raw("size"), ">", Raw("progress"));
+            .orWhereColumn(Raw(SIZE), ">", Raw("progress"));
     QCOMPARE(builder->toSql(),
              "select * from \"torrent_previewable_files\" where filepath = \"note\" "
              "or size > progress");
@@ -996,7 +997,7 @@ void tst_PostgreSQL_QueryBuilder::whereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumn({{"filepath", "note"},
-                              {"size", "progress", ">"}});
+                              {SIZE, "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where (\"filepath\" = \"note\" "
@@ -1010,7 +1011,7 @@ void tst_PostgreSQL_QueryBuilder::whereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumn({{"filepath", "note"},
-                              {"size", "progress", ">", "or"}});
+                              {SIZE, "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where (\"filepath\" = \"note\" "
@@ -1027,7 +1028,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", "note"},
-                                {"size", "progress", ">"}});
+                                {SIZE, "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where \"id\" = ? or (\"filepath\" = \"note\" "
@@ -1041,7 +1042,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", "note"},
-                                {"size", "progress", ">", "and"}});
+                                {SIZE, "progress", ">", "and"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where \"id\" = ? or (\"filepath\" = \"note\" "
@@ -1055,7 +1056,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", "note"},
-                                {"size", "progress", ">", "or"}});
+                                {SIZE, "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where \"id\" = ? or (\"filepath\" = \"note\" "
@@ -1071,7 +1072,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn_WithVectorValue_ColumnExpression
 
     builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
             .orWhereColumn({{Raw("filepath"), Raw("\"note\"")},
-                            {"size", Raw("progress"), ">"}});
+                            {SIZE, Raw("progress"), ">"}});
     QCOMPARE(builder->toSql(),
              "select * from \"torrent_previewable_files\" "
              "where \"id\" = ? or (filepath = \"note\" or \"size\" > progress)");
@@ -1531,7 +1532,7 @@ void tst_PostgreSQL_QueryBuilder::insert() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").insert({{NAME, "xyz"}, {"size", 6}});
+        connection.query()->from("torrents").insert({{NAME, "xyz"}, {SIZE, 6}});
     });
 
     const auto &firstLog = log.first();
@@ -1548,7 +1549,7 @@ void tst_PostgreSQL_QueryBuilder::insert_WithExpression() const
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         connection.query()->from("torrents")
-                .insert({{NAME, DB::raw("'xyz'")}, {"size", 6},
+                .insert({{NAME, DB::raw("'xyz'")}, {SIZE, 6},
                          {"progress", DB::raw(2)}});
     });
 
@@ -1568,7 +1569,7 @@ void tst_PostgreSQL_QueryBuilder::update() const
     {
         connection.query()->from("torrents")
                 .whereEq(ID, 10)
-                .update({{NAME, "xyz"}, {"size", 6}});
+                .update({{NAME, "xyz"}, {SIZE, 6}});
     });
 
     const auto &firstLog = log.first();
@@ -1586,7 +1587,7 @@ void tst_PostgreSQL_QueryBuilder::update_WithExpression() const
     {
         connection.query()->from("torrents")
                 .whereEq(ID, 10)
-                .update({{NAME, DB::raw("'xyz'")}, {"size", 6},
+                .update({{NAME, DB::raw("'xyz'")}, {SIZE, 6},
                          {"progress", DB::raw(2)}});
     });
 

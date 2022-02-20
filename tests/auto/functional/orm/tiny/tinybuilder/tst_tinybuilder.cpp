@@ -11,6 +11,7 @@ using Models::Torrent;
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::SIZE;
 
 using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
@@ -96,13 +97,13 @@ void tst_TinyBuilder::get_Columns() const
 
     ConnectionOverride::connection = connection;
 
-    auto torrents = createQuery<Torrent>()->get({ID, NAME, "size"});
+    auto torrents = createQuery<Torrent>()->get({ID, NAME, SIZE});
 
     const auto &torrent = torrents.at(1);
     QCOMPARE(torrent.getAttributes().size(), 3);
     QCOMPARE(torrent.getAttributes().at(0).key, QString(ID));
     QCOMPARE(torrent.getAttributes().at(1).key, QString(NAME));
-    QCOMPARE(torrent.getAttributes().at(2).key, QString("size"));
+    QCOMPARE(torrent.getAttributes().at(2).key, QString(SIZE));
 }
 
 void tst_TinyBuilder::value() const
@@ -183,7 +184,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
 
     const auto &updatedAtColumn = torrent4_1->getUpdatedAtColumn();
 
-    auto sizeOriginal = torrent4_1->getAttribute("size");
+    auto sizeOriginal = torrent4_1->getAttribute(SIZE);
     auto progressOriginal = torrent4_1->getAttribute("progress");
     auto updatedAtOriginal = torrent4_1->getAttribute(updatedAtColumn);
     QCOMPARE(sizeOriginal, QVariant(14));
@@ -192,25 +193,25 @@ void tst_TinyBuilder::incrementAndDecrement() const
              QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
 
     // Incremented
-    Torrent::whereEq(ID, 4)->increment("size", 2, {{"progress", 444}});
+    Torrent::whereEq(ID, 4)->increment(SIZE, 2, {{"progress", 444}});
 
     auto torrent4_2 = Torrent::find(4);
     QVERIFY(torrent4_2);
     QVERIFY(torrent4_2->exists);
-    QCOMPARE(torrent4_2->getAttribute("size"), QVariant(16));
+    QCOMPARE(torrent4_2->getAttribute(SIZE), QVariant(16));
     QCOMPARE(torrent4_2->getAttribute("progress"), QVariant(444));
     QVERIFY(torrent4_2->getAttribute(updatedAtColumn).toDateTime()
             >= timeBeforeIncrement);
 
     // Decremented and restore updated at column
-    Torrent::whereEq(ID, 4)->decrement("size", 2,
-                                         {{"progress", 400},
-                                          {updatedAtColumn, updatedAtOriginal}});
+    Torrent::whereEq(ID, 4)->decrement(SIZE, 2,
+                                       {{"progress", 400},
+                                        {updatedAtColumn, updatedAtOriginal}});
 
     auto torrent4_3 = Torrent::find(4);
     QVERIFY(torrent4_3);
     QVERIFY(torrent4_3->exists);
-    QCOMPARE(torrent4_3->getAttribute("size"), QVariant(14));
+    QCOMPARE(torrent4_3->getAttribute(SIZE), QVariant(14));
     QCOMPARE(torrent4_3->getAttribute("progress"), QVariant(400));
     QCOMPARE(torrent4_3->getAttribute(updatedAtColumn), updatedAtOriginal);
 }

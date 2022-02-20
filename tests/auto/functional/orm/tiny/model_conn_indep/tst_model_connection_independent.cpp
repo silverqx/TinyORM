@@ -19,6 +19,7 @@ using Models::TorrentEager;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::SIZE;
 
 using Orm::DB;
 
@@ -92,15 +93,15 @@ void tst_Model_Connection_Independent::subscriptOperator_OnLhs() const
 
     QCOMPARE(torrent->getAttribute(ID), QVariant(2));
     QCOMPARE(torrent->getAttribute(NAME), QVariant("test2"));
-    QCOMPARE(torrent->getAttribute("size"), QVariant(12));
+    QCOMPARE(torrent->getAttribute(SIZE), QVariant(12));
 
     const auto name = QStringLiteral("test2 operator[]");
     const auto size = 112;
     (*torrent)[NAME] = name;
-    (*torrent)["size"] = size;
+    (*torrent)[SIZE] = size;
 
     QCOMPARE(torrent->getAttribute(NAME), QVariant(name));
-    QCOMPARE(torrent->getAttribute("size"), QVariant(size));
+    QCOMPARE(torrent->getAttribute(SIZE), QVariant(size));
 }
 
 void tst_Model_Connection_Independent
@@ -142,7 +143,7 @@ void tst_Model_Connection_Independent::defaultAttributeValues() const
         TorrentEager torrent;
 
         QVERIFY(!torrent.exists);
-        QCOMPARE(torrent["size"], QVariant(0));
+        QCOMPARE(torrent[SIZE], QVariant(0));
         QCOMPARE(torrent["progress"], QVariant(0));
         QCOMPARE(torrent["added_on"],
                 QVariant(QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)));
@@ -158,7 +159,7 @@ void tst_Model_Connection_Independent::defaultAttributeValues() const
         });
 
         QVERIFY(!torrent.exists);
-        QCOMPARE(torrent["size"], QVariant(0));
+        QCOMPARE(torrent[SIZE], QVariant(0));
         QCOMPARE(torrent["progress"], QVariant(0));
         QCOMPARE(torrent["added_on"],
                 QVariant(QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)));
@@ -176,7 +177,7 @@ void tst_Model_Connection_Independent::defaultAttributeValues() const
         };
 
         QVERIFY(!torrent.exists);
-        QCOMPARE(torrent["size"], QVariant(0));
+        QCOMPARE(torrent[SIZE], QVariant(0));
         QCOMPARE(torrent["progress"], QVariant(0));
         QCOMPARE(torrent["added_on"],
                 QVariant(QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)));
@@ -190,11 +191,11 @@ void tst_Model_Connection_Independent::massAssignment_Fillable() const
 {
     Torrent torrent;
 
-    torrent.fill({{NAME, "test150"}, {"size", 10}});
+    torrent.fill({{NAME, "test150"}, {SIZE, 10}});
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[NAME], QVariant("test150"));
-    QCOMPARE(torrent["size"], QVariant(10));
+    QCOMPARE(torrent[SIZE], QVariant(10));
     QCOMPARE(torrent.getAttributes().size(), 2);
 }
 
@@ -268,11 +269,11 @@ void tst_Model_Connection_Independent
      ::massAssignment_forceFill_OnTotallyGuardedModel() const
 {
     Torrent_TotallyGuarded torrent;
-    torrent.forceFill({{NAME, "foo"}, {"size", 12}, {"progress", 20}});
+    torrent.forceFill({{NAME, "foo"}, {SIZE, 12}, {"progress", 20}});
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[NAME], QVariant("foo"));
-    QCOMPARE(torrent["size"], QVariant(12));
+    QCOMPARE(torrent[SIZE], QVariant(12));
     QCOMPARE(torrent["progress"], QVariant(20));
     QCOMPARE(torrent.getAttributes().size(), 3);
 }

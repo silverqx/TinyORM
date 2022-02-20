@@ -42,6 +42,8 @@ namespace Orm::Constants
     inline const QString DESC        = QStringLiteral("desc");
     inline const QString ID          = QStringLiteral("id");
     inline const QString NAME        = QStringLiteral("name");
+    inline const QString SIZE        = QStringLiteral("size");
+    inline const QString &SIZE_      = Orm::Constants::SIZE;
     inline const QString CREATED_AT  = QStringLiteral("created_at");
     inline const QString UPDATED_AT  = QStringLiteral("updated_at");
     inline const QString PARENTH_ONE = QStringLiteral("(%1)");

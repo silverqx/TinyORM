@@ -11,6 +11,8 @@
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::SIZE;
+
 using Orm::DB;
 
 using QueryBuilder = Orm::Query::Builder;
@@ -104,7 +106,7 @@ void tst_QueryBuilder::pluck() const
     {
         auto builder = createQuery(connection);
 
-        auto result = builder->from("torrents").pluck<QString>("size", NAME);
+        auto result = builder->from("torrents").pluck<QString>(SIZE, NAME);
 
         std::map<QString, QVariant> expected {
             {"test1", 11}, {"test2", 12}, {"test3", 13}, {"test4", 14},
