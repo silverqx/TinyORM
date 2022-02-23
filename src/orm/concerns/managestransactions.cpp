@@ -20,10 +20,11 @@ ManagesTransactions::ManagesTransactions()
 bool ManagesTransactions::beginTransaction()
 {
     Q_ASSERT(m_inTransaction == false);
+    Q_ASSERT(m_savepoints == 0);
 
     databaseConnection().reconnectIfMissingConnection();
 
-    static const auto query = QStringLiteral("START TRANSACTION");
+    static const auto queryString = QStringLiteral("START TRANSACTION");
 
     // Elapsed timer needed
     const auto countElapsed = databaseConnection().shouldCountElapsed();
@@ -35,10 +36,9 @@ bool ManagesTransactions::beginTransaction()
     if (!databaseConnection().pretending() &&
         !databaseConnection().getQtConnection().transaction()
     )
-        throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__tiny_func__, query),
-                databaseConnection().getRawQtConnection().lastError());
+        handleStartTransactionError(
+                    __tiny_func__, queryString,
+                    databaseConnection().getRawQtConnection().lastError());
 
     m_inTransaction = true;
 
@@ -49,9 +49,9 @@ bool ManagesTransactions::beginTransaction()
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
     if (databaseConnection().pretending())
-        databaseConnection().logTransactionQueryForPretend(query);
+        databaseConnection().logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(query, std::move(elapsed));
+        databaseConnection().logTransactionQuery(queryString, std::move(elapsed));
 
     return true;
 }
@@ -60,7 +60,7 @@ bool ManagesTransactions::commit()
 {
     Q_ASSERT(m_inTransaction);
 
-    static const auto query = QStringLiteral("COMMIT");
+    static const auto queryString = QStringLiteral("COMMIT");
 
     // Elapsed timer needed
     const auto countElapsed = databaseConnection().shouldCountElapsed();
@@ -72,10 +72,8 @@ bool ManagesTransactions::commit()
     if (!databaseConnection().pretending() &&
         !databaseConnection().getQtConnection().commit()
     )
-        throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__tiny_func__, query),
-                databaseConnection().getRawQtConnection().lastError());
+        handleCommonTransactionError(__tiny_func__, queryString,
+                          databaseConnection().getRawQtConnection().lastError());
 
     resetTransactions();
 
@@ -86,9 +84,9 @@ bool ManagesTransactions::commit()
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
     if (databaseConnection().pretending())
-        databaseConnection().logTransactionQueryForPretend(query);
+        databaseConnection().logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(query, std::move(elapsed));
+        databaseConnection().logTransactionQuery(queryString, std::move(elapsed));
 
     return true;
 }
@@ -97,7 +95,7 @@ bool ManagesTransactions::rollBack()
 {
     Q_ASSERT(m_inTransaction);
 
-    static const auto query = QStringLiteral("ROLLBACK");
+    static const auto queryString = QStringLiteral("ROLLBACK");
 
     // Elapsed timer needed
     const auto countElapsed = databaseConnection().shouldCountElapsed();
@@ -109,10 +107,8 @@ bool ManagesTransactions::rollBack()
     if (!databaseConnection().pretending() &&
         !databaseConnection().getQtConnection().rollback()
     )
-        throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__tiny_func__, query),
-                databaseConnection().getRawQtConnection().lastError());
+        handleCommonTransactionError(__tiny_func__, queryString,
+                          databaseConnection().getRawQtConnection().lastError());
 
     resetTransactions();
 
@@ -123,20 +119,20 @@ bool ManagesTransactions::rollBack()
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
     if (databaseConnection().pretending())
-        databaseConnection().logTransactionQueryForPretend(query);
+        databaseConnection().logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(query, std::move(elapsed));
+        databaseConnection().logTransactionQuery(queryString, std::move(elapsed));
 
     return true;
 }
 
 bool ManagesTransactions::savepoint(const QString &id)
 {
-    // TODO rewrite savepoint() and rollBack() with a new m_connection.statement() API silverqx
     Q_ASSERT(m_inTransaction);
 
     auto savePoint = databaseConnection().getQtQuery();
-    const auto query = QStringLiteral("SAVEPOINT %1_%2").arg(m_savepointNamespace, id);
+    const auto queryString =
+            QStringLiteral("SAVEPOINT %1_%2").arg(m_savepointNamespace, id);
 
     // Elapsed timer needed
     const auto countElapsed = databaseConnection().shouldCountElapsed();
@@ -146,11 +142,9 @@ bool ManagesTransactions::savepoint(const QString &id)
         timer.start();
 
     // Execute a savepoint query
-    if (!databaseConnection().pretending() && !savePoint.exec(query))
-        throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__tiny_func__, query),
-                savePoint.lastError());
+    if (!databaseConnection().pretending() && !savePoint.exec(queryString))
+        handleCommonTransactionError(__tiny_func__, queryString,
+                          databaseConnection().getRawQtConnection().lastError());
 
     ++m_savepoints;
 
@@ -161,9 +155,9 @@ bool ManagesTransactions::savepoint(const QString &id)
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
     if (databaseConnection().pretending())
-        databaseConnection().logTransactionQueryForPretend(query);
+        databaseConnection().logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(query, std::move(elapsed));
+        databaseConnection().logTransactionQuery(queryString, std::move(elapsed));
 
     return true;
 }
@@ -179,8 +173,8 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
     Q_ASSERT(m_savepoints > 0);
 
     auto rollbackToSavepoint = databaseConnection().getQtQuery();
-    const auto query = QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2")
-                       .arg(m_savepointNamespace, id);
+    const auto queryString =
+            QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2").arg(m_savepointNamespace, id);
 
     // Elapsed timer needed
     const auto countElapsed = databaseConnection().shouldCountElapsed();
@@ -190,11 +184,9 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
         timer.start();
 
     // Execute a rollback to savepoint query
-    if (!databaseConnection().pretending() && !rollbackToSavepoint.exec(query))
-        throw Exceptions::SqlTransactionError(
-                QStringLiteral("Statement in %1() failed : %2")
-                    .arg(__tiny_func__, query),
-                rollbackToSavepoint.lastError());
+    if (!databaseConnection().pretending() && !rollbackToSavepoint.exec(queryString))
+        handleCommonTransactionError(__tiny_func__, queryString,
+                          databaseConnection().getRawQtConnection().lastError());
 
     m_savepoints = std::max<std::size_t>(0, m_savepoints - 1);
 
@@ -205,9 +197,9 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
     if (databaseConnection().pretending())
-        databaseConnection().logTransactionQueryForPretend(query);
+        databaseConnection().logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(query, std::move(elapsed));
+        databaseConnection().logTransactionQuery(queryString, std::move(elapsed));
 
     return true;
 }
@@ -243,6 +235,35 @@ DatabaseConnection &ManagesTransactions::databaseConnection()
 CountsQueries &ManagesTransactions::countsQueries()
 {
     return dynamic_cast<CountsQueries &>(*this);
+}
+
+void ManagesTransactions::throwIfTransactionError(
+            QString &&functionName, const QString &queryString, QSqlError &&error)
+{
+    throw Exceptions::SqlTransactionError(
+            QStringLiteral("Statement in %1() failed : %2")
+                .arg(functionName, queryString),
+            error);
+}
+
+void ManagesTransactions::handleStartTransactionError(
+            QString &&functionName, const QString &queryString, QSqlError &&error)
+{
+    if (!databaseConnection().causedByLostConnection(error))
+        throwIfTransactionError(std::move(functionName), queryString, std::move(error));
+
+    databaseConnection().reconnect();
+
+    databaseConnection().getQtConnection().transaction();
+}
+
+void ManagesTransactions::handleCommonTransactionError(
+            QString &&functionName, const QString &queryString, QSqlError &&error)
+{
+    if (databaseConnection().causedByLostConnection(error))
+        resetTransactions();
+
+    throwIfTransactionError(std::move(functionName), queryString, std::move(error));
 }
 
 } // namespace Orm::Concerns

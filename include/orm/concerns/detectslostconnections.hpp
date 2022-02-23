@@ -11,6 +11,8 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+class QSqlError;
+
 namespace Orm
 {
 
@@ -35,6 +37,8 @@ namespace Concerns
 
         /*! Determine if the given exception was caused by a lost connection. */
         bool causedByLostConnection(const Exceptions::SqlError &e) const;
+        /*! Determine if the given exception was caused by a lost connection. */
+        bool causedByLostConnection(const QSqlError &e) const;
     };
 
 } // namespace Concerns

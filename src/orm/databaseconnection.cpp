@@ -280,7 +280,7 @@ DatabaseConnection::setQtConnectionResolver(
     /* m_qtConnection.reset() is called also in DatabaseConnection::disconnect(),
        because both methods are public apis.
        m_qtConnection can also be understood as m_qtConnectionWasResolved,
-       because it performs two functions, saves active connection name and
+       because it has two functions, saves active connection name and
        if it's not nullopt, then it means, that the database connection was
        resolved by m_qtConnectionResolver.
        If it's nullopt, then m_qtConnectionResolver should be called to
@@ -373,7 +373,7 @@ void DatabaseConnection::disconnect()
        and invalidating any existing QSqlQuery objects that are used
        with the database.
        Only close the QSqlDatabase database connection and don't remove it
-       from QSqlDatabase connection repository, so they can be reused, it's
+       from QSqlDatabase connection repository, so it can be reused, it's
        better for performance. */
     getRawQtConnection().close();
 
@@ -492,12 +492,19 @@ std::unique_ptr<QueryProcessor> DatabaseConnection::getDefaultPostProcessor() co
 
 void DatabaseConnection::reconnectIfMissingConnection() const
 {
-    if (!m_qtConnectionResolver) {
-        // This should never happen, but when it does, I want to know about that
-        Q_ASSERT(m_qtConnection);
+    /* Calls a connection resolver defined
+       in the ConnectionFactory::createQSqlDatabaseResolver(), the connection resolver
+       is passed to the DatabaseConnection constructor and is always available. Only
+       one exception is when disconnect() is called, it resets connection resolver which
+       will be recreated (with the db connection of course) here, that is only one case
+       when code below (reconnect() logic) is true as I'm aware of.*/
+    if (m_qtConnectionResolver)
+        return;
 
-        reconnect();
-    }
+    // This should never happen, but when it does, I want to know about that
+    Q_ASSERT(m_qtConnection);
+
+    reconnect();
 }
 
 /* private */

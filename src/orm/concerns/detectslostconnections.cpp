@@ -11,6 +11,11 @@ namespace Orm::Concerns
 
 bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &e) const
 {
+    return causedByLostConnection(e.getSqlError().databaseText());
+}
+
+bool DetectsLostConnections::causedByLostConnection(const QSqlError &e) const
+{
     // TODO verify this will be pain in the ass 😕 silverqx
     static const QVector<QString> lostMessagesCache {
         QLatin1String("server has gone away"),
@@ -53,7 +58,7 @@ bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &
     };
 
     return std::ranges::any_of(lostMessagesCache,
-                               [databaseError = e.getSqlError().databaseText()]
+                               [databaseError = e.databaseText()]
                                (const auto &lostMessage)
     {
         // found

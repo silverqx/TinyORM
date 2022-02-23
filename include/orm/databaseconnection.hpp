@@ -238,7 +238,7 @@ namespace Schema
                 const QString &queryString, const QVector<QVariant> &bindings,
                 const RunCallback<Return> &callback) const;
 
-        /*! Reconnect to the database if a PDO connection is missing. */
+        /*! Reconnect to the database if a Qt connection is missing. */
         void reconnectIfMissingConnection() const;
 
         /*! The active QSqlDatabase connection name. */
