@@ -12,6 +12,10 @@
 #include "models/torrentpreviewablefile.hpp"
 #include "models/user.hpp"
 
+#ifdef PROJECT_TINYORM_PLAYGROUND
+#include "configuration.hpp"
+#endif
+
 namespace Models
 {
 
@@ -26,6 +30,10 @@ using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;
 using Orm::Tiny::Relations::Pivot;
+
+#ifdef PROJECT_TINYORM_PLAYGROUND
+using TinyPlay::Configuration;
+#endif
 
 /* This class serves as a showcase, so all possible features are defined / used. */
 
@@ -139,8 +147,8 @@ private:
 #ifdef PROJECT_TINYORM_PLAYGROUND
     // I leave the initializer here to be clearly visible
     /*! The connection name for the model. */
-    QString u_connection {Orm::DB::getDefaultConnection() == "mysql" // BUG play, multi-thread? silverqx
-                          ? "mysql_alt"
+    QString u_connection {Orm::DB::getDefaultConnection() == Configuration::Mysql
+                          ? Configuration::Mysql_Alt
                           : Orm::DB::getDefaultConnection()};
 #endif
 
