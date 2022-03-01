@@ -52,7 +52,11 @@ namespace Schema
     /*! Database connection base class.
         TinyORM's DatabaseConnection never physically connects to the database after
         create()/reconnect() method calls, it only creates a connection resolver,
-        a physical connection to the database is made lazily during a first query call. */
+        a physical connection to the database is made lazily during a first query call.
+        It is designed in such a way that you don't have to worry about connecting or
+        reconnecting  to the database, this is handled by the TinyORM library
+        internally. The reconnection is handled correctly if a connection loss is
+        detected. */
     class SHAREDLIB_EXPORT DatabaseConnection :
             public Concerns::DetectsLostConnections,
             public Concerns::ManagesTransactions,
