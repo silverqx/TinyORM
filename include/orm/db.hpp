@@ -254,6 +254,8 @@ namespace Orm
         static const QString &databaseName(const QString &connection = "");
         /*! Return the host name of the connected database. */
         static const QString &hostName(const QString &connection = "");
+        /*! Determine whether the database connection is currently open. */
+        static bool isOpen(const QString &connection = "");
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */

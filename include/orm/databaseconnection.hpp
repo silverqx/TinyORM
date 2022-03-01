@@ -188,6 +188,8 @@ namespace Schema
         inline const QString &getDatabaseName() const;
         /*! Get the host name of the connected database. */
         inline const QString &getHostName() const;
+        /*! Determine whether the database connection is currently open. */
+        inline bool isOpen();
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */
@@ -405,6 +407,11 @@ namespace Schema
     const QString &DatabaseConnection::getHostName() const
     {
         return m_hostName;
+    }
+
+    inline bool DatabaseConnection::isOpen()
+    {
+        return m_qtConnection && getQtConnection().isOpen();
     }
 
     bool DatabaseConnection::pretending() const

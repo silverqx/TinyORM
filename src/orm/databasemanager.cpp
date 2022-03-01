@@ -671,6 +671,11 @@ DatabaseManager::hostName(const QString &connection)
     return this->connection(connection).getHostName();
 }
 
+bool DatabaseManager::isOpen(const QString &connection)
+{
+    return this->connection(connection).isOpen();
+}
+
 QVector<Log>
 DatabaseManager::pretend(const std::function<void()> &callback,
                          const QString &connection)

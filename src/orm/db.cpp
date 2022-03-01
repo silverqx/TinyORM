@@ -429,6 +429,11 @@ const QString &DB::hostName(const QString &connection)
     return manager().connection(connection).getHostName();
 }
 
+bool DB::isOpen(const QString &connection)
+{
+    return manager().connection(connection).isOpen();
+}
+
 QVector<Log>
 DB::pretend(const std::function<void()> &callback, const QString &connection)
 {

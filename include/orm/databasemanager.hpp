@@ -256,6 +256,8 @@ namespace Query
         const QString &databaseName(const QString &connection = "");
         /*! Return the host name of the connected database. */
         const QString &hostName(const QString &connection = "");
+        /*! Determine whether the database connection is currently open. */
+        bool isOpen(const QString &connection = "");
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */
