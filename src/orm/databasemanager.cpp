@@ -306,7 +306,7 @@ DatabaseConnection &DatabaseManager::reconnect(const QString &name)
     if (!(*m_connections).contains(name_))
         return connection(name_);
 
-    return refreshQtConnections(name_);
+    return refreshQtConnection(name_);
 }
 
 void DatabaseManager::disconnect(const QString &name) const
@@ -755,13 +755,13 @@ DatabaseManager::configure(std::unique_ptr<DatabaseConnection> &&connection) con
 }
 
 DatabaseConnection &
-DatabaseManager::refreshQtConnections(const QString &name)
+DatabaseManager::refreshQtConnection(const QString &name)
 {
     const auto &name_ = parseConnectionName(name);
 
     /* Make OUR new connection and copy the connection resolver from this new
-       connection to the current connection, this ensure that the connection
-       will be resolved/connected again lazily. */
+       connection to the current connection, this ensures that the connection
+       will be again resolved/connected lazily. */
     auto fresh = configure(makeConnection(name_));
 
     return (*m_connections)[name_]->setQtConnectionResolver(

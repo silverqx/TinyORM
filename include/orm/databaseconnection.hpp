@@ -49,7 +49,10 @@ namespace Schema
     /*! SchemaGrammar alias. */
     using SchemaGrammar  = Schema::Grammars::SchemaGrammar;
 
-    /*! Database connection base class. */
+    /*! Database connection base class.
+        TinyORM's DatabaseConnection never physically connects to the database after
+        create()/reconnect() method calls, it only creates a connection resolver,
+        a physical connection to the database is made lazily during a first query call. */
     class SHAREDLIB_EXPORT DatabaseConnection :
             public Concerns::DetectsLostConnections,
             public Concerns::ManagesTransactions,
@@ -153,7 +156,8 @@ namespace Schema
         /*! Check database connection and show warnings when the state changed. */
         virtual bool pingDatabase();
 
-        /*! Reconnect to the database. */
+        /*! Reconnect to the database (doesn't create physical connection, only refreshs
+            a connection resolver). */
         void reconnect() const;
         /*! Disconnect from the underlying Qt's connection. */
         void disconnect();
@@ -240,7 +244,8 @@ namespace Schema
                 const QString &queryString, const QVector<QVariant> &bindings,
                 const RunCallback<Return> &callback) const;
 
-        /*! Reconnect to the database if a Qt connection is missing. */
+        /*! Reconnect to the database if a Qt connection is missing (doesn't create
+            a physical connection, only refreshs connection resolver). */
         void reconnectIfMissingConnection() const;
 
         /*! The active QSqlDatabase connection name. */
@@ -514,6 +519,7 @@ namespace Schema
             const QString &queryString, const QVector<QVariant> &bindings,
             const RunCallback<Return> &callback) const
     {
+        // TODO would be good to call KILL on lost connection to free locks, https://dev.mysql.com/doc/c-api/8.0/en/c-api-auto-reconnect.html silverqx
         if (causedByLostConnection(e)) {
             reconnect();
 

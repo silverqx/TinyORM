@@ -311,8 +311,9 @@ namespace Query
         std::unique_ptr<DatabaseConnection>
         configure(std::unique_ptr<DatabaseConnection> &&connection) const;
 
-        /*! Refresh an underlying QSqlDatabase connection on a given connection. */
-        DatabaseConnection &refreshQtConnections(const QString &name);
+        /*! Refresh an underlying QSqlDatabase connection resolver on a given
+            TinyORM connection. */
+        DatabaseConnection &refreshQtConnection(const QString &name);
 
         /*! Throw exception if DatabaseManager instance already exists. */
         static void checkInstance();
