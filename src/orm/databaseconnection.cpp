@@ -260,11 +260,21 @@ QSqlDatabase DatabaseConnection::getQtConnection()
            connection was resolved by connection resolver. */
         if (!QSqlDatabase::contains(*m_qtConnection))
             throw Exceptions::RuntimeError(
-                    QStringLiteral("Connection '%1' doesn't exist.")
+                    QStringLiteral("QSqlDatabase does not contain '%1' connection.")
                     .arg(*m_qtConnection));
     }
 
     // Return the connection from QSqlDatabase connection manager
+    return QSqlDatabase::database(*m_qtConnection);
+}
+
+QSqlDatabase DatabaseConnection::getRawQtConnection() const
+{
+    if (!m_qtConnection)
+        throw Exceptions::RuntimeError(
+                "Can not obtain a connection from the QSqlDatabase instance because "
+                "the connection has not yet been established.");
+
     return QSqlDatabase::database(*m_qtConnection);
 }
 
@@ -369,6 +379,10 @@ void DatabaseConnection::reconnect() const
 
 void DatabaseConnection::disconnect()
 {
+    // Nothing to disconnect
+    if (!m_qtConnection)
+        return;
+
     /* Closes the database connection, freeing any resources acquired,
        and invalidating any existing QSqlQuery objects that are used
        with the database.
@@ -497,7 +511,7 @@ void DatabaseConnection::reconnectIfMissingConnection() const
        is passed to the DatabaseConnection constructor and is always available. Only
        one exception is when disconnect() is called, it resets connection resolver which
        will be recreated (with the db connection of course) here, that is only one case
-       when code below (reconnect() logic) is true as I'm aware of.*/
+       when the code below (reconnect() logic) is true as I'm aware of.*/
     if (m_qtConnectionResolver)
         return;
 

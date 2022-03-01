@@ -132,7 +132,7 @@ namespace Schema
         /*! Get underlying database connection (QSqlDatabase). */
         QSqlDatabase getQtConnection();
         /*! Get underlying database connection without executing any reconnect logic. */
-        inline QSqlDatabase getRawQtConnection() const;
+        QSqlDatabase getRawQtConnection() const;
         /*! Get the connection resolver for an underlying database connection. */
         inline const std::function<Connectors::ConnectionName()> &
         getQtConnectionResolver() const;
@@ -355,11 +355,6 @@ namespace Schema
     }
 
     /* Obtain connection instance */
-
-    QSqlDatabase DatabaseConnection::getRawQtConnection() const
-    {
-        return QSqlDatabase::database(*m_qtConnection);
-    }
 
     const std::function<Connectors::ConnectionName()> &
     DatabaseConnection::getQtConnectionResolver() const
