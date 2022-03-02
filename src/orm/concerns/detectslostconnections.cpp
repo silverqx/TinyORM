@@ -11,7 +11,7 @@ namespace Orm::Concerns
 
 bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &e) const
 {
-    return causedByLostConnection(e.getSqlError().databaseText());
+    return causedByLostConnection(e.getSqlError());
 }
 
 bool DetectsLostConnections::causedByLostConnection(const QSqlError &e) const
