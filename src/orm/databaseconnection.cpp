@@ -515,8 +515,9 @@ void DatabaseConnection::reconnectIfMissingConnection() const
     if (m_qtConnectionResolver)
         return;
 
-    // This should never happen, but when it does, I want to know about that
-    Q_ASSERT(m_qtConnection);
+    /* This should never happen, but when it does, I want to know about that. If the
+       m_qtConnectionResolver is not set then m_qtConnection has to be std::nullopt. */
+    Q_ASSERT(!m_qtConnection);
 
     reconnect();
 }
