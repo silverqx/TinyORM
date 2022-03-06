@@ -27,7 +27,7 @@ namespace Connectors
         /*! Default constructor. */
         inline ConnectionFactory() = default;
         /*! Default destructor. */
-        ~ConnectionFactory() = default;
+        inline ~ConnectionFactory() = default;
 
         /*! Establish a QSqlDatabase connection based on the configuration. */
         std::unique_ptr<DatabaseConnection>
