@@ -233,6 +233,14 @@ npm start -- --no-open
 .\dotenv.ps1
 .\algolia_rebuild.ps1
 
+- upgrade Docusaurus npm:
+
+npm install @docusaurus/core@latest @docusaurus/plugin-ideal-image@latest @docusaurus/preset-classic@latest
+
+- upgrade Docusaurus yarn:
+
+yarn upgrade @docusaurus/core@latest @docusaurus/preset-classic@latest
+
 
 CMake Guidelines:
 -----------------
