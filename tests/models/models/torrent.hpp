@@ -147,8 +147,8 @@ private:
 #ifdef PROJECT_TINYORM_PLAYGROUND
     // I leave the initializer here to be clearly visible
     /*! The connection name for the model. */
-    QString u_connection {Orm::DB::getDefaultConnection() == Configuration::Mysql
-                          ? Configuration::Mysql_Alt
+    QString u_connection {Orm::DB::getDefaultConnection() == Mysql
+                          ? Mysql_Alt
                           : Orm::DB::getDefaultConnection()};
 #endif
 
