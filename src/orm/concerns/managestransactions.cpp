@@ -70,10 +70,11 @@ bool ManagesTransactions::commit()
         timer.start();
 
     if (!databaseConnection().pretending() &&
-        !databaseConnection().getQtConnection().commit()
+        !databaseConnection().getRawQtConnection().commit()
     )
-        handleCommonTransactionError(__tiny_func__, queryString,
-                          databaseConnection().getRawQtConnection().lastError());
+        handleCommonTransactionError(
+                    __tiny_func__, queryString,
+                    databaseConnection().getRawQtConnection().lastError());
 
     resetTransactions();
 
@@ -105,10 +106,11 @@ bool ManagesTransactions::rollBack()
         timer.start();
 
     if (!databaseConnection().pretending() &&
-        !databaseConnection().getQtConnection().rollback()
+        !databaseConnection().getRawQtConnection().rollback()
     )
-        handleCommonTransactionError(__tiny_func__, queryString,
-                          databaseConnection().getRawQtConnection().lastError());
+        handleCommonTransactionError(
+                    __tiny_func__, queryString,
+                    databaseConnection().getRawQtConnection().lastError());
 
     resetTransactions();
 
@@ -143,8 +145,9 @@ bool ManagesTransactions::savepoint(const QString &id)
 
     // Execute a savepoint query
     if (!databaseConnection().pretending() && !savePoint.exec(queryString))
-        handleCommonTransactionError(__tiny_func__, queryString,
-                          databaseConnection().getRawQtConnection().lastError());
+        handleCommonTransactionError(
+                    __tiny_func__, queryString,
+                    databaseConnection().getRawQtConnection().lastError());
 
     ++m_savepoints;
 
@@ -172,6 +175,7 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
     Q_ASSERT(m_inTransaction);
     Q_ASSERT(m_savepoints > 0);
 
+    // BUG getRawQtQuery() silverqx
     auto rollbackToSavepoint = databaseConnection().getQtQuery();
     const auto queryString =
             QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2").arg(m_savepointNamespace, id);
@@ -185,8 +189,9 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
 
     // Execute a rollback to savepoint query
     if (!databaseConnection().pretending() && !rollbackToSavepoint.exec(queryString))
-        handleCommonTransactionError(__tiny_func__, queryString,
-                          databaseConnection().getRawQtConnection().lastError());
+        handleCommonTransactionError(
+                    __tiny_func__, queryString,
+                    databaseConnection().getRawQtConnection().lastError());
 
     m_savepoints = std::max<std::size_t>(0, m_savepoints - 1);
 
