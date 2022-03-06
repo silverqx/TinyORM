@@ -68,44 +68,51 @@ namespace Query
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
         QSqlQuery
-        select(const QString &query, const QVector<QVariant> &bindings = {});
+        select(const QString &query, const QVector<QVariant> &bindings = {},
+               const QString &connection = "");
         /*! Run a select statement and return a single result. */
         QSqlQuery
-        selectOne(const QString &query, const QVector<QVariant> &bindings = {});
+        selectOne(const QString &query, const QVector<QVariant> &bindings = {},
+                  const QString &connection = "");
         /*! Run an insert statement against the database. */
         QSqlQuery
-        insert(const QString &query, const QVector<QVariant> &bindings = {});
+        insert(const QString &query, const QVector<QVariant> &bindings = {},
+               const QString &connection = "");
         /*! Run an update statement against the database. */
         std::tuple<int, QSqlQuery>
-        update(const QString &query, const QVector<QVariant> &bindings = {});
+        update(const QString &query, const QVector<QVariant> &bindings = {},
+               const QString &connection = "");
         /*! Run a delete statement against the database. */
         std::tuple<int, QSqlQuery>
-        remove(const QString &query, const QVector<QVariant> &bindings = {});
+        remove(const QString &query, const QVector<QVariant> &bindings = {},
+               const QString &connection = "");
 
         /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
         QSqlQuery
-        statement(const QString &query, const QVector<QVariant> &bindings = {});
+        statement(const QString &query, const QVector<QVariant> &bindings = {},
+                  const QString &connection = "");
         /*! Run an SQL statement and get the number of rows affected. */
         std::tuple<int, QSqlQuery>
-        affectingStatement(const QString &query, const QVector<QVariant> &bindings = {});
+        affectingStatement(const QString &query, const QVector<QVariant> &bindings = {},
+                           const QString &connection = "");
 
         /*! Run a raw, unprepared query against the database. */
-        QSqlQuery unprepared(const QString &query);
+        QSqlQuery unprepared(const QString &query, const QString &connection = "");
 
         /*! Start a new database transaction. */
-        bool beginTransaction();
+        bool beginTransaction(const QString &connection = "");
         /*! Commit the active database transaction. */
-        bool commit();
+        bool commit(const QString &connection = "");
         /*! Rollback the active database transaction. */
-        bool rollBack();
+        bool rollBack(const QString &connection = "");
         /*! Start a new named transaction savepoint. */
-        bool savepoint(const QString &id);
+        bool savepoint(const QString &id, const QString &connection = "");
         /*! Start a new named transaction savepoint. */
-        bool savepoint(std::size_t id);
+        bool savepoint(std::size_t id, const QString &connection = "");
         /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(const QString &id);
+        bool rollbackToSavepoint(const QString &id, const QString &connection = "");
         /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(std::size_t id);
+        bool rollbackToSavepoint(std::size_t id, const QString &connection = "");
         /*! Get the number of active transactions. */
         std::size_t transactionLevel(const QString &connection = "");
 

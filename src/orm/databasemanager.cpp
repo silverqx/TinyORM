@@ -107,91 +107,100 @@ QSqlQuery DatabaseManager::qtQuery(const QString &connection)
 }
 
 QSqlQuery
-DatabaseManager::select(const QString &query, const QVector<QVariant> &bindings)
+DatabaseManager::select(const QString &query, const QVector<QVariant> &bindings,
+                        const QString &connection)
 {
-    return connection().select(query, bindings);
+    return this->connection(connection).select(query, bindings);
 }
 
 QSqlQuery
-DatabaseManager::selectOne(const QString &query, const QVector<QVariant> &bindings)
+DatabaseManager::selectOne(const QString &query, const QVector<QVariant> &bindings,
+                           const QString &connection)
 {
-    return connection().selectOne(query, bindings);
+    return this->connection(connection).selectOne(query, bindings);
 }
 
 QSqlQuery
-DatabaseManager::insert(const QString &query, const QVector<QVariant> &bindings)
+DatabaseManager::insert(const QString &query, const QVector<QVariant> &bindings,
+                        const QString &connection)
 {
-    return connection().insert(query, bindings);
+    return this->connection(connection).insert(query, bindings);
 }
 
 std::tuple<int, QSqlQuery>
-DatabaseManager::update(const QString &query, const QVector<QVariant> &bindings)
+DatabaseManager::update(const QString &query, const QVector<QVariant> &bindings,
+                        const QString &connection)
 {
-    return connection().update(query, bindings);
+    return this->connection(connection).update(query, bindings);
 }
 
 std::tuple<int, QSqlQuery>
-DatabaseManager::remove(const QString &query, const QVector<QVariant> &bindings)
+DatabaseManager::remove(const QString &query, const QVector<QVariant> &bindings,
+                        const QString &connection)
 {
-    return connection().remove(query, bindings);
+    return this->connection(connection).remove(query, bindings);
 }
 
 QSqlQuery
-DatabaseManager::statement(const QString &query, const QVector<QVariant> &bindings)
+DatabaseManager::statement(const QString &query, const QVector<QVariant> &bindings,
+                           const QString &connection)
 {
-    return connection().statement(query, bindings);
+    return this->connection(connection).statement(query, bindings);
 }
 
 std::tuple<int, QSqlQuery>
-DatabaseManager::affectingStatement(const QString &query,
-                                    const QVector<QVariant> &bindings)
+DatabaseManager::affectingStatement(
+            const QString &query, const QVector<QVariant> &bindings,
+            const QString &connection)
 {
-    return connection().affectingStatement(query, bindings);
+    return this->connection(connection).affectingStatement(query, bindings);
 }
 
-QSqlQuery DatabaseManager::unprepared(const QString &query)
+QSqlQuery DatabaseManager::unprepared(const QString &query,
+                                      const QString &connection)
 {
-    return connection().unprepared(query);
+    return this->connection(connection).unprepared(query);
 }
 
-bool DatabaseManager::beginTransaction()
+bool DatabaseManager::beginTransaction(const QString &connection)
 {
-    return connection().beginTransaction();
+    return this->connection(connection).beginTransaction();
 }
 
-bool DatabaseManager::commit()
+bool DatabaseManager::commit(const QString &connection)
 {
-    return connection().commit();
+    return this->connection(connection).commit();
 }
 
-bool DatabaseManager::rollBack()
+bool DatabaseManager::rollBack(const QString &connection)
 {
-    return connection().rollBack();
+    return this->connection(connection).rollBack();
 }
 
-bool DatabaseManager::savepoint(const QString &id)
+bool DatabaseManager::savepoint(const QString &id, const QString &connection)
 {
-    return connection().savepoint(id);
+    return this->connection(connection).savepoint(id);
 }
 
-bool DatabaseManager::savepoint(const std::size_t id)
+bool DatabaseManager::savepoint(const std::size_t id, const QString &connection)
 {
-    return connection().savepoint(id);
+    return this->connection(connection).savepoint(id);
 }
 
-bool DatabaseManager::rollbackToSavepoint(const QString &id)
+bool DatabaseManager::rollbackToSavepoint(const QString &id, const QString &connection)
 {
-    return connection().rollbackToSavepoint(id);
+    return this->connection(connection).rollbackToSavepoint(id);
 }
 
-bool DatabaseManager::rollbackToSavepoint(const std::size_t id)
+bool DatabaseManager::rollbackToSavepoint(const std::size_t id,
+                                          const QString &connection)
 {
-    return connection().rollbackToSavepoint(id);
+    return this->connection(connection).rollbackToSavepoint(id);
 }
 
-size_t DatabaseManager::transactionLevel()
+size_t DatabaseManager::transactionLevel(const QString &connection)
 {
-    return connection().transactionLevel();
+    return this->connection(connection).transactionLevel();
 }
 
 bool DatabaseManager::isOpen(const QString &connection)

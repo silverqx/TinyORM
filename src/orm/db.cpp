@@ -142,50 +142,58 @@ QSqlQuery DB::qtQuery(const QString &connection)
 }
 
 QSqlQuery
-DB::select(const QString &query, const QVector<QVariant> &bindings)
+DB::select(const QString &query, const QVector<QVariant> &bindings,
+           const QString &connection)
 {
-    return manager().connection().select(query, bindings);
+    return manager().connection(connection).select(query, bindings);
 }
 
 QSqlQuery
-DB::selectOne(const QString &query, const QVector<QVariant> &bindings)
+DB::selectOne(const QString &query, const QVector<QVariant> &bindings,
+              const QString &connection)
 {
-    return manager().connection().selectOne(query, bindings);
+    return manager().connection(connection).selectOne(query, bindings);
 }
 
 QSqlQuery
-DB::insert(const QString &query, const QVector<QVariant> &bindings)
+DB::insert(const QString &query, const QVector<QVariant> &bindings,
+           const QString &connection)
 {
-    return manager().connection().insert(query, bindings);
+    return manager().connection(connection).insert(query, bindings);
 }
 
 std::tuple<int, QSqlQuery>
-DB::update(const QString &query, const QVector<QVariant> &bindings)
+DB::update(const QString &query, const QVector<QVariant> &bindings,
+           const QString &connection)
 {
-    return manager().connection().update(query, bindings);
+    return manager().connection(connection).update(query, bindings);
 }
 
 std::tuple<int, QSqlQuery>
-DB::remove(const QString &query, const QVector<QVariant> &bindings)
+DB::remove(const QString &query, const QVector<QVariant> &bindings,
+           const QString &connection)
 {
-    return manager().connection().remove(query, bindings);
+    return manager().connection(connection).remove(query, bindings);
 }
 
 QSqlQuery
-DB::statement(const QString &query, const QVector<QVariant> &bindings)
+DB::statement(const QString &query, const QVector<QVariant> &bindings,
+              const QString &connection)
 {
-    return manager().connection().statement(query, bindings);
+    return manager().connection(connection).statement(query, bindings);
 }
 
 std::tuple<int, QSqlQuery>
-DB::affectingStatement(const QString &query, const QVector<QVariant> &bindings)
+DB::affectingStatement(const QString &query, const QVector<QVariant> &bindings,
+                       const QString &connection)
 {
-    return manager().connection().affectingStatement(query, bindings);
+    return manager().connection(connection).affectingStatement(query, bindings);
 }
 
-QSqlQuery DB::unprepared(const QString &query)
+QSqlQuery DB::unprepared(const QString &query,
+                         const QString &connection)
 {
-    return manager().connection().unprepared(query);
+    return manager().connection(connection).unprepared(query);
 }
 
 // NOTE api different silverqx

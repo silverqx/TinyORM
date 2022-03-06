@@ -109,29 +109,37 @@ namespace Orm
 
         /*! Run a select statement against the database. */
         static QSqlQuery
-        select(const QString &query, const QVector<QVariant> &bindings = {});
+        select(const QString &query, const QVector<QVariant> &bindings = {},
+               const QString &connection = "");
         /*! Run a select statement and return a single result. */
         static QSqlQuery
-        selectOne(const QString &query, const QVector<QVariant> &bindings = {});
+        selectOne(const QString &query, const QVector<QVariant> &bindings = {},
+                  const QString &connection = "");
         /*! Run an insert statement against the database. */
         static QSqlQuery
-        insert(const QString &query, const QVector<QVariant> &bindings = {});
+        insert(const QString &query, const QVector<QVariant> &bindings = {},
+               const QString &connection = "");
         /*! Run an update statement against the database. */
         static std::tuple<int, QSqlQuery>
-        update(const QString &query, const QVector<QVariant> &bindings = {});
+        update(const QString &query, const QVector<QVariant> &bindings = {},
+               const QString &connection = "");
         /*! Run a delete statement against the database. */
         static std::tuple<int, QSqlQuery>
-        remove(const QString &query, const QVector<QVariant> &bindings = {});
+        remove(const QString &query, const QVector<QVariant> &bindings = {},
+               const QString &connection = "");
 
         /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
         static QSqlQuery
-        statement(const QString &query, const QVector<QVariant> &bindings = {});
+        statement(const QString &query, const QVector<QVariant> &bindings = {},
+                  const QString &connection = "");
         /*! Run an SQL statement and get the number of rows affected. */
         static std::tuple<int, QSqlQuery>
-        affectingStatement(const QString &query, const QVector<QVariant> &bindings = {});
+        affectingStatement(const QString &query, const QVector<QVariant> &bindings = {},
+                           const QString &connection = "");
 
         /*! Run a raw, unprepared query against the database. */
-        static QSqlQuery unprepared(const QString &query);
+        static QSqlQuery
+        unprepared(const QString &query, const QString &connection = "");
 
         /*! Start a new database transaction. */
         static bool beginTransaction(const QString &connection = "");
