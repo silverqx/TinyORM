@@ -538,6 +538,8 @@ namespace Schema
             reconnect();
 
             // BUG rethrow e when causedByLostConnection to correctly inform user, causedByLostConnection state lost during second runQueryCallback(), because it internally tries to connect to DB and throws "Unable to connect to database" instead of "Lost connection", probably another try-catch and if catched "Unable to connect to database" then rethrow e (Lost connection)? silverqx
+            /* After the second failed attempt will be isOpen() == false because
+               the m_qtConnection == std::nullopt. */
             return runQueryCallback(queryString, bindings, callback);
         }
 
