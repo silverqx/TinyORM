@@ -34,6 +34,11 @@ DatabaseConnection &DB::connection(const QString &name)
     return manager().connection(name);
 }
 
+DatabaseConnection &DB::on(const QString &name)
+{
+    return manager().connection(name);
+}
+
 DatabaseManager &
 DB::addConnection(const QVariantHash &config, const QString &name)
 {

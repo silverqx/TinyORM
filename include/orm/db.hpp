@@ -46,6 +46,9 @@ namespace Orm
 
         /*! Get a database connection instance. */
         static DatabaseConnection &connection(const QString &name = "");
+        /*! Begin a fluent query against the database on a given connection (alias for
+            the connection() method). */
+        static DatabaseConnection &on(const QString &name);
         /*! Register a connection with the manager. */
         static DatabaseManager &
         addConnection(const QVariantHash &config,

@@ -122,6 +122,9 @@ namespace Query
 
         /*! Get a database connection instance. */
         DatabaseConnection &connection(const QString &name = "") final;
+        /*! Begin a fluent query against the database on a given connection (alias for
+            the connection() method). */
+        inline DatabaseConnection &on(const QString &name);
         /*! Register a connection with the manager. */
         DatabaseManager &
         addConnection(const QVariantHash &config,
@@ -344,6 +347,11 @@ namespace Query
     DatabaseManager::raw(const QVariant &value)
     {
         return Query::Expression(value);
+    }
+
+    DatabaseConnection &DatabaseManager::on(const QString &name)
+    {
+        return connection(name);
     }
 
 } // namespace Orm
