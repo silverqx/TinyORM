@@ -27,7 +27,7 @@ Param(
 
 Set-StrictMode -Version 3.0
 
-$Script:TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|CUR1|TMP) '
+$Script:TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|CUR1|TMP|SEC) '
 
 # If empty search all subfolders
 if ($InSubFoldersPattern.Length -eq 0) {
