@@ -313,6 +313,11 @@ bool DatabaseManager::removeConnection(const QString &name)
     return true;
 }
 
+bool DatabaseManager::containsConnection(const QString &name)
+{
+    return (*m_connections).contains(name);
+}
+
 DatabaseConnection &DatabaseManager::reconnect(const QString &name)
 {
     const auto &name_ = parseConnectionName(name);

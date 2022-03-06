@@ -62,6 +62,11 @@ bool DB::removeConnection(const QString &name)
     return manager().removeConnection(name);
 }
 
+bool DB::containsConnection(const QString &name)
+{
+    return manager().containsConnection(name);
+}
+
 DatabaseConnection &DB::reconnect(const QString &name)
 {
     return manager().reconnect(name);

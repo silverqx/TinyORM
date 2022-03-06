@@ -62,6 +62,8 @@ namespace Orm
                        const QString &defaultConnection);
         /*! Remove the given connection from the manager. */
         static bool removeConnection(const QString &name = "");
+        /*! Determine whether a given connection is already registered. */
+        static bool containsConnection(const QString &name = "");
 
         /*! Reconnect to the given database. */
         static DatabaseConnection &reconnect(const QString &name = "");

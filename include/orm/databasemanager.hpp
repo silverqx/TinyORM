@@ -138,6 +138,8 @@ namespace Query
                        const QString &defaultConnection);
         /*! Remove the given connection from the manager. */
         bool removeConnection(const QString &name = "");
+        /*! Determine whether a given connection is already registered. */
+        bool containsConnection(const QString &name = "");
 
         /*! Reconnect to the given database. */
         DatabaseConnection &reconnect(const QString &name = "");
