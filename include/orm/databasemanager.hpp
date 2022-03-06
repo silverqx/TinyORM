@@ -51,8 +51,11 @@ namespace Query
         /* Proxy methods to the DatabaseConnection */
         /*! Begin a fluent query against a database table for the connection. */
         QSharedPointer<QueryBuilder>
-        table(const QString &table, const QString &as = "",
-              const QString &connection = "");
+        table(const QString &table, const QString &connection = "");
+        /*! Begin a fluent query against a database table for the connection. */
+        QSharedPointer<QueryBuilder>
+        tableAs(const QString &table, const QString &as = "",
+                const QString &connection = "");
 
         /*! Get a new query builder instance for the connection. */
         QSharedPointer<QueryBuilder> query(const QString &connection = "");

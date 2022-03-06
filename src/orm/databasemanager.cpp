@@ -83,8 +83,14 @@ DatabaseManager::create(const ConfigurationsType &configs,
 }
 
 QSharedPointer<QueryBuilder>
-DatabaseManager::table(
-        const QString &table, const QString &as, const QString &connection)
+DatabaseManager::table(const QString &table, const QString &connection)
+{
+    return this->connection(connection).table(table);
+}
+
+QSharedPointer<QueryBuilder>
+DatabaseManager::tableAs(const QString &table, const QString &as,
+                         const QString &connection)
 {
     return this->connection(connection).table(table, as);
 }

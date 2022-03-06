@@ -109,7 +109,13 @@ DB::setReconnector(const ReconnectorType &reconnector)
 }
 
 QSharedPointer<QueryBuilder>
-DB::table(const QString &table, const QString &as, const QString &connection)
+DB::table(const QString &table, const QString &connection)
+{
+    return manager().connection(connection).table(table);
+}
+
+QSharedPointer<QueryBuilder>
+DB::tableAs(const QString &table, const QString &as, const QString &connection)
 {
     return manager().connection(connection).table(table, as);
 }
