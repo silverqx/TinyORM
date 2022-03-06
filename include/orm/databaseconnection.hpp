@@ -282,6 +282,8 @@ namespace Schema
     private:
         /*! Prepare an SQL statement and return the query object. */
         QSqlQuery prepareQuery(const QString &queryString);
+        /*! Get a new invalid QSqlQuery instance for the pretend. */
+        inline static QSqlQuery getQtQueryForPretend();
 
         /*! Handle a query exception. */
         template<typename Return>
@@ -511,6 +513,11 @@ namespace Schema
     }
 
     /* private */
+
+    QSqlQuery DatabaseConnection::getQtQueryForPretend()
+    {
+        return QSqlQuery(QSqlDatabase());
+    }
 
     template<typename Return>
     Return

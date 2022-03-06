@@ -92,7 +92,7 @@ DatabaseConnection::select(const QString &queryString,
                -> QSqlQuery
     {
         if (m_pretending)
-            return getQtQuery();
+            return getQtQueryForPretend();
 
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString_);
@@ -140,7 +140,7 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
                -> QSqlQuery
     {
         if (m_pretending)
-            return getQtQuery();
+            return getQtQueryForPretend();
 
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString_);
@@ -179,7 +179,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
             -> std::tuple<int, QSqlQuery>
     {
         if (m_pretending)
-            return {0, getQtQuery()};
+            return {0, getQtQueryForPretend()};
 
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString_);
@@ -219,7 +219,7 @@ QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
                -> QSqlQuery
     {
         if (m_pretending)
-            return getQtQuery();
+            return getQtQueryForPretend();
 
         // Prepare unprepared QSqlQuery 🙂
         auto query = getQtQuery();
