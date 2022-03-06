@@ -16,7 +16,7 @@ bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &
 
 bool DetectsLostConnections::causedByLostConnection(const QSqlError &e) const
 {
-    // TODO verify this will be pain in the ass 😕 silverqx
+    // TODO verify this will be pain in the ass 😕, but but it looks like few of them for mysql and postgres are completly valid silverqx
     static const QVector<QString> lostMessagesCache {
         QLatin1String("server has gone away"),
         QLatin1String("no connection to the server"),

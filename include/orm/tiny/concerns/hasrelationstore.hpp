@@ -670,6 +670,7 @@ namespace Orm::Tiny::Concerns
 
     /* HasRelationStore */
 
+    // CUR1 clang-tidy fix modernize-use-equals-delete silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::HasRelationStore(
 #ifdef TINYORM_DEBUG

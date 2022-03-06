@@ -1319,3 +1319,4 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR docs exceptions, which methods throw which exceptions, so user know which exception classes to define in a catch blocks silverqx
 // CUR Belongs To Many firstOrNew, firstOrCreate, and updateOrCreate Methods, revisit first and second argument silverqx
 // CUR add attribute to touch() method silverqx
+// SEC fix LoadLibrary() before qsql plugin loads? https://www.qt.io/blog/security-advisory-qlockfile-qauthenticator-windows-platform-plugin silverqx

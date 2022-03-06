@@ -412,7 +412,7 @@ namespace Concerns
 
         const auto position = m_attributesHash.at(key);
 
-        // FUTURE all the operations on this containers should be synchronized silverqx
+        // FUTURE all the operations on this containers should be synchronized, later, I think that this is not true because connection or model can be used only from a thread where it was created silverqx
         m_attributes.removeAt(position);
         m_attributesHash.erase(key);
 

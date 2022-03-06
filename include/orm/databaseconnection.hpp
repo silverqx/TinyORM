@@ -537,6 +537,7 @@ namespace Schema
         if (causedByLostConnection(e)) {
             reconnect();
 
+            // BUG rethrow e when causedByLostConnection to correctly inform user, causedByLostConnection state lost during second runQueryCallback(), because it internally tries to connect to DB and throws "Unable to connect to database" instead of "Lost connection", probably another try-catch and if catched "Unable to connect to database" then rethrow e (Lost connection)? silverqx
             return runQueryCallback(queryString, bindings, callback);
         }
 
