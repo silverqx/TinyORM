@@ -157,6 +157,8 @@ namespace Schema
         void bindValues(QSqlQuery &query,
                         const QVector<QVariant> &bindings) const;
 
+        /*! Determine whether the database connection is currently open. */
+        inline bool isOpen();
         /*! Check database connection and show warnings when the state changed. */
         virtual bool pingDatabase();
 
@@ -165,6 +167,9 @@ namespace Schema
         void reconnect() const;
         /*! Disconnect from the underlying Qt's connection. */
         void disconnect();
+        /*! Force connection to the database (creates physical connection), doesn't have
+            to be called before querying a database. */
+        inline QSqlDatabase connectEagerly();
 
         /*! Get the query grammar used by the connection. */
         inline const QueryGrammar &getQueryGrammar() const;
@@ -196,8 +201,6 @@ namespace Schema
         inline const QString &getDatabaseName() const;
         /*! Get the host name of the connected database. */
         inline const QString &getHostName() const;
-        /*! Determine whether the database connection is currently open. */
-        inline bool isOpen();
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */
@@ -371,6 +374,18 @@ namespace Schema
         return m_qtConnectionResolver;
     }
 
+    bool DatabaseConnection::isOpen()
+    {
+        return m_qtConnection && getQtConnection().isOpen();
+    }
+
+    QSqlDatabase DatabaseConnection::connectEagerly()
+    {
+        reconnectIfMissingConnection();
+
+        return getQtConnection();
+    }
+
     const QueryGrammar &DatabaseConnection::getQueryGrammar() const
     {
         return *m_queryGrammar;
@@ -411,11 +426,6 @@ namespace Schema
     const QString &DatabaseConnection::getHostName() const
     {
         return m_hostName;
-    }
-
-    inline bool DatabaseConnection::isOpen()
-    {
-        return m_qtConnection && getQtConnection().isOpen();
     }
 
     bool DatabaseConnection::pretending() const

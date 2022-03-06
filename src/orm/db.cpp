@@ -67,6 +67,11 @@ void DB::disconnect(const QString &name)
     manager().disconnect(name);
 }
 
+QSqlDatabase DB::connectEagerly(const QString &name)
+{
+    return manager().connectEagerly(name);
+}
+
 QStringList DB::supportedDrivers()
 {
     return manager().supportedDrivers();
@@ -206,6 +211,16 @@ bool DB::rollbackToSavepoint(const std::size_t id, const QString &connection)
 size_t DB::transactionLevel(const QString &connection)
 {
     return manager().connection(connection).transactionLevel();
+}
+
+bool DB::isOpen(const QString &connection)
+{
+    return manager().connection(connection).isOpen();
+}
+
+bool DB::pingDatabase(const QString &connection)
+{
+    return manager().connection(connection).pingDatabase();
 }
 
 bool DB::countingElapsed(const QString &connection)
@@ -427,11 +442,6 @@ const QString &DB::databaseName(const QString &connection)
 const QString &DB::hostName(const QString &connection)
 {
     return manager().connection(connection).getHostName();
-}
-
-bool DB::isOpen(const QString &connection)
-{
-    return manager().connection(connection).isOpen();
 }
 
 QVector<Log>

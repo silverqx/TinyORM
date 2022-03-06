@@ -64,6 +64,9 @@ namespace Orm
         static DatabaseConnection &reconnect(const QString &name = "");
         /*! Disconnect from the given database. */
         static void disconnect(const QString &name = "");
+        /*! Force connection to the database (creates physical connection), doesn't have
+            to be called before querying a database. */
+        static QSqlDatabase connectEagerly(const QString &name = "");
 
         /*! Get all of the support drivers. */
         static QStringList supportedDrivers();
@@ -140,6 +143,11 @@ namespace Orm
                                         const QString &connection = "");
         /*! Get the number of active transactions. */
         static std::size_t transactionLevel(const QString &connection = "");
+
+        /*! Determine whether the database connection is currently open. */
+        static bool isOpen(const QString &connection = "");
+        /*! Check database connection and show warnings when the state changed. */
+        static bool pingDatabase(const QString &connection = "");
 
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */
@@ -254,8 +262,6 @@ namespace Orm
         static const QString &databaseName(const QString &connection = "");
         /*! Return the host name of the connected database. */
         static const QString &hostName(const QString &connection = "");
-        /*! Determine whether the database connection is currently open. */
-        static bool isOpen(const QString &connection = "");
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */

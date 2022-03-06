@@ -188,6 +188,16 @@ size_t DatabaseManager::transactionLevel()
     return connection().transactionLevel();
 }
 
+bool DatabaseManager::isOpen(const QString &connection)
+{
+    return this->connection(connection).isOpen();
+}
+
+bool DatabaseManager::pingDatabase(const QString &connection)
+{
+    return this->connection(connection).pingDatabase();
+}
+
 namespace
 {
     const auto *const InstanceExceptionMessage =
@@ -317,6 +327,11 @@ void DatabaseManager::disconnect(const QString &name) const
         return;
 
     (*m_connections).find(name_)->second->disconnect();
+}
+
+QSqlDatabase DatabaseManager::connectEagerly(const QString &name)
+{
+    return connection(name).connectEagerly();
 }
 
 QStringList DatabaseManager::supportedDrivers() const
@@ -669,11 +684,6 @@ const QString &
 DatabaseManager::hostName(const QString &connection)
 {
     return this->connection(connection).getHostName();
-}
-
-bool DatabaseManager::isOpen(const QString &connection)
-{
-    return this->connection(connection).isOpen();
 }
 
 QVector<Log>

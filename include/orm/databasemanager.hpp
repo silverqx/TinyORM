@@ -104,7 +104,12 @@ namespace Query
         /*! Rollback to a named transaction savepoint. */
         bool rollbackToSavepoint(std::size_t id);
         /*! Get the number of active transactions. */
-        std::size_t transactionLevel();
+        std::size_t transactionLevel(const QString &connection = "");
+
+        /*! Determine whether the database connection is currently open. */
+        bool isOpen(const QString &connection = "");
+        /*! Check database connection and show warnings when the state changed. */
+        bool pingDatabase(const QString &connection = "");
 
         /* DatabaseManager */
         /*! Obtain a shared pointer to the DatabaseManager. */
@@ -132,6 +137,9 @@ namespace Query
         DatabaseConnection &reconnect(const QString &name = "");
         /*! Disconnect from the given database. */
         void disconnect(const QString &name = "") const;
+        /*! Force connection to the database (creates physical connection), doesn't have
+            to be called before querying a database. */
+        QSqlDatabase connectEagerly(const QString &name = "");
 
         /*! Get all of the support drivers. */
         QStringList supportedDrivers() const;
@@ -256,8 +264,6 @@ namespace Query
         const QString &databaseName(const QString &connection = "");
         /*! Return the host name of the connected database. */
         const QString &hostName(const QString &connection = "");
-        /*! Determine whether the database connection is currently open. */
-        bool isOpen(const QString &connection = "");
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */
