@@ -7,12 +7,15 @@
 
 #ifdef TINYORM_MYSQL_PING
 #  ifdef __MINGW32__
-#    include "mysql/errmsg.h"
+#    include <mysql/errmsg.h>
 #  endif
-#  ifdef _MSC_VER
-#    include "mysql.h"
-#  elif defined(__GNUG__) || defined(__MINGW32__)
-#    include "mysql/mysql.h"
+#  if __has_include(<mysql.h>)
+#    include <mysql.h>
+#  elif __has_include(<mysql/mysql.h>)
+#    include <mysql/mysql.h>
+#  else
+#    error Can not find <mysql.h> header file, install the MySQL C client library or \
+disable TINYORM_MYSQL_PING preprocessor directive.
 #  endif
 #endif
 

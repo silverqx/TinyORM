@@ -7,7 +7,7 @@ TINY_SYSTEM_HEADER
 
 // Check
 #if defined(TINYORM_EXTERN_CONSTANTS) && defined(TINYORM_INLINE_CONSTANTS)
-#  error("Both TINYORM_EXTERN_CONSTANTS and TINYORM_INLINE_CONSTANTS defined.")
+#  error Both TINYORM_EXTERN_CONSTANTS and TINYORM_INLINE_CONSTANTS defined.
 #endif
 // Enforce extern constants in shared build/linking when a user did not define it
 #if !defined(TINYORM_EXTERN_CONSTANTS) && !defined(TINYORM_INLINE_CONSTANTS) && \
@@ -17,7 +17,7 @@ TINY_SYSTEM_HEADER
 
 // Check
 #if defined(TINYORM_NO_DEBUG) && defined(TINYORM_DEBUG)
-#  error("Both TINYORM_DEBUG and TINYORM_NO_DEBUG defined.")
+#  error Both TINYORM_DEBUG and TINYORM_NO_DEBUG defined.
 #endif
 // Debug build
 #if !defined(TINYORM_NO_DEBUG) && !defined(TINYORM_DEBUG)
@@ -26,7 +26,7 @@ TINY_SYSTEM_HEADER
 
 // Check
 #if defined(TINYORM_NO_DEBUG_SQL) && defined(TINYORM_DEBUG_SQL)
-#  error("Both TINYORM_DEBUG_SQL and TINYORM_NO_DEBUG_SQL defined.")
+#  error Both TINYORM_DEBUG_SQL and TINYORM_NO_DEBUG_SQL defined.
 #endif
 // Log queries with a time measurement
 #if !defined(TINYORM_NO_DEBUG_SQL) && !defined(TINYORM_DEBUG_SQL)

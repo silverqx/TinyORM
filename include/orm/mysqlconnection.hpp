@@ -32,7 +32,9 @@ namespace Orm
         /*! Determine if the connected database is a MariaDB database. */
         bool isMaria();
 
-        /*! Check database connection and show warnings when the state changed. */
+        /*! Check database connection and show warnings when the state changed.
+            MySQL reconnection logic is disabled (MYSQL_OPT_RECONNECT), TinyORM has
+            own reconnector. */
         bool pingDatabase() final;
 
     protected:
