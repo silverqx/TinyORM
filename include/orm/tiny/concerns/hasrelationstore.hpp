@@ -253,11 +253,11 @@ namespace Orm::Tiny::Concerns
 
         protected:
             /*! Store type initializer. */
-            static constexpr RelationStoreType initStoreType();
+            constexpr static RelationStoreType initStoreType();
 
             /*! Served store type, this class can handle two store types. */
             T_THREAD_LOCAL
-            static constexpr const RelationStoreType STORE_TYPE = initStoreType();
+            constexpr static const RelationStoreType STORE_TYPE = initStoreType();
 
         private:
             /*! The QueriesRelationships instance to which the visited relation will be

@@ -585,7 +585,7 @@ namespace Orm::Query
 
         /*! Determine whether the T type is a query builder instance or a lambda expr. */
         template<typename T>
-        static constexpr bool isQueryable =
+        constexpr static bool isQueryable =
                 std::is_convertible_v<T, Orm::QueryBuilder &> ||
                 std::is_invocable_v<T, Orm::QueryBuilder &>;
 
