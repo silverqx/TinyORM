@@ -14,7 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny::Relations
 {
 
-    /*! The tag for one type relation. */
+    /*! Tag for one type relation. */
     class OneRelation
     {
         Q_DISABLE_COPY(OneRelation)
@@ -26,7 +26,7 @@ namespace Orm::Tiny::Relations
         inline virtual ~OneRelation() = 0;
     };
 
-    /*! The tag for many type relation. */
+    /*! Tag for many type relation. */
     class ManyRelation
     {
         Q_DISABLE_COPY(ManyRelation)
@@ -38,7 +38,7 @@ namespace Orm::Tiny::Relations
         inline virtual ~ManyRelation() = 0;
     };
 
-    /*! The tag for the relation which contains pivot table, like many-to-many. */
+    /*! Tag for the relation which contains pivot table, like many-to-many. */
     class PivotRelation
     {
         Q_DISABLE_COPY(PivotRelation)

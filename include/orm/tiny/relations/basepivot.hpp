@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny::Relations
 {
 
-    /*! The tag for the Pivot model. */
+    /*! Tag for the Pivot model. */
     class IsPivotModel
     {};
 

@@ -73,7 +73,7 @@ namespace Tiny
         bool touch = true;
     };
 
-    /*! The tag for the model. */
+    /*! Tag for the model. */
     class IsModel
     {};
 
