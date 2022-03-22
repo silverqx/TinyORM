@@ -15,10 +15,10 @@ namespace Orm
    parametrize uses Container type and Parametrize constraint.
    columnize() is used for column names containers (constrained by ColumnContainer
    concept) and it calls wrapArray() internally, columnize uses ColumnContainer
-   constraint.
+   constraint, it converts a vector of column names into a wrapped comma delimited string.
    Values or columns/tables/identifiers can also be the Query::Expression.
    The Query::Expression is always converted to the QString and appended to the query.
-   quoteString() can be used to quote string literals, it is not used anywhere for now.
+   quoteString() can be used to quote string literals.
 */
 
 const QString &BaseGrammar::getDateFormat() const
@@ -57,7 +57,7 @@ QString BaseGrammar::wrap(const Column &value) const
 // NOLINTNEXTLINE(misc-no-recursion)
 QString BaseGrammar::wrapTable(const QString &table) const
 {
-    return wrap(QStringLiteral("%1%2").arg(m_tablePrefix, table), true);
+    return wrap(NOSPACE.arg(m_tablePrefix, table), true);
 }
 
 QString BaseGrammar::wrapTable(const FromClause &table) const
@@ -106,6 +106,8 @@ QString BaseGrammar::unqualifyColumn(const QString &column) const
     return column.split(DOT).last().trimmed();
 }
 
+/* protected */
+
 QString BaseGrammar::parameter(const QVariant &value) const
 {
     return isExpression(value) ? getValue(value).value<QString>()
@@ -121,7 +123,7 @@ QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAli
        as well in order to generate proper syntax. If this is a column of course
        no prefix is necessary. The condition will be true when from wrapTable. */
     if (prefixAlias)
-        segments[1] = QStringLiteral("%1%2").arg(m_tablePrefix, segments[1]);
+        segments[1] = NOSPACE.arg(m_tablePrefix, segments[1]);
 
     return QStringLiteral("%1 as %2").arg(wrap(segments[0]), wrapValue(segments[1]));
 }
@@ -177,25 +179,6 @@ QString BaseGrammar::getAliasFromFrom(const QString &from) const
     const auto segments = getSegmentsFromFrom(from);
 
     return segments.last();
-}
-
-QString BaseGrammar::columnizeInternal(const QVector<QString> &columns) const
-{
-    QString columnized;
-
-    if (columns.isEmpty())
-        return columnized;
-
-    const auto end = columns.cend() - 1;
-    auto it = columns.begin();
-
-    for (; it < end; ++it)
-        columnized += QStringLiteral("%1, ").arg(*it);
-
-    if (it == end)
-        columnized += *it;
-
-    return columnized;
 }
 
 } // namespace Orm

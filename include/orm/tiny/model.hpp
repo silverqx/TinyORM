@@ -44,7 +44,8 @@ namespace Orm::Tiny
             public Tiny::Concerns::GuardsAttributes<Derived, AllRelations...>,
             public Tiny::Concerns::HasRelationships<Derived, AllRelations...>,
             public Tiny::Concerns::HasTimestamps<Derived, AllRelations...>,
-            public ModelProxies<Derived, AllRelations...>
+            public ModelProxies<Derived, AllRelations...>,
+            public IsModel
     {
         // To access getUserXx() methods
         friend Concerns::GuardsAttributes<Derived, AllRelations...>;
@@ -1320,3 +1321,5 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR Belongs To Many firstOrNew, firstOrCreate, and updateOrCreate Methods, revisit first and second argument silverqx
 // CUR add attribute to touch() method silverqx
 // SEC fix LoadLibrary() before qsql plugin loads? https://www.qt.io/blog/security-advisory-qlockfile-qauthenticator-windows-platform-plugin silverqx
+// CUR1 connection, control disable/enable logging at runtime silverqx
+// CUR cmake, make TinyUtils_target in TinyTestCommon.cmake optional, not always needed to link to silverqx

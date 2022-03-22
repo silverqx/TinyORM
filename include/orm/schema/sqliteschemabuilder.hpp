@@ -9,10 +9,10 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Schema
+namespace Orm::SchemaNs
 {
 
-    /*! SQLite schema repository class. */
+    /*! SQLite schema builder class. */
     class SQLiteSchemaBuilder : public SchemaBuilder
     {
         Q_DISABLE_COPY(SQLiteSchemaBuilder)
@@ -25,7 +25,7 @@ namespace Orm::Schema
         inline ~SQLiteSchemaBuilder() override = default;
     };
 
-} // namespace Orm::Schema
+} // namespace Orm::SchemaNs
 
 TINYORM_END_COMMON_NAMESPACE
 

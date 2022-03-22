@@ -92,6 +92,7 @@ QString MySqlGrammar::wrapValue(QString value) const
 const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
 MySqlGrammar::getCompileMap() const
 {
+    // CUR schema, update all this comments silverqx
     /* Needed, because some compileXx() methods are overloaded, this way I will capture
        'this' reference and the compileMethod rvalue reference in the following lambda
        and simply save std::function<> in the SelectComponentValue's compileMethod data

@@ -1,0 +1,2 @@
+add_subdirectory(blueprint)
+add_subdirectory(mysql_schemabuilder)

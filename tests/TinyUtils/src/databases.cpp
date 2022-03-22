@@ -9,9 +9,11 @@ using Orm::Constants::driver_;
 using Orm::Constants::charset_;
 using Orm::Constants::check_database_exists;
 using Orm::Constants::collation_;
+using Orm::Constants::engine_;
 using Orm::Constants::foreign_key_constraints;
 using Orm::Constants::H127001;
 using Orm::Constants::host_;
+using Orm::Constants::InnoDB;
 using Orm::Constants::isolation_level;
 using Orm::Constants::options_;
 using Orm::Constants::P3306;
@@ -19,6 +21,7 @@ using Orm::Constants::P5432;
 using Orm::Constants::password_;
 using Orm::Constants::port_;
 using Orm::Constants::prefix_;
+using Orm::Constants::prefix_indexes;
 using Orm::Constants::PUBLIC;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
@@ -138,8 +141,10 @@ Databases::mysqlConfiguration()
         // Very important for tests
         {timezone_,       "+00:00"},
         {prefix_,         ""},
+        {prefix_indexes,  true},
         {strict_,         true},
         {isolation_level, "REPEATABLE READ"},
+        {engine_,         InnoDB},
         {options_,        QVariantHash()},
         // FUTURE remove, when unit tested silverqx
         // Example
@@ -171,6 +176,8 @@ Databases::sqliteConfiguration()
         {foreign_key_constraints, qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS",
                                                        QStringLiteral("true"))},
         {check_database_exists,   true},
+        {prefix_,                 ""},
+        // FUTURE schema sqlite, prefix_indexes and sqlite, works it? test silverqx
     };
 
     // Environment variables were undefined
@@ -199,9 +206,10 @@ Databases::postgresConfiguration()
         {password_, qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},
         {charset_,  qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
         // I don't use timezone types in postgres anyway
-        {timezone_, UTC},
-        {prefix_,   ""},
-        {options_,  QVariantHash()},
+        {timezone_,      UTC},
+        {prefix_,        ""},
+        {prefix_indexes, true},
+        {options_,       QVariantHash()},
     };
 
     // Environment variables were undefined

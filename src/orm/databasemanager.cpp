@@ -2,6 +2,7 @@
 
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
+#include "orm/schema.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -213,6 +214,11 @@ bool DatabaseManager::pingDatabase(const QString &connection)
     return this->connection(connection).pingDatabase();
 }
 
+QSqlDriver *DatabaseManager::driver(const QString &connection)
+{
+    return this->connection(connection).driver();
+}
+
 namespace
 {
     const auto *const InstanceExceptionMessage =
@@ -312,10 +318,14 @@ bool DatabaseManager::removeConnection(const QString &name)
     if ((*m_connections).erase(name_) == 0)
         return false;
 
+    // Remove a cached schema builder for the currently removing connection
+    if (Schema::m_schemaBuildersCache.contains(name_))
+        Schema::m_schemaBuildersCache.erase(name_);
+
+    // Remove TinyORM configuration
+    (*m_configuration).remove(name_);
     // Remove Qt's database connection
     QSqlDatabase::removeDatabase(name_);
-    // Also remove configuration
-    (*m_configuration).remove(name_);
 
     resetDefaultConnection_();
 

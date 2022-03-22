@@ -3,6 +3,8 @@
 #include <QRegularExpression>
 #include <QtSql/QSqlQuery>
 
+#include <unordered_set>
+
 #include "orm/constants.hpp"
 #include "orm/exceptions/queryerror.hpp"
 #include "orm/utils/type.hpp"
@@ -85,11 +87,12 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
 
     QSqlQuery query(connection);
 
-    static const QStringList local {"local", "default"};
+    static const std::unordered_set<QString> local {QStringLiteral("local"),
+                                                    QStringLiteral("default")};
 
     const auto timezone = config[timezone_].value<QString>();
 
-    if (local.contains(timezone, Qt::CaseInsensitive)) {
+    if (local.contains(timezone.toLower())) {
         if (query.exec(QStringLiteral("set time zone %1").arg(timezone)))
             return;
     } else

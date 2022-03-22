@@ -49,6 +49,8 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString UPDATED_AT;
     SHAREDLIB_EXPORT extern const QString PARENTH_ONE;
     SHAREDLIB_EXPORT extern const QString NEWLINE;
+    SHAREDLIB_EXPORT extern const QString SPACE_IN;
+    SHAREDLIB_EXPORT extern const QString NOSPACE;
 
     SHAREDLIB_EXPORT extern const QString QMYSQL;
     SHAREDLIB_EXPORT extern const QString QPSQL;
@@ -70,10 +72,12 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString prefix_;
     SHAREDLIB_EXPORT extern const QString options_;
     SHAREDLIB_EXPORT extern const QString strict_;
+    SHAREDLIB_EXPORT extern const QString engine_;
 
     SHAREDLIB_EXPORT extern const QString isolation_level;
     SHAREDLIB_EXPORT extern const QString foreign_key_constraints;
     SHAREDLIB_EXPORT extern const QString check_database_exists;
+    SHAREDLIB_EXPORT extern const QString prefix_indexes;
 
     SHAREDLIB_EXPORT extern const QString H127001;
     SHAREDLIB_EXPORT extern const QString LOCALHOST;
@@ -86,6 +90,10 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString PUBLIC;
     SHAREDLIB_EXPORT extern const QString UTF8;
     SHAREDLIB_EXPORT extern const QString UTF8MB4;
+    SHAREDLIB_EXPORT extern const QString InnoDB;
+    SHAREDLIB_EXPORT extern const QString MyISAM;
+
+    SHAREDLIB_EXPORT extern const QString NotImplemented;
 
     // Comparison/logical/search operators
     SHAREDLIB_EXPORT extern const QString EQ;

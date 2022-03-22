@@ -654,7 +654,7 @@ namespace Private
     template<typename Related>
     void QueriesRelationships<Model>::createHasNestedStore(
             const QString &comparison, const qint64 count,
-            const std::function<void (TinyBuilder<Related> &)> &callback) const
+            const std::function<void(TinyBuilder<Related> &)> &callback) const
     {
         // BUG clang doesn't know how to init. aggregate ( by forward declaration inside, using construct in place ) silverqx
 #ifdef __clang__

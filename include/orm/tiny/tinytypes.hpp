@@ -73,6 +73,10 @@ namespace Tiny
         bool touch = true;
     };
 
+    /*! The tag for the model. */
+    class IsModel
+    {};
+
 namespace Concerns
 {
     /*! QueriesRelationships builder type passed to the callback. */

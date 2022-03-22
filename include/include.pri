@@ -1,9 +1,13 @@
 INCLUDEPATH += $$PWD
 
 extern_constants: \
-    headersList += $$PWD/orm/constants_extern.hpp
+    headersList += \
+        $$PWD/orm/constants_extern.hpp \
+        $$PWD/orm/schema/schemaconstants_extern.hpp
 else: \
-    headersList += $$PWD/orm/constants_inline.hpp
+    headersList += \
+        $$PWD/orm/constants_inline.hpp \
+        $$PWD/orm/schema/schemaconstants_inline.hpp
 
 headersList += \
     $$PWD/orm/basegrammar.hpp \
@@ -59,6 +63,12 @@ headersList += \
     $$PWD/orm/query/processors/processor.hpp \
     $$PWD/orm/query/processors/sqliteprocessor.hpp \
     $$PWD/orm/query/querybuilder.hpp \
+    $$PWD/orm/schema.hpp \
+    $$PWD/orm/schema/blueprint.hpp \
+    $$PWD/orm/schema/columndefinition.hpp \
+    $$PWD/orm/schema/columndefinitionreference.hpp \
+    $$PWD/orm/schema/foreignidcolumndefinitionreference.hpp \
+    $$PWD/orm/schema/foreignkeydefinitionreference.hpp \
     $$PWD/orm/schema/grammars/mysqlschemagrammar.hpp \
     $$PWD/orm/schema/grammars/postgresschemagrammar.hpp \
     $$PWD/orm/schema/grammars/schemagrammar.hpp \
@@ -66,6 +76,8 @@ headersList += \
     $$PWD/orm/schema/mysqlschemabuilder.hpp \
     $$PWD/orm/schema/postgresschemabuilder.hpp \
     $$PWD/orm/schema/schemabuilder.hpp \
+    $$PWD/orm/schema/schemaconstants.hpp \
+    $$PWD/orm/schema/schematypes.hpp \
     $$PWD/orm/schema/sqliteschemabuilder.hpp \
     $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/support/configurationoptionsparser.hpp \
@@ -73,6 +85,7 @@ headersList += \
     $$PWD/orm/support/databaseconnectionsmap.hpp \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \
+    $$PWD/orm/utils/container.hpp \
     $$PWD/orm/utils/fs.hpp \
     $$PWD/orm/utils/query.hpp \
     $$PWD/orm/utils/thread.hpp \

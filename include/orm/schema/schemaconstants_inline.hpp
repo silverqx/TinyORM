@@ -1,0 +1,60 @@
+#pragma once
+#ifndef ORM_SCHEMA_SCHEMACONSTANTS_INLINE_HPP
+#define ORM_SCHEMA_SCHEMACONSTANTS_INLINE_HPP
+
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
+#include <QString>
+
+#include "orm/macros/commonnamespace.hpp"
+
+TINYORM_BEGIN_COMMON_NAMESPACE
+
+/*! Namespace constains common chars and strings used in the Schema. */
+namespace Orm::SchemaNs
+{
+namespace Constants
+{
+
+    // Command names
+    inline const QString Create           = QStringLiteral("create");
+    inline const QString Add              = QStringLiteral("add");
+    inline const QString Change           = QStringLiteral("change");
+    inline const QString Drop             = QStringLiteral("drop");
+    inline const QString DropIfExists     = QStringLiteral("dropIfExists");
+    inline const QString Rename           = QStringLiteral("rename");
+    inline const QString DropColumn       = QStringLiteral("dropColumn");
+    inline const QString RenameColumn     = QStringLiteral("renameColumn");
+    inline const QString DropPrimary      = QStringLiteral("dropPrimary");
+    inline const QString DropUnique       = QStringLiteral("dropUnique");
+    inline const QString DropIndex        = QStringLiteral("dropIndex");
+    inline const QString DropFullText     = QStringLiteral("dropFullText");
+    inline const QString DropSpatialIndex = QStringLiteral("dropSpatialIndex");
+    inline const QString DropForeign      = QStringLiteral("dropForeign");
+    inline const QString RenameIndex      = QStringLiteral("renameIndex");
+
+    // Indexes
+    inline const QString Primary      = QStringLiteral("primary");
+    inline const QString Unique       = QStringLiteral("unique");
+    inline const QString Index        = QStringLiteral("index");
+    // CUR schema, I fucked up case in fulltext and spatialIndex during replacement, have to check all occurences :( silverqx
+    inline const QString Fulltext     = QStringLiteral("fulltext");
+    inline const QString SpatialIndex = QStringLiteral("spatialIndex");
+    inline const QString Foreign      = QStringLiteral("foreign");
+
+    // Foreign constrains
+    inline const QString Cascade  = QStringLiteral("cascade");
+    inline const QString Restrict = QStringLiteral("restrict");
+    inline const QString SetNull  = QStringLiteral("set null");
+
+} // namespace Constants
+
+// NOLINTNEXTLINE(google-build-using-namespace)
+using namespace Orm::SchemaNs::Constants;
+
+} // namespace Orm::SchemaNs
+
+TINYORM_END_COMMON_NAMESPACE
+
+#endif // ORM_SCHEMA_SCHEMACONSTANTS_INLINE_HPP

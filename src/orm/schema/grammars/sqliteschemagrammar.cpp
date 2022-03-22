@@ -1,9 +1,23 @@
 #include "orm/schema/grammars/sqliteschemagrammar.hpp"
 
+#include "orm/exceptions/runtimeerror.hpp"
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Schema::Grammars
+namespace Orm::SchemaNs::Grammars
 {
+
+/* Compile methods for the SchemaBuilder */
+
+QString SQLiteSchemaGrammar::compileEnableForeignKeyConstraints() const
+{
+    throw Exceptions::RuntimeError(NotImplemented);
+}
+
+QString SQLiteSchemaGrammar::compileDisableForeignKeyConstraints() const
+{
+    throw Exceptions::RuntimeError(NotImplemented);
+}
 
 QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const
 {
@@ -12,9 +26,37 @@ QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const
     // TODO study, wtf is this 🤔 silverqx
     table_.replace(DOT, "__");
 
-    return QStringLiteral("pragma table_info(%1)").arg(wrap(table_));
+    return QStringLiteral("pragma table_info(%1)").arg(BaseGrammar::wrap(table_));
 }
 
-} // namespace Orm::Schema::Grammars
+/* Compile methods for commands */
+
+QVector<QString>
+SQLiteSchemaGrammar::compileForeign(const Blueprint &/*unused*/,
+                                    const ColumnDefinition &/*unused*/) const
+{
+    throw Exceptions::RuntimeError(NotImplemented);
+}
+
+QVector<QString>
+SQLiteSchemaGrammar::invokeCompileMethod(const ColumnDefinition &/*unused*/,
+                                         const DatabaseConnection &/*unused*/,
+                                         const Blueprint &/*unused*/) const
+{
+    throw Exceptions::RuntimeError(NotImplemented);
+}
+
+QString SQLiteSchemaGrammar::addModifiers(QString &&/*unused*/,
+                                          const ColumnDefinition &/*unused*/) const
+{
+    throw Exceptions::RuntimeError(NotImplemented);
+}
+
+QString SQLiteSchemaGrammar::getType(const ColumnDefinition &/*unused*/) const
+{
+    throw Exceptions::RuntimeError(NotImplemented);
+}
+
+} // namespace Orm::SchemaNs::Grammars
 
 TINYORM_END_COMMON_NAMESPACE

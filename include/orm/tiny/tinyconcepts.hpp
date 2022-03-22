@@ -19,6 +19,12 @@ namespace Orm::Tiny
     template<typename Derived, typename ...AllRelations>
     concept AllRelationsConcept = (!std::same_as<Derived, AllRelations> && ...);
 
+    class IsModel;
+
+    /*! Concept to check whether a passed type is the model class. */
+    template<typename T>
+    concept ModelConcept = std::derived_from<T, IsModel>;
+
 } // namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE

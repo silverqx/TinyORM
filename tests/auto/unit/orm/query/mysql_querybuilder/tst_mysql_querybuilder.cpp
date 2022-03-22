@@ -177,6 +177,7 @@ void tst_MySql_QueryBuilder::get() const
             connection.query()->from("torrents").get({ID, NAME});
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -191,6 +192,7 @@ void tst_MySql_QueryBuilder::get() const
             connection.query()->from("torrents").get();
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -207,6 +209,7 @@ void tst_MySql_QueryBuilder::get_ColumnExpression() const
         connection.query()->from("torrents").get({Raw(ID), NAME});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -222,6 +225,7 @@ void tst_MySql_QueryBuilder::find() const
         connection.query()->from("torrents").find(3, {ID, NAME});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -239,6 +243,7 @@ void tst_MySql_QueryBuilder::find_ColumnAndValueExpression() const
             connection.query()->from("torrents").find(3, {ID, Raw(NAME)});
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -254,6 +259,7 @@ void tst_MySql_QueryBuilder::find_ColumnAndValueExpression() const
             connection.query()->from("torrents").find(Raw("1 + 3"), {ID, Raw(NAME)});
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -270,6 +276,7 @@ void tst_MySql_QueryBuilder::first() const
         connection.query()->from("torrents").first({ID, NAME});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -285,6 +292,7 @@ void tst_MySql_QueryBuilder::first_ColumnExpression() const
         connection.query()->from("torrents").first({ID, Raw(NAME)});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -300,6 +308,7 @@ void tst_MySql_QueryBuilder::value() const
         connection.query()->from("torrents").value(NAME);
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -315,6 +324,7 @@ void tst_MySql_QueryBuilder::value_ColumnExpression() const
         connection.query()->from("torrents").value(Raw(NAME));
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -330,6 +340,7 @@ void tst_MySql_QueryBuilder::count() const
         connection.query()->from("torrents").count();
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -346,6 +357,7 @@ void tst_MySql_QueryBuilder::count_Distinct() const
             connection.query()->from("torrents").distinct().count(SIZE);
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -361,6 +373,7 @@ void tst_MySql_QueryBuilder::count_Distinct() const
             connection.query()->from("torrents").distinct().count({SIZE, "note"});
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -376,6 +389,7 @@ void tst_MySql_QueryBuilder::count_Distinct() const
             connection.query()->from("torrents").distinct({SIZE, "note"}).count();
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -392,6 +406,7 @@ void tst_MySql_QueryBuilder::min_Aggregate() const
         connection.query()->from("torrents").min(SIZE);
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -407,6 +422,7 @@ void tst_MySql_QueryBuilder::min_Aggregate_ColumnExpression() const
         connection.query()->from("torrents").min(Raw(SIZE));
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -422,6 +438,7 @@ void tst_MySql_QueryBuilder::max_Aggregate() const
         connection.query()->from("torrents").max(SIZE);
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -437,6 +454,7 @@ void tst_MySql_QueryBuilder::sum_Aggregate() const
         connection.query()->from("torrents").sum(SIZE);
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -452,6 +470,7 @@ void tst_MySql_QueryBuilder::average_Aggregate() const
         connection.query()->from("torrents").avg(SIZE);
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -1937,6 +1956,7 @@ void tst_MySql_QueryBuilder::insert() const
         connection.query()->from("torrents").insert({{NAME, "xyz"}, {SIZE, 6}});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -1955,6 +1975,7 @@ void tst_MySql_QueryBuilder::insert_WithExpression() const
                          {"progress", DB::raw(2)}});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -1973,6 +1994,7 @@ void tst_MySql_QueryBuilder::update() const
                 .update({{NAME, "xyz"}, {SIZE, 6}});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -1992,6 +2014,7 @@ void tst_MySql_QueryBuilder::update_WithExpression() const
                          {"progress", DB::raw(2)}});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -2009,6 +2032,7 @@ void tst_MySql_QueryBuilder::remove() const
         connection.query()->from("torrents").remove(2222);
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -2025,6 +2049,7 @@ void tst_MySql_QueryBuilder::remove_WithExpression() const
         connection.query()->from("torrents").remove(DB::raw(2223));
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);

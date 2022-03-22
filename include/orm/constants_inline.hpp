@@ -14,6 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 /*! Namespace constains common chars and strings. */
 namespace Orm::Constants
 {
+    // CUR1 sort it silverqx
 
     // Common chars
     inline const QChar SPACE      = QChar(' ');
@@ -48,6 +49,8 @@ namespace Orm::Constants
     inline const QString UPDATED_AT  = QStringLiteral("updated_at");
     inline const QString PARENTH_ONE = QStringLiteral("(%1)");
     inline const QString NEWLINE     = QStringLiteral("\n");
+    inline const QString SPACE_IN    = QStringLiteral("%1 %2");
+    inline const QString NOSPACE     = QStringLiteral("%1%2");
 
     inline const QString QMYSQL      = QStringLiteral("QMYSQL");
     inline const QString QPSQL       = QStringLiteral("QPSQL");
@@ -69,6 +72,7 @@ namespace Orm::Constants
     inline const QString prefix_     = QStringLiteral("prefix");
     inline const QString options_    = QStringLiteral("options");
     inline const QString strict_     = QStringLiteral("strict");
+    inline const QString engine_     = QStringLiteral("engine");
 
     inline const QString
     isolation_level         = QStringLiteral("isolation_level");
@@ -76,6 +80,8 @@ namespace Orm::Constants
     foreign_key_constraints = QStringLiteral("foreign_key_constraints");
     inline const QString
     check_database_exists   = QStringLiteral("check_database_exists");
+    inline const QString
+    prefix_indexes          = QStringLiteral("prefix_indexes");
 
     inline const QString H127001   = QStringLiteral("127.0.0.1");
     inline const QString LOCALHOST = QStringLiteral("localhost");
@@ -88,6 +94,10 @@ namespace Orm::Constants
     inline const QString PUBLIC    = QStringLiteral("public");
     inline const QString UTF8      = QStringLiteral("utf8");
     inline const QString UTF8MB4   = QStringLiteral("utf8mb4");
+    inline const QString InnoDB    = QStringLiteral("InnoDB");
+    inline const QString MyISAM    = QStringLiteral("MyISAM");
+
+    inline const QString NotImplemented = QStringLiteral("Not implemented :/.");
 
     // Comparison/logical/search operators
     inline const QString EQ    = QStringLiteral("=");

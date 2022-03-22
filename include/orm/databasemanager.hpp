@@ -121,6 +121,9 @@ namespace Query
         /*! Check database connection and show warnings when the state changed. */
         bool pingDatabase(const QString &connection = "");
 
+        /*! Returns the database driver used to access the database connection. */
+        QSqlDriver *driver(const QString &connection = "");
+
         /* DatabaseManager */
         /*! Obtain a shared pointer to the DatabaseManager. */
         static std::shared_ptr<DatabaseManager> instance();

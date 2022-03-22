@@ -138,6 +138,7 @@ void tst_SQLite_QueryBuilder::get() const
             connection.query()->from("torrents").get({ID, NAME});
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -152,6 +153,7 @@ void tst_SQLite_QueryBuilder::get() const
             connection.query()->from("torrents").get();
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -168,6 +170,7 @@ void tst_SQLite_QueryBuilder::get_ColumnExpression() const
         connection.query()->from("torrents").get({Raw(ID), NAME});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -183,6 +186,7 @@ void tst_SQLite_QueryBuilder::find() const
         connection.query()->from("torrents").find(3, {ID, NAME});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -200,6 +204,7 @@ void tst_SQLite_QueryBuilder::find_ColumnAndValueExpression() const
             connection.query()->from("torrents").find(3, {ID, Raw(NAME)});
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -215,6 +220,7 @@ void tst_SQLite_QueryBuilder::find_ColumnAndValueExpression() const
             connection.query()->from("torrents").find(Raw("1 + 3"), {ID, Raw(NAME)});
         });
 
+        QVERIFY(!log.isEmpty());
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
@@ -231,6 +237,7 @@ void tst_SQLite_QueryBuilder::first() const
         connection.query()->from("torrents").first({ID, NAME});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -246,6 +253,7 @@ void tst_SQLite_QueryBuilder::first_ColumnExpression() const
         connection.query()->from("torrents").first({ID, Raw(NAME)});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -261,6 +269,7 @@ void tst_SQLite_QueryBuilder::value() const
         connection.query()->from("torrents").value(NAME);
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -276,6 +285,7 @@ void tst_SQLite_QueryBuilder::value_ColumnExpression() const
         connection.query()->from("torrents").value(Raw(NAME));
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -1488,6 +1498,7 @@ void tst_SQLite_QueryBuilder::insert() const
         connection.query()->from("torrents").insert({{NAME, "xyz"}, {SIZE, 6}});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -1506,6 +1517,7 @@ void tst_SQLite_QueryBuilder::insert_WithExpression() const
                          {"progress", DB::raw(2)}});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -1525,6 +1537,7 @@ void tst_SQLite_QueryBuilder::update() const
                 .update({{NAME, "xyz"}, {SIZE, 6}});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -1544,6 +1557,7 @@ void tst_SQLite_QueryBuilder::update_WithExpression() const
                          {"progress", DB::raw(2)}});
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -1561,6 +1575,7 @@ void tst_SQLite_QueryBuilder::remove() const
         connection.query()->from("torrents").remove(2222);
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
@@ -1577,6 +1592,7 @@ void tst_SQLite_QueryBuilder::remove_WithExpression() const
         connection.query()->from("torrents").remove(DB::raw(2223));
     });
 
+    QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);

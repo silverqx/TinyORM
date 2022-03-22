@@ -5,9 +5,15 @@ function(tiny_sources out_headers out_sources)
     set(headers)
 
     if(TINY_EXTERN_CONSTANTS)
-        list(APPEND headers constants_extern.hpp)
+        list(APPEND headers
+            constants_extern.hpp
+            schema/schemaconstants_extern.hpp
+        )
     else()
-        list(APPEND headers constants_inline.hpp)
+        list(APPEND headers
+            constants_inline.hpp
+            schema/schemaconstants_inline.hpp
+        )
     endif()
 
     list(APPEND headers
@@ -61,6 +67,12 @@ function(tiny_sources out_headers out_sources)
         query/processors/processor.hpp
         query/processors/sqliteprocessor.hpp
         query/querybuilder.hpp
+        schema.hpp
+        schema/blueprint.hpp
+        schema/columndefinition.hpp
+        schema/columndefinitionreference.hpp
+        schema/foreignidcolumndefinitionreference.hpp
+        schema/foreignkeydefinitionreference.hpp
         schema/grammars/mysqlschemagrammar.hpp
         schema/grammars/postgresschemagrammar.hpp
         schema/grammars/schemagrammar.hpp
@@ -68,6 +80,8 @@ function(tiny_sources out_headers out_sources)
         schema/mysqlschemabuilder.hpp
         schema/postgresschemabuilder.hpp
         schema/schemabuilder.hpp
+        schema/schemaconstants.hpp
+        schema/schematypes.hpp
         schema/sqliteschemabuilder.hpp
         sqliteconnection.hpp
         support/configurationoptionsparser.hpp
@@ -75,6 +89,7 @@ function(tiny_sources out_headers out_sources)
         support/databaseconnectionsmap.hpp
         types/log.hpp
         types/statementscounter.hpp
+        utils/container.hpp
         utils/fs.hpp
         utils/query.hpp
         utils/thread.hpp
@@ -123,7 +138,10 @@ function(tiny_sources out_headers out_sources)
     set(sources)
 
     if(TINY_EXTERN_CONSTANTS)
-        list(APPEND sources constants_extern.cpp)
+        list(APPEND sources
+            constants_extern.cpp
+            schema/schemaconstants_extern.cpp
+        )
     endif()
 
     list(APPEND sources
@@ -158,8 +176,13 @@ function(tiny_sources out_headers out_sources)
         query/processors/processor.cpp
         query/processors/sqliteprocessor.cpp
         query/querybuilder.cpp
+        schema.cpp
+        schema/blueprint.cpp
+        schema/foreignidcolumndefinitionreference.cpp
+        schema/foreignkeydefinitionreference.cpp
         schema/grammars/mysqlschemagrammar.cpp
         schema/grammars/postgresschemagrammar.cpp
+        schema/grammars/schemagrammar.cpp
         schema/grammars/sqliteschemagrammar.cpp
         schema/mysqlschemabuilder.cpp
         schema/postgresschemabuilder.cpp

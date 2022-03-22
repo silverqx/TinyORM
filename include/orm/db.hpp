@@ -165,6 +165,9 @@ namespace Orm
         /*! Check database connection and show warnings when the state changed. */
         static bool pingDatabase(const QString &connection = "");
 
+        /*! Returns the database driver used to access the database connection. */
+        static QSqlDriver *driver(const QString &connection = "");
+
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */
         static bool

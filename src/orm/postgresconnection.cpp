@@ -32,7 +32,7 @@ std::unique_ptr<SchemaBuilder> PostgresConnection::getSchemaBuilder()
     if (!m_schemaGrammar)
         useDefaultSchemaGrammar();
 
-    return std::make_unique<Schema::PostgresSchemaBuilder>(*this);
+    return std::make_unique<SchemaNs::PostgresSchemaBuilder>(*this);
 }
 
 std::unique_ptr<QueryGrammar> PostgresConnection::getDefaultQueryGrammar() const
@@ -48,7 +48,7 @@ std::unique_ptr<QueryGrammar> PostgresConnection::getDefaultQueryGrammar() const
 std::unique_ptr<SchemaGrammar> PostgresConnection::getDefaultSchemaGrammar() const
 {
     // Ownership of a unique_ptr()
-    auto grammar = std::make_unique<Schema::Grammars::PostgresSchemaGrammar>();
+    auto grammar = std::make_unique<SchemaNs::Grammars::PostgresSchemaGrammar>();
 
     withTablePrefix(*grammar);
 

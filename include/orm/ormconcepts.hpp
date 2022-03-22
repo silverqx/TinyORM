@@ -61,6 +61,22 @@ namespace Query
     concept QStringConcept = std::convertible_to<T, const QString &> ||
                              std::convertible_to<T, QString>;
 
+    /*! Type for the database column. */
+    using Column = std::variant<QString, Query::Expression>;
+
+    /*! QString container concept (QStringList or QVector<QString>). */
+    template<typename T>
+    concept ColumnContainer = std::convertible_to<T, const QStringList &> ||
+                              std::convertible_to<T, const QVector<QString> &> ||
+                              std::convertible_to<T, const QVector<Column> &>;
+
+    // CUR concepts, check if const QString & vs QString in convertible_to<> makes sense silverqx
+    /*! Concept for delimiter for joining containers. */
+    template<typename T>
+    concept DelimiterConcept = std::convertible_to<T, const QString &> ||
+                               std::convertible_to<T, QString> ||
+                               std::convertible_to<T, QChar>;
+
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE

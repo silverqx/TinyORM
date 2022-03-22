@@ -5,7 +5,9 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/ormconcepts.hpp"
 #include "orm/ormtypes.hpp"
+#include "orm/utils/container.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -15,12 +17,6 @@ namespace Query
 {
     class Expression;
 } // namespace Query
-
-    /*! QString container concept (QStringList or QVector<QString>). */
-    template<typename T>
-    concept ColumnContainer = std::convertible_to<T, const QStringList &> ||
-                              std::convertible_to<T, const QVector<QString> &> ||
-                              std::convertible_to<T, const QVector<Column> &>;
 
     /*! Concept for container passed to the parametrize() method (QVariantMap
         or QVector<QString>). */
@@ -33,6 +29,7 @@ namespace Query
     {
         Q_DISABLE_COPY(BaseGrammar)
 
+    protected:
         /*! Expression alias. */
         using Expression = Query::Expression;
 
@@ -82,9 +79,12 @@ namespace Query
         QString unqualifyColumn(const QString &column) const;
 
     protected:
-        /*! Convert the vector of column names into a delimited string. */
+        /*! Convert the vector of column names into a wrapped comma delimited string. */
         template<ColumnContainer T>
-        inline QString columnize(const T &columns) const;
+        QString columnize(T &&columns) const;
+        /*! Convert the vector of column names into a comma delimited string. */
+        template<ColumnContainer T>
+        QString columnizeWithoutWrap(T &&columns) const;
 
         /*! Create query parameter place-holders for the vector. */
         template<Parametrize Container>
@@ -110,16 +110,20 @@ namespace Query
         // FEATURE qt6, use everywhere QLatin1String("") instead of = "", BUT Qt6 has char8_t ctor, so u"" can be used, I will wait with this problem silverqx
         /*! The grammar table prefix. */
         QString m_tablePrefix {};
-
-    private:
-        /*! Convert the vector of column names into a delimited string. */
-        QString columnizeInternal(const QVector<QString> &columns) const;
     };
 
     template<ColumnContainer T>
-    QString BaseGrammar::columnize(const T &columns) const
+    QString BaseGrammar::columnize(T &&columns) const
     {
-        return columnizeInternal(wrapArray(columns));
+        return columnizeWithoutWrap(wrapArray(std::forward<T>(columns)));
+    }
+
+    /* I leave this method here because it has meaningful name, not make it inline to avoid
+       utils/container.hpp include in the header file. */
+    template<ColumnContainer T>
+    QString BaseGrammar::columnizeWithoutWrap(T &&columns) const
+    {
+        return Utils::Container::join(std::forward<T>(columns));
     }
 
     QString BaseGrammar::getTablePrefix() const
@@ -168,7 +172,7 @@ namespace Query
             compiledParameters << parameter(value);
 
         // CUR1 QString allocation 😟 solve everywhere 😭 silverqx
-        return compiledParameters.join(COMMA);
+        return columnizeWithoutWrap(compiledParameters);
     }
 
 } // namespace Orm

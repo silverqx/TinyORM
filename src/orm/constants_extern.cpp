@@ -38,6 +38,8 @@ namespace Orm::Constants
     const QString UPDATED_AT  = QStringLiteral("updated_at");
     const QString PARENTH_ONE = QStringLiteral("(%1)");
     const QString NEWLINE     = QStringLiteral("\n");
+    const QString SPACE_IN    = QStringLiteral("%1 %2");
+    const QString NOSPACE     = QStringLiteral("%1%2");
 
     const QString QMYSQL      = QStringLiteral("QMYSQL");
     const QString QPSQL       = QStringLiteral("QPSQL");
@@ -59,10 +61,12 @@ namespace Orm::Constants
     const QString prefix_     = QStringLiteral("prefix");
     const QString options_    = QStringLiteral("options");
     const QString strict_     = QStringLiteral("strict");
+    const QString engine_     = QStringLiteral("engine");
 
     const QString isolation_level         = QStringLiteral("isolation_level");
     const QString foreign_key_constraints = QStringLiteral("foreign_key_constraints");
     const QString check_database_exists   = QStringLiteral("check_database_exists");
+    const QString prefix_indexes          = QStringLiteral("prefix_indexes");
 
     const QString H127001   = QStringLiteral("127.0.0.1");
     const QString LOCALHOST = QStringLiteral("localhost");
@@ -75,6 +79,10 @@ namespace Orm::Constants
     const QString PUBLIC    = QStringLiteral("public");
     const QString UTF8      = QStringLiteral("utf8");
     const QString UTF8MB4   = QStringLiteral("utf8mb4");
+    const QString InnoDB    = QStringLiteral("InnoDB");
+    const QString MyISAM    = QStringLiteral("MyISAM");
+
+    const QString NotImplemented = QStringLiteral("Not implemented :/.");
 
     // Comparison/logical/search operators
     const QString EQ       = QStringLiteral("=");

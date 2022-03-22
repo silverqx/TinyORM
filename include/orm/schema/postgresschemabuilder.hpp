@@ -9,10 +9,10 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Schema
+namespace Orm::SchemaNs
 {
 
-    /*! PostgreSql schema repository class. */
+    /*! PostgreSql schema builder class. */
     class SHAREDLIB_EXPORT PostgresSchemaBuilder : public SchemaBuilder
     {
         Q_DISABLE_COPY(PostgresSchemaBuilder)
@@ -33,7 +33,7 @@ namespace Orm::Schema
         parseSchemaAndTable(const QString &table) const;
     };
 
-} // namespace Orm::Schema
+} // namespace Orm::SchemaNs
 
 TINYORM_END_COMMON_NAMESPACE
 

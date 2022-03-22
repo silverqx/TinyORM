@@ -906,7 +906,7 @@ namespace Orm::Tiny
 //    template<typename ...Args>
 //    Builder<Model> &
 //    Builder<Model>::callScope(
-//            const std::function<void (Builder &, Args ...)> &scope,
+//            const std::function<void(Builder &, Args ...)> &scope,
 //            Args &&...parameters)
 //    {
 //        std::invoke(scope, *this, std::forward<Args>(parameters)...);

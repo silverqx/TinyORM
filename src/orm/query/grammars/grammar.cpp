@@ -43,7 +43,7 @@ QString Grammar::compileInsert(const QueryBuilder &query,
                 table,
                 // Columns are obtained only from a first QMap
                 columnize(values.at(0).keys()),
-                compileInsertToVector(values).join(COMMA));
+                columnizeWithoutWrap(compileInsertToVector(values)));
 }
 
 QString Grammar::compileInsertOrIgnore(const QueryBuilder &/*unused*/,
@@ -152,8 +152,9 @@ QStringList Grammar::compileComponents(const QueryBuilder &query) const
 {
     QStringList sql;
 
-    const auto &compileMap = getCompileMap();
-    for (const auto &component : compileMap)
+    for (const auto &compileMap = getCompileMap();
+         const auto &component : compileMap
+    )
         if (component.isset)
             if (component.isset(query))
                 sql.append(std::invoke(component.compileMethod, query));
@@ -227,9 +228,8 @@ QStringList Grammar::compileWheresToVector(const QueryBuilder &query) const
     compiledWheres.reserve(wheres.size());
 
     for (const auto &where : wheres)
-        compiledWheres << QStringLiteral("%1 %2")
-                          .arg(where.condition,
-                               std::invoke(getWhereMethod(where.type), where));
+        compiledWheres << SPACE_IN.arg(where.condition,
+                                       std::invoke(getWhereMethod(where.type), where));
 
     return compiledWheres;
 }
@@ -242,8 +242,7 @@ QString Grammar::concatenateWhereClauses(const QueryBuilder &query,
                              ? QStringLiteral("where")
                              : QStringLiteral("on");
 
-    return QStringLiteral("%1 %2").arg(conjunction,
-                                       removeLeadingBoolean(sql.join(SPACE)));
+    return SPACE_IN.arg(conjunction, removeLeadingBoolean(sql.join(SPACE)));
 }
 
 QString Grammar::compileJoins(const QueryBuilder &query) const
@@ -292,7 +291,7 @@ QString Grammar::compileHaving(const HavingConditionItem &having) const
 
     T_UNLIKELY
     case HavingType::RAW:
-        return QStringLiteral("%1 %2").arg(having.condition, having.sql);
+        return SPACE_IN.arg(having.condition, having.sql);
 
     T_UNLIKELY
     default:
@@ -312,7 +311,8 @@ QString Grammar::compileOrders(const QueryBuilder &query) const
     if (query.getOrders().isEmpty())
         return QLatin1String("");
 
-    return QStringLiteral("order by %1").arg(compileOrdersToVector(query).join(COMMA));
+    return QStringLiteral("order by %1")
+            .arg(columnizeWithoutWrap(compileOrdersToVector(query)));
 }
 
 QStringList Grammar::compileOrdersToVector(const QueryBuilder &query) const
@@ -324,8 +324,8 @@ QStringList Grammar::compileOrdersToVector(const QueryBuilder &query) const
 
     for (const auto &order : orders)
         if (order.sql.isEmpty()) T_LIKELY
-            compiledOrders << QStringLiteral("%1 %2")
-                              .arg(wrap(order.column), order.direction.toLower());
+            compiledOrders << SPACE_IN.arg(wrap(order.column),
+                                           order.direction.toLower());
         else T_UNLIKELY
             compiledOrders << order.sql;
 
@@ -450,7 +450,7 @@ Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
                                    wrap(assignment.column),
                                    parameter(assignment.value));
 
-    return compiledAssignments.join(COMMA);
+    return columnizeWithoutWrap(compiledAssignments);
 }
 
 QString

@@ -4,14 +4,14 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Schema
+namespace Orm::SchemaNs
 {
 
 QStringList PostgresSchemaBuilder::getColumnListing(const QString &table) const
 {
     auto [schema, table_] = parseSchemaAndTable(table);
 
-    table_ = QStringLiteral("%1%2").arg(m_connection.getTablePrefix(), table);
+    table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
 
     auto query = m_connection.select(m_grammar.compileColumnListing(), {
         schema, table_
@@ -45,6 +45,6 @@ PostgresSchemaBuilder::parseSchemaAndTable(const QString &table) const
     return {std::move(schema), table};
 }
 
-} // namespace Orm::Schema
+} // namespace Orm::SchemaNs
 
 TINYORM_END_COMMON_NAMESPACE

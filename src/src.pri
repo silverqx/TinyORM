@@ -1,5 +1,7 @@
 extern_constants: \
-    sourcesList += $$PWD/orm/constants_extern.cpp
+    sourcesList += \
+        $$PWD/orm/constants_extern.cpp \
+        $$PWD/orm/schema/schemaconstants_extern.cpp
 
 sourcesList += \
     $$PWD/orm/basegrammar.cpp \
@@ -33,8 +35,13 @@ sourcesList += \
     $$PWD/orm/query/processors/processor.cpp \
     $$PWD/orm/query/processors/sqliteprocessor.cpp \
     $$PWD/orm/query/querybuilder.cpp \
+    $$PWD/orm/schema.cpp \
+    $$PWD/orm/schema/blueprint.cpp \
+    $$PWD/orm/schema/foreignidcolumndefinitionreference.cpp \
+    $$PWD/orm/schema/foreignkeydefinitionreference.cpp \
     $$PWD/orm/schema/grammars/mysqlschemagrammar.cpp \
     $$PWD/orm/schema/grammars/postgresschemagrammar.cpp \
+    $$PWD/orm/schema/grammars/schemagrammar.cpp \
     $$PWD/orm/schema/grammars/sqliteschemagrammar.cpp \
     $$PWD/orm/schema/mysqlschemabuilder.cpp \
     $$PWD/orm/schema/postgresschemabuilder.cpp \

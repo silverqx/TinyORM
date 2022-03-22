@@ -35,7 +35,7 @@ namespace Processors
 }
 } // namespace Query
 
-namespace Schema
+namespace SchemaNs
 {
     class SchemaBuilder;
 }
@@ -45,9 +45,9 @@ namespace Schema
     /*! QueryProcessor alias. */
     using QueryProcessor = Query::Processors::Processor;
     /*! SchemaBuilder alias. */
-    using SchemaBuilder  = Schema::SchemaBuilder;
+    using SchemaBuilder  = SchemaNs::SchemaBuilder;
     /*! SchemaGrammar alias. */
-    using SchemaGrammar  = Schema::Grammars::SchemaGrammar;
+    using SchemaGrammar  = SchemaNs::Grammars::SchemaGrammar;
 
     /*! Database connection base class.
         TinyORM's DatabaseConnection never physically connects to the database after
@@ -161,6 +161,9 @@ namespace Schema
         inline bool isOpen();
         /*! Check database connection and show warnings when the state changed. */
         virtual bool pingDatabase();
+
+        /*! Returns the database driver used to access the database connection. */
+        QSqlDriver *driver();
 
         /*! Reconnect to the database (doesn't create physical connection, only refreshs
             a connection resolver). */

@@ -63,6 +63,11 @@ ConnectionFactory::parseConfig(QVariantHash &config, const QString &name) const
     if (!config.contains(options_))
         config.insert(options_, QVariantHash());
 
+    if (!config.contains(prefix_indexes))
+        config.insert(prefix_indexes, false);
+
+    // FUTURE connector, this can be enhanced, eg. add default values per driver, eg. engine_ for mysql is missing, can not be added because is driver specific silverqx
+
     return config;
 }
 

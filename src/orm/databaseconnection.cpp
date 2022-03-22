@@ -367,6 +367,11 @@ bool DatabaseConnection::pingDatabase()
                 .arg(driverName()));
 }
 
+QSqlDriver *DatabaseConnection::driver()
+{
+    return getQtConnection().driver();
+}
+
 void DatabaseConnection::reconnect() const
 {
     if (!m_reconnector)
