@@ -148,8 +148,9 @@ QVector<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
     return sql;
 }
 
-QVector<QString> MySqlSchemaGrammar::compileDropColumn(
-        const Blueprint &blueprint, const DropColumnsCommand &command) const
+QVector<QString>
+MySqlSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
+                                      const DropColumnsCommand &command) const
 {
     return {QStringLiteral("alter table %1 %2")
                 .arg(wrapTable(blueprint),
@@ -157,16 +158,18 @@ QVector<QString> MySqlSchemaGrammar::compileDropColumn(
                                                       wrapArray(command.columns))))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileRenameColumn(
-        const Blueprint &blueprint, const RenameCommand &command) const
+QVector<QString>
+MySqlSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
+                                        const RenameCommand &command) const
 {
     return {QStringLiteral("alter table %1 rename column %2 to %3")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compilePrimary(
-        const Blueprint &blueprint, const IndexCommand &command) const
+QVector<QString>
+MySqlSchemaGrammar::compilePrimary(const Blueprint &blueprint,
+                                   const IndexCommand &command) const
 {
     // CUR schema, check this, why it is doing, I have to make command non-const silverqx
 //    command.name.clear();
@@ -174,39 +177,45 @@ QVector<QString> MySqlSchemaGrammar::compilePrimary(
     return {compileKey(blueprint, command, QStringLiteral("primary key"))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileUnique(
-        const Blueprint &blueprint, const IndexCommand &command) const
+QVector<QString>
+MySqlSchemaGrammar::compileUnique(const Blueprint &blueprint,
+                                  const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, Unique)};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileIndex(
-        const Blueprint &blueprint, const IndexCommand &command) const
+QVector<QString>
+MySqlSchemaGrammar::compileIndex(const Blueprint &blueprint,
+                                 const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, Index)};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileFullText(
-        const Blueprint &blueprint, const IndexCommand &command) const
+QVector<QString>
+MySqlSchemaGrammar::compileFullText(const Blueprint &blueprint,
+                                    const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, Fulltext)};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileSpatialIndex(
-        const Blueprint &blueprint, const IndexCommand &command) const
+QVector<QString>
+MySqlSchemaGrammar::compileSpatialIndex(const Blueprint &blueprint,
+                                        const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, QStringLiteral("spatial index"))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileDropPrimary(
-        const Blueprint &blueprint, const IndexCommand &/*unused*/) const
+QVector<QString>
+MySqlSchemaGrammar::compileDropPrimary(const Blueprint &blueprint,
+                                       const IndexCommand &/*unused*/) const
 {
     return {QStringLiteral("alter table %1 drop primary key")
                 .arg(wrapTable(blueprint))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileDropIndex(
-        const Blueprint &blueprint, const IndexCommand &command) const
+QVector<QString>
+MySqlSchemaGrammar::compileDropIndex(const Blueprint &blueprint,
+                                     const IndexCommand &command) const
 {
     return {QStringLiteral("alter table %1 drop index %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index))};
@@ -254,6 +263,7 @@ namespace
         from std::tuple. */
     template<std::size_t I, IsMemFun M>
     auto argumentType(M &&method) -> decltype (std::get<I>(argumentTypes(method)));
+
 } // namespace
 
 QVector<QString>
@@ -301,20 +311,24 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
         {Rename,           bind(&MySqlSchemaGrammar::compileRename)},
         {Drop,             bind(&MySqlSchemaGrammar::compileDrop)},
         {DropIfExists,     bind(&MySqlSchemaGrammar::compileDropIfExists)},
+
         {DropColumn,       bind(&MySqlSchemaGrammar::compileDropColumn)},
         {RenameColumn,     bind(&MySqlSchemaGrammar::compileRenameColumn)},
+
         {Primary,          bind(&MySqlSchemaGrammar::compilePrimary)},
         {Unique,           bind(&MySqlSchemaGrammar::compileUnique)},
         {Index,            bind(&MySqlSchemaGrammar::compileIndex)},
         {Fulltext,         bind(&MySqlSchemaGrammar::compileFullText)},
         {SpatialIndex,     bind(&MySqlSchemaGrammar::compileSpatialIndex)},
         {Foreign,          bind(&MySqlSchemaGrammar::compileForeign)},
+
         {DropPrimary,      bind(&MySqlSchemaGrammar::compileDropPrimary)},
         {DropUnique,       bind(&MySqlSchemaGrammar::compileDropUnique)},
         {DropIndex,        bind(&MySqlSchemaGrammar::compileDropIndex)},
         {DropFullText,     bind(&MySqlSchemaGrammar::compileDropFullText)},
         {DropSpatialIndex, bind(&MySqlSchemaGrammar::compileDropSpatialIndex)},
         {DropForeign,      bind(&MySqlSchemaGrammar::compileDropForeign)},
+
         {RenameIndex,      bind(&MySqlSchemaGrammar::compileRenameIndex)},
     };
 
@@ -425,9 +439,9 @@ MySqlSchemaGrammar::compileAutoIncrementStartingValues(const Blueprint &blueprin
             | ranges::to<QVector<QString>>();
 }
 
-QString MySqlSchemaGrammar::compileKey(
-        const Blueprint &blueprint, const IndexCommand &command,
-        const QString &type) const
+QString
+MySqlSchemaGrammar::compileKey(const Blueprint &blueprint, const IndexCommand &command,
+                               const QString &type) const
 {
     static const auto usingTmpl = QStringLiteral(" using %1");
 

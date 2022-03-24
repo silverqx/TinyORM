@@ -106,8 +106,7 @@ const RenameCommand &Blueprint::rename(const QString &to)
     return addCommand<RenameCommand>(Rename, {.to = to});
 }
 
-const RenameCommand &
-Blueprint::renameColumn(const QString &from, const QString &to)
+const RenameCommand &Blueprint::renameColumn(const QString &from, const QString &to)
 {
     return addCommand<RenameCommand>(RenameColumn, {.from = from, .to = to});
 }

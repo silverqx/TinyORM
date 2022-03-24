@@ -151,9 +151,8 @@ namespace Grammars
         compileAutoIncrementStartingValues(const Blueprint &blueprint) const;
 
         /*! Compile an index creation command. */
-        QString
-        compileKey(const Blueprint &blueprint, const IndexCommand &command,
-                   const QString &type) const;
+        QString compileKey(const Blueprint &blueprint, const IndexCommand &command,
+                           const QString &type) const;
 
         /*! Wrap a single string in keyword identifiers. */
         QString wrapValue(QString value) const override;
