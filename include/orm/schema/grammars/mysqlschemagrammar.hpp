@@ -9,7 +9,13 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::SchemaNs::Grammars
+namespace Orm::SchemaNs
+{
+    class BasicCommand;
+    class DropColumnsCommand;
+    class RenameCommand;
+
+namespace Grammars
 {
 
     /*! MySql schema grammar. */
@@ -52,78 +58,76 @@ namespace Orm::SchemaNs::Grammars
 
         /* Compile methods for commands */
         /*! Compile a create table command. */
-        QVector<QString>
-        compileCreate(const Blueprint &blueprint, const ColumnDefinition &command,
-                      const DatabaseConnection &connection) const;
+        QVector<QString> compileCreate(const Blueprint &blueprint,
+                                       const DatabaseConnection &connection) const;
 
         /*! Compile a drop table command. */
         QVector<QString> compileDrop(const Blueprint &blueprint,
-                                     const ColumnDefinition &command) const;
+                                     const BasicCommand &command) const;
         /*! Compile a drop table (if exists) command. */
         QVector<QString> compileDropIfExists(const Blueprint &blueprint,
-                                             const ColumnDefinition &command) const;
+                                             const BasicCommand &command) const;
 
         /*! Compile a rename table command. */
         QVector<QString> compileRename(const Blueprint &blueprint,
-                                       const ColumnDefinition &command) const;
+                                       const RenameCommand &command) const;
 
         /*! Compile an add column command. */
         QVector<QString> compileAdd(const Blueprint &blueprint,
-                                    const ColumnDefinition &command) const;
+                                    const BasicCommand &command) const;
         /*! Compile a drop column command. */
         QVector<QString> compileDropColumn(const Blueprint &blueprint,
-                                           const ColumnDefinition &command) const;
+                                           const DropColumnsCommand &command) const;
         /*! Compile a rename column command. */
         QVector<QString> compileRenameColumn(const Blueprint &blueprint,
-                                             const ColumnDefinition &command) const;
+                                             const RenameCommand &command) const;
 
         /*! Compile a primary key command. */
         QVector<QString> compilePrimary(const Blueprint &blueprint,
-                                        const ColumnDefinition &command) const;
+                                        const IndexCommand &command) const;
         /*! Compile a unique key command. */
         QVector<QString> compileUnique(const Blueprint &blueprint,
-                                       const ColumnDefinition &command) const;
+                                       const IndexCommand &command) const;
         /*! Compile a plain index key command. */
         QVector<QString> compileIndex(const Blueprint &blueprint,
-                                      const ColumnDefinition &command) const;
+                                      const IndexCommand &command) const;
         /*! Compile a fulltext index key command. */
         QVector<QString> compileFullText(const Blueprint &blueprint,
-                                         const ColumnDefinition &command) const override;
+                                         const IndexCommand &command) const override;
         /*! Compile a spatial index key command. */
         QVector<QString> compileSpatialIndex(const Blueprint &blueprint,
-                                             const ColumnDefinition &command) const;
+                                             const IndexCommand &command) const;
 
         /*! Compile a drop primary key command. */
         QVector<QString> compileDropPrimary(const Blueprint &blueprint,
-                                            const ColumnDefinition &command) const;
+                                            const IndexCommand &command) const;
         /*! Compile a drop unique key command. */
         inline QVector<QString> compileDropUnique(const Blueprint &blueprint,
-                                                  const ColumnDefinition &command) const;
+                                                  const IndexCommand &command) const;
         /*! Compile a drop index command. */
         QVector<QString> compileDropIndex(const Blueprint &blueprint,
-                                          const ColumnDefinition &command) const;
+                                          const IndexCommand &command) const;
         /*! Compile a drop fulltext index command. */
         inline QVector<QString>
         compileDropFullText(const Blueprint &blueprint,
-                            const ColumnDefinition &command) const override;
+                            const IndexCommand &command) const override;
         /*! Compile a drop spatial index command. */
         inline QVector<QString>
         compileDropSpatialIndex(const Blueprint &blueprint,
-                                const ColumnDefinition &command) const;
+                                const IndexCommand &command) const;
 
         /*! Compile a drop foreign key command. */
         QVector<QString> compileDropForeign(const Blueprint &blueprint,
-                                            const ColumnDefinition &command) const;
+                                            const IndexCommand &command) const;
 
         /*! Compile a rename index command. */
         QVector<QString> compileRenameIndex(const Blueprint &blueprint,
-                                            const ColumnDefinition &command) const;
+                                            const RenameCommand &command) const;
 
         /*! Map a command name to SchemaGrammar::compileXx() methods. */
-        QVector<QString>
-        invokeCompileMethod(const ColumnDefinition &command,
-                            const DatabaseConnection &connection,
-                            const Blueprint &blueprint) const override;
+        QVector<QString> invokeCompileMethod(const CommandDefinition &command,
+                                             const DatabaseConnection &connection,
+                                             const Blueprint &blueprint) const override;
 
     protected:
         // BUG schema, change after upgrade to QtCreator with clang 13 silverqx
@@ -131,9 +135,7 @@ namespace Orm::SchemaNs::Grammars
 //        using enum ColumnType;
 
         /*! Create the main create table clause. */
-        QString
-        compileCreateTable(const Blueprint &blueprint, const ColumnDefinition &command,
-                           const DatabaseConnection &connection) const;
+        QString compileCreateTable(const Blueprint &blueprint) const;
         /*! Add the column modifiers to the definition. */
         QString addModifiers(QString &&sql,
                              const ColumnDefinition &column) const override;
@@ -149,8 +151,9 @@ namespace Orm::SchemaNs::Grammars
         compileAutoIncrementStartingValues(const Blueprint &blueprint) const;
 
         /*! Compile an index creation command. */
-        QString compileKey(const Blueprint &blueprint, const ColumnDefinition &command,
-                           const QString &type) const;
+        QString
+        compileKey(const Blueprint &blueprint, const IndexCommand &command,
+                   const QString &type) const;
 
         /*! Wrap a single string in keyword identifiers. */
         QString wrapValue(QString value) const override;
@@ -272,26 +275,27 @@ namespace Orm::SchemaNs::Grammars
 
     QVector<QString>
     MySqlSchemaGrammar::compileDropUnique(const Blueprint &blueprint,
-                                          const ColumnDefinition &command) const
+                                          const IndexCommand &command) const
     {
         return compileDropIndex(blueprint, command);
     }
 
     QVector<QString>
     MySqlSchemaGrammar::compileDropFullText(const Blueprint &blueprint,
-                                            const ColumnDefinition &command) const
+                                            const IndexCommand &command) const
     {
         return compileDropIndex(blueprint, command);
     }
 
     QVector<QString>
-    MySqlSchemaGrammar::compileDropSpatialIndex(const Blueprint &blueprint,
-                                                const ColumnDefinition &command) const
+    MySqlSchemaGrammar::compileDropSpatialIndex(
+                const Blueprint &blueprint, const IndexCommand &command) const
     {
         return compileDropIndex(blueprint, command);
     }
 
-} // namespace Orm::SchemaNs::Grammars
+} // namespace Grammars
+} // namespace Orm::SchemaNs
 
 TINYORM_END_COMMON_NAMESPACE
 

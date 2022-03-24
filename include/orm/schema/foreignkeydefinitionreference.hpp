@@ -5,13 +5,17 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <QVector>
+
+#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
-#include "orm/schema/columndefinitionreference.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::SchemaNs
 {
+
+    class ForeignKeyCommand;
 
     /*! Reference class to the ColumnDefinition, provides setters with a nice API
         for the foreign key column. */
@@ -19,11 +23,7 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Constructor. */
-        ForeignKeyDefinitionReference( // NOLINT(google-explicit-constructor)
-                    ColumnDefinitionReference<> columnDefinitionReference);
-        /*! Constructor. */
-        ForeignKeyDefinitionReference( // NOLINT(google-explicit-constructor)
-                    ForeignIdColumnDefinitionReference foreignIdColumnReference);
+        ForeignKeyDefinitionReference(ForeignKeyCommand &foreignKeyCommandDefinition); // NOLINT(google-explicit-constructor)
         /*! Default destructor. */
         inline ~ForeignKeyDefinitionReference() = default;
 
@@ -54,7 +54,7 @@ namespace Orm::SchemaNs
 
     private:
         /*! Reference to a column definition. */
-        std::reference_wrapper<ColumnDefinition> m_columnDefinition;
+        std::reference_wrapper<ForeignKeyCommand> m_foreignKeyCommandDefinition;
     };
 
     template<typename>

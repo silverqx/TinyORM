@@ -27,8 +27,6 @@ namespace Orm::SchemaNs
     {
         // To access m_columnDefinition data member
         friend ForeignIdColumnDefinitionReference;
-        // To access m_columnDefinition data member
-        friend class ForeignKeyDefinitionReference;
 
     public:
         /*! CRTP return type by the passed R template parameter. */
@@ -84,12 +82,13 @@ namespace Orm::SchemaNs
         /*! Add a unique index. */
         ColumnReferenceType &unique(const QString &indexName = "");
 
+    protected:
+        /*! Reference to a column definition. */
+        std::reference_wrapper<ColumnDefinition> m_columnDefinition;
+
     private:
         /*! Static cast this to a child's instance type (CRTP). */
         ColumnReferenceType &columnReference();
-
-        /*! Reference to a column definition. */
-        std::reference_wrapper<ColumnDefinition> m_columnDefinition;
     };
 
     /* I had to make this class templated to be able call eg. foreignId().nullable(),
@@ -264,9 +263,9 @@ namespace Orm::SchemaNs
     ColumnDefinitionReference<R>::index(const QString &indexName)
     {
         if (indexName.isEmpty())
-            m_columnDefinition.get().index_ = true;
+            m_columnDefinition.get().index = true;
         else
-            m_columnDefinition.get().index_ = indexName;
+            m_columnDefinition.get().index = indexName;
 
         return columnReference();
     }

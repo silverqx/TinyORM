@@ -13,7 +13,6 @@ ForeignIdColumnDefinitionReference::ForeignIdColumnDefinitionReference(
 )
     : ColumnDefinitionReference(columnDefinitionReference.m_columnDefinition)
     , m_blueprint(blueprint)
-    , m_columnDefinition(columnDefinitionReference.m_columnDefinition)
 {}
 
 ForeignKeyDefinitionReference
@@ -35,7 +34,10 @@ ForeignIdColumnDefinitionReference::constrained(const QString &table,
 ForeignKeyDefinitionReference
 ForeignIdColumnDefinitionReference::references(const QVector<QString> &columns)
 {
-    return m_blueprint.foreign(m_columnDefinition.get().name).references(columns);
+    m_foreignKeyDefinitionReference =
+            m_blueprint.get().foreign(m_columnDefinition.get().name);
+
+    return m_foreignKeyDefinitionReference->references(columns);
 }
 
 } // namespace Orm::SchemaNs

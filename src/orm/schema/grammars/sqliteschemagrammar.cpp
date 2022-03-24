@@ -33,13 +33,13 @@ QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const
 
 QVector<QString>
 SQLiteSchemaGrammar::compileForeign(const Blueprint &/*unused*/,
-                                    const ColumnDefinition &/*unused*/) const
+                                    const ForeignKeyCommand &/*unused*/) const
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
 QVector<QString>
-SQLiteSchemaGrammar::invokeCompileMethod(const ColumnDefinition &/*unused*/,
+SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &/*unused*/,
                                          const DatabaseConnection &/*unused*/,
                                          const Blueprint &/*unused*/) const
 {

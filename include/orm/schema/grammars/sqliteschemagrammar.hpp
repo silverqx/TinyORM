@@ -34,12 +34,13 @@ namespace Orm::SchemaNs::Grammars
 
         /* Compile methods for commands */
         /*! Compile a foreign key command. */
-        QVector<QString> compileForeign(const Blueprint &blueprint,
-                                        const ColumnDefinition &command) const override;
+        QVector<QString>
+        compileForeign(const Blueprint &blueprint,
+                       const ForeignKeyCommand &command) const override;
 
         /*! Run command's compile method and return SQL queries. */
         QVector<QString>
-        invokeCompileMethod(const ColumnDefinition &command,
+        invokeCompileMethod(const CommandDefinition &command,
                             const DatabaseConnection &connection,
                             const Blueprint &blueprint) const override;
 

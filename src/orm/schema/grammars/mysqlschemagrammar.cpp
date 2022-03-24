@@ -84,12 +84,11 @@ QString MySqlSchemaGrammar::compileColumnListing(const QString &/*unused*/) cons
 /* public */
 
 QVector<QString>
-MySqlSchemaGrammar::compileCreate(
-        const Blueprint &blueprint, const ColumnDefinition &command,
-        const DatabaseConnection &connection) const
+MySqlSchemaGrammar::compileCreate(const Blueprint &blueprint,
+                                  const DatabaseConnection &connection) const
 {
     // Primary SQL query for create table
-    auto sqlCreateTable = compileCreateTable(blueprint, command, connection);
+    auto sqlCreateTable = compileCreateTable(blueprint);
 
     // Add the encoding option to the SQL for the table
     compileCreateEncoding(sqlCreateTable, connection, blueprint);
@@ -109,27 +108,28 @@ MySqlSchemaGrammar::compileCreate(
     return sql;
 }
 
-QVector<QString> MySqlSchemaGrammar::compileDrop(
-        const Blueprint &blueprint, const ColumnDefinition &/*unused*/) const
+QVector<QString> MySqlSchemaGrammar::compileDrop(const Blueprint &blueprint,
+                                                 const BasicCommand &/*unused*/) const
 {
     return {QStringLiteral("drop table %1").arg(wrapTable(blueprint))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileDropIfExists(
-        const Blueprint &blueprint, const ColumnDefinition &/*unused*/) const
+QVector<QString>
+MySqlSchemaGrammar::compileDropIfExists(const Blueprint &blueprint,
+                                        const BasicCommand &/*unused*/) const
 {
     return {QStringLiteral("drop table if exists %1").arg(wrapTable(blueprint))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileRename(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+QVector<QString> MySqlSchemaGrammar::compileRename(const Blueprint &blueprint,
+                                                   const RenameCommand &command) const
 {
     return {QStringLiteral("rename table %1 to %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
 
 QVector<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
-                                                const ColumnDefinition &/*unused*/) const
+                                                const BasicCommand &/*unused*/) const
 {
     auto columns = prefixArray(Add, getColumns(blueprint));
 
@@ -149,7 +149,7 @@ QVector<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
 }
 
 QVector<QString> MySqlSchemaGrammar::compileDropColumn(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+        const Blueprint &blueprint, const DropColumnsCommand &command) const
 {
     return {QStringLiteral("alter table %1 %2")
                 .arg(wrapTable(blueprint),
@@ -158,15 +158,15 @@ QVector<QString> MySqlSchemaGrammar::compileDropColumn(
 }
 
 QVector<QString> MySqlSchemaGrammar::compileRenameColumn(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+        const Blueprint &blueprint, const RenameCommand &command) const
 {
     return {QStringLiteral("alter table %1 rename column %2 to %3")
-                .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from_),
+                .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};
 }
 
 QVector<QString> MySqlSchemaGrammar::compilePrimary(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+        const Blueprint &blueprint, const IndexCommand &command) const
 {
     // CUR schema, check this, why it is doing, I have to make command non-const silverqx
 //    command.name.clear();
@@ -175,79 +175,118 @@ QVector<QString> MySqlSchemaGrammar::compilePrimary(
 }
 
 QVector<QString> MySqlSchemaGrammar::compileUnique(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+        const Blueprint &blueprint, const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, Unique)};
 }
 
 QVector<QString> MySqlSchemaGrammar::compileIndex(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+        const Blueprint &blueprint, const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, Index)};
 }
 
 QVector<QString> MySqlSchemaGrammar::compileFullText(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+        const Blueprint &blueprint, const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, Fulltext)};
 }
 
 QVector<QString> MySqlSchemaGrammar::compileSpatialIndex(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+        const Blueprint &blueprint, const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, QStringLiteral("spatial index"))};
 }
 
 QVector<QString> MySqlSchemaGrammar::compileDropPrimary(
-        const Blueprint &blueprint, const ColumnDefinition &/*unused*/) const
+        const Blueprint &blueprint, const IndexCommand &/*unused*/) const
 {
     return {QStringLiteral("alter table %1 drop primary key")
                 .arg(wrapTable(blueprint))};
 }
 
 QVector<QString> MySqlSchemaGrammar::compileDropIndex(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+        const Blueprint &blueprint, const IndexCommand &command) const
 {
     return {QStringLiteral("alter table %1 drop index %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileDropForeign(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+QVector<QString>
+MySqlSchemaGrammar::compileDropForeign(const Blueprint &blueprint,
+                                       const IndexCommand &command) const
 {
     return {QStringLiteral("alter table %1 drop foreign key %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileRenameIndex(
-        const Blueprint &blueprint, const ColumnDefinition &command) const
+QVector<QString>
+MySqlSchemaGrammar::compileRenameIndex(const Blueprint &blueprint,
+                                       const RenameCommand &command) const
 {
     return {QStringLiteral("alter table %1 rename index %2 to %3")
-                .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from_),
+                .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};
 }
 
+namespace
+{
+    /*! Concept for a member function. */
+    template<typename M>
+    concept IsMemFun = std::is_member_function_pointer_v<std::decay_t<M>>;
+
+    /*! Function signature. */
+    template<typename Sig>
+    struct FunctionSignature;
+
+    /*! Function signature, a member function specialization. */
+    template<typename R, typename C, typename...Args>
+    struct FunctionSignature<R(C::*)(Args...) const>
+    {
+        using type = std::tuple<Args...>;
+    };
+
+    /*! Helper function to obtain function types as std::tuple. */
+    template<IsMemFun M>
+    auto argumentTypes(M &&) -> typename FunctionSignature<std::decay_t<M>>::type;
+
+    /*! Helper function to obtain function parameter type at I position
+        from std::tuple. */
+    template<std::size_t I, IsMemFun M>
+    auto argumentType(M &&method) -> decltype (std::get<I>(argumentTypes(method)));
+} // namespace
+
 QVector<QString>
-MySqlSchemaGrammar::invokeCompileMethod(const ColumnDefinition &command,
+MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                                         const DatabaseConnection &connection,
                                         const Blueprint &blueprint) const
 {
+    // FUTURE concepts, somehow check that after reinterpret_cast<> is command_.name QString, i have tried but without success, I have added example to NOTES.txt silverqx
+    const auto &command_ = reinterpret_cast<const BasicCommand &>(command);
+    const auto &name = command_.name;
+
+    /* Helps to avoid declare all compileXx() methods with a DatabaseConenction &
+       parameter, only the compileCreate() needs connection argument. */
+    if (name == Create)
+        return compileCreate(blueprint, connection);
+
     /*! Type for the compileXx() methods. */
     using CompileMemFn =
             std::function<QVector<QString>(
                 const MySqlSchemaGrammar &, const Blueprint &,
-                const ColumnDefinition &)>;
+                const CommandDefinition &)>;
 
-    /* Helps to avoid declare all compileXx() methods with a DatabaseConenction &
-       parameter, only the compileCreate() needs connection argument. */
-    const auto bindCreate = [&connection](auto &&compileMethod)
+    const auto bind = [](auto &&compileMethod)
     {
-        return [&connection,
-                compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
+        return [compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
                (const MySqlSchemaGrammar &grammar, const Blueprint &blueprint,
-                const ColumnDefinition &command)
+                const CommandDefinition &command) // clazy:exclude=function-args-by-value
         {
-            return std::invoke(compileMethod, grammar, blueprint, command, connection);
+            /* Get type of a second parameter of compile method and cast to that type. */
+            const auto &command_ =
+                    reinterpret_cast<decltype (argumentType<1>(compileMethod))>(command);
+
+            return std::invoke(compileMethod, grammar, blueprint, command_);
         };
     };
 
@@ -258,44 +297,39 @@ MySqlSchemaGrammar::invokeCompileMethod(const ColumnDefinition &command,
        QString(command.name) -> enum. */
     T_THREAD_LOCAL
     static const std::unordered_map<QString, CompileMemFn> cached {
-        {Create,           bindCreate(&MySqlSchemaGrammar::compileCreate)},
-
-        {Add,              &MySqlSchemaGrammar::compileAdd},
-        {Rename,           &MySqlSchemaGrammar::compileRename},
-        {Drop,             &MySqlSchemaGrammar::compileDrop},
-        {DropIfExists,     &MySqlSchemaGrammar::compileDropIfExists},
-        {DropColumn,       &MySqlSchemaGrammar::compileDropColumn},
-        {RenameColumn,     &MySqlSchemaGrammar::compileRenameColumn},
-        {Primary,          &MySqlSchemaGrammar::compilePrimary},
-        {Unique,           &MySqlSchemaGrammar::compileUnique},
-        {Index,            &MySqlSchemaGrammar::compileIndex},
-        {Fulltext,         &MySqlSchemaGrammar::compileFullText},
-        {SpatialIndex,     &MySqlSchemaGrammar::compileSpatialIndex},
-        {Foreign,          &MySqlSchemaGrammar::compileForeign},
-        {DropPrimary,      &MySqlSchemaGrammar::compileDropPrimary},
-        {DropUnique,       &MySqlSchemaGrammar::compileDropUnique},
-        {DropIndex,        &MySqlSchemaGrammar::compileDropIndex},
-        {DropFullText,     &MySqlSchemaGrammar::compileDropFullText},
-        {DropSpatialIndex, &MySqlSchemaGrammar::compileDropSpatialIndex},
-        {DropForeign,      &MySqlSchemaGrammar::compileDropForeign},
-        {RenameIndex,      &MySqlSchemaGrammar::compileRenameIndex},
+        {Add,              bind(&MySqlSchemaGrammar::compileAdd)},
+        {Rename,           bind(&MySqlSchemaGrammar::compileRename)},
+        {Drop,             bind(&MySqlSchemaGrammar::compileDrop)},
+        {DropIfExists,     bind(&MySqlSchemaGrammar::compileDropIfExists)},
+        {DropColumn,       bind(&MySqlSchemaGrammar::compileDropColumn)},
+        {RenameColumn,     bind(&MySqlSchemaGrammar::compileRenameColumn)},
+        {Primary,          bind(&MySqlSchemaGrammar::compilePrimary)},
+        {Unique,           bind(&MySqlSchemaGrammar::compileUnique)},
+        {Index,            bind(&MySqlSchemaGrammar::compileIndex)},
+        {Fulltext,         bind(&MySqlSchemaGrammar::compileFullText)},
+        {SpatialIndex,     bind(&MySqlSchemaGrammar::compileSpatialIndex)},
+        {Foreign,          bind(&MySqlSchemaGrammar::compileForeign)},
+        {DropPrimary,      bind(&MySqlSchemaGrammar::compileDropPrimary)},
+        {DropUnique,       bind(&MySqlSchemaGrammar::compileDropUnique)},
+        {DropIndex,        bind(&MySqlSchemaGrammar::compileDropIndex)},
+        {DropFullText,     bind(&MySqlSchemaGrammar::compileDropFullText)},
+        {DropSpatialIndex, bind(&MySqlSchemaGrammar::compileDropSpatialIndex)},
+        {DropForeign,      bind(&MySqlSchemaGrammar::compileDropForeign)},
+        {RenameIndex,      bind(&MySqlSchemaGrammar::compileRenameIndex)},
     };
 
-    Q_ASSERT_X(cached.contains(command.name),
+    Q_ASSERT_X(cached.contains(name),
                qUtf8Printable(__tiny_func__),
                QStringLiteral("Compile methods map doesn't contain the '%1' key.")
-               .arg(command.name)
+               .arg(name)
                .toUtf8().constData());
 
-    return std::invoke(cached.at(command.name), *this, blueprint, command);
+    return std::invoke(cached.at(name), *this, blueprint, command);
 }
 
 /* protected */
 
-QString
-MySqlSchemaGrammar::compileCreateTable(
-        const Blueprint &blueprint, const ColumnDefinition &/*unused*/,
-        const DatabaseConnection &/*unused*/) const
+QString MySqlSchemaGrammar::compileCreateTable(const Blueprint &blueprint) const
 {
     return QStringLiteral("%1 table %2 (%3)")
             .arg(blueprint.isTemporary() ? QStringLiteral("create temporary")
@@ -392,7 +426,7 @@ MySqlSchemaGrammar::compileAutoIncrementStartingValues(const Blueprint &blueprin
 }
 
 QString MySqlSchemaGrammar::compileKey(
-        const Blueprint &blueprint, const ColumnDefinition &command,
+        const Blueprint &blueprint, const IndexCommand &command,
         const QString &type) const
 {
     static const auto usingTmpl = QStringLiteral(" using %1");
@@ -423,7 +457,7 @@ QString MySqlSchemaGrammar::addSlashes(QString value) const
             .replace(QChar(QChar::LineFeed), "\\n")
             .replace(QChar(QChar::Tabulation), "\\t")
             .replace(QChar(0x0008), "\\b")
-            .replace(QChar(0x000d), "\\r")
+            .replace(QChar(QChar::CarriageReturn), "\\r")
             .replace(QChar('"'), "\\\"")
             .replace(QChar(0x0027), "\\'");
 }

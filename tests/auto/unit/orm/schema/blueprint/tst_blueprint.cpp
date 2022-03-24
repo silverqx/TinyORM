@@ -12,6 +12,7 @@ using Orm::Constants::SIZE;
 using Orm::DB;
 
 using Orm::SchemaNs::Blueprint;
+using Orm::SchemaNs::IndexCommand;
 using Orm::SchemaNs::Grammars::MySqlSchemaGrammar;
 
 using TestUtils::Databases;
@@ -59,7 +60,8 @@ void tst_Blueprint::index_DefaultNames() const
         blueprint.unique({NAME, "foo"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "torrents_name_foo_unique");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "torrents_name_foo_unique");
     }
     // Index
     {
@@ -67,7 +69,8 @@ void tst_Blueprint::index_DefaultNames() const
         blueprint.index(SIZE);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "torrents_size_index");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "torrents_size_index");
     }
     // SpatialIndex
     {
@@ -75,7 +78,8 @@ void tst_Blueprint::index_DefaultNames() const
         blueprint.spatialIndex({"coordinates"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "torrents_coordinates_spatialindex");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "torrents_coordinates_spatialindex");
     }
     // FullText
     {
@@ -83,7 +87,8 @@ void tst_Blueprint::index_DefaultNames() const
         blueprint.fullText("note");
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "torrents_note_fulltext");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "torrents_note_fulltext");
     }
 }
 
@@ -95,7 +100,8 @@ void tst_Blueprint::index_DefaultNames_WithPrefix() const
         blueprint.unique({NAME, "foo"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "prefix_torrents_name_foo_unique");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "prefix_torrents_name_foo_unique");
     }
     // Index
     {
@@ -103,7 +109,8 @@ void tst_Blueprint::index_DefaultNames_WithPrefix() const
         blueprint.index(SIZE);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "prefix_torrents_size_index");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "prefix_torrents_size_index");
     }
     // SpatialIndex
     {
@@ -111,7 +118,8 @@ void tst_Blueprint::index_DefaultNames_WithPrefix() const
         blueprint.spatialIndex({"coordinates"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "prefix_torrents_coordinates_spatialindex");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "prefix_torrents_coordinates_spatialindex");
     }
     // FullText
     {
@@ -119,7 +127,8 @@ void tst_Blueprint::index_DefaultNames_WithPrefix() const
         blueprint.fullText("note");
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "prefix_torrents_note_fulltext");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "prefix_torrents_note_fulltext");
     }
 }
 
@@ -130,7 +139,8 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
         blueprint.dropUnique({NAME, "foo"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "torrents_name_foo_unique");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "torrents_name_foo_unique");
     }
     // Index
     {
@@ -138,7 +148,8 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
         blueprint.dropIndex(QVector<QString> {SIZE});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "torrents_size_index");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "torrents_size_index");
     }
     // SpatialIndex
     {
@@ -146,7 +157,8 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
         blueprint.dropSpatialIndex({"coordinates"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "torrents_coordinates_spatialindex");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "torrents_coordinates_spatialindex");
     }
     // FullText
     {
@@ -154,7 +166,8 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
         blueprint.dropFullText({"note"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "torrents_note_fulltext");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "torrents_note_fulltext");
     }
 }
 
@@ -165,7 +178,8 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
         blueprint.dropUnique({NAME, "foo"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "prefix_torrents_name_foo_unique");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "prefix_torrents_name_foo_unique");
     }
     // Index
     {
@@ -173,7 +187,8 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
         blueprint.dropIndex(QVector<QString> {SIZE});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "prefix_torrents_size_index");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "prefix_torrents_size_index");
     }
     // SpatialIndex
     {
@@ -181,7 +196,8 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
         blueprint.dropSpatialIndex({"coordinates"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "prefix_torrents_coordinates_spatialindex");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "prefix_torrents_coordinates_spatialindex");
     }
     // FullText
     {
@@ -189,7 +205,8 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
         blueprint.dropFullText({"note"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "prefix_torrents_note_fulltext");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "prefix_torrents_note_fulltext");
     }
 }
 
@@ -200,7 +217,8 @@ void tst_Blueprint::dropIndex_ByIndexName() const
         blueprint.dropUnique(NAME);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, NAME);
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 NAME);
     }
     // Index
     {
@@ -208,7 +226,8 @@ void tst_Blueprint::dropIndex_ByIndexName() const
         blueprint.dropIndex(SIZE);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, SIZE);
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 SIZE);
     }
     // SpatialIndex
     {
@@ -216,7 +235,8 @@ void tst_Blueprint::dropIndex_ByIndexName() const
         blueprint.dropSpatialIndex("coordinates");
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "coordinates");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "coordinates");
     }
     // FullText
     {
@@ -224,7 +244,8 @@ void tst_Blueprint::dropIndex_ByIndexName() const
         blueprint.dropFullText("note");
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(commands.first().index, "note");
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+                 "note");
     }
 }
 

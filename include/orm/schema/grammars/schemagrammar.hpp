@@ -16,6 +16,9 @@ namespace Orm::SchemaNs
 {
     class Blueprint;
     class ColumnDefinition;
+    class CommandDefinition;
+    class ForeignKeyCommand;
+    class IndexCommand;
 
 namespace Grammars
 {
@@ -62,17 +65,17 @@ namespace Grammars
         /*! Compile a fulltext index key command. */
         virtual QVector<QString>
         compileFullText(const Blueprint &blueprint,
-                        const ColumnDefinition &command) const;
+                        const IndexCommand &command) const;
 
         /*! Compile a foreign key command. */
         virtual QVector<QString>
         compileForeign(const Blueprint &blueprint,
-                       const ColumnDefinition &command) const;
+                       const ForeignKeyCommand &command) const;
 
         /*! Compile a drop fulltext index command. */
         virtual QVector<QString>
         compileDropFullText(const Blueprint &blueprint,
-                            const ColumnDefinition &command) const;
+                            const IndexCommand &command) const;
 
         /*! Wrap a value in keyword identifiers. */
         QString wrap(const ColumnDefinition &column, bool prefixAlias = false) const;
@@ -84,7 +87,7 @@ namespace Grammars
 
         /*! Run command's compile method and return SQL queries. */
         virtual QVector<QString>
-        invokeCompileMethod(const ColumnDefinition &command,
+        invokeCompileMethod(const CommandDefinition &command,
                             const DatabaseConnection &connection,
                             const Blueprint &blueprint) const = 0;
 

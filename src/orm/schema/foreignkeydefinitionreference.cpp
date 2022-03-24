@@ -1,6 +1,6 @@
 #include "orm/schema/foreignkeydefinitionreference.hpp"
 
-#include "orm/schema/foreignidcolumndefinitionreference.hpp"
+#include "orm/schema/columndefinition.hpp"
 #include "orm/schema/schemaconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -9,21 +9,15 @@ namespace Orm::SchemaNs
 {
 
 ForeignKeyDefinitionReference::ForeignKeyDefinitionReference(
-            const ColumnDefinitionReference<> columnDefinitionReference
+            ForeignKeyCommand &foreignKeyCommandDefinition
 )
-    : m_columnDefinition(columnDefinitionReference.m_columnDefinition)
-{}
-
-ForeignKeyDefinitionReference::ForeignKeyDefinitionReference(
-            ForeignIdColumnDefinitionReference foreignIdColumnReference
-)
-    : m_columnDefinition(foreignIdColumnReference.m_columnDefinition)
+    : m_foreignKeyCommandDefinition(foreignKeyCommandDefinition)
 {}
 
 ForeignKeyDefinitionReference &
 ForeignKeyDefinitionReference::references(const QVector<QString> &columns)
 {
-    m_columnDefinition.get().references = columns;
+    m_foreignKeyCommandDefinition.get().references = columns;
 
     return *this;
 }
@@ -31,7 +25,7 @@ ForeignKeyDefinitionReference::references(const QVector<QString> &columns)
 ForeignKeyDefinitionReference &
 ForeignKeyDefinitionReference::on(const QString &table)
 {
-    m_columnDefinition.get().on = table;
+    m_foreignKeyCommandDefinition.get().on = table;
 
     return *this;
 }
@@ -39,7 +33,7 @@ ForeignKeyDefinitionReference::on(const QString &table)
 ForeignKeyDefinitionReference &
 ForeignKeyDefinitionReference::onDelete(const QString &action)
 {
-    m_columnDefinition.get().onDelete = action;
+    m_foreignKeyCommandDefinition.get().onDelete = action;
 
     return *this;
 }
@@ -47,7 +41,7 @@ ForeignKeyDefinitionReference::onDelete(const QString &action)
 ForeignKeyDefinitionReference &
 ForeignKeyDefinitionReference::onUpdate(const QString &action)
 {
-    m_columnDefinition.get().onUpdate = action;
+    m_foreignKeyCommandDefinition.get().onUpdate = action;
 
     return *this;
 }

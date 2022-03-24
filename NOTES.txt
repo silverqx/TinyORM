@@ -718,6 +718,41 @@ EntityManager::createConnection(const QVariantHash &config)
 #endif
 
 
+Check whether first data member in BaseCommand is QString (unsuccessful):
+---
+
+struct CommandDefinition
+{};
+
+struct BaseCommand : CommandDefinition
+{
+    QString name;
+};
+
+struct Idx1 : CommandDefinition
+{
+    int i = 0;
+    QString name;
+};
+
+template<typename T>
+concept IsQString = requires(T t)
+{
+//    requires std::same_as<decltype (std::declval<T>().name), QString>;
+    {t.name} -> std::same_as<QString &>;
+};
+
+BaseCommand i {.name = "h i"};
+Idx1 i1 {.i = 10, .name = "h i1"};
+CommandDefinition &bi = i;
+CommandDefinition &bi1 = i1;
+
+if constexpr (IsQString<decltype (reinterpret_cast<BaseCommand &>(bi))>)
+    qDebug() << "y";
+else
+    qDebug() << "n";
+
+
 Test Column expressions code, just swap groupBy
 -----
 

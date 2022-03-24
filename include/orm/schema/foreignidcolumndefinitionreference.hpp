@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/constants.hpp"
+#include "orm/schema/columndefinitionreference.hpp"
 #include "orm/schema/foreignkeydefinitionreference.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -20,9 +21,6 @@ namespace Orm::SchemaNs
     class SHAREDLIB_EXPORT ForeignIdColumnDefinitionReference :
             public ColumnDefinitionReference<ForeignIdColumnDefinitionReference>
     {
-        // To access m_columnDefinition data member
-        friend ForeignKeyDefinitionReference;
-
     public:
         /*! Constructor. */
         ForeignIdColumnDefinitionReference( // NOLINT(google-explicit-constructor)
@@ -44,9 +42,9 @@ namespace Orm::SchemaNs
 
     private:
         /*! Reference to the schema builder blueprint instance. */
-        Blueprint &m_blueprint;
+        std::reference_wrapper<Blueprint> m_blueprint;
         /*! Reference to a column definition. */
-        std::reference_wrapper<ColumnDefinition> m_columnDefinition;
+        std::optional<ForeignKeyDefinitionReference> m_foreignKeyDefinitionReference;
     };
 
     template<typename>

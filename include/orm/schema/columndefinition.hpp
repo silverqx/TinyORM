@@ -15,36 +15,77 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::SchemaNs
 {
 
-    /*! Database column definition. */
-    class ColumnDefinition
+    /* NOTE: every command must start with the QString name; data member because of
+       usage the reinterpret_cast<> from CommandDefinition & to BasicCommand &, look at
+       MySqlSchemaGrammar::invokeCompileMethod(). */
+
+    /*! Type for the database column. */
+    using Column = std::variant<QString, Query::Expression>;
+
+    /*! Base class for all command definitions. */
+    class CommandDefinition
+    {};
+
+    /*! Basic command that needs only the name. */
+    class BasicCommand : public CommandDefinition
     {
-        /*! Type for the database column. */
-        using Column = std::variant<QString, Query::Expression>;
-
     public:
-        /*! Column type. */
-        ColumnType type;
-        /*! Column name. */
+        /*! Command name. */
         QString name;
-        /*! Indicates whether a column will be changed or created. */
-        bool change = false;
+    };
 
-        /* Commands */
-        // indexes, and columns also used in dropColumns()
+    /*! Drop columns command. */
+    class DropColumnsCommand : public CommandDefinition
+    {
+    public:
+        /*! Command name. */
+        QString name;
+
+        /*! Columns to drop. */
+        QVector<Column> columns;
+    };
+
+    /*! Rename table, column or index command. */
+    class RenameCommand : public CommandDefinition
+    {
+    public:
+        /*! Command name. */
+        QString name;
+
+        /*! Rename from. */
+        QString from;
+        /*! Rename to. */
+        QString to;
+    };
+
+    /*! Create primary, index, unique, fulltext or spatialIndex command. */
+    class IndexCommand : public CommandDefinition
+    {
+    public:
+        /*! Command name. */
+        QString name;
+
         /*! Index name. */
         QString index;
         /*! Columns for which to create an index. */
-        QVector<Column> columns; // foreign key
-        /*! Algorith to use during index creation. */
+        QVector<Column> columns;
+        /*! Algorithm to use during index creation. */
         QString algorithm;
+    };
 
-        // rename index
-        /*! Rename index from. */
-        QString from_;
-        /*! Rename index to. */
-        QString to;
+    /*! Foreign key constrains command. */
+    class ForeignKeyCommand : public CommandDefinition
+    {
+    public:
+        /*! Command name. */
+        QString name;
 
-        // foreign key
+        /*! Index name for the foreign key. */
+        QString index;
+        // CUR schema, check if foreign key can use more columns, if not use QString silverqx
+        /*! Columns for which to create the foreign key. */
+        QVector<Column> columns;
+
         /*! Specifies the referenced columns. */
         QVector<QString> references;
         /*! Specifies the referenced table. */
@@ -55,8 +96,22 @@ namespace Orm::SchemaNs
         /*! Specifies ON UPDATE action (cascade/restrict/set null/no action/
             set default). */
         QString onUpdate;
+    };
 
-        /* Internal - used from blueprint */
+    /*! Database column definition. */
+    class ColumnDefinition
+    {
+    public:
+        /* Internal - used from the blueprint, not exposed to ColumnDefinitionReference */
+        /* Has every column */
+        /*! Column type. */
+        ColumnType type;
+        /*! Column name. */
+        QString name;
+        /*! Indicates whether a column will be changed or created. */
+        bool change = false;
+
+        /* Column type specific */
         /*! Allowed index values for Enumaration Literals (enum/set). */
         QVector<QString> allowed;
         /*! Value for a generated, computed column type (SQL Server). */
@@ -76,9 +131,9 @@ namespace Orm::SchemaNs
         /*! Number of digits before the decimal point for floating-point types. */
         std::optional<int> total;
 
-        /* Indexes */
+        /* Indexes - used by blueprint command for indexes or fluent indexes on column */
         /*! Add an index. */
-        std::variant<std::monostate, QString, bool> index_;
+        std::variant<std::monostate, QString, bool> index;
         /*! Add a primary index. */
         std::variant<std::monostate, QString, bool> primary;
         /*! Add a fulltext index. */
@@ -88,7 +143,7 @@ namespace Orm::SchemaNs
         /*! Add a unique index. */
         std::variant<std::monostate, QString, bool> unique;
 
-        /* Column definitions */
+        /* Column definition */
         /*! Determine "after" which column to place a current column (MySQL). */
         QString after;
         /*! Specify a character set for the column (MySQL). */
@@ -124,6 +179,15 @@ namespace Orm::SchemaNs
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP when updating (MySQL). */
         bool useCurrentOnUpdate = false;
     };
+
+    /* Commands was extracted from the ColumnDefinition and has been created
+       own struct for every or very similar commands. They are now allocated
+       on the heap to save space because sizeof(ColumnDefinition) was 736 and
+       that is too much, eg. if schema would contain 100 columns it would take
+       73KB.
+       I have decided not to use polymorphic commands, I wanted to use
+       designated initializers with aggregates, the consequence of this is
+       usage of reinterpret_cast() :/, but it works great. */
 
 } // namespace Orm::SchemaNs
 

@@ -50,7 +50,7 @@ QString SchemaGrammar::compileTableExists() const
 
 QVector<QString>
 SchemaGrammar::compileFullText(const Blueprint &/*unused*/,
-                               const ColumnDefinition &/*unused*/) const
+                               const IndexCommand &/*unused*/) const
 {
     // CUR schema, check runtime vs logic exception silverqx
     // CUR schema, add driver and maybe connection names to this type of exceptions silverqx
@@ -61,7 +61,7 @@ SchemaGrammar::compileFullText(const Blueprint &/*unused*/,
 
 QVector<QString>
 SchemaGrammar::compileForeign(const Blueprint &blueprint,
-                              const ColumnDefinition &command) const
+                              const ForeignKeyCommand &command) const
 {
     /* We need to prepare several of the elements of the foreign key definition
        before we can create the SQL, such as wrapping the tables and convert
@@ -91,7 +91,7 @@ SchemaGrammar::compileForeign(const Blueprint &blueprint,
 
 QVector<QString>
 SchemaGrammar::compileDropFullText(const Blueprint &/*unused*/,
-                                   const ColumnDefinition &/*unused*/) const
+                                   const IndexCommand &/*unused*/) const
 {
     throw Exceptions::RuntimeError(
                 "This database driver does not support dropping databases.");

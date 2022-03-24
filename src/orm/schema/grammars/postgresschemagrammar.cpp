@@ -30,13 +30,13 @@ QString PostgresSchemaGrammar::compileColumnListing(const QString &/*unused*/) c
 
 QVector<QString>
 PostgresSchemaGrammar::compileForeign(const Blueprint &/*unused*/,
-                                      const ColumnDefinition &/*unused*/) const
+                                      const ForeignKeyCommand &/*unused*/) const
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
 QVector<QString>
-PostgresSchemaGrammar::invokeCompileMethod(const ColumnDefinition &/*unused*/,
+PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &/*unused*/,
                                            const DatabaseConnection &/*unused*/,
                                            const Blueprint &/*unused*/) const
 {
