@@ -31,7 +31,7 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name;
+        QString name {};
     };
 
     /*! Drop columns command. */
@@ -39,7 +39,7 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name;
+        QString name {};
 
         /*! Columns to drop. */
         QVector<Column> columns;
@@ -50,10 +50,10 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name;
+        QString name {};
 
         /*! Rename from. */
-        QString from;
+        QString from {};
         /*! Rename to. */
         QString to;
     };
@@ -63,14 +63,14 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name;
+        QString name {};
 
         /*! Index name. */
         QString index;
         /*! Columns for which to create an index. */
         QVector<Column> columns;
         /*! Algorithm to use during index creation. */
-        QString algorithm;
+        QString algorithm {};
     };
 
     /*! Foreign key constrains command. */
@@ -78,7 +78,7 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name;
+        QString name {};
 
         /*! Index name for the foreign key. */
         QString index;
@@ -87,15 +87,15 @@ namespace Orm::SchemaNs
         QVector<Column> columns;
 
         /*! Specifies the referenced columns. */
-        QVector<QString> references;
+        QVector<QString> references {};
         /*! Specifies the referenced table. */
-        QString on;
+        QString on {};
         /*! Specifies ON DELETE action (cascade/restrict/set null/no action/
             set default). */
-        QString onDelete;
+        QString onDelete {};
         /*! Specifies ON UPDATE action (cascade/restrict/set null/no action/
             set default). */
-        QString onUpdate;
+        QString onUpdate {};
     };
 
     /*! Database column definition. */
@@ -103,79 +103,79 @@ namespace Orm::SchemaNs
     {
     public:
         /* Internal - used from the blueprint, not exposed to ColumnDefinitionReference */
-        /* Has every column */
+        /* Every column must define type and name values */
         /*! Column type. */
-        ColumnType type;
+        ColumnType type = ColumnType::Undefined;
         /*! Column name. */
-        QString name;
+        QString name {};
         /*! Indicates whether a column will be changed or created. */
         bool change = false;
 
         /* Column type specific */
         /*! Allowed index values for Enumaration Literals (enum/set). */
-        QVector<QString> allowed;
+        QVector<QString> allowed {};
         /*! Value for a generated, computed column type (SQL Server). */
-        QString expression;
+        QString expression {};
         /*! Length of the char or varchar column. */
         int length = DefaultStringLength;
         /*! Number of digits after the decimal point for floating-point types. */
-        std::optional<int> places;
+        std::optional<int> places = std::nullopt;
         /*! Determine fractional Seconds in Time Values (MySQL 0-6). */
-        int precision;
+        int precision = -1;
         /* srid max. value should be 2^32-1 as is described here, so unsigned int
            should be ok:
            https://dev.mysql.com/doc/refman/8.0/en/spatial-function-argument-handling.html */
         /*! The spatial reference identifier (SRID) of a geometry identifies the SRS
             in which the geometry is defined. */
-        std::optional<quint32> srid;
+        std::optional<quint32> srid = std::nullopt;
         /*! Number of digits before the decimal point for floating-point types. */
-        std::optional<int> total;
+        std::optional<int> total    = std::nullopt;
 
         /* Indexes - used by blueprint command for indexes or fluent indexes on column */
         /*! Add an index. */
-        std::variant<std::monostate, QString, bool> index;
+        std::variant<std::monostate, QString, bool> index        {};
         /*! Add a primary index. */
-        std::variant<std::monostate, QString, bool> primary;
+        std::variant<std::monostate, QString, bool> primary      {};
         /*! Add a fulltext index. */
-        std::variant<std::monostate, QString, bool> fulltext;
+        std::variant<std::monostate, QString, bool> fulltext     {};
         /*! Add a spatial index. */
-        std::variant<std::monostate, QString, bool> spatialIndex;
+        std::variant<std::monostate, QString, bool> spatialIndex {};
         /*! Add a unique index. */
-        std::variant<std::monostate, QString, bool> unique;
+        std::variant<std::monostate, QString, bool> unique       {};
 
         /* Column definition */
         /*! Determine "after" which column to place a current column (MySQL). */
-        QString after;
+        QString after         {};
         /*! Specify a character set for the column (MySQL). */
-        QString charset;
+        QString charset       {};
         /*! Specify a collation for the column (MySQL/PostgreSQL/SQL Server). */
-        QString collation;
+        QString collation     {};
         /*! Add a comment to the column (MySQL/PostgreSQL). */
-        QString comment;
+        QString comment       {};
         /*! Specify a "default" value for the column. */
-        QVariant defaultValue;
+        QVariant defaultValue {};
         /*! Set the starting value of an auto-incrementing field (MySQL / PostgreSQL). */
-        std::optional<quint64> from;
+        std::optional<quint64> from          = std::nullopt;
         /*! Set the starting value of an auto-incrementing field (MySQL / PostgreSQL). */
-        std::optional<quint64> startingValue;
+        std::optional<quint64> startingValue = std::nullopt;
         /*! Create a stored generated column (MySQL/PostgreSQL/SQLite). */
-        QString storedAs;
+        QString storedAs  {};
         /*! Create a virtual generated column (MySQL/PostgreSQL/SQLite). */
-        QString virtualAs;
+        QString virtualAs {};
 
         // Place boolean data members at the end to avoid excessive padding
         /*! Determine whether the INTEGER column is auto-increment (primary key). */
-        bool autoIncrement = false;
+        bool autoIncrement      = false;
         /*! Place the column "first" in the table (MySQL). */
-        bool first = false;
+        bool first              = false;
         /*! Specify that the column should be invisible to "SELECT *" (MySQL). */
-        bool invisible = false;
+        bool invisible          = false;
         /*! Determine whether the INTEGER column is UNSIGNED (MySQL). */
-        bool isUnsigned = false;
+        bool isUnsigned         = false;
         /*! Allow NULL values to be inserted into the column. */
-        bool nullable = false;
+        bool nullable           = false;
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP as default value. */
-        bool useCurrent = false;
+        bool useCurrent         = false;
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP when updating (MySQL). */
         bool useCurrentOnUpdate = false;
     };
@@ -187,7 +187,14 @@ namespace Orm::SchemaNs
        73KB.
        I have decided not to use polymorphic commands, I wanted to use
        designated initializers with aggregates, the consequence of this is
-       usage of reinterpret_cast() :/, but it works great. */
+       usage of reinterpret_cast() :/, but it works great.
+       I had to reject designated initializers with commands because of gcc throws
+       -Wmissing-field-initializers warning with aggregates that have a base class
+       even empty base class, so I had to use classic aggregate initialization with
+       commands, it's not a big deal as all data members of commands have to be
+       initialized anyway as command aggregate classes are tailor-made for a particular
+       commands. I didn't want to suppress this warning around every addCommand()
+       method call. */
 
 } // namespace Orm::SchemaNs
 

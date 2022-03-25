@@ -272,8 +272,8 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                                         const Blueprint &blueprint) const
 {
     // FUTURE concepts, somehow check that after reinterpret_cast<> is command_.name QString, i have tried but without success, I have added example to NOTES.txt silverqx
-    const auto &command_ = reinterpret_cast<const BasicCommand &>(command);
-    const auto &name = command_.name;
+    const auto &basicCommand = reinterpret_cast<const BasicCommand &>(command);
+    const auto &name = basicCommand.name;
 
     /* Helps to avoid declare all compileXx() methods with a DatabaseConenction &
        parameter, only the compileCreate() needs connection argument. */
@@ -289,14 +289,14 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
     const auto bind = [](auto &&compileMethod)
     {
         return [compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
-               (const MySqlSchemaGrammar &grammar, const Blueprint &blueprint,
-                const CommandDefinition &command) // clazy:exclude=function-args-by-value
+               (const MySqlSchemaGrammar &grammar, const Blueprint &blueprint_,
+                const CommandDefinition &command_) // clazy:exclude=function-args-by-value
         {
             /* Get type of a second parameter of compile method and cast to that type. */
-            const auto &command_ =
-                    reinterpret_cast<decltype (argumentType<1>(compileMethod))>(command);
+            const auto &castedCommand =
+                    reinterpret_cast<decltype (argumentType<1>(compileMethod))>(command_);
 
-            return std::invoke(compileMethod, grammar, blueprint, command_);
+            return std::invoke(compileMethod, grammar, blueprint_, castedCommand);
         };
     };
 

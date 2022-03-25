@@ -21,7 +21,9 @@ namespace Orm
         friend bool DatabaseManager::removeConnection(const QString &name);
 
         /*! Alias for the Blueprint. */
-        using Blueprint = SchemaNs::Blueprint;
+        using Blueprint     = SchemaNs::Blueprint;
+        /*! Alias for the schema builder. */
+        using SchemaBuilder = SchemaNs::SchemaBuilder;
 
     public:
         /*! Deleted default constructor, this is a pure library class. */
@@ -112,9 +114,6 @@ namespace Orm
         static void defaultStringLength(int length);
 
     private:
-        /*! Alias for the schema builder. */
-        using SchemaBuilder = SchemaNs::SchemaBuilder;
-
         /*! Get a reference to the SchemaBuilder. */
         static SchemaBuilder &schemaBuilder(const QString &connection = "");
         /*! Get a reference to the DatabaseManager. */

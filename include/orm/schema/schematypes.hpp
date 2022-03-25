@@ -22,6 +22,7 @@ namespace Orm::SchemaNs
     /*! Column types. */
     enum struct ColumnType
     {
+        Undefined = -1,
         Char,
         String,
         TinyText,

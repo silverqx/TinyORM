@@ -44,7 +44,8 @@ namespace Orm::SchemaNs
         /*! Reference to the schema builder blueprint instance. */
         std::reference_wrapper<Blueprint> m_blueprint;
         /*! Reference to a column definition. */
-        std::optional<ForeignKeyDefinitionReference> m_foreignKeyDefinitionReference;
+        std::optional<ForeignKeyDefinitionReference>
+                m_foreignKeyDefinitionReference = std::nullopt;
     };
 
     template<typename>

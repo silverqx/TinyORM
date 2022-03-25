@@ -24,7 +24,7 @@ namespace Grammars
 {
 
     /*! Database schema grammar base class. */
-    class SchemaGrammar : public BaseGrammar
+    class SHAREDLIB_EXPORT SchemaGrammar : public BaseGrammar
     {
         Q_DISABLE_COPY(SchemaGrammar)
 

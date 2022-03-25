@@ -611,9 +611,9 @@ void tst_Mysql_SchemaBuilder::getColumnListing() const
 {
     auto &connection = DB::connection(m_connection);
 
-    auto log = connection.pretend([](auto &connection)
+    auto log = connection.pretend([](auto &connection_)
     {
-        Schema::on(connection.getName()).getColumnListing(Firewalls);
+        Schema::on(connection_.getName()).getColumnListing(Firewalls);
     });
 
     QVERIFY(!log.isEmpty());
@@ -633,9 +633,9 @@ void tst_Mysql_SchemaBuilder::hasTable() const
 {
     auto &connection = DB::connection(m_connection);
 
-    auto log = connection.pretend([](auto &connection)
+    auto log = connection.pretend([](auto &connection_)
     {
-        Schema::on(connection.getName()).hasTable(Firewalls);
+        Schema::on(connection_.getName()).hasTable(Firewalls);
     });
 
     QVERIFY(!log.isEmpty());

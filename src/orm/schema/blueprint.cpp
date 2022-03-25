@@ -61,7 +61,7 @@ QVector<QString> Blueprint::toSql(const DatabaseConnection &connection,
 
 const BasicCommand &Blueprint::create()
 {
-    return addCommand(Create);
+    return addCommand({{}, Create});
 }
 
 void Blueprint::after(const QString &column,
@@ -76,24 +76,23 @@ void Blueprint::after(const QString &column,
 
 const BasicCommand &Blueprint::drop()
 {
-    return addCommand(Drop);
+    return addCommand({{}, Drop});
 }
 
 const BasicCommand &Blueprint::dropIfExists()
 {
-    return addCommand(DropIfExists);
+    return addCommand({{}, DropIfExists});
 }
 
 const DropColumnsCommand &Blueprint::dropColumns(const QVector<QString> &columns)
 {
     return addCommand<DropColumnsCommand>(
-                DropColumn,
-                {.columns = QVector<Column>(columns.cbegin(), columns.cend())});
+                {{}, DropColumn, QVector<Column>(columns.cbegin(), columns.cend())});
 }
 
 const DropColumnsCommand &Blueprint::dropColumn(const QString &column)
 {
-    return addCommand<DropColumnsCommand>(DropColumn, {.columns = {column}});
+    return addCommand<DropColumnsCommand>({{}, DropColumn, {column}});
 }
 
 void Blueprint::dropTimestamps()
@@ -103,63 +102,63 @@ void Blueprint::dropTimestamps()
 
 const RenameCommand &Blueprint::rename(const QString &to)
 {
-    return addCommand<RenameCommand>(Rename, {.to = to});
+    return addCommand<RenameCommand>({{}, Rename, {}, to});
 }
 
 const RenameCommand &Blueprint::renameColumn(const QString &from, const QString &to)
 {
-    return addCommand<RenameCommand>(RenameColumn, {.from = from, .to = to});
+    return addCommand<RenameCommand>({{}, RenameColumn, from, to});
 }
 
 const IndexCommand &
-Blueprint::primary(const QVector<QString> &columns, const QString &name,
+Blueprint::primary(const QVector<QString> &columns, const QString &indexName,
                    const QString &algorithm)
 {
-    return indexCommand(Primary, columns, name, algorithm);
+    return indexCommand(Primary, columns, indexName, algorithm);
 }
 
 const IndexCommand &
-Blueprint::unique(const QVector<QString> &columns, const QString &name,
+Blueprint::unique(const QVector<QString> &columns, const QString &indexName,
                   const QString &algorithm)
 {
-    return indexCommand(Unique, columns, name, algorithm);
+    return indexCommand(Unique, columns, indexName, algorithm);
 }
 
 const IndexCommand &
-Blueprint::index(const QVector<QString> &columns, const QString &name,
+Blueprint::index(const QVector<QString> &columns, const QString &indexName,
                  const QString &algorithm)
 {
-    return indexCommand(Index, columns, name, algorithm); // NOLINT(readability-suspicious-call-argument)
+    return indexCommand(Index, columns, indexName, algorithm); // NOLINT(readability-suspicious-call-argument)
 }
 
 const IndexCommand &
-Blueprint::fullText(const QVector<QString> &columns, const QString &name,
+Blueprint::fullText(const QVector<QString> &columns, const QString &indexName,
                     const QString &algorithm)
 {
-    return indexCommand(Fulltext, columns, name, algorithm);
+    return indexCommand(Fulltext, columns, indexName, algorithm);
 }
 
 // CUR schema, it looks like spatial index can not be created on multiple columns on mysql, if its true remove QVector overloads, error 1070 Too many key parts specified; max 1 parts allowed silverqx
 const IndexCommand &
-Blueprint::spatialIndex(const QVector<QString> &columns, const QString &name)
+Blueprint::spatialIndex(const QVector<QString> &columns, const QString &indexName)
 {
-    return indexCommand(SpatialIndex, columns, name);
+    return indexCommand(SpatialIndex, columns, indexName);
 }
 
 const IndexCommand &
-Blueprint::rawIndex(const Expression &expression, const QString &name)
+Blueprint::rawIndex(const Expression &expression, const QString &indexName)
 {
-    return addCommand<IndexCommand>(Index, {.index = name,
-                                                      .columns = {expression}});
+    return addCommand<IndexCommand>({{}, Index, indexName, {expression}});
 }
 
 ForeignKeyDefinitionReference
-Blueprint::foreign(const QVector<QString> &columns, const QString &name)
+Blueprint::foreign(const QVector<QString> &columns, const QString &indexName)
 {
     return addCommand<ForeignKeyCommand>(
-                Foreign, {.index = name.isEmpty() ? createIndexName(Foreign, columns)
-                                                  : name,
-                          .columns = QVector<Column>(columns.cbegin(), columns.cend())});
+                {{}, Foreign,
+                 indexName.isEmpty() ? createIndexName(Foreign, columns)
+                                     : indexName,
+                 QVector<Column>(columns.cbegin(), columns.cend())});
 
 }
 
@@ -202,7 +201,7 @@ const DropColumnsCommand &Blueprint::dropConstrainedForeignId(const QString &col
 
 const RenameCommand &Blueprint::renameIndex(const QString &from, const QString &to)
 {
-    return addCommand<RenameCommand>(RenameIndex, {.from = from, .to = to});
+    return addCommand<RenameCommand>({{}, RenameIndex, from, to});
 }
 
 ForeignIdColumnDefinitionReference Blueprint::foreignId(const QString &column)
@@ -440,6 +439,7 @@ ColumnDefinitionReference<> Blueprint::geometryCollection(const QString &column)
     return addColumn(ColumnType::GeometryCollection, column);
 }
 
+// CUR schema, ideal api to pass column by value and move silverqx
 ColumnDefinitionReference<> Blueprint::multiPoint(const QString &column)
 {
     return addColumn(ColumnType::MultiPoint, column);
@@ -474,15 +474,12 @@ ColumnDefinitionReference<> Blueprint::rememberToken()
 
 ColumnDefinitionReference<>
 Blueprint::addColumn(const ColumnType type, const QString &name,
-                     ColumnDefinition &&parameters)
+                     ColumnDefinition &&definition)
 {
-    // To be more clear
-    auto &columnDefinition = parameters;
+    definition.type = type;
+    definition.name = name;
 
-    columnDefinition.type = type;
-    columnDefinition.name = name;
-
-    return addColumnDefinition(std::move(columnDefinition));
+    return addColumnDefinition(std::move(definition));
 }
 
 QVector<ColumnDefinition> Blueprint::getAddedColumns() const
@@ -531,9 +528,10 @@ QVector<AutoIncrementColumnValue> Blueprint::autoIncrementStartingValues() const
 
     // CUR1 ranges, check all pred and proj, now I understand where I have to use auto & or auto &&, note in bash_or_cmd c++ sheet silverqx
     return addedColumns
-            | ranges::views::filter([](const auto addedColumn)
+            | ranges::views::filter([](const auto &addedColumn)
     {
-        return addedColumn.autoIncrement;
+        return addedColumn.autoIncrement &&
+                (addedColumn.startingValue || addedColumn.from);
     })
             | ranges::views::transform([](auto &addedColumn)
                                        -> AutoIncrementColumnValue
@@ -541,15 +539,11 @@ QVector<AutoIncrementColumnValue> Blueprint::autoIncrementStartingValues() const
         /* When value was not defined then init. it to std::nullopt and filter out
            in the next operator| chain. */
         return {std::move(addedColumn.name),
-                addedColumn.startingValue ? *addedColumn.startingValue
-                                          /* Default value if a startingValue was not
-                                             defined, can also be the std::nullopt. */
-                                          : addedColumn.from};
-    })
-        // Filter out items with std::nullopt values to avoid alter table autoIncrement 0
-        | ranges::views::filter([](auto &&autoIncrementColumnValue)
-    {
-        return autoIncrementColumnValue.value;
+                addedColumn.startingValue
+                    ? std::move(addedColumn.startingValue)
+                      /* Default value if a 'startingValue' was not defined, then use
+                         a 'from' value, can also be the std::nullopt. */
+                    : std::move(addedColumn.from)};
     })
         | ranges::to<QVector<AutoIncrementColumnValue>>();
 }
@@ -597,7 +591,7 @@ ColumnDefinitionReference<> Blueprint::addColumnDefinition(ColumnDefinition &&de
 void Blueprint::addImpliedCommands(const SchemaGrammar &/*unused*/)
 {
     if (!getAddedColumns().isEmpty() && !creating())
-        m_commands.emplace_front(createCommand<BasicCommand>(Add));
+        m_commands.emplace_front(createCommand<BasicCommand>({{}, Add}));
 
 //    if (!getChangedColumns().isEmpty() && !creating())
 //        m_commands.prepend(createCommand(Change));
@@ -673,10 +667,11 @@ Blueprint::indexCommand(const QString &type, const QVector<QString> &columns,
        index type, such as primary or index, which makes the index unique,
        eg. posts_user_id_foreign or users_name_unique. */
     return addCommand<IndexCommand>(
-                type, {.index = indexName.isEmpty() ? createIndexName(type, columns)
-                                                    : indexName,
-                       .columns = QVector<Column>(columns.cbegin(), columns.cend()),
-                       .algorithm = algorithm});
+                {{}, type,
+                 indexName.isEmpty() ? createIndexName(type, columns)
+                                     : indexName,
+                 QVector<Column>(columns.cbegin(), columns.cend()),
+                 algorithm});
 }
 
 const IndexCommand &
@@ -695,9 +690,9 @@ Blueprint::dropIndexCommand(const QString &command, const QString &type,
 
 // NOTE api different, Eloquent doesn't have overload like this silverqx
 const IndexCommand &
-Blueprint::dropIndexCommand(const QString &command, const QString &index)
+Blueprint::dropIndexCommand(const QString &command, const QString &indexName)
 {
-    return indexCommand(command, {}, index);
+    return indexCommand(command, {}, indexName);
 }
 
 QString
