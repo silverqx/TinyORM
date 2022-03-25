@@ -122,9 +122,11 @@ QString PostgresConnector::formatSchema(QStringList schema) const
 {
     /* A schema configuration option can be passed as QString and also
        as QStringList at once. */
-    if (schema.size() == 1)
-        schema = schema.at(0).trimmed()
-                 .split(QRegularExpression("\\s*(?:,|;)\\s*"), Qt::SkipEmptyParts);
+    if (schema.size() == 1) {
+        QRegularExpression regex("\\s*(?:,|;)\\s*");
+
+        schema = schema.at(0).trimmed().split(regex, Qt::SkipEmptyParts);
+    }
 
     // Really nice 😎
     return QStringLiteral("\"%1\"").arg(schema.join(QLatin1String("\", \"")));

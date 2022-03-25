@@ -36,22 +36,22 @@ QString Type::prettyFunction(const QString &function)
     /* I can leave RegEx here because this function is used only during throwing
        exceptions, so there would not be any performance benefit. */
 #ifdef __GNUG__
-    QRegularExpression re(QStringLiteral(
-                              "(?:.* )?(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)\\(.*\\)"));
+    QRegularExpression regex(QStringLiteral(
+                                 "(?:.* )?(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)\\(.*\\)"));
 #elif _MSC_VER
-    QRegularExpression re(QStringLiteral(
-                              "(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)(?:$|::<lambda)"));
+    QRegularExpression regex(QStringLiteral(
+                                 "(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)(?:$|::<lambda)"));
 #else
     throw RuntimeError(
                 "Unsupported compiler in Utils::Type::prettyFunction().");
 #endif
 
-    const auto match = re.match(function);
+    const auto match = regex.match(function);
 
     // This should never happen, but who knows 🤔
     Q_ASSERT_X(match.hasMatch(), "regex match",
                "Can not get the function name in Utils::Type::prettyFunction().");
-    Q_ASSERT_X(re.captureCount() == 2, "regex match",
+    Q_ASSERT_X(regex.captureCount() == 2, "regex match",
                "Can not get the function name in Utils::Type::prettyFunction().");
 
     return QStringLiteral("%1::%2").arg(match.captured(1), match.captured(2));
