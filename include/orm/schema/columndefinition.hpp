@@ -73,7 +73,7 @@ namespace Orm::SchemaNs
         QString algorithm {};
     };
 
-    /*! Foreign key constrains command. */
+    /*! Foreign key constraints command. */
     class ForeignKeyCommand : public CommandDefinition
     {
     public:
@@ -184,7 +184,8 @@ namespace Orm::SchemaNs
        own struct for every or very similar commands. They are now allocated
        on the heap to save space because sizeof(ColumnDefinition) was 736 and
        that is too much, eg. if schema would contain 100 columns it would take
-       73KB.
+       73KB. After a commands extraction sizeof(ColumnDefinition) have decreased
+       to 496 bytes (~40% decrease) 😁.
        I have decided not to use polymorphic commands, I wanted to use
        designated initializers with aggregates, the consequence of this is
        usage of reinterpret_cast() :/, but it works great.

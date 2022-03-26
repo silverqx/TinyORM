@@ -43,7 +43,7 @@ namespace Constants
     SHAREDLIB_EXPORT extern const QString SpatialIndex;
     SHAREDLIB_EXPORT extern const QString Foreign;
 
-    // Foreign constrains
+    // Foreign constraints
     SHAREDLIB_EXPORT extern const QString Cascade;
     SHAREDLIB_EXPORT extern const QString Restrict;
     SHAREDLIB_EXPORT extern const QString SetNull;

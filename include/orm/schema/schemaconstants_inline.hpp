@@ -43,7 +43,7 @@ namespace Constants
     inline const QString SpatialIndex = QStringLiteral("spatialIndex");
     inline const QString Foreign      = QStringLiteral("foreign");
 
-    // Foreign constrains
+    // Foreign constraints
     inline const QString Cascade  = QStringLiteral("cascade");
     inline const QString Restrict = QStringLiteral("restrict");
     inline const QString SetNull  = QStringLiteral("set null");

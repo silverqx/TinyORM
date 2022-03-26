@@ -30,7 +30,7 @@ namespace Orm::SchemaNs::Constants
     const QString SpatialIndex = QStringLiteral("spatialIndex");
     const QString Foreign      = QStringLiteral("foreign");
 
-    // Foreign constrains
+    // Foreign constraints
     const QString Cascade  = QStringLiteral("cascade");
     const QString Restrict = QStringLiteral("restrict");
     const QString SetNull  = QStringLiteral("set null");

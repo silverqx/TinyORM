@@ -470,7 +470,7 @@ namespace Orm::Tiny::Concerns
             Look at the Relation::m_parent for additional info. */
         auto dummyModel = this->m_hasRelationStore.model().newInstance();
 
-        /* We want to run a relationship query without any constrains so that we will
+        /* We want to run a relationship query without any constraints so that we will
            not have to remove these where clauses manually which gets really hacky
            and error prone. We don't want constraints because we add eager ones. */
         auto relationInstance =
@@ -636,7 +636,7 @@ namespace Orm::Tiny::Concerns
                     "How did this happen? Is a mystery 😎, a Related type has to be "
                     "the same as a RelatedFromMethod.");
 
-        // We want to run a relationship query without any constrains
+        // We want to run a relationship query without any constraints
         auto relationInstance =
                 Relations::Relation<Derived, RelatedFromMethod>::noConstraints(
                     [this, &method]
