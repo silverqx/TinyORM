@@ -40,6 +40,8 @@ To create a new database table, use the `create` method on the `Schema` facade. 
 
     #include <orm/schema.hpp>
 
+    using Orm::Schema;
+
     Schema::create("users", [](Blueprint &table)
     {
         table.id();

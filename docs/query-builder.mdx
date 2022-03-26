@@ -61,6 +61,8 @@ The `get` method returns a `QSqlQuery` containing the results of the query where
 
     #include <orm/db.hpp>
 
+    using Orm::DB;
+
     auto users = DB::table("users")->get();
 
     while(users.next())

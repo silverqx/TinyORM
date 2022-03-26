@@ -31,6 +31,8 @@ You can create and configure new database connection by `create` method provided
 
     #include <orm/db.hpp>
 
+    using Orm::DB;
+
     // Ownership of a shared_ptr()
     auto manager = DB::create({
         {"driver",    "QMYSQL"},
