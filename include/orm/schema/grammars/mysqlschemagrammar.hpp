@@ -29,6 +29,9 @@ namespace Grammars
         /*! Virtual destructor. */
         inline ~MySqlSchemaGrammar() override = default;
 
+        /*! Check if this Grammar supports schema changes wrapped in a transaction. */
+        inline bool supportsSchemaTransactions() const noexcept override;
+
         /* Compile methods for the SchemaBuilder */
         /*! Compile a create database command. */
         QString compileCreateDatabase(const QString &name,
@@ -271,6 +274,11 @@ namespace Grammars
         /*! Get the SQL for a SRID column modifier. */
         QString modifySrid(const ColumnDefinition &column) const;
     };
+
+    bool MySqlSchemaGrammar::supportsSchemaTransactions() const noexcept
+    {
+        return false;
+    }
 
     QVector<QString>
     MySqlSchemaGrammar::compileDropUnique(const Blueprint &blueprint,

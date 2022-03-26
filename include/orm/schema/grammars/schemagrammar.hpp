@@ -34,6 +34,9 @@ namespace Grammars
         /*! Pure virtual destructor. */
         inline ~SchemaGrammar() override = 0;
 
+        /*! Check if this Grammar supports schema changes wrapped in a transaction. */
+        virtual bool supportsSchemaTransactions() const noexcept = 0;
+
         /* Compile methods for the SchemaBuilder */
         /*! Compile a create database command. */
         virtual QString compileCreateDatabase(const QString &name,
@@ -77,6 +80,7 @@ namespace Grammars
         compileDropFullText(const Blueprint &blueprint,
                             const IndexCommand &command) const;
 
+        /* Others */
         /*! Wrap a value in keyword identifiers. */
         QString wrap(const ColumnDefinition &column, bool prefixAlias = false) const;
         /*! Wrap a table in keyword identifiers. */

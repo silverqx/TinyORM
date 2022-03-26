@@ -23,6 +23,9 @@ namespace Orm::SchemaNs::Grammars
         /*! Virtual destructor. */
         inline ~PostgresSchemaGrammar() override = default;
 
+        /*! Check if this Grammar supports schema changes wrapped in a transaction. */
+        inline bool supportsSchemaTransactions() const noexcept override;
+
         /* Compile methods for the SchemaBuilder */
         /*! Compile the command to enable foreign key constraints. */
         QString compileEnableForeignKeyConstraints() const override;
@@ -52,6 +55,11 @@ namespace Orm::SchemaNs::Grammars
         /*! Get the SQL for the column data type. */
         QString getType(const ColumnDefinition &column) const override;
     };
+
+    bool PostgresSchemaGrammar::supportsSchemaTransactions() const noexcept
+    {
+        return true;
+    }
 
 } // namespace Orm::SchemaNs::Grammars
 
