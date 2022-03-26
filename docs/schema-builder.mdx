@@ -1,0 +1,846 @@
+---
+sidebar_position: 7
+description: The TinyORM Schema facade provides database agnostic support for creating and manipulating tables across all of TinyORM's supported database systems. Typically, migrations will use this facade to create and modify database tables and columns.
+---
+
+import APITable from '@theme/APITable'
+
+# Database: Schema Builder
+
+- [Introduction](#introduction)
+- [Tables](#tables)
+    - [Creating Tables](#creating-tables)
+    - [Updating Tables](#updating-tables)
+    - [Renaming / Dropping Tables](#renaming-and-dropping-tables)
+- [Columns](#columns)
+    - [Creating Columns](#creating-columns)
+    - [Available Column Types](#available-column-types)
+    - [Column Modifiers](#column-modifiers)
+    - [Modifying Columns](#modifying-columns)
+    - [Dropping Columns](#dropping-columns)
+- [Indexes](#indexes)
+    - [Creating Indexes](#creating-indexes)
+    - [Renaming Indexes](#renaming-indexes)
+    - [Dropping Indexes](#dropping-indexes)
+    - [Foreign Key Constraints](#foreign-key-constraints)
+
+## Introduction
+
+The TinyORM `Schema` facade provides database agnostic support for creating and manipulating tables across all of TinyORM's supported database systems. Typically, migrations will use this facade to create and modify database tables and columns.
+
+:::caution
+Currently, TinyORM's schema builder provides first-party support for the MySQL database only. Support for the PostgreSQL and SQLite databases is not implemented 😢.
+:::
+
+## Tables
+
+### Creating Tables
+
+To create a new database table, use the `create` method on the `Schema` facade. The `create` method accepts two arguments: the first is the name of the table, while the second is a lambda expression which receives a `Orm::SchemaNs::Blueprint` object that may be used to define the new table:
+
+    #include <orm/schema.hpp>
+
+    Schema::create("users", [](Blueprint &table)
+    {
+        table.id();
+        table.string("name");
+        table.string("email");
+        table.timestamps();
+    });
+
+When creating the table, you may use any of the schema builder's [column methods](#creating-columns) to define the table's columns.
+
+#### Checking For Table / Column Existence
+
+You may check for the existence of a table or column using the `hasTable` and `hasColumn` methods:
+
+    if (Schema::hasTable("users")) {
+        // The "users" table exists...
+    }
+
+    if (Schema::hasColumn("users", "email")) {
+        // The "users" table exists and has an "email" column...
+    }
+
+#### Database Connection & Table Options
+
+If you want to perform a schema operation on a database connection that is not your application's default connection, use the `connection` method or `on` alias:
+
+    Schema::connection("sqlite").create("users", [](Blueprint &table)
+    {
+        table.id();
+    });
+
+In addition, a few other data members and methods may be used to define other aspects of the table's creation. The `engine` data member may be used to specify the table's storage engine when using MySQL:
+
+    #include <orm/constants.hpp>
+
+    Schema::create("users", [](Blueprint &table)
+    {
+        table.engine = Orm::InnoDB;
+
+        // ...
+    });
+
+The `charset` and `collation` data members may be used to specify the character set and collation for the created table when using MySQL:
+
+    #include <orm/constants.hpp>
+
+    using Orm::Constants::UTF8MB4;
+
+    Schema::create("users", [](Blueprint &table)
+    {
+        table.charset = UTF8MB4;
+        table.collation = "utf8mb4_unicode_ci";
+
+        // ...
+    });
+
+The `temporary` method may be used to indicate that the table should be "temporary". Temporary tables are only visible to the current connection's database session and are dropped automatically when the connection is closed:
+
+    Schema::create("calculations", [](Blueprint &table)
+    {
+        table.temporary();
+
+        // ...
+    });
+
+### Updating Tables
+
+The `table` method on the `Schema` facade may be used to update existing tables. Like the `create` method, the `table` method accepts two arguments: the name of the table and a lambda expression that receives a `Blueprint` instance you may use to add columns or indexes to the table:
+
+    #include <orm/schema.hpp>
+
+    Schema::table("users", [](Blueprint &table)
+    {
+        table.integer("votes");
+    });
+
+### Renaming / Dropping Tables {#renaming-and-dropping-tables}
+
+To rename an existing database table, use the `rename` method:
+
+    #include <orm/schema.hpp>
+
+    Schema::rename(from, to);
+
+To drop an existing table, you may use the `drop` or `dropIfExists` methods:
+
+    Schema::drop("users");
+
+    Schema::dropIfExists("users");
+
+#### Renaming Tables With Foreign Keys
+
+Before renaming a table, you should verify that any foreign key constraints on the table have an explicit name in your migration files instead of letting TinyORM assign a convention based name. Otherwise, the foreign key constraint __index name__ will refer to the old table name.
+
+:::tip
+After renaming a table, you can re-create (drop and create again) the foreign key constraints to fix an __index name__, so it refers to a renamed table.
+:::
+
+## Columns
+
+### Creating Columns
+
+The `table` method on the `Schema` facade may be used to update existing tables. Like the `create` method, the `table` method accepts two arguments: the name of the table and a lambda expression that receives a `Blueprint` instance you may use to add columns to the table:
+
+    #include <orm/schema.hpp>
+
+    Schema::table("users", [](Blueprint &table)
+    {
+        table.integer("votes");
+    });
+
+### Available Column Types
+
+The schema builder blueprint offers a variety of methods that correspond to the different types of columns you can add to your database tables. Each of the available methods are listed in the table below:
+
+<div id="collection-method-list" markdown="1">
+
+[bigIncrements](#column-method-bigIncrements)
+[bigInteger](#column-method-bigInteger)
+[binary](#column-method-binary)
+[boolean](#column-method-boolean)
+[Char](#column-method-Char)
+[dateTimeTz](#column-method-dateTimeTz)
+[dateTime](#column-method-dateTime)
+[date](#column-method-date)
+[decimal](#column-method-decimal)
+[Double](#column-method-Double)
+[Enum](#column-method-Enum)
+[Float](#column-method-Float)
+[foreignId](#column-method-foreignId)
+[foreignIdFor](#column-method-foreignIdFor)
+[foreignUuid](#column-method-foreignUuid)
+[geometryCollection](#column-method-geometryCollection)
+[geometry](#column-method-geometry)
+[id](#column-method-id)
+[increments](#column-method-increments)
+[integer](#column-method-integer)
+[ipAddress](#column-method-ipAddress)
+[json](#column-method-json)
+[jsonb](#column-method-jsonb)
+[lineString](#column-method-lineString)
+[longText](#column-method-longText)
+[macAddress](#column-method-macAddress)
+[mediumIncrements](#column-method-mediumIncrements)
+[mediumInteger](#column-method-mediumInteger)
+[mediumText](#column-method-mediumText)
+[multiLineString](#column-method-multiLineString)
+[multiPoint](#column-method-multiPoint)
+[multiPolygon](#column-method-multiPolygon)
+[point](#column-method-point)
+[polygon](#column-method-polygon)
+[rememberToken](#column-method-rememberToken)
+[set](#column-method-set)
+[smallIncrements](#column-method-smallIncrements)
+[smallInteger](#column-method-smallInteger)
+[string](#column-method-string)
+[text](#column-method-text)
+[timeTz](#column-method-timeTz)
+[time](#column-method-time)
+[timestampTz](#column-method-timestampTz)
+[timestamp](#column-method-timestamp)
+[timestampsTz](#column-method-timestampsTz)
+[timestamps](#column-method-timestamps)
+[tinyIncrements](#column-method-tinyIncrements)
+[tinyInteger](#column-method-tinyInteger)
+[tinyText](#column-method-tinyText)
+[unsignedBigInteger](#column-method-unsignedBigInteger)
+[unsignedDecimal](#column-method-unsignedDecimal)
+[unsignedInteger](#column-method-unsignedInteger)
+[unsignedMediumInteger](#column-method-unsignedMediumInteger)
+[unsignedSmallInteger](#column-method-unsignedSmallInteger)
+[unsignedTinyInteger](#column-method-unsignedTinyInteger)
+[uuid](#column-method-uuid)
+[year](#column-method-year)
+
+</div>
+
+:::info
+Names of `Char`, `Double`, `Enum`, and `Float` column methods are in the CamelCase format to avoid collisions with c++ keywords.
+:::
+
+<div id="collection-methods" markdown="1">
+
+#### `bigIncrements()` {#column-method-bigIncrements}
+
+The `bigIncrements` method creates an auto-incrementing `UNSIGNED BIGINT` (primary key) equivalent column:
+
+    #include <orm/constants.hpp>
+
+    table.bigIncrements(Orm::ID);
+
+#### `bigInteger()` {#column-method-bigInteger}
+
+The `bigInteger` method creates a `BIGINT` equivalent column:
+
+    table.bigInteger("votes");
+
+#### `binary()` {#column-method-binary}
+
+The `binary` method creates a `BLOB` equivalent column:
+
+    table.binary("photo");
+
+#### `boolean()` {#column-method-boolean}
+
+The `boolean` method creates a `BOOLEAN` equivalent column:
+
+    table.boolean("confirmed");
+
+#### `Char()` {#column-method-Char}
+
+The `Char` method creates a `CHAR` equivalent column with of a given length:
+
+    #include <orm/constants.hpp>
+
+    table.Char(Orm::NAME, 100);
+
+#### `dateTimeTz()` {#column-method-dateTimeTz}
+
+The `dateTimeTz` method creates a `DATETIME` (with timezone) equivalent column with an optional precision (total digits):
+
+    #include <orm/constants.hpp>
+
+    table.dateTimeTz(Orm::CREATED_AT, precision = 0);
+
+#### `dateTime()` {#column-method-dateTime}
+
+The `dateTime` method creates a `DATETIME` equivalent column with an optional precision (total digits):
+
+    table.dateTime("created_at", precision = 0);
+
+#### `date()` {#column-method-date}
+
+The `date` method creates a `DATE` equivalent column:
+
+    table.date("created_at");
+
+#### `decimal()` {#column-method-decimal}
+
+The `decimal` method creates a `DECIMAL` equivalent column with the given precision (total digits) and scale (decimal digits):
+
+    table.decimal("amount", precision = 8, scale = 2);
+
+#### `Double()` {#column-method-Double}
+
+The `Double` method creates a `DOUBLE` equivalent column with the given precision (total digits) and scale (decimal digits):
+
+    table.Double("amount", 8, 2);
+
+#### `Enum()` {#column-method-Enum}
+
+The `Enum` method creates a `ENUM` equivalent column with the given valid values:
+
+    table.Enum("difficulty", {"easy", "hard"});
+
+#### `Float()` {#column-method-Float}
+
+The `Float` method creates a `FLOAT` equivalent column with the given precision (total digits) and scale (decimal digits):
+
+    table.Float("amount", 8, 2);
+
+#### `foreignId()` {#column-method-foreignId}
+
+The `foreignId` method creates an `UNSIGNED BIGINT` equivalent column:
+
+    table.foreignId("user_id");
+
+#### `foreignIdFor()` {#column-method-foreignIdFor}
+
+The `foreignIdFor` method adds a `{column}_id UNSIGNED BIGINT` equivalent column for a given model class:
+
+    #include "models/user.hpp"
+
+    Models::User user;
+
+    table.foreignIdFor(User);
+
+#### `foreignUuid()` {#column-method-foreignUuid}
+
+The `foreignUuid` method creates a `UUID` equivalent column:
+
+    table.foreignUuid("user_id");
+
+#### `geometryCollection()` {#column-method-geometryCollection}
+
+The `geometryCollection` method creates a `GEOMETRYCOLLECTION` equivalent column:
+
+    table.geometryCollection("positions");
+
+#### `geometry()` {#column-method-geometry}
+
+The `geometry` method creates a `GEOMETRY` equivalent column:
+
+    table.geometry("positions");
+
+#### `id()` {#column-method-id}
+
+The `id` method is an alias of the `bigIncrements` method. By default, the method will create an `id` column; however, you may pass a column name if you would like to assign a different name to the column:
+
+    table.id();
+
+#### `increments()` {#column-method-increments}
+
+The `increments` method creates an auto-incrementing `UNSIGNED INTEGER` equivalent column as a primary key:
+
+    table.increments("id");
+
+#### `integer()` {#column-method-integer}
+
+The `integer` method creates an `INTEGER` equivalent column:
+
+    table.integer("votes");
+
+#### `ipAddress()` {#column-method-ipAddress}
+
+The `ipAddress` method creates a `VARCHAR(45)` equivalent column:
+
+    table.ipAddress("visitor");
+
+#### `json()` {#column-method-json}
+
+The `json` method creates a `JSON` equivalent column:
+
+    table.json("options");
+
+#### `jsonb()` {#column-method-jsonb}
+
+The `jsonb` method creates a `JSONB` equivalent column:
+
+    table.jsonb("options");
+
+#### `lineString()` {#column-method-lineString}
+
+The `lineString` method creates a `LINESTRING` equivalent column:
+
+    table.lineString("positions");
+
+#### `longText()` {#column-method-longText}
+
+The `longText` method creates a `LONGTEXT` equivalent column:
+
+    table.longText("description");
+
+#### `macAddress()` {#column-method-macAddress}
+
+The `macAddress` method creates a column that is intended to hold a MAC address. Some database systems, such as PostgreSQL, have a dedicated column type for this type of data. Other database systems will use a string equivalent `VARCHAR(17)` column:
+
+    table.macAddress("device");
+
+#### `mediumIncrements()` {#column-method-mediumIncrements}
+
+The `mediumIncrements` method creates an auto-incrementing `UNSIGNED MEDIUMINT` equivalent column as a primary key:
+
+    table.mediumIncrements("id");
+
+#### `mediumInteger()` {#column-method-mediumInteger}
+
+The `mediumInteger` method creates a `MEDIUMINT` equivalent column:
+
+    table.mediumInteger("votes");
+
+#### `mediumText()` {#column-method-mediumText}
+
+The `mediumText` method creates a `MEDIUMTEXT` equivalent column:
+
+    table.mediumText("description");
+
+#### `multiLineString()` {#column-method-multiLineString}
+
+The `multiLineString` method creates a `MULTILINESTRING` equivalent column:
+
+    table.multiLineString("positions");
+
+#### `multiPoint()` {#column-method-multiPoint}
+
+The `multiPoint` method creates a `MULTIPOINT` equivalent column:
+
+    table.multiPoint("positions");
+
+#### `multiPolygon()` {#column-method-multiPolygon}
+
+The `multiPolygon` method creates a `MULTIPOLYGON` equivalent column:
+
+    table.multiPolygon("positions");
+
+#### `point()` {#column-method-point}
+
+The `point` method creates a `POINT` equivalent column:
+
+    table.point("position");
+
+#### `polygon()` {#column-method-polygon}
+
+The `polygon` method creates a `POLYGON` equivalent column:
+
+    table.polygon("position");
+
+#### `rememberToken()` {#column-method-rememberToken}
+
+The `rememberToken` method creates a nullable, `VARCHAR(100)` equivalent column that is intended to store the current "remember me" authentication token:
+
+    table.rememberToken();
+
+#### `set()` {#column-method-set}
+
+The `set` method creates a `SET` equivalent column with the given list of valid values:
+
+    table.set("flavors", {"strawberry", "vanilla"});
+
+#### `smallIncrements()` {#column-method-smallIncrements}
+
+The `smallIncrements` method creates an auto-incrementing `UNSIGNED SMALLINT` equivalent column as a primary key:
+
+    table.smallIncrements("id");
+
+#### `smallInteger()` {#column-method-smallInteger}
+
+The `smallInteger` method creates a `SMALLINT` equivalent column:
+
+    table.smallInteger("votes");
+
+#### `string()` {#column-method-string}
+
+The `string` method creates a `VARCHAR` equivalent column of the given length:
+
+    #include <orm/constants.hpp>
+
+    table.string(Orm::NAME, 100);
+
+#### `text()` {#column-method-text}
+
+The `text` method creates a `TEXT` equivalent column:
+
+    table.text("description");
+
+#### `timeTz()` {#column-method-timeTz}
+
+The `timeTz` method creates a `TIME` (with timezone) equivalent column with an optional precision (total digits):
+
+    table.timeTz("sunrise", precision = 0);
+
+#### `time()` {#column-method-time}
+
+The `time` method creates a `TIME` equivalent column with an optional precision (total digits):
+
+    table.time("sunrise", precision = 0);
+
+#### `timestampTz()` {#column-method-timestampTz}
+
+The `timestampTz` method creates a `TIMESTAMP` (with timezone) equivalent column with an optional precision (total digits):
+
+    table.timestampTz("added_at", precision = 0);
+
+#### `timestamp()` {#column-method-timestamp}
+
+The `timestamp` method creates a `TIMESTAMP` equivalent column with an optional precision (total digits):
+
+    table.timestamp("added_at", precision = 0);
+
+#### `timestampsTz()` {#column-method-timestampsTz}
+
+The `timestampsTz` method creates `created_at` and `updated_at` `TIMESTAMP` (with timezone) equivalent columns with an optional precision (total digits):
+
+    table.timestampsTz(precision = 0);
+
+#### `timestamps()` {#column-method-timestamps}
+
+The `timestamps` method creates `created_at` and `updated_at` `TIMESTAMP` equivalent columns with an optional precision (total digits):
+
+    table.timestamps(precision = 0);
+
+#### `tinyIncrements()` {#column-method-tinyIncrements}
+
+The `tinyIncrements` method creates an auto-incrementing `UNSIGNED TINYINT` equivalent column as a primary key:
+
+    table.tinyIncrements("id");
+
+#### `tinyInteger()` {#column-method-tinyInteger}
+
+The `tinyInteger` method creates a `TINYINT` equivalent column:
+
+    table.tinyInteger("votes");
+
+#### `tinyText()` {#column-method-tinyText}
+
+The `tinyText` method creates a `TINYTEXT` equivalent column:
+
+    table.tinyText("notes");
+
+#### `unsignedBigInteger()` {#column-method-unsignedBigInteger}
+
+The `unsignedBigInteger` method creates an `UNSIGNED BIGINT` equivalent column:
+
+    table.unsignedBigInteger("votes");
+
+#### `unsignedDecimal()` {#column-method-unsignedDecimal}
+
+The `unsignedDecimal` method creates an `UNSIGNED DECIMAL` equivalent column with an optional precision (total digits) and scale (decimal digits):
+
+    table.unsignedDecimal("amount", precision = 8, scale = 2);
+
+#### `unsignedInteger()` {#column-method-unsignedInteger}
+
+The `unsignedInteger` method creates an `UNSIGNED INTEGER` equivalent column:
+
+    table.unsignedInteger("votes");
+
+#### `unsignedMediumInteger()` {#column-method-unsignedMediumInteger}
+
+The `unsignedMediumInteger` method creates an `UNSIGNED MEDIUMINT` equivalent column:
+
+    table.unsignedMediumInteger("votes");
+
+#### `unsignedSmallInteger()` {#column-method-unsignedSmallInteger}
+
+The `unsignedSmallInteger` method creates an `UNSIGNED SMALLINT` equivalent column:
+
+    table.unsignedSmallInteger("votes");
+
+#### `unsignedTinyInteger()` {#column-method-unsignedTinyInteger}
+
+The `unsignedTinyInteger` method creates an `UNSIGNED TINYINT` equivalent column:
+
+    table.unsignedTinyInteger("votes");
+
+#### `uuid()` {#column-method-uuid}
+
+The `uuid` method creates a `UUID` equivalent column:
+
+    table.uuid("id");
+
+#### `year()` {#column-method-year}
+
+The `year` method creates a `YEAR` equivalent column:
+
+    table.year("birth_year");
+
+</div>
+
+### Column Modifiers
+
+In addition to the column types listed above, there are several column "modifiers" you may use when adding a column to a database table. For example, to make the column "nullable", you may use the `nullable` method:
+
+    #include <orm/schema.hpp>
+
+    Schema::table("users", [](Blueprint &table)
+    {
+        table.string("email").nullable();
+    });
+
+The following table contains all of the available column modifiers. This list does not include [index modifiers](#creating-indexes):
+
+| Modifier                   | Description |
+| -------------------------- | ----------- |
+| `.after("column")`         | Place the column "after" another column (MySQL). |
+| `.autoIncrement()`         | Set INTEGER columns as auto-incrementing (primary key). |
+| `.charset("utf8mb4")`      | Specify a character set for the column (MySQL). |
+| <small>`.collation("utf8mb4_unicode_ci")`</small> | Specify a collation for the column (MySQL/PostgreSQL/SQL Server). |
+| `.comment("my comment")`   | Add a comment to a column (MySQL/PostgreSQL). |
+| `.default(value)`          | Specify a "default" value for the column. |
+| `.first()`                 | Place the column "first" in the table (MySQL). |
+| `.from(integer)`           | Set the starting value of an auto-incrementing field, an alias for `startingValue()` (MySQL / PostgreSQL). |
+| `.invisible()`             | Make the column "invisible" to `SELECT *` queries (MySQL). |
+| `.nullable(value = true)`  | Allow NULL values to be inserted into the column. |
+| `.startingValue(integer)`  | Set the starting value of an auto-incrementing field (MySQL / PostgreSQL). |
+| `.storedAs(expression)`    | Create a stored generated column (MySQL / PostgreSQL). |
+| `.unsigned()`              | Set INTEGER columns as UNSIGNED (MySQL). |
+| `.useCurrent()`            | Set TIMESTAMP columns to use CURRENT_TIMESTAMP as default value. |
+| `.useCurrentOnUpdate()`    | Set TIMESTAMP columns to use CURRENT_TIMESTAMP when a record is updated. |
+| `.virtualAs(expression)`   | Create a virtual generated column (MySQL). |
+| `.generatedAs(expression)` | Create an identity column with specified sequence options (PostgreSQL). |
+| `.always()`                | Defines the precedence of sequence values over input for an identity column (PostgreSQL). |
+| `.isGeometry()`            |  Set spatial column type to `geometry` - the default type is `geography` (PostgreSQL). |
+
+#### Default Expressions
+
+The `default` modifier accepts a value or an `Orm::Query::Expression` instance. Using an `Expression` instance will prevent TinyORM from wrapping the value in quotes and allow you to use database specific functions. One situation where this is particularly useful is when you need to assign default values to JSON columns:
+
+    #include <orm/schema.hpp>
+
+    using Orm::Query::Expression;
+
+    Schema::create("flights", [](Blueprint &table)
+    {
+        table.id();
+        table.json("detail").default(Expression("(JSON_ARRAY('none'))"));
+        table.timestamps();
+    });
+
+:::note
+Support for default expressions depends on your database driver, database version, and the field type. Please refer to your database's documentation.
+:::
+
+:::tip
+You can obtain an `Orm::Query::Expression` using the [`DB::raw`](query-builder.mdx#raw-expressions) method if you have access to the `DB` facade.
+:::
+
+#### Column Order
+
+When using the MySQL database, the `after` method may be used to add columns after an existing column in the schema:
+
+    table.after("password", [](Blueprint &table)
+    {
+        table.string("address_line1");
+        table.string("address_line2");
+        table.string("city");
+    });
+
+### Modifying Columns
+
+Not implemented.
+
+#### Renaming Columns
+
+To rename a column, you may use the `renameColumn` method provided by the schema builder blueprint:
+
+    Schema::table("users", [](Blueprint &table)
+    {
+        table.renameColumn("from", "to");
+    });
+
+### Dropping Columns
+
+To drop a column, you may use the `dropColumn` method on the schema builder blueprint:
+
+    Schema::table("users", [](Blueprint &table)
+    {
+        table.dropColumn("votes");
+    });
+
+You may drop multiple columns from a table by passing a `QVector<QString>` of column names to the `dropColumns` method, the `dropColumns` method also provides parameter pack overload:
+
+    Schema::table("users", [](Blueprint &table)
+    {
+        table.dropColumns({"votes", "avatar", "location"});
+        // Parameter pack overload
+        table.dropColumns("votes", "avatar", "location");
+    });
+
+#### Available Command Aliases
+
+TinyORM provides several convenient methods related to dropping common types of columns. Each of these methods is described in the table below:
+
+| Command                          | Description |
+| -------------------------------- | ----------- |
+| `table.dropRememberToken();`     | Drop the `remember_token` column. |
+| `table.dropTimestamps();`        | Drop the `created_at` and `updated_at` columns. |
+| `table.dropTimestampsTz();`      | Alias of `dropTimestamps()` method. |
+
+## Indexes
+
+### Creating Indexes
+
+The TinyORM schema builder supports several types of indexes. The following example creates a new `email` column and specifies that its values should be unique. To create the index, we can chain the `unique` method onto the column definition:
+
+    #include <orm/schema.hpp>
+
+    Schema::table("users", [](Blueprint &table)
+    {
+        table.string("email").unique();
+    });
+
+Alternatively, you may create the index after defining the column. To do so, you should call the `unique` method on the schema builder blueprint. This method accepts the name of the column that should receive a unique index:
+
+    table.unique("email");
+
+You may even pass a `QVector<QString>` of columns to an index method to create a compound (or composite) index:
+
+    table.index({"account_id", "created_at"});
+
+When creating an index, TinyORM will automatically generate an index name based on the table, column names, and the index type (eg. users_email_unique), but you may pass a second argument to the method to specify the index name yourself:
+
+    table.unique("email", "unique_email");
+
+#### Available Index Types
+
+TinyORM's schema builder blueprint class provides methods for creating each type of index supported by TinyORM. Each index method accepts an optional second argument to specify the name of the index. If omitted, the name will be derived from the names of the table and column(s) used for the index, as well as the index type (eg. users_email_fulltext). Each of the available index methods is described in the table below:
+
+| Command                                       | Description |
+| ------------------------------------- | ----------- |
+| `table.primary("id");`                | Adds a primary key. |
+| `table.primary({"id", "parent_id"});` | Adds composite keys. |
+| `table.unique("email");`              | Adds a unique index. |
+| `table.index("state");`               | Adds an index. |
+| `table.fullText("body");`             | Adds a full text index (MySQL/PostgreSQL). |
+| <small>`table.fullText("body").language("english");`</small> | Adds a full text index of the specified language (PostgreSQL). |
+| `table.spatialIndex("location");`     | Adds a spatial index (except SQLite). |
+
+#### Index Lengths & MySQL / MariaDB
+
+By default, TinyORM uses the `utf8mb4` character set. If you are running a version of MySQL older than the 5.7.7 release or MariaDB older than the 10.2.2 release, you may need to manually configure the default string length generated by migrations in order for MySQL to create indexes for them. You may configure the default string length by calling the `Schema::defaultStringLength` method:
+
+    #include <orm/schema.hpp>
+
+    Schema::defaultStringLength(191);
+
+:::tip
+Alternatively, you may enable the `innodb_large_prefix` option for your database (enabled by default in >=MySQL 5.7.7). Refer to your database's documentation for instructions on how to properly enable this option.
+:::
+
+### Renaming Indexes
+
+To rename an index, you may use the `renameIndex` method provided by the schema builder blueprint. This method accepts the current index name as its first argument and the desired name as its second argument:
+
+    table.renameIndex("from", "to")
+
+### Dropping Indexes
+
+To drop an index, you must specify the index's name. By default, TinyORM automatically assigns an index name based on the table name, the name of the indexed column, and the index type (eg. users_email_unique). Here are some examples:
+
+<div id='apitable-dropping-indexes'>
+<APITable>
+
+| Command                                                | Description |
+| ----------------------------------------- | ----------- |
+| `table.dropPrimary("users_id_primary");`  | Drop a primary key from the "users" table. |
+| `table.dropUnique("users_email_unique");` | Drop a unique index from the "users" table. |
+| `table.dropIndex("geo_state_index");`     | Drop a basic index from the "geo" table. |
+| <small>`table.dropFullText("posts_body_fulltext");`</small> | Drop a full text index from the "posts" table. |
+| <small>`.dropSpatialIndex("geo_location_spatialindex");`</small> | Drop a spatial index from the "geo" table  (except SQLite). |
+
+</APITable>
+</div>
+
+I may also drop indexes by a column name or column names for composite keys, if you pass a `QVector<QString>` of columns into a method that drops indexes, the conventional index name will be generated based on the table name, columns, and index type:
+
+    Schema::table("geo", [](Blueprint &table)
+    {
+        table.dropIndex({"state"}); // Drops index 'geo_state_index'
+    });
+
+### Foreign Key Constraints
+
+TinyORM also provides support for creating foreign key constraints, which are used to force referential integrity at the database level. For example, let's define a `user_id` column on the `posts` table that references the `id` column on a `users` table:
+
+    #include <orm/schema.hpp>
+
+    using Orm::Constants::ID;
+
+    Schema::table("posts", [](Blueprint &table)
+    {
+        table.unsignedBigInteger("user_id");
+
+        table.foreign("user_id").references(ID).on("users");
+    });
+
+Since this syntax is rather verbose, TinyORM provides additional, terser methods that use conventions to provide a better developer experience. When using the `foreignId` method to create your column, the example above can be rewritten like so:
+
+    Schema::table("posts", [](Blueprint &table)
+    {
+        table.foreignId("user_id").constrained();
+    });
+
+The `foreignId` method creates an `UNSIGNED BIGINT` equivalent column, while the `constrained` method will use conventions to determine the table and column name being referenced. If your table name does not match TinyORM's conventions, you may specify the table name by passing it as an argument to the `constrained` method:
+
+    Schema::table("posts", [](Blueprint &table)
+    {
+        table.foreignId("user_id").constrained("users");
+    });
+
+You may also specify the desired action for the "on delete" and "on update" properties of the constraint:
+
+    #include <orm/constants.hpp>
+
+    using Orm::Constants::Cascade;
+
+    table.foreignId("user_id")
+          .constrained()
+          .onUpdate("cascade")
+          .onDelete(Cascade);
+
+An alternative, expressive syntax is also provided for these actions:
+
+| Method                     | Description |
+| -------------------------- | ----------- |
+| `table.cascadeOnUpdate();` | Updates should cascade. |
+| `table.restrictOnUpdate();`| Updates should be restricted. |
+| `table.cascadeOnDelete();` | Deletes should cascade. |
+| `table.restrictOnDelete();`| Deletes should be restricted. |
+| `table.nullOnDelete();`    | Deletes should set the foreign key value to null. |
+
+Any additional [column modifiers](#column-modifiers) must be called before the `constrained` method:
+
+    table.foreignId("user_id")
+         .nullable()
+         .constrained();
+
+#### Dropping Foreign Keys
+
+To drop a foreign key, you may use the `dropForeign` method, passing the name of the foreign key constraint to be deleted as an argument. Foreign key constraints use the same naming convention as indexes. In other words, the foreign key constraint name is based on the name of the table and the columns in the constraint, followed by a "_foreign" suffix:
+
+    table.dropForeign("posts_user_id_foreign");
+
+Alternatively, you may pass a `QVector<QString>` containing the column name that holds the foreign key to the `dropForeign` method. The `QVector` will be converted to a foreign key constraint name using TinyORM's constraint naming conventions:
+
+    table.dropForeign({"user_id"});
+
+#### Toggling Foreign Key Constraints
+
+You may enable or disable foreign key constraints within your migrations by using the following methods:
+
+    Schema::enableForeignKeyConstraints();
+
+    Schema::disableForeignKeyConstraints();
