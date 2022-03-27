@@ -1324,3 +1324,5 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR1 connection, control disable/enable logging at runtime silverqx
 // CUR cmake, make TinyUtils_target in TinyTestCommon.cmake optional, not always needed to link to silverqx
 // CUR docs, info about unsupported json column by qtsql drivers and link to schema.mdx Default Expressions silverqx
+// CUR model, add whereBelongsTo, whereRelation, orWhereRelation silverqx
+// CUR schema, add tests for enum and set; and json and jsonb, storedAs / virtualAs silverqx
