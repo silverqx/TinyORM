@@ -2,13 +2,8 @@ TEMPLATE = subdirs
 
 SUBDIRS = src
 
-!disable_tom {
-    SUBDIRS += tom
-    tom.depends = src
-}
-
 # Can be enabled by CONFIG += build_tests when the qmake.exe for the project is called
-build_tests {
-    SUBDIRS += tests
-    tests.depends = src
-}
+#build_tests {
+#    SUBDIRS += tests
+#    tests.depends = src
+#}

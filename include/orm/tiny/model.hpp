@@ -1327,3 +1327,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR model, add whereBelongsTo, whereRelation, orWhereRelation silverqx
 // CUR schema, add tests for enum and set; and json and jsonb, storedAs / virtualAs silverqx
 // CUR propagation, https://ben.balter.com/2017/11/10/twelve-tips-for-growing-communities-around-your-open-source-project/ silverqx
+// CUR optimization, use Q_UNREACHABLE in all switch statements, of course where appropriate silverqx
+// TODO vcpkg, check tom src.pro will solving vcpkg builds again silverqx
+// CUR tom docs, disable_tom and TINYORM_DISABLE_TOM to build.mdx silverqx
