@@ -1326,3 +1326,4 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR docs, info about unsupported json column by qtsql drivers and link to schema.mdx Default Expressions silverqx
 // CUR model, add whereBelongsTo, whereRelation, orWhereRelation silverqx
 // CUR schema, add tests for enum and set; and json and jsonb, storedAs / virtualAs silverqx
+// CUR propagation, https://ben.balter.com/2017/11/10/twelve-tips-for-growing-communities-around-your-open-source-project/ silverqx
