@@ -2,7 +2,7 @@
 #ifndef TOM_CONFIG_HPP
 #define TOM_CONFIG_HPP
 
-#include "orm/macros/systemheader.hpp"
+#include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
 // Check
