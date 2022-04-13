@@ -16,7 +16,7 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/modelproxies.hpp"
 #include "orm/tiny/tinybuilder.hpp"
 #ifdef TINYORM_TESTS_CODE
-#include "orm/tiny/types/connectionoverride.hpp"
+#  include "orm/tiny/types/connectionoverride.hpp"
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE

@@ -11,7 +11,7 @@ TINY_SYSTEM_HEADER
 #include <map>
 
 #if defined(__clang__) || (defined(_MSC_VER) && _MSC_VER <= 1928)
-#include <range/v3/algorithm/unique.hpp>
+#  include <range/v3/algorithm/unique.hpp>
 #endif
 
 #include "orm/macros/commonnamespace.hpp"

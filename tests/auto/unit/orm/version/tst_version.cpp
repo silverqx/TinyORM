@@ -2,7 +2,7 @@
 #include <QtTest>
 
 #if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
-#include <qt_windows.h>
+#  include <qt_windows.h>
 #endif
 
 #include "fs.hpp"

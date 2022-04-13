@@ -6,9 +6,9 @@
 TINY_SYSTEM_HEADER
 
 #ifdef __GNUG__
-#include <map>
+#  include <map>
 #else
-#include <unordered_map>
+#  include <unordered_map>
 #endif
 #include <unordered_set>
 

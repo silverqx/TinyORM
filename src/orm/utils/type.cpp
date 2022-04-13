@@ -3,12 +3,12 @@
 #include <QRegularExpression>
 
 #if !defined(_MSC_VER)
-#include <memory>
+#  include <memory>
 #endif
 
 #include "orm/constants.hpp"
 #if !defined(_MSC_VER)
-#include "orm/exceptions/runtimeerror.hpp"
+#  include "orm/exceptions/runtimeerror.hpp"
 #endif
 
 using Orm::Constants::ASTERISK_C;

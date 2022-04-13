@@ -4,11 +4,11 @@
 
 #if !defined(__clang__) && \
     !defined(TINYORM_NO_DEBUG) && defined(_MSC_VER) && !defined(Q_OS_WINRT)
-#include <qt_windows.h>
+#  include <qt_windows.h>
 #endif
 
 #if defined(Q_OS_LINUX) && !defined(QT_LINUXBASE)
-#include <sys/prctl.h>
+#  include <sys/prctl.h>
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE

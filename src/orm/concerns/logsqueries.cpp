@@ -1,13 +1,13 @@
 #include "orm/concerns/logsqueries.hpp"
 
 #ifdef TINYORM_DEBUG_SQL
-#include <QDebug>
+#  include <QDebug>
 #endif
 
 #include "orm/databaseconnection.hpp"
 #include "orm/macros/likely.hpp"
 #ifdef TINYORM_DEBUG_SQL
-#include "orm/utils/query.hpp"
+#  include "orm/utils/query.hpp"
 #endif
 
 #ifdef TINYORM_DEBUG_SQL
