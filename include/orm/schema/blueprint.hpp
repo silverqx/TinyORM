@@ -390,7 +390,7 @@ namespace Grammars
         /*! Get the columns on the blueprint. */
         inline const QVector<ColumnDefinition> &getColumns() const noexcept;
         /*! Get the commands on the blueprint. */
-        inline const std::deque<std::unique_ptr<CommandDefinition>> &
+        inline const std::deque<std::shared_ptr<CommandDefinition>> &
         getCommands() const noexcept;
         /*! Determine whether the blueprint describes temporary table. */
         inline bool isTemporary() const noexcept;
@@ -425,7 +425,7 @@ namespace Grammars
         T &addCommand(T &&definition = {});
         /*! Create a new Fluent command.. */
         template<CommandDefinitionConcept T>
-        std::unique_ptr<T> createCommand(T &&definition = {});
+        std::shared_ptr<T> createCommand(T &&definition = {});
 
         /*! Add the commands that are implied by the blueprint's state. */
         void addImpliedCommands(const SchemaGrammar &grammar);
@@ -455,8 +455,9 @@ namespace Grammars
 
         /*! The columns that should be added to the table. */
         QVector<ColumnDefinition> m_columns {};
+        // BUG omg what dtors are called in this unique_ptr(), CommandDefinition doesn't have virtual dtor silverqx
         /*! The commands that should be run for the table. */
-        std::deque<std::unique_ptr<CommandDefinition>> m_commands {};
+        std::deque<std::shared_ptr<CommandDefinition>> m_commands {};
 
         /*! Whether to make the table temporary. */
         bool m_temporary = false;
@@ -674,7 +675,7 @@ namespace Grammars
         return m_columns;
     }
 
-    const std::deque<std::unique_ptr<CommandDefinition>> &
+    const std::deque<std::shared_ptr<CommandDefinition>> &
     Blueprint::getCommands() const noexcept
     {
         return m_commands;
@@ -703,10 +704,10 @@ namespace Grammars
     }
 
     template<CommandDefinitionConcept T>
-    std::unique_ptr<T>
+    std::shared_ptr<T>
     Blueprint::createCommand(T &&definition)
     {
-        return std::make_unique<T>(std::forward<T>(definition));
+        return std::make_shared<T>(std::forward<T>(definition));
     }
 
 } // namespace SchemaNs
