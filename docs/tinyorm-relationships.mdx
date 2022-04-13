@@ -48,6 +48,7 @@ But, before diving too deep into using relationships, let's learn how to define 
 
 Before you start defining relationship methods, you have to declare a model class, let's examine following model class with a "one" type relation:
 
+    #pragma once
     #ifndef USER_HPP
     #define USER_HPP
 
@@ -94,6 +95,7 @@ You may omit the `friend Model` declaration and define all the private data and 
 
 A one-to-one relationship is a very basic type of database relationship. For example, a `User` model might be associated with one `Phone` model. To define this relationship, we will place a `phone` method on the `User` model. The `phone` method should call the `hasOne` method and return its result. The `hasOne<Related>` method is available to your model via the model's `Orm::Tiny::Model<Derived, AllRelations...>` base class:
 
+    #pragma once
     #ifndef USER_HPP
     #define USER_HPP
 
@@ -142,6 +144,7 @@ Additionally, TinyORM assumes that the foreign key should have a value matching 
 
 So, we can access the `Phone` model from our `User` model. Next, let's define a relationship on the `Phone` model that will let us access the user that owns the phone. We can define the inverse of a `hasOne` relationship using the `belongsTo<Related>` method:
 
+    #pragma once
     #ifndef PHONE_HPP
     #define PHONE_HPP
 
@@ -213,6 +216,7 @@ The relation name will be guessed from the type-id of the `Related` template par
 
 A one-to-many relationship is used to define relationships where a single model is the parent to one or more child models. For example, a blog post may have an infinite number of comments. Like all other TinyORM relationships, one-to-many relationships are defined by defining a `hasMany<Related>` method on your TinyORM model:
 
+    #pragma once
     #ifndef POST_HPP
     #define POST_HPP
 
@@ -273,6 +277,7 @@ Like the `hasOne` method, you may also override the foreign and local keys by pa
 
 Now that we can access all of a post's comments, let's define a relationship to allow a comment to access its parent post. To define the inverse of a `hasMany` relationship, define a relationship method on the child model which calls the `belongsTo` method:
 
+    #pragma once
     #ifndef COMMENT_HPP
     #define COMMENT_HPP
 
@@ -406,6 +411,7 @@ Remember, since a role can belong to many users, we cannot simply place a `user_
 
 Many-to-many relationships are defined by writing a method that returns the result of the `belongsToMany` method. The `belongsToMany` method is provided by the `Orm::Tiny::Model<Derived, AllRelations...>` base class that is used by all of your application's TinyORM models. For example, let's define a `roles` method on our `User` model. The first argument passed to this method is the name of the related model class:
 
+    #pragma once
     #ifndef USER_HPP
     #define USER_HPP
 
@@ -471,6 +477,7 @@ The relation name is used during [Touching Parent Timestamps](#touching-parent-t
 
 To define the "inverse" of a many-to-many relationship, you should define a method on the related model which also returns the result of the `belongsToMany` method. To complete our user / role example, let's define the `users` method on the `Role` model:
 
+    #pragma once
     #ifndef ROLE_HPP
     #define ROLE_HPP
 
@@ -582,6 +589,7 @@ If you would like to define a custom model to represent the intermediate table o
 
 Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePivot<PivotModel>` class. For example, we may define a `User` model which uses a custom `RoleUser` pivot model:
 
+    #pragma once
     #ifndef USER_HPP
     #define USER_HPP
 
@@ -618,6 +626,7 @@ Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePi
 
 When defining the `RoleUser` model, you should extend the `Orm::Tiny::Relations::BasePivot<PivotModel>` class:
 
+    #pragma once
     #ifndef ROLEUSER_HPP
     #define ROLEUSER_HPP
 
@@ -637,6 +646,7 @@ When defining the `RoleUser` model, you should extend the `Orm::Tiny::Relations:
 
 You have to pass a custom pivot type to the `AllRelations` template parameter pack on `Model<Derived, AllRelations...>` so that the `Model` knows how to generate a `std::variant`, which holds all the relations and also you have to add a new mapping from the relation name to the custom pivot model type-id, this is  described in more detail in the [Common Rules](#common-rules):
 
+    #pragma once
     #ifndef ROLE_HPP
     #define ROLE_HPP
 
