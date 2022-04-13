@@ -31,12 +31,6 @@ DEFINES += PROJECT_TINYORM_TEST
 CONFIG(release, debug|release): \
     DEFINES *= QT_NO_DEBUG_OUTPUT
 
-# TinyORM library defines
-# ---
-
-# Enable code needed by tests, eg connection overriding in the Model
-DEFINES *= TINYORM_TESTS_CODE
-
 # Link against TinyORM library (also adds defines and include headers)
 # ---
 
