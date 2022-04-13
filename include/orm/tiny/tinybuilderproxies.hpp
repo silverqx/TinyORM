@@ -23,7 +23,6 @@ namespace Query
 
 namespace Tiny
 {
-    namespace TinyUtils = Orm::Tiny::Utils;
 
     /*! Contains proxy methods to the QueryBuilder. */
     template<typename Model>
@@ -31,6 +30,8 @@ namespace Tiny
     {
         Q_DISABLE_COPY(BuilderProxies)
 
+        /*! Alias for the attribute utils. */
+        using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! JoinClause alias. */
         using JoinClause = Orm::Query::JoinClause;
 
@@ -439,14 +440,14 @@ namespace Tiny
     std::optional<QSqlQuery>
     BuilderProxies<Model>::insert(const QVector<AttributeItem> &values) const
     {
-        return toBase().insert(TinyUtils::Attribute::convertVectorToMap(values));
+        return toBase().insert(AttributeUtils::convertVectorToMap(values));
     }
 
     template<typename Model>
     std::optional<QSqlQuery>
     BuilderProxies<Model>::insert(const QVector<QVector<AttributeItem>> &values) const
     {
-        return toBase().insert(TinyUtils::Attribute::convertVectorsToMaps(values));
+        return toBase().insert(AttributeUtils::convertVectorsToMaps(values));
     }
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
@@ -455,7 +456,7 @@ namespace Tiny
     BuilderProxies<Model>::insertGetId(const QVector<AttributeItem> &values,
                                        const QString &sequence) const
     {
-        return toBase().insertGetId(TinyUtils::Attribute::convertVectorToMap(values),
+        return toBase().insertGetId(AttributeUtils::convertVectorToMap(values),
                                     sequence);
     }
 
@@ -463,8 +464,7 @@ namespace Tiny
     std::tuple<int, std::optional<QSqlQuery>>
     BuilderProxies<Model>::insertOrIgnore(const QVector<AttributeItem> &values) const
     {
-        return toBase().insertOrIgnore(
-                    TinyUtils::Attribute::convertVectorToMap(values));
+        return toBase().insertOrIgnore(AttributeUtils::convertVectorToMap(values));
     }
 
     template<typename Model>
@@ -472,8 +472,7 @@ namespace Tiny
     BuilderProxies<Model>::insertOrIgnore(
             const QVector<QVector<AttributeItem>> &values) const
     {
-        return toBase().insertOrIgnore(
-                    TinyUtils::Attribute::convertVectorsToMaps(values));
+        return toBase().insertOrIgnore(AttributeUtils::convertVectorsToMaps(values));
     }
 
     template<typename Model>

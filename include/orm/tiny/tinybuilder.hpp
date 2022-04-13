@@ -32,6 +32,9 @@ namespace Orm::Tiny
         // Used by TinyBuilderProxies::where/latest/oldest/update()
         friend BuilderProxies<Model>;
 
+        /*! Alias for the attribute utils. */
+        using AttributeUtils = Orm::Tiny::Utils::Attribute;
+
     public:
         /*! Constructor. */
         Builder(const QSharedPointer<QueryBuilder> &query, Model &model);
@@ -348,9 +351,8 @@ namespace Orm::Tiny
         if (instance)
             return *instance;
 
-        return newModelInstance(
-                    TinyUtils::Attribute::joinAttributesForFirstOr(
-                        attributes, values, m_model.getKeyName()));
+        return newModelInstance(AttributeUtils::joinAttributesForFirstOr(
+                                    attributes, values, m_model.getKeyName()));
     }
 
     template<typename Model>
@@ -363,9 +365,8 @@ namespace Orm::Tiny
             return *instance;
 
         auto newInstance =
-                newModelInstance(
-                    TinyUtils::Attribute::joinAttributesForFirstOr(
-                        attributes, values, m_model.getKeyName()));
+                newModelInstance(AttributeUtils::joinAttributesForFirstOr(
+                                     attributes, values, m_model.getKeyName()));
 
         newInstance.save();
 

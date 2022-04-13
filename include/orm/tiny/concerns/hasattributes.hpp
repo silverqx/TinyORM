@@ -16,17 +16,19 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny
-{
-    namespace TinyUtils = Orm::Tiny::Utils;
-
-namespace Concerns
+namespace Orm::Tiny::Concerns
 {
 
     /*! Model attributes. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasAttributes
     {
+        // CUR utils, use this using pattern also for all Orm::Utils silverqx
+        /*! Alias for the attribute utils. */
+        using AttributeUtils = Orm::Tiny::Utils::Attribute;
+        /*! Alias for the string utils. */
+        using StringUtils = Orm::Tiny::Utils::String;
+
     public:
         /*! Set a given attribute on the model. */
         Derived &setAttribute(const QString &key, QVariant value);
@@ -258,7 +260,7 @@ namespace Concerns
             const bool sync)
     {
         m_attributes.reserve(attributes.size());
-        m_attributes = TinyUtils::Attribute::removeDuplicitKeys(attributes);
+        m_attributes = AttributeUtils::removeDuplicitKeys(attributes);
 
         // Build attributes hash
         m_attributesHash.clear();
@@ -831,7 +833,7 @@ namespace Concerns
            and format a Carbon object from this timestamp. This allows flexibility
            when defining your date fields as they might be UNIX timestamps here. */
         if (value.canConvert<QString>() &&
-            TinyUtils::String::isNumber(value.value<QString>())
+            StringUtils::isNumber(value.value<QString>())
         )
             // TODO switch ms accuracy? For the u_dateFormat too? silverqx
             return QDateTime::fromSecsSinceEpoch(value.value<qint64>());
@@ -884,8 +886,7 @@ namespace Concerns
     /* Static cast this to a child's instance type (CRTP) */
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasAttributes)
 
-} // namespace Concerns
-} // namespace Orm::Tiny
+} // namespace Orm::Tiny::Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 

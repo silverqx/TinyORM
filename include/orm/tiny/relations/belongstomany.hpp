@@ -25,8 +25,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny::Relations
 {
-    namespace TinyUtils = Orm::Tiny::Utils;
-
     class Pivot;
 
     /*! TinyORM's 'Pivot' class. */
@@ -46,6 +44,8 @@ namespace Orm::Tiny::Relations
     {
         Q_DISABLE_COPY(BelongsToMany)
 
+        /*! Alias for the attribute utils. */
+        using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! Model alias. */
         template<typename Derived>
         using BaseModel = Orm::Tiny::Model<Derived>;
@@ -953,7 +953,7 @@ namespace Orm::Tiny::Relations
             return *instance;
 
         return this->m_related->newInstance(
-                    TinyUtils::Attribute::joinAttributesForFirstOr(
+                    AttributeUtils::joinAttributesForFirstOr(
                         attributes, values, this->m_relatedKey));
     }
 
@@ -969,7 +969,7 @@ namespace Orm::Tiny::Relations
             return *instance;
 
         // NOTE api different, Eloquent doen't use values argument silverqx
-        return create(TinyUtils::Attribute::joinAttributesForFirstOr(
+        return create(AttributeUtils::joinAttributesForFirstOr(
                           attributes, values, this->m_relatedKey),
                       pivotValues, touch);
     }
@@ -1154,7 +1154,7 @@ namespace Orm::Tiny::Relations
                we have inserted the records, we will touch the relationships if
                necessary and the function will return. */
             newPivotStatement()->insert(
-                    TinyUtils::Attribute::convertVectorsToMaps(
+                    AttributeUtils::convertVectorsToMaps(
                         formatAttachRecords(ids, attributes)));
         else
             attachUsingCustomClass(ids, attributes);
@@ -1200,7 +1200,7 @@ namespace Orm::Tiny::Relations
                we have inserted the records, we will touch the relationships if
                necessary and the function will return. */
             newPivotStatement()->insert(
-                    TinyUtils::Attribute::convertVectorsToMaps(
+                    AttributeUtils::convertVectorsToMaps(
                         formatAttachRecords(idsWithAttributes)));
         else
             attachUsingCustomClass(idsWithAttributes);
@@ -1334,7 +1334,7 @@ namespace Orm::Tiny::Relations
         int updated = -1;
         std::tie(updated, std::ignore) =
                 newPivotStatementForId(id)->update(
-                    TinyUtils::Attribute::convertVectorToUpdateItem(
+                    AttributeUtils::convertVectorToUpdateItem(
                         castAttributes(attributes)));
 
         /* It will not touch if attributes size is 0, because this function is called

@@ -12,13 +12,15 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny::Relations
 {
-    namespace TinyUtils = Orm::Tiny::Utils;
 
     /*! Has one/many relation base class. */
     template<class Model, class Related>
     class HasOneOrMany : public Relation<Model, Related>
     {
         Q_DISABLE_COPY(HasOneOrMany)
+
+        /*! Alias for the attribute utils. */
+        using AttributeUtils = Orm::Tiny::Utils::Attribute;
 
     protected:
         /*! Protected constructor. */
@@ -199,7 +201,7 @@ namespace Orm::Tiny::Relations
 
         auto newInstance =
                 this->m_related->newInstance(
-                    TinyUtils::Attribute::joinAttributesForFirstOr(
+                    AttributeUtils::joinAttributesForFirstOr(
                         attributes, values, this->m_relatedKey));
 
         setForeignAttributesForCreate(newInstance);
@@ -218,7 +220,7 @@ namespace Orm::Tiny::Relations
         if (instance)
             return *instance;
 
-        return create(TinyUtils::Attribute::joinAttributesForFirstOr(
+        return create(AttributeUtils::joinAttributesForFirstOr(
                           attributes, values, this->m_relatedKey));
     }
 

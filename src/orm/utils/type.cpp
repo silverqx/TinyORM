@@ -57,6 +57,11 @@ QString Type::prettyFunction(const QString &function)
     return QStringLiteral("%1::%2").arg(match.captured(1), match.captured(2));
 }
 
+bool Type::isTrue(const QString &value)
+{
+    return !value.isEmpty() && value != "0" && value != "false";
+}
+
 QString
 Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withNamespace)
 {
