@@ -16,7 +16,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! Database query exception. */
+    /*! TinyORM Database query exception. */
     class SHAREDLIB_EXPORT QueryError : public SqlError
     {
     public:

@@ -10,7 +10,6 @@ TINY_SYSTEM_HEADER
 #include <stdexcept>
 
 #include "orm/exceptions/ormerror.hpp"
-#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -18,7 +17,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! Runtime exception. */
+    /*! TinyORM Runtime exception. */
     class SHAREDLIB_EXPORT RuntimeError :
             public std::runtime_error,
             public OrmError
@@ -28,16 +27,18 @@ namespace Orm::Exceptions
         explicit RuntimeError(const char *message);
         /*! QString constructor. */
         explicit RuntimeError(const QString &message);
+        /*! std::string constructor. */
+        explicit RuntimeError(const std::string &message);
 
         /*! Return exception message as a QString. */
-        const QString &message() const;
+        inline const QString &message() const noexcept;
 
     protected:
         /*! Exception message. */
         QString m_message = what();
     };
 
-    inline const QString &RuntimeError::message() const
+    const QString &RuntimeError::message() const noexcept
     {
         return m_message;
     }

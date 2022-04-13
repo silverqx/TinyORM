@@ -26,11 +26,6 @@ SqlError::SqlError(const QString &message, const QSqlError &error, const int /*u
     , m_sqlError(error)
 {}
 
-const QSqlError &SqlError::getSqlError() const
-{
-    return m_sqlError;
-}
-
 QString SqlError::formatMessage(const char *message, const QSqlError &error) const
 {
     QString result(message);

@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! Invalid template argument exception. */
+    /*! TinyORM invalid template argument exception. */
     class InvalidTemplateArgumentError : public InvalidArgumentError
     {
         /*! Inherit constructors. */
