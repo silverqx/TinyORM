@@ -6,6 +6,11 @@
 
 #include "export.hpp"
 
+namespace Orm
+{
+    class DatabaseManager;
+}
+
 namespace TestUtils
 {
 
@@ -33,6 +38,9 @@ namespace TestUtils
 
         /*! Check whether all env. variables are empty. */
         static bool allEnvVariablesEmpty(const std::vector<const char *> &envVariables);
+
+        /*! Get a reference to the database manager. */
+        static const std::shared_ptr<Orm::DatabaseManager> &manager();
 
     private:
         /*! Obtain configurations for the given connection names. */
