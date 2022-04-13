@@ -1,6 +1,7 @@
 # TinyORM configuration
 # ---
 
+QT *= core sql
 CONFIG *= c++2a strict_c++ warn_on utf8_source link_prl hide_symbols silent
 
 # Use extern constants for shared build
