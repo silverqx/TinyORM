@@ -11,6 +11,10 @@
 #include "orm/version.hpp"
 // TinyUtils
 #include "version.hpp"
+// Tom example
+#ifdef TINYTOM_EXAMPLE
+#  include "tom/version.hpp"
+#endif
 
 // Used by checkFileVersion_*() tests
 #if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
@@ -22,6 +26,7 @@
 #else
 #  define TINYTEST_VERSION_TINYORM_PATH
 #  define TINYTEST_VERSION_TINYUTILS_PATH
+#  define TINYTEST_VERSION_TOMEXAMPLE_PATH
 #endif
 
 #if defined(_WIN32)
@@ -35,9 +40,15 @@ class tst_Version : public QObject
 private slots:
     void versions_TinyOrm() const;
     void versions_TinyUtils() const;
+#ifdef TINYTOM_EXAMPLE
+    void versions_TomExample() const;
+#endif
 
     void checkFileVersion_TinyOrm() const;
     void checkFileVersion_TinyUtils() const;
+#ifdef TINYTOM_EXAMPLE
+    void checkFileVersion_TomExample() const;
+#endif
 
 #if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
@@ -125,6 +136,43 @@ void tst_Version::versions_TinyUtils() const
     QCOMPARE(TINYUTILS_VERSION, version);
 }
 
+#ifdef TINYTOM_EXAMPLE
+void tst_Version::versions_TomExample() const
+{
+    // Test types
+    QCOMPARE(typeid (TINYTOM_VERSION_MAJOR), typeid (int));
+    QCOMPARE(typeid (TINYTOM_VERSION_MINOR), typeid (int));
+    QCOMPARE(typeid (TINYTOM_VERSION_BUGFIX), typeid (int));
+    QCOMPARE(typeid (TINYTOM_VERSION_BUILD), typeid (int));
+
+    // Individual version numbers have to be greater than zero
+    QVERIFY(TINYTOM_VERSION_MAJOR >= 0);
+    QVERIFY(TINYTOM_VERSION_MINOR >= 0);
+    QVERIFY(TINYTOM_VERSION_BUGFIX >= 0);
+    QVERIFY(TINYTOM_VERSION_BUILD >= 0);
+
+    // Project and File Version strings
+    QString versionStr = QString::number(TINYTOM_VERSION_MAJOR) + QChar('.') +
+                         QString::number(TINYTOM_VERSION_MINOR) + QChar('.') +
+                         QString::number(TINYTOM_VERSION_BUGFIX);
+    QString fileVersionStr = versionStr + QChar('.') +
+                             QString::number(TINYTOM_VERSION_BUILD);
+    if constexpr (TINYTOM_VERSION_BUILD > 0)
+        versionStr += QChar('.') + QString::number(TINYTOM_VERSION_BUILD);
+    versionStr += TINYTOM_VERSION_STATUS;
+
+    QCOMPARE(TINYTOM_FILEVERSION_STR, fileVersionStr);
+    QCOMPARE(TINYTOM_VERSION_STR, versionStr);
+    QCOMPARE(TINYTOM_VERSION_STR_2, QChar('v') + versionStr);
+
+    // Project Version number, to check API compatibility
+    const auto version = TINYTOM_VERSION_MAJOR * 10000 +
+                         TINYTOM_VERSION_MINOR * 100 +
+                         TINYTOM_VERSION_BUGFIX;
+    QCOMPARE(TINYTOM_VERSION, version);
+}
+#endif
+
 void tst_Version::checkFileVersion_TinyOrm() const
 {
 #if !defined(_WIN32)
@@ -166,6 +214,29 @@ void tst_Version::checkFileVersion_TinyUtils() const
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
 #endif
 }
+
+#ifdef TINYTOM_EXAMPLE
+void tst_Version::checkFileVersion_TomExample() const
+{
+#if !defined(_WIN32)
+    QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
+#elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+    QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
+#else
+    const auto fileVersions =
+            getExeVersionString(Fs::absolutePath(TINYTEST_VERSION_TOMEXAMPLE_PATH));
+
+    // Project and File Version strings
+    const QString versionStr = QString::number(TINYTOM_VERSION_MAJOR) + QChar('.') +
+                               QString::number(TINYTOM_VERSION_MINOR) + QChar('.') +
+                               QString::number(TINYTOM_VERSION_BUGFIX) + QChar('.') +
+                               QString::number(TINYTOM_VERSION_BUILD);
+
+    QCOMPARE(fileVersions.productVersion, versionStr);
+    QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
+#endif
+}
+#endif
 
 #if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 tst_Version::FileVersions

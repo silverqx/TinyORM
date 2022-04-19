@@ -1,0 +1,2 @@
+CONFIG *= tom_example
+DEFINES *= TINYORM_TOM_EXAMPLE

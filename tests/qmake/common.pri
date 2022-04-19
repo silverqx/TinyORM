@@ -45,7 +45,7 @@ mingw: tinyRcIncludepath += $$quote($$TINYORM_SOURCE_TREE/tests/resources/)
 load(tiny_resource_and_manifest)
 tiny_resource_and_manifest($$tinyRcIncludepath,     \
     $$quote($$TINYORM_SOURCE_TREE/tests/resources), \
-    true                                            \
+    TinyTest                                        \
 )
 
 unset(tinyRcIncludepath)

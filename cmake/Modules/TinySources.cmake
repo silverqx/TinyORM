@@ -1,7 +1,8 @@
 # TinyORM library header and source files
 # Create header and source files lists and return them
-function(tiny_sources out_headers out_sources)
+function(tinyorm_sources out_headers out_sources)
 
+    # ORM headers section
     set(headers)
 
     if(TINY_EXTERN_CONSTANTS)
@@ -131,10 +132,17 @@ function(tiny_sources out_headers out_sources)
             tiny/types/connectionoverride.hpp
             tiny/types/syncchanges.hpp
             tiny/utils/attribute.hpp
+        )
+    endif()
+
+    # Headers used in both ORM and TOM
+    if(ORM OR TOM)
+        list(APPEND headers
             tiny/utils/string.hpp
         )
     endif()
 
+    # ORM sources section
     set(sources)
 
     if(TINY_EXTERN_CONSTANTS)
@@ -203,6 +211,12 @@ function(tiny_sources out_headers out_sources)
             tiny/tinytypes.cpp
             tiny/types/syncchanges.cpp
             tiny/utils/attribute.cpp
+        )
+    endif()
+
+    # Sources needed in both ORM and TOM
+    if(ORM OR TOM)
+        list(APPEND sources
             tiny/utils/string.cpp
         )
     endif()
@@ -215,5 +229,91 @@ function(tiny_sources out_headers out_sources)
 
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
+endfunction()
 
+# TinyTom application header and source files
+# Create header and source files lists and return them
+function(tinytom_sources out_headers out_sources)
+
+    # Tom headers section
+    set(headers)
+
+    list(APPEND headers
+        application.hpp
+        commands/command.hpp
+        commands/database/wipecommand.hpp
+        commands/environmentcommand.hpp
+        commands/helpcommand.hpp
+        commands/inspirecommand.hpp
+        commands/listcommand.hpp
+        commands/make/migrationcommand.hpp
+#        commands/make/projectcommand.hpp
+        commands/make/stubs/migrationstubs.hpp
+        commands/make/stubs/projectstubs.hpp
+        commands/migrations/freshcommand.hpp
+        commands/migrations/installcommand.hpp
+        commands/migrations/migratecommand.hpp
+        commands/migrations/refreshcommand.hpp
+        commands/migrations/resetcommand.hpp
+        commands/migrations/rollbackcommand.hpp
+        commands/migrations/statuscommand.hpp
+        concerns/callscommands.hpp
+        concerns/confirmable.hpp
+        concerns/interactswithio.hpp
+        concerns/printsoptions.hpp
+        config.hpp
+        exceptions/invalidargumenterror.hpp
+        exceptions/invalidtemplateargumenterror.hpp
+        exceptions/logicerror.hpp
+        exceptions/runtimeerror.hpp
+        exceptions/tomerror.hpp
+        migration.hpp
+        migrationcreator.hpp
+        migrationrepository.hpp
+        migrator.hpp
+        terminal.hpp
+        tomtypes.hpp
+        version.hpp
+    )
+
+    # Tom sources section
+    set(sources)
+
+    list(APPEND sources
+        application.cpp
+        commands/command.cpp
+        commands/database/wipecommand.cpp
+        commands/environmentcommand.cpp
+        commands/helpcommand.cpp
+        commands/inspirecommand.cpp
+        commands/listcommand.cpp
+        commands/make/migrationcommand.cpp
+#        commands/make/projectcommand.cpp
+        commands/migrations/freshcommand.cpp
+        commands/migrations/installcommand.cpp
+        commands/migrations/migratecommand.cpp
+        commands/migrations/refreshcommand.cpp
+        commands/migrations/resetcommand.cpp
+        commands/migrations/rollbackcommand.cpp
+        commands/migrations/statuscommand.cpp
+        concerns/callscommands.cpp
+        concerns/confirmable.cpp
+        concerns/interactswithio.cpp
+        concerns/printsoptions.cpp
+        exceptions/tomlogicerror.cpp
+        exceptions/tomruntimeerror.cpp
+        migrationcreator.cpp
+        migrationrepository.cpp
+        migrator.cpp
+        terminal.cpp
+    )
+
+    list(SORT headers)
+    list(SORT sources)
+
+    list(TRANSFORM headers PREPEND "${CMAKE_SOURCE_DIR}/tom/include/tom/")
+    list(TRANSFORM sources PREPEND "${CMAKE_SOURCE_DIR}/tom/src/tom/")
+
+    set(${out_headers} ${headers} PARENT_SCOPE)
+    set(${out_sources} ${sources} PARENT_SCOPE)
 endfunction()

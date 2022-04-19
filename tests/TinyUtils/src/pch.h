@@ -6,6 +6,7 @@
 /* Add C++ includes here */
 //#include <QCoreApplication>
 #include <QDateTime>
+//#include <QDebug>
 #include <QHash>
 #include <QMap>
 #include <QSharedPointer>
@@ -38,7 +39,8 @@
 //#include <thread>
 #include <tuple>
 //#include <type_traits>
-#include <typeinfo>
+//#include <typeindex>
+//#include <typeinfo>
 //#include <unordered_map>
 //#include <vector>
 #endif

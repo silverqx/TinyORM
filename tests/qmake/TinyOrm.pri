@@ -5,13 +5,16 @@ CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
     DEFINES += TINYORM_LINKING_SHARED
 
-# Enable code needed by tests, eg connection overriding in the Model
-DEFINES *= TINYORM_TESTS_CODE
-
 # TinyORM library headers include path
 # ---
 
 INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/include/)
+
+# TinyTom include path
+# ---
+
+!disable_tom: \
+    INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tom/include/)
 
 # Link against TinyORM library
 # ---

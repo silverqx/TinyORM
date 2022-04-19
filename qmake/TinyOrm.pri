@@ -30,3 +30,11 @@ CONFIG(release, debug|release): \
 # Log queries with a time measurement in debug build
 CONFIG(release, debug|release): \
     DEFINES *= TINYORM_NO_DEBUG_SQL
+
+# TinyTom related defines
+# ---
+
+# Release build
+CONFIG(release, debug|release): DEFINES += TINYTOM_NO_DEBUG
+# Debug build
+CONFIG(debug, debug|release): DEFINES *= TINYTOM_DEBUG

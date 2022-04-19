@@ -53,8 +53,10 @@ set(minReqMsvcVersion  19.29)
 set(minRecGCCVersion   10.2)
 set(minRecClangVersion 12)
 # Packages
-set(minQtVersion      5.15.2)
-set(minRangeV3Version 0.11.0)
+set(minQtVersion       5.15.2)
+set(minRangeV3Version  0.11.0)
+# tabulate doesn't provide Package Version File
+#set(minTabulateVersion 1.4.0)
 
 # Make minimum toolchain version a requirement
 tiny_toolchain_requirement(
@@ -157,11 +159,25 @@ option is disabled, then only the query builder without ORM is compiled."
         DISABLED TINYORM_DISABLE_ORM
 )
 
+target_optional_compile_definitions(${TinyOrm_target}
+    PUBLIC
+        FEATURE NAME TOM
+        DEFAULT ON
+        DESCRIPTION "Controls the compilation of all tom related source code (command \
+line interface)."
+        DISABLED TINYORM_DISABLE_TOM
+)
+# Depends on the TOM option so defined here
+feature_option_dependent(TOM_EXAMPLE
+    "Build the tom command-line application example" OFF
+    "TOM" TOM_EXAMPLE-NOTFOUND
+)
+
 # TinyORM library header and source files
 # ---
 
 include(TinySources)
-tiny_sources(${TinyOrm_target}_headers ${TinyOrm_target}_sources)
+tinyorm_sources(${TinyOrm_target}_headers ${TinyOrm_target}_sources)
 
 target_sources(${TinyOrm_target} PRIVATE
     ${${TinyOrm_target}_headers}
@@ -212,7 +228,6 @@ target_compile_definitions(${TinyOrm_target}
         $<$<NOT:$<CONFIG:Debug>>:TINYORM_NO_DEBUG>
         # Do not log queries
         $<$<NOT:$<CONFIG:Debug>>:TINYORM_NO_DEBUG_SQL>
-    PRIVATE
         # Debug build
         $<$<CONFIG:Debug>:TINYORM_DEBUG>
         # Log queries with a time measurement
@@ -237,8 +252,47 @@ else()
 endif()
 
 # Enable code needed by tests, eg. connection overriding in the Model
-if(BUILD_TESTS)
+if(BUILD_TESTS AND ORM)
     target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_TESTS_CODE)
+endif()
+
+# TinyTom related header and source files
+# ---
+
+if(TOM)
+    tinytom_sources(${TomExample_target}_headers ${TomExample_target}_sources)
+
+    target_sources(${TinyOrm_target} PRIVATE
+        ${${TomExample_target}_headers}
+        ${${TomExample_target}_sources}
+    )
+endif()
+
+# TinyTom related specific configuration
+# ---
+
+if(TOM)
+    target_include_directories(${TinyOrm_target} PUBLIC
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tom/include>"
+    )
+endif()
+
+# TinyTom related defines
+# ---
+
+if(TOM)
+    target_compile_definitions(${TinyOrm_target}
+        PUBLIC
+            # Release build
+            $<$<NOT:$<CONFIG:Debug>>:TINYTOM_NO_DEBUG>
+            # Debug build
+            $<$<CONFIG:Debug>:TINYTOM_DEBUG>
+    )
+
+    # Enable code needed by tests (modify the migrate:status command for tests need)
+    if(BUILD_TESTS)
+        target_compile_definitions(${TinyOrm_target} PUBLIC TINYTOM_TESTS_CODE)
+    endif()
 endif()
 
 # Windows resource and manifest files
@@ -285,6 +339,12 @@ if(MYSQL_PING)
     target_link_libraries(${TinyOrm_target} PRIVATE MySQL::MySQL)
 endif()
 
+if(TOM)
+    # tabulate doesn't provide Package Version File
+    tiny_find_package(tabulate CONFIG REQUIRED)
+    target_link_libraries(${TinyOrm_target} PUBLIC tabulate::tabulate)
+endif()
+
 # Build auto tests
 # ---
 
@@ -293,6 +353,13 @@ if(BUILD_TESTS)
     find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} REQUIRED COMPONENTS Test)
 
     add_subdirectory(tests)
+endif()
+
+# Build examples
+# ---
+
+if(TOM_EXAMPLE)
+    add_subdirectory(examples)
 endif()
 
 # Deployment
@@ -355,8 +422,18 @@ set_package_properties(range-v3
 if(MYSQL_PING)
     set_package_properties(MySQL
         PROPERTIES
+            # URL and DESCRIPTION are already set by Find-module Package (FindMySQL.cmake)
             TYPE REQUIRED
             PURPOSE "Provides MySQL ping, enables MySqlConnection::pingDatabase()"
+    )
+endif()
+if(TOM)
+    set_package_properties(tabulate
+        PROPERTIES
+            URL "https://github.com/p-ranav/tabulate/"
+            DESCRIPTION "Table Maker for Modern C++"
+            TYPE REQUIRED
+            PURPOSE "Used by the tom in the migrate:status command"
     )
 endif()
 

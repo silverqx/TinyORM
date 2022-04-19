@@ -61,6 +61,9 @@ sourcesList += \
         $$PWD/orm/tiny/tinytypes.cpp \
         $$PWD/orm/tiny/types/syncchanges.cpp \
         $$PWD/orm/tiny/utils/attribute.cpp \
+
+!disable_orm|!disable_tom: \
+    sourcesList += \
         $$PWD/orm/tiny/utils/string.cpp \
 
 SOURCES += $$sorted(sourcesList)
