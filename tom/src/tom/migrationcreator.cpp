@@ -41,7 +41,7 @@ fspath MigrationCreator::create(const QString &name, fspath &&migrationsPath,
        various place-holders, and save the file. */
     auto stub = getStub(table, create);
 
-    ensureDirectoryExists(migrationPath.parent_path());
+    ensureDirectoryExists(migrationsPath);
 
     // Output it as binary stream to force line endings to LF
     std::ofstream(migrationPath, std::ios::out | std::ios::binary)
@@ -61,18 +61,26 @@ namespace
 void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
                                                      const fspath &migrationsPath) const
 {
+    // Nothing to check
+    if (!fs::exists(migrationsPath))
+        return;
+
     using options = fs::directory_options;
 
     for (const auto &entry :
          fs::directory_iterator(migrationsPath, options::skip_permission_denied)
     ) {
+        // Check only files
+        if (!entry.is_regular_file())
+            continue;
+
         // Extract migration name without datetime prefix and extension
         auto entryName = QString::fromWCharArray(entry.path().filename().c_str())
                          .mid(DatePrefix->size() + 1);
 
         entryName.truncate(entryName.lastIndexOf(DOT));
 
-        if (entry.is_regular_file() && entryName == name)
+        if (entryName == name)
             throw Exceptions::InvalidArgumentError(
                     QStringLiteral("A '%1' migration already exists.").arg(name));
     }
@@ -134,9 +142,9 @@ QString MigrationCreator::getClassName(const QString &name) const
     return StringUtils::studly(name);
 }
 
-void MigrationCreator::ensureDirectoryExists(fspath &&path) const
+void MigrationCreator::ensureDirectoryExists(const fspath &path) const
 {
-    if (fs::is_directory(path) && fs::exists(path))
+    if (fs::exists(path) && fs::is_directory(path))
         return;
 
     fs::create_directories(path);

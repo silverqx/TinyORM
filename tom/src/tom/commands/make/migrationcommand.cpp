@@ -5,6 +5,10 @@
 #include <orm/constants.hpp>
 #include <orm/tiny/utils/string.hpp>
 
+#include "tom/exceptions/invalidargumenterror.hpp"
+
+namespace fs = std::filesystem;
+
 using fspath = std::filesystem::path;
 
 using Orm::Constants::NAME;
@@ -92,6 +96,30 @@ void MigrationCommand::writeMigration(const QString &name, const QString &table,
     info(QLatin1String("Created Migration: "), false);
 
     note(QString::fromWCharArray(migrationFile.c_str()));
+}
+
+fspath MigrationCommand::getMigrationPath() const
+{
+    // Default location
+    if (!isSet("path"))
+        return fs::current_path() / "database" / "migrations";
+
+    auto targetPath = value("path").toStdString();
+
+    // The 'path' argument contains an absolute path
+    if (isSet("realpath"))
+        return fspath(std::move(targetPath));
+
+    // The 'path' argument contains a relative path
+    auto migrationsPath = fs::current_path() / std::move(targetPath);
+
+    // Validate
+    if (fs::exists(migrationsPath) && !fs::is_directory(migrationsPath))
+        throw Exceptions::InvalidArgumentError(
+                QLatin1String("Migrations path '%1' exists and it's not a directory.")
+                .arg(migrationsPath.c_str()));
+
+    return migrationsPath;
 }
 
 } // namespace Tom::Commands::Make

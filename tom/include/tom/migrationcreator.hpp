@@ -55,7 +55,7 @@ namespace Tom
         /*! Get the class name of a migration name. */
         QString getClassName(const QString &name) const;
         /*! Ensure a directory exists. */
-        void ensureDirectoryExists(fspath &&path) const;
+        void ensureDirectoryExists(const fspath &path) const;
     };
 
 } // namespace Tom

@@ -19,7 +19,7 @@ namespace Tom::Commands::Make
         Q_DISABLE_COPY(MigrationCommand)
 
         /*! Alias for the filesystem path. */
-        using path = std::filesystem::path;
+        using fspath = std::filesystem::path;
 
     public:
         /*! Constructor. */
@@ -47,7 +47,7 @@ namespace Tom::Commands::Make
 
         /*! Get migration path (either specified by '--path' option or default
             location). */
-        inline path getMigrationPath() const;
+        fspath getMigrationPath() const;
 
         /*! The migration creator instance. */
         MigrationCreator m_creator {};
@@ -63,14 +63,6 @@ namespace Tom::Commands::Make
     QString MigrationCommand::description() const
     {
         return QLatin1String("Create a new migration file");
-    }
-
-    /* protected */
-
-    // CUR tom, finish --path/--realpath silverqx
-    std::filesystem::path MigrationCommand::getMigrationPath() const
-    {
-        return path(__FILE__).parent_path().parent_path().parent_path() / "migrations";
     }
 
 } // namespace Tom::Commands::Make
