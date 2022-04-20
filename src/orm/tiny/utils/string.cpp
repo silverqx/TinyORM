@@ -173,6 +173,10 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
         /* Section - compute how much chars to copy */
         QString::size_type copySize = -1;
 
+        // No space found in the current range, eg. long path so copy whole searched block
+        if (pos < from)
+            pos = searchFrom;
+
         // The last text block, -1 for copy the rest
         if (isEnd)
             copySize = -1;
@@ -206,7 +210,8 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
         /* +1 means - don't copy a space at beginning (skip space at beginning),
            is guaranteed that the first char will be a space. */
         else
-            from = pos + 1;
+            // Don't skip space if no space found in the searched block
+            from = pos == searchFrom ? pos : pos + 1;
     }
 
     return lines;
