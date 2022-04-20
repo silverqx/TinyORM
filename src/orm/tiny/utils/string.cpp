@@ -150,69 +150,82 @@ bool String::isNumber(const QString &string, const bool allowFloating)
 /*! Split a string by the given width (not in the middle of a word). */
 std::vector<QString> String::splitStringByWidth(const QString &string, const int width)
 {
-    const auto stringSize = string.size();
-
     // Nothing to split
-    if (stringSize <= width)
+    if (string.size() <= width)
         return {string};
 
-    QString::size_type from = 0;
-
     std::vector<QString> lines;
+    QString line;
 
-    while (true) {
-        /* Section - find split position */
-        auto searchFrom = from + width - 1;
+    for (auto token : string.tokenize(SPACE)) {
+        /* If there is still a space on the line then append the token */
+        if (line.size() + token.size() + 1 <= width) {
+            // Don't prepend the space at beginning of an empty line
+            if (!line.isEmpty())
+                line.append(' ');
 
-        // Hit the end - the last text block - !(searchFrom < stringSize)
-        const auto isEnd = searchFrom >= stringSize - 1;
-
-        // Returns pos == -1 if not found
-        auto pos = string.lastIndexOf(SPACE, isEnd ? -1 : searchFrom);
-
-        /* Section - compute how much chars to copy */
-        QString::size_type copySize = -1;
-
-        // No space found in the current range, eg. long path so copy whole searched block
-        if (pos < from)
-            pos = searchFrom;
-
-        // The last text block, -1 for copy the rest
-        if (isEnd)
-            copySize = -1;
-
-        // If pos == -1 (no space found) and not at end then copy a whole width block
-        else if (pos == -1 && !isEnd)
-            copySize = width;
-
-        // Copy to the found space char
-        else
-            copySize = pos - from;
-
-        /* Section - done, copy a text */
-        lines.emplace_back(string.mid(from, copySize));
-
-        // Hit the end - the last text block - !(searchFrom < stringSize)
-        if (isEnd)
-            break;
-
-        /* Section - prepare 'from' for the next loop */
-        /* Start after the whole width block (if pos == -1 then pos + 1 is not
-           correct here). */
-        if (pos == -1) {
-            from += width;
-
-            // When whole block was copied, the next char can or can not be a space
-            if (string.at(from) == SPACE)
-                ++from;
+            line.append(token);
+            continue;
         }
-        // Start from a last found space
-        /* +1 means - don't copy a space at beginning (skip space at beginning),
-           is guaranteed that the first char will be a space. */
-        else
-            // Don't skip space if no space found in the searched block
-            from = pos == searchFrom ? pos : pos + 1;
+
+        /* If a token is longer than the width or an empty space on the current line */
+        const auto spaceSize = line.isEmpty() ? 0 : 1;
+
+        if (const auto emptySpace = width - line.size() + spaceSize;
+            token.size() > emptySpace
+        ) {
+            // If on the line is still more than 30% of an empty space, use/fill it
+            if (emptySpace > llround(static_cast<float>(width) * 0.3)) {
+                // Position where to split the token
+                auto pos = width - line.size() - spaceSize;
+
+                // Don't prepend the space at beginning of the line
+                if (!line.isEmpty())
+                    line.append(SPACE);
+
+                line.append(token.left(pos));
+                // Cut the appended part
+                token = token.mid(pos);
+            }
+
+            // In every case no more space on the line here, push to lines
+            lines.emplace_back(std::move(line));
+            // Start a new line
+            line.clear(); // NOLINT(bugprone-use-after-move)
+
+            // Process a long token or rest of the token after the previous 30% filling
+            while (!token.isEmpty()) {
+                // Token is shorter than the width, indicates processing of the last token
+                if (token.size() <= width) {
+                    line.append(token); // NOLINT(bugprone-use-after-move)
+                    break;
+                }
+
+                // Fill the whole line
+                line.append(token.left(width));
+                // Cut the appended part
+                token = token.mid(width);
+                // Push to lines
+                lines.emplace_back(std::move(line));
+                // Start a new line
+                line.clear();
+            }
+
+            continue;
+        }
+
+        // No space on the line, push to lines and start a new line
+        lines.emplace_back(std::move(line));
+
+        // Start a new line
+        line.clear(); // NOLINT(bugprone-use-after-move)
+        line.append(token);
     }
+
+    /* This can happen if a simple append of the token was the last operation, can happen
+       on the two places above. */
+    if (!line.isEmpty())
+        lines.emplace_back(std::move(line));
 
     return lines;
 }
