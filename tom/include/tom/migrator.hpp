@@ -139,7 +139,7 @@ namespace Tom
         /*! The database connection resolver instance. */
         std::shared_ptr<ConnectionResolverInterface> m_resolver;
         /*! The name of the database connection to use. */
-        QString m_connection;
+        QString m_connection {};
 
         /*! Reference to the migrations vector to process. */
         const std::vector<std::shared_ptr<Migration>> &m_migrations;

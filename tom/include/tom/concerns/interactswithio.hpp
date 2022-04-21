@@ -40,8 +40,8 @@ namespace Concerns
 
         /*! Constructor. */
         explicit InteractsWithIO(const QCommandLineParser &parser);
-        /*! Default destructor. */
-        ~InteractsWithIO();
+        /*! Virtual destructor. */
+        virtual ~InteractsWithIO();
 
         /*! Base enum for the verbosity levels. */
         enum struct Verbosity {

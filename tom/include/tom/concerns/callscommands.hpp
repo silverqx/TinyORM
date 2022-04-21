@@ -29,8 +29,8 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline CallsCommands() = default;
-        /*! Default destructor. */
-        inline ~CallsCommands() = default;
+        /*! Virtual destructor. */
+        inline virtual ~CallsCommands() = default;
 
         /*! Call another console command. */
         inline int call(const QString &command, QStringList &&arguments = {}) const;

@@ -29,8 +29,8 @@ namespace Concerns
     public:
         /*! Constructor (int param. to avoid interpret it as copy ctor). */
         PrintsOptions(const Commands::Command &command, int);
-        /*! Default destructor. */
-        inline ~PrintsOptions() = default;
+        /*! Virtual destructor. */
+        inline virtual ~PrintsOptions() = default;
 
         /*! Print options section. */
         int printOptionsSection(bool commonOptions) const;

@@ -34,8 +34,8 @@ namespace Concerns
     public:
         /*! Constructor (int param. to avoid interpret it as copy ctor). */
         Confirmable(Command &command, int);
-        /*! Default destructor. */
-        inline ~Confirmable() = default;
+        /*! Virtual destructor. */
+        inline virtual ~Confirmable() = default;
 
         /*! Confirm before proceeding with the action (only in production environment). */
         bool confirmToProceed(

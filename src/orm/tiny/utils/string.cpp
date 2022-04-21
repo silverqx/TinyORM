@@ -1,5 +1,9 @@
 #include "orm/tiny/utils/string.hpp"
 
+#include <QStringList>
+
+#include <cmath>
+
 #include "orm/constants.hpp"
 
 using Orm::Constants::DASH;
@@ -28,7 +32,7 @@ namespace
     using SnakeCache = std::unordered_map<QString, QString>;
 
     /*! Snake cache for already computed strings. */
-    Q_GLOBAL_STATIC(SnakeCache, snakeCache);
+    Q_GLOBAL_STATIC(SnakeCache, snakeCache); // NOLINT(readability-redundant-member-init)
 } // namespace
 
 QString String::snake(QString string, const QChar delimiter)
@@ -70,7 +74,7 @@ namespace
     using StudlyCache = std::unordered_map<QString, QString>;
 
     /*! Studly cache for already computed strings. */
-    Q_GLOBAL_STATIC(StudlyCache, studlyCache);
+    Q_GLOBAL_STATIC(StudlyCache, studlyCache); // NOLINT(readability-redundant-member-init)
 } // namespace
 
 QString String::studly(QString string)
@@ -147,35 +151,27 @@ bool String::isNumber(const QString &string, const bool allowFloating)
 }
 
 #ifndef TINYORM_DISABLE_TOM
-/*! Split a string by the given width (not in the middle of a word). */
-std::vector<QString> String::splitStringByWidth(const QString &string, const int width)
+namespace
 {
-    // Nothing to split
-    if (string.size() <= width)
-        return {string};
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    using StringViewType = QStringView;
+#else
+    using StringViewType = QStringRef;
+#endif
 
-    std::vector<QString> lines;
-    QString line;
+    /*! Split the token to multiple lines by the given width. */
+    bool splitLongToken(StringViewType token, const int width, QString &line,
+                        std::vector<QString> &lines)
+    {
+        auto shouldContinue = false;
 
-    for (auto token : string.tokenize(SPACE)) {
-        /* If there is still a space on the line then append the token */
-        if (line.size() + token.size() + 1 <= width) {
-            // Don't prepend the space at beginning of an empty line
-            if (!line.isEmpty())
-                line.append(' ');
-
-            line.append(token);
-            continue;
-        }
-
-        /* If a token is longer than the width or an empty space on the current line */
         const auto spaceSize = line.isEmpty() ? 0 : 1;
 
         if (const auto emptySpace = width - line.size() + spaceSize;
             token.size() > emptySpace
         ) {
             // If on the line is still more than 30% of an empty space, use/fill it
-            if (emptySpace > llround(static_cast<float>(width) * 0.3)) {
+            if (emptySpace > std::llround(static_cast<float>(width) * 0.3F)) {
                 // Position where to split the token
                 auto pos = width - line.size() - spaceSize;
 
@@ -208,11 +204,44 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
                 // Push to lines
                 lines.emplace_back(std::move(line));
                 // Start a new line
-                line.clear();
+                line.clear(); // NOLINT(bugprone-use-after-move)
             }
 
+            shouldContinue = true;
+        }
+
+        return shouldContinue;
+    }
+} // namespace
+
+/*! Split a string by the given width (not in the middle of a word). */
+std::vector<QString> String::splitStringByWidth(const QString &string, const int width)
+{
+    // Nothing to split
+    if (string.size() <= width)
+        return {string};
+
+    std::vector<QString> lines;
+    QString line;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    for (auto token : string.tokenize(SPACE)) {
+#else
+    for (auto token : string.splitRef(SPACE)) { // NOLINT(performance-for-range-copy) clazy:exclude=range-loop
+#endif
+        /* If there is still a space on the line then append the token */
+        if (line.size() + token.size() + 1 <= width) {
+            // Don't prepend the space at beginning of an empty line
+            if (!line.isEmpty())
+                line.append(SPACE);
+
+            line.append(token);
             continue;
         }
+
+        /* If a token is longer than the width or an empty space on the current line */
+        if (splitLongToken(token, width, line, lines))
+            continue;
 
         // No space on the line, push to lines and start a new line
         lines.emplace_back(std::move(line));
