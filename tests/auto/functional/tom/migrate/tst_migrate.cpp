@@ -33,10 +33,10 @@ private slots:
     void initTestCase();
     void cleanup() const;
 
-    void reset() const;
-
     void migrate() const;
     void migrate_Step() const;
+
+    void reset() const;
 
     void rollback_OnMigrate() const;
     void rollback_OnMigrateWithStep() const;
@@ -159,22 +159,6 @@ void tst_Migrate::cleanup() const
     }
 }
 
-void tst_Migrate::reset() const
-{
-    {
-        auto exitCode = invokeCommand("migrate:reset");
-
-        QVERIFY(exitCode == EXIT_SUCCESS);
-    }
-
-    {
-        auto exitCode = invokeTestStatusCommand();
-
-        QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createResetStatus(), status());
-    }
-}
-
 void tst_Migrate::migrate() const
 {
     {
@@ -204,6 +188,22 @@ void tst_Migrate::migrate_Step() const
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyStepMigrated), status());
+    }
+}
+
+void tst_Migrate::reset() const
+{
+    {
+        auto exitCode = invokeCommand("migrate:reset");
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+    }
+
+    {
+        auto exitCode = invokeTestStatusCommand();
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+        QCOMPARE(createResetStatus(), status());
     }
 }
 
