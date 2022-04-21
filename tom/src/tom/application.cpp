@@ -62,6 +62,10 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom {
 
+/* Adding/removing/disabling/enabling a command, #include, using, factory in the
+   Application::createCommand(), add a command name to the Application::commandNames(),
+   update indexes in the ListCommand::getCommandsInNamespace(). */
+
 /* public */
 
 Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager> db,
@@ -431,7 +435,7 @@ const std::vector<const char *> &Application::commandNames() const
         // db
         "db:wipe",
         // make
-        "make:migration", "make:project",
+        "make:migration", /*"make:project",*/
         // migrate
         "migrate:fresh",    "migrate:install", "migrate:refresh", "migrate:reset",
         "migrate:rollback", "migrate:status",

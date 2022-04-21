@@ -207,14 +207,16 @@ ListCommand::getCommandsByNamespace(const QString &name) const
 std::vector<std::shared_ptr<Command>>
 ListCommand::getCommandsInNamespace(const QString &name) const
 {
-    /* First number is index where it starts (0-based), second the number where it ends.
+    /* First number is index where it starts (0-based), second the number where it ends
+       (it's like iterator's end so should point after).
+       Look to the Application::commandNames() to understand this indexes.
        tuple is forwarded as args to the ranges::views::slice(). */
     static const std::unordered_map<QString, std::tuple<int, int>> cached {
         {"",        std::make_tuple(0, 5)},
         {"global",  std::make_tuple(0, 5)},
         {"db",      std::make_tuple(5, 6)},
-        {"make",    std::make_tuple(6, 8)},
-        {"migrate", std::make_tuple(8, 14)},
+        {"make",    std::make_tuple(6, 7)},
+        {"migrate", std::make_tuple(7, 13)},
     };
 
     if (!cached.contains(name)) {
