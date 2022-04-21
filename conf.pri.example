@@ -21,6 +21,11 @@ win32-g++|win32-clang-g++ {
     # Enable ccache wrapper
     CONFIG *= tiny_ccache
 
+    # Includes
+    # tabulate
+    INCLUDEPATH += $$quote(C:/msys64/home/xyz/vcpkg/installed/x64-mingw-dynamic/include/)
+    QMAKE_CXXFLAGS += -isystem $$shell_quote(C:/msys64/home/xyz/vcpkg/installed/x64-mingw-dynamic/include/)
+
     # Libraries
     # MySQL C library
     # Find with the pkg-config (preferred), shared build only
@@ -64,7 +69,7 @@ else:win32-msvc {
 else:unix {
     # Includes
     # range-v3
-    QMAKE_CXXFLAGS += -isystem $$quote(/home/xyz/vcpkg/installed/x64-linux/include/)
+    QMAKE_CXXFLAGS += -isystem $$shell_quote(/home/xyz/vcpkg/installed/x64-linux/include/)
 
     # Libraries
     # MySQL C library

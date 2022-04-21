@@ -6,19 +6,24 @@ win32-g++|win32-clang-g++ {
     # Enable ccache wrapper
     CONFIG *= tiny_ccache
 
+    # Includes
+    # tabulate
+    INCLUDEPATH += $$quote(C:/msys64/home/xyz/vcpkg/installed/x64-mingw-dynamic/include/)
+    QMAKE_CXXFLAGS += -isystem $$shell_quote(C:/msys64/home/xyz/vcpkg/installed/x64-mingw-dynamic/include/)
+
     # Use faster linker
     # CONFIG *= use_lld_linker does not work on MinGW
     QMAKE_LFLAGS *= -fuse-ld=lld
 }
 else:win32-msvc {
     # Includes
-    # range-v3
+    # range-v3 and tabulate
     INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include/)
 }
 else:unix {
     # Includes
-    # range-v3
-    QMAKE_CXXFLAGS += -isystem $$quote(/home/xyz/vcpkg/installed/x64-linux/include/)
+    # range-v3 and tabulate
+    QMAKE_CXXFLAGS += -isystem $$shell_quote(/home/xyz/vcpkg/installed/x64-linux/include/)
 
     # Use faster linkers
     clang: CONFIG *= use_lld_linker
