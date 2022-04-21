@@ -3,23 +3,15 @@
 defineTest(tiny_version_numbers) {
     # version.hpp for the TinyORM library project
     contains(_PRO_FILE_, ".*\/src\/src\.pro$"): \
-            versionHeader = $$absolute_path("../include/orm/version.hpp")
+        versionHeader = $$absolute_path("../include/orm/version.hpp")
 
     # version.hpp for the tom example project
     else:contains(_PRO_FILE_, ".*\/examples\/tom\/tom\.pro$"): \
         versionHeader = $$absolute_path("../tom/include/tom/version.hpp")
 
-    else {
+    else: \
         # Try to find in the HEADERS
         versionHeader = $$find(HEADERS, "(?:.*\/)?version\.h(?:pp)?$")
-
-        # Try to find on the INCLUDEPATH
-        isEmpty(versionHeader) {
-            versionHeaders = $$files("$$clean_path($$first(INCLUDEPATH))/version.hpp", \
-                                     true)
-            versionHeader = $$first(versionHeaders)
-        }
-    }
 
     exists(versionHeader)|isEmpty(versionHeader): \
         error( "HEADERS does not contain a version header file version.hpp, needed\
