@@ -2,6 +2,8 @@
 #ifndef TINYUTILS_DATABASES_HPP
 #define TINYUTILS_DATABASES_HPP
 
+#include <memory>
+
 #include "orm/support/databaseconfiguration.hpp"
 
 #include "export.hpp"

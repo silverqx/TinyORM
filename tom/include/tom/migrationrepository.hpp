@@ -4,6 +4,8 @@
 
 #include <QSharedPointer>
 
+#include <optional>
+
 #include <orm/connectionresolverinterface.hpp>
 
 #include "tom/tomtypes.hpp"
