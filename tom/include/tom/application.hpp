@@ -104,11 +104,6 @@ namespace Concerns
         /*! Alias for the commands' base class. */
         using Command = Commands::Command;
 
-        /* Application initialization */
-#ifdef _WIN32
-        /*! Prepare console input/output character encoding. */
-        void initializeConsoleEncoding() const;
-#endif
         /*! Fix m_argc/m_argv data members if the argv is empty. */
         void fixEmptyArgv();
         /*! Processes the specified function at application's normal exit. */

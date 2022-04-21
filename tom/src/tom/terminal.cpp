@@ -2,11 +2,12 @@
 
 #ifdef _WIN32
 #  include <qt_windows.h>
+
+#  include <fcntl.h>
+#  include <io.h>
 #elif defined(__linux__)
 #  include <sys/ioctl.h>
 #endif
-
-#include <io.h>
 
 #include <orm/utils/type.hpp>
 
@@ -20,6 +21,17 @@ namespace Tom
 /* public */
 
 // I can tell that ansi logic detection in this class is a real porn 😎
+
+void Terminal::initialize()
+{
+#ifdef _WIN32
+    enableUtf8ConsoleEncoding();
+#endif
+
+#ifdef __MINGW32__
+    enableVt100Support();
+#endif
+}
 
 bool Terminal::hasColorSupport(std::ostream &cout) const
 {
@@ -204,6 +216,38 @@ bool Terminal::hasVt100Support(std::wostream &wcout) const
 
     return (mode & ENABLE_VIRTUAL_TERMINAL_PROCESSING) ==
             ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+}
+
+/* Terminal initialization */
+
+void Terminal::enableUtf8ConsoleEncoding()
+{
+    // Set it here so the user doesn't have to deal with this
+    SetConsoleOutputCP(CP_UTF8);
+
+    /* UTF-8 encoding is corrupted for narrow input functions, needed to use wcin/wstring
+       for an input, input will be in the unicode encoding then needed to translate
+       unicode to utf8, eg. by QString::fromStdWString(), WideCharToMultiByte(), or
+       std::codecvt(). It also works with msys2 ucrt64 gcc/clang. */
+    SetConsoleCP(CP_UTF8);
+    _setmode(_fileno(stdin), _O_WTEXT);
+}
+#endif
+
+#ifdef __MINGW32__
+void Terminal::enableVt100Support()
+{
+    /* The vt100 is disabled by default on MSYS2 so have to be explicitly enabled:
+       https://github.com/msys2/msys2-runtime/issues/91 */
+    DWORD mode = 0;
+    auto *const stdOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleMode(stdOutHandle, &mode);
+    SetConsoleMode(stdOutHandle, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
+    mode = 0;
+    auto *const stdErrHandle = GetStdHandle(STD_ERROR_HANDLE);
+    GetConsoleMode(stdErrHandle, &mode);
+    SetConsoleMode(stdErrHandle, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 #endif
 

@@ -31,6 +31,9 @@ namespace Tom
         /*! Default destructor. */
         inline ~Terminal() = default;
 
+        /*! Prepare the console terminal. */
+        static void initialize();
+
         /*! Supports the given output ansi colors? (ansi is disabled for non-tty). */
         bool hasColorSupport(std::ostream &cout = std::cout) const;
         /*! Supports the given output ansi colors? (ansi is disabled for non-tty),
@@ -73,6 +76,16 @@ namespace Tom
         /*! Detect if c++ wostream has enabled virtual terminal processing,
             wide version. */
         bool hasVt100Support(std::wostream &wcout) const;
+#endif
+
+        /* Terminal initialization */
+#ifdef _WIN32
+        /*! Enable the UTF-8 console input/output character encoding. */
+        static void enableUtf8ConsoleEncoding();
+#endif
+#ifdef __MINGW32__
+        /*! Enable the virtual terminal processing on the out/err output streams. */
+        static void enableVt100Support();
 #endif
 
         /*! Cache for detected ansi output. */

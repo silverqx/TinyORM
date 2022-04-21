@@ -3,13 +3,6 @@
 #include <QCoreApplication>
 #include <QDebug>
 
-#ifdef _WIN32
-#  include <qt_windows.h>
-
-#  include <fcntl.h>
-#  include <io.h>
-#endif
-
 #include <orm/databasemanager.hpp>
 #include <orm/utils/type.hpp>
 #include <orm/version.hpp>
@@ -30,6 +23,7 @@
 #include "tom/commands/migrations/statuscommand.hpp"
 #include "tom/migrationrepository.hpp"
 #include "tom/migrator.hpp"
+#include "tom/terminal.hpp"
 #ifndef TINYTOM_TESTS_CODE
 #  include "tom/version.hpp"
 #endif
@@ -81,10 +75,8 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
     , m_migrationTable(std::move(migrationTable))
     , m_migrations(std::move(migrations))
 {
-#ifdef _WIN32
-    // Prepare console input/output character encoding
-    initializeConsoleEncoding();
-#endif
+    // Enable UTF-8 encoding and vt100 support
+    Terminal::initialize();
 
     // Following is not relevant in the auto test executables
 #ifndef TINYTOM_TESTS_CODE
@@ -156,23 +148,6 @@ void Application::enableInUnitTests() noexcept
 #endif
 
 /* protected */
-
-/* Application initialization */
-
-#ifdef _WIN32
-void Application::initializeConsoleEncoding() const
-{
-    // Set it here so the user doesn't have to deal with this
-    SetConsoleOutputCP(CP_UTF8);
-
-    /* UTF-8 encoding is corrupted for narrow input functions, needed to use wcin/wstring
-       for an input, input will be in the unicode encoding then needed to translate
-       unicode to utf8, eg. by QString::fromStdWString(), WideCharToMultiByte(), or
-       std::codecvt(). It also works with msys2 ucrt64 gcc/clang. */
-    SetConsoleCP(CP_UTF8);
-    _setmode(_fileno(stdin), _O_WTEXT);
-}
-#endif
 
 void Application::fixEmptyArgv()
 {
