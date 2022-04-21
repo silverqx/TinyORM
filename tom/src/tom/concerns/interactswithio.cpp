@@ -7,7 +7,6 @@
 
 #include "tom/terminal.hpp"
 
-using tabulate::Color;
 using tabulate::Table;
 
 using Orm::Constants::ASTERISK;
@@ -448,7 +447,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
     QStringList lines;
 
     {
-        auto splitted = string.split(NEWLINE, Qt::SkipEmptyParts);
+        const auto splitted = string.split(NEWLINE, Qt::SkipEmptyParts);
 
         /* Compute the max. box width */
         // Get max. line width after the split with the newline in all rendered lines

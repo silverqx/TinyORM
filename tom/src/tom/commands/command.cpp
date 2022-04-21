@@ -112,7 +112,7 @@ QString Command::boolCmd(const QString &name, const QString &key) const
     return QStringLiteral("--%1").arg(key.isEmpty() ? name : key);
 }
 
-bool Command::hasArgument(const QList<QString>::size_type index) const
+bool Command::hasArgument(const ArgumentsSizeType index) const
 {
     /* Has to be isNull(), an argument passed on the command line still can be an empty
        value, like "", in this case it has to return a true value. */
@@ -124,13 +124,19 @@ QStringList Command::arguments() const
     return parser().positionalArguments();
 }
 
-QString Command::argument(const QList<QString>::size_type index) const
+QString Command::argument(const ArgumentsSizeType index) const
 {
+    const auto &positionalArgumentsRef = positionalArguments();
+
+
+    using ArgumentsStdSizeType =
+            std::remove_cvref_t<decltype (positionalArgumentsRef)>::size_type;
+
     // Default value supported
     return parser().positionalArguments()
             .value(index,
-                   positionalArguments().at(
-                       static_cast<std::size_t>(index) - 1).defaultValue);
+                   positionalArgumentsRef.at(
+                       static_cast<ArgumentsStdSizeType>(index) - 1).defaultValue);
 }
 
 QString Command::argument(const QString &name) const
@@ -158,16 +164,15 @@ void Command::initializePositionalArguments()
     if (arguments.empty())
         return;
 
-    using ArgumentsSizeType = std::vector<PositionalArgument>::size_type;
-
     m_positionalArguments =
             ranges::views::zip_with([](const auto &argument, auto &&index)
-                                    -> std::pair<QString, OptionsSizeType>
+                                    -> std::pair<QString, ArgumentsSizeType>
     {
         return {argument.name, index};
     },
-        arguments, ranges::views::closed_iota(static_cast<ArgumentsSizeType>(1),
-                                              arguments.size())
+        arguments,
+        ranges::views::closed_iota(static_cast<ArgumentsSizeType>(1),
+                                   static_cast<ArgumentsSizeType>(arguments.size()))
     )
             | ranges::to<decltype (m_positionalArguments)>();
 

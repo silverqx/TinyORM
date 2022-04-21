@@ -227,7 +227,10 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     for (auto token : string.tokenize(SPACE)) {
 #else
-    for (auto token : string.splitRef(SPACE)) { // NOLINT(performance-for-range-copy) clazy:exclude=range-loop
+    for (const auto splitted = string.splitRef(SPACE);
+         // NOLINTNEXTLINE(performance-for-range-copy)
+         auto token : splitted // clazy:exclude=range-loop,range-loop-reference
+    ) {
 #endif
         /* If there is still a space on the line then append the token */
         if (line.size() + token.size() + 1 <= width) {

@@ -271,7 +271,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
     QVERIFY(savedFile2[ID]->value<quint64>() > 9);
 
     // saveMany() have to return reference to the same 'models' vector
-    QVERIFY(reinterpret_cast<uintptr_t>(&filesToSave[0])
+    QVERIFY(reinterpret_cast<uintptr_t>(filesToSave.data())
             != reinterpret_cast<uintptr_t>(&savedFile1));
     QVERIFY(reinterpret_cast<uintptr_t>(&filesToSave[1])
             != reinterpret_cast<uintptr_t>(&savedFile2));
@@ -873,7 +873,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
     QCOMPARE(size, 2);
 
     // saveMany method have to return the same models as a reference_wrapper
-    QVERIFY(reinterpret_cast<uintptr_t>(&tagsToSave[0])
+    QVERIFY(reinterpret_cast<uintptr_t>(tagsToSave.data())
             == reinterpret_cast<uintptr_t>(&savedTag1));
     QVERIFY(reinterpret_cast<uintptr_t>(&tagsToSave[1])
             == reinterpret_cast<uintptr_t>(&savedTag2));

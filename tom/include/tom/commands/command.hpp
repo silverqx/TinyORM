@@ -89,12 +89,15 @@ namespace Tom::Commands
         /*! Get a full command-line boolean option if it's set in the parser. */
         QString boolCmd(const QString &name, const QString &key = "") const;
 
+        /*! Alias for the QList command-line option size type. */
+        using ArgumentsSizeType = QStringList::size_type;
+
         /*! Check whether a positional argument at the given index was set. */
-        bool hasArgument(QList<QString>::size_type index) const;
+        bool hasArgument(ArgumentsSizeType index) const;
         /*! Get a list of positional arguments. */
         QStringList arguments() const;
         /*! Get a positional argument at the given index position. */
-        QString argument(QList<QString>::size_type index) const;
+        QString argument(ArgumentsSizeType index) const;
         /*! Get a positional argument by the given name. */
         QString argument(const QString &name) const;
 
@@ -111,10 +114,8 @@ namespace Tom::Commands
         /*! Passed command's arguments. */
         QStringList m_arguments {};
 
-        /*! Alias for the QList command-line option size type. */
-        using OptionsSizeType = QList<QCommandLineOption>::size_type;
         /*! Map positional argument names to the index for obtaining values. */
-        std::unordered_map<QString, OptionsSizeType> m_positionalArguments {};
+        std::unordered_map<QString, ArgumentsSizeType> m_positionalArguments {};
 
     private:
         /*! Initialize positional arguments map. */

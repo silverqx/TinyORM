@@ -95,7 +95,7 @@ namespace Concerns
         using StatusRow = std::vector<std::string>;
 
         /*! Get result of the status command (used in auto tests). */
-        static std::vector<StatusRow> status() noexcept;
+        static std::vector<StatusRow> status();
         /*! Enable logic for unit testing? */
         static void enableInUnitTests() noexcept;
 #endif

@@ -108,7 +108,7 @@ fspath MigrationCommand::getMigrationPath() const
 
     // The 'path' argument contains an absolute path
     if (isSet("realpath"))
-        return fspath(std::move(targetPath));
+        return {std::move(targetPath)};
 
     // The 'path' argument contains a relative path
     auto migrationsPath = fs::current_path() / std::move(targetPath);

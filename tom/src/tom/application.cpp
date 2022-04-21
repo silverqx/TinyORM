@@ -136,7 +136,7 @@ QStringList Application::arguments() const
 }
 
 #ifdef TINYTOM_TESTS_CODE
-std::vector<Application::StatusRow> Application::status() noexcept
+std::vector<Application::StatusRow> Application::status()
 {
     return StatusCommand::status();
 }

@@ -1348,3 +1348,4 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR tom, don't modify migrate:status command, rather extend it and add possibility to only call it through Application::runWithArguments() (this secure to not be able to call it from the cmd. line), do not show it in the list or help command output silverqx
 // CUR tom, think about remove TINYTOM_NO/_DEBUG and TINYTOM_TESTS_CODE and use TINYORM_ defines instead silverqx
 // BUG rc file © encoding silverqx
+// TODO github actions, update llvm analyzer tools to llvm 14 (clang-tidy/clazy) silverqx

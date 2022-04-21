@@ -50,8 +50,7 @@ QVector<QString> Blueprint::toSql(const DatabaseConnection &connection,
 
     QVector<QString> statements;
     // Reserve * 2 might be enough, can't be predicted :/
-    // CUR schema, Qt6 use long long instead of int for containers? silverqx
-    statements.reserve(static_cast<int>(m_commands.size()) * 2);
+    statements.reserve(static_cast<QVector<QString>::size_type>(m_commands.size()) * 2);
 
     for (const auto &command : m_commands)
         statements += grammar.invokeCompileMethod(*command, connection, *this);

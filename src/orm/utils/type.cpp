@@ -36,11 +36,11 @@ QString Type::prettyFunction(const QString &function)
     /* I can leave RegEx here because this function is used only during throwing
        exceptions, so there would not be any performance benefit. */
 #ifdef __GNUG__
-    QRegularExpression regex(QStringLiteral(
-                                 "(?:.* )?(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)\\(.*\\)"));
+    static QRegularExpression regex(
+                QLatin1String("(?:.* )?(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)\\(.*\\)"));
 #elif _MSC_VER
-    QRegularExpression regex(QStringLiteral(
-                                 "(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)(?:$|::<lambda)"));
+    static QRegularExpression regex(
+                QLatin1String("(?:.*::)?(\\w+)(?:<.*>)?::(\\w+)(?:$|::<lambda)"));
 #else
     throw RuntimeError(
                 "Unsupported compiler in Utils::Type::prettyFunction().");

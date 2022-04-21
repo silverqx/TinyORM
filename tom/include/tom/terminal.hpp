@@ -8,6 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QString>
 
 #include <iostream>
+#include <unordered_map>
 
 #include <orm/macros/commonnamespace.hpp>
 

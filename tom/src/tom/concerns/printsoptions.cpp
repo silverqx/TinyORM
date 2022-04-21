@@ -35,7 +35,7 @@ int PrintsOptions::optionsMaxSize() const
 {
     int optionsMaxSize = 0;
 
-    for (const auto &option : m_command.get().application().m_options) {
+    for (const auto &option : std::as_const(m_command.get().application().m_options)) {
         QStringList options;
 
         for (const auto &names = option.names();
@@ -66,7 +66,7 @@ int PrintsOptions::optionsMaxSize() const
 
 void PrintsOptions::printOptions(const int optionsMaxSize) const
 {
-    for (const auto &option : m_command.get().application().m_options) {
+    for (const auto &option : std::as_const(m_command.get().application().m_options)) {
         QStringList options;
 
         for (const auto &names = option.names();

@@ -567,17 +567,17 @@ Status tst_Migrate::status() const
 
 Status tst_Migrate::createStatus(std::initializer_list<StatusRow> rows) const
 {
-    return Status({rows});
+    return rows;
 }
 
 Status tst_Migrate::createResetStatus() const
 {
-    return Status({
+    return {
         {No, s_2014_10_12_000000_create_posts_table},
         {No, s_2014_10_12_100000_add_factor_column_to_posts_table},
         {No, s_2014_10_12_200000_create_properties_table},
         {No, s_2014_10_12_300000_create_phones_table},
-    });
+    };
 }
 
 QTEST_MAIN(tst_Migrate)
