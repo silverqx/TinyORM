@@ -75,7 +75,7 @@ void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
             continue;
 
         // Extract migration name without datetime prefix and extension
-        auto entryName = QString::fromWCharArray(entry.path().filename().c_str())
+        auto entryName = QString::fromStdString(entry.path().filename().string())
                          .mid(DatePrefix->size() + 1);
 
         entryName.truncate(entryName.lastIndexOf(DOT));

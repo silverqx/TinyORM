@@ -116,6 +116,9 @@ namespace Tom
     template<OStreamConcept O>
     bool Terminal::hasColorSupportInternal(O &&cout, FILE *stream) const
     {
+#ifndef _WIN32
+        Q_UNUSED(cout)
+#endif
         // Follow https://no-color.org/
         if (qEnvironmentVariableIsSet("NO_COLOR"))
             return false;

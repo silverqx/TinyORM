@@ -8,7 +8,8 @@
   "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
   "supports": "!(uwp | arm | android | emscripten)",
   "dependencies": [
-    "range-v3"
+    "range-v3",
+    "tabulate"
   ],
   "features": {
     "mysqlping": {

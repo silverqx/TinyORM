@@ -93,8 +93,11 @@ bool Terminal::hasWColorSupport(std::wostream &wcout) const
 
 bool Terminal::isatty(FILE *stream) const
 {
-    // CUR tom, linux silverqx
-    return _isatty(_fileno(stream)) != 0;
+#ifdef _WIN32
+    return ::_isatty(::_fileno(stream)) != 0;
+#else
+    return ::isatty(::fileno(stream)) != 0;
+#endif
 }
 
 int Terminal::width()

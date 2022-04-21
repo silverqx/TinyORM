@@ -95,7 +95,7 @@ void MigrationCommand::writeMigration(const QString &name, const QString &table,
 
     info(QLatin1String("Created Migration: "), false);
 
-    note(QString::fromWCharArray(migrationFile.c_str()));
+    note(QString::fromStdString(migrationFile.string()));
 }
 
 fspath MigrationCommand::getMigrationPath() const
