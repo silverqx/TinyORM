@@ -1,11 +1,29 @@
 # Find version numbers in the version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
 defineTest(tiny_version_numbers) {
-    versionHeader = $$find(HEADERS, "(?:.*\/)?version\.h(?:pp)?$")
-    exists(versionHeader)|isEmpty(versionHeader) {
+    # version.hpp for the TinyORM library project
+    contains(_PRO_FILE_, ".*\/src\/src\.pro$"): \
+            versionHeader = $$absolute_path("../include/orm/version.hpp")
+
+    # version.hpp for the tom example project
+    else:contains(_PRO_FILE_, ".*\/examples\/tom\/tom\.pro$"): \
+        versionHeader = $$absolute_path("../tom/include/tom/version.hpp")
+
+    else {
+        # Try to find in the HEADERS
+        versionHeader = $$find(HEADERS, "(?:.*\/)?version\.h(?:pp)?$")
+
+        # Try to find on the INCLUDEPATH
+        isEmpty(versionHeader) {
+            versionHeaders = $$files("$$clean_path($$first(INCLUDEPATH))/version.hpp", \
+                                     true)
+            versionHeader = $$first(versionHeaders)
+        }
+    }
+
+    exists(versionHeader)|isEmpty(versionHeader): \
         error( "HEADERS does not contain a version header file version.hpp, needed\
                 in the tiny_version_numbers.prf." )
-    }
 
     versionFileContent = $$cat($$quote($$absolute_path($$versionHeader)), lines)
     versionTokens = MAJOR MINOR BUGFIX BUILD STATUS
@@ -38,9 +56,8 @@ defineTest(tiny_version_numbers) {
     $$hasStatus: versionStatus = $$take_last(versionList)
 
     # Use 3 numbers version on other platforms
-    !win32 {
+    !win32: \
         $$take_last(versionList)
-    }
 
     VERSION = $$join(versionList, '.')$$versionStatus
     export(VERSION)

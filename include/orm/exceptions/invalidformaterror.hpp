@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! Invalid format exception. */
+    /*! TinyORM invalid format exception. */
     class InvalidFormatError : public LogicError
     {
         /*! Inherit constructors. */

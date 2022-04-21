@@ -2,7 +2,7 @@
 
 #include <QDateTime>
 #if defined(TINYORM_MYSQL_PING)
-#include <QDebug>
+#  include <QDebug>
 #endif
 
 #include "orm/query/querybuilder.hpp"
@@ -400,6 +400,14 @@ void DatabaseConnection::disconnect()
     m_qtConnectionResolver = nullptr;
 }
 
+const SchemaGrammar &DatabaseConnection::getSchemaGrammar()
+{
+    if (!m_schemaGrammar)
+        useDefaultSchemaGrammar();
+
+    return *m_schemaGrammar;
+}
+
 std::unique_ptr<SchemaBuilder> DatabaseConnection::getSchemaBuilder()
 {
     if (!m_schemaGrammar)
@@ -432,7 +440,7 @@ namespace
 {
     using DriverNameMapType = std::unordered_map<QString, const QString &>;
 
-    // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+    /*! Map Qt driver name to the pretty name. */
     Q_GLOBAL_STATIC_WITH_ARGS(DriverNameMapType, DRIVER_NAME_MAP, ({
                                   {QMYSQL,  MYSQL_},
                                   {QPSQL,   POSTGRESQL},

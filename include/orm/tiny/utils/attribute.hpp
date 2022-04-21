@@ -9,33 +9,46 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny::Utils::Attribute
+namespace Orm::Tiny::Utils
 {
-    /*! Convert a AttributeItem QVector to QVariantMap. */
-    SHAREDLIB_EXPORT QVariantMap
-    convertVectorToMap(const QVector<AttributeItem> &attributes);
-    /*! Convert a vector of AttributeItem QVectors to the vector of QVariantMaps. */
-    SHAREDLIB_EXPORT QVector<QVariantMap>
-    convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attributesVector);
 
-    /*! Convert a AttributeItem QVector to UpdateItem QVector. */
-    SHAREDLIB_EXPORT QVector<UpdateItem>
-    convertVectorToUpdateItem(const QVector<AttributeItem> &attributes);
-    /*! Convert a AttributeItem QVector to UpdateItem QVector. */
-    SHAREDLIB_EXPORT QVector<UpdateItem>
-    convertVectorToUpdateItem(QVector<AttributeItem> &&attributes);
+    /*! Library class for the database attribute. */
+    class SHAREDLIB_EXPORT Attribute
+    {
+        Q_DISABLE_COPY(Attribute)
 
-    /*! Remove attributes which have duplicite keys and leave only the last one. */
-    SHAREDLIB_EXPORT QVector<AttributeItem>
-    removeDuplicitKeys(const QVector<AttributeItem> &attributes);
+    public:
+        /*! Deleted default constructor, this is a pure library class. */
+        Attribute() = delete;
+        /*! Deleted destructor. */
+        ~Attribute() = delete;
 
-    /*! Join attributes and values for firstOrXx methods. */
-    SHAREDLIB_EXPORT QVector<AttributeItem>
-    joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
-                             const QVector<AttributeItem> &values,
-                             const QString &keyName);
+        /*! Convert a AttributeItem QVector to QVariantMap. */
+        static QVariantMap
+        convertVectorToMap(const QVector<AttributeItem> &attributes);
+        /*! Convert a vector of AttributeItem QVectors to the vector of QVariantMaps. */
+        static QVector<QVariantMap>
+        convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attributesVector);
 
-} // namespace Orm::Tiny::Utils::Attribute
+        /*! Convert a AttributeItem QVector to UpdateItem QVector. */
+        static QVector<UpdateItem>
+        convertVectorToUpdateItem(const QVector<AttributeItem> &attributes);
+        /*! Convert a AttributeItem QVector to UpdateItem QVector. */
+        static QVector<UpdateItem>
+        convertVectorToUpdateItem(QVector<AttributeItem> &&attributes);
+
+        /*! Remove attributes which have duplicite keys and leave only the last one. */
+        static QVector<AttributeItem>
+        removeDuplicitKeys(const QVector<AttributeItem> &attributes);
+
+        /*! Join attributes and values for firstOrXx methods. */
+        static QVector<AttributeItem>
+        joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
+                                 const QVector<AttributeItem> &values,
+                                 const QString &keyName);
+    };
+
+} // namespace Orm::Tiny::Utils
 
 TINYORM_END_COMMON_NAMESPACE
 

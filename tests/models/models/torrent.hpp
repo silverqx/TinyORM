@@ -13,7 +13,7 @@
 #include "models/user.hpp"
 
 #ifdef PROJECT_TINYORM_PLAYGROUND
-#include "configuration.hpp"
+#  include "configuration.hpp"
 #endif
 
 namespace Models

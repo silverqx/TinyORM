@@ -16,7 +16,7 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/modelproxies.hpp"
 #include "orm/tiny/tinybuilder.hpp"
 #ifdef TINYORM_TESTS_CODE
-#include "orm/tiny/types/connectionoverride.hpp"
+#  include "orm/tiny/types/connectionoverride.hpp"
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -63,6 +63,10 @@ namespace Orm::Tiny
         // Used by TinyBuilder::eagerLoadRelations()
         friend TinyBuilder<Derived>;
 
+        /*! Alias for the attribute utils. */
+        using AttributeUtils = Orm::Tiny::Utils::Attribute;
+        /*! Alias for the string utils. */
+        using StringUtils = Orm::Tiny::Utils::String;
         /*! Apply all the Model's template parameters to the passed T template
             argument. */
         template<template<typename ...> typename T>
@@ -893,8 +897,7 @@ namespace Orm::Tiny
         if (table.isEmpty())
             const_cast<QString &>(model().u_table) =
                 QStringLiteral("%1s").arg(
-                    TinyUtils::String::toSnake(
-                        Orm::Utils::Type::classPureBasename<Derived>()));
+                    StringUtils::snake(Orm::Utils::Type::classPureBasename<Derived>()));
 
         return table;
     }
@@ -940,8 +943,7 @@ namespace Orm::Tiny
     QString Model<Derived, AllRelations...>::getForeignKey() const
     {
         return QStringLiteral("%1_%2").arg(
-                    TinyUtils::String::toSnake(
-                        Orm::Utils::Type::classPureBasename<Derived>()),
+                    StringUtils::snake(Orm::Utils::Type::classPureBasename<Derived>()),
                     getKeyName());
     }
 
@@ -1076,7 +1078,7 @@ namespace Orm::Tiny
 
         if (!dirty.isEmpty()) {
             model().setKeysForSaveQuery(query).update(
-                        TinyUtils::Attribute::convertVectorToUpdateItem(dirty));
+                        AttributeUtils::convertVectorToUpdateItem(dirty));
 
             this->syncChanges();
 
@@ -1327,3 +1329,22 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR model, add whereBelongsTo, whereRelation, orWhereRelation silverqx
 // CUR schema, add tests for enum and set; and json and jsonb, storedAs / virtualAs silverqx
 // CUR propagation, https://ben.balter.com/2017/11/10/twelve-tips-for-growing-communities-around-your-open-source-project/ silverqx
+// CUR optimization, use Q_UNREACHABLE in all switch statements, of course where appropriate silverqx
+// TODO vcpkg, solve how to build tom (when solving vcpkg builds again), currently I have hardly added tabulate to the vcpkg.json port and also manifest file; it will have to be conditional base of the TINYORM_DISABLE_TOM macro silverqx
+// CUR tom docs, disable_tom and TINYORM_DISABLE_TOM to build.mdx, don't forget to add features and update dependencies (tabulate) in vcpkg.json silverqx
+// CUR schema, add tests for enum and set; and json and jsonb, storedAs / virtualAs silverqx
+// CUR compiler, enable /sdl on msvc https://docs.microsoft.com/en-us/cpp/build/reference/sdl-enable-additional-security-checks?view=msvc-170 silverqx
+// CUR cmake, update max. policy to 3.23 silverqx
+// CUR tom, add tabulate to comments where range-v3 is, all checked, only docs left silverqx
+// CUR tom, verify -isystem $$shell_quote() updated in docs silverqx
+// CUR tom, tom/conf.pri is used by who silverqx
+// CUR cmake, add messages about Building tom example, tests and ORM silverqx
+// CUR docs, remove target_link_libs() for transitive dependencies silverqx
+// CUR tests, move version test outside of the orm/ folder silverqx
+// CUR tom docs, write documentation silverqx
+// CUR tom, build on mingw, linux, build without pch and all common tasks that should run from time to time silverqx
+// CUR tom, update docs target_link_library() https://discourse.cmake.org/t/explicitly-link-against-public-interface-dependencies/5484/2 silverqx
+// CUR tom, provide somehow a custom path to migrations for the tom example, so the tom example can be used like real migration app silverqx
+// CUR tom, don't modify migrate:status command, rather extend it and add possibility to only call it through Application::runWithArguments() (this secure to not be able to call it from the cmd. line), do not show it in the list or help command output silverqx
+// CUR tom, think about remove TINYTOM_NO/_DEBUG and TINYTOM_TESTS_CODE and use TINYORM_ defines instead silverqx
+// BUG rc file © encoding silverqx

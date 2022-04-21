@@ -143,10 +143,12 @@ macro(tiny_init_tiny_variables_pre)
     # a main package name
     set(TinyOrm_ns TinyOrm)
     set(TinyUtils_ns TinyUtils)
+    set(TomExample_ns tom)
     # Target names
     set(CommonConfig_target CommonConfig)
     set(TinyOrm_target TinyOrm)
     set(TinyUtils_target TinyUtils)
+    set(TomExample_target tom)
 
     get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
     set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL

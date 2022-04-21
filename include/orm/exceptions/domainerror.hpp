@@ -5,8 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <stdexcept>
-
 #include "orm/exceptions/logicerror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -14,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! Domain exception. */
+    /*! TinyORM Domain exception. */
     class DomainError : public LogicError
     {
         /*! Inherit constructors. */

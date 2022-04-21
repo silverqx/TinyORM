@@ -8,6 +8,7 @@
   "supports": "!(uwp | arm | android | emscripten)",
   "dependencies": [
     "range-v3",
+    "tabulate",
     "qt5-base",
     {
       "name": "vcpkg-cmake",

@@ -11,7 +11,7 @@ TINY_SYSTEM_HEADER
 #include <typeinfo>
 
 #ifdef __GNUG__
-#include <cxxabi.h>
+#  include <cxxabi.h>
 #endif
 
 #include "orm/macros/commonnamespace.hpp"
@@ -58,6 +58,9 @@ namespace Orm::Utils
 
         /*! Return a pretty function name in the following format: Xyz::function. */
         static QString prettyFunction(const QString &function);
+
+        /*! Determine whether a string is true bool value (false for "", "0", "false"). */
+        static bool isTrue(const QString &value);
 
     private:
         /*! Class name with or w/o a namespace and w/o template parameters, common

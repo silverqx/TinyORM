@@ -21,6 +21,15 @@ if(BUILD_SHARED_LIBS)
     target_compile_definitions(version PRIVATE TINYTEST_VERSION_IS_SHARED_BUILD)
 endif()
 
+if(TOM_EXAMPLE)
+    target_compile_definitions(version PRIVATE TINYTOM_EXAMPLE)
+
+    # To find tom/include/version.hpp
+    target_include_directories(version PRIVATE
+        "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tom/include>"
+    )
+endif()
+
 target_include_directories(version PRIVATE
     "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/include>"
 )

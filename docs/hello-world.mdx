@@ -456,7 +456,7 @@ TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake)
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 
 # TinyORM header files
-QMAKE_CXXFLAGS += -isystem $$quote($$TINY_MAIN_DIR/TinyORM/include/)
+QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_MAIN_DIR/TinyORM/include/)
 
 # TinyORM library path
 LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
@@ -464,7 +464,7 @@ LIBS += -lTinyOrm
 
 # vcpkg - range-v3
 # ---
-QMAKE_CXXFLAGS += -isystem $$quote(../../../../vcpkg/installed/x64-linux/include/)
+QMAKE_CXXFLAGS += -isystem $$shell_quote(../../../../vcpkg/installed/x64-linux/include/)
 ```
 
 :::tip

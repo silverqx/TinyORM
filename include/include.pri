@@ -126,6 +126,9 @@ headersList += \
         $$PWD/orm/tiny/types/connectionoverride.hpp \
         $$PWD/orm/tiny/types/syncchanges.hpp \
         $$PWD/orm/tiny/utils/attribute.hpp \
+
+!disable_orm|!disable_tom: \
+    headersList += \
         $$PWD/orm/tiny/utils/string.hpp \
 
 HEADERS += $$sorted(headersList)

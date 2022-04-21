@@ -10,6 +10,12 @@ CONFIG(dll, dll|shared|static|staticlib): \
 
 INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/include/)
 
+# TinyTom include path
+# ---
+
+!disable_tom: \
+    INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tom/include/)
+
 # Link against TinyORM library
 # ---
 

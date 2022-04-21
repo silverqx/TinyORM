@@ -1,0 +1,2 @@
+CONFIG *= disable_tom
+DEFINES *= TINYORM_DISABLE_TOM

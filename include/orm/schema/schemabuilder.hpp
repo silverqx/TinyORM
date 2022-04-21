@@ -9,7 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
-// CUR check this on clean project silverqx
+// CUR tom, check this on clean project silverqx
 // Include the blueprint here so a user doesn't have to
 #include "orm/schema/blueprint.hpp"
 

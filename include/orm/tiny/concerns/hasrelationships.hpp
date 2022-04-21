@@ -6,9 +6,9 @@
 TINY_SYSTEM_HEADER
 
 #ifdef __GNUG__
-#include <map>
+#  include <map>
 #else
-#include <unordered_map>
+#  include <unordered_map>
 #endif
 #include <unordered_set>
 
@@ -955,7 +955,6 @@ namespace Concerns
     QString
     HasRelationships<Derived, AllRelations...>::guessBelongsToRelationInternal() const
     {
-        // TODO reliability, also add Orm::Tiny::Utils::String::studly silverqx
         auto relation = Orm::Utils::Type::classPureBasename<Related>();
 
         relation[0] = relation[0].toLower();

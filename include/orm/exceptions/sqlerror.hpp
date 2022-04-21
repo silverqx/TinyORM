@@ -14,7 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! SqlError exception, wrapper for the QSqlError. */
+    /*! TinyORM SqlError exception, wrapper for the QSqlError. */
     class SHAREDLIB_EXPORT SqlError : public RuntimeError
     {
     public:
@@ -24,7 +24,7 @@ namespace Orm::Exceptions
         SqlError(const QString &message, const QSqlError &error);
 
         /*! Get the original Qt SQL error. */
-        const QSqlError &getSqlError() const;
+        inline const QSqlError &getSqlError() const noexcept;
 
     protected:
         /*! Internal ctor for use from descendants to avoid an error message
@@ -37,6 +37,11 @@ namespace Orm::Exceptions
         /*! The Qt SQL error instance. */
         QSqlError m_sqlError;
     };
+
+    const QSqlError &SqlError::getSqlError() const noexcept
+    {
+        return m_sqlError;
+    }
 
 } // namespace Orm::Exceptions
 

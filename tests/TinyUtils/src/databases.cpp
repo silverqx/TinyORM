@@ -39,6 +39,10 @@ using Orm::DB;
 
 using Orm::Exceptions::RuntimeError;
 
+#ifndef TINYORM_SQLITE_DATABASE
+#  define TINYORM_SQLITE_DATABASE ""
+#endif
+
 namespace TestUtils
 {
 
@@ -49,6 +53,14 @@ namespace TestUtils
    correctly.
    Tests don't fail but are skipped when a connection is not available. */
 
+namespace
+{
+    /*! DatabaseManager instance. */
+    Q_GLOBAL_STATIC_WITH_ARGS(std::shared_ptr<Orm::DatabaseManager>, db, {nullptr});
+}
+
+/* public */
+
 const QStringList &Databases::createConnections(const QStringList &connections)
 {
     throwIfConnectionsInitialized();
@@ -57,7 +69,7 @@ const QStringList &Databases::createConnections(const QStringList &connections)
     /* The default connection is empty for tests, there is no default connection
        because it can produce hard to find bugs, I have to be explicit about
        the connection which will be used. */
-    static const auto manager = DB::create(getConfigurations(connections), "");
+    static const auto manager = *db = DB::create(getConfigurations(connections), "");
 
     static const auto cachedConnectionNames = manager->connectionNames();
 
@@ -87,6 +99,16 @@ bool Databases::allEnvVariablesEmpty(const std::vector<const char *> &envVariabl
         return qEnvironmentVariableIsEmpty(envVariable);
     });
 }
+
+const std::shared_ptr<Orm::DatabaseManager> &Databases::manager()
+{
+    if (db() == nullptr)
+        throw RuntimeError("The global static 'db' was already destroyed.");
+
+    return *db;
+}
+
+/* private */
 
 const Databases::ConfigurationsType &
 Databases::getConfigurations(const QStringList &connections)

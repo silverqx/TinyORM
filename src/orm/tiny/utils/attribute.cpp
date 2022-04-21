@@ -9,11 +9,10 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny::Utils::Attribute
+namespace Orm::Tiny::Utils
 {
 
-QVariantMap
-convertVectorToMap(const QVector<AttributeItem> &attributes)
+QVariantMap Attribute::convertVectorToMap(const QVector<AttributeItem> &attributes)
 {
     QVariantMap result;
 
@@ -24,7 +23,7 @@ convertVectorToMap(const QVector<AttributeItem> &attributes)
 }
 
 QVector<QVariantMap>
-convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attributesVector)
+Attribute::convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attributesVector)
 {
     const auto size = attributesVector.size();
     QVector<QVariantMap> result(size);
@@ -37,7 +36,7 @@ convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attributesVector)
 }
 
 QVector<UpdateItem>
-convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
+Attribute::convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
 {
     QVector<UpdateItem> result;
     result.reserve(attributes.size());
@@ -49,7 +48,7 @@ convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
 }
 
 QVector<UpdateItem>
-convertVectorToUpdateItem(QVector<AttributeItem> &&attributes)
+Attribute::convertVectorToUpdateItem(QVector<AttributeItem> &&attributes)
 {
     QVector<UpdateItem> result;
     result.reserve(attributes.size());
@@ -62,7 +61,7 @@ convertVectorToUpdateItem(QVector<AttributeItem> &&attributes)
 }
 
 QVector<AttributeItem>
-removeDuplicitKeys(const QVector<AttributeItem> &attributes)
+Attribute::removeDuplicitKeys(const QVector<AttributeItem> &attributes)
 {
     const auto size = attributes.size();
     std::unordered_set<QString> added(static_cast<std::size_t>(size));
@@ -87,9 +86,9 @@ removeDuplicitKeys(const QVector<AttributeItem> &attributes)
 }
 
 QVector<AttributeItem>
-joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
-                         const QVector<AttributeItem> &values,
-                         const QString &keyName)
+Attribute::joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
+                                    const QVector<AttributeItem> &values,
+                                    const QString &keyName)
 {
     // Remove the primary key from attributes
     auto attributesFiltered =
@@ -126,6 +125,6 @@ joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
     return attributesFiltered + valuesFiltered;
 }
 
-} // namespace Orm::Tiny::Utils::Attribute
+} // namespace Orm::Tiny::Utils
 
 TINYORM_END_COMMON_NAMESPACE

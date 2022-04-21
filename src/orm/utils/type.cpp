@@ -3,12 +3,12 @@
 #include <QRegularExpression>
 
 #if !defined(_MSC_VER)
-#include <memory>
+#  include <memory>
 #endif
 
 #include "orm/constants.hpp"
 #if !defined(_MSC_VER)
-#include "orm/exceptions/runtimeerror.hpp"
+#  include "orm/exceptions/runtimeerror.hpp"
 #endif
 
 using Orm::Constants::ASTERISK_C;
@@ -55,6 +55,11 @@ QString Type::prettyFunction(const QString &function)
                "Can not get the function name in Utils::Type::prettyFunction().");
 
     return QStringLiteral("%1::%2").arg(match.captured(1), match.captured(2));
+}
+
+bool Type::isTrue(const QString &value)
+{
+    return !value.isEmpty() && value != "0" && value != "false";
 }
 
 QString

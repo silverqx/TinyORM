@@ -3,7 +3,7 @@ include(TinyResourceAndManifest)
 # Configure passed auto test
 function(tiny_configure_test name)
 
-    set(options INCLUDE_MODELS)
+    set(options INCLUDE_MIGRATIONS INCLUDE_MODELS)
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "" "")
 
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
@@ -54,6 +54,12 @@ ${TINY_UNPARSED_ARGUMENTS}")
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
     )
 
+    if(TINY_INCLUDE_MIGRATIONS)
+        target_include_directories(${name} PRIVATE
+            "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tests/database>"
+        )
+    endif()
+
     if(TINY_INCLUDE_MODELS)
         target_include_directories(${name} PRIVATE
             "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tests/models>"
@@ -62,8 +68,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     target_link_libraries(${name}
         PRIVATE
-            Qt${QT_VERSION_MAJOR}::Core
-            Qt${QT_VERSION_MAJOR}::Sql
             Qt${QT_VERSION_MAJOR}::Test
             ${TinyOrm_ns}::${TinyUtils_target}
             ${TinyOrm_ns}::${TinyOrm_target}

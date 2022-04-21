@@ -179,7 +179,7 @@ namespace SchemaNs
         /*! Get the query grammar used by the connection. */
         inline QueryGrammar &getQueryGrammar();
         /*! Get the schema grammar used by the connection. */
-        inline const SchemaGrammar &getSchemaGrammar() const;
+        const SchemaGrammar &getSchemaGrammar();
         /*! Get a schema builder instance for the connection. */
         virtual std::unique_ptr<SchemaBuilder> getSchemaBuilder();
         /*! Get the query post processor used by the connection. */
@@ -399,11 +399,6 @@ namespace SchemaNs
     QueryGrammar &DatabaseConnection::getQueryGrammar()
     {
         return *m_queryGrammar;
-    }
-
-    const SchemaGrammar &DatabaseConnection::getSchemaGrammar() const
-    {
-        return *m_schemaGrammar;
     }
 
     const QueryProcessor &DatabaseConnection::getPostProcessor() const

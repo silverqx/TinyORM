@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! Sql transaction exception. */
+    /*! TinyORM Sql transaction exception. */
     class SqlTransactionError : public SqlError
     {
         /*! Inherit constructors. */
