@@ -61,8 +61,8 @@ namespace Concerns
                     const char *environmentEnvName = "TOM_ENV",
                     QString migrationTable = QLatin1String("migrations"),
                     std::vector<std::shared_ptr<Migration>> migrations = {});
-        /*! Default destructor. */
-        inline ~Application() = default;
+        /*! Virtual destructor. */
+        inline ~Application() override = default;
 
         /*! Instantiate/initialize all migration classes. */
         template<typename ...M>

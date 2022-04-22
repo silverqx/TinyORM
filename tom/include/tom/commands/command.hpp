@@ -45,7 +45,7 @@ namespace Tom::Commands
         /*! Constructor. */
         Command(Application &application, QCommandLineParser &parser);
         /*! Pure virtual destructor. */
-        inline virtual ~Command() = 0;
+        inline ~Command() override = 0;
 
         /*! The console command name. */
         virtual QString name() const = 0;
