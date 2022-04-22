@@ -536,7 +536,7 @@ Builder &Builder::orderBy(const Column &column, const QString &direction)
 
     if (directionLower != ASC && directionLower != DESC)
         throw Exceptions::InvalidArgumentError(
-                R"T(Order direction must be "asc" or "desc", case is not important.)T");
+                R"(Order direction must be "asc" or "desc", case is not important.)");
 
     m_orders.append({column, directionLower});
 

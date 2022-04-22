@@ -13,7 +13,7 @@ namespace Tom::Commands::Make::Stubs
 {
 
 /*! Empty migration stub. */
-inline const auto *const MigrationStub = R"T(#pragma once
+inline const auto *const MigrationStub = R"(#pragma once
 
 #include <tom/migration.hpp>
 
@@ -37,10 +37,10 @@ namespace Migrations
     };
 
 } // namespace Migrations
-)T";
+)";
 
 /*! Migration stub for creating a new table. */
-inline const auto *const MigrationCreateStub = R"T(#pragma once
+inline const auto *const MigrationCreateStub = R"(#pragma once
 
 #include <tom/migration.hpp>
 
@@ -68,10 +68,10 @@ namespace Migrations
     };
 
 } // namespace Migrations
-)T";
+)";
 
 /*! Migration stub for updating an existing table. */
-inline const auto *const MigrationUpdateStub = R"T(#pragma once
+inline const auto *const MigrationUpdateStub = R"(#pragma once
 
 #include <tom/migration.hpp>
 
@@ -101,7 +101,7 @@ namespace Migrations
     };
 
 } // namespace Migrations
-)T";
+)";
 
 } // namespace Tom::Commands::Make::Stubs
 

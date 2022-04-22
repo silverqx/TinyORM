@@ -12,8 +12,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands::Make::Stubs
 {
 
-inline const auto *const XyzStub = R"T(#pragma once
-)T";
+inline const auto *const XyzStub = R"(#pragma once
+)";
 
 } // namespace Tom::Commands::Make::Stubs
 
