@@ -124,6 +124,8 @@ namespace Tom::Commands
         void checkHelpArgument() const;
         /*! Show the error wall and exit the application if the parser fails. */
         void showParserError(const QCommandLineParser &parser) const;
+        /*! Validate if all required positional arguments were passed on the cmd. line. */
+        void validateRequiredArguments() const;
     };
 
     /* public */

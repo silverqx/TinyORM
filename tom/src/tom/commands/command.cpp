@@ -45,6 +45,9 @@ int Command::run()
     // Show help if --help argument was passed
     checkHelpArgument();
 
+    // Validate if all required positional arguments were passed on the command line.
+    validateRequiredArguments();
+
     return EXIT_SUCCESS;
 }
 
@@ -194,6 +197,35 @@ void Command::checkHelpArgument() const
 void Command::showParserError(const QCommandLineParser &parser) const
 {
     errorWall(parser.errorText());
+
+    application().exitApplication(EXIT_FAILURE);
+}
+
+void Command::validateRequiredArguments() const
+{
+    const auto &arguments = positionalArguments();
+
+    using RequiredStdSizeType = std::remove_cvref_t<decltype (arguments)>::size_type;
+
+    // Count required arguments
+    RequiredStdSizeType requiredArgsSize = 0;
+    for (const auto &argument : arguments)
+        // Required arguments can not be after optional arguments
+        if (argument.optional)
+            break;
+        else
+            ++requiredArgsSize;
+
+    /* -1 to exclude the command name.
+       It can be also understand as the index to the missing argument. */
+    const auto passedArgsSize = this->arguments().size() - 1;
+
+    // All required positional arguments were passed
+    if (static_cast<RequiredStdSizeType>(passedArgsSize) >= requiredArgsSize)
+        return;
+
+    errorWall(QLatin1String(R"(Not enough arguments (missing: "%1").)")
+              .arg(arguments.at(passedArgsSize).name));
 
     application().exitApplication(EXIT_FAILURE);
 }
