@@ -25,7 +25,7 @@ namespace Types
 {
 
     /*! Result of the sync() related methods in belongs to many relation type. */
-    class SHAREDLIB_EXPORT SyncChanges final :
+    class SHAREDLIB_EXPORT SyncChanges final : // NOLINT(bugprone-exception-escape)
             public std::map<QString, QVector<QVariant>>
     {
     public:
