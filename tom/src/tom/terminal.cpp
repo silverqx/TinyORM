@@ -148,7 +148,7 @@ Terminal::TerminalSize Terminal::terminalSize() const
     width  = static_cast<int>(csbi.srWindow.Right - csbi.srWindow.Left) + 1;
     height = static_cast<int>(csbi.srWindow.Bottom - csbi.srWindow.Top) + 1;
 #elif defined(__linux__)
-    struct winsize w {};
+    winsize w {};
     ioctl(fileno(stdout), TIOCGWINSZ, &w);
 
     width  = static_cast<int>(w.ws_col);
