@@ -108,11 +108,11 @@ int Terminal::width()
         auto ok = false;
         const auto width = widthRaw.toInt(&ok);
 
-        if (ok)
+        if (ok && width > 0)
             return m_lastWidth = width;
     }
 
-    if (auto [width, _] = terminalSize(); width != -1)
+    if (auto [width, _] = terminalSize(); width > 0)
         return m_lastWidth = width;
 
     return m_lastWidth;
@@ -126,11 +126,11 @@ int Terminal::height()
         auto ok = false;
         const auto height = heightRaw.toInt(&ok);
 
-        if (ok)
+        if (ok && height > 0)
             return m_lastHeight = height;
     }
 
-    if (auto [_, height] = terminalSize(); height != -1)
+    if (auto [_, height] = terminalSize(); height > 0)
         return m_lastHeight = height;
 
     return m_lastHeight;
