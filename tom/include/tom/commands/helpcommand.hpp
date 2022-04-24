@@ -48,9 +48,8 @@ namespace Tom::Commands
         /*! Print description section. */
         void printDescriptionSection(const Command &command) const;
         /*! Print usage section. */
-        void printUsageSection(
-                    const QString &commandNameArg, const Command &command,
-                    const std::vector<PositionalArgument> &arguments) const;
+        void printUsageSection(const Command &command,
+                               const std::vector<PositionalArgument> &arguments) const;
 
         /*! Print positional arguments section. */
         void printArgumentsSection(

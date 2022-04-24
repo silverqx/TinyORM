@@ -7,8 +7,11 @@ TINY_SYSTEM_HEADER
 
 #include <QCommandLineParser>
 
+#include <range/v3/view/slice.hpp>
+
 #include "tom/config.hpp"
 
+#include "tom/concerns/guesscommandname.hpp"
 #include "tom/concerns/interactswithio.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -22,13 +25,13 @@ namespace Tom {
 
 namespace Commands
 {
-    class Command;
     class HelpCommand;
     class ListCommand;
 } // namespace Commands
 namespace Concerns
 {
     class CallsCommands;
+    class GuessCommandName;
     class PrintsOptions;
 } // namespace Concerns
 
@@ -37,7 +40,8 @@ namespace Concerns
     class Migrator;
 
     /*! Tom application. */
-    class SHAREDLIB_EXPORT Application : public Concerns::InteractsWithIO
+    class SHAREDLIB_EXPORT Application : public Concerns::InteractsWithIO,
+                                         public Concerns::GuessCommandName
     {
         Q_DISABLE_COPY(Application)
 
@@ -51,6 +55,8 @@ namespace Concerns
         friend Concerns::PrintsOptions;
         // To access initializeParser() and createCommand()
         friend Concerns::CallsCommands;
+        // To access createCommandsVector(), errorWall(), exitApplication()
+        friend Concerns::GuessCommandName;
 
         /*! Alias for the DatabaseManager. */
         using DatabaseManager = Orm::DatabaseManager;
@@ -129,6 +135,24 @@ namespace Concerns
         /*! Obtain command name to run. */
         QString getCommandName();
 
+        /*! Action to do if the passed command was not found. */
+        enum struct CommandNotFound
+        {
+            /*! Show all commands list using the list command. */
+            ShowCommandsList,
+            /*! Show a command not defined error wall. */
+            ShowErrorWall,
+        };
+        /*! Show all commands list using the list command. */
+        constexpr static CommandNotFound
+        ShowCommandsList = CommandNotFound::ShowCommandsList;
+        /*! Show a command not defined error wall. */
+        constexpr static CommandNotFound
+        ShowErrorWall    = CommandNotFound::ShowErrorWall;
+
+        /*! Get the command name including the guess command name logic. */
+        QString getCommandName(const QString &name, CommandNotFound notFound);
+
         /* Early exit during parse command-line */
         /*! Display the version information and exits. */
         Q_NORETURN void showVersion() const;
@@ -155,12 +179,23 @@ namespace Concerns
         std::shared_ptr<Migrator> createMigrator();
 
         /* Others */
-        /*! Get all supported commands list (used by the list command). */
-        const std::vector<std::shared_ptr<Command>> &createCommandsVector();
-        /*! Get all supported commands' names. */
-        const std::vector<const char *> &commandNames() const;
         /*! Get arguments list from the m_argv array. */
         QStringList prepareArguments() const;
+
+        /*! Get all supported commands list (used by the list command). */
+        const std::vector<std::shared_ptr<Command>> &createCommandsVector();
+        /*! Hash that maps namespaces to command indexes from createCommandsVector(). */
+        const std::unordered_map<QString, std::tuple<int, int>> &
+        commandsByNamespaceHash() const;
+        /*! Obtain all commands in the given namespace. */
+        inline auto getCommandsInNamespace(const QString &name);
+
+        /*! Get all supported commands' names. */
+        const std::vector<const char *> &commandNames() const;
+        /*! Get all commands' namespace names. */
+        const std::vector<const char *> &namespaceNames() const;
+        /*! Get commands index positions in namespaces. */
+        const std::vector<std::tuple<int, int>> &commandsIndexes() const;
 
         /*! Current application argc. */
         int &m_argc;
@@ -250,6 +285,16 @@ namespace Concerns
         m_migrationTable = std::move(table);
 
         return *this;
+    }
+
+    /* protected */
+
+    auto Application::getCommandsInNamespace(const QString &name)
+    {
+        Q_ASSERT(commandsByNamespaceHash().contains(name));
+
+        return createCommandsVector()
+                | std::apply(ranges::views::slice, commandsByNamespaceHash().at(name));
     }
 
 } // namespace Tom

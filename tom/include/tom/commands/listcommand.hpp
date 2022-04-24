@@ -47,27 +47,34 @@ namespace Tom::Commands
         /*! Output raw commands list and nothing else (can be consumed by scripts). */
         int raw(const QString &namespaceArg);
 
+        /* Guess namespace name section */
+        /*! Get the namespace name including the guess namespace name logic. */
+        QString getNamespaceName(const QString &namespaceArg) const;
+        /*! Try to guess the namespace name. */
+        std::vector<QString> guessNamespace(const QString &namespaceArg) const;
+        /*! Print the error wall with ambiguous namespaces. */
+        Q_NORETURN void
+        printAmbiguousNamespaces(const QString &namespaceName,
+                                 const std::vector<QString> &namespaces) const;
+
         /* Commands section */
         /*! Print commands section. */
-        void printCommandsSection(const QString &namespaceArg, int optionsMaxSize) const;
+        void printCommandsSection(const QString &namespaceName, int optionsMaxSize) const;
         /*! Get max. command size in all command names. */
         int commandsMaxSize(const std::vector<std::shared_ptr<Command>> &commands,
                            int optionsMaxSize) const;
         /*! Print commands to the console. */
         void printCommands(const std::vector<std::shared_ptr<Command>> &commands,
-                           int commandsMaxSize, bool hasNamespaceArg) const;
+                           int commandsMaxSize, bool hasNamespaceName) const;
         /*! Print a new namespace section. */
         void tryBeginNsSection(QString &renderingNamespace,
-                               const QString &commandName, bool hasNamespaceArg) const;
+                               const QString &commandName, bool hasNamespaceName) const;
         /*! Get command's namespace from a command name. */
         QString commandNamespace(const QString &commandName) const;
 
         /*! Wrapper for the two methods below, helps to avoid one copy. */
         const std::vector<std::shared_ptr<Command>> &
         getCommandsByNamespace(const QString &name) const;
-        /*! Obtain all commands in the given namespace. */
-        std::vector<std::shared_ptr<Command>>
-        getCommandsInNamespace(const QString &name) const;
     };
 
     /* public */

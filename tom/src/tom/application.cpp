@@ -3,7 +3,11 @@
 #include <QCoreApplication>
 #include <QDebug>
 
+#include <range/v3/algorithm/contains.hpp>
+#include <range/v3/view/zip_with.hpp>
+
 #include <orm/databasemanager.hpp>
+#include <orm/macros/likely.hpp>
 #include <orm/utils/type.hpp>
 #include <orm/version.hpp>
 
@@ -56,9 +60,12 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom {
 
-/* Adding/removing/disabling/enabling a command, #include, using, factory in the
+/* Adding/removing/disabling/enabling a command, add #include, using, factory in the
    Application::createCommand(), add a command name to the Application::commandNames(),
-   update indexes in the ListCommand::getCommandsInNamespace(). */
+   update indexes in the Application::commandsIndexes() and if the command introduces
+   a new namespace add it to the Application::namespaceNames().
+   I have everything extracted and placed it to the bottom of application.cpp so it is
+   nicely on one place. */
 
 /* public */
 
@@ -262,7 +269,38 @@ QString Application::getCommandName()
     if (arguments.isEmpty())
         return {};
 
-    return arguments.at(0);
+    return getCommandName(arguments[0], ShowCommandsList);
+}
+
+QString Application::getCommandName(const QString &name, CommandNotFound notFound)
+{
+    // Try to find a full command name to avoid the guess logic
+    if (auto name_ = name.toLower();
+        ranges::contains(commandNames(), name_)
+    )
+        return name_;
+
+    // Invoke the guess logic 👌
+    auto commandName = guessCommandName(name);
+
+    // If passed a non-existent command then show all commands list or error wall
+    if (commandName.isEmpty())
+        switch (notFound) {
+        T_LIKELY
+        case ShowCommandsList:
+            showCommandsList(EXIT_FAILURE);
+
+        T_UNLIKELY
+        case ShowErrorWall: {
+            errorWall(QLatin1String("Command '%1' is not defined.").arg(name));
+
+            exitApplication(EXIT_FAILURE);
+        }
+        default:
+            Q_UNREACHABLE();
+        }
+
+    return commandName;
 }
 
 /* Early exit during parse command-line */
@@ -285,7 +323,9 @@ void Application::printVersion() const
 
 Q_NORETURN void Application::showCommandsList(const int exitCode)
 {
+    // CUR tom, allocate on heap to make func const silverqx
     ListCommand(*this, m_parser).run();
+//    std::make_unique<ListCommand>(*this, m_parser)->run();
 
     exitApplication(exitCode);
 }
@@ -384,6 +424,17 @@ std::shared_ptr<Migrator> Application::createMigrator()
 
 /* Others */
 
+QStringList Application::prepareArguments() const
+{
+    QStringList arguments;
+    arguments.reserve(m_argc);
+
+    for (QStringList::size_type i = 0; i < m_argc; ++i)
+        arguments << QString::fromUtf8(m_argv[i]);
+
+    return arguments;
+}
+
 const std::vector<std::shared_ptr<Application::Command>> &
 Application::createCommandsVector()
 {
@@ -401,9 +452,34 @@ Application::createCommandsVector()
     return cached;
 }
 
+const std::unordered_map<QString, std::tuple<int, int>> &
+Application::commandsByNamespaceHash() const
+{
+    /* First number is index where it starts (0-based), second the number where it ends
+       (it's like iterator's end so should point after).
+       Look to the Application::commandNames() to understand this indexes.
+       tuple is forwarded as args to the ranges::views::slice(). */
+    static const std::unordered_map<QString, std::tuple<int, int>> cached = [this]
+    {
+        Q_ASSERT(namespaceNames().size() == commandsIndexes().size());
+
+        return ranges::views::zip_with(
+                    [](const char *namespaceName, const auto &indexes)
+                    -> std::pair<QString, std::tuple<int, int>>
+        {
+            return {namespaceName, indexes};
+        },
+            namespaceNames(), commandsIndexes()
+        )
+            | ranges::to<std::unordered_map<QString, std::tuple<int, int>>>();
+    }();
+
+    return cached;
+}
+
 const std::vector<const char *> &Application::commandNames() const
 {
-    // Order is important here
+    // Order is important here (shown by defined order by the list command)
     static const std::vector<const char *> cached {
         // global namespace
         "env", "help", "inspire", "list", "migrate",
@@ -419,15 +495,41 @@ const std::vector<const char *> &Application::commandNames() const
     return cached;
 }
 
-QStringList Application::prepareArguments() const
+const std::vector<const char *> &Application::namespaceNames() const
 {
-    QStringList arguments;
-    arguments.reserve(m_argc);
+    // Order is important here - ziped with the commandsIndexes()
+    static const std::vector<const char *> cached {
+        // global namespace
+        "", "global",
+        // all other namespaces
+        "db", "make", "migrate",
+        /* The special index used by the command name guesser doesn't name the namespace
+           but rather returns all namespaced commands. I leave it accessible also by
+           the list command so a user can also display all namespaced commands. */
+        "namespaced",
+    };
 
-    for (QStringList::size_type i = 0; i < m_argc; ++i)
-        arguments << QString::fromUtf8(m_argv[i]);
+    return cached;
+}
 
-    return arguments;
+const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
+{
+    /* First number is index where it starts (0-based), second the number where it ends
+       (it's like iterator's end so should point after).
+       Look to the Application::commandNames() to understand this indexes.
+       tuple is forwarded as args to the ranges::views::slice().
+
+       Order is important here - ziped with the namespaceNames(). */
+    static const std::vector<std::tuple<int, int>> cached {
+        {0, 5},  // "" - also global
+        {0, 5},  // global
+        {5, 6},  // db
+        {6, 7},  // make
+        {7, 13}, // migrate
+        {5, 13}, // namespaced
+    };
+
+    return cached;
 }
 
 /* Auto tests helpers */
@@ -450,4 +552,3 @@ int Application::runWithArguments(QStringList &&arguments)
 TINYORM_END_COMMON_NAMESPACE
 
 // CUR tom, commands I want to implement; completion, test, db:seed, schema:dump silverqx
-// CUR tom, implement support for short command names, eg mig:st silverqx

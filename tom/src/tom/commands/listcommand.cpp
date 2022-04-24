@@ -1,15 +1,16 @@
 #include "tom/commands/listcommand.hpp"
 
-#include <QCommandLineOption>
-
+#include <range/v3/algorithm/contains.hpp>
 #include <range/v3/range/conversion.hpp>
-#include <range/v3/view/slice.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include <orm/constants.hpp>
 
 #include "tom/application.hpp"
 
 using Orm::Constants::COLON;
+using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -43,13 +44,17 @@ QList<QCommandLineOption> ListCommand::optionsSignature() const
 QString ListCommand::help() const
 {
     return QLatin1String(
-"  The <info>list</info> command lists all commands:\n\n"
-"    <info>tom list</info>\n\n"
-"  You can also display the commands for a specific namespace:\n\n"
-"    <info>tom list test</info>\n\n"
-"  It's also possible to get raw list of commands (useful for embedding command "
-  "runner):\n\n"
-"    <info>tom list --raw</info>");
+R"(  The <info>list</info> command lists all commands:
+
+    <info>tom list</info>
+
+  You can also display the commands for a specific namespace:
+
+    <info>tom list test</info>
+
+  It's also possible to get raw list of commands (useful for embedding command runner):
+
+    <info>tom list --raw</info>)");
 }
 
 int ListCommand::run()
@@ -75,14 +80,14 @@ int ListCommand::full(const QString &namespaceArg)
     const auto optionsMaxSize = printOptionsSection(true);
 
     // Commands section
-    printCommandsSection(namespaceArg, optionsMaxSize);
+    printCommandsSection(getNamespaceName(namespaceArg), optionsMaxSize);
 
     return EXIT_SUCCESS;
 }
 
 int ListCommand::raw(const QString &namespaceArg)
 {
-    const auto &commands = getCommandsByNamespace(namespaceArg);
+    const auto &commands = getCommandsByNamespace(getNamespaceName(namespaceArg));
 
     const auto it = std::ranges::max_element(commands, std::less {},
                                              [](const auto &command)
@@ -103,27 +108,101 @@ int ListCommand::raw(const QString &namespaceArg)
     return EXIT_SUCCESS;
 }
 
+/* Guess namespace name section */
+
+QString ListCommand::getNamespaceName(const QString &namespaceArg) const
+{
+    // Namespace positional argument was not defined, show all commands list
+    if (namespaceArg.isNull())
+        return {};
+
+    // Show commands for the global namespace if empty string
+    if (namespaceArg.isEmpty())
+        return "global";
+
+    // Try to find a full command name to avoid the guess logic
+    if (auto namespaceArg_ = namespaceArg.toLower();
+        ranges::contains(application().namespaceNames(), namespaceArg_)
+    )
+        return namespaceArg_;
+
+    // Invoke the guess logic 👌
+    const auto namespaces = guessNamespace(namespaceArg);
+
+    // Found exactly one namespace
+    if (namespaces.size() == 1)
+        return namespaces.front();
+
+    // No namespace found
+    if (namespaces.empty()) {
+        application().errorWall(
+                    QLatin1String(
+                        "There are no commands defined in the \"%1\" namespace.")
+                    .arg(namespaceArg));
+
+        application().exitApplication(EXIT_FAILURE);
+    }
+
+    // Found more namespaces (ambiguous)
+    printAmbiguousNamespaces(namespaceArg, namespaces);
+}
+
+std::vector<QString> ListCommand::guessNamespace(const QString &namespaceArg) const
+{
+    return application().namespaceNames()
+            | ranges::views::filter([&namespaceArg](const QString &namespaceName)
+    {
+        return namespaceName.startsWith(namespaceArg, Qt::CaseInsensitive);
+    })
+            | ranges::to<std::vector<QString>>();
+}
+
+Q_NORETURN void
+ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
+                                      const std::vector<QString> &namespaces) const
+{
+    // Prepare namespaces for the errorWall()
+    const auto formattedNamespaces = namespaces
+            | ranges::views::transform([](const auto &ambiguousNsName) -> QString
+    {
+        return QLatin1String("    %1").arg(ambiguousNsName);
+    })
+            | ranges::to<QStringList>();
+
+    application().errorWall(
+                QLatin1String("The namespace \"%1\" is ambiguous.\n\n"
+                              "Did you mean one of these?\n%2")
+                .arg(namespaceName, formattedNamespaces.join(NEWLINE)));
+
+    application().exitApplication(EXIT_FAILURE);
+}
+
 /* Commands section */
 
-void ListCommand::printCommandsSection(const QString &namespaceArg,
+void ListCommand::printCommandsSection(const QString &namespaceName,
                                        const int optionsMaxSize) const
 {
-    const auto hasNamespaceArg = !namespaceArg.isNull();
+    const auto hasNamespaceName = !namespaceName.isNull();
+
+    const auto &commands = getCommandsByNamespace(namespaceName);
 
     newLine();
 
-    if (hasNamespaceArg)
-        comment(QLatin1String("Available commands for the '%1' namespace:")
-                .arg(namespaceArg.isEmpty() ? QLatin1String("global") : namespaceArg));
+    // Specific namespace
+    if (hasNamespaceName)
+                // Custom message for the namespaced argument
+        comment(namespaceName == QLatin1String("namespaced")
+                ? QLatin1String("Commands with the namespace prefix:")
+                : QLatin1String("Available commands for the '%1' namespace:")
+                  .arg(namespaceName.isEmpty() ? QLatin1String("global") : namespaceName));
+    // All commands
     else
         comment(QLatin1String("Available commands:"));
-
-    const auto &commands = getCommandsByNamespace(namespaceArg);
 
     // Get max. command size in all command names
     const auto commandsMaxSize = this->commandsMaxSize(commands, optionsMaxSize);
     // Print commands to the console
-    printCommands(commands, commandsMaxSize, hasNamespaceArg);
+    printCommands(commands, commandsMaxSize, hasNamespaceName);
 }
 
 int ListCommand::commandsMaxSize(
@@ -147,7 +226,7 @@ int ListCommand::commandsMaxSize(
 
 void ListCommand::printCommands(
         const std::vector<std::shared_ptr<Command>> &commands,
-        const int commandsMaxSize, const bool hasNamespaceArg) const
+        const int commandsMaxSize, const bool hasNamespaceName) const
 {
     // Currently rendering NS
     QString renderingNamespace;
@@ -156,7 +235,7 @@ void ListCommand::printCommands(
         auto commandName = command->name();
 
         // Begin a new namespace section
-        tryBeginNsSection(renderingNamespace, commandName, hasNamespaceArg);
+        tryBeginNsSection(renderingNamespace, commandName, hasNamespaceName);
 
         auto indent = QString(commandsMaxSize - commandName.size(), SPACE);
 
@@ -169,11 +248,11 @@ void ListCommand::printCommands(
 
 void ListCommand::tryBeginNsSection(
         QString &renderingNamespace, const QString &commandName,
-        const bool hasNamespaceArg) const
+        const bool hasNamespaceName) const
 {
     const auto commandNamespace = this->commandNamespace(commandName);
 
-    if (hasNamespaceArg || commandNamespace == renderingNamespace)
+    if (hasNamespaceName || commandNamespace == renderingNamespace)
         return;
 
     // Update currently rendering NS section
@@ -193,7 +272,8 @@ QString ListCommand::commandNamespace(const QString &commandName) const
 const std::vector<std::shared_ptr<Command>> &
 ListCommand::getCommandsByNamespace(const QString &name) const
 {
-    // isNull() needed because still able to return global namespace for an empty string
+    /* Obtain all commands and isNull() needed because still able to return the global
+       namespace for an empty string. */
     if (name.isNull())
         return application().createCommandsVector();
 
@@ -201,34 +281,8 @@ ListCommand::getCommandsByNamespace(const QString &name) const
        key thing is that it can be returned as a const reference, believe it it works. */
     static std::vector<std::shared_ptr<Command>> cached;
 
-    return cached = getCommandsInNamespace(name);
-}
-
-std::vector<std::shared_ptr<Command>>
-ListCommand::getCommandsInNamespace(const QString &name) const
-{
-    /* First number is index where it starts (0-based), second the number where it ends
-       (it's like iterator's end so should point after).
-       Look to the Application::commandNames() to understand this indexes.
-       tuple is forwarded as args to the ranges::views::slice(). */
-    static const std::unordered_map<QString, std::tuple<int, int>> cached {
-        {"",        std::make_tuple(0, 5)},
-        {"global",  std::make_tuple(0, 5)},
-        {"db",      std::make_tuple(5, 6)},
-        {"make",    std::make_tuple(6, 7)},
-        {"migrate", std::make_tuple(7, 13)},
-    };
-
-    if (!cached.contains(name)) {
-        errorWall(QLatin1String("There are no commands defined in the '%1' namespace.")
-                  .arg(name));
-
-        application().exitApplication(EXIT_FAILURE);
-    }
-
-    return application().createCommandsVector()
-            | std::apply(ranges::views::slice, cached.at(name))
-            | ranges::to<std::vector<std::shared_ptr<Command>>>();
+    return cached = application().getCommandsInNamespace(name)
+                    | ranges::to<std::vector<std::shared_ptr<Command>>>();
 }
 
 } // namespace Tom::Commands

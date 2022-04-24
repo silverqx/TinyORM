@@ -17,6 +17,7 @@ SOURCES += \
     $$PWD/tom/commands/migrations/statuscommand.cpp \
     $$PWD/tom/concerns/callscommands.cpp \
     $$PWD/tom/concerns/confirmable.cpp \
+    $$PWD/tom/concerns/guesscommandname.cpp \
     $$PWD/tom/concerns/interactswithio.cpp \
     $$PWD/tom/concerns/printsoptions.cpp \
     $$PWD/tom/exceptions/tomlogicerror.cpp \

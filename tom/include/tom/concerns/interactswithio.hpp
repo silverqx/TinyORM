@@ -43,7 +43,7 @@ namespace Concerns
         /*! Virtual destructor. */
         virtual ~InteractsWithIO();
 
-        /*! Base enum for the verbosity levels. */
+        /*! Verbosity levels. */
         enum struct Verbosity {
             Quiet       = 0x0001,
             Normal      = 0x0002,
@@ -52,15 +52,15 @@ namespace Concerns
             Debug       = 0x0010,
         };
         /*! Quiet verbosity. */
-        static constexpr Verbosity Quiet       = Verbosity::Quiet;
+        constexpr static Verbosity Quiet       = Verbosity::Quiet;
         /*! Normal verbosity (default). */
-        static constexpr Verbosity Normal      = Verbosity::Normal;
+        constexpr static Verbosity Normal      = Verbosity::Normal;
         /*! Verbose verbosity. */
-        static constexpr Verbosity Verbose     = Verbosity::Verbose;
+        constexpr static Verbosity Verbose     = Verbosity::Verbose;
         /*! Very verbose verbosity. */
-        static constexpr Verbosity VeryVerbose = Verbosity::VeryVerbose;
+        constexpr static Verbosity VeryVerbose = Verbosity::VeryVerbose;
         /*! Debug verbosity. */
-        static constexpr Verbosity Debug       = Verbosity::Debug;
+        constexpr static Verbosity Debug       = Verbosity::Debug;
 
         /*! Write a string as standard output. */
         const InteractsWithIO &line(const QString &string, bool newline = true,

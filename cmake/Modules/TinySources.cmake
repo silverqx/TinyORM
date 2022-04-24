@@ -259,6 +259,7 @@ function(tinytom_sources out_headers out_sources)
         commands/migrations/statuscommand.hpp
         concerns/callscommands.hpp
         concerns/confirmable.hpp
+        concerns/guesscommandname.hpp
         concerns/interactswithio.hpp
         concerns/printsoptions.hpp
         config.hpp
@@ -298,6 +299,7 @@ function(tinytom_sources out_headers out_sources)
         commands/migrations/statuscommand.cpp
         concerns/callscommands.cpp
         concerns/confirmable.cpp
+        concerns/guesscommandname.cpp
         concerns/interactswithio.cpp
         concerns/printsoptions.cpp
         exceptions/tomlogicerror.cpp

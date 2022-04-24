@@ -35,10 +35,11 @@ const std::vector<PositionalArgument> &HelpCommand::positionalArguments() const
 QString HelpCommand::help() const
 {
     return QLatin1String(
-"  The <info>help</info> command displays help for a given command:\n\n"
-"    <info>tom</info> help list\n\n"
-"  To display the list of available commands, please use the <info>list</info> "
-  "command.");
+R"(  The <info>help</info> command displays help for a given command:
+
+    <info>tom</info> help list
+
+  To display the list of available commands, please use the <info>list</info> command.)");
 }
 
 int HelpCommand::run()
@@ -54,7 +55,7 @@ int HelpCommand::run()
         return EXIT_FAILURE;
 
     printDescriptionSection(*command);
-    printUsageSection(commandNameArg, *command, arguments);
+    printUsageSection(*command, arguments);
 
     printArgumentsSection(arguments);
     printOptionsSection(*command);
@@ -68,14 +69,10 @@ int HelpCommand::run()
 
 std::unique_ptr<Command> HelpCommand::createCommand(const QString &name) const
 {
-    auto command = application().createCommand(name, std::nullopt, false);
+    const auto commandName =
+            application().getCommandName(name, Application::ShowErrorWall);
 
-    if (command)
-        return command;
-
-    errorWall(QLatin1String("Command '%1' is not defined.").arg(name));
-
-    application().exitApplication(EXIT_FAILURE);
+    return application().createCommand(commandName, std::nullopt, false);
 }
 
 bool HelpCommand::validateRequiredArguments(
@@ -120,8 +117,8 @@ void HelpCommand::printDescriptionSection(const Command &command) const
 }
 
 void HelpCommand::printUsageSection(
-        const QString &commandNameArg, const Command &command,
-        const std::vector<PositionalArgument> &arguments) const
+            const Command &command,
+            const std::vector<PositionalArgument> &arguments) const
 {
     /* Everything after the option -- (double dash) is treated as positional arguments.
        [] means optional, <> means positional argument. If an argument is optional,
@@ -132,7 +129,7 @@ void HelpCommand::printUsageSection(
     comment(QLatin1String("Usage:"));
 
     QString usage(2, SPACE);
-    usage += commandNameArg;
+    usage += command.name();
 
     if (command.hasOptions())
         usage += QLatin1String(" [options]");
