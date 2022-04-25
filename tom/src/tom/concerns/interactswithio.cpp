@@ -262,7 +262,8 @@ InteractsWithIO::table(const TableRow &headers, const std::vector<TableRow> &row
 
     // TODO study tom, "locale::facet::_S_create_c_locale name not valid" for all locales, how the hell it works? silverqx
     /* Set locale to C until I discover how the heck this works on MSYS2 because every
-       other locale throws "locale::facet::_S_create_c_locale name not valid". */
+       other locale throws "locale::facet::_S_create_c_locale name not valid",
+       ok it looks like MSYS2 only supports "C" and "POSIX" locale, nothing else. */
 #ifdef __MINGW32__
     table.format().locale("C");
 #endif
