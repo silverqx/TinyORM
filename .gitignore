@@ -91,6 +91,7 @@ Thumbs.db
 ~$*.xlsx
 conf.pri
 /compile_commands.json
+/database/
 /exports*.txt
 /exports.xlsx
 /todos.csv
