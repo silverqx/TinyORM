@@ -539,7 +539,7 @@ Important `qmake` options.
 
 | `CONFIG` <small>Option Name</small> | Default | Description |
 | ----------------------------------- | ------- | ----------- |
-| `precompile_header`                 | `ON`    | Enable precompiled headers, you can disable them with:<br/> `CONFIG-=precompile_header`. |
+| `precompile_header`                 | `-`     | Enable precompiled headers, you can disable them with:<br/> `CONFIG-=precompile_header`.<br/><small>The `precompile_header` is enabled by default on `msvc` and `g++` on `Windows` and disabled by default on `linux`.</small> |
 | `static`<br/>`staticlib`            | `OFF`   | Build as a static library (lib only). |
 
 </APITable>
