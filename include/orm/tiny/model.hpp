@@ -1340,7 +1340,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR tom, tom/conf.pri is used by who silverqx
 // CUR cmake, add messages about Building tom example, tests and ORM silverqx
 // CUR docs, remove target_link_libs() for transitive dependencies silverqx
-// CUR tests, move version test outside of the orm/ folder silverqx
 // CUR tom docs, write documentation silverqx
 // CUR tom, build on mingw, linux, build without pch and all common tasks that should run from time to time silverqx
 // CUR tom, update docs target_link_library() https://discourse.cmake.org/t/explicitly-link-against-public-interface-dependencies/5484/2 silverqx

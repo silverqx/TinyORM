@@ -5,5 +5,3 @@ add_subdirectory(schema)
 if(ORM)
     add_subdirectory(tiny)
 endif()
-
-add_subdirectory(version)

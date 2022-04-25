@@ -2,6 +2,7 @@ TEMPLATE = subdirs
 
 subdirsList = \
     orm \
+    others \
 
 !disable_tom: \
     subdirsList += \

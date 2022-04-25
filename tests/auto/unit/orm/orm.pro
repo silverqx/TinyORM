@@ -4,7 +4,6 @@ subdirsList = \
     databaseconnection \
     query \
     schema \
-    version \
 
 !disable_orm: \
     subdirsList += \
