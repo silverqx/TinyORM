@@ -1336,13 +1336,11 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR compiler, enable /sdl on msvc https://docs.microsoft.com/en-us/cpp/build/reference/sdl-enable-additional-security-checks?view=msvc-170 silverqx
 // CUR cmake, update max. policy to 3.23 silverqx
 // CUR tom, add tabulate to comments where range-v3 is, all checked, only docs left silverqx
-// CUR tom, verify -isystem $$shell_quote() updated in docs silverqx
 // CUR tom, tom/conf.pri is used by who silverqx
 // CUR cmake, add messages about Building tom example, tests and ORM silverqx
 // CUR docs, remove target_link_libs() for transitive dependencies silverqx
 // CUR tom docs, write documentation silverqx
 // CUR tom, build on mingw, linux, build without pch and all common tasks that should run from time to time silverqx
-// CUR tom, update docs target_link_library() https://discourse.cmake.org/t/explicitly-link-against-public-interface-dependencies/5484/2 silverqx
 // CUR tom, provide somehow a custom path to migrations for the tom example, so the tom example can be used like real migration app silverqx
 // CUR tom, don't modify migrate:status command, rather extend it and add possibility to only call it through Application::runWithArguments() (this secure to not be able to call it from the cmd. line), do not show it in the list or help command output silverqx
 // CUR tom, think about remove TINYTOM_NO/_DEBUG and TINYTOM_TESTS_CODE and use TINYORM_ defines instead silverqx
