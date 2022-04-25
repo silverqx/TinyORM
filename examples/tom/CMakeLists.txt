@@ -17,7 +17,7 @@ tiny_read_version(TINY_VERSION
 
 project(${TomExample_ns}
     DESCRIPTION "Tom console for TinyORM"
-    HOMEPAGE_URL "https://silverqx.github.io/TinyORM/"
+    HOMEPAGE_URL "https://www.tinyorm.org"
     LANGUAGES CXX
     VERSION ${TINY_VERSION}
 )

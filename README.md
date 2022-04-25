@@ -5,7 +5,7 @@
 [![MSYS2 UCRT64 GCC/Clang][action-mingw-badge]][action-mingw]
 [![Clang Tidy/Clazy][action-analyzers-badge]][action-analyzers]
 
-[![silverqx.github.io][docs-badge]][docs]
+[![www.tinyorm.org][docs-badge]][docs]
 [![License MIT][license-badge]][license]
 
 TinyORM is a modern ORM library that makes interacting with a database extremely simple.
@@ -16,7 +16,7 @@ The code is well tested with the unit and functional tests. Almost all the query
 
 Whole library is documented as markdown documents:
 
-[![silverqx.github.io][docs-badge]][docs]
+[![www.tinyorm.org][docs-badge]][docs]
 
 - [Documentation: Index](/docs/README.mdx#prologue)
 - [Dependencies](/docs/dependencies.mdx#dependencies)
