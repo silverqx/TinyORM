@@ -225,7 +225,7 @@ void Command::validateRequiredArguments() const
         return;
 
     errorWall(QLatin1String(R"(Not enough arguments (missing: "%1").)")
-              .arg(arguments.at(passedArgsSize).name));
+              .arg(arguments.at(static_cast<RequiredStdSizeType>(passedArgsSize)).name));
 
     application().exitApplication(EXIT_FAILURE);
 }

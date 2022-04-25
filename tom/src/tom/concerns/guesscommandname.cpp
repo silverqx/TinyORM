@@ -88,15 +88,15 @@ GuessCommandName::printAmbiguousCommands(
     const auto commandsMaxSize = static_cast<int>((*it)->name().size());
 
     // Prepare commands for the errorWall()
-    auto formattedCommands =
-            commands | ranges::views::transform([commandsMaxSize](const auto &command)
-                                                -> QString
+    auto formattedCommands = commands
+            | ranges::views::transform([commandsMaxSize](const auto &command)
+                                       -> QString
     {
-        auto commandName = command->name();
-        auto indent = QString(commandsMaxSize - commandName.size() + 1, SPACE);
+        auto commandName_ = command->name();
+        auto indent = QString(commandsMaxSize - commandName_.size() + 1, SPACE);
 
         return QLatin1String("    %1%2%3")
-                .arg(std::move(commandName), std::move(indent), command->description());
+                .arg(std::move(commandName_), std::move(indent), command->description());
     })
             | ranges::to<QStringList>();
 
