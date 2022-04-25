@@ -180,7 +180,7 @@ void Command::initializePositionalArguments()
             | ranges::to<decltype (m_positionalArguments)>();
 
     // The same as above, I leave above as I want to have one example with zip_with()
-//    for (OptionsSizeType index = 0; const auto &argument : positionalArguments())
+//    for (ArgumentsSizeType index = 0; const auto &argument : positionalArguments())
 //        m_positionalArguments.emplace(argument.name, ++index);
 }
 

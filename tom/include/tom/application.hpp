@@ -174,9 +174,9 @@ namespace Concerns
                       bool showHelp = true);
 
         /*! Migration repository instance. */
-        std::shared_ptr<MigrationRepository> createMigrationRepository();
+        std::shared_ptr<MigrationRepository> createMigrationRepository() const;
         /*! Migrator instance. */
-        std::shared_ptr<Migrator> createMigrator();
+        std::shared_ptr<Migrator> createMigrator() const;
 
         /* Others */
         /*! Get arguments list from the m_argv array. */
@@ -204,10 +204,10 @@ namespace Concerns
 
         /*! DatabaseManager instance. */
         std::shared_ptr<DatabaseManager> m_db;
-        /*! The migration repository instance. */
-        std::shared_ptr<MigrationRepository> m_repository = nullptr;
-        /*! The migrator service instance. */
-        std::shared_ptr<Migrator> m_migrator = nullptr;
+        /*! The migration repository instance (cache only one instance created). */
+        mutable std::shared_ptr<MigrationRepository> m_repository = nullptr;
+        /*! The migrator service instance (cache only one instance created). */
+        mutable std::shared_ptr<Migrator> m_migrator = nullptr;
 
         /* Only one instance can exist in the whole application, auto tests create their
            own QCoreApplication instance so this has to be excluded. */

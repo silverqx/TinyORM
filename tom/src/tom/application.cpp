@@ -323,9 +323,8 @@ void Application::printVersion() const
 
 Q_NORETURN void Application::showCommandsList(const int exitCode)
 {
-    // CUR tom, allocate on heap to make func const silverqx
+    // FUTURE tom, allocate on heap to make func const, I would have to pass the const Application & to the Command base class and instead of to use one Application::m_parser I would have to create own parser for Command, problem is with the saveOptions(), prependOptions(), and initializeParser(), they are used in commands and they modify Application instance silverqx
     ListCommand(*this, m_parser).run();
-//    std::make_unique<ListCommand>(*this, m_parser)->run();
 
     exitApplication(exitCode);
 }
@@ -399,7 +398,7 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
     this->showCommandsList(EXIT_FAILURE);
 }
 
-std::shared_ptr<MigrationRepository> Application::createMigrationRepository()
+std::shared_ptr<MigrationRepository> Application::createMigrationRepository() const
 {
     if (m_repository)
         return m_repository;
@@ -410,7 +409,7 @@ std::shared_ptr<MigrationRepository> Application::createMigrationRepository()
                 m_migrationTable);
 }
 
-std::shared_ptr<Migrator> Application::createMigrator()
+std::shared_ptr<Migrator> Application::createMigrator() const
 {
     if (m_migrator)
         return m_migrator;
