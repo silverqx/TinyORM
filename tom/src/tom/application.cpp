@@ -249,10 +249,10 @@ void Application::initializeEnvironment()
     /*! Order is as follow, the default value is development, can be overriden by
         a env. variable which name is in the m_environmentEnvName data member, highest
         priority has --env command-line argument. */
-    if (auto environmentCmd = m_parser.value("env");
-        !environmentCmd.isEmpty()
+    if (auto environmentOpt = m_parser.value("env");
+        !environmentOpt.isEmpty()
     )
-        m_environment = std::move(environmentCmd);
+        m_environment = std::move(environmentOpt);
 
     else if (auto environmentEnv = QString::fromUtf8(m_environmentEnvName).isEmpty()
                                    ? ""
