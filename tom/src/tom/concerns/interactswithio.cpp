@@ -260,6 +260,13 @@ InteractsWithIO::table(const TableRow &headers, const std::vector<TableRow> &row
 
     Table table;
 
+    // TODO study tom, "locale::facet::_S_create_c_locale name not valid" for all locales, how the hell it works? silverqx
+    /* Set locale to C until I discover how the heck this works on MSYS2 because every
+       other locale throws "locale::facet::_S_create_c_locale name not valid". */
+#ifdef __MINGW32__
+    table.format().locale("C");
+#endif
+
     table.add_row(headers);
 
     for (const auto &row : rows)
