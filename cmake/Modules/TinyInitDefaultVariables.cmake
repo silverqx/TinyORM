@@ -149,6 +149,8 @@ macro(tiny_init_tiny_variables_pre)
     set(TinyOrm_target TinyOrm)
     set(TinyUtils_target TinyUtils)
     set(TomExample_target tom)
+    # Targets' folders
+    set(TomExample_folder examples/tom)
 
     get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
     set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL

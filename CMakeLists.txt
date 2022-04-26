@@ -172,6 +172,19 @@ feature_option_dependent(TOM_EXAMPLE
     "Build the tom command-line application example" OFF
     "TOM" TOM_EXAMPLE-NOTFOUND
 )
+# Depends on the TOM_EXAMPLE option so defined here
+if(TOM_EXAMPLE)
+    # Provide the default migrations path
+    if(NOT DEFINED TOM_MIGRATIONS_PATH)
+        file(REAL_PATH "${TomExample_folder}/database/migrations" TOM_MIGRATIONS_PATH)
+    endif()
+
+    # Set path from the -D option or from the above file(REAL_PATH) command
+    set(TOM_MIGRATIONS_PATH "${TOM_MIGRATIONS_PATH}" CACHE PATH
+        "Default migrations path for the make:migration command")
+
+    mark_as_advanced(TOM_MIGRATIONS_PATH)
+endif()
 
 # TinyORM library header and source files
 # ---
@@ -293,6 +306,14 @@ if(TOM)
     if(BUILD_TESTS)
         target_compile_definitions(${TinyOrm_target} PUBLIC TINYTOM_TESTS_CODE)
     endif()
+endif()
+
+if(TOM_EXAMPLE)
+    target_compile_definitions(${TinyOrm_target}
+        PUBLIC
+            # Will be stringified in the tom/application.cpp
+            TINYTOM_MIGRATIONS_PATH=${TOM_MIGRATIONS_PATH}
+    )
 endif()
 
 # Windows resource and manifest files

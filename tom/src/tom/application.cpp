@@ -32,6 +32,8 @@
 #  include "tom/version.hpp"
 #endif
 
+using fspath = std::filesystem::path;
+
 using Orm::ConnectionResolverInterface;
 using Orm::Constants::NEWLINE;
 
@@ -80,6 +82,8 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
 #endif
     , m_environmentEnvName(environmentEnvName)
     , m_migrationTable(std::move(migrationTable))
+    , m_migrationsPath(initializeMigrationsPath(
+                           TINYORM_STRINGIFY(TINYTOM_MIGRATIONS_PATH)))
     , m_migrations(std::move(migrations))
 {
     // Enable UTF-8 encoding and vt100 support
@@ -140,6 +144,13 @@ QStringList Application::arguments() const
     // Never obtain arguments from the QCoreApplication instance in unit tests
     return hasQtApplication ? QCoreApplication::arguments()
                             : prepareArguments();
+}
+
+Application &Application::migrationsPath(fspath path)
+{
+    m_migrationsPath = initializeMigrationsPath(std::move(path));
+
+    return *this;
 }
 
 #ifdef TINYTOM_TESTS_CODE
@@ -529,6 +540,14 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
     };
 
     return cached;
+}
+
+fspath Application::initializeMigrationsPath(fspath &&path)
+{
+    if (path.is_relative())
+        path = std::filesystem::current_path() / std::move(path);
+
+    return path.make_preferred();
 }
 
 /* Auto tests helpers */

@@ -1341,7 +1341,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR docs, remove target_link_libs() for transitive dependencies silverqx
 // CUR tom docs, write documentation silverqx
 // CUR tom, build on mingw, linux, build without pch and all common tasks that should run from time to time silverqx
-// CUR tom, provide somehow a custom path to migrations for the tom example, so the tom example can be used like real migration app silverqx
 // CUR tom, don't modify migrate:status command, rather extend it and add possibility to only call it through Application::runWithArguments() (this secure to not be able to call it from the cmd. line), do not show it in the list or help command output silverqx
 // CUR tom, think about remove TINYTOM_NO/_DEBUG and TINYTOM_TESTS_CODE and use TINYORM_ defines instead silverqx
 // BUG rc file © encoding silverqx

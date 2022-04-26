@@ -1,3 +1,13 @@
+# Tom migrations
+# ---
+
+# Default migrations path as the string
+# The path can be absolute or relative (to the pwd at runtime)
+# It will look like this on the cmd. line: -DTINYTOM_MIGRATIONS_PATH="<path>/<path>"
+# If the path doesn't contain a space then the \" is not needed
+# Will be stringified in the tom/application.cpp
+#DEFINES += TINYTOM_MIGRATIONS_PATH="\"database/migrations\""
+
 # Dependencies include and library paths
 # ---
 

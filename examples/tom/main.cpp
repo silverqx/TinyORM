@@ -47,6 +47,10 @@ int main(int argc, char *argv[])
         auto db = setupManager();
 
         return TomApplication(argc, argv, db, "TOM_EXAMPLE_ENV")
+                /* Default migrations path for the make:migration command, the path
+                   can be absolute or relative (to the pwd at runtime). */
+//                .migrationsPath("database/migrations")
+//                .migrationsPath(std::filesystem::current_path() / "database" / "migrations")
                 .migrations<
                     _2014_10_12_000000_create_posts_table,
                     _2014_10_12_100000_add_factor_column_to_posts_table,

@@ -5,6 +5,7 @@
 #include <orm/constants.hpp>
 #include <orm/tiny/utils/string.hpp>
 
+#include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
 
 namespace fs = std::filesystem;
@@ -102,7 +103,7 @@ fspath MigrationCommand::getMigrationPath() const
 {
     // Default location
     if (!isSet("path"))
-        return fs::current_path() / "database" / "migrations";
+        return application().getMigrationsPath();
 
     auto targetPath = value("path").toStdString();
 

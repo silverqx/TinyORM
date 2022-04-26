@@ -7,6 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include <QCommandLineParser>
 
+#include <filesystem>
+
 #include <range/v3/view/slice.hpp>
 
 #include "tom/config.hpp"
@@ -95,6 +97,14 @@ namespace Concerns
 
         /*! Set the migration repository table name. */
         inline Application &migrationTable(QString table);
+
+        /*! Alias for the filesystem path. */
+        using fspath = std::filesystem::path;
+
+        /*! Set the default migrations path for the make:migration command. */
+        Application &migrationsPath(fspath path);
+        /*! Get the default migrations path used by the make:migration command. */
+        inline const fspath &getMigrationsPath() const noexcept;
 
 #ifdef TINYTOM_TESTS_CODE
         /*! Alias for the test output row from the status command. */
@@ -197,6 +207,9 @@ namespace Concerns
         /*! Get commands index positions in namespaces. */
         const std::vector<std::tuple<int, int>> &commandsIndexes() const;
 
+        /*! Initialize the migrations path (prepend pwd and make_prefered). */
+        static fspath initializeMigrationsPath(fspath &&path);
+
         /*! Current application argc. */
         int &m_argc;
         /*! Current application argv. */
@@ -229,6 +242,8 @@ namespace Concerns
         const char *m_environmentEnvName;
         /*! Migration repository table name. */
         QString m_migrationTable;
+        /*! Migrations path for the make:migration command. */
+        std::filesystem::path m_migrationsPath;
 
         /*! Migrations vector to process. */
         std::vector<std::shared_ptr<Migration>> m_migrations;
@@ -285,6 +300,11 @@ namespace Concerns
         m_migrationTable = std::move(table);
 
         return *this;
+    }
+
+    const std::filesystem::path &Application::getMigrationsPath() const noexcept
+    {
+        return m_migrationsPath;
     }
 
     /* protected */
