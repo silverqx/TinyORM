@@ -82,6 +82,7 @@ jobs:
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
         -D MYSQL_PING:BOOL=ON
         -D BUILD_TESTS:BOOL=ON
+        -D TOM_EXAMPLE:BOOL=ON
 
     - name: TinyORM cmake build ✨ (clang13-cmake-debug)
       run: |
@@ -128,6 +129,6 @@ jobs:
         'no-copyable-polymorphic,no-ctor-missing-parent-argument,no-function-args-by-ref,'\
         'no-qstring-allocations,no-rule-of-three'
 
-        tools/run-clazy-standalone -checks="$checks" -header-filter='orm/.+\.(h|hpp)$' \
+        tools/run-clazy-standalone -checks="$checks" -header-filter='(orm|tom)/.+\.(h|hpp)$' \
         '(?:src\/|tests\/).+\/(?!mocs_)[\w_\-\+]+\.cpp$'
 
