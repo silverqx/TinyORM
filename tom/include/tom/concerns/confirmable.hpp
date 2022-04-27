@@ -33,7 +33,7 @@ namespace Concerns
 
     public:
         /*! Constructor (int param. to avoid interpret it as copy ctor). */
-        Confirmable(Command &command, int);
+        Confirmable(Command &command, int /*unused*/);
         /*! Virtual destructor. */
         inline virtual ~Confirmable() = default;
 

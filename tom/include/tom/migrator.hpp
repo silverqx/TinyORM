@@ -36,8 +36,8 @@ namespace Tom
                  std::shared_ptr<ConnectionResolverInterface> &&resolver,
                  const std::vector<std::shared_ptr<Migration>> &migrations,
                  const QCommandLineParser &parser);
-        /*! Default destructor. */
-        inline ~Migrator() = default;
+        /*! Virtual destructor. */
+        inline ~Migrator() override = default;
 
         /* Main migrate operations */
         /*! Migrate options. */

@@ -57,7 +57,7 @@ namespace Commands::Migrations
         using StatusRow = std::vector<std::string>;
 
         /*! Get result of the status command (used in auto tests). */
-        inline static std::vector<StatusRow> status() noexcept;
+        inline static std::vector<StatusRow> status();
         /*! Enable logic for unit testing? */
         inline static void setInUnitTests() noexcept;
 #endif
@@ -99,7 +99,7 @@ namespace Commands::Migrations
     }
 
 #ifdef TINYTOM_TESTS_CODE
-    std::vector<StatusCommand::StatusRow> StatusCommand::status() noexcept
+    std::vector<StatusCommand::StatusRow> StatusCommand::status()
     {
         return m_status;
     }
