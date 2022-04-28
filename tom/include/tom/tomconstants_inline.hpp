@@ -52,7 +52,7 @@ namespace Tom::Constants
     inline const QString create_      = QStringLiteral("create");
     inline const QString table_       = QStringLiteral("table");
     inline const QString path_        = QStringLiteral("path");
-    inline const QString realpath     = QStringLiteral("realpath");
+    inline const QString realpath_    = QStringLiteral("realpath");
     inline const QString fullpath     = QStringLiteral("fullpath");
     // migrate:refresh
     inline const QString step_migrate = QStringLiteral("step-migrate");

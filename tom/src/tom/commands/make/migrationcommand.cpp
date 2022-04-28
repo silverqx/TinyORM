@@ -20,7 +20,7 @@ using StringUtils = Orm::Tiny::Utils::String;
 using Tom::Constants::create_;
 using Tom::Constants::fullpath;
 using Tom::Constants::path_;
-using Tom::Constants::realpath;
+using Tom::Constants::realpath_;
 using Tom::Constants::table_;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -46,13 +46,13 @@ const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() c
 QList<QCommandLineOption> MigrationCommand::optionsSignature() const
 {
     return {
-        {create_,  QLatin1String("The table to be created"), create_}, // Value
-        {table_,   QLatin1String("The table to migrate"), table_}, // Value
-        {path_,    QLatin1String("The location where the migration file should be "
-                                 "created"), path_}, // Value
-        {realpath, QLatin1String("Indicate any provided migration file paths are "
-                                 "pre-resolved absolute paths")},
-        {fullpath, QLatin1String("Output the full path of the migration")},
+        {create_,   QLatin1String("The table to be created"), create_}, // Value
+        {table_,    QLatin1String("The table to migrate"), table_}, // Value
+        {path_,     QLatin1String("The location where the migration file should be "
+                                  "created"), path_}, // Value
+        {realpath_, QLatin1String("Indicate any provided migration file paths are "
+                                  "pre-resolved absolute paths")},
+        {fullpath,  QLatin1String("Output the full path of the migration")},
     };
 }
 
@@ -116,7 +116,7 @@ fspath MigrationCommand::getMigrationPath() const
     auto targetPath = value(path_).toStdString();
 
     // The 'path' argument contains an absolute path
-    if (isSet(realpath))
+    if (isSet(realpath_))
         return {std::move(targetPath)};
 
     // The 'path' argument contains a relative path

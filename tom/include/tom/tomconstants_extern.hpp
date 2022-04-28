@@ -53,7 +53,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString create_;
     SHAREDLIB_EXPORT extern const QString table_;
     SHAREDLIB_EXPORT extern const QString path_;
-    SHAREDLIB_EXPORT extern const QString realpath;
+    SHAREDLIB_EXPORT extern const QString realpath_;
     SHAREDLIB_EXPORT extern const QString fullpath;
     // migrate:refresh
     SHAREDLIB_EXPORT extern const QString step_migrate;
