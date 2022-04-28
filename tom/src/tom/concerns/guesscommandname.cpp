@@ -98,13 +98,13 @@ GuessCommandName::printAmbiguousCommands(
         auto commandName_ = command->name();
         auto indent = QString(commandsMaxSize - commandName_.size() + 1, SPACE);
 
-        return QLatin1String("    %1%2%3")
+        return QStringLiteral("    %1%2%3")
                 .arg(std::move(commandName_), std::move(indent), command->description());
     })
             | ranges::to<QStringList>();
 
     application().errorWall(
-                QLatin1String(
+                QStringLiteral(
                     "Command \"%1\" is ambiguous.\n\nDid you mean one of these?\n%2")
                 .arg(commandName, formattedCommands.join(NEWLINE)));
 

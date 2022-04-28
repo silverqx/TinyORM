@@ -58,7 +58,7 @@ std::vector<std::shared_ptr<Migration>> Migrator::run(const MigrateOptions optio
        aren't, we will just make a note of it to the developer so they're aware
        that all of the migrations have been run against this database system. */
     if (migrations.empty()) {
-        info(QLatin1String("Nothing to migrate."));
+        info(QStringLiteral("Nothing to migrate."));
 
         return migrations;
     }
@@ -286,7 +286,7 @@ Migrator::rollbackMigrations(std::vector<RollbackItem> &&migrations,
                              const bool pretend) const
 {
     if (migrations.empty()) {
-        info(QLatin1String("Nothing to rollback"));
+        info(QStringLiteral("Nothing to rollback"));
 
         return std::move(migrations);
     }
@@ -405,7 +405,7 @@ void Migrator::throwIfMigrationsNotSorted(const QString &previousMigrationName,
         return;
 
     throw Exceptions::InvalidTemplateArgumentError(
-            QLatin1String(
+            QStringLiteral(
                 "The template arguments passed to the TomApplication::migrations() "
                 "must always be sorted alphabetically."));
 }

@@ -38,12 +38,12 @@ bool Confirmable::confirmToProceed(const QString &warning,
 
     const auto confirmed =
             m_command.get().confirm(
-                QLatin1String("Do you really wish to run this command?"));
+                QStringLiteral("Do you really wish to run this command?"));
 
     if (confirmed)
         return true;
 
-    m_command.get().comment(QLatin1String("Command Canceled!"));
+    m_command.get().comment(QStringLiteral("Command Canceled!"));
 
     return false;
 }

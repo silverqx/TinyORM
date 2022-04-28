@@ -64,7 +64,7 @@ namespace Commands::Migrations
 
     QString RefreshCommand::description() const
     {
-        return QLatin1String("Rollback and re-run all migrations");
+        return QStringLiteral("Rollback and re-run all migrations");
     }
 
 } // namespace Commands::Migrations

@@ -67,7 +67,7 @@ namespace Concerns
         /*! Constructor. */
         Application(int &argc, char **argv, std::shared_ptr<DatabaseManager> db,
                     const char *environmentEnvName = "TOM_ENV",
-                    QString migrationTable = QLatin1String("migrations"),
+                    QString migrationTable = QStringLiteral("migrations"),
                     std::vector<std::shared_ptr<Migration>> migrations = {});
         /*! Virtual destructor. */
         inline ~Application() override = default;
@@ -237,7 +237,7 @@ namespace Concerns
         QCommandLineParser m_parser {};
 
         /*! Current environment. */
-        QString m_environment = QLatin1String("development");
+        QString m_environment = QStringLiteral("development");
         /*! Environment variable name that holds a current environment value. */
         const char *m_environmentEnvName;
         /*! Migration repository table name. */

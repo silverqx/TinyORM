@@ -315,10 +315,11 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
     if (!m_interactive)
         return defaultAnswer;
 
-    info(QStringLiteral("%1 (yes/no) ").arg(question), false)
-            .comment(QStringLiteral("[%1]").arg(defaultAnswer ? QLatin1String("yes")
-                                                              : QLatin1String("no")))
-            .note(QLatin1String("> "), false);
+    info(QStringLiteral("%1 (yes/no) ").arg(question), false);
+
+    comment(QStringLiteral("[%1]").arg(defaultAnswer ? QStringLiteral("yes")
+                                                     : QStringLiteral("no")));
+    note(QStringLiteral("> "), false);
 
     std::wstring answerRaw;
     std::wcin >> std::noskipws >> answerRaw;
@@ -369,7 +370,7 @@ InteractsWithIO::initializeVerbosity(const QCommandLineParser &parser) const
     if (parser.isSet(quiet))
         return Quiet;
 
-    const auto verboseCount = countSetOption(QLatin1String("v"), parser);
+    const auto verboseCount = countSetOption(QStringLiteral("v"), parser);
 
     if (verboseCount == 1)
         return Verbose;

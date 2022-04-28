@@ -35,15 +35,15 @@ FreshCommand::FreshCommand(
 QList<QCommandLineOption> FreshCommand::optionsSignature() const
 {
     return {
-        {database_,     QLatin1String("The database connection to use"), database_}, // Value
-        {drop_views,    QLatin1String("Drop all tables and views")},
-        {drop_types,    QLatin1String("Drop all tables and types (Postgres only)")},
-        {force,         QLatin1String("Force the operation to run when in production")},
-//        {"schema-path", QLatin1String("The path to a schema dump file")}, // Value
-//        {"seed",        QLatin1String("Indicates if the seed task should be re-run")},
-//        {"seeder",      QLatin1String("The class name of the root seeder"), "seeded"}, // Value
-        {step_,         QLatin1String("Force the migrations to be run so they can be "
-                                      "rolled back individually")},
+        {database_,     QStringLiteral("The database connection to use"), database_}, // Value
+        {drop_views,    QStringLiteral("Drop all tables and views")},
+        {drop_types,    QStringLiteral("Drop all tables and types (Postgres only)")},
+        {force,         QStringLiteral("Force the operation to run when in production")},
+//        {"schema-path", QStringLiteral("The path to a schema dump file")}, // Value
+//        {"seed",        QStringLiteral("Indicates if the seed task should be re-run")},
+//        {"seeder",      QStringLiteral("The class name of the root seeder"), "seeded"}, // Value
+        {step_,         QStringLiteral("Force the migrations to be run so they can be "
+                                       "rolled back individually")},
     };
 }
 

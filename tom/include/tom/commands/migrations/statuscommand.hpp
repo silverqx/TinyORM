@@ -96,7 +96,7 @@ namespace Commands::Migrations
 
     QString StatusCommand::description() const
     {
-        return QLatin1String("Show the status of each migration");
+        return QStringLiteral("Show the status of each migration");
     }
 
 #ifdef TINYTOM_TESTS_CODE

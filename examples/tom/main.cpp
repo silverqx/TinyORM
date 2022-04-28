@@ -89,7 +89,7 @@ std::shared_ptr<DatabaseManager> setupManager()
         {engine_,         InnoDB},
         {options_,        QVariantHash()},
     },
-        QLatin1String("tinyorm_tom"));
+        QStringLiteral("tinyorm_tom"));
 }
 
 /* Alternative syntax to instantiate migration classes. */

@@ -24,8 +24,8 @@ PrintsOptions::PrintsOptions(const Commands::Command &command, const int /*unuse
 int PrintsOptions::printOptionsSection(const bool commonOptions) const
 {
     m_command.get().newLine();
-    m_command.get().comment(commonOptions ? QLatin1String("Common options:")
-                                          : QLatin1String("Options:"));
+    m_command.get().comment(commonOptions ? QStringLiteral("Common options:")
+                                          : QStringLiteral("Options:"));
 
     // Get max. option size in all options
     int optionsMaxSize = this->optionsMaxSize();
@@ -49,7 +49,7 @@ int PrintsOptions::optionsMaxSize() const
             if (name.size() == 1)
                 options << ShortOption
                            // Custom logic for the verbose option, good enough 😎
-                           .arg(name == QChar('v') ? QLatin1String("v|vv|vvv")
+                           .arg(name == QChar('v') ? QStringLiteral("v|vv|vvv")
                                                    : name);
 
             // Long option
@@ -80,7 +80,7 @@ void PrintsOptions::printOptions(const int optionsMaxSize) const
             if (name.size() == 1)
                 options << ShortOption
                            // Custom logic for the verbose option, good enough 😎
-                           .arg(name == QChar('v') ? QLatin1String("v|vv|vvv")
+                           .arg(name == QChar('v') ? QStringLiteral("v|vv|vvv")
                                                    : name);
 
             // Long option

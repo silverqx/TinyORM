@@ -32,14 +32,14 @@ MigrateCommand::MigrateCommand(
 QList<QCommandLineOption> MigrateCommand::optionsSignature() const
 {
     return {
-        {database_,     QLatin1String("The database connection to use"), database_}, // Value
-        {force,         QLatin1String("Force the operation to run when in production")},
-        {pretend,       QLatin1String("Dump the SQL queries that would be run")},
-//        {"schema-path", QLatin1String("The path to a schema dump file")}, // Value
-//        {"seed",        QLatin1String("Indicates if the seed task should be re-run")},
-//        {"seeder",      QLatin1String("The class name of the root seeder"), "seeded"}, // Value
-        {step_,         QLatin1String("Force the migrations to be run so they can be "
-                                      "rolled back individually")},
+        {database_,     QStringLiteral("The database connection to use"), database_}, // Value
+        {force,         QStringLiteral("Force the operation to run when in production")},
+        {pretend,       QStringLiteral("Dump the SQL queries that would be run")},
+//        {"schema-path", QStringLiteral("The path to a schema dump file")}, // Value
+//        {"seed",        QStringLiteral("Indicates if the seed task should be re-run")},
+//        {"seeder",      QStringLiteral("The class name of the root seeder"), "seeded"}, // Value
+        {step_,         QStringLiteral("Force the migrations to be run so they can be "
+                                       "rolled back individually")},
     };
 }
 

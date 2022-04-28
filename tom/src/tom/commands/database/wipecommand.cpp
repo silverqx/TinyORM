@@ -27,10 +27,10 @@ WipeCommand::WipeCommand(Application &application, QCommandLineParser &parser)
 QList<QCommandLineOption> WipeCommand::optionsSignature() const
 {
     return {
-        {database_,  QLatin1String("The database connection to use"), database_}, // Value
-        {drop_views, QLatin1String("Drop all tables and views")},
-        {drop_types, QLatin1String("Drop all tables and types (Postgres only)")},
-        {force,      QLatin1String("Force the operation to run when in production")},
+        {database_,  QStringLiteral("The database connection to use"), database_}, // Value
+        {drop_views, QStringLiteral("Drop all tables and views")},
+        {drop_types, QStringLiteral("Drop all tables and types (Postgres only)")},
+        {force,      QStringLiteral("Force the operation to run when in production")},
     };
 }
 
@@ -48,17 +48,17 @@ int WipeCommand::run()
     if (isSet(drop_views)) {
         dropAllViews(database);
 
-        info(QLatin1String("Dropped all views successfully."));
+        info(QStringLiteral("Dropped all views successfully."));
     }
 
     dropAllTables(database);
 
-    info(QLatin1String("Dropped all tables successfully."));
+    info(QStringLiteral("Dropped all tables successfully."));
 
     if (isSet(drop_types)) {
         dropAllTypes(database);
 
-        info(QLatin1String("Dropped all types successfully."));
+        info(QStringLiteral("Dropped all types successfully."));
     }
 
     return EXIT_SUCCESS;

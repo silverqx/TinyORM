@@ -50,7 +50,7 @@ bool Terminal::hasColorSupport(std::ostream &cout) const
         stream = stderr;
     else
         throw Exceptions::InvalidArgumentError(
-                QLatin1String("Unsupported stream type passed in %1().")
+                QStringLiteral("Unsupported stream type passed in %1().")
                 .arg(__tiny_func__));
 
     // Autodetect
@@ -79,7 +79,7 @@ bool Terminal::hasWColorSupport(std::wostream &wcout) const
         stream = stderr;
     else
         throw Exceptions::InvalidArgumentError(
-                QLatin1String("Unsupported stream type passed in %1().")
+                QStringLiteral("Unsupported stream type passed in %1().")
                 .arg(__tiny_func__));
 
     // Autodetect
@@ -174,7 +174,7 @@ namespace
             handle = GetStdHandle(STD_ERROR_HANDLE);
         else
             throw Exceptions::InvalidArgumentError(
-                    QLatin1String("Unsupported stream type passed in %1().")
+                    QStringLiteral("Unsupported stream type passed in %1().")
                     .arg(__tiny_func__));
 
         return handle;
@@ -191,7 +191,7 @@ namespace
             handle = GetStdHandle(STD_ERROR_HANDLE);
         else
             throw Exceptions::InvalidArgumentError(
-                    QLatin1String("Unsupported stream type passed in %1().")
+                    QStringLiteral("Unsupported stream type passed in %1().")
                     .arg(__tiny_func__));
 
         return handle;

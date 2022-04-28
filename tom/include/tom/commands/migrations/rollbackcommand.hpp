@@ -59,7 +59,7 @@ namespace Commands::Migrations
 
     QString RollbackCommand::description() const
     {
-        return QLatin1String("Rollback the last database migration");
+        return QStringLiteral("Rollback the last database migration");
     }
 
 } // namespace Commands::Migrations

@@ -37,7 +37,7 @@ MigrationCommand::MigrationCommand(Application &application, QCommandLineParser 
 const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, QLatin1String("The name of the migration")},
+        {NAME, QStringLiteral("The name of the migration")},
     };
 
     return cached;
@@ -46,13 +46,13 @@ const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() c
 QList<QCommandLineOption> MigrationCommand::optionsSignature() const
 {
     return {
-        {create_,   QLatin1String("The table to be created"), create_}, // Value
-        {table_,    QLatin1String("The table to migrate"), table_}, // Value
-        {path_,     QLatin1String("The location where the migration file should be "
-                                  "created"), path_}, // Value
-        {realpath_, QLatin1String("Indicate any provided migration file paths are "
-                                  "pre-resolved absolute paths")},
-        {fullpath,  QLatin1String("Output the full path of the migration")},
+        {create_,   QStringLiteral("The table to be created"), create_}, // Value
+        {table_,    QStringLiteral("The table to migrate"), table_}, // Value
+        {path_,     QStringLiteral("The location where the migration file should be "
+                                   "created"), path_}, // Value
+        {realpath_, QStringLiteral("Indicate any provided migration file paths are "
+                                   "pre-resolved absolute paths")},
+        {fullpath,  QStringLiteral("Output the full path of the migration")},
     };
 }
 
@@ -102,7 +102,7 @@ void MigrationCommand::writeMigration(const QString &name, const QString &table,
     const auto migrationFile = isSet(fullpath) ? migrationFilePath.make_preferred()
                                                : migrationFilePath.filename();
 
-    info(QLatin1String("Created Migration: "), false);
+    info(QStringLiteral("Created Migration: "), false);
 
     note(QString::fromStdString(migrationFile.string()));
 }
@@ -125,7 +125,7 @@ fspath MigrationCommand::getMigrationPath() const
     // Validate
     if (fs::exists(migrationsPath) && !fs::is_directory(migrationsPath))
         throw Exceptions::InvalidArgumentError(
-                QLatin1String("Migrations path '%1' exists and it's not a directory.")
+                QStringLiteral("Migrations path '%1' exists and it's not a directory.")
                 .arg(migrationsPath.c_str()));
 
     return migrationsPath;

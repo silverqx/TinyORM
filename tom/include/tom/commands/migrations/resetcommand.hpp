@@ -59,7 +59,7 @@ namespace Commands::Migrations
 
     QString ResetCommand::description() const
     {
-        return QLatin1String("Rollback all database migrations");
+        return QStringLiteral("Rollback all database migrations");
     }
 
 } // namespace Commands::Migrations

@@ -64,7 +64,7 @@ namespace Commands::Migrations
 
     QString FreshCommand::description() const
     {
-        return QLatin1String("Drop all tables and re-run all migrations");
+        return QStringLiteral("Drop all tables and re-run all migrations");
     }
 
 } // namespace Commands::Migrations

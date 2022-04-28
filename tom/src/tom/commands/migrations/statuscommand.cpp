@@ -34,7 +34,7 @@ StatusCommand::StatusCommand(
 QList<QCommandLineOption> StatusCommand::optionsSignature() const
 {
     return {
-        {database_, QLatin1String("The database connection to use"), database_}, // Value
+        {database_, QStringLiteral("The database connection to use"), database_}, // Value
     };
 }
 
@@ -46,7 +46,7 @@ int StatusCommand::run()
     return m_migrator->usingConnection(value(database_), isDebugVerbosity(), [this]
     {
         if (!m_migrator->repositoryExists()) {
-            error(QLatin1String("Migration table not found."));
+            error(QStringLiteral("Migration table not found."));
 
             return EXIT_FAILURE;
         }
@@ -74,7 +74,7 @@ int StatusCommand::run()
             m_status.clear();
 #endif
 
-        error(QLatin1String("No migrations found"));
+        error(QStringLiteral("No migrations found"));
 
         return EXIT_SUCCESS;
     });

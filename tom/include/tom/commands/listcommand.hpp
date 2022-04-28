@@ -87,7 +87,7 @@ namespace Tom::Commands
 
     QString ListCommand::description() const
     {
-        return QLatin1String("List commands");
+        return QStringLiteral("List commands");
     }
 
 } // namespace Tom::Commands

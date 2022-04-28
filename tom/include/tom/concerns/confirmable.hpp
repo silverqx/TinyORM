@@ -39,7 +39,7 @@ namespace Concerns
 
         /*! Confirm before proceeding with the action (only in production environment). */
         bool confirmToProceed(
-                    const QString &warning = QLatin1String("Application In Production!"),
+                    const QString &warning = QStringLiteral("Application In Production!"),
                     const std::function<bool()> &callback = nullptr) const;
 
     protected:

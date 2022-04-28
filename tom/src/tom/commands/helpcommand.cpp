@@ -29,7 +29,7 @@ HelpCommand::HelpCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &HelpCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {command_name, QLatin1String("The command name"), {}, true, Constants::help},
+        {command_name, QStringLiteral("The command name"), {}, true, Constants::help},
     };
 
     return cached;
@@ -37,7 +37,7 @@ const std::vector<PositionalArgument> &HelpCommand::positionalArguments() const
 
 QString HelpCommand::help() const
 {
-    return QLatin1String(
+    return QStringLiteral(
 R"(  The <info>help</info> command displays help for a given command:
 
     <info>tom</info> help list
@@ -89,8 +89,8 @@ bool HelpCommand::validateRequiredArguments(
         const auto &right = arguments.at(i);
 
         if (left.optional && !right.optional) {
-            errorWall(QLatin1String("Cannot add a required argument '%1' after "
-                                    "an optional one '%2'.")
+            errorWall(QStringLiteral("Cannot add a required argument '%1' after "
+                                     "an optional one '%2'.")
                       .arg(right.name, left.name));
 
             return false;
@@ -104,8 +104,8 @@ bool HelpCommand::validateRequiredArguments(
                                          !argument.defaultValue.isEmpty();
 
         if (requiredWithDefault)
-            errorWall(QLatin1String("The required argument '%1' has a default value "
-                                    "'%2'.")
+            errorWall(QStringLiteral("The required argument '%1' has a default value "
+                                     "'%2'.")
                       .arg(argument.name, argument.defaultValue));
 
         return requiredWithDefault;
@@ -114,9 +114,9 @@ bool HelpCommand::validateRequiredArguments(
 
 void HelpCommand::printDescriptionSection(const Command &command) const
 {
-    comment(QLatin1String("Description:"));
+    comment(QStringLiteral("Description:"));
 
-    note(QLatin1String("  %1").arg(command.description()));
+    note(QStringLiteral("  %1").arg(command.description()));
 }
 
 void HelpCommand::printUsageSection(
@@ -129,7 +129,7 @@ void HelpCommand::printUsageSection(
 
     newLine();
 
-    comment(QLatin1String("Usage:"));
+    comment(QStringLiteral("Usage:"));
 
     QString usage(2, SPACE);
     usage += command.name();
@@ -167,7 +167,7 @@ void HelpCommand::printArgumentsSection(
 
     newLine();
 
-    comment(QLatin1String("Arguments:"));
+    comment(QStringLiteral("Arguments:"));
 
     for (const auto argumentsMaxSize = this->argumentsMaxSize(arguments);
          const auto &argument : arguments
@@ -230,7 +230,7 @@ void HelpCommand::printHelpSection(const Command &command) const
 
     newLine();
 
-    comment(QLatin1String("Help:"));
+    comment(QStringLiteral("Help:"));
 
     note(help);
 }

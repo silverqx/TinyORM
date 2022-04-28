@@ -26,7 +26,7 @@ InstallCommand::InstallCommand(
 QList<QCommandLineOption> InstallCommand::optionsSignature() const
 {
     return {
-        {database_, QLatin1String("The database connection to use"), database_}, // Value
+        {database_, QStringLiteral("The database connection to use"), database_}, // Value
     };
 }
 
@@ -39,7 +39,7 @@ int InstallCommand::run()
 
     m_repository->createRepository();
 
-    info(QLatin1String("Migration table created successfully."));
+    info(QStringLiteral("Migration table created successfully."));
 
     return EXIT_SUCCESS;
 }

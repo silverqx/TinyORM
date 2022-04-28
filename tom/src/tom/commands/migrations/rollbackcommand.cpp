@@ -31,10 +31,10 @@ RollbackCommand::RollbackCommand(
 QList<QCommandLineOption> RollbackCommand::optionsSignature() const
 {
     return {
-        {database_, QLatin1String("The database connection to use"), database_}, // Value
-        {force,     QLatin1String("Force the operation to run when in production")},
-        {pretend,   QLatin1String("Dump the SQL queries that would be run")},
-        {step_,     QLatin1String("The number of migrations to be reverted"), step_}, // Value
+        {database_, QStringLiteral("The database connection to use"), database_}, // Value
+        {force,     QStringLiteral("Force the operation to run when in production")},
+        {pretend,   QStringLiteral("Dump the SQL queries that would be run")},
+        {step_,     QStringLiteral("The number of migrations to be reverted"), step_}, // Value
     };
 }
 

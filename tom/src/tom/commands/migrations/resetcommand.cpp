@@ -30,9 +30,9 @@ ResetCommand::ResetCommand(
 QList<QCommandLineOption> ResetCommand::optionsSignature() const
 {
     return {
-        {database_, QLatin1String("The database connection to use"), database_}, // Value
-        {force,     QLatin1String("Force the operation to run when in production")},
-        {pretend,   QLatin1String("Dump the SQL queries that would be run")},
+        {database_, QStringLiteral("The database connection to use"), database_}, // Value
+        {force,     QStringLiteral("Force the operation to run when in production")},
+        {pretend,   QStringLiteral("Dump the SQL queries that would be run")},
     };
 }
 
@@ -48,7 +48,7 @@ int ResetCommand::run()
     return m_migrator->usingConnection(value(database_), isDebugVerbosity(), [this]
     {
         if (!m_migrator->repositoryExists()) {
-            comment(QLatin1String("Migration table not found."));
+            comment(QStringLiteral("Migration table not found."));
 
             return EXIT_FAILURE;
         }

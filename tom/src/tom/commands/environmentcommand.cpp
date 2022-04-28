@@ -18,7 +18,7 @@ int EnvironmentCommand::run()
 {
     Command::run();
 
-    info(QLatin1String("Current application environment: "), false);
+    info(QStringLiteral("Current application environment: "), false);
 
     comment(application().environment());
 

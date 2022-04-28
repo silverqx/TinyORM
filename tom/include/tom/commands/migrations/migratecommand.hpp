@@ -69,7 +69,7 @@ namespace Commands::Migrations
 
     QString MigrateCommand::description() const
     {
-        return QLatin1String("Run the database migrations");
+        return QStringLiteral("Run the database migrations");
     }
 
 } // namespace Commands::Migrations

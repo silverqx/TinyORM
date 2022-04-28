@@ -33,7 +33,7 @@ ListCommand::ListCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &ListCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {namespace_, QLatin1String("The namespace name"), {}, true},
+        {namespace_, QStringLiteral("The namespace name"), {}, true},
     };
 
     return cached;
@@ -42,13 +42,13 @@ const std::vector<PositionalArgument> &ListCommand::positionalArguments() const
 QList<QCommandLineOption> ListCommand::optionsSignature() const
 {
     return {
-        {raw_, QLatin1String("To output raw command list")},
+        {raw_, QStringLiteral("To output raw command list")},
     };
 }
 
 QString ListCommand::help() const
 {
-    return QLatin1String(
+    return QStringLiteral(
 R"(  The <info>list</info> command lists all commands:
 
     <info>tom list</info>
@@ -78,8 +78,8 @@ int ListCommand::full(const QString &namespaceArg)
     application().printVersion();
 
     newLine();
-    comment(QLatin1String("Usage:"));
-    note(QLatin1String("  command [options] [--] [arguments]"));
+    comment(QStringLiteral("Usage:"));
+    note(QStringLiteral("  command [options] [--] [arguments]"));
 
     // Options section
     const auto optionsMaxSize = printOptionsSection(true);
@@ -141,7 +141,7 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
     // No namespace found
     if (namespaces.empty()) {
         application().errorWall(
-                    QLatin1String(
+                    QStringLiteral(
                         "There are no commands defined in the \"%1\" namespace.")
                     .arg(namespaceArg));
 
@@ -170,13 +170,13 @@ ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
     const auto formattedNamespaces = namespaces
             | ranges::views::transform([](const auto &ambiguousNsName) -> QString
     {
-        return QLatin1String("    %1").arg(ambiguousNsName);
+        return QStringLiteral("    %1").arg(ambiguousNsName);
     })
             | ranges::to<QStringList>();
 
     application().errorWall(
-                QLatin1String("The namespace \"%1\" is ambiguous.\n\n"
-                              "Did you mean one of these?\n%2")
+                QStringLiteral("The namespace \"%1\" is ambiguous.\n\n"
+                               "Did you mean one of these?\n%2")
                 .arg(namespaceName, formattedNamespaces.join(NEWLINE)));
 
     application().exitApplication(EXIT_FAILURE);
@@ -197,12 +197,12 @@ void ListCommand::printCommandsSection(const QString &namespaceName,
     if (hasNamespaceName)
                 // Custom message for the namespaced argument
         comment(namespaceName == NsNamespaced
-                ? QLatin1String("Commands with the namespace prefix:")
-                : QLatin1String("Available commands for the '%1' namespace:")
+                ? QStringLiteral("Commands with the namespace prefix:")
+                : QStringLiteral("Available commands for the '%1' namespace:")
                   .arg(namespaceName.isEmpty() ? NsGlobal : namespaceName));
     // All commands
     else
-        comment(QLatin1String("Available commands:"));
+        comment(QStringLiteral("Available commands:"));
 
     // Get max. command size in all command names
     const auto commandsMaxSize = this->commandsMaxSize(commands, optionsMaxSize);

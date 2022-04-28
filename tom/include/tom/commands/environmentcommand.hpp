@@ -42,7 +42,7 @@ namespace Tom::Commands
 
     QString EnvironmentCommand::description() const
     {
-        return QLatin1String("Display the current framework environment");
+        return QStringLiteral("Display the current framework environment");
     }
 
 } // namespace Tom::Commands

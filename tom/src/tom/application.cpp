@@ -120,9 +120,9 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
 
     // Following is not relevant in the auto test executables
 #ifndef TINYTOM_TESTS_CODE
-    QCoreApplication::setOrganizationName(QLatin1String("TinyORM"));
-    QCoreApplication::setOrganizationDomain(QLatin1String("tinyorm.org"));
-    QCoreApplication::setApplicationName(QLatin1String("tom"));
+    QCoreApplication::setOrganizationName(QStringLiteral("TinyORM"));
+    QCoreApplication::setOrganizationDomain(QStringLiteral("tinyorm.org"));
+    QCoreApplication::setApplicationName(QStringLiteral("tom"));
     QCoreApplication::setApplicationVersion(TINYTOM_VERSION_STR);
 #endif
 
@@ -149,14 +149,15 @@ void Application::logException(const std::exception &e, const bool noAnsi)
 {
     // TODO future decide how qCritical()/qFatal() really works, also regarding to the Qt Creator's settings 'Ignore first chance access violations' and similar silverqx
     // TODO future alse how to correctly setup this in prod/dev envs. silverqx
-    auto message = QLatin1String("Caught '%1' Exception:\n%2")
-                   .arg(TypeUtils::classPureBasename(e, true), e.what());
 
     /* Want to have this method static, downside is that the InteractsWithIO has to be
        instantiated again. */
     Concerns::InteractsWithIO io(noAnsi);
 
-    static const auto tmpl = QLatin1String("%1%2%1").arg(NEWLINE, "%1");
+    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, "%1");
+
+    auto message = QStringLiteral("Caught '%1' Exception:\n%2")
+                   .arg(TypeUtils::classPureBasename(e, true), e.what());
 
     // No-ansi output
     if (noAnsi || !io.isAnsiOutput(std::cerr)) {
@@ -222,20 +223,20 @@ void Application::initializeParser(QCommandLineParser &parser)
 
     // Common options used in all commands
     parser.addOptions(saveOptions({
-        {      ansi,           QLatin1String("Force ANSI output")},
-        {      noansi,         QLatin1String("Disable ANSI output")},
-        {      env,            QLatin1String("The environment the command should run "
-                                             "under"), env}, // Value
-        {{"h", help},          QLatin1String("Display help for the given command. When "
-                                             "no command is given display help for the "
-                                             "<info>list</info> command")},
-        {{"n", nointeraction}, QLatin1String("Do not ask any interactive question")},
-        {{"q", quiet},         QLatin1String("Do not output any message")},
-        {{"V", version},       QLatin1String("Display this application version")},
-        {{"v", verbose},       QLatin1String("Increase the verbosity of messages: "
-                                             "1 for normal output, "
-                                             "2 for more verbose output and "
-                                             "3 for debug")},
+        {      ansi,           QStringLiteral("Force ANSI output")},
+        {      noansi,         QStringLiteral("Disable ANSI output")},
+        {      env,            QStringLiteral("The environment the command should run "
+                                              "under"), env}, // Value
+        {{"h", help},          QStringLiteral("Display help for the given command. When "
+                                              "no command is given display help for the "
+                                              "<info>list</info> command")},
+        {{"n", nointeraction}, QStringLiteral("Do not ask any interactive question")},
+        {{"q", quiet},         QStringLiteral("Do not output any message")},
+        {{"V", version},       QStringLiteral("Display this application version")},
+        {{"v", verbose},       QStringLiteral("Increase the verbosity of messages: "
+                                              "1 for normal output, "
+                                              "2 for more verbose output and "
+                                              "3 for debug")},
     }));
 }
 
@@ -334,7 +335,7 @@ QString Application::getCommandName(const QString &name, CommandNotFound notFoun
 
         T_UNLIKELY
         case ShowErrorWall: {
-            errorWall(QLatin1String("Command '%1' is not defined.").arg(name));
+            errorWall(QStringLiteral("Command '%1' is not defined.").arg(name));
 
             exitApplication(EXIT_FAILURE);
         }

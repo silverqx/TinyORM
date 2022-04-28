@@ -35,14 +35,14 @@ RefreshCommand::RefreshCommand(
 QList<QCommandLineOption> RefreshCommand::optionsSignature() const
 {
     return {
-        {database_,    QLatin1String("The database connection to use"), database_}, // Value
-        {force,        QLatin1String("Force the operation to run when in production")},
-//        {"seed",       QLatin1String("Indicates if the seed task should be re-run")},
-//        {"seeder",     QLatin1String("The class name of the root seeder", "seeded")}, // Value
-        {step_,        QLatin1String("The number of migrations to be reverted & "
-                                     "re-run"), step_}, // Value
-        {step_migrate, QLatin1String("Force the migrations to be run so they can be "
-                                     "rolled back individually")},
+        {database_,    QStringLiteral("The database connection to use"), database_}, // Value
+        {force,        QStringLiteral("Force the operation to run when in production")},
+//        {"seed",       QStringLiteral("Indicates if the seed task should be re-run")},
+//        {"seeder",     QStringLiteral("The class name of the root seeder", "seeded")}, // Value
+        {step_,        QStringLiteral("The number of migrations to be reverted & "
+                                      "re-run"), step_}, // Value
+        {step_migrate, QStringLiteral("Force the migrations to be run so they can be "
+                                      "rolled back individually")},
     };
 }
 

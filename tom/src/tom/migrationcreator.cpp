@@ -76,7 +76,7 @@ void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
 
         if (entryName == name)
             throw Exceptions::InvalidArgumentError(
-                    QLatin1String("A '%1' migration already exists.").arg(name));
+                    QStringLiteral("A '%1' migration already exists.").arg(name));
     }
 }
 
@@ -113,7 +113,7 @@ std::string MigrationCreator::getDatePrefix() const
 
 const QString &MigrationCreator::getDatePrefixFormat()
 {
-    static const QString cached = QLatin1String("yyyy_MM_dd_HHmmss");
+    static const QString cached = QStringLiteral("yyyy_MM_dd_HHmmss");
 
     return cached;
 }
@@ -123,17 +123,17 @@ std::string MigrationCreator::populateStub(const QString &name, QString &&stub,
 {
     const auto className = getClassName(name);
 
-    stub.replace(QLatin1String("DummyClass"), className)
-        .replace(QLatin1String("{{ class }}"), className)
-        .replace(QLatin1String("{{class}}"), className);
+    stub.replace(QStringLiteral("DummyClass"), className)
+        .replace(QStringLiteral("{{ class }}"), className)
+        .replace(QStringLiteral("{{class}}"), className);
 
     /* Here we will replace the table place-holders with the table specified by
        the developer, which is useful for quickly creating a tables creation
        or update migration from the console instead of typing it manually. */
     if (!table.isEmpty())
-        stub.replace(QLatin1String("DummyTable"), table)
-            .replace(QLatin1String("{{ table }}"), table)
-            .replace(QLatin1String("{{table}}"), table);
+        stub.replace(QStringLiteral("DummyTable"), table)
+            .replace(QStringLiteral("{{ table }}"), table)
+            .replace(QStringLiteral("{{table}}"), table);
 
     return stub.toStdString();
 }
