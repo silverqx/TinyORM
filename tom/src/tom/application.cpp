@@ -56,7 +56,33 @@ using Tom::Commands::Migrations::ResetCommand;
 using Tom::Commands::Migrations::RollbackCommand;
 using Tom::Commands::Migrations::StatusCommand;
 
-using namespace Tom::Constants;
+using Tom::Constants::ansi;
+using Tom::Constants::env;
+using Tom::Constants::help;
+using Tom::Constants::noansi;
+using Tom::Constants::nointeraction;
+using Tom::Constants::quiet;
+using Tom::Constants::verbose;
+using Tom::Constants::version;
+using Tom::Constants::DbWipe;
+using Tom::Constants::Env;
+using Tom::Constants::Help;
+using Tom::Constants::Inspire;
+using Tom::Constants::List;
+using Tom::Constants::MakeMigration;
+//using Tom::Constants::MakeProject;
+using Tom::Constants::Migrate;
+using Tom::Constants::MigrateFresh;
+using Tom::Constants::MigrateInstall;
+using Tom::Constants::MigrateRefresh;
+using Tom::Constants::MigrateReset;
+using Tom::Constants::MigrateRollback;
+using Tom::Constants::MigrateStatus;
+using Tom::Constants::NsDb;
+using Tom::Constants::NsGlobal;
+using Tom::Constants::NsMake;
+using Tom::Constants::NsMigrate;
+using Tom::Constants::NsNamespaced;
 
 /*! Invoke Qt's global post routines. */
 extern void Q_DECL_IMPORT qt_call_post_routines();
