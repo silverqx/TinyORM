@@ -34,7 +34,6 @@ namespace Query
     /*! Type for the DatabaseConnection Reconnector (lambda). */
     using ReconnectorType = std::function<void(const DatabaseConnection &)>;
 
-    // CUR what about const char * ? silverqx
     /*! Type for the database column. */
     using Column = std::variant<QString, Query::Expression>;
 
