@@ -7,6 +7,7 @@
 #include "migrations/2014_10_12_200000_create_properties_table.hpp"
 #include "migrations/2014_10_12_300000_create_phones_table.hpp"
 
+using Orm::Constants::EMPTY;
 using Orm::Constants::H127001;
 using Orm::Constants::P3306;
 using Orm::Constants::QMYSQL;
@@ -74,14 +75,14 @@ std::shared_ptr<DatabaseManager> setupManager()
         {driver_,         QMYSQL},
         {host_,           qEnvironmentVariable("DB_MYSQL_HOST", H127001)},
         {port_,           qEnvironmentVariable("DB_MYSQL_PORT", P3306)},
-        {database_,       qEnvironmentVariable("DB_MYSQL_DATABASE", "")},
-        {username_,       qEnvironmentVariable("DB_MYSQL_USERNAME", "")},
-        {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
+        {database_,       qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY)},
+        {username_,       qEnvironmentVariable("DB_MYSQL_USERNAME", EMPTY)},
+        {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
         {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
         {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION",
                                                QStringLiteral("utf8mb4_0900_ai_ci"))},
         {timezone_,       SYSTEM},
-        {prefix_,         ""},
+        {prefix_,         EMPTY},
         {prefix_indexes,  true},
         {strict_,         true},
         {isolation_level, QStringLiteral("REPEATABLE READ")},
