@@ -13,6 +13,11 @@ using Orm::Constants::COLON;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
 
+using Tom::Constants::namespace_;
+using Tom::Constants::raw_;
+using Tom::Constants::NsGlobal;
+using Tom::Constants::NsNamespaced;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands
@@ -28,7 +33,7 @@ ListCommand::ListCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &ListCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {"namespace", "The namespace name", {}, true},
+        {namespace_, QLatin1String("The namespace name"), {}, true},
     };
 
     return cached;
@@ -37,7 +42,7 @@ const std::vector<PositionalArgument> &ListCommand::positionalArguments() const
 QList<QCommandLineOption> ListCommand::optionsSignature() const
 {
     return {
-        {"raw", "To output raw command list"},
+        {raw_, QLatin1String("To output raw command list")},
     };
 }
 
@@ -61,9 +66,9 @@ int ListCommand::run()
 {
     Command::run();
 
-    const auto namespaceArg = argument("namespace");
+    const auto namespaceArg = argument(namespace_);
 
-    return isSet("raw") ? raw(namespaceArg) : full(namespaceArg);
+    return isSet(raw_) ? raw(namespaceArg) : full(namespaceArg);
 }
 
 /* protected */
@@ -118,7 +123,7 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
 
     // Show commands for the global namespace if empty string
     if (namespaceArg.isEmpty())
-        return "global";
+        return NsGlobal;
 
     // Try to find a full command name to avoid the guess logic
     if (auto namespaceArg_ = namespaceArg.toLower();
@@ -191,10 +196,10 @@ void ListCommand::printCommandsSection(const QString &namespaceName,
     // Specific namespace
     if (hasNamespaceName)
                 // Custom message for the namespaced argument
-        comment(namespaceName == QLatin1String("namespaced")
+        comment(namespaceName == NsNamespaced
                 ? QLatin1String("Commands with the namespace prefix:")
                 : QLatin1String("Available commands for the '%1' namespace:")
-                  .arg(namespaceName.isEmpty() ? QLatin1String("global") : namespaceName));
+                  .arg(namespaceName.isEmpty() ? NsGlobal : namespaceName));
     // All commands
     else
         comment(QLatin1String("Available commands:"));

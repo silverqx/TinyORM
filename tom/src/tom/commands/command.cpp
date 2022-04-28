@@ -9,7 +9,11 @@
 #include <orm/databasemanager.hpp>
 
 #include "tom/application.hpp"
+#include "tom/tomconstants.hpp"
 #include "tom/version.hpp"
+
+using Tom::Constants::Help;
+using Tom::Constants::LongOption;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -112,7 +116,12 @@ QString Command::boolCmd(const QString &name, const QString &key) const
     if (!parser().isSet(name))
         return {};
 
-    return QStringLiteral("--%1").arg(key.isEmpty() ? name : key);
+    return LongOption.arg(key.isEmpty() ? name : key);
+}
+
+QString Command::longOption(const QString &name)
+{
+    return LongOption.arg(name);
 }
 
 bool Command::hasArgument(const ArgumentsSizeType index) const
@@ -186,10 +195,10 @@ void Command::initializePositionalArguments()
 
 void Command::checkHelpArgument() const
 {
-    if (!isSet("help"))
+    if (!isSet(Constants::help))
         return;
 
-    call("help", {name()});
+    call(Help, {name()});
 
     application().exitApplication(EXIT_SUCCESS);
 }

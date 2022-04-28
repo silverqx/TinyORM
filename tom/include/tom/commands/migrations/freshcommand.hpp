@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
 #include "tom/concerns/confirmable.hpp"
+#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -46,9 +47,9 @@ namespace Commands::Migrations
 
     protected:
         /*! Determine if the developer has requested database seeding. */
-        bool needsSeeding() const;
+//        bool needsSeeding() const;
         /*! Run the database seeder command. */
-        void runSeeder(QString &&databaseCmd) const;
+//        void runSeeder(QString &&databaseCmd) const;
 
         /*! The migrator service instance. */
         std::shared_ptr<Migrator> m_migrator;
@@ -58,7 +59,7 @@ namespace Commands::Migrations
 
     QString FreshCommand::name() const
     {
-        return QStringLiteral("migrate:fresh");
+        return Constants::MigrateFresh;
     }
 
     QString FreshCommand::description() const

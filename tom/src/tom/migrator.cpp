@@ -219,7 +219,7 @@ void Migrator::runUp(const Migration &migration, const int batch,
 
     auto migrationName = getMigrationName(migration);
 
-    comment(QLatin1String("Migrating: "), false).note(migrationName);
+    comment(QStringLiteral("Migrating: "), false).note(migrationName);
 
     QElapsedTimer timer;
     timer.start();
@@ -233,7 +233,7 @@ void Migrator::runUp(const Migration &migration, const int batch,
        in the application. A migration repository keeps the migrate order. */
     m_repository->log(migrationName, batch);
 
-    info(QLatin1String("Migrated: "), false);
+    info(QStringLiteral("Migrated: "), false);
     note(QStringLiteral("%1 (%2ms)").arg(std::move(migrationName)).arg(elapsedTime));
 }
 
@@ -306,7 +306,7 @@ void Migrator::runDown(const RollbackItem &migrationToRollback, const bool prete
         return;
     }
 
-    comment(QLatin1String("Rolling back: "), false).note(migrationName);
+    comment(QStringLiteral("Rolling back: "), false).note(migrationName);
 
     QElapsedTimer timer;
     timer.start();
@@ -320,7 +320,7 @@ void Migrator::runDown(const RollbackItem &migrationToRollback, const bool prete
        by the application then will be able to fire by any later operation. */
     m_repository->deleteMigration(id);
 
-    info(QLatin1String("Rolled back: "), false);
+    info(QStringLiteral("Rolled back: "), false);
     note(QStringLiteral("%1 (%2ms)").arg(migrationName).arg(elapsedTime));
 }
 

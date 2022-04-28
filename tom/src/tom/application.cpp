@@ -35,6 +35,7 @@
 using fspath = std::filesystem::path;
 
 using Orm::ConnectionResolverInterface;
+using Orm::Constants::EMPTY;
 using Orm::Constants::NEWLINE;
 
 using TypeUtils = Orm::Utils::Type;
@@ -54,6 +55,8 @@ using Tom::Commands::Migrations::RefreshCommand;
 using Tom::Commands::Migrations::ResetCommand;
 using Tom::Commands::Migrations::RollbackCommand;
 using Tom::Commands::Migrations::StatusCommand;
+
+using namespace Tom::Constants;
 
 /*! Invoke Qt's global post routines. */
 extern void Q_DECL_IMPORT qt_call_post_routines();
@@ -91,9 +94,9 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
 
     // Following is not relevant in the auto test executables
 #ifndef TINYTOM_TESTS_CODE
-    QCoreApplication::setOrganizationName("TinyORM");
-    QCoreApplication::setOrganizationDomain("tinyorm.org");
-    QCoreApplication::setApplicationName("tom");
+    QCoreApplication::setOrganizationName(QLatin1String("TinyORM"));
+    QCoreApplication::setOrganizationDomain(QLatin1String("tinyorm.org"));
+    QCoreApplication::setApplicationName(QLatin1String("tom"));
     QCoreApplication::setApplicationVersion(TINYTOM_VERSION_STR);
 #endif
 
@@ -120,14 +123,14 @@ void Application::logException(const std::exception &e, const bool noAnsi)
 {
     // TODO future decide how qCritical()/qFatal() really works, also regarding to the Qt Creator's settings 'Ignore first chance access violations' and similar silverqx
     // TODO future alse how to correctly setup this in prod/dev envs. silverqx
-    auto message = QStringLiteral("Caught '%1' Exception:\n%2")
+    auto message = QLatin1String("Caught '%1' Exception:\n%2")
                    .arg(TypeUtils::classPureBasename(e, true), e.what());
 
     /* Want to have this method static, downside is that the InteractsWithIO has to be
        instantiated again. */
     Concerns::InteractsWithIO io(noAnsi);
 
-    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, "%1");
+    static const auto tmpl = QLatin1String("%1%2%1").arg(NEWLINE, "%1");
 
     // No-ansi output
     if (noAnsi || !io.isAnsiOutput(std::cerr)) {
@@ -193,18 +196,20 @@ void Application::initializeParser(QCommandLineParser &parser)
 
     // Common options used in all commands
     parser.addOptions(saveOptions({
-        {      "ansi",            "Force ANSI output"},
-        {      "no-ansi",         "Disable ANSI output"},
-        {      "env",             "The environment the command should run under",
-                                  "env"}, // Value
-        {{"h",  "help"},          "Display help for the given command. When no command "
-                                   "is given display help for the <info>list</info> "
-                                   "command"},
-        {{"n", "no-interaction"}, "Do not ask any interactive question"},
-        {{"q", "quiet"},          "Do not output any message"},
-        {{"V", "version"},        "Display this application version"},
-        {{"v", "verbose"},        "Increase the verbosity of messages: 1 for normal "
-                                   "output, 2 for more verbose output and 3 for debug"},
+        {      ansi,           QLatin1String("Force ANSI output")},
+        {      noansi,         QLatin1String("Disable ANSI output")},
+        {      env,            QLatin1String("The environment the command should run "
+                                             "under"), env}, // Value
+        {{"h", help},          QLatin1String("Display help for the given command. When "
+                                             "no command is given display help for the "
+                                             "<info>list</info> command")},
+        {{"n", nointeraction}, QLatin1String("Do not ask any interactive question")},
+        {{"q", quiet},         QLatin1String("Do not output any message")},
+        {{"V", version},       QLatin1String("Display this application version")},
+        {{"v", verbose},       QLatin1String("Increase the verbosity of messages: "
+                                             "1 for normal output, "
+                                             "2 for more verbose output and "
+                                             "3 for debug")},
     }));
 }
 
@@ -248,10 +253,10 @@ void Application::parseCommandLine()
        is not needed until here. */
     Concerns::InteractsWithIO::initialize(m_parser);
 
-    if (m_parser.isSet("no-interaction"))
+    if (m_parser.isSet(nointeraction))
         m_interactive = false;
 
-    if (m_parser.isSet(QStringLiteral("version")))
+    if (m_parser.isSet(version))
         showVersion();
 }
 
@@ -260,7 +265,7 @@ void Application::initializeEnvironment()
     /*! Order is as follow, the default value is development, can be overriden by
         a env. variable which name is in the m_environmentEnvName data member, highest
         priority has --env command-line argument. */
-    if (auto environmentOpt = m_parser.value("env");
+    if (auto environmentOpt = m_parser.value(env);
         !environmentOpt.isEmpty()
     )
         m_environment = std::move(environmentOpt);
@@ -358,47 +363,47 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
     // Use a custom parser if passed as the argument, needed by CallsCommands::call()
     auto parserRef = parser ? *parser : std::ref(m_parser);
 
-    if (command == QStringLiteral("db:wipe"))
+    if (command == DbWipe)
         return std::make_unique<WipeCommand>(*this, parserRef);
 
-    if (command == QStringLiteral("env"))
+    if (command == Env)
         return std::make_unique<EnvironmentCommand>(*this, parserRef);
 
-    if (command == QStringLiteral("help"))
+    if (command == Help)
         return std::make_unique<HelpCommand>(*this, parserRef);
 
-    if (command == QStringLiteral("inspire"))
+    if (command == Inspire)
         return std::make_unique<InspireCommand>(*this, parserRef);
 
-    if (command == QStringLiteral("list"))
+    if (command == List)
         return std::make_unique<ListCommand>(*this, parserRef);
 
-    if (command == QStringLiteral("make:migration"))
+    if (command == MakeMigration)
         return std::make_unique<MigrationCommand>(*this, parserRef);
 
-//    if (command == QStringLiteral("make:project"))
+//    if (command == MakeProject)
 //        return std::make_unique<ProjectCommand>(*this, parserRef);
 
-    if (command == QStringLiteral("migrate"))
+    if (command == Migrate)
         return std::make_unique<MigrateCommand>(*this, parserRef, createMigrator());
 
-    if (command == QStringLiteral("migrate:fresh"))
+    if (command == MigrateFresh)
         return std::make_unique<FreshCommand>(*this, parserRef, createMigrator());
 
-    if (command == QStringLiteral("migrate:install"))
+    if (command == MigrateInstall)
         return std::make_unique<InstallCommand>(*this, parserRef,
                                                 createMigrationRepository());
 
-    if (command == QStringLiteral("migrate:rollback"))
+    if (command == MigrateRollback)
         return std::make_unique<RollbackCommand>(*this, parserRef, createMigrator());
 
-    if (command == QStringLiteral("migrate:refresh"))
+    if (command == MigrateRefresh)
         return std::make_unique<RefreshCommand>(*this, parserRef, createMigrator());
 
-    if (command == QStringLiteral("migrate:reset"))
+    if (command == MigrateReset)
         return std::make_unique<ResetCommand>(*this, parserRef, createMigrator());
 
-    if (command == QStringLiteral("migrate:status"))
+    if (command == MigrateStatus)
         return std::make_unique<StatusCommand>(*this, parserRef, createMigrator());
 
     // Used by the help command
@@ -451,7 +456,7 @@ Application::createCommandsVector()
     static const std::vector<std::shared_ptr<Command>> cached = [this]
     {
         return commandNames()
-                | ranges::views::transform([this](const char *const commandName)
+                | ranges::views::transform([this](const QString &commandName)
                                            -> std::shared_ptr<Command>
         {
             return createCommand(commandName);
@@ -474,7 +479,7 @@ Application::commandsByNamespaceHash() const
         Q_ASSERT(namespaceNames().size() == commandsIndexes().size());
 
         return ranges::views::zip_with(
-                    [](const char *namespaceName, const auto &indexes)
+                    [](const QString &namespaceName, const auto &indexes)
                     -> std::pair<QString, std::tuple<int, int>>
         {
             return {namespaceName, indexes};
@@ -487,36 +492,38 @@ Application::commandsByNamespaceHash() const
     return cached;
 }
 
-const std::vector<const char *> &Application::commandNames() const
+const std::vector<std::reference_wrapper<const QString>> &
+Application::commandNames() const
 {
     // Order is important here (shown by defined order by the list command)
-    static const std::vector<const char *> cached {
+    static const std::vector<std::reference_wrapper<const QString>> cached {
         // global namespace
-        "env", "help", "inspire", "list", "migrate",
+        Env, Help, Inspire, List, Migrate,
         // db
-        "db:wipe",
+        DbWipe,
         // make
-        "make:migration", /*"make:project",*/
+        MakeMigration, /*MakeProject,*/
         // migrate
-        "migrate:fresh",    "migrate:install", "migrate:refresh", "migrate:reset",
-        "migrate:rollback", "migrate:status",
+        MigrateFresh, MigrateInstall, MigrateRefresh, MigrateReset, MigrateRollback,
+        MigrateStatus,
     };
 
     return cached;
 }
 
-const std::vector<const char *> &Application::namespaceNames() const
+const std::vector<std::reference_wrapper<const QString>> &
+Application::namespaceNames() const
 {
     // Order is important here - ziped with the commandsIndexes()
-    static const std::vector<const char *> cached {
+    static const std::vector<std::reference_wrapper<const QString>> cached {
         // global namespace
-        "", "global",
+        EMPTY, NsGlobal,
         // all other namespaces
-        "db", "make", "migrate",
+        NsDb, NsMake, NsMigrate,
         /* The special index used by the command name guesser doesn't name the namespace
            but rather returns all namespaced commands. I leave it accessible also by
            the list command so a user can also display all namespaced commands. */
-        "namespaced",
+        NsNamespaced,
     };
 
     return cached;

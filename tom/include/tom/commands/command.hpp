@@ -88,6 +88,8 @@ namespace Tom::Commands
         QString valueCmd(const QString &name, const QString &key = "") const;
         /*! Get a full command-line boolean option if it's set in the parser. */
         QString boolCmd(const QString &name, const QString &key = "") const;
+        /*! Get a long option name by the given name (prepend -- before the name). */
+        static QString longOption(const QString &name);
 
         /*! Alias for the QList command-line option size type. */
         using ArgumentsSizeType = QStringList::size_type;

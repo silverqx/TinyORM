@@ -201,9 +201,9 @@ namespace Concerns
         inline auto getCommandsInNamespace(const QString &name);
 
         /*! Get all supported commands' names. */
-        const std::vector<const char *> &commandNames() const;
+        const std::vector<std::reference_wrapper<const QString>> &commandNames() const;
         /*! Get all commands' namespace names. */
-        const std::vector<const char *> &namespaceNames() const;
+        const std::vector<std::reference_wrapper<const QString>> &namespaceNames() const;
         /*! Get commands index positions in namespaces. */
         const std::vector<std::tuple<int, int>> &commandsIndexes() const;
 
@@ -237,7 +237,7 @@ namespace Concerns
         QCommandLineParser m_parser {};
 
         /*! Current environment. */
-        QString m_environment = QStringLiteral("development");
+        QString m_environment = QLatin1String("development");
         /*! Environment variable name that holds a current environment value. */
         const char *m_environmentEnvName;
         /*! Migration repository table name. */

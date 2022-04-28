@@ -1,6 +1,13 @@
 INCLUDEPATH += $$PWD
 
-HEADERS += \
+extern_constants: \
+    headersList += \
+        $$PWD/tom/tomconstants_extern.hpp
+else: \
+    headersList += \
+        $$PWD/tom/tomconstants_inline.hpp
+
+headersList += \
     $$PWD/tom/application.hpp \
     $$PWD/tom/commands/command.hpp \
     $$PWD/tom/commands/database/wipecommand.hpp \
@@ -35,5 +42,10 @@ HEADERS += \
     $$PWD/tom/migrationrepository.hpp \
     $$PWD/tom/migrator.hpp \
     $$PWD/tom/terminal.hpp \
+    $$PWD/tom/tomconstants.hpp \
     $$PWD/tom/tomtypes.hpp \
     $$PWD/tom/version.hpp \
+
+HEADERS += $$sorted(headersList)
+
+unset(headersList)

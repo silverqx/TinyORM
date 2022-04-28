@@ -4,9 +4,13 @@
 
 #include "tom/application.hpp"
 #include "tom/commands/command.hpp"
+#include "tom/tomconstants.hpp"
 
 using Orm::Constants::COMMA;
 using Orm::Constants::SPACE;
+
+using Tom::Constants::ShortOption;
+using Tom::Constants::LongOption;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -43,8 +47,8 @@ int PrintsOptions::optionsMaxSize() const
         )
             // Short option
             if (name.size() == 1)
-                options << QStringLiteral("-%1")
-                           // Custom logic for verbose option, good enough 😎
+                options << ShortOption
+                           // Custom logic for the verbose option, good enough 😎
                            .arg(name == QChar('v') ? QLatin1String("v|vv|vvv")
                                                    : name);
 
@@ -52,7 +56,7 @@ int PrintsOptions::optionsMaxSize() const
             else
                 // Short and long options passed
                 if (names.size() == 2)
-                    options << QStringLiteral("--%1").arg(name);
+                    options << LongOption.arg(name);
                 // Only long option passed
                 else
                     options << QStringLiteral("    --%1").arg(name);
@@ -74,8 +78,8 @@ void PrintsOptions::printOptions(const int optionsMaxSize) const
         )
             // Short option
             if (name.size() == 1)
-                options << QStringLiteral("-%1")
-                           // Custom logic for verbose option, good enough 😎
+                options << ShortOption
+                           // Custom logic for the verbose option, good enough 😎
                            .arg(name == QChar('v') ? QLatin1String("v|vv|vvv")
                                                    : name);
 
@@ -83,7 +87,7 @@ void PrintsOptions::printOptions(const int optionsMaxSize) const
             else
                 // Short and long options passed
                 if (names.size() == 2)
-                    options << QStringLiteral("--%1").arg(name);
+                    options << LongOption.arg(name);
                 // Only long option passed
                 else
                     options << QStringLiteral("    --%1").arg(name);

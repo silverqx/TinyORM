@@ -238,6 +238,16 @@ function(tinytom_sources out_headers out_sources)
     # Tom headers section
     set(headers)
 
+    if(TINY_EXTERN_CONSTANTS)
+        list(APPEND headers
+            tomconstants_extern.hpp
+        )
+    else()
+        list(APPEND headers
+            tomconstants_inline.hpp
+        )
+    endif()
+
     list(APPEND headers
         application.hpp
         commands/command.hpp
@@ -273,12 +283,19 @@ function(tinytom_sources out_headers out_sources)
         migrationrepository.hpp
         migrator.hpp
         terminal.hpp
+        tomconstants.hpp
         tomtypes.hpp
         version.hpp
     )
 
     # Tom sources section
     set(sources)
+
+    if(TINY_EXTERN_CONSTANTS)
+        list(APPEND sources
+            tomconstants_extern.cpp
+        )
+    endif()
 
     list(APPEND sources
         application.cpp

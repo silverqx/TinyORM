@@ -34,7 +34,7 @@ StatusCommand::StatusCommand(
 QList<QCommandLineOption> StatusCommand::optionsSignature() const
 {
     return {
-        {database_, "The database connection to use", database_}, // Value
+        {database_, QLatin1String("The database connection to use"), database_}, // Value
     };
 }
 

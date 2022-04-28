@@ -8,6 +8,10 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::force;
+using Tom::Constants::pretend;
+using Tom::Constants::step_;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Migrations
@@ -27,10 +31,10 @@ RollbackCommand::RollbackCommand(
 QList<QCommandLineOption> RollbackCommand::optionsSignature() const
 {
     return {
-        {database_,  "The database connection to use", database_}, // Value
-        {"force",    "Force the operation to run when in production"},
-        {"pretend",  "Dump the SQL queries that would be run"},
-        {"step",     "The number of migrations to be reverted", "step"}, // Value
+        {database_, QLatin1String("The database connection to use"), database_}, // Value
+        {force,     QLatin1String("Force the operation to run when in production")},
+        {pretend,   QLatin1String("Dump the SQL queries that would be run")},
+        {step_,     QLatin1String("The number of migrations to be reverted"), step_}, // Value
     };
 }
 
@@ -46,8 +50,8 @@ int RollbackCommand::run()
     return m_migrator->usingConnection(value(database_), isDebugVerbosity(), [this]
     {
         // Validation not needed as the toInt() returns 0 if conversion fails, like it
-        m_migrator->rollback({.pretend   = isSet("pretend"),
-                              .stepValue = value("step").toInt()});
+        m_migrator->rollback({.pretend   = isSet(pretend),
+                              .stepValue = value(step_).toInt()});
 
         return EXIT_SUCCESS;
     });

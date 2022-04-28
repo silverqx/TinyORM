@@ -4,7 +4,13 @@
 
 #include <orm/databaseconnection.hpp>
 
+#include "tom/tomconstants.hpp"
+
 using Orm::Constants::database_;
+
+using Tom::Constants::drop_types;
+using Tom::Constants::drop_views;
+using Tom::Constants::force;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -21,10 +27,10 @@ WipeCommand::WipeCommand(Application &application, QCommandLineParser &parser)
 QList<QCommandLineOption> WipeCommand::optionsSignature() const
 {
     return {
-        {database_,    "The database connection to use", database_}, // Value
-        {"drop-views", "Drop all tables and views"},
-        {"drop-types", "Drop all tables and types (Postgres only)"},
-        {"force",      "Force the operation to run when in production"},
+        {database_,  QLatin1String("The database connection to use"), database_}, // Value
+        {drop_views, QLatin1String("Drop all tables and views")},
+        {drop_types, QLatin1String("Drop all tables and types (Postgres only)")},
+        {force,      QLatin1String("Force the operation to run when in production")},
     };
 }
 
@@ -39,7 +45,7 @@ int WipeCommand::run()
     // Database connection to use
     const auto database = value(database_);
 
-    if (isSet("drop-views")) {
+    if (isSet(drop_views)) {
         dropAllViews(database);
 
         info(QLatin1String("Dropped all views successfully."));
@@ -49,7 +55,7 @@ int WipeCommand::run()
 
     info(QLatin1String("Dropped all tables successfully."));
 
-    if (isSet("drop-types")) {
+    if (isSet(drop_types)) {
         dropAllTypes(database);
 
         info(QLatin1String("Dropped all types successfully."));

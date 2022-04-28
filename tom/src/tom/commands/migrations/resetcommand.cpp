@@ -8,6 +8,9 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::force;
+using Tom::Constants::pretend;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Migrations
@@ -27,9 +30,9 @@ ResetCommand::ResetCommand(
 QList<QCommandLineOption> ResetCommand::optionsSignature() const
 {
     return {
-        {database_,  "The database connection to use", database_}, // Value
-        {"force",    "Force the operation to run when in production"},
-        {"pretend",  "Dump the SQL queries that would be run"},
+        {database_, QLatin1String("The database connection to use"), database_}, // Value
+        {force,     QLatin1String("Force the operation to run when in production")},
+        {pretend,   QLatin1String("Dump the SQL queries that would be run")},
     };
 }
 
@@ -50,7 +53,7 @@ int ResetCommand::run()
             return EXIT_FAILURE;
         }
 
-        m_migrator->reset(isSet("pretend"));
+        m_migrator->reset(isSet(pretend));
 
         return EXIT_SUCCESS;
     });

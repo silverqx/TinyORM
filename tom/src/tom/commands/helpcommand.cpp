@@ -6,10 +6,13 @@
 #include <orm/tiny/utils/string.hpp>
 
 #include "tom/application.hpp"
+#include "tom/tomconstants.hpp"
 
 using Orm::Constants::SPACE;
 
 using StringUtils = Orm::Tiny::Utils::String;
+
+using Tom::Constants::command_name;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -26,7 +29,7 @@ HelpCommand::HelpCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &HelpCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {"command_name", "The command name", {}, true, "help"},
+        {command_name, QLatin1String("The command name"), {}, true, Constants::help},
     };
 
     return cached;
@@ -46,7 +49,7 @@ int HelpCommand::run()
 {
     Command::run();
 
-    const auto commandNameArg = argument("command_name");
+    const auto commandNameArg = argument(command_name);
 
     const auto command = createCommand(commandNameArg);
     const auto &arguments = command->positionalArguments();
@@ -113,7 +116,7 @@ void HelpCommand::printDescriptionSection(const Command &command) const
 {
     comment(QLatin1String("Description:"));
 
-    note(QStringLiteral("  %1").arg(command.description()));
+    note(QLatin1String("  %1").arg(command.description()));
 }
 
 void HelpCommand::printUsageSection(

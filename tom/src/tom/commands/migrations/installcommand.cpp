@@ -26,7 +26,7 @@ InstallCommand::InstallCommand(
 QList<QCommandLineOption> InstallCommand::optionsSignature() const
 {
     return {
-        {database_, "The database connection to use", database_}, // Value
+        {database_, QLatin1String("The database connection to use"), database_}, // Value
     };
 }
 

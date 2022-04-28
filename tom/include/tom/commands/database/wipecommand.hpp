@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
 #include "tom/concerns/confirmable.hpp"
+#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -52,7 +53,7 @@ namespace Tom::Commands::Database
 
     QString WipeCommand::name() const
     {
-        return QStringLiteral("db:wipe");
+        return Constants::DbWipe;
     }
 
     QString WipeCommand::description() const

@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
+#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -48,7 +49,7 @@ namespace Commands::Migrations
 
     QString InstallCommand::name() const
     {
-        return QStringLiteral("migrate:install");
+        return Constants::MigrateInstall;
     }
 
     QString InstallCommand::description() const

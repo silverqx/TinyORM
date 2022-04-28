@@ -2,6 +2,9 @@
 
 #include "tom/application.hpp"
 #include "tom/commands/command.hpp"
+#include "tom/tomconstants.hpp"
+
+using Tom::Constants::force;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -26,7 +29,7 @@ bool Confirmable::confirmToProceed(const QString &warning,
         return true;
 
     if (const auto &parser = m_command.get().application().parser();
-        parser.optionNames().contains("force") && parser.isSet("force")
+        parser.optionNames().contains(force) && parser.isSet(force)
     )
         return true;
 
@@ -53,8 +56,8 @@ std::function<bool()> Confirmable::defaultConfirmCallback() const
     {
         const auto &environment = m_command.get().application().environment();
 
-        return environment == QStringLiteral("production") ||
-                environment == QStringLiteral("prod");
+        return environment == QLatin1String("production") ||
+                environment == QLatin1String("prod");
     };
 }
 

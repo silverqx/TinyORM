@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
 #include "tom/concerns/confirmable.hpp"
+#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -53,7 +54,7 @@ namespace Commands::Migrations
 
     QString RollbackCommand::name() const
     {
-        return QStringLiteral("migrate:rollback");
+        return Constants::MigrateRollback;
     }
 
     QString RollbackCommand::description() const

@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
+#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -36,7 +37,7 @@ namespace Tom::Commands
 
     QString EnvironmentCommand::name() const
     {
-        return QStringLiteral("env");
+        return Constants::Env;
     }
 
     QString EnvironmentCommand::description() const

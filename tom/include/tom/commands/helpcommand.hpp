@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
 #include "tom/concerns/printsoptions.hpp"
+#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -69,7 +70,7 @@ namespace Tom::Commands
 
     QString HelpCommand::name() const
     {
-        return QStringLiteral("help");
+        return Constants::Help;
     }
 
     QString HelpCommand::description() const

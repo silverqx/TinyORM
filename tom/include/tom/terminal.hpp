@@ -124,15 +124,15 @@ namespace Tom
         if (qEnvironmentVariableIsSet("NO_COLOR"))
             return false;
 
-        if (qEnvironmentVariable("TERM_PROGRAM") == QLatin1String("Hyper"))
+        if (qEnvironmentVariable("TERM_PROGRAM") == QStringLiteral("Hyper"))
             return isatty(stream);
 
 #ifdef _WIN32
         return isatty(stream) &&
                 (hasVt100Support(std::forward<O>(cout)) ||
                  qEnvironmentVariableIsSet("ANSICON") ||
-                 qEnvironmentVariable("ConEmuANSI") == QLatin1String("ON") ||
-                 qEnvironmentVariable("TERM") == QLatin1String("xterm"));
+                 qEnvironmentVariable("ConEmuANSI") == QStringLiteral("ON") ||
+                 qEnvironmentVariable("TERM") == QStringLiteral("xterm"));
 #endif
 
         // Detect character device, in most cases false when the output is redirected

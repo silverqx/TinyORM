@@ -16,6 +16,11 @@ using namespace Migrations; // NOLINT(google-build-using-namespace)
 using TomApplication = Tom::Application;
 
 using Tom::Commands::Migrations::StatusCommand;
+using Tom::Constants::Migrate;
+using Tom::Constants::MigrateRefresh;
+using Tom::Constants::MigrateReset;
+using Tom::Constants::MigrateRollback;
+using Tom::Constants::MigrateStatus;
 
 using TestUtils::Databases;
 
@@ -146,7 +151,7 @@ void tst_Migrate::cleanup() const
     /* All test methods need this except for two of them (reset and I don't remember
        second), I will not implement special logic to skip this for these two methods. */
     {
-        auto exitCode = invokeCommand("migrate:reset");
+        auto exitCode = invokeCommand(MigrateReset);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -162,7 +167,7 @@ void tst_Migrate::cleanup() const
 void tst_Migrate::migrate() const
 {
     {
-        auto exitCode = invokeCommand("migrate");
+        auto exitCode = invokeCommand(Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -178,7 +183,7 @@ void tst_Migrate::migrate() const
 void tst_Migrate::migrate_Step() const
 {
     {
-        auto exitCode = invokeCommand("migrate", {"--step"});
+        auto exitCode = invokeCommand(Migrate, {"--step"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -194,7 +199,7 @@ void tst_Migrate::migrate_Step() const
 void tst_Migrate::reset() const
 {
     {
-        auto exitCode = invokeCommand("migrate:reset");
+        auto exitCode = invokeCommand(MigrateReset);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -210,7 +215,7 @@ void tst_Migrate::reset() const
 void tst_Migrate::rollback_OnMigrate() const
 {
     {
-        auto exitCode = invokeCommand("migrate");
+        auto exitCode = invokeCommand(Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -224,7 +229,7 @@ void tst_Migrate::rollback_OnMigrate() const
 
     // rollback on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand("migrate:rollback");
+        auto exitCode = invokeCommand(MigrateRollback);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -240,7 +245,7 @@ void tst_Migrate::rollback_OnMigrate() const
 void tst_Migrate::rollback_OnMigrateWithStep() const
 {
     {
-        auto exitCode = invokeCommand("migrate", {"--step"});
+        auto exitCode = invokeCommand(Migrate, {"--step"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -254,7 +259,7 @@ void tst_Migrate::rollback_OnMigrateWithStep() const
 
     // rollback on previous migrate with --step
     {
-        auto exitCode = invokeCommand("migrate:rollback");
+        auto exitCode = invokeCommand(MigrateRollback);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -275,7 +280,7 @@ void tst_Migrate::rollback_OnMigrateWithStep() const
 void tst_Migrate::rollback_Step_OnMigrate() const
 {
     {
-        auto exitCode = invokeCommand("migrate");
+        auto exitCode = invokeCommand(Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -289,7 +294,7 @@ void tst_Migrate::rollback_Step_OnMigrate() const
 
     // rollback on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand("migrate:rollback", {"--step=2"});
+        auto exitCode = invokeCommand(MigrateRollback, {"--step=2"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -310,7 +315,7 @@ void tst_Migrate::rollback_Step_OnMigrate() const
 void tst_Migrate::rollback_Step_OnMigrateWithStep() const
 {
     {
-        auto exitCode = invokeCommand("migrate", {"--step"});
+        auto exitCode = invokeCommand(Migrate, {"--step"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -324,7 +329,7 @@ void tst_Migrate::rollback_Step_OnMigrateWithStep() const
 
     // rollback on previous migrate with --step
     {
-        auto exitCode = invokeCommand("migrate:rollback", {"--step=2"});
+        auto exitCode = invokeCommand(MigrateRollback, {"--step=2"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -345,7 +350,7 @@ void tst_Migrate::rollback_Step_OnMigrateWithStep() const
 void tst_Migrate::refresh_OnMigrate() const
 {
     {
-        auto exitCode = invokeCommand("migrate");
+        auto exitCode = invokeCommand(Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -359,7 +364,7 @@ void tst_Migrate::refresh_OnMigrate() const
 
     // refresh on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand("migrate:refresh");
+        auto exitCode = invokeCommand(MigrateRefresh);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -375,7 +380,7 @@ void tst_Migrate::refresh_OnMigrate() const
 void tst_Migrate::refresh_OnMigrateWithStep() const
 {
     {
-        auto exitCode = invokeCommand("migrate", {"--step"});
+        auto exitCode = invokeCommand(Migrate, {"--step"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -389,7 +394,7 @@ void tst_Migrate::refresh_OnMigrateWithStep() const
 
     // refresh on previous migrate with --step
     {
-        auto exitCode = invokeCommand("migrate:refresh");
+        auto exitCode = invokeCommand(MigrateRefresh);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -405,7 +410,7 @@ void tst_Migrate::refresh_OnMigrateWithStep() const
 void tst_Migrate::refresh_Step() const
 {
     {
-        auto exitCode = invokeCommand("migrate");
+        auto exitCode = invokeCommand(Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -419,7 +424,7 @@ void tst_Migrate::refresh_Step() const
 
     // refresh on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand("migrate:refresh", {"--step=2"});
+        auto exitCode = invokeCommand(MigrateRefresh, {"--step=2"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -440,7 +445,7 @@ void tst_Migrate::refresh_Step() const
 void tst_Migrate::refresh_StepMigrate() const
 {
     {
-        auto exitCode = invokeCommand("migrate");
+        auto exitCode = invokeCommand(Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -454,7 +459,7 @@ void tst_Migrate::refresh_StepMigrate() const
 
     // refresh on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand("migrate:refresh", {"--step-migrate"});
+        auto exitCode = invokeCommand(MigrateRefresh, {"--step-migrate"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -470,7 +475,7 @@ void tst_Migrate::refresh_StepMigrate() const
 void tst_Migrate::refresh_Step_StepMigrate() const
 {
     {
-        auto exitCode = invokeCommand("migrate");
+        auto exitCode = invokeCommand(Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -484,7 +489,7 @@ void tst_Migrate::refresh_Step_StepMigrate() const
 
     // refresh on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand("migrate:refresh", {"--step=2", "--step-migrate"});
+        auto exitCode = invokeCommand(MigrateRefresh, {"--step=2", "--step-migrate"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
@@ -557,7 +562,7 @@ int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv) co
 
 int tst_Migrate::invokeTestStatusCommand() const
 {
-    return invokeCommand("migrate:status");
+    return invokeCommand(MigrateStatus);
 }
 
 Status tst_Migrate::status() const

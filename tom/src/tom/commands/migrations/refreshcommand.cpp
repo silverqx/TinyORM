@@ -8,6 +8,14 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::force;
+using Tom::Constants::step_;
+using Tom::Constants::step_migrate;
+using Tom::Constants::DbSeed;
+using Tom::Constants::Migrate;
+using Tom::Constants::MigrateReset;
+using Tom::Constants::MigrateRollback;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Migrations
@@ -27,13 +35,14 @@ RefreshCommand::RefreshCommand(
 QList<QCommandLineOption> RefreshCommand::optionsSignature() const
 {
     return {
-        {database_,      "The database connection to use", database_}, // Value
-        {"force",        "Force the operation to run when in production"},
-//        {"seed",         "Indicates if the seed task should be re-run"},
-//        {"seeder",       "The class name of the root seeder", "seeded"}, // Value
-        {"step",         "The number of migrations to be reverted & re-run", "step"}, // Value
-        {"step-migrate", "Force the migrations to be run so they can be rolled back "
-                          "individually"},
+        {database_,    QLatin1String("The database connection to use"), database_}, // Value
+        {force,        QLatin1String("Force the operation to run when in production")},
+//        {"seed",       QLatin1String("Indicates if the seed task should be re-run")},
+//        {"seeder",     QLatin1String("The class name of the root seeder", "seeded")}, // Value
+        {step_,        QLatin1String("The number of migrations to be reverted & "
+                                     "re-run"), step_}, // Value
+        {step_migrate, QLatin1String("Force the migrations to be run so they can be "
+                                     "rolled back individually")},
     };
 }
 
@@ -51,16 +60,16 @@ int RefreshCommand::run()
     /* If the "step" option is specified it means we only want to rollback a small
        number of migrations before migrating again. For example, the user might
        only rollback and remigrate the latest four migrations instead of all. */
-    if (const auto step = value("step").toInt(); step > 0)
-        call("migrate:rollback", {databaseCmd,
-                                  QStringLiteral("--force"),
-                                  valueCmd("step")});
+    if (const auto step = value(step_).toInt(); step > 0)
+        call(MigrateRollback, {databaseCmd,
+                               longOption(force),
+                               valueCmd(step_)});
     else
-        call("migrate:reset", {databaseCmd, QStringLiteral("--force")});
+        call(MigrateReset, {databaseCmd, longOption(force)});
 
-    call("migrate", {databaseCmd,
-                     QStringLiteral("--force"),
-                     boolCmd("step-migrate", "step")});
+    call(Migrate, {databaseCmd,
+                   longOption(force),
+                   boolCmd(step_migrate, step_)});
 
 //    if (needsSeeding())
 //        runSeeder(std::move(databaseCmd));
@@ -77,9 +86,9 @@ bool RefreshCommand::needsSeeding() const
 
 void RefreshCommand::runSeeder(QString &&databaseCmd) const
 {
-    call("db:seed", {std::move(databaseCmd),
-                     QStringLiteral("--force"),
-                     valueCmd("seeder", "class")});
+    call(DbSeed, {std::move(databaseCmd),
+                  longOption(force),
+                  valueCmd("seeder", "class")});
 }
 
 } // namespace Tom::Commands::Migrations

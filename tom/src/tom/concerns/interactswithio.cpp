@@ -6,6 +6,7 @@
 #include <orm/tiny/utils/string.hpp>
 
 #include "tom/terminal.hpp"
+#include "tom/tomconstants.hpp"
 
 using tabulate::Table;
 
@@ -16,6 +17,11 @@ using Orm::Constants::SPACE;
 
 using StringUtils = Orm::Tiny::Utils::String;
 
+using Tom::Constants::ansi;
+using Tom::Constants::noansi;
+using Tom::Constants::nointeraction;
+using Tom::Constants::quiet;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Concerns
@@ -24,7 +30,7 @@ namespace Tom::Concerns
 /* public */
 
 InteractsWithIO::InteractsWithIO(const QCommandLineParser &parser)
-    : m_interactive(!parser.isSet("no-interaction"))
+    : m_interactive(!parser.isSet(nointeraction))
     , m_verbosity(initializeVerbosity(parser))
     , m_ansi(initializeAnsi(parser))
     , m_terminal(std::make_unique<Terminal>())
@@ -42,7 +48,7 @@ InteractsWithIO::InteractsWithIO()
 
 void InteractsWithIO::initialize(const QCommandLineParser &parser)
 {
-    m_interactive = !parser.isSet("no-interaction");
+    m_interactive = !parser.isSet(nointeraction);
     m_verbosity   = initializeVerbosity(parser);
     m_ansi        = initializeAnsi(parser);
     m_terminal    = std::make_unique<Terminal>();
@@ -310,7 +316,7 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
         return defaultAnswer;
 
     info(QStringLiteral("%1 (yes/no) ").arg(question), false)
-            .comment(QStringLiteral("[%1]").arg(defaultAnswer ? QStringLiteral("yes")
+            .comment(QStringLiteral("[%1]").arg(defaultAnswer ? QLatin1String("yes")
                                                               : QLatin1String("no")))
             .note(QLatin1String("> "), false);
 
@@ -320,7 +326,7 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
     const auto answer = QString::fromStdWString(answerRaw).toLower();
 
     return answer == QLatin1String("y") || answer == QLatin1String("ye") ||
-           answer == QStringLiteral("yes");
+           answer == QLatin1String("yes");
 }
 
 /* private */
@@ -360,10 +366,10 @@ QString InteractsWithIO::stripTags(QString string) const
 InteractsWithIO::Verbosity
 InteractsWithIO::initializeVerbosity(const QCommandLineParser &parser) const
 {
-    if (parser.isSet("quiet"))
+    if (parser.isSet(quiet))
         return Quiet;
 
-    const auto verboseCount = countSetOption("v", parser);
+    const auto verboseCount = countSetOption(QLatin1String("v"), parser);
 
     if (verboseCount == 1)
         return Verbose;
@@ -381,10 +387,10 @@ std::optional<bool>
 InteractsWithIO::initializeAnsi(const QCommandLineParser &parser) const
 {
     // Ansi option has higher priority
-    if (parser.isSet(QLatin1String("ansi")))
+    if (parser.isSet(ansi))
         return true;
 
-    if (parser.isSet(QLatin1String("no-ansi")))
+    if (parser.isSet(noansi))
         return false;
 
     return std::nullopt;

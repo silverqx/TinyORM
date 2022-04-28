@@ -1,4 +1,8 @@
-SOURCES += \
+extern_constants: \
+    sourcesList += \
+        $$PWD/tom/tomconstants_extern.cpp
+
+sourcesList += \
     $$PWD/tom/application.cpp \
     $$PWD/tom/commands/command.cpp \
     $$PWD/tom/commands/database/wipecommand.cpp \
@@ -26,3 +30,7 @@ SOURCES += \
     $$PWD/tom/migrationrepository.cpp \
     $$PWD/tom/migrator.cpp \
     $$PWD/tom/terminal.cpp \
+
+SOURCES += $$sorted(sourcesList)
+
+unset(sourcesList)

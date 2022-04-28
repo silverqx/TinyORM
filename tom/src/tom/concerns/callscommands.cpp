@@ -9,6 +9,14 @@
 
 #include "tom/application.hpp"
 #include "tom/commands/command.hpp"
+#include "tom/tomconstants.hpp"
+
+using Tom::Constants::ansi;
+using Tom::Constants::noansi;
+using Tom::Constants::nointeraction;
+using Tom::Constants::quiet;
+using Tom::Constants::verbose;
+using Tom::Constants::LongOption;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -75,12 +83,19 @@ CallsCommands::createCommandLineArguments(
 
 QStringList CallsCommands::getCommonArguments(QStringList &&arguments) const
 {
+    // This way I'm able to re-use global constants
+    /*! Create a long command line option from the option name (--xyz). */
+    const auto o = [](const auto &optionName)
+    {
+        return LongOption.arg(optionName);
+    };
+
     static const std::unordered_set<QString> allowed {
-        "--ansi",
-        "--no-ansi",
-        "--no-interaction", "-n",
-        "--quiet",          "-q",
-        "--verbose",        "-v", "-vv", "-vvv",
+        o(ansi),
+        o(noansi),
+        o(nointeraction), "-n",
+        o(quiet),         "-q",
+        o(verbose),       "-v", "-vv", "-vvv",
     };
 
     return ranges::views::move(arguments)

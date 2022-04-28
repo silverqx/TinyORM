@@ -7,6 +7,7 @@
 
 #include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
+#include "tom/tomconstants.hpp"
 
 namespace fs = std::filesystem;
 
@@ -15,6 +16,12 @@ using fspath = std::filesystem::path;
 using Orm::Constants::NAME;
 
 using StringUtils = Orm::Tiny::Utils::String;
+
+using Tom::Constants::create_;
+using Tom::Constants::fullpath;
+using Tom::Constants::path_;
+using Tom::Constants::realpath;
+using Tom::Constants::table_;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -30,7 +37,7 @@ MigrationCommand::MigrationCommand(Application &application, QCommandLineParser 
 const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, "The name of the migration"},
+        {NAME, QLatin1String("The name of the migration")},
     };
 
     return cached;
@@ -39,12 +46,13 @@ const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() c
 QList<QCommandLineOption> MigrationCommand::optionsSignature() const
 {
     return {
-        {"create",   "The table to be created", "create"},
-        {"table",    "The table to migrate", "table"},
-        {"path",     "The location where the migration file should be created", "path"},
-        {"realpath", "Indicate any provided migration file paths are pre-resolved "
-                      "absolute paths"},
-        {"fullpath", "Output the full path of the migration"},
+        {create_,  QLatin1String("The table to be created"), create_}, // Value
+        {table_,   QLatin1String("The table to migrate"), table_}, // Value
+        {path_,    QLatin1String("The location where the migration file should be "
+                                 "created"), path_}, // Value
+        {realpath, QLatin1String("Indicate any provided migration file paths are "
+                                 "pre-resolved absolute paths")},
+        {fullpath, QLatin1String("Output the full path of the migration")},
     };
 }
 
@@ -57,10 +65,10 @@ int MigrationCommand::run()
        to be freshly created so we can create the appropriate migrations. */
     const auto name = StringUtils::snake(argument(NAME).trimmed());
 
-    auto table = value(QStringLiteral("table"));
+    auto table = value(table_);
 
-    auto createArg = value(QStringLiteral("create"));
-    auto create = isSet(QStringLiteral("create"));
+    auto createArg = value(create_);
+    auto create = isSet(create_);
 
     /* If no table was given as an option but a create option is given then we
        will use the "create" option as the table name. This allows the devs
@@ -91,8 +99,8 @@ void MigrationCommand::writeMigration(const QString &name, const QString &table,
     auto migrationFilePath = m_creator.create(name, getMigrationPath(), table, create);
 
     // make_preferred() returns reference and filename() creates a new fs::path instance
-    const auto migrationFile = isSet("fullpath") ? migrationFilePath.make_preferred()
-                                                 : migrationFilePath.filename();
+    const auto migrationFile = isSet(fullpath) ? migrationFilePath.make_preferred()
+                                               : migrationFilePath.filename();
 
     info(QLatin1String("Created Migration: "), false);
 
@@ -102,13 +110,13 @@ void MigrationCommand::writeMigration(const QString &name, const QString &table,
 fspath MigrationCommand::getMigrationPath() const
 {
     // Default location
-    if (!isSet("path"))
+    if (!isSet(path_))
         return application().getMigrationsPath();
 
-    auto targetPath = value("path").toStdString();
+    auto targetPath = value(path_).toStdString();
 
     // The 'path' argument contains an absolute path
-    if (isSet("realpath"))
+    if (isSet(realpath))
         return {std::move(targetPath)};
 
     // The 'path' argument contains a relative path

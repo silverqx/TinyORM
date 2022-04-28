@@ -1,0 +1,88 @@
+#pragma once
+#ifndef TOM_TOMCONSTANTS_INLINE_HPP
+#define TOM_TOMCONSTANTS_INLINE_HPP
+
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
+#include <QString>
+
+#include "orm/macros/commonnamespace.hpp"
+
+TINYORM_BEGIN_COMMON_NAMESPACE
+
+/*! Namespace constains common strings for the Tom namespace (migrations). */
+namespace Tom::Constants
+{
+
+    // Common strings
+    inline const QString LongOption  = QStringLiteral("--%1");
+    inline const QString ShortOption = QStringLiteral("-%1");
+
+    inline const QString migration_  = QStringLiteral("migration");
+    inline const QString batch_      = QStringLiteral("batch");
+
+    // Common options
+    inline const QString ansi          = QStringLiteral("ansi");
+    inline const QString noansi        = QStringLiteral("no-ansi");
+    inline const QString env           = QStringLiteral("env");
+    inline const QString help          = QStringLiteral("help");
+    inline const QString nointeraction = QStringLiteral("no-interaction");
+    inline const QString quiet         = QStringLiteral("quiet");
+    inline const QString version       = QStringLiteral("version"); // unused
+    inline const QString verbose       = QStringLiteral("verbose"); // unused
+
+    // Commands' positional options
+    // help
+    inline const QString command_name = QStringLiteral("command_name");
+    // list
+    inline const QString namespace_   = QStringLiteral("namespace");
+
+    // Commands' options
+    // Used by more commands
+    inline const QString force        = QStringLiteral("force");
+    inline const QString pretend      = QStringLiteral("pretend");
+    inline const QString step_        = QStringLiteral("step");
+    // list
+    inline const QString raw_         = QStringLiteral("raw");
+    // db:wipe
+    inline const QString drop_views   = QStringLiteral("drop-views");
+    inline const QString drop_types   = QStringLiteral("drop-types");
+    // make:migration
+    inline const QString create_      = QStringLiteral("create");
+    inline const QString table_       = QStringLiteral("table");
+    inline const QString path_        = QStringLiteral("path");
+    inline const QString realpath     = QStringLiteral("realpath");
+    inline const QString fullpath     = QStringLiteral("fullpath");
+    // migrate:refresh
+    inline const QString step_migrate = QStringLiteral("step-migrate");
+
+    // Namespace names
+    inline const QString NsGlobal     = QStringLiteral("global");
+    inline const QString NsDb         = QStringLiteral("db");
+    inline const QString NsMake       = QStringLiteral("make");
+    inline const QString NsMigrate    = QStringLiteral("migrate");
+    inline const QString NsNamespaced = QStringLiteral("namespaced");
+
+    // Command names
+    inline const QString DbSeed          = QStringLiteral("db:seed");
+    inline const QString DbWipe          = QStringLiteral("db:wipe");
+    inline const QString Inspire         = QStringLiteral("inspire");
+    inline const QString List            = QStringLiteral("list");
+    inline const QString &Env            = Tom::Constants::env;
+    inline const QString &Help           = Tom::Constants::help;
+    inline const QString MakeMigration   = QStringLiteral("make:migration");
+    inline const QString MakeProject     = QStringLiteral("make:project");
+    inline const QString &Migrate        = Tom::Constants::NsMigrate;
+    inline const QString MigrateFresh    = QStringLiteral("migrate:fresh");
+    inline const QString MigrateInstall  = QStringLiteral("migrate:install");
+    inline const QString MigrateRollback = QStringLiteral("migrate:rollback");
+    inline const QString MigrateRefresh  = QStringLiteral("migrate:refresh");
+    inline const QString MigrateReset    = QStringLiteral("migrate:reset");
+    inline const QString MigrateStatus   = QStringLiteral("migrate:status");
+
+} // namespace Tom::Constants
+
+TINYORM_END_COMMON_NAMESPACE
+
+#endif // TOM_TOMCONSTANTS_INLINE_HPP

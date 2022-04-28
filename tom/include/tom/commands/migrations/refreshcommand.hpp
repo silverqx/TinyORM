@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
 #include "tom/concerns/confirmable.hpp"
+#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -58,7 +59,7 @@ namespace Commands::Migrations
 
     QString RefreshCommand::name() const
     {
-        return QStringLiteral("migrate:refresh");
+        return Constants::MigrateRefresh;
     }
 
     QString RefreshCommand::description() const

@@ -14,6 +14,7 @@ TINY_SYSTEM_HEADER
 #endif
 
 #include "tom/commands/command.hpp"
+#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -90,7 +91,7 @@ namespace Commands::Migrations
 
     QString StatusCommand::name() const
     {
-        return QStringLiteral("migrate:status");
+        return Constants::MigrateStatus;
     }
 
     QString StatusCommand::description() const

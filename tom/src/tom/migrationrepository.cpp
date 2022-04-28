@@ -3,14 +3,20 @@
 #include <orm/databaseconnection.hpp>
 #include <orm/query/querybuilder.hpp>
 
+#include "tom/tomconstants.hpp"
+
 using Orm::Constants::ASC;
 using Orm::Constants::DESC;
 using Orm::Constants::GE;
+using Orm::Constants::ID;
 
 using Orm::DatabaseConnection;
 using Orm::SchemaNs::Blueprint;
 
 using QueryBuilder = Orm::Query::Builder;
+
+using Tom::Constants::batch_;
+using Tom::Constants::migration_;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -30,17 +36,17 @@ QVector<QVariant> MigrationRepository::getRanSimple() const
 {
     // Ownership of the QSharedPointer<QueryBuilder>
     return table()
-            ->orderBy("batch", ASC)
-            .orderBy("migration", ASC)
-            .pluck("migration");
+            ->orderBy(batch_, ASC)
+            .orderBy(migration_, ASC)
+            .pluck(migration_);
 }
 
 std::vector<MigrationItem> MigrationRepository::getRan(const QString &order) const
 {
     // Ownership of the QSharedPointer<QueryBuilder>
     auto query = table()
-                 ->orderBy("batch", order)
-                 .orderBy("migration", order)
+                 ->orderBy(batch_, order)
+                 .orderBy(migration_, order)
                  .get();
 
     return hydrateMigrations(query);
@@ -49,9 +55,9 @@ std::vector<MigrationItem> MigrationRepository::getRan(const QString &order) con
 std::vector<MigrationItem> MigrationRepository::getMigrations(const int steps) const
 {
     // Ownership of the QSharedPointer<QueryBuilder>
-    auto query = table()->where("batch", GE, 1)
-                 .orderBy("batch", DESC)
-                 .orderBy("migration", DESC)
+    auto query = table()->where(batch_, GE, 1)
+                 .orderBy(batch_, DESC)
+                 .orderBy(migration_, DESC)
                  .take(steps)
                  .get();
 
@@ -61,8 +67,8 @@ std::vector<MigrationItem> MigrationRepository::getMigrations(const int steps) c
 std::vector<MigrationItem> MigrationRepository::getLast() const
 {
     // Ownership of the QSharedPointer<QueryBuilder>
-    auto query = table()->whereEq("batch", getLastBatchNumber())
-                 .orderBy("migration", DESC)
+    auto query = table()->whereEq(batch_, getLastBatchNumber())
+                 .orderBy(migration_, DESC)
                  .get();
 
     return hydrateMigrations(query);
@@ -72,15 +78,15 @@ std::map<QString, QVariant> MigrationRepository::getMigrationBatches() const
 {
     // Ownership of the QSharedPointer<QueryBuilder>
     return table()
-            ->orderBy("batch", ASC)
-            .orderBy("migration", ASC)
-            .pluck<QString>("batch", "migration");
+            ->orderBy(batch_, ASC)
+            .orderBy(migration_, ASC)
+            .pluck<QString>(batch_, migration_);
 }
 
 void MigrationRepository::log(const QString &file, const int batch) const
 {
     // Ownership of the QSharedPointer<QueryBuilder>
-    table()->insert({{"migration", file}, {"batch", batch}});
+    table()->insert({{migration_, file}, {batch_, batch}});
 }
 
 void MigrationRepository::deleteMigration(const quint64 id) const
@@ -98,7 +104,7 @@ int MigrationRepository::getLastBatchNumber() const
 {
     // Ownership of the QSharedPointer<QueryBuilder>
     // Will be 0 on empty migrations table
-    return table()->max("batch").value<int>();
+    return table()->max(batch_).value<int>();
 }
 
 void MigrationRepository::createRepository() const
@@ -113,8 +119,8 @@ void MigrationRepository::createRepository() const
     {
         table.id();
 
-        table.string("migration").unique();
-        table.integer("batch");
+        table.string(migration_).unique();
+        table.integer(batch_);
     });
 }
 
@@ -163,13 +169,13 @@ MigrationRepository::hydrateMigrations(QSqlQuery &query) const
     while (query.next())
 #ifdef __clang__
         migration.emplace_back(
-                    MigrationItem {query.value("id").value<quint64>(),
-                                   query.value("migration").value<QString>(),
-                                   query.value("batch").value<int>()});
+                    MigrationItem {query.value(ID).value<quint64>(),
+                                   query.value(migration_).value<QString>(),
+                                   query.value(batch_).value<int>()});
 #else
-        migration.emplace_back(query.value("id").value<quint64>(),
-                               query.value("migration").value<QString>(),
-                               query.value("batch").value<int>());
+        migration.emplace_back(query.value(ID).value<quint64>(),
+                               query.value(migration_).value<QString>(),
+                               query.value(batch_).value<int>());
 #endif
 
     return migration;

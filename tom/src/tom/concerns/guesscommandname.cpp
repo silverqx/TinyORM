@@ -8,12 +8,15 @@
 
 #include "tom/application.hpp"
 #include "tom/commands/command.hpp"
+#include "tom/tomconstants.hpp"
 
 using Orm::Constants::COLON;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
 
 using Tom::Commands::Command;
+using Tom::Constants::NsGlobal;
+using Tom::Constants::NsNamespaced;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -44,7 +47,7 @@ QString GuessCommandName::guessCommandName(const QString &name)
 std::vector<std::shared_ptr<Command>>
 GuessCommandName::guessCommandsWithNamespace(const QString &name)
 {
-    const auto namespacedCommands = application().getCommandsInNamespace("namespaced");
+    const auto namespacedCommands = application().getCommandsInNamespace(NsNamespaced);
 
     return namespacedCommands
             | ranges::views::filter([&name](const auto &command)
@@ -65,7 +68,7 @@ GuessCommandName::guessCommandsWithNamespace(const QString &name)
 std::vector<std::shared_ptr<Command>>
 GuessCommandName::guessCommandsWithoutNamespace(const QString &name)
 {
-    const auto globalCommands = application().getCommandsInNamespace("global");
+    const auto globalCommands = application().getCommandsInNamespace(NsGlobal);
 
     return globalCommands
             | ranges::views::filter([&name](const auto &command)

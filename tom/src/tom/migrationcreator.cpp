@@ -52,12 +52,6 @@ fspath MigrationCreator::create(const QString &name, fspath &&migrationsPath,
 
 /* protected */
 
-namespace
-{
-    /*! Migration files datetime prefix format. */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, DatePrefix, ("yyyy_MM_dd_HHmmss"));
-}
-
 void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
                                                      const fspath &migrationsPath) const
 {
@@ -76,13 +70,13 @@ void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
 
         // Extract migration name without datetime prefix and extension
         auto entryName = QString::fromStdString(entry.path().filename().string())
-                         .mid(DatePrefix->size() + 1);
+                         .mid(getDatePrefixFormat().size() + 1);
 
         entryName.truncate(entryName.lastIndexOf(DOT));
 
         if (entryName == name)
             throw Exceptions::InvalidArgumentError(
-                    QStringLiteral("A '%1' migration already exists.").arg(name));
+                    QLatin1String("A '%1' migration already exists.").arg(name));
     }
 }
 
@@ -114,7 +108,14 @@ fspath MigrationCreator::getPath(const QString &name, const fspath &path) const
 
 std::string MigrationCreator::getDatePrefix() const
 {
-    return QDateTime::currentDateTime().toString(*DatePrefix).toStdString();
+    return QDateTime::currentDateTime().toString(getDatePrefixFormat()).toStdString();
+}
+
+const QString &MigrationCreator::getDatePrefixFormat()
+{
+    static const QString cached = QLatin1String("yyyy_MM_dd_HHmmss");
+
+    return cached;
 }
 
 std::string MigrationCreator::populateStub(const QString &name, QString &&stub,
