@@ -380,6 +380,25 @@ QHash<QString, QVariant> config {
 };
 
 
+QtCreator common CMake options:
+-------------------------------
+
+-G Ninja
+-D CMAKE_BUILD_TYPE:STRING=Debug
+-D BUILD_TESTS:BOOL=OFF
+-D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=ON
+-D MYSQL_PING:BOOL=ON
+-D VERBOSE_CONFIGURE:BOOL=OFF
+-D CMAKE_VERBOSE_MAKEFILE:BOOL=OFF
+-D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=OFF
+-D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=OFF
+-D CMAKE_PROJECT_INCLUDE_BEFORE:PATH=%{IDE:ResourcePath}/package-manager/auto-setup.cmake
+-D QT_QMAKE_EXECUTABLE:STRING=%{Qt:qmakeExecutable}
+-D CMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX}
+-D CMAKE_C_COMPILER:STRING=%{Compiler:Executable:C}
+-D CMAKE_CXX_COMPILER:STRING=%{Compiler:Executable:Cxx}
+
+
 DatabaseConnection debug code:
 ------------------------------
 
