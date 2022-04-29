@@ -37,7 +37,7 @@ jobs:
     - name: TinyORM prepend to the system $env:PATH
       working-directory: ..
       run: |
-        echo "LD_LIBRARY_PATH=$GITHUB_WORKSPACE${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=$PWD${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
         echo "LIBRARY_PATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
         pwd >> $GITHUB_PATH
 
@@ -239,10 +239,10 @@ jobs:
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
 
-    - name: TinyORM prepend to the system $env:PATH
+    - name: TinyORM prepend to the system $LD_LIBRARY_PATH
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
       run: |
-        pwd >> $GITHUB_PATH
+        echo "LD_LIBRARY_PATH=$GITHUB_WORKSPACE${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
     - name: Tom example execute migrate:status 🚀
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
