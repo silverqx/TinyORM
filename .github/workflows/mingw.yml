@@ -28,47 +28,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: |
-        MSYS2 UCRT64 setup (${{ join(matrix.compiler.pacboy, ', ') }}, lld:u, qt5-base:u, ccache:u)
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: ucrt64
-        path-type: minimal
-        update: true
-        install: |
-          git
-        pacboy: >-
-          ${{ join(matrix.compiler.pacboy, ' ') }} lld:u
-          cmake:u ninja:u ccache:u
-          qt5-base:u
-          libmariadbclient:u postgresql:u
-
-    - name: Print env
-      shell: msys2 {0}
-      run: |
-        echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-        echo "LIBRARY_PATH: $LIBRARY_PATH"
-        echo "PATH: $PATH"
-
-    - name: TinyORM prepend to the system $env:PATH
-      shell: msys2 {0}
-      working-directory: ..
-      run: |
-        echo "LD_LIBRARY_PATH=$PWD${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
-        echo "LIBRARY_PATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-        pwd >> $GITHUB_PATH
-
-    - name: Print env
-      shell: msys2 {0}
-      working-directory: ..
-      run: |
-        pwd
-        echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-        echo "LIBRARY_PATH: $LIBRARY_PATH"
-        echo "PATH: $PATH"
-
-    - run: exit 1
-
     - name: PostgreSQL start service
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual
