@@ -216,14 +216,10 @@ jobs:
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
 
-    - name: TinyORM prepend to the system $LD_LIBRARY_PATH
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
-      run: |
-        echo "LD_LIBRARY_PATH=$PWD${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
-
     - name: Tom example execute migrate:status 🚀
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
         ./tom migrate:status
       env:
         DB_MYSQL_CHARSET: utf8mb4
