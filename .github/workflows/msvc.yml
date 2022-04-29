@@ -202,7 +202,7 @@ jobs:
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
         -D MYSQL_PING:BOOL=ON
         -D BUILD_TESTS:BOOL=ON
-        -D ORM:BOOL=OFF
+        -D ORM:BOOL=ON
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
 
@@ -236,7 +236,7 @@ jobs:
     - name: Tom example execute migrate:status 🚀
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
       run: |
-        .\tom.exe migrate:status -vvv
+        .\tom.exe migrate:status
       env:
         DB_MYSQL_CHARSET: utf8mb4
         DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
