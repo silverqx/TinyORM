@@ -226,3 +226,22 @@ jobs:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+
+    - name: TinyORM prepend to the system $env:PATH
+      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug
+      run: >-
+        Get-Location | Select-Object -ExpandProperty Path |
+        Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    - name: Tom example execute migrate:status 🚀
+      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
+      run: |
+        .\tom.exe migrate:status -vvv
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        TOM_EXAMPLE_ENV: development
