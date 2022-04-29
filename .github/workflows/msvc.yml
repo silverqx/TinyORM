@@ -236,7 +236,7 @@ jobs:
     - name: Tom example execute migrate:status 🚀
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
       run: |
-        .\tom.exe migrate:status
+        .\tom.exe migrate:status --ansi
       env:
         DB_MYSQL_CHARSET: utf8mb4
         DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
