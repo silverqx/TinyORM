@@ -114,6 +114,19 @@ Maintenance:
    - compile with Qt6, I have still problem with clazy
 
 
+GitHub Actions:
+---------------
+
+ - how to update the clazy-standalone (analyzers.yml):
+   - update the QtCreator to latest version, copy libexec/qtcreator/clang/ to some empty folder
+   - leave only the clazy-standalone executable in the bin/ folder and compress it:
+tar cjvf ../clazy-standalone.tar.bz2 .
+
+   - then upload to the gdrive to the public/TinyORM folder and create shareble link to obtain ID
+   - paste this new URL to the GitHub secrets:
+https://drive.google.com/uc?id=some_id
+
+
 RegExs:
 -------
 
