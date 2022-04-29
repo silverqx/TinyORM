@@ -235,7 +235,7 @@ jobs:
       shell: msys2 {0}
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
       run: |
-        echo "LD_LIBRARY_PATH=$PWD${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo $PWD >> $GITHUB_PATH
 
     - name: Tom example execute migrate:status 🚀
       shell: msys2 {0}
