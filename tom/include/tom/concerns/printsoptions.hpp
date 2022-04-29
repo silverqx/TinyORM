@@ -5,7 +5,7 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QtGlobal>
+#include <QStringList>
 
 #include <orm/macros/commonnamespace.hpp>
 
