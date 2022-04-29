@@ -21,12 +21,38 @@ jobs:
             pacboy: [ 'clang:u', 'gcc:u' ]
             command: clang++.exe
 
-          - key: gcc
-            pacboy: [ 'gcc:u' ]
-            command: g++.exe
+          # - key: gcc
+          #   pacboy: [ 'gcc:u' ]
+          #   command: g++.exe
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Print env
+      shell: msys2 {0}
+      run: |
+        echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+        echo "LIBRARY_PATH: $LIBRARY_PATH"
+        echo "PATH: $PATH"
+
+    - name: TinyORM prepend to the system $env:PATH
+      shell: msys2 {0}
+      working-directory: ..
+      run: |
+        echo "LD_LIBRARY_PATH=$PWD${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "LIBRARY_PATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+        pwd >> $GITHUB_PATH
+
+    - name: Print env
+      shell: msys2 {0}
+      working-directory: ..
+      run: |
+        pwd
+        echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+        echo "LIBRARY_PATH: $LIBRARY_PATH"
+        echo "PATH: $PATH"
+
+    - run: exit 1
 
     - name: PostgreSQL start service
       run: |
@@ -230,3 +256,23 @@ jobs:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+
+    - name: TinyORM prepend to the system $LD_LIBRARY_PATH
+      shell: msys2 {0}
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+      run: |
+        echo "LD_LIBRARY_PATH=$PWD${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
+
+    - name: Tom example execute migrate:status 🚀
+      shell: msys2 {0}
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      run: |
+        ./tom migrate:status
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        TOM_EXAMPLE_ENV: development
