@@ -28,29 +28,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Print env
-      run: |
-        echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-        echo "LIBRARY_PATH: $LIBRARY_PATH"
-        echo "PATH: $PATH"
-
-    - name: TinyORM prepend to the system $env:PATH
-      working-directory: ..
-      run: |
-        echo "LD_LIBRARY_PATH=$PWD${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
-        echo "LIBRARY_PATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-        pwd >> $GITHUB_PATH
-
-    - name: Print env
-      working-directory: ..
-      run: |
-        pwd
-        echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-        echo "LIBRARY_PATH: $LIBRARY_PATH"
-        echo "PATH: $PATH"
-
-    - run: exit 1
-
     - name: PostgreSQL start service
       run: |
         sudo systemctl start postgresql.service
@@ -242,7 +219,7 @@ jobs:
     - name: TinyORM prepend to the system $LD_LIBRARY_PATH
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
       run: |
-        echo "LD_LIBRARY_PATH=$GITHUB_WORKSPACE${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=$PWD${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
     - name: Tom example execute migrate:status 🚀
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
