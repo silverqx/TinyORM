@@ -8,6 +8,7 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::database_up;
 using Tom::Constants::drop_types;
 using Tom::Constants::drop_views;
 using Tom::Constants::force;
@@ -35,7 +36,7 @@ FreshCommand::FreshCommand(
 QList<QCommandLineOption> FreshCommand::optionsSignature() const
 {
     return {
-        {database_,     QStringLiteral("The database connection to use"), database_}, // Value
+        {database_,     QStringLiteral("The database connection to use"), database_up}, // Value
         {drop_views,    QStringLiteral("Drop all tables and views")},
         {drop_types,    QStringLiteral("Drop all tables and types (Postgres only)")},
         {force,         QStringLiteral("Force the operation to run when in production")},

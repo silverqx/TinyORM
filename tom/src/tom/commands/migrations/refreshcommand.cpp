@@ -8,8 +8,10 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::database_up;
 using Tom::Constants::force;
 using Tom::Constants::step_;
+using Tom::Constants::step_up;
 using Tom::Constants::step_migrate;
 using Tom::Constants::DbSeed;
 using Tom::Constants::Migrate;
@@ -35,12 +37,12 @@ RefreshCommand::RefreshCommand(
 QList<QCommandLineOption> RefreshCommand::optionsSignature() const
 {
     return {
-        {database_,    QStringLiteral("The database connection to use"), database_}, // Value
+        {database_,    QStringLiteral("The database connection to use"), database_up}, // Value
         {force,        QStringLiteral("Force the operation to run when in production")},
 //        {"seed",       QStringLiteral("Indicates if the seed task should be re-run")},
 //        {"seeder",     QStringLiteral("The class name of the root seeder", "seeded")}, // Value
         {step_,        QStringLiteral("The number of migrations to be reverted & "
-                                      "re-run"), step_}, // Value
+                                      "re-run"), step_up}, // Value
         {step_migrate, QStringLiteral("Force the migrations to be run so they can be "
                                       "rolled back individually")},
     };

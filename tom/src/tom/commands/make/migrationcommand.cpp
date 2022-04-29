@@ -46,10 +46,10 @@ const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() c
 QList<QCommandLineOption> MigrationCommand::optionsSignature() const
 {
     return {
-        {create_,   QStringLiteral("The table to be created"), create_}, // Value
-        {table_,    QStringLiteral("The table to migrate"), table_}, // Value
+        {create_,   QStringLiteral("The table to be created"), create_.toUpper()}, // Value
+        {table_,    QStringLiteral("The table to migrate"), table_.toUpper()}, // Value
         {path_,     QStringLiteral("The location where the migration file should be "
-                                   "created"), path_}, // Value
+                                   "created"), path_.toUpper()}, // Value
         {realpath_, QStringLiteral("Indicate any provided migration file paths are "
                                    "pre-resolved absolute paths")},
         {fullpath,  QStringLiteral("Output the full path of the migration")},

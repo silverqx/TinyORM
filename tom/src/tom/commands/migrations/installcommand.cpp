@@ -8,6 +8,8 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::database_up;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Migrations
@@ -26,7 +28,7 @@ InstallCommand::InstallCommand(
 QList<QCommandLineOption> InstallCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use"), database_}, // Value
+        {database_, QStringLiteral("The database connection to use"), database_up}, // Value
     };
 }
 

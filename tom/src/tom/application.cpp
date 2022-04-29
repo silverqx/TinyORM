@@ -226,7 +226,7 @@ void Application::initializeParser(QCommandLineParser &parser)
         {      ansi,           QStringLiteral("Force ANSI output")},
         {      noansi,         QStringLiteral("Disable ANSI output")},
         {      env,            QStringLiteral("The environment the command should run "
-                                              "under"), env}, // Value
+                                              "under"), env.toUpper()}, // Value
         {{"h", help},          QStringLiteral("Display help for the given command. When "
                                               "no command is given display help for the "
                                               "<info>list</info> command")},

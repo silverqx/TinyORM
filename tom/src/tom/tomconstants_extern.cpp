@@ -6,8 +6,10 @@ namespace Tom::Constants
 {
 
     // Common strings
-    const QString LongOption  = QStringLiteral("--%1");
-    const QString ShortOption = QStringLiteral("-%1");
+    const QString LongOption       = QStringLiteral("--%1");
+    const QString LongOptionOnly   = QStringLiteral("    %1");
+    const QString LongOptionValue  = QStringLiteral("--%1[=%2]");
+    const QString ShortOption      = QStringLiteral("-%1");
 
     const QString migration_  = QStringLiteral("migration");
     const QString batch_      = QStringLiteral("batch");
@@ -33,6 +35,9 @@ namespace Tom::Constants
     const QString force        = QStringLiteral("force");
     const QString pretend      = QStringLiteral("pretend");
     const QString step_        = QStringLiteral("step");
+    // Default value names
+    const QString database_up  = QStringLiteral("DATABASE");
+    const QString step_up      = QStringLiteral("STEP");
     // list
     const QString raw_         = QStringLiteral("raw");
     // db:wipe

@@ -3,14 +3,11 @@
 #include <QCommandLineOption>
 
 #include <orm/constants.hpp>
-#include <orm/tiny/utils/string.hpp>
 
 #include "tom/application.hpp"
 #include "tom/tomconstants.hpp"
 
 using Orm::Constants::SPACE;
-
-using StringUtils = Orm::Tiny::Utils::String;
 
 using Tom::Constants::command_name;
 
@@ -23,7 +20,7 @@ namespace Tom::Commands
 
 HelpCommand::HelpCommand(Application &application, QCommandLineParser &parser)
     : Command(application, parser)
-    , Concerns::PrintsOptions(*this, 0)
+    , Concerns::PrintsOptions(application.m_options, *this)
 {}
 
 const std::vector<PositionalArgument> &HelpCommand::positionalArguments() const
@@ -196,21 +193,12 @@ int HelpCommand::argumentsMaxSize(const std::vector<PositionalArgument> &argumen
 
 void HelpCommand::printArgumentDefaultValue(const PositionalArgument &argument) const
 {
-    // Empty default value, don't render
-    const auto &defaultValueRef = argument.defaultValue;
+    if (const auto &defaultValue = argument.defaultValue;
+        !defaultValue.isEmpty()
+    )
+        comment(defaultValueText(defaultValue), false);
 
-    if (defaultValueRef.isEmpty()) {
-        newLine();
-
-        return;
-    }
-
-    // Quote string type
-    auto defaultValue = StringUtils::isNumber(defaultValueRef, true)
-                        ? defaultValueRef
-                        : QStringLiteral("\"%1\"").arg(defaultValueRef);
-
-    comment(QStringLiteral(" [default: %1]").arg(std::move(defaultValue)));
+    newLine();
 }
 
 int HelpCommand::printOptionsSection(const Command &command) const

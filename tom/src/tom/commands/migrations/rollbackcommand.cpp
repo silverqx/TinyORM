@@ -8,9 +8,11 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::database_up;
 using Tom::Constants::force;
 using Tom::Constants::pretend;
 using Tom::Constants::step_;
+using Tom::Constants::step_up;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -31,10 +33,10 @@ RollbackCommand::RollbackCommand(
 QList<QCommandLineOption> RollbackCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use"), database_}, // Value
+        {database_, QStringLiteral("The database connection to use"), database_up}, // Value
         {force,     QStringLiteral("Force the operation to run when in production")},
         {pretend,   QStringLiteral("Dump the SQL queries that would be run")},
-        {step_,     QStringLiteral("The number of migrations to be reverted"), step_}, // Value
+        {step_,     QStringLiteral("The number of migrations to be reverted"), step_up}, // Value
     };
 }
 

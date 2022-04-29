@@ -27,7 +27,7 @@ namespace Tom::Commands
 
 ListCommand::ListCommand(Application &application, QCommandLineParser &parser)
     : Command(application, parser)
-    , Concerns::PrintsOptions(*this, 0)
+    , Concerns::PrintsOptions(application.m_options, *this)
 {}
 
 const std::vector<PositionalArgument> &ListCommand::positionalArguments() const

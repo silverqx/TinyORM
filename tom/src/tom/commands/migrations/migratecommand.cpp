@@ -8,6 +8,7 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::database_up;
 using Tom::Constants::force;
 using Tom::Constants::pretend;
 using Tom::Constants::step_;
@@ -32,7 +33,7 @@ MigrateCommand::MigrateCommand(
 QList<QCommandLineOption> MigrateCommand::optionsSignature() const
 {
     return {
-        {database_,     QStringLiteral("The database connection to use"), database_}, // Value
+        {database_,     QStringLiteral("The database connection to use"), database_up}, // Value
         {force,         QStringLiteral("Force the operation to run when in production")},
         {pretend,       QStringLiteral("Dump the SQL queries that would be run")},
 //        {"schema-path", QStringLiteral("The path to a schema dump file")}, // Value

@@ -18,6 +18,8 @@ namespace Tom::Constants
 
     // Common strings
     SHAREDLIB_EXPORT extern const QString LongOption;
+    SHAREDLIB_EXPORT extern const QString LongOptionOnly;
+    SHAREDLIB_EXPORT extern const QString LongOptionValue;
     SHAREDLIB_EXPORT extern const QString ShortOption;
 
     SHAREDLIB_EXPORT extern const QString migration_;
@@ -44,6 +46,9 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString force;
     SHAREDLIB_EXPORT extern const QString pretend;
     SHAREDLIB_EXPORT extern const QString step_;
+    // Default value names
+    SHAREDLIB_EXPORT extern const QString database_up;
+    SHAREDLIB_EXPORT extern const QString step_up;
     // list
     SHAREDLIB_EXPORT extern const QString raw_;
     // db:wipe

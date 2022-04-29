@@ -8,6 +8,7 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::database_up;
 using Tom::Constants::force;
 using Tom::Constants::pretend;
 
@@ -30,7 +31,7 @@ ResetCommand::ResetCommand(
 QList<QCommandLineOption> ResetCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use"), database_}, // Value
+        {database_, QStringLiteral("The database connection to use"), database_up}, // Value
         {force,     QStringLiteral("Force the operation to run when in production")},
         {pretend,   QStringLiteral("Dump the SQL queries that would be run")},
     };
