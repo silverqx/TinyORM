@@ -82,6 +82,8 @@ jobs:
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
         -D MYSQL_PING:BOOL=ON
         -D BUILD_TESTS:BOOL=ON
+        -D ORM:BOOL=ON
+        -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
 
     - name: TinyORM cmake build ✨ (clang14-cmake-debug)
