@@ -32,7 +32,7 @@ Blueprint::Blueprint(
 
 void Blueprint::build(DatabaseConnection &connection, const SchemaGrammar &grammar)
 {
-    // TODO clazy, old clazy check range-loop, remove after ugprade to newer clazy (1.11) silverqx
+    // TODO clazy, old clazy check range-loop, remove after ugprade to newer clazy 1.11, it was divided to two checks in clazy 1.11 silverqx
     for (const auto &queryString : toSql(connection, grammar)) // clazy:exclude=range-loop,range-loop-detach
         connection.statement(queryString);
 }
