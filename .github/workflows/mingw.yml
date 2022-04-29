@@ -28,6 +28,21 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: |
+        MSYS2 UCRT64 setup (${{ join(matrix.compiler.pacboy, ', ') }}, lld:u, qt5-base:u, ccache:u)
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ucrt64
+        path-type: minimal
+        update: true
+        install: |
+          git
+        pacboy: >-
+          ${{ join(matrix.compiler.pacboy, ' ') }} lld:u
+          cmake:u ninja:u ccache:u
+          qt5-base:u
+          libmariadbclient:u postgresql:u
+
     - name: Print env
       shell: msys2 {0}
       run: |
