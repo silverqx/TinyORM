@@ -22,6 +22,8 @@ namespace Migrations
 
     struct {{ class }} : Migration
     {
+        /*! Filename of the migration file. */
+        T_MIGRATION
 
         /*! Run the migrations. */
         void up() const override
@@ -49,6 +51,8 @@ namespace Migrations
 
     struct {{ class }} : Migration
     {
+        /*! Filename of the migration file. */
+        T_MIGRATION
 
         /*! Run the migrations. */
         void up() const override
@@ -80,6 +84,8 @@ namespace Migrations
 
     struct {{ class }} : Migration
     {
+        /*! Filename of the migration file. */
+        T_MIGRATION
 
         /*! Run the migrations. */
         void up() const override
