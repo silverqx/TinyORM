@@ -544,11 +544,10 @@ int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv) co
         // env. should be always development so passed {} for env. name
         return TomApplication(argc, const_cast<char **>(argv.data()),
                               Databases::manager(), {})
-                .migrations<
-                    _2014_10_12_000000_create_posts_table,
-                    _2014_10_12_100000_add_factor_column_to_posts_table,
-                    _2014_10_12_200000_create_properties_table,
-                    _2014_10_12_300000_create_phones_table>()
+                .migrations<CreatePostsTable,
+                            AddFactorColumnToPostsTable,
+                            CreatePropertiesTable,
+                            CreatePhonesTable>()
                 // Fire it up 🔥🚀✨
                 .runWithArguments({argv.cbegin(), argv.cend()});
 

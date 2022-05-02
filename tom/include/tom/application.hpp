@@ -8,6 +8,8 @@ TINY_SYSTEM_HEADER
 #include <QCommandLineParser>
 
 #include <filesystem>
+#include <typeindex>
+#include <typeinfo>
 
 #include <range/v3/view/slice.hpp>
 
@@ -15,6 +17,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/concerns/guesscommandname.hpp"
 #include "tom/concerns/interactswithio.hpp"
+#include "tom/tomtypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -247,6 +250,9 @@ namespace Concerns
 
         /*! Migrations vector to process. */
         std::vector<std::shared_ptr<Migration>> m_migrations;
+        /*! Cache the migration properties by the migration type-id. */
+        std::unordered_map<std::type_index, MigrationProperties> m_migrationsProperties;
+
         /*! Is this input means interactive? */
         bool m_interactive = true;
 
@@ -269,6 +275,15 @@ namespace Concerns
         m_migrations = {std::make_shared<Migrations>()...};
 
         // Correct sort order is checked in the Migrator::createMigrationNamesMap()
+
+        /* Helps to avoid declaring the FileName, connection, and withinTransaction as
+           getters in migrations, I can tell that this is really crazy. 🤪🙃😎 */
+        m_migrationsProperties = {
+            {typeid (Migrations),
+             {Migrations::FileName,
+              Migrations().connection,
+              Migrations().withinTransaction}}...
+        };
 
         return *this;
     }

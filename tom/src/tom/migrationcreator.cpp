@@ -9,6 +9,7 @@
 
 #include "tom/commands/make/stubs/migrationstubs.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
+#include "tom/tomconstants.hpp"
 
 namespace fs = std::filesystem;
 
@@ -21,6 +22,7 @@ using StringUtils = Orm::Tiny::Utils::String;
 using Tom::Commands::Make::Stubs::MigrationCreateStub;
 using Tom::Commands::Make::Stubs::MigrationUpdateStub;
 using Tom::Commands::Make::Stubs::MigrationStub;
+using Tom::Constants::DateTimePrefix;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -68,9 +70,10 @@ void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
         if (!entry.is_regular_file())
             continue;
 
+        // CUR tom, use stem silverqx
         // Extract migration name without datetime prefix and extension
         auto entryName = QString::fromStdString(entry.path().filename().string())
-                         .mid(getDatePrefixFormat().size() + 1);
+                         .mid(DateTimePrefix.size() + 1);
 
         entryName.truncate(entryName.lastIndexOf(DOT));
 
@@ -108,14 +111,7 @@ fspath MigrationCreator::getPath(const QString &name, const fspath &path) const
 
 std::string MigrationCreator::getDatePrefix() const
 {
-    return QDateTime::currentDateTime().toString(getDatePrefixFormat()).toStdString();
-}
-
-const QString &MigrationCreator::getDatePrefixFormat()
-{
-    static const QString cached = QStringLiteral("yyyy_MM_dd_HHmmss");
-
-    return cached;
+    return QDateTime::currentDateTime().toString(DateTimePrefix).toStdString();
 }
 
 std::string MigrationCreator::populateStub(const QString &name, QString &&stub,

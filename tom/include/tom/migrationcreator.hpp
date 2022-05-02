@@ -48,8 +48,6 @@ namespace Tom
         fspath getPath(const QString &name, const fspath &path) const;
         /*! Get the date prefix for the migration. */
         std::string getDatePrefix() const;
-        /*! Migration files datetime prefix format. */
-        static const QString &getDatePrefixFormat();
 
         /*! Populate the place-holders in the migration stub. */
         std::string populateStub(const QString &name, QString &&stub,

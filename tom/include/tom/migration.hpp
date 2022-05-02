@@ -5,7 +5,19 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
+#include <filesystem>
+
 #include <orm/schema.hpp>
+
+/*! Filename of the migration file (populated by the __FILE__ macro excluding
+    the filepath part). */
+#define T_MIGRATION                                                                 \
+    /*! Filename of the migration file. */                                          \
+    inline static const QString FileName = []                                       \
+    {                                                                               \
+        return QString::fromStdString(                                              \
+                    std::filesystem::path(__FILE__).stem().string());               \
+    }();
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -18,6 +30,9 @@ namespace Tom
         Q_DISABLE_COPY(Migration)
 
     public:
+        /*! Filename of the migration file. */
+        inline static const QString FileName;
+
         /*! Default constructor. */
         inline Migration() = default;
         /*! Pure virtual destructor. */

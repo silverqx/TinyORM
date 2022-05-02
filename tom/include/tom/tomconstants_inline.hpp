@@ -15,6 +15,9 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Constants
 {
 
+    /*! Migration files datetime prefix format. */
+    inline const QString DateTimePrefix  = QStringLiteral("yyyy_MM_dd_HHmmss");
+
     // Common strings
     inline const QString LongOption      = QStringLiteral("--%1");
     inline const QString LongOptionOnly  = QStringLiteral("    %1");

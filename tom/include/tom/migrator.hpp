@@ -35,6 +35,8 @@ namespace Tom
         Migrator(std::shared_ptr<MigrationRepository> &&repository,
                  std::shared_ptr<ConnectionResolverInterface> &&resolver,
                  const std::vector<std::shared_ptr<Migration>> &migrations,
+                 const std::unordered_map<std::type_index,
+                                          MigrationProperties> &migrationsProperties,
                  const QCommandLineParser &parser);
         /*! Virtual destructor. */
         inline ~Migrator() override = default;
@@ -90,8 +92,10 @@ namespace Tom
         /* Migration instances lists and hashes */
         /*! Create a map that maps migration names by migrations type-id (type_index). */
         void createMigrationNamesMap();
-        /*! Get a migration name by a migration type-id. */
+        /*! Get a migration name by a migration type-id (from the migration instance). */
         QString getMigrationName(const Migration &migration) const;
+        /*! Get a cached migration name by a migration type-id. */
+        QString cachedMigrationName(const Migration &migration) const;
 
         /* Migrate */
         /*! Get the migration instances that have not yet run. */
@@ -129,10 +133,20 @@ namespace Tom
         /*! Migrate by the given method (up/down). */
         void migrateByMethod(const Migration &migration, MigrateMethod method) const;
 
+        /* Validate migrations */
         /*! Throw if migrations passed to the TomApplication are not sorted
             alphabetically. */
         void throwIfMigrationsNotSorted(const QString &previousMigrationName,
                                         const QString &migrationName) const;
+        /*! Throw if migration filename is not valid. */
+        static void throwIfMigrationFileNameNotValid(const QString &migrationName);
+        /*! Throw if migration classname is not valid. */
+        static void throwIfMigrationClassNameNotValid(const QString &migrationName);
+
+        /*! Check whether a migration name starts with the datetime prefix. */
+        static bool startsWithDatetimePrefix(const QString &migrationName);
+        /*! Check whether all datetime parts are equal to the DateTimePrefix constant. */
+        static bool areDatetimePartsEqual(const QList<QStringView> &prefixParts);
 
         /*! The migration repository instance. */
         std::shared_ptr<MigrationRepository> m_repository;
@@ -142,9 +156,14 @@ namespace Tom
         QString m_connection {};
 
         /*! Reference to the migrations vector to process. */
-        const std::vector<std::shared_ptr<Migration>> &m_migrations;
+        std::reference_wrapper<
+                const std::vector<std::shared_ptr<Migration>>> m_migrations;
+        /*! Reference to the cached migration properties. */
+        std::reference_wrapper<
+                const std::unordered_map<std::type_index,
+                                         MigrationProperties>> m_migrationsProperties;
         /*! Map a migration names by migrations type-id (type_index)
-            (used migrate, rollback, pretend). */
+            (used by migrate, rollback, pretend). */
         std::unordered_map<std::type_index, QString> m_migrationNamesMap {};
         /*! Migration names list (used by status). */
         std::set<QString> m_migrationNames {};

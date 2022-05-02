@@ -2,11 +2,22 @@
 
 #include <tom/migration.hpp>
 
+/* This class serves as a showcase, so all possible features are defined / used. */
+
 namespace Migrations
 {
 
-    struct _2014_10_12_000000_create_posts_table : Migration
+    struct CreatePostsTable : Migration
+//    struct _2014_10_12_000000_create_posts_table : Migration
     {
+        /*! Filename of the migration file. */
+        T_MIGRATION
+
+        /*! The name of the database connection to use. */
+//        QString connection = QStringLiteral("tinyorm_tom");
+        /*! Wrapping the migration within a transaction, if supported. */
+        bool withinTransaction = false;
+
         /*! Run the migrations. */
         void up() const override
         {

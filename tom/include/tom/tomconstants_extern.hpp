@@ -16,6 +16,9 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Constants
 {
 
+    /*! Migration files datetime prefix format. */
+    SHAREDLIB_EXPORT extern const QString DateTimePrefix;
+
     // Common strings
     SHAREDLIB_EXPORT extern const QString LongOption;
     SHAREDLIB_EXPORT extern const QString LongOptionOnly;

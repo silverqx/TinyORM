@@ -4,6 +4,7 @@
 
 #include <orm/databaseconnection.hpp>
 #include <orm/schema/schemabuilder.hpp>
+#include <orm/tiny/utils/string.hpp>
 #include <orm/utils/query.hpp>
 #include <orm/utils/type.hpp>
 
@@ -13,17 +14,25 @@
 #include <range/v3/view/move.hpp>
 #include <range/v3/view/remove_if.hpp>
 #include <range/v3/view/reverse.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "tom/exceptions/invalidtemplateargumenterror.hpp"
+#include "tom/exceptions/runtimeerror.hpp"
 #include "tom/migration.hpp"
 #include "tom/migrationrepository.hpp"
+#include "tom/tomconstants.hpp"
 
 using Orm::DatabaseConnection;
 
 using Orm::Constants::DESC;
+using Orm::Constants::UNDERSCORE;
+
+using StringUtils = Orm::Tiny::Utils::String;
 
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
+
+using Tom::Constants::DateTimePrefix;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -36,12 +45,15 @@ Migrator::Migrator(
         std::shared_ptr<MigrationRepository> &&repository,
         std::shared_ptr<ConnectionResolverInterface> &&resolver,
         const std::vector<std::shared_ptr<Migration>> &migrations,
+        const std::unordered_map<std::type_index,
+                                 MigrationProperties> &migrationsProperties,
         const QCommandLineParser &parser
 )
     : Concerns::InteractsWithIO(parser)
     , m_repository(std::move(repository))
     , m_resolver(std::move(resolver))
     , m_migrations(migrations)
+    , m_migrationsProperties(migrationsProperties)
 {
     /* Initialize these containers in the constructor as every command that uses
        the Migrator also needs a migrations map or names list. */
@@ -165,12 +177,11 @@ void Migrator::createMigrationNamesMap()
 {
     QString previousMigrationName;
 
-    for (const auto &migration : m_migrations) {
+    for (const auto &migration : m_migrations.get()) {
         // To avoid expression with side effects in the typeid ()
         const auto &migrationRef = *migration;
 
-        // mid(1) tp remove the '_' at beginning
-        auto migrationName = TypeUtils::classPureBasename(migrationRef, false).mid(1);
+        auto migrationName = getMigrationName(migrationRef);
 
         // Verify alphabetical sorting
         throwIfMigrationsNotSorted(previousMigrationName, migrationName);
@@ -187,13 +198,30 @@ void Migrator::createMigrationNamesMap()
 
 QString Migrator::getMigrationName(const Migration &migration) const
 {
-    // To avoid expression with side effects in the typeid ()
-    const auto &migrationRef = migration;
-    const auto &migrationId = typeid (migrationRef);
+    /* Migration name from the T_MIGRATION macro */
+    const auto &migrationName = m_migrationsProperties.get().at(typeid (migration)).name;
 
-    Q_ASSERT(m_migrationNamesMap.contains(migrationId));
+    throwIfMigrationFileNameNotValid(migrationName);
 
-    return m_migrationNamesMap.at(migrationId);
+    if (!migrationName.isEmpty())
+        return migrationName;
+
+    /* Migration name from the migration type-id */
+    // mid(1) to remove the '_' at beginning
+    auto migrationNameFromType = TypeUtils::classPureBasename(migration, false).mid(1);
+
+    throwIfMigrationClassNameNotValid(migrationNameFromType);
+
+    return migrationNameFromType;
+}
+
+QString Migrator::cachedMigrationName(const Migration &migration) const
+{
+    const auto &migrationTypeId = typeid (migration);
+
+    Q_ASSERT(m_migrationNamesMap.contains(migrationTypeId));
+
+    return m_migrationNamesMap.at(migrationTypeId);
 }
 
 /* Migrate */
@@ -201,10 +229,10 @@ QString Migrator::getMigrationName(const Migration &migration) const
 std::vector<std::shared_ptr<Migration>>
 Migrator::pendingMigrations(const QVector<QVariant> &ran) const
 {
-    return m_migrations
+    return m_migrations.get()
             | ranges::views::remove_if([this, &ran](const auto &migration)
     {
-        return ran.contains(getMigrationName(*migration));
+        return ran.contains(cachedMigrationName(*migration));
     })
             | ranges::to<std::vector<std::shared_ptr<Migration>>>();
 }
@@ -217,7 +245,7 @@ void Migrator::runUp(const Migration &migration, const int batch,
         return;
     }
 
-    auto migrationName = getMigrationName(migration);
+    auto migrationName = cachedMigrationName(migration);
 
     comment(QStringLiteral("Migrating: "), false).note(migrationName);
 
@@ -246,11 +274,11 @@ Migrator::getMigrationsForRollback(const MigrateOptions options) const
                         ? m_repository->getMigrations(options.stepValue)
                         : m_repository->getLast();
 
-    return m_migrations
+    return m_migrations.get()
             | ranges::views::reverse
             | ranges::views::filter([this, &migrationsDb](const auto &migration)
     {
-        return ranges::contains(migrationsDb, getMigrationName(*migration),
+        return ranges::contains(migrationsDb, cachedMigrationName(*migration),
                                 [](const auto &m) { return m.migration; });
     })
             | ranges::views::transform([this, &migrationsDb](const auto &migration)
@@ -258,7 +286,7 @@ Migrator::getMigrationsForRollback(const MigrateOptions options) const
     {
         // Can not happen that it doesn't find, checked in previous lambda by 'contains'
         auto &&[id, migrationName, _] =
-                *std::ranges::find(migrationsDb, getMigrationName(*migration),
+                *std::ranges::find(migrationsDb, cachedMigrationName(*migration),
                                    [](const auto &m) { return m.migration; });
 
         return {std::move(id), std::move(migrationName), migration};
@@ -329,7 +357,7 @@ void Migrator::runDown(const RollbackItem &migrationToRollback, const bool prete
 void Migrator::pretendToRun(const Migration &migration, const MigrateMethod method) const
 {
     for (auto &&query : getQueries(migration, method)) {
-        info(QStringLiteral("%1:").arg(getMigrationName(migration)));
+        info(QStringLiteral("%1: ").arg(cachedMigrationName(migration)), false);
 
         note(QueryUtils::parseExecutedQueryForPretend(query.query,
                                                       query.boundValues));
@@ -339,10 +367,14 @@ void Migrator::pretendToRun(const Migration &migration, const MigrateMethod meth
 QVector<Migrator::Log>
 Migrator::getQueries(const Migration &migration, const MigrateMethod method) const
 {
+    const auto &migrationTypeId = typeid (migration);
+
+    Q_ASSERT(m_migrationsProperties.get().contains(migrationTypeId));
+
     /* Now that we have the connections we can resolve it and pretend to run the
        queries against the database returning the array of raw SQL statements
        that would get fired against the database system for this migration. */
-    return resolveConnection(migration.connection)
+    return resolveConnection(m_migrationsProperties.get().at(migrationTypeId).connection)
             .pretend([this, &migration, method]()
     {
         migrateByMethod(migration, method);
@@ -353,12 +385,18 @@ Migrator::getQueries(const Migration &migration, const MigrateMethod method) con
 
 void Migrator::runMigration(const Migration &migration, const MigrateMethod method) const
 {
-    auto &connection = resolveConnection(migration.connection);
+    const auto &migrationTypeId = typeid (migration);
+
+    Q_ASSERT(m_migrationsProperties.get().contains(migrationTypeId));
+
+    const auto &migartionProperties = m_migrationsProperties.get().at(migrationTypeId);
+
+    auto &connection = resolveConnection(migartionProperties.connection);
 
     // Invoke migration in the transaction if a database driver supports it
     const auto withinTransaction =
             connection.getSchemaGrammar().supportsSchemaTransactions() &&
-            migration.withinTransaction;
+            migartionProperties.withinTransaction;
 
     // Without transaction
     if (!withinTransaction) {
@@ -398,6 +436,8 @@ void Migrator::migrateByMethod(const Migration &migration,
     Q_UNREACHABLE();
 }
 
+/* Validate migrations */
+
 void Migrator::throwIfMigrationsNotSorted(const QString &previousMigrationName,
                                           const QString &migrationName) const
 {
@@ -407,7 +447,94 @@ void Migrator::throwIfMigrationsNotSorted(const QString &previousMigrationName,
     throw Exceptions::InvalidTemplateArgumentError(
             QStringLiteral(
                 "The template arguments passed to the TomApplication::migrations() "
-                "must always be sorted alphabetically."));
+                "must always be sorted alphabetically (%1 < %2).")
+                .arg(previousMigrationName, migrationName));
+}
+
+void Migrator::throwIfMigrationFileNameNotValid(const QString &migrationName)
+{
+    if (migrationName.isEmpty() || startsWithDatetimePrefix(migrationName))
+        return;
+
+    throw Exceptions::RuntimeError(
+                QStringLiteral(
+                    "Migration filename '%1' has to start with the datetime prefix.")
+                .arg(migrationName));
+
+}
+
+void Migrator::throwIfMigrationClassNameNotValid(const QString &migrationName)
+{
+    Q_ASSERT(!migrationName.isEmpty());
+
+    if (startsWithDatetimePrefix(migrationName))
+        return;
+
+    throw Exceptions::RuntimeError(
+                QStringLiteral(
+                    "Migration classname '%1' has to start with the datetime prefix.")
+                .arg(migrationName));
+}
+
+bool Migrator::startsWithDatetimePrefix(const QString &migrationName)
+{
+    /* Datetime prefix 2022_02_02_011255_, the size has to be >18, has to have 4 parts
+       after the split(_), every part has specific size and all parts has to be numbers.
+       I want to avoid the RegEx where it's possible. */
+
+    static const auto datetimePrefixSize = DateTimePrefix.size();
+
+    /* 17 chars datetime prefix, 1 char the last _ character after the datetime prefix,
+       and at least one character for the migration name; >18. */
+    if (migrationName.size() <= datetimePrefixSize + 1)
+        return false;
+
+    const auto datetime = QStringView(migrationName.constBegin(), datetimePrefixSize)
+                          .split(UNDERSCORE);
+
+    // 4 parts
+    if (datetime.size() != 4)
+        return false;
+
+    // The size of every part has to be equal
+    if (!areDatetimePartsEqual(datetime))
+        return false;
+
+    // All parts are numbers
+    return std::ranges::all_of(datetime, [](const auto datetimePart)
+    {
+        return StringUtils::isNumber(datetimePart);
+    });
+}
+
+bool Migrator::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
+{
+    /*! Cached the datetime prefix parts sizes. */
+    static const auto prefixSizes = []
+    {
+        const auto prefixSplitted = DateTimePrefix.split(UNDERSCORE);
+
+        return prefixSplitted
+                | ranges::views::transform([](const auto &datetimePart)
+        {
+            return datetimePart.size();
+        })
+                | ranges::to<std::vector>();
+    }();
+
+    /*! Compute the current datetime prefix parts sizes. */
+    const auto prefixPartsSizes = [&prefixParts]
+    {
+        return prefixParts
+                | ranges::views::transform([](const auto datetimePart)
+        {
+            return datetimePart.size();
+        })
+                | ranges::to<std::vector>();
+    };
+
+    // The size of every part has to be equal
+    return prefixSizes == prefixPartsSizes();
 }
 
 } // namespace Tom

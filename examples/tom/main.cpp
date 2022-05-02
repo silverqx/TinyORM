@@ -52,11 +52,15 @@ int main(int argc, char *argv[])
                    can be absolute or relative (to the pwd at runtime). */
 //                .migrationsPath("database/migrations")
 //                .migrationsPath(std::filesystem::current_path() / "database" / "migrations")
-                .migrations<
-                    _2014_10_12_000000_create_posts_table,
-                    _2014_10_12_100000_add_factor_column_to_posts_table,
-                    _2014_10_12_200000_create_properties_table,
-                    _2014_10_12_300000_create_phones_table>()
+                /* You can name the migration in two formats, CamelCase without the
+                   datetime prefix and snake_case with the datetime prefix.
+                   If the CamelCase name is used then the T_MIGRATION macro has to be
+                   also used in the migration class. */
+                .migrations<CreatePostsTable,
+//                            _2014_10_12_000000_create_posts_table,
+                            AddFactorColumnToPostsTable,
+                            CreatePropertiesTable,
+                            CreatePhonesTable>()
                 // Fire it up 🔥🚀✨
                 .run();
 

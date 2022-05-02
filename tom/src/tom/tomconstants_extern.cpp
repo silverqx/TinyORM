@@ -5,6 +5,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Constants
 {
 
+    const QString DateTimePrefix   = QStringLiteral("yyyy_MM_dd_HHmmss");
+
     // Common strings
     const QString LongOption       = QStringLiteral("--%1");
     const QString LongOptionOnly   = QStringLiteral("    %1");

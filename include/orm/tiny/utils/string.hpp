@@ -35,10 +35,10 @@ namespace Orm::Tiny::Utils
         /*! Convert a value to studly caps case. */
         static QString studly(QString string);
 
-        /*! Check if the given string is the number, signed or unsigned. */
-        static bool isNumber(const QString &string, bool allowFloating = false);
-
 #ifndef TINYORM_DISABLE_TOM
+        /*! Check if the given string is the number, signed or unsigned. */
+        static bool isNumber(const QStringView string, bool allowFloating = false);
+
         /*! Split a string by the given width (not in the middle of a word). */
         static std::vector<QString>
         splitStringByWidth(const QString &string, int width);

@@ -5,8 +5,10 @@
 namespace Migrations
 {
 
-    struct _2014_10_12_300000_create_phones_table : Migration
+    struct CreatePhonesTable : Migration
     {
+        T_MIGRATION
+
         /*! Run the migrations. */
         void up() const override
         {

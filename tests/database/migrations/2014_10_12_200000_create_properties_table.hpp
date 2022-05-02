@@ -5,8 +5,10 @@
 namespace Migrations
 {
 
-    struct _2014_10_12_200000_create_properties_table : Migration
+    struct CreatePropertiesTable : Migration
     {
+        T_MIGRATION
+
         /*! Run the migrations. */
         void up() const override
         {

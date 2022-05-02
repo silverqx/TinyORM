@@ -5,8 +5,10 @@
 namespace Migrations
 {
 
-    struct _2014_10_12_100000_add_factor_column_to_posts_table : Migration
+    struct AddFactorColumnToPostsTable : Migration
     {
+        T_MIGRATION
+
         /*! Run the migrations. */
         void up() const override
         {

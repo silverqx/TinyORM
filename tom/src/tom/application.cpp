@@ -461,7 +461,7 @@ std::shared_ptr<Migrator> Application::createMigrator() const
             std::make_shared<Migrator>(
                 createMigrationRepository(),
                 std::dynamic_pointer_cast<ConnectionResolverInterface>(m_db),
-                m_migrations, m_parser);
+                m_migrations, m_migrationsProperties, m_parser);
 }
 
 /* Others */
