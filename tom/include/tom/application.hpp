@@ -251,7 +251,8 @@ namespace Concerns
         /*! Migrations vector to process. */
         std::vector<std::shared_ptr<Migration>> m_migrations;
         /*! Cache the migration properties by the migration type-id. */
-        std::unordered_map<std::type_index, MigrationProperties> m_migrationsProperties;
+        std::unordered_map<std::type_index,
+                           MigrationProperties> m_migrationsProperties {};
 
         /*! Is this input means interactive? */
         bool m_interactive = true;
