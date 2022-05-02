@@ -589,7 +589,7 @@ namespace Concerns
 
         /* If no table name was provided, we can guess it by concatenating the two
            models using underscores in alphabetical order. The two model names
-           are transformed to snake case from their default CamelCase also. */
+           are transformed to snake case from their default StudlyCase also. */
         if (table.isEmpty())
             table = pivotTableName<Related>();
 
