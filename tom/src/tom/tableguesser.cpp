@@ -10,9 +10,9 @@ namespace Tom
 /* private */
 
 const QString
-TableGuesser::CreatePatterns = QStringLiteral(R"(^create_(\w+)(?:_table)?$)");
+TableGuesser::CreatePatterns = QStringLiteral(R"(^create_(\w+?)(?:_table)?$)");
 const QString
-TableGuesser::ChangePatterns = QStringLiteral(R"(_(?:to|from|in)_(\w+)(?:_table)?$)");
+TableGuesser::ChangePatterns = QStringLiteral(R"(_(?:to|from|in)_(\w+?)(?:_table)?$)");
 
 /* public */
 
