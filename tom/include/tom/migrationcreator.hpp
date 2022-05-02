@@ -31,7 +31,8 @@ namespace Tom
         inline ~MigrationCreator() = default;
 
         /*! Create a new migration at the given path. */
-        fspath create(const QString &name, fspath &&migrationsPath,
+        fspath create(std::string &&datetimePrefix, const QString &name,
+                      std::string &&extension, fspath &&migrationsPath,
                       const QString &table = "", bool create = false) const;
 
     protected:
@@ -45,7 +46,8 @@ namespace Tom
         /*! Get the path to the stubs. */
         fspath stubPath() const;
         /*! Get the full path to the migration. */
-        fspath getPath(const QString &name, const fspath &path) const;
+        fspath getPath(std::string &&datetimePrefix, const QString &name,
+                       std::string &&extension, const fspath &path) const;
         /*! Get the date prefix for the migration. */
         std::string getDatePrefix() const;
 

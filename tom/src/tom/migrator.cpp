@@ -3,36 +3,28 @@
 #include <typeinfo>
 
 #include <orm/databaseconnection.hpp>
-#include <orm/schema/schemabuilder.hpp>
-#include <orm/tiny/utils/string.hpp>
 #include <orm/utils/query.hpp>
 #include <orm/utils/type.hpp>
 
 #include <range/v3/algorithm/contains.hpp>
-#include <range/v3/range/conversion.hpp>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/move.hpp>
-#include <range/v3/view/remove_if.hpp>
 #include <range/v3/view/reverse.hpp>
-#include <range/v3/view/transform.hpp>
 
 #include "tom/exceptions/invalidtemplateargumenterror.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 #include "tom/migration.hpp"
 #include "tom/migrationrepository.hpp"
-#include "tom/tomconstants.hpp"
+#include "tom/tomutils.hpp"
 
 using Orm::DatabaseConnection;
 
 using Orm::Constants::DESC;
-using Orm::Constants::UNDERSCORE;
-
-using StringUtils = Orm::Tiny::Utils::String;
 
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
 
-using Tom::Constants::DateTimePrefix;
+using TomUtils = Tom::Utils;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -453,7 +445,7 @@ void Migrator::throwIfMigrationsNotSorted(const QString &previousMigrationName,
 
 void Migrator::throwIfMigrationFileNameNotValid(const QString &migrationName)
 {
-    if (migrationName.isEmpty() || startsWithDatetimePrefix(migrationName))
+    if (migrationName.isEmpty() || TomUtils::startsWithDatetimePrefix(migrationName))
         return;
 
     throw Exceptions::RuntimeError(
@@ -467,76 +459,13 @@ void Migrator::throwIfMigrationClassNameNotValid(const QString &migrationName)
 {
     Q_ASSERT(!migrationName.isEmpty());
 
-    if (startsWithDatetimePrefix(migrationName))
+    if (TomUtils::startsWithDatetimePrefix(migrationName))
         return;
 
     throw Exceptions::RuntimeError(
                 QStringLiteral(
                     "Migration classname '%1' has to start with the datetime prefix.")
                 .arg(migrationName));
-}
-
-bool Migrator::startsWithDatetimePrefix(const QString &migrationName)
-{
-    /* Datetime prefix 2022_02_02_011255_, the size has to be >18, has to have 4 parts
-       after the split(_), every part has specific size and all parts has to be numbers.
-       I want to avoid the RegEx where it's possible. */
-
-    static const auto datetimePrefixSize = DateTimePrefix.size();
-
-    /* 17 chars datetime prefix, 1 char the last _ character after the datetime prefix,
-       and at least one character for the migration name; >18. */
-    if (migrationName.size() <= datetimePrefixSize + 1)
-        return false;
-
-    const auto datetime = QStringView(migrationName.constBegin(), datetimePrefixSize)
-                          .split(UNDERSCORE);
-
-    // 4 parts
-    if (datetime.size() != 4)
-        return false;
-
-    // The size of every part has to be equal
-    if (!areDatetimePartsEqual(datetime))
-        return false;
-
-    // All parts are numbers
-    return std::ranges::all_of(datetime, [](const auto datetimePart)
-    {
-        return StringUtils::isNumber(datetimePart);
-    });
-}
-
-bool Migrator::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
-{
-    using SizeType = QList<QStringView>::size_type;
-
-    /*! Cached the datetime prefix parts sizes. */
-    static const auto prefixSizes = []
-    {
-        const auto prefixSplitted = DateTimePrefix.split(UNDERSCORE);
-
-        return prefixSplitted
-                | ranges::views::transform([](const auto &datetimePart)
-        {
-            return datetimePart.size();
-        })
-                | ranges::to<std::vector<SizeType>>();
-    }();
-
-    /*! Compute the current datetime prefix parts sizes. */
-    const auto prefixPartsSizes = [&prefixParts]
-    {
-        return prefixParts
-                | ranges::views::transform([](const auto datetimePart)
-        {
-            return datetimePart.size();
-        })
-                | ranges::to<std::vector<SizeType>>();
-    };
-
-    // The size of every part has to be equal
-    return prefixSizes == prefixPartsSizes();
 }
 
 } // namespace Tom

@@ -143,11 +143,6 @@ namespace Tom
         /*! Throw if migration classname is not valid. */
         static void throwIfMigrationClassNameNotValid(const QString &migrationName);
 
-        /*! Check whether a migration name starts with the datetime prefix. */
-        static bool startsWithDatetimePrefix(const QString &migrationName);
-        /*! Check whether all datetime parts are equal to the DateTimePrefix constant. */
-        static bool areDatetimePartsEqual(const QList<QStringView> &prefixParts);
-
         /*! The migration repository instance. */
         std::shared_ptr<MigrationRepository> m_repository;
         /*! The database connection resolver instance. */

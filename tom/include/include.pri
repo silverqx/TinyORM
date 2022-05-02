@@ -45,6 +45,7 @@ headersList += \
     $$PWD/tom/terminal.hpp \
     $$PWD/tom/tomconstants.hpp \
     $$PWD/tom/tomtypes.hpp \
+    $$PWD/tom/tomutils.hpp \
     $$PWD/tom/version.hpp \
 
 HEADERS += $$sorted(headersList)

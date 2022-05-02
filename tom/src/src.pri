@@ -31,6 +31,7 @@ sourcesList += \
     $$PWD/tom/migrator.cpp \
     $$PWD/tom/tableguesser.cpp \
     $$PWD/tom/terminal.cpp \
+    $$PWD/tom/tomutils.cpp \
 
 SOURCES += $$sorted(sourcesList)
 

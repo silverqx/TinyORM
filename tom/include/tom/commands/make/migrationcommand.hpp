@@ -42,8 +42,27 @@ namespace Tom::Commands::Make
         int run() override;
 
     protected:
+        /*! Allows to pass the full migration filename with the datetime prefix. */
+        static std::tuple<std::string, QString, std::string>
+        prepareMigrationName(QString &&migration);
+        /*! Prepare a migration name from the filename. */
+        static std::tuple<std::string, QString, std::string>
+        prepareMigrationNameFromFilename(
+                    bool startsWithDatetimePrefix, QString &&migration, bool hasExt,
+                    std::string &&ext);
+        /*! Try to extract the datetime prefix from the migration name. */
+        static std::string
+        tryExtractDateTimePrefixFromName(
+                    bool startsWithDatetimePrefix, QString &&migration,
+                    QString &migrationName);
+        /*! Try to extract the extension from the migration name. */
+        static std::string
+        tryExtractExtensionFromName(bool hasExt, std::string &&ext,
+                                    QString &migrationName);
+
         /*! Write the migration file to disk. */
-        void writeMigration(const QString &name, const QString &table,
+        void writeMigration(std::string &&datetimePrefix, const QString &name,
+                            std::string &&extension, const QString &table,
                             bool create) const;
 
         /*! Get migration path (either specified by '--path' option or default

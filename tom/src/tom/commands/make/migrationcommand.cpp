@@ -9,6 +9,7 @@
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tableguesser.hpp"
 #include "tom/tomconstants.hpp"
+#include "tom/tomutils.hpp"
 
 namespace fs = std::filesystem;
 
@@ -23,6 +24,9 @@ using Tom::Constants::fullpath;
 using Tom::Constants::path_;
 using Tom::Constants::realpath_;
 using Tom::Constants::table_;
+using Tom::Constants::DateTimePrefix;
+
+using TomUtils = Tom::Utils;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -64,7 +68,8 @@ int MigrationCommand::run()
     /* It's possible for the developer to specify the tables to modify in this
        schema operation. The developer may also specify if this table needs
        to be freshly created so we can create the appropriate migrations. */
-    const auto name = StringUtils::snake(argument(NAME).trimmed());
+    auto [datetimePrefix, migrationName, extension] =
+            prepareMigrationName(argument(NAME).trimmed());
 
     auto table = value(table_);
 
@@ -85,19 +90,101 @@ int MigrationCommand::run()
        "create" in the name. This will allow us to provide a convenient way
        of creating migrations that create new tables for the application. */
     if (table.isEmpty())
-        std::tie(table, create) = TableGuesser::guess(name);
+        std::tie(table, create) = TableGuesser::guess(migrationName);
 
     /* Now we are ready to write the migration out to disk. Once we've written
        the migration out. */
-    writeMigration(name, table, create);
+    writeMigration(std::move(datetimePrefix), migrationName, std::move(extension),
+                   table, create);
 
     return EXIT_SUCCESS;
 }
 
-void MigrationCommand::writeMigration(const QString &name, const QString &table,
-                                      const bool create) const
+/* protected */
+
+std::tuple<std::string, QString, std::string>
+MigrationCommand::prepareMigrationName(QString &&migration)
 {
-    auto migrationFilePath = m_creator.create(name, getMigrationPath(), table, create);
+    // Try to extract the extension from the migration name
+    auto ext = fspath(migration.toStdString()).extension().string();
+    const auto hasExt = !ext.empty();
+
+    const auto startsWithDatetimePrefix = TomUtils::startsWithDatetimePrefix(migration);
+
+    /* Classname was passed on the command-line */
+    if (!startsWithDatetimePrefix && !hasExt)
+        return {{}, StringUtils::snake(std::move(migration)), std::string {}};
+
+    /* Filename was passed on the command-line */
+    return prepareMigrationNameFromFilename(
+                startsWithDatetimePrefix, std::move(migration), hasExt, std::move(ext));
+}
+
+std::tuple<std::string, QString, std::string>
+MigrationCommand::prepareMigrationNameFromFilename(
+            const bool startsWithDatetimePrefix, QString &&migration, const bool hasExt,
+            std::string &&ext)
+{
+    QString migrationName;
+
+    // Try to extract the datetime prefix
+    auto datetimePrefix = tryExtractDateTimePrefixFromName(
+                              startsWithDatetimePrefix, std::move(migration),
+                              migrationName);
+
+    // Try to extract the extension
+    auto extension = tryExtractExtensionFromName(hasExt, std::move(ext), migrationName);
+
+    return {std::move(datetimePrefix), StringUtils::snake(std::move(migrationName)),
+            std::move(extension)};
+}
+
+std::string
+MigrationCommand::tryExtractDateTimePrefixFromName(
+            const bool startsWithDatetimePrefix, QString &&migration,
+            QString &migrationName)
+{
+    // Nothing to extract
+    if (!startsWithDatetimePrefix) {
+        migrationName = std::move(migration);
+
+        return {};
+    }
+
+    const auto dateTimePrefixSize = DateTimePrefix.size();
+
+    // Remove the datetime prefix from the migration name
+    auto datetimePrefix = migration.mid(0, dateTimePrefixSize).toStdString();
+    // +1 to exclude the _ after the datetime prefix
+    migrationName = migration.mid(dateTimePrefixSize + 1);
+
+    return datetimePrefix;
+}
+
+std::string
+MigrationCommand::tryExtractExtensionFromName(const bool hasExt, std::string &&ext,
+                                              QString &migrationName)
+{
+    // Nothing to extract
+    if (!hasExt)
+        return {};
+
+    auto extension = std::move(ext);
+
+    // Remove the extension from the migration name
+    migrationName.truncate(migrationName.size() -
+                           static_cast<QString::size_type>(extension.size()));
+
+    return extension;
+}
+
+void MigrationCommand::writeMigration(
+            std::string &&datetimePrefix, const QString &name, std::string &&extension,
+            const QString &table, const bool create) const
+{
+    auto migrationFilePath = m_creator.create(
+                                 std::move(datetimePrefix), name, std::move(extension),
+                                 getMigrationPath(), table, create);
 
     // make_preferred() returns reference and filename() creates a new fs::path instance
     const auto migrationFile = isSet(fullpath) ? migrationFilePath.make_preferred()

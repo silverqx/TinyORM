@@ -286,6 +286,7 @@ function(tinytom_sources out_headers out_sources)
         terminal.hpp
         tomconstants.hpp
         tomtypes.hpp
+        tomutils.hpp
         version.hpp
     )
 
@@ -327,6 +328,7 @@ function(tinytom_sources out_headers out_sources)
         migrator.cpp
         tableguesser.cpp
         terminal.cpp
+        tomutils.cpp
     )
 
     list(SORT headers)

@@ -31,10 +31,12 @@ namespace Tom
 
 /* public */
 
-fspath MigrationCreator::create(const QString &name, fspath &&migrationsPath,
-                                const QString &table, const bool create) const
+fspath MigrationCreator::create(
+            std::string &&datetimePrefix, const QString &name, std::string &&extension,
+            fspath &&migrationsPath, const QString &table, const bool create) const
 {
-    auto migrationPath = getPath(name, migrationsPath);
+    auto migrationPath = getPath(std::move(datetimePrefix), name, std::move(extension),
+                                 migrationsPath);
 
     throwIfMigrationAlreadyExists(name, migrationsPath);
 
@@ -104,9 +106,17 @@ fspath MigrationCreator::stubPath() const
     return fspath(__FILE__).parent_path() / "stubs";
 }
 
-fspath MigrationCreator::getPath(const QString &name, const fspath &path) const
+fspath MigrationCreator::getPath(std::string &&datetimePrefix, const QString &name,
+                                 std::string &&extension, const fspath &path) const
 {
-    return path / (getDatePrefix() + "_" + name.toStdString() + ".hpp");
+    std::string filename = datetimePrefix.empty() ? getDatePrefix()
+                                                  : std::move(datetimePrefix);
+
+    filename += '_' + name.toStdString();
+
+    filename += extension.empty() ? ".hpp" : std::move(extension);
+
+    return path / std::move(filename);
 }
 
 std::string MigrationCreator::getDatePrefix() const

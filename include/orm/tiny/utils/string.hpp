@@ -37,7 +37,7 @@ namespace Orm::Tiny::Utils
 
 #ifndef TINYORM_DISABLE_TOM
         /*! Check if the given string is the number, signed or unsigned. */
-        static bool isNumber(const QStringView string, bool allowFloating = false);
+        static bool isNumber(QStringView string, bool allowFloating = false);
 
         /*! Split a string by the given width (not in the middle of a word). */
         static std::vector<QString>
