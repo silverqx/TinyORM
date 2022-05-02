@@ -282,6 +282,7 @@ function(tinytom_sources out_headers out_sources)
         migrationcreator.hpp
         migrationrepository.hpp
         migrator.hpp
+        tableguesser.hpp
         terminal.hpp
         tomconstants.hpp
         tomtypes.hpp
@@ -324,6 +325,7 @@ function(tinytom_sources out_headers out_sources)
         migrationcreator.cpp
         migrationrepository.cpp
         migrator.cpp
+        tableguesser.cpp
         terminal.cpp
     )
 

@@ -41,6 +41,7 @@ headersList += \
     $$PWD/tom/migrationcreator.hpp \
     $$PWD/tom/migrationrepository.hpp \
     $$PWD/tom/migrator.hpp \
+    $$PWD/tom/tableguesser.hpp \
     $$PWD/tom/terminal.hpp \
     $$PWD/tom/tomconstants.hpp \
     $$PWD/tom/tomtypes.hpp \

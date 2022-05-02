@@ -7,6 +7,7 @@
 
 #include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
+#include "tom/tableguesser.hpp"
 #include "tom/tomconstants.hpp"
 
 namespace fs = std::filesystem;
@@ -83,8 +84,8 @@ int MigrationCommand::run()
     /* Next, we will attempt to guess the table name if the migration name has
        "create" in the name. This will allow us to provide a convenient way
        of creating migrations that create new tables for the application. */
-//    if (!table.isEmpty())
-//        auto [table, create] = TableGuesser::guess(name);
+    if (table.isEmpty())
+        std::tie(table, create) = TableGuesser::guess(name);
 
     /* Now we are ready to write the migration out to disk. Once we've written
        the migration out. */

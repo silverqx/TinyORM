@@ -29,6 +29,7 @@ sourcesList += \
     $$PWD/tom/migrationcreator.cpp \
     $$PWD/tom/migrationrepository.cpp \
     $$PWD/tom/migrator.cpp \
+    $$PWD/tom/tableguesser.cpp \
     $$PWD/tom/terminal.cpp \
 
 SOURCES += $$sorted(sourcesList)
