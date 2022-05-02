@@ -31,7 +31,6 @@ std::tuple<QString, bool> TableGuesser::guess(const QString &migration)
     }
 
     {
-        // CUR tom, const QRegularExpression everywhere silverqx
         static const QRegularExpression regex(ChangePatterns);
 
         const auto match = regex.match(migration);
