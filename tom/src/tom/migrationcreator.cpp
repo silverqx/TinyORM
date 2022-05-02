@@ -4,7 +4,6 @@
 
 #include <fstream>
 
-#include <orm/constants.hpp>
 #include <orm/tiny/utils/string.hpp>
 
 #include "tom/commands/make/stubs/migrationstubs.hpp"
@@ -14,8 +13,6 @@
 namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
-
-using Orm::Constants::DOT;
 
 using StringUtils = Orm::Tiny::Utils::String;
 
@@ -72,12 +69,9 @@ void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
         if (!entry.is_regular_file())
             continue;
 
-        // CUR tom, use stem silverqx
         // Extract migration name without datetime prefix and extension
-        auto entryName = QString::fromStdString(entry.path().filename().string())
+        auto entryName = QString::fromStdString(entry.path().stem().string())
                          .mid(DateTimePrefix.size() + 1);
-
-        entryName.truncate(entryName.lastIndexOf(DOT));
 
         if (entryName == name)
             throw Exceptions::InvalidArgumentError(
