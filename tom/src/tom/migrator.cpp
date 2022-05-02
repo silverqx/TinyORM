@@ -509,6 +509,8 @@ bool Migrator::startsWithDatetimePrefix(const QString &migrationName)
 
 bool Migrator::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
 {
+    using SizeType = QList<QStringView>::size_type;
+
     /*! Cached the datetime prefix parts sizes. */
     static const auto prefixSizes = []
     {
@@ -519,7 +521,7 @@ bool Migrator::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
         {
             return datetimePart.size();
         })
-                | ranges::to<std::vector>();
+                | ranges::to<std::vector<SizeType>>();
     }();
 
     /*! Compute the current datetime prefix parts sizes. */
@@ -530,7 +532,7 @@ bool Migrator::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
         {
             return datetimePart.size();
         })
-                | ranges::to<std::vector>();
+                | ranges::to<std::vector<SizeType>>();
     };
 
     // The size of every part has to be equal
