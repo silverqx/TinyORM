@@ -236,6 +236,7 @@ But a special situation is when you are building your application / library and 
 | `TINYORM_INLINE_CONSTANTS`        | Defined when global inline constants are used.<br/><small>Defined when [`inline_constants`](#inline_constants) <small>(qmake)</small> / [`INLINE_CONSTANTS`](#INLINE_CONSTANTS) <small>(cmake)</small> configuration `build option` is enabled.</small> |
 | `TINYORM_TESTS_CODE`              | Enable code needed by unit tests, eg. connection overriding in the `Orm::Tiny::Model`.<br/><small>Defined when [`build_tests`](#build_tests) <small>(qmake)</small> / [`BUILD_TESTS`](#BUILD_TESTS) <small>(cmake)</small> configuration `build option` is enabled.</small> |
 | `TINYORM_DISABLE_THREAD_LOCAL`    | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables threading support.<br/><small>Defined when [`disable_thread_local`](#disable_thread_local) <small>(qmake)</small> / [`DISABLE_THREAD_LOCAL`](#DISABLE_THREAD_LOCAL) <small>(cmake)</small> configuration `build option` is enabled.</small> |
+| `TINYTOM_MIGRATIONS_PATH`         | Default migrations path for the `make:migration` command.<br/><small>Default value: `/examples/tom/database/migrations`</small><br/><small>Defined by [`TOM_MIGRATIONS_PATH`](#TOM_MIGRATIONS_PATH) <small>(cmake)</small> configuration build option.<br/><small>(qmake note) You can use `DEFINES += TINYTOM_MIGRATIONS_PATH="\"database/migrations\""` on the command-line or set it in the __main__ [`conf.pri`](https://github.com/silverqx/TinyORM/blob/develop/conf.pri.example#L4-L9) file.</small></small> |
 
 </APITable>
 </div>
@@ -340,6 +341,9 @@ CMake multi-config generators like `Ninja Multi-Config` or `Visual Studio 16 201
 | `MSVC_RUNTIME_DYNAMIC`            | `ON`    | Use MSVC dynamic runtime library (`-MD`) instead of static (`-MT`), also considers a Debug configuration (`-MTd`, `-MDd`).<br/><small>Available when: `MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY`</small> |
 | `MYSQL_PING`                      | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
 | `ORM`                             | `ON`    | Controls the compilation of all `ORM-related` source code, when this option is `disabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
+| `TOM`                             | `ON`    | Controls the compilation of all `Tom-related` source code, when this option is `disabled`, then it also excludes `Tom-related` unit tests. |
+| `TOM_EXAMPLE`                     | `OFF`   | Build the <abbr title='TinyORM Migrations'>`Tom`</abbr> command-line application example (console application). |
+| `TOM_MIGRATIONS_PATH`             | `-`     | Default migrations path for the `make:migration` command.<br/><small>Default value: `/examples/tom/database/migrations`</small> |
 | `VERBOSE_CONFIGURE`               | `OFF`   | Show information about `PACKAGES_FOUND` / `PACKAGES_NOT_FOUND` in the CMake configure output. |
 
 </APITable>
@@ -525,9 +529,11 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `build_tests`                       | `OFF`   | Build TinyORM unit tests. |
 | `disable_thread_local`              | `OFF`   | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables threading support. |
 | `disable_orm`                       | `OFF`   | Controls the compilation of all `ORM-related` source code, when this option is `enabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
+| `disable_tom`                       | `OFF`   | Controls the compilation of all `Tom-related` source code, when this option is `disabled`, then it also excludes `Tom-related` unit tests. |
 | `inline_constants`                  | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: <code>CONFIG(shared\|dll)</code></small> |
 | `link_pkgconfig_off`                | `OFF`   | Link against `libmariadb` with `PKGCONFIG`.<br/>Used only in the `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L27).<br/><small>Available when: <code>(win32-g++\|win32-clang-g++):mysql:!static:!staticlib</code></small> |
 | `mysql_ping`                        | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
+| `tom_example`                       | `OFF`   | Build the <abbr title='TinyORM Migrations'>`Tom`</abbr> command-line application example (console application). |
 
 </APITable>
 </div>
