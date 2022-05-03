@@ -1,13 +1,17 @@
 ---
 sidebar_position: 7
-description: The TinyORM Schema facade provides database agnostic support for creating and manipulating tables across all of TinyORM's supported database systems. Typically, migrations will use this facade to create and modify database tables and columns.
+description: Migrations are like version control for your database, allowing your team to define and share the application's database schema definition. Migrations use the Schema facade that provides database agnostic support for creating and manipulating tables across all of TinyORM's supported database systems.
 ---
 
 import APITable from '@theme/APITable'
 
-# Database: Schema Builder
+# Database: Migrations
 
 - [Introduction](#introduction)
+- [Generating Migrations](#generating-migrations)
+- [Migration Structure](#migration-structure)
+- [Running Migrations](#running-migrations)
+    - [Rolling Back Migrations](#rolling-back-migrations)
 - [Tables](#tables)
     - [Creating Tables](#creating-tables)
     - [Updating Tables](#updating-tables)
@@ -26,10 +30,144 @@ import APITable from '@theme/APITable'
 
 ## Introduction
 
+Migrations are like version control for your database, allowing your team to define and share the application's database schema definition. If you have ever had to tell a teammate to manually add a column to their local database schema after pulling in your changes from source control, you've faced the problem that database migrations solve.
+
 The TinyORM `Schema` facade provides database agnostic support for creating and manipulating tables across all of TinyORM's supported database systems. Typically, migrations will use this facade to create and modify database tables and columns.
 
 :::caution
 Currently, TinyORM's schema builder provides first-party support for the MySQL database only. Support for the PostgreSQL and SQLite databases is not implemented 😢.
+:::
+
+## Generating Migrations
+
+You may use the `make:migration` Tom command to generate a database migration. The new migration will be placed in your `database/migrations` directory. Each migration filename contains a timestamp that allows Tom to determine the order of the migrations:
+
+```bash
+tom make:migration create_posts_table
+```
+
+Tom will use the name of the migration to attempt to guess the name of the table and whether or not the migration will be creating a new table. If Tom is able to determine the table name from the migration name, Tom will pre-fill the generated migration file with the specified table. Otherwise, you may simply specify the table in the migration file manually.
+
+If you would like to specify a custom path for the generated migration, you may use the `--path` option when executing the `make:migration` command. The given path can be absolute or should be relative to your pwd.
+
+## Migration Structure
+
+A migration class contains two methods: `up` and `down`. The `up` method is used to add new tables, columns, or indexes to your database, while the `down` method should reverse the operations performed by the `up` method.
+
+Within both of these methods, you may use the TinyORM schema builder to expressively create and modify tables. To learn about all of the methods available on the `Schema` builder, [check out its documentation](#creating-tables). For example, the following migration creates a `posts` table:
+
+    #pragma once
+
+    #include <tom/migration.hpp>
+
+    namespace Migrations
+    {
+
+        struct CreatePostsTable : Migration
+        {
+            /*! Filename of the migration file. */
+            T_MIGRATION
+
+            /*! Run the migrations. */
+            void up() const override
+            {
+                Schema::create("posts", [](Blueprint &table)
+                {
+                    table.id();
+
+                    table.string(NAME);
+                    table.timestamps();
+                });
+            }
+
+            /*! Reverse the migrations. */
+            void down() const override
+            {
+                Schema::dropIfExists("posts");
+            }
+        };
+
+    } // namespace Migrations
+
+#### Setting The Migration Connection
+
+If your migration will be interacting with a database connection other than your application's default database connection, you should set the `connection` data member of your migration:
+
+    /*! The name of the database connection to use. */
+    QString connection = QStringLiteral("tinyorm_example");
+
+    /*! Run the migrations. */
+    void up() const override
+    {
+        //
+    }
+
+## Running Migrations
+
+To run all of your outstanding migrations, execute the `migrate` Tom command:
+
+```bash
+tom migrate
+```
+
+If you would like to see which migrations have run thus far, you may use the `migrate:status` Tom command:
+
+```bash
+tom migrate:status
+```
+
+#### Forcing Migrations To Run In Production
+
+Some migration operations are destructive, which means they may cause you to lose data. In order to protect you from running these commands against your production database, you will be prompted for confirmation before the commands are executed. To force the commands to run without a prompt, use the `--force` flag:
+
+```bash
+tom migrate --force
+```
+
+### Rolling Back Migrations
+
+To roll back the latest migration operation, you may use the `rollback` Tom command. This command rolls back the last "batch" of migrations, which may include multiple migration files:
+
+```bash
+tom migrate:rollback
+```
+
+You may roll back a limited number of migrations by providing the `step` option to the `rollback` command. For example, the following command will roll back the last five migrations:
+
+```bash
+tom migrate:rollback --step=5
+```
+
+The `migrate:reset` command will roll back all of your application's migrations:
+
+```bash
+tom migrate:reset
+```
+
+#### Roll Back & Migrate Using A Single Command
+
+The `migrate:refresh` command will roll back all of your migrations and then execute the `migrate` command. This command effectively re-creates your entire database:
+
+```bash
+tom migrate:refresh
+```
+
+You may roll back and re-migrate a limited number of migrations by providing the `step` option to the `refresh` command. For example, the following command will roll back and re-migrate the last five migrations:
+
+```bash
+tom migrate:refresh --step=5
+```
+
+#### Drop All Tables & Migrate
+
+The `migrate:fresh` command will drop all tables from the database and then execute the `migrate` command:
+
+```bash
+tom migrate:fresh
+```
+
+:::caution
+The `migrate:fresh` command will drop all database tables regardless of their prefix. This command should be used with caution when developing on a database that is shared with other applications.
 :::
 
 ## Tables
