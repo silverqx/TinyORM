@@ -1347,3 +1347,4 @@ TINYORM_END_COMMON_NAMESPACE
 // TODO github actions, update llvm analyzer tools to llvm 14 (clang-tidy/clazy), also qa-lint-tinyorm-qtX.ps1 tools silverqx
 // CUR check all unique_ptr() of base clases, if base classes have virtual dtors, or find unique_ptrs of aggregates to base classes silverqx
 // CUR use EMPTY constant everywhere silverqx
+// CUR tom, squashing migrations silverqx
