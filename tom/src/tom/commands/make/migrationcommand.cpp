@@ -15,7 +15,9 @@ namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
 
+using Orm::Constants::DASH;
 using Orm::Constants::NAME;
+using Orm::Constants::UNDERSCORE;
 
 using StringUtils = Orm::Tiny::Utils::String;
 
@@ -69,7 +71,7 @@ int MigrationCommand::run()
        schema operation. The developer may also specify if this table needs
        to be freshly created so we can create the appropriate migrations. */
     auto [datetimePrefix, migrationName, extension] =
-            prepareMigrationName(argument(NAME).trimmed());
+            prepareMigrationNameClassname(argument(NAME).trimmed());
 
     auto table = value(table_);
 
@@ -103,7 +105,7 @@ int MigrationCommand::run()
 /* protected */
 
 std::tuple<std::string, QString, std::string>
-MigrationCommand::prepareMigrationName(QString &&migration)
+MigrationCommand::prepareMigrationNameClassname(QString &&migration)
 {
     // Try to extract the extension from the migration name
     auto ext = fspath(migration.toStdString()).extension().string();
@@ -113,7 +115,7 @@ MigrationCommand::prepareMigrationName(QString &&migration)
 
     /* Classname was passed on the command-line */
     if (!startsWithDatetimePrefix && !hasExt)
-        return {{}, StringUtils::snake(std::move(migration)), std::string {}};
+        return {{}, prepareFinalMigrationName(std::move(migration)), std::string {}};
 
     /* Filename was passed on the command-line */
     return prepareMigrationNameFromFilename(
@@ -135,7 +137,8 @@ MigrationCommand::prepareMigrationNameFromFilename(
     // Try to extract the extension
     auto extension = tryExtractExtensionFromName(hasExt, std::move(ext), migrationName);
 
-    return {std::move(datetimePrefix), StringUtils::snake(std::move(migrationName)),
+    return {std::move(datetimePrefix),
+            prepareFinalMigrationName(std::move(migrationName)),
             std::move(extension)};
 }
 
@@ -176,6 +179,11 @@ MigrationCommand::tryExtractExtensionFromName(const bool hasExt, std::string &&e
                            static_cast<QString::size_type>(extension.size()));
 
     return extension;
+}
+
+QString MigrationCommand::prepareFinalMigrationName(QString &&migration)
+{
+    return StringUtils::snake(std::move(migration)).replace(DASH, UNDERSCORE);
 }
 
 void MigrationCommand::writeMigration(
