@@ -52,6 +52,10 @@ Rules are, if the migration name starts with the `create_` string then the stub 
 
 If you would like to specify a custom path for the generated migration, you may use the `--path` option when executing the `make:migration` command. The given path can be absolute or should be relative to your pwd.
 
+:::tip
+You can also pass the full migration filename with the datetime prefix and extension to the `tom make:migration`. This command is able to detect almost any combination of the passed value, with or without datetime prefix or extension if it is the filename; or StudlyCase, snake_case, or kebab-case if it is the classname or any combination described above. 👀
+:::
+
 ## Migration Structure
 
 A migration class contains two methods: `up` and `down`. The `up` method is used to add new tables, columns, or indexes to your database, while the `down` method should reverse the operations performed by the `up` method.
