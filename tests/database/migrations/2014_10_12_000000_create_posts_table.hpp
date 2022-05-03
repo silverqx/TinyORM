@@ -2,7 +2,10 @@
 
 #include <tom/migration.hpp>
 
-/* This class serves as a showcase, so all possible features are defined / used. */
+/* This class serves as a showcase, so all possible features are defined / used.
+   Only PostgreSQL and Microsoft SQL Server support the 'withinTransaction' option,
+   as TinyORM Schema builder currently only supports MySQL server, this option is
+   unused. */
 
 namespace Migrations
 {
