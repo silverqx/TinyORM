@@ -174,7 +174,7 @@ feature_option_dependent(TOM_EXAMPLE
 )
 # Depends on the TOM_EXAMPLE option so defined here
 if(TOM_EXAMPLE)
-    # Provide the default migrations path
+    # Provide the default migrations path for the make:migration command
     if(NOT DEFINED TOM_MIGRATIONS_PATH)
         file(REAL_PATH "${TomExample_folder}/database/migrations" TOM_MIGRATIONS_PATH)
     endif()
