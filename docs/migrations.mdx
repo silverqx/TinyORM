@@ -48,6 +48,8 @@ tom make:migration create_posts_table
 
 Tom will use the name of the migration to attempt to guess the name of the table and whether or not the migration will be creating a new table. If Tom is able to determine the table name from the migration name, Tom will pre-fill the generated migration file with the specified table. Otherwise, you may simply specify the table in the migration file manually.
 
+Rules are, if the migration name starts with the `create_` string then the stub for table creation will be used and if the migration name contains `_(from|to|in)_` then the stub for table update will be used. You can override these rules using the `--create` and `--table` options and specify the table name manually.
+
 If you would like to specify a custom path for the generated migration, you may use the `--path` option when executing the `make:migration` command. The given path can be absolute or should be relative to your pwd.
 
 ## Migration Structure
@@ -115,6 +117,10 @@ If you would like to see which migrations have run thus far, you may use the `mi
 ```bash
 tom migrate:status
 ```
+
+:::tip
+Many `tom` commands offer variety of options, you can explore them using the `tom list` and `tom help` commands. In most cases, these commands and options are self-explanatory.
+:::
 
 #### Forcing Migrations To Run In Production
 
