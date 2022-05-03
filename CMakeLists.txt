@@ -176,7 +176,8 @@ feature_option_dependent(TOM_EXAMPLE
 if(TOM_EXAMPLE)
     # Provide the default migrations path for the make:migration command
     if(NOT DEFINED TOM_MIGRATIONS_PATH)
-        file(REAL_PATH "${TomExample_folder}/database/migrations" TOM_MIGRATIONS_PATH)
+        file(REAL_PATH "${TomExample_folder}/${TomMigrations_folder}" TOM_MIGRATIONS_PATH
+             BASE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     endif()
 
     # Set path from the -D option or from the above file(REAL_PATH) command

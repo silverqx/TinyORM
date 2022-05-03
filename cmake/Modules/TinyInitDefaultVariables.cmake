@@ -151,6 +151,8 @@ macro(tiny_init_tiny_variables_pre)
     set(TomExample_target tom)
     # Targets' folders
     set(TomExample_folder examples/tom)
+    # Tom migrations folder for the make:migration
+    set(TomMigrations_folder database/migrations)
 
     get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
     set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL
