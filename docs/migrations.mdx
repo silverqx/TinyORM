@@ -48,12 +48,14 @@ tom make:migration create_posts_table
 
 Tom will use the name of the migration to attempt to guess the name of the table and whether or not the migration will be creating a new table. If Tom is able to determine the table name from the migration name, Tom will pre-fill the generated migration file with the specified table. Otherwise, you may simply specify the table in the migration file manually.
 
-Rules are, if the migration name starts with the `create_` string then the stub for table creation will be used and if the migration name contains `_(from|to|in)_` then the stub for table update will be used. You can override these rules using the `--create` and `--table` options and specify the table name manually.
+If you would like to specify a custom path for the generated migration, you may use the `--path` option when executing the `make:migration` command. The given path should be relative to your <abbr title='Current working directory'>pwd</abbr> or you can use the `--realpath` option and pass the absolute path to the `--path` option.
 
-If you would like to specify a custom path for the generated migration, you may use the `--path` option when executing the `make:migration` command. The given path can be absolute or should be relative to your pwd.
+#### Migrations naming rules
+
+If the migration name starts with the `create_` string then the stub for table creation will be used and if the migration name contains `_(from|to|in)_` then the stub for table update will be used. You can override these rules using the `--create` and `--table` options and specify the table name manually.
 
 :::tip
-You can also pass the full migration filename with the datetime prefix and extension to the `tom make:migration`. This command is able to detect almost any combination of the passed value, with or without datetime prefix or extension if it is the filename; or StudlyCase, snake_case, or kebab-case if it is the classname or any combination described above. 👀
+You can also pass the full migration filename with the datetime prefix and extension to the `make:migration`. This command is able to detect almost any combination of the passed value, with or without datetime prefix or extension if it is the filename; or StudlyCase, snake_case, or kebab-case if it is the classname or any combination described above. 👀
 :::
 
 ## Migration Structure
@@ -94,6 +96,30 @@ Within both of these methods, you may use the TinyORM schema builder to expressi
         };
 
     } // namespace Migrations
+
+Migration classes can be named in two formats, StudlyCase without the datetime prefix and snake_case with the datetime prefix. If the StudlyCase name is used then the `T_MIGRATION` macro must also be used in the migration class.
+
+Naming with the datetime prefix should look like this.
+
+    struct _2014_10_12_000000_create_posts_table : Migration
+    {
+
+        /*! Run the migrations. */
+        void up() const override
+        {
+            //
+        }
+
+        /*! Reverse the migrations. */
+        void down() const override
+        {
+            //
+        }
+    };
+
+:::tip
+The StudlyCase naming is preferred. Also the `make:migration` command generates migrations in this format.
+:::
 
 #### Setting The Migration Connection
 
