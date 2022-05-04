@@ -152,6 +152,10 @@ tom migrate:status
 Many `tom` commands offer variety of options, you can explore them using the `tom list` and `tom help` commands. In most cases, these commands and options are self-explanatory.
 :::
 
+:::tip
+The `tom` command is able to guess the command name and command namespace, eg. `tom mig:st` or `tom m:rol`, ...
+:::
+
 #### Forcing Migrations To Run In Production
 
 Some migration operations are destructive, which means they may cause you to lose data. In order to protect you from running these commands against your production database, you will be prompted for confirmation before the commands are executed. To force the commands to run without a prompt, use the `--force` flag:
