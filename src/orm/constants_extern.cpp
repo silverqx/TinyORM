@@ -83,7 +83,8 @@ namespace Orm::Constants
     const QString InnoDB    = QStringLiteral("InnoDB");
     const QString MyISAM    = QStringLiteral("MyISAM");
 
-    const QString NotImplemented = QStringLiteral("Not implemented :/.");
+    const QString UTF8MB40900aici = QStringLiteral("utf8mb4_0900_ai_ci");
+    const QString NotImplemented  = QStringLiteral("Not implemented :/.");
 
     // Comparison/logical/search operators
     const QString EQ       = QStringLiteral("=");

@@ -94,6 +94,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString InnoDB;
     SHAREDLIB_EXPORT extern const QString MyISAM;
 
+    SHAREDLIB_EXPORT extern const QString UTF8MB40900aici;
     SHAREDLIB_EXPORT extern const QString NotImplemented;
 
     // Comparison/logical/search operators

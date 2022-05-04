@@ -13,6 +13,7 @@ using Orm::Constants::P3306;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::SYSTEM;
 using Orm::Constants::UTF8MB4;
+using Orm::Constants::UTF8MB40900aici;
 using Orm::Constants::charset_;
 using Orm::Constants::collation_;
 using Orm::Constants::database_;
@@ -83,8 +84,7 @@ std::shared_ptr<DatabaseManager> setupManager()
         {username_,       qEnvironmentVariable("DB_MYSQL_USERNAME", EMPTY)},
         {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
         {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
-        {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION",
-                                               QStringLiteral("utf8mb4_0900_ai_ci"))},
+        {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
         {timezone_,       SYSTEM},
         {prefix_,         EMPTY},
         {prefix_indexes,  true},

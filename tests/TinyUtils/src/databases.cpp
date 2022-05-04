@@ -34,6 +34,7 @@ using Orm::Constants::username_;
 using Orm::Constants::UTC;
 using Orm::Constants::UTF8;
 using Orm::Constants::UTF8MB4;
+using Orm::Constants::UTF8MB40900aici;
 
 using Orm::DB;
 
@@ -158,8 +159,7 @@ Databases::mysqlConfiguration()
         {username_,  qEnvironmentVariable("DB_MYSQL_USERNAME", ROOT)},
         {password_,  qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
         {charset_,   qEnvironmentVariable("DB_MYSQL_CHARSET",  UTF8MB4)},
-        {collation_, qEnvironmentVariable("DB_MYSQL_COLLATION",
-                                          QStringLiteral("utf8mb4_0900_ai_ci"))},
+        {collation_, qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
         // Very important for tests
         {timezone_,       "+00:00"},
         {prefix_,         ""},
