@@ -40,13 +40,13 @@ Currently, TinyORM's schema builder provides first-party support for the MySQL d
 
 ## Generating Migrations
 
-You may use the `make:migration` Tom command to generate a database migration. The new migration will be placed in your `database/migrations` directory. Each migration filename contains a timestamp that allows Tom to determine the order of the migrations:
+You may use the `make:migration` tom command to generate a database migration. The new migration will be placed in your `database/migrations` directory. Each migration filename contains a timestamp that allows tom to determine the order of the migrations:
 
 ```bash
 tom make:migration create_posts_table
 ```
 
-Tom will use the name of the migration to attempt to guess the name of the table and whether or not the migration will be creating a new table. If Tom is able to determine the table name from the migration name, Tom will pre-fill the generated migration file with the specified table. Otherwise, you may simply specify the table in the migration file manually.
+tom will use the name of the migration to attempt to guess the name of the table and whether or not the migration will be creating a new table. If tom is able to determine the table name from the migration name, tom will pre-fill the generated migration file with the specified table. Otherwise, you may simply specify the table in the migration file manually.
 
 If you would like to specify a custom path for the generated migration, you may use the `--path` option when executing the `make:migration` command. The given path should be relative to your <abbr title='Current working directory'>pwd</abbr> or you can use the `--realpath` option and pass the absolute path to the `--path` option.
 
@@ -142,7 +142,7 @@ To run all of your outstanding migrations, execute the `migrate` Tom command:
 tom migrate
 ```
 
-If you would like to see which migrations have run thus far, you may use the `migrate:status` Tom command:
+If you would like to see which migrations have run thus far, you may use the `migrate:status` tom command:
 
 ```bash
 tom migrate:status
