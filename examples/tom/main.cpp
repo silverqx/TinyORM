@@ -99,10 +99,10 @@ std::shared_ptr<DatabaseManager> setupManager()
 /* Alternative syntax to instantiate migration classes. */
 //        return TomApplication(argc, argv, db, "TOM_EXAMPLE_ENV",
 //        {
-//            std::make_shared<_2014_10_12_000000_create_posts_table>(),
-//            std::make_shared<_2014_10_12_100000_add_factor_column_to_posts_table>(),
-//            std::make_shared<_2014_10_12_200000_create_properties_table>(),
-//            std::make_shared<_2014_10_12_300000_create_phones_table>(),
+//            std::make_shared<CreatePostsTable>(),
+//            std::make_shared<AddFactorColumnToPostsTable>(),
+//            std::make_shared<CreatePropertiesTable>(),
+//            std::make_shared<CreatePhonesTable>(),
 //        })
 //            // Fire it up 🔥🚀✨
 //            .run();
