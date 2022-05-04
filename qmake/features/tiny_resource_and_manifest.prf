@@ -55,7 +55,13 @@ defineReplace(tiny_configure_cmake_rc) {
     defined(3, var):!isEmpty(3): rcBasename = $$3
     else: rcBasename = $$TARGET
 
-    rcFile = $$absolute_path($$1/$${rcBasename}.rc.in)
+    # This solved problem with the © character, problem with the encoding
+    # MinGW
+    win32-g++|win32-clang-g++: \
+        rcFile = $$absolute_path($$1/$${rcBasename}.rc.in)
+    else: \
+        rcFile = $$absolute_path($$1/$${rcBasename}.nopragma.rc.in)
+
     exists(rcFile) {
         error( "Windows RC file $$rcFile does not exists, the path passed to the\
                 tiny_configure_cmake_rc() was $${1}." )

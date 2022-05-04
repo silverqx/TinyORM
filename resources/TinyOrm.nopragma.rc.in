@@ -1,17 +1,17 @@
-#pragma code_page(65001) // UTF-8
+//#pragma code_page(65001) // UTF-8
 
-//IDI_ICON1 ICON "icons/@TinyUtils_target@.ico"
+IDI_ICON1 ICON "icons/@TinyOrm_target@.ico"
 
 #include <windows.h>
-#include "version.hpp"
+#include "orm/version.hpp"
 
-#define VER_FILEVERSION             TINYUTILS_VERSION_MAJOR,TINYUTILS_VERSION_MINOR,TINYUTILS_VERSION_BUGFIX,TINYUTILS_VERSION_BUILD
-#define VER_FILEVERSION_STR         TINYUTILS_FILEVERSION_STR "\0"
+#define VER_FILEVERSION             TINYORM_VERSION_MAJOR,TINYORM_VERSION_MINOR,TINYORM_VERSION_BUGFIX,TINYORM_VERSION_BUILD
+#define VER_FILEVERSION_STR         TINYORM_FILEVERSION_STR "\0"
 
-#define VER_PRODUCTVERSION          TINYUTILS_VERSION_MAJOR,TINYUTILS_VERSION_MINOR,TINYUTILS_VERSION_BUGFIX,TINYUTILS_VERSION_BUILD
-#define VER_PRODUCTVERSION_STR      TINYUTILS_VERSION_STR "\0"
+#define VER_PRODUCTVERSION          TINYORM_VERSION_MAJOR,TINYORM_VERSION_MINOR,TINYORM_VERSION_BUGFIX,TINYORM_VERSION_BUILD
+#define VER_PRODUCTVERSION_STR      TINYORM_VERSION_STR "\0"
 
-#define VER_ORIGINALFILENAME_STR    "$<TARGET_FILE_NAME:@TinyUtils_target@>\0"
+#define VER_ORIGINALFILENAME_STR    "$<TARGET_FILE_NAME:@TinyOrm_target@>\0"
 
 #ifdef TINYORM_NO_DEBUG
 #  define VER_DEBUG                 0
@@ -33,11 +33,11 @@ VS_VERSION_INFO VERSIONINFO
             BLOCK "040904B0"
             BEGIN
                 VALUE "CompanyName",      "Crystal Studio\0"
-                VALUE "FileDescription",  "Utils library for TinyORM tests\0"
+                VALUE "FileDescription",  "TinyORM user-friendly ORM\0"
                 VALUE "FileVersion",      VER_FILEVERSION_STR
-                VALUE "InternalName",     "TinyUtils\0"
+                VALUE "InternalName",     "TinyOrm\0"
                 VALUE "LegalCopyright",   "Copyright (©) 2021 Crystal Studio\0"
-                VALUE "ProductName",      "TinyUtils\0"
+                VALUE "ProductName",      "TinyORM\0"
                 VALUE "ProductVersion",   VER_PRODUCTVERSION_STR
                 VALUE "OriginalFilename", VER_ORIGINALFILENAME_STR
             END
@@ -51,5 +51,5 @@ VS_VERSION_INFO VERSIONINFO
 /* End of Version info */
 
 #ifdef __MINGW32__
-ISOLATIONAWARE_MANIFEST_RESOURCE_ID RT_MANIFEST "@TinyUtils_target@$<TARGET_FILE_SUFFIX:@TinyUtils_target@>.manifest"
+ISOLATIONAWARE_MANIFEST_RESOURCE_ID RT_MANIFEST "@TinyOrm_target@$<TARGET_FILE_SUFFIX:@TinyOrm_target@>.manifest"
 #endif
