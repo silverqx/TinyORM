@@ -1,8 +1,11 @@
 # Find version numbers in the version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
 defineTest(tiny_version_numbers) {
+    defined(1, var):!isEmpty(1): \
+        versionHeader = $$1
+
     # version.hpp for the TinyORM library project
-    contains(_PRO_FILE_, ".*\/src\/src\.pro$"): \
+    else:contains(_PRO_FILE_, ".*\/src\/src\.pro$"): \
         versionHeader = $$absolute_path("../include/orm/version.hpp")
 
     # version.hpp for the tom example project
