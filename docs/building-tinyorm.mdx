@@ -163,7 +163,7 @@ cd ${rootFolderPath(bash)}`}
 
 ## vcpkg
 
-Installing the `vcpkg` is highly recommended, it simplifies installation of `range-v3` dependency.
+Installing the `vcpkg` is highly recommended, it simplifies installation of the `range-v3` and `tabulate` dependencies.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -459,7 +459,8 @@ With the `qmake` build system, you have to install `TinyORM` dependencies manual
 cd ../../vcpkg
 
 vcpkg search range-v3
-vcpkg install range-v3
+vcpkg search tabulate
+vcpkg install range-v3 tabulate
 vcpkg list
 ```
 
@@ -605,7 +606,7 @@ INCLUDEPATH += $$quote($$TINY_MAIN_DIR/TinyORM/include/)
 LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
 LIBS += -lTinyOrm
 
-# vcpkg - range-v3
+# vcpkg - range-v3 and tabulate
 # ---
 INCLUDEPATH += $$quote(../../../../vcpkg/installed/x64-windows/include/)
 ```
@@ -629,7 +630,7 @@ QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_MAIN_DIR/TinyORM/include/)
 LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_GCC_64bit-Debug/src/debug/)
 LIBS += -lTinyOrm
 
-# vcpkg - range-v3
+# vcpkg - range-v3 and tabulate
 # ---
 QMAKE_CXXFLAGS += -isystem $$shell_quote(../../../../vcpkg/installed/x64-linux/include/)
 ```

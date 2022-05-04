@@ -39,7 +39,7 @@ import {
 
 ## Introduction
 
-We try to create simplest working application in the terminal with the `CMake` and in the `QtCreator` IDE with the `qmake`.
+We will try to create the simplest working application in the terminal with the `CMake` and in the `QtCreator` IDE with the `qmake`.
 
 The `HelloWorld` example also expects the following [folders structure](building-tinyorm.mdx#folders-structure), let's create them.
 
@@ -78,9 +78,9 @@ select * from posts;"
 
 First, install the `vcpkg` package manager as is described [here](building-tinyorm.mdx#vcpkg).
 
-The `range-v3` library is a required dependency because `TinyORM` uses the `range-v3` library in header files, so you have to install it before you can use `TinyORM`.
+The `range-v3` and `tabulate` libraries are required dependencies because `TinyORM` uses them in header files, you have to install them before you can use `TinyORM`. The `tabulate` library is only needed in the `tom` migrations it's used by the `migrate:status` command.
 
-There are two ways to install the `range-v3` library using `vcpkg`.
+There are two ways how to install the `range-v3` and `tabulate` libraries using `vcpkg`.
 
 #### Using vcpkg.json <small>(manifest mode)</small> {#using-vcpkg-json}
 
@@ -100,7 +100,8 @@ vim vcpkg.json
   "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
   "supports": "!(uwp | arm | android | emscripten)",
   "dependencies": [
-    "range-v3"
+    "range-v3",
+    "tabulate"
   ]
 }
 ```
@@ -117,7 +118,8 @@ This method can be used with both `CMake` and `qmake`.
 cd ../../vcpkg
 
 vcpkg search range-v3
-vcpkg install range-v3
+vcpkg search tabulate
+vcpkg install range-v3 tabulate
 vcpkg list
 ```
 
@@ -420,7 +422,7 @@ INCLUDEPATH += $$quote($$TINY_MAIN_DIR/TinyORM/include/)
 LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
 LIBS += -lTinyOrm
 
-# vcpkg - range-v3
+# vcpkg - range-v3 and tabulate
 # ---
 INCLUDEPATH += $$quote(../../../../vcpkg/installed/x64-windows/include/)
 ```
@@ -462,7 +464,7 @@ QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_MAIN_DIR/TinyORM/include/)
 LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
 LIBS += -lTinyOrm
 
-# vcpkg - range-v3
+# vcpkg - range-v3 and tabulate
 # ---
 QMAKE_CXXFLAGS += -isystem $$shell_quote(../../../../vcpkg/installed/x64-linux/include/)
 ```
