@@ -41,7 +41,7 @@ import {
 
 We try to create simplest working application in the terminal with the `CMake` and in the `QtCreator` IDE with the `qmake`.
 
-The `HelloWorld` example also expects the following [folders structure](building.mdx#folders-structure), let's create them.
+The `HelloWorld` example also expects the following [folders structure](building-tinyorm.mdx#folders-structure), let's create them.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -76,7 +76,7 @@ select * from posts;"
 
 ## Install dependencies
 
-First, install the `vcpkg` package manager as is described [here](building.mdx#vcpkg).
+First, install the `vcpkg` package manager as is described [here](building-tinyorm.mdx#vcpkg).
 
 The `range-v3` library is a required dependency because `TinyORM` uses the `range-v3` library in header files, so you have to install it before you can use `TinyORM`.
 
@@ -289,7 +289,7 @@ cmake --build . --target all
 
 ### Execute Hello world {#execute-hello-world-cmake}
 
-Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so `HelloWorld` application can find it during execution, as is described [here](building.mdx#tinyorm-on-path-cmake).
+Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so `HelloWorld` application can find it during execution, as is described [here](building-tinyorm.mdx#tinyorm-on-path-cmake).
 
 <Tabs groupId={shell} name='tinyorm-on-path'>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -304,7 +304,7 @@ Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRA
 </TabItem>
 </Tabs>
 
-Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building.mdx#allow-symbolic-links-unprivileged).
+Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building-tinyorm.mdx#allow-symbolic-links-unprivileged).
 
 <Tabs groupId={shell} name='tinyorm-on-path'>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -481,12 +481,12 @@ On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -extern
 ### Build Hello world {#build-hello-world-qmake}
 
 :::tip
-I recommend creating a new `Session` in the `QtCreator IDE` as is described [here](building.mdx#open-qtcreator-ide).
+I recommend creating a new `Session` in the `QtCreator IDE` as is described [here](building-tinyorm.mdx#open-qtcreator-ide).
 :::
 
 Now you can open the `HelloWorld.pro` project in the `QtCreator IDE`.
 
-This will open the `Configure Project` tab, select some kit and update build folder paths to meet our [folders structure](building.mdx#folders-structure) or like you want.
+This will open the `Configure Project` tab, select some kit and update build folder paths to meet our [folders structure](building-tinyorm.mdx#folders-structure) or like you want.
 
 <img src={require('./assets/img/hello-world/qmake-configure_project.png').default}
     alt='HelloWorld - QtCreator - Configure Project' width='760' />
@@ -506,7 +506,7 @@ The `QtCreator` takes care about all the necessary configuration, sets up the bu
 
 Only one thing you might want to change is to run the `HelloWorld` example in the new terminal window. To do so, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open the `Project Settings` tab and select `Run` in the left sidebar to open the `Run Settings`, then in the `Run` section select the `Run in terminal` checkbox.
 
-Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building.mdx#allow-symbolic-links-unprivileged).
+Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building-tinyorm.mdx#allow-symbolic-links-unprivileged).
 
 <Tabs groupId={shell} name='tinyorm-on-path'>
 <TabItem value={pwsh} label={pwsh_label}>
