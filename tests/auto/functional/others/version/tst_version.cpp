@@ -72,7 +72,7 @@ private:
 namespace
 {
     // All executables has the same LegalCopyright
-    inline const auto CopyRight = QStringLiteral("Copyright (©) 2022 Crystal Studio");
+    Q_GLOBAL_STATIC_WITH_ARGS(QString, CopyRight, ("Copyright (©) 2022 Crystal Studio"));
 }
 
 void tst_Version::versions_TinyOrm() const
@@ -199,7 +199,7 @@ void tst_Version::checkFileVersion_TinyOrm() const
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
-    QCOMPARE(fileVersions.copyright, CopyRight);
+    QCOMPARE(fileVersions.copyright, *CopyRight);
 #endif
 }
 
@@ -221,7 +221,7 @@ void tst_Version::checkFileVersion_TinyUtils() const
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
-    QCOMPARE(fileVersions.copyright, CopyRight);
+    QCOMPARE(fileVersions.copyright, *CopyRight);
 #endif
 }
 
@@ -244,7 +244,7 @@ void tst_Version::checkFileVersion_TomExample() const
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
-    QCOMPARE(fileVersions.copyright, CopyRight);
+    QCOMPARE(fileVersions.copyright, *CopyRight);
 #endif
 }
 #endif

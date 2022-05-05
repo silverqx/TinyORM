@@ -90,31 +90,31 @@ using StatusRow = tst_Migrate::StatusRow;
 namespace
 {
     // Status
-    inline const auto *Yes = "Yes";
-    inline const auto *No  = "No";
+    const auto *Yes = "Yes";
+    const auto *No  = "No";
 
     // Batches
-    inline const auto *s_1  = "1";
-    inline const auto *s_2  = "2";
-    inline const auto *s_3  = "3";
-    inline const auto *s_4  = "4";
+    const auto *s_1  = "1";
+    const auto *s_2  = "2";
+    const auto *s_3  = "3";
+    const auto *s_4  = "4";
 
     // Migration names
-    inline const auto *
+    const auto *
     s_2014_10_12_000000_create_posts_table =
             "2014_10_12_000000_create_posts_table";
-    inline const auto *
+    const auto *
     s_2014_10_12_100000_add_factor_column_to_posts_table =
             "2014_10_12_100000_add_factor_column_to_posts_table";
-    inline const auto *
+    const auto *
     s_2014_10_12_200000_create_properties_table =
             "2014_10_12_200000_create_properties_table";
-    inline const auto *
+    const auto *
     s_2014_10_12_300000_create_phones_table =
             "2014_10_12_300000_create_phones_table";
 
     // Fully migrated w/o --step
-    inline const std::initializer_list<StatusRow>
+    const std::initializer_list<StatusRow>
     FullyMigrated = {
         {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
         {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_1},
@@ -123,7 +123,7 @@ namespace
     };
 
     // Fully migrated with --step
-    inline const std::initializer_list<StatusRow>
+    const std::initializer_list<StatusRow>
     FullyStepMigrated = {
         {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
         {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_2},
