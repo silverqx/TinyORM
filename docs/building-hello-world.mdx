@@ -1,6 +1,5 @@
 ---
 sidebar_position: 5
-hide_table_of_contents: true
 description: Hello world example created in the terminal and QtCreator IDE.
 ---
 
@@ -384,6 +383,10 @@ cd HelloWorld
 vim HelloWorld.pro
 ```
 
+:::tip
+To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>.
+:::
+
 <Tabs groupId={shell} name='tinyorm-on-path'>
 <TabItem value={pwsh} label={pwsh_label}>
 
@@ -468,16 +471,18 @@ LIBS += -lTinyOrm
 QMAKE_CXXFLAGS += -isystem $$shell_quote(../../../../vcpkg/installed/x64-linux/include/)
 ```
 
-:::tip
-On Linux `-isystem` marks the directory as a system directory, it prevents warnings.
-:::
-
-:::tip
-On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes, `#include <file>`.
-:::
-
 </TabItem>
 </Tabs>
+
+:::caution
+The exact [folders structure](building-tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
+:::
+
+:::tip
+On Linux `-isystem` marks the directory as a system directory, it prevents warnings.
+
+On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes; `#include <file>`.
+:::
 
 ### Build Hello world {#build-hello-world-qmake}
 
@@ -497,13 +502,13 @@ You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to op
 Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used.
 
 <img src={require('./assets/img/building-hello-world/qmake-build_settings.png').default}
-    alt='HelloWorld - QtCreator - Build Settings' width='760' />
+    className='no-blurry' alt='HelloWorld - QtCreator - Build Settings' width='760' />
 
 Everything is ready to build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to build the project.
 
-### Execute Hello world qmake
+### Execute Hello world {#execute-hello-world-qmake}
 
-The `QtCreator` takes care about all the necessary configuration, sets up the built environment correctly and also prepends dependency libraries on the path on Windows and on the `LD_LIBRARY_PATH` on Linux.
+The `QtCreator` takes care about all the necessary configuration, sets up the build environment correctly and also prepends dependency libraries on the path on Windows and on the `LD_LIBRARY_PATH` on Linux.
 
 Only one thing you might want to change is to run the `HelloWorld` example in the new terminal window. To do so, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open the `Project Settings` tab and select `Run` in the left sidebar to open the `Run Settings`, then in the `Run` section select the `Run in terminal` checkbox.
 

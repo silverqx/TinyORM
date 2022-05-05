@@ -3,24 +3,674 @@ sidebar_position: 4
 description: How to compile the TinyORM migrations (tom) c++ console application on Windows and Linux.
 ---
 
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import {
+    shell,
+    application, bash, pwsh,
+    bash_label, pwsh_label
+} from '@theme/constants'
+import {
+    applicationFolder,
+    applicationFolderPath,
+    convertToCmakeEnvVariable,
+    rootFolderPath
+} from '@theme/utils/rootFolderUtils'
+
 # Building: Migrations
 
 - [Introduction](#introduction)
-    - [Common Prerequisites](#common-prerequisites)
-    - [Windows Prerequisites](#windows-prerequisites)
-- [Folders structure](#folders-structure)
-- [Getting started](#getting-started)
-- [vcpkg](#vcpkg)
-- [C preprocessor macros](#c-preprocessor-macros)
-- [Building with CMake](#building-with-cmake)
-    - [Configure & Build](#configure-and-build-cmake)
-    - [CMake build options](#cmake-build-options)
-    - [Consume TinyOrm library](#consume-tinyorm-library-cmake)
-- [Building with qmake](#building-with-qmake)
-    - [Install dependencies](#install-dependencies)
-    - [Configure & Build](#configure-and-build-qmake)
-    - [qmake build options](#qmake-build-options)
-    - [Consume TinyOrm library](#consume-tinyorm-library-qmake)
+- [Prerequisites](#prerequisites)
+- [Migrations with CMake](#migrations-with-cmake)
+    - [Source code](#source-code)
+    - [CMake project](#cmake-project)
+    - [Build migrations](#build-migrations-cmake)
+    - [Execute migrations](#execute-migrations-cmake)
+- [Migrations with qmake](#migrations-with-qmake)
+    - [qmake project](#qmake-project)
+    - [Build migrations](#build-migrations-qmake)
+    - [Execute migrations](#execute-migrations-qmake)
+- [Finish](#finish)
 
 ## Introduction
+
+We will try to create a working migrations console application called as <abbr title='TinyORM migrations'>`tom`</abbr> in the terminal with the `CMake` and in the `QtCreator` IDE with the `qmake`.
+
+The `tom` console application also expects the following [folders structure](building-tinyorm.mdx#folders-structure), let's create them.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ${applicationFolderPath(pwsh)}
+mkdir tom/tom
+cd tom`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ${applicationFolderPath(bash)}
+mkdir -p tom/tom
+cd tom`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+## Prerequisites
+
+Working MySQL database server as the `tom` migrations currently provides support only for the MySQL database.
+
+Install required dependencies and build the `TinyORM` library with the `tom` (it's enabled by default) as is described [here](building-hello-world.mdx#install-dependencies) and [here](building-tinyorm.mdx).
+
+## Migrations with CMake
+
+Let's start in the `tom` project folder.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ${applicationFolderPath(pwsh)}/tom/tom`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ${applicationFolderPath(bash)}/tom/tom`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+### Source code
+
+Create `main.cpp` source file.
+
+```bash
+vim main.cpp
+```
+
+:::tip
+To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>.
+:::
+
+And paste the following code.
+
+    #include <orm/db.hpp>
+
+    #include <tom/application.hpp>
+
+    #include "migrations/2014_10_12_000000_create_posts_table.hpp"
+
+    using Orm::DatabaseManager;
+    using Orm::DB;
+
+    using TomApplication = Tom::Application;
+
+    using namespace Migrations; // NOLINT(google-build-using-namespace)
+
+    /*! Build the database manager instance and add a database connection. */
+    std::shared_ptr<DatabaseManager> setupManager();
+
+    /*! c++ main function. */
+    int main(int argc, char *argv[])
+    {
+        try {
+            // Ownership of the shared_ptr()
+            auto db = setupManager();
+
+            return TomApplication(argc, argv, db, "TOM_MIGRATIONS_ENV")
+                    // Migration classes
+                    .migrations<CreatePostsTable>()
+                    // Fire it up 🔥🚀✨
+                    .run();
+
+        } catch (const std::exception &e) {
+
+            TomApplication::logException(e);
+        }
+
+        return EXIT_FAILURE;
+    }
+
+    std::shared_ptr<DatabaseManager> setupManager()
+    {
+        using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+
+        // Ownership of the shared_ptr()
+        return DB::create({
+            {driver_,         QMYSQL},
+            {host_,           qEnvironmentVariable("DB_MYSQL_HOST", H127001)},
+            {port_,           qEnvironmentVariable("DB_MYSQL_PORT", P3306)},
+            {database_,       qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY)},
+            {username_,       qEnvironmentVariable("DB_MYSQL_USERNAME", EMPTY)},
+            {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
+            {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
+            {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
+            {timezone_,       SYSTEM},
+            {prefix_,         EMPTY},
+            {prefix_indexes,  true},
+            {strict_,         true},
+            {isolation_level, QStringLiteral("REPEATABLE READ")},
+            {engine_,         InnoDB},
+            {options_,        QVariantHash()},
+        },
+            QStringLiteral("tinyorm_tom"));
+    }
+
+#### Migrations
+
+If you have already built the `tom` application then you can generate a migrations using the [`make:migration`](migrations.mdx#generating-migrations) command 😎.
+
+```bash
+tom make:migration create_posts_table
+```
+
+If you want, you can also build the `tom` application without the migrations, simply comment out the `migrations()` method and the corresponding `#include "migrations/xyz.hpp"` files.
+
+Let's create the first migration manually.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`mkdir database/migrations\n
+vim database/migrations/2014_10_12_000000_create_posts_table.hpp`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`mkdir -p database/migrations\n
+vim database/migrations/2014_10_12_000000_create_posts_table.hpp`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+And paste the following code.
+
+    #pragma once
+
+    #include <tom/migration.hpp>
+
+    namespace Migrations
+    {
+
+        struct CreatePostsTable : Migration
+        {
+            /*! Filename of the migration file. */
+            T_MIGRATION
+
+            /*! Run the migrations. */
+            void up() const override
+            {
+                Schema::create("posts", [](Blueprint &table)
+                {
+                    table.id();
+
+                    table.string(NAME);
+                    table.timestamps();
+                });
+            }
+
+            /*! Reverse the migrations. */
+            void down() const override
+            {
+                Schema::dropIfExists("posts");
+            }
+        };
+
+    } // namespace Migrations
+
+### CMake project
+
+Create `CMakeLists.txt` file with the following content. I leave the comments in the `CMakeLists.txt` file because it's not as simple as the `Hello world` example; to make it clear what's going on.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-cmake'>
+{`cmake_minimum_required(VERSION VERSION 3.20...3.23 FATAL_ERROR)\n
+# Specify the C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)\n
+set(CMAKE_AUTOMOC ON)\n
+# Tom command-line application
+# ---\n
+set(Tom_ns tom)
+set(Tom_target tom)\n
+set(TinyOrmSourceDir "${convertToCmakeEnvVariable(pwsh, applicationFolderPath(pwsh))}/TinyORM/TinyORM")
+set(TinyOrmBuildDir "${convertToCmakeEnvVariable(pwsh, applicationFolderPath(pwsh))}/TinyORM/TinyORM-builds-cmake/build-debug")\n
+# TinyORM CMake modules (needed to set the executable version and RC file on Windows)
+list(APPEND CMAKE_MODULE_PATH "\${TinyOrmSourceDir}/cmake/CommonModules")\n
+# build tree
+list(APPEND CMAKE_PREFIX_PATH "\${TinyOrmBuildDir}")\n
+# Initialize Project Version
+# ---\n
+include(TinyHelpers)
+tiny_read_version(TINY_VERSION
+    TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
+    VERSION_HEADER "\${TinyOrmSourceDir}/tom/include/tom/version.hpp"
+    PREFIX TINYTOM
+    HEADER_FOR "\${Tom_ns}"
+)\n
+# Basic project
+# ---\n
+project(\${Tom_ns}
+    DESCRIPTION "Tom console for TinyORM"
+    HOMEPAGE_URL "https://www.tinyorm.org"
+    LANGUAGES CXX
+    VERSION \${TINY_VERSION}
+)\n
+# Tom command-line application
+# ---\n
+add_executable(\${Tom_target}
+    main.cpp
+)
+add_executable(\${Tom_ns}::\${Tom_target} ALIAS \${Tom_target})\n
+# Tom command-line application specific configuration
+# ---\n
+set_target_properties(\${Tom_target}
+    PROPERTIES
+        C_VISIBILITY_PRESET "hidden"
+        CXX_VISIBILITY_PRESET "hidden"
+        VISIBILITY_INLINES_HIDDEN YES
+        VERSION \${PROJECT_VERSION}
+)\n
+target_include_directories(\${Tom_target} PRIVATE
+    "\$<BUILD_INTERFACE:\${CMAKE_SOURCE_DIR}/database>"
+)\n
+# Tom command-line application defines
+# ---\n
+target_compile_definitions(\${Tom_target}
+    PRIVATE
+        PROJECT_TOM
+)\n
+# Windows resource and manifest files
+# ---\n
+# Find icons, tom/version.hpp, and Windows manifest file for MinGW
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    tiny_set_rc_flags("-I \\"\${TinyOrmSourceDir}/tom/resources\\"")
+endif()\n
+include(TinyResourceAndManifest)
+tiny_resource_and_manifest(\${Tom_target}
+    OUTPUT_DIR "\${TINY_BUILD_GENDIR}/tmp/"
+    RESOURCES_DIR "\${TinyOrmSourceDir}/tom/resources"
+)\n
+# Resolve and link dependencies
+# ---\n
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt\${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
+find_package(TinyOrm 0.2.0 CONFIG REQUIRED)\n
+# Unconditional dependencies
+target_link_libraries(\${Tom_target}
+    PRIVATE
+        Qt\${QT_VERSION_MAJOR}::Core
+        TinyOrm::TinyOrm
+)`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-cmake'>
+{`cmake_minimum_required(VERSION VERSION 3.20...3.23 FATAL_ERROR)\n
+# Specify the C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)\n
+set(CMAKE_AUTOMOC ON)\n
+# Tom command-line application
+# ---\n
+set(Tom_ns tom)
+set(Tom_target tom)\n
+set(TinyOrmSourceDir "${convertToCmakeEnvVariable(bash, applicationFolderPath(bash))}/TinyORM/TinyORM")
+set(TinyOrmBuildDir "${convertToCmakeEnvVariable(bash, applicationFolderPath(bash))}/TinyORM/TinyORM-builds-cmake/build-debug")\n
+# TinyORM CMake modules (needed to set the executable version and RC file on Windows)
+list(APPEND CMAKE_MODULE_PATH "\${TinyOrmSourceDir}/cmake/CommonModules")\n
+# build tree
+list(APPEND CMAKE_PREFIX_PATH "\${TinyOrmBuildDir}")\n
+# Initialize Project Version
+# ---\n
+include(TinyHelpers)
+tiny_read_version(TINY_VERSION
+    TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
+    VERSION_HEADER "\${TinyOrmSourceDir}/tom/include/tom/version.hpp"
+    PREFIX TINYTOM
+    HEADER_FOR "\${Tom_ns}"
+)\n
+# Basic project
+# ---\n
+project(\${Tom_ns}
+    DESCRIPTION "Tom console for TinyORM"
+    HOMEPAGE_URL "https://www.tinyorm.org"
+    LANGUAGES CXX
+    VERSION \${TINY_VERSION}
+)\n
+# Tom command-line application
+# ---\n
+add_executable(\${Tom_target}
+    main.cpp
+)
+add_executable(\${Tom_ns}::\${Tom_target} ALIAS \${Tom_target})\n
+# Tom command-line application specific configuration
+# ---\n
+set_target_properties(\${Tom_target}
+    PROPERTIES
+        C_VISIBILITY_PRESET "hidden"
+        CXX_VISIBILITY_PRESET "hidden"
+        VISIBILITY_INLINES_HIDDEN YES
+        VERSION \${PROJECT_VERSION}
+)\n
+target_include_directories(\${Tom_target} PRIVATE
+    "\$<BUILD_INTERFACE:\${CMAKE_SOURCE_DIR}/database>"
+)\n
+# Tom command-line application defines
+# ---\n
+target_compile_definitions(\${Tom_target}
+    PRIVATE
+        PROJECT_TOM
+)\n
+# Windows resource and manifest files
+# ---\n
+# Find icons, tom/version.hpp, and Windows manifest file for MinGW
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    tiny_set_rc_flags("-I \\"\${TinyOrmSourceDir}/tom/resources\\"")
+endif()\n
+include(TinyResourceAndManifest)
+tiny_resource_and_manifest(\${Tom_target}
+    OUTPUT_DIR "\${TINY_BUILD_GENDIR}/tmp/"
+    RESOURCES_DIR "\${TinyOrmSourceDir}/tom/resources"
+)\n
+# Resolve and link dependencies
+# ---\n
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt\${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
+find_package(TinyOrm 0.2.0 CONFIG REQUIRED)\n
+# Unconditional dependencies
+target_link_libraries(\${Tom_target}
+    PRIVATE
+        Qt\${QT_VERSION_MAJOR}::Core
+        TinyOrm::TinyOrm
+)`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+### Build migrations {#build-migrations-cmake}
+
+Create a folder for the `CMake` build.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ..
+mkdir tom-builds-cmake/build-debug\n
+cd tom-builds-cmake/build-debug`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ..
+mkdir -p tom-builds-cmake/build-debug\n
+cd tom-builds-cmake/build-debug`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+Now you are ready to configure `tom` `CMake` application.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cmake.exe \`
+-S "${applicationFolderPath(pwsh)}/tom/tom" \`
+-B "${applicationFolderPath(pwsh)}/tom/tom-builds-cmake/build-debug" \`
+-G 'Ninja' \`
+-D CMAKE_BUILD_TYPE:STRING='Debug' \`
+-D CMAKE_TOOLCHAIN_FILE:FILEPATH="${rootFolderPath(pwsh)}/vcpkg/scripts/buildsystems/vcpkg.cmake" \`
+-D CMAKE_INSTALL_PREFIX:PATH="${rootFolderPath(pwsh)}/tmp/tom"`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cmake \\
+-S "${applicationFolderPath(bash)}/tom/tom" \\
+-B "${applicationFolderPath(bash)}/tom/tom-builds-cmake/build-debug" \\
+-G 'Ninja' \\
+-D CMAKE_BUILD_TYPE:STRING='Debug' \\
+-D CMAKE_TOOLCHAIN_FILE:FILEPATH="${rootFolderPath(bash)}/vcpkg/scripts/buildsystems/vcpkg.cmake" \\
+-D CMAKE_INSTALL_PREFIX:PATH="${rootFolderPath(bash)}/tmp/tom"`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+And build.
+
+```bash
+cmake --build . --target all
+```
+
+### Execute migrations {#execute-migrations-cmake}
+
+Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so `tom` application can find it during execution, as is described [here](building-tinyorm.mdx#tinyorm-on-path-cmake).
+
+<Tabs groupId={shell} name='tinyorm-on-path'>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`$env:Path = "${applicationFolderPath(pwsh, false)}\\TinyORM\\TinyORM-builds-cmake\\build-debug;" + $env:Path`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`export LD_LIBRARY_PATH=${applicationFolderPath(bash)}/TinyORM/TinyORM-builds-cmake/build-debug\${PATH:+:}$PATH`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+Execute `tom` application.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+
+```powershell
+.\tom.exe migrate:status
+```
+
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+```bash
+./tom migrate:status
+```
+
+</TabItem>
+</Tabs>
+
+The output will look something like this.
+
+<img src={require('./assets/img/building-migrations/tom_migrate_status.png').default}
+    alt='Tom migrations - migrate:status command output' width='660' />
+
+Happy migrating 🎉👌
+
+## Migrations with qmake
+
+Create a folder for the `qmake` build.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ${applicationFolderPath(pwsh)}/tom\n
+mkdir tom-builds-qmake`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ${applicationFolderPath(bash)}/tom\n
+mkdir tom-builds-qmake`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+The [`source code`](#source-code) is the same as for the `Migrations with CMake` console application.
+
+### qmake project
+
+Create `tom.pro` qmake file with the following content.
+
+```bash
+cd tom
+vim tom.pro
+```
+
+:::tip
+To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>.
+:::
+
+<Tabs groupId={shell} name='tinyorm-on-path'>
+<TabItem value={pwsh} label={pwsh_label}>
+
+```qmake
+QT *= core sql
+QT -= gui
+
+TEMPLATE = app
+TARGET = tom
+
+# TinyTom application specific configuration
+# ---
+
+CONFIG *= console
+
+TINY_MAIN_DIR = $$quote($$PWD/../../TinyORM)
+# Name of this qmake variable is crucial
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug)
+
+# Configure TinyORM library for the migrations purposes
+include($$TINY_MAIN_DIR/TinyORM/qmake/tom.pri)
+
+# TinyTom application defines
+# ---
+
+DEFINES += PROJECT_TOM
+
+# TinyTom application header and source files
+# ---
+
+SOURCES += $$PWD/main.cpp
+
+# Database migrations
+include($$quote($$PWD/database/migrations.pri))
+
+# vcpkg - range-v3 and tabulate
+# ---
+
+INCLUDEPATH += $$quote(../../../../vcpkg/installed/x64-windows/include/)
+```
+
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+```qmake
+QT *= core sql
+QT -= gui
+
+TEMPLATE = app
+TARGET = tom
+
+# TinyTom application specific configuration
+# ---
+
+CONFIG *= console
+
+TINY_MAIN_DIR = $$quote($$PWD/../../TinyORM)
+# Name of this qmake variable is crucial
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug)
+
+# Configure TinyORM library for the migrations purposes
+include($$TINY_MAIN_DIR/TinyORM/qmake/tom.pri)
+
+# TinyTom application defines
+# ---
+
+DEFINES += PROJECT_TOM
+
+# TinyTom application header and source files
+# ---
+
+SOURCES += $$PWD/main.cpp
+
+# Database migrations
+include($$quote($$PWD/database/migrations.pri))
+
+# vcpkg - range-v3 and tabulate
+# ---
+
+QMAKE_CXXFLAGS += -isystem $$shell_quote(../../../../vcpkg/installed/x64-windows/include/)
+```
+
+</TabItem>
+</Tabs>
+
+:::caution
+The exact [folders structure](building-tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
+:::
+
+:::tip
+On Linux `-isystem` marks the directory as a system directory, it prevents warnings.
+
+On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes; `#include <file>`.
+:::
+
+#### Migrations source files
+
+Create `database/migrations.pri` file and paste the following code.
+
+```qmake
+INCLUDEPATH += $$PWD
+
+HEADERS += \
+    $$PWD/migrations/2014_10_12_000000_create_posts_table.hpp \
+```
+
+### Build migrations {#build-migrations-qmake}
+
+:::tip
+I recommend creating a new `Session` in the `QtCreator IDE` as is described [here](building-tinyorm.mdx#open-qtcreator-ide).
+:::
+
+Now you can open the `tom.pro` project in the `QtCreator IDE`.
+
+This will open the `Configure Project` tab, select some kit and update build folder paths to meet our [folders structure](building-tinyorm.mdx#folders-structure) or like you want.
+
+<img src={require('./assets/img/building-migrations/qmake-configure_project.png').default}
+    alt='tom - QtCreator - Configure Project' width='760' />
+
+You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open `Project Settings` tab and select `Build` in the left sidebar to open the `Build Settings`, it should look similar to the following picture.
+
+Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used.
+
+<img src={require('./assets/img/building-migrations/qmake-build_settings.png').default}
+    className='no-blurry' alt='tom - QtCreator - Build Settings' width='760' />
+
+Everything is ready to build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to build the project.
+
+### Execute migrations {#execute-migrations-qmake}
+
+The `QtCreator` takes care about all the necessary configuration, sets up the build environment correctly and also prepends dependency libraries on the path on Windows and on the `LD_LIBRARY_PATH` on Linux.
+
+Only one thing you might want to change is to run the `tom` application in the new terminal window. To do so, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open the `Project Settings` tab and select `Run` in the left sidebar to open the `Run Settings`, then in the `Run` section select the `Run in terminal` checkbox.
+
+To execute the `tom` application press <kbd>Ctrl</kbd> + <kbd>r</kbd>.
+
+The output will look something like this.
+
+<img src={require('./assets/img/building-migrations/tom_migrate_status.png').default}
+    alt='Tom migrations - migrate:status command output' width='660' />
+
+Happy migrating 🎉👌
+
+## Finish
+
+As the last thing, you can check that all the file properties were correctly set by the [`rc`](https://docs.microsoft.com/en-us/windows/win32/menurc/resource-compiler) compiler.
+
+Find the `tom.exe` file and press <kbd>Alt</kbd> + <kbd>Enter</kbd> to open the file properties. To check the executable manifest you can use eg. the [Resource Hacker](http://www.angusj.com/resourcehacker/).
+
+<img src={require('./assets/img/building-migrations/tom_file_properties.png').default}
+    alt='tom.exe file properties detail' width='440' />
 

@@ -75,7 +75,7 @@ Open `Local Security Policy`, go to `Local Policies - User Rights Assignment`, o
 
 ## Folders structure
 
-All `tinyorm.org` examples are based on the following folders structure.
+All `tinyorm.org` examples are based on the following folders structure. The `tom` folder will contain a [migrations console application](building-migrations.mdx).
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label} className='tiny-tree'>
@@ -91,16 +91,26 @@ All `tinyorm.org` examples are based on the following folders structure.
 │   |   |   └── build-debug/
 │   |   └── HelloWorld-builds-qmake/
 │   |       └── build-debug/
-│   └── TinyORM/
-│       ├── TinyORM/
-│       ├── TinyORM-builds-cmake/
-│       │   ├── build-gcc-debug/
-│       │   ├── build-gcc-release/
-│       │   └── build-clang-debug/
-│       └── TinyOrm-builds-qmake/
-│           ├── build-debug/
-│           ├── build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/
-│           └── build-TinyOrm-Desktop_Qt_5_15_2_MSYS2_UCRT64_64bit-Release/
+│   ├── TinyORM/
+│   |   ├── TinyORM/
+│   |   ├── TinyORM-builds-cmake/
+│   |   │   ├── build-gcc-debug/
+│   |   │   ├── build-gcc-release/
+│   |   │   └── build-clang-debug/
+│   |   └── TinyOrm-builds-qmake/
+│   |       ├── build-debug/
+│   |       ├── build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/
+│   |       └── build-TinyOrm-Desktop_Qt_5_15_2_MSYS2_UCRT64_64bit-Release/
+│   └── tom/
+│       ├── tom/
+│       │   └── database/
+│       │       ├── migrations/
+│       │       └── migrations.pri
+│       ├── tom-builds-cmake/
+│       │   └── build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug/
+│       └── tom-builds-qmake/
+│           ├── build-TinyOrm-Desktop_Qt_5_15_3_MSYS2_UCRT64_64bit-Release/
+│           └── build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug/
 ├── tmp/
 └── vcpkg/
 ```
@@ -119,16 +129,26 @@ All `tinyorm.org` examples are based on the following folders structure.
 │   |   |   └── build-debug/
 │   |   └── HelloWorld-builds-qmake/
 │   |       └── build-debug/
-│   └── TinyORM/
-│       ├── TinyORM/
-│       ├── TinyORM-builds-cmake/
-│       │   ├── build-gcc-debug/
-│       │   ├── build-gcc-release/
-│       │   └── build-clang-debug/
-│       └── TinyOrm-builds-qmake/
-│           ├── build-debug/
-│           ├── build-TinyOrm-Desktop_Qt_5_15_2_GCC_64bit-Debug/
-│           └── build-TinyOrm-Desktop_Qt_5_15_2_clang13_64bit_ccache-Release/
+│   ├── TinyORM/
+│   |   ├── TinyORM/
+│   |   ├── TinyORM-builds-cmake/
+│   |   │   ├── build-gcc-debug/
+│   |   │   ├── build-gcc-release/
+│   |   │   └── build-clang-debug/
+│   |   └── TinyOrm-builds-qmake/
+│   |       ├── build-debug/
+│   |       ├── build-TinyOrm-Desktop_Qt_5_15_2_GCC_64bit-Debug/
+│   |       └── build-TinyOrm-Desktop_Qt_5_15_2_clang13_64bit_ccache-Release/
+│   └── tom/
+│       ├── tom/
+│       │   └── database/
+│       │       └── migrations/
+│       │       └── migrations.pri
+│       ├── tom-builds-cmake/
+│       │   └── build-TinyOrm-Desktop_Qt_6_2_4_clang14_64bit_ccache-Debug/
+│       └── tom-builds-qmake/
+│           ├── build-TinyOrm-Desktop_Qt_6_2_4_GCC_64bit-Debug/
+│           └── build-TinyOrm-Desktop_Qt_6_2_4_clang14_64bit_ccache-Release/
 ├── tmp/
 └── vcpkg/
 ```
