@@ -53,6 +53,9 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     set(tiny_manifest_basename ${rcBasename})
 
+    # CMake doesn't have problem with UTF-8 encoded files
+    set(pragma_codepage "65001")
+
     # Start configuring
     configure_file(
         "${TINY_RESOURCES_DIR}/${rcBasename}.rc.in"

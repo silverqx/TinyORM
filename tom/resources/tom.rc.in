@@ -1,4 +1,4 @@
-#pragma code_page(65001) // UTF-8
+#pragma code_page(@pragma_codepage@) // DEFAULT on Windows and UTF-8 with msvc
 
 //IDI_ICON1 ICON "icons/@TomExample_target@.ico"
 

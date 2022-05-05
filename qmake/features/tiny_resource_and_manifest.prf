@@ -55,12 +55,7 @@ defineReplace(tiny_configure_cmake_rc) {
     defined(3, var):!isEmpty(3): rcBasename = $$3
     else: rcBasename = $$TARGET
 
-    # This solved problem with the © character, problem with the encoding
-    # MinGW
-    win32-g++|win32-clang-g++: \
-        rcFile = $$absolute_path($$1/$${rcBasename}.rc.in)
-    else: \
-        rcFile = $$absolute_path($$1/$${rcBasename}.nopragma.rc.in)
+    rcFile = $$absolute_path($$1/$${rcBasename}.rc.in)
 
     exists(rcFile) {
         error( "Windows RC file $$rcFile does not exists, the path passed to the\
@@ -81,6 +76,15 @@ defineReplace(tiny_configure_cmake_rc) {
     defined(4, var):!isEmpty(4): token = $$4
     else: token = $$rcBasename
 
+    # This solves the problem with the © character, problem with the encoding
+    # Use utf8 on MinGW and ANSI with msvc
+    # The core of the problem is in the $$cat() and write_file() qmake functions they
+    # don't know process UTF-8 encoded files, they use the ANSI encoding.
+    win32-g++|win32-clang-g++: \
+        pragmaCodepage = 65001
+    else: \
+        pragmaCodepage = DEFAULT
+
     rcFileContent = $$cat($$rcFile, blob)
 
     # Support OriginalFilename in the Windows RC file
@@ -91,6 +95,7 @@ defineReplace(tiny_configure_cmake_rc) {
     rcFileContent ~= s/@tiny_manifest_basename@/$$tiny_manifest_basename
     rcFileContent ~= s/\\$<TARGET_FILE_NAME:$$TARGET>/$$basename(QMAKE_RESOLVED_TARGET)
     rcFileContent ~= s/\\$<TARGET_FILE_SUFFIX:$$TARGET>/$$2
+    rcFileContent ~= s/@pragma_codepage@/$$pragmaCodepage
 
     !write_file($$rcFilepath, rcFileContent) {
         error( "Can not write to the file $${rcFilepath}." )

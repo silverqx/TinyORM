@@ -60,12 +60,20 @@ private:
         const QString productVersion;
         /*! FileVersion. */
         const QString fileVersion;
+        /*! LegalCopyright. */
+        const QString copyright;
     };
 
     /*! Obtain a ProductVersion and FileVersion strings from an exe/dll. */
     [[nodiscard]] FileVersions getExeVersionString(const QString &fileName) const;
 #endif
 };
+
+namespace
+{
+    // All executables has the same LegalCopyright
+    inline const auto CopyRight = QStringLiteral("Copyright (©) 2022 Crystal Studio");
+}
 
 void tst_Version::versions_TinyOrm() const
 {
@@ -191,6 +199,7 @@ void tst_Version::checkFileVersion_TinyOrm() const
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
+    QCOMPARE(fileVersions.copyright, CopyRight);
 #endif
 }
 
@@ -212,6 +221,7 @@ void tst_Version::checkFileVersion_TinyUtils() const
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
+    QCOMPARE(fileVersions.copyright, CopyRight);
 #endif
 }
 
@@ -234,6 +244,7 @@ void tst_Version::checkFileVersion_TomExample() const
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
+    QCOMPARE(fileVersions.copyright, CopyRight);
 #endif
 }
 #endif
@@ -259,14 +270,29 @@ tst_Version::getExeVersionString(const QString &fileName) const
         return {};
     }
 
+    // Get the copyright
+    LPTSTR copyrightPtr = nullptr;
+    UINT uLen = 0;
+
+    if (!VerQueryValue(lpData.get(), LR"(\StringFileInfo\040904b0\LegalCopyright)",
+                       reinterpret_cast<LPVOID *>(&copyrightPtr), &uLen)
+    ) {
+        qWarning() << "Error in VerQueryValue() for the LegalCopyright.";
+        return {};
+    }
+
+    // -1 to exclude null character
+    auto copyright = QString::fromWCharArray(copyrightPtr,
+                                             static_cast<QString::size_type>(uLen) - 1);
+
     // VerQueryValue
     VS_FIXEDFILEINFO *lpBuffer = nullptr;
-    UINT uLen = 0;
+    uLen = 0;
 
     if (!VerQueryValue(lpData.get(), QString("\\").toStdWString().c_str(),
                        reinterpret_cast<LPVOID *>(&lpBuffer), &uLen)
     ) {
-        qWarning() << "Error in VerQueryValue().";
+        qWarning() << "Error in VerQueryValue() for the version-information resource.";
         return {};
     }
 
@@ -283,6 +309,8 @@ tst_Version::getExeVersionString(const QString &fileName) const
                 .arg(LOWORD(lpBuffer->dwFileVersionMS))
                 .arg(HIWORD(lpBuffer->dwFileVersionLS))
                 .arg(LOWORD(lpBuffer->dwFileVersionLS)),
+        // LegalCopyright
+        std::move(copyright)
     };
 }
 #endif
