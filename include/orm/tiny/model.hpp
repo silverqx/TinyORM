@@ -1342,9 +1342,9 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR tom, build on mingw, linux, build without pch and all common tasks that should run from time to time silverqx
 // CUR tom, don't modify migrate:status command, rather extend it and add possibility to only call it through Application::runWithArguments() (this secure to not be able to call it from the cmd. line), do not show it in the list or help command output silverqx
 // CUR tom, think about remove TINYTOM_NO/_DEBUG and TINYTOM_TESTS_CODE and use TINYORM_ defines instead silverqx
-// BUG rc file © encoding silverqx
 // TODO github actions, update llvm analyzer tools to llvm 14 (clang-tidy/clazy), also qa-lint-tinyorm-qtX.ps1 tools silverqx
 // CUR check all unique_ptr() of base clases, if base classes have virtual dtors, or find unique_ptrs of aggregates to base classes silverqx
 // CUR use EMPTY constant everywhere silverqx
 // CUR tom, squashing migrations silverqx
 // CUR docs building.mdx TINYTOM_MIGRATIONS_PATH url to main branch after a new release, currently it links to develop branch silverqx
+// CUR TinyOrm.pri add INCLUDEPATH like in tom.pri silverqx
