@@ -4,6 +4,6 @@
 
 #define TINYTEST_VERSION_TINYORM_PATH "$<TARGET_FILE:@TinyOrm_target@>"
 #define TINYTEST_VERSION_TINYUTILS_PATH "$<TARGET_FILE:@TinyUtils_target@>"
-#define TINYTEST_VERSION_TOMEXAMPLE_PATH "$<$<TARGET_EXISTS:@TomExample_target@>:$<TARGET_FILE:@TomExample_target@>>"
+#define TINYTEST_VERSION_TOMEXAMPLE_PATH "$<$<TARGET_EXISTS:@Tom_target@>:$<TARGET_FILE:@Tom_target@>>"
 
 #endif // TINYTESTS_VERSIONDEBUG_CMAKE_HPP

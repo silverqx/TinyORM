@@ -149,6 +149,9 @@ macro(tiny_init_tiny_variables_pre)
     set(TinyOrm_target TinyOrm)
     set(TinyUtils_target TinyUtils)
     set(TomExample_target tom)
+    # User should see Tom_target in the tom.rc.in not TomExample_target that is
+    # the reason of this mapping, also applies in the version/CMakeLists.txt
+    set(Tom_target ${TomExample_target})
     # Targets' folders
     set(TomExample_folder examples/tom)
     # Tom migrations folder for the make:migration
