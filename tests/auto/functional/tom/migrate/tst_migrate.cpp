@@ -11,18 +11,19 @@
 #include "migrations/2014_10_12_200000_create_properties_table.hpp"
 #include "migrations/2014_10_12_300000_create_phones_table.hpp"
 
-using namespace Migrations; // NOLINT(google-build-using-namespace)
-
 using TomApplication = Tom::Application;
 
 using Tom::Commands::Migrations::StatusCommand;
 using Tom::Constants::Migrate;
+using Tom::Constants::MigrateInstall;
 using Tom::Constants::MigrateRefresh;
 using Tom::Constants::MigrateReset;
 using Tom::Constants::MigrateRollback;
 using Tom::Constants::MigrateStatus;
 
 using TestUtils::Databases;
+
+using namespace Migrations; // NOLINT(google-build-using-namespace)
 
 class tst_Migrate : public QObject
 {
@@ -72,6 +73,9 @@ private:
     Status createStatus(std::initializer_list<StatusRow> rows) const;
     /*! Create a status object to be equal after complete rollback. */
     Status createResetStatus() const;
+
+    /*! Prepare the migration database for running. */
+    void prepareDatabase() const;
 
     /*! Connection name used in this test case. */
     QString m_connection {};
@@ -144,6 +148,9 @@ void tst_Migrate::initTestCase()
        instead return a result as the vector, this vector is then used for comparing
        results. */
     TomApplication::enableInUnitTests();
+
+    // Prepare the migration database for running
+    prepareDatabase();
 }
 
 void tst_Migrate::cleanup() const
@@ -582,6 +589,27 @@ Status tst_Migrate::createResetStatus() const
         {No, s_2014_10_12_200000_create_properties_table},
         {No, s_2014_10_12_300000_create_phones_table},
     };
+}
+
+void tst_Migrate::prepareDatabase() const
+{
+    // Ownership of a unique_ptr()
+    const auto schema = Databases::manager()->connection(m_connection)
+                        .getSchemaBuilder();
+
+    // Create the migrations table if needed
+    if (!schema->hasTable(QStringLiteral("migrations"))) {
+        auto exitCode = invokeCommand(MigrateInstall);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+
+        return;
+    }
+
+    // Reset the migrations table
+    auto exitCode = invokeCommand(MigrateReset);
+
+    QVERIFY(exitCode == EXIT_SUCCESS);
 }
 
 QTEST_MAIN(tst_Migrate)
