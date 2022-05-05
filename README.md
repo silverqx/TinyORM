@@ -21,7 +21,7 @@ Whole library is documented as markdown documents:
 - [Documentation: Index](/docs/README.mdx#prologue)
 - [Dependencies](/docs/dependencies.mdx#dependencies)
 - [Supported Compilers](/docs/supported-compilers.mdx#supported-compilers)
-- [Building: TinyORM](/docs/building-tinyorm.mdx##building-tinyorm)
+- [Building: TinyORM](/docs/building-tinyorm.mdx#building-tinyorm)
 - [Building: Migrations](/docs/building-migrations.mdx#building-migrations)
 - [Building: Hello world](/docs/building-hello-world.mdx#building-hello-world)
 - [Database: Getting Started](/docs/database.mdx#database-getting-started)
