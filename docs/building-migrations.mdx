@@ -412,7 +412,7 @@ cd tom-builds-cmake/build-debug`}
 </TabItem>
 </Tabs>
 
-Now you are ready to configure `tom` `CMake` application.
+Now you are ready to configure `tom` `CMake` application. Don't forget to prepare the build environment with the [`qtenv6.ps1`](building-tinyorm.mdx#windows-prerequisites) command if you are building with the `msvc`.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -486,6 +486,8 @@ The output will look something like this.
 <img src={require('./assets/img/building-migrations/tom_migrate_status.png').default}
     alt='Tom migrations - migrate:status command output' width='660' />
 
+See also the [final thoughts](#finish) on how to verify the `tom` executable file properties.
+
 Happy migrating 🎉👌
 
 ## Migrations with qmake
@@ -537,10 +539,6 @@ TARGET = tom
 
 CONFIG *= console
 
-TINY_MAIN_DIR = $$quote($$PWD/../../TinyORM)
-# Name of this qmake variable is crucial
-TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug)
-
 # Configure TinyORM library for the migrations purposes
 include($$TINY_MAIN_DIR/TinyORM/qmake/tom.pri)
 
@@ -555,7 +553,7 @@ DEFINES += PROJECT_TOM
 SOURCES += $$PWD/main.cpp
 
 # Database migrations
-include($$quote($$PWD/database/migrations.pri))
+include($$PWD/database/migrations.pri)
 
 # vcpkg - range-v3 and tabulate
 # ---
@@ -578,10 +576,6 @@ TARGET = tom
 
 CONFIG *= console
 
-TINY_MAIN_DIR = $$quote($$PWD/../../TinyORM)
-# Name of this qmake variable is crucial
-TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug)
-
 # Configure TinyORM library for the migrations purposes
 include($$TINY_MAIN_DIR/TinyORM/qmake/tom.pri)
 
@@ -596,12 +590,12 @@ DEFINES += PROJECT_TOM
 SOURCES += $$PWD/main.cpp
 
 # Database migrations
-include($$quote($$PWD/database/migrations.pri))
+include($$PWD/database/migrations.pri)
 
 # vcpkg - range-v3 and tabulate
 # ---
 
-QMAKE_CXXFLAGS += -isystem $$shell_quote(../../../../vcpkg/installed/x64-windows/include/)
+QMAKE_CXXFLAGS += -isystem $$shell_quote(../../../../vcpkg/installed/x64-linux/include/)
 ```
 
 </TabItem>
@@ -616,6 +610,21 @@ On Linux `-isystem` marks the directory as a system directory, it prevents warni
 
 On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes; `#include <file>`.
 :::
+
+#### Configure using .qmake.conf
+
+To correctly set a file properties as the version, description, ... you have to provide the path to the `TinyORM` qmake features (`.prf` files) which handle this correctly, this path is provided by the `QMAKEFEATURES` variable and can be set only in the `.qmake.conf` file.
+
+Create `.qmake.conf` with following content.
+
+```qmake
+TINY_MAIN_DIR = $$clean_path($$PWD/../../TinyORM)
+TINYORM_SOURCE_TREE = $$quote($$TINY_MAIN_DIR/TinyORM)
+# Name of this qmake variable is crucial
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug)
+
+QMAKEFEATURES *= $$quote($$TINYORM_SOURCE_TREE/qmake/features)
+```
 
 #### Migrations source files
 
@@ -655,6 +664,8 @@ Everything is ready to build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to buil
 The `QtCreator` takes care about all the necessary configuration, sets up the build environment correctly and also prepends dependency libraries on the path on Windows and on the `LD_LIBRARY_PATH` on Linux.
 
 Only one thing you might want to change is to run the `tom` application in the new terminal window. To do so, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open the `Project Settings` tab and select `Run` in the left sidebar to open the `Run Settings`, then in the `Run` section select the `Run in terminal` checkbox.
+
+You can also set the `Command line arguments` in this `Run` section, eg. the `migrate:status`.
 
 To execute the `tom` application press <kbd>Ctrl</kbd> + <kbd>r</kbd>.
 
