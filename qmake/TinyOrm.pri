@@ -1,40 +1,45 @@
-# TinyORM configuration
+TINYORM_SOURCE_TREE = $$clean_path($$quote($$PWD/..))
+TINYTOM_SOURCE_TREE = $$quote($$TINYORM_SOURCE_TREE/tom)
+
+# Qt Common Configuration
 # ---
 
 QT *= core sql
-CONFIG *= c++2a strict_c++ warn_on utf8_source link_prl hide_symbols silent
 
-# Use extern constants for shared build
-CONFIG(shared, dll|shared|static|staticlib) | \
-CONFIG(dll, dll|shared|static|staticlib): \
-    # Support override because inline_constants can be used in the shared build too
-    !inline_constants: \
-        CONFIG *= extern_constants
+CONFIG *= link_prl
 
-# Archive library build
-else: \
-    CONFIG += inline_constants
+include($$TINYORM_SOURCE_TREE/qmake/common.pri)
 
-# TinyORM defines
+# Configure TinyORM library
 # ---
+# everything else is defined in the qmake/common.pri
 
-# Link with the shared library
+# Link against the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
     DEFINES *= TINYORM_LINKING_SHARED
 
-# Release build
-CONFIG(release, debug|release): \
-    DEFINES *= TINYORM_NO_DEBUG
+# Disable the ORM-related source code
+disable_orm: DEFINES *= TINYORM_DISABLE_ORM
+# Disable the tom-related source code
+disable_tom: DEFINES *= TINYORM_DISABLE_TOM
 
-# Log queries with a time measurement in debug build
-CONFIG(release, debug|release): \
-    DEFINES *= TINYORM_NO_DEBUG_SQL
-
-# TinyTom related defines
+# Link against TinyORM library
 # ---
 
-# Release build
-CONFIG(release, debug|release): DEFINES += TINYTOM_NO_DEBUG
-# Debug build
-CONFIG(debug, debug|release): DEFINES *= TINYTOM_DEBUG
+!isEmpty(TINYORM_SOURCE_TREE): \
+exists($$TINYORM_SOURCE_TREE): \
+    win32-msvc: \
+        INCLUDEPATH *= \
+            $$quote($$TINYORM_SOURCE_TREE/include/) \
+            $$quote($$TINYTOM_SOURCE_TREE/include/)
+    else: \
+        QMAKE_CXXFLAGS += \
+            -isystem $$shell_quote($$TINYORM_SOURCE_TREE/include/) \
+            -isystem $$shell_quote($$TINYTOM_SOURCE_TREE/include/)
+
+!isEmpty(TINYORM_BUILD_TREE): \
+exists($$TINYORM_BUILD_TREE): {
+    LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/src$${TINY_RELEASE_TYPE}/)
+    LIBS += -lTinyOrm
+}

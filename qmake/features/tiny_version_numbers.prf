@@ -20,13 +20,18 @@ defineTest(tiny_version_numbers) {
         error( "HEADERS does not contain a version header file version.hpp, needed\
                 in the tiny_version_numbers.prf." )
 
-    versionFileContent = $$cat($$quote($$absolute_path($$versionHeader)), lines)
+    versionHeader = $$clean_path($$absolute_path($$versionHeader))
+
+    versionFileContent = $$cat($$quote($$versionHeader), lines)
     versionTokens = MAJOR MINOR BUGFIX BUILD STATUS
     regexpTokens = $$join(versionTokens, '|')
     regexp = "_($${regexpTokens}) +([0-9]+|\"-{1}\w+\")"
     versionLines = $$find(versionFileContent, $$regexp)
     versionList =
     hasStatus = false
+
+    isEmpty(versionFileContent)|isEmpty(versionLines): \
+        error( "Parse of the '$$versionHeader' version file failed." )
 
     for(versionLine, versionLines) {
         splittedLine  = $$split(versionLine, ' ')

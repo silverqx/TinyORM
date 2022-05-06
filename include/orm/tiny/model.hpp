@@ -1293,7 +1293,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR 0.1.0 vs 0.1.0.0 Product/FileVersion, investigate, also check versions in pc, prl, ... silverqx
 // CUR enable QT_ASCII_CAST_WARNINGS silverqx
 // CUR enable QT_NO_CAST_FROM_ASCII silverqx
-// CUR autoconfigure qmake with qmake/TinyOrm.pri and TINY_ROOT_DIR and TINY_TINYORM_BUILDS_DIR silverqx
 // BUG qmake MinGW UCRT64 clang static build duplicit symbols, this is MinGW bug silverqx
 // BUG qmake MinGW UCRT64 clang shared build with inline_constants cause crashes of 50% of tests, this will be MinGW clang or clang bug, on unix it works without problems silverqx
 // BUG cmake MinGW UCRT64 clang static build builds, but cause problem with inline_constants ; shared build with inline_constants cause crashes of 50% of tests, like bug above, this will be MinGW clang or clang bug, on unix it works without problems silverqx

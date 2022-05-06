@@ -12,12 +12,17 @@ include($$TINYORM_SOURCE_TREE/qmake/common.pri)
 
 # Configure TinyORM library
 # ---
-# everything other is defined in the qmake/common.pri
+# everything else is defined in the qmake/common.pri
 
-# Link with the shared library
+# Link against the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
     DEFINES *= TINYORM_LINKING_SHARED
+
+# Disable the ORM-related source code
+disable_orm: DEFINES *= TINYORM_DISABLE_ORM
+# Disable the tom-related source code
+disable_tom: DEFINES *= TINYORM_DISABLE_TOM
 
 # File version
 # ---
@@ -37,18 +42,25 @@ mingw: tinyRcIncludepath += $$quote($$TINYTOM_SOURCE_TREE/resources/)
 
 load(tiny_resource_and_manifest)
 tiny_resource_and_manifest(                                               \
-    $$tinyRcIncludepath, $$TINYTOM_SOURCE_TREE/resources, tom, TomExample \
+    $$tinyRcIncludepath, $$TINYTOM_SOURCE_TREE/resources, tom, Tom        \
 )
 
 # Link against TinyORM library
 # ---
 
-INCLUDEPATH *= \
-    $$quote($$TINYORM_SOURCE_TREE/include/) \
-    $$quote($$TINYTOM_SOURCE_TREE/include/) \
+!isEmpty(TINYORM_SOURCE_TREE): \
+exists($$TINYORM_SOURCE_TREE): \
+    win32-msvc: \
+        INCLUDEPATH *= \
+            $$quote($$TINYORM_SOURCE_TREE/include/) \
+            $$quote($$TINYTOM_SOURCE_TREE/include/)
+    else: \
+        QMAKE_CXXFLAGS += \
+            -isystem $$shell_quote($$TINYORM_SOURCE_TREE/include/) \
+            -isystem $$shell_quote($$TINYTOM_SOURCE_TREE/include/)
 
 !isEmpty(TINYORM_BUILD_TREE): \
 exists($$TINYORM_BUILD_TREE): {
-    LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src$${TINY_RELEASE_TYPE}/)
+    LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/src$${TINY_RELEASE_TYPE}/)
     LIBS += -lTinyOrm
 }

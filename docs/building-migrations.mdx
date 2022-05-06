@@ -23,6 +23,7 @@ import {
 
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
+    - [vcpkg.json manifest](#vcpkg-json-manifest)
 - [Migrations with CMake](#migrations-with-cmake)
     - [Source code](#source-code)
     - [CMake project](#cmake-project)
@@ -62,6 +63,34 @@ cd tom`}
 Working MySQL database server as the `tom` migrations currently provides support only for the MySQL database.
 
 Install required dependencies and build the `TinyORM` library with the `tom` (it's enabled by default) as is described [here](building-hello-world.mdx#install-dependencies) and [here](building-tinyorm.mdx).
+
+### vcpkg.json manifest {#vcpkg-json-manifest}
+
+Create a `vcpkg.json` file with the following content. `CMake` example below uses this method.
+
+```bash
+cd tom
+vim vcpkg.json
+```
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "tom",
+  "version-semver": "0.1.0",
+  "description": "Tom console for TinyORM.",
+  "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
+  "supports": "!(uwp | arm | android | emscripten)",
+  "dependencies": [
+    "range-v3",
+    "tabulate"
+  ]
+}
+```
+
+:::note
+Only `CMake` via the `toolchain file` supports this method.
+:::
 
 ## Migrations with CMake
 
@@ -235,8 +264,9 @@ set(CMAKE_AUTOMOC ON)\n
 # ---\n
 set(Tom_ns tom)
 set(Tom_target tom)\n
-set(TinyOrmSourceDir "${convertToCmakeEnvVariable(pwsh, applicationFolderPath(pwsh))}/TinyORM/TinyORM")
-set(TinyOrmBuildDir "${convertToCmakeEnvVariable(pwsh, applicationFolderPath(pwsh))}/TinyORM/TinyORM-builds-cmake/build-debug")\n
+file(REAL_PATH "../../TinyORM" TinyMainDir)\n
+set(TinyOrmSourceDir "\${TinyMainDir}/TinyORM")
+set(TinyOrmBuildDir "\${TinyMainDir}/TinyORM-builds-cmake/build-debug")\n
 # TinyORM CMake modules (needed to set the executable version and RC file on Windows)
 list(APPEND CMAKE_MODULE_PATH "\${TinyOrmSourceDir}/cmake/CommonModules")\n
 # build tree
@@ -318,8 +348,9 @@ set(CMAKE_AUTOMOC ON)\n
 # ---\n
 set(Tom_ns tom)
 set(Tom_target tom)\n
-set(TinyOrmSourceDir "${convertToCmakeEnvVariable(bash, applicationFolderPath(bash))}/TinyORM/TinyORM")
-set(TinyOrmBuildDir "${convertToCmakeEnvVariable(bash, applicationFolderPath(bash))}/TinyORM/TinyORM-builds-cmake/build-debug")\n
+file(REAL_PATH "../../TinyORM" TinyMainDir)\n
+set(TinyOrmSourceDir "\${TinyMainDir}/TinyORM")
+set(TinyOrmBuildDir "\${TinyMainDir}/TinyORM-builds-cmake/build-debug")\n
 # TinyORM CMake modules (needed to set the executable version and RC file on Windows)
 list(APPEND CMAKE_MODULE_PATH "\${TinyOrmSourceDir}/cmake/CommonModules")\n
 # build tree
@@ -524,9 +555,6 @@ vim tom.pro
 To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>.
 :::
 
-<Tabs groupId={shell} name='tinyorm-on-path'>
-<TabItem value={pwsh} label={pwsh_label}>
-
 ```qmake
 QT *= core sql
 QT -= gui
@@ -534,72 +562,26 @@ QT -= gui
 TEMPLATE = app
 TARGET = tom
 
-# TinyTom application specific configuration
-# ---
-
 CONFIG *= console
 
-# Configure TinyORM library for the migrations purposes
-include($$TINY_MAIN_DIR/TinyORM/qmake/tom.pri)
-
-# TinyTom application defines
-# ---
-
 DEFINES += PROJECT_TOM
-
-# TinyTom application header and source files
-# ---
 
 SOURCES += $$PWD/main.cpp
 
 # Database migrations
 include($$PWD/database/migrations.pri)
 
-# vcpkg - range-v3 and tabulate
-# ---
-
-INCLUDEPATH += $$quote(../../../../vcpkg/installed/x64-windows/include/)
-```
-
-</TabItem>
-<TabItem value={bash} label={bash_label}>
-
-```qmake
-QT *= core sql
-QT -= gui
-
-TEMPLATE = app
-TARGET = tom
-
-# TinyTom application specific configuration
-# ---
-
-CONFIG *= console
-
 # Configure TinyORM library for the migrations purposes
 include($$TINY_MAIN_DIR/TinyORM/qmake/tom.pri)
 
-# TinyTom application defines
-# ---
-
-DEFINES += PROJECT_TOM
-
-# TinyTom application header and source files
-# ---
-
-SOURCES += $$PWD/main.cpp
-
-# Database migrations
-include($$PWD/database/migrations.pri)
-
 # vcpkg - range-v3 and tabulate
-# ---
-
-QMAKE_CXXFLAGS += -isystem $$shell_quote(../../../../vcpkg/installed/x64-linux/include/)
+win32-msvc: \
+    INCLUDEPATH += $$quote($$TINY_VCPKG_INSTALLED/x64-windows/include/)
+mingw: \
+    QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_VCPKG_INSTALLED/x64-mingw-dynamic/include/)
+unix:!macx: \
+    QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_VCPKG_INSTALLED/x64-linux/include/)
 ```
-
-</TabItem>
-</Tabs>
 
 :::caution
 The exact [folders structure](building-tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
@@ -615,16 +597,21 @@ On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -extern
 
 To correctly set a file properties as the version, description, ... you have to provide the path to the `TinyORM` qmake features (`.prf` files) which handle this correctly, this path is provided by the `QMAKEFEATURES` variable and can be set only in the `.qmake.conf` file.
 
-Create `.qmake.conf` with following content.
+Create `.qmake.conf` in the `tom` application root folder with the following content.
 
 ```qmake
 TINY_MAIN_DIR = $$clean_path($$PWD/../../TinyORM)
-TINYORM_SOURCE_TREE = $$quote($$TINY_MAIN_DIR/TinyORM)
 # Name of this qmake variable is crucial
 TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug)
+# vcpkg - range-v3 and tabulate
+TINY_VCPKG_INSTALLED = $$clean_path($$PWD/../../../vcpkg/installed)
 
-QMAKEFEATURES *= $$quote($$TINYORM_SOURCE_TREE/qmake/features)
+QMAKEFEATURES *= $$quote($$TINY_MAIN_DIR/TinyORM/qmake/features)
 ```
+
+:::info
+Configuring with the `.qmake.conf` file has one big advantage that is that you do not have to modify the project files.
+:::
 
 #### Migrations source files
 

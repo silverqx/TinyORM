@@ -153,35 +153,35 @@ To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>
 
 And paste the following code.
 
-```
-#include <QDebug>
+    #include <QDebug>
 
-#ifdef _WIN32
-#  include <qt_windows.h>
-#endif
+    #ifdef _WIN32
+    #  include <qt_windows.h>
+    #endif
 
-#include <orm/db.hpp>
+    #include <orm/db.hpp>
 
-int main(int /*unused*/, char */*unused*/[])
-{
-#ifdef _WIN32
-    SetConsoleOutputCP(CP_UTF8);
-//    SetConsoleOutputCP(1250);
-#endif
+    using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",   "QSQLITE"},
-        {"database", qEnvironmentVariable("DB_DATABASE", "HelloWorld.sqlite3")},
-        {"check_database_exists", true},
-    });
+    int main(int /*unused*/, char */*unused*/[])
+    {
+    #ifdef _WIN32
+        SetConsoleOutputCP(CP_UTF8);
+    //    SetConsoleOutputCP(1250);
+    #endif
 
-    auto posts = DB::select("select * from posts");
+        // Ownership of a shared_ptr()
+        auto manager = DB::create({
+            {"driver",   "QSQLITE"},
+            {"database", qEnvironmentVariable("DB_DATABASE", "HelloWorld.sqlite3")},
+            {"check_database_exists", true},
+        });
 
-    while(posts.next())
-        qDebug() << posts.value("id").toULongLong() << posts.value("name").toString();
-}
-```
+        auto posts = DB::select("select * from posts");
+
+        while(posts.next())
+            qDebug() << posts.value("id").toULongLong() << posts.value("name").toString();
+    }
 
 ### CMake project
 
@@ -387,92 +387,25 @@ vim HelloWorld.pro
 To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>.
 :::
 
-<Tabs groupId={shell} name='tinyorm-on-path'>
-<TabItem value={pwsh} label={pwsh_label}>
-
 ```qmake
 QT *= core sql
 QT -= gui
 
 TEMPLATE = app
 
-CONFIG *= console c++2a strict_c++ warn_on utf8_source link_prl hide_symbols silent
-CONFIG -= c++11 app_bundle
-
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
-
-DEFINES *= QT_NO_CAST_TO_ASCII
-DEFINES *= QT_NO_CAST_FROM_BYTEARRAY
-DEFINES *= QT_USE_QSTRINGBUILDER
-DEFINES *= QT_STRICT_ITERATORS
-
-SOURCES += \
-    main.cpp
-
-# Link against TinyORM library
-# ---
-TINY_MAIN_DIR = $$quote($$PWD/../../TinyORM)
-TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake)
+SOURCES += $$PWD/main.cpp
 
 # Configure TinyORM library
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 
-# TinyORM header files
-INCLUDEPATH += $$quote($$TINY_MAIN_DIR/TinyORM/include/)
-
-# TinyORM library path
-LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
-LIBS += -lTinyOrm
-
-# vcpkg - range-v3 and tabulate
-# ---
-INCLUDEPATH += $$quote(../../../../vcpkg/installed/x64-windows/include/)
+# vcpkg - range-v3
+win32-msvc: \
+    INCLUDEPATH += $$quote($$TINY_VCPKG_INSTALLED/x64-windows/include/)
+mingw: \
+    QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_VCPKG_INSTALLED/x64-mingw-dynamic/include/)
+unix:!macx: \
+    QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_VCPKG_INSTALLED/x64-linux/include/)
 ```
-
-</TabItem>
-<TabItem value={bash} label={bash_label}>
-
-```qmake
-QT *= core sql
-QT -= gui
-
-TEMPLATE = app
-
-CONFIG *= console c++2a strict_c++ warn_on utf8_source link_prl hide_symbols silent
-CONFIG -= c++11 app_bundle
-
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
-
-DEFINES *= QT_NO_CAST_TO_ASCII
-DEFINES *= QT_NO_CAST_FROM_BYTEARRAY
-DEFINES *= QT_USE_QSTRINGBUILDER
-DEFINES *= QT_STRICT_ITERATORS
-
-SOURCES += \
-    main.cpp
-
-# Link against TinyORM library
-# ---
-TINY_MAIN_DIR = $$quote($$PWD/../../TinyORM)
-TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake)
-
-# Configure TinyORM library
-include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
-
-# TinyORM header files
-QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_MAIN_DIR/TinyORM/include/)
-
-# TinyORM library path
-LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
-LIBS += -lTinyOrm
-
-# vcpkg - range-v3 and tabulate
-# ---
-QMAKE_CXXFLAGS += -isystem $$shell_quote(../../../../vcpkg/installed/x64-linux/include/)
-```
-
-</TabItem>
-</Tabs>
 
 :::caution
 The exact [folders structure](building-tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
@@ -482,6 +415,22 @@ The exact [folders structure](building-tinyorm.mdx#folders-structure) is crucial
 On Linux `-isystem` marks the directory as a system directory, it prevents warnings.
 
 On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes; `#include <file>`.
+:::
+
+#### Configure using .qmake.conf
+
+Create `.qmake.conf` in the `HelloWorld` project root folder with the following content.
+
+```qmake
+TINY_MAIN_DIR = $$clean_path($$PWD/../../TinyORM)
+# Name of this qmake variable is crucial
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug)
+# vcpkg - range-v3
+TINY_VCPKG_INSTALLED = $$clean_path($$PWD/../../../vcpkg/installed)
+```
+
+:::info
+Configuring with the `.qmake.conf` file has one big advantage that is that you do not have to modify the project files.
 :::
 
 ### Build Hello world {#build-hello-world-qmake}

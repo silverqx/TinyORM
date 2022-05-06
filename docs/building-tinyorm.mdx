@@ -595,13 +595,13 @@ Important `qmake` options.
 
 ### Consume TinyOrm library <small>(qmake)</small> {#consume-tinyorm-library-qmake}
 
-A basic [`TinyOrm.pri`](https://github.com/silverqx/TinyORM/blob/main/qmake/TinyOrm.pri) file is available to simplify the integration of the `TinyORM` library into your application. This file sets up basic qmake variables that are needed by `TinyORM`. You can or don't have to use it.
+A basic [`TinyOrm.pri`](https://github.com/silverqx/TinyORM/blob/main/qmake/TinyOrm.pri) file is available to simplify the integration of the `TinyORM` library into your application. This file sets up basic qmake variables that are needed by `TinyORM`. You can use it to configure the `TinyORM` library.
 
 ```qmake
 include($$PWD/../../TinyORM/TinyORM/qmake/TinyOrm.pri)
 ```
 
-Or you can set it up manually.
+Or you can configure `TinyORM` library manually.
 
 ```qmake
 # TinyORM configuration
@@ -612,7 +612,7 @@ CONFIG *= c++2a strict_c++ warn_on utf8_source link_prl hide_symbols silent
 # TinyORM defines
 # ---
 
-# Link with the shared library
+# Link against the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
     DEFINES *= TINYORM_LINKING_SHARED
@@ -624,6 +624,14 @@ CONFIG(release, debug|release): \
 # Log queries with a time measurement in debug build
 CONFIG(release, debug|release): \
     DEFINES *= TINYORM_NO_DEBUG_SQL
+
+# TinyTom defines
+# ---
+
+# Release build
+CONFIG(release, debug|release): DEFINES += TINYTOM_NO_DEBUG
+# Debug build
+CONFIG(debug, debug|release): DEFINES *= TINYTOM_DEBUG
 ```
 
 And of course you have to set the `INCLUDEPATH` and `LIBS`.
