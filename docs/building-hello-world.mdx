@@ -26,8 +26,8 @@ import {
 - [Install dependencies](#install-dependencies)
     - [Using vcpkg.json](#using-vcpkg-json)
     - [Using vcpkg install](#using-vcpkg-install)
+- [Source code](#source-code)
 - [Hello world with CMake](#hello-world-with-cmake)
-    - [Source code](#source-code)
     - [CMake project](#cmake-project)
     - [Build Hello world](#build-hello-world-cmake)
     - [Execute Hello world](#execute-hello-world-cmake)
@@ -122,7 +122,7 @@ vcpkg install range-v3 tabulate
 vcpkg list
 ```
 
-## Hello world with CMake
+## Source code
 
 Let's start in the `HelloWorld` project folder.
 
@@ -138,8 +138,6 @@ Let's start in the `HelloWorld` project folder.
 </CodeBlock>
 </TabItem>
 </Tabs>
-
-### Source code
 
 Create `main.cpp` source file.
 
@@ -182,6 +180,27 @@ And paste the following code.
         while(posts.next())
             qDebug() << posts.value("id").toULongLong() << posts.value("name").toString();
     }
+
+## Hello world with CMake
+
+Create a folder for the `CMake` build.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ..
+mkdir HelloWorld-builds-cmake/build-debug\n
+cd HelloWorld-builds-cmake/build-debug`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ..
+mkdir -p HelloWorld-builds-cmake/build-debug\n
+cd HelloWorld-builds-cmake/build-debug`}
+</CodeBlock>
+</TabItem>
+</Tabs>
 
 ### CMake project
 
@@ -236,26 +255,11 @@ target_link_libraries(HelloWorld
 
 ### Build Hello world {#build-hello-world-cmake}
 
-Create a folder for the `CMake` build.
-
-<Tabs groupId={shell}>
-<TabItem value={pwsh} label={pwsh_label}>
-<CodeBlock className='language-powershell'>
-{`cd ..
-mkdir HelloWorld-builds-cmake/build-debug\n
-cd HelloWorld-builds-cmake/build-debug`}
-</CodeBlock>
-</TabItem>
-<TabItem value={bash} label={bash_label}>
-<CodeBlock className='language-bash'>
-{`cd ..
-mkdir -p HelloWorld-builds-cmake/build-debug\n
-cd HelloWorld-builds-cmake/build-debug`}
-</CodeBlock>
-</TabItem>
-</Tabs>
-
 Now you are ready to configure `HelloWorld` `CMake` application.
+
+```bash
+cd ../HelloWorld-builds-cmake/build-debug
+```
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>

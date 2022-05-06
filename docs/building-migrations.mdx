@@ -24,8 +24,8 @@ import {
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
     - [vcpkg.json manifest](#vcpkg-json-manifest)
+- [Source code](#source-code)
 - [Migrations with CMake](#migrations-with-cmake)
-    - [Source code](#source-code)
     - [CMake project](#cmake-project)
     - [Build migrations](#build-migrations-cmake)
     - [Execute migrations](#execute-migrations-cmake)
@@ -66,6 +66,8 @@ Install required dependencies and build the `TinyORM` library with the `tom` (it
 
 ### vcpkg.json manifest {#vcpkg-json-manifest}
 
+Whole section about the `vcpkg` dependencies is described in the [Install dependencies](building-hello-world.mdx#install-dependencies).
+
 Create a `vcpkg.json` file with the following content. `CMake` example below uses this method.
 
 ```bash
@@ -92,7 +94,7 @@ vim vcpkg.json
 Only `CMake` via the `toolchain file` supports this method.
 :::
 
-## Migrations with CMake
+## Source code
 
 Let's start in the `tom` project folder.
 
@@ -108,8 +110,6 @@ Let's start in the `tom` project folder.
 </CodeBlock>
 </TabItem>
 </Tabs>
-
-### Source code
 
 Create `main.cpp` source file.
 
@@ -246,6 +246,27 @@ And paste the following code.
         };
 
     } // namespace Migrations
+
+## Migrations with CMake
+
+Create a folder for the `cmake` build.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ..
+mkdir tom-builds-cmake/build-debug\n
+cd tom-builds-cmake/build-debug`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ..
+mkdir -p tom-builds-cmake/build-debug\n
+cd tom-builds-cmake/build-debug`}
+</CodeBlock>
+</TabItem>
+</Tabs>
 
 ### CMake project
 
@@ -424,26 +445,11 @@ target_link_libraries(\${Tom_target}
 
 ### Build migrations {#build-migrations-cmake}
 
-Create a folder for the `CMake` build.
-
-<Tabs groupId={shell}>
-<TabItem value={pwsh} label={pwsh_label}>
-<CodeBlock className='language-powershell'>
-{`cd ..
-mkdir tom-builds-cmake/build-debug\n
-cd tom-builds-cmake/build-debug`}
-</CodeBlock>
-</TabItem>
-<TabItem value={bash} label={bash_label}>
-<CodeBlock className='language-bash'>
-{`cd ..
-mkdir -p tom-builds-cmake/build-debug\n
-cd tom-builds-cmake/build-debug`}
-</CodeBlock>
-</TabItem>
-</Tabs>
-
 Now you are ready to configure `tom` `CMake` application. Don't forget to prepare the build environment with the [`qtenv6.ps1`](building-tinyorm.mdx#windows-prerequisites) command if you are building with the `msvc`.
+
+```bash
+cd ../tom-builds-cmake/build-debug
+```
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
