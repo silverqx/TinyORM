@@ -69,11 +69,13 @@ private:
 #endif
 };
 
+#if defined(_WIN32)
 namespace
 {
     // All executables has the same LegalCopyright
     Q_GLOBAL_STATIC_WITH_ARGS(QString, CopyRight, ("Copyright (©) 2022 Crystal Studio"));
 }
+#endif
 
 void tst_Version::versions_TinyOrm() const
 {
