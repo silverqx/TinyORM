@@ -1345,6 +1345,4 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR check all unique_ptr() of base clases, if base classes have virtual dtors, or find unique_ptrs of aggregates to base classes silverqx
 // CUR use EMPTY constant everywhere silverqx
 // CUR tom, squashing migrations silverqx
-// CUR docs building.mdx TINYTOM_MIGRATIONS_PATH url to main branch after a new release, currently it links to develop branch silverqx
-// CUR TinyOrm.pri add INCLUDEPATH like in tom.pri silverqx
 // CUR tom, create icon silverqx
