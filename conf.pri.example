@@ -1,7 +1,7 @@
 # Tom migrations
 # ---
 
-# Default migrations path as the stringfor the make:migration command
+# Default migrations path as the string for the make:migration command
 # The path can be absolute or relative (to the pwd at runtime)
 # It will look like this on the cmd. line: -DTINYTOM_MIGRATIONS_PATH="<path>/<path>"
 # If the path doesn't contain a space then the \" is not needed
