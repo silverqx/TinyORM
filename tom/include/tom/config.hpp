@@ -16,9 +16,9 @@ TINY_SYSTEM_HEADER
 
 /* Default migrations path for the make:migration command, the path can be absolute or
    relative (to the pwd at runtime) and will be stringified in the tom/application.cpp. */
-#ifndef TINYTOM_MIGRATIONS_PATH
+#ifndef TINYTOM_MIGRATIONS_DIR
 // NOLINTNEXTLINE(bugprone-macro-parentheses)
-#  define TINYTOM_MIGRATIONS_PATH database/migrations
+#  define TINYTOM_MIGRATIONS_DIR database/migrations
 #endif
 
 #endif // TOM_CONFIG_HPP

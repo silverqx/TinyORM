@@ -112,7 +112,7 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
     , m_environmentEnvName(environmentEnvName)
     , m_migrationTable(std::move(migrationTable))
     , m_migrationsPath(initializeMigrationsPath(
-                           TINYORM_STRINGIFY(TINYTOM_MIGRATIONS_PATH)))
+                           TINYORM_STRINGIFY(TINYTOM_MIGRATIONS_DIR)))
     , m_migrations(std::move(migrations))
 {
     // Enable UTF-8 encoding and vt100 support

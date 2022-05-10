@@ -167,25 +167,15 @@ target_optional_compile_definitions(${TinyOrm_target}
 line interface)."
         DISABLED TINYORM_DISABLE_TOM
 )
+
 # Depends on the TOM option so defined here
 feature_option_dependent(TOM_EXAMPLE
     "Build the tom command-line application example" OFF
     "TOM" TOM_EXAMPLE-NOTFOUND
 )
+
 # Depends on the TOM_EXAMPLE option so defined here
-if(TOM_EXAMPLE)
-    # Provide the default migrations path for the make:migration command
-    if(NOT DEFINED TOM_MIGRATIONS_PATH)
-        file(REAL_PATH "${TomExample_folder}/${TomMigrations_folder}" TOM_MIGRATIONS_PATH
-             BASE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    endif()
-
-    # Set path from the -D option or from the above file(REAL_PATH) command
-    set(TOM_MIGRATIONS_PATH "${TOM_MIGRATIONS_PATH}" CACHE PATH
-        "Default migrations path for the make:migration command")
-
-    mark_as_advanced(TOM_MIGRATIONS_PATH)
-endif()
+tiny_init_tom_migrations_dir()
 
 # TinyORM library header and source files
 # ---
@@ -313,7 +303,7 @@ if(TOM_EXAMPLE)
     target_compile_definitions(${TinyOrm_target}
         PUBLIC
             # Will be stringified in the tom/application.cpp
-            TINYTOM_MIGRATIONS_PATH=${TOM_MIGRATIONS_PATH}
+            TINYTOM_MIGRATIONS_DIR=${TOM_MIGRATIONS_DIR}
     )
 endif()
 

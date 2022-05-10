@@ -247,3 +247,25 @@ constants")
     unset(tinyExternConstants)
 
 endmacro()
+
+# Initialize the default migrations path for the make:migration command
+macro(tiny_init_tom_migrations_dir)
+
+    if(TOM_EXAMPLE)
+        # Provide the default migrations path for the make:migration command
+        if(NOT DEFINED TOM_MIGRATIONS_DIR)
+            # Relative path to the pwd
+            set(TOM_MIGRATIONS_DIR ${TomMigrations_folder})
+            # Absolute path
+#            file(REAL_PATH "${TomExample_folder}/${TomMigrations_folder}"
+#                 TOM_MIGRATIONS_DIR BASE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+        endif()
+
+        # Set path from the -D option or from the above file(REAL_PATH) command
+        set(TOM_MIGRATIONS_DIR "${TOM_MIGRATIONS_DIR}" CACHE PATH
+            "Default migrations path for the make:migration command")
+
+        mark_as_advanced(TOM_MIGRATIONS_DIR)
+    endif()
+
+endmacro()
