@@ -30,7 +30,7 @@ disable_tom: DEFINES *= TINYORM_DISABLE_TOM
 # Find version numbers in the version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
 load(tiny_version_numbers)
-tiny_version_numbers($$quote($$TINYTOM_SOURCE_TREE/include/version.hpp))
+tiny_version_numbers($$quote($$TINYTOM_SOURCE_TREE/include/tom/version.hpp))
 
 # Windows resource and manifest files
 # ---
