@@ -42,7 +42,7 @@ set_target_properties(${TomExample_target}
 )
 
 target_include_directories(${TomExample_target} PRIVATE
-    "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tests/database>"
+    "${CMAKE_SOURCE_DIR}/tests/database"
 )
 
 # Tom command-line application defines

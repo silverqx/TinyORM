@@ -61,9 +61,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
 endif()
 
-target_include_directories(${TinyUtils_target} PUBLIC
-    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
-)
+target_include_directories(${TinyUtils_target} PUBLIC "${PROJECT_SOURCE_DIR}/src")
 
 # TinyUtils defines
 # ---
