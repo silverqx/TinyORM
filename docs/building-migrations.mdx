@@ -193,7 +193,14 @@ If you have already built the `tom` application then you can generate a migratio
 tom make:migration create_posts_table
 ```
 
-If you want, you can also build the `tom` application without the migrations, simply comment out the `migrations()` method and the corresponding `#include "migrations/xyz.hpp"` files.
+Below is the expected folders structure for the migrations. The [`migrations.pri`](#migrations-source-files) file is used only by the `qmake` build system and is not needed with `CMake` builds.
+
+```text
+tom/
+└── database/
+    ├── migrations/
+    └── migrations.pri
+```
 
 Let's create the first migration manually.
 
@@ -246,6 +253,10 @@ And paste the following code.
         };
 
     } // namespace Migrations
+
+:::info
+If you want, you can also build the `tom` application without the migrations, simply comment out the `migrations()` method and the corresponding `#include "migrations/xyz.hpp"` files.
+:::
 
 ## Migrations with CMake
 
