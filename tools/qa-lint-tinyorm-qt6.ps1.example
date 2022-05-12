@@ -23,5 +23,5 @@ Param(
 Set-StrictMode -Version 3.0
 
 E:\dotfiles\bin\Lint-TinyORM.ps1 `
-    -BuildPath '<your_path_here>\TinyOrm\TinyOrm-builds-cmake\build-lint-qt5' `
-    -QtVersion 5 @PSBoundParameters
+    -BuildPath '<your_path_here>\TinyOrm\TinyOrm-builds-cmake\build-lint-qt6' `
+    -QtVersion 6 @PSBoundParameters

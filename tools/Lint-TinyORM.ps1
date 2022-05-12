@@ -1,7 +1,19 @@
 #!/usr/bin/env pwsh
 
 Param(
-    [Parameter(Position = 0, 
+    [Parameter(Position = 0, Mandatory = $false,
+        HelpMessage = 'Specifies the files to be processed, is joined with by the | character ' +
+            'and used in the parenthesized regex eg. (file1|file2).')]
+    [ValidateNotNullOrEmpty()]
+    [string[]] $Files,
+
+    [Parameter(Mandatory = $false,
+        HelpMessage = 'Specifies the files paths to be processed, is joined with by the | ' +
+            'character and used in the parenthesized regex eg. (folder1|folder2).')]
+    [ValidateNotNullOrEmpty()]
+    [string[]] $FilesPaths,
+
+    [Parameter(Mandatory = $false,
         HelpMessage = 'Specifies the path to the cmake build folder, is pwd by default.')]
     [ValidateNotNullOrEmpty()]
     [string] $BuildPath = $($(Get-Location).Path),
@@ -10,12 +22,25 @@ Param(
     [switch] $SkipClangTidy,
 
     [Parameter(HelpMessage = 'Skip Clazy standalone analyzes.')]
-    [switch] $SkipClazy
+    [switch] $SkipClazy,
+
+    [Parameter(HelpMessage = 'Specifies Qt version to use for compilation (sources qtenvX.ps1).')]
+    [ValidateRange(5, 6)]
+    [int] $QtVersion = 5
 )
 
 Set-StrictMode -Version 3.0
 
-$Script:RegEx = '(?:src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
+# Rules for linting folders using the -FilesPaths parameter:
+#  - xyz    - passed folder only
+#  - xyz.*? - passed folder and all subfolders
+#  - xyz.+? - subfolders only excluding the passed folder
+
+# Prepare regex paths and provide default values if not passed
+$FilesPaths = $null -eq $FilesPaths ? '.+?'        : "(?:$($FilesPaths -join '|'))"
+$Files      = $null -eq $Files      ? '[\w_\-\+]+' : "(?:$($Files -join '|'))"
+
+$Script:RegEx = "(?:src|tests)[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$($Files)\.cpp$"
 
 Push-Location
 
@@ -23,7 +48,7 @@ Set-Location -Path $BuildPath
 
 # Initialize build environment if it's not already there
 if (-not (Test-Path env:WindowsSDKLibVersion)) {
-    . E:\dotfiles\bin\qtenv5.ps1
+    . "E:\dotfiles\bin\qtenv${QtVersion}.ps1"
 }
 
 # Configure
@@ -38,6 +63,7 @@ if (-not (Test-Path $BuildPath\compile_commands.json)) {
         -D VERBOSE_CONFIGURE:BOOL=ON `
         -D BUILD_TESTS:BOOL=ON `
         -D MYSQL_PING:BOOL=ON `
+        -D TOM_EXAMPLE:BOOL=ON `
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON `
         -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON `
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
@@ -70,14 +96,14 @@ if (-not $SkipClazy) {
         'assert-with-side-effects,container-inside-loop,detaching-member,' +
         'heap-allocated-small-trivial-type,ifndef-define-typo,isempty-vs-count,jni-signatures,' +
         'qhash-with-char-pointer-key,qproperty-type-mismatch,qrequiredresult-candidates,' +
-        'qstring-varargs,qt6-fwd-fixes,qt6-header-fixes,qt6-qhash-signature,' +
-        'raw-environment-function,reserve-candidates,signal-with-return-value,thread-with-slots,' +
-        'tr-non-literal,' +
-        # Will be added in Clazy 1.11
-        # 'unexpected-flag-enumerator-value,'
+        'qstring-varargs,qt6-deprecated-api-fixes,qt6-fwd-fixes,qt6-header-fixes,' +
+        'qt6-qhash-signature,raw-environment-function,reserve-candidates,' +
+        'signal-with-return-value,thread-with-slots,tr-non-literal,' +
+        # New in Clazy 1.11
+        'unexpected-flag-enumerator-value,' +
         'unneeded-cast,' +
-        # Will be added in Clazy 1.11
-        # 'use-arrow-operator-instead-of-data,'
+        # New in Clazy 1.11
+        'use-arrow-operator-instead-of-data,' +
         'use-chrono-in-qtimer,' +
         # Checks Excluded from level2
         'no-copyable-polymorphic,no-ctor-missing-parent-argument,no-function-args-by-ref,' +
@@ -85,7 +111,7 @@ if (-not $SkipClazy) {
 
     & 'E:\dotfiles\bin\run-clazy-standalone.ps1' `
         -checks="$Script:Checks" `
-        -extra-arg-before='-Qunused-arguments' -header-filter='orm/.+\.(h|hpp)$' `
+        -extra-arg-before='-Qunused-arguments' -header-filter='(orm|tom|migrations)/.+\.(h|hpp)$' `
         -p="$BuildPath" $Script:RegEx
 }
 
