@@ -5,7 +5,6 @@ require_once 'vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Combine Insert statement values with columns.
