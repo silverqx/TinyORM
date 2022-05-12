@@ -41,7 +41,9 @@ set_target_properties(${TomTestData_target}
         VERSION ${PROJECT_VERSION}
 )
 
-target_include_directories(${TomTestData_target} PRIVATE "database")
+target_include_directories(${TomTestData_target} PRIVATE
+    "${PROJECT_SOURCE_DIR}/database"
+)
 
 # Tom migrations for unit tests defines
 # ---
