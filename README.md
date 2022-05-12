@@ -21,14 +21,14 @@ Whole library is documented as markdown documents:
 - [Documentation: Index](/docs/README.mdx#prologue)
 - [Dependencies](/docs/dependencies.mdx#dependencies)
 - [Supported Compilers](/docs/supported-compilers.mdx#supported-compilers)
-- [Building: TinyORM](/docs/building-tinyorm.mdx#building-tinyorm)
-- [Building: Migrations](/docs/building-migrations.mdx#building-migrations)
-- [Building: Hello world](/docs/building-hello-world.mdx#building-hello-world)
 - [Database: Getting Started](/docs/database.mdx#database-getting-started)
 - [Database: Query Builder](/docs/query-builder.mdx#database-query-builder)
 - [Database: Migrations](/docs/migrations.mdx#database-migrations)
 - [TinyORM: Getting Started](/docs/tinyorm.mdx#tinyorm-getting-started)
 - [TinyORM: Relationships](/docs/tinyorm-relationships.mdx#tinyorm-relationships)
+- [Building: TinyORM](/docs/building-tinyorm.mdx#building-tinyorm)
+- [Building: Hello world](/docs/building-hello-world.mdx#building-hello-world)
+- [Building: Migrations](/docs/building-migrations.mdx#building-migrations)
 
 [action-msvc]: https://github.com/silverqx/TinyORM/actions/workflows/msvc.yml
 [action-msvc-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc.yml/badge.svg
