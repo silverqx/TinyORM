@@ -425,7 +425,7 @@ namespace Grammars
         /*! Add a new command to the blueprint. */
         template<CommandDefinitionConcept T = BasicCommand>
         T &addCommand(T &&definition = {});
-        /*! Create a new Fluent command.. */
+        /*! Create a new Fluent command. */
         template<CommandDefinitionConcept T>
         std::shared_ptr<T> createCommand(T &&definition = {});
 
