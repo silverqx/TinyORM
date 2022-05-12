@@ -41,6 +41,9 @@ namespace Tom::Commands::Database
         int run() override;
 
     protected:
+        /*! Set the debug sql for the current connection. */
+        void setConnectionDebugSql(const QString &connectionName) const;
+
         /*! Drop all of the database tables. */
         void dropAllTables(const QString &database) const;
         /*! Drop all of the database views. */

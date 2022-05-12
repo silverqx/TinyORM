@@ -46,6 +46,9 @@ int WipeCommand::run()
     // Database connection to use
     const auto database = value(database_);
 
+    // Set the debug sql for the current connection
+    setConnectionDebugSql(database);
+
     if (isSet(drop_views)) {
         dropAllViews(database);
 
@@ -66,6 +69,16 @@ int WipeCommand::run()
 }
 
 /* protected */
+
+void WipeCommand::setConnectionDebugSql(const QString &connectionName) const
+{
+    auto &connection = this->connection(connectionName);
+
+    if (isDebugVerbosity())
+        connection.enableDebugSql();
+    else
+        connection.disableDebugSql();
+}
 
 void WipeCommand::dropAllTables(const QString &database) const
 {
