@@ -235,6 +235,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+        ./tom migrate:install --no-ansi
         ./tom migrate:status --no-ansi
       env:
         DB_MYSQL_CHARSET: utf8mb4

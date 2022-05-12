@@ -246,6 +246,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
+        .\tom.exe migrate:install --no-ansi
         .\tom.exe migrate:status --no-ansi
       env:
         DB_MYSQL_CHARSET: utf8mb4
