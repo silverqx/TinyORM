@@ -34,6 +34,8 @@ Migrations are like version control for your database, allowing your team to def
 
 The TinyORM `Schema` facade provides database agnostic support for creating and manipulating tables across all of TinyORM's supported database systems. Typically, migrations will use this facade to create and modify database tables and columns.
 
+`Tom` migrations is a small console application that depends on the `TinyORM` library. All migrations logic is compiled so recompilation is needed after adding a new migration class.
+
 :::caution
 Currently, TinyORM's schema builder provides first-party support for the MySQL database only. Support for the PostgreSQL and SQLite databases is not implemented 😢.
 :::
@@ -154,6 +156,10 @@ Many `tom` commands offer variety of options, you can explore them using the `to
 
 :::tip
 The `tom` command is able to guess the command name and command namespace, eg. `tom mig:st` or `tom m:rol`, ...
+:::
+
+:::tip
+You can pass the `-vvv` command-line argument to any command to see all executed SQL queries. 👌
 :::
 
 #### Forcing Migrations To Run In Production
