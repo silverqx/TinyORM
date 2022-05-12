@@ -6,7 +6,7 @@ description: Platform requirements and supported compilers for TinyORM c++ libra
 
 # Supported Compilers
 
-Following compilers are backed up by GitHub Action [workflows](https://github.com/silverqx/TinyORM/tree/main/.github/workflows) (CI pipelines) which also include more then 900 unit tests.
+Following compilers are backed up by the GitHub Action [workflows](https://github.com/silverqx/TinyORM/tree/main/.github/workflows) (CI pipelines), these workflows also include more then 920 unit tests.
 
 Windows >=10:
 
@@ -18,3 +18,7 @@ Linux:
 
 - GCC 10.2 - 11.3
 - Clang 11 - 14
+
+:::caution
+The MSVC >=17 (Visual Studio 2022) is not supported as the Qt Framework doesn't support it and it looks like the currently upcoming Qt 6.4.0 will not have the MSVC 17 support 😞, support will be added immediately after the Qt adds this support.
+:::
