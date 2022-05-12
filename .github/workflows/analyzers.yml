@@ -131,6 +131,7 @@ jobs:
         'no-copyable-polymorphic,no-ctor-missing-parent-argument,no-function-args-by-ref,'\
         'no-qstring-allocations,no-rule-of-three'
 
-        tools/run-clazy-standalone -checks="$checks" -header-filter='(orm|tom)/.+\.(h|hpp)$' \
+        tools/run-clazy-standalone -checks="$checks" \
+        -header-filter='(orm|tom|migrations)/.+\.(h|hpp)$' \
         '(?:src\/|tests\/).+\/(?!mocs_)[\w_\-\+]+\.cpp$'
 
