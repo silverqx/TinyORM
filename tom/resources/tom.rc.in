@@ -51,5 +51,5 @@ VS_VERSION_INFO VERSIONINFO
 /* End of Version info */
 
 #ifdef __MINGW32__
-CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "@Tom_target@$<TARGET_FILE_SUFFIX:@Tom_target@>.manifest"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "@Tom_manifest@$<TARGET_FILE_SUFFIX:@Tom_target@>.manifest"
 #endif

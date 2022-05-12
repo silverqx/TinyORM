@@ -130,24 +130,6 @@ jobs:
           --working-dir=${{ github.workspace }}/tests/testdata
           --prefer-dist --optimize-autoloader
 
-    - name: Create and Seed tables (MySQL, PostgreSQL, SQLite)
-      working-directory: tests/testdata
-      run: |
-        php.exe ./create_and_seed_database.php
-      env:
-        DB_MYSQL_CHARSET: utf8mb4
-        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
-        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-        DB_PGSQL_CHARSET: utf8
-        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
-        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
-
     - name: TinyORM create build folder (${{ matrix.compiler.key }}-cmake-debug)
       run: |
         mkdir -p ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
@@ -212,6 +194,39 @@ jobs:
       run: >-
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         --target all --parallel ${{ matrix.compiler.key == 'gcc' && 1 || 2 }}
+
+    - name: Create tables for unit tests 🎉 (MySQL only)
+      shell: msys2 {0}
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
+      run: |
+        export PATH=../..${PATH:+:}$PATH
+        ./tom.exe migrate --no-ansi
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        TOM_TESTDATA_ENV: testing
+
+    - name: Create and Seed tables for unit tests (MySQL (seed only), PostgreSQL, SQLite)
+      working-directory: tests/testdata
+      run: |
+        php.exe ./create_and_seed_database.php --skip-mysql-migrate
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
 
     - name: TinyORM execute ctest 🔥
       shell: msys2 {0}

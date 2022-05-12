@@ -426,14 +426,22 @@ function fixSequences(): void
  * Create and seed all tables for all connections.
  *
  * @param array $connections Connection names
+ * @param array $options Command line options parsed by getopt()
  *
  * @return void
  */
-function createAndSeedTables(array $connections): void
+function createAndSeedTables(array $connections, array $options): void
 {
     foreach ($connections as $connection) {
-        dropAllTables($connection);
-        createTables($connection);
+        /* Allow to skip dropping and creating tables for the mysql connection.
+           Currently, TinyORM's migrations supports the MySQL database only, and I want to use our
+           tom migrations in CI/CD pipelines, this is the reason for the condition below. */
+        if (false === array_key_exists('skip-mysql-migrate', $options) &&
+            $connection === 'mysql'
+        ) {
+            dropAllTables($connection);
+            createTables($connection);
+        }
         seedTables($connection);
 
         if ($connection === 'pgsql')
@@ -488,6 +496,11 @@ removeUnusedConfigs($configs);
 // Create database connections first so when any connection fails then no data will be seeded
 addConnections($capsule, $configs);
 
-createAndSeedTables(array_keys($configs));
+// Parse command line options
+$options = getopt('', [
+    'skip-mysql-migrate'
+]);
+
+createAndSeedTables(array_keys($configs), $options);
 
 //var_dump(Capsule::connection('mysql')->table('torrents')->get()->toArray());
