@@ -18,3 +18,7 @@ $Env:DB_PGSQL_SCHEMA    = "public"
 $Env:DB_PGSQL_USERNAME  = ""
 $Env:DB_PGSQL_PASSWORD  = ""
 $Env:DB_PGSQL_CHARSET   = "utf8"
+
+# Tom related
+$Env:TOM_EXAMPLE_ENV    = "development"
+$Env:TOM_TESTS_ENV      = "development"

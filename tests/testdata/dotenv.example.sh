@@ -18,3 +18,7 @@ export DB_PGSQL_SCHEMA="public"
 export DB_PGSQL_USERNAME=""
 export DB_PGSQL_PASSWORD=""
 export DB_PGSQL_CHARSET="utf8"
+
+# Tom related
+export TOM_EXAMPLE_ENV="development"
+export TOM_TESTS_ENV="development"
