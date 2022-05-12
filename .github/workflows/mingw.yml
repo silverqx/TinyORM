@@ -245,6 +245,7 @@ jobs:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        TOM_TESTS_ENV: testing
 
     - name: Tom example execute migrate:status 🚀
       shell: msys2 {0}

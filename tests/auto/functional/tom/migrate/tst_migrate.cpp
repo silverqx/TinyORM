@@ -550,7 +550,7 @@ int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv) co
     try {
         // env. should be always development so passed {} for env. name
         return TomApplication(argc, const_cast<char **>(argv.data()),
-                              Databases::manager(), {})
+                              Databases::manager(), "TOM_TESTS_ENV")
                 .migrations<CreatePostsTable,
                             AddFactorColumnToPostsTable,
                             CreatePropertiesTable,
