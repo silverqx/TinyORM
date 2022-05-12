@@ -48,7 +48,8 @@ int main(int argc, char *argv[])
         // Ownership of the shared_ptr()
         auto db = setupManager();
 
-        return TomApplication(argc, argv, db, "TOM_EXAMPLE_ENV")
+        return TomApplication(argc, argv, db, "TOM_EXAMPLE_ENV",
+                              QStringLiteral("migrations_example"))
                 /* Default migrations path for the make:migration command, the path
                    can be absolute or relative (to the pwd at runtime). */
 //                .migrationsPath("database/migrations")

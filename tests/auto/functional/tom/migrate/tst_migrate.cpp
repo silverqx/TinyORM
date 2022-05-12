@@ -79,6 +79,9 @@ private:
 
     /*! Connection name used in this test case. */
     QString m_connection {};
+
+    /*! Migrations table name. */
+    inline static const auto MigrationsTable = QStringLiteral("migrations_unit_testing");
 };
 
 /*! Alias for the test output row. */
@@ -550,7 +553,7 @@ int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv) co
     try {
         // env. should be always development so passed {} for env. name
         return TomApplication(argc, const_cast<char **>(argv.data()),
-                              Databases::manager(), "TOM_TESTS_ENV")
+                              Databases::manager(), "TOM_TESTS_ENV", MigrationsTable)
                 .migrations<CreatePostsTable,
                             AddFactorColumnToPostsTable,
                             CreatePropertiesTable,
@@ -598,7 +601,7 @@ void tst_Migrate::prepareDatabase() const
                         .getSchemaBuilder();
 
     // Create the migrations table if needed
-    if (!schema->hasTable(QStringLiteral("migrations"))) {
+    if (!schema->hasTable(MigrationsTable)) {
         auto exitCode = invokeCommand(MigrateInstall);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
