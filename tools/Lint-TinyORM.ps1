@@ -26,7 +26,10 @@ Param(
 
     [Parameter(HelpMessage = 'Specifies Qt version to use for compilation (sources qtenvX.ps1).')]
     [ValidateRange(5, 6)]
-    [int] $QtVersion = 5
+    [int] $QtVersion = 5,
+
+    [Parameter(HelpMessage = 'Clean CMake build (remove everything inside the -BuildPath).')]
+    [switch] $Clean
 )
 
 Set-StrictMode -Version 3.0
@@ -49,6 +52,16 @@ Set-Location -Path $BuildPath
 # Initialize build environment if it's not already there
 if (-not (Test-Path env:WindowsSDKLibVersion)) {
     . "E:\dotfiles\bin\qtenv${QtVersion}.ps1"
+}
+
+# Clean build
+if ($Clean) {
+    Remove-Item -Recurse -Force $BuildPath\*
+
+    Write-Host "`nClean CMake build`n" -ForegroundColor Green
+}
+else {
+    Write-Host "`nCMake build`n" -ForegroundColor DarkBlue
 }
 
 # Configure
