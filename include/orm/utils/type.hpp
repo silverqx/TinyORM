@@ -89,7 +89,11 @@ namespace Orm::Utils
     QString Type::classPureBasename(const T &type, const bool withNamespace)
     {
         /* If you want to obtain a name for the polymorphic type, take care to pass
-            a glvalue as the 'type' argument, the 'this' pointer is a prvalue! */
+           a glvalue as the 'type' argument, the 'this' pointer is a prvalue!
+           Above is whole true, but doesn't make sense as if I passing this or better
+           *this to this function then it will be implicitly converted to the reference
+           for polymorphic types as the parameter is const &.
+           Anyway for polymorphic types pass *this! */
         return classPureBasenameInternal(typeid (type), withNamespace);
     }
 
