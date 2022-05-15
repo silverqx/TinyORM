@@ -1036,7 +1036,11 @@ namespace Orm::Tiny::Relations
             QVector<Related> &models,
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
-        for (int i = 0, attributesSize = pivotValues.size(); i < models.size(); ++i)
+        using SizeType = QVector<QVector<AttributeItem>>::size_type;
+
+        const SizeType attributesSize = pivotValues.size();
+
+        for (SizeType i = 0; i < models.size(); ++i)
             if (attributesSize > i) T_LIKELY
                 save(models[i], pivotValues.at(i), false);
             else T_UNLIKELY
@@ -1053,7 +1057,11 @@ namespace Orm::Tiny::Relations
             QVector<Related> &&models,
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
-        for (int i = 0, attributesSize = pivotValues.size(); i < models.size(); ++i)
+        using SizeType = QVector<QVector<AttributeItem>>::size_type;
+
+        const SizeType attributesSize = pivotValues.size();
+
+        for (SizeType i = 0; i < models.size(); ++i)
             if (attributesSize > i) T_LIKELY
                 save(models[i], pivotValues.at(i), false);
             else T_UNLIKELY
@@ -1110,7 +1118,10 @@ namespace Orm::Tiny::Relations
         const auto recordsSize = records.size();
         instances.reserve(recordsSize);
 
-        for (int i = 0, attributesSize = pivotValues.size(); i < recordsSize; ++i)
+        using SizeType = QVector<QVector<AttributeItem>>::size_type;
+        const SizeType attributesSize = pivotValues.size();
+
+        for (SizeType i = 0; i < recordsSize; ++i)
             if (attributesSize > i) T_LIKELY
                 instances << create(records.at(i), pivotValues.at(i), false);
             else T_UNLIKELY
@@ -1131,7 +1142,10 @@ namespace Orm::Tiny::Relations
         const auto recordsSize = records.size();
         instances.reserve(recordsSize);
 
-        for (int i = 0, attributesSize = pivotValues.size(); i < recordsSize; ++i)
+        using SizeType = QVector<QVector<AttributeItem>>::size_type;
+        const SizeType attributesSize = pivotValues.size();
+
+        for (SizeType i = 0; i < recordsSize; ++i)
             if (attributesSize > i) T_LIKELY
                 instances << create(std::move(records[i]), pivotValues.at(i), false);
             else T_UNLIKELY
