@@ -93,6 +93,8 @@ defineReplace(tiny_configure_cmake_rc) {
     # Substitute Cmake variable values referenced as @VAR@ and also generator expressions
     rcFileContent ~= s/@$${token}_target@/$$TARGET
     rcFileContent ~= s/@tiny_manifest_basename@/$$tiny_manifest_basename
+    # For MinGW (used only in the tom.rc.in)
+    rcFileContent ~= s/@Tom_manifest@/$$tiny_manifest_basename
     rcFileContent ~= s/\\$<TARGET_FILE_NAME:$$TARGET>/$$basename(QMAKE_RESOLVED_TARGET)
     rcFileContent ~= s/\\$<TARGET_FILE_SUFFIX:$$TARGET>/$$2
     rcFileContent ~= s/@pragma_codepage@/$$pragmaCodepage
