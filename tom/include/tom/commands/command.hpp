@@ -14,6 +14,7 @@ class QCommandLineOption;
 
 namespace Orm
 {
+    class ConnectionResolverInterface;
     class DatabaseConnection;
 }
 
@@ -40,6 +41,9 @@ namespace Tom::Commands
                     public Concerns::InteractsWithIO
     {
         Q_DISABLE_COPY(Command)
+
+        /*! Alias for the ConnectionResolverInterface. */
+        using ConnectionResolverInterface = Orm::ConnectionResolverInterface;
 
     public:
         /*! Constructor. */
@@ -96,17 +100,21 @@ namespace Tom::Commands
 
         /*! Check whether a positional argument at the given index was set. */
         bool hasArgument(ArgumentsSizeType index) const;
+        /*! Check whether a positional argument by the given name was set. */
+        bool hasArgument(const QString &name) const;
         /*! Get a list of positional arguments. */
         QStringList arguments() const;
         /*! Get a positional argument at the given index position. */
-        QString argument(ArgumentsSizeType index) const;
+        QString argument(ArgumentsSizeType index, bool useDefault = true) const;
         /*! Get a positional argument by the given name. */
-        QString argument(const QString &name) const;
+        QString argument(const QString &name, bool useDefault = true) const;
 
         /*! Get a database connection. */
         Orm::DatabaseConnection &connection(const QString &name) const;
         /*! Get a command-line parser. */
         QCommandLineParser &parser() const noexcept;
+        /*! Get database connection resolver. */
+        std::shared_ptr<ConnectionResolverInterface> resolver() const noexcept;
 
         /*! Reference to the tom application. */
         std::reference_wrapper<Application> m_application;

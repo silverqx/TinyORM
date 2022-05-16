@@ -48,12 +48,18 @@ namespace Tom::Constants
     // Used by more commands
     SHAREDLIB_EXPORT extern const QString force;
     SHAREDLIB_EXPORT extern const QString pretend;
+    SHAREDLIB_EXPORT extern const QString seed;
+    SHAREDLIB_EXPORT extern const QString seeder;
     SHAREDLIB_EXPORT extern const QString step_;
     // Default value names
+    SHAREDLIB_EXPORT extern const QString class_up;
     SHAREDLIB_EXPORT extern const QString database_up;
+    SHAREDLIB_EXPORT extern const QString seeder_up;
     SHAREDLIB_EXPORT extern const QString step_up;
     // list
     SHAREDLIB_EXPORT extern const QString raw_;
+    // db:seed
+    SHAREDLIB_EXPORT extern const QString class_;
     // db:wipe
     SHAREDLIB_EXPORT extern const QString drop_views;
     SHAREDLIB_EXPORT extern const QString drop_types;

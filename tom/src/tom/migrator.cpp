@@ -104,25 +104,6 @@ std::vector<RollbackItem> Migrator::reset(const bool pretend) const
                               pretend);
 }
 
-/* Database connection related */
-
-int Migrator::usingConnection(QString &&name, const bool debugSql,
-                              std::function<int()> &&callback)
-{
-    auto previousConnection = m_resolver->getDefaultConnection();
-    /* Default connection can also be "" empty string, eg. auto tests are using empty
-       string as the default connection. */
-    auto previousDebugSql = getConnectionDebugSql(previousConnection);
-
-    setConnection(std::move(name), debugSql);
-
-    auto exitCode = std::invoke(std::move(callback));
-
-    setConnection(std::move(previousConnection), std::move(previousDebugSql));
-
-    return exitCode;
-}
-
 /* Proxies to MigrationRepository */
 
 bool Migrator::repositoryExists() const
@@ -135,32 +116,13 @@ bool Migrator::hasRunAnyMigrations() const
     return repositoryExists() && !m_repository->getRanSimple().isEmpty();
 }
 
-/* Getters / Setters */
-
-void Migrator::setConnection(QString &&name, std::optional<bool> &&debugSql)
-{
-    // It indicates "" empty string for the default connection, eg. in auto tests
-    if (!name.isEmpty())
-        m_resolver->setDefaultConnection(name);
-
-    m_repository->setConnection(name, std::move(debugSql));
-
-    m_connection = std::move(name);
-}
-
 /* protected */
 
 /* Database connection related */
 
 DatabaseConnection &Migrator::resolveConnection(const QString &name) const
 {
-    return m_resolver->connection(name.isEmpty() ? m_connection : name);
-}
-
-std::optional<bool> Migrator::getConnectionDebugSql(const QString &name) const
-{
-    return name.isEmpty() ? std::nullopt
-                          : std::make_optional(m_resolver->connection(name).debugSql());
+    return m_resolver->connection(name);
 }
 
 /* Migration instances lists and hashes */
@@ -253,8 +215,8 @@ void Migrator::runUp(const Migration &migration, const int batch,
        in the application. A migration repository keeps the migrate order. */
     m_repository->log(migrationName, batch);
 
-    info(QStringLiteral("Migrated: "), false);
-    note(QStringLiteral("%1 (%2ms)").arg(std::move(migrationName)).arg(elapsedTime));
+    info(QStringLiteral("Migrated:"), false);
+    note(QStringLiteral("  %1 (%2ms)").arg(std::move(migrationName)).arg(elapsedTime));
 }
 
 /* Rollback */
@@ -340,8 +302,8 @@ void Migrator::runDown(const RollbackItem &migrationToRollback, const bool prete
        by the application then will be able to fire by any later operation. */
     m_repository->deleteMigration(id);
 
-    info(QStringLiteral("Rolled back: "), false);
-    note(QStringLiteral("%1 (%2ms)").arg(migrationName).arg(elapsedTime));
+    info(QStringLiteral("Rolled back:"), false);
+    note(QStringLiteral("  %1 (%2ms)").arg(migrationName).arg(elapsedTime));
 }
 
 /* Pretend */
@@ -402,7 +364,7 @@ void Migrator::runMigration(const Migration &migration, const MigrateMethod meth
     try {
         migrateByMethod(migration, method);
 
-    }  catch (const std::exception &/*unused*/) {
+    }  catch (...) {
 
         connection.rollBack();
         // Re-throw

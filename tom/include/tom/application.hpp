@@ -23,6 +23,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
+    class ConnectionResolverInterface;
     class DatabaseManager;
 }
 
@@ -43,6 +44,7 @@ namespace Concerns
     class Migration;
     class MigrationRepository;
     class Migrator;
+    class Seeder;
 
     /*! Tom application. */
     class SHAREDLIB_EXPORT Application : public Concerns::InteractsWithIO,
@@ -63,6 +65,8 @@ namespace Concerns
         // To access createCommandsVector(), errorWall(), exitApplication()
         friend Concerns::GuessCommandName;
 
+        /*! Alias for the ConnectionResolverInterface. */
+        using ConnectionResolverInterface = Orm::ConnectionResolverInterface;
         /*! Alias for the DatabaseManager. */
         using DatabaseManager = Orm::DatabaseManager;
 
@@ -71,13 +75,18 @@ namespace Concerns
         Application(int &argc, char **argv, std::shared_ptr<DatabaseManager> db,
                     const char *environmentEnvName = "TOM_ENV",
                     QString migrationTable = QStringLiteral("migrations"),
-                    std::vector<std::shared_ptr<Migration>> migrations = {});
+                    std::vector<std::shared_ptr<Migration>> migrations = {},
+                    std::vector<std::shared_ptr<Seeder>> seeders = {});
         /*! Virtual destructor. */
         inline ~Application() override = default;
 
         /*! Instantiate/initialize all migration classes. */
-        template<typename ...M>
+        template<typename ...Migrations>
         Application &migrations();
+
+        /*! Instantiate/initialize all seeder classes. */
+        template<typename ...Seeders>
+        Application &seeders();
 
         /*! Run the tom application. */
         int run();
@@ -108,6 +117,13 @@ namespace Concerns
         Application &migrationsPath(fspath path);
         /*! Get the default migrations path used by the make:migration command. */
         inline const fspath &getMigrationsPath() const noexcept;
+
+        /*! Get a reference to the all migrations instances. */
+        inline const std::vector<std::shared_ptr<Migration>> &
+        getMigrations() const noexcept;
+        /*! Get a reference to the all seeders instances. */
+        inline const std::vector<std::shared_ptr<Seeder>> &
+        getSeeders() const noexcept;
 
 #ifdef TINYTOM_TESTS_CODE
         /*! Alias for the test output row from the status command. */
@@ -213,6 +229,12 @@ namespace Concerns
         /*! Initialize the migrations path (prepend pwd and make_prefered). */
         static fspath initializeMigrationsPath(fspath &&path);
 
+        /*! Get database connection resolver. */
+        std::shared_ptr<ConnectionResolverInterface> resolver() const noexcept;
+
+        /*! Throw if a default connection is empty. */
+        void throwIfEmptyDefaultConnection() const;
+
         /*! Current application argc. */
         int &m_argc;
         /*! Current application argv. */
@@ -254,6 +276,9 @@ namespace Concerns
         std::unordered_map<std::type_index,
                            MigrationProperties> m_migrationsProperties {};
 
+        /*! Seeders vector to process. */
+        std::vector<std::shared_ptr<Seeder>> m_seeders;
+
         /*! Is this input means interactive? */
         bool m_interactive = true;
 
@@ -280,11 +305,18 @@ namespace Concerns
         /* Helps to avoid declaring the FileName, connection, and withinTransaction as
            getters in migrations, I can tell that this is really crazy. 🤪🙃😎 */
         m_migrationsProperties = {
-            {typeid (Migrations),
-             {Migrations::FileName,
-              Migrations().connection,
-              Migrations().withinTransaction}}...
+            {typeid (Migrations), {Migrations::FileName,
+                                   Migrations().connection,
+                                   Migrations().withinTransaction}}...
         };
+
+        return *this;
+    }
+
+    template<typename ...Seeders>
+    Application &Application::seeders()
+    {
+        m_seeders = {std::make_shared<Seeders>()...};
 
         return *this;
     }
@@ -321,6 +353,18 @@ namespace Concerns
     const std::filesystem::path &Application::getMigrationsPath() const noexcept
     {
         return m_migrationsPath;
+    }
+
+    const std::vector<std::shared_ptr<Migration>> &
+    Application::getMigrations() const noexcept
+    {
+        return m_migrations;
+    }
+
+    const std::vector<std::shared_ptr<Seeder>> &
+    Application::getSeeders() const noexcept
+    {
+        return m_seeders;
     }
 
     /* protected */

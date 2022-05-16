@@ -30,6 +30,7 @@ StatusCommand::StatusCommand(
         std::shared_ptr<Migrator> migrator
 )
     : Command(application, parser)
+    , Concerns::UsingConnection(resolver())
     , m_migrator(std::move(migrator))
 {}
 
@@ -45,7 +46,8 @@ int StatusCommand::run()
     Command::run();
 
     // Database connection to use
-    return m_migrator->usingConnection(value(database_), isDebugVerbosity(), [this]
+    return usingConnection(value(database_), isDebugVerbosity(), m_migrator->repository(),
+                           [this]
     {
         if (!m_migrator->repositoryExists()) {
             error(QStringLiteral("Migration table not found."));

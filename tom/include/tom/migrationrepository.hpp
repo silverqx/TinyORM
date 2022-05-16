@@ -67,9 +67,9 @@ namespace Tom
         void deleteRepository() const;
 
         /*! Resolve the database connection instance. */
-        DatabaseConnection &getConnection() const;
+        DatabaseConnection &connection() const;
         /*! Set the connection name to use in the repository. */
-        void setConnection(const QString &name, std::optional<bool> &&debugSql);
+        inline void setConnection(const QString &name);
 
     protected:
         /*! Get a query builder for the migration table. */
@@ -78,9 +78,6 @@ namespace Tom
         /*! Hydrate a vector of migration items from a raw QSqlQuery. */
         std::vector<MigrationItem> hydrateMigrations(QSqlQuery &query) const;
 
-        /*! Set the debug sql for the current repository connection. */
-        void setConnectionDebugSql(std::optional<bool> &&debugSql) const;
-
         /*! The database connection resolver instance. */
         std::shared_ptr<ConnectionResolverInterface> m_resolver;
         /*! The name of the migration table. */
@@ -88,6 +85,13 @@ namespace Tom
         /*! The name of the database connection to use. */
         QString m_connection {};
     };
+
+    /* public */
+
+    void MigrationRepository::setConnection(const QString &name)
+    {
+        m_connection = name;
+    }
 
 } // namespace Tom
 

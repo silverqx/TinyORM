@@ -25,6 +25,7 @@ ResetCommand::ResetCommand(
 )
     : Command(application, parser)
     , Concerns::Confirmable(*this, 0)
+    , Concerns::UsingConnection(resolver())
     , m_migrator(std::move(migrator))
 {}
 
@@ -46,7 +47,8 @@ int ResetCommand::run()
         return EXIT_FAILURE;
 
     // Database connection to use
-    return m_migrator->usingConnection(value(database_), isDebugVerbosity(), [this]
+    return usingConnection(value(database_), isDebugVerbosity(), m_migrator->repository(),
+                           [this]
     {
         if (!m_migrator->repositoryExists()) {
             comment(QStringLiteral("Migration table not found."));

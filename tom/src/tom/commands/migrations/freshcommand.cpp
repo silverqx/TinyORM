@@ -8,12 +8,16 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::class_;
 using Tom::Constants::database_up;
 using Tom::Constants::drop_types;
 using Tom::Constants::drop_views;
 using Tom::Constants::force;
+using Tom::Constants::seed;
+using Tom::Constants::seeder;
+using Tom::Constants::seeder_up;
 using Tom::Constants::step_;
-//using Tom::Constants::DbSeed;
+using Tom::Constants::DbSeed;
 using Tom::Constants::DbWipe;
 using Tom::Constants::Migrate;
 
@@ -41,8 +45,8 @@ QList<QCommandLineOption> FreshCommand::optionsSignature() const
         {drop_types,    QStringLiteral("Drop all tables and types (Postgres only)")},
         {force,         QStringLiteral("Force the operation to run when in production")},
 //        {"schema-path", QStringLiteral("The path to a schema dump file")}, // Value
-//        {"seed",        QStringLiteral("Indicates if the seed task should be re-run")},
-//        {"seeder",      QStringLiteral("The class name of the root seeder"), "seeded"}, // Value
+        {seed,          QStringLiteral("Indicates if the seed task should be re-run")},
+        {seeder,        QStringLiteral("The class name of the root seeder"), seeder_up}, // Value
         {step_,         QStringLiteral("Force the migrations to be run so they can be "
                                        "rolled back individually")},
     };
@@ -69,25 +73,26 @@ int FreshCommand::run()
                    boolCmd(step_)});
 //                   valueCmd("schema-path")});
 
-//    if (needsSeeding())
-//        runSeeder(std::move(databaseCmd));
+    // Invoke seeder
+    if (needsSeeding())
+        runSeeder(std::move(databaseCmd));
 
     return EXIT_SUCCESS;
 }
 
 /* protected */
 
-//bool FreshCommand::needsSeeding() const
-//{
-//    return isSet("seed") || !value("seeder").isEmpty();
-//}
+bool FreshCommand::needsSeeding() const
+{
+    return isSet(seed) || !value(seeder).isEmpty();
+}
 
-//void FreshCommand::runSeeder(QString &&databaseCmd) const
-//{
-//    call(DbSeed, {std::move(databaseCmd),
-//                  longOption(force),
-//                  valueCmd("seeder", "class")});
-//}
+void FreshCommand::runSeeder(QString &&databaseCmd) const
+{
+    call(DbSeed, {std::move(databaseCmd),
+                  longOption(force),
+                  valueCmd(seeder, class_)});
+}
 
 } // namespace Tom::Commands::Migrations
 

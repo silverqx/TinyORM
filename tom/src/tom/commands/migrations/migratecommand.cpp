@@ -11,7 +11,9 @@ using Orm::Constants::database_;
 using Tom::Constants::database_up;
 using Tom::Constants::force;
 using Tom::Constants::pretend;
+using Tom::Constants::seed;
 using Tom::Constants::step_;
+using Tom::Constants::DbSeed;
 using Tom::Constants::MigrateInstall;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -27,6 +29,7 @@ MigrateCommand::MigrateCommand(
 )
     : Command(application, parser)
     , Concerns::Confirmable(*this, 0)
+    , Concerns::UsingConnection(resolver())
     , m_migrator(std::move(migrator))
 {}
 
@@ -37,8 +40,7 @@ QList<QCommandLineOption> MigrateCommand::optionsSignature() const
         {force,         QStringLiteral("Force the operation to run when in production")},
         {pretend,       QStringLiteral("Dump the SQL queries that would be run")},
 //        {"schema-path", QStringLiteral("The path to a schema dump file")}, // Value
-//        {"seed",        QStringLiteral("Indicates if the seed task should be re-run")},
-//        {"seeder",      QStringLiteral("The class name of the root seeder"), "seeded"}, // Value
+        {seed,          QStringLiteral("Indicates if the seed task should be re-run")},
         {step_,         QStringLiteral("Force the migrations to be run so they can be "
                                        "rolled back individually")},
     };
@@ -53,7 +55,8 @@ int MigrateCommand::run()
         return EXIT_FAILURE;
 
     // Database connection to use
-    return m_migrator->usingConnection(value(database_), isDebugVerbosity(), [this]
+    return usingConnection(value(database_), isDebugVerbosity(), m_migrator->repository(),
+                           [this]
     {
         // Install db repository and load schema state
         prepareDatabase();
@@ -63,11 +66,13 @@ int MigrateCommand::run()
            so that migrations may be run for any path within the applications. */
         m_migrator->run({isSet(pretend), isSet(step_)});
 
+        info("Database migaration completed successfully.");
+
         /* Finally, if the "seed" option has been given, we will re-run the database
            seed task to re-populate the database, which is convenient when adding
            a migration and a seed at the same time, as it is only this command. */
-//        if (needsSeeding()
-//            runSeeder();
+        if (needsSeeding())
+            runSeeder();
 
         return EXIT_SUCCESS;
     });
@@ -89,17 +94,16 @@ void MigrateCommand::loadSchemaState() const
     // CUR tom, finish load schema silverqx
 }
 
-//bool MigrateCommand::needsSeeding() const
-//{
-//    return !isSet(pretend) && (isSet("seed") || !value("seeder").isEmpty());
-//}
+// CUR tom, remove silverqx
+bool MigrateCommand::needsSeeding() const
+{
+    return !isSet(pretend) && isSet(seed);
+}
 
-//void MigrateCommand::runSeeder() const
-//{
-//    call(DbSeed, {valueCmd(database_),
-//                  longOption(force),
-//                  valueCmd("seeder", "class")});
-//}
+void MigrateCommand::runSeeder() const
+{
+    call(DbSeed, {valueCmd(database_), longOption(force)});
+}
 
 } // namespace Tom::Commands::Migrations
 

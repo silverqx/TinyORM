@@ -1,10 +1,15 @@
-# Migrations header files
+# Migrations and Seeders header files
 # ---
 
-# Tests' migrations as example migrations
+# Tom example migrations
 include($$TINYORM_SOURCE_TREE/tests/database/migrations.pri)
 # Or include yours migrations
 #include(/home/xyz/your_project/database/migrations.pri)
+
+# Tom example seeders
+include($$TINYORM_SOURCE_TREE/tests/database/seeders.pri)
+# Or include yours seeders
+#include(/home/xyz/your_project/database/seeders.pri)
 
 # Dependencies include and library paths
 # ---

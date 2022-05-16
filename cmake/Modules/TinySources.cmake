@@ -253,6 +253,7 @@ function(tinytom_sources out_headers out_sources)
     list(APPEND headers
         application.hpp
         commands/command.hpp
+        commands/database/seedcommand.hpp
         commands/database/wipecommand.hpp
         commands/environmentcommand.hpp
         commands/helpcommand.hpp
@@ -274,6 +275,7 @@ function(tinytom_sources out_headers out_sources)
         concerns/guesscommandname.hpp
         concerns/interactswithio.hpp
         concerns/printsoptions.hpp
+        concerns/usingconnection.hpp
         config.hpp
         exceptions/invalidargumenterror.hpp
         exceptions/invalidtemplateargumenterror.hpp
@@ -284,6 +286,7 @@ function(tinytom_sources out_headers out_sources)
         migrationcreator.hpp
         migrationrepository.hpp
         migrator.hpp
+        seeder.hpp
         tableguesser.hpp
         terminal.hpp
         tomconstants.hpp
@@ -304,6 +307,7 @@ function(tinytom_sources out_headers out_sources)
     list(APPEND sources
         application.cpp
         commands/command.cpp
+        commands/database/seedcommand.cpp
         commands/database/wipecommand.cpp
         commands/environmentcommand.cpp
         commands/helpcommand.cpp
@@ -323,11 +327,13 @@ function(tinytom_sources out_headers out_sources)
         concerns/guesscommandname.cpp
         concerns/interactswithio.cpp
         concerns/printsoptions.cpp
+        concerns/usingconnection.cpp
         exceptions/tomlogicerror.cpp
         exceptions/tomruntimeerror.cpp
         migrationcreator.cpp
         migrationrepository.cpp
         migrator.cpp
+        seeder.cpp
         tableguesser.cpp
         terminal.cpp
         tomutils.cpp

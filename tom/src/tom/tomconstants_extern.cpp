@@ -36,12 +36,18 @@ namespace Tom::Constants
     // Used by more commands
     const QString force        = QStringLiteral("force");
     const QString pretend      = QStringLiteral("pretend");
+    const QString seed         = QStringLiteral("seed");
+    const QString seeder       = QStringLiteral("seeder");
     const QString step_        = QStringLiteral("step");
     // Default value names
+    const QString class_up     = QStringLiteral("CLASS");
     const QString database_up  = QStringLiteral("DATABASE");
+    const QString seeder_up    = QStringLiteral("SEEDER");
     const QString step_up      = QStringLiteral("STEP");
     // list
     const QString raw_         = QStringLiteral("raw");
+    // db:seed
+    const QString class_       = QStringLiteral("class");
     // db:wipe
     const QString drop_views   = QStringLiteral("drop-views");
     const QString drop_types   = QStringLiteral("drop-types");

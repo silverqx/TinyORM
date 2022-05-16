@@ -12,6 +12,8 @@
 #include "tom/tomconstants.hpp"
 #include "tom/version.hpp"
 
+using Orm::ConnectionResolverInterface;
+
 using Tom::Constants::Help;
 using Tom::Constants::LongOption;
 
@@ -128,7 +130,13 @@ bool Command::hasArgument(const ArgumentsSizeType index) const
 {
     /* Has to be isNull(), an argument passed on the command line still can be an empty
        value, like "", in this case it has to return a true value. */
-    return !argument(index).isNull();
+    return !argument(index, false).isNull();
+}
+
+bool Command::hasArgument(const QString &name) const
+{
+    return m_positionalArguments.contains(name) &&
+            !argument(m_positionalArguments.at(name), false).isNull();
 }
 
 QStringList Command::arguments() const
@@ -136,25 +144,29 @@ QStringList Command::arguments() const
     return parser().positionalArguments();
 }
 
-QString Command::argument(const ArgumentsSizeType index) const
+QString Command::argument(const ArgumentsSizeType index, const bool useDefault) const
 {
     const auto &positionalArgumentsRef = positionalArguments();
-
 
     using ArgumentsStdSizeType =
             std::remove_cvref_t<decltype (positionalArgumentsRef)>::size_type;
 
+    const auto positionalArguments = parser().positionalArguments();
+
+    if (!useDefault)
+        return positionalArguments.value(index);
+
     // Default value supported
-    return parser().positionalArguments()
-            .value(index,
-                   positionalArgumentsRef.at(
-                       static_cast<ArgumentsStdSizeType>(index) - 1).defaultValue);
+    auto defaultValue = positionalArgumentsRef.at(
+                            static_cast<ArgumentsStdSizeType>(index) - 1).defaultValue;
+
+    return positionalArguments.value(index, std::move(defaultValue));
 }
 
-QString Command::argument(const QString &name) const
+QString Command::argument(const QString &name, const bool useDefault) const
 {
     // Default value supported
-    return argument(m_positionalArguments.at(name));
+    return argument(m_positionalArguments.at(name), useDefault);
 }
 
 Orm::DatabaseConnection &Command::connection(const QString &name) const
@@ -165,6 +177,11 @@ Orm::DatabaseConnection &Command::connection(const QString &name) const
 QCommandLineParser &Command::parser() const noexcept
 {
     return m_parser;
+}
+
+std::shared_ptr<ConnectionResolverInterface> Command::resolver() const noexcept
+{
+    return application().resolver();
 }
 
 /* private */

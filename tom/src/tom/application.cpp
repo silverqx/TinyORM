@@ -11,6 +11,7 @@
 #include <orm/utils/type.hpp>
 #include <orm/version.hpp>
 
+#include "tom/commands/database/seedcommand.hpp"
 #include "tom/commands/database/wipecommand.hpp"
 #include "tom/commands/environmentcommand.hpp"
 #include "tom/commands/helpcommand.hpp"
@@ -25,6 +26,7 @@
 #include "tom/commands/migrations/resetcommand.hpp"
 #include "tom/commands/migrations/rollbackcommand.hpp"
 #include "tom/commands/migrations/statuscommand.hpp"
+#include "tom/exceptions/runtimeerror.hpp"
 #include "tom/migrationrepository.hpp"
 #include "tom/migrator.hpp"
 #include "tom/terminal.hpp"
@@ -41,6 +43,7 @@ using Orm::Constants::NEWLINE;
 using TypeUtils = Orm::Utils::Type;
 
 using Tom::Commands::Command;
+using Tom::Commands::Database::SeedCommand;
 using Tom::Commands::Database::WipeCommand;
 using Tom::Commands::EnvironmentCommand;
 using Tom::Commands::HelpCommand;
@@ -64,6 +67,7 @@ using Tom::Constants::nointeraction;
 using Tom::Constants::quiet;
 using Tom::Constants::verbose;
 using Tom::Constants::version;
+using Tom::Constants::DbSeed;
 using Tom::Constants::DbWipe;
 using Tom::Constants::Env;
 using Tom::Constants::Help;
@@ -96,13 +100,14 @@ namespace Tom {
    update indexes in the Application::commandsIndexes() and if the command introduces
    a new namespace add it to the Application::namespaceNames().
    I have everything extracted and placed it to the bottom of application.cpp so it is
-   nicely on one place. */
+   nicely in one place. */
 
 /* public */
 
 Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager> db,
                          const char *const environmentEnvName, QString migrationTable,
-                         std::vector<std::shared_ptr<Migration>> migrations)
+                         std::vector<std::shared_ptr<Migration>> migrations,
+                         std::vector<std::shared_ptr<Seeder>> seeders)
     : m_argc(argc)
     , m_argv(argv)
     , m_db(std::move(db))
@@ -114,6 +119,7 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
     , m_migrationsPath(initializeMigrationsPath(
                            TINYORM_STRINGIFY(TINYTOM_MIGRATIONS_DIR)))
     , m_migrations(std::move(migrations))
+    , m_seeders(std::move(seeders))
 {
     // Enable UTF-8 encoding and vt100 support
     Terminal::initialize();
@@ -138,6 +144,9 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
 
 int Application::run()
 {
+    // Default database connection is required in the migrations application
+    throwIfEmptyDefaultConnection();
+
     // Process the actual command-line arguments given by the user
     parseCommandLine();
 
@@ -390,6 +399,9 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
     // Use a custom parser if passed as the argument, needed by CallsCommands::call()
     auto parserRef = parser ? *parser : std::ref(m_parser);
 
+    if (command == DbSeed)
+        return std::make_unique<SeedCommand>(*this, parserRef, m_db);
+
     if (command == DbWipe)
         return std::make_unique<WipeCommand>(*this, parserRef);
 
@@ -527,7 +539,7 @@ Application::commandNames() const
         // global namespace
         Env, Help, Inspire, List, Migrate,
         // db
-        DbWipe,
+        DbSeed, DbWipe,
         // make
         MakeMigration, /*MakeProject,*/
         // migrate
@@ -567,10 +579,10 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
     static const std::vector<std::tuple<int, int>> cached {
         {0, 5},  // "" - also global
         {0, 5},  // global
-        {5, 6},  // db
-        {6, 7},  // make
-        {7, 13}, // migrate
-        {5, 13}, // namespaced
+        {5, 7},  // db
+        {7, 8},  // make
+        {8, 14}, // migrate
+        {5, 14}, // namespaced
     };
 
     return cached;
@@ -582,6 +594,19 @@ fspath Application::initializeMigrationsPath(fspath &&path)
         path = std::filesystem::current_path() / std::move(path);
 
     return path.make_preferred();
+}
+
+std::shared_ptr<ConnectionResolverInterface> Application::resolver() const noexcept
+{
+    return std::dynamic_pointer_cast<ConnectionResolverInterface>(m_db);
+}
+
+void Application::throwIfEmptyDefaultConnection() const
+{
+    if (!m_db->getDefaultConnection().isEmpty())
+        return;
+
+    throw Exceptions::RuntimeError("Default database connection not configured.");
 }
 
 /* Auto tests helpers */

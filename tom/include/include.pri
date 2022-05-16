@@ -10,6 +10,7 @@ else: \
 headersList += \
     $$PWD/tom/application.hpp \
     $$PWD/tom/commands/command.hpp \
+    $$PWD/tom/commands/database/seedcommand.hpp \
     $$PWD/tom/commands/database/wipecommand.hpp \
     $$PWD/tom/commands/environmentcommand.hpp \
     $$PWD/tom/commands/helpcommand.hpp \
@@ -31,6 +32,7 @@ headersList += \
     $$PWD/tom/concerns/guesscommandname.hpp \
     $$PWD/tom/concerns/interactswithio.hpp \
     $$PWD/tom/concerns/printsoptions.hpp \
+    $$PWD/tom/concerns/usingconnection.hpp \
     $$PWD/tom/config.hpp \
     $$PWD/tom/exceptions/invalidargumenterror.hpp \
     $$PWD/tom/exceptions/invalidtemplateargumenterror.hpp \
@@ -41,6 +43,7 @@ headersList += \
     $$PWD/tom/migrationcreator.hpp \
     $$PWD/tom/migrationrepository.hpp \
     $$PWD/tom/migrator.hpp \
+    $$PWD/tom/seeder.hpp \
     $$PWD/tom/tableguesser.hpp \
     $$PWD/tom/terminal.hpp \
     $$PWD/tom/tomconstants.hpp \

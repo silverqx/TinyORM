@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
 #include "tom/concerns/confirmable.hpp"
+#include "tom/concerns/usingconnection.hpp"
 #include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -20,7 +21,8 @@ namespace Commands::Migrations
 
     /*! Rollback the last database migration. */
     class RollbackCommand : public Command,
-                            public Concerns::Confirmable
+                            public Concerns::Confirmable,
+                            public Concerns::UsingConnection
     {
         Q_DISABLE_COPY(RollbackCommand)
 

@@ -110,7 +110,7 @@ int MigrationRepository::getLastBatchNumber() const
 void MigrationRepository::createRepository() const
 {
     // Ownership of a unique_ptr()
-    const auto schema = getConnection().getSchemaBuilder();
+    const auto schema = connection().getSchemaBuilder();
 
     /* The migrations table is responsible for keeping track of which migrations have
        actually run for the application. We'll create the table to hold the migration
@@ -127,38 +127,26 @@ void MigrationRepository::createRepository() const
 bool MigrationRepository::repositoryExists() const
 {
     // Ownership of a unique_ptr()
-    const auto schema = getConnection().getSchemaBuilder();
+    const auto schema = connection().getSchemaBuilder();
 
     return schema->hasTable(m_table);
 }
 
 void MigrationRepository::deleteRepository() const
 {
-    getConnection().getSchemaBuilder()->drop(m_table);
+    connection().getSchemaBuilder()->drop(m_table);
 }
 
-DatabaseConnection &MigrationRepository::getConnection() const
+DatabaseConnection &MigrationRepository::connection() const
 {
     return m_resolver->connection(m_connection);
-}
-
-void MigrationRepository::setConnection(const QString &name,
-                                        std::optional<bool> &&debugSql)
-{
-    m_connection = name;
-
-    if (!debugSql)
-        return;
-
-    // Enable/disable showing of sql queries in the console
-    setConnectionDebugSql(std::move(debugSql));
 }
 
 /* protected */
 
 QSharedPointer<QueryBuilder> MigrationRepository::table() const
 {
-    return getConnection().table(m_table);
+    return connection().table(m_table);
 }
 
 std::vector<MigrationItem>
@@ -179,16 +167,6 @@ MigrationRepository::hydrateMigrations(QSqlQuery &query) const
 #endif
 
     return migration;
-}
-
-void MigrationRepository::setConnectionDebugSql(std::optional<bool> &&debugSql) const
-{
-    auto &connection = getConnection();
-
-    if (*debugSql)
-        connection.enableDebugSql();
-    else
-        connection.disableDebugSql();
 }
 
 } // namespace Tom

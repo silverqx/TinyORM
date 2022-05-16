@@ -47,9 +47,9 @@ namespace Commands::Migrations
 
     protected:
         /*! Determine if the developer has requested database seeding. */
-//        bool needsSeeding() const;
+        bool needsSeeding() const;
         /*! Run the database seeder command. */
-//        void runSeeder(QString &&databaseCmd) const;
+        void runSeeder(QString &&databaseCmd) const;
 
         /*! The migrator service instance. */
         std::shared_ptr<Migrator> m_migrator;

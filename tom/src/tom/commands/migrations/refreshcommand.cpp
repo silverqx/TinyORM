@@ -8,8 +8,12 @@
 
 using Orm::Constants::database_;
 
+using Tom::Constants::class_;
 using Tom::Constants::database_up;
 using Tom::Constants::force;
+using Tom::Constants::seed;
+using Tom::Constants::seeder;
+using Tom::Constants::seeder_up;
 using Tom::Constants::step_;
 using Tom::Constants::step_up;
 using Tom::Constants::step_migrate;
@@ -39,8 +43,8 @@ QList<QCommandLineOption> RefreshCommand::optionsSignature() const
     return {
         {database_,    QStringLiteral("The database connection to use"), database_up}, // Value
         {force,        QStringLiteral("Force the operation to run when in production")},
-//        {"seed",       QStringLiteral("Indicates if the seed task should be re-run")},
-//        {"seeder",     QStringLiteral("The class name of the root seeder", "seeded")}, // Value
+        {seed,         QStringLiteral("Indicates if the seed task should be re-run")},
+        {seeder,       QStringLiteral("The class name of the root seeder"), seeder_up}, // Value
         {step_,        QStringLiteral("The number of migrations to be reverted & "
                                       "re-run"), step_up}, // Value
         {step_migrate, QStringLiteral("Force the migrations to be run so they can be "
@@ -73,8 +77,9 @@ int RefreshCommand::run()
                    longOption(force),
                    boolCmd(step_migrate, step_)});
 
-//    if (needsSeeding())
-//        runSeeder(std::move(databaseCmd));
+    // Invoke seeder
+    if (needsSeeding())
+        runSeeder(std::move(databaseCmd));
 
     return EXIT_SUCCESS;
 }
@@ -83,14 +88,14 @@ int RefreshCommand::run()
 
 bool RefreshCommand::needsSeeding() const
 {
-    return isSet("seed") || !value("seeder").isEmpty();
+    return isSet(seed) || !value(seeder).isEmpty();
 }
 
 void RefreshCommand::runSeeder(QString &&databaseCmd) const
 {
     call(DbSeed, {std::move(databaseCmd),
                   longOption(force),
-                  valueCmd("seeder", "class")});
+                  valueCmd(seeder, class_)});
 }
 
 } // namespace Tom::Commands::Migrations

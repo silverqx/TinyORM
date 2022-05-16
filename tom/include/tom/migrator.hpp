@@ -60,12 +60,6 @@ namespace Tom
         /*! Rolls all of the currently applied migrations back. */
         std::vector<RollbackItem> reset(bool pretend = false) const;
 
-        /* Database connection related */
-        /*! Execute the given callback using the given connection as the default
-            connection. */
-        int usingConnection(QString &&name, bool debugSql,
-                            std::function<int()> &&callback);
-
         /* Proxies to MigrationRepository */
         /*! Determine if the migration repository exists. */
         bool repositoryExists() const;
@@ -73,10 +67,6 @@ namespace Tom
         bool hasRunAnyMigrations() const;
 
         /* Getters / Setters */
-        /*! Get the default connection name. */
-        inline const QString &getConnection() const noexcept;
-        /*! Set the default connection name. */
-        void setConnection(QString &&name, std::optional<bool> &&debugSql);
         /*! Get the migration repository instance. */
         inline MigrationRepository &repository() const noexcept;
         /*! Get migration names list. */
@@ -86,8 +76,6 @@ namespace Tom
         /* Database connection related */
         /*! Resolve the database connection instance. */
         DatabaseConnection &resolveConnection(const QString &name = "") const;
-        /*! Get the debug sql by the connection name. */
-        std::optional<bool> getConnectionDebugSql(const QString &name) const;
 
         /* Migration instances lists and hashes */
         /*! Create a map that maps migration names by migrations type-id (type_index). */
@@ -147,8 +135,6 @@ namespace Tom
         std::shared_ptr<MigrationRepository> m_repository;
         /*! The database connection resolver instance. */
         std::shared_ptr<ConnectionResolverInterface> m_resolver;
-        /*! The name of the database connection to use. */
-        QString m_connection {};
 
         /*! Reference to the migrations vector to process. */
         std::reference_wrapper<
@@ -168,11 +154,6 @@ namespace Tom
     };
 
     /* public */
-
-    const QString &Migrator::getConnection() const noexcept
-    {
-        return m_connection;
-    }
 
     MigrationRepository &Migrator::repository() const noexcept
     {

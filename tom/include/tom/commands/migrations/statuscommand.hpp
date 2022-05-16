@@ -14,6 +14,7 @@ TINY_SYSTEM_HEADER
 #endif
 
 #include "tom/commands/command.hpp"
+#include "tom/concerns/usingconnection.hpp"
 #include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -26,7 +27,8 @@ namespace Commands::Migrations
 {
 
     /*! Show the status of each migration. */
-    class StatusCommand : public Command
+    class StatusCommand : public Command,
+                          public Concerns::UsingConnection
     {
         Q_DISABLE_COPY(StatusCommand)
 

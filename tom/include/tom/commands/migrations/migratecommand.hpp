@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
 #include "tom/concerns/confirmable.hpp"
+#include "tom/concerns/usingconnection.hpp"
 #include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -20,7 +21,8 @@ namespace Commands::Migrations
 
     /*! Run the database migrations up/down. */
     class MigrateCommand : public Command,
-                           public Concerns::Confirmable
+                           public Concerns::Confirmable,
+                           public Concerns::UsingConnection
     {
         Q_DISABLE_COPY(MigrateCommand)
 
@@ -52,9 +54,9 @@ namespace Commands::Migrations
         void loadSchemaState() const;
 
         /*! Determine if the developer has requested database seeding. */
-//        bool needsSeeding() const;
+        bool needsSeeding() const;
         /*! Run the database seeder command. */
-//        void runSeeder() const;
+        void runSeeder() const;
 
         /*! The migrator service instance. */
         std::shared_ptr<Migrator> m_migrator;

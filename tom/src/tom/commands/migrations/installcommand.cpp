@@ -22,6 +22,7 @@ InstallCommand::InstallCommand(
         std::shared_ptr<MigrationRepository> repository
 )
     : Command(application, parser)
+    , Concerns::UsingConnection(resolver())
     , m_repository(std::move(repository))
 {}
 
@@ -37,13 +38,14 @@ int InstallCommand::run()
     Command::run();
 
     // Database connection to use
-    m_repository->setConnection(value(database_), isDebugVerbosity());
+    return usingConnection(value(database_), isDebugVerbosity(), *m_repository, [this]
+    {
+        m_repository->createRepository();
 
-    m_repository->createRepository();
+        info(QStringLiteral("Migration table created successfully."));
 
-    info(QStringLiteral("Migration table created successfully."));
-
-    return EXIT_SUCCESS;
+        return EXIT_SUCCESS;
+    });
 }
 
 } // namespace Tom::Commands::Migrations

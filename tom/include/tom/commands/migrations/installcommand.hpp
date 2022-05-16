@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
+#include "tom/concerns/usingconnection.hpp"
 #include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -18,7 +19,8 @@ namespace Commands::Migrations
 {
 
     /*! Create the migration database repository. */
-    class InstallCommand : public Command
+    class InstallCommand : public Command,
+                           public Concerns::UsingConnection
     {
         Q_DISABLE_COPY(InstallCommand)
 

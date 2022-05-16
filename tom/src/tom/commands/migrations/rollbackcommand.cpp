@@ -27,6 +27,7 @@ RollbackCommand::RollbackCommand(
 )
     : Command(application, parser)
     , Concerns::Confirmable(*this, 0)
+    , Concerns::UsingConnection(resolver())
     , m_migrator(std::move(migrator))
 {}
 
@@ -49,7 +50,8 @@ int RollbackCommand::run()
         return EXIT_FAILURE;
 
     // Database connection to use
-    return m_migrator->usingConnection(value(database_), isDebugVerbosity(), [this]
+    return usingConnection(value(database_), isDebugVerbosity(), m_migrator->repository(),
+                           [this]
     {
         // Validation not needed as the toInt() returns 0 if conversion fails, like it
         m_migrator->rollback({.pretend   = isSet(pretend),

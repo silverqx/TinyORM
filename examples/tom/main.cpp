@@ -7,6 +7,8 @@
 #include "migrations/2014_10_12_200000_create_properties_table.hpp"
 #include "migrations/2014_10_12_300000_create_phones_table.hpp"
 
+#include "seeders/databaseseeder.hpp"
+
 using Orm::Constants::EMPTY;
 using Orm::Constants::H127001;
 using Orm::Constants::P3306;
@@ -37,6 +39,7 @@ using Orm::DB;
 using TomApplication = Tom::Application;
 
 using namespace Migrations; // NOLINT(google-build-using-namespace)
+using namespace Seeders; // NOLINT(google-build-using-namespace)
 
 /*! Build the database manager instance and add a database connection. */
 std::shared_ptr<DatabaseManager> setupManager();
@@ -63,6 +66,14 @@ int main(int argc, char *argv[])
                             AddFactorColumnToPostsTable,
                             CreatePropertiesTable,
                             CreatePhonesTable>()
+                /* Seeder classes, the DatabaseSeeder is the default/root seeder class,
+                   it must always exist if the --class command-line argument is not
+                   provided, or you can provide a custom name through the --class
+                   argument.
+                   The order of seeder classes doesn't matter, they will be called
+                   in the order defined by the call<>() method inside the seeders
+                   themselves. */
+                .seeders<DatabaseSeeder>()
                 // Fire it up 🔥🚀✨
                 .run();
 

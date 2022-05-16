@@ -5,6 +5,7 @@ extern_constants: \
 sourcesList += \
     $$PWD/tom/application.cpp \
     $$PWD/tom/commands/command.cpp \
+    $$PWD/tom/commands/database/seedcommand.cpp \
     $$PWD/tom/commands/database/wipecommand.cpp \
     $$PWD/tom/commands/environmentcommand.cpp \
     $$PWD/tom/commands/helpcommand.cpp \
@@ -24,11 +25,13 @@ sourcesList += \
     $$PWD/tom/concerns/guesscommandname.cpp \
     $$PWD/tom/concerns/interactswithio.cpp \
     $$PWD/tom/concerns/printsoptions.cpp \
+    $$PWD/tom/concerns/usingconnection.cpp \
     $$PWD/tom/exceptions/tomlogicerror.cpp \
     $$PWD/tom/exceptions/tomruntimeerror.cpp \
     $$PWD/tom/migrationcreator.cpp \
     $$PWD/tom/migrationrepository.cpp \
     $$PWD/tom/migrator.cpp \
+    $$PWD/tom/seeder.cpp \
     $$PWD/tom/tableguesser.cpp \
     $$PWD/tom/terminal.cpp \
     $$PWD/tom/tomutils.cpp \

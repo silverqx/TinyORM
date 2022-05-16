@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
 #include "tom/concerns/confirmable.hpp"
+#include "tom/concerns/usingconnection.hpp"
 #include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -16,7 +17,8 @@ namespace Tom::Commands::Database
 
     /*! Drop all tables, views, and types. */
     class WipeCommand : public Command,
-                        public Concerns::Confirmable
+                        public Concerns::Confirmable,
+                        public Concerns::UsingConnection
     {
         Q_DISABLE_COPY(WipeCommand)
 
@@ -41,9 +43,6 @@ namespace Tom::Commands::Database
         int run() override;
 
     protected:
-        /*! Set the debug sql for the current connection. */
-        void setConnectionDebugSql(const QString &connectionName) const;
-
         /*! Drop all of the database tables. */
         void dropAllTables(const QString &database) const;
         /*! Drop all of the database views. */
