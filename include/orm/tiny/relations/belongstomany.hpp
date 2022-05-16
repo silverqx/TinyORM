@@ -1036,7 +1036,7 @@ namespace Orm::Tiny::Relations
             QVector<Related> &models,
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
-        using SizeType = QVector<QVector<AttributeItem>>::size_type;
+        using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
 
         const SizeType attributesSize = pivotValues.size();
 
@@ -1057,7 +1057,7 @@ namespace Orm::Tiny::Relations
             QVector<Related> &&models,
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
-        using SizeType = QVector<QVector<AttributeItem>>::size_type;
+        using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
 
         const SizeType attributesSize = pivotValues.size();
 
@@ -1118,7 +1118,7 @@ namespace Orm::Tiny::Relations
         const auto recordsSize = records.size();
         instances.reserve(recordsSize);
 
-        using SizeType = QVector<QVector<AttributeItem>>::size_type;
+        using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
         const SizeType attributesSize = pivotValues.size();
 
         for (SizeType i = 0; i < recordsSize; ++i)
@@ -1142,7 +1142,7 @@ namespace Orm::Tiny::Relations
         const auto recordsSize = records.size();
         instances.reserve(recordsSize);
 
-        using SizeType = QVector<QVector<AttributeItem>>::size_type;
+        using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
         const SizeType attributesSize = pivotValues.size();
 
         for (SizeType i = 0; i < recordsSize; ++i)
