@@ -34,6 +34,9 @@ Param(
 
 Set-StrictMode -Version 3.0
 
+# Number of processes to spawn (value passed to the -j option)
+$Script:numberOfProcesses = $env:NUMBER_OF_PROCESSORS - 2
+
 # Rules for linting folders using the -FilesPaths parameter:
 #  - xyz    - passed folder only
 #  - xyz.*? - passed folder and all subfolders
@@ -95,7 +98,7 @@ if (-not $SkipClangTidy) {
     Write-Host
 
     & 'E:\dotfiles\bin\run-clang-tidy.ps1' -extra-arg-before='-Qunused-arguments' `
-        -p="$BuildPath" $Script:RegEx
+        -j $Script:numberOfProcesses -p="$BuildPath" $Script:RegEx
 }
 
 if (-not $SkipClazy) {
@@ -125,6 +128,7 @@ if (-not $SkipClazy) {
     & 'E:\dotfiles\bin\run-clazy-standalone.ps1' `
         -checks="$Script:Checks" `
         -extra-arg-before='-Qunused-arguments' -header-filter='(orm|tom|migrations)/.+\.(h|hpp)$' `
+        -j $Script:numberOfProcesses `
         -p="$BuildPath" $Script:RegEx
 }
 
