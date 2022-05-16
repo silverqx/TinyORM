@@ -280,10 +280,10 @@ namespace Orm::Tiny
         /*! Throw InvalidArgumentError if attributes passed to the constructor contain
             some value, which will cause access of some data member in a derived
             instance. */
-        inline void
-        throwIfCRTPctorProblem(const QVector<AttributeItem> &attributes) const;
+        inline static void
+        throwIfCRTPctorProblem(const QVector<AttributeItem> &attributes);
         /*! The QDateTime attribute detected, causes CRTP ctor problem. */
-        void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes) const;
+        static void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes) const;
 
         /* HasAttributes */
         /*! Get the u_dateFormat attribute from the Derived model. */
@@ -1125,14 +1125,14 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::throwIfCRTPctorProblem(
-            const QVector<AttributeItem> &attributes) const
+            const QVector<AttributeItem> &attributes)
     {
         throwIfQDateTimeAttribute(attributes);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::throwIfQDateTimeAttribute(
-            const QVector<AttributeItem> &attributes) const
+            const QVector<AttributeItem> &attributes)
     {
         static const auto message = QStringLiteral(
             "Attributes passed to the '%1' model's constructor can't contain the "
