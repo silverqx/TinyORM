@@ -11,7 +11,7 @@ namespace Seeders
 {
 
     /*! Main database seeder. */
-    struct DatabaseSeeder : Seeder
+    struct DatabaseSeeder : public Seeder
     {
         /*! Run the database seeders. */
         void run() override

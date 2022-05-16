@@ -24,6 +24,7 @@ Whole library is documented as markdown documents:
 - [Database: Getting Started](/docs/database.mdx#database-getting-started)
 - [Database: Query Builder](/docs/query-builder.mdx#database-query-builder)
 - [Database: Migrations](/docs/migrations.mdx#database-migrations)
+- [Database: Seeding](/docs/seeding.mdx#database-seeding)
 - [TinyORM: Getting Started](/docs/tinyorm.mdx#tinyorm-getting-started)
 - [TinyORM: Relationships](/docs/tinyorm-relationships.mdx#tinyorm-relationships)
 - [Building: TinyORM](/docs/building-tinyorm.mdx#building-tinyorm)
