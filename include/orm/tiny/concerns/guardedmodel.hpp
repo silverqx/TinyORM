@@ -20,7 +20,7 @@ namespace Orm::Tiny::Concerns
     {
     public:
         /*! Run the given callable while being unguarded. */
-        static void unguarded(std::function<void()> callback);
+        static void unguarded(const std::function<void()> &callback);
 
         /*! Disable all mass assignable restrictions. */
         static void unguard(bool state = true) noexcept;

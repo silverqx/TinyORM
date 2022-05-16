@@ -24,17 +24,17 @@ static std::atomic<bool> g_unguarded = false;
 /* public */
 
 // NOTE api different, Eloquent returns whatever callback returns and catches all exceptions around the std::invoke() silverqx
-void GuardedModel::unguarded(std::function<void()> callback)
+void GuardedModel::unguarded(const std::function<void()> &callback)
 {
     if (g_unguarded.load()) {
-        std::invoke(std::move(callback));
+        std::invoke(callback);
         return;
     }
 
     unguard();
 
     try {
-        std::invoke(std::move(callback));
+        std::invoke(callback);
 
     }  catch (...) {
 
