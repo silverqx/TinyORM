@@ -100,6 +100,7 @@ function(tinyorm_sources out_headers out_sources)
 
     if(ORM)
         list(APPEND headers
+            tiny/concerns/guardedmodel.hpp
             tiny/concerns/guardsattributes.hpp
             tiny/concerns/hasattributes.hpp
             tiny/concerns/hasrelationships.hpp
@@ -205,6 +206,7 @@ function(tinyorm_sources out_headers out_sources)
 
     if(ORM)
         list(APPEND sources
+            tiny/concerns/guardedmodel.cpp
             tiny/exceptions/modelnotfounderror.cpp
             tiny/exceptions/relationnotfounderror.cpp
             tiny/exceptions/relationnotloadederror.cpp

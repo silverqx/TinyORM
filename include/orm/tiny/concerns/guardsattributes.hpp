@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/macros/threadlocal.hpp"
+#include "orm/tiny/concerns/guardedmodel.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/tinytypes.hpp"
 #include "orm/utils/type.hpp"
@@ -17,7 +18,7 @@ namespace Orm::Tiny::Concerns
 
     /*! Guards attributes. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    class GuardsAttributes
+    class GuardsAttributes : public Concerns::GuardedModel
     {
     public:
         /*! Get the fillable attributes for the model. */
@@ -46,15 +47,6 @@ namespace Orm::Tiny::Concerns
             on the model. */
         Derived &mergeGuarded(QStringList &&guarded);
 
-        /*! Disable all mass assignable restrictions. */
-        static void unguard(bool state = true);
-        /*! Enable the mass assignment restrictions. */
-        static void reguard();
-        /*! Determine if the current state is "unguarded". */
-        inline static bool isUnguarded();
-        /*! Run the given callable while being unguarded. */
-        static void unguarded(const std::function<void()> &callback);
-
         /*! Determine if the given attribute may be mass assigned. */
         bool isFillable(const QString &key) const;
         /*! Determine if the given key is guarded. */
@@ -81,9 +73,6 @@ namespace Orm::Tiny::Concerns
         /*! The attributes that aren't mass assignable. */
         T_THREAD_LOCAL
         inline static QStringList u_guarded {ASTERISK}; // NOLINT(cppcoreguidelines-interfaces-global-init)
-        /*! Indicates if all mass assignment is enabled. */
-        T_THREAD_LOCAL
-        inline static bool m_unguarded = false;
         /*! The actual columns that exist on the database and can be guarded. */
         T_THREAD_LOCAL
         inline static QHash<QString, QStringList> m_guardableColumns;
@@ -98,6 +87,8 @@ namespace Orm::Tiny::Concerns
        a Model &, but because of the CRTP pattern and the need of calling fill() method
        from the Model::ctor all of the u_xx mass asignment related data members have
        to be static. ✌ */
+
+    /* public */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
@@ -203,49 +194,10 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void GuardsAttributes<Derived, AllRelations...>::unguard(const bool state)
-    {
-        // NOTE api different, Eloquent use late static binding for unguarded silverqx
-        m_unguarded = state;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    void GuardsAttributes<Derived, AllRelations...>::reguard()
-    {
-        m_unguarded = false;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool GuardsAttributes<Derived, AllRelations...>::isUnguarded()
-    {
-        return m_unguarded;
-    }
-
-    // NOTE api different, Eloquent returns whatever callback returns silverqx
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    void GuardsAttributes<Derived, AllRelations...>::unguarded(
-            const std::function<void()> &callback)
-    {
-        if (m_unguarded) {
-            std::invoke(callback);
-            return;
-        }
-
-        unguard();
-
-        try {
-            std::invoke(callback);
-        } catch (...) {
-        }
-
-        reguard();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
     GuardsAttributes<Derived, AllRelations...>::isFillable(const QString &key) const
     {
-        if (m_unguarded)
+        if (isUnguarded())
             return true;
 
         const auto &fillable = basemodel().getUserFillable();
@@ -293,6 +245,8 @@ namespace Orm::Tiny::Concerns
                 && basemodel().getUserGuarded() == QStringList {ASTERISK};
     }
 
+    /* protected */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
     GuardsAttributes<Derived, AllRelations...>::isGuardableColumn(
@@ -326,7 +280,7 @@ namespace Orm::Tiny::Concerns
     {
         const auto &fillable = basemodel().getUserFillable();
 
-        if (fillable.isEmpty() || m_unguarded)
+        if (fillable.isEmpty() || isUnguarded())
             return attributes;
 
         QVector<AttributeItem> result;
@@ -345,7 +299,7 @@ namespace Orm::Tiny::Concerns
     {
         const auto &fillable = basemodel().getUserFillable();
 
-        if (fillable.isEmpty() || m_unguarded)
+        if (fillable.isEmpty() || isUnguarded())
             return std::move(attributes);
 
         QVector<AttributeItem> result;

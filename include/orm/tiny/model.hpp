@@ -24,6 +24,9 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny
 {
 
+    /*! Alias for the GuardedModel. */
+    using GuardedModel = Concerns::GuardedModel;
+
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
     // TODO model missing methods Comparing Models silverqx
@@ -689,7 +692,7 @@ namespace Orm::Tiny
         if (attributes.isEmpty())
             return model();
 
-        this->unguarded([this, &attributes]
+        GuardedModel::unguarded([this, &attributes]
         {
             fill(attributes);
         });

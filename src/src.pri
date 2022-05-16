@@ -55,6 +55,7 @@ sourcesList += \
 
 !disable_orm: \
     sourcesList += \
+        $$PWD/orm/tiny/concerns/guardedmodel.cpp \
         $$PWD/orm/tiny/exceptions/modelnotfounderror.cpp \
         $$PWD/orm/tiny/exceptions/relationnotfounderror.cpp \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \

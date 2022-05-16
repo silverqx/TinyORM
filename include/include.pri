@@ -94,6 +94,7 @@ headersList += \
 
 !disable_orm: \
     headersList += \
+        $$PWD/orm/tiny/concerns/guardedmodel.hpp \
         $$PWD/orm/tiny/concerns/guardsattributes.hpp \
         $$PWD/orm/tiny/concerns/hasattributes.hpp \
         $$PWD/orm/tiny/concerns/hasrelationships.hpp \
