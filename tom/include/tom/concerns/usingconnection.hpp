@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include <QStringList>
 
+#include <memory>
 #include <optional>
 
 #include <orm/macros/commonnamespace.hpp>
@@ -40,8 +41,8 @@ namespace Concerns
     public:
         /*! Constructor. */
         explicit UsingConnection(std::shared_ptr<ConnectionResolverInterface> &&resolver);
-        /*! Default destructor. */
-        inline ~UsingConnection() = default;
+        /*! Virtual destructor. */
+        inline virtual ~UsingConnection() = default;
 
         /*! Execute the given callback using the given connection as the default
             connection. */
