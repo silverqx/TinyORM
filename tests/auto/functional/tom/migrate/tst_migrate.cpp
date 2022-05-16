@@ -540,6 +540,7 @@ int tst_Migrate::invokeCommand(const QString &name,
 #endif
         nameArr.constData(),
         connectionArr.constData(),
+//        "-vvv",
     };
     std::ranges::move(arguments, std::back_inserter(argv));
 
