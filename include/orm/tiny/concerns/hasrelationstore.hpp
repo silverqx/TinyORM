@@ -127,7 +127,7 @@ namespace Orm::Tiny::Concerns
                     const Tiny::TinyBuilder<Derived> &builder,
                     QVector<Derived> &models, const WithItem &relation);
             /*! Virtual destructor. */
-            inline ~EagerRelationStore() final = default;
+            inline virtual ~EagerRelationStore() final = default;
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -155,7 +155,7 @@ namespace Orm::Tiny::Concerns
             explicit PushRelationStore(HasRelationStore &hasRelationStore,
                                        RelationsType<AllRelations...> &models);
             /*! Virtual destructor. */
-            inline ~PushRelationStore() final = default;
+            inline virtual ~PushRelationStore() final = default;
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -177,7 +177,7 @@ namespace Orm::Tiny::Concerns
             explicit TouchOwnersRelationStore(HasRelationStore &hasRelationStore,
                                               const QString &relation);
             /*! Virtual destructor. */
-            inline ~TouchOwnersRelationStore() final = default;
+            inline virtual ~TouchOwnersRelationStore() final = default;
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -198,7 +198,7 @@ namespace Orm::Tiny::Concerns
             /*! Constructor. */
             explicit LazyRelationStore(HasRelationStore &hasRelationStore);
             /*! Virtual destructor. */
-            inline ~LazyRelationStore() final = default;
+            inline virtual ~LazyRelationStore() final = default;
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -218,7 +218,7 @@ namespace Orm::Tiny::Concerns
             /*! Constructor. */
             explicit BelongsToManyRelatedTableStore(HasRelationStore &hasRelationStore);
             /*! Virtual destructor. */
-            inline ~BelongsToManyRelatedTableStore() final = default;
+            inline virtual ~BelongsToManyRelatedTableStore() final = default;
 
             /*! Method called after visitation. */
             template<typename Method>
@@ -245,7 +245,7 @@ namespace Orm::Tiny::Concerns
                     std::optional<std::reference_wrapper<
                             QStringList>> relations = std::nullopt);
             /*! Virtual destructor. */
-            inline ~QueriesRelationshipsStore() final = default;
+            inline virtual ~QueriesRelationshipsStore() final = default;
 
             /*! Method called after visitation. */
             template<typename RelatedFromMethod, typename Method>
