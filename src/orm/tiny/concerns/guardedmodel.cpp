@@ -1,5 +1,7 @@
 #include "orm/tiny/concerns/guardedmodel.hpp"
 
+#include <atomic>
+
 #include "orm/macros/threadlocal.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
