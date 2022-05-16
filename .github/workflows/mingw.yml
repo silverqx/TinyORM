@@ -254,6 +254,9 @@ jobs:
         export PATH=../..${PATH:+:}$PATH
         ./tom.exe migrate:install --no-ansi
         ./tom.exe migrate:status --no-ansi
+        ./tom.exe migrate --seed --no-ansi
+        ./tom.exe migrate:refresh --seed --no-ansi
+        ./tom.exe migrate:status --no-ansi
       env:
         DB_MYSQL_CHARSET: utf8mb4
         DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci

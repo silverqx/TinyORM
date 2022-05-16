@@ -237,6 +237,9 @@ jobs:
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
         ./tom migrate:install --no-ansi
         ./tom migrate:status --no-ansi
+        ./tom migrate --seed --no-ansi
+        ./tom migrate:refresh --seed --no-ansi
+        ./tom migrate:status --no-ansi
       env:
         DB_MYSQL_CHARSET: utf8mb4
         DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
