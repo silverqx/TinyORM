@@ -21,4 +21,11 @@ TINY_SYSTEM_HEADER
 #  define TINYTOM_MIGRATIONS_DIR database/migrations
 #endif
 
+/* Default seeders path for the make:seeder command, the path can be absolute or
+   relative (to the pwd at runtime) and will be stringified in the tom/application.cpp. */
+#ifndef TINYTOM_SEEDERS_DIR
+// NOLINTNEXTLINE(bugprone-macro-parentheses)
+#  define TINYTOM_SEEDERS_DIR database/seeders
+#endif
+
 #endif // TOM_CONFIG_HPP

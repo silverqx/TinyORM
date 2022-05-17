@@ -14,7 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands::Make
 {
 
-    /*! Create a new migration file. */
+    /*! Create a new migration class. */
     class MigrationCommand : public Command
     {
         Q_DISABLE_COPY(MigrationCommand)
@@ -62,12 +62,12 @@ namespace Tom::Commands::Make
         /*! Prepare a final migration name. */
         static QString prepareFinalMigrationName(QString &&migration);
 
-        /*! Write the migration file to disk. */
+        /*! Write the migration file to the disk. */
         void writeMigration(std::string &&datetimePrefix, const QString &name,
                             std::string &&extension, const QString &table,
                             bool create) const;
 
-        /*! Get migration path (either specified by '--path' option or default
+        /*! Get the migration path (either specified by the --path option or the default
             location). */
         fspath getMigrationPath() const;
 
@@ -84,7 +84,7 @@ namespace Tom::Commands::Make
 
     QString MigrationCommand::description() const
     {
-        return QStringLiteral("Create a new migration file");
+        return QStringLiteral("Create a new migration class");
     }
 
 } // namespace Tom::Commands::Make

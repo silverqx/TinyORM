@@ -115,8 +115,13 @@ namespace Concerns
 
         /*! Set the default migrations path for the make:migration command. */
         Application &migrationsPath(fspath path);
+        /*! Set the default seeders path for the make:seeder command. */
+        Application &seedersPath(fspath path);
+
         /*! Get the default migrations path used by the make:migration command. */
         inline const fspath &getMigrationsPath() const noexcept;
+        /*! Get the default seeders path used by the make:seeder command. */
+        inline const fspath &getSeedersPath() const noexcept;
 
         /*! Get a reference to the all migrations instances. */
         inline const std::vector<std::shared_ptr<Migration>> &
@@ -226,8 +231,8 @@ namespace Concerns
         /*! Get commands index positions in namespaces. */
         const std::vector<std::tuple<int, int>> &commandsIndexes() const;
 
-        /*! Initialize the migrations path (prepend pwd and make_prefered). */
-        static fspath initializeMigrationsPath(fspath &&path);
+        /*! Initialize the migrations or seeders path (prepend pwd and make_prefered). */
+        static fspath initializePath(fspath &&path);
 
         /*! Get database connection resolver. */
         std::shared_ptr<ConnectionResolverInterface> resolver() const noexcept;
@@ -269,6 +274,8 @@ namespace Concerns
         QString m_migrationTable;
         /*! Migrations path for the make:migration command. */
         std::filesystem::path m_migrationsPath;
+        /*! Seeders path for the make:seeder command. */
+        std::filesystem::path m_seedersPath;
 
         /*! Migrations vector to process. */
         std::vector<std::shared_ptr<Migration>> m_migrations;
@@ -353,6 +360,11 @@ namespace Concerns
     const std::filesystem::path &Application::getMigrationsPath() const noexcept
     {
         return m_migrationsPath;
+    }
+
+    const std::filesystem::path &Application::getSeedersPath() const noexcept
+    {
+        return m_seedersPath;
     }
 
     const std::vector<std::shared_ptr<Migration>> &

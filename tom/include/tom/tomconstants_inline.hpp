@@ -87,6 +87,7 @@ namespace Tom::Constants
     inline const QString &Help           = Tom::Constants::help;
     inline const QString MakeMigration   = QStringLiteral("make:migration");
     inline const QString MakeProject     = QStringLiteral("make:project");
+    inline const QString MakeSeeder      = QStringLiteral("make:seeder");
     inline const QString &Migrate        = Tom::Constants::NsMigrate;
     inline const QString MigrateFresh    = QStringLiteral("migrate:fresh");
     inline const QString MigrateInstall  = QStringLiteral("migrate:install");

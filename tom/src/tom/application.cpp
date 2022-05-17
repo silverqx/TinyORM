@@ -19,6 +19,7 @@
 #include "tom/commands/listcommand.hpp"
 #include "tom/commands/make/migrationcommand.hpp"
 //#include "tom/commands/make/projectcommand.hpp"
+#include "tom/commands/make/seedercommand.hpp"
 #include "tom/commands/migrations/freshcommand.hpp"
 #include "tom/commands/migrations/installcommand.hpp"
 #include "tom/commands/migrations/migratecommand.hpp"
@@ -51,6 +52,7 @@ using Tom::Commands::InspireCommand;
 using Tom::Commands::ListCommand;
 using Tom::Commands::Make::MigrationCommand;
 //using Tom::Commands::Make::ProjectCommand;
+using Tom::Commands::Make::SeederCommand;
 using Tom::Commands::Migrations::FreshCommand;
 using Tom::Commands::Migrations::InstallCommand;
 using Tom::Commands::Migrations::MigrateCommand;
@@ -75,6 +77,7 @@ using Tom::Constants::Inspire;
 using Tom::Constants::List;
 using Tom::Constants::MakeMigration;
 //using Tom::Constants::MakeProject;
+using Tom::Constants::MakeSeeder;
 using Tom::Constants::Migrate;
 using Tom::Constants::MigrateFresh;
 using Tom::Constants::MigrateInstall;
@@ -116,8 +119,8 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
 #endif
     , m_environmentEnvName(environmentEnvName)
     , m_migrationTable(std::move(migrationTable))
-    , m_migrationsPath(initializeMigrationsPath(
-                           TINYORM_STRINGIFY(TINYTOM_MIGRATIONS_DIR)))
+    , m_migrationsPath(initializePath(TINYORM_STRINGIFY(TINYTOM_MIGRATIONS_DIR)))
+    , m_seedersPath(initializePath(TINYORM_STRINGIFY(TINYTOM_SEEDERS_DIR)))
     , m_migrations(std::move(migrations))
     , m_seeders(std::move(seeders))
 {
@@ -187,7 +190,14 @@ QStringList Application::arguments() const
 
 Application &Application::migrationsPath(fspath path)
 {
-    m_migrationsPath = initializeMigrationsPath(std::move(path));
+    m_migrationsPath = initializePath(std::move(path));
+
+    return *this;
+}
+
+Application &Application::seedersPath(fspath path)
+{
+    m_seedersPath = initializePath(std::move(path));
 
     return *this;
 }
@@ -423,6 +433,9 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
 //    if (command == MakeProject)
 //        return std::make_unique<ProjectCommand>(*this, parserRef);
 
+    if (command == MakeSeeder)
+        return std::make_unique<SeederCommand>(*this, parserRef);
+
     if (command == Migrate)
         return std::make_unique<MigrateCommand>(*this, parserRef, createMigrator());
 
@@ -541,7 +554,7 @@ Application::commandNames() const
         // db
         DbSeed, DbWipe,
         // make
-        MakeMigration, /*MakeProject,*/
+        MakeMigration, /*MakeProject,*/ MakeSeeder,
         // migrate
         MigrateFresh, MigrateInstall, MigrateRefresh, MigrateReset, MigrateRollback,
         MigrateStatus,
@@ -580,15 +593,15 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
         {0, 5},  // "" - also global
         {0, 5},  // global
         {5, 7},  // db
-        {7, 8},  // make
-        {8, 14}, // migrate
-        {5, 14}, // namespaced
+        {7, 9},  // make
+        {9, 15}, // migrate
+        {5, 15}, // namespaced
     };
 
     return cached;
 }
 
-fspath Application::initializeMigrationsPath(fspath &&path)
+fspath Application::initializePath(fspath &&path)
 {
     if (path.is_relative())
         path = std::filesystem::current_path() / std::move(path);

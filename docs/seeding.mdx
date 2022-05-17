@@ -108,6 +108,10 @@ You may also seed your database using the `migrate`, `migrate:fresh` or `migrate
 tom migrate:fresh --seed
 ```
 
+:::tip
+You can change the default seeders path as is described in the [`C preprocessor macros`](building-tinyorm.mdx#TINYTOM_SEEDERS_DIR), CMake provides the [`TOM_SEEDERS_DIR`](building-tinyorm.mdx#TOM_SEEDERS_DIR) option.
+:::
+
 #### Forcing Seeders To Run In Production
 
 Some seeding operations may cause you to alter or lose data. In order to protect you from running seeding commands against your production database, you will be prompted for confirmation before the seeders are executed in the `production` environment. To force the seeders to run without a prompt, use the `--force` flag:

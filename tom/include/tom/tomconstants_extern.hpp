@@ -88,6 +88,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString &Help;
     SHAREDLIB_EXPORT extern const QString MakeMigration;
     SHAREDLIB_EXPORT extern const QString MakeProject;
+    SHAREDLIB_EXPORT extern const QString MakeSeeder;
     SHAREDLIB_EXPORT extern const QString &Migrate;
     SHAREDLIB_EXPORT extern const QString MigrateFresh;
     SHAREDLIB_EXPORT extern const QString MigrateInstall;

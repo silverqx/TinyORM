@@ -8,6 +8,9 @@
 # Will be stringified in the tom/application.cpp
 #DEFINES += TINYTOM_MIGRATIONS_DIR="\"database/migrations\""
 
+# Default seeders path as the string for the make:seeder command
+#DEFINES += TINYTOM_SEEDERS_DIR="\"database/seeders\""
+
 # Dependencies include and library paths
 # ---
 

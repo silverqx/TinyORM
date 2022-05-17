@@ -93,8 +93,7 @@ int MigrationCommand::run()
     if (table.isEmpty())
         std::tie(table, create) = TableGuesser::guess(migrationName);
 
-    /* Now we are ready to write the migration out to disk. Once we've written
-       the migration out. */
+    // Ready to write the migration to the disk 🧨✨
     writeMigration(std::move(datetimePrefix), migrationName, std::move(extension),
                    table, create);
 

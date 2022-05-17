@@ -18,8 +18,10 @@ headersList += \
     $$PWD/tom/commands/listcommand.hpp \
     $$PWD/tom/commands/make/migrationcommand.hpp \
 #    $$PWD/tom/commands/make/projectcommand.hpp \
+    $$PWD/tom/commands/make/seedercommand.hpp \
     $$PWD/tom/commands/make/stubs/migrationstubs.hpp \
     $$PWD/tom/commands/make/stubs/projectstubs.hpp \
+    $$PWD/tom/commands/make/stubs/seederstubs.hpp \
     $$PWD/tom/commands/migrations/freshcommand.hpp \
     $$PWD/tom/commands/migrations/installcommand.hpp \
     $$PWD/tom/commands/migrations/migratecommand.hpp \
@@ -44,6 +46,7 @@ headersList += \
     $$PWD/tom/migrationrepository.hpp \
     $$PWD/tom/migrator.hpp \
     $$PWD/tom/seeder.hpp \
+    $$PWD/tom/seedercreator.hpp \
     $$PWD/tom/tableguesser.hpp \
     $$PWD/tom/terminal.hpp \
     $$PWD/tom/tomconstants.hpp \
