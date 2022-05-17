@@ -1,4 +1,4 @@
-#include "tom/migrationcreator.hpp"
+#include "tom/commands/make/support/migrationcreator.hpp"
 
 #include <QDateTime>
 
@@ -23,7 +23,7 @@ using Tom::Constants::DateTimePrefix;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Tom
+namespace Tom::Commands::Make::Support
 {
 
 /* public */
@@ -148,6 +148,6 @@ void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
     }
 }
 
-} // namespace Tom
+} // namespace Tom::Commands::Make::Support
 
 TINYORM_END_COMMON_NAMESPACE

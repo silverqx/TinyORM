@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TOM_SEEDERCREATOR_HPP
-#define TOM_SEEDERCREATOR_HPP
+#ifndef TOM_COMMANDS_MAKE_SUPPORT_SEEDERCREATOR_HPP
+#define TOM_COMMANDS_MAKE_SUPPORT_SEEDERCREATOR_HPP
 
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
@@ -13,7 +13,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Tom
+namespace Tom::Commands::Make::Support
 {
 
     /*! Seeder file generator (used by the make:seeder command). */
@@ -57,8 +57,8 @@ namespace Tom
                     const fspath &seedersPath) const;
     };
 
-} // namespace Tom
+} // namespace Tom::Commands::Make::Support
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // TOM_SEEDERCREATOR_HPP
+#endif // TOM_COMMANDS_MAKE_SUPPORT_SEEDERCREATOR_HPP

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TOM_MIGRATIONCREATOR_HPP
-#define TOM_MIGRATIONCREATOR_HPP
+#ifndef TOM_COMMANDS_MAKE_SUPPORT_MIGRATIONCREATOR_HPP
+#define TOM_COMMANDS_MAKE_SUPPORT_MIGRATIONCREATOR_HPP
 
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
@@ -13,7 +13,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Tom
+namespace Tom::Commands::Make::Support
 {
 
     /*! Migration file generator (used by the make:migration command). */
@@ -59,8 +59,8 @@ namespace Tom
                                                   const fspath &migrationsPath);
     };
 
-} // namespace Tom
+} // namespace Tom::Commands::Make::Support
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // TOM_MIGRATIONCREATOR_HPP
+#endif // TOM_COMMANDS_MAKE_SUPPORT_MIGRATIONCREATOR_HPP

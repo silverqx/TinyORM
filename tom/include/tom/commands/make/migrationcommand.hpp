@@ -6,7 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
-#include "tom/migrationcreator.hpp"
+#include "tom/commands/make/support/migrationcreator.hpp"
 #include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -72,7 +72,7 @@ namespace Tom::Commands::Make
         fspath getMigrationPath() const;
 
         /*! The migration creator instance. */
-        MigrationCreator m_creator {};
+        Support::MigrationCreator m_creator {};
     };
 
     /* public */

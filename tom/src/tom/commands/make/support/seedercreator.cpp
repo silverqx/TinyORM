@@ -1,4 +1,4 @@
-#include "tom/seedercreator.hpp"
+#include "tom/commands/make/support/seedercreator.hpp"
 
 #include <fstream>
 
@@ -20,7 +20,7 @@ using Tom::Commands::Make::Stubs::SeederStub;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Tom
+namespace Tom::Commands::Make::Support
 {
 
 /* public */
@@ -125,6 +125,6 @@ void SeederCreator::throwIfSeederAlreadyExists(
     }
 }
 
-} // namespace Tom
+} // namespace Tom::Commands::Make::Support
 
 TINYORM_END_COMMON_NAMESPACE

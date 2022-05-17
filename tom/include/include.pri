@@ -22,6 +22,8 @@ headersList += \
     $$PWD/tom/commands/make/stubs/migrationstubs.hpp \
     $$PWD/tom/commands/make/stubs/projectstubs.hpp \
     $$PWD/tom/commands/make/stubs/seederstubs.hpp \
+    $$PWD/tom/commands/make/support/migrationcreator.hpp \
+    $$PWD/tom/commands/make/support/seedercreator.hpp \
     $$PWD/tom/commands/migrations/freshcommand.hpp \
     $$PWD/tom/commands/migrations/installcommand.hpp \
     $$PWD/tom/commands/migrations/migratecommand.hpp \
@@ -42,11 +44,9 @@ headersList += \
     $$PWD/tom/exceptions/runtimeerror.hpp \
     $$PWD/tom/exceptions/tomerror.hpp \
     $$PWD/tom/migration.hpp \
-    $$PWD/tom/migrationcreator.hpp \
     $$PWD/tom/migrationrepository.hpp \
     $$PWD/tom/migrator.hpp \
     $$PWD/tom/seeder.hpp \
-    $$PWD/tom/seedercreator.hpp \
     $$PWD/tom/tableguesser.hpp \
     $$PWD/tom/terminal.hpp \
     $$PWD/tom/tomconstants.hpp \
