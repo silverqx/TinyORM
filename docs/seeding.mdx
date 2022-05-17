@@ -56,6 +56,42 @@ Within the `DatabaseSeeder` class, you may use the `call` method to execute addi
         call<UserSeeder, PostSeeder, CommentSeeder>();
     }
 
+#### Call with additional arguments
+
+The `call` method allows to pass additional arguments to the seeder/s, but it has additional requirements.
+
+If you define a `run` method without parameters then this method is called using the virtual dispatch (polymorphism) and in this case, you should use the `override` specifier.
+
+If you define your `run` method eg. like this `run(bool shouldSeed)` or whatever parameters you want, then this method is called using the fold expression (virtual dispatch is not used in this case) so you can't use the `override` specifier and you must call the `call<>()` method with exactly the same arguments like the `run` method was defined with, in our example, it should look like this `call<ExampleSeeder>(true)`.
+
+Let's demonstrate it on a small example, following is the `run` method in the root `DatabaseSeeder` class.
+
+    /*! Run the database seeders. */
+    void run() override
+    {
+        // This value can be based eg. on data from the database
+        const auto shouldSeed = true;
+
+        call<UserSeeder>(shouldSeed);
+    }
+
+The `run` method in the `UserSeeder` class.
+
+    /*! Run the database seeders. */
+    void run(const bool shouldSeed)
+    {
+        if (!shouldSeed)
+            return;
+
+        DB::table("users")->insert({
+            {"name", "1. user"},
+        });
+    }
+
+:::tip
+The `call` method provides two shortcut methods, `callWith` and `callSilent` (no output from seeders).
+:::
+
 ## Running Seeders
 
 You may execute the `db:seed` tom command to seed your database. By default, the `db:seed` command runs the `Seeders::DatabaseSeeder` class, which may in turn invoke other seed classes. However, you may use the `--class` option to specify a specific seeder class to run individually:

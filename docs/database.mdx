@@ -142,7 +142,7 @@ Some database statements do not return any value. For these types of operations,
     DB::statement("drop table users");
 
 :::tip
-`DB::statement()` should be used for [DDL](https://en.wikipedia.org/wiki/Data_definition_language) queries, don't use it for "select" queries because it internally calls `recordsHaveBeenModified()`.
+`DB::statement` method should be used for [DDL](https://en.wikipedia.org/wiki/Data_definition_language) queries, don't use it for "select" queries because it internally calls `recordsHaveBeenModified` method.
 :::
 
 #### Running An Unprepared Statement
