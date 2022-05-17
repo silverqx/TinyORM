@@ -36,10 +36,6 @@ namespace Tom
                       const QString &table = "", bool create = false) const;
 
     protected:
-        /*! Ensure that a migration with the given name doesn't already exist. */
-        void throwIfMigrationAlreadyExists(const QString &name,
-                                           const fspath &migrationsPath) const;
-
         /*! Get the migration stub file. */
         QString getStub(const QString &table, bool create) const;
 
@@ -56,6 +52,11 @@ namespace Tom
         QString getClassName(const QString &name) const;
         /*! Ensure a directory exists. */
         void ensureDirectoryExists(const fspath &path) const;
+
+    private:
+        /*! Ensure that a migration with the given name doesn't already exist. */
+        void throwIfMigrationAlreadyExists(const QString &name,
+                                           const fspath &migrationsPath) const;
     };
 
 } // namespace Tom

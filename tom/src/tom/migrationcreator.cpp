@@ -53,32 +53,6 @@ fspath MigrationCreator::create(
 
 /* protected */
 
-void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
-                                                     const fspath &migrationsPath) const
-{
-    // Nothing to check
-    if (!fs::exists(migrationsPath))
-        return;
-
-    using options = fs::directory_options;
-
-    for (const auto &entry :
-         fs::directory_iterator(migrationsPath, options::skip_permission_denied)
-    ) {
-        // Check only files
-        if (!entry.is_regular_file())
-            continue;
-
-        // Extract migration name without datetime prefix and extension
-        auto entryName = QString::fromStdString(entry.path().stem().string())
-                         .mid(DateTimePrefix.size() + 1);
-
-        if (entryName == name)
-            throw Exceptions::InvalidArgumentError(
-                    QStringLiteral("A '%1' migration already exists.").arg(name));
-    }
-}
-
 QString MigrationCreator::getStub(const QString &table, const bool create) const
 {
     QString stub;
@@ -144,6 +118,34 @@ void MigrationCreator::ensureDirectoryExists(const fspath &path) const
         return;
 
     fs::create_directories(path);
+}
+
+/* private */
+
+void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
+                                                     const fspath &migrationsPath) const
+{
+    // Nothing to check
+    if (!fs::exists(migrationsPath))
+        return;
+
+    using options = fs::directory_options;
+
+    for (const auto &entry :
+         fs::directory_iterator(migrationsPath, options::skip_permission_denied)
+    ) {
+        // Check only files
+        if (!entry.is_regular_file())
+            continue;
+
+        // Extract migration name without datetime prefix and extension
+        auto entryName = QString::fromStdString(entry.path().stem().string())
+                         .mid(DateTimePrefix.size() + 1);
+
+        if (entryName == name)
+            throw Exceptions::InvalidArgumentError(
+                    QStringLiteral("A '%1' migration already exists.").arg(name));
+    }
 }
 
 } // namespace Tom
