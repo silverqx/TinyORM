@@ -2,8 +2,8 @@
 
 #include <tom/seeder.hpp>
 
-#include "seeders/phonesseeder.hpp"
-#include "seeders/propertiesseeder.hpp"
+#include "seeders/phoneseeder.hpp"
+#include "seeders/propertyseeder.hpp"
 
 /* This class serves as a showcase, so all possible features are defined / used. */
 
@@ -21,7 +21,7 @@ namespace Seeders
                 {{"name", "2. post"}, {"factor", 20}},
             });
 
-            call<PhonesSeeder, PropertiesSeeder>();
+            call<PhoneSeeder, PropertySeeder>();
 
             // You can also pass arguments to the call() related methods
 //            callWith<UsersSeeder>(shouldSeedPasswd);

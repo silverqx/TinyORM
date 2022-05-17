@@ -17,7 +17,7 @@ namespace Models
 namespace Seeders
 {
 
-    struct PhonesSeeder : public Seeder
+    struct PhoneSeeder : public Seeder
     {
         /*! Run the database seeders. */
         void run() override
