@@ -14,7 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands::Make
 {
 
-    /*! Create a new migration class. */
+    /*! Create a new migration file. */
     class MigrationCommand : public Command
     {
         Q_DISABLE_COPY(MigrationCommand)
@@ -84,7 +84,7 @@ namespace Tom::Commands::Make
 
     QString MigrationCommand::description() const
     {
-        return QStringLiteral("Create a new migration class");
+        return QStringLiteral("Create a new migration file");
     }
 
 } // namespace Tom::Commands::Make

@@ -33,7 +33,7 @@ SeederCommand::SeederCommand(Application &application, QCommandLineParser &parse
 const std::vector<PositionalArgument> &SeederCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, QStringLiteral("The name of the seeder class")},
+        {NAME, QStringLiteral("The name of the seeder class (required StudlyCase)")},
     };
 
     return cached;
