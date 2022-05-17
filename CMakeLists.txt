@@ -304,6 +304,8 @@ if(TOM_EXAMPLE)
         PUBLIC
             # Will be stringified in the tom/application.cpp
             TINYTOM_MIGRATIONS_DIR=${TOM_MIGRATIONS_DIR}
+            # Will be stringified in the tom/application.cpp
+            TINYTOM_SEEDERS_DIR=${TOM_SEEDERS_DIR}
     )
 endif()
 

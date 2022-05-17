@@ -156,8 +156,10 @@ macro(tiny_init_tiny_variables_pre)
     set(Tom_target ${TomExample_target})
     # Targets' folders
     set(TomExample_folder examples/tom)
-    # Tom migrations folder for the make:migration
+    # Tom migrations folder for the make:migration command
     set(TomMigrations_folder database/migrations)
+    # Tom seeders folder for the make:seeder command
+    set(TomSeeders_folder database/seeders)
 
     get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
     set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL
@@ -258,16 +260,22 @@ macro(tiny_init_tom_migrations_dir)
         if(NOT DEFINED TOM_MIGRATIONS_DIR)
             # Relative path to the pwd
             set(TOM_MIGRATIONS_DIR ${TomMigrations_folder})
-            # Absolute path
-#            file(REAL_PATH "${TomExample_folder}/${TomMigrations_folder}"
-#                 TOM_MIGRATIONS_DIR BASE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
         endif()
 
-        # Set path from the -D option or from the above file(REAL_PATH) command
+        # Provide the default seeders path for the make:seeders command
+        if(NOT DEFINED TOM_SEEDERS_DIR)
+            # Relative path to the pwd
+            set(TOM_SEEDERS_DIR ${TomSeeders_folder})
+        endif()
+
+        # Set path from the -D option or from the above default value
         set(TOM_MIGRATIONS_DIR "${TOM_MIGRATIONS_DIR}" CACHE PATH
             "Default migrations path for the make:migration command")
 
-        mark_as_advanced(TOM_MIGRATIONS_DIR)
+        set(TOM_SEEDERS_DIR "${TOM_SEEDERS_DIR}" CACHE PATH
+            "Default seeders path for the make:seeder command")
+
+        mark_as_advanced(TOM_MIGRATIONS_DIR TOM_SEEDERS_DIR)
     endif()
 
 endmacro()
