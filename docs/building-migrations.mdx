@@ -276,6 +276,12 @@ If you want, you can also build the `tom` application without the migrations, si
 
 ### Seeders
 
+If you have already built the `tom` application then you can generate a seeder using the [`make:seeder`](seeding.mdx#writing-seeders) command 😎.
+
+```bash
+tom make:seeder PostSeeder
+```
+
 The expected folders structure is described a few paragraphs [above](#folders-structure). The [`seeders.pri`](#seeders-source-files) file is used only by the `qmake` build system and is not needed with `CMake` builds.
 
 Let's create the root seeder class manually.

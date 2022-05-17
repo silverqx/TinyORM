@@ -20,6 +20,16 @@ TinyORM includes the ability to seed your database with data using seed classes.
 
 ## Writing Seeders
 
+To generate a seeder, execute the `make:seeder` `tom` command. A new seeder will be placed in the `database/seeders` directory relative to the current <abbr title='Current working directory'>pwd</abbr>:
+
+```bash
+tom make:seeder UserSeeder
+```
+
+:::tip
+You can omit the `Seeder` word in the class name, `tom` appends it for you.
+:::
+
 A seeder class only contains one method by default: `run`. This method is called when the `db:seed` tom command is executed. Within the `run` method, you may insert data into your database however you wish. You may use the [query builder](query-builder.mdx#insert-statements) to manually insert data.
 
 As an example, let's modify the default `DatabaseSeeder` class and add a database insert statement to the `run` method:
