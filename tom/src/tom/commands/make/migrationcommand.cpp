@@ -87,7 +87,6 @@ int MigrationCommand::run()
         create = true;
     }
 
-    // CUR tom, finish TableGuesser, when --create/--table params are not passed silverqx
     /* Next, we will attempt to guess the table name if the migration name has
        "create" in the name. This will allow us to provide a convenient way
        of creating migrations that create new tables for the application. */
