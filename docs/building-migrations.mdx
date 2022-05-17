@@ -317,8 +317,8 @@ And paste the following code.
             void run() override
             {
                 DB::table("posts")->insert({
-                    {"name", "1. post"},
-                    {"name", "2. post"},
+                    {{"name", "1. post"}},
+                    {{"name", "2. post"}},
                 });
             }
         };
