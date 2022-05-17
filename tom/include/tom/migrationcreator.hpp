@@ -43,8 +43,6 @@ namespace Tom
         /*! Get the migration stub file. */
         QString getStub(const QString &table, bool create) const;
 
-        /*! Get the path to the stubs. */
-        fspath stubPath() const;
         /*! Get the full path to the migration. */
         fspath getPath(std::string &&datetimePrefix, const QString &name,
                        std::string &&extension, const fspath &path) const;

@@ -95,11 +95,6 @@ QString MigrationCreator::getStub(const QString &table, const bool create) const
     return stub;
 }
 
-fspath MigrationCreator::stubPath() const
-{
-    return fspath(__FILE__).parent_path() / "stubs";
-}
-
 fspath MigrationCreator::getPath(std::string &&datetimePrefix, const QString &name,
                                  std::string &&extension, const fspath &path) const
 {
