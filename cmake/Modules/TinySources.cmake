@@ -336,11 +336,9 @@ function(tinytom_sources out_headers out_sources)
         concerns/usingconnection.cpp
         exceptions/tomlogicerror.cpp
         exceptions/tomruntimeerror.cpp
-        migrationcreator.cpp
         migrationrepository.cpp
         migrator.cpp
         seeder.cpp
-        seedercreator.cpp
         tableguesser.cpp
         terminal.cpp
         tomutils.cpp
