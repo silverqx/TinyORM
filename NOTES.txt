@@ -81,6 +81,7 @@ Features related/to implement:
  - guarded               : related to the mass assignable feature
  - json columns          : JSON support
  - logging               : logging related
+ - migrations            : database migrations related
  - multidriver           : task related to adding support for another drivers PostgreSQL, SQLite and SQL Server
  - pivot                 : pivot table in the many-to-many relationship
  - postgres              : specific to PostgreSQL server
@@ -89,7 +90,9 @@ Features related/to implement:
  - relations             : relations related 🤓
  - savepoints            : database savepoints
  - scopes                : query scopes
+ - seeders               : seeders related
  - table prefix          : table prefix in the query grammar
+ - tom                   : tom migrations related
 
 
 Versions info:
