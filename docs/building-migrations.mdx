@@ -25,6 +25,9 @@ import {
 - [Prerequisites](#prerequisites)
     - [vcpkg.json manifest](#vcpkg-json-manifest)
 - [Source code](#source-code)
+    - [Main file](#main-file)
+    - [Migrations](#migrations)
+    - [Seeders](#seeders)
 - [Migrations with CMake](#migrations-with-cmake)
     - [CMake project](#cmake-project)
     - [Build migrations](#build-migrations-cmake)
@@ -115,6 +118,8 @@ Let's start in the `tom` project folder.
 </TabItem>
 </Tabs>
 
+### Main file
+
 Create `main.cpp` source file.
 
 ```bash
@@ -133,12 +138,15 @@ And paste the following code.
 
     #include "migrations/2014_10_12_000000_create_posts_table.hpp"
 
+    #include "seeders/databaseseeder.hpp"
+
     using Orm::DatabaseManager;
     using Orm::DB;
 
     using TomApplication = Tom::Application;
 
     using namespace Migrations; // NOLINT(google-build-using-namespace)
+    using namespace Seeders;    // NOLINT(google-build-using-namespace)
 
     /*! Build the database manager instance and add a database connection. */
     std::shared_ptr<DatabaseManager> setupManager();
@@ -151,8 +159,8 @@ And paste the following code.
             auto db = setupManager();
 
             return TomApplication(argc, argv, db, "TOM_MIGRATIONS_ENV")
-                    // Migration classes
                     .migrations<CreatePostsTable>()
+                    .seeders<DatabaseSeeder>()
                     // Fire it up 🔥🚀✨
                     .run();
 
@@ -189,7 +197,7 @@ And paste the following code.
             QStringLiteral("tinyorm_tom"));
     }
 
-#### Migrations
+### Migrations
 
 If you have already built the `tom` application then you can generate a migrations using the [`make:migration`](migrations.mdx#generating-migrations) command 😎.
 
@@ -199,11 +207,15 @@ tom make:migration create_posts_table
 
 Below is the expected folders structure for the migrations. The [`migrations.pri`](#migrations-source-files) file is used only by the `qmake` build system and is not needed with `CMake` builds.
 
+<a id='folders-structure' />
+
 ```text
 tom/
 └── database/
     ├── migrations/
-    └── migrations.pri
+    ├── seeders/
+    ├── migrations.pri
+    └── seeders.pri
 ```
 
 Let's create the first migration manually.
@@ -260,6 +272,55 @@ And paste the following code.
 
 :::info
 If you want, you can also build the `tom` application without the migrations, simply comment out the `migrations()` method and the corresponding `#include "migrations/xyz.hpp"` files.
+:::
+
+### Seeders
+
+The expected folders structure is described a few paragraphs [above](#folders-structure). The [`seeders.pri`](#seeders-source-files) file is used only by the `qmake` build system and is not needed with `CMake` builds.
+
+Let's create the root seeder class manually.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`mkdir database/seeders\n
+vim database/seeders/databaseseeder.hpp`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`mkdir -p database/seeders\n
+vim database/seeders/databaseseeder.hpp`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+And paste the following code.
+
+    #pragma once
+
+    #include <tom/seeder.hpp>
+
+    namespace Seeders
+    {
+
+        /*! Main database seeder. */
+        struct DatabaseSeeder : public Seeder
+        {
+            /*! Run the database seeders. */
+            void run() override
+            {
+                DB::table("posts")->insert({
+                    {"name", "1. post"},
+                    {"name", "2. post"},
+                });
+            }
+        };
+
+    } // namespace Seeders
+
+:::tip
+You can create more seeder classes like this and use the `call<>()` method to invoke them as is described in the [Calling Additional Seeders](seeding.mdx#calling-additional-seeders) section.
 :::
 
 ## Migrations with CMake
@@ -591,6 +652,8 @@ SOURCES += $$PWD/main.cpp
 
 # Database migrations
 include($$PWD/database/migrations.pri)
+# Database seeders
+include($$PWD/database/seeders.pri)
 
 # Configure TinyORM library for the migrations purposes
 include($$TINY_MAIN_DIR/TinyORM/qmake/tom.pri)
@@ -643,6 +706,17 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/migrations/2014_10_12_000000_create_posts_table.hpp \
+```
+
+#### Seeders source files
+
+Create `database/seeders.pri` file and paste the following code.
+
+```qmake
+INCLUDEPATH += $$PWD
+
+HEADERS += \
+    $$PWD/seeders/databaseseeder.hpp \
 ```
 
 ### Build migrations {#build-migrations-qmake}
