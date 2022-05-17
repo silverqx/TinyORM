@@ -6,8 +6,8 @@
 #include <orm/tiny/utils/string.hpp>
 
 #include "tom/application.hpp"
-#include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/commands/make/support/tableguesser.hpp"
+#include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
 
