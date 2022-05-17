@@ -37,26 +37,26 @@ namespace Tom
 
     protected:
         /*! Get the migration stub file. */
-        QString getStub(const QString &table, bool create) const;
+        static QString getStub(const QString &table, bool create);
 
         /*! Get the full path to the migration. */
         fspath getPath(std::string &&datetimePrefix, const QString &name,
                        std::string &&extension, const fspath &path) const;
         /*! Get the date prefix for the migration. */
-        std::string getDatePrefix() const;
+        static std::string getDatePrefix();
 
         /*! Populate the place-holders in the migration stub. */
-        std::string populateStub(const QString &name, QString &&stub,
-                                 const QString &table) const;
+        static std::string
+        populateStub(const QString &name, QString &&stub, const QString &table);
         /*! Get the class name of a migration name. */
-        QString getClassName(const QString &name) const;
+        static QString getClassName(const QString &name);
         /*! Ensure a directory exists. */
-        void ensureDirectoryExists(const fspath &path) const;
+        static void ensureDirectoryExists(const fspath &path);
 
     private:
         /*! Ensure that a migration with the given name doesn't already exist. */
-        void throwIfMigrationAlreadyExists(const QString &name,
-                                           const fspath &migrationsPath) const;
+        static void throwIfMigrationAlreadyExists(const QString &name,
+                                                  const fspath &migrationsPath);
     };
 
 } // namespace Tom

@@ -53,7 +53,7 @@ fspath MigrationCreator::create(
 
 /* protected */
 
-QString MigrationCreator::getStub(const QString &table, const bool create) const
+QString MigrationCreator::getStub(const QString &table, const bool create)
 {
     QString stub;
 
@@ -82,13 +82,13 @@ fspath MigrationCreator::getPath(std::string &&datetimePrefix, const QString &na
     return path / std::move(filename);
 }
 
-std::string MigrationCreator::getDatePrefix() const
+std::string MigrationCreator::getDatePrefix()
 {
     return QDateTime::currentDateTime().toString(DateTimePrefix).toStdString();
 }
 
-std::string MigrationCreator::populateStub(const QString &name, QString &&stub,
-                                           const QString &table) const
+std::string
+MigrationCreator::populateStub(const QString &name, QString &&stub, const QString &table)
 {
     const auto className = getClassName(name);
 
@@ -107,12 +107,12 @@ std::string MigrationCreator::populateStub(const QString &name, QString &&stub,
     return stub.toStdString();
 }
 
-QString MigrationCreator::getClassName(const QString &name) const
+QString MigrationCreator::getClassName(const QString &name)
 {
     return StringUtils::studly(name);
 }
 
-void MigrationCreator::ensureDirectoryExists(const fspath &path) const
+void MigrationCreator::ensureDirectoryExists(const fspath &path)
 {
     if (fs::exists(path) && fs::is_directory(path))
         return;
@@ -123,7 +123,7 @@ void MigrationCreator::ensureDirectoryExists(const fspath &path) const
 /* private */
 
 void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
-                                                     const fspath &migrationsPath) const
+                                                     const fspath &migrationsPath)
 {
     // Nothing to check
     if (!fs::exists(migrationsPath))
