@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TOM_TABLEGUESSER_HPP
-#define TOM_TABLEGUESSER_HPP
+#ifndef TOM_COMMANDS_MAKE_SUPPORT_TABLEGUESSER_HPP
+#define TOM_COMMANDS_MAKE_SUPPORT_TABLEGUESSER_HPP
 
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
@@ -13,7 +13,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Tom
+namespace Tom::Commands::Make::Support
 {
 
     /*! Guess the table name by the passed argument on the command line. */
@@ -37,8 +37,8 @@ namespace Tom
         static const QString ChangePatterns;
     };
 
-} // namespace Tom
+} // namespace Tom::Commands::Make::Support
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // TOM_TABLEGUESSER_HPP
+#endif // TOM_COMMANDS_MAKE_SUPPORT_TABLEGUESSER_HPP

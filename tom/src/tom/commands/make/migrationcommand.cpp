@@ -7,7 +7,7 @@
 
 #include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
-#include "tom/tableguesser.hpp"
+#include "tom/commands/make/support/tableguesser.hpp"
 #include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
 
@@ -91,7 +91,7 @@ int MigrationCommand::run()
        "create" in the name. This will allow us to provide a convenient way
        of creating migrations that create new tables for the application. */
     if (table.isEmpty())
-        std::tie(table, create) = TableGuesser::guess(migrationName);
+        std::tie(table, create) = Support::TableGuesser::guess(migrationName);
 
     // Ready to write the migration to the disk 🧨✨
     writeMigration(std::move(datetimePrefix), migrationName, std::move(extension),

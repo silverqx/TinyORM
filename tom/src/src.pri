@@ -16,6 +16,7 @@ sourcesList += \
     $$PWD/tom/commands/make/seedercommand.cpp \
     $$PWD/tom/commands/make/support/migrationcreator.cpp \
     $$PWD/tom/commands/make/support/seedercreator.cpp \
+    $$PWD/tom/commands/make/support/tableguesser.cpp \
     $$PWD/tom/commands/migrations/freshcommand.cpp \
     $$PWD/tom/commands/migrations/installcommand.cpp \
     $$PWD/tom/commands/migrations/migratecommand.cpp \
@@ -34,7 +35,6 @@ sourcesList += \
     $$PWD/tom/migrationrepository.cpp \
     $$PWD/tom/migrator.cpp \
     $$PWD/tom/seeder.cpp \
-    $$PWD/tom/tableguesser.cpp \
     $$PWD/tom/terminal.cpp \
     $$PWD/tom/tomutils.cpp \
 

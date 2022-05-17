@@ -267,6 +267,7 @@ function(tinytom_sources out_headers out_sources)
         commands/make/stubs/seederstubs.hpp
         commands/make/support/migrationcreator.hpp
         commands/make/support/seedercreator.hpp
+        commands/make/support/tableguesser.hpp
         commands/migrations/freshcommand.hpp
         commands/migrations/installcommand.hpp
         commands/migrations/migratecommand.hpp
@@ -290,7 +291,6 @@ function(tinytom_sources out_headers out_sources)
         migrationrepository.hpp
         migrator.hpp
         seeder.hpp
-        tableguesser.hpp
         terminal.hpp
         tomconstants.hpp
         tomtypes.hpp
@@ -321,6 +321,7 @@ function(tinytom_sources out_headers out_sources)
         commands/make/seedercommand.cpp
         commands/make/support/migrationcreator.cpp
         commands/make/support/seedercreator.cpp
+        commands/make/support/tableguesser.cpp
         commands/migrations/freshcommand.cpp
         commands/migrations/installcommand.cpp
         commands/migrations/migratecommand.cpp
@@ -339,7 +340,6 @@ function(tinytom_sources out_headers out_sources)
         migrationrepository.cpp
         migrator.cpp
         seeder.cpp
-        tableguesser.cpp
         terminal.cpp
         tomutils.cpp
     )

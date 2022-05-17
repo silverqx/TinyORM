@@ -1,10 +1,10 @@
-#include "tom/tableguesser.hpp"
+#include "tom/commands/make/support/tableguesser.hpp"
 
 #include <QRegularExpression>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Tom
+namespace Tom::Commands::Make::Support
 {
 
 /* private */
@@ -49,6 +49,6 @@ std::tuple<QString, bool> TableGuesser::guess(const QString &migration)
     return {};
 }
 
-} // namespace Tom
+} // namespace Tom::Commands::Make::Support
 
 TINYORM_END_COMMON_NAMESPACE
