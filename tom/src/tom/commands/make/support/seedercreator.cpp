@@ -2,7 +2,6 @@
 
 #include <fstream>
 
-#include <orm/constants.hpp>
 #include <orm/tiny/utils/string.hpp>
 
 #include "tom/commands/make/stubs/seederstubs.hpp"
@@ -11,8 +10,6 @@
 namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
-
-using Orm::Constants::EMPTY;
 
 using StringUtils = Orm::Tiny::Utils::String;
 
