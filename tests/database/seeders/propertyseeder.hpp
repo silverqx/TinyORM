@@ -5,7 +5,7 @@
 namespace Seeders
 {
 
-    struct PropertySeeder : public Seeder
+    struct PropertySeeder : Seeder
     {
         /*! Run the database seeders. */
         void run() override
