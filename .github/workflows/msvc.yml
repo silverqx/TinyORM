@@ -192,7 +192,7 @@ jobs:
       run: >-
         cmake --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
 
-    - name: Create tables for unit tests 🎉 (MySQL only)
+    - name: Create and Seed tables for unit tests 🎉 (MySQL)
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/tests/testdata_tom
       run: |
         $env:Path = '..\..;' + $env:Path
@@ -206,7 +206,7 @@ jobs:
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         TOM_TESTDATA_ENV: testing
 
-    - name: Create and Seed tables for unit tests (MySQL (seed only), PostgreSQL, SQLite)
+    - name: Create and Seed tables for unit tests (PostgreSQL, SQLite)
       working-directory: tests/testdata
       run: |
         php.exe ./create_and_seed_database.php --skip-mysql-migrate
