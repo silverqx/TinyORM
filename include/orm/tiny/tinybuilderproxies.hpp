@@ -48,6 +48,10 @@ namespace Tiny
         /*! Insert new records into the database. */
         std::optional<QSqlQuery>
         insert(const QVector<QVector<AttributeItem>> &values) const;
+        /*! Insert new records into the database (multi insert). */
+        std::optional<QSqlQuery>
+        insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values) const;
+
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVector<AttributeItem> &values,
                             const QString &sequence = "") const;
@@ -58,6 +62,10 @@ namespace Tiny
         /*! Insert new records into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVector<QVector<AttributeItem>> &values) const;
+        /*! Insert new records into the database while ignoring errors (multi insert). */
+        std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<QString> &columns,
+                       QVector<QVector<QVariant>> values) const;
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
@@ -450,6 +458,14 @@ namespace Tiny
         return toBase().insert(AttributeUtils::convertVectorsToMaps(values));
     }
 
+    template<typename Model>
+    std::optional<QSqlQuery>
+    BuilderProxies<Model>::insert(
+            const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
+    {
+        return toBase().insert(columns, std::move(values));
+    }
+
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<typename Model>
     quint64
@@ -473,6 +489,14 @@ namespace Tiny
             const QVector<QVector<AttributeItem>> &values) const
     {
         return toBase().insertOrIgnore(AttributeUtils::convertVectorsToMaps(values));
+    }
+
+    template<typename Model>
+    std::tuple<int, std::optional<QSqlQuery>>
+    BuilderProxies<Model>::insertOrIgnore(
+            const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
+    {
+        return toBase().insertOrIgnore(columns, std::move(values));
     }
 
     template<typename Model>

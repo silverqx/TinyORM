@@ -78,6 +78,10 @@ namespace Orm::Query
         /*! Insert a new record into the database. */
         std::optional<QSqlQuery>
         insert(const QVariantMap &values);
+        /*! Insert new records into the database (multi insert). */
+        std::optional<QSqlQuery>
+        insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values);
+
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVariantMap &values, const QString &sequence = "");
 
@@ -87,6 +91,10 @@ namespace Orm::Query
         /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVariantMap &values);
+        /*! Insert new records into the database while ignoring errors (multi insert). */
+        std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<QString> &columns,
+                       QVector<QVector<QVariant>> values);
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>

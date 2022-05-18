@@ -3,6 +3,9 @@
 #include <QDebug>
 #include <QtSql/QSqlQuery>
 
+#include "orm/exceptions/invalidargumenterror.hpp"
+#include "orm/utils/type.hpp"
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Utils
@@ -81,6 +84,35 @@ void Query::logExecutedQuery(const QSqlQuery &query)
 void Query::logExecutedQuery(const QSqlQuery &/*unused*/)
 {}
 #endif
+
+QVector<QVariantMap>
+Query::zipForInsert(const QVector<QString> &columns, QVector<QVector<QVariant>> values)
+{
+    const auto columnsSize = columns.size();
+
+    QVector<QVariantMap> zippedValues;
+    zippedValues.reserve(columnsSize);
+
+    using SizeType = std::remove_cvref_t<decltype (columns)>::size_type;
+
+    for (auto &&valuesList : values) {
+
+        if (columnsSize != valuesList.size())
+            throw Exceptions::InvalidArgumentError(
+                QStringLiteral("A columns and values arguments don't have the same "
+                               "number of items in %1.")
+                .arg(__tiny_func__));
+
+        QVariantMap zipped;
+
+        for (SizeType i = 0; i < columnsSize; ++i)
+            zipped.insert(columns[i], std::move(valuesList[i]));
+
+        zippedValues << std::move(zipped);
+    }
+
+    return zippedValues;
+}
 
 } // namespace Orm::Utils
 

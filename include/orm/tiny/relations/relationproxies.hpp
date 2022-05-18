@@ -141,6 +141,10 @@ namespace Tiny::Relations
         /*! Insert new records into the database. */
         std::optional<QSqlQuery>
         insert(const QVector<QVector<AttributeItem>> &values) const;
+        /*! Insert new records into the database (multi insert). */
+        std::optional<QSqlQuery>
+        insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values) const;
+
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVector<AttributeItem> &attributes,
                             const QString &sequence = "") const;
@@ -151,6 +155,10 @@ namespace Tiny::Relations
         /*! Insert new records into the database while ignoring errors. */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVector<QVector<AttributeItem>> &values) const;
+        /*! Insert new records into the database while ignoring errors (multi insert). */
+        std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<QString> &columns,
+                       QVector<QVector<QVariant>> values) const;
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
@@ -889,6 +897,14 @@ namespace Tiny::Relations
         return getQuery().insert(values);
     }
 
+    template<class Model, class Related>
+    std::optional<QSqlQuery>
+    RelationProxies<Model, Related>::insert(
+            const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
+    {
+        return getQuery().insert(columns, std::move(values));
+    }
+
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<class Model, class Related>
     quint64
@@ -912,6 +928,14 @@ namespace Tiny::Relations
             const QVector<QVector<AttributeItem>> &values) const
     {
         return getQuery().insertOrIgnore(values);
+    }
+
+    template<class Model, class Related>
+    std::tuple<int, std::optional<QSqlQuery>>
+    RelationProxies<Model, Related>::insertOrIgnore(
+            const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
+    {
+        return getQuery().insertOrIgnore(columns, std::move(values));
     }
 
     template<class Model, class Related>

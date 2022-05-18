@@ -3,6 +3,9 @@
 #include "orm/databaseconnection.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/query/joinclause.hpp"
+#include "orm/utils/query.hpp"
+
+using QueryUtils = Orm::Utils::Query;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -134,6 +137,12 @@ Builder::insert(const QVariantMap &values)
     return insert(QVector<QVariantMap> {values});
 }
 
+std::optional<QSqlQuery>
+Builder::insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values)
+{
+    return insert(QueryUtils::zipForInsert(columns, std::move(values)));
+}
+
 // FEATURE dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
 quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
 {
@@ -162,6 +171,13 @@ std::tuple<int, std::optional<QSqlQuery>>
 Builder::insertOrIgnore(const QVariantMap &values)
 {
     return insertOrIgnore(QVector<QVariantMap> {values});
+}
+
+std::tuple<int, std::optional<QSqlQuery>>
+Builder::insertOrIgnore(const QVector<QString> &columns,
+                        QVector<QVector<QVariant>> values)
+{
+    return insertOrIgnore(QueryUtils::zipForInsert(columns, std::move(values)));
 }
 
 std::tuple<int, QSqlQuery>

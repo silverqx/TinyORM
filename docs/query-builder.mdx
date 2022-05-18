@@ -588,14 +588,28 @@ The query builder also provides an `insert` method that may be used to insert re
         {"votes", 0},
     });
 
-You may insert several records at once by passing a `QVector<QVariantMap>`. Each QVariantMap represents a record that should be inserted into the table:
+You may insert several records at once by passing a `QVector<QString>` for column names as the first argument and `QVector<QVector<QVariant>>` for values as the second argument. Each `QVector<QVariant>` represents a record that should be inserted into the table. This overload is useful for multi-insert and allows to specify column names only once:
+
+    DB::table("users")->insert({"email", "votes"},
+    {
+        {"picard@example.com",  0},
+        {"janeway@example.com", 0},
+    });
+
+You may also insert several records at once by passing a `QVector<QVariantMap>`. Each `QVariantMap` represents a record that should be inserted into the table:
 
     DB::table("users")->insert({
-        {{"email", "picard@example.com"}, {"votes", 0}},
+        {{"email", "picard@example.com"},  {"votes", 0}},
         {{"email", "janeway@example.com"}, {"votes", 0}},
     });
 
-The `insertOrIgnore` method will ignore duplicate record errors while inserting records into the database:
+The `insertOrIgnore` method will ignore duplicate record errors while inserting records into the database and also provides the same overloads like the `insert` method:
+
+    DB::table("users")->insertOrIgnore({"id", "email"},
+    {
+        {1, "sisko@example.com"},
+        {2, "archer@example.com"},
+    });
 
     DB::table("users")->insertOrIgnore({
         {{"id", 1}, {"email", "sisko@example.com"}},

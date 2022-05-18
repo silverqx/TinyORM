@@ -150,6 +150,10 @@ namespace Relations
         /*! Insert new records into the database. */
         static std::optional<QSqlQuery>
         insert(const QVector<QVector<AttributeItem>> &values);
+        /*! Insert new records into the database (multi insert). */
+        static std::optional<QSqlQuery>
+        insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values);
+
         /*! Insert a new record and get the value of the primary key. */
         static quint64
         insertGetId(const QVector<AttributeItem> &values,
@@ -161,6 +165,10 @@ namespace Relations
         /*! Insert new records into the database while ignoring errors. */
         static std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVector<QVector<AttributeItem>> &values);
+        /*! Insert new records into the database while ignoring errors (multi insert). */
+        static std::tuple<int, std::optional<QSqlQuery>>
+        insertOrIgnore(const QVector<QString> &columns,
+                       QVector<QVector<QVariant>> values);
 
         /*! Destroy the models for the given IDs. */
         static std::size_t destroy(const QVector<QVariant> &ids);
@@ -924,6 +932,14 @@ namespace Relations
         return query()->insert(values);
     }
 
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::optional<QSqlQuery>
+    ModelProxies<Derived, AllRelations...>::insert(
+            const QVector<QString> &columns, QVector<QVector<QVariant>> values)
+    {
+        return query()->insert(columns, std::move(values));
+    }
+
     // FEATURE dilemma primarykey, Derived::KeyType vs QVariant silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     quint64
@@ -947,6 +963,14 @@ namespace Relations
             const QVector<QVector<AttributeItem>> &values)
     {
         return query()->insertOrIgnore(values);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::tuple<int, std::optional<QSqlQuery>>
+    ModelProxies<Derived, AllRelations...>::insertOrIgnore(
+            const QVector<QString> &columns, QVector<QVector<QVariant>> values)
+    {
+        return query()->insertOrIgnore(columns, std::move(values));
     }
 
     // TODO cpp check all int types and use std::size_t where appropriate silverqx

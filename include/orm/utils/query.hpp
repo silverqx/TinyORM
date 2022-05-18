@@ -38,6 +38,10 @@ namespace Orm::Utils
         /*! Log the last executed query to the debug output. */
         [[maybe_unused]]
         static void logExecutedQuery(const QSqlQuery &query);
+
+        /*! Prepare the passed containers for the multi-insert. */
+        static QVector<QVariantMap>
+        zipForInsert(const QVector<QString> &columns, QVector<QVector<QVariant>> values);
     };
 
 } // namespace Orm::Utils
