@@ -3,6 +3,7 @@
 #include "orm/constants.hpp"
 #include "orm/db.hpp"
 #include "orm/exceptions/runtimeerror.hpp"
+#include "orm/utils/type.hpp"
 
 using Orm::Constants::database_;
 using Orm::Constants::driver_;
@@ -31,6 +32,7 @@ using Orm::Constants::schema_;
 using Orm::Constants::strict_;
 using Orm::Constants::timezone_;
 using Orm::Constants::username_;
+using Orm::Constants::EMPTY;
 using Orm::Constants::UTC;
 using Orm::Constants::UTF8;
 using Orm::Constants::UTF8MB4;
@@ -70,7 +72,7 @@ const QStringList &Databases::createConnections(const QStringList &connections)
     /* The default connection is empty for tests, there is no default connection
        because it can produce hard to find bugs, I have to be explicit about
        the connection which will be used. */
-    static const auto manager = *db = DB::create(getConfigurations(connections), "");
+    static const auto manager = *db = DB::create(getConfigurations(connections), EMPTY);
 
     static const auto cachedConnectionNames = manager->connectionNames();
 
@@ -83,8 +85,8 @@ QString Databases::createConnection(const QString &connection)
 
     if (connections.size() > 1)
         throw RuntimeError(
-                "Returned more than one connection in Databases::createConnection() "
-                "method.");
+                QStringLiteral("Returned more than one connection in %1().")
+                .arg(__tiny_func__));
 
     if (!connections.isEmpty())
         return connections.first();
@@ -104,7 +106,9 @@ bool Databases::allEnvVariablesEmpty(const std::vector<const char *> &envVariabl
 const std::shared_ptr<Orm::DatabaseManager> &Databases::manager()
 {
     if (db() == nullptr)
-        throw RuntimeError("The global static 'db' was already destroyed.");
+        throw RuntimeError(
+                QStringLiteral("The global static 'db' was already destroyed in %1().")
+                .arg(__tiny_func__));
 
     return *db;
 }
@@ -152,20 +156,20 @@ std::pair<std::reference_wrapper<const QVariantHash>, bool>
 Databases::mysqlConfiguration()
 {
     static const QVariantHash config {
-        {driver_,    QMYSQL},
-        {host_,      qEnvironmentVariable("DB_MYSQL_HOST",     H127001)},
-        {port_,      qEnvironmentVariable("DB_MYSQL_PORT",     P3306)},
-        {database_,  qEnvironmentVariable("DB_MYSQL_DATABASE", "")},
-        {username_,  qEnvironmentVariable("DB_MYSQL_USERNAME", ROOT)},
-        {password_,  qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
-        {charset_,   qEnvironmentVariable("DB_MYSQL_CHARSET",  UTF8MB4)},
-        {collation_, qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
+        {driver_,         QMYSQL},
+        {host_,           qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
+        {port_,           qEnvironmentVariable("DB_MYSQL_PORT",      P3306)},
+        {database_,       qEnvironmentVariable("DB_MYSQL_DATABASE",  EMPTY)},
+        {username_,       qEnvironmentVariable("DB_MYSQL_USERNAME",  ROOT)},
+        {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD",  EMPTY)},
+        {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET",   UTF8MB4)},
+        {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
         // Very important for tests
-        {timezone_,       "+00:00"},
-        {prefix_,         ""},
+        {timezone_,       QStringLiteral("+00:00")},
+        {prefix_,         EMPTY},
         {prefix_indexes,  true},
         {strict_,         true},
-        {isolation_level, "REPEATABLE READ"},
+        {isolation_level, QStringLiteral("REPEATABLE READ")},
         {engine_,         InnoDB},
         {options_,        QVariantHash()},
         // FUTURE remove, when unit tested silverqx
@@ -192,13 +196,13 @@ std::pair<std::reference_wrapper<const QVariantHash>, bool>
 Databases::sqliteConfiguration()
 {
     static const QVariantHash config {
-        {driver_,    QSQLITE},
-        {database_,  qEnvironmentVariable("DB_SQLITE_DATABASE",
-                                          TINYORM_SQLITE_DATABASE)},
+        {driver_,                 QSQLITE},
+        {database_,               qEnvironmentVariable("DB_SQLITE_DATABASE",
+                                                       TINYORM_SQLITE_DATABASE)},
         {foreign_key_constraints, qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS",
                                                        QStringLiteral("true"))},
         {check_database_exists,   true},
-        {prefix_,                 ""},
+        {prefix_,                 EMPTY},
         // FUTURE schema sqlite, prefix_indexes and sqlite, works it? test silverqx
     };
 
@@ -218,18 +222,18 @@ std::pair<std::reference_wrapper<const QVariantHash>, bool>
 Databases::postgresConfiguration()
 {
     static const QVariantHash config {
-        {driver_,   QPSQL},
-        {host_,     qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
-        {port_,     qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
-        {database_, qEnvironmentVariable("DB_PGSQL_DATABASE", "")},
-        {schema_,   qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
-        {username_, qEnvironmentVariable("DB_PGSQL_USERNAME",
-                                         QStringLiteral("postgres"))},
-        {password_, qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},
-        {charset_,  qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
+        {driver_,        QPSQL},
+        {host_,          qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
+        {port_,          qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
+        {database_,      qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
+        {schema_,        qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
+        {username_,      qEnvironmentVariable("DB_PGSQL_USERNAME",
+                                              QStringLiteral("postgres"))},
+        {password_,      qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
+        {charset_,       qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
         // I don't use timezone types in postgres anyway
         {timezone_,      UTC},
-        {prefix_,        ""},
+        {prefix_,        EMPTY},
         {prefix_indexes, true},
         {options_,       QVariantHash()},
     };
@@ -253,8 +257,10 @@ void Databases::throwIfConnectionsInitialized()
     static bool initialized = false;
 
     if (initialized)
-        throw RuntimeError("Databases::createConnections/createConnection methods "
-                           "can be called only once.");
+        throw RuntimeError(
+                QStringLiteral("Databases::createConnections/createConnection methods "
+                               "can be called only once in %1().")
+                .arg(__tiny_func__));
 
     initialized = true;
 }
