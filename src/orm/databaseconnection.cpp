@@ -376,7 +376,7 @@ void DatabaseConnection::reconnect() const
 {
     if (!m_reconnector)
         throw Exceptions::RuntimeError(
-                QStringLiteral("Lost connection and no reconnector available in %1.")
+                QStringLiteral("Lost connection and no reconnector available in %1().")
                 .arg(__tiny_func__));
 
     std::invoke(m_reconnector, *this);
