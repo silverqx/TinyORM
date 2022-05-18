@@ -58,6 +58,10 @@ You can also configure [Transaction Isolation Levels](https://dev.mysql.com/doc/
 A database connection is resolved lazily, which means that the connection configuration is only saved after the `DB::create` method call. The connection will be resolved after you run some query or you can create it using the `DB::connection` method.
 :::
 
+:::tip
+You can also use predefined string constants to avoid unnecessary `QString` instantiations, as used in the `tom` migrations [example](building-migrations.mdx#string-constants-example).
+:::
+
 #### SQLite Configuration
 
 SQLite databases are contained within a single file on your filesystem. You can create a new SQLite database using the `touch` command in your terminal: `touch database.sqlite3`. After the database has been created, you may configure SQLite database connection:

@@ -132,6 +132,8 @@ To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>
 
 And paste the following code.
 
+<a id='string-constants-example' />
+
     #include <orm/db.hpp>
 
     #include <tom/application.hpp>
@@ -186,7 +188,7 @@ And paste the following code.
             {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
             {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
             {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
-            {timezone_,       SYSTEM},
+            {timezone_,       TZ00},
             {prefix_,         EMPTY},
             {prefix_indexes,  true},
             {strict_,         true},

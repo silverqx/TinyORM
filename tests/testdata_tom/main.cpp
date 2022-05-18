@@ -18,29 +18,6 @@
 
 #include "seeders/databaseseeder.hpp"
 
-using Orm::Constants::EMPTY;
-using Orm::Constants::H127001;
-using Orm::Constants::P3306;
-using Orm::Constants::QMYSQL;
-using Orm::Constants::UTF8MB4;
-using Orm::Constants::UTF8MB40900aici;
-using Orm::Constants::charset_;
-using Orm::Constants::collation_;
-using Orm::Constants::database_;
-using Orm::Constants::driver_;
-using Orm::Constants::engine_;
-using Orm::Constants::host_;
-using Orm::Constants::InnoDB;
-using Orm::Constants::isolation_level;
-using Orm::Constants::options_;
-using Orm::Constants::password_;
-using Orm::Constants::port_;
-using Orm::Constants::prefix_;
-using Orm::Constants::prefix_indexes;
-using Orm::Constants::strict_;
-using Orm::Constants::timezone_;
-using Orm::Constants::username_;
-
 using Orm::DatabaseManager;
 using Orm::DB;
 
@@ -87,6 +64,8 @@ int main(int argc, char *argv[])
 
 std::shared_ptr<DatabaseManager> setupManager()
 {
+    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+
     // Ownership of the shared_ptr()
     return DB::create({
         {driver_,         QMYSQL},
@@ -97,7 +76,7 @@ std::shared_ptr<DatabaseManager> setupManager()
         {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
         {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
         {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
-        {timezone_,       QStringLiteral("+00:00")},
+        {timezone_,       TZ00},
         {prefix_,         EMPTY},
         {prefix_indexes,  true},
         {strict_,         true},

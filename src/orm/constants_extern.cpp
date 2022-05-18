@@ -77,6 +77,7 @@ namespace Orm::Constants
     const QString UTC       = QStringLiteral("UTC");
     const QString LOCAL     = QStringLiteral("LOCAL");
     const QString SYSTEM    = QStringLiteral("SYSTEM");
+    const QString TZ00      = QStringLiteral("+00:00");
     const QString PUBLIC    = QStringLiteral("public");
     const QString UTF8      = QStringLiteral("utf8");
     const QString UTF8MB4   = QStringLiteral("utf8mb4");

@@ -33,6 +33,7 @@ using Orm::Constants::strict_;
 using Orm::Constants::timezone_;
 using Orm::Constants::username_;
 using Orm::Constants::EMPTY;
+using Orm::Constants::TZ00;
 using Orm::Constants::UTC;
 using Orm::Constants::UTF8;
 using Orm::Constants::UTF8MB4;
@@ -165,7 +166,7 @@ Databases::mysqlConfiguration()
         {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET",   UTF8MB4)},
         {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
         // Very important for tests
-        {timezone_,       QStringLiteral("+00:00")},
+        {timezone_,       TZ00},
         {prefix_,         EMPTY},
         {prefix_indexes,  true},
         {strict_,         true},
