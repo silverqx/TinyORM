@@ -47,14 +47,19 @@ As an example, let's modify the default `DatabaseSeeder` class and add a databas
             /*! Run the database seeders. */
             void run() override
             {
-                DB::table("users")->insert({
-                    {{"name", "1. user"}, {"email", "user1@example.com"}},
-                    {{"name", "2. user"}, {"email", "user2@example.com"}},
+                DB::table("users")->insert({"name", "email"},
+                {
+                    {"1. user", "user1@example.com"},
+                    {"2. user", "user2@example.com"},
                 });
             }
         };
 
     } // namespace Seeders
+
+:::tip
+The multi-insert [`insert`](query-builder.mdx#multi-insert-overload) method overload is ideal for seeding data.
+:::
 
 ### Calling Additional Seeders
 

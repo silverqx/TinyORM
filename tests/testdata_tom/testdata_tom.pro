@@ -35,6 +35,8 @@ SOURCES += $$PWD/main.cpp
 
 # Migrations header files
 include($$PWD/database/migrations.pri)
+# Seeders header files
+include($$PWD/database/seeders.pri)
 
 # Deployment
 # ---

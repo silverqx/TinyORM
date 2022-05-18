@@ -436,13 +436,13 @@ function createAndSeedTables(array $connections, array $options): void
         /* Allow to skip dropping and creating tables for the mysql connection.
            Currently, TinyORM's migrations supports the MySQL database only, and I want to use our
            tom migrations in CI/CD pipelines, this is the reason for the condition below. */
-        if ($connection !== 'mysql' ||
-            false === array_key_exists('skip-mysql-migrate', $options)
-        ) {
-            dropAllTables($connection);
-            createTables($connection);
-        }
+        if (array_key_exists('skip-mysql-migrate', $options) &&
+            $connection === 'mysql'
+        )
+            continue;
 
+        dropAllTables($connection);
+        createTables($connection);
         seedTables($connection);
 
         if ($connection === 'pgsql')

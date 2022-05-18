@@ -16,11 +16,12 @@
 #include "migrations/2022_05_11_171100_create_tag_torrent_table.hpp"
 #include "migrations/2022_05_11_171200_create_tag_properties_table.hpp"
 
+#include "seeders/databaseseeder.hpp"
+
 using Orm::Constants::EMPTY;
 using Orm::Constants::H127001;
 using Orm::Constants::P3306;
 using Orm::Constants::QMYSQL;
-using Orm::Constants::SYSTEM;
 using Orm::Constants::UTF8MB4;
 using Orm::Constants::UTF8MB40900aici;
 using Orm::Constants::charset_;
@@ -46,6 +47,7 @@ using Orm::DB;
 using TomApplication = Tom::Application;
 
 using namespace Migrations; // NOLINT(google-build-using-namespace)
+using namespace Seeders;    // NOLINT(google-build-using-namespace)
 
 /*! Build the database manager instance and add a database connection. */
 std::shared_ptr<DatabaseManager> setupManager();
@@ -71,6 +73,7 @@ int main(int argc, char *argv[])
                             CreateTorrentTagsTable,
                             CreateTagTorrentTable,
                             CreateTagPropertiesTable>()
+                .seeders<DatabaseSeeder>()
                 // Fire it up 🔥🚀✨
                 .run();
 
@@ -94,7 +97,7 @@ std::shared_ptr<DatabaseManager> setupManager()
         {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
         {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
         {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
-        {timezone_,       SYSTEM},
+        {timezone_,       QStringLiteral("+00:00")},
         {prefix_,         EMPTY},
         {prefix_indexes,  true},
         {strict_,         true},
