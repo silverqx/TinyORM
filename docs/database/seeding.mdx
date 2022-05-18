@@ -1,5 +1,6 @@
 ---
-sidebar_position: 6
+sidebar_position: 3
+sidebar_label: Seeding
 description: TinyORM includes the ability to seed your database with data using seed classes. The DatabaseSeeder class is considered as the root seeder. From this class, you may use the `call` method to run other seed classes, allowing you to control the seeding order.
 ---
 
@@ -15,7 +16,7 @@ description: TinyORM includes the ability to seed your database with data using 
 TinyORM includes the ability to seed your database with data using seed classes. All seed classes should be stored in the `database/seeders` directory. The `DatabaseSeeder` class is considered as the root seeder. From this class, you may use the `call` method to run other seed classes, allowing you to control the seeding order.
 
 :::tip
-[Mass assignment protection](tinyorm.mdx#mass-assignment) is automatically disabled during database seeding.
+[Mass assignment protection](tinyorm/getting-started.mdx#mass-assignment) is automatically disabled during database seeding.
 :::
 
 ## Writing Seeders
@@ -30,7 +31,7 @@ tom make:seeder UserSeeder
 You can omit the `Seeder` word in the class name, `tom` appends it for you.
 :::
 
-A seeder class only contains one method by default: `run`. This method is called when the `db:seed` tom command is executed. Within the `run` method, you may insert data into your database however you wish. You may use the [query builder](query-builder.mdx#insert-statements) to manually insert data.
+A seeder class only contains one method by default: `run`. This method is called when the `db:seed` tom command is executed. Within the `run` method, you may insert data into your database however you wish. You may use the [query builder](database/query-builder.mdx#insert-statements) to manually insert data.
 
 As an example, let's modify the default `DatabaseSeeder` class and add a database insert statement to the `run` method:
 
@@ -58,7 +59,7 @@ As an example, let's modify the default `DatabaseSeeder` class and add a databas
     } // namespace Seeders
 
 :::tip
-The multi-insert [`insert`](query-builder.mdx#multi-insert-overload) method overload is ideal for seeding data.
+The multi-insert [`insert`](database/query-builder.mdx#multi-insert-overload) method overload is ideal for seeding data.
 :::
 
 ### Calling Additional Seeders
@@ -124,7 +125,7 @@ tom migrate:fresh --seed
 ```
 
 :::tip
-You can change the default seeders path as is described in the [`C preprocessor macros`](building-tinyorm.mdx#TINYTOM_SEEDERS_DIR), CMake provides the [`TOM_SEEDERS_DIR`](building-tinyorm.mdx#TOM_SEEDERS_DIR) option.
+You can change the default seeders path as is described in the [`C preprocessor macros`](building/tinyorm.mdx#TINYTOM_SEEDERS_DIR), CMake provides the [`TOM_SEEDERS_DIR`](building/tinyorm.mdx#TOM_SEEDERS_DIR) option.
 :::
 
 #### Forcing Seeders To Run In Production

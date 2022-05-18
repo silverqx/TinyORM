@@ -1,5 +1,6 @@
 ---
-sidebar_position: 11
+sidebar_position: 3
+sidebar_label: Migrations
 description: How to compile the TinyORM migrations (tom) c++ console application on Windows and Linux.
 ---
 
@@ -42,7 +43,7 @@ import {
 
 We will try to create a working migrations console application called as <abbr title='TinyORM migrations'>`tom`</abbr> in the terminal with the `CMake` and in the `QtCreator` IDE with the `qmake`.
 
-The `tom` console application also expects the following [folders structure](building-tinyorm.mdx#folders-structure), let's create them.
+The `tom` console application also expects the following [folders structure](building/tinyorm.mdx#folders-structure), let's create them.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -69,11 +70,11 @@ All these three console applications the `tom` example, `tom` migrations for uni
 
 Working MySQL database server as the `tom` migrations currently provides support only for the MySQL database.
 
-Install required dependencies and build the `TinyORM` library with the `tom` (it's enabled by default) as is described [here](building-hello-world.mdx#install-dependencies) and [here](building-tinyorm.mdx).
+Install required dependencies and build the `TinyORM` library with the `tom` (it's enabled by default) as is described [here](building/hello-world.mdx#install-dependencies) and [here](building/tinyorm.mdx).
 
 ### vcpkg.json manifest {#vcpkg-json-manifest}
 
-Whole section about the `vcpkg` dependencies is described in the [Install dependencies](building-hello-world.mdx#install-dependencies).
+Whole section about the `vcpkg` dependencies is described in the [Install dependencies](building/hello-world.mdx#install-dependencies).
 
 Create a `vcpkg.json` file with the following content. `CMake` example below uses this method.
 
@@ -201,7 +202,7 @@ And paste the following code.
 
 ### Migrations
 
-If you have already built the `tom` application then you can generate a migrations using the [`make:migration`](migrations.mdx#generating-migrations) command 😎.
+If you have already built the `tom` application then you can generate a migrations using the [`make:migration`](database/migrations.mdx#generating-migrations) command 😎.
 
 ```bash
 tom make:migration create_posts_table
@@ -278,7 +279,7 @@ If you want, you can also build the `tom` application without the migrations, si
 
 ### Seeders
 
-If you have already built the `tom` application then you can generate a seeder using the [`make:seeder`](seeding.mdx#writing-seeders) command 😎.
+If you have already built the `tom` application then you can generate a seeder using the [`make:seeder`](database/seeding.mdx#writing-seeders) command 😎.
 
 ```bash
 tom make:seeder PostSeeder
@@ -328,7 +329,7 @@ And paste the following code.
     } // namespace Seeders
 
 :::tip
-You can create more seeder classes like this and use the `call<>()` method to invoke them as is described in the [Calling Additional Seeders](seeding.mdx#calling-additional-seeders) section.
+You can create more seeder classes like this and use the `call<>()` method to invoke them as is described in the [Calling Additional Seeders](database/seeding.mdx#calling-additional-seeders) section.
 :::
 
 ## Migrations with CMake
@@ -529,7 +530,7 @@ target_link_libraries(\${Tom_target}
 
 ### Build migrations {#build-migrations-cmake}
 
-Now you are ready to configure `tom` `CMake` application. Don't forget to prepare the build environment with the [`qtenv6.ps1`](building-tinyorm.mdx#windows-prerequisites) command if you are building with the `msvc`.
+Now you are ready to configure `tom` `CMake` application. Don't forget to prepare the build environment with the [`qtenv6.ps1`](building/tinyorm.mdx#windows-prerequisites) command if you are building with the `msvc`.
 
 ```bash
 cd ../tom-builds-cmake/build-debug
@@ -568,7 +569,7 @@ cmake --build . --target all
 
 ### Execute migrations {#execute-migrations-cmake}
 
-Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so `tom` application can find it during execution, as is described [here](building-tinyorm.mdx#tinyorm-on-path-cmake).
+Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so `tom` application can find it during execution, as is described [here](building/tinyorm.mdx#tinyorm-on-path-cmake).
 
 <Tabs groupId={shell} name='tinyorm-on-path'>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -604,7 +605,7 @@ Execute `tom` application.
 
 The output will look something like this.
 
-<img src={require('./assets/img/building-migrations/tom_migrate_status.png').default}
+<img src={require('./assets/img/migrations/tom_migrate_status.png').default}
     alt='Tom migrations - migrate:status command output' width='660' />
 
 See also the [final thoughts](#finish) on how to verify the `tom` executable file properties.
@@ -676,7 +677,7 @@ unix:!macx: \
 ```
 
 :::caution
-The exact [folders structure](building-tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
+The exact [folders structure](building/tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
 :::
 
 :::tip
@@ -730,21 +731,21 @@ HEADERS += \
 ### Build migrations {#build-migrations-qmake}
 
 :::tip
-I recommend creating a new `Session` in the `QtCreator IDE` as is described [here](building-tinyorm.mdx#open-qtcreator-ide).
+I recommend creating a new `Session` in the `QtCreator IDE` as is described [here](building/tinyorm.mdx#open-qtcreator-ide).
 :::
 
 Now you can open the `tom.pro` project in the `QtCreator IDE`.
 
-This will open the `Configure Project` tab, select some kit and update build folder paths to meet our [folders structure](building-tinyorm.mdx#folders-structure) or like you want.
+This will open the `Configure Project` tab, select some kit and update build folder paths to meet our [folders structure](building/tinyorm.mdx#folders-structure) or like you want.
 
-<img src={require('./assets/img/building-migrations/qmake-configure_project.png').default}
+<img src={require('./assets/img/migrations/qmake-configure_project.png').default}
     alt='tom - QtCreator - Configure Project' width='760' />
 
 You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open `Project Settings` tab and select `Build` in the left sidebar to open the `Build Settings`, it should look similar to the following picture.
 
 Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used.
 
-<img src={require('./assets/img/building-migrations/qmake-build_settings.png').default}
+<img src={require('./assets/img/migrations/qmake-build_settings.png').default}
     className='no-blurry' alt='tom - QtCreator - Build Settings' width='760' />
 
 Everything is ready to build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to build the project.
@@ -761,7 +762,7 @@ To execute the `tom` application press <kbd>Ctrl</kbd> + <kbd>r</kbd>.
 
 The output will look something like this.
 
-<img src={require('./assets/img/building-migrations/tom_migrate_status.png').default}
+<img src={require('./assets/img/migrations/tom_migrate_status.png').default}
     alt='Tom migrations - migrate:status command output' width='660' />
 
 Happy migrating 🎉👌
@@ -772,6 +773,6 @@ As the last thing, you can check that all the file properties were correctly set
 
 Find the `tom.exe` file and press <kbd>Alt</kbd> + <kbd>Enter</kbd> to open the file properties. To check the executable manifest you can use eg. the [Resource Hacker](http://www.angusj.com/resourcehacker/).
 
-<img src={require('./assets/img/building-migrations/tom_file_properties.png').default}
+<img src={require('./assets/img/migrations/tom_file_properties.png').default}
     alt='tom.exe file properties detail' width='440' />
 

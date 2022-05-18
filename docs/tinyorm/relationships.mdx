@@ -1,5 +1,6 @@
 ---
-sidebar_position: 8
+sidebar_position: 1
+sidebar_label: Relationships
 description: TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful query builders, defining relationships as methods provides powerful method chaining and querying capabilities.
 ---
 
@@ -38,7 +39,7 @@ Database tables are often related to one another. For example, a blog post may h
 
 ## Defining Relationships
 
-TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful [query builders](query-builder.mdx), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
+TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful [query builders](database/query-builder.mdx), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
 
     user->posts()->whereEq("active", 1).get();
 
@@ -261,7 +262,7 @@ Once the relationship method has been defined, we can access the `QVector<Relate
         //
     }
 
-Since all relationships also serve as [query builders](query-builder.mdx), you may add further constraints to the relationship query by calling the `comments` method and continuing to chain conditions onto the query, all the `TinyBuilder` methods which are related to building queries are proxied:
+Since all relationships also serve as [query builders](database/query-builder.mdx), you may add further constraints to the relationship query by calling the `comments` method and continuing to chain conditions onto the query, all the `TinyBuilder` methods which are related to building queries are proxied:
 
     auto comment = Post::find(1)->comments()
                          ->whereEq("title", "foo")
@@ -703,7 +704,7 @@ If you have defined a many-to-many relationship that uses a custom pivot model, 
 
 ## Querying Relations
 
-Since all TinyORM relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing a query to load the related models. In addition, all types of TinyORM relationships also serve as [query builders](query-builder.mdx), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL query against your database.
+Since all TinyORM relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing a query to load the related models. In addition, all types of TinyORM relationships also serve as [query builders](database/query-builder.mdx), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL query against your database.
 
 For example, imagine a blog application in which a `User` model has many associated `Post` models:
 
@@ -740,7 +741,7 @@ You may query the `posts` relationship and add additional constraints to the rel
 
     user->posts()->whereEq("active", 1).get();
 
-You are able to use any of the TinyORM [query builder's](query-builder.mdx) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
+You are able to use any of the TinyORM [query builder's](database/query-builder.mdx) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
 
 :::note
 All the `TinyBuilder` methods which are related to building queries are proxied on the `Relation` base class.
@@ -763,7 +764,7 @@ from posts
 where user_id = ? and active = 1 or votes >= 100
 ```
 
-In most situations, you should use [logical groups](query-builder.mdx#logical-grouping) to group the conditional checks between parentheses:
+In most situations, you should use [logical groups](database/query-builder.mdx#logical-grouping) to group the conditional checks between parentheses:
 
     user->posts()
         ->where([](auto &query)
@@ -1019,7 +1020,7 @@ Sometimes you may wish to eager load a relationship but also specify additional 
         query.where("title", "like", "%code%");
     }}})->get();
 
-In this example, TinyORM will only eager load posts where the post's `title` column contains the word `code`. You may call other [query builder](query-builder.mdx) methods to further customize the eager loading operation:
+In this example, TinyORM will only eager load posts where the post's `title` column contains the word `code`. You may call other [query builder](database/query-builder.mdx) methods to further customize the eager loading operation:
 
     auto users = User::with({{"posts", [](auto &query)
     {
@@ -1169,10 +1170,10 @@ The many-to-many relationship also supports the `create` and `createMany` method
         {{"active", false}},
     });
 
-You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate`, and `updateOrCreate` methods to [create and update models on relationships](tinyorm.mdx#retrieving-or-creating-models).
+You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate`, and `updateOrCreate` methods to [create and update models on relationships](tinyorm/getting-started.mdx#retrieving-or-creating-models).
 
 :::tip
-Before using the `create` method, be sure to review the [mass assignment](tinyorm.mdx#mass-assignment) documentation.
+Before using the `create` method, be sure to review the [mass assignment](tinyorm/getting-started.mdx#mass-assignment) documentation.
 :::
 
 ### Belongs To Relationships {#updating-belongs-to-relationships}

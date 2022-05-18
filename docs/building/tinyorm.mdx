@@ -1,5 +1,6 @@
 ---
-sidebar_position: 9
+sidebar_position: 0
+sidebar_label: TinyORM
 hide_table_of_contents: true
 description: How to compile the TinyORM c++ library on Windows and Linux.
 ---
@@ -90,7 +91,7 @@ Open `Local Security Policy`, go to `Local Policies - User Rights Assignment`, o
 
 ## Folders structure
 
-All `tinyorm.org` examples are based on the following folders structure. The `tom` folder will contain a [migrations console application](building-migrations.mdx).
+All `tinyorm.org` examples are based on the following folders structure. The `tom` folder will contain a [migrations console application](building/migrations.mdx).
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label} className='tiny-tree'>
@@ -471,7 +472,7 @@ As the last thing, do not forget to add `TinyOrm0d.dll` on the path on Windows a
 </TabItem>
 </Tabs>
 
-Now you can try the [`HelloWorld CMake`](building-hello-world.mdx#hello-world-with-cmake) example.
+Now you can try the [`HelloWorld CMake`](building/hello-world.mdx#hello-world-with-cmake) example.
 
 ## Building with qmake
 
@@ -548,19 +549,19 @@ Now you can open the `TinyOrm.pro` project in the `QtCreator IDE`.
 
 This will open the `Configure Project` tab, select some kit and update build folder paths to meet our [folders structure](#folders-structure) or like you want.
 
-<img src={require('./assets/img/building-tinyorm/qmake-configure_project.png').default}
+<img src={require('./assets/img/tinyorm/qmake-configure_project.png').default}
     alt='TinyORM - QtCreator - Configure Project' width='760' />
 
 You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open `Project Settings` tab and select `Build` in the left sidebar to open the `Build Settings`, it should look similar to the following picture.
 
 Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used.
 
-<img src={require('./assets/img/building-tinyorm/qmake-build_settings.png').default}
+<img src={require('./assets/img/tinyorm/qmake-build_settings.png').default}
     alt='TinyORM - QtCreator - Build Settings' width='760' />
 
 If you want to change some `TinyORM` build options, you can pass them to the `Build Steps` - `qmake TinyOrm.pro` - `Additional arguments` input field. It can look like this.
 
-<img src={require('./assets/img/building-tinyorm/qmake-additional_arguments.png').default}
+<img src={require('./assets/img/tinyorm/qmake-additional_arguments.png').default}
     alt='TinyORM - QtCreator - Build Settings - Additional arguments' width='660' />
 
 #### Build TinyORM

@@ -1,5 +1,6 @@
 ---
-sidebar_position: 3
+sidebar_position: 0
+sidebar_label: Getting Started
 description: TinyORM makes interacting with a database extremely simple using raw SQL, a fluent query builder, and the TinyORM. It provides first-party support for three databases MySQL/MariaDB, PostgreSQL, and SQLite.
 ---
 
@@ -13,7 +14,7 @@ description: TinyORM makes interacting with a database extremely simple using ra
 
 ## Introduction
 
-Almost every modern application interacts with a database. TinyORM makes interacting with a database extremely simple using raw SQL, a [fluent query builder](query-builder.mdx), and the [TinyORM](tinyorm.mdx). Currently, TinyORM provides first-party support for three databases:
+Almost every modern application interacts with a database. TinyORM makes interacting with a database extremely simple using raw SQL, a [fluent query builder](database/query-builder.mdx), and the [TinyORM](tinyorm/getting-started.mdx). Currently, TinyORM provides first-party support for three databases:
 
 - MySQL or MariaDB 5.0+ ([Version Policy](https://en.wikipedia.org/wiki/MySQL#Release_history))
 - PostgreSQL 9.6+ ([Version Policy](https://www.postgresql.org/support/versioning/))
@@ -59,7 +60,7 @@ A database connection is resolved lazily, which means that the connection config
 :::
 
 :::tip
-You can also use predefined string constants to avoid unnecessary `QString` instantiations, as used in the `tom` migrations [example](building-migrations.mdx#string-constants-example).
+You can also use predefined string constants to avoid unnecessary `QString` instantiations, as used in the `tom` migrations [example](building/migrations.mdx#string-constants-example).
 :::
 
 #### SQLite Configuration
@@ -232,5 +233,5 @@ All transaction methods accept a connection name as the optional argument:
     DB::beginTransaction("mysql_test");
 
 :::tip
-The `DB` facade's transaction methods control the transactions for both the [query builder](query-builder.mdx) and [TinyORM](tinyorm.mdx).
+The `DB` facade's transaction methods control the transactions for both the [query builder](database/query-builder.mdx) and [TinyORM](tinyorm/getting-started.mdx).
 :::

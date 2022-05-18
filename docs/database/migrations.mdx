@@ -1,5 +1,6 @@
 ---
-sidebar_position: 5
+sidebar_position: 2
+sidebar_label: Migrations
 description: Migrations are like version control for your database, allowing your team to define and share the application's database schema definition. Migrations use the Schema facade that provides database agnostic support for creating and manipulating tables across all of TinyORM's supported database systems.
 ---
 
@@ -820,7 +821,7 @@ Support for default expressions depends on your database driver, database versio
 :::
 
 :::tip
-You can obtain an `Orm::Query::Expression` using the [`DB::raw`](query-builder.mdx#raw-expressions) method if you have access to the `DB` facade.
+You can obtain an `Orm::Query::Expression` using the [`DB::raw`](database/query-builder.mdx#raw-expressions) method if you have access to the `DB` facade.
 :::
 
 #### Column Order

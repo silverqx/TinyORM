@@ -1,5 +1,6 @@
 ---
-sidebar_position: 10
+sidebar_position: 2
+sidebar_label: Hello world
 description: Hello world example created in the terminal and QtCreator IDE.
 ---
 
@@ -40,7 +41,7 @@ import {
 
 We will try to create the simplest working application in the terminal with the `CMake` and in the `QtCreator` IDE with the `qmake`.
 
-The `HelloWorld` example also expects the following [folders structure](building-tinyorm.mdx#folders-structure), let's create them.
+The `HelloWorld` example also expects the following [folders structure](building/tinyorm.mdx#folders-structure), let's create them.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -75,7 +76,7 @@ select * from posts;"
 
 ## Install dependencies
 
-First, install the `vcpkg` package manager as is described [here](building-tinyorm.mdx#vcpkg).
+First, install the `vcpkg` package manager as is described [here](building/tinyorm.mdx#vcpkg).
 
 The `range-v3` and `tabulate` libraries are required dependencies because `TinyORM` uses them in header files, you have to install them before you can use `TinyORM`. The `tabulate` library is only needed in the `tom` migrations it's used by the `migrate:status` command.
 
@@ -294,7 +295,7 @@ cmake --build . --target all
 
 ### Execute Hello world {#execute-hello-world-cmake}
 
-Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so `HelloWorld` application can find it during execution, as is described [here](building-tinyorm.mdx#tinyorm-on-path-cmake).
+Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so `HelloWorld` application can find it during execution, as is described [here](building/tinyorm.mdx#tinyorm-on-path-cmake).
 
 <Tabs groupId={shell} name='tinyorm-on-path'>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -309,7 +310,7 @@ Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRA
 </TabItem>
 </Tabs>
 
-Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building-tinyorm.mdx#allow-symbolic-links-unprivileged).
+Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building/tinyorm.mdx#allow-symbolic-links-unprivileged).
 
 <Tabs groupId={shell} name='tinyorm-on-path'>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -412,7 +413,7 @@ unix:!macx: \
 ```
 
 :::caution
-The exact [folders structure](building-tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
+The exact [folders structure](building/tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
 :::
 
 :::tip
@@ -440,21 +441,21 @@ Configuring with the `.qmake.conf` file has one big advantage that is that you d
 ### Build Hello world {#build-hello-world-qmake}
 
 :::tip
-I recommend creating a new `Session` in the `QtCreator IDE` as is described [here](building-tinyorm.mdx#open-qtcreator-ide).
+I recommend creating a new `Session` in the `QtCreator IDE` as is described [here](building/tinyorm.mdx#open-qtcreator-ide).
 :::
 
 Now you can open the `HelloWorld.pro` project in the `QtCreator IDE`.
 
-This will open the `Configure Project` tab, select some kit and update build folder paths to meet our [folders structure](building-tinyorm.mdx#folders-structure) or like you want.
+This will open the `Configure Project` tab, select some kit and update build folder paths to meet our [folders structure](building/tinyorm.mdx#folders-structure) or like you want.
 
-<img src={require('./assets/img/building-hello-world/qmake-configure_project.png').default}
+<img src={require('./assets/img/hello-world/qmake-configure_project.png').default}
     alt='HelloWorld - QtCreator - Configure Project' width='760' />
 
 You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open `Project Settings` tab and select `Build` in the left sidebar to open the `Build Settings`, it should look similar to the following picture.
 
 Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used.
 
-<img src={require('./assets/img/building-hello-world/qmake-build_settings.png').default}
+<img src={require('./assets/img/hello-world/qmake-build_settings.png').default}
     className='no-blurry' alt='HelloWorld - QtCreator - Build Settings' width='760' />
 
 Everything is ready to build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to build the project.
@@ -465,7 +466,7 @@ The `QtCreator` takes care about all the necessary configuration, sets up the bu
 
 Only one thing you might want to change is to run the `HelloWorld` example in the new terminal window. To do so, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open the `Project Settings` tab and select `Run` in the left sidebar to open the `Run Settings`, then in the `Run` section select the `Run in terminal` checkbox.
 
-Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building-tinyorm.mdx#allow-symbolic-links-unprivileged).
+Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building/tinyorm.mdx#allow-symbolic-links-unprivileged).
 
 <Tabs groupId={shell} name='tinyorm-on-path'>
 <TabItem value={pwsh} label={pwsh_label}>
