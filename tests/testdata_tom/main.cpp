@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
         auto db = setupManager();
 
         return TomApplication(argc, argv, db, "TOM_TESTDATA_ENV")
+                // TODO tests, add migration for createDatabase if not exists and remove DB creation from the workflows? silverqx
                 .migrations<CreateUsersTable,
                             CreateRolesTable,
                             CreateRoleUserTable,
