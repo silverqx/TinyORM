@@ -39,7 +39,7 @@ using Orm::DB;
 using TomApplication = Tom::Application;
 
 using namespace Migrations; // NOLINT(google-build-using-namespace)
-using namespace Seeders; // NOLINT(google-build-using-namespace)
+using namespace Seeders;    // NOLINT(google-build-using-namespace)
 
 /*! Build the database manager instance and add a database connection. */
 std::shared_ptr<DatabaseManager> setupManager();
