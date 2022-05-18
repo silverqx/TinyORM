@@ -100,7 +100,7 @@ Query::zipForInsert(const QVector<QString> &columns, QVector<QVector<QVariant>> 
         if (columnsSize != valuesList.size())
             throw Exceptions::InvalidArgumentError(
                 QStringLiteral("A columns and values arguments don't have the same "
-                               "number of items in %1.")
+                               "number of items in %1().")
                 .arg(__tiny_func__));
 
         QVariantMap zipped;
