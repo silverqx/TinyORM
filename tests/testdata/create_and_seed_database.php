@@ -22,8 +22,8 @@ function combineValues(array $columns, array $values): array
     foreach ($values as $value) {
         if (count($value) != $columnsSize)
             throw new InvalidArgumentException(
-                '\'$columns\' and \'$values\' in the parseInsertValues() have to have ' .
-                'the same elements size.');
+                '\'$columns\' and \'$values\' arguments in the combineValues() must have ' .
+                'the same number of items.');
 
         $result[] = array_combine($columns, $value);
     }
@@ -312,7 +312,7 @@ function seedTables(string $connection): void
             [2, 2, '902555777'],
             [3, 3, '905111999'],
         ]));
-    
+
     Capsule::table('torrents', null, $connection)->insert(
         combineValues(['id', 'user_id', 'name', 'size', 'progress', 'added_on', 'hash', 'note', 'created_at', 'updated_at'], [
             [1, 1, 'test1', 11, 100, '2020-08-01 20:11:10', '1579e3af2768cdf52ec84c1f320333f68401dc6e', NULL,                             '2021-01-01 14:51:23', '2021-01-01 18:46:31'],
