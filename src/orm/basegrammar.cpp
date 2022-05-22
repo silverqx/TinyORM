@@ -11,14 +11,26 @@ namespace Orm
 /*
    wrap methods are only for column names, table names and identifiers, they use
    primarily Column type and QString type.
-   parameter()/parametrize() methods are for values, parameter uses QVariant only and
+   wrapValue() for one string column/table/identifier.
+   wrapTable() for table, columnize() for columns.
+
+   parameter()/parametrize() methods are for values, it replaces value/s with ? or use
+   a raw expression if was passed (Query::Expression), parameter uses QVariant only and
    parametrize uses Container type and Parametrize constraint.
+
    columnize() is used for column names containers (constrained by ColumnContainer
-   concept) and it calls wrapArray() internally, columnize uses ColumnContainer
-   constraint, it converts a vector of column names into a wrapped comma delimited string.
-   Values or columns/tables/identifiers can also be the Query::Expression.
+   concept) and it calls wrapArray() and other wrap related methods internally,
+   columnize uses ColumnContainer constraint, it converts a vector of column names
+   into a wrapped comma delimited string.
+   Columns/tables/identifiers can also be the Query::Expression.
    The Query::Expression is always converted to the QString and appended to the query.
-   quoteString() can be used to quote string literals.
+
+   quoteString() can be used to quote string literals, it also supports containers.
+
+   If next time you will think that some method for quoting is missing then it doesn't,
+   for parameter bindings (?) use parameter()/parametrize(), for column names use
+   wrap() related methods and for quoting raw strings eg. in the schema use
+   the quoteString(), all these methods support container types.
 */
 
 const QString &BaseGrammar::getDateFormat() const
