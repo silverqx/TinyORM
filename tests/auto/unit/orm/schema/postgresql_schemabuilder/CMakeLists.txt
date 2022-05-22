@@ -3,7 +3,7 @@ project(mysql_schemabuilder
 )
 
 add_executable(mysql_schemabuilder
-    tst_mysql_schemabuilder.cpp
+    tst_postgresql_schemabuilder.cpp
 )
 
 add_test(NAME mysql_schemabuilder COMMAND mysql_schemabuilder)
