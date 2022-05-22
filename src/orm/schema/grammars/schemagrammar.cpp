@@ -9,6 +9,10 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::SchemaNs::Grammars
 {
 
+/* public */
+
+/* Compile methods for the SchemaBuilder */
+
 QString SchemaGrammar::compileCreateDatabase(const QString &/*unused*/,
                                              DatabaseConnection &connection) const
 {
@@ -47,6 +51,8 @@ QString SchemaGrammar::compileTableExists() const
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }
+
+/* Compile methods for commands */
 
 QVector<QString>
 SchemaGrammar::compileFullText(const Blueprint &/*unused*/,
@@ -96,6 +102,8 @@ SchemaGrammar::compileDropFullText(const Blueprint &/*unused*/,
     throw Exceptions::RuntimeError(
                 "This database driver does not support dropping databases.");
 }
+
+/* Others */
 
 QString SchemaGrammar::wrap(const ColumnDefinition &column, bool prefixAlias) const
 {

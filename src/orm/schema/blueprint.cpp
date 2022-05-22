@@ -60,6 +60,7 @@ QVector<QString> Blueprint::toSql(const DatabaseConnection &connection,
 
 const BasicCommand &Blueprint::create()
 {
+    // First {} is for the base class
     return addCommand({{}, Create});
 }
 
@@ -283,6 +284,7 @@ ColumnDefinitionReference<> Blueprint::longText(const QString &column)
     return addColumn(ColumnType::LongText, column);
 }
 
+// CUR schema, fix and unify real/double/float types with latest standard and remove deprecated APIs, what I have understood from the MySQL and PostgreSQL docs it should be like this; I should have real and double (double precision) types without any total, places or precision params and then I should have float type that should have precision param, currently this total and places params are depreceted as described in https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html and will be removed in future, also add this column types to tests and to the playground also check numeric/decimal type, its different animal silverqx
 ColumnDefinitionReference<>
 Blueprint::Float(const QString &column, const std::optional<int> total,
                  const std::optional<int> places, const bool isUnsigned)

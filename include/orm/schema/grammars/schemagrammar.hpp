@@ -112,7 +112,11 @@ namespace Grammars
         virtual QString typeComputed(const ColumnDefinition &column) const;
     };
 
+    /* public */
+
     SchemaGrammar::~SchemaGrammar() = default;
+
+    /* others */
 
     template<ColumnContainer T>
     QVector<QString>

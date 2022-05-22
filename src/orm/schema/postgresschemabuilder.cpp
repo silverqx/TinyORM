@@ -7,6 +7,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::SchemaNs
 {
 
+/* public */
+
 QStringList PostgresSchemaBuilder::getColumnListing(const QString &table) const
 {
     auto [schema, table_] = parseSchemaAndTable(table);

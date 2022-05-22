@@ -56,6 +56,8 @@ namespace Orm::SchemaNs::Grammars
         QString getType(const ColumnDefinition &column) const override;
     };
 
+    /* public */
+
     bool PostgresSchemaGrammar::supportsSchemaTransactions() const noexcept
     {
         return true;

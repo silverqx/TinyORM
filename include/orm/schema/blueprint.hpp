@@ -408,11 +408,11 @@ namespace Grammars
         /*! The default string length for migrations. */
         static int DefaultStringLength;
 
-        /*! The storage engine that should be used for the table. */
+        /*! The storage engine that should be used for the table (MySQL). */
         QString engine {};
-        /*! The default character set that should be used for the table. */
+        /*! The default character set that should be used for the table (MySQL). */
         QString charset {};
-        /*! The collation that should be used for the table. */
+        /*! The collation that should be used for the table (MySQL). */
         QString collation {};
 
     protected:

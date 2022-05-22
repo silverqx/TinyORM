@@ -7,6 +7,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::SchemaNs::Grammars
 {
 
+/* public */
+
 /* Compile methods for the SchemaBuilder */
 
 QString PostgresSchemaGrammar::compileEnableForeignKeyConstraints() const

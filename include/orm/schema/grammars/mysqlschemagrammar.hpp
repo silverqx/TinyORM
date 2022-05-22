@@ -275,6 +275,8 @@ namespace Grammars
         QString modifySrid(const ColumnDefinition &column) const;
     };
 
+    /* public */
+
     bool MySqlSchemaGrammar::supportsSchemaTransactions() const noexcept
     {
         return false;
