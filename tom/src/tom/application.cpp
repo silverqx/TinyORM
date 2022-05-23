@@ -218,7 +218,7 @@ void Application::enableInUnitTests() noexcept
 
 void Application::fixEmptyArgv()
 {
-    constexpr const auto *const empty = "";
+    constexpr static const auto *const empty = "";
 
     if (m_argc == 0 || m_argv == nullptr) {
         m_argc = 0;
