@@ -429,6 +429,11 @@ QVariant DatabaseConnection::getConfig(const QString &option) const
     return m_config.value(option);
 }
 
+bool DatabaseConnection::hasConfig(const QString &option) const
+{
+    return m_config.contains(option);
+}
+
 /* Getters */
 
 QString DatabaseConnection::driverName()

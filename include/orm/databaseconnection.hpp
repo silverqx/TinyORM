@@ -192,6 +192,8 @@ namespace SchemaNs
         QVariant getConfig(const QString &option) const;
         /*! Get the configuration for the current connection. */
         inline const QVariantHash &getConfig() const;
+        /*! Check whether the configuration contains the given option. */
+        bool hasConfig(const QString &option) const;
 
         /* Getters */
         /*! Return the connection's driver name. */
