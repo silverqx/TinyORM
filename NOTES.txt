@@ -299,6 +299,27 @@ All are snake-case unless otherwise specified.
  - compile definitions prefix by project eg. TINYORM_, TINYUTILS_
 
 
+Drop all PostgreSQL tables:
+---------------------------
+
+DROP TABLE IF EXISTS "tag_properties" CASCADE;
+DROP TABLE IF EXISTS "tag_torrent" CASCADE;
+DROP TABLE IF EXISTS "torrent_tags" CASCADE;
+DROP TABLE IF EXISTS "roles" CASCADE;
+DROP TABLE IF EXISTS "role_user" CASCADE;
+DROP TABLE IF EXISTS "users" CASCADE;
+DROP TABLE IF EXISTS "user_phones" CASCADE;
+DROP TABLE IF EXISTS "settings" CASCADE;
+DROP TABLE IF EXISTS "torrents" CASCADE;
+DROP TABLE IF EXISTS "torrent_peers" CASCADE;
+DROP TABLE IF EXISTS "torrent_previewable_files" CASCADE;
+DROP TABLE IF EXISTS "torrent_previewable_file_properties" CASCADE;
+DROP TABLE IF EXISTS "file_property_properties" CASCADE;
+DROP TABLE IF EXISTS "migrations" CASCADE;
+DROP TABLE IF EXISTS "migrations_example" CASCADE;
+DROP TABLE IF EXISTS "migrations_unit_testing" CASCADE;
+
+
 UBSan:
 ------
 
