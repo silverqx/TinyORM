@@ -683,7 +683,8 @@ void tst_Mysql_SchemaBuilder::modifiers() const
             table.bigInteger("big_int").isUnsigned();
             table.bigInteger("big_int1");
         });
-        // Tests from and also integerIncrements
+        /* Tests from and also integerIncrements, this would of course fail on real DB
+           as you can not have two primary keys. */
         Schema::on(connection.getName())
                 .table(Firewalls, [](Blueprint &table)
         {
