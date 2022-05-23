@@ -38,6 +38,20 @@ namespace Orm::SchemaNs
         /*! Default destructor. */
         inline ~ColumnDefinitionReference() = default;
 
+        /*! Copy constructor. */
+        inline ColumnDefinitionReference(
+                    const ColumnDefinitionReference &) = default;
+        /*! Move constructor. */
+        inline ColumnDefinitionReference(
+                    ColumnDefinitionReference &&) noexcept = default;
+
+        /*! Deleted copy assignment operator. */
+        ColumnDefinitionReference &
+        operator=(const ColumnDefinitionReference &) = delete;
+        /*! Deleted move assignment operator. */
+        ColumnDefinitionReference &
+        operator=(ColumnDefinitionReference &&) noexcept = delete;
+
         /*! Place the column "after" another column (MySQL). */
         ColumnReferenceType &after(const QString &column);
         /*! Set INTEGER column as auto-increment (primary key). */

@@ -29,6 +29,20 @@ namespace Orm::SchemaNs
         /*! Default destructor. */
         inline ~ForeignIdColumnDefinitionReference() = default;
 
+        /*! Copy constructor. */
+        inline ForeignIdColumnDefinitionReference(
+                    const ForeignIdColumnDefinitionReference &) = default;
+        /*! Move constructor. */
+        inline ForeignIdColumnDefinitionReference(
+                    ForeignIdColumnDefinitionReference &&) noexcept = default;
+
+        /*! Deleted copy assignment operator. */
+        ForeignIdColumnDefinitionReference &
+        operator=(const ForeignIdColumnDefinitionReference &) = delete;
+        /*! Deleted move assignment operator. */
+        ForeignIdColumnDefinitionReference &
+        operator=(ForeignIdColumnDefinitionReference &&) noexcept = delete;
+
         /*! Create a foreign key constraint on this column referencing the "id" column
             of the conventionally related table. */
         ForeignKeyDefinitionReference
