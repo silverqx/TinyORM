@@ -243,7 +243,7 @@ jobs:
         $env:Path = '..\..;' + $env:Path
         .\tom.exe migrate:install --database=tinyorm_tom_mysql --no-ansi
         .\tom.exe migrate:status --database=tinyorm_tom_mysql --no-ansi
-        .\tom.exe migrate --seed --database=tinyorm_tom_mysql --no-ansi
+        .\tom.exe migrate --database=tinyorm_tom_mysql --seed --no-ansi
         .\tom.exe migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
         .\tom.exe migrate:status --database=tinyorm_tom_mysql --no-ansi
       env:
@@ -261,7 +261,7 @@ jobs:
         $env:Path = '..\..;' + $env:Path
         .\tom.exe migrate:install --database=tinyorm_tom_postgres --no-ansi
         .\tom.exe migrate:status --database=tinyorm_tom_postgres --no-ansi
-        .\tom.exe migrate --seed --database=tinyorm_tom_postgres --no-ansi
+        .\tom.exe migrate --database=tinyorm_tom_postgres --seed --no-ansi
         .\tom.exe migrate:refresh --database=tinyorm_tom_postgres --seed --no-ansi
         .\tom.exe migrate:status --database=tinyorm_tom_postgres --no-ansi
       env:
