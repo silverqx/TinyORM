@@ -37,10 +37,10 @@ namespace Seeders
 
             DB::table("role_user")->insert({"role_id", "user_id", "active"},
             {
-                {1, 1, 1},
-                {2, 1, 0},
-                {3, 1, 1},
-                {2, 2, 1},
+                {1, 1, true},
+                {2, 1, false},
+                {3, 1, true},
+                {2, 2, true},
             });
 
             DB::table("user_phones")->insert({ID, "user_id", "number"},
@@ -113,12 +113,12 @@ namespace Seeders
 
             DB::table("tag_torrent")->insert({"torrent_id", "tag_id", "active", CREATED_AT, UPDATED_AT},
             {
-                {2, 1, 1, "2021-02-21 17:31:58", "2021-02-21 18:49:22"},
-                {2, 2, 1, "2021-02-22 17:31:58", "2021-02-22 18:49:22"},
-                {2, 3, 0, "2021-02-23 17:31:58", "2021-02-23 18:49:22"},
-                {2, 4, 1, "2021-02-24 17:31:58", "2021-02-24 18:49:22"},
-                {3, 2, 1, "2021-02-25 17:31:58", "2021-02-25 18:49:22"},
-                {3, 4, 1, "2021-02-26 17:31:58", "2021-02-26 18:49:22"},
+                {2, 1, true,  "2021-02-21 17:31:58", "2021-02-21 18:49:22"},
+                {2, 2, true,  "2021-02-22 17:31:58", "2021-02-22 18:49:22"},
+                {2, 3, false, "2021-02-23 17:31:58", "2021-02-23 18:49:22"},
+                {2, 4, true,  "2021-02-24 17:31:58", "2021-02-24 18:49:22"},
+                {3, 2, true,  "2021-02-25 17:31:58", "2021-02-25 18:49:22"},
+                {3, 4, true,  "2021-02-26 17:31:58", "2021-02-26 18:49:22"},
             });
 
             DB::table("tag_properties")->insert({ID, "tag_id", "color", "position", CREATED_AT, UPDATED_AT},
@@ -128,7 +128,43 @@ namespace Seeders
                 {3, 3, "red",    2, "2021-02-13 12:41:28", "2021-02-13 22:17:11"},
                 {4, 4, "orange", 3, "2021-02-14 12:41:28", "2021-02-14 22:17:11"},
             });
+
+            // Fix sequence numbers for the PostgreSQL
+            if (DB::getDefaultConnection() ==
+                QLatin1String("tinyorm_testdata_tom_postgres")
+            )
+                fixPostgresSequences();
         }
+
+    private:
+        /*! Fix sequence numbers for the PostgreSQL. */
+        inline void fixPostgresSequences() const;
     };
+
+    /* private */
+
+    void DatabaseSeeder::fixPostgresSequences() const
+    {
+        /* I have to fix sequences in Postgres because I'm inserting IDs manually, and
+           it doesn't increment sequences. */
+
+        std::unordered_map<QString, quint64> sequences {
+            {QStringLiteral("torrents_id_seq"),                             7},
+            {QStringLiteral("torrent_peers_id_seq"),                        5},
+            {QStringLiteral("torrent_previewable_files_id_seq"),           10},
+            {QStringLiteral("torrent_previewable_file_properties_id_seq"),  6},
+            {QStringLiteral("file_property_properties_id_seq"),             7},
+            {QStringLiteral("torrent_tags_id_seq"),                         6},
+            {QStringLiteral("tag_properties_id_seq"),                       5},
+            {QStringLiteral("users_id_seq"),                                4},
+            {QStringLiteral("roles_id_seq"),                                4},
+            {QStringLiteral("user_phones_id_seq"),                          4},
+        };
+
+        for (auto &&[sequence, id] : sequences)
+            DB::connection().unprepared(
+                    QStringLiteral("ALTER SEQUENCE %1 RESTART WITH %2")
+                    .arg(std::move(sequence)).arg(id));
+    }
 
 } // namespace Seeders

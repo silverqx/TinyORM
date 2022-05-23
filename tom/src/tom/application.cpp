@@ -616,7 +616,10 @@ std::shared_ptr<ConnectionResolverInterface> Application::resolver() const noexc
 
 void Application::throwIfEmptyDefaultConnection() const
 {
-    if (!m_db->getDefaultConnection().isEmpty())
+    // Throw if exactly one connection is registered
+    if (!m_db->getDefaultConnection().isEmpty() || m_db->connectionsSize() > 1 ||
+        m_db->connectionsSize() < 1
+    )
         return;
 
     throw Exceptions::RuntimeError("Default database connection not configured.");
