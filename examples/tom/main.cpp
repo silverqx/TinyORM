@@ -67,23 +67,47 @@ std::shared_ptr<DatabaseManager> setupManager()
 
     // Ownership of the shared_ptr()
     return DB::create({
-        {driver_,         QMYSQL},
-        {host_,           qEnvironmentVariable("DB_MYSQL_HOST", H127001)},
-        {port_,           qEnvironmentVariable("DB_MYSQL_PORT", P3306)},
-        {database_,       qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY)},
-        {username_,       qEnvironmentVariable("DB_MYSQL_USERNAME", EMPTY)},
-        {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
-        {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
-        {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
-        {timezone_,       TZ00},
-        {prefix_,         EMPTY},
-        {prefix_indexes,  true},
-        {strict_,         true},
-        {isolation_level, QStringLiteral("REPEATABLE READ")},
-        {engine_,         InnoDB},
-        {options_,        QVariantHash()},
+        // MySQL connection
+        {QStringLiteral("tinyorm_tom_mysql"), {
+            {driver_,         QMYSQL},
+            {host_,           qEnvironmentVariable("DB_MYSQL_HOST", H127001)},
+            {port_,           qEnvironmentVariable("DB_MYSQL_PORT", P3306)},
+            {database_,       qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY)},
+            {username_,       qEnvironmentVariable("DB_MYSQL_USERNAME", EMPTY)},
+            {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
+            {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
+            {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
+            {timezone_,       TZ00},
+            {prefix_,         EMPTY},
+            {prefix_indexes,  true},
+            {strict_,         true},
+            {isolation_level, QStringLiteral("REPEATABLE READ")},
+            {engine_,         InnoDB},
+            {options_,        QVariantHash()},
+        }},
+
+        // PostgreSQL connection
+        {QStringLiteral("tinyorm_tom_postgres"), {
+            {driver_,        QPSQL},
+            {host_,          qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
+            {port_,          qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
+            {database_,      qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
+            {schema_,        qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
+            {username_,      qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
+            {password_,      qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
+            {charset_,       qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
+            // I don't use timezone types in postgres anyway
+            {timezone_,      UTC},
+            {prefix_,        EMPTY},
+            {prefix_indexes, true},
+            // ConnectionFactory provides a default value for this (for reference only)
+//            {dont_drop,      QStringList {QStringLiteral("spatial_ref_sys")}},
+            {options_,       QVariantHash()},
+        }}
     },
-        QStringLiteral("tinyorm_tom"));
+        /* Because the default connection name is not defined, then will be needed
+           to provide the connection name using the --database=xyz argument. */
+        {});
 }
 
 /* Alternative syntax to instantiate migration classes. */
