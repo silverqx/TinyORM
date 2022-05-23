@@ -35,6 +35,9 @@ namespace Constants
     SHAREDLIB_EXPORT extern const QString DropForeign;
     SHAREDLIB_EXPORT extern const QString RenameIndex;
 
+    // PostgreSQL specific command
+    SHAREDLIB_EXPORT extern const QString Comment;
+
     // Indexes
     SHAREDLIB_EXPORT extern const QString Primary;
     SHAREDLIB_EXPORT extern const QString Unique;

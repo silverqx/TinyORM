@@ -5,6 +5,21 @@
 #include "orm/exceptions/runtimeerror.hpp"
 #include "orm/utils/type.hpp"
 
+using Orm::Constants::EMPTY;
+using Orm::Constants::H127001;
+using Orm::Constants::InnoDB;
+using Orm::Constants::P3306;
+using Orm::Constants::P5432;
+using Orm::Constants::PUBLIC;
+using Orm::Constants::QMYSQL;
+using Orm::Constants::QPSQL;
+using Orm::Constants::QSQLITE;
+using Orm::Constants::ROOT;
+using Orm::Constants::TZ00;
+using Orm::Constants::UTC;
+using Orm::Constants::UTF8;
+using Orm::Constants::UTF8MB4;
+using Orm::Constants::UTF8MB40900aici;
 using Orm::Constants::database_;
 using Orm::Constants::driver_;
 using Orm::Constants::charset_;
@@ -12,32 +27,18 @@ using Orm::Constants::check_database_exists;
 using Orm::Constants::collation_;
 using Orm::Constants::engine_;
 using Orm::Constants::foreign_key_constraints;
-using Orm::Constants::H127001;
 using Orm::Constants::host_;
-using Orm::Constants::InnoDB;
 using Orm::Constants::isolation_level;
 using Orm::Constants::options_;
-using Orm::Constants::P3306;
-using Orm::Constants::P5432;
 using Orm::Constants::password_;
 using Orm::Constants::port_;
+using Orm::Constants::postgres_;
 using Orm::Constants::prefix_;
 using Orm::Constants::prefix_indexes;
-using Orm::Constants::PUBLIC;
-using Orm::Constants::QMYSQL;
-using Orm::Constants::QPSQL;
-using Orm::Constants::QSQLITE;
-using Orm::Constants::ROOT;
 using Orm::Constants::schema_;
 using Orm::Constants::strict_;
 using Orm::Constants::timezone_;
 using Orm::Constants::username_;
-using Orm::Constants::EMPTY;
-using Orm::Constants::TZ00;
-using Orm::Constants::UTC;
-using Orm::Constants::UTF8;
-using Orm::Constants::UTF8MB4;
-using Orm::Constants::UTF8MB40900aici;
 
 using Orm::DB;
 
@@ -228,14 +229,15 @@ Databases::postgresConfiguration()
         {port_,          qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
         {database_,      qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
         {schema_,        qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
-        {username_,      qEnvironmentVariable("DB_PGSQL_USERNAME",
-                                              QStringLiteral("postgres"))},
+        {username_,      qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
         {password_,      qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
         {charset_,       qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
         // I don't use timezone types in postgres anyway
         {timezone_,      UTC},
         {prefix_,        EMPTY},
         {prefix_indexes, true},
+        // ConnectionFactory provides a default value for this, this is only for reference
+//        {dont_drop,      QStringList {QStringLiteral("spatial_ref_sys")}},
         {options_,       QVariantHash()},
     };
 

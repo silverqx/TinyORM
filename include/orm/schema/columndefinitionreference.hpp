@@ -54,6 +54,8 @@ namespace Orm::SchemaNs
 
         /*! Place the column "after" another column (MySQL). */
         ColumnReferenceType &after(const QString &column);
+        /*! Used as a modifier for generatedAs() (PostgreSQL). */
+        ColumnReferenceType &always();
         /*! Set INTEGER column as auto-increment (primary key). */
         ColumnReferenceType &autoIncrement();
         /*! Specify a character set for the column (MySQL). */
@@ -68,12 +70,20 @@ namespace Orm::SchemaNs
         ColumnReferenceType &first();
         /*! Set the starting value of an auto-incrementing field (MySQL / PostgreSQL). */
         ColumnReferenceType &from(int startingValue);
+        /*! Create a SQL compliant identity column (PostgreSQL). */
+        ColumnReferenceType &generatedAs(const QString &expression);
         /*! Specify that the column should be invisible to "SELECT *" (MySQL). */
         ColumnReferenceType &invisible();
+        /*! Determine whether to use the geography (default, false) or
+            geometry type (PostgreSQL). */
+        ColumnReferenceType &isGeometry();
         /*! Set the INTEGER column as UNSIGNED (MySQL). */
         ColumnReferenceType &isUnsigned();
         /*! Allow NULL values to be inserted into the column. */
         ColumnReferenceType &nullable(bool value = true);
+        /*! The spatial reference identifier (SRID) of a geometry identifies the SRS
+            in which the geometry is defined (MySQL/PostgreSQL). */
+        ColumnReferenceType &srid(quint32 value);
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL). */
         ColumnReferenceType &startingValue(int startingValue);
         /*! Create a stored generated column (MySQL/PostgreSQL/SQLite). */
@@ -133,6 +143,15 @@ namespace Orm::SchemaNs
     ColumnDefinitionReference<R>::after(const QString &column)
     {
         m_columnDefinition.get().after = column;
+
+        return columnReference();
+    }
+
+    template<ColumnReferenceReturn R>
+    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::always()
+    {
+        m_columnDefinition.get().always = true;
 
         return columnReference();
     }
@@ -202,9 +221,27 @@ namespace Orm::SchemaNs
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::generatedAs(const QString &expression)
+    {
+        m_columnDefinition.get().generatedAs = expression;
+
+        return columnReference();
+    }
+
+    template<ColumnReferenceReturn R>
+    typename ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::invisible()
     {
         m_columnDefinition.get().invisible = true;
+
+        return columnReference();
+    }
+
+    template<ColumnReferenceReturn R>
+    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+            ColumnDefinitionReference<R>::isGeometry()
+    {
+        m_columnDefinition.get().isGeometry = true;
 
         return columnReference();
     }
@@ -232,6 +269,15 @@ namespace Orm::SchemaNs
     ColumnDefinitionReference<R>::startingValue(const int startingValue)
     {
         m_columnDefinition.get().startingValue = startingValue;
+
+        return columnReference();
+    }
+
+    template<ColumnReferenceReturn R>
+    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+            ColumnDefinitionReference<R>::srid(const quint32 value)
+    {
+        m_columnDefinition.get().srid = value;
 
         return columnReference();
     }

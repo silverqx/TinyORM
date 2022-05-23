@@ -61,12 +61,13 @@ private slots:
 private:
     /*! Prepare arguments and invoke runCommand(). */
     [[nodiscard]] int
-    invokeCommand(const QString &name, std::vector<const char *> &&arguments = {}) const;
+    invokeCommand(const QString &connection, const QString &name,
+                  std::vector<const char *> &&arguments = {}) const;
     /*! Create a tom application instance and invoke the given command. */
     int runCommand(int &argc, const std::vector<const char *> &argv) const;
 
     /*! Invoke the status command to obtain results. */
-    inline int invokeTestStatusCommand() const;
+    inline int invokeTestStatusCommand(const QString &connection) const;
     /*! Get result of the last status command. */
     Status status() const;
     /*! Create a status object for comparing with the result of the status(). */
@@ -75,10 +76,7 @@ private:
     Status createResetStatus() const;
 
     /*! Prepare the migration database for running. */
-    void prepareDatabase() const;
-
-    /*! Connection name used in this test case. */
-    QString m_connection {};
+    void prepareDatabase(const QStringList &connections) const;
 
     /*! Migrations table name. */
     inline static const auto MigrationsTable = QStringLiteral("migrations_unit_testing");
@@ -140,12 +138,19 @@ namespace
 
 void tst_Migrate::initTestCase()
 {
-    m_connection = Databases::createConnection(Databases::MYSQL);
+    const auto &connections =
+            Databases::createConnections({Databases::MYSQL, Databases::POSTGRESQL});
 
-    if (m_connection.isEmpty())
+    if (connections.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
-                             "for '%2' connection have not been defined.")
-              .arg("tst_Migrate", Databases::MYSQL).toUtf8().constData(), );
+                             "for ANY connection have not been defined.")
+              .arg("tst_Migrate").toUtf8().constData(), );
+
+    QTest::addColumn<QString>("connection");
+
+    // Run all tests for all supported database connections
+    for (const auto &connection : connections)
+        QTest::newRow(connection.toUtf8().constData()) << connection;
 
     /* Modify the migrate:status command to not output a status table to the console but
        instead return a result as the vector, this vector is then used for comparing
@@ -153,21 +158,23 @@ void tst_Migrate::initTestCase()
     TomApplication::enableInUnitTests();
 
     // Prepare the migration database for running
-    prepareDatabase();
+    prepareDatabase(connections);
 }
 
 void tst_Migrate::cleanup() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     /* All test methods need this except for two of them (reset and I don't remember
        second), I will not implement special logic to skip this for these two methods. */
     {
-        auto exitCode = invokeCommand(MigrateReset);
+        auto exitCode = invokeCommand(connection, MigrateReset);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createResetStatus(), status());
@@ -176,14 +183,16 @@ void tst_Migrate::cleanup() const
 
 void tst_Migrate::migrate() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate);
+        auto exitCode = invokeCommand(connection, Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyMigrated), status());
@@ -192,14 +201,16 @@ void tst_Migrate::migrate() const
 
 void tst_Migrate::migrate_Step() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate, {"--step"});
+        auto exitCode = invokeCommand(connection, Migrate, {"--step"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyStepMigrated), status());
@@ -208,14 +219,16 @@ void tst_Migrate::migrate_Step() const
 
 void tst_Migrate::reset() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(MigrateReset);
+        auto exitCode = invokeCommand(connection, MigrateReset);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createResetStatus(), status());
@@ -224,14 +237,16 @@ void tst_Migrate::reset() const
 
 void tst_Migrate::rollback_OnMigrate() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate);
+        auto exitCode = invokeCommand(connection, Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyMigrated), status());
@@ -239,13 +254,13 @@ void tst_Migrate::rollback_OnMigrate() const
 
     // rollback on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand(MigrateRollback);
+        auto exitCode = invokeCommand(connection, MigrateRollback);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createResetStatus(), status());
@@ -254,14 +269,16 @@ void tst_Migrate::rollback_OnMigrate() const
 
 void tst_Migrate::rollback_OnMigrateWithStep() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate, {"--step"});
+        auto exitCode = invokeCommand(connection, Migrate, {"--step"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyStepMigrated), status());
@@ -269,13 +286,13 @@ void tst_Migrate::rollback_OnMigrateWithStep() const
 
     // rollback on previous migrate with --step
     {
-        auto exitCode = invokeCommand(MigrateRollback);
+        auto exitCode = invokeCommand(connection, MigrateRollback);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus({
@@ -289,14 +306,16 @@ void tst_Migrate::rollback_OnMigrateWithStep() const
 
 void tst_Migrate::rollback_Step_OnMigrate() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate);
+        auto exitCode = invokeCommand(connection, Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyMigrated), status());
@@ -304,13 +323,13 @@ void tst_Migrate::rollback_Step_OnMigrate() const
 
     // rollback on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand(MigrateRollback, {"--step=2"});
+        auto exitCode = invokeCommand(connection, MigrateRollback, {"--step=2"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus({
@@ -324,14 +343,16 @@ void tst_Migrate::rollback_Step_OnMigrate() const
 
 void tst_Migrate::rollback_Step_OnMigrateWithStep() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate, {"--step"});
+        auto exitCode = invokeCommand(connection, Migrate, {"--step"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyStepMigrated), status());
@@ -339,13 +360,13 @@ void tst_Migrate::rollback_Step_OnMigrateWithStep() const
 
     // rollback on previous migrate with --step
     {
-        auto exitCode = invokeCommand(MigrateRollback, {"--step=2"});
+        auto exitCode = invokeCommand(connection, MigrateRollback, {"--step=2"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus({
@@ -359,14 +380,16 @@ void tst_Migrate::rollback_Step_OnMigrateWithStep() const
 
 void tst_Migrate::refresh_OnMigrate() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate);
+        auto exitCode = invokeCommand(connection, Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyMigrated), status());
@@ -374,13 +397,13 @@ void tst_Migrate::refresh_OnMigrate() const
 
     // refresh on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand(MigrateRefresh);
+        auto exitCode = invokeCommand(connection, MigrateRefresh);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyMigrated), status());
@@ -389,14 +412,16 @@ void tst_Migrate::refresh_OnMigrate() const
 
 void tst_Migrate::refresh_OnMigrateWithStep() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate, {"--step"});
+        auto exitCode = invokeCommand(connection, Migrate, {"--step"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyStepMigrated), status());
@@ -404,13 +429,13 @@ void tst_Migrate::refresh_OnMigrateWithStep() const
 
     // refresh on previous migrate with --step
     {
-        auto exitCode = invokeCommand(MigrateRefresh);
+        auto exitCode = invokeCommand(connection, MigrateRefresh);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyMigrated), status());
@@ -419,14 +444,16 @@ void tst_Migrate::refresh_OnMigrateWithStep() const
 
 void tst_Migrate::refresh_Step() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate);
+        auto exitCode = invokeCommand(connection, Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyMigrated), status());
@@ -434,13 +461,13 @@ void tst_Migrate::refresh_Step() const
 
     // refresh on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand(MigrateRefresh, {"--step=2"});
+        auto exitCode = invokeCommand(connection, MigrateRefresh, {"--step=2"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus({
@@ -454,14 +481,16 @@ void tst_Migrate::refresh_Step() const
 
 void tst_Migrate::refresh_StepMigrate() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate);
+        auto exitCode = invokeCommand(connection, Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyMigrated), status());
@@ -469,13 +498,13 @@ void tst_Migrate::refresh_StepMigrate() const
 
     // refresh on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand(MigrateRefresh, {"--step-migrate"});
+        auto exitCode = invokeCommand(connection, MigrateRefresh, {"--step-migrate"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyStepMigrated), status());
@@ -484,14 +513,16 @@ void tst_Migrate::refresh_StepMigrate() const
 
 void tst_Migrate::refresh_Step_StepMigrate() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     {
-        auto exitCode = invokeCommand(Migrate);
+        auto exitCode = invokeCommand(connection, Migrate);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus(FullyMigrated), status());
@@ -499,13 +530,14 @@ void tst_Migrate::refresh_Step_StepMigrate() const
 
     // refresh on previous migrate w/o --step
     {
-        auto exitCode = invokeCommand(MigrateRefresh, {"--step=2", "--step-migrate"});
+        auto exitCode = invokeCommand(connection, MigrateRefresh,
+                                      {"--step=2", "--step-migrate"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
 
     {
-        auto exitCode = invokeTestStatusCommand();
+        auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createStatus({
@@ -519,18 +551,15 @@ void tst_Migrate::refresh_Step_StepMigrate() const
 
 /* private */
 
-int tst_Migrate::invokeCommand(const QString &name,
+int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
                                std::vector<const char *> &&arguments) const
 {
     static const auto connectionTmpl = QStringLiteral("--database=%1");
 
     // Prepare fake argc and argv
     const auto nameArr = name.toUtf8();
-    // FUTURE tests tom, when the schema builder will support more db drivers, I can run it on all supported connections, code will look like in the tst_querybuilder.cpp, then I will fetch connection name in every test method using QFETCH_GLOBAL() and I will pass this connection name to the invokeCommand(), so I will discard m_connection and will use method parameter connection here silverqx
-    /* Schema builder is implemented only for the MySQL driver, so I can use m_connection
-       here as the default connection. */
     // DB connection to use
-    const auto connectionArr = connectionTmpl.arg(m_connection).toUtf8();
+    const auto connectionArr = connectionTmpl.arg(connection).toUtf8();
 
     std::vector<const char *> argv {
 #ifdef _WIN32
@@ -570,9 +599,9 @@ int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv) co
     return EXIT_FAILURE;
 }
 
-int tst_Migrate::invokeTestStatusCommand() const
+int tst_Migrate::invokeTestStatusCommand(const QString &connection) const
 {
-    return invokeCommand(MigrateStatus);
+    return invokeCommand(connection, MigrateStatus);
 }
 
 Status tst_Migrate::status() const
@@ -595,25 +624,27 @@ Status tst_Migrate::createResetStatus() const
     };
 }
 
-void tst_Migrate::prepareDatabase() const
+void tst_Migrate::prepareDatabase(const QStringList &connections) const
 {
-    // Ownership of a unique_ptr()
-    const auto schema = Databases::manager()->connection(m_connection)
-                        .getSchemaBuilder();
+    for (const auto &connection : connections) {
+        // Ownership of a unique_ptr()
+        const auto schema = Databases::manager()->connection(connection)
+                            .getSchemaBuilder();
 
-    // Create the migrations table if needed
-    if (!schema->hasTable(MigrationsTable)) {
-        auto exitCode = invokeCommand(MigrateInstall);
+        // Create the migrations table if needed
+        if (!schema->hasTable(MigrationsTable)) {
+            auto exitCode = invokeCommand(connection, MigrateInstall);
+
+            QVERIFY(exitCode == EXIT_SUCCESS);
+
+            return;
+        }
+
+        // Reset the migrations table
+        auto exitCode = invokeCommand(connection, MigrateReset);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-
-        return;
     }
-
-    // Reset the migrations table
-    auto exitCode = invokeCommand(MigrateReset);
-
-    QVERIFY(exitCode == EXIT_SUCCESS);
 }
 
 QTEST_MAIN(tst_Migrate)

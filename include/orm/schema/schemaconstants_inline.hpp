@@ -34,6 +34,9 @@ namespace Constants
     inline const QString DropForeign      = QStringLiteral("dropForeign");
     inline const QString RenameIndex      = QStringLiteral("renameIndex");
 
+    // PostgreSQL specific command
+    inline const QString Comment          = QStringLiteral("comment");
+
     // Indexes
     inline const QString Primary      = QStringLiteral("primary");
     inline const QString Unique       = QStringLiteral("unique");

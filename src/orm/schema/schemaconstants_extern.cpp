@@ -6,21 +6,24 @@ namespace Orm::SchemaNs::Constants
 {
 
     // Command names
-    const QString Create           = QStringLiteral("create");
-    const QString Add              = QStringLiteral("add");
-    const QString Change           = QStringLiteral("change");
-    const QString Drop             = QStringLiteral("drop");
-    const QString DropIfExists     = QStringLiteral("dropIfExists");
-    const QString Rename           = QStringLiteral("rename");
-    const QString DropColumn       = QStringLiteral("dropColumn");
-    const QString RenameColumn     = QStringLiteral("renameColumn");
-    const QString DropPrimary      = QStringLiteral("dropPrimary");
-    const QString DropUnique       = QStringLiteral("dropUnique");
-    const QString DropIndex        = QStringLiteral("dropIndex");
-    const QString DropFullText     = QStringLiteral("dropFullText");
-    const QString DropSpatialIndex = QStringLiteral("dropSpatialIndex");
-    const QString DropForeign      = QStringLiteral("dropForeign");
-    const QString RenameIndex      = QStringLiteral("renameIndex");
+    const QString Create            = QStringLiteral("create");
+    const QString Add               = QStringLiteral("add");
+    const QString Change            = QStringLiteral("change");
+    const QString Drop              = QStringLiteral("drop");
+    const QString DropIfExists      = QStringLiteral("dropIfExists");
+    const QString Rename            = QStringLiteral("rename");
+    const QString DropColumn        = QStringLiteral("dropColumn");
+    const QString RenameColumn      = QStringLiteral("renameColumn");
+    const QString DropPrimary       = QStringLiteral("dropPrimary");
+    const QString DropUnique        = QStringLiteral("dropUnique");
+    const QString DropIndex         = QStringLiteral("dropIndex");
+    const QString DropFullText      = QStringLiteral("dropFullText");
+    const QString DropSpatialIndex  = QStringLiteral("dropSpatialIndex");
+    const QString DropForeign       = QStringLiteral("dropForeign");
+    const QString RenameIndex       = QStringLiteral("renameIndex");
+
+    // PostgreSQL specific command
+    const QString Comment           = QStringLiteral("comment");
 
     // Indexes
     const QString Primary      = QStringLiteral("primary");

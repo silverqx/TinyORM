@@ -10,6 +10,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::SchemaNs
 {
 
+/* public */
+
 QSqlQuery MySqlSchemaBuilder::createDatabase(const QString &name) const
 {
     return m_connection.statement(
@@ -73,21 +75,21 @@ void MySqlSchemaBuilder::dropAllViews() const
 QSqlQuery MySqlSchemaBuilder::getAllTables() const
 {
     // CUR schema, use postproccessor processColumnListing() silverqx
-    return m_connection.select(m_grammar.compileGetAllTables());
+    return m_connection.selectFromWriteConnection(m_grammar.compileGetAllTables());
 }
 
 QSqlQuery MySqlSchemaBuilder::getAllViews() const
 {
-    return m_connection.select(m_grammar.compileGetAllViews());
+    return m_connection.selectFromWriteConnection(m_grammar.compileGetAllViews());
 }
 
 QStringList MySqlSchemaBuilder::getColumnListing(const QString &table) const
 {
     const auto table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
 
-    auto query = m_connection.select(m_grammar.compileColumnListing(), {
-        m_connection.getDatabaseName(), table_
-    });
+    auto query = m_connection.selectFromWriteConnection(
+                     m_grammar.compileColumnListing(),
+                     {m_connection.getDatabaseName(), table_});
 
     return m_connection.getPostProcessor().processColumnListing(query);
 }
@@ -98,9 +100,9 @@ bool MySqlSchemaBuilder::hasTable(const QString &table) const
 
     Q_ASSERT(m_connection.driver()->hasFeature(QSqlDriver::QuerySize));
 
-    return m_connection.select(m_grammar.compileTableExists(),
-                               {m_connection.getDatabaseName(), table_})
-            .size() > 0;
+    return m_connection.selectFromWriteConnection(
+                m_grammar.compileTableExists(),
+                {m_connection.getDatabaseName(), table_}).size() > 0;
 }
 
 } // namespace Orm::SchemaNs

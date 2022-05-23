@@ -38,7 +38,7 @@ The TinyORM `Schema` facade provides database agnostic support for creating and 
 `Tom` migrations is a small console application that depends on the `TinyORM` library. All migrations logic is compiled so recompilation is needed after adding a new migration class.
 
 :::caution
-Currently, TinyORM's schema builder provides first-party support for the MySQL database only. Support for the PostgreSQL and SQLite databases is not implemented 😢.
+Currently, TinyORM's schema builder provides first-party support for the MySQL and PostgreSQL database. Support for the SQLite databases is not implemented 😢.
 :::
 
 ## Generating Migrations
@@ -253,7 +253,7 @@ You may check for the existence of a table or column using the `hasTable` and `h
 
 If you want to perform a schema operation on a database connection that is not your application's default connection, use the `connection` method or `on` alias:
 
-    Schema::connection("sqlite").create("users", [](Blueprint &table)
+    Schema::connection("postgres").create("users", [](Blueprint &table)
     {
         table.id();
     });

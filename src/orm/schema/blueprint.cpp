@@ -5,6 +5,7 @@
 #include <range/v3/view/filter.hpp>
 
 #include "orm/databaseconnection.hpp"
+#include "orm/schema/grammars/postgresschemagrammar.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -34,7 +35,10 @@ void Blueprint::build(DatabaseConnection &connection, const SchemaGrammar &gramm
 {
     // TODO clazy, old clazy check range-loop, remove after ugprade to newer clazy 1.11, it was divided to two checks in clazy 1.11 silverqx
     for (const auto &queryString : toSql(connection, grammar)) // clazy:exclude=range-loop,range-loop-detach
-        connection.statement(queryString);
+        /* All compile methods in the SchemaBuilders are unprepared, eg. the PostgreSQL
+           driver even doesn't allow to send DDL commands as prepared statements,
+           MySQL driver supports to send DDL commands as prepared statements. */
+        connection.unprepared(queryString);
 }
 
 QVector<QString> Blueprint::toSql(const DatabaseConnection &connection,
@@ -110,42 +114,42 @@ const RenameCommand &Blueprint::renameColumn(const QString &from, const QString 
     return addCommand<RenameCommand>({{}, RenameColumn, from, to});
 }
 
-const IndexCommand &
+IndexDefinitionReference
 Blueprint::primary(const QVector<QString> &columns, const QString &indexName,
                    const QString &algorithm)
 {
     return indexCommand(Primary, columns, indexName, algorithm);
 }
 
-const IndexCommand &
+IndexDefinitionReference
 Blueprint::unique(const QVector<QString> &columns, const QString &indexName,
                   const QString &algorithm)
 {
     return indexCommand(Unique, columns, indexName, algorithm);
 }
 
-const IndexCommand &
+IndexDefinitionReference
 Blueprint::index(const QVector<QString> &columns, const QString &indexName,
                  const QString &algorithm)
 {
     return indexCommand(Index, columns, indexName, algorithm); // NOLINT(readability-suspicious-call-argument)
 }
 
-const IndexCommand &
+IndexDefinitionReference
 Blueprint::fullText(const QVector<QString> &columns, const QString &indexName,
-                    const QString &algorithm)
+                    const QString &algorithm, const QString &language)
 {
-    return indexCommand(Fulltext, columns, indexName, algorithm);
+    return indexCommand(Fulltext, columns, indexName, algorithm, language);
 }
 
 // CUR schema, it looks like spatial index can not be created on multiple columns on mysql, if its true remove QVector overloads, error 1070 Too many key parts specified; max 1 parts allowed silverqx
-const IndexCommand &
+IndexDefinitionReference
 Blueprint::spatialIndex(const QVector<QString> &columns, const QString &indexName)
 {
     return indexCommand(SpatialIndex, columns, indexName);
 }
 
-const IndexCommand &
+IndexDefinitionReference
 Blueprint::rawIndex(const Expression &expression, const QString &indexName)
 {
     return addCommand<IndexCommand>({{}, Index, indexName, {expression}});
@@ -589,7 +593,7 @@ ColumnDefinitionReference<> Blueprint::addColumnDefinition(ColumnDefinition &&de
     return definitionRef;
 }
 
-void Blueprint::addImpliedCommands(const SchemaGrammar &/*unused*/)
+void Blueprint::addImpliedCommands(const SchemaGrammar &grammar)
 {
     if (!getAddedColumns().isEmpty() && !creating())
         m_commands.emplace_front(createCommand<BasicCommand>({{}, Add}));
@@ -599,7 +603,7 @@ void Blueprint::addImpliedCommands(const SchemaGrammar &/*unused*/)
 
     addFluentIndexes();
 
-//    addFluentCommands(grammar);
+    addFluentCommands(grammar);
 }
 
 void Blueprint::addFluentIndexes()
@@ -659,9 +663,22 @@ void Blueprint::addFluentIndexes()
         }
 }
 
-const IndexCommand &
+void Blueprint::addFluentCommands(const SchemaGrammar &grammar)
+{
+    /* The PostgreSQL grammar is only one that has a fluent command, it is
+       the Comment command. */
+    if (dynamic_cast<const Grammars::PostgresSchemaGrammar *>(&grammar) == nullptr)
+        return;
+
+    for (const auto &column : m_columns)
+        if (!column.comment.isEmpty())
+            addCommand<CommentCommand>({{}, Comment, column.name, column.comment});
+}
+
+IndexDefinitionReference
 Blueprint::indexCommand(const QString &type, const QVector<QString> &columns,
-                        const QString &indexName, const QString &algorithm)
+                        const QString &indexName, const QString &algorithm,
+                        const QString &language)
 {
     /* If no name was specified for this index, we will create one using a basic
        convention of the table name, followed by the columns, followed by an
@@ -672,13 +689,16 @@ Blueprint::indexCommand(const QString &type, const QVector<QString> &columns,
                  indexName.isEmpty() ? createIndexName(type, columns)
                                      : indexName,
                  QVector<Column>(columns.cbegin(), columns.cend()),
-                 algorithm});
+                 algorithm, language});
 }
 
 const IndexCommand &
 Blueprint::dropIndexCommand(const QString &command, const QString &type,
                             const QVector<QString> &columns)
 {
+    /* Although it looks weird so these two methods works, I tested them, believe me,
+       the dropPrimary("") drops the primary key on both MySQL and PostgreSQL. */
+
     // Used by dropPrimary("")
     if (columns.isEmpty())
         return indexCommand(command, {}, {});

@@ -55,10 +55,10 @@ ConnectionFactory::parseConfig(QVariantHash &config, const QString &name) const
     normalizeDriverName(config);
 
     if (!config.contains(database_))
-        config.insert(database_, QString(""));
+        config.insert(database_, EMPTY);
 
     if (!config.contains(prefix_))
-        config.insert(prefix_, QString(""));
+        config.insert(prefix_, EMPTY);
 
     if (!config.contains(options_))
         config.insert(options_, QVariantHash());
@@ -67,6 +67,9 @@ ConnectionFactory::parseConfig(QVariantHash &config, const QString &name) const
         config.insert(prefix_indexes, false);
 
     // FUTURE connector, this can be enhanced, eg. add default values per driver, eg. engine_ for mysql is missing, can not be added because is driver specific silverqx
+    if (config[driver_] == QPSQL && !config.contains(dont_drop))
+        // spatial_ref_sys table is used by the PostGIS
+        config.insert(dont_drop, QStringList {QStringLiteral("spatial_ref_sys")});
 
     return config;
 }
@@ -74,7 +77,7 @@ ConnectionFactory::parseConfig(QVariantHash &config, const QString &name) const
 void ConnectionFactory::normalizeDriverName(QVariantHash &config) const
 {
     if (!config.contains(driver_))
-        config.insert(driver_, QString(""));
+        config.insert(driver_, EMPTY);
 
     else {
         auto &driver = config[driver_];

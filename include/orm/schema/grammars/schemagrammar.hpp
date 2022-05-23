@@ -50,9 +50,9 @@ namespace Grammars
         virtual QString compileDropAllViews(const QVector<QString> &views) const;
 
         /*! Compile the SQL needed to retrieve all table names. */
-        virtual QString compileGetAllTables() const;
+        virtual QString compileGetAllTables(const QVector<QString> &databases = {}) const;
         /*! Compile the SQL needed to retrieve all view names. */
-        virtual QString compileGetAllViews() const;
+        virtual QString compileGetAllViews(const QVector<QString> &databases = {}) const;
 
         /*! Compile the command to enable foreign key constraints. */
         virtual QString compileEnableForeignKeyConstraints() const = 0;

@@ -40,12 +40,14 @@ QString MySqlSchemaGrammar::compileDropAllViews(const QVector<QString> &views) c
     return QStringLiteral("drop view %1").arg(columnize(views));
 }
 
-QString MySqlSchemaGrammar::compileGetAllTables() const
+QString
+MySqlSchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const
 {
     return QStringLiteral("SHOW FULL TABLES WHERE table_type = 'BASE TABLE';");
 }
 
-QString MySqlSchemaGrammar::compileGetAllViews() const
+QString
+MySqlSchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const
 {
     return QStringLiteral("SHOW FULL TABLES WHERE table_type = 'VIEW';");
 }
@@ -77,8 +79,6 @@ QString MySqlSchemaGrammar::compileColumnListing(const QString &/*unused*/) cons
 
 /* Compile methods for commands */
 
-/* public */
-
 QVector<QString>
 MySqlSchemaGrammar::compileCreate(const Blueprint &blueprint,
                                   const DatabaseConnection &connection) const
@@ -97,7 +97,11 @@ MySqlSchemaGrammar::compileCreate(const Blueprint &blueprint,
 
     /* Prepare container with all sql queries, autoIncrement for every column uses
        alter table, so separate SQL queries are provided for every column. */
-    QVector<QString> sql {sqlCreateTable};
+    QVector<QString> sql;
+    sql.reserve(2);
+
+    sql << std::move(sqlCreateTable);
+
     if (!autoIncrementStartingValues.isEmpty())
         sql << std::move(autoIncrementStartingValues);
 
@@ -137,7 +141,11 @@ QVector<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
 
     /* Prepare container with all sql queries, autoIncrement for every column uses
        alter table, so separate SQL queries are provided for every column. */
-    QVector<QString> sql {sqlAlterTable};
+    QVector<QString> sql;
+    sql.reserve(2);
+
+    sql << std::move(sqlAlterTable);
+
     if (!autoIncrementStartingValues.isEmpty())
         sql << std::move(autoIncrementStartingValues);
 
@@ -235,34 +243,6 @@ MySqlSchemaGrammar::compileRenameIndex(const Blueprint &blueprint,
                      BaseGrammar::wrap(command.to))};
 }
 
-namespace
-{
-    /*! Concept for a member function. */
-    template<typename M>
-    concept IsMemFun = std::is_member_function_pointer_v<std::decay_t<M>>;
-
-    /*! Function signature. */
-    template<typename Sig>
-    struct FunctionSignature;
-
-    /*! Function signature, a member function specialization. */
-    template<typename R, typename C, typename...Args>
-    struct FunctionSignature<R(C::*)(Args...) const>
-    {
-        using type = std::tuple<Args...>;
-    };
-
-    /*! Helper function to obtain function types as std::tuple. */
-    template<IsMemFun M>
-    auto argumentTypes(M &&) -> typename FunctionSignature<std::decay_t<M>>::type;
-
-    /*! Helper function to obtain function parameter type at I position
-        from std::tuple. */
-    template<std::size_t I, IsMemFun M>
-    auto argumentType(M &&method) -> decltype (std::get<I>(argumentTypes(method)));
-
-} // namespace
-
 QVector<QString>
 MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                                         const DatabaseConnection &connection,
@@ -331,7 +311,8 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
     Q_ASSERT_X(cached.contains(name),
                qUtf8Printable(__tiny_func__),
-               QStringLiteral("Compile methods map doesn't contain the '%1' key.")
+               QStringLiteral("Compile methods map doesn't contain the '%1' key "
+                              "(unsupported command).")
                .arg(name)
                .toUtf8().constData());
 
@@ -627,7 +608,7 @@ QString MySqlSchemaGrammar::typeTinyText(const ColumnDefinition &/*unused*/) con
 
 QString MySqlSchemaGrammar::typeText(const ColumnDefinition &/*unused*/) const
 {
-    return QStringLiteral("text");
+    return text_;
 }
 
 QString MySqlSchemaGrammar::typeMediumText(const ColumnDefinition &/*unused*/) const
@@ -752,6 +733,9 @@ QString MySqlSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
 
 QString MySqlSchemaGrammar::typeTimestamp(const ColumnDefinition &column) const
 {
+    /* The behavior if the precision is omitted (or 0 of course):
+       >0 is ok so the default will be: timestamp and the MySQL default is 0 if omitted.
+       The same as in the PostgreSQL grammar. */
     auto columnType = column.precision > 0
                       ? QStringLiteral("timestamp(%1)").arg(column.precision)
                       : QStringLiteral("timestamp");

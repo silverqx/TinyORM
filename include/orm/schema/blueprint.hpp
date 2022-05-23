@@ -11,6 +11,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/ormconcepts.hpp"
 #include "orm/schema/foreignidcolumndefinitionreference.hpp"
+#include "orm/schema/indexdefinitionreference.hpp"
 #include "orm/schema/schemaconstants.hpp"
 #ifndef TINYORM_DISABLE_ORM
 #  include "orm/tiny/tinytypes.hpp"
@@ -89,50 +90,50 @@ namespace Grammars
         const RenameCommand &renameColumn(const QString &from, const QString &to);
 
         /*! Specify the primary key(s) for the table. */
-        const IndexCommand &
+        IndexDefinitionReference
         primary(const QVector<QString> &columns, const QString &indexName = "",
                 const QString &algorithm = "");
         /*! Specify the primary key(s) for the table. */
         template<typename = void>
-        const IndexCommand &
+        IndexDefinitionReference
         primary(const QString &column, const QString &indexName = "",
                 const QString &algorithm = "");
         /*! Specify a unique index for the table. */
-        const IndexCommand &
+        IndexDefinitionReference
         unique(const QVector<QString> &columns, const QString &indexName = "",
                const QString &algorithm = "");
         /*! Specify a unique index for the table. */
         template<typename = void>
-        const IndexCommand &
+        IndexDefinitionReference
         unique(const QString &column, const QString &indexName = "",
                const QString &algorithm = "");
         /*! Specify an index for the table. */
-        const IndexCommand &
+        IndexDefinitionReference
         index(const QVector<QString> &columns, const QString &indexName = "",
               const QString &algorithm = "");
         /*! Specify an index for the table. */
         template<typename = void>
-        const IndexCommand &
+        IndexDefinitionReference
         index(const QString &column, const QString &indexName = "",
               const QString &algorithm = "");
         /*! Specify an fulltext for the table. */
-        const IndexCommand &
+        IndexDefinitionReference
         fullText(const QVector<QString> &columns, const QString &indexName = "",
-                 const QString &algorithm = "");
+                 const QString &algorithm = "", const QString &language = "");
         /*! Specify an fulltext for the table. */
         template<typename = void>
-        const IndexCommand &
+        IndexDefinitionReference
         fullText(const QString &column, const QString &indexName = "",
-                 const QString &algorithm = "");
+                 const QString &algorithm = "", const QString &language = "");
         /*! Specify a spatial index for the table. */
-        const IndexCommand &
+        IndexDefinitionReference
         spatialIndex(const QVector<QString> &columns, const QString &indexName = "");
         /*! Specify a spatial index for the table. */
         template<typename = void>
-        const IndexCommand &
+        IndexDefinitionReference
         spatialIndex(const QString &column, const QString &indexName = "");
         /*! Specify a raw index for the table. */
-        const IndexCommand &
+        IndexDefinitionReference
         rawIndex(const Expression &expression, const QString &indexName);
         /*! Specify a foreign key for the table. */
         ForeignKeyDefinitionReference
@@ -433,11 +434,14 @@ namespace Grammars
         void addImpliedCommands(const SchemaGrammar &grammar);
         /*! Add the index commands fluently specified on columns. */
         void addFluentIndexes();
+        /*! Add the fluent commands specified on any columns. */
+        void addFluentCommands(const SchemaGrammar &grammar);
 
         /*! Add a new index command to the blueprint. */
-        const IndexCommand &
+        IndexDefinitionReference
         indexCommand(const QString &type, const QVector<QString> &columns,
-                     const QString &indexName, const QString &algorithm = "");
+                     const QString &indexName, const QString &algorithm = "",
+                     const QString &language = "");
         /*! Create a new drop index command on the blueprint. */
         const IndexCommand &
         dropIndexCommand(const QString &command, const QString &type,
@@ -500,7 +504,7 @@ namespace Grammars
     }
 
     template<typename>
-    const IndexCommand &
+    IndexDefinitionReference
     Blueprint::primary(const QString &column, const QString &indexName,
                        const QString &algorithm)
     {
@@ -508,7 +512,7 @@ namespace Grammars
     }
 
     template<typename>
-    const IndexCommand &
+    IndexDefinitionReference
     Blueprint::unique(const QString &column, const QString &indexName,
                       const QString &algorithm)
     {
@@ -516,7 +520,7 @@ namespace Grammars
     }
 
     template<typename>
-    const IndexCommand &
+    IndexDefinitionReference
     Blueprint::index(const QString &column, const QString &indexName,
                      const QString &algorithm)
     {
@@ -524,15 +528,15 @@ namespace Grammars
     }
 
     template<typename>
-    const IndexCommand &
+    IndexDefinitionReference
     Blueprint::fullText(const QString &column, const QString &indexName,
-                        const QString &algorithm)
+                        const QString &algorithm, const QString &language)
     {
-        return fullText(QVector<QString> {column}, indexName, algorithm);
+        return fullText(QVector<QString> {column}, indexName, algorithm, language);
     }
 
     template<typename>
-    const IndexCommand &
+    IndexDefinitionReference
     Blueprint::spatialIndex(const QString &column, const QString &indexName)
     {
         return spatialIndex(QVector<QString> {column}, indexName);

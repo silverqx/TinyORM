@@ -46,6 +46,31 @@ ForeignKeyDefinitionReference::onUpdate(const QString &action)
     return *this;
 }
 
+ForeignKeyDefinitionReference &
+ForeignKeyDefinitionReference::deferrable(const bool value)
+{
+    m_foreignKeyCommandDefinition.get().deferrable = value;
+
+    return *this;
+}
+
+ForeignKeyDefinitionReference &
+ForeignKeyDefinitionReference::initiallyImmediate(const bool value)
+{
+    m_foreignKeyCommandDefinition.get().initiallyImmediate = value;
+
+    return *this;
+}
+
+ForeignKeyDefinitionReference &ForeignKeyDefinitionReference::notValid(const bool value)
+{
+    m_foreignKeyCommandDefinition.get().notValid = value;
+
+    return *this;
+}
+
+/* Shortcuts */
+
 ForeignKeyDefinitionReference &ForeignKeyDefinitionReference::cascadeOnUpdate()
 {
     return onUpdate(Cascade);

@@ -73,6 +73,7 @@ headersList += \
     $$PWD/orm/schema/grammars/postgresschemagrammar.hpp \
     $$PWD/orm/schema/grammars/schemagrammar.hpp \
     $$PWD/orm/schema/grammars/sqliteschemagrammar.hpp \
+    $$PWD/orm/schema/indexdefinitionreference.hpp \
     $$PWD/orm/schema/mysqlschemabuilder.hpp \
     $$PWD/orm/schema/postgresschemabuilder.hpp \
     $$PWD/orm/schema/schemabuilder.hpp \

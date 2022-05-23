@@ -71,6 +71,8 @@ namespace Orm::SchemaNs
         QVector<Column> columns;
         /*! Algorithm to use during index creation. */
         QString algorithm {};
+        /*! Dictionary for the to_tsvector function for fulltext search (PostgreSQL). */
+        QString language {};
     };
 
     /*! Foreign key constraints command. */
@@ -96,6 +98,26 @@ namespace Orm::SchemaNs
         /*! Specifies ON UPDATE action (cascade/restrict/set null/no action/
             set default). */
         QString onUpdate {};
+
+        /*! Set the foreign key as deferrable (PostgreSQL). */
+        std::optional<bool> deferrable = std::nullopt;
+        /*! Set the default time to check the constraint (PostgreSQL). */
+        std::optional<bool> initiallyImmediate = std::nullopt;
+        /*! Set the skip check that all existing rows in the table satisfy the new
+            constraint, skip this check on true (PostgreSQL). */
+        std::optional<bool> notValid = std::nullopt;
+    };
+
+    /*! Column comment command for the PostgreSQL. */
+    class CommentCommand : public CommandDefinition
+    {
+    public:
+        /*! Command name. */
+        QString name {};
+        /*! Column name. */
+        QString column;
+        /*! Column comment value. */
+        QString comment;
     };
 
     /*! Database column definition. */
@@ -126,7 +148,7 @@ namespace Orm::SchemaNs
            should be ok:
            https://dev.mysql.com/doc/refman/8.0/en/spatial-function-argument-handling.html */
         /*! The spatial reference identifier (SRID) of a geometry identifies the SRS
-            in which the geometry is defined. */
+            in which the geometry is defined (MySQL/PostgreSQL). */
         std::optional<quint32> srid = std::nullopt;
         /*! Number of digits before the decimal point for floating-point types. */
         std::optional<int> total    = std::nullopt;
@@ -154,22 +176,30 @@ namespace Orm::SchemaNs
         QString comment       {};
         /*! Specify a "default" value for the column. */
         QVariant defaultValue {};
-        /*! Set the starting value of an auto-incrementing field (MySQL / PostgreSQL). */
-        std::optional<quint64> from          = std::nullopt;
-        /*! Set the starting value of an auto-incrementing field (MySQL / PostgreSQL). */
-        std::optional<quint64> startingValue = std::nullopt;
+        /*! Create a SQL compliant identity column (PostgreSQL). */
+        QString generatedAs   {};
         /*! Create a stored generated column (MySQL/PostgreSQL/SQLite). */
-        QString storedAs  {};
+        QString storedAs      {};
         /*! Create a virtual generated column (MySQL/PostgreSQL/SQLite). */
-        QString virtualAs {};
+        QString virtualAs     {};
+
+        /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL). */
+        std::optional<quint64> from          = std::nullopt;
+        /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL). */
+        std::optional<quint64> startingValue = std::nullopt;
 
         // Place boolean data members at the end to avoid excessive padding
+        /*! Used as a modifier for generatedAs() (PostgreSQL). */
+        bool always             = false;
         /*! Determine whether the INTEGER column is auto-increment (primary key). */
         bool autoIncrement      = false;
         /*! Place the column "first" in the table (MySQL). */
         bool first              = false;
         /*! Specify that the column should be invisible to "SELECT *" (MySQL). */
         bool invisible          = false;
+        /*! Determine whether to use the geography (default, false) or
+            geometry type (PostgreSQL). */
+        bool isGeometry         = false;
         /*! Determine whether the INTEGER column is UNSIGNED (MySQL). */
         bool isUnsigned         = false;
         /*! Allow NULL values to be inserted into the column. */

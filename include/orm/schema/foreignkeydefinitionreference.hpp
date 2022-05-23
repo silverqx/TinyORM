@@ -41,6 +41,15 @@ namespace Orm::SchemaNs
         /*! Add an ON UPDATE action. */
         ForeignKeyDefinitionReference &onUpdate(const QString &action);
 
+        /*! Set the foreign key as deferrable (PostgreSQL). */
+        ForeignKeyDefinitionReference &deferrable(bool value = true);
+        /*! Set the default time to check the constraint (PostgreSQL). */
+        ForeignKeyDefinitionReference &initiallyImmediate(bool value = true);
+        /*! Set skip check that all existing rows in the table satisfy the new
+            constraint (PostgreSQL). */
+        ForeignKeyDefinitionReference &notValid(bool value = true);
+
+        /* Shortcuts */
         /*! Indicate that updates should cascade. */
         ForeignKeyDefinitionReference &cascadeOnUpdate();
         /*! Indicate that updates should be restricted. */

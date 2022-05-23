@@ -78,6 +78,7 @@ function(tinyorm_sources out_headers out_sources)
         schema/grammars/postgresschemagrammar.hpp
         schema/grammars/schemagrammar.hpp
         schema/grammars/sqliteschemagrammar.hpp
+        schema/indexdefinitionreference.hpp
         schema/mysqlschemabuilder.hpp
         schema/postgresschemabuilder.hpp
         schema/schemabuilder.hpp
@@ -193,6 +194,7 @@ function(tinyorm_sources out_headers out_sources)
         schema/grammars/postgresschemagrammar.cpp
         schema/grammars/schemagrammar.cpp
         schema/grammars/sqliteschemagrammar.cpp
+        schema/indexdefinitionreference.cpp
         schema/mysqlschemabuilder.cpp
         schema/postgresschemabuilder.cpp
         schema/schemabuilder.cpp

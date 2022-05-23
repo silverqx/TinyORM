@@ -12,14 +12,14 @@
 #include "databases.hpp"
 
 using Orm::Constants::ID;
-using Orm::Constants::MyISAM;
 using Orm::Constants::NAME;
-using Orm::Constants::QMYSQL;
+using Orm::Constants::PUBLIC;
+using Orm::Constants::QPSQL;
 using Orm::Constants::SIZE;
 using Orm::Constants::UTF8;
+using Orm::Constants::UcsBasic;
 using Orm::Constants::charset_;
 using Orm::Constants::driver_;
-using Orm::Constants::collation_;
 
 using Orm::DB;
 using Orm::Exceptions::LogicError;
@@ -30,7 +30,7 @@ using Orm::SchemaNs::Constants::Restrict;
 
 using TestUtils::Databases;
 
-class tst_Mysql_SchemaBuilder : public QObject
+class tst_PostgreSQL_SchemaBuilder : public QObject
 {
     Q_OBJECT
 
@@ -104,17 +104,18 @@ private:
     QString m_connection {};
 };
 
-void tst_Mysql_SchemaBuilder::initTestCase()
+void tst_PostgreSQL_SchemaBuilder::initTestCase()
 {
-    m_connection = Databases::createConnection(Databases::MYSQL);
+    m_connection = Databases::createConnection(Databases::POSTGRESQL);
 
     if (m_connection.isEmpty())
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
                              "for '%2' connection have not been defined.")
-              .arg("tst_Mysql_SchemaBuilder", Databases::MYSQL).toUtf8().constData(), );
+              .arg("tst_PostgreSQL_SchemaBuilder", Databases::POSTGRESQL)
+              .toUtf8().constData(), );
 }
 
-void tst_Mysql_SchemaBuilder::createDatabase() const
+void tst_PostgreSQL_SchemaBuilder::createDatabase() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -126,23 +127,22 @@ void tst_Mysql_SchemaBuilder::createDatabase() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create database `firewalls` "
-             "default character set `utf8mb4` default collate `utf8mb4_0900_ai_ci`");
+             R"(create database "firewalls" encoding "utf8")");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::createDatabase_Charset_Collation() const
+void tst_PostgreSQL_SchemaBuilder::createDatabase_Charset_Collation() const
 {
-    static const auto mysqlCreateDb = QStringLiteral("tinyorm_mysql_tests_create_db");
+    static const auto postgresCreateDb = QStringLiteral(
+                                             "tinyorm_postgres_tests_create_db");
 
-    // Create a new connection with different charset and collation
+    // Create a new connection with different charset
     DB::addConnection({
-        {driver_,    QMYSQL},
-        {charset_,   UTF8},
-        {collation_, QStringLiteral("utf8_general_ci")},
-    }, mysqlCreateDb);
+        {driver_,    QPSQL},
+        {charset_,   "WIN1250"},
+    }, postgresCreateDb);
 
-    auto log = DB::connection(mysqlCreateDb).pretend([](auto &connection)
+    auto log = DB::connection(postgresCreateDb).pretend([](auto &connection)
     {
         Schema::on(connection.getName()).createDatabase(Firewalls);
     });
@@ -152,15 +152,14 @@ void tst_Mysql_SchemaBuilder::createDatabase_Charset_Collation() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create database `firewalls` "
-             "default character set `utf8` default collate `utf8_general_ci`");
+             R"(create database "firewalls" encoding "WIN1250")");
     QVERIFY(firstLog.boundValues.isEmpty());
 
     // Restore
-    DB::removeConnection(mysqlCreateDb);
+    DB::removeConnection(postgresCreateDb);
 }
 
-void tst_Mysql_SchemaBuilder::dropDatabaseIfExists() const
+void tst_PostgreSQL_SchemaBuilder::dropDatabaseIfExists() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -172,11 +171,11 @@ void tst_Mysql_SchemaBuilder::dropDatabaseIfExists() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "drop database if exists `firewalls`");
+             R"(drop database if exists "firewalls")");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::createTable() const
+void tst_PostgreSQL_SchemaBuilder::createTable() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -199,6 +198,7 @@ void tst_Mysql_SchemaBuilder::createTable() const
             table.mediumInteger("mediumInteger");
             table.bigInteger("bigInteger");
 
+            // PostgreSQL doesn't have unsigned integers, so they should be same as above
             table.unsignedInteger("unsignedInteger");
             table.unsignedTinyInteger("unsignedTinyInteger");
             table.unsignedSmallInteger("unsignedSmallInteger");
@@ -216,35 +216,33 @@ void tst_Mysql_SchemaBuilder::createTable() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`char` char(255) not null, "
-             "`char_10` char(10) not null, "
-             "`string` varchar(255) not null, "
-             "`string_22` varchar(22) not null, "
-             "`tiny_text` tinytext not null, "
-             "`text` text not null, "
-             "`medium_text` mediumtext not null, "
-             "`long_text` longtext not null, "
-             "`integer` int not null, "
-             "`tinyInteger` tinyint not null, "
-             "`smallInteger` smallint not null, "
-             "`mediumInteger` mediumint not null, "
-             "`bigInteger` bigint not null, "
-             "`unsignedInteger` int unsigned not null, "
-             "`unsignedTinyInteger` tinyint unsigned not null, "
-             "`unsignedSmallInteger` smallint unsigned not null, "
-             "`unsignedMediumInteger` mediumint unsigned not null, "
-             "`unsignedBigInteger` bigint unsigned not null, "
-             "`uuid` char(36) not null, "
-             "`ip_address` varchar(45) not null, "
-             "`mac_address` varchar(17) not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"char\" char(255) not null, "
+             "\"char_10\" char(10) not null, "
+             "\"string\" varchar(255) not null, "
+             "\"string_22\" varchar(22) not null, "
+             "\"tiny_text\" varchar(255) not null, "
+             "\"text\" text not null, "
+             "\"medium_text\" text not null, "
+             "\"long_text\" text not null, "
+             "\"integer\" integer not null, "
+             "\"tinyInteger\" smallint not null, "
+             "\"smallInteger\" smallint not null, "
+             "\"mediumInteger\" integer not null, "
+             "\"bigInteger\" bigint not null, "
+             "\"unsignedInteger\" integer not null, "
+             "\"unsignedTinyInteger\" smallint not null, "
+             "\"unsignedSmallInteger\" smallint not null, "
+             "\"unsignedMediumInteger\" integer not null, "
+             "\"unsignedBigInteger\" bigint not null, "
+             "\"uuid\" uuid not null, "
+             "\"ip_address\" inet not null, "
+             "\"mac_address\" macaddr not null)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::createTable_Temporary() const
+void tst_PostgreSQL_SchemaBuilder::createTable_Temporary() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -263,24 +261,21 @@ void tst_Mysql_SchemaBuilder::createTable_Temporary() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create temporary table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name` varchar(255) not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create temporary table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"name\" varchar(255) not null)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::createTable_Charset_Collation_Engine() const
+void tst_PostgreSQL_SchemaBuilder::createTable_Charset_Collation_Engine() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         Schema::on(connection.getName())
                 .create(Firewalls, [](Blueprint &table)
         {
-            table.charset = UTF8;
-            table.collation = "utf8_general_ci";
-            table.engine = MyISAM;
+            // Ignored with the PosrgreSQL grammar
+            table.charset = "WIN1250";
 
             table.id();
             table.string(NAME);
@@ -292,15 +287,13 @@ void tst_Mysql_SchemaBuilder::createTable_Charset_Collation_Engine() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name` varchar(255) not null) "
-             "default character set utf8 collate 'utf8_general_ci' "
-             "engine = MyISAM");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"name\" varchar(255) not null)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
+void tst_PostgreSQL_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -333,37 +326,34 @@ void tst_Mysql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`created_at` timestamp null, "
-             "`updated_at` timestamp null, "
-             "`remember_token` varchar(100) null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"created_at\" timestamp(0) without time zone null, "
+             "\"updated_at\" timestamp(0) without time zone null, "
+             "\"remember_token\" varchar(100) null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` drop `created_at`, drop `updated_at`");
+             "alter table \"firewalls\" "
+             "drop column \"created_at\", drop column \"updated_at\"");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` drop `remember_token`");
+             "alter table \"firewalls\" drop column \"remember_token\"");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`created_at` timestamp(3) null, "
-             "`updated_at` timestamp(3) null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"created_at\" timestamp(3) without time zone null, "
+             "\"updated_at\" timestamp(3) without time zone null)");
     QVERIFY(log3.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::modifyTable() const
+void tst_PostgreSQL_SchemaBuilder::modifyTable() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -397,48 +387,52 @@ void tst_Mysql_SchemaBuilder::modifyTable() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "alter table `firewalls` "
-             "add `char` char(255) not null, "
-             "add `char_10` char(10) not null, "
-             "add `string` varchar(255) not null, "
-             "add `string_22` varchar(22) not null, "
-             "add `tiny_text` tinytext not null, "
-             "add `text` text not null, "
-             "add `medium_text` mediumtext not null, "
-             "add `long_text` longtext not null, "
-             "add `integer` int null, "
-             "add `tinyInteger` tinyint not null, "
-             "add `smallInteger` smallint not null, "
-             "add `mediumInteger` mediumint not null");
+             "alter table \"firewalls\" "
+             "add column \"char\" char(255) not null, "
+             "add column \"char_10\" char(10) not null, "
+             "add column \"string\" varchar(255) not null, "
+             "add column \"string_22\" varchar(22) not null, "
+             "add column \"tiny_text\" varchar(255) not null, "
+             "add column \"text\" text not null, "
+             "add column \"medium_text\" text not null, "
+             "add column \"long_text\" text not null, "
+             "add column \"integer\" integer null, "
+             "add column \"tinyInteger\" smallint not null, "
+             "add column \"smallInteger\" smallint not null, "
+             "add column \"mediumInteger\" integer not null");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` drop `long_text`");
+             "alter table \"firewalls\" drop column \"long_text\"");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` drop `medium_text`, drop `text`");
+             "alter table \"firewalls\" "
+             "drop column \"medium_text\", drop column \"text\"");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table `firewalls` drop `smallInteger`, drop `mediumInteger`");
+             "alter table \"firewalls\" "
+             "drop column \"smallInteger\", drop column \"mediumInteger\"");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
-             "alter table `firewalls` rename column `integer` to `integer_renamed`");
+             "alter table \"firewalls\" "
+             "rename column \"integer\" to \"integer_renamed\"");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
     QCOMPARE(log5.query,
-             "alter table `firewalls` rename column `string_22` to `string_22_renamed`");
+             "alter table \"firewalls\" "
+             "rename column \"string_22\" to \"string_22_renamed\"");
     QVERIFY(log5.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropTable() const
+void tst_PostgreSQL_SchemaBuilder::dropTable() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -449,11 +443,11 @@ void tst_Mysql_SchemaBuilder::dropTable() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "drop table `firewalls`");
+    QCOMPARE(firstLog.query, "drop table \"firewalls\"");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropTableIfExists() const
+void tst_PostgreSQL_SchemaBuilder::dropTableIfExists() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -464,11 +458,11 @@ void tst_Mysql_SchemaBuilder::dropTableIfExists() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "drop table if exists `firewalls`");
+    QCOMPARE(firstLog.query, "drop table if exists \"firewalls\"");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::rename() const
+void tst_PostgreSQL_SchemaBuilder::rename() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -479,11 +473,11 @@ void tst_Mysql_SchemaBuilder::rename() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "rename table `secured` to `firewalls`");
+    QCOMPARE(firstLog.query, "alter table \"secured\" rename to \"firewalls\"");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropColumns() const
+void tst_PostgreSQL_SchemaBuilder::dropColumns() const
 {
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
@@ -495,7 +489,8 @@ void tst_Mysql_SchemaBuilder::dropColumns() const
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
-        QCOMPARE(firstLog.query, "alter table `firewalls` drop `name`");
+        QCOMPARE(firstLog.query,
+                 R"(alter table "firewalls" drop column "name")");
         QVERIFY(firstLog.boundValues.isEmpty());
     }
     {
@@ -508,7 +503,8 @@ void tst_Mysql_SchemaBuilder::dropColumns() const
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
-        QCOMPARE(firstLog.query, "alter table `firewalls` drop `name`, drop `size`");
+        QCOMPARE(firstLog.query,
+                 R"(alter table "firewalls" drop column "name", drop column "size")");
         QVERIFY(firstLog.boundValues.isEmpty());
     }
     {
@@ -521,12 +517,13 @@ void tst_Mysql_SchemaBuilder::dropColumns() const
         const auto &firstLog = log.first();
 
         QCOMPARE(log.size(), 1);
-        QCOMPARE(firstLog.query, "alter table `firewalls` drop `name`, drop `size`");
+        QCOMPARE(firstLog.query,
+                 R"(alter table "firewalls" drop column "name", drop column "size")");
         QVERIFY(firstLog.boundValues.isEmpty());
     }
 }
 
-void tst_Mysql_SchemaBuilder::renameColumn() const
+void tst_PostgreSQL_SchemaBuilder::renameColumn() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -538,16 +535,16 @@ void tst_Mysql_SchemaBuilder::renameColumn() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "alter table `firewalls` rename column `name` to `first_name`");
+             "alter table \"firewalls\" rename column \"name\" to \"first_name\"");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropAllTypes() const
+void tst_PostgreSQL_SchemaBuilder::dropAllTypes() const
 {
     QVERIFY_EXCEPTION_THROWN(Schema::on(m_connection).dropAllTypes(), LogicError);
 }
 
-void tst_Mysql_SchemaBuilder::getAllTables() const
+void tst_PostgreSQL_SchemaBuilder::getAllTables() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -558,11 +555,13 @@ void tst_Mysql_SchemaBuilder::getAllTables() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "SHOW FULL TABLES WHERE table_type = 'BASE TABLE';");
+    QCOMPARE(firstLog.query,
+             "select tablename from pg_catalog.pg_tables "
+             "where schemaname in ('public')");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::getAllViews() const
+void tst_PostgreSQL_SchemaBuilder::getAllViews() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -573,11 +572,13 @@ void tst_Mysql_SchemaBuilder::getAllViews() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "SHOW FULL TABLES WHERE table_type = 'VIEW';");
+    QCOMPARE(firstLog.query,
+             "select viewname from pg_catalog.pg_views "
+             "where schemaname in ('public')");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::enableForeignKeyConstraints() const
+void tst_PostgreSQL_SchemaBuilder::enableForeignKeyConstraints() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -588,11 +589,11 @@ void tst_Mysql_SchemaBuilder::enableForeignKeyConstraints() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "SET FOREIGN_KEY_CHECKS=1;");
+    QCOMPARE(firstLog.query, "SET CONSTRAINTS ALL IMMEDIATE;");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::disableForeignKeyConstraints() const
+void tst_PostgreSQL_SchemaBuilder::disableForeignKeyConstraints() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -603,11 +604,11 @@ void tst_Mysql_SchemaBuilder::disableForeignKeyConstraints() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "SET FOREIGN_KEY_CHECKS=0;");
+    QCOMPARE(firstLog.query, "SET CONSTRAINTS ALL DEFERRED;");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::getColumnListing() const
+void tst_PostgreSQL_SchemaBuilder::getColumnListing() const
 {
     auto &connection = DB::connection(m_connection);
 
@@ -621,15 +622,14 @@ void tst_Mysql_SchemaBuilder::getColumnListing() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "select `column_name` as `column_name` "
-             "from `information_schema`.`columns` "
-             "where `table_schema` = ? and `table_name` = ?");
+             "select column_name "
+             "from information_schema.columns "
+             "where table_schema = ? and table_name = ?");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                QVariant(Firewalls)}));
+             QVector<QVariant>({QVariant(PUBLIC), QVariant(Firewalls)}));
 }
 
-void tst_Mysql_SchemaBuilder::hasTable() const
+void tst_PostgreSQL_SchemaBuilder::hasTable() const
 {
     auto &connection = DB::connection(m_connection);
 
@@ -644,15 +644,14 @@ void tst_Mysql_SchemaBuilder::hasTable() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "select * "
-             "from `information_schema`.`tables` "
-             "where `table_schema` = ? and `table_name` = ? and "
-             "`table_type` = 'BASE TABLE'");
+             "from information_schema.tables "
+             "where table_schema = ? and table_name = ? and "
+             "table_type = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                QVariant(Firewalls)}));
+             QVector<QVariant>({QVariant(PUBLIC), QVariant(Firewalls)}));
 }
 
-void tst_Mysql_SchemaBuilder::defaultStringLength_Set() const
+void tst_PostgreSQL_SchemaBuilder::defaultStringLength_Set() const
 {
     QVERIFY(Blueprint::DefaultStringLength == Orm::SchemaNs::DefaultStringLength);
 
@@ -664,75 +663,72 @@ void tst_Mysql_SchemaBuilder::defaultStringLength_Set() const
     QVERIFY(Blueprint::DefaultStringLength == Orm::SchemaNs::DefaultStringLength);
 }
 
-void tst_Mysql_SchemaBuilder::modifiers() const
+void tst_PostgreSQL_SchemaBuilder::modifiers() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         Schema::on(connection.getName())
                 .create(Firewalls, [](Blueprint &table)
         {
-            table.bigInteger(ID).autoIncrement().isUnsigned().startingValue(5);
+            table.bigInteger(ID).autoIncrement().startingValue(5);
+            table.bigInteger("big_int");
             table.string(NAME).defaultValue("guest");
             table.string("name1").nullable();
             table.string("name2").comment("name2 note");
             table.string("name3");
-            table.string("name4").invisible();
+            // PostgreSQL doesn't support charset on the column
             table.string("name5").charset(UTF8);
-            table.string("name6").collation("utf8mb4_unicode_ci");
-            table.string("name7").charset(UTF8).collation("utf8_unicode_ci");
-            table.bigInteger("big_int").isUnsigned();
-            table.bigInteger("big_int1");
+            table.string("name6").collation(UcsBasic);
+            // PostgreSQL doesn't support charset on the column
+            table.string("name7").charset(UTF8).collation(UcsBasic);
         });
         /* Tests from and also integerIncrements, this would of course fail on real DB
            as you can not have two primary keys. */
         Schema::on(connection.getName())
                 .table(Firewalls, [](Blueprint &table)
         {
-            table.string(NAME).after("big_int");
-            table.integerIncrements(ID).from(15).first();
+            table.integerIncrements(ID).from(15);
         });
     });
 
-    QCOMPARE(log.size(), 4);
+    QCOMPARE(log.size(), 5);
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name` varchar(255) not null default 'guest', "
-             "`name1` varchar(255) null, "
-             "`name2` varchar(255) not null comment 'name2 note', "
-             "`name3` varchar(255) not null, "
-             "`name4` varchar(255) not null invisible, "
-             "`name5` varchar(255) character set 'utf8' not null, "
-             "`name6` varchar(255) collate 'utf8mb4_unicode_ci' not null, "
-             "`name7` varchar(255) character set 'utf8' collate 'utf8_unicode_ci' "
-               "not null, "
-             "`big_int` bigint unsigned not null, "
-             "`big_int1` bigint not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"big_int\" bigint not null, "
+             "\"name\" varchar(255) not null default 'guest', "
+             "\"name1\" varchar(255) null, "
+             "\"name2\" varchar(255) not null, "
+             "\"name3\" varchar(255) not null, "
+             "\"name5\" varchar(255) not null, "
+             "\"name6\" varchar(255) collate \"ucs_basic\" not null, "
+             "\"name7\" varchar(255) collate \"ucs_basic\" not null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` auto_increment = 5");
+             R"(alter sequence "firewalls_id_seq" restart with 5)");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` "
-             "add `name` varchar(255) not null after `big_int`, "
-             "add `id` int unsigned not null auto_increment primary key first");
+             R"(comment on column "firewalls"."name2" is 'name2 note')");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table `firewalls` auto_increment = 15");
+             "alter table \"firewalls\" add column \"id\" serial primary key not null");
     QVERIFY(log3.boundValues.isEmpty());
+
+    const auto &log4 = log.at(4);
+    QCOMPARE(log4.query,
+             R"(alter sequence "firewalls_id_seq" restart with 15)");
+    QVERIFY(log4.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::modifier_defaultValue_WithExpression() const
+void tst_PostgreSQL_SchemaBuilder::modifier_defaultValue_WithExpression() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -749,15 +745,13 @@ void tst_Mysql_SchemaBuilder::modifier_defaultValue_WithExpression() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`name` varchar(255) not null default 'guest', "
-             "`name_raw` varchar(255) not null default 'guest_raw') "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"name\" varchar(255) not null default 'guest', "
+             "\"name_raw\" varchar(255) not null default 'guest_raw')");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::modifier_defaultValue_WithBoolean() const
+void tst_PostgreSQL_SchemaBuilder::modifier_defaultValue_WithBoolean() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -777,18 +771,16 @@ void tst_Mysql_SchemaBuilder::modifier_defaultValue_WithBoolean() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`boolean` tinyint(1) not null, "
-             "`boolean_false` tinyint(1) not null default '0', "
-             "`boolean_true` tinyint(1) not null default '1', "
-             "`boolean_0` tinyint(1) not null default '0', "
-             "`boolean_1` tinyint(1) not null default '1') "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"boolean\" boolean not null, "
+             "\"boolean_false\" boolean not null default '0', "
+             "\"boolean_true\" boolean not null default '1', "
+             "\"boolean_0\" boolean not null default '0', "
+             "\"boolean_1\" boolean not null default '1')");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::useCurrent() const
+void tst_PostgreSQL_SchemaBuilder::useCurrent() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -808,17 +800,17 @@ void tst_Mysql_SchemaBuilder::useCurrent() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`created` datetime not null, "
-             "`created_current` datetime default CURRENT_TIMESTAMP not null, "
-             "`created_t` timestamp not null, "
-             "`created_t_current` timestamp default CURRENT_TIMESTAMP not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"created\" timestamp(0) without time zone not null, "
+             "\"created_current\" timestamp(0) without time zone "
+               "default CURRENT_TIMESTAMP not null, "
+             "\"created_t\" timestamp(0) without time zone not null, "
+             "\"created_t_current\" timestamp(0) without time zone "
+               "default CURRENT_TIMESTAMP not null)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::useCurrentOnUpdate() const
+void tst_PostgreSQL_SchemaBuilder::useCurrentOnUpdate() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -826,6 +818,7 @@ void tst_Mysql_SchemaBuilder::useCurrentOnUpdate() const
                 .create(Firewalls, [](Blueprint &table)
         {
             table.dateTime("updated");
+            // PostgreSQL doesn't support on update
             table.dateTime("updated_current").useCurrentOnUpdate();
 
             table.timestamp("updated_t");
@@ -838,17 +831,15 @@ void tst_Mysql_SchemaBuilder::useCurrentOnUpdate() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`updated` datetime not null, "
-             "`updated_current` datetime on update CURRENT_TIMESTAMP not null, "
-             "`updated_t` timestamp not null, "
-             "`updated_t_current` timestamp on update CURRENT_TIMESTAMP not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"updated\" timestamp(0) without time zone not null, "
+             "\"updated_current\" timestamp(0) without time zone not null, "
+             "\"updated_t\" timestamp(0) without time zone not null, "
+             "\"updated_t_current\" timestamp(0) without time zone not null)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::indexes_Fluent() const
+void tst_PostgreSQL_SchemaBuilder::indexes_Fluent() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -875,59 +866,59 @@ void tst_Mysql_SchemaBuilder::indexes_Fluent() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name_u` varchar(255) not null, "
-             "`name_i` varchar(255) not null, "
-             "`name_i_cn` varchar(255) not null, "
-             "`name_f` varchar(255) not null, "
-             "`name_f_cn` varchar(255) not null, "
-             "`coordinates_s` geometry not null, "
-             "`coordinates_s_cn` geometry not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"name_u\" varchar(255) not null, "
+             "\"name_i\" varchar(255) not null, "
+             "\"name_i_cn\" varchar(255) not null, "
+             "\"name_f\" varchar(255) not null, "
+             "\"name_f_cn\" varchar(255) not null, "
+             "\"coordinates_s\" geography(geometry, 4326) not null, "
+             "\"coordinates_s_cn\" geography(geometry, 4326) not null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` add unique `firewalls_name_u_unique`(`name_u`)");
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_name_u_unique\" unique (\"name_u\")");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` add index `firewalls_name_i_index`(`name_i`)");
+             R"(create index "firewalls_name_i_index" on "firewalls" ("name_i"))");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table `firewalls` add index `name_i_cn_index`(`name_i_cn`)");
+             R"(create index "name_i_cn_index" on "firewalls" ("name_i_cn"))");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
-             "alter table `firewalls` "
-             "add fulltext `firewalls_name_f_fulltext`(`name_f`)");
+             "create index \"firewalls_name_f_fulltext\" on \"firewalls\" "
+             "using gin ((to_tsvector('english', \"name_f\")))");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
     QCOMPARE(log5.query,
-             "alter table `firewalls` add fulltext `name_f_cn_fulltext`(`name_f_cn`)");
+             "create index \"name_f_cn_fulltext\" on \"firewalls\" "
+             "using gin ((to_tsvector('english', \"name_f_cn\")))");
     QVERIFY(log5.boundValues.isEmpty());
 
     const auto &log6 = log.at(6);
     QCOMPARE(log6.query,
-             "alter table `firewalls` "
-             "add spatial index `firewalls_coordinates_s_spatialindex`(`coordinates_s`)");
+             "create index \"firewalls_coordinates_s_spatialindex\" on \"firewalls\" "
+             "using gist (\"coordinates_s\")");
     QVERIFY(log6.boundValues.isEmpty());
 
     const auto &log7 = log.at(7);
     QCOMPARE(log7.query,
-             "alter table `firewalls` "
-             "add spatial index `coordinates_s_cn_spatial`(`coordinates_s_cn`)");
+             "create index \"coordinates_s_cn_spatial\" on \"firewalls\" "
+             "using gist (\"coordinates_s_cn\")");
     QVERIFY(log7.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::indexes_Blueprint() const
+void tst_PostgreSQL_SchemaBuilder::indexes_Blueprint() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -948,7 +939,7 @@ void tst_Mysql_SchemaBuilder::indexes_Blueprint() const
 
             table.string("name_r");
             table.string("name_r1");
-            table.rawIndex(DB::raw("`name_r`, name_r1"), "name_r_raw");
+            table.rawIndex(DB::raw(R"("name_r", name_r1)"), "name_r_raw");
 
             table.string("name_f");
             table.fullText({"name_f"});
@@ -956,10 +947,10 @@ void tst_Mysql_SchemaBuilder::indexes_Blueprint() const
             table.string("name_f_cn");
             table.fullText("name_f_cn", "name_f_cn_fulltext");
 
-            table.geometry("coordinates_s");
+            table.geometry("coordinates_s").isGeometry();
             table.spatialIndex("coordinates_s");
 
-            table.geometry("coordinates_s_cn");
+            table.point("coordinates_s_cn", 3200).isGeometry();
             table.spatialIndex("coordinates_s_cn", "coordinates_s_cn_spatial");
         });
     });
@@ -968,66 +959,66 @@ void tst_Mysql_SchemaBuilder::indexes_Blueprint() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name_u` varchar(255) not null, "
-             "`name_i` varchar(255) not null, "
-             "`name_i_cn` varchar(255) not null, "
-             "`name_r` varchar(255) not null, "
-             "`name_r1` varchar(255) not null, "
-             "`name_f` varchar(255) not null, "
-             "`name_f_cn` varchar(255) not null, "
-             "`coordinates_s` geometry not null, "
-             "`coordinates_s_cn` geometry not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"name_u\" varchar(255) not null, "
+             "\"name_i\" varchar(255) not null, "
+             "\"name_i_cn\" varchar(255) not null, "
+             "\"name_r\" varchar(255) not null, "
+             "\"name_r1\" varchar(255) not null, "
+             "\"name_f\" varchar(255) not null, "
+             "\"name_f_cn\" varchar(255) not null, "
+             "\"coordinates_s\" geometry(geometry) not null, "
+             "\"coordinates_s_cn\" geometry(point, 3200) not null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` add unique `name_u_unique`(`name_u`)");
+             "alter table \"firewalls\" "
+             "add constraint \"name_u_unique\" unique (\"name_u\")");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` add index `firewalls_name_i_index`(`name_i`)");
+             R"(create index "firewalls_name_i_index" on "firewalls" ("name_i"))");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table `firewalls` add index `name_i_cn_index`(`name_i_cn`)");
+             R"(create index "name_i_cn_index" on "firewalls" ("name_i_cn"))");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
-             "alter table `firewalls` add index `name_r_raw`(`name_r`, name_r1)");
+             R"(create index "name_r_raw" on "firewalls" ("name_r", name_r1))");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
     QCOMPARE(log5.query,
-             "alter table `firewalls` "
-             "add fulltext `firewalls_name_f_fulltext`(`name_f`)");
+             "create index \"firewalls_name_f_fulltext\" on \"firewalls\" "
+             "using gin ((to_tsvector('english', \"name_f\")))");
     QVERIFY(log5.boundValues.isEmpty());
 
     const auto &log6 = log.at(6);
     QCOMPARE(log6.query,
-             "alter table `firewalls` add fulltext `name_f_cn_fulltext`(`name_f_cn`)");
+             "create index \"name_f_cn_fulltext\" on \"firewalls\" "
+             "using gin ((to_tsvector('english', \"name_f_cn\")))");
     QVERIFY(log6.boundValues.isEmpty());
 
     const auto &log7 = log.at(7);
     QCOMPARE(log7.query,
-             "alter table `firewalls` "
-             "add spatial index `firewalls_coordinates_s_spatialindex`(`coordinates_s`)");
+             "create index \"firewalls_coordinates_s_spatialindex\" on \"firewalls\" "
+             "using gist (\"coordinates_s\")");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log8 = log.at(8);
     QCOMPARE(log8.query,
-             "alter table `firewalls` "
-             "add spatial index `coordinates_s_cn_spatial`(`coordinates_s_cn`)");
+             "create index \"coordinates_s_cn_spatial\" on \"firewalls\" "
+             "using gist (\"coordinates_s_cn\")");
     QVERIFY(log8.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::renameIndex() const
+void tst_PostgreSQL_SchemaBuilder::renameIndex() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1050,26 +1041,25 @@ void tst_Mysql_SchemaBuilder::renameIndex() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name` varchar(255) not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"name\" varchar(255) not null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` add unique `firewalls_name_unique`(`name`)");
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_name_unique\" unique (\"name\")");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` "
-             "rename index `firewalls_name_unique` to `firewalls_name_unique_renamed`");
+             "alter index \"firewalls_name_unique\" "
+             "rename to \"firewalls_name_unique_renamed\"");
     QVERIFY(log2.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropIndex_ByIndexName() const
+void tst_PostgreSQL_SchemaBuilder::dropIndex_ByIndexName() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1100,72 +1090,69 @@ void tst_Mysql_SchemaBuilder::dropIndex_ByIndexName() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` int unsigned not null, "
-             "`name_u` varchar(255) not null, "
-             "`name_i` varchar(255) not null, "
-             "`name_f` varchar(255) not null, "
-             "`coordinates_s` geometry not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" integer not null, "
+             "\"name_u\" varchar(255) not null, "
+             "\"name_i\" varchar(255) not null, "
+             "\"name_f\" varchar(255) not null, "
+             "\"coordinates_s\" geography(geometry, 4326) not null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` add primary key `firewalls_id_primary`(`id`)");
+             R"(alter table "firewalls" add primary key ("id"))");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` add unique `firewalls_name_u_unique`(`name_u`)");
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_name_u_unique\" unique (\"name_u\")");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table `firewalls` add index `firewalls_name_i_index`(`name_i`)");
+             R"(create index "firewalls_name_i_index" on "firewalls" ("name_i"))");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
-             "alter table `firewalls` "
-             "add fulltext `firewalls_name_f_fulltext`(`name_f`)");
+             "create index \"firewalls_name_f_fulltext\" on \"firewalls\" "
+             "using gin ((to_tsvector('english', \"name_f\")))");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
     QCOMPARE(log5.query,
-             "alter table `firewalls` "
-             "add spatial index "
-               "`firewalls_coordinates_s_spatialindex`(`coordinates_s`)");
+             "create index \"firewalls_coordinates_s_spatialindex\" on \"firewalls\" "
+             "using gist (\"coordinates_s\")");
     QVERIFY(log5.boundValues.isEmpty());
 
     const auto &log6 = log.at(6);
     QCOMPARE(log6.query,
-             "alter table `firewalls` drop primary key");
+             R"(alter table "firewalls" drop constraint "firewalls_pkey")");
     QVERIFY(log6.boundValues.isEmpty());
 
     const auto &log7 = log.at(7);
     QCOMPARE(log7.query,
-             "alter table `firewalls` drop index `firewalls_name_u_unique`");
+             R"(alter table "firewalls" drop constraint "firewalls_name_u_unique")");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log8 = log.at(8);
     QCOMPARE(log8.query,
-             "alter table `firewalls` drop index `firewalls_name_i_index`");
+             R"(drop index "firewalls_name_i_index")");
     QVERIFY(log8.boundValues.isEmpty());
 
     const auto &log9 = log.at(9);
     QCOMPARE(log9.query,
-             "alter table `firewalls` drop index `firewalls_name_f_fulltext`");
+             R"(drop index "firewalls_name_f_fulltext")");
     QVERIFY(log9.boundValues.isEmpty());
 
     const auto &log10 = log.at(10);
     QCOMPARE(log10.query,
-             "alter table `firewalls` "
-             "drop index `firewalls_coordinates_s_spatialindex`");
+             R"(drop index "firewalls_coordinates_s_spatialindex")");
     QVERIFY(log10.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropIndex_ByColumn() const
+void tst_PostgreSQL_SchemaBuilder::dropIndex_ByColumn() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1196,72 +1183,69 @@ void tst_Mysql_SchemaBuilder::dropIndex_ByColumn() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` int unsigned not null, "
-             "`name_u` varchar(255) not null, "
-             "`name_i` varchar(255) not null, "
-             "`name_f` varchar(255) not null, "
-             "`coordinates_s` geometry not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" integer not null, "
+             "\"name_u\" varchar(255) not null, "
+             "\"name_i\" varchar(255) not null, "
+             "\"name_f\" varchar(255) not null, "
+             "\"coordinates_s\" geography(geometry, 4326) not null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` add primary key `firewalls_id_primary`(`id`)");
+             R"(alter table "firewalls" add primary key ("id"))");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` add unique `firewalls_name_u_unique`(`name_u`)");
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_name_u_unique\" unique (\"name_u\")");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table `firewalls` add index `firewalls_name_i_index`(`name_i`)");
+             R"(create index "firewalls_name_i_index" on "firewalls" ("name_i"))");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
-             "alter table `firewalls` "
-             "add fulltext `firewalls_name_f_fulltext`(`name_f`)");
+             "create index \"firewalls_name_f_fulltext\" on \"firewalls\" "
+             "using gin ((to_tsvector('english', \"name_f\")))");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
     QCOMPARE(log5.query,
-             "alter table `firewalls` "
-             "add spatial index "
-               "`firewalls_coordinates_s_spatialindex`(`coordinates_s`)");
+             "create index \"firewalls_coordinates_s_spatialindex\" on \"firewalls\" "
+             "using gist (\"coordinates_s\")");
     QVERIFY(log5.boundValues.isEmpty());
 
     const auto &log6 = log.at(6);
     QCOMPARE(log6.query,
-             "alter table `firewalls` drop primary key");
+             R"(alter table "firewalls" drop constraint "firewalls_pkey")");
     QVERIFY(log6.boundValues.isEmpty());
 
     const auto &log7 = log.at(7);
     QCOMPARE(log7.query,
-             "alter table `firewalls` drop index `firewalls_name_u_unique`");
+             R"(alter table "firewalls" drop constraint "firewalls_name_u_unique")");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log8 = log.at(8);
     QCOMPARE(log8.query,
-             "alter table `firewalls` drop index `firewalls_name_i_index`");
+             R"(drop index "firewalls_name_i_index")");
     QVERIFY(log8.boundValues.isEmpty());
 
     const auto &log9 = log.at(9);
     QCOMPARE(log9.query,
-             "alter table `firewalls` drop index `firewalls_name_f_fulltext`");
+             R"(drop index "firewalls_name_f_fulltext")");
     QVERIFY(log9.boundValues.isEmpty());
 
     const auto &log10 = log.at(10);
     QCOMPARE(log10.query,
-             "alter table `firewalls` "
-             "drop index `firewalls_coordinates_s_spatialindex`");
+             R"(drop index "firewalls_coordinates_s_spatialindex")");
     QVERIFY(log10.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropIndex_ByMultipleColumns() const
+void tst_PostgreSQL_SchemaBuilder::dropIndex_ByMultipleColumns() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1299,65 +1283,65 @@ void tst_Mysql_SchemaBuilder::dropIndex_ByMultipleColumns() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` int unsigned not null, "
-             "`id1` int unsigned not null, "
-             "`name_u` varchar(255) not null, "
-             "`name_u1` varchar(255) not null, "
-             "`name_i` varchar(255) not null, "
-             "`name_i1` varchar(255) not null, "
-             "`name_f` varchar(255) not null, "
-             "`name_f1` varchar(255) not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" integer not null, "
+             "\"id1\" integer not null, "
+             "\"name_u\" varchar(255) not null, "
+             "\"name_u1\" varchar(255) not null, "
+             "\"name_i\" varchar(255) not null, "
+             "\"name_i1\" varchar(255) not null, "
+             "\"name_f\" varchar(255) not null, "
+             "\"name_f1\" varchar(255) not null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` "
-             "add primary key `firewalls_id_id1_primary`(`id`, `id1`)");
+             R"(alter table "firewalls" add primary key ("id", "id1"))");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` "
-             "add unique `firewalls_name_u_name_u1_unique`(`name_u`, `name_u1`)");
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_name_u_name_u1_unique\" "
+               "unique (\"name_u\", \"name_u1\")");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table `firewalls` "
-             "add index `firewalls_name_i_name_i1_index`(`name_i`, `name_i1`)");
+             "create index \"firewalls_name_i_name_i1_index\" "
+             "on \"firewalls\" (\"name_i\", \"name_i1\")");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
-             "alter table `firewalls` "
-             "add fulltext `firewalls_name_f_name_f1_fulltext`(`name_f`, `name_f1`)");
+             "create index \"firewalls_name_f_name_f1_fulltext\" on \"firewalls\" "
+             "using gin ((to_tsvector('english', \"name_f\") || "
+               "to_tsvector('english', \"name_f1\")))");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
     QCOMPARE(log5.query,
-             "alter table `firewalls` drop primary key");
+             R"(alter table "firewalls" drop constraint "firewalls_pkey")");
     QVERIFY(log5.boundValues.isEmpty());
 
     const auto &log6 = log.at(6);
     QCOMPARE(log6.query,
-             "alter table `firewalls` drop index `firewalls_name_u_name_u1_unique`");
+             "alter table \"firewalls\" drop constraint "
+             "\"firewalls_name_u_name_u1_unique\"");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log7 = log.at(7);
     QCOMPARE(log7.query,
-             "alter table `firewalls` drop index `firewalls_name_i_name_i1_index`");
+             R"(drop index "firewalls_name_i_name_i1_index")");
     QVERIFY(log7.boundValues.isEmpty());
 
     const auto &log8 = log.at(8);
     QCOMPARE(log8.query,
-             "alter table `firewalls` drop index `firewalls_name_f_name_f1_fulltext`");
+             R"(drop index "firewalls_name_f_name_f1_fulltext")");
     QVERIFY(log8.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::foreignKey() const
+void tst_PostgreSQL_SchemaBuilder::foreignKey() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1383,44 +1367,42 @@ void tst_Mysql_SchemaBuilder::foreignKey() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`user_id` bigint unsigned not null, "
-             "`torrent_id` bigint unsigned not null, "
-             "`role_id` bigint unsigned null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"user_id\" bigint not null, "
+             "\"torrent_id\" bigint not null, "
+             "\"role_id\" bigint null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_user_id_foreign` "
-             "foreign key (`user_id`) "
-             "references `users` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_user_id_foreign\" "
+             "foreign key (\"user_id\") "
+             "references \"users\" (\"id\") "
              "on delete cascade on update restrict");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_torrent_id_foreign` "
-             "foreign key (`torrent_id`) "
-             "references `torrents` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_torrent_id_foreign\" "
+             "foreign key (\"torrent_id\") "
+             "references \"torrents\" (\"id\") "
              "on delete restrict on update restrict");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_role_id_foreign` "
-             "foreign key (`role_id`) "
-             "references `roles` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_role_id_foreign\" "
+             "foreign key (\"role_id\") "
+             "references \"roles\" (\"id\") "
              "on delete set null on update cascade");
     QVERIFY(log3.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::foreignKey_TerserSyntax() const
+void tst_PostgreSQL_SchemaBuilder::foreignKey_TerserSyntax() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1442,45 +1424,43 @@ void tst_Mysql_SchemaBuilder::foreignKey_TerserSyntax() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`user_id` bigint unsigned not null, "
-             "`torrent_id` bigint unsigned not null, "
-             "`role_id` bigint unsigned null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"user_id\" bigint not null, "
+             "\"torrent_id\" bigint not null, "
+             "\"role_id\" bigint null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_user_id_foreign` "
-             "foreign key (`user_id`) "
-             "references `users` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_user_id_foreign\" "
+             "foreign key (\"user_id\") "
+             "references \"users\" (\"id\") "
              "on delete cascade on update restrict");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_torrent_id_foreign` "
-             "foreign key (`torrent_id`) "
-             "references `torrents` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_torrent_id_foreign\" "
+             "foreign key (\"torrent_id\") "
+             "references \"torrents\" (\"id\") "
              "on delete restrict on update restrict");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_role_id_foreign` "
-             "foreign key (`role_id`) "
-             "references `roles` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_role_id_foreign\" "
+             "foreign key (\"role_id\") "
+             "references \"roles\" (\"id\") "
              "on delete set null on update cascade");
     QVERIFY(log3.boundValues.isEmpty());
 }
 
 #ifndef TINYORM_DISABLE_ORM
-void tst_Mysql_SchemaBuilder::foreignKey_WithModel() const
+void tst_PostgreSQL_SchemaBuilder::foreignKey_WithModel() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1503,35 +1483,33 @@ void tst_Mysql_SchemaBuilder::foreignKey_WithModel() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`torrent_id` bigint unsigned not null, "
-             "`user_id` bigint unsigned null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"torrent_id\" bigint not null, "
+             "\"user_id\" bigint null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_torrent_id_foreign` "
-             "foreign key (`torrent_id`) "
-             "references `torrents` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_torrent_id_foreign\" "
+             "foreign key (\"torrent_id\") "
+             "references \"torrents\" (\"id\") "
              "on delete cascade on update restrict");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_user_id_foreign` "
-             "foreign key (`user_id`) "
-             "references `users` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_user_id_foreign\" "
+             "foreign key (\"user_id\") "
+             "references \"users\" (\"id\") "
              "on delete set null on update cascade");
     QVERIFY(log2.boundValues.isEmpty());
 }
 #endif
 
-void tst_Mysql_SchemaBuilder::dropForeign() const
+void tst_PostgreSQL_SchemaBuilder::dropForeign() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1561,63 +1539,61 @@ void tst_Mysql_SchemaBuilder::dropForeign() const
     // I leave these comparisons here, even if they are doubled from the previous test
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`user_id` bigint unsigned not null, "
-             "`torrent_id` bigint unsigned not null, "
-             "`role_id` bigint unsigned null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"user_id\" bigint not null, "
+             "\"torrent_id\" bigint not null, "
+             "\"role_id\" bigint null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_user_id_foreign` "
-             "foreign key (`user_id`) "
-             "references `users` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_user_id_foreign\" "
+             "foreign key (\"user_id\") "
+             "references \"users\" (\"id\") "
              "on delete cascade on update restrict");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_torrent_id_foreign` "
-             "foreign key (`torrent_id`) "
-             "references `torrents` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_torrent_id_foreign\" "
+             "foreign key (\"torrent_id\") "
+             "references \"torrents\" (\"id\") "
              "on delete restrict on update restrict");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table `firewalls` "
-             "add constraint `firewalls_role_id_foreign` "
-             "foreign key (`role_id`) "
-             "references `roles` (`id`) "
+             "alter table \"firewalls\" "
+             "add constraint \"firewalls_role_id_foreign\" "
+             "foreign key (\"role_id\") "
+             "references \"roles\" (\"id\") "
              "on delete set null on update cascade");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
-             "alter table `firewalls` drop foreign key `firewalls_user_id_foreign`");
+             R"(alter table "firewalls" drop constraint "firewalls_user_id_foreign")");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
     QCOMPARE(log5.query,
-             "alter table `firewalls` drop foreign key `firewalls_torrent_id_foreign`");
+             R"(alter table "firewalls" drop constraint "firewalls_torrent_id_foreign")");
     QVERIFY(log5.boundValues.isEmpty());
 
     const auto &log6 = log.at(6);
     QCOMPARE(log6.query,
-             "alter table `firewalls` drop foreign key `firewalls_role_id_foreign`");
+             R"(alter table "firewalls" drop constraint "firewalls_role_id_foreign")");
     QVERIFY(log6.boundValues.isEmpty());
 
     const auto &log7 = log.at(7);
     QCOMPARE(log7.query,
-             "alter table `firewalls` drop `role_id`");
+             R"(alter table "firewalls" drop column "role_id")");
     QVERIFY(log7.boundValues.isEmpty());
 }
 
-QTEST_MAIN(tst_Mysql_SchemaBuilder)
+QTEST_MAIN(tst_PostgreSQL_SchemaBuilder)
 
-#include "tst_mysql_schemabuilder.moc"
+#include "tst_postgresql_schemabuilder.moc"

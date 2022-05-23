@@ -52,6 +52,7 @@ namespace Orm::Constants
     inline const QString SPACE_IN    = QStringLiteral("%1 %2");
     inline const QString NOSPACE     = QStringLiteral("%1%2");
     inline const QString EMPTY       = QLatin1String("");
+    inline const QString text_       = QStringLiteral("text");
 
     inline const QString QMYSQL      = QStringLiteral("QMYSQL");
     inline const QString QPSQL       = QStringLiteral("QPSQL");
@@ -74,6 +75,7 @@ namespace Orm::Constants
     inline const QString options_    = QStringLiteral("options");
     inline const QString strict_     = QStringLiteral("strict");
     inline const QString engine_     = QStringLiteral("engine");
+    inline const QString dont_drop   = QStringLiteral("dont_drop");
 
     inline const QString
     isolation_level         = QStringLiteral("isolation_level");
@@ -98,8 +100,10 @@ namespace Orm::Constants
     inline const QString UTF8MB4   = QStringLiteral("utf8mb4");
     inline const QString InnoDB    = QStringLiteral("InnoDB");
     inline const QString MyISAM    = QStringLiteral("MyISAM");
+    inline const QString postgres_ = QStringLiteral("postgres");
 
     inline const QString UTF8MB40900aici = QStringLiteral("utf8mb4_0900_ai_ci");
+    inline const QString UcsBasic        = QStringLiteral("ucs_basic");
     inline const QString NotImplemented  = QStringLiteral("Not implemented :/.");
 
     // Comparison/logical/search operators
