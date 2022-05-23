@@ -114,13 +114,11 @@ if (-not $SkipClazy) {
         'qhash-with-char-pointer-key,qproperty-type-mismatch,qrequiredresult-candidates,' +
         'qstring-varargs,qt6-deprecated-api-fixes,qt6-fwd-fixes,qt6-header-fixes,' +
         'qt6-qhash-signature,raw-environment-function,reserve-candidates,' +
-        'signal-with-return-value,thread-with-slots,tr-non-literal,' +
+        'signal-with-return-value,thread-with-slots,tr-non-literal,unneeded-cast,' +
+        'use-chrono-in-qtimer,' +
         # New in Clazy 1.11
         'unexpected-flag-enumerator-value,' +
-        'unneeded-cast,' +
-        # New in Clazy 1.11
         'use-arrow-operator-instead-of-data,' +
-        'use-chrono-in-qtimer,' +
         # Checks Excluded from level2
         'no-copyable-polymorphic,no-ctor-missing-parent-argument,no-function-args-by-ref,' +
         'no-qstring-allocations,no-rule-of-three'
