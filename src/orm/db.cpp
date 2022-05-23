@@ -97,6 +97,11 @@ QStringList DB::openedConnectionNames()
     return manager().openedConnectionNames();
 }
 
+std::size_t DB::connectionsSize()
+{
+    return manager().connectionsSize();
+}
+
 const QString &DB::getDefaultConnection()
 {
     return manager().getDefaultConnection();

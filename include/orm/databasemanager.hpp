@@ -165,6 +165,8 @@ namespace Query
         QStringList connectionNames() const;
         /*! Returns a list containing the names of opened connections. */
         QStringList openedConnectionNames() const;
+        /*! Get the number of registered connections. */
+        std::size_t connectionsSize() const;
 
         /*! Get the default connection name. */
         const QString &getDefaultConnection() const final;

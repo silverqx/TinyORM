@@ -388,6 +388,11 @@ QStringList DatabaseManager::openedConnectionNames() const
     return names;
 }
 
+std::size_t DatabaseManager::connectionsSize() const
+{
+    return (*m_connections).size();
+}
+
 const QString &
 DatabaseManager::getDefaultConnection() const
 {

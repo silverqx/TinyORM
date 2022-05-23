@@ -79,6 +79,8 @@ namespace Orm
         static QStringList connectionNames();
         /*! Returns a list containing the names of opened connections. */
         static QStringList openedConnectionNames();
+        /*! Get the number of registered connections. */
+        static std::size_t connectionsSize();
 
         /*! Get the default connection name. */
         static const QString &getDefaultConnection();
