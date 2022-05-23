@@ -670,7 +670,7 @@ void Blueprint::addFluentCommands(const SchemaGrammar &grammar)
     if (dynamic_cast<const Grammars::PostgresSchemaGrammar *>(&grammar) == nullptr)
         return;
 
-    for (const auto &column : m_columns)
+    for (const auto &column : std::as_const(m_columns))
         if (!column.comment.isEmpty())
             addCommand<CommentCommand>({{}, Comment, column.name, column.comment});
 }
