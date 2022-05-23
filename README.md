@@ -18,7 +18,7 @@ Whole library is documented as markdown documents:
 
 [![www.tinyorm.org][docs-badge]][docs]
 
-- [Documentation: Index](/docs/README.mdx#prologue)
+- [Prologue](/docs/README.mdx#prologue)
 - [Dependencies](/docs/dependencies.mdx#dependencies)
 - [Supported Compilers](/docs/supported-compilers.mdx#supported-compilers)
 - [Database](/docs/database#database)
