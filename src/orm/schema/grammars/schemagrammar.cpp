@@ -61,8 +61,7 @@ SchemaGrammar::compileFullText(const Blueprint &/*unused*/,
     // CUR schema, check runtime vs logic exception silverqx
     // CUR schema, add driver and maybe connection names to this type of exceptions silverqx
     // CUR schema, extract this type of exceptions silverqx
-    throw Exceptions::RuntimeError(
-                "This database driver does not support dropping databases.");
+    throw Exceptions::RuntimeError(NotImplemented);
 }
 
 QVector<QString>
@@ -99,8 +98,7 @@ QVector<QString>
 SchemaGrammar::compileDropFullText(const Blueprint &/*unused*/,
                                    const IndexCommand &/*unused*/) const
 {
-    throw Exceptions::RuntimeError(
-                "This database driver does not support dropping databases.");
+    throw Exceptions::RuntimeError(NotImplemented);
 }
 
 /* Others */
