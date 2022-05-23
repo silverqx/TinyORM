@@ -151,8 +151,8 @@ QSqlQuery SchemaBuilder::disableForeignKeyConstraints() const
 QStringList SchemaBuilder::getColumnListing(const QString &table) const
 {
     auto query = m_connection.selectFromWriteConnection(
-                     m_connection.getTablePrefix() +
-                     m_grammar.compileColumnListing(table));
+                     m_grammar.compileColumnListing(
+                         NOSPACE.arg(m_connection.getTablePrefix(), table)));
 
     return m_connection.getPostProcessor().processColumnListing(query);
 }
