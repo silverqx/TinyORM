@@ -689,7 +689,7 @@ void tst_Mysql_SchemaBuilder::modifiers() const
                 .table(Firewalls, [](Blueprint &table)
         {
             table.string(NAME).after("big_int");
-            table.integerIncrements(ID).autoIncrement().from(15).first();
+            table.integerIncrements(ID).from(15).first();
         });
     });
 
