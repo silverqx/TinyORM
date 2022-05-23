@@ -60,7 +60,6 @@ SchemaGrammar::compileFullText(const Blueprint &/*unused*/,
 {
     // CUR schema, check runtime vs logic exception silverqx
     // CUR schema, add driver and maybe connection names to this type of exceptions silverqx
-    // CUR schema, extract this type of exceptions silverqx
     throw Exceptions::RuntimeError(NotImplemented);
 }
 

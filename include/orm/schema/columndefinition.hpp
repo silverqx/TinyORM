@@ -84,7 +84,6 @@ namespace Orm::SchemaNs
 
         /*! Index name for the foreign key. */
         QString index;
-        // CUR schema, check if foreign key can use more columns, if not use QString silverqx
         /*! Columns for which to create the foreign key. */
         QVector<Column> columns;
 
