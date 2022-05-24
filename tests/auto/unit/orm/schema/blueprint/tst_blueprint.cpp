@@ -21,7 +21,7 @@ class tst_Blueprint : public QObject // clazy:exclude=ctor-missing-parent-argume
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
 
     void index_DefaultNames() const;

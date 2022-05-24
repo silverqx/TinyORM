@@ -37,7 +37,7 @@ class tst_Version : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void versions_TinyOrm() const;
     void versions_TinyUtils() const;
 #ifdef TINYTOM_EXAMPLE

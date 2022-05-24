@@ -35,7 +35,7 @@ public:
     /*! Type used for comparing results of the status command. */
     using Status = std::vector<StatusRow>;
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
     void cleanup() const;
 

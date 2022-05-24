@@ -26,7 +26,7 @@ class tst_PostgreSQL_QueryBuilder : public QObject // clazy:exclude=ctor-missing
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
 
     void get() const;

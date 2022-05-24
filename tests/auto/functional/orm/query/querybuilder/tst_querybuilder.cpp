@@ -23,7 +23,7 @@ class tst_QueryBuilder : public QObject // clazy:exclude=ctor-missing-parent-arg
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase_data() const;
 
     void find() const;

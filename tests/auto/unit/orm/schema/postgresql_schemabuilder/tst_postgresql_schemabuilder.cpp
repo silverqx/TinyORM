@@ -34,7 +34,7 @@ class tst_PostgreSQL_SchemaBuilder : public QObject // clazy:exclude=ctor-missin
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
 
     void createDatabase() const;

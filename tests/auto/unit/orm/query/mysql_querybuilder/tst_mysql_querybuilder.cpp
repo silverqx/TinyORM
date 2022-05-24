@@ -45,7 +45,7 @@ class tst_MySql_QueryBuilder : public QObject // clazy:exclude=ctor-missing-pare
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
 
     void get() const;

@@ -24,7 +24,7 @@ class tst_DatabaseConnection : public QObject // clazy:exclude=ctor-missing-pare
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase_data() const;
 
     void pingDatabase() const;

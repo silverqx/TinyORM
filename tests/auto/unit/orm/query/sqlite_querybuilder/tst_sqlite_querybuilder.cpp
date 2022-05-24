@@ -26,7 +26,7 @@ class tst_SQLite_QueryBuilder : public QObject // clazy:exclude=ctor-missing-par
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
 
     void get() const;

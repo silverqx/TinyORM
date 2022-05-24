@@ -27,7 +27,7 @@ class tst_DatabaseManager : public QObject // clazy:exclude=ctor-missing-parent-
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
 
     void removeConnection_Connected() const;
