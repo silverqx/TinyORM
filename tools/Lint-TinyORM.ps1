@@ -106,6 +106,10 @@ if (-not $SkipClazy) {
     Write-Host 'Clazy standalone' -ForegroundColor DarkBlue
     Write-Host
 
+    # Disabled checks
+    # Level 2      - qstring-allocations
+    # Manual level - qt4-qstring-from-array, qt6-qlatin1stringchar-to-u,
+    #                qvariant-template-instantiation
     $Script:Checks =
         'level0,level1,level2,' +
         # Manual checks
