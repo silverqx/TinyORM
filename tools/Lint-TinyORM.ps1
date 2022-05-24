@@ -112,7 +112,7 @@ if (-not $SkipClazy) {
         'assert-with-side-effects,container-inside-loop,detaching-member,' +
         'heap-allocated-small-trivial-type,ifndef-define-typo,isempty-vs-count,jni-signatures,' +
         'qhash-with-char-pointer-key,qproperty-type-mismatch,qrequiredresult-candidates,' +
-        'qstring-varargs,qt6-deprecated-api-fixes,qt6-fwd-fixes,qt6-header-fixes,' +
+        'qstring-varargs,qt-keywords,qt6-deprecated-api-fixes,qt6-fwd-fixes,qt6-header-fixes,' +
         'qt6-qhash-signature,raw-environment-function,reserve-candidates,' +
         'signal-with-return-value,thread-with-slots,tr-non-literal,unneeded-cast,' +
         'use-chrono-in-qtimer,' +
