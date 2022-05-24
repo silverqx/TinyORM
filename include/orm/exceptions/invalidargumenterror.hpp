@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM invalid argument exception. */
-    class InvalidArgumentError : public LogicError
+    class InvalidArgumentError : public LogicError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using LogicError::LogicError;

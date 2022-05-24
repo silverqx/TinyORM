@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM invalid format exception. */
-    class InvalidFormatError : public LogicError
+    class InvalidFormatError : public LogicError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using LogicError::LogicError;

@@ -17,7 +17,7 @@ namespace Tom::Exceptions
 {
 
     /*! Tom Runtime exception. */
-    class RuntimeError : public std::runtime_error,
+    class RuntimeError : public std::runtime_error, // clazy:exclude=copyable-polymorphic
                          public TomError
     {
     public:

@@ -27,7 +27,7 @@ namespace Orm::Query
     // TODO add inRandomOrder() silverqx
     // TODO QueryBuilder::updateOrInsert() silverqx
     /*! Database query builder. */
-    class SHAREDLIB_EXPORT Builder
+    class SHAREDLIB_EXPORT Builder // clazy:exclude=copyable-polymorphic
     {
         using QueryGrammar = Query::Grammars::Grammar;
 

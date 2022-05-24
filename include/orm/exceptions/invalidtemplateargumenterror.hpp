@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM invalid template argument exception. */
-    class InvalidTemplateArgumentError : public InvalidArgumentError
+    class InvalidTemplateArgumentError : public InvalidArgumentError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using InvalidArgumentError::InvalidArgumentError;

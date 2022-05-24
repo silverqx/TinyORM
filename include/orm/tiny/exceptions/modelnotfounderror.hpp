@@ -15,7 +15,7 @@ namespace Orm::Tiny::Exceptions
 {
 
     /*! Model not found exception. */
-    class SHAREDLIB_EXPORT ModelNotFoundError : public Orm::Exceptions::RuntimeError
+    class SHAREDLIB_EXPORT ModelNotFoundError : public Orm::Exceptions::RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
         // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx

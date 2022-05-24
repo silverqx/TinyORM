@@ -13,7 +13,7 @@ namespace Tom::Exceptions
 {
 
     /*! Tom exceptions tag, all Tom exceptions are derived from this class. */
-    class TomError
+    class TomError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Virtual destructor. */

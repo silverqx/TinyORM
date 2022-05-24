@@ -13,7 +13,7 @@ namespace Orm::Query
 {
 
     /*! Join clause. */
-    class SHAREDLIB_EXPORT JoinClause final : public Builder
+    class SHAREDLIB_EXPORT JoinClause final : public Builder // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Type for the Join table (FromClause). */

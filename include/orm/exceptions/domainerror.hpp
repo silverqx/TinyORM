@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM Domain exception. */
-    class DomainError : public LogicError
+    class DomainError : public LogicError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using LogicError::LogicError;

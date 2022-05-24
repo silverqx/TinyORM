@@ -15,7 +15,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM SqlError exception, wrapper for the QSqlError. */
-    class SHAREDLIB_EXPORT SqlError : public RuntimeError
+    class SHAREDLIB_EXPORT SqlError : public RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! const char * constructor. */

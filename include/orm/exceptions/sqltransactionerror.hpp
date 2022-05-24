@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM Sql transaction exception. */
-    class SqlTransactionError : public SqlError
+    class SqlTransactionError : public SqlError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using SqlError::SqlError;

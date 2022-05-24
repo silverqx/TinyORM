@@ -14,7 +14,7 @@ namespace Orm::Tiny::Exceptions
 
     /*! Relation not loaded exception, called from Model::getRelation(), when
         the relation was not loaded. */
-    class SHAREDLIB_EXPORT RelationNotLoadedError : public Orm::Exceptions::RuntimeError
+    class SHAREDLIB_EXPORT RelationNotLoadedError : public Orm::Exceptions::RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Constructor. */

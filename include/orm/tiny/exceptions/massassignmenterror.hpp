@@ -13,7 +13,7 @@ namespace Orm::Tiny::Exceptions
 {
 
     /*! Mass assignment exception. */
-    class MassAssignmentError : public Orm::Exceptions::RuntimeError
+    class MassAssignmentError : public Orm::Exceptions::RuntimeError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using Orm::Exceptions::RuntimeError::RuntimeError;

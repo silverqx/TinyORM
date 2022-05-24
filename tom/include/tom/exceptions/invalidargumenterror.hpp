@@ -13,7 +13,7 @@ namespace Tom::Exceptions
 {
 
     /*! Tom Invalid argument exception. */
-    class InvalidArgumentError : public LogicError
+    class InvalidArgumentError : public LogicError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using LogicError::LogicError;

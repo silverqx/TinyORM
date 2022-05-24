@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM exceptions tag, all TinyORM exceptions are derived from this class. */
-    class OrmError
+    class OrmError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Virtual destructor. */

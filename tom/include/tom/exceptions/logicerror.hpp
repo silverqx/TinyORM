@@ -17,7 +17,7 @@ namespace Tom::Exceptions
 {
 
     /*! Tom Logic exception. */
-    class LogicError : public std::logic_error,
+    class LogicError : public std::logic_error, // clazy:exclude=copyable-polymorphic
                        public TomError
     {
     public:

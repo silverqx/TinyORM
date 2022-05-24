@@ -18,9 +18,8 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM Runtime exception. */
-    class SHAREDLIB_EXPORT RuntimeError :
-            public std::runtime_error,
-            public OrmError
+    class SHAREDLIB_EXPORT RuntimeError : public std::runtime_error, // clazy:exclude=copyable-polymorphic
+                                          public OrmError
     {
     public:
         /*! const char * constructor. */
