@@ -109,6 +109,10 @@ jobs:
 
         run-clang-tidy-14 '(?:src\/|tests\/).+\/(?!mocs_)[\w_\-\+]+\.cpp$'
 
+    # Disabled checks
+    # Level 2      - qstring-allocations
+    # Manual level - qt4-qstring-from-array, qt6-qlatin1stringchar-to-u,qt-keywords,
+    #                qvariant-template-instantiation
     - name: TinyORM execute clazy-standalone 🚀
       if: env.TINY_CLANG_TIDY_EXECUTED == 'true' && (success() || failure())
       run: |
@@ -120,16 +124,13 @@ jobs:
         'qhash-with-char-pointer-key,qproperty-type-mismatch,qrequiredresult-candidates,'\
         'qstring-varargs,qt6-deprecated-api-fixes,qt6-fwd-fixes,qt6-header-fixes,'\
         'qt6-qhash-signature,raw-environment-function,reserve-candidates,'\
-        'signal-with-return-value,thread-with-slots,tr-non-literal,'\
+        'signal-with-return-value,thread-with-slots,tr-non-literal,unneeded-cast,'\
+        'use-chrono-in-qtimer,'\
         `# New in Clazy 1.11`\
         'unexpected-flag-enumerator-value,'\
-        'unneeded-cast,'\
-        `# New in Clazy 1.11`\
         'use-arrow-operator-instead-of-data,'\
-        'use-chrono-in-qtimer,'\
         `# Checks Excluded from level2`\
-        'no-copyable-polymorphic,no-ctor-missing-parent-argument,no-function-args-by-ref,'\
-        'no-qstring-allocations,no-rule-of-three'
+        'no-qstring-allocations'
 
         tools/run-clazy-standalone -checks="$checks" \
         -header-filter='(orm|tom|migrations)/.+\.(h|hpp)$' \
