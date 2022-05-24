@@ -120,8 +120,7 @@ if (-not $SkipClazy) {
         'unexpected-flag-enumerator-value,' +
         'use-arrow-operator-instead-of-data,' +
         # Checks Excluded from level2
-        'no-copyable-polymorphic,no-function-args-by-ref,' +
-        'no-qstring-allocations'
+        'no-copyable-polymorphic,no-qstring-allocations'
 
     & 'E:\dotfiles\bin\run-clazy-standalone.ps1' `
         -checks="$Script:Checks" `
