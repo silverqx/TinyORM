@@ -94,7 +94,7 @@ namespace Orm::Query
         /*! Insert new records into the database while ignoring errors (multi insert). */
         std::tuple<int, std::optional<QSqlQuery>>
         insertOrIgnore(const QVector<QString> &columns,
-                       QVector<QVector<QVariant>> values);
+                       const QVector<QVector<QVariant>> &values);
 
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
