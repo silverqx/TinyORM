@@ -41,7 +41,8 @@ namespace Orm::Utils
 
         /*! Prepare the passed containers for the multi-insert. */
         static QVector<QVariantMap>
-        zipForInsert(const QVector<QString> &columns, QVector<QVector<QVariant>> values);
+        zipForInsert(const QVector<QString> &columns,
+                     const QVector<QVector<QVariant>> &values);
     };
 
 } // namespace Orm::Utils

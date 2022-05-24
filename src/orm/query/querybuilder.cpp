@@ -138,9 +138,10 @@ Builder::insert(const QVariantMap &values)
 }
 
 std::optional<QSqlQuery>
-Builder::insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values)
+Builder::insert(const QVector<QString> &columns,
+                const QVector<QVector<QVariant>> &values)
 {
-    return insert(QueryUtils::zipForInsert(columns, std::move(values)));
+    return insert(QueryUtils::zipForInsert(columns, values));
 }
 
 // FEATURE dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
@@ -175,9 +176,9 @@ Builder::insertOrIgnore(const QVariantMap &values)
 
 std::tuple<int, std::optional<QSqlQuery>>
 Builder::insertOrIgnore(const QVector<QString> &columns,
-                        QVector<QVector<QVariant>> values)
+                        const QVector<QVector<QVariant>> &values)
 {
-    return insertOrIgnore(QueryUtils::zipForInsert(columns, std::move(values)));
+    return insertOrIgnore(QueryUtils::zipForInsert(columns, values));
 }
 
 std::tuple<int, QSqlQuery>

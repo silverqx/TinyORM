@@ -80,7 +80,7 @@ namespace Orm::Query
         insert(const QVariantMap &values);
         /*! Insert new records into the database (multi insert). */
         std::optional<QSqlQuery>
-        insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values);
+        insert(const QVector<QString> &columns, const QVector<QVector<QVariant>> &values);
 
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVariantMap &values, const QString &sequence = "");

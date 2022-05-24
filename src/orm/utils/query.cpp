@@ -86,7 +86,8 @@ void Query::logExecutedQuery(const QSqlQuery &/*unused*/)
 #endif
 
 QVector<QVariantMap>
-Query::zipForInsert(const QVector<QString> &columns, QVector<QVector<QVariant>> values)
+Query::zipForInsert(const QVector<QString> &columns,
+                    const QVector<QVector<QVariant>> &values)
 {
     const auto columnsSize = columns.size();
 
@@ -95,7 +96,7 @@ Query::zipForInsert(const QVector<QString> &columns, QVector<QVector<QVariant>> 
 
     using SizeType = std::remove_cvref_t<decltype (columns)>::size_type;
 
-    for (auto &&valuesList : values) {
+    for (const auto &valuesList : values) {
 
         if (columnsSize != valuesList.size())
             throw Exceptions::InvalidArgumentError(
@@ -106,7 +107,7 @@ Query::zipForInsert(const QVector<QString> &columns, QVector<QVector<QVariant>> 
         QVariantMap zipped;
 
         for (SizeType i = 0; i < columnsSize; ++i)
-            zipped.insert(columns[i], std::move(valuesList[i]));
+            zipped.insert(columns[i], valuesList[i]);
 
         zippedValues << std::move(zipped);
     }
