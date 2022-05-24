@@ -248,3 +248,7 @@ In addition, the third party libraries used by the `QSqlDrivers` can impose furt
 In short, if you create a `DB::connection` in some thread then you have to use this connection only from this particular thread and of course all queries that will be executed on this connection.
 
 If you want to execute some query from another thread for the same connection then you have to create a new connection first and if you have a new connection you can send a query from this new thread to the database.
+
+:::caution
+The [`schema builder`](database/migrations.mdx#tables) and [`migrations`](database/migrations.mdx) don't support multi-threading.
+:::
