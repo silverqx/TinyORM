@@ -111,12 +111,22 @@ namespace Orm::Tiny::Concerns
             friend HasAttributes<Derived, AllRelations...>;
 
         public:
+            /*! Default destructor. */
+            inline ~AttributeReference() = default;
+
+            /*! Copy constructor. */
+            inline AttributeReference(const AttributeReference &) = default;
+            /*! Move constructor. */
+            inline AttributeReference(AttributeReference &&) noexcept = default;
+            /*! Deleted move assignment operator. */
+            AttributeReference &operator=(AttributeReference &&) noexcept = delete;
+
             /*! Assign a value of the QVariant to the referenced attribute. */
-            const AttributeReference & // NOLINT(misc-unconventional-assign-operator)
+            inline const AttributeReference & // NOLINT(misc-unconventional-assign-operator)
             operator=(const QVariant &value) const;
             /*! Assign a value of another attribute reference to the referenced
                 attribute. */
-            const AttributeReference & // NOLINT(misc-unconventional-assign-operator)
+            inline const AttributeReference & // NOLINT(misc-unconventional-assign-operator)
             operator=(const AttributeReference &attributeReference) const;
 
             /*! Accesses the contained value, only const member functions. */
@@ -135,7 +145,7 @@ namespace Orm::Tiny::Concerns
                                const QString &attribute);
 
             /*! The model on which is an attribute set. */
-            Model<Derived, AllRelations...> &m_model;
+            std::reference_wrapper<Model<Derived, AllRelations...>> m_model;
             /*! Attribute key name. */
             QString m_attribute;
             /*! The temporary cache used during operator->() call, to be able
@@ -602,7 +612,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::AttributeReference::operator=(
             const QVariant &value) const
     {
-        m_model.setAttribute(m_attribute, value);
+        m_model.get().setAttribute(m_attribute, value);
 
         return *this;
     }
@@ -613,7 +623,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::AttributeReference::operator=(
             const AttributeReference &attributeReference) const
     {
-        m_model.setAttribute(m_attribute, attributeReference.value());
+        m_model.get().setAttribute(m_attribute, attributeReference.value());
 
         return *this;
     }
@@ -635,7 +645,7 @@ namespace Orm::Tiny::Concerns
     QVariant
     HasAttributes<Derived, AllRelations...>::AttributeReference::value() const
     {
-        return m_model.getAttribute(m_attribute);
+        return m_model.get().getAttribute(m_attribute);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

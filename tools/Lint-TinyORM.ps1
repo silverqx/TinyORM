@@ -121,7 +121,7 @@ if (-not $SkipClazy) {
         'use-arrow-operator-instead-of-data,' +
         # Checks Excluded from level2
         'no-copyable-polymorphic,no-ctor-missing-parent-argument,no-function-args-by-ref,' +
-        'no-qstring-allocations,no-rule-of-three'
+        'no-qstring-allocations'
 
     & 'E:\dotfiles\bin\run-clazy-standalone.ps1' `
         -checks="$Script:Checks" `
