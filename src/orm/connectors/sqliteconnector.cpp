@@ -27,7 +27,7 @@ SQLiteConnector::connect(const QVariantHash &config) const
     /* SQLite supports "in-memory" databases that only last as long as the owning
        connection does. These are useful for tests or for short lifetime store
        querying. In-memory databases may only have a single open connection. */
-    if (config[database_] == QStringLiteral(":memory:")) {
+    if (config[database_].value<QString>() == QStringLiteral(":memory:")) {
         // sqlite :memory: driver
         createConnection(name, config, options);
 
