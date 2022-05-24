@@ -30,7 +30,7 @@ using Orm::SchemaNs::Constants::Restrict;
 
 using TestUtils::Databases;
 
-class tst_Mysql_SchemaBuilder : public QObject
+class tst_Mysql_SchemaBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

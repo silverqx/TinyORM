@@ -25,7 +25,7 @@ using Orm::Tiny::ConnectionOverride;
 
 using TestUtils::Databases;
 
-class tst_Relations_Inserting_Updating : public QObject
+class tst_Relations_Inserting_Updating : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

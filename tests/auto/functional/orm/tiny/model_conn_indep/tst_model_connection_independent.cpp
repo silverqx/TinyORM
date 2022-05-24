@@ -28,7 +28,7 @@ using Orm::Tiny::Exceptions::MassAssignmentError;
 
 using TestUtils::Databases;
 
-class tst_Model_Connection_Independent : public QObject
+class tst_Model_Connection_Independent : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

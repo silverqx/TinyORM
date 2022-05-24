@@ -22,7 +22,7 @@ using Raw = Orm::Query::Expression;
 
 using TestUtils::Databases;
 
-class tst_SQLite_QueryBuilder : public QObject
+class tst_SQLite_QueryBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

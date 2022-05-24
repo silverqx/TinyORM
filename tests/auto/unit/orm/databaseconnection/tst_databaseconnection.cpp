@@ -20,7 +20,7 @@ using QueryBuilder = Orm::Query::Builder;
 using TestUtils::Databases;
 
 // TEST exceptions in tests, qt doesn't care about exceptions, totally ignore it, so when the exception is thrown, I didn't get any exception message or something similar, nothing 👿, try to solve it somehow 🤔 silverqx
-class tst_DatabaseConnection : public QObject
+class tst_DatabaseConnection : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

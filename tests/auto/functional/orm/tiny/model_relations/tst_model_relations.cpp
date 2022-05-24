@@ -50,7 +50,7 @@ using Orm::Tiny::TinyBuilder;
 
 using TestUtils::Databases;
 
-class tst_Model_Relations : public QObject
+class tst_Model_Relations : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

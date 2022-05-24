@@ -33,7 +33,7 @@
 using TestUtils::Fs;
 #endif
 
-class tst_Version : public QObject
+class tst_Version : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

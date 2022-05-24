@@ -22,7 +22,7 @@ using TinyBuilder = Orm::Tiny::Builder<Model>;
 
 using TestUtils::Databases;
 
-class tst_TinyBuilder : public QObject
+class tst_TinyBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

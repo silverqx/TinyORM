@@ -17,7 +17,7 @@ using Orm::SchemaNs::Grammars::MySqlSchemaGrammar;
 
 using TestUtils::Databases;
 
-class tst_Blueprint : public QObject
+class tst_Blueprint : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

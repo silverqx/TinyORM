@@ -41,7 +41,7 @@ using TestUtils::Databases;
    I wrote it like a hungarian, but whatever, it serves a purpose. 😁
 */
 
-class tst_MySql_QueryBuilder : public QObject
+class tst_MySql_QueryBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

@@ -26,7 +26,7 @@ using Orm::Tiny::TinyBuilder;
 
 using TestUtils::Databases;
 
-class tst_MySql_TinyBuilder : public QObject
+class tst_MySql_TinyBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

@@ -25,7 +25,7 @@ using TestUtils::Databases;
 
 using namespace Migrations; // NOLINT(google-build-using-namespace)
 
-class tst_Migrate : public QObject
+class tst_Migrate : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

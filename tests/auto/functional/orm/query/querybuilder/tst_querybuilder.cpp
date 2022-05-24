@@ -19,7 +19,7 @@ using QueryBuilder = Orm::Query::Builder;
 
 using TestUtils::Databases;
 
-class tst_QueryBuilder : public QObject
+class tst_QueryBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

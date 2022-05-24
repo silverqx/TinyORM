@@ -31,7 +31,7 @@ using Orm::Tiny::Exceptions::ModelNotFoundError;
 using TestUtils::Databases;
 
 // TEST tests, look at commit history for inspiration for new tests silverqx
-class tst_Model : public QObject
+class tst_Model : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 

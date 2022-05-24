@@ -23,7 +23,7 @@ using Orm::Constants::UTF8;
 using Orm::DatabaseManager;
 using Orm::Support::DatabaseConfiguration;
 
-class tst_DatabaseManager : public QObject
+class tst_DatabaseManager : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 
