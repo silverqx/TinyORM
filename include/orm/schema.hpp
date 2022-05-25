@@ -126,6 +126,8 @@ namespace Orm
         static std::shared_ptr<DatabaseManager> m_manager;
     };
 
+    /* public */
+
     template<QStringConcept ...Args>
     void Schema::dropColumns(const QString &table, Args &&...columns)
     {

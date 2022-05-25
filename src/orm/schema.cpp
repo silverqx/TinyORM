@@ -8,6 +8,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
+/* private */
+
 std::unordered_map<Connectors::ConnectionName,
                    std::unique_ptr<SchemaBuilder>> Schema::m_schemaBuildersCache;
 std::shared_ptr<DatabaseManager> Schema::m_manager;
