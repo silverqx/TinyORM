@@ -46,11 +46,9 @@ namespace Orm::SchemaNs
                     ColumnDefinitionReference &&) noexcept = default;
 
         /*! Deleted copy assignment operator. */
-        ColumnDefinitionReference &
-        operator=(const ColumnDefinitionReference &) = delete;
+        ColumnDefinitionReference &operator=(const ColumnDefinitionReference &) = delete;
         /*! Deleted move assignment operator. */
-        ColumnDefinitionReference &
-        operator=(ColumnDefinitionReference &&) noexcept = delete;
+        ColumnDefinitionReference &operator=(ColumnDefinitionReference &&) = delete;
 
         /*! Place the column "after" another column (MySQL). */
         ColumnReferenceType &after(const QString &column);

@@ -119,7 +119,7 @@ namespace Orm::Tiny::Concerns
             /*! Move constructor. */
             inline AttributeReference(AttributeReference &&) noexcept = default;
             /*! Deleted move assignment operator. */
-            AttributeReference &operator=(AttributeReference &&) noexcept = delete;
+            AttributeReference &operator=(AttributeReference &&) = delete;
 
             /*! Assign a value of the QVariant to the referenced attribute. */
             inline const AttributeReference & // NOLINT(misc-unconventional-assign-operator)

@@ -41,7 +41,7 @@ namespace Orm::SchemaNs
         operator=(const ForeignIdColumnDefinitionReference &) = delete;
         /*! Deleted move assignment operator. */
         ForeignIdColumnDefinitionReference &
-        operator=(ForeignIdColumnDefinitionReference &&) noexcept = delete;
+        operator=(ForeignIdColumnDefinitionReference &&) = delete;
 
         /*! Create a foreign key constraint on this column referencing the "id" column
             of the conventionally related table. */

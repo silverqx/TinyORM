@@ -22,12 +22,12 @@ namespace Orm::Query
         /*! Copy constructor. */
         inline JoinClause(const JoinClause &) = default;
         /*! Deleted copy assignment operator (class constains reference and const). */
-        inline JoinClause &operator=(const JoinClause &) = delete;
+        JoinClause &operator=(const JoinClause &) = delete;
 
         /*! Move constructor. */
         inline JoinClause(JoinClause &&) = default;
         /*! Deleted move assignment operator (class constains reference and const). */
-        inline JoinClause &operator=(JoinClause &&) = delete;
+        JoinClause &operator=(JoinClause &&) = delete;
 
         /*! Virtual destructor. */
         inline ~JoinClause() final = default;

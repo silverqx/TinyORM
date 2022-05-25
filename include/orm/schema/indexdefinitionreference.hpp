@@ -38,7 +38,7 @@ namespace Orm::SchemaNs
         operator=(const IndexDefinitionReference &) = delete;
         /*! Deleted move assignment operator. */
         IndexDefinitionReference &
-        operator=(IndexDefinitionReference &&) noexcept = delete;
+        operator=(IndexDefinitionReference &&) = delete;
 
         /*! Return the reference to underlying index command. */
         constexpr const IndexCommand &get() const noexcept;
