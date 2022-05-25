@@ -11,7 +11,7 @@
 #include "orm/version.hpp"
 // TinyUtils
 #include "version.hpp"
-// Tom example
+// Tom example (defined on windows only)
 #ifdef TINYTOM_EXAMPLE
 #  include "tom/version.hpp"
 #endif
