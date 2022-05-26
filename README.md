@@ -10,7 +10,7 @@
 
 TinyORM is a modern ORM library that makes interacting with a database extremely simple.
 
-The code is well tested with the unit and functional tests. Almost all the query builder methods are unit tested. The TinyORM's query builder code and the code which is responsible for obtaining relationships, is tested by functional tests against all supported databases. For now, the code coverage is not ideal but is good enough to guarantee API and behavior compatibility.
+The code is written in the modern c++20 way and is well tested with the unit and functional tests. Almost all the query builder methods are unit tested. The TinyORM's query builder code and the code which is responsible for obtaining relationships, is tested by functional tests against all supported databases. The code coverage is good enough to guarantee API and behavior compatibility.
 
 ## Documentation
 
