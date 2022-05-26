@@ -18,7 +18,7 @@ jobs:
       TINY_CLANG_TIDY_EXECUTED: false
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: add-apt-repository gcc 11 and Qt 5.15.2
       run: |
