@@ -1,4 +1,4 @@
-#pragma code_page(@pragma_codepage@) // DEFAULT on msvc >=Qt6 and UTF-8 in any other case
+#pragma code_page(@pragma_codepage@) // DEFAULT for msvc >=Qt6 and UTF-8 in any other case
 
 //IDI_ICON1 ICON "icons/@TinyTest_icon@.ico"
 
