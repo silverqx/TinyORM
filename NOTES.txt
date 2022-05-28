@@ -323,11 +323,21 @@ DROP TABLE IF EXISTS "migrations_unit_testing" CASCADE;
 UBSan:
 ------
 
+Has to be invoked on Linux clang and errors are detected at runtime.
+
+This enable the undefined group:
+
 QMAKE_CXXFLAGS += -O1 -fsanitize=undefined
 QMAKE_LFLAGS += -fsanitize=undefined
 
+This with the above one! enables all the possible sanitizers:
+
 QMAKE_CXXFLAGS += -O1 -fsanitize=nullability -fsanitize=float-divide-by-zero -fsanitize=unsigned-integer-overflow -fsanitize=implicit-conversion -fsanitize=local-bounds
 QMAKE_LFLAGS += -fsanitize=nullability -fsanitize=float-divide-by-zero -fsanitize=unsigned-integer-overflow -fsanitize=implicit-conversion -fsanitize=local-bounds
+
+Set in the QtCreator env. before execution, it suspends some errors detected in the Qt library:
+
+UBSAN_OPTIONS=suppressions=/home/silverqx/Code/c/TinyOrm/TinyORM/tools/configs/UBSan.supp:print_stacktrace=0
 
 
 constructor copy/move snippet:
