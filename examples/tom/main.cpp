@@ -107,7 +107,7 @@ std::shared_ptr<DatabaseManager> setupManager()
     },
         /* Because the default connection name is not defined, then will be needed
            to provide the connection name using the --database=xyz argument. */
-        {});
+        QStringLiteral("tinyorm_tom_mysql"));
 }
 
 /* Alternative syntax to instantiate migration classes. */
