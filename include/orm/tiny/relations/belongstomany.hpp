@@ -58,6 +58,9 @@ namespace Orm::Tiny::Relations
                       const QString &relatedKey = "", const QString &relationName = "");
 
     public:
+        /*! Related instance type passed to the relation. */
+        using RelatedType = Related;
+
         /*! Virtual destructor. */
         inline ~BelongsToMany() override = default;
 

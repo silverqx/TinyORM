@@ -26,6 +26,9 @@ namespace Orm::Tiny::Relations
                 const QString &foreignKey, const QString &localKey);
 
     public:
+        /*! Related instance type passed to the relation. */
+        using RelatedType = Related;
+
         /*! Virtual destructor. */
         inline ~HasMany() override = default;
 
