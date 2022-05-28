@@ -404,12 +404,12 @@ namespace Orm::Tiny::Concerns
                 break;
 
             case RelationStoreType::QUERIES_RELATIONSHIPS_QUERY:
+            case RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED:
                 static_cast<QueriesRelationshipsStore<void> *>(this)
                         ->template visited<Related>(method);
                 break;
 
             case RelationStoreType::QUERIES_RELATIONSHIPS_TINY:
-            case RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED:
                 static_cast<QueriesRelationshipsStore<Related> *>(this)
                         ->template visited<Related>(method);
                 break;
