@@ -1,0 +1,2 @@
+implicit-integer-sign-change:qarraydata.h
+unsigned-integer-overflow:qhashfunctions.h

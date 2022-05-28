@@ -41,3 +41,24 @@ QMAKE_CXXFLAGS_WARN_ON *= \
 
 # Clang 12 still doesn't support -Wstrict-null-sentinel
 !clang: QMAKE_CXXFLAGS_WARN_ON *= -Wstrict-null-sentinel
+
+# Allow to enable UBSan with Clang
+clang:ubsan: {
+    QMAKE_CXXFLAGS += -O1
+
+    QMAKE_CXXFLAGS *= \
+        -fsanitize=undefined \
+        -fsanitize=nullability \
+        -fsanitize=float-divide-by-zero \
+        -fsanitize=unsigned-integer-overflow \
+        -fsanitize=implicit-conversion \
+        -fsanitize=local-bounds \
+
+    QMAKE_LFLAGS *= \
+        -fsanitize=undefined \
+        -fsanitize=nullability \
+        -fsanitize=float-divide-by-zero \
+        -fsanitize=unsigned-integer-overflow \
+        -fsanitize=implicit-conversion \
+        -fsanitize=local-bounds
+}
