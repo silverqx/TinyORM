@@ -133,10 +133,10 @@ namespace Tom
                  qEnvironmentVariableIsSet("ANSICON") ||
                  qEnvironmentVariable("ConEmuANSI") == QStringLiteral("ON") ||
                  qEnvironmentVariable("TERM") == QStringLiteral("xterm"));
-#endif
-
+#else
         // Detect character device, in most cases false when the output is redirected
         return isatty(stream);
+#endif
     }
 
 } // namespace Tom
