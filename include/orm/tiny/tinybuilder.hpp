@@ -553,9 +553,6 @@ namespace Orm::Tiny
     {
         return m_model.newInstance(attributes)
                 .setConnection(m_query->getConnection().getName());
-        // TODO study, or stackoverflow move or not move? its a question 🤔 silverqx
-//        return std::move(m_model.newInstance(attributes)
-//                         .setConnection(m_query->getConnection().getName()));
     }
 
     template<typename Model>
