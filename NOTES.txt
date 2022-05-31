@@ -253,6 +253,8 @@ $env:Path = "E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-cmake;E:\c\qMedia\Ti
 
 TinyORM docs github pages:
 --------------------------
+tags: docusaurus
+---
 
 - npm run clear
 
@@ -276,7 +278,7 @@ npm start -- --no-open
 
 - upgrade Docusaurus npm:
 
-npm install @docusaurus/core@latest @docusaurus/plugin-ideal-image@latest @docusaurus/preset-classic@latest
+npm install @docusaurus/core@latest @docusaurus/plugin-client-redirects@latest @docusaurus/plugin-ideal-image@latest @docusaurus/preset-classic@latest
 
 - upgrade Docusaurus yarn:
 
