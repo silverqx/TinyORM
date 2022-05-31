@@ -549,8 +549,7 @@ namespace Orm::Tiny::Concerns
     HasRelationStore<Derived, AllRelations...>::LazyRelationStore<Related>::visited(
             const Method method)
     {
-        m_result = std::invoke(method, this->m_hasRelationStore.model())
-                ->getResults();
+        m_result = std::invoke(method, this->m_hasRelationStore.model())->getResults();
     }
 
     /* BelongsToManyRelatedTableStore */
