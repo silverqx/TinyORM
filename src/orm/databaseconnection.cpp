@@ -33,7 +33,6 @@ namespace Orm
 
 /* public */
 
-// TODO err, may be configurable exceptions by config or compiler directive? (completely disable exceptions by directive) silverqx
 DatabaseConnection::DatabaseConnection(
         std::function<Connectors::ConnectionName()> &&connection,
         // NOLINTNEXTLINE(modernize-pass-by-value)

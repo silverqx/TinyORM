@@ -873,7 +873,6 @@ bool Builder::invalidOperator(const QString &comparison) const
 QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings) const
 {
     // TODO investigate const, move, reserve() vs ctor(size), nice example of move semantics 😏 silverqx
-    // FUTURE rewrite with ranges transform, for fun silverqx
     QVector<QVariant> cleanedBindings;
     cleanedBindings.reserve(bindings.size());
 
@@ -1104,7 +1103,6 @@ Builder &Builder::joinSubInternal(
 Builder &Builder::whereInternal(const Column &column, const QString &comparison,
                                 const QVariant &value, const QString &condition)
 {
-    // TODO constexpr, compile check for a invalid comparison operator silverqx
     invalidOperator(comparison);
 
     m_wheres.append({.column = column, .value = value, .comparison = comparison,

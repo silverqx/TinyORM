@@ -72,7 +72,6 @@ namespace Orm::Tiny::Relations
         /*!  Get the "related key" column name. */
         QString getRelatedKey() const;
 
-
         // TODO fuckup, timestamps in pivot, I will solve it when I will have to use timestamps in the code, anyway may be I will not need it, because I can pass to the method right away what I will need silverqx
         // TODO also don't forget unsetRelations() if pivotParent will be implemented silverqx
         /*! The parent model of the relationship. */
