@@ -20,6 +20,9 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class GuardsAttributes : public Concerns::GuardedModel
     {
+        /*! Alias for the type utils. */
+        using TypeUtils = Orm::Utils::Type;
+
     public:
         /*! Get the fillable attributes for the model. */
         inline const QStringList &getFillable() const;
@@ -268,9 +271,8 @@ namespace Orm::Tiny::Concerns
     QString
     GuardsAttributes<Derived, AllRelations...>::getKeyForGuardableHash() const
     {
-        return QStringLiteral("%1-%2").arg(
-                    model().getConnectionName(),
-                    Orm::Utils::Type::classPureBasename<Derived>());
+        return QStringLiteral("%1-%2").arg(model().getConnectionName(),
+                                           TypeUtils::classPureBasename<Derived>());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

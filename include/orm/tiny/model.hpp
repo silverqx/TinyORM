@@ -70,6 +70,8 @@ namespace Orm::Tiny
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! Alias for the string utils. */
         using StringUtils = Orm::Tiny::Utils::String;
+        /*! Alias for the type utils. */
+        using TypeUtils = Orm::Utils::Type;
         /*! Apply all the Model's template parameters to the passed T template
             argument. */
         template<template<typename ...> typename T>
@@ -896,7 +898,7 @@ namespace Orm::Tiny
         if (table.isEmpty())
             const_cast<QString &>(model().u_table) =
                 QStringLiteral("%1s").arg(
-                    StringUtils::snake(Orm::Utils::Type::classPureBasename<Derived>()));
+                    StringUtils::snake(TypeUtils::classPureBasename<Derived>()));
 
         return table;
     }
@@ -942,7 +944,7 @@ namespace Orm::Tiny
     QString Model<Derived, AllRelations...>::getForeignKey() const
     {
         return QStringLiteral("%1_%2").arg(
-                    StringUtils::snake(Orm::Utils::Type::classPureBasename<Derived>()),
+                    StringUtils::snake(TypeUtils::classPureBasename<Derived>()),
                     getKeyName());
     }
 
@@ -1148,7 +1150,7 @@ namespace Orm::Tiny
 #endif
             )
                 throw Orm::Exceptions::InvalidArgumentError(
-                        message.arg(Orm::Utils::Type::classPureBasename<Derived>(), key));
+                        message.arg(TypeUtils::classPureBasename<Derived>(), key));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1158,7 +1160,7 @@ namespace Orm::Tiny
                     QStringLiteral("Add '%1' to u_fillable data member to allow "
                                    "mass assignment on the '%2' model.")
                     .arg(std::move(key),
-                         Orm::Utils::Type::classPureBasename<Derived>()));
+                         TypeUtils::classPureBasename<Derived>()));
     }
 
     /* Getters for u_ data members defined in the Derived models, helps to avoid

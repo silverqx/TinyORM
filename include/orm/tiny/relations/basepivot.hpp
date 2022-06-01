@@ -22,6 +22,8 @@ namespace Orm::Tiny::Relations
     {
         /*! Alias for the string utils. */
         using StringUtils = Orm::Tiny::Utils::String;
+        /*! Alias for the type utils. */
+        using TypeUtils = Orm::Utils::Type;
 
     public:
         friend Model<PivotModel>;
@@ -237,8 +239,7 @@ namespace Orm::Tiny::Relations
         // Get singularizes snake-case table name
         if (table.isEmpty())
             return StringUtils::singular(
-                        StringUtils::snake(
-                            Orm::Utils::Type::classPureBasename<PivotModel>()));
+                        StringUtils::snake(TypeUtils::classPureBasename<PivotModel>()));
 
         return table;
     }

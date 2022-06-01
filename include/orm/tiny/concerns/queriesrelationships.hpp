@@ -86,6 +86,9 @@ namespace Private
         template<typename Related>
         using CallbackType = QueriesRelationshipsCallback<Related>;
 
+        /*! Alias for the type utils. */
+        using TypeUtils = Orm::Utils::Type;
+
     protected:
         /*! Alias for the Relations::Relation. */
         template<typename Related>
@@ -697,9 +700,9 @@ namespace Private
                     "nested relations. Actual '<Related> = %1', expected '<Related> "
                     "= %2', <Related> has to be of the same type as the 'last' "
                     "relation name passed to the has() related method.")
-                .arg(Orm::Utils::Type::classPureBasename(
+                .arg(TypeUtils::classPureBasename(
                          Private::HasNestedStore::STORE_TYPEID.top()),
-                     Orm::Utils::Type::classPureBasename<Related>()));
+                     TypeUtils::classPureBasename<Related>()));
     }
 
 } // namespace Orm::Tiny::Concerns

@@ -50,6 +50,9 @@ namespace Concerns
         // To access private queriesRelationshipsWithVisitor()
         friend Concerns::QueriesRelationships<Derived>;
 
+        /*! Alias for the type utils. */
+        using TypeUtils = Orm::Utils::Type;
+
     public:
         /*! Get a relationship for Many types relation. */
         template<typename Related,
@@ -384,7 +387,7 @@ namespace Concerns
     {
         if (!relationLoaded(relation))
             throw Exceptions::RelationNotLoadedError(
-                    Orm::Utils::Type::classPureBasename<Derived>(), relation);
+                    TypeUtils::classPureBasename<Derived>(), relation);
 
         return getRelationFromHash<Related, Container>(relation);
     }
@@ -397,7 +400,7 @@ namespace Concerns
     {
         if (!relationLoaded(relation))
             throw Exceptions::RelationNotLoadedError(
-                    Orm::Utils::Type::classPureBasename<Derived>(), relation);
+                    TypeUtils::classPureBasename<Derived>(), relation);
 
         return getRelationFromHash<Related, Tag>(relation);
     }
@@ -831,9 +834,9 @@ namespace Concerns
            just sort the models and join them together to get the table name. */
         QStringList segments {
             // The table name of the current model instance
-            Orm::Utils::Type::classPureBasename<Derived>(),
+            TypeUtils::classPureBasename<Derived>(),
             // The table name of the related model instance
-            Orm::Utils::Type::classPureBasename<Related>(),
+            TypeUtils::classPureBasename<Related>(),
         };
 
         /* Now that we have the model names in the vector, we can just sort them and
@@ -853,7 +856,7 @@ namespace Concerns
     {
         if (!basemodel().getUserRelations().contains(name))
             throw Exceptions::RelationNotFoundError(
-                    Orm::Utils::Type::classPureBasename<Derived>(), name, from);
+                    TypeUtils::classPureBasename<Derived>(), name, from);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -936,7 +939,7 @@ namespace Concerns
                             "The relation '%1' is many type relation, use "
                             "%2<%3>() method overload without an 'Orm::One' tag.")
                         .arg(relation, source,
-                             Orm::Utils::Type::classPureBasename<Related>()));
+                             TypeUtils::classPureBasename<Related>()));
         } else if constexpr (std::is_same_v<Result, QVector<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::InvalidTemplateArgumentError(
@@ -944,7 +947,7 @@ namespace Concerns
                             "The relation '%1' is one type relation, use "
                             "%2<%3, Orm::One>() method overload with an 'Orm::One' tag.")
                         .arg(relation, source,
-                             Orm::Utils::Type::classPureBasename<Related>()));
+                             TypeUtils::classPureBasename<Related>()));
         } else
             throw Orm::Exceptions::InvalidTemplateArgumentError(
                     "Unexpected 'Result' template argument.");
@@ -955,7 +958,7 @@ namespace Concerns
     QString
     HasRelationships<Derived, AllRelations...>::guessBelongsToRelationInternal() const
     {
-        auto relation = Orm::Utils::Type::classPureBasename<Related>();
+        auto relation = TypeUtils::classPureBasename<Related>();
 
         relation[0] = relation[0].toLower();
 

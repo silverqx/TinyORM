@@ -39,6 +39,9 @@ namespace Orm::Tiny::Concerns
         // To access createXyzStore(), xyzStore() getters, resetRelationStore(), ...
         friend HasRelationships<Derived, AllRelations...>;
 
+        /*! Alias for the type utils. */
+        using TypeUtils = Orm::Utils::Type;
+
         /*! Default constructor. */
         inline HasRelationStore() = default;
         /*! Default destructor. */
@@ -361,7 +364,6 @@ namespace Orm::Tiny::Concerns
                     *this);
     }
 
-    // CUR1 add constraint to also check Method return value, should be std::unique_ptr<Relation> silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<RelationshipMethod<Derived> Method>
     requires std::is_member_function_pointer_v<Method>
@@ -861,7 +863,7 @@ namespace Orm::Tiny::Concerns
                     "You can not %1 the %2 model in the middle of any relation store "
                     "operation.");
 
-        const auto className = Orm::Utils::Type::classPureBasename<Derived>();
+        const auto className = TypeUtils::classPureBasename<Derived>();
 
         switch (type) {
         case CopyMoveTemplateType::COPY:

@@ -46,6 +46,9 @@ namespace Orm::Tiny::Relations
 
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
+        /*! Alias for the type utils. */
+        using TypeUtils = Orm::Utils::Type;
+
         /*! Model alias. */
         template<typename Derived>
         using BaseModel = Orm::Tiny::Model<Derived>;
@@ -919,7 +922,7 @@ namespace Orm::Tiny::Relations
             return *model;
 
         throw Exceptions::ModelNotFoundError(
-                    Orm::Utils::Type::classPureBasename<Related>(), {id});
+                    TypeUtils::classPureBasename<Related>(), {id});
     }
 
     template<class Model, class Related, class PivotType>
@@ -985,8 +988,7 @@ namespace Orm::Tiny::Relations
         if (auto model = first(columns); model)
             return *model;
 
-        throw Exceptions::ModelNotFoundError(
-                    Orm::Utils::Type::classPureBasename<Related>());
+        throw Exceptions::ModelNotFoundError(TypeUtils::classPureBasename<Related>());
     }
 
     template<class Model, class Related, class PivotType>
@@ -1816,7 +1818,7 @@ namespace Orm::Tiny::Relations
     QString BelongsToMany<Model, Related, PivotType>::guessInverseRelation() const
     {
         // FEATURE relations, add parent touches (eg parentTouchesName) to the Model::belongsToMany factory method silverqx
-        auto relation = Orm::Utils::Type::classPureBasename<Model>();
+        auto relation = TypeUtils::classPureBasename<Model>();
 
         relation[0] = relation[0].toLower();
 

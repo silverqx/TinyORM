@@ -23,7 +23,6 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasAttributes
     {
-        // CUR utils, use this using pattern also for all Orm::Utils silverqx
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! Alias for the string utils. */

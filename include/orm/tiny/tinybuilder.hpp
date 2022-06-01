@@ -34,6 +34,8 @@ namespace Orm::Tiny
 
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
+        /*! Alias for the type utils. */
+        using TypeUtils = Orm::Utils::Type;
 
     public:
         /*! Constructor. */
@@ -313,7 +315,7 @@ namespace Orm::Tiny
             return *model;
 
         throw Exceptions::ModelNotFoundError(
-                    Orm::Utils::Type::classPureBasename<Model>(), {id});
+                    TypeUtils::classPureBasename<Model>(), {id});
     }
 
     template<typename Model>
@@ -381,8 +383,7 @@ namespace Orm::Tiny
         if (model)
             return *model;
 
-        throw Exceptions::ModelNotFoundError(
-                    Orm::Utils::Type::classPureBasename<Model>());
+        throw Exceptions::ModelNotFoundError(TypeUtils::classPureBasename<Model>());
     }
 
     template<typename Model>
