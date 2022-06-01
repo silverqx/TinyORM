@@ -429,7 +429,7 @@ MySqlSchemaGrammar::compileKey(const Blueprint &blueprint, const IndexCommand &c
                  columnize(command.columns));
 }
 
-// CUR duplicate in MysqlGrammar silverqx
+// Duplicate in the MysqlGrammar is OK
 QString MySqlSchemaGrammar::wrapValue(QString value) const
 {
     if (value == ASTERISK_C)
