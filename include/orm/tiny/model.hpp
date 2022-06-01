@@ -1325,7 +1325,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
 // CUR docs IdealImage silverqx
 // CUR docs, add all the implemented features summary somewhere silverqx
-// CUR export dll paths in Invoke- ps1 scripts, also check dotenv and source if needed and add dotenv example to tools/ silverqx
 // TODO cache static_cast<>(*this) in the model()/basemodel() CRTP as a class data member std::optional<std::reference_wrapper<Derived>> m_model = std::nullopt, but I will have to create copy ctor to set m_model {std::nullopt}, the same for other similar model() methods like Model::model(), then I can to check if (m_model) and return right away and I will call static_cast or dynamic_cast only once for every instance, it is casted everytime now 😟 silverqx
 // CUR docs exceptions, which methods throw which exceptions, so user know which exception classes to define in a catch blocks silverqx
 // CUR Belongs To Many firstOrNew, firstOrCreate, and updateOrCreate Methods, revisit first and second argument silverqx
@@ -1340,7 +1339,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR schema, add tests for enum and set; and json and jsonb, storedAs / virtualAs silverqx
 // CUR compiler, enable /sdl on msvc https://docs.microsoft.com/en-us/cpp/build/reference/sdl-enable-additional-security-checks?view=msvc-170 silverqx
 // CUR cmake, update max. policy to 3.23 silverqx
-// CUR docs, remove target_link_libs() for transitive dependencies silverqx
 // CUR tom, don't modify migrate:status command, rather extend it and add possibility to only call it through Application::runWithArguments() (this secure to not be able to call it from the cmd. line), do not show it in the list or help command output silverqx
 // CUR tom, think about remove TINYTOM_NO/_DEBUG and TINYTOM_TESTS_CODE and use TINYORM_ defines instead silverqx
 // CUR check all unique_ptr() of base clases, if base classes have virtual dtors, or find unique_ptrs of aggregates to base classes silverqx
