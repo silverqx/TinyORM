@@ -52,7 +52,7 @@ QString SQLiteSchemaGrammar::addModifiers(QString &&/*unused*/,
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QString SQLiteSchemaGrammar::escapeString(QString /*unused*/) const
+QString SQLiteSchemaGrammar::escapeString(QString /*unused*/) const // clazy:exclude=function-args-by-ref
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }
