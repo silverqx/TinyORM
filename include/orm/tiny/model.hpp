@@ -1343,8 +1343,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR schema, add tests for enum and set; and json and jsonb, storedAs / virtualAs silverqx
 // CUR compiler, enable /sdl on msvc https://docs.microsoft.com/en-us/cpp/build/reference/sdl-enable-additional-security-checks?view=msvc-170 silverqx
 // CUR cmake, update max. policy to 3.23 silverqx
-// CUR tom, tom/conf.pri is used by who silverqx
-// CUR cmake, add messages about Building tom example, tests and ORM silverqx
 // CUR docs, remove target_link_libs() for transitive dependencies silverqx
 // CUR tom docs, write documentation silverqx
 // CUR tom, build on mingw, linux, build without pch and all common tasks that should run from time to time silverqx

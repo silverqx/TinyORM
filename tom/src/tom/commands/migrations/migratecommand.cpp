@@ -94,7 +94,6 @@ void MigrateCommand::loadSchemaState() const
     // CUR tom, finish load schema silverqx
 }
 
-// CUR tom, remove silverqx
 bool MigrateCommand::needsSeeding() const
 {
     return !isSet(pretend) && isSet(seed);
