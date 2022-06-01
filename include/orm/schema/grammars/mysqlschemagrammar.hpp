@@ -162,8 +162,8 @@ namespace Grammars
         /*! Wrap a single string in keyword identifiers. */
         QString wrapValue(QString value) const override;
 
-        /*! Escape all MySQL spacial characters desribed in String Literal docs. */
-        QString addSlashes(QString value) const;
+        /*! Escape special characters (used by the defaultValue and comment). */
+        QString escapeString(QString value) const override;
 
         /*! Get the SQL for the column data type. */
         QString getType(const ColumnDefinition &column) const override;

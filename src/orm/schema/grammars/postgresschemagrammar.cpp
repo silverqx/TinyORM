@@ -298,13 +298,9 @@ QVector<QString>
 PostgresSchemaGrammar::compileComment(const Blueprint &blueprint,
                                       const CommentCommand &command) const
 {
-    auto comment = command.comment;
-    // Escape single quotes
-    comment.replace(QChar('\''), QStringLiteral("''"));
-
     return {QStringLiteral("comment on column %1.%2 is %3")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.column),
-                     quoteString(comment))};
+                     quoteString(escapeString(command.comment)))};
 }
 
 QVector<QString>
@@ -440,6 +436,21 @@ PostgresSchemaGrammar::compileDropConstraint(const Blueprint &blueprint,
 {
     return {QStringLiteral("alter table %1 drop constraint %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index))};
+}
+
+QString PostgresSchemaGrammar::escapeString(QString value) const
+{
+    /* Different approach used for the MySQL and PostgreSQL, for MySQL are escaped more
+       special characters but for PostrgreSQL only single-quote, it doesn't matter
+       though, it will work anyway.
+       On MySQL escaping of ^Z, \0, and \ is needed on some environments, described here:
+       https://dev.mysql.com/doc/refman/8.0/en/string-literals.html
+       On PostgreSQL escaping using \ is is more SQL standard conforming, described here,
+       (especially look at the caution box):
+       https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-SPECIAL-CHARS*/
+
+    // 0x0027 = '
+    return value.replace(QChar(0x0027), QStringLiteral("''"));
 }
 
 QString PostgresSchemaGrammar::getType(const ColumnDefinition &column) const
@@ -884,7 +895,7 @@ QString PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) con
     if (!defaultValue.isValid() || defaultValue.isNull())
         return {};
 
-    // CUR schema, note about security in docs, unprepared and unescaped silverqx
+    // Default value is already quoted and escaped
     return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
 }
 

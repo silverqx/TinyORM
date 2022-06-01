@@ -439,18 +439,29 @@ QString MySqlSchemaGrammar::wrapValue(QString value) const
                                                     QStringLiteral("``")));
 }
 
-QString MySqlSchemaGrammar::addSlashes(QString value) const
+QString MySqlSchemaGrammar::escapeString(QString value) const
 {
+    /* Different approach used for the MySQL and PostgreSQL, for MySQL are escaped more
+       special characters but for PostrgreSQL only single-quote, it doesn't matter
+       though, it will work anyway.
+       On MySQL escaping of ^Z, \0, and \ is needed on some environments, described here:
+       https://dev.mysql.com/doc/refman/8.0/en/string-literals.html
+       On PostgreSQL escaping using \ is is more SQL standard conforming, described here,
+       (especially look at the caution box):
+       https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-SPECIAL-CHARS*/
+
     return value
-            .replace(QChar(0x001a), "^Z")
-            .replace(QChar('\\'), "\\\\")
-            .replace(QChar(QChar::Null), "\\0")
-            .replace(QChar(QChar::LineFeed), "\\n")
-            .replace(QChar(QChar::Tabulation), "\\t")
-            .replace(QChar(0x0008), "\\b")
-            .replace(QChar(QChar::CarriageReturn), "\\r")
-            .replace(QChar('"'), "\\\"")
-            .replace(QChar(0x0027), "\\'");
+            // No need to escape these
+//            .replace(QChar(QChar::LineFeed), "\\n")
+//            .replace(QChar(QChar::Tabulation), "\\t")
+//            .replace(QChar(0x0008), "\\b")
+//            .replace(QChar(QChar::CarriageReturn), "\\r")
+//            .replace(QChar('"'), "\\\"")
+            .replace(QChar(0x001a), QStringLiteral("^Z"))
+            .replace(QChar('\\'), QStringLiteral("\\\\"))
+            .replace(QChar(QChar::Null), QStringLiteral("\\0"))
+            // 0x0027 = '
+            .replace(QChar(0x0027), "''");
 }
 
 QString MySqlSchemaGrammar::getType(const ColumnDefinition &column) const
@@ -902,6 +913,7 @@ QString MySqlSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
         return {};
 
     // CUR schema, note about security in docs, unprepared and unescaped silverqx
+    // Default value is already quoted and escaped
     return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
 }
 
@@ -940,9 +952,8 @@ QString MySqlSchemaGrammar::modifyComment(const ColumnDefinition &column) const
     if (column.comment.isEmpty())
         return {};
 
-    // CUR schema docs, note about escaping silverqx
     // All escaped special characters will be correctly saved in the comment
-    return QStringLiteral(" comment %1").arg(quoteString(addSlashes(column.comment)));
+    return QStringLiteral(" comment %1").arg(quoteString(escapeString(column.comment)));
 }
 
 QString MySqlSchemaGrammar::modifySrid(const ColumnDefinition &column) const

@@ -74,6 +74,7 @@ private Q_SLOTS:
     void modifiers() const;
     void modifier_defaultValue_WithExpression() const;
     void modifier_defaultValue_WithBoolean() const;
+    void modifier_defaultValue_Escaping() const;
 
     void useCurrent() const;
     void useCurrentOnUpdate() const;
@@ -783,6 +784,33 @@ void tst_Mysql_SchemaBuilder::modifier_defaultValue_WithBoolean() const
              "`boolean_true` tinyint(1) not null default '1', "
              "`boolean_0` tinyint(1) not null default '0', "
              "`boolean_1` tinyint(1) not null default '1') "
+             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
+             "engine = InnoDB");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_Mysql_SchemaBuilder::modifier_defaultValue_Escaping() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            // String contains \t after tab word
+            table.string("string").defaultValue(R"(Text ' and " or \ newline
+and tab	end)");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             // String contains \t after tab word
+             "create table `firewalls` ("
+             "`string` varchar(255) not null default 'Text '' and \" or \\\\ newline\n"
+             "and tab	end') "
              "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
              "engine = InnoDB");
     QVERIFY(firstLog.boundValues.isEmpty());

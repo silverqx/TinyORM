@@ -96,6 +96,9 @@ namespace Grammars
                             const Blueprint &blueprint) const = 0;
 
     protected:
+        /*! Escape special characters (used by the defaultValue and comment). */
+        virtual QString escapeString(QString value) const = 0;
+
         /*! Get the SQL for the column data type. */
         virtual QString getType(const ColumnDefinition &column) const = 0;
         /*! Compile the blueprint's column definitions. */

@@ -786,25 +786,25 @@ The following table contains all of the available column modifiers. This list do
 
 | Modifier                   | Description |
 | -------------------------- | ----------- |
-| `.after("column")`         | Place the column "after" another column (MySQL). |
+| `.after("column")`         | Place the column "after" another column <small>(MySQL)</small>. |
 | `.autoIncrement()`         | Set INTEGER columns as auto-incrementing (primary key). |
-| `.charset("utf8mb4")`      | Specify a character set for the column (MySQL). |
-| <small>`.collation("utf8mb4_unicode_ci")`</small> | Specify a collation for the column (MySQL/PostgreSQL/SQL Server). |
-| `.comment("my comment")`   | Add a comment to a column (MySQL/PostgreSQL). |
-| `.defaultValue(value)`     | Specify a "default" value for the column. |
-| `.first()`                 | Place the column "first" in the table (MySQL). |
-| `.from(integer)`           | Set the starting value of an auto-incrementing field, an alias for `startingValue()` (MySQL / PostgreSQL). |
-| `.invisible()`             | Make the column "invisible" to `SELECT *` queries (MySQL). |
+| `.charset("utf8mb4")`      | Specify a character set for the column <small>(MySQL)</small>. |
+| <small>`.collation("utf8mb4_unicode_ci")`</small> | Specify a collation for the column <small>(MySQL/PostgreSQL/SQL Server)</small>. |
+| `.comment("my comment")`   | Add a comment to a column <small>(MySQL / PostgreSQL)</small>.<br/><small>Special characters are escaped.</small> |
+| `.defaultValue(value)`     | Specify a "default" value for the column.<br/><small>Special characters are escaped.</small> |
+| `.first()`                 | Place the column "first" in the table <small>(MySQL)</small>. |
+| `.from(integer)`           | Set the starting value of an auto-incrementing field, an alias for `startingValue()` <small>(MySQL / PostgreSQL)</small>. |
+| `.invisible()`             | Make the column "invisible" to `SELECT *` queries <small>(MySQL)</small>. |
 | `.nullable(value = true)`  | Allow NULL values to be inserted into the column. |
-| `.startingValue(integer)`  | Set the starting value of an auto-incrementing field (MySQL / PostgreSQL). |
-| `.storedAs(expression)`    | Create a stored generated column (MySQL / PostgreSQL). |
-| `.unsigned()`              | Set INTEGER columns as UNSIGNED (MySQL). |
+| `.startingValue(integer)`  | Set the starting value of an auto-incrementing field <small>(MySQL / PostgreSQL)</small>. |
+| `.storedAs(expression)`    | Create a stored generated column <small>(MySQL / PostgreSQL)</small>. |
+| `.unsigned()`              | Set INTEGER columns as UNSIGNED <small>(MySQL)</small>. |
 | `.useCurrent()`            | Set TIMESTAMP columns to use CURRENT_TIMESTAMP as default value. |
 | `.useCurrentOnUpdate()`    | Set TIMESTAMP columns to use CURRENT_TIMESTAMP when a record is updated. |
-| `.virtualAs(expression)`   | Create a virtual generated column (MySQL). |
-| `.generatedAs(expression)` | Create an identity column with specified sequence options (PostgreSQL). |
-| `.always()`                | Defines the precedence of sequence values over input for an identity column (PostgreSQL). |
-| `.isGeometry()`            |  Set spatial column type to `geometry` - the default type is `geography` (PostgreSQL). |
+| `.virtualAs(expression)`   | Create a virtual generated column <small>(MySQL)</small>. |
+| `.generatedAs(expression)` | Create an identity column with specified sequence options <small>(PostgreSQL)</small>. |
+| `.always()`                | Defines the precedence of sequence values over input for an identity column <small>(PostgreSQL)</small>. |
+| `.isGeometry()`            |  Set spatial column type to `geometry` - the default type is `geography` <small>(PostgreSQL)</small>. |
 
 #### Default Expressions
 

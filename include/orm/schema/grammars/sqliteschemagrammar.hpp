@@ -52,6 +52,9 @@ namespace Orm::SchemaNs::Grammars
         QString addModifiers(QString &&sql,
                              const ColumnDefinition &column) const override;
 
+        /*! Escape special characters (used by the defaultValue and comment). */
+        QString escapeString(QString value) const override;
+
         /*! Get the SQL for the column data type. */
         QString getType(const ColumnDefinition &column) const override;
     };

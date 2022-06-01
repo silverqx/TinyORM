@@ -52,6 +52,11 @@ QString SQLiteSchemaGrammar::addModifiers(QString &&/*unused*/,
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
+QString SQLiteSchemaGrammar::escapeString(QString /*unused*/) const
+{
+    throw Exceptions::RuntimeError(NotImplemented);
+}
+
 QString SQLiteSchemaGrammar::getType(const ColumnDefinition &/*unused*/) const
 {
     throw Exceptions::RuntimeError(NotImplemented);

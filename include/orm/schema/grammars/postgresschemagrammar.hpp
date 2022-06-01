@@ -159,6 +159,9 @@ namespace Grammars
         QVector<QString> compileDropConstraint(const Blueprint &blueprint,
                                                const IndexCommand &command) const;
 
+        /*! Escape special characters (used by the defaultValue and comment). */
+        QString escapeString(QString value) const override;
+
         /*! Get the SQL for the column data type. */
         QString getType(const ColumnDefinition &column) const override;
 

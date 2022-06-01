@@ -147,7 +147,7 @@ QString SchemaGrammar::getDefaultValue(const QVariant &value) const
     return value.userType() == QMetaType::Bool
 #endif
             ? quoteString(QString::number(value.value<int>()))
-            : quoteString(value.value<QString>());
+            : quoteString(escapeString(value.value<QString>()));
 }
 
 QString SchemaGrammar::typeComputed(const ColumnDefinition &/*unused*/) const
