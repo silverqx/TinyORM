@@ -22,15 +22,13 @@ namespace Orm::Tiny::Concerns
     template<typename Model>
     class QueriesRelationships;
 
-    // FEATURE concepts, stackoverflow how the hell should I check this silverqx
-//    template<typename Model, typename Method>
-//    concept RelationMethod = std::is_member_function_pointer_v<Method> &&
-//        (requires(Method m) {
-//            {std::invoke(m, Model())} -> std::convertible_to<std::unique_ptr<Relations::OneRelation>>;
-//        } ||
-//        requires(Method m) {
-//            {std::invoke(m, Model())} -> std::convertible_to<std::unique_ptr<Relations::ManyRelation>>;
-//        });
+    /*! Concept to check the relationship method. */
+    template<typename Method, typename Derived>
+    concept RelationshipMethod =
+            ModelConcept<Derived> &&
+            std::is_member_function_pointer_v<Method> &&
+            std::is_convertible_v<std::invoke_result_t<Method, Derived>,
+                                  std::unique_ptr<Relations::IsRelation>>;
 
     // FUTURE relationstore, cache results, eg. cache Relation instance and return copy of this cached Relation instance, Related parameter can be obtained from cached Relation instance silverqx
     /*! Relation store, handles mapping from a relation name to the Model's relation
@@ -98,7 +96,7 @@ namespace Orm::Tiny::Concerns
 
             /*! Called from Model::u_relations to pass reference to the relation
                 method, an enter point of the visitation. */
-            template<typename Method>
+            template<RelationshipMethod<Derived> Method>
             requires std::is_member_function_pointer_v<Method>
             void operator()(Method method);
 
@@ -129,7 +127,7 @@ namespace Orm::Tiny::Concerns
             inline virtual ~EagerRelationStore() final = default;
 
             /*! Method called after visitation. */
-            template<typename Method>
+            template<RelationshipMethod<Derived> Method>
             void visited(Method method) const;
 
         private:
@@ -157,7 +155,7 @@ namespace Orm::Tiny::Concerns
             inline virtual ~PushRelationStore() final = default;
 
             /*! Method called after visitation. */
-            template<typename Method>
+            template<RelationshipMethod<Derived> Method>
             void visited(Method /*unused*/) const;
 
             /*! Models to push, the reference to the relation in m_relations hash. */
@@ -179,7 +177,7 @@ namespace Orm::Tiny::Concerns
             inline virtual ~TouchOwnersRelationStore() final = default;
 
             /*! Method called after visitation. */
-            template<typename Method>
+            template<RelationshipMethod<Derived> Method>
             void visited(Method method) const;
 
             /*! Models to touch timestamps for, the reference to the relation name/key
@@ -200,7 +198,7 @@ namespace Orm::Tiny::Concerns
             inline virtual ~LazyRelationStore() final = default;
 
             /*! Method called after visitation. */
-            template<typename Method>
+            template<RelationshipMethod<Derived> Method>
             void visited(Method method);
 
             // TODO templated LazyRelationStore by Container too, QVector to Container silverqx
@@ -220,7 +218,7 @@ namespace Orm::Tiny::Concerns
             inline virtual ~BelongsToManyRelatedTableStore() final = default;
 
             /*! Method called after visitation. */
-            template<typename Method>
+            template<RelationshipMethod<Derived> Method>
             void visited(Method /*unused*/);
 
             /*! The related table name result. */
@@ -365,7 +363,7 @@ namespace Orm::Tiny::Concerns
 
     // CUR1 add constraint to also check Method return value, should be std::unique_ptr<Relation> silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Method>
+    template<RelationshipMethod<Derived> Method>
     requires std::is_member_function_pointer_v<Method>
     void HasRelationStore<Derived, AllRelations...>::BaseRelationStore
                                                    ::operator()(const Method method)
@@ -446,18 +444,12 @@ namespace Orm::Tiny::Concerns
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Method>
+    template<RelationshipMethod<Derived> Method>
     void HasRelationStore<Derived, AllRelations...>::EagerRelationStore::visited(
             const Method method) const
     {
         using Related = typename std::invoke_result_t<Method, Derived>
                                     ::element_type::RelatedType;
-
-        // TODO static_assert() check silverqx
-//        static_assert (std::is_convertible_v<std::invoke_result_t<Method, Derived>,
-//                std::unique_ptr<Relations::OneRelation>> ||
-//                std::is_convertible_v<std::invoke_result_t<Method, Derived>,
-//                                std::unique_ptr<Relations::ManyRelation>>, "xyz");
 
         /*! Helping model for eager loads, because Relation::m_parent has to be
             reference (Relation::m_parent == dummyModel), this dummy model prevents
@@ -495,7 +487,7 @@ namespace Orm::Tiny::Concerns
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Method>
+    template<RelationshipMethod<Derived> Method>
     void HasRelationStore<Derived, AllRelations...>::PushRelationStore::visited(
             const Method /*unused*/) const
     {
@@ -517,7 +509,7 @@ namespace Orm::Tiny::Concerns
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Method>
+    template<RelationshipMethod<Derived> Method>
     void HasRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore::visited(
             const Method method) const
     {
@@ -543,7 +535,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    template<typename Method>
+    template<RelationshipMethod<Derived> Method>
     void
     HasRelationStore<Derived, AllRelations...>::LazyRelationStore<Related>::visited(
             const Method method)
@@ -563,7 +555,7 @@ namespace Orm::Tiny::Concerns
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Method>
+    template<RelationshipMethod<Derived> Method>
     void HasRelationStore<Derived, AllRelations...>::BelongsToManyRelatedTableStore
                                                    ::visited(const Method /*unused*/)
     {

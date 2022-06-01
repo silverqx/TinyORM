@@ -30,7 +30,8 @@ namespace Relations
 
     /*! Base relations class. */
     template<class Model, class Related>
-    class Relation : public RelationProxies<Model, Related>
+    class Relation : public RelationProxies<Model, Related>,
+                     public IsRelation
     {
         Q_DISABLE_COPY(Relation)
 

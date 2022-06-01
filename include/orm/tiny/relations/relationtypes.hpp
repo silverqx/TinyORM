@@ -14,6 +14,20 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny::Relations
 {
 
+    /*! Tag for the relation type. */
+    class IsRelation
+    {
+        Q_DISABLE_COPY(IsRelation)
+
+    public:
+        /*! Default constructor. */
+        inline IsRelation() = default;
+        /*! Pure virtual destructor. */
+        inline virtual ~IsRelation() = 0;
+    };
+
+    IsRelation::~IsRelation() = default;
+
     /*! Tag for one type relation. */
     class OneRelation
     {

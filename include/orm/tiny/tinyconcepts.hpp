@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include <concepts>
+#include <memory>
 
 #include "orm/macros/commonnamespace.hpp"
 

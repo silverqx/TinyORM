@@ -1330,7 +1330,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR Belongs To Many firstOrNew, firstOrCreate, and updateOrCreate Methods, revisit first and second argument silverqx
 // CUR add attribute to touch() method silverqx
 // SEC fix LoadLibrary() before qsql plugin loads? https://www.qt.io/blog/security-advisory-qlockfile-qauthenticator-windows-platform-plugin silverqx
-// CUR1 connection, control disable/enable logging at runtime silverqx
 // CUR cmake, make TinyUtils_target in TinyTestCommon.cmake optional, not always needed to link to silverqx
 // CUR docs, info about unsupported json column by qtsql drivers and link to schema.mdx Default Expressions silverqx
 // CUR model, add whereBelongsTo, whereRelation, orWhereRelation silverqx
