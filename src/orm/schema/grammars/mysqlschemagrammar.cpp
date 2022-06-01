@@ -912,7 +912,6 @@ QString MySqlSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
     if (!defaultValue.isValid() || defaultValue.isNull())
         return {};
 
-    // CUR schema, note about security in docs, unprepared and unescaped silverqx
     // Default value is already quoted and escaped
     return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
 }
