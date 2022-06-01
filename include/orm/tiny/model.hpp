@@ -1335,7 +1335,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR cmake, make TinyUtils_target in TinyTestCommon.cmake optional, not always needed to link to silverqx
 // CUR docs, info about unsupported json column by qtsql drivers and link to schema.mdx Default Expressions silverqx
 // CUR model, add whereBelongsTo, whereRelation, orWhereRelation silverqx
-// CUR schema, add tests for enum and set; and json and jsonb, storedAs / virtualAs silverqx
 // CUR propagation, https://ben.balter.com/2017/11/10/twelve-tips-for-growing-communities-around-your-open-source-project/ silverqx
 // CUR optimization, use Q_UNREACHABLE in all switch statements, of course where appropriate silverqx
 // TODO vcpkg, solve how to build tom (when solving vcpkg builds again), currently I have hardly added tabulate to the vcpkg.json port and also manifest file; it will have to be conditional base of the TINYORM_DISABLE_TOM macro silverqx
