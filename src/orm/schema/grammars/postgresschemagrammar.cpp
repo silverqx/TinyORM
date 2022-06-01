@@ -339,7 +339,6 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
         };
     };
 
-    // CUR schema, use enum, indexCommand() calls createIndexName() that needs also command.name silverqx
     /* Pointers to a command's compile member methods by a command name, yes yes c++ 😂.
        I have to map by QString instead of enum struct because a command.name is used
        to look up, I could use enum struct but I had to map
@@ -399,7 +398,6 @@ QString PostgresSchemaGrammar::compileCreateTable(const Blueprint &blueprint) co
 QString PostgresSchemaGrammar::addModifiers(QString &&sql,
                                             const ColumnDefinition &column) const
 {
-    // CUR schema, should be T_THREAD_LOCAL? silverqx
     constexpr static std::array modifierMethods {
         &PostgresSchemaGrammar::modifyCollate,   &PostgresSchemaGrammar::modifyIncrement,
         &PostgresSchemaGrammar::modifyNullable,  &PostgresSchemaGrammar::modifyDefault,
@@ -893,8 +891,8 @@ QString PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) con
 QString PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const
 {
     static const std::unordered_set serials {
-        ColumnType::BigInteger, ColumnType::Integer, ColumnType::MediumInteger,
-        ColumnType::SmallInteger, ColumnType::TinyInteger
+        ColumnType::BigInteger,   ColumnType::Integer,     ColumnType::MediumInteger,
+        ColumnType::SmallInteger, ColumnType::TinyInteger,
     };
 
     if ((serials.contains(column.type) || !column.generatedAs.isEmpty()) &&

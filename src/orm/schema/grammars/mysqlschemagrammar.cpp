@@ -860,7 +860,7 @@ QString MySqlSchemaGrammar::modifyCharset(const ColumnDefinition &column) const
     if (column.charset.isEmpty())
         return {};
 
-    // CUR check quote, origin doesn't have silverqx
+    // Quotes are not used in the MySQL docs
     return QStringLiteral(" character set %1").arg(quoteString(column.charset));
 }
 
@@ -909,7 +909,7 @@ QString MySqlSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
 QString MySqlSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const
 {
     static const std::unordered_set serials {
-        ColumnType::BigInteger, ColumnType::Integer, ColumnType::MediumInteger,
+        ColumnType::BigInteger,   ColumnType::Integer,     ColumnType::MediumInteger,
         ColumnType::SmallInteger, ColumnType::TinyInteger
     };
 

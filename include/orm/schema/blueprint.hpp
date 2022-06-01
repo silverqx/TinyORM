@@ -405,7 +405,6 @@ namespace Grammars
         /*! Set the default string length for migrations. */
         static void defaultStringLength(int length) noexcept;
 
-        // CUR schema, should be T_THREAD_LOCAL? cant be now, thread_local can not be part of dll interface silverqx
         /*! The default string length for migrations. */
         static int DefaultStringLength;
 

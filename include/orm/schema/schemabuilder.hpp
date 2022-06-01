@@ -9,8 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
-// CUR tom, check this on clean project silverqx
-// Include the blueprint here so a user doesn't have to
+// Include the blueprint here so a user doesn't have to (it can be forward declared)
 #include "orm/schema/blueprint.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

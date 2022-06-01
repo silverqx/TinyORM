@@ -1339,13 +1339,10 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR propagation, https://ben.balter.com/2017/11/10/twelve-tips-for-growing-communities-around-your-open-source-project/ silverqx
 // CUR optimization, use Q_UNREACHABLE in all switch statements, of course where appropriate silverqx
 // TODO vcpkg, solve how to build tom (when solving vcpkg builds again), currently I have hardly added tabulate to the vcpkg.json port and also manifest file; it will have to be conditional base of the TINYORM_DISABLE_TOM macro silverqx
-// CUR tom docs, disable_tom and TINYORM_DISABLE_TOM to build.mdx, don't forget to add features and update dependencies (tabulate) in vcpkg.json silverqx
 // CUR schema, add tests for enum and set; and json and jsonb, storedAs / virtualAs silverqx
 // CUR compiler, enable /sdl on msvc https://docs.microsoft.com/en-us/cpp/build/reference/sdl-enable-additional-security-checks?view=msvc-170 silverqx
 // CUR cmake, update max. policy to 3.23 silverqx
 // CUR docs, remove target_link_libs() for transitive dependencies silverqx
-// CUR tom docs, write documentation silverqx
-// CUR tom, build on mingw, linux, build without pch and all common tasks that should run from time to time silverqx
 // CUR tom, don't modify migrate:status command, rather extend it and add possibility to only call it through Application::runWithArguments() (this secure to not be able to call it from the cmd. line), do not show it in the list or help command output silverqx
 // CUR tom, think about remove TINYTOM_NO/_DEBUG and TINYTOM_TESTS_CODE and use TINYORM_ defines instead silverqx
 // CUR check all unique_ptr() of base clases, if base classes have virtual dtors, or find unique_ptrs of aggregates to base classes silverqx
