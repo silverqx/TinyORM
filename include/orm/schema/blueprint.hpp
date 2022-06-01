@@ -460,7 +460,6 @@ namespace Grammars
 
         /*! The columns that should be added to the table. */
         QVector<ColumnDefinition> m_columns {};
-        // BUG omg what dtors are called in this unique_ptr(), CommandDefinition doesn't have virtual dtor silverqx
         /*! The commands that should be run for the table. */
         std::deque<std::shared_ptr<CommandDefinition>> m_commands {};
 
