@@ -14,7 +14,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 /*! Namespace constains common chars and strings. */
 namespace Orm::Constants
 {
-    // CUR1 sort it silverqx
 
     // Common chars
     inline const QChar SPACE      = QChar(' ');
