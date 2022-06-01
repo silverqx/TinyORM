@@ -194,7 +194,7 @@ target_sources(${TinyOrm_target} PRIVATE
 target_precompile_headers(${TinyOrm_target} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:"pch.h">)
 
 if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
-    target_compile_definitions(${TinyOrm_target} PRIVATE USING_PCH)
+    target_compile_definitions(${TinyOrm_target} PRIVATE TINYORM_USING_PCH)
 endif()
 
 # TinyORM library specific configuration

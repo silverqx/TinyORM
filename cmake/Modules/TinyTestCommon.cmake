@@ -16,7 +16,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     )
 
     if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
-        target_compile_definitions(${name} PRIVATE USING_PCH)
+        target_compile_definitions(${name} PRIVATE TINYORM_USING_PCH)
     endif()
 
     set_target_properties(${name}
