@@ -334,7 +334,6 @@ QString MySqlSchemaGrammar::compileCreateTable(const Blueprint &blueprint) const
 QString MySqlSchemaGrammar::addModifiers(QString &&sql,
                                          const ColumnDefinition &column) const
 {
-    // CUR schema, should be T_THREAD_LOCAL? silverqx
     constexpr static std::array modifierMethods {
         &MySqlSchemaGrammar::modifyUnsigned,  &MySqlSchemaGrammar::modifyCharset,
         &MySqlSchemaGrammar::modifyCollate,   &MySqlSchemaGrammar::modifyVirtualAs,
