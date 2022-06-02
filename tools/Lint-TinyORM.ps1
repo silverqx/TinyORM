@@ -31,7 +31,7 @@ Param(
     [Parameter(HelpMessage = 'Clean CMake build (remove everything inside the -BuildPath).')]
     [switch] $Clean,
 
-    [Parameter(Mandatory, HelpMessage = 'Specifies the CMake build type.')]
+    [Parameter(HelpMessage = 'Specifies the CMake build type.')]
     [ValidateSet('Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel')]
     [ValidateNotNullOrEmpty()]
     [string] $BuildType = 'Debug'
