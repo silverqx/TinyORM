@@ -563,8 +563,10 @@ namespace Orm::Tiny::Concerns
     {
         using Relation = typename std::invoke_result_t<Method, Derived>::element_type;
 
-        if constexpr (std::is_base_of_v<Relations::PivotRelation, Relation>)
-            m_result = typename Relation::RelatedType().getTable();
+        if constexpr (!std::is_base_of_v<Relations::PivotRelation, Relation>)
+            return;
+
+        m_result = typename Relation::RelatedType().getTable();
     }
 
     /* QueriesRelationshipsStore */
