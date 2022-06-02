@@ -859,7 +859,11 @@ namespace Orm::Tiny::Concerns
     HasRelationStore<Derived, AllRelations...>::relationStoreCopyMoveTemplate(
 #ifdef TINYORM_DEBUG
                 const CopyMoveTemplateType type)
+#else
+                const CopyMoveTemplateType /*unused*/)
+#endif
     {
+#ifdef TINYORM_DEBUG
         const auto message =
                 QStringLiteral(
                     "You can not %1 the %2 model in the middle of any relation store "
@@ -876,11 +880,9 @@ namespace Orm::Tiny::Concerns
             // This should never happen 🤔
             qFatal("Bad type in relationStoreCopyMoveTemplate().");
         }
-#else
-                const CopyMoveTemplateType /*unused*/)
-    {
-        return "";
 #endif
+
+        return "";
     }
 
     /* Static cast this to a child's instance type (CRTP) */
