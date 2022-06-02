@@ -744,10 +744,12 @@ This will open the `Configure Project` tab, select some kit and update build fol
 
 You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open `Project Settings` tab and select `Build` in the left sidebar to open the `Build Settings`, it should look similar to the following picture.
 
-Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used.
-
 <img src={require('./assets/img/migrations/qmake-build_settings.png').default}
     className='no-blurry' alt='tom - QtCreator - Build Settings' width='760' />
+
+Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used.
+
+In the left sidebar open `Dependencies` and check `TinyOrm` and `Synchronize configuration`, this setting ensures that the current project will be rebuilt correctly when the `TinyORM` library source code changes.
 
 Everything is ready to build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to build the project.
 
