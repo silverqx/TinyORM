@@ -32,13 +32,14 @@ QSqlQuery SchemaBuilder::dropDatabaseIfExists(const QString &/*unused*/) const
 void SchemaBuilder::create(const QString &table,
                            const std::function<void(Blueprint &)> &callback) const
 {
-    auto blueprint = createBlueprint(table);
+    build(Helpers::tap<Blueprint>(
+              createBlueprint(table),
+              [&callback](auto &blueprint)
+    {
+        blueprint.create();
 
-    blueprint.create();
-
-    std::invoke(callback, blueprint);
-
-    build(std::move(blueprint));
+        std::invoke(callback, blueprint);
+    }));
 }
 
 void SchemaBuilder::table(const QString &table,
@@ -49,30 +50,26 @@ void SchemaBuilder::table(const QString &table,
 
 void SchemaBuilder::drop(const QString &table) const
 {
-    // CUR schema, create tap helper silverqx
-    auto blueprint = createBlueprint(table);
-
-    blueprint.drop();
-
-    build(std::move(blueprint));
+    build(Helpers::tap<Blueprint>(createBlueprint(table), [](auto &blueprint)
+    {
+        blueprint.drop();
+    }));
 }
 
 void SchemaBuilder::dropIfExists(const QString &table) const
 {
-    auto blueprint = createBlueprint(table);
-
-    blueprint.dropIfExists();
-
-    build(std::move(blueprint));
+    build(Helpers::tap<Blueprint>(createBlueprint(table), [](auto &blueprint)
+    {
+        blueprint.dropIfExists();
+    }));
 }
 
 void SchemaBuilder::rename(const QString &from, const QString &to) const
 {
-    auto blueprint = createBlueprint(from);
-
-    blueprint.rename(to);
-
-    build(std::move(blueprint));
+    build(Helpers::tap<Blueprint>(createBlueprint(from), [&to](auto &blueprint)
+    {
+        blueprint.rename(to);
+    }));
 }
 
 void SchemaBuilder::dropColumns(const QString &table,

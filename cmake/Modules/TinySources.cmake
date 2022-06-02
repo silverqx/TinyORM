@@ -93,6 +93,7 @@ function(tinyorm_sources out_headers out_sources)
         types/statementscounter.hpp
         utils/container.hpp
         utils/fs.hpp
+        utils/helpers.hpp
         utils/query.hpp
         utils/thread.hpp
         utils/type.hpp

@@ -88,6 +88,7 @@ headersList += \
     $$PWD/orm/types/statementscounter.hpp \
     $$PWD/orm/utils/container.hpp \
     $$PWD/orm/utils/fs.hpp \
+    $$PWD/orm/utils/helpers.hpp \
     $$PWD/orm/utils/query.hpp \
     $$PWD/orm/utils/thread.hpp \
     $$PWD/orm/utils/type.hpp \

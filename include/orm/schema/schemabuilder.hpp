@@ -11,6 +11,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/export.hpp"
 // Include the blueprint here so a user doesn't have to (it can be forward declared)
 #include "orm/schema/blueprint.hpp"
+#include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -29,6 +30,9 @@ namespace Grammars
     class SHAREDLIB_EXPORT SchemaBuilder
     {
         Q_DISABLE_COPY(SchemaBuilder)
+
+        /*! Alias for the helper utils. */
+        using Helpers = Orm::Utils::Helpers;
 
     public:
         /*! Constructor. */

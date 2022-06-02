@@ -15,6 +15,7 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/concerns/queriesrelationships.hpp"
 #include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/tinybuilderproxies.hpp"
+#include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -34,6 +35,8 @@ namespace Orm::Tiny
 
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
+        /*! Alias for the helper utils. */
+        using Helpers = Orm::Utils::Helpers;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
@@ -365,13 +368,13 @@ namespace Orm::Tiny
         if (auto instance = this->where(attributes).first(); instance)
             return *instance;
 
-        auto newInstance =
-                newModelInstance(AttributeUtils::joinAttributesForFirstOr(
-                                     attributes, values, m_model.getKeyName()));
-
-        newInstance.save();
-
-        return newInstance;
+        return Helpers::tap<Model>(
+                    newModelInstance(AttributeUtils::joinAttributesForFirstOr(
+                                         attributes, values, m_model.getKeyName())),
+                    [](auto &newInstance)
+        {
+            newInstance.save();
+        });
     }
 
     template<typename Model>
