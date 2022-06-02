@@ -19,5 +19,5 @@ INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/include/)
 # Link against TinyORM library
 # ---
 
-LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src$$TINY_RELEASE_TYPE/)
+LIBS += $$quote(-L$$TINYORM_BUILD_TREE/src$$TINY_BUILD_SUBFOLDER/)
 LIBS += -lTinyOrm

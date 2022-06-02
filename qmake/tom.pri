@@ -61,6 +61,6 @@ exists($$TINYORM_SOURCE_TREE): \
 
 !isEmpty(TINYORM_BUILD_TREE): \
 exists($$TINYORM_BUILD_TREE): {
-    LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/src$${TINY_RELEASE_TYPE}/)
+    LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/src$${TINY_BUILD_SUBFOLDER}/)
     LIBS += -lTinyOrm
 }

@@ -1,6 +1,9 @@
 TINYORM_SOURCE_TREE = $$clean_path($$quote($$PWD/..))
 TINYTOM_SOURCE_TREE = $$quote($$TINYORM_SOURCE_TREE/tom)
 
+# Also Provides:
+# - TINY_BUILD_SUBFOLDER - folder by release type (/debug, /release, or empty)
+
 # Qt Common Configuration
 # ---
 
@@ -40,6 +43,6 @@ exists($$TINYORM_SOURCE_TREE): \
 
 !isEmpty(TINYORM_BUILD_TREE): \
 exists($$TINYORM_BUILD_TREE): {
-    LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/src$${TINY_RELEASE_TYPE}/)
+    LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/src$${TINY_BUILD_SUBFOLDER}/)
     LIBS += -lTinyOrm
 }

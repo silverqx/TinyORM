@@ -89,8 +89,8 @@ mingw|if(unix:!macx): include(unixconf.pri)
 # Folder by release type
 debug_and_release: {
     CONFIG(release, debug|release): \
-        TINY_RELEASE_TYPE = $$quote(/release)
+        TINY_BUILD_SUBFOLDER = $$quote(/release)
     else:CONFIG(debug, debug|release): \
-        TINY_RELEASE_TYPE = $$quote(/debug)
+        TINY_BUILD_SUBFOLDER = $$quote(/debug)
 }
-else: TINY_RELEASE_TYPE =
+else: TINY_BUILD_SUBFOLDER =
