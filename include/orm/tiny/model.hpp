@@ -1289,8 +1289,6 @@ TINYORM_END_COMMON_NAMESPACE
 // FEATURE build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
 // FEATURE build systems, libuv example how it could look like https://github.com/libuv/libuv silverqx
 // FUTURE cmake can generate export header file by GenerateExportHeader module, find way to use it, because I have own export header file, how to unify this? I don't know now silverqx
-// CUR try clang-include-fixer at https://clang.llvm.org/extra/clang-include-fixer.html silverqx
-// CUR try iwyu at https://include-what-you-use.org/ silverqx
 // CUR generate pkg-config file on unix silverqx
 // CUR cmake use gold linker option, https://github.com/frobware/c-hacks/blob/master/cmake/use-gold-linker.cmake silverqx
 // BUG mingw64, TinyOrmPlayground seg. fault at the end, but everything runs/passes correctly, but only when invoked from mintty terminal, when I run it from QtCreator that uses cmd I don't see any seg. fault silverqx
