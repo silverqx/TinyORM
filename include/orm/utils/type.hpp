@@ -47,10 +47,10 @@ namespace Orm::Utils
 
         /*! Class name with or w/o a namespace and w/o template parameters. */
         template<typename T>
-        inline static QString classPureBasename(bool withNamespace = false);
+        static QString classPureBasename(bool withNamespace = false);
         /*! Class name with or w/o a namespace and w/o template parameters. */
         template<typename T>
-        inline static QString
+        static QString
         classPureBasename(const T &type, bool withNamespace = false);
         /*! Class name with or w/o a namespace and w/o template parameters. */
         static QString
