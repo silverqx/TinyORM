@@ -17,7 +17,15 @@ Param(
     [switch] $SkipClangTidy,
 
     [Parameter(HelpMessage = 'Skip Clazy standalone analyzes.')]
-    [switch] $SkipClazy
+    [switch] $SkipClazy,
+
+    [Parameter(HelpMessage = 'Clean CMake build (remove everything inside the -BuildPath).')]
+    [switch] $Clean,
+
+    [Parameter(Mandatory, HelpMessage = 'Specifies the CMake build type.')]
+    [ValidateSet('Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel')]
+    [ValidateNotNullOrEmpty()]
+    [string] $BuildType = 'Debug'
 )
 
 Set-StrictMode -Version 3.0

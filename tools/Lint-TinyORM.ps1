@@ -29,7 +29,12 @@ Param(
     [int] $QtVersion = 5,
 
     [Parameter(HelpMessage = 'Clean CMake build (remove everything inside the -BuildPath).')]
-    [switch] $Clean
+    [switch] $Clean,
+
+    [Parameter(Mandatory, HelpMessage = 'Specifies the CMake build type.')]
+    [ValidateSet('Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel')]
+    [ValidateNotNullOrEmpty()]
+    [string] $BuildType = 'Debug'
 )
 
 Set-StrictMode -Version 3.0
@@ -48,6 +53,18 @@ $Files      = $null -eq $Files      ? '[\w_\-\+]+' : "(?:$($Files -join '|'))"
 
 $Script:RegEx = "(?:src|tests)[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$($Files)\.cpp$"
 
+# Append the build type to the build path
+$BuildPath = $BuildPath.TrimEnd(
+    [IO.Path]::DirectorySeparatorChar,
+    [IO.Path]::AltDirectorySeparatorChar
+)
+$BuildPath += "_$BuildType"
+
+# Create build folder
+if (-not (Test-Path $BuildPath)) {
+    New-Item -Path $BuildPath -ItemType Directory | Out-Null
+}
+
 Push-Location
 
 Set-Location -Path $BuildPath
@@ -61,10 +78,10 @@ if (-not (Test-Path env:WindowsSDKLibVersion)) {
 if ($Clean) {
     Remove-Item -Recurse -Force $BuildPath\*
 
-    Write-Host "`nClean CMake build`n" -ForegroundColor Green
+    Write-Host "`nClean CMake $BuildType build`n" -ForegroundColor Green
 }
 else {
-    Write-Host "`nCMake build`n" -ForegroundColor DarkBlue
+    Write-Host "`nCMake $BuildType build`n" -ForegroundColor DarkBlue
 }
 
 # Configure
@@ -73,7 +90,7 @@ if (-not (Test-Path $BuildPath\compile_commands.json)) {
         -S E:/c/qMedia/TinyOrm/TinyOrm `
         -B $BuildPath `
         -G 'Ninja' `
-        -D CMAKE_BUILD_TYPE:BOOL=Debug `
+        -D CMAKE_BUILD_TYPE:BOOL=$BuildType `
         -D CMAKE_TOOLCHAIN_FILE:PATH=E:/c_libs/vcpkg/scripts/buildsystems/vcpkg.cmake `
         -D CMAKE_INSTALL_PREFIX:PATH=E:/c/qMedia/tmp/dummy `
         -D VERBOSE_CONFIGURE:BOOL=ON `
