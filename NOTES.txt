@@ -154,6 +154,21 @@ https://drive.google.com/uc?id=some_id
 
     - run: exit 1
 
+ - vcpkg debug:
+
+    - name: TinyORM cmake configure (msvc-cmake-debug)
+      run: >-
+        echo $env:VCPKG_ROOT
+
+        echo $env:VCPKG_DEFAULT_TRIPLET
+
+        echo $env:VCPKG_MAX_CONCURRENCY
+
+        cmake
+        -S .
+        -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
+        ...
+
 
 RegExs:
 -------
