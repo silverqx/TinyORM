@@ -1,4 +1,4 @@
-# Policies <= CMP0126 default to NEW
+# Policies <= CMP0120 default to NEW
 # 3.20 - because NEWLINE_STYLE is used in the file(GENERATE) command
 cmake_minimum_required(VERSION 3.20...3.23 FATAL_ERROR)
 
