@@ -17,7 +17,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
-#ifdef __GNUG__
+#if defined(__GNUG__) || defined(__clang__)
 // NOLINTNEXTLINE(bugprone-reserved-identifier)
 #  define __tiny_func__ \
     Orm::Utils::Type::prettyFunction(static_cast<const char *>(__PRETTY_FUNCTION__))

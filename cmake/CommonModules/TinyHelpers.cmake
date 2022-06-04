@@ -23,7 +23,7 @@ endfunction()
 # Make minimum toolchain version a requirement
 function(tiny_toolchain_requirement)
 
-    set(oneValueArgs MSVC GCC CLANG)
+    set(oneValueArgs MSVC GCC CLANG CLANG_CL)
     cmake_parse_arguments(PARSE_ARGV 0 TINY "" "${oneValueArgs}" "")
 
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
@@ -39,7 +39,24 @@ Visual Studio")
         endif()
     endif()
 
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # clang-cl
+    if(MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND
+        CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"
+    )
+        if(CMAKE_CXX_SIMULATE_VERSION VERSION_LESS TINY_MSVC)
+            message(FATAL_ERROR "Minimum required MSVC version was not satisfied, \
+required version >=${TINY_MSVC}, your version is ${CMAKE_CXX_SIMULATE_VERSION}, upgrade \
+Visual Studio")
+        endif()
+
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_CLANG_CL)
+            message(FATAL_ERROR "Minimum required clang-cl version was not satisfied, \
+required version >=${TINY_CLANG_CL}, your version is ${CMAKE_CXX_COMPILER_VERSION}, \
+upgrade LLVM")
+        endif()
+    endif()
+
+    if(NOT MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_GCC)
             message(STATUS "Minimum recommended GCC version was not satisfied, \
 recommended version >=${TINY_GCC}, your version is ${CMAKE_CXX_COMPILER_VERSION}, \
@@ -47,8 +64,8 @@ upgrade the GCC compiler")
         endif()
     endif()
 
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
-            OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang"
+    if(NOT MSVC AND (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
+            OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     )
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_CLANG)
             message(STATUS "Minimum recommended Clang version was not satisfied, \

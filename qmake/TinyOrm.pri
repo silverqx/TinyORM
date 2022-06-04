@@ -32,7 +32,7 @@ disable_tom: DEFINES *= TINYORM_DISABLE_TOM
 
 !isEmpty(TINYORM_SOURCE_TREE): \
 exists($$TINYORM_SOURCE_TREE): \
-    win32-msvc: \
+    win32-msvc|win32-clang-msvc: \
         INCLUDEPATH *= \
             $$quote($$TINYORM_SOURCE_TREE/include/) \
             $$quote($$TINYTOM_SOURCE_TREE/include/)

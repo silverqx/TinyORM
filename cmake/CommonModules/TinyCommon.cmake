@@ -63,7 +63,12 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # Compiler and Linker options
     # ---
 
+    # clang-cl.exe notes:
+    # /RTC    - https://lists.llvm.org/pipermail/cfe-commits/Week-of-Mon-20130902/088105.html
+    # /bigobj - clang-cl uses it by default - https://reviews.llvm.org/D12981
+
     if(MSVC)
+        # Common for MSVC and clang-cl
         target_compile_options(${target} INTERFACE
             # Suppress banner and info messages
             /nologo
@@ -71,19 +76,27 @@ ${TINY_UNPARSED_ARGUMENTS}")
             /EHsc
             /guard:cf
             /utf-8
-            # Set by default by c++20 but from VS 16.11, can be removed when
-            # minMsvcReqVersion will be >= 16.11
-            /permissive-
-            /bigobj
             # Has to be enabled explicitly
             # https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
             /Zc:__cplusplus
             # Standards-conforming behavior
-            /Zc:wchar_t,rvalueCast,inline,strictStrings
-            /Zc:throwingNew,referenceBinding,ternary
-            /external:anglebrackets /external:W0
-            /WX /W4 /wd4702
+            /Zc:strictStrings
+            /WX /W4
         )
+
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            target_compile_options(${target} INTERFACE
+                # Set by default by c++20 but from VS 16.11, can be removed when
+                # minMsvcReqVersion will be >= 16.11
+                /permissive-
+                /bigobj
+                # Standards-conforming behavior
+                /Zc:wchar_t,rvalueCast,inline
+                /Zc:throwingNew,referenceBinding,ternary
+                /external:anglebrackets /external:W0
+                /wd4702
+            )
+        endif()
 
         target_link_options(${target} INTERFACE
             /guard:cf
@@ -108,9 +121,10 @@ ${TINY_UNPARSED_ARGUMENTS}")
         )
     endif()
 
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
-            OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
-            OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang"
+    if(NOT MSVC AND
+            (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR
+                CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
+                CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     )
         target_compile_options(${target} INTERFACE
             # -fexceptions for linux is not needed, it is on by default
@@ -146,7 +160,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
     # Use faster lld linker on Clang
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    if(NOT MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_link_options(${target} INTERFACE -fuse-ld=lld)
     endif()
 

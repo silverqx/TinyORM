@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include <optional>
 
+#include "orm/macros/export.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/tiny/tinyconcepts.hpp"
 

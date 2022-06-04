@@ -11,10 +11,11 @@ TARGET = TinyOrm
 # Rec - recommended, shows message
 
 # 16.10/16.11 (1929) - to support #pragma system_header
-tinyMinReqMsvc  = 19.29
-tinyMinRecClang = 12
-tinyMinRecGCC   = 10.2
-tinyMinRecQt    = 5.15.2
+tinyMinReqMsvc    = 19.29
+tinyMinReqClang   = 12
+tinyMinReqGCC     = 10.2
+tinyMinReqQt      = 5.15.2
+tinyMinReqClangCl = 14.0.3
 
 # Make minimum toolchain version a requirement
 load(tiny_toolchain_requirement)

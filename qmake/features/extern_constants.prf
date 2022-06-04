@@ -3,6 +3,11 @@ CONFIG(staticlib, dll|shared|static|staticlib): \
     error( "extern constants (extern_constants CONFIG option) cause crashes with\
             an archive library, please use \"CONFIG += inline_constants\" instead." )
 
+win32-clang-msvc: \
+    error( "extern constants (extern_constants CONFIG option) cause crashes with\
+            the shared library on clang-cl MSVC, please use\
+            \"CONFIG += inline_constants\" instead or leave it undefined." )
+
 CONFIG -= inline_constants
 DEFINES -= TINYORM_INLINE_CONSTANTS
 

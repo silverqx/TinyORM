@@ -47,12 +47,21 @@ file(GENERATE OUTPUT "${TINY_BUILD_GENDIR}/include/versiondebug_cmake-$<CONFIG>.
     NEWLINE_STYLE UNIX
 )
 
+# Following commented code throws warning with clang-cl:
+# warning: definition of macro 'TINYTEST_VERSION_VERSIONDEBUG' does not match definition
+# in precompiled header [-Wclang-cl-pch]
+
 # Pass generated filename to the tst_version.cpp source file (used in #include directive)
-set_source_files_properties("tst_version.cpp"
-    TARGET_DIRECTORY version
-    PROPERTIES
-        COMPILE_DEFINITIONS
-            TINYTEST_VERSION_VERSIONDEBUG="versiondebug_cmake-$<CONFIG>.hpp"
+#set_source_files_properties("tst_version.cpp"
+#    TARGET_DIRECTORY version
+#    PROPERTIES
+#        COMPILE_DEFINITIONS
+#            TINYTEST_VERSION_VERSIONDEBUG="versiondebug_cmake-$<CONFIG>.hpp"
+#)
+
+# This is ok
+target_compile_definitions(version
+    PRIVATE TINYTEST_VERSION_VERSIONDEBUG="versiondebug_cmake-$<CONFIG>.hpp"
 )
 
 target_sources(version PRIVATE

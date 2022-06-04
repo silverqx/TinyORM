@@ -28,10 +28,13 @@ win32-g++|win32-clang-g++ {
     # CONFIG *= use_lld_linker does not work on MinGW
     QMAKE_LFLAGS *= -fuse-ld=lld
 }
-else:win32-msvc {
+else:win32-msvc|win32-clang-msvc {
     # Includes
     # range-v3 and tabulate
-    INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include/)
+    win32-clang-msvc: \
+        QMAKE_CXXFLAGS += -imsvc $$shell_quote(E:/xyz/vcpkg/installed/x64-windows/include/)
+    else: \
+        INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include/)
 }
 else:unix {
     # Includes

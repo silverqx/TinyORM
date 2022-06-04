@@ -342,6 +342,34 @@ Set in the QtCreator env. before execution, it suspends some errors detected in 
 UBSAN_OPTIONS=suppressions=/home/silverqx/Code/c/TinyOrm/TinyORM/tools/configs/UBSan.supp:print_stacktrace=0
 
 
+inline constants:
+-----------------
+
+ - for static archive build only inline constants are allowed, this is the default for all scenarios, any ify
+
+ - cmake
+   - normal behavior is that user can switch between inline and extern constants using the INLINE_CONSTANTS cmake option
+   - default is to provide/show this INLINE_CONSTANTS cmake option with the default value OFF, so extern constants are enabled by default
+   - MinGW clang shared build crashes with inline constants
+     - so don't show INLINE_CONSTANTS cmake option and value is NOT DEFINED in this case so the default will be used and it's extern constants
+   - clang-cl shared build crashes with extern constants, so force to inline constants 😕🤔
+     - don't show INLINE_CONSTANTS cmake option and provide the default value ON using feature_option_dependent(INLINE_CONSTANTS) depends option, so inline constants is the default
+     - so inline constants are only one option with clang-cl
+
+ - qmake
+   - normal behavior is that user can switch between inline and extern constants using the inline_constants/extern_constants qmake CONFIG option
+   - default is when no qmake CONFIG option is set and in this case extern constants (extern_constants CONFIG option) is set/enabled
+   - MinGW clang shared build crashes with inline constants
+     - when user set inline_constants then qmake error() is thrown with nice message
+     - so the default is extern constants, if no CONFIG option was set or user can set the extern_constants qmake CONFIG option manually
+   - clang-cl shared build crashes with extern constants, so force to inline constants 😕🤔
+     - when is shared build then inline_constants qmake CONFIG option is set (this is the default)
+     - when user set extern_constants then qmake error() is thrown with nice message
+     - so inline constants are only one option with clang-cl
+
+The conclusion is that the funckin string constants 💥, it was bearable until I have added the clang-cl MSVC support.
+
+
 constructor copy/move snippet:
 ------------------------------
 

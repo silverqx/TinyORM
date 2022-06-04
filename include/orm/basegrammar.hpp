@@ -5,6 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/macros/export.hpp"
 #include "orm/ormconcepts.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/utils/container.hpp"

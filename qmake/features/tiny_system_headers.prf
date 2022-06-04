@@ -1,0 +1,31 @@
+# Mark all Qt's headers as the system headers
+
+!win32-clang-msvc:!mingw:!unix: \
+    return()
+
+win32-clang-msvc: \
+    optionToken = -imsvc
+else: \
+    optionToken = -isystem
+
+# I don't know why but on MSYS2 this line makes problem, it throws:
+# fatal error: stdlib.h: No such file or directory
+# On unix it is needed to avoid warnings from system headers
+# No warnings on MSYS2 without it
+!mingw: \
+    QMAKE_CXXFLAGS += $$optionToken $$shell_quote($$[QT_INSTALL_HEADERS]/)
+
+for(module, QT) {
+    equals(module, "testlib"): \
+        QMAKE_CXXFLAGS += $$optionToken $$shell_quote($$[QT_INSTALL_HEADERS]/QtTest/)
+    else {
+        # Capitalize a first letter, result: -isystem <path>/include/QtCore/
+        moduleList = $$split(module, )
+        QMAKE_CXXFLAGS += \
+            $$optionToken $$shell_quote($$[QT_INSTALL_HEADERS]/Qt$$upper(\
+                          $$take_first(moduleList))$$join(moduleList, )/)
+    }
+}
+
+unset(optionToken)
+unset(moduleList)

@@ -49,9 +49,10 @@ set(CMAKE_AUTOMOC ON)
 
 # Compilers
 # 16.10/16.11 (1929) to support pragma system_header
-set(minReqMsvcVersion  19.29)
-set(minRecGCCVersion   10.2)
-set(minRecClangVersion 12)
+set(minReqMsvcVersion    19.29)
+set(minReqGCCVersion     10.2)
+set(minReqClangVersion   12)
+set(minReqClangClVersion 14.0.3)
 # Packages
 set(minQtVersion       5.15.2)
 set(minRangeV3Version  0.11.0)
@@ -60,9 +61,10 @@ set(minRangeV3Version  0.11.0)
 
 # Make minimum toolchain version a requirement
 tiny_toolchain_requirement(
-    MSVC  ${minReqMsvcVersion}
-    GCC   ${minRecGCCVersion}
-    CLANG ${minRecClangVersion}
+    MSVC     ${minReqMsvcVersion}
+    GCC      ${minReqGCCVersion}
+    CLANG    ${minReqClangVersion}
+    CLANG_CL ${minReqClangClVersion}
 )
 
 # TinyORM build options
@@ -71,7 +73,7 @@ tiny_toolchain_requirement(
 include(FeatureSummary)
 include(TinyFeatureOptions)
 
-# Initialize default CMake variables on which options depend
+# Initialize default CMake variables on which cmake options depend
 tiny_init_cmake_variables_pre()
 
 feature_option(BUILD_SHARED_LIBS
@@ -96,11 +98,17 @@ feature_option(VERBOSE_CONFIGURE
 output" OFF
 )
 # MinGW clang shared build crashes with inline constants
+# clang-cl shared build crashes with extern constants so force to inline constants 😕🤔
+# only one option with the clang-cl is inline constants for both shared/static builds
+# Look at NOTES.txt[inline constants] how this funckin machinery works 😎
 if(NOT MINGW OR NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR NOT BUILD_SHARED_LIBS)
+    # Initialize TINY_INLINE_CONSTANTS_DEPENDS
+    tiny_init_inline_constants_depends()
+
     feature_option_dependent(INLINE_CONSTANTS
         "Use inline constants instead of extern constants in the shared build. \
 OFF is highly recommended for the shared build; is always ON for the static build" OFF
-        "BUILD_SHARED_LIBS" ON
+        "TINY_INLINE_CONSTANTS_DEPENDS" ON
     )
 endif()
 

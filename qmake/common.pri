@@ -10,7 +10,8 @@ win32-clang-g++: {
 # Common Configuration ( also for tests )
 # ---
 
-CONFIG *= c++2a strict_c++ warn_on utf8_source hide_symbols silent
+CONFIG *= c++2a strict_c++ warn_on utf8_source hide_symbols tiny_system_headers
+CONFIG *= silent
 CONFIG -= c++11 app_bundle
 
 # Qt defines
@@ -34,8 +35,13 @@ DEFINES *= QT_STRICT_ITERATORS
 # ---
 
 # Use extern constants for shared build
-CONFIG(shared, dll|shared|static|staticlib) | \
-CONFIG(dll, dll|shared|static|staticlib): \
+# clang-cl notes:
+# shared build crashes with extern constants, force to inline constants 😕🤔
+# only one option with the clang-cl is inline constants for both shared/static builds
+# Look at NOTES.txt[inline constants] how this funckin machinery works 😎
+!win32-clang-msvc: \
+if(CONFIG(shared, dll|shared|static|staticlib) | \
+CONFIG(dll, dll|shared|static|staticlib)): \
     # Support override because inline_constants can be used in the shared build too
     !inline_constants: \
         CONFIG += extern_constants

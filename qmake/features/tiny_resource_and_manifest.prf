@@ -83,7 +83,7 @@ defineReplace(tiny_configure_cmake_rc) {
     # don't know process UTF-8 encoded files, they use the ANSI encoding.
     # Few weeks later: I don't understand how the heck is possible that it works with
     # the msvc Qt5.
-    win32-msvc:greaterThan(QT_MAJOR_VERSION, 5): \
+    win32-msvc|win32-clang-msvc:greaterThan(QT_MAJOR_VERSION, 5): \
         pragmaCodepage = DEFAULT
     else: \
         pragmaCodepage = 65001

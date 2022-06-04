@@ -9,8 +9,14 @@ TINY_SYSTEM_HEADER
 #if defined(TINYORM_EXTERN_CONSTANTS) && defined(TINYORM_INLINE_CONSTANTS)
 #  error Both TINYORM_EXTERN_CONSTANTS and TINYORM_INLINE_CONSTANTS defined.
 #endif
+/* clang-cl shared build crashes with extern constants, force to inline constants. 😕🤔
+   Only one option with the clang-cl is inline constants for both shared/static builds.
+   Look at NOTES.txt[inline constants] how this funckin machinery works. 😎 */
+#if !defined(TINYORM_INLINE_CONSTANTS) && defined(_MSC_VER) && defined(__clang__)
+#  undef TINYORM_EXTERN_CONSTANTS
+#  define TINYORM_INLINE_CONSTANTS
 // Enforce extern constants in shared build/linking when a user did not define it
-#if !defined(TINYORM_EXTERN_CONSTANTS) && !defined(TINYORM_INLINE_CONSTANTS) && \
+#elif !defined(TINYORM_EXTERN_CONSTANTS) && !defined(TINYORM_INLINE_CONSTANTS) && \
     (defined(TINYORM_BUILDING_SHARED) || defined(TINYORM_LINKING_SHARED))
 #  define TINYORM_EXTERN_CONSTANTS
 #endif
