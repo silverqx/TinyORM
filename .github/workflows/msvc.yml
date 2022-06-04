@@ -160,21 +160,6 @@ jobs:
         Write-Output 'VCPKG_MAX_CONCURRENCY=2' | `
         Out-File -FilePath $env:GITHUB_ENV -Append
 
-    - name: Cache LLVM and Clang
-      id: llvm-cached
-      uses: actions/cache@v2
-      with:
-        path: |
-          C:/Program Files/LLVM
-        key: llvm-14.0.4
-
-    - name: Install LLVM and Clang 14.0.4
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "14.0.4"
-        force-version: true
-        cached: ${{ steps.llvm-cached.outputs.cache-hit }}
-
     - name: Visual Studio 2019 pwsh shell setup
       uses: egor-tensin/vs-shell@v2
       with:
@@ -182,19 +167,11 @@ jobs:
 
     - name: TinyORM cmake configure (msvc-cmake-debug)
       run: >-
-        echo $env:VCPKG_ROOT
-
-        echo $env:VCPKG_DEFAULT_TRIPLET
-
-        echo $env:VCPKG_MAX_CONCURRENCY
-
         cmake
         -S .
         -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
         -G Ninja
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        -D CMAKE_C_COMPILER:FILEPATH="${env:LLVM_PATH}/bin/clang-cl.exe"
-        -D CMAKE_CXX_COMPILER:FILEPATH="${env:LLVM_PATH}/bin/clang-cl.exe"
         -D CMAKE_BUILD_TYPE:BOOL=Debug
         -D VERBOSE_CONFIGURE:BOOL=ON
         -D CMAKE_VERBOSE_MAKEFILE:BOOL=OFF
