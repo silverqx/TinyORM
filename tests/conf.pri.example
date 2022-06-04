@@ -18,10 +18,10 @@ win32-g++|win32-clang-g++ {
 else:win32-msvc|win32-clang-msvc {
     # Includes
     # range-v3 and tabulate
+    INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include/)
+
     win32-clang-msvc: \
         QMAKE_CXXFLAGS += -imsvc $$shell_quote(E:/xyz/vcpkg/installed/x64-windows/include/)
-    else: \
-        INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include/)
 }
 else:unix {
     # Includes
