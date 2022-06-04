@@ -165,6 +165,20 @@ jobs:
       with:
         arch: x64
 
+    - name: Cache LLVM and Clang
+      id: llvm-cached
+      uses: actions/cache@v2
+      with:
+        path: |
+          C:/Program Files/LLVM
+        key: llvm-14.0.4
+
+    - name: Install LLVM and Clang 14.0.4
+      uses: KyleMayes/install-llvm-action@v1
+      with:
+        version: "14.0.4"
+        cached: ${{ steps.llvm-cached.outputs.cache-hit }}
+
     - name: TinyORM cmake configure (msvc-cmake-debug)
       run: >-
         echo $env:VCPKG_ROOT
