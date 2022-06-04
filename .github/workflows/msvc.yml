@@ -137,7 +137,7 @@ jobs:
     - name: QMYSQL install driver dlls (Qt 5.15.2)
       working-directory: ${{ runner.temp }}
       run: >-
-        $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64
+        $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_5_15_2
 
         $filename = [System.Net.Mime.ContentDisposition]::new(
         $response.Headers['Content-Disposition']).FileName
@@ -149,7 +149,7 @@ jobs:
 
         7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $filepath
       env:
-        URL_QMYSQL_DLLS_MSVC_X64: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64 }}
+        URL_QMYSQL_DLLS_MSVC_X64_5_15_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_5_15_2 }}
 
     - name: vcpkg set-up environment
       run: |
