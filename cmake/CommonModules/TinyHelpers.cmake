@@ -271,6 +271,13 @@ function(tiny_check_unsupported_build)
 inline constants :/.")
     endif()
 
+    if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND BUILD_SHARED_LIBS AND
+        INLINE_CONSTANTS
+    )
+        message(FATAL_ERROR "MinGW clang shared build crashes with inline constants, \
+don't enable INLINE_CONSTANTS cmake option :/.")
+    endif()
+
 endfunction()
 
 # Print a VERBOSE message against which library is project linking

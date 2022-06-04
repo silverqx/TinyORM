@@ -367,6 +367,9 @@ inline constants:
    - default is to provide/show this INLINE_CONSTANTS cmake option with the default value OFF, so extern constants are enabled by default
    - MinGW clang shared build crashes with inline constants
      - so don't show INLINE_CONSTANTS cmake option and value is NOT DEFINED in this case so the default will be used and it's extern constants
+   - MinGW clang static build is not supported, problem with inline constants :/
+     - this is different than qmake build, it compiles (qmake has problem with duplicit symbols) but it crashes
+     - so throw cmake message(FATAL_ERROR) with a nice message in TinyHelpers tiny_check_unsupported_build()
    - clang-cl shared build crashes with extern constants, so force to inline constants 😕🤔
      - don't show INLINE_CONSTANTS cmake option and provide the default value ON using feature_option_dependent(INLINE_CONSTANTS) depends option, so inline constants is the default
      - so inline constants are only one option with clang-cl
@@ -377,6 +380,9 @@ inline constants:
    - MinGW clang shared build crashes with inline constants
      - when user set inline_constants then qmake error() is thrown with nice message
      - so the default is extern constants, if no CONFIG option was set or user can set the extern_constants qmake CONFIG option manually
+   - MinGW clang static build is not supported, contains a problem with duplicit symbols, this build type is disabled
+     - qmake error() is thrown with a nice message
+     - cmake compiles ok but crashes in this scenario
    - clang-cl shared build crashes with extern constants, so force to inline constants 😕🤔
      - when is shared build then inline_constants qmake CONFIG option is set (this is the default)
      - when user set extern_constants then qmake error() is thrown with nice message
