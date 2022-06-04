@@ -69,7 +69,7 @@ private:
 #endif
 };
 
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 namespace
 {
     // All executables has the same LegalCopyright
