@@ -160,11 +160,6 @@ jobs:
         Write-Output 'VCPKG_MAX_CONCURRENCY=2' | `
         Out-File -FilePath $env:GITHUB_ENV -Append
 
-    - name: Visual Studio 2019 pwsh shell setup
-      uses: egor-tensin/vs-shell@v2
-      with:
-        arch: x64
-
     - name: Cache LLVM and Clang
       id: llvm-cached
       uses: actions/cache@v2
@@ -179,6 +174,11 @@ jobs:
         version: "14.0.4"
         force-version: true
         cached: ${{ steps.llvm-cached.outputs.cache-hit }}
+
+    - name: Visual Studio 2019 pwsh shell setup
+      uses: egor-tensin/vs-shell@v2
+      with:
+        arch: x64
 
     - name: TinyORM cmake configure (msvc-cmake-debug)
       run: >-
