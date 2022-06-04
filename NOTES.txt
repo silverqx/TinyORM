@@ -934,3 +934,13 @@ All AutoTests Average Execution time : 5191ms
         - debug build
 All AutoTests Execution time : 546585ms
 All AutoTests Average Execution time : 5466ms
+
+
+Compilation time and Memory usage:
+----------------------------------
+
+- 04. jun 2022 qmake ("CONFIG+=mysql_ping tom_example build_tests")
+  - Qt 6.2.4
+MSVC2019          9.9GB 1:27
+MSVC2022          8.0GB 1:25
+clang-cl MSVC2022 5.5GB 1:35
