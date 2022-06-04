@@ -176,7 +176,8 @@ jobs:
     - name: Install LLVM and Clang 14.0.4
       uses: KyleMayes/install-llvm-action@v1
       with:
-        force-version: "14.0.4"
+        version: "14.0.4"
+        force-version: true
         cached: ${{ steps.llvm-cached.outputs.cache-hit }}
 
     - name: TinyORM cmake configure (msvc-cmake-debug)
