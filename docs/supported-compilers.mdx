@@ -2,8 +2,8 @@
 sidebar_position: 2
 sidebar_label: 🚀 Supported Compilers
 hide_table_of_contents: true
-description: Platform requirements and supported compilers for TinyORM c++ library.
-keywords: [c++ orm, supported compilers, tinyorm]
+description: Platform requirements, supported compilers and build systems for TinyORM c++ library.
+keywords: [c++ orm, supported compilers, supported build systems, tinyorm]
 ---
 
 # Supported Compilers
@@ -18,7 +18,7 @@ Following compilers are backed up by the GitHub Action [workflows](https://githu
 - MSVC 2022 >=17
 - MSYS2 UCRT64 GCC 10.2 - 11.3
 - MSYS2 UCRT64 Clang 12 - 14
-- clang-cl >=14 with MSVC 2019/2022 <small class='darker'>(without CI)</small>
+- clang-cl >=14 with MSVC 2019/2022
 
 #### `Linux`
 
@@ -30,3 +30,21 @@ Following compilers are backed up by the GitHub Action [workflows](https://githu
 :::tip
 You can compile TinyORM with the MSVC 2022 even if Qt doesn't provide binaries for the MSVC 2022, you can link against Qt MSVC 2019 binaries without any limitations.
 :::
+
+## Supported build systems
+
+- `CMake` >=3.20 <small class='darker'>(policies <= CMP0120 default to NEW)</small>
+- `qmake` distributed by the Qt Framework
+
+##### Make tools
+
+- `jom` - highly recommended with the `qmake` build system on Windows <small class='darker'>(replacement for nmake)</small>
+- `ninja` - recommended for `CMake` as the make file generator
+
+##### Parallel building
+
+You can control parallel building using the following environment variables.
+
+- CMake - `CMAKE_BUILD_PARALLEL_LEVEL` eg. to `10`
+- jom - `JOMFLAGS` eg. to `j11`
+- vcpkg - `VCPKG_MAX_CONCURRENCY` eg. to `10`
