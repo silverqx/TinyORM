@@ -22,6 +22,10 @@ win32-g++ {
     QMAKE_CXXFLAGS_DEBUG += -O1
 }
 
+# BUG qmake, in Makefile.Debug during debug\moc_predefs.h in all tests silverqx
+win32-clang-msvc: \
+    QMAKE_CXXFLAGS_WARN_ON -= -WX
+
 # Tests defines
 # ---
 

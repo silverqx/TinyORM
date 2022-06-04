@@ -1342,3 +1342,5 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR use EMPTY constant everywhere silverqx
 // CUR tom, squashing migrations silverqx
 // CUR tom, create icon silverqx
+// BUG qmake, in Makefile.Debug during debug\moc_predefs.h in all tests silverqx
+// BUG qmake, clang-cl (win32-clang-msvc) ctrl+shift+alt+b fails with: fatal error: PCH file 'debug\TinyOrm_pch.pch' not found: module file not found silverqx
