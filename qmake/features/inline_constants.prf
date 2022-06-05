@@ -1,4 +1,4 @@
-win32-clang-g++ {
+!build_pass:win32-clang-g++ {
     CONFIG(shared, dll|shared|static|staticlib) | \
     CONFIG(dll, dll|shared|static|staticlib): \
         error( "inline constants (inline_constants CONFIG option) cause crashes with\
