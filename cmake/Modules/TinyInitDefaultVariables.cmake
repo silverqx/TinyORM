@@ -9,17 +9,6 @@ registry")
 
 endmacro()
 
-# Initialize the depends value for the feature_option_dependent(INLINE_CONSTANTS)
-macro(tiny_init_inline_constants_depends)
-
-    if(NOT BUILD_SHARED_LIBS OR (MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang"))
-        set(TINY_INLINE_CONSTANTS_DEPENDS OFF)
-    else()
-        set(TINY_INLINE_CONSTANTS_DEPENDS ON)
-    endif()
-
-endmacro()
-
 # Initialize default CMake variables
 macro(tiny_init_cmake_variables)
 

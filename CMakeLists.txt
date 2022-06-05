@@ -1,6 +1,7 @@
-# Policies <= CMP0120 default to NEW
-# 3.20 - because NEWLINE_STYLE is used in the file(GENERATE) command
-cmake_minimum_required(VERSION 3.20...3.23 FATAL_ERROR)
+# Policies <= CMP0128 default to NEW
+# 3.20 - because is used NEWLINE_STYLE in the file(GENERATE) command
+# 3.22 - because is used CMP0127: cmake_dependent_option() supports full Condition Syntax
+cmake_minimum_required(VERSION 3.22...3.23 FATAL_ERROR)
 
 list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonModules"
@@ -101,14 +102,11 @@ output" OFF
 # clang-cl shared build crashes with extern constants so force to inline constants 😕🤔
 # only one option with the clang-cl is inline constants for both shared/static builds
 # Look at NOTES.txt[inline constants] how this funckin machinery works 😎
-if(NOT MINGW OR NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR NOT BUILD_SHARED_LIBS)
-    # Initialize TINY_INLINE_CONSTANTS_DEPENDS
-    tiny_init_inline_constants_depends()
-
+if(NOT (MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND BUILD_SHARED_LIBS))
     feature_option_dependent(INLINE_CONSTANTS
         "Use inline constants instead of extern constants in the shared build. \
 OFF is highly recommended for the shared build; is always ON for the static build" OFF
-        "TINY_INLINE_CONSTANTS_DEPENDS" ON
+        "BUILD_SHARED_LIBS AND NOT (MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL \"Clang\")" ON
     )
 endif()
 
