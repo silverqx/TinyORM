@@ -513,6 +513,18 @@ QtCreator common CMake options:
 -D CMAKE_CXX_COMPILER:STRING=%{Compiler:Executable:Cxx}
 
 
+ - for QtCreator:
+
+-D BUILD_TESTS:BOOL=ON
+-D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+-D MYSQL_PING:BOOL=ON
+-D ORM:BOOL=ON
+-D TOM:BOOL=ON
+-D TOM_EXAMPLE:BOOL=ON
+-D TOM_MIGRATIONS_DIR:PATH=database/migrations
+-D VERBOSE_CONFIGURE:BOOL=ON
+
+
 DatabaseConnection debug code:
 ------------------------------
 
