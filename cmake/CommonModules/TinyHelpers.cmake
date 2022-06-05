@@ -64,8 +64,9 @@ upgrade the GCC compiler")
         endif()
     endif()
 
-    if(NOT MSVC AND (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
-            OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    if(NOT MSVC AND
+            (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
+                CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     )
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_CLANG)
             message(STATUS "Minimum recommended Clang version was not satisfied, \

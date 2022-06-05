@@ -46,8 +46,8 @@ DESTINATION is encountered")
 #    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
     # Fix install prefix for the MinGW and x64 toolchain
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows"
-            AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND
+            CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT
     )
         get_property(help_string CACHE CMAKE_INSTALL_PREFIX PROPERTY HELPSTRING)
         if(NOT help_string)

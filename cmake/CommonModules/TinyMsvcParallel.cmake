@@ -1,9 +1,9 @@
 # Allow per-translation-unit parallel builds when using MSVC
 function(tiny_msvc_parallel desc)
 
-    if(CMAKE_GENERATOR MATCHES "Visual Studio"
-            AND (CMAKE_C_COMPILER_ID MATCHES "MSVC|Intel"
-                OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC|Intel")
+    if(CMAKE_GENERATOR MATCHES "Visual Studio" AND
+            (CMAKE_C_COMPILER_ID MATCHES "MSVC|Intel" OR
+                CMAKE_CXX_COMPILER_ID MATCHES "MSVC|Intel")
     )
         set(MSVC_PARALLEL ON CACHE STRING "${desc}")
 
