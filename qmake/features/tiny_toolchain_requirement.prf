@@ -31,10 +31,10 @@ if(win32-msvc|win32-clang-msvc): \
 
 !build_pass: \
 win32-clang-msvc: \
-!versionAtLeast(TINY_CLANG_CL_COMPILER_VERSION, $$tinyMinRecClangCl): \
-    message( "Minimum required clang-cl version was not satisfied, required version\
-              >=$${tinyMinRecClangCl}, your version is\
-              $${TINY_CLANG_CL_COMPILER_VERSION}, upgrade LLVM." )
+!versionAtLeast(TINY_CLANG_CL_COMPILER_VERSION, $$tinyMinReqClangCl): \
+    error( "Minimum required clang-cl version was not satisfied, required version\
+            >=$${tinyMinReqClangCl}, your version is\
+            $${TINY_CLANG_CL_COMPILER_VERSION}, upgrade LLVM." )
 
 !build_pass: \
 !versionAtLeast(QT_VERSION, $$tinyMinRecQt): \
