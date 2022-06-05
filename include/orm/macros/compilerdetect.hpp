@@ -12,7 +12,25 @@ TINY_SYSTEM_HEADER
 #  ifdef __apple_build_version__
 #    define TINYORM_COMPILER_STRING "Clang " __clang_version__ " (Apple)"
 #  else
-#    define TINYORM_COMPILER_STRING "Clang " __clang_version__
+// Clang-cl simulating MSVC
+#    if defined(_MSC_VER)
+#      define TINYORM_COMPILER_STRING "Clang-cl " __clang_version__
+
+#      if _MSC_VER < 1910
+#        define TINYORM_SIMULATED_STRING "MSVC 2015 (" TINYORM_STRINGIFY(_MSC_VER) ")"
+#      elif _MSC_VER < 1917
+#        define TINYORM_SIMULATED_STRING "MSVC 2017 (" TINYORM_STRINGIFY(_MSC_VER) ")"
+#      elif _MSC_VER < 1930
+#        define TINYORM_SIMULATED_STRING "MSVC 2019 (" TINYORM_STRINGIFY(_MSC_VER) ")"
+#      elif _MSC_VER < 2000
+#        define TINYORM_SIMULATED_STRING "MSVC 2022 (" TINYORM_STRINGIFY(_MSC_VER) ")"
+#      else
+#        define TINYORM_SIMULATED_STRING "MSVC _MSC_VER " TINYORM_STRINGIFY(_MSC_VER)
+#      endif
+// Normal Clang
+#    else
+#      define TINYORM_COMPILER_STRING "Clang " __clang_version__
+#    endif
 #  endif
 #elif defined(__GNUC__)
 #  define TINYORM_COMPILER_STRING "GCC " __VERSION__
