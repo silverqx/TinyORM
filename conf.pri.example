@@ -80,11 +80,10 @@ else:win32-msvc|win32-clang-msvc {
         LIBS += -llibmysql
     }
 
-    win32-clang-msvc {
+    win32-clang-msvc: \
         QMAKE_CXXFLAGS += \
             -imsvc $$shell_quote(E:/xyz/vcpkg/installed/x64-windows/include/) \
             -imsvc $$shell_quote(C:/Program Files/MySQL/MySQL Server 8.0/include/)
-    }
 }
 else:unix {
     # Includes
