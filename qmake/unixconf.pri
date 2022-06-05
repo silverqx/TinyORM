@@ -27,7 +27,7 @@ QMAKE_CXXFLAGS_WARN_ON *= \
 !clang: QMAKE_CXXFLAGS_WARN_ON *= -Wstrict-null-sentinel
 
 # Allow to enable UBSan with Clang
-clang:ubsan: {
+clang:ubsan {
     QMAKE_CXXFLAGS += -O1
 
     QMAKE_CXXFLAGS *= \

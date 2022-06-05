@@ -49,7 +49,7 @@ tiny_resource_and_manifest(                                               \
 # ---
 
 !isEmpty(TINYORM_SOURCE_TREE): \
-exists($$TINYORM_SOURCE_TREE): \
+exists($$TINYORM_SOURCE_TREE) {
     win32-msvc|win32-clang-msvc: \
         INCLUDEPATH *= \
             $$quote($$TINYORM_SOURCE_TREE/include/) \
@@ -58,9 +58,10 @@ exists($$TINYORM_SOURCE_TREE): \
         QMAKE_CXXFLAGS += \
             -isystem $$shell_quote($$TINYORM_SOURCE_TREE/include/) \
             -isystem $$shell_quote($$TINYTOM_SOURCE_TREE/include/)
+}
 
 !isEmpty(TINYORM_BUILD_TREE): \
-exists($$TINYORM_BUILD_TREE): {
+exists($$TINYORM_BUILD_TREE) {
     LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/src$${TINY_BUILD_SUBFOLDER}/)
     LIBS += -lTinyOrm
 }

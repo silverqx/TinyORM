@@ -55,7 +55,7 @@ win32-g++|win32-clang-g++ {
         LIBS += -lmariadb.dll
 
     # Or add manually (use only one method, above or this manual method)
-    mysql_ping: {
+    mysql_ping {
         # For shared build
         LIBS += -lmariadb
         # For static build

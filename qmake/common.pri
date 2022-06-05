@@ -1,6 +1,6 @@
 # Unsupported build types
 # ---
-win32-clang-g++: {
+win32-clang-g++ {
     CONFIG(static, dll|shared|static|staticlib) | \
     CONFIG(staticlib, dll|shared|static|staticlib): \
         error( "MinGW clang static build is not supported, contains a problem with\
@@ -39,8 +39,11 @@ DEFINES *= QT_STRICT_ITERATORS
 # shared build crashes with extern constants, force to inline constants 😕🤔
 # only one option with the clang-cl is inline constants for both shared/static builds
 # Look at NOTES.txt[inline constants] how this funckin machinery works 😎
-!win32-clang-msvc: \
-if(CONFIG(shared, dll|shared|static|staticlib) | \
+win32-clang-msvc: \
+    CONFIG += inline_constants
+
+else: \
+CONFIG(shared, dll|shared|static|staticlib | \
 CONFIG(dll, dll|shared|static|staticlib)): \
     # Support override because inline_constants can be used in the shared build too
     !inline_constants: \
@@ -93,7 +96,7 @@ mingw|if(unix:!macx): include(unixconf.pri)
 # ---
 
 # Folder by release type
-debug_and_release: {
+debug_and_release {
     CONFIG(release, debug|release): \
         TINY_BUILD_SUBFOLDER = $$quote(/release)
     else:CONFIG(debug, debug|release): \
