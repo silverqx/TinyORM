@@ -1,4 +1,4 @@
-# Mark all Qt's headers as the system headers
+# Mark all Qt headers as system headers
 
 !win32-clang-msvc:!mingw:!unix: \
     return()
