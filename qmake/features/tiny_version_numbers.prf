@@ -16,11 +16,11 @@ defineTest(tiny_version_numbers) {
         # Try to find in the HEADERS
         versionHeader = $$find(HEADERS, "(?:.*\/)?version\.h(?:pp)?$")
 
-    exists(versionHeader)|isEmpty(versionHeader): \
+    versionHeader = $$clean_path($$absolute_path($$versionHeader))
+
+    isEmpty(versionHeader)|!exists($$versionHeader): \
         error( "HEADERS does not contain a version header file version.hpp, needed\
                 in the tiny_version_numbers.prf." )
-
-    versionHeader = $$clean_path($$absolute_path($$versionHeader))
 
     versionFileContent = $$cat($$quote($$versionHeader), lines)
     versionTokens = MAJOR MINOR BUGFIX BUILD STATUS
