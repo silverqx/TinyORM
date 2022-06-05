@@ -31,25 +31,25 @@ if(win32-msvc|win32-clang-msvc): \
 
 !build_pass: \
 win32-clang-msvc: \
-!versionAtLeast(TINY_CLANG_CL_COMPILER_VERSION, $$tinyMinReqClangCl): \
+!versionAtLeast(TINY_CLANG_CL_COMPILER_VERSION, $$tinyMinRecClangCl): \
     message( "Minimum required clang-cl version was not satisfied, required version\
-              >=$${tinyMinReqClangCl}, your version is\
+              >=$${tinyMinRecClangCl}, your version is\
               $${TINY_CLANG_CL_COMPILER_VERSION}, upgrade LLVM." )
 
 !build_pass: \
-!versionAtLeast(QT_VERSION, $$tinyMinReqQt): \
+!versionAtLeast(QT_VERSION, $$tinyMinRecQt): \
     message( "Minimum recommended Qt Framework version was not satisfied, recommended\
-              version >=$${tinyMinReqQt}, your version is $${QT_VERSION}, upgrade\
+              version >=$${tinyMinRecQt}, your version is $${QT_VERSION}, upgrade\
               Qt Framework.")
 
 !build_pass:!win32-clang-msvc:if(gcc|clang) {
-    clang:!versionAtLeast(TINY_COMPILER_VERSION, $$tinyMinReqClang): \
+    clang:!versionAtLeast(TINY_COMPILER_VERSION, $$tinyMinRecClang): \
         message( "Minimum recommended Clang compiler version was not satisfied,\
-                  recommended version >=$${tinyMinReqClang}, your version is\
+                  recommended version >=$${tinyMinRecClang}, your version is\
                   $${TINY_COMPILER_VERSION}, upgrade Clang compiler.")
 
-    gcc:!versionAtLeast(TINY_COMPILER_VERSION, $$tinyMinReqGCC): \
+    gcc:!versionAtLeast(TINY_COMPILER_VERSION, $$tinyMinRecGCC): \
         message( "Minimum recommended GCC compiler version was not satisfied,\
-                  recommended version >=$${tinyMinReqGCC}, your version is\
+                  recommended version >=$${tinyMinRecGCC}, your version is\
                   $${TINY_COMPILER_VERSION}, upgrade GCC compiler.")
 }
