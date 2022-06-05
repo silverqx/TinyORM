@@ -225,7 +225,7 @@ vcvars64.ps1
 cd E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-cmake\
 cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds-cmake/build-cmake -GNinja `
 -DCMAKE_BUILD_TYPE:STRING=Debug `
--DCMAKE_TOOLCHAIN_FILE:PATH=E:/c/qMedia/vcpkg/scripts/buildsystems/vcpkg.cmake
+-DCMAKE_TOOLCHAIN_FILE:PATH=E:/c_libs/vcpkg/scripts/buildsystems/vcpkg.cmake
 
 cmake --build . --target all
 
@@ -233,7 +233,7 @@ cmake --build . --target all
 
 cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds-cmake/build-cmake -GNinja `
 -DCMAKE_BUILD_TYPE:STRING=Debug `
--DCMAKE_TOOLCHAIN_FILE:PATH=E:/c/qMedia/vcpkg/scripts/buildsystems/vcpkg.cmake `
+-DCMAKE_TOOLCHAIN_FILE:PATH=E:/c_libs/vcpkg/scripts/buildsystems/vcpkg.cmake `
 --graphviz=E:/c/qMedia/TinyOrm/TinyOrm-builds-cmake/build-cmake/graph/graph.dot; `
 `
 dot -Tpng -o .\graph\graph.png .\graph\graph.dot; `
@@ -259,7 +259,7 @@ cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds-c
 "-DQT_QMAKE_EXECUTABLE:STRING=E:/Qt/5.15.2/msvc2019_64/bin/qmake.exe" `
 "-DCMAKE_PREFIX_PATH:STRING=E:/Qt/5.15.2/msvc2019_64" `
 "-DCMAKE_C_COMPILER:STRING=C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/bin/HostX64/x64/cl.exe" `
-"-DCMAKE_CXX_COMPILER:STRING=C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/bin/HostX64/x64/cl.exe" ` "-DCMAKE_TOOLCHAIN_FILE:PATH=E:/c/qMedia/vcpkg/scripts/buildsystems/vcpkg.cmake"
+"-DCMAKE_CXX_COMPILER:STRING=C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/bin/HostX64/x64/cl.exe" ` "-DCMAKE_TOOLCHAIN_FILE:PATH=E:/c_libs/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
  - put TinyOrm and TinyUtils libraries on the system path:
 
