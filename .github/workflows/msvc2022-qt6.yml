@@ -1,4 +1,4 @@
-name: MSVC2022 Qt6.2
+name: MSVC 2022 Qt 6.2
 
 on:
   pull_request:
