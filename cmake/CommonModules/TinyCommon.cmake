@@ -82,6 +82,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
             # Standards-conforming behavior
             /Zc:strictStrings
             /WX /W4
+            $<$<CONFIG:Debug>:/sdl>
         )
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
