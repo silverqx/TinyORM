@@ -51,7 +51,7 @@ win32-msvc|win32-clang-msvc {
 
 win32-msvc {
     QMAKE_CXXFLAGS += -bigobj
-    QMAKE_CXXFLAGS_DEBUG += -RTC1
+    QMAKE_CXXFLAGS_DEBUG += -RTC1 -sdl
     QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0 -WX -W4 -wd4702
 }
 
