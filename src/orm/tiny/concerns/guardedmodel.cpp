@@ -16,17 +16,16 @@ namespace Orm::Tiny::Concerns
    inline static and it caused problems, it had different address if was called from
    the dll and from the application exe. */
 
-// BUG multithread, all writable integral/bool types should be of std::atomic<> type silverqx
 /*! Indicates if all mass assignment is enabled. */
 T_THREAD_LOCAL
-static std::atomic<bool> g_unguarded = false;
+static bool g_unguarded = false;
 
 /* public */
 
 // NOTE api different, Eloquent returns whatever callback returns and catches all exceptions around the std::invoke() silverqx
 void GuardedModel::unguarded(const std::function<void()> &callback)
 {
-    if (g_unguarded.load()) {
+    if (g_unguarded) {
         std::invoke(callback);
         return;
     }
