@@ -2,7 +2,9 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
     auto \
-    testdata_tom \
     TinyUtils \
+
+!disable_tom: \
+    SUBDIRS += testdata_tom
 
 auto.depends = TinyUtils
