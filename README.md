@@ -2,8 +2,10 @@
 
 [![MSVC 2019 Qt 5.15][action-msvc2019-qt5-badge]][action-msvc2019-qt5]
 [![MSVC 2022 Qt 6.2][action-msvc2022-qt6-badge]][action-msvc2022-qt6]
+
 [![Linux GCC/Clang][action-linux-badge]][action-linux]
 [![MSYS2 UCRT64 GCC/Clang][action-mingw-badge]][action-mingw]
+
 [![Clang Tidy/Clazy][action-analyzers-badge]][action-analyzers]
 
 [![www.tinyorm.org][docs-badge]][docs]
