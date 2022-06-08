@@ -1,6 +1,7 @@
 <h1><img src="https://github.com/silverqx/TinyORM/blob/main/resources/icons/logo-optim.svg" width="34" height="34" alt="TinyORM Logo" align="center">&nbsp;TinyORM</h1>
 
-[![MSVC 2019][action-msvc-badge]][action-msvc]
+[![MSVC 2019 Qt 5.15][action-msvc2019-qt5-badge]][action-msvc2019-qt5]
+[![MSVC 2022 Qt 6.2][action-msvc2022-qt6-badge]][action-msvc2022-qt6]
 [![Linux GCC/Clang][action-linux-badge]][action-linux]
 [![MSYS2 UCRT64 GCC/Clang][action-mingw-badge]][action-mingw]
 [![Clang Tidy/Clazy][action-analyzers-badge]][action-analyzers]
@@ -34,8 +35,10 @@ Whole library is documented as markdown documents:
   - [Hello world](/docs/building/hello-world.mdx#building-hello-world)
   - [Migrations](/docs/building/migrations.mdx#building-migrations)
 
-[action-msvc]: https://github.com/silverqx/TinyORM/actions/workflows/msvc.yml
-[action-msvc-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc.yml/badge.svg
+[action-msvc2019-qt5]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2019-qt5.yml
+[action-msvc2019-qt5-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2019-qt5.yml/badge.svg
+[action-msvc2022-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2022-qt6.yml
+[action-msvc2022-qt6-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2022-qt6.yml/badge.svg
 [action-linux]: https://github.com/silverqx/TinyORM/actions/workflows/linux.yml
 [action-linux-badge]: https://github.com/silverqx/TinyORM/actions/workflows/linux.yml/badge.svg
 [action-mingw]: https://github.com/silverqx/TinyORM/actions/workflows/mingw.yml
