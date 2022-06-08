@@ -113,7 +113,7 @@ QString String::studly(QString string)
     return (*studlyCache)[std::move(key)] = value.replace(SPACE, "");
 }
 
-#ifndef TINYORM_DISABLE_TOM
+#if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
 bool String::isNumber(const QStringView string, const bool allowFloating)
 {
     /* Performance boost was amazing after the QRegularExpression has been removed,
@@ -150,7 +150,9 @@ bool String::isNumber(const QStringView string, const bool allowFloating)
 
     return nonDigit == string.cend();
 }
+#endif
 
+#ifndef TINYORM_DISABLE_TOM
 namespace
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
