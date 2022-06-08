@@ -1,9 +1,10 @@
 <h1><img src="https://github.com/silverqx/TinyORM/blob/main/resources/icons/logo-optim.svg" width="34" height="34" alt="TinyORM Logo" align="center">&nbsp;TinyORM</h1>
 
-[![MSVC2019 Qt 5.15][action-msvc2019-qt5-badge]][action-msvc2019-qt5]
-[![MSVC2022 Qt 6.2][action-msvc2022-qt6-badge]][action-msvc2022-qt6]
+[![MSVC2019 Qt5.15][action-msvc2019-qt5-badge]][action-msvc2019-qt5]
+[![MSVC2022 Qt6.2][action-msvc2022-qt6-badge]][action-msvc2022-qt6]
 [![Linux GCC/Clang][action-linux-badge]][action-linux]
 [![MSYS2 UCRT64 GCC/Clang][action-mingw-badge]][action-mingw]
+[![clang-cl MSVC2022][clang-cl-badge]][clang-cl]
 [![Clang Tidy/Clazy][action-analyzers-badge]][action-analyzers]
 
 [![www.tinyorm.org][docs-badge]][docs]
@@ -43,6 +44,8 @@ Whole library is documented as markdown documents:
 [action-linux-badge]: https://github.com/silverqx/TinyORM/actions/workflows/linux.yml/badge.svg
 [action-mingw]: https://github.com/silverqx/TinyORM/actions/workflows/mingw.yml
 [action-mingw-badge]: https://github.com/silverqx/TinyORM/actions/workflows/mingw.yml/badge.svg
+[clang-cl]: https://github.com/silverqx/TinyORM/actions/workflows/clang-cl.yml
+[clang-cl-badge]: https://github.com/silverqx/TinyORM/actions/workflows/clang-cl.yml/badge.svg
 [action-analyzers]: https://github.com/silverqx/TinyORM/actions/workflows/analyzers.yml
 [action-analyzers-badge]: https://github.com/silverqx/TinyORM/actions/workflows/analyzers.yml/badge.svg
 [docs-badge]: https://img.shields.io/badge/Docs-www.tinyorm.org-blue

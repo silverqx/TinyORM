@@ -1,4 +1,4 @@
-name: clang-cl MSVC 2022
+name: clang-cl MSVC2022
 
 on:
   pull_request:
