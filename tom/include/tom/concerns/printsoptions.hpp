@@ -30,7 +30,7 @@ namespace Concerns
         Q_DISABLE_COPY(PrintsOptions)
 
     public:
-        /*! Constructor (int param. to avoid interpret it as copy ctor). */
+        /*! Constructor. */
         PrintsOptions(const QList<QCommandLineOption> &options,
                       const Concerns::InteractsWithIO &io);
         /*! Virtual destructor. */
