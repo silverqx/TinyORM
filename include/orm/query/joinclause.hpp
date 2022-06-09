@@ -25,9 +25,9 @@ namespace Orm::Query
         JoinClause &operator=(const JoinClause &) = delete;
 
         /*! Move constructor. */
-        inline JoinClause(JoinClause &&) = default;
+        inline JoinClause(JoinClause &&) noexcept = default;
         /*! Deleted move assignment operator (class constains reference and const). */
-        JoinClause &operator=(JoinClause &&) = delete;
+        JoinClause &operator=(JoinClause &&) noexcept = delete;
 
         /*! Virtual destructor. */
         inline ~JoinClause() final = default;
