@@ -38,6 +38,9 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands
 {
 
+/* Complete command is inspired by winget/dotnet complete:
+   https://github.com/microsoft/winget-cli/blob/master/doc/Completion.md */
+
 /* public */
 
 CompleteCommand::CompleteCommand(Application &application, QCommandLineParser &parser)
