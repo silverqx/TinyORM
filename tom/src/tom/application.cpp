@@ -11,6 +11,7 @@
 #include <orm/utils/type.hpp>
 #include <orm/version.hpp>
 
+#include "tom/commands/completecommand.hpp"
 #include "tom/commands/database/seedcommand.hpp"
 #include "tom/commands/database/wipecommand.hpp"
 #include "tom/commands/environmentcommand.hpp"
@@ -44,6 +45,7 @@ using Orm::Constants::NEWLINE;
 using TypeUtils = Orm::Utils::Type;
 
 using Tom::Commands::Command;
+using Tom::Commands::CompleteCommand;
 using Tom::Commands::Database::SeedCommand;
 using Tom::Commands::Database::WipeCommand;
 using Tom::Commands::EnvironmentCommand;
@@ -61,14 +63,7 @@ using Tom::Commands::Migrations::ResetCommand;
 using Tom::Commands::Migrations::RollbackCommand;
 using Tom::Commands::Migrations::StatusCommand;
 
-using Tom::Constants::ansi;
-using Tom::Constants::env;
-using Tom::Constants::help;
-using Tom::Constants::noansi;
-using Tom::Constants::nointeraction;
-using Tom::Constants::quiet;
-using Tom::Constants::verbose;
-using Tom::Constants::version;
+using Tom::Constants::Complete;
 using Tom::Constants::DbSeed;
 using Tom::Constants::DbWipe;
 using Tom::Constants::Env;
@@ -85,11 +80,20 @@ using Tom::Constants::MigrateRefresh;
 using Tom::Constants::MigrateReset;
 using Tom::Constants::MigrateRollback;
 using Tom::Constants::MigrateStatus;
+using Tom::Constants::NsAll;
 using Tom::Constants::NsDb;
 using Tom::Constants::NsGlobal;
 using Tom::Constants::NsMake;
 using Tom::Constants::NsMigrate;
 using Tom::Constants::NsNamespaced;
+using Tom::Constants::ansi;
+using Tom::Constants::env;
+using Tom::Constants::help;
+using Tom::Constants::noansi;
+using Tom::Constants::nointeraction;
+using Tom::Constants::quiet;
+using Tom::Constants::verbose;
+using Tom::Constants::version;
 
 /*! Invoke Qt's global post routines. */
 extern void Q_DECL_IMPORT qt_call_post_routines();
@@ -409,6 +413,9 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
     // Use a custom parser if passed as the argument, needed by CallsCommands::call()
     auto parserRef = parser ? *parser : std::ref(m_parser);
 
+    if (command == Complete)
+        return std::make_unique<CompleteCommand>(*this, parserRef);
+
     if (command == DbSeed)
         return std::make_unique<SeedCommand>(*this, parserRef, m_db);
 
@@ -550,7 +557,7 @@ Application::commandNames() const
     // Order is important here (shown by defined order by the list command)
     static const std::vector<std::reference_wrapper<const QString>> cached {
         // global namespace
-        Env, Help, Inspire, List, Migrate,
+        Complete, Env, Help, Inspire, List, Migrate,
         // db
         DbSeed, DbWipe,
         // make
@@ -572,10 +579,16 @@ Application::namespaceNames() const
         EMPTY, NsGlobal,
         // all other namespaces
         NsDb, NsMake, NsMigrate,
-        /* The special index used by the command name guesser doesn't name the namespace
-           but rather returns all namespaced commands. I leave it accessible also by
-           the list command so a user can also display all namespaced commands. */
+        /* The special index used by the command name guesser, it doesn't name
+           the namespace but rather returns all namespaced commands. I leave it
+           accessible also by the list command so a user can also display all namespaced
+           commands. */
         NsNamespaced,
+        /* The special index used by the command name guesser for the complete command,
+           it doesn't name the namespace but rather returns all commands. I leave it
+           accessible also by the list command so a user can also display all namespaced
+           commands. */
+        NsAll,
     };
 
     return cached;
@@ -590,12 +603,13 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
 
        Order is important here - ziped with the namespaceNames(). */
     static const std::vector<std::tuple<int, int>> cached {
-        {0, 5},  // "" - also global
-        {0, 5},  // global
-        {5, 7},  // db
-        {7, 9},  // make
-        {9, 15}, // migrate
-        {5, 15}, // namespaced
+        {0,   6}, // "" - also global
+        {0,   6}, // global
+        {6,   8}, // db
+        {8,  10}, // make
+        {10, 16}, // migrate
+        {6,  16}, // namespaced
+        {0,  16}, // all
     };
 
     return cached;

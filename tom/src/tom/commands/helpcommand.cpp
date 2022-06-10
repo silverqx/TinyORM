@@ -6,10 +6,13 @@
 
 #include "tom/application.hpp"
 #include "tom/tomconstants.hpp"
+#include "tom/tomutils.hpp"
 
 using Orm::Constants::SPACE;
 
 using Tom::Constants::command_name;
+
+using TomUtils = Tom::Utils;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -196,7 +199,7 @@ void HelpCommand::printArgumentDefaultValue(const PositionalArgument &argument) 
     if (const auto &defaultValue = argument.defaultValue;
         !defaultValue.isEmpty()
     )
-        comment(defaultValueText(defaultValue), false);
+        comment(TomUtils::defaultValueText(defaultValue), false);
 
     newLine();
 }

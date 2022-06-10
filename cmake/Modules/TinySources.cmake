@@ -256,6 +256,7 @@ function(tinytom_sources out_headers out_sources)
     list(APPEND headers
         application.hpp
         commands/command.hpp
+        commands/completecommand.hpp
         commands/database/seedcommand.hpp
         commands/database/wipecommand.hpp
         commands/environmentcommand.hpp
@@ -313,6 +314,7 @@ function(tinytom_sources out_headers out_sources)
     list(APPEND sources
         application.cpp
         commands/command.cpp
+        commands/completecommand.cpp
         commands/database/seedcommand.cpp
         commands/database/wipecommand.cpp
         commands/environmentcommand.cpp

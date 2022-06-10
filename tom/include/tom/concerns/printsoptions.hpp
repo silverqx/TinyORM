@@ -39,10 +39,6 @@ namespace Concerns
         /*! Print options section. */
         int printOptionsSection(bool commonOptions) const;
 
-    protected:
-        /*! Get the default value text (quotes the string type). */
-        static QString defaultValueText(const QString &value);
-
     private:
         /*! Create an option names list prepared for output. */
         static QStringList createOptionNamesList(const QCommandLineOption &option);

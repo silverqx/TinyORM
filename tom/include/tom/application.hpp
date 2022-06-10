@@ -31,13 +31,13 @@ namespace Tom {
 
 namespace Commands
 {
+    class CompleteCommand;
     class HelpCommand;
     class ListCommand;
 } // namespace Commands
 namespace Concerns
 {
     class CallsCommands;
-    class GuessCommandName;
     class PrintsOptions;
 } // namespace Concerns
 
@@ -54,9 +54,11 @@ namespace Concerns
 
         // To access saveOptions()
         friend Commands::Command;
-        // To access createCommand()
+        // To access createCommand(), namespaceNames(), guessCommandXyz() related methods
+        friend Commands::CompleteCommand;
+        // To access createCommand(), m_options
         friend Commands::HelpCommand;
-        // To access showVersion()
+        // To access showVersion(), m_options
         friend Commands::ListCommand;
         // To access m_options
         friend Concerns::PrintsOptions;

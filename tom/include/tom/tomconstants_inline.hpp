@@ -51,10 +51,17 @@ namespace Tom::Constants
     inline const QString seeder       = QStringLiteral("seeder");
     inline const QString step_        = QStringLiteral("step");
     // Default value names
-    inline const QString class_up     = QStringLiteral("CLASS");
-    inline const QString database_up  = QStringLiteral("DATABASE");
-    inline const QString seeder_up    = QStringLiteral("SEEDER");
-    inline const QString step_up      = QStringLiteral("STEP");
+    inline const QString class_up       = QStringLiteral("CLASS");
+    inline const QString database_up    = QStringLiteral("DATABASE");
+    inline const QString seeder_up      = QStringLiteral("SEEDER");
+    inline const QString step_up        = QStringLiteral("STEP");
+    inline const QString commandline_up = QStringLiteral("COMMANDLINE");
+    inline const QString position_up    = QStringLiteral("POSITION");
+    inline const QString word_up        = QStringLiteral("WORD");
+    // complete
+    inline const QString commandline  = QStringLiteral("commandline");
+    inline const QString position     = QStringLiteral("position");
+    inline const QString word_        = QStringLiteral("word");
     // list
     inline const QString raw_         = QStringLiteral("raw");
     // db:seed
@@ -77,8 +84,10 @@ namespace Tom::Constants
     inline const QString NsMake       = QStringLiteral("make");
     inline const QString NsMigrate    = QStringLiteral("migrate");
     inline const QString NsNamespaced = QStringLiteral("namespaced");
+    inline const QString NsAll        = QStringLiteral("all");
 
     // Command names
+    inline const QString Complete        = QStringLiteral("complete");
     inline const QString DbSeed          = QStringLiteral("db:seed");
     inline const QString DbWipe          = QStringLiteral("db:wipe");
     inline const QString Inspire         = QStringLiteral("inspire");

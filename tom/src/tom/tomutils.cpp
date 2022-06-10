@@ -54,6 +54,16 @@ bool Utils::startsWithDatetimePrefix(const QString &migrationName)
     });
 }
 
+QString Utils::defaultValueText(const QString &value)
+{
+    // Quote the string type
+    auto defaultValue = StringUtils::isNumber(value, true)
+                        ? value
+                        : QStringLiteral("\"%1\"").arg(value);
+
+    return QStringLiteral(" [default: %1]").arg(std::move(defaultValue));
+}
+
 /* private */
 
 bool Utils::areDatetimePartsEqual(const QList<QStringView> &prefixParts)

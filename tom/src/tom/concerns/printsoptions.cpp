@@ -8,6 +8,7 @@
 #include "tom/concerns/interactswithio.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 #include "tom/tomconstants.hpp"
+#include "tom/tomutils.hpp"
 
 using Orm::Constants::COMMA;
 using Orm::Constants::SPACE;
@@ -18,6 +19,8 @@ using Tom::Constants::ShortOption;
 using Tom::Constants::LongOption;
 using Tom::Constants::LongOptionOnly;
 using Tom::Constants::LongOptionValue;
+
+using TomUtils = Tom::Utils;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -45,18 +48,6 @@ int PrintsOptions::printOptionsSection(const bool commonOptions) const
     printOptions(optionsMaxSize);
 
     return optionsMaxSize;
-}
-
-/* protected */
-
-QString PrintsOptions::defaultValueText(const QString &value)
-{
-    // Quote the string type
-    auto defaultValue = StringUtils::isNumber(value, true)
-                        ? value
-                        : QStringLiteral("\"%1\"").arg(value);
-
-    return QStringLiteral(" [default: %1]").arg(std::move(defaultValue));
 }
 
 /* private */
@@ -149,7 +140,7 @@ void PrintsOptions::printOptionDefaultValue(const QCommandLineOption &option) co
     if (defaultValues.isEmpty())
         io().newLine();
     else
-        io().comment(defaultValueText(defaultValues[0]));
+        io().comment(TomUtils::defaultValueText(defaultValues[0]));
 }
 
 void PrintsOptions::validateOption(const QCommandLineOption &option) const

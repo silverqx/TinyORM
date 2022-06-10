@@ -10,6 +10,7 @@ else: \
 headersList += \
     $$PWD/tom/application.hpp \
     $$PWD/tom/commands/command.hpp \
+    $$PWD/tom/commands/completecommand.hpp \
     $$PWD/tom/commands/database/seedcommand.hpp \
     $$PWD/tom/commands/database/wipecommand.hpp \
     $$PWD/tom/commands/environmentcommand.hpp \

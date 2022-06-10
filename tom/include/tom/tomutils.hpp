@@ -28,6 +28,9 @@ namespace Tom
         /*! Check whether a migration name starts with the datetime prefix. */
         static bool startsWithDatetimePrefix(const QString &migrationName);
 
+        /*! Get the default value text (quotes the string type). */
+        static QString defaultValueText(const QString &value);
+
     private:
         /*! Check whether all datetime parts are equal to the DateTimePrefix constant. */
         static bool areDatetimePartsEqual(const QList<QStringView> &prefixParts);

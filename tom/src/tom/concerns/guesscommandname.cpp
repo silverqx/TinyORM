@@ -15,6 +15,7 @@ using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
 
 using Tom::Commands::Command;
+using Tom::Constants::NsAll;
 using Tom::Constants::NsGlobal;
 using Tom::Constants::NsNamespaced;
 
@@ -24,6 +25,8 @@ namespace Tom::Concerns
 {
 
 /* protected */
+
+/* For classic command guesser */
 
 QString GuessCommandName::guessCommandName(const QString &name)
 {
@@ -66,16 +69,9 @@ GuessCommandName::guessCommandsWithNamespace(const QString &name)
 }
 
 std::vector<std::shared_ptr<Command>>
-GuessCommandName::guessCommandsWithoutNamespace(const QString &name)
+GuessCommandName::guessCommandsWithoutNamespace(const QString &commandName)
 {
-    const auto globalCommands = application().getCommandsInNamespace(NsGlobal);
-
-    return globalCommands
-            | ranges::views::filter([&name](const auto &command)
-    {
-        return command->name().startsWith(name, Qt::CaseInsensitive);
-    })
-            | ranges::to<std::vector<std::shared_ptr<Command>>>();
+    return guessCommandsInNamespace(NsGlobal, commandName);
 }
 
 Q_NORETURN void
@@ -111,7 +107,41 @@ GuessCommandName::printAmbiguousCommands(
     application().exitApplication(EXIT_FAILURE);
 }
 
+/* For the complete command */
+
+std::vector<std::shared_ptr<Command>>
+GuessCommandName::guessCommandNamesForComplete(const QString &name)
+{
+    const auto isNamespacedCmd = name.contains(COLON);
+
+    return isNamespacedCmd ? guessCommandsWithNamespace(name)
+                           : guessCommandsInAllNamespaces(name);
+}
+
+std::vector<std::shared_ptr<Command>>
+GuessCommandName::guessCommandsInAllNamespaces(const QString &commandName)
+{
+    return guessCommandsInNamespace(NsAll, commandName);
+}
+
 /* private */
+
+/* Common */
+
+std::vector<std::shared_ptr<GuessCommandName::Command>>
+GuessCommandName::guessCommandsInNamespace(const QString &namespaceName,
+                                           const QString &commandName)
+{
+    const auto allCommands = application().getCommandsInNamespace(namespaceName);
+
+    return allCommands
+            | ranges::views::filter([&commandName](const auto &command)
+    {
+        return commandName.isEmpty() ||
+                command->name().startsWith(commandName, Qt::CaseInsensitive);
+    })
+            | ranges::to<std::vector<std::shared_ptr<Command>>>();
+}
 
 Application &GuessCommandName::application() noexcept
 {
