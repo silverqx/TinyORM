@@ -82,7 +82,6 @@ namespace Tom::Commands
         /*! Commands to exclude from the list. */
         const std::unordered_set<QString> m_dontList {
             Tom::Constants::Complete,
-            Tom::Constants::Integrate,
         };
     };
 
