@@ -11,6 +11,7 @@ import APITable from '@theme/APITable'
 
 - [Introduction](#introduction)
 - [Generating Migrations](#generating-migrations)
+- [Tab completion](#tab-completion)
 - [Migration Structure](#migration-structure)
 - [Running Migrations](#running-migrations)
     - [Rolling Back Migrations](#rolling-back-migrations)
@@ -65,6 +66,34 @@ If the migration name starts with the `create_` string then the stub for table c
 :::tip
 You can also pass the full migration filename with the datetime prefix and extension to the `make:migration`. This command is able to detect almost any combination of the passed value, with or without datetime prefix or extension if it is the filename; or StudlyCase, snake_case, or kebab-case if it is the classname or any combination described above. 👀
 :::
+
+## Tab completion
+
+You can enable tab completion using the following command. The `tom.exe` and `TinyOrm0.dll` library must be on the system path for the tab completion to work properly. Currently is available only for the `pwsh` shell.
+
+```powershell
+tom integrate pwsh
+```
+
+Or you can paste the tab completion code to the pwsh profile manually.
+
+```powershell title='~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1'
+Register-ArgumentCompleter -Native -CommandName tom -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+    [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
+    $Local:word = $wordToComplete.Replace('"', '""')
+    $Local:ast = $commandAst.ToString().Replace('"', '""')
+    tom complete --word="$Local:word" --commandline="$Local:ast" --position=$cursorPosition | ForEach-Object {
+            $completionText, $listText, $toolTip = $_ -split ';', 3
+            $listText ??= $completionText
+            $toolTip ??= $completionText
+            [System.Management.Automation.CompletionResult]::new(
+                $completionText, $listText, 'ParameterValue', $toolTip)
+        }
+}
+```
+
+It provides completion for the commands, long and short parameters, and also for some positional arguments like namespaces for the list command or commands for the help command.
 
 ## Migration Structure
 
