@@ -253,7 +253,9 @@ int CompleteCommand::printGuessedShortOptions(const QString &currentCommand) con
         const auto optionNames = option.names();
 
         // Some validation
+#ifdef TINYTOM_NO_DEBUG
         const auto optionNamesSize = optionNames.size();
+#endif
         Q_ASSERT(optionNamesSize == 1 || optionNamesSize == 2);
 
         for (const auto &optionName : optionNames)
