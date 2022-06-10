@@ -13,11 +13,10 @@ using Orm::Constants::COLON;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
 
-using Tom::Constants::Complete;
-using Tom::Constants::namespace_;
-using Tom::Constants::raw_;
 using Tom::Constants::NsGlobal;
 using Tom::Constants::NsNamespaced;
+using Tom::Constants::namespace_;
+using Tom::Constants::raw_;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -106,8 +105,8 @@ int ListCommand::raw(const QString &namespaceArg)
     for (const auto &command : commands) {
         auto commandName = command->name();
 
-        // Exclude complete command, this is good enough 😎
-        if (commandName == Complete)
+        // Exclude defined commands
+        if (m_dontList.contains(commandName))
             continue;
 
         auto indent = QString(commandMaxSize - commandName.size(), SPACE);
@@ -245,8 +244,8 @@ void ListCommand::printCommands(
     for (const auto &command : commands) {
         auto commandName = command->name();
 
-        // Exclude complete command, this is good enough 😎
-        if (commandName == Complete)
+        // Exclude defined commands
+        if (m_dontList.contains(commandName))
             continue;
 
         // Begin a new namespace section

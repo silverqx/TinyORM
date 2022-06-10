@@ -17,6 +17,7 @@
 #include "tom/commands/environmentcommand.hpp"
 #include "tom/commands/helpcommand.hpp"
 #include "tom/commands/inspirecommand.hpp"
+#include "tom/commands/integratecommand.hpp"
 #include "tom/commands/listcommand.hpp"
 #include "tom/commands/make/migrationcommand.hpp"
 //#include "tom/commands/make/projectcommand.hpp"
@@ -51,6 +52,7 @@ using Tom::Commands::Database::WipeCommand;
 using Tom::Commands::EnvironmentCommand;
 using Tom::Commands::HelpCommand;
 using Tom::Commands::InspireCommand;
+using Tom::Commands::IntegrateCommand;
 using Tom::Commands::ListCommand;
 using Tom::Commands::Make::MigrationCommand;
 //using Tom::Commands::Make::ProjectCommand;
@@ -69,6 +71,7 @@ using Tom::Constants::DbWipe;
 using Tom::Constants::Env;
 using Tom::Constants::Help;
 using Tom::Constants::Inspire;
+using Tom::Constants::Integrate;
 using Tom::Constants::List;
 using Tom::Constants::MakeMigration;
 //using Tom::Constants::MakeProject;
@@ -465,6 +468,9 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
     if (command == MigrateStatus)
         return std::make_unique<StatusCommand>(*this, parserRef, createMigrator());
 
+    if (command == Integrate)
+        return std::make_unique<IntegrateCommand>(*this, parserRef);
+
     // Used by the help command
     if (!showHelp)
         return nullptr;
@@ -557,7 +563,7 @@ Application::commandNames() const
     // Order is important here (shown by defined order by the list command)
     static const std::vector<std::reference_wrapper<const QString>> cached {
         // global namespace
-        Complete, Env, Help, Inspire, List, Migrate,
+        Complete, Env, Help, Inspire, Integrate, List, Migrate,
         // db
         DbSeed, DbWipe,
         // make
@@ -603,13 +609,13 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
 
        Order is important here - ziped with the namespaceNames(). */
     static const std::vector<std::tuple<int, int>> cached {
-        {0,   6}, // "" - also global
-        {0,   6}, // global
-        {6,   8}, // db
-        {8,  10}, // make
-        {10, 16}, // migrate
-        {6,  16}, // namespaced
-        {0,  16}, // all
+        {0,   7}, // "" - also global
+        {0,   7}, // global
+        {7,   9}, // db
+        {9,  11}, // make
+        {11, 17}, // migrate
+        {7,  17}, // namespaced
+        {0,  17}, // all
     };
 
     return cached;

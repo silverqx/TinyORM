@@ -43,6 +43,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString command_name;
     // list
     SHAREDLIB_EXPORT extern const QString namespace_;
+    SHAREDLIB_EXPORT extern const QString shell_;
 
     // Commands' options
     // Used by more commands
@@ -87,6 +88,11 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString NsNamespaced;
     SHAREDLIB_EXPORT extern const QString NsAll;
 
+    // Shell names
+    SHAREDLIB_EXPORT extern const QString ShBash;
+    SHAREDLIB_EXPORT extern const QString ShPwsh;
+    SHAREDLIB_EXPORT extern const QString ShZsh;
+
     // Command names
     SHAREDLIB_EXPORT extern const QString Complete;
     SHAREDLIB_EXPORT extern const QString DbSeed;
@@ -105,6 +111,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString MigrateRefresh;
     SHAREDLIB_EXPORT extern const QString MigrateReset;
     SHAREDLIB_EXPORT extern const QString MigrateStatus;
+    SHAREDLIB_EXPORT extern const QString Integrate;
 
 } // namespace Tom::Constants
 

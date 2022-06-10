@@ -42,6 +42,7 @@ namespace Tom::Constants
     inline const QString command_name = QStringLiteral("command_name");
     // list
     inline const QString namespace_   = QStringLiteral("namespace");
+    inline const QString shell_       = QStringLiteral("shell");
 
     // Commands' options
     // Used by more commands
@@ -86,6 +87,11 @@ namespace Tom::Constants
     inline const QString NsNamespaced = QStringLiteral("namespaced");
     inline const QString NsAll        = QStringLiteral("all");
 
+    // Shell names
+    inline const QString ShBash       = QStringLiteral("bash");
+    inline const QString ShPwsh       = QStringLiteral("pwsh");
+    inline const QString ShZsh        = QStringLiteral("zsh");
+
     // Command names
     inline const QString Complete        = QStringLiteral("complete");
     inline const QString DbSeed          = QStringLiteral("db:seed");
@@ -104,6 +110,7 @@ namespace Tom::Constants
     inline const QString MigrateRefresh  = QStringLiteral("migrate:refresh");
     inline const QString MigrateReset    = QStringLiteral("migrate:reset");
     inline const QString MigrateStatus   = QStringLiteral("migrate:status");
+    inline const QString Integrate       = QStringLiteral("integrate");
 
 } // namespace Tom::Constants
 

@@ -16,6 +16,7 @@ headersList += \
     $$PWD/tom/commands/environmentcommand.hpp \
     $$PWD/tom/commands/helpcommand.hpp \
     $$PWD/tom/commands/inspirecommand.hpp \
+    $$PWD/tom/commands/integratecommand.hpp \
     $$PWD/tom/commands/listcommand.hpp \
     $$PWD/tom/commands/make/migrationcommand.hpp \
 #    $$PWD/tom/commands/make/projectcommand.hpp \

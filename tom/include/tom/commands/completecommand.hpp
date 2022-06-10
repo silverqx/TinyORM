@@ -13,7 +13,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands
 {
 
-    /*! List all available commands. */
+    /*! Complete command names and parameters (for tab-completion only). */
     class CompleteCommand : public Command
     {
         Q_DISABLE_COPY(CompleteCommand)
@@ -43,6 +43,8 @@ namespace Tom::Commands
         int printGuessedCommands(std::vector<std::shared_ptr<Command>> &&commands) const;
         /*! Print all or guessed namespace names for the list command. */
         int printGuessedNamespaces(const QString &word) const;
+        /*! Print all or guessed shell names for the integrate command. */
+        int printGuessedShells(const QString &word) const;
         /*! Print all or guessed long option parameter names. */
         int printGuessedLongOptions(const QString &currentCommand,
                                     const QString &word) const;
@@ -63,7 +65,7 @@ namespace Tom::Commands
     QString CompleteCommand::description() const
     {
         return QStringLiteral(
-                    "Complete command names and parameters (for tab completion only)");
+                    "Complete command names and parameters (for tab-completion only)");
     }
 
 } // namespace Tom::Commands

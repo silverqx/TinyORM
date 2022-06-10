@@ -262,6 +262,7 @@ function(tinytom_sources out_headers out_sources)
         commands/environmentcommand.hpp
         commands/helpcommand.hpp
         commands/inspirecommand.hpp
+        commands/integratecommand.hpp
         commands/listcommand.hpp
         commands/make/migrationcommand.hpp
 #        commands/make/projectcommand.hpp
@@ -320,6 +321,7 @@ function(tinytom_sources out_headers out_sources)
         commands/environmentcommand.cpp
         commands/helpcommand.cpp
         commands/inspirecommand.cpp
+        commands/integratecommand.cpp
         commands/listcommand.cpp
         commands/make/migrationcommand.cpp
 #        commands/make/projectcommand.cpp

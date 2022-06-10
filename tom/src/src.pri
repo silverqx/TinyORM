@@ -11,6 +11,7 @@ sourcesList += \
     $$PWD/tom/commands/environmentcommand.cpp \
     $$PWD/tom/commands/helpcommand.cpp \
     $$PWD/tom/commands/inspirecommand.cpp \
+    $$PWD/tom/commands/integratecommand.cpp \
     $$PWD/tom/commands/listcommand.cpp \
     $$PWD/tom/commands/make/migrationcommand.cpp \
 #    $$PWD/tom/commands/make/projectcommand.cpp \

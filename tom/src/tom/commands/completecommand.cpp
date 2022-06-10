@@ -17,9 +17,13 @@ using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
 
 using Tom::Constants::Help;
+using Tom::Constants::Integrate;
 using Tom::Constants::List;
 using Tom::Constants::LongOption;
 using Tom::Constants::LongOptionValue;
+//using Tom::Constants::ShBash;
+using Tom::Constants::ShPwsh;
+//using Tom::Constants::ShZsh;
 using Tom::Constants::commandline;
 using Tom::Constants::commandline_up;
 using Tom::Constants::position;
@@ -89,6 +93,14 @@ int CompleteCommand::run()
     )
         return printGuessedNamespaces(wordArg);
 
+    // Print all or guessed shell names for the integrate command
+    if (!wordArg.startsWith(QLatin1String("--")) && !wordArg.startsWith(DASH) &&
+        currentCommandArg == Integrate && positionArg >= commandlineArgSize &&
+        ((wordArg.isEmpty() && commandlineArg.count(SPACE) == 1) ||
+         (!wordArg.isEmpty() && commandlineArg.count(SPACE) == 2))
+    )
+        return printGuessedShells(wordArg);
+
     // Print all or guessed long option parameter names
     if (wordArg.startsWith(QLatin1String("--")) && commandlineArg.contains(SPACE))
         return printGuessedLongOptions(*currentCommandArg, wordArg);
@@ -136,6 +148,33 @@ int CompleteCommand::printGuessedNamespaces(const QString &word) const
         namespaceNames.sort(Qt::CaseInsensitive);
 
     note(namespaceNames.join(NEWLINE));
+
+    return EXIT_SUCCESS;
+}
+
+// FUTURE complete, printGuessedNamespaces and printGuessedShells are practically the same methods, if I will implement another method of this simple list type, then create common method and reuse code silverqx
+int CompleteCommand::printGuessedShells(const QString &word) const
+{
+    static const std::vector allShellNames {
+//        ShBash,
+        ShPwsh,
+//        ShZsh,
+    };
+
+    const auto printAll = word.isEmpty();
+
+    QStringList shellNames;
+    shellNames.reserve(static_cast<QStringList::size_type>(allShellNames.size()));
+
+    for (const QString &shellName : allShellNames)
+        if (!shellName.isEmpty() && (printAll || shellName.startsWith(word)))
+            shellNames << shellName;
+
+    // Want to have un-sorted if printing all namespaces
+    if (!printAll)
+        shellNames.sort(Qt::CaseInsensitive);
+
+    note(shellNames.join(NEWLINE));
 
     return EXIT_SUCCESS;
 }
