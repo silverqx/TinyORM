@@ -260,7 +260,7 @@ int CompleteCommand::printGuessedShortOptions(const QString &currentCommand) con
             // Short option
             if (optionName.size() == 1) {
                 // All other short options
-                if (option.names()[0] != "v")
+                if (option.names().constFirst() != "v")
                     options << QStringLiteral("-%1;-%2;%3").arg(optionName, optionName,
                                                                 option.description());
                 // Special handling of the -v options, good enough 😎
