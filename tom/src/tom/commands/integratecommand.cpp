@@ -171,6 +171,10 @@ bool IntegrateCommand::writeToPwshProfile(
     // Apppend tab-completion code to the pwsh profile
     pwshProfileStream << getRegisterArgumentCompleter();
 
+#ifdef TINYTOM_DEBUG
+    pwshProfileStream.flush();
+#endif
+
     return true;
 }
 
