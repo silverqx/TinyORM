@@ -196,8 +196,8 @@ CompleteCommand::getCurrentTomCommand(const QString &commandlineArg,
             // Little weird, but the current tom command is actually completing now
             if (i == cword)
                 return std::nullopt;
-            else
-                return currentCommand;
+
+            return currentCommand;
         }
 
     return std::nullopt;
