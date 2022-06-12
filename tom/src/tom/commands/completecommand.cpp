@@ -89,7 +89,7 @@ int CompleteCommand::run()
     const auto currentCommandSplitted = commandlineArg.split(SPACE);
     const auto currentCommandArg = currentCommandSplitted.size() >= 2
                                    ? std::make_optional(currentCommandSplitted[1])
-            : std::nullopt;
+                                   : std::nullopt;
 #else
     const auto cwordArg = static_cast<QString::size_type>(value(cword_).toLongLong());
 
