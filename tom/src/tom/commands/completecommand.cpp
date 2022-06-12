@@ -21,16 +21,16 @@ using Tom::Constants::Help;
 using Tom::Constants::Integrate;
 using Tom::Constants::List;
 using Tom::Constants::LongOption;
-using Tom::Constants::LongOptionValue;
-//using Tom::Constants::ShBash;
 using Tom::Constants::ShPwsh;
-//using Tom::Constants::ShZsh;
 using Tom::Constants::commandline;
 using Tom::Constants::commandline_up;
 using Tom::Constants::word_;
 using Tom::Constants::word_up;
 
 #ifdef _MSC_VER
+using Tom::Constants::LongOptionValue;
+//using Tom::Constants::ShBash;
+//using Tom::Constants::ShZsh;
 using Tom::Constants::position;
 using Tom::Constants::position_up;
 #else
