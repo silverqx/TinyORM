@@ -27,12 +27,17 @@ using Tom::Constants::ShPwsh;
 //using Tom::Constants::ShZsh;
 using Tom::Constants::commandline;
 using Tom::Constants::commandline_up;
-using Tom::Constants::cword_;
-using Tom::Constants::cword_up;
-using Tom::Constants::position;
-using Tom::Constants::position_up;
 using Tom::Constants::word_;
 using Tom::Constants::word_up;
+
+#ifdef _MSC_VER
+using Tom::Constants::position;
+using Tom::Constants::position_up;
+#else
+using Tom::Constants::cword_;
+using Tom::Constants::cword_up;
+#endif
+
 
 using TomUtils = Tom::Utils;
 
@@ -79,12 +84,18 @@ int CompleteCommand::run()
                                  value(position).toLongLong());
 
     const auto commandlineArgSize = commandlineArg.size();
+
+    // Currently proccessed tom command
+    const auto currentCommandSplitted = commandlineArg.split(SPACE);
+    const auto currentCommandArg = currentCommandSplitted.size() >= 2
+                                   ? std::make_optional(currentCommandSplitted[1])
+            : std::nullopt;
 #else
     const auto cwordArg = static_cast<QString::size_type>(value(cword_).toLongLong());
-#endif
 
     // Currently proccessed tom command
     const auto currentCommandArg = getCurrentTomCommand(commandlineArg, cwordArg);
+#endif
 
     /* Main logic section */
 
@@ -167,6 +178,7 @@ int CompleteCommand::run()
 
 /* protected */
 
+#ifndef _MSC_VER
 std::optional<QString>
 CompleteCommand::getCurrentTomCommand(const QString &commandlineArg,
                                       const QString::size_type cword)
@@ -190,6 +202,7 @@ CompleteCommand::getCurrentTomCommand(const QString &commandlineArg,
 
     return std::nullopt;
 }
+#endif
 
 int CompleteCommand::printGuessedCommands(
             std::vector<std::shared_ptr<Command>> &&commands) const
