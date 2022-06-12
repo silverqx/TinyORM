@@ -621,6 +621,12 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
     return cached;
 }
 
+QList<QCommandLineOption> Application::getCommandOptionsSignature(const QString &command)
+{
+    // Ownership of a unique_ptr()
+    return createCommand(command, std::nullopt, false)->optionsSignature();
+}
+
 fspath Application::initializePath(fspath &&path)
 {
     if (path.is_relative())

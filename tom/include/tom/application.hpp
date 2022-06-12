@@ -233,6 +233,9 @@ namespace Concerns
         /*! Get commands index positions in namespaces. */
         const std::vector<std::tuple<int, int>> &commandsIndexes() const;
 
+        /*! Get options signature for the given command. */
+        QList<QCommandLineOption> getCommandOptionsSignature(const QString &command);
+
         /*! Initialize the migrations or seeders path (prepend pwd and make_prefered). */
         static fspath initializePath(fspath &&path);
 

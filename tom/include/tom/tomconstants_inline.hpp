@@ -23,6 +23,7 @@ namespace Tom::Constants
     inline const QString LongOptionOnly  = QStringLiteral("    %1");
     inline const QString LongOptionValue = QStringLiteral("--%1[=%2]");
     inline const QString ShortOption     = QStringLiteral("-%1");
+    inline const QString DoubleDash      = QStringLiteral("--");
 
     inline const QString migration_  = QStringLiteral("migration");
     inline const QString batch_      = QStringLiteral("batch");
@@ -59,10 +60,12 @@ namespace Tom::Constants
     inline const QString commandline_up = QStringLiteral("COMMANDLINE");
     inline const QString position_up    = QStringLiteral("POSITION");
     inline const QString word_up        = QStringLiteral("WORD");
+    inline const QString cword_up       = QStringLiteral("CWORD");
     // complete
     inline const QString commandline  = QStringLiteral("commandline");
     inline const QString position     = QStringLiteral("position");
     inline const QString word_        = QStringLiteral("word");
+    inline const QString cword_       = QStringLiteral("cword");
     // list
     inline const QString raw_         = QStringLiteral("raw");
     // db:seed

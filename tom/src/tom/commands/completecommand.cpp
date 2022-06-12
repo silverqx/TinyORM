@@ -16,6 +16,7 @@ using Orm::Constants::EQ_C;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
 
+using Tom::Constants::DoubleDash;
 using Tom::Constants::Help;
 using Tom::Constants::Integrate;
 using Tom::Constants::List;
@@ -26,6 +27,8 @@ using Tom::Constants::ShPwsh;
 //using Tom::Constants::ShZsh;
 using Tom::Constants::commandline;
 using Tom::Constants::commandline_up;
+using Tom::Constants::cword_;
+using Tom::Constants::cword_up;
 using Tom::Constants::position;
 using Tom::Constants::position_up;
 using Tom::Constants::word_;
@@ -52,9 +55,14 @@ QList<QCommandLineOption> CompleteCommand::optionsSignature() const
     return {
         {word_,       QStringLiteral("The current word that is being "
                                      "completed"), word_up},
-        {commandline, QStringLiteral("The entire current command line"), commandline_up},
+        {commandline, QStringLiteral("The entire current command-line"), commandline_up},
+#ifdef _MSC_VER
         {position,    QStringLiteral("The current position of the cursor on the "
                                      "command line"), position_up, "0"},
+#else
+        {cword_,      QStringLiteral("Position of the current word on the command-line "
+                                     "that is being completed"), cword_up},
+#endif
     };
 }
 
@@ -62,70 +70,148 @@ int CompleteCommand::run()
 {
     Command::run();
 
+    /* Initialization section */
     const auto wordArg = value(word_);
     const auto commandlineArg = value(commandline);
+
+#ifdef _MSC_VER
     const auto positionArg = static_cast<QString::size_type>(
                                  value(position).toLongLong());
 
-    const auto currentCommandSplitted = commandlineArg.split(SPACE);
-    const auto currentCommandArg = currentCommandSplitted.size() >= 2
-                                   ? std::make_optional(currentCommandSplitted[1])
-                                   : std::nullopt;
-
     const auto commandlineArgSize = commandlineArg.size();
+#else
+    const auto cwordArg = static_cast<QString::size_type>(value(cword_).toLongLong());
+#endif
 
-    // Print all commands after tom command itself or for the help command
-    if (wordArg.isEmpty() && positionArg >= commandlineArgSize &&
+    // Currently proccessed tom command
+    const auto currentCommandArg = getCurrentTomCommand(commandlineArg, cwordArg);
+
+    /* Main logic section */
+
+    /* Print all commands after tom command itself or for the help command
+       --- */
+#ifdef _MSC_VER
+    if (!isOptionArgument(wordArg) && wordArg.isEmpty() &&
+        positionArg >= commandlineArgSize &&
         (!commandlineArg.contains(SPACE) || currentCommandArg == Help)
     )
+#else
+    if (!isOptionArgument(wordArg) && wordArg.isEmpty() &&
+        (!currentCommandArg || currentCommandArg == Help)
+    )
+#endif
         return printGuessedCommands(
                     application().guessCommandNamesForComplete({}));
 
-    // Print all guessed commands by the word argument after tom or for the help command
-    if (!wordArg.isEmpty() && positionArg >= commandlineArgSize &&
+    /* Print all guessed commands by the word argument after tom or for the help command
+       --- */
+#ifdef _MSC_VER
+    if (!isOptionArgument(wordArg) && !wordArg.isEmpty() &&
+        positionArg >= commandlineArgSize &&
         (commandlineArg.count(SPACE) == 1 || currentCommandArg == Help)
     )
+#else
+    if (!isOptionArgument(wordArg) && !wordArg.isEmpty() &&
+        (!currentCommandArg || currentCommandArg == Help)
+    )
+#endif
         return printGuessedCommands(
                     application().guessCommandNamesForComplete(wordArg));
 
-    // Print all or guessed namespace names for the list command
-    if (!wordArg.startsWith(QLatin1String("--")) && !wordArg.startsWith(DASH) &&
-        currentCommandArg == List && positionArg >= commandlineArgSize &&
+    /* Print all or guessed namespace names for the list command
+       --- */
+#ifdef _MSC_VER
+    if (!isOptionArgument(wordArg) && currentCommandArg == List &&
+        positionArg >= commandlineArgSize &&
         ((wordArg.isEmpty() && commandlineArg.count(SPACE) == 1) ||
          (!wordArg.isEmpty() && commandlineArg.count(SPACE) == 2))
     )
+#else
+    if (!isOptionArgument(wordArg) && currentCommandArg == List)
+#endif
         return printGuessedNamespaces(wordArg);
 
-    // Print all or guessed shell names for the integrate command
-    if (!wordArg.startsWith(QLatin1String("--")) && !wordArg.startsWith(DASH) &&
-        currentCommandArg == Integrate && positionArg >= commandlineArgSize &&
+    /* Print all or guessed shell names for the integrate command
+       --- */
+#ifdef _MSC_VER
+    if (!isOptionArgument(wordArg) && currentCommandArg == Integrate &&
+        positionArg >= commandlineArgSize &&
         ((wordArg.isEmpty() && commandlineArg.count(SPACE) == 1) ||
          (!wordArg.isEmpty() && commandlineArg.count(SPACE) == 2))
     )
+#else
+    if (!isOptionArgument(wordArg) && currentCommandArg == Integrate)
+#endif
         return printGuessedShells(wordArg);
 
-    // Print all or guessed long option parameter names
-    if (wordArg.startsWith(QLatin1String("--")) && commandlineArg.contains(SPACE))
-        return printGuessedLongOptions(*currentCommandArg, wordArg);
+    /* Print all or guessed long option parameter names
+       --- */
+#ifdef _MSC_VER
+    if (isLongOption(wordArg) && commandlineArg.contains(SPACE))
+#else
+    if (isLongOption(wordArg) && cwordArg >= 1)
+#endif
+        return printGuessedLongOptions(currentCommandArg, wordArg);
 
-    // Print all or guessed short option parameter names
-    if (wordArg.startsWith(DASH) && commandlineArg.contains(SPACE))
-        return printGuessedShortOptions(*currentCommandArg);
+    /* Print all or guessed short option parameter names
+       --- */
+#ifdef _MSC_VER
+    if (isShortOption(wordArg) && commandlineArg.contains(SPACE))
+#else
+    if (isShortOption(wordArg) && cwordArg >= 1)
+#endif
+        return printGuessedShortOptions(currentCommandArg);
 
     return EXIT_SUCCESS;
 }
 
 /* protected */
 
+std::optional<QString>
+CompleteCommand::getCurrentTomCommand(const QString &commandlineArg,
+                                      const QString::size_type cword)
+{
+    const auto currentCommandSplitted = commandlineArg.trimmed().split(SPACE);
+    const auto currentSplittedSize = currentCommandSplitted.size();
+
+    if (currentSplittedSize <= 1)
+        return std::nullopt;
+
+    for (auto i = 1; i < currentSplittedSize; ++i)
+        if (const auto &currentCommand = currentCommandSplitted[i];
+            !isOptionArgument(currentCommand)
+        ) {
+            // Little weird, but the current tom command is actually completing now
+            if (i == cword)
+                return std::nullopt;
+            else
+                return currentCommand;
+        }
+
+    return std::nullopt;
+}
+
 int CompleteCommand::printGuessedCommands(
             std::vector<std::shared_ptr<Command>> &&commands) const
 {
-    for (const auto &command : commands) {
-        const auto commandName = command->name();
+    QStringList guessedCommands;
+    guessedCommands.reserve(static_cast<QStringList::size_type>(commands.size()));
 
-        note(QStringLiteral("%1;%2;%3").arg(commandName, commandName,
-                                            command->description()));
+    for (const auto &command : commands) {
+        auto commandName = command->name();
+
+        if (m_dontList.contains(commandName))
+            continue;
+
+#ifdef _MSC_VER
+        guessedCommands << QStringLiteral("%1;%2;%3").arg(commandName, commandName,
+                                                          command->description());
+#else
+        guessedCommands << std::move(commandName);
+#endif
     }
+
+    note(guessedCommands.join(NEWLINE));
 
     return EXIT_SUCCESS;
 }
@@ -182,14 +268,10 @@ int CompleteCommand::printGuessedShells(const QString &word) const
     return EXIT_SUCCESS;
 }
 
-int CompleteCommand::printGuessedLongOptions(const QString &currentCommand,
-                                             const QString &word) const
+int CompleteCommand::printGuessedLongOptions(
+            const std::optional<QString> &currentCommand, const QString &word) const
 {
-    // Ownership of a unique_ptr()
-    const auto command = application().createCommand(
-                             currentCommand, std::nullopt, false);
-
-    const auto commandOptions = command->optionsSignature() + application().m_options;
+    const auto commandOptions = getCommandOptionsSignature(currentCommand);
 
     const auto wordToGuess = word.mid(2);
     const auto printAll = wordToGuess.isEmpty();
@@ -212,15 +294,20 @@ int CompleteCommand::printGuessedLongOptions(const QString &currentCommand,
                 if (const auto valueName = option.valueName();
                     valueName.isEmpty()
                 ) {
-                    const auto longOption = LongOption.arg(std::move(optionName));
+                    auto longOption = LongOption.arg(std::move(optionName));
 
+#ifdef _MSC_VER
                     options << QStringLiteral("%1;%2;%3").arg(longOption, longOption,
                                                               option.description());
+#else
+                    options << std::move(longOption);
+#endif
                 }
                 // With a value
                 else {
                     // Text to be used as the auto completion result
                     auto longOption = LongOption.arg(optionName).append(EQ_C);
+#ifdef _MSC_VER
                     // Text to be displayed in a list
                     auto longOptionList = LongOptionValue.arg(std::move(optionName),
                                                               valueName);
@@ -229,6 +316,9 @@ int CompleteCommand::printGuessedLongOptions(const QString &currentCommand,
                                .arg(std::move(longOption), std::move(longOptionList),
                                     option.description(),
                                     getOptionDefaultValue(option));
+#else
+                    options << std::move(longOption);
+#endif
                 }
             }
     }
@@ -238,13 +328,10 @@ int CompleteCommand::printGuessedLongOptions(const QString &currentCommand,
     return EXIT_SUCCESS;
 }
 
-int CompleteCommand::printGuessedShortOptions(const QString &currentCommand) const
+int CompleteCommand::printGuessedShortOptions(
+            const std::optional<QString> &currentCommand) const
 {
-    // Ownership of a unique_ptr()
-    const auto command = application().createCommand(
-                             currentCommand, std::nullopt, false);
-
-    const auto commandOptions = command->optionsSignature() + application().m_options;
+    const auto commandOptions = getCommandOptionsSignature(currentCommand);
 
     QStringList options;
     options.reserve(commandOptions.size());
@@ -260,15 +347,25 @@ int CompleteCommand::printGuessedShortOptions(const QString &currentCommand) con
             if (optionName.size() == 1) {
                 // All other short options
                 if (option.names().constFirst() != "v")
+#ifdef _MSC_VER
                     options << QStringLiteral("-%1;-%2;%3").arg(optionName, optionName,
                                                                 option.description());
+#else
+                    options << QStringLiteral("-%1").arg(optionName);
+#endif
                 // Special handling of the -v options, good enough 😎
                 else {
                     /* Has to be v because pwsh parameter names are case-insensitive so
                        it collides with the -V parameter. */
-                    options << QStringLiteral("-v;v;%1").arg(option.description());
-                    options << QStringLiteral("-vv;-vv;%1").arg(option.description());
-                    options << QStringLiteral("-vvv;-vvv;%1").arg(option.description());
+#ifdef _MSC_VER
+                    options << QStringLiteral("-v;v;%1").arg(option.description())
+                            << QStringLiteral("-vv;-vv;%1").arg(option.description())
+                            << QStringLiteral("-vvv;-vvv;%1").arg(option.description());
+#else
+                    options << QStringLiteral("-v")
+                            << QStringLiteral("-vv")
+                            << QStringLiteral("-vvv");
+#endif
                 }
             }
     }
@@ -287,6 +384,31 @@ QString CompleteCommand::getOptionDefaultValue(const QCommandLineOption &option)
 
     return defaultValues.isEmpty() ? EMPTY
                                    : TomUtils::defaultValueText(defaultValues[0]);
+}
+
+QList<QCommandLineOption>
+CompleteCommand::getCommandOptionsSignature(const std::optional<QString> &command) const
+{
+    if (!command)
+        return application().m_options;
+
+    return application().getCommandOptionsSignature(*command) + application().m_options;
+}
+
+bool CompleteCommand::isOptionArgument(const QString &wordArg, const OptionType type)
+{
+    const auto isLong = wordArg.startsWith(DoubleDash);
+    const auto isShort = isLong ? false : wordArg.startsWith(DASH);
+
+    if (type == UNDEFINED)
+        return isLong || isShort;
+
+    if (type == LONG)
+        return isLong;
+    if (type == SHORT)
+        return isShort;
+
+    Q_UNREACHABLE();
 }
 
 } // namespace Tom::Commands
