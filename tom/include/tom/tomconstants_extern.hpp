@@ -2,13 +2,13 @@
 #ifndef TOM_TOMCONSTANTS_EXTERN_HPP
 #define TOM_TOMCONSTANTS_EXTERN_HPP
 
-#include "orm/macros/systemheader.hpp"
+#include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
 #include <QString>
 
-#include "orm/macros/commonnamespace.hpp"
-#include "orm/macros/export.hpp"
+#include <orm/macros/commonnamespace.hpp>
+#include <orm/macros/export.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

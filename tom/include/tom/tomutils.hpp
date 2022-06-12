@@ -2,12 +2,12 @@
 #ifndef TOM_TOMUTILS_HPP
 #define TOM_TOMUTILS_HPP
 
-#include "orm/macros/systemheader.hpp"
+#include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
 #include <QString>
 
-#include "orm/macros/commonnamespace.hpp"
+#include <orm/macros/commonnamespace.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
