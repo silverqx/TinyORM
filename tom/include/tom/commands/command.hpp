@@ -118,7 +118,7 @@ namespace Tom::Commands
 
         /*! Reference to the tom application. */
         std::reference_wrapper<Application> m_application;
-        /*! Command line parser. */
+        /*! Command-line parser. */
         std::reference_wrapper<QCommandLineParser> m_parser;
 
         /*! Passed command's arguments. */

@@ -162,7 +162,7 @@ namespace Concerns
         prependOptions(QList<QCommandLineOption> &&options);
 
         /* Run command */
-        /*! Parse current application's command line. */
+        /*! Parse current application's command-line. */
         void parseCommandLine();
 
         /*! Initialize environment value, order:
@@ -268,7 +268,7 @@ namespace Concerns
         /*! Determine whether the TomApplication has its own QCoreApplication instance. */
         bool hasQtApplication = false;
 #endif
-        /*! Command line parser. */
+        /*! Command-line parser. */
         QCommandLineParser m_parser {};
 
         /*! Current environment. */

@@ -51,7 +51,7 @@ int Command::run()
     // Show help if --help argument was passed
     checkHelpArgument();
 
-    // Validate if all required positional arguments were passed on the command line.
+    // Validate if all required positional arguments were passed on the command-line.
     validateRequiredArguments();
 
     return EXIT_SUCCESS;
@@ -128,7 +128,7 @@ QString Command::longOption(const QString &name)
 
 bool Command::hasArgument(const ArgumentsSizeType index) const
 {
-    /* Has to be isNull(), an argument passed on the command line still can be an empty
+    /* Has to be isNull(), an argument passed on the command-line still can be an empty
        value, like "", in this case it has to return a true value. */
     return !argument(index, false).isNull();
 }

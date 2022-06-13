@@ -301,7 +301,7 @@ void Application::parseCommandLine()
 
     initializeEnvironment();
 
-    /* Command line arguments are parsed now, the InteractsWithIO() base class can be
+    /* Command-line arguments are parsed now, the InteractsWithIO() base class can be
        initialized. Nothing bad to divide it into two steps as output to the console
        is not needed until here. */
     Concerns::InteractsWithIO::initialize(m_parser);

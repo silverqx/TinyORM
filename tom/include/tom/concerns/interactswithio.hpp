@@ -162,7 +162,7 @@ namespace Concerns
         /*! Initialize ansi support by noAnsi passed to the Application::logException. */
         std::optional<bool> initializeNoAnsi(bool noAnsi) const;
 
-        /*! Number of the option name set on the command line (used by eg. -vvv). */
+        /*! Number of the option name set on the command-line (used by eg. -vvv). */
         QStringList::size_type
         countSetOption(const QString &optionName, const QCommandLineParser &parser) const;
         /*! Determine whether discard output by the current and the given verbosity. */

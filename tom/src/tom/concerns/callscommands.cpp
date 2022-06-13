@@ -55,7 +55,7 @@ CallsCommands::createCommandLineArguments(
 
     /* First create a new arguments list that starts with an executable name followed
        by a command name to execute, then obtain common arguments which were passed
-       on the current command line, and as the last thing append passed arguments. */
+       on the current command-line, and as the last thing append passed arguments. */
 
     // Absolute path of the exe name
     QStringList newArguments {std::move(currentArguments[0])};
@@ -84,7 +84,7 @@ CallsCommands::createCommandLineArguments(
 QStringList CallsCommands::getCommonArguments(QStringList &&arguments) const
 {
     // This way I'm able to re-use global constants
-    /*! Create a long command line option from the option name (--xyz). */
+    /*! Create a long command-line option from the option name (--xyz). */
     const auto o = [](const auto &optionName)
     {
         return LongOption.arg(optionName);

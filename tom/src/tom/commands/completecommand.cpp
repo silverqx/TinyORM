@@ -63,7 +63,7 @@ QList<QCommandLineOption> CompleteCommand::optionsSignature() const
         {commandline, QStringLiteral("The entire current command-line"), commandline_up},
 #ifdef _MSC_VER
         {position,    QStringLiteral("The current position of the cursor on the "
-                                     "command line"), position_up, "0"},
+                                     "command-line"), position_up, "0"},
 #else
         {cword_,      QStringLiteral("Position of the current word on the command-line "
                                      "that is being completed"), cword_up},

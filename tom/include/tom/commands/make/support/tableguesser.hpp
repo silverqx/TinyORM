@@ -16,7 +16,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands::Make::Support
 {
 
-    /*! Guess the table name by the passed argument on the command line. */
+    /*! Guess the table name by the passed argument on the command-line. */
     class TableGuesser
     {
         Q_DISABLE_COPY(TableGuesser)
