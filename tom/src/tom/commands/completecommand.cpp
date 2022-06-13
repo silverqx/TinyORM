@@ -29,11 +29,11 @@ using Tom::Constants::word_up;
 
 #ifdef _MSC_VER
 using Tom::Constants::LongOptionValue;
-//using Tom::Constants::ShBash;
-//using Tom::Constants::ShZsh;
 using Tom::Constants::position;
 using Tom::Constants::position_up;
 #else
+using Tom::Constants::ShBash;
+//using Tom::Constants::ShZsh;
 using Tom::Constants::cword_;
 using Tom::Constants::cword_up;
 #endif
@@ -258,7 +258,9 @@ int CompleteCommand::printGuessedNamespaces(const QString &word) const
 int CompleteCommand::printGuessedShells(const QString &word) const
 {
     static const std::vector allShellNames {
-//        ShBash,
+#ifndef _MSC_VER
+        ShBash,
+#endif
         ShPwsh,
 //        ShZsh,
     };
