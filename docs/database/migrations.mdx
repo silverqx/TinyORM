@@ -6,6 +6,18 @@ keywords: [c++ orm, database, migrations, tinyorm]
 ---
 
 import APITable from '@theme/APITable'
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import {
+    shell,
+    bash, pwsh,
+    bash_label, pwsh_label
+} from '@theme/constants'
+import {
+    applicationFolderPath,
+} from '@theme/utils/rootFolderUtils'
 
 # Database: Migrations
 
@@ -69,13 +81,30 @@ You can also pass the full migration filename with the datetime prefix and exten
 
 ## Tab completion
 
-You can enable tab completion using the following command. The `tom.exe` and `TinyOrm0.dll` library must be on the system path for the tab completion to work properly. Currently is available only for the `pwsh` shell.
+Tab completion is currently available for the `pwsh` (on Linux too) and `bash` shells. For `pwsh` the `tom.exe` and `TinyOrm0.dll` library must be on the system path to work properly. With `bash` if the `tom` executable and `libTinyOrm.so` library is not on the system paths then it will provide less accurate completions.
+
+You can enable it using the following commands.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
 
 ```powershell
 tom integrate pwsh
 ```
 
-Or you can paste the tab completion code to the pwsh profile manually.
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+```bash
+tom integrate bash
+```
+
+</TabItem>
+</Tabs>
+
+Or you can enable the tab completion manually. Following actions are the same as the `tom integrate` command does.
+
+For the `pwsh` paste the following code to the pwsh profile (works on Linux or Windows).
 
 ```powershell title='~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1'
 Register-ArgumentCompleter -Native -CommandName tom -ScriptBlock {
@@ -93,7 +122,13 @@ Register-ArgumentCompleter -Native -CommandName tom -ScriptBlock {
 }
 ```
 
-It provides completion for the commands, long and short parameters, and also for some positional arguments like namespaces for the list command or commands for the help command.
+For `bash` you can copy or create symlink of the `/tools/completions/tom.bash` file to the `/usr/share/bash-completion/completions` folder.
+
+<CodeBlock className='language-bash'>
+{`sudo ln -s ${applicationFolderPath(bash)}/TinyORM/tools/completions/tom.bash /usr/share/bash-completion/completions/tom`}
+</CodeBlock>
+
+It will provide completions for the tom commands, long and short parameters, and also for some positional arguments like namespaces for the list command or commands for the help command.
 
 ## Migration Structure
 
