@@ -33,6 +33,8 @@ namespace Tom::Commands
 
         /*! The console command positional arguments signature. */
         const std::vector<PositionalArgument> &positionalArguments() const override;
+        /*! The signature of the console command. */
+        QList<QCommandLineOption> optionsSignature() const override;
 
         /*! Execute the console command. */
         int run() override;

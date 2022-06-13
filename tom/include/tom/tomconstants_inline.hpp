@@ -81,6 +81,8 @@ namespace Tom::Constants
     inline const QString fullpath     = QStringLiteral("fullpath");
     // migrate:refresh
     inline const QString step_migrate = QStringLiteral("step-migrate");
+    // integrate
+    inline const QString stdout_      = QStringLiteral("stdout");
 
     // Namespace names
     inline const QString NsGlobal     = QStringLiteral("global");

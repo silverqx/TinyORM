@@ -1,5 +1,6 @@
 #include "tom/commands/integratecommand.hpp"
 
+#include <QCommandLineOption>
 #include <QDir>
 #include <QFile>
 #include <QStandardPaths>
@@ -15,6 +16,7 @@ using Orm::Constants::COMMA;
 
 using Tom::Constants::ShPwsh;
 using Tom::Constants::shell_;
+using Tom::Constants::stdout_;
 
 #ifdef __linux__
 using Tom::Constants::ShBash;
@@ -40,19 +42,38 @@ const std::vector<PositionalArgument> &IntegrateCommand::positionalArguments() c
     return cached;
 }
 
+QList<QCommandLineOption> IntegrateCommand::optionsSignature() const
+{
+    return {
+        {stdout_, QStringLiteral("Print content of the <info>integrate</info> command "
+                                 "(instead of writing to disk)")},
+    };
+}
+
 int IntegrateCommand::run()
 {
     Command::run();
 
     const auto shellArg = argument(shell_);
+    const auto isStdOutArg = isSet(stdout_);
 
 #ifdef __linux__
-    if (shellArg == ShBash)
-        return integrateBash();
+    if (shellArg == ShBash) {
+        if (!isStdOutArg)
+            return integrateBash();
+
+        note(Stubs::TomBashCompletionContent);
+        return EXIT_SUCCESS;
+    }
 #endif
 
-    if (shellArg == ShPwsh)
-        return integratePwsh();
+    if (shellArg == ShPwsh) {
+        if (!isStdOutArg)
+            return integratePwsh();
+
+        note(Stubs::RegisterArgumentCompleter);
+        return EXIT_SUCCESS;
+    }
 
 //    if (shellArg == ShZsh)
 //        return integrateZsh();

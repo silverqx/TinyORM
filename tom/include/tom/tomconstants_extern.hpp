@@ -82,6 +82,8 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString fullpath;
     // migrate:refresh
     SHAREDLIB_EXPORT extern const QString step_migrate;
+    // integrate
+    SHAREDLIB_EXPORT extern const QString stdout_;
 
     // Namespace names
     SHAREDLIB_EXPORT extern const QString NsGlobal;
