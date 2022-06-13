@@ -264,13 +264,13 @@ int IntegrateCommand::integrateBash() const
 
 namespace
 {
-   /*! Bash completions directory path. */
-   Q_GLOBAL_STATIC_WITH_ARGS(QString, BashCompletionsDirPath,
-                             ("/usr/share/bash-completion/completions"));
+    /*! Bash completions directory path. */
+    Q_GLOBAL_STATIC_WITH_ARGS(QString, BashCompletionsDirPath,
+                              ("/usr/share/bash-completion/completions"));
 
     /*! Path to the TinyORM tom bash completion file. */
     Q_GLOBAL_STATIC_WITH_ARGS(QString, TomBashCompletionFilepath,
-                              (QStringLiteral("%1/tom").arg(*BashCompletionsDirPath)));
+                              (QString("%1/tom").arg(*BashCompletionsDirPath)));
 } // namespace
 
 void IntegrateCommand::throwIfBashCompletionDirNotExists()
