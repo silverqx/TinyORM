@@ -9,9 +9,9 @@ TINY_SYSTEM_HEADER
 
 #include <orm/macros/commonnamespace.hpp>
 
-TINYORM_BEGIN_COMMON_NAMESPACE
-
 class QCommandLineOption;
+
+TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom
 {

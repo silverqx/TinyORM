@@ -12,9 +12,9 @@ TINY_SYSTEM_HEADER
 #include <orm/macros/commonnamespace.hpp>
 #include <orm/macros/export.hpp>
 
-TINYORM_BEGIN_COMMON_NAMESPACE
-
 class QCommandLineParser;
+
+TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom
 {

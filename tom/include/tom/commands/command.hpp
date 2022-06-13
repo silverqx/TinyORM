@@ -8,9 +8,9 @@ TINY_SYSTEM_HEADER
 #include "tom/concerns/callscommands.hpp"
 #include "tom/concerns/interactswithio.hpp"
 
-TINYORM_BEGIN_COMMON_NAMESPACE
-
 class QCommandLineOption;
+
+TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {

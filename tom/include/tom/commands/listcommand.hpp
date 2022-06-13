@@ -11,6 +11,8 @@ TINY_SYSTEM_HEADER
 #include "tom/concerns/printsoptions.hpp"
 #include "tom/tomconstants.hpp"
 
+class QCommandLineOption;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands

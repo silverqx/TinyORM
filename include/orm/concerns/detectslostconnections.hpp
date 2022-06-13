@@ -10,9 +10,9 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
-TINYORM_BEGIN_COMMON_NAMESPACE
-
 class QSqlError;
+
+TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
