@@ -280,6 +280,7 @@ function(tinytom_sources out_headers out_sources)
         commands/migrations/resetcommand.hpp
         commands/migrations/rollbackcommand.hpp
         commands/migrations/statuscommand.hpp
+        commands/stubs/integratestubs.hpp
         concerns/callscommands.hpp
         concerns/confirmable.hpp
         concerns/guesscommandname.hpp

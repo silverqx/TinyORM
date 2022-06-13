@@ -5,10 +5,20 @@
 #include <QStandardPaths>
 #include <QTextStream>
 
+#include <orm/constants.hpp>
+#include <orm/utils/type.hpp>
+
+#include "tom/commands/stubs/integratestubs.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
+
+using Orm::Constants::COMMA;
 
 using Tom::Constants::ShPwsh;
 using Tom::Constants::shell_;
+
+#ifdef __linux__
+using Tom::Constants::ShBash;
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -24,7 +34,7 @@ IntegrateCommand::IntegrateCommand(Application &application, QCommandLineParser 
 const std::vector<PositionalArgument> &IntegrateCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {shell_, QStringLiteral("The shell name (values: pwsh)"), {}, true},
+        {shell_, QStringLiteral("The shell name (values: bash, pwsh)"), {}, true},
     };
 
     return cached;
@@ -36,8 +46,10 @@ int IntegrateCommand::run()
 
     const auto shellArg = argument(shell_);
 
-//    if (shellArg == ShBash)
-//        return integrateBash();
+#ifdef __linux__
+    if (shellArg == ShBash)
+        return integrateBash();
+#endif
 
     if (shellArg == ShPwsh)
         return integratePwsh();
@@ -45,12 +57,14 @@ int IntegrateCommand::run()
 //    if (shellArg == ShZsh)
 //        return integrateZsh();
 
-    return EXIT_SUCCESS;
+    throwIfUnknownShell(shellArg);
+
+    Q_UNREACHABLE();
 }
 
 /* protected */
 
-/* pwsh profile related */
+/* Pwsh integrate related */
 
 namespace
 {
@@ -156,9 +170,10 @@ bool IntegrateCommand::writeToPwshProfile(
             const QString &pwshProfileFolder, const QString &profileFileRelative,
             const QString &pwshProfile)
 {
+    const auto pwshProfileFilepath = QStringLiteral("%1/%2").arg(pwshProfileFolder,
+                                                                 profileFileRelative);
     // Prepare QFile and QTextStream
-    QFile pwshProfileFile(QStringLiteral("%1/%2").arg(pwshProfileFolder,
-                                                      profileFileRelative));
+    QFile pwshProfileFile(pwshProfileFilepath);
     openPwshProfileFile(pwshProfileFile, pwshProfileFolder, profileFileRelative,
                         pwshProfile);
 
@@ -169,11 +184,21 @@ bool IntegrateCommand::writeToPwshProfile(
         return false;
 
     // Apppend tab-completion code to the pwsh profile
-    pwshProfileStream << getRegisterArgumentCompleter();
+    pwshProfileStream << Stubs::RegisterArgumentCompleter;
 
 #ifdef TINYTOM_DEBUG
     pwshProfileStream.flush();
 #endif
+
+    // Handle failed write
+    if (pwshProfileStream.status() != QTextStream::WriteFailed)
+        return true;
+
+    throw Exceptions::RuntimeError(
+                QStringLiteral(
+                    "Write operation of the tom pwsh tab-completion code to the '%1' "
+                    "file failed in %2().")
+                .arg(pwshProfileFilepath, __tiny_func__));
 
     return true;
 }
@@ -195,27 +220,99 @@ bool IntegrateCommand::isPwshCompletionRegistered(const QString &pwshProfile,
     return false;
 }
 
-QString IntegrateCommand::getRegisterArgumentCompleter()
-{
-    return QStringLiteral(R"(
-# TinyORM tom tab-completion
-# ---
+/* Bash integrate related */
 
-Register-ArgumentCompleter -Native -CommandName tom -ScriptBlock {
-    param($wordToComplete, $commandAst, $cursorPosition)
-    [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
-    $Local:word = $wordToComplete.Replace('"', '""')
-    $Local:ast = $commandAst.ToString().Replace('"', '""')
-    tom complete --word="$Local:word" --commandline="$Local:ast" --position=$cursorPosition
-        | ForEach-Object {
-            $completionText, $listText, $toolTip = $_ -split ';', 3
-            $listText ??= $completionText
-            $toolTip ??= $completionText
-            [System.Management.Automation.CompletionResult]::new(
-                $completionText, $listText, 'ParameterValue', $toolTip)
-        }
+#ifdef __linux__
+int IntegrateCommand::integrateBash() const
+{
+    // Some validation
+    throwIfBashCompletionDirNotExists();
+
+    /* Write the TinyORM tom tab-completion code to:
+       /usr/share/bash-completion/completions/tom */
+    if (writeTomBashCompletion())
+        // Yeah 🙌
+        info(QStringLiteral(
+                 "Tab-completion for the bash shell was successfully registered. 🎉"));
+    else
+        comment(QStringLiteral(
+                    "Tab-completion for the bash shell is already registered. 🙌"));
+
+    return EXIT_SUCCESS;
 }
-)");
+
+namespace
+{
+   /*! Bash completions directory path. */
+   Q_GLOBAL_STATIC_WITH_ARGS(QString, BashCompletionsDirPath,
+                             ("/usr/share/bash-completion/completions"));
+
+    /*! Path to the TinyORM tom bash completion file. */
+    Q_GLOBAL_STATIC_WITH_ARGS(QString, TomBashCompletionFilepath,
+                              (QStringLiteral("%1/tom").arg(*BashCompletionsDirPath)));
+} // namespace
+
+void IntegrateCommand::throwIfBashCompletionDirNotExists()
+{
+    if (QDir(*BashCompletionsDirPath).exists())
+        return;
+
+    throw Exceptions::RuntimeError(
+                QStringLiteral(
+                    "Bash completion directory '%1' doesn't exists in %2().")
+                .arg(*BashCompletionsDirPath, __tiny_func__));
+}
+
+bool IntegrateCommand::writeTomBashCompletion()
+{
+    if (isBashCompletionRegistered())
+        return false;
+
+    QFile tomBashCompletionFile(*TomBashCompletionFilepath);
+    if (!tomBashCompletionFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        throw Exceptions::RuntimeError(
+                QStringLiteral("Can not open '%1' tom bash completion file in %2().")
+                .arg(*TomBashCompletionFilepath, __tiny_func__));
+
+    QTextStream tomBashCompletionStream(&tomBashCompletionFile);
+
+    tomBashCompletionStream << Stubs::TomBashCompletionContent;
+
+#ifdef TINYTOM_DEBUG
+    tomBashCompletionStream.flush();
+#endif
+
+    // Handle failed write
+    if (tomBashCompletionStream.status() != QTextStream::WriteFailed)
+        return true;
+
+    throw Exceptions::RuntimeError(
+                QStringLiteral(
+                    "Write operation of the tom bash tab-completion file '%1' failed "
+                    "in %2().")
+                .arg(*TomBashCompletionFilepath, __tiny_func__));
+}
+
+bool IntegrateCommand::isBashCompletionRegistered()
+{
+    return QFile::exists(*TomBashCompletionFilepath);
+}
+#endif
+
+/* Others */
+
+void IntegrateCommand::throwIfUnknownShell(const QString &shellArg)
+{
+    const QStringList allowedShells {
+#ifdef __linux__
+        ShBash,
+#endif
+        ShPwsh,
+    };
+
+    throw Exceptions::RuntimeError(
+                QStringLiteral("Unknown shell name '%1' (allowed values: %2).")
+                .arg(shellArg, allowedShells.join(COMMA)));
 }
 
 } // namespace Tom::Commands

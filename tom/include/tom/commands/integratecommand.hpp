@@ -38,7 +38,7 @@ namespace Tom::Commands
         int run() override;
 
     protected:
-        /* pwsh profile related */
+        /* Pwsh integrate related */
         /*! Integrate tab-completion for the pwsh shell. */
         int integratePwsh() const;
 
@@ -48,11 +48,26 @@ namespace Tom::Commands
         static bool writeToPwshProfile(
                 const QString &pwshProfileFolder, const QString &profileFileRelative,
                 const QString &pwshProfile);
-        /*! Detect whether the tom tab-completion is already registered. */
+        /*! Detect whether the tom tab-completion is already registered (pwsh). */
         static bool isPwshCompletionRegistered(const QString &pwshProfile,
                                                QTextStream &pwshProfileStream);
-        /*! Get the Register-ArgumentCompleter command string. */
-        static QString getRegisterArgumentCompleter();
+
+        /* Bash integrate related */
+#ifdef __linux__
+        /*! Integrate tab-completion for the bash shell. */
+        int integrateBash() const;
+
+        /*! Throw exception if the bash completion directory doesn't exists. */
+        static void throwIfBashCompletionDirNotExists();
+        /*! Write the TinyORM tom tab-completion code for the bash shell. */
+        static bool writeTomBashCompletion();
+        /*! Detect whether the tom tab-completion is already registered (bash). */
+        static bool isBashCompletionRegistered();
+#endif
+
+        /* Others */
+        /*! Throw exception if unknown shell was passed. */
+        static void throwIfUnknownShell(const QString &shellArg);
     };
 
     /* public */
