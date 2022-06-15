@@ -158,7 +158,7 @@ int IntegrateCommand::integratePwsh() const
     const auto profileFileRelative = QStringLiteral("%1/Microsoft.PowerShell_profile.ps1")
                                      .arg(powershellFolder);
 
-    // Get system dependant Documents folder
+    // Get system dependant PowerShell folder
     const auto pwshProfileFolder = getPwshProfileFolder();
     const QDir documentsDir(pwshProfileFolder);
 
