@@ -125,19 +125,19 @@ jobs:
       run: |
         mkdir -p ../TinyORM-builds-cmake/build-clang-cl-cmake-debug
 
-    - name: Qt 6.2.4 install base components
+    - name: Qt 6.3.1 install base components
       uses: jurplel/install-qt-action@v2
       with:
-        version: 6.2.4
+        version: 6.3.1
         arch: win64_msvc2019_64
         setup-python: false
         extra: --external 7z.exe
         dir: '${{ runner.workspace }}/../'
 
-    - name: QMYSQL install driver dlls (Qt 6.2.4)
+    - name: QMYSQL install driver dlls (Qt 6.3.1)
       working-directory: ${{ runner.temp }}
       run: >-
-        $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_2_4
+        $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_3_1
 
         $filename = [System.Net.Mime.ContentDisposition]::new(
         $response.Headers['Content-Disposition']).FileName
@@ -149,7 +149,7 @@ jobs:
 
         7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $filepath
       env:
-        URL_QMYSQL_DLLS_MSVC_X64_6_2_4: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_2_4 }}
+        URL_QMYSQL_DLLS_MSVC_X64_6_3_1: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_3_1 }}
 
     - name: vcpkg set-up environment
       run: |
