@@ -115,10 +115,10 @@ jobs:
         "
 
     - name: testdata composer install (illuminate/database)
-      uses: ramsey/composer-install@v2
+      uses: ramsey/composer-install@v1
       with:
-        working-directory: tests/testdata
-        composer-options: |
+        composer-options: >-
+          --working-dir=${{ github.workspace }}/tests/testdata
           --prefer-dist --optimize-autoloader
 
     - name: TinyORM create build folder (msvc-cmake-debug)
