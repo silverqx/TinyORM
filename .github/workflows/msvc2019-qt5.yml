@@ -117,7 +117,7 @@ jobs:
     - name: testdata composer install (illuminate/database)
       uses: ramsey/composer-install@v2
       with:
-        working-directory: tests/testdata
+        working-directory: "tests/testdata"
         composer-options: |
           --prefer-dist --optimize-autoloader
 
