@@ -215,7 +215,7 @@ __tom_seeders() {
 
     [[ -d database/seeders && -f main.cpp ]] || return
 
-    seeder_files=($(/bin/ls database/seeders/*seeder.hpp))
+    seeder_files=($(/bin/ls database/seeders/*seeder.hpp)) #*/ msvc compile bug workaround
 
     # Nothing found
     [[ $#seeder_files -eq 0 ]] && return
