@@ -70,7 +70,7 @@ std::shared_ptr<DatabaseManager> setupManager()
     // Ownership of the shared_ptr()
     return DB::create({
         // MySQL connection
-        {QStringLiteral("tinyorm_testdata_tom_mysql"), {
+        {QStringLiteral("tinyorm_testdata_tom_mysql"), { // zsh:connection
             {driver_,         QMYSQL},
             {host_,           qEnvironmentVariable("DB_MYSQL_HOST", H127001)},
             {port_,           qEnvironmentVariable("DB_MYSQL_PORT", P3306)},
@@ -90,7 +90,7 @@ std::shared_ptr<DatabaseManager> setupManager()
         }},
 
         // PostgreSQL connection
-        {QStringLiteral("tinyorm_testdata_tom_postgres"), {
+        {QStringLiteral("tinyorm_testdata_tom_postgres"), { // zsh:connection
             {driver_,        QPSQL},
             {host_,          qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
             {port_,          qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},

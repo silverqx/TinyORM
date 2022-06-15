@@ -33,7 +33,7 @@ using Tom::Constants::position;
 using Tom::Constants::position_up;
 #else
 using Tom::Constants::ShBash;
-//using Tom::Constants::ShZsh;
+using Tom::Constants::ShZsh;
 using Tom::Constants::cword_;
 using Tom::Constants::cword_up;
 #endif
@@ -262,7 +262,9 @@ int CompleteCommand::printGuessedShells(const QString &word) const
         ShBash,
 #endif
         ShPwsh,
-//        ShZsh,
+#ifndef _MSC_VER
+        ShZsh,
+#endif
     };
 
     const auto printAll = word.isEmpty();
