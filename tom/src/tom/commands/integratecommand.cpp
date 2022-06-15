@@ -416,7 +416,7 @@ bool IntegrateCommand::isZshCompletionRegistered()
 
 bool IntegrateCommand::writeTomZshCompletionToExistFolder()
 {
-    for (const auto &completionFilepath : *TomZshCompletionPaths)
+    for (const auto &completionFilepath : std::as_const(*TomZshCompletionPaths))
         if (QDir(completionFilepath.dirPath).exists() &&
             writeTomZshCompletion(completionFilepath.filePath)
         )
