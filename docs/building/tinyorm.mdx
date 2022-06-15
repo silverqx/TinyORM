@@ -126,10 +126,10 @@ All `tinyorm.org` examples are based on the following folders structure. The `to
 │       │       ├── migrations.pri
 │       │       └── seeders.pri
 │       ├── tom-builds-cmake/
-│       │   └── build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug/
+│       │   └── build-TinyOrm-Desktop_Qt_6_3_1_MSVC2019_64bit-Debug/
 │       └── tom-builds-qmake/
 │           ├── build-TinyOrm-Desktop_Qt_5_15_3_MSYS2_UCRT64_64bit-Release/
-│           └── build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug/
+│           └── build-TinyOrm-Desktop_Qt_6_3_1_MSVC2019_64bit-Debug/
 ├── tmp/
 └── vcpkg/
 ```
@@ -166,10 +166,10 @@ All `tinyorm.org` examples are based on the following folders structure. The `to
 │       │       ├── migrations.pri
 │       │       └── seeders.pri
 │       ├── tom-builds-cmake/
-│       │   └── build-TinyOrm-Desktop_Qt_6_2_4_clang14_64bit_ccache-Debug/
+│       │   └── build-TinyOrm-Desktop_Qt_6_3_1_clang14_64bit_ccache-Debug/
 │       └── tom-builds-qmake/
-│           ├── build-TinyOrm-Desktop_Qt_6_2_4_GCC_64bit-Debug/
-│           └── build-TinyOrm-Desktop_Qt_6_2_4_clang14_64bit_ccache-Release/
+│           ├── build-TinyOrm-Desktop_Qt_6_3_1_GCC_64bit-Debug/
+│           └── build-TinyOrm-Desktop_Qt_6_3_1_clang14_64bit_ccache-Release/
 ├── tmp/
 └── vcpkg/
 ```
@@ -621,7 +621,7 @@ The [`TinyOrm.pri`](https://github.com/silverqx/TinyORM/blob/main/qmake/TinyOrm.
 ```qmake
 TINY_MAIN_DIR = $$clean_path(<your_path>)
 # Name of this qmake variable is crucial
-TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_6_2_4_MSVC2019_64bit-Debug)
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_6_3_1_MSVC2019_64bit-Debug)
 
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 ```
