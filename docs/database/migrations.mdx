@@ -81,7 +81,7 @@ You can also pass the full migration filename with the datetime prefix and exten
 
 ## Tab completion
 
-Tab completion is currently available for the `pwsh` (on Linux too) and `bash` shells. For `pwsh` the `tom.exe` and `TinyOrm0.dll` library must be on the system path to work properly. With `bash` if the `tom` executable and `libTinyOrm.so` library is not on the system paths then it will provide less accurate completions.
+Tab completion is available for the `pwsh` (on Linux too), `bash`, and `zsh` shells. For `pwsh` the `tom.exe` and `TinyOrm0.dll` library must be on the system path to work properly. With `bash` if the `tom` executable and `libTinyOrm.so` library is not on the system path then it will provide less accurate completions.
 
 You can enable it using the following commands.
 
@@ -100,9 +100,16 @@ tom integrate bash
 ```
 
 </TabItem>
+<TabItem value='zsh' label='zsh'>
+
+```bash
+tom integrate zsh
+```
+
+</TabItem>
 </Tabs>
 
-Or you can enable the tab completion manually. Following actions are the same as the `tom integrate` command does.
+Or you can enable it manually. Following actions are the same as the `tom integrate` command does.
 
 For the `pwsh` paste the following code to the pwsh profile (works on Linux or Windows).
 
@@ -126,6 +133,12 @@ For `bash` you can copy or create symlink of the `/tools/completions/tom.bash` f
 
 <CodeBlock className='language-bash'>
 {`sudo ln -s ${applicationFolderPath(bash)}/TinyORM/tools/completions/tom.bash /usr/share/bash-completion/completions/tom`}
+</CodeBlock>
+
+And for `zsh` you can copy or create symlink of the `/tools/completions/tom.zsh` file to the `_tom` file to `/usr/local/share/zsh/site-functions` folder.
+
+<CodeBlock className='language-bash'>
+{`sudo ln -s ${applicationFolderPath(bash)}/TinyORM/tools/completions/tom.zsh /usr/local/share/zsh/site-functions/_tom`}
 </CodeBlock>
 
 It will provide completions for the tom commands, long and short parameters, and also for some positional arguments like namespaces for the list command or commands for the help command.
