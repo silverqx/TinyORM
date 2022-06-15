@@ -201,6 +201,10 @@ And paste the following code.
             QStringLiteral("tinyorm_tom"));
     }
 
+:::tip
+If you have defined more database connections then you can tag the line with the database connection name with `// zsh:connection` comment and this connection name will be provided to the zsh completion for the `--database=` option, [example](https://github.com/silverqx/TinyORM/blob/main/examples/tom/main.cpp#L71).
+:::
+
 ### Migrations
 
 If you have already built the `tom` application then you can generate a migrations using the [`make:migration`](database/migrations.mdx#generating-migrations) command 😎.
