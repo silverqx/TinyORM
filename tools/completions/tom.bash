@@ -67,7 +67,7 @@ _tom()
     common_options='--ansi --no-ansi --env= --help --no-interaction --quiet
         --version --verbose'
 
-    shells='bash pwsh'
+    shells='bash pwsh zsh'
 
     # Complete positional arguments for tom commands
     if [[ -v tom_command && $args -eq 2 && $cur != -* ]]; then

@@ -18,8 +18,9 @@ using Tom::Constants::ShPwsh;
 using Tom::Constants::shell_;
 using Tom::Constants::stdout_;
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__MINGW32__)
 using Tom::Constants::ShBash;
+using Tom::Constants::ShZsh;
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -36,7 +37,7 @@ IntegrateCommand::IntegrateCommand(Application &application, QCommandLineParser 
 const std::vector<PositionalArgument> &IntegrateCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {shell_, QStringLiteral("The shell name (values: bash, pwsh)"), {}, true},
+        {shell_, QStringLiteral("The shell name (values: bash, pwsh, zsh)"), {}, true},
     };
 
     return cached;
@@ -46,7 +47,7 @@ QList<QCommandLineOption> IntegrateCommand::optionsSignature() const
 {
     return {
         {stdout_, QStringLiteral("Print content of the <info>integrate</info> command "
-                                 "(instead of writing to disk)")},
+                                 "(instead of writing to the disk)")},
     };
 }
 
@@ -57,12 +58,20 @@ int IntegrateCommand::run()
     const auto shellArg = argument(shell_);
     const auto isStdOutArg = isSet(stdout_);
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__MINGW32__)
     if (shellArg == ShBash) {
         if (!isStdOutArg)
             return integrateBash();
 
         note(Stubs::TomBashCompletionContent);
+        return EXIT_SUCCESS;
+    }
+
+    if (shellArg == ShZsh) {
+        if (!isStdOutArg)
+            return integrateZsh();
+
+        note(Stubs::TomZshCompletionContent);
         return EXIT_SUCCESS;
     }
 #endif
@@ -74,9 +83,6 @@ int IntegrateCommand::run()
         note(Stubs::RegisterArgumentCompleter);
         return EXIT_SUCCESS;
     }
-
-//    if (shellArg == ShZsh)
-//        return integrateZsh();
 
     throwIfUnknownShell(shellArg);
 
@@ -130,6 +136,15 @@ namespace
                     .arg(QStringLiteral("%1/%2").arg(std::move(documentsFolder),
                                                      std::move(powershellFolder))));
     }
+
+    /*! Template string for tab-completion installed successfully. */
+    Q_GLOBAL_STATIC_WITH_ARGS(
+            QString, IntegrateSuccessTmpl,
+            ("Tab-completion for the %1 shell was successfully registered. 🎉"));
+    /*! Template string for tab-completion already registered. */
+    Q_GLOBAL_STATIC_WITH_ARGS(
+            QString, IntegrateAlreadyRegisteredTmpl,
+            ("Tab-completion for the %1 shell is already registered. 🙌"));
 } // namespace
 
 int IntegrateCommand::integratePwsh() const
@@ -163,11 +178,9 @@ int IntegrateCommand::integratePwsh() const
     // Write the TinyORM tom tab-completion code to the pwsh profile
     if (writeToPwshProfile(pwshProfileFolder, profileFileRelative, pwshProfile))
         // Yeah 🙌
-        info(QStringLiteral(
-                 "Tab-completion for the pwsh shell was successfully registered. 🎉"));
+        info(IntegrateSuccessTmpl->arg(ShPwsh));
     else
-        comment(QStringLiteral(
-                    "Tab-completion for the pwsh shell is already registered. 🙌"));
+        comment(IntegrateAlreadyRegisteredTmpl->arg(ShPwsh));
 
     return EXIT_SUCCESS;
 }
@@ -243,7 +256,7 @@ bool IntegrateCommand::isPwshCompletionRegistered(const QString &pwshProfile,
 
 /* Bash integrate related */
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__MINGW32__)
 int IntegrateCommand::integrateBash() const
 {
     // Some validation
@@ -253,11 +266,9 @@ int IntegrateCommand::integrateBash() const
        /usr/share/bash-completion/completions/tom */
     if (writeTomBashCompletion())
         // Yeah 🙌
-        info(QStringLiteral(
-                 "Tab-completion for the bash shell was successfully registered. 🎉"));
+        info(IntegrateSuccessTmpl->arg(ShBash));
     else
-        comment(QStringLiteral(
-                    "Tab-completion for the bash shell is already registered. 🙌"));
+        comment(IntegrateAlreadyRegisteredTmpl->arg(ShBash));
 
     return EXIT_SUCCESS;
 }
@@ -318,6 +329,158 @@ bool IntegrateCommand::isBashCompletionRegistered()
 {
     return QFile::exists(*TomBashCompletionFilepath);
 }
+
+/* Zsh integrate related */
+
+int IntegrateCommand::integrateZsh() const
+{
+    /* It's design to work on Ubuntu, Manjaro, Arch, and Gentoo, if any of these folders
+       exist /usr/[local/]share/zsh/site-functions then write the _tom completion file
+       into it, if don't then try to create the /usr/local/share/zsh/site-functions
+       folder and write to it. These folders should be on the zsh's $fpath on all above
+       described OS-es, finito, I'm done with this, it's good enough 😎. */
+
+    /* Write the TinyORM tom tab-completion code to:
+       /usr/[local/]share/zsh/site-functions/_tom */
+    if (writeTomZshCompletionWrapper())
+        // Yeah 🙌
+        info(IntegrateSuccessTmpl->arg(ShZsh));
+    else
+        comment(IntegrateAlreadyRegisteredTmpl->arg(ShZsh));
+
+    return EXIT_SUCCESS;
+}
+
+namespace
+{
+
+    /*! Zsh completions directory path. */
+    Q_GLOBAL_STATIC_WITH_ARGS(QStringList, ZshCompletionsDirPaths,
+                              ({"/usr/local/share/zsh/site-functions",
+                                "/usr/share/zsh/site-functions"}));
+
+    /*! Zsh completion files structure holds parent directory path and also filepath. */
+    struct ZshCompletionPathsItem
+    {
+        /*! Parent directory path. */
+        QString dirPath;
+        /*! Absolute completion file filepath. */
+        QString filePath;
+    };
+
+    /*! Paths to the TinyORM tom zsh completion files. */
+    Q_GLOBAL_STATIC_WITH_ARGS(
+            QVector<ZshCompletionPathsItem>, TomZshCompletionPaths,
+            ({{(*ZshCompletionsDirPaths)[0],
+               QString("%1/_tom").arg((*ZshCompletionsDirPaths)[0])},
+              {(*ZshCompletionsDirPaths)[1],
+               QString("%1/_tom").arg((*ZshCompletionsDirPaths)[1])}}));
+
+} // namespace
+
+bool IntegrateCommand::writeTomZshCompletionWrapper()
+{
+    if (isZshCompletionRegistered())
+        return false;
+
+    // One of the folder paths exists, so loop and write completion file
+    if (anyCompletionDirPathExists()) {
+        if (writeTomZshCompletionToExistFolder())
+            return true;
+    }
+    else {
+        /* Write failed or any of the folder paths exists, in this case try to create
+           a folder and write completion file again. */
+        createZshCompletionFolder();
+
+        // And try to write the completion file again
+        if (writeTomZshCompletion((*TomZshCompletionPaths)[0].filePath))
+            return true;
+    }
+
+    throw Exceptions::RuntimeError(
+                QStringLiteral(
+                    "Write operation of the tom zsh tab-completion files %1 failed "
+                    "in %2(), please run with sudo.")
+                .arg(getCompletionFilepaths().join(COMMA), __tiny_func__));
+}
+
+bool IntegrateCommand::isZshCompletionRegistered()
+{
+    return std::ranges::any_of(*TomZshCompletionPaths,
+                               [](const auto &completionPathsItem)
+    {
+        return QFile::exists(completionPathsItem.filePath);
+    });
+}
+
+bool IntegrateCommand::writeTomZshCompletionToExistFolder()
+{
+    for (const auto &completionFilepath : *TomZshCompletionPaths)
+        if (QDir(completionFilepath.dirPath).exists() &&
+            writeTomZshCompletion(completionFilepath.filePath)
+        )
+            return true;
+
+    return false;
+}
+
+bool IntegrateCommand::anyCompletionDirPathExists()
+{
+    return std::ranges::any_of(*TomZshCompletionPaths,
+                               [](const auto &completionPathsItem)
+    {
+        return QDir(completionPathsItem.dirPath).exists();
+    });
+}
+
+bool IntegrateCommand::writeTomZshCompletion(const QString &filepath)
+{
+    QFile tomZshCompletionFile(filepath);
+    if (!tomZshCompletionFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        return false;
+
+    QTextStream tomZshCompletionStream(&tomZshCompletionFile);
+
+    tomZshCompletionStream << Stubs::TomZshCompletionContent;
+
+#ifdef TINYTOM_DEBUG
+    tomZshCompletionStream.flush();
+#endif
+
+    // Handle failed write
+    if (tomZshCompletionStream.status() == QTextStream::WriteFailed)
+        return false;
+
+    return true;
+}
+
+void IntegrateCommand::createZshCompletionFolder()
+{
+    if (QDir(QStringLiteral("/"))
+            .mkpath((*TomZshCompletionPaths)[0].dirPath)
+    )
+        return;
+
+    throw Exceptions::RuntimeError(
+                QStringLiteral("Can not create '%1' directory in %2(), please run "
+                               "with sudo.")
+                .arg((*TomZshCompletionPaths)[0].dirPath, __tiny_func__));
+}
+
+QStringList IntegrateCommand::getCompletionFilepaths()
+{
+    QStringList completionFilepaths;
+
+    std::ranges::transform(*TomZshCompletionPaths,
+                           std::back_inserter(completionFilepaths),
+                           [](const auto &completionPaths)
+    {
+        return QStringLiteral("'%1'").arg(completionPaths.filePath);
+    });
+
+    return completionFilepaths;
+}
 #endif
 
 /* Others */
@@ -325,10 +488,13 @@ bool IntegrateCommand::isBashCompletionRegistered()
 void IntegrateCommand::throwIfUnknownShell(const QString &shellArg)
 {
     const QStringList allowedShells {
-#ifdef __linux__
+#if defined(__linux__) || defined(__MINGW32__)
         ShBash,
 #endif
         ShPwsh,
+#if defined(__linux__) || defined(__MINGW32__)
+        ShZsh,
+#endif
     };
 
     throw Exceptions::RuntimeError(

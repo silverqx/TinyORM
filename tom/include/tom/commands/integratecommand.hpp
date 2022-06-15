@@ -55,7 +55,7 @@ namespace Tom::Commands
                                                QTextStream &pwshProfileStream);
 
         /* Bash integrate related */
-#ifdef __linux__
+#if defined(__linux__) || defined(__MINGW32__)
         /*! Integrate tab-completion for the bash shell. */
         int integrateBash() const;
 
@@ -65,6 +65,27 @@ namespace Tom::Commands
         static bool writeTomBashCompletion();
         /*! Detect whether the tom tab-completion is already registered (bash). */
         static bool isBashCompletionRegistered();
+#endif
+
+        /* Zsh integrate related */
+#if defined(__linux__) || defined(__MINGW32__)
+        /*! Integrate tab-completion for the zsh shell. */
+        int integrateZsh() const;
+
+        /*! Write the TinyORM tom tab-completion code for the zsh shell. */
+        static bool writeTomZshCompletionWrapper();
+        /*! Detect whether the tom tab-completion is already registered (zsh). */
+        static bool isZshCompletionRegistered();
+        /*! Write to already existing completion folder. */
+        static bool writeTomZshCompletionToExistFolder();
+        /*! Check whether any of the completion folders exist. */
+        static bool anyCompletionDirPathExists();
+        /*! Write the TinyORM tom tab-completion code for the zsh shell. */
+        static bool writeTomZshCompletion(const QString &filepath);
+        /*! Create /usr/local/share/zsh/site-functions folder for zsh completions. */
+        static void createZshCompletionFolder();
+        /*! Get list of all completion filepaths. */
+        static QStringList getCompletionFilepaths();
 #endif
 
         /* Others */
