@@ -77,7 +77,7 @@ namespace Tom::Commands
         /*! Detect whether the tom tab-completion is already registered (zsh). */
         static bool isZshCompletionRegistered();
         /*! Write to already existing completion folder. */
-        static bool writeTomZshCompletionToExistFolder();
+        static bool writeTomZshCompletionToExistingFolder();
         /*! Check whether any of the completion folders exist. */
         static bool anyCompletionDirPathExists();
         /*! Write the TinyORM tom tab-completion code for the zsh shell. */

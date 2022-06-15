@@ -385,7 +385,7 @@ bool IntegrateCommand::writeTomZshCompletionWrapper()
 
     // One of the folder paths exists, so loop and write completion file
     if (anyCompletionDirPathExists()) {
-        if (writeTomZshCompletionToExistFolder())
+        if (writeTomZshCompletionToExistingFolder())
             return true;
     }
     else {
@@ -414,15 +414,14 @@ bool IntegrateCommand::isZshCompletionRegistered()
     });
 }
 
-bool IntegrateCommand::writeTomZshCompletionToExistFolder()
+bool IntegrateCommand::writeTomZshCompletionToExistingFolder()
 {
-    for (const auto &completionFilepath : *TomZshCompletionPaths())
-        if (QDir(completionFilepath.dirPath).exists() &&
-            writeTomZshCompletion(completionFilepath.filePath)
-        )
-            return true;
-
-    return false;
+    return std::ranges::any_of(*TomZshCompletionPaths,
+                               [](const auto &completionPathsItem)
+    {
+        return QDir(completionPathsItem.dirPath).exists() &&
+                writeTomZshCompletion(completionPathsItem.filePath);
+    });
 }
 
 bool IntegrateCommand::anyCompletionDirPathExists()
@@ -449,10 +448,7 @@ bool IntegrateCommand::writeTomZshCompletion(const QString &filepath)
 #endif
 
     // Handle failed write
-    if (tomZshCompletionStream.status() == QTextStream::WriteFailed)
-        return false;
-
-    return true;
+    return tomZshCompletionStream.status() != QTextStream::WriteFailed;
 }
 
 void IntegrateCommand::createZshCompletionFolder()
