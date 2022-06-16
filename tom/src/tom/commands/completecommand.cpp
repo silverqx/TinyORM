@@ -87,9 +87,12 @@ int CompleteCommand::run()
 
     // Currently proccessed tom command
     const auto currentCommandSplitted = commandlineArg.split(SPACE);
+    Q_ASSERT(!currentCommandSplitted.isEmpty());
+
     const auto currentCommandArg = currentCommandSplitted.size() >= 2
                                    ? std::make_optional(currentCommandSplitted[1])
                                    : std::nullopt;
+    const auto tomCommandSize = currentCommandSplitted[0].size();
 #else
     const auto cwordArg = static_cast<QString::size_type>(value(cword_).toLongLong());
 
@@ -103,8 +106,9 @@ int CompleteCommand::run()
        --- */
 #ifdef _MSC_VER
     if (!isOptionArgument(wordArg) && wordArg.isEmpty() &&
-        positionArg >= commandlineArgSize &&
-        (!commandlineArg.contains(SPACE) || currentCommandArg == Help)
+        (positionArg == tomCommandSize + 1 ||
+         (positionArg >= commandlineArgSize &&
+          (!commandlineArg.contains(SPACE) || currentCommandArg == Help)))
     )
 #else
     if (!isOptionArgument(wordArg) && wordArg.isEmpty() &&
