@@ -81,7 +81,7 @@ You can also pass the full migration filename with the datetime prefix and exten
 
 ## Tab completion
 
-Tab completion is available for the `pwsh` (on Linux too), `bash`, and `zsh` shells. For `pwsh` the `tom.exe` and `TinyOrm0.dll` library must be on the system path to work properly. With `bash` if the `tom` executable and `libTinyOrm.so` library is not on the system path then it will provide less accurate completions.
+Tab completion is available for the `pwsh` (on Linux too), `bash`, and `zsh` shells. For `pwsh` the `tom.exe` and `TinyOrm0.dll` library must be on the system path to work properly. With `bash` if the `tom` executable and `libTinyOrm.so` library is __not__ on the system path then it will provide less accurate completions.
 
 You can enable it using the following commands.
 
@@ -136,13 +136,17 @@ For `bash` you can copy or create symlink of the `/tools/completions/tom.bash` f
 {`sudo ln -s ${applicationFolderPath(bash)}/TinyORM/tools/completions/tom.bash /usr/share/bash-completion/completions/tom`}
 </CodeBlock>
 
-And for `zsh` you can copy or create symlink of the `/tools/completions/tom.zsh` file to the `_tom` file to `/usr/local/share/zsh/site-functions` folder or you can pass a custom path using the `--path=` option.
+And for `zsh` you can copy or create symlink of the `/tools/completions/tom.zsh` file to the `_tom` file to `/usr/local/share/zsh/site-functions` folder.
 
 <CodeBlock className='language-bash'>
 {`sudo ln -s ${applicationFolderPath(bash)}/TinyORM/tools/completions/tom.zsh /usr/local/share/zsh/site-functions/_tom`}
 </CodeBlock>
 
-It will provide completions for the tom commands, long and short parameters, and also for some positional arguments like namespaces for the list command or commands for the help command.
+It will provide completions for the `tom` commands, long and short parameters, and also for some positional arguments like namespaces for the `list` command or commands for the `help` command.
+
+:::tip
+The `tom integrate zsh` command also accepts the `--path=` option with which you can set the location, where the completion file should be created.
+:::
 
 ## Migration Structure
 
