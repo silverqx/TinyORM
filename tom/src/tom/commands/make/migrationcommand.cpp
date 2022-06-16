@@ -24,6 +24,7 @@ using StringUtils = Orm::Tiny::Utils::String;
 using Tom::Constants::create_;
 using Tom::Constants::fullpath;
 using Tom::Constants::path_;
+using Tom::Constants::path_up;
 using Tom::Constants::realpath_;
 using Tom::Constants::table_;
 using Tom::Constants::DateTimePrefix;
@@ -56,7 +57,7 @@ QList<QCommandLineOption> MigrationCommand::optionsSignature() const
         {create_,   QStringLiteral("The table to be created"), create_.toUpper()}, // Value
         {table_,    QStringLiteral("The table to migrate"), table_.toUpper()}, // Value
         {path_,     QStringLiteral("The location where the migration file should be "
-                                   "created"), path_.toUpper()}, // Value
+                                   "created"), path_up}, // Value
         {realpath_, QStringLiteral("Indicate any provided migration file paths are "
                                    "pre-resolved absolute paths")},
         {fullpath,  QStringLiteral("Output the full path of the migration")},

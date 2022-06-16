@@ -53,6 +53,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString seed;
     SHAREDLIB_EXPORT extern const QString seeder;
     SHAREDLIB_EXPORT extern const QString step_;
+    SHAREDLIB_EXPORT extern const QString path_;
     // Default value names
     SHAREDLIB_EXPORT extern const QString class_up;
     SHAREDLIB_EXPORT extern const QString database_up;
@@ -62,6 +63,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString position_up;
     SHAREDLIB_EXPORT extern const QString word_up;
     SHAREDLIB_EXPORT extern const QString cword_up;
+    SHAREDLIB_EXPORT extern const QString path_up;
     // complete
     SHAREDLIB_EXPORT extern const QString commandline;
     SHAREDLIB_EXPORT extern const QString position;
@@ -77,7 +79,6 @@ namespace Tom::Constants
     // make:migration
     SHAREDLIB_EXPORT extern const QString create_;
     SHAREDLIB_EXPORT extern const QString table_;
-    SHAREDLIB_EXPORT extern const QString path_;
     SHAREDLIB_EXPORT extern const QString realpath_;
     SHAREDLIB_EXPORT extern const QString fullpath;
     // migrate:refresh

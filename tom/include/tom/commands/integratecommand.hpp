@@ -73,7 +73,9 @@ namespace Tom::Commands
         int integrateZsh() const;
 
         /*! Write the TinyORM tom tab-completion code for the zsh shell. */
-        static bool writeTomZshCompletionWrapper();
+        bool writeTomZshCompletionWrapper() const;
+        /*! Allow to override installation folder using the --path= option. */
+        void zshOverrideInstallFolder() const;
         /*! Detect whether the tom tab-completion is already registered (zsh). */
         static bool isZshCompletionRegistered();
         /*! Write to already existing completion folder. */

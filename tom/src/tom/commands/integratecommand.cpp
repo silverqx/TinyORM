@@ -15,6 +15,8 @@
 using Orm::Constants::COMMA;
 
 using Tom::Constants::ShPwsh;
+using Tom::Constants::path_;
+using Tom::Constants::path_up;
 using Tom::Constants::shell_;
 using Tom::Constants::stdout_;
 
@@ -48,6 +50,8 @@ QList<QCommandLineOption> IntegrateCommand::optionsSignature() const
     return {
         {stdout_, QStringLiteral("Print content of the <info>integrate</info> command "
                                  "(instead of writing to the disk)")},
+        {path_,   QStringLiteral("The location where the completion file should be "
+                                 "created (zsh only)"), path_up}, // Value
     };
 }
 
@@ -378,8 +382,11 @@ namespace
 
 } // namespace
 
-bool IntegrateCommand::writeTomZshCompletionWrapper()
+bool IntegrateCommand::writeTomZshCompletionWrapper() const
 {
+    // Allow to override installation folder using the --path= option
+    zshOverrideInstallFolder();
+
     if (isZshCompletionRegistered())
         return false;
 
@@ -388,9 +395,8 @@ bool IntegrateCommand::writeTomZshCompletionWrapper()
         if (writeTomZshCompletionToExistingFolder())
             return true;
     }
+    // Try to create a folder and write completion file
     else {
-        /* Write failed or any of the folder paths exists, in this case try to create
-           a folder and write completion file again. */
         createZshCompletionFolder();
 
         // And try to write the completion file again
@@ -403,6 +409,17 @@ bool IntegrateCommand::writeTomZshCompletionWrapper()
                     "Write operation of the tom zsh tab-completion files %1 failed "
                     "in %2(), please run with sudo.")
                 .arg(getCompletionFilepaths().join(COMMA), __tiny_func__));
+}
+
+void IntegrateCommand::zshOverrideInstallFolder() const
+{
+    if (!isSet(path_))
+        return;
+
+    const auto completionsDir = QDir::cleanPath(value(path_));
+
+    TomZshCompletionPaths->prepend({{completionsDir},
+                                    {QStringLiteral("%1/_tom").arg(completionsDir)}});
 }
 
 bool IntegrateCommand::isZshCompletionRegistered()

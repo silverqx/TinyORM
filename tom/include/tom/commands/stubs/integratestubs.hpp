@@ -292,7 +292,8 @@ _tom() {
             _arguments \
                 $common_options \
                 '1::shell:(bash pwsh zsh)' \
-                '--stdout[Print content of the integrate command (instead of writing to disk)]'
+                '--stdout[Print content of the integrate command (instead of writing to disk)]' \
+                '--path=[The location where the completion file should be created (zsh only)]:folder path:_files -/'
             ;;
 
         list)

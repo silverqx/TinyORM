@@ -52,6 +52,7 @@ namespace Tom::Constants
     inline const QString seed         = QStringLiteral("seed");
     inline const QString seeder       = QStringLiteral("seeder");
     inline const QString step_        = QStringLiteral("step");
+    inline const QString path_        = QStringLiteral("path");
     // Default value names
     inline const QString class_up       = QStringLiteral("CLASS");
     inline const QString database_up    = QStringLiteral("DATABASE");
@@ -61,6 +62,7 @@ namespace Tom::Constants
     inline const QString position_up    = QStringLiteral("POSITION");
     inline const QString word_up        = QStringLiteral("WORD");
     inline const QString cword_up       = QStringLiteral("CWORD");
+    inline const QString path_up        = QStringLiteral("PATH");
     // complete
     inline const QString commandline  = QStringLiteral("commandline");
     inline const QString position     = QStringLiteral("position");
@@ -76,7 +78,6 @@ namespace Tom::Constants
     // make:migration
     inline const QString create_      = QStringLiteral("create");
     inline const QString table_       = QStringLiteral("table");
-    inline const QString path_        = QStringLiteral("path");
     inline const QString realpath_    = QStringLiteral("realpath");
     inline const QString fullpath     = QStringLiteral("fullpath");
     // migrate:refresh
