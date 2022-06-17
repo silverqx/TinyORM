@@ -12,8 +12,8 @@ import Tabs from '@theme/Tabs'
 
 import {
     shell,
-    bash, pwsh,
-    bash_label, pwsh_label
+    bash, pwsh, zsh,
+    bash_label, pwsh_label, zsh_label
 } from '@theme/constants'
 import {
     applicationFolderPath,
@@ -24,6 +24,7 @@ import {
 - [Introduction](#introduction)
 - [Generating Migrations](#generating-migrations)
 - [Tab completion](#tab-completion)
+    - [Alternative installation methods](#alternative-installation-methods)
 - [Migration Structure](#migration-structure)
 - [Running Migrations](#running-migrations)
     - [Rolling Back Migrations](#rolling-back-migrations)
@@ -100,7 +101,7 @@ tom integrate bash
 ```
 
 </TabItem>
-<TabItem value='zsh' label='zsh'>
+<TabItem value={zsh} label={zsh_label}>
 
 ```bash
 tom integrate zsh
@@ -147,6 +148,68 @@ It will provide completions for the `tom` commands, long and short parameters, a
 :::tip
 The `tom integrate zsh` command also accepts the `--path=` option with which you can set the location, where the zsh completion file should be created.
 :::
+
+:::tip
+You can also output the completion script using the `--stdout` option eg. `tom integrate bash --stdout`.
+:::
+
+### Alternative installation methods
+
+This section describes alternative installation methods for `bash` and `zsh` tab-completions.
+
+#### Static installation
+
+Idea is to output the tab-completion to the file and then source it.
+
+<Tabs groupId={shell}>
+<TabItem value={bash} label={bash_label}>
+
+```bash
+mkdir -p ~/.local/share/tom
+tom integrate bash --stdout > ~/.local/share/tom/tom.bash
+
+# Then source this file in the ~/.bashrc
+source $HOME/.local/share/tom/tom.bash
+```
+
+</TabItem>
+<TabItem value={zsh} label={zsh_label}>
+
+```bash
+mkdir -p ~/.local/share/tom
+tom integrate zsh --stdout > ~/.local/share/tom/tom.zsh
+
+# Then source this file in the ~/.zshrc
+source $HOME/.local/share/tom/tom.zsh
+compdef _tom tom
+```
+
+</TabItem>
+</Tabs>
+
+#### Dynamic installation
+
+Idea is to __avoid__ outputting the tab-completion to the file, so you `eval` the tab-completion source code right away.
+
+<Tabs groupId={shell}>
+<TabItem value={bash} label={bash_label}>
+
+```bash
+# Add this eval to the ~/.bashrc
+eval "$(tom integrate bash --stdout)"
+```
+
+</TabItem>
+<TabItem value={zsh} label={zsh_label}>
+
+```bash
+# Add this eval to the ~/.zshrc
+eval "$(tom integrate zsh --stdout)"
+compdef _tom tom
+```
+
+</TabItem>
+</Tabs>
 
 ## Migration Structure
 
