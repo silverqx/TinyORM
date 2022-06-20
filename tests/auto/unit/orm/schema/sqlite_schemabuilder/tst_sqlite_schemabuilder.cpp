@@ -15,6 +15,8 @@
 
 namespace fs = std::filesystem;
 
+using fspath = std::filesystem::path;
+
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::SIZE;
@@ -137,17 +139,23 @@ void tst_SQLite_SchemaBuilder::initTestCase()
 void tst_SQLite_SchemaBuilder::createDatabase() const
 {
     const auto database = getDatabaseFilepath();
-    const auto databaseStdString = database.toStdString();
+    fspath databasePath(database.toUtf8().constData());
 
     // Clean up before test
-    if (fs::exists(databaseStdString))
-        fs::remove(databaseStdString);
+    if (fs::exists(databasePath))
+        fs::remove(databasePath);
 
-    QVERIFY(!fs::exists(databaseStdString));
+    // Create tmp/ folder
+    if (const auto databaseDirPath = databasePath.parent_path();
+        !fs::exists(databaseDirPath)
+    )
+        fs::create_directory(databaseDirPath);
+
+    QVERIFY(!fs::exists(databasePath));
 
     Schema::on(m_connection).createDatabase(database);
 
-    QVERIFY(fs::exists(databaseStdString));
+    QVERIFY(fs::exists(databasePath));
 }
 
 void tst_SQLite_SchemaBuilder::dropDatabaseIfExists() const
