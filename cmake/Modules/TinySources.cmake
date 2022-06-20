@@ -199,6 +199,7 @@ function(tinyorm_sources out_headers out_sources)
         schema/mysqlschemabuilder.cpp
         schema/postgresschemabuilder.cpp
         schema/schemabuilder.cpp
+        schema/sqliteschemabuilder.cpp
         sqliteconnection.cpp
         support/configurationoptionsparser.cpp
         utils/fs.cpp

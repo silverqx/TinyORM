@@ -38,6 +38,11 @@ namespace Orm::SchemaNs::Constants
     const QString Restrict = QStringLiteral("restrict");
     const QString SetNull  = QStringLiteral("set null");
 
+    // Column types
+    const QString integer_ = QStringLiteral("integer");
+    const QString varchar_ = QStringLiteral("varchar");
+    const QString float_   = QStringLiteral("float");
+
 } // namespace Orm::SchemaNs::Constants
 
 TINYORM_END_COMMON_NAMESPACE

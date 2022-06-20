@@ -12,13 +12,14 @@ namespace Orm::SchemaNs
 
 /* public */
 
-QSqlQuery MySqlSchemaBuilder::createDatabase(const QString &name) const
+std::optional<QSqlQuery> MySqlSchemaBuilder::createDatabase(const QString &name) const
 {
     return m_connection.statement(
                 m_grammar.compileCreateDatabase(name, m_connection));
 }
 
-QSqlQuery MySqlSchemaBuilder::dropDatabaseIfExists(const QString &name) const
+std::optional<QSqlQuery>
+MySqlSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 {
     return m_connection.statement(
                 m_grammar.compileDropDatabaseIfExists(name));

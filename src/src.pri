@@ -47,6 +47,7 @@ sourcesList += \
     $$PWD/orm/schema/mysqlschemabuilder.cpp \
     $$PWD/orm/schema/postgresschemabuilder.cpp \
     $$PWD/orm/schema/schemabuilder.cpp \
+    $$PWD/orm/schema/sqliteschemabuilder.cpp \
     $$PWD/orm/sqliteconnection.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \
     $$PWD/orm/utils/fs.cpp \

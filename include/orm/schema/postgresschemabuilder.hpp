@@ -25,9 +25,10 @@ namespace Orm::SchemaNs
         inline ~PostgresSchemaBuilder() override = default;
 
         /*! Create a database in the schema. */
-        QSqlQuery createDatabase(const QString &name) const override;
+        std::optional<QSqlQuery> createDatabase(const QString &name) const override;
         /*! Drop a database from the schema if the database exists. */
-        QSqlQuery dropDatabaseIfExists(const QString &name) const override;
+        std::optional<QSqlQuery>
+        dropDatabaseIfExists(const QString &name) const override;
 
         /*! Drop all tables from the database. */
         void dropAllTables() const override;

@@ -13,6 +13,7 @@ namespace Orm::SchemaNs::Grammars
 
 /* Compile methods for the SchemaBuilder */
 
+// CUR schema sqlite, check all this NotImplemented and remove which are not used silverqx
 QString SchemaGrammar::compileCreateDatabase(const QString &/*unused*/,
                                              DatabaseConnection &connection) const
 {
@@ -97,6 +98,7 @@ QVector<QString>
 SchemaGrammar::compileDropFullText(const Blueprint &/*unused*/,
                                    const IndexCommand &/*unused*/) const
 {
+    // CUR schema sqlite, add getConnection() to Blueprint and print exception like in compileCreateDatabase() silverqx
     throw Exceptions::RuntimeError(NotImplemented);
 }
 

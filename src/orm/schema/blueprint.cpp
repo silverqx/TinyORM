@@ -56,8 +56,12 @@ QVector<QString> Blueprint::toSql(const DatabaseConnection &connection,
     // Reserve * 2 might be enough, can't be predicted :/
     statements.reserve(static_cast<QVector<QString>::size_type>(m_commands.size()) * 2);
 
+    // CUR schema sqlite, divide to 2 call, hasCompileMethod and then invoke, get rid of sql.isEmpty() silverqx
     for (const auto &command : m_commands)
-        statements += grammar.invokeCompileMethod(*command, connection, *this);
+        if (auto sql = grammar.invokeCompileMethod(*command, connection, *this);
+            !sql.isEmpty()
+        )
+            statements += std::move(sql);
 
     return statements;
 }

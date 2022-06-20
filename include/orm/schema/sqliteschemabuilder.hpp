@@ -13,7 +13,7 @@ namespace Orm::SchemaNs
 {
 
     /*! SQLite schema builder class. */
-    class SQLiteSchemaBuilder : public SchemaBuilder
+    class SHAREDLIB_EXPORT SQLiteSchemaBuilder : public SchemaBuilder
     {
         Q_DISABLE_COPY(SQLiteSchemaBuilder)
 
@@ -23,6 +23,26 @@ namespace Orm::SchemaNs
 
         /*! Virtual destructor. */
         inline ~SQLiteSchemaBuilder() override = default;
+
+        /*! Create a database in the schema. */
+        std::optional<QSqlQuery>
+        createDatabase(const QString &name) const override;
+        /*! Drop a database from the schema if the database exists. */
+        std::optional<QSqlQuery>
+        dropDatabaseIfExists(const QString &name) const override;
+
+        /*! Drop all tables from the database. */
+        void dropAllTables() const override;
+        /*! Drop all views from the database. */
+        void dropAllViews() const override;
+
+        /*! Get all of the table names for the database. */
+        QSqlQuery getAllTables() const override;
+        /*! Get all of the view names for the database. */
+        QSqlQuery getAllViews() const override;
+
+        /*! Empty the database file. */
+        void refreshDatabaseFile() const;
     };
 
 } // namespace Orm::SchemaNs

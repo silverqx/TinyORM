@@ -1,5 +1,7 @@
 #include "orm/schema/schemabuilder.hpp"
 
+#include <QtSql/QSqlDriver>
+
 #include <range/v3/action/transform.hpp>
 #include <range/v3/algorithm/contains.hpp>
 
@@ -16,17 +18,19 @@ SchemaBuilder::SchemaBuilder(DatabaseConnection &connection)
     , m_grammar(connection.getSchemaGrammar())
 {}
 
-QSqlQuery SchemaBuilder::createDatabase(const QString &/*unused*/) const
+std::optional<QSqlQuery> SchemaBuilder::createDatabase(const QString &/*unused*/) const
 {
     throw Exceptions::LogicError(
                 QStringLiteral("%1 database driver does not support creating databases.")
                 .arg(m_connection.driverName()));
 }
 
-QSqlQuery SchemaBuilder::dropDatabaseIfExists(const QString &/*unused*/) const
+std::optional<QSqlQuery>
+SchemaBuilder::dropDatabaseIfExists(const QString &/*unused*/) const
 {
     throw Exceptions::LogicError(
-                "This database driver does not support dropping databases.");
+                QStringLiteral("%1 database driver does not support dropping databases.")
+                .arg(m_connection.driverName()));
 }
 
 void SchemaBuilder::create(const QString &table,
@@ -154,9 +158,22 @@ QStringList SchemaBuilder::getColumnListing(const QString &table) const
     return m_connection.getPostProcessor().processColumnListing(query);
 }
 
-bool SchemaBuilder::hasTable(const QString &/*unused*/) const
+bool SchemaBuilder::hasTable(const QString &table) const
 {
-    throw Exceptions::RuntimeError(NotImplemented);
+    const auto table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
+
+    auto query = m_connection.selectFromWriteConnection(
+                     m_grammar.compileTableExists(), {table_});
+
+    if (m_connection.driver()->hasFeature(QSqlDriver::QuerySize))
+        return query.size() > 0;
+
+    // Count manually
+    auto size = 0;
+    while (query.next())
+        ++size;
+
+    return size > 0;
 }
 
 // CUR schema, test in functional tests silverqx

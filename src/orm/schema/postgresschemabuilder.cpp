@@ -13,14 +13,15 @@ namespace Orm::SchemaNs
 
 /* public */
 
-QSqlQuery PostgresSchemaBuilder::createDatabase(const QString &name) const
+std::optional<QSqlQuery> PostgresSchemaBuilder::createDatabase(const QString &name) const
 {
     // CUR schema, duplicates silverqx
     return m_connection.unprepared(
                 m_grammar.compileCreateDatabase(name, m_connection));
 }
 
-QSqlQuery PostgresSchemaBuilder::dropDatabaseIfExists(const QString &name) const
+std::optional<QSqlQuery>
+PostgresSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 {
     // CUR schema, duplicates silverqx
     return m_connection.unprepared(

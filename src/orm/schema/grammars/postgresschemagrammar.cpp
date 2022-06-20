@@ -127,6 +127,7 @@ QVector<QString>
 PostgresSchemaGrammar::compileRename(const Blueprint &blueprint,
                                      const RenameCommand &command) const
 {
+    // CUR schema, duplicate silverqx
     return {QStringLiteral("alter table %1 rename to %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
@@ -308,8 +309,8 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                                            const DatabaseConnection &/*unused*/,
                                            const Blueprint &blueprint) const
 {
-    // FUTURE concepts, somehow check that after reinterpret_cast<> is command_.name QString, i have tried but without success, I have added example to NOTES.txt silverqx
     const auto &basicCommand = reinterpret_cast<const BasicCommand &>(command);
+    Q_ASSERT(typeid (QString) == typeid (basicCommand.name));
     const auto &name = basicCommand.name;
 
     if (name == Create)
@@ -337,7 +338,7 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
     /* Pointers to a command's compile member methods by a command name, yes yes c++ 😂.
        I have to map by QString instead of enum struct because a command.name is used
-       to look up, I could use enum struct but I had to map
+       to look up, I could use enum struct but I would have to map
        QString(command.name) -> enum. */
     T_THREAD_LOCAL
     static const std::unordered_map<QString, CompileMemFn> cached {
@@ -387,8 +388,7 @@ QString PostgresSchemaGrammar::compileCreateTable(const Blueprint &blueprint) co
             .arg(blueprint.isTemporary() ? QStringLiteral("create temporary")
                                          : Create,
                  wrapTable(blueprint),
-                 columnizeWithoutWrap(getColumns(blueprint)))
-            .trimmed();
+                 columnizeWithoutWrap(getColumns(blueprint)));
 }
 
 QString PostgresSchemaGrammar::addModifiers(QString &&sql,

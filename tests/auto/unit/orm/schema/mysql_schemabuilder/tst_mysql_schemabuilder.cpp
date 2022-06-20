@@ -105,6 +105,8 @@ private:
     QString m_connection {};
 };
 
+/* private slots */
+
 void tst_Mysql_SchemaBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::MYSQL);

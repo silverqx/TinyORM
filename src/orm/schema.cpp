@@ -18,12 +18,14 @@ std::shared_ptr<DatabaseManager> Schema::m_manager;
 
 /* Proxy methods to the SchemaBuilder */
 
-QSqlQuery Schema::createDatabase(const QString &name, const QString &connection)
+std::optional<QSqlQuery>
+Schema::createDatabase(const QString &name, const QString &connection)
 {
     return schemaBuilder(connection).createDatabase(name);
 }
 
-QSqlQuery Schema::dropDatabaseIfExists(const QString &name, const QString &connection)
+std::optional<QSqlQuery>
+Schema::dropDatabaseIfExists(const QString &name, const QString &connection)
 {
     return schemaBuilder(connection).dropDatabaseIfExists(name);
 }

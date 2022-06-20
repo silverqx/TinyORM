@@ -41,9 +41,11 @@ namespace Grammars
         inline virtual ~SchemaBuilder() = default;
 
         /*! Create a database in the schema. */
-        virtual QSqlQuery createDatabase(const QString &name) const;
+        virtual std::optional<QSqlQuery>
+        createDatabase(const QString &name) const;
         /*! Drop a database from the schema if the database exists. */
-        virtual QSqlQuery dropDatabaseIfExists(const QString &name) const;
+        virtual std::optional<QSqlQuery>
+        dropDatabaseIfExists(const QString &name) const;
 
         /*! Create a new table on the schema. */
         void create(const QString &table,

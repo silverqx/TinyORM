@@ -33,11 +33,11 @@ namespace Orm
 
         /* Proxy methods to the SchemaBuilder */
         /*! Create a database in the schema. */
-        static QSqlQuery createDatabase(const QString &name,
-                                        const QString &connection = "");
+        static std::optional<QSqlQuery>
+        createDatabase(const QString &name, const QString &connection = "");
         /*! Drop a database from the schema if the database exists. */
-        static QSqlQuery dropDatabaseIfExists(const QString &name,
-                                              const QString &connection = "");
+        static std::optional<QSqlQuery>
+        dropDatabaseIfExists(const QString &name, const QString &connection = "");
 
         /*! Create a new table on the schema. */
         static void create(const QString &table,

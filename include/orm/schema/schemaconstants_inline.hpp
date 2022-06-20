@@ -51,6 +51,11 @@ namespace Constants
     inline const QString Restrict = QStringLiteral("restrict");
     inline const QString SetNull  = QStringLiteral("set null");
 
+    // Column types
+    inline const QString integer_ = QStringLiteral("integer");
+    inline const QString varchar_ = QStringLiteral("varchar");
+    inline const QString float_   = QStringLiteral("float");
+
 } // namespace Constants
 
 // NOLINTNEXTLINE(google-build-using-namespace)
