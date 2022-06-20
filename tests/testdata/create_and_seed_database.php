@@ -416,10 +416,9 @@ function fixPostgresSequences(): void
         'user_phones_id_seq'                         => 4,
     ];
 
-    foreach ($sequences as $sequence => $id) {
+    foreach ($sequences as $sequence => $id)
         Capsule::connection('pgsql')
             ->unprepared("ALTER SEQUENCE $sequence RESTART WITH $id");
-    }
 }
 
 /**
