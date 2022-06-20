@@ -319,11 +319,14 @@ SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
 QString SQLiteSchemaGrammar::addForeignKeys(const Blueprint &blueprint) const
 {
+    // Prevent clazy detach warning
+    const auto foreignCommands = getCommandsByName(blueprint, Foreign);
+
     QString sql;
 
     /* Loop through all of the foreign key commands and add them to the create table SQL
        we are building, since SQLite needs foreign keys on the tables creation. */
-    for (const auto &foreignBase : getCommandsByName(blueprint, Foreign)) {
+    for (const auto &foreignBase : foreignCommands) {
         Q_ASSERT(foreignBase);
         /* static_cast should not be used in this type of casting, from a base to derived
            so use reinterpret_cast instead to be clear that it's ok (primarily for
