@@ -246,7 +246,7 @@ jobs:
         ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate --database=tinyorm_tom_sqlite --seed --no-ansi
-        # ./tom migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
+        ./tom migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
         ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
       env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
