@@ -17,13 +17,13 @@ jobs:
     strategy:
       matrix:
         compiler:
-          # - key: clang14
-          #   apt: [ clang-14, lld, g++-11 ]
-          #   command: clang++-14
+          - key: clang14
+            apt: [ clang-14, lld, g++-11 ]
+            command: clang++-14
 
-          - key: gcc11
-            apt: [ g++-11 ]
-            command: g++-11
+          # - key: gcc11
+          #   apt: [ g++-11 ]
+          #   command: g++-11
 
     steps:
     - uses: actions/checkout@v3
@@ -125,14 +125,14 @@ jobs:
       run: |
         mkdir -p ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
 
-    - name: ccache setup 🕺
-      uses: Chocobo1/setup-ccache-action@v1
-      with:
-        install_ccache: false
-        update_packager_index: false
-        ccache_options: |
-          compression = false
-          max_size = 3G
+    # - name: ccache setup 🕺
+    #   uses: Chocobo1/setup-ccache-action@v1
+    #   with:
+    #     install_ccache: false
+    #     update_packager_index: false
+    #     ccache_options: |
+    #       compression = false
+    #       max_size = 3G
 
     - name: vcpkg set-up environment
       run: |
@@ -150,10 +150,9 @@ jobs:
         -S .
         -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER=/usr/bin/ccache
         -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/${{ matrix.compiler.command }}
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
-        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=OFF
         -D CMAKE_BUILD_TYPE:BOOL=Debug
         -D VERBOSE_CONFIGURE:BOOL=ON
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
