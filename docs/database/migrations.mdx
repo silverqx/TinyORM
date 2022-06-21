@@ -116,7 +116,7 @@ Or you can enable it manually. Following actions are the same as the `tom integr
 For the `pwsh` paste the following code to the pwsh profile (works on Linux or Windows).
 
 ```powershell title='~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1'
-Register-ArgumentCompleter -Native -CommandName tom -ScriptBlock {
+Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
     $Local:word = $wordToComplete.Replace('"', '""')
