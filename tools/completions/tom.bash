@@ -102,6 +102,6 @@ _tom()
     __tom_filedir $tom_command $args
 
 } &&
-    complete -F _tom tom
+    complete -F _tom tom tom_testdata
 
 # ex: filetype=sh

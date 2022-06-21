@@ -1,4 +1,4 @@
-#compdef tom
+#compdef tom tom_testdata
 
 # Completion for the TinyORM tom application
 
