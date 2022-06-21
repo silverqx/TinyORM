@@ -248,7 +248,7 @@ jobs:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
         TOM_TESTS_ENV: testing
 
-    - name: Tom example test some commands (MySQL) 🚀
+    - name: Tom example test some commands (MySQL) 🙌
       working-directory: ../TinyORM-builds-cmake/build-clang-cl-cmake-debug/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
@@ -266,7 +266,7 @@ jobs:
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         TOM_EXAMPLE_ENV: testing
 
-    - name: Tom example test some commands (PostgreSQL) 🚀
+    - name: Tom example test some commands (PostgreSQL) 🏁
       working-directory: ../TinyORM-builds-cmake/build-clang-cl-cmake-debug/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path

@@ -240,7 +240,7 @@ jobs:
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         TOM_EXAMPLE_ENV: testing
 
-    - name: Tom example test some commands (PostgreSQL) 🚀
+    - name: Tom example test some commands (PostgreSQL) 🙌
       shell: msys2 {0}
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
@@ -258,7 +258,7 @@ jobs:
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         TOM_EXAMPLE_ENV: testing
 
-    - name: Tom example test some commands (SQLite) 🚀
+    - name: Tom example test some commands (SQLite) 🏁
       shell: msys2 {0}
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |

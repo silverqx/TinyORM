@@ -228,7 +228,7 @@ jobs:
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         TOM_EXAMPLE_ENV: testing
 
-    - name: Tom example test some commands (PostgreSQL) 🚀
+    - name: Tom example test some commands (PostgreSQL) 🙌
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
@@ -245,7 +245,7 @@ jobs:
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         TOM_EXAMPLE_ENV: testing
 
-    - name: Tom example test some commands (SQLite) 🚀
+    - name: Tom example test some commands (SQLite) 🏁
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
