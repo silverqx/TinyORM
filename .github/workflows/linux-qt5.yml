@@ -1,4 +1,4 @@
-name: Linux GCC/Clang
+name: Linux GCC/Clang Qt5.15
 
 on:
   pull_request:
