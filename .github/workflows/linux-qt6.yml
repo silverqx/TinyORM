@@ -18,11 +18,11 @@ jobs:
       matrix:
         compiler:
           - key: clang14
-            apt: [ clang-14, lld, g++-11 ]
+            apt: [ lld ]
             command: clang++-14
 
           - key: gcc11
-            apt: [ g++-11 ]
+            apt: []
             command: g++-11
 
     steps:
@@ -110,7 +110,7 @@ jobs:
     - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, Qt 6.2.4 base, and ccache
       run: >-
         sudo apt install -y ${{ join(matrix.compiler.apt, ' ') }} ccache
-        libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql
+        qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql
 
     - name: ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
