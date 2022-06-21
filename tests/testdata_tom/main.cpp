@@ -106,6 +106,15 @@ std::shared_ptr<DatabaseManager> setupManager()
             // ConnectionFactory provides a default value for this (for reference only)
 //            {dont_drop,      QStringList {QStringLiteral("spatial_ref_sys")}},
             {options_,       QVariantHash()},
+        }},
+
+        // SQLite connection
+        {QStringLiteral("tinyorm_testdata_tom_sqlite"), { // zsh:connection
+            {driver_,                 QSQLITE},
+            {database_,               qEnvironmentVariable("DB_SQLITE_DATABASE", {})},
+            {foreign_key_constraints, true},
+            {check_database_exists,   true},
+            {prefix_,                 EMPTY},
         }}
     },
         /* Because the default connection name is not defined, then will be needed

@@ -105,22 +105,6 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
 
-    - name: PHP enable PDO extensions (pdo_mysql, pdo_pgsql, pdo_sqlite)
-      run: |
-        Add-Content -Path "${env:PHPROOT}/php.ini" -Value `
-        "[PHP]
-        extension=pdo_mysql
-        extension=pdo_pgsql
-        extension=pdo_sqlite
-        "
-
-    - name: testdata composer install (illuminate/database)
-      uses: ramsey/composer-install@v1
-      with:
-        composer-options: >-
-          --working-dir=${{ github.workspace }}/tests/testdata
-          --prefer-dist --optimize-autoloader
-
     - name: TinyORM create build folder (msvc-cmake-debug)
       run: |
         mkdir -p ../TinyORM-builds-cmake/build-msvc-cmake-debug
@@ -186,12 +170,13 @@ jobs:
       run: >-
         cmake --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
 
-    - name: Create and Seed tables for unit tests 🎉 (MySQL, PostgreSQL)
+    - name: Create and Seed tables for unit tests 🎉
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/tests/testdata_tom
       run: |
         $env:Path = '..\..;' + $env:Path
         .\tom_testdata.exe migrate --database=tinyorm_testdata_tom_mysql --seed --no-ansi
         .\tom_testdata.exe migrate --database=tinyorm_testdata_tom_postgres --seed --no-ansi
+        .\tom_testdata.exe migrate --database=tinyorm_testdata_tom_sqlite --seed --no-ansi
       env:
         DB_MYSQL_CHARSET: utf8mb4
         DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
@@ -204,14 +189,8 @@ jobs:
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-        TOM_TESTDATA_ENV: testing
-
-    - name: Create and Seed tables for unit tests (SQLite)
-      working-directory: tests/testdata
-      run: |
-        php.exe ./create_and_seed_database.php --skip-mysql-migrate --skip-postgres-migrate
-      env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        TOM_TESTDATA_ENV: testing
 
     - name: TinyORM execute ctest 🔥
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug
@@ -264,4 +243,17 @@ jobs:
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        TOM_EXAMPLE_ENV: testing
+
+    - name: Tom example test some commands (SQLite) 🚀
+      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
+      run: |
+        $env:Path = '..\..;' + $env:Path
+        .\tom.exe migrate:install --database=tinyorm_tom_sqlite --no-ansi
+        .\tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
+        .\tom.exe migrate --database=tinyorm_tom_sqlite --seed --no-ansi
+        .\tom.exe migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
+        .\tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
+      env:
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
         TOM_EXAMPLE_ENV: testing

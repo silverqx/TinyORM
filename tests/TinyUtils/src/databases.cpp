@@ -201,8 +201,7 @@ Databases::sqliteConfiguration()
         {driver_,                 QSQLITE},
         {database_,               qEnvironmentVariable("DB_SQLITE_DATABASE",
                                                        TINYORM_SQLITE_DATABASE)},
-        {foreign_key_constraints, qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS",
-                                                       QStringLiteral("true"))},
+        {foreign_key_constraints, true},
         {check_database_exists,   true},
         {prefix_,                 EMPTY},
         // FUTURE schema sqlite, prefix_indexes and sqlite, works it? test silverqx

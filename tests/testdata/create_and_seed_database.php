@@ -432,12 +432,10 @@ function fixPostgresSequences(): void
 function createAndSeedTables(array $connections, array $options): void
 {
     foreach ($connections as $connection) {
-        /* Allow to skip dropping and creating tables for the mysql and pgsql connection.
-           Currently, TinyORM's migrations supports the MySQL and PostgreSQL database, and
-           I want to use our tom migrations in CI/CD pipelines, this is the reason
-           for the condition below. */
+        // Allow to skip dropping and creating tables for the given connection
         if ((array_key_exists('skip-mysql-migrate',    $options) && $connection === 'mysql') ||
-            (array_key_exists('skip-postgres-migrate', $options) && $connection === 'pgsql')
+            (array_key_exists('skip-postgres-migrate', $options) && $connection === 'pgsql') ||
+            (array_key_exists('skip-sqlite-migrate',   $options) && $connection === 'sqlite')
         )
             continue;
 
@@ -501,6 +499,7 @@ addConnections($capsule, $configs);
 $options = getopt('', [
     'skip-mysql-migrate',
     'skip-postgres-migrate',
+    'skip-sqlite-migrate',
 ]);
 
 createAndSeedTables(array_keys($configs), $options);
