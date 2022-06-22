@@ -22,7 +22,7 @@ jobs:
             command: clang++-14
 
           - key: gcc12
-            apt: []
+            apt: [g++-12]
             command: g++-12
 
     steps:
