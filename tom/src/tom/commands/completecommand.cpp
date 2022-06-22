@@ -1,5 +1,9 @@
 #include "tom/commands/completecommand.hpp"
 
+#include <QRegularExpression>
+
+#include <fstream>
+
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/filter.hpp>
@@ -10,13 +14,18 @@
 #include "tom/application.hpp"
 #include "tom/tomutils.hpp"
 
+namespace fs = std::filesystem;
+
 using Orm::Constants::DASH;
 using Orm::Constants::EMPTY;
 using Orm::Constants::EQ_C;
 using Orm::Constants::NEWLINE;
+using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
+using Orm::Constants::database_;
 
 using Tom::Constants::DoubleDash;
+using Tom::Constants::Env;
 using Tom::Constants::Help;
 using Tom::Constants::Integrate;
 using Tom::Constants::List;
@@ -159,6 +168,28 @@ int CompleteCommand::run()
 #endif
         return printGuessedShells(wordArg);
 
+    /* Print inferred database connection names for the --database= option
+       --- */
+    // Bash has it's own guess logic in the tom.bash complete file
+#ifdef _MSC_VER
+    if (wordArg.startsWith(LongOption.arg(database_)) &&
+        currentCommandArg && commandHasLongOption(*currentCommandArg, database_) &&
+        positionArg >= commandlineArgSize
+    )
+        return printAndGuessConnectionNames(getOptionValue(wordArg));
+#endif
+
+    /* Print environment names for the --env= option
+       --- */
+    // Bash has it's own guess logic in the tom.bash complete file
+#ifdef _MSC_VER
+    if (wordArg.startsWith(LongOption.arg(Env)) &&
+        currentCommandArg && // All commands has the --env= option
+        positionArg >= commandlineArgSize
+    )
+        return printEnvironmentNames(getOptionValue(wordArg));
+#endif
+
     /* Print all or guessed long option parameter names
        --- */
 #ifdef _MSC_VER
@@ -285,6 +316,60 @@ int CompleteCommand::printGuessedShells(const QString &word) const
         shellNames.sort(Qt::CaseInsensitive);
 
     note(shellNames.join(NEWLINE));
+
+    return EXIT_SUCCESS;
+}
+
+int CompleteCommand::printAndGuessConnectionNames(const QString &connectionName) const
+{
+    auto allConnectionNames = getConnectionNamesFromFile();
+
+    // Nothing to guess
+    if (allConnectionNames.empty())
+        return EXIT_SUCCESS;
+
+    QStringList connectionNames;
+
+    for (auto &&connection : allConnectionNames)
+        /* It also evaluates to true if the given connectionName is an empty string "",
+           so it prints all connection names in this case.
+           Also --database= has to be prepended because pwsh overwrites whole option. */
+        if (connection.startsWith(connectionName))
+            connectionNames
+                    << QStringLiteral("%1;%2").arg(
+                           NOSPACE.arg(LongOption.arg(database_).append(EQ_C),
+                                       connection),
+                           std::move(connection));
+
+    // Print
+    note(connectionNames.join(NEWLINE));
+
+    return EXIT_SUCCESS;
+}
+
+int CompleteCommand::printEnvironmentNames(const QString &environmentName) const
+{
+    static const QStringList allEnvironmentNames {
+        QStringLiteral("dev"),     QStringLiteral("development"), QStringLiteral("local"),
+        QStringLiteral("prod"),    QStringLiteral("production"),  QStringLiteral("test"),
+        QStringLiteral("testing"), QStringLiteral("staging")
+    };
+
+    QStringList environmentNames;
+
+    for (auto &&environment : allEnvironmentNames)
+        /* It also evaluates to true if the given environmentName is an empty string "",
+           so it prints all environment names in this case.
+           Also --env= has to be prepended because pwsh overwrites whole option. */
+        if (environment.startsWith(environmentName))
+            environmentNames
+                    << QStringLiteral("%1;%2").arg(
+                           NOSPACE.arg(LongOption.arg(Env).append(EQ_C),
+                                       environment),
+                           std::move(environment));
+
+    // Print
+    note(environmentNames.join(NEWLINE));
 
     return EXIT_SUCCESS;
 }
@@ -430,6 +515,58 @@ bool CompleteCommand::isOptionArgument(const QString &wordArg, const OptionType 
         return isShort;
 
     Q_UNREACHABLE();
+}
+
+QString CompleteCommand::getOptionValue(const QString &wordArg)
+{
+    Q_ASSERT(wordArg.contains(EQ_C));
+
+    const auto splitted = wordArg.split(EQ_C);
+
+    Q_ASSERT(splitted.size() <= 2);
+
+    return splitted.size() == 1 ? QString() : splitted.last();
+}
+
+bool CompleteCommand::commandHasLongOption(const QString &command, const QString &option)
+{
+    return ranges::contains(getCommandOptionsSignature(command), true,
+                            [&option](const QCommandLineOption &optionItem)
+    {
+        Q_ASSERT(!optionItem.names().isEmpty());
+
+        return optionItem.names().constFirst() == option;
+    });
+}
+
+QStringList CompleteCommand::getConnectionNamesFromFile()
+{
+    // Are we in the tom project folder?
+    if (!fs::exists("database/migrations") || !fs::exists("main.cpp"))
+        return {};
+
+    QStringList connectionNames;
+
+    std::ifstream mainFileStream("main.cpp");
+
+    if (mainFileStream.fail())
+        return {};
+
+    std::string line;
+    line.reserve(256);
+
+    static QRegularExpression regex(".*\"(\\w+)\".*// zsh:connection");
+
+    while (getline(mainFileStream, line)) {
+        const auto match = regex.match(QString::fromStdString(line));
+
+        if (match.hasMatch())
+            connectionNames << match.captured(1);
+    }
+
+    mainFileStream.close();
+
+    return connectionNames;
 }
 
 } // namespace Tom::Commands

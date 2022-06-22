@@ -53,6 +53,10 @@ namespace Tom::Commands
         int printGuessedNamespaces(const QString &word) const;
         /*! Print all or guessed shell names for the integrate command. */
         int printGuessedShells(const QString &word) const;
+        /*! Print all or guessed connection names for the --database= option. */
+        int printAndGuessConnectionNames(const QString &connectionName) const;
+        /*! Print all or guessed environment names for the --env= option. */
+        int printEnvironmentNames(const QString &environmentName) const;
         /*! Print all or guessed long option parameter names. */
         int printGuessedLongOptions(const std::optional<QString> &currentCommand,
                                     const QString &word) const;
@@ -83,6 +87,15 @@ namespace Tom::Commands
         inline static bool isLongOption(const QString &wordArg);
         /*! Determine whether the given word is a short option argument. */
         inline static bool isShortOption(const QString &wordArg);
+        /*! Get the command line option value (--database=value). */
+        static QString getOptionValue(const QString &wordArg);
+
+        /*! Determine whether the given command contains the given option. */
+        bool commandHasLongOption(const QString &command, const QString &option);
+
+        /*! Obtain all connection names tagged with zsh:connection comment from
+            the main.cpp file. */
+        static QStringList getConnectionNamesFromFile();
 
         /*! Commands to exclude from the list. */
         const std::unordered_set<QString> m_dontList {
