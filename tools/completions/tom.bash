@@ -8,11 +8,40 @@ __tom_filedir()
     fi
 }
 
+# Try to infer database connection names if a user is in the right folder and have tagged
+# connection names with '// zsh:connection' comment
+__tom_connections() {
+    declare -a connections
+    declare -a lines
+
+    [[ -d database/migrations && -f main.cpp ]] || return
+
+    IFS=$'\n' lines=($(/bin/cat main.cpp | grep '// zsh:connection'))
+
+    # Nothing found
+    [[ ${#lines[@]} -eq 0 ]] && return
+
+    regex='.*"(\w+)".*// zsh:connection'
+
+    for line in "${lines[@]}"; do
+        if [[ $line =~ $regex ]]; then
+            connections[${#connections[@]}]=${BASH_REMATCH[1]}
+        fi
+    done
+
+    echo "${connections[*]}"
+}
+
+__tom_environments() {
+    echo 'dev development local prod production test testing staging'
+}
+
 _tom()
 {
-    local cur prev words cword
+    local cur prev words cword split
 
-    _init_completion || return
+    _init_completion -s || return
+    echo "'$split' : '$cur' : '$prev' : '$words' : '$cword'" > /home/silverqx/tmp/tom.log
 
     COMP_WORDBREAKS=${COMP_WORDBREAKS//:}
 
@@ -21,12 +50,17 @@ _tom()
         --help | --version | -!(-*)[hV])
             return
             ;;
+        --env)
+            COMPREPLY=($(compgen -W "$(__tom_environments)" -- "$cur"))
+            return
+            ;;
     esac
 
     # Count the number of arguments excluding options
     # Default is 1 and it only count arguments before current word!
+    # $1 = because without it it counts tom --env=dev as 3 instead of 1+
     local args
-    _count_args
+    _count_args =
 
     # Find currently active tom command
     local tom_command i
@@ -40,14 +74,25 @@ _tom()
         fi
     done
 
+    # Complete connection names
+    if [[ -v tom_command ]] &&
+       [[ $tom_command == 'migrate' || $tom_command =~ ^migrate: || $tom_command =~ ^db: ]] &&
+       [[ $prev == '--database' ]]
+    then
+        COMPREPLY=($(compgen -W "$(__tom_connections)" -- "$cur"))
+        return
+    fi
+
     # Accurate completion using the tom complete command
     if _have tom; then
         # Completion for positional arguments and for long and short options
-        if [[ $args -eq 1 || $cur == -* ||
-            (-v tom_command && $args -eq 2 && $tom_command == @(help|list|integrate)) ]];
+        if [[ $split == false && ($args -eq 1 || $cur == -*) ]] ||
+           [[ $split == false &&
+              (-v tom_command && $args -eq 2 && $tom_command == @(help|list|integrate)) ]]
         then
             COMPREPLY=($(compgen -W "$(tom complete --word="$cur" \
                 --commandline="${words[*]}" --cword=$cword 2>/dev/null)" -- "$cur"))
+            return
         fi
 
         # Provide file/dir completion for the following commands
