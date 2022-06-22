@@ -41,7 +41,6 @@ _tom()
     local cur prev words cword split
 
     _init_completion -s || return
-    echo "'$split' : '$cur' : '$prev' : '$words' : '$cword'" > /home/silverqx/tmp/tom.log
 
     COMP_WORDBREAKS=${COMP_WORDBREAKS//:}
 
