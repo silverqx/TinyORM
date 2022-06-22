@@ -21,9 +21,9 @@ jobs:
             apt: [ lld ]
             command: clang++-14
 
-          - key: gcc11
+          - key: gcc12
             apt: []
-            command: g++-11
+            command: g++-12
 
     steps:
     - uses: actions/checkout@v3
