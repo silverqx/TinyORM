@@ -80,7 +80,7 @@ QList<QCommandLineOption> CompleteCommand::optionsSignature() const
     };
 }
 
-int CompleteCommand::run()
+int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 {
     Command::run();
 
