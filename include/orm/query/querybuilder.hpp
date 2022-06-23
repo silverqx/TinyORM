@@ -12,6 +12,7 @@ TINY_SYSTEM_HEADER
 #include "orm/ormconcepts.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/query/grammars/grammar.hpp"
+#include "orm/utils/query.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -29,7 +30,10 @@ namespace Orm::Query
     /*! Database query builder. */
     class SHAREDLIB_EXPORT Builder // clazy:exclude=copyable-polymorphic
     {
+        /*! Alias for the query grammar. */
         using QueryGrammar = Query::Grammars::Grammar;
+        /*! Alias for query utils. */
+        using QueryUtils = Orm::Utils::Query;
 
     public:
         /*! Constructor. */
@@ -708,7 +712,7 @@ namespace Orm::Query
            the results and get the exact data that was requested for the query. */
         auto query = get({column, key});
 
-        const auto size = query.size();
+        const auto size = QueryUtils::queryResultSize(query, m_connection);
 
         // Empty result
         if (size == 0)

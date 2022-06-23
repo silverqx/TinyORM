@@ -1,8 +1,10 @@
 #include "orm/utils/query.hpp"
 
 #include <QDebug>
+#include <QtSql/QSqlDriver>
 #include <QtSql/QSqlQuery>
 
+#include "orm/databaseconnection.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/utils/type.hpp"
 
@@ -113,6 +115,23 @@ Query::zipForInsert(const QVector<QString> &columns,
     }
 
     return zippedValues;
+}
+
+int Query::queryResultSize(QSqlQuery &query, DatabaseConnection &connection)
+{
+    if (connection.driver()->hasFeature(QSqlDriver::QuerySize))
+        return query.size();
+
+    query.seek(QSql::BeforeFirstRow);
+
+    // Count manually
+    int size = 0;
+    while (query.next())
+        ++size;
+
+    query.seek(QSql::BeforeFirstRow);
+
+    return size;
 }
 
 } // namespace Orm::Utils

@@ -7,6 +7,9 @@
 
 #include "orm/databaseconnection.hpp"
 #include "orm/exceptions/logicerror.hpp"
+#include "orm/utils/query.hpp"
+
+using QueryUtils = Orm::Utils::Query;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -165,15 +168,7 @@ bool SchemaBuilder::hasTable(const QString &table) const
     auto query = m_connection.selectFromWriteConnection(
                      m_grammar.compileTableExists(), {table_});
 
-    if (m_connection.driver()->hasFeature(QSqlDriver::QuerySize))
-        return query.size() > 0;
-
-    // Count manually
-    auto size = 0;
-    while (query.next())
-        ++size;
-
-    return size > 0;
+    return QueryUtils::queryResultSize(query, m_connection) > 0;
 }
 
 // CUR schema, test in functional tests silverqx

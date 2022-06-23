@@ -73,7 +73,7 @@ QVector<QVariant> Builder::pluck(const QString &column)
        and get the exact data that was requested for the query. */
     auto query = get({column});
 
-    const auto size = query.size();
+    const auto size = QueryUtils::queryResultSize(query, m_connection);
 
     // Empty result
     if (size == 0)

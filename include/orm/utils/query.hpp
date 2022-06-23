@@ -15,7 +15,11 @@ class QSqlQuery;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Utils
+namespace Orm
+{
+    class DatabaseConnection;
+
+namespace Utils
 {
 
     /*! Library class for database query. */
@@ -43,9 +47,13 @@ namespace Orm::Utils
         static QVector<QVariantMap>
         zipForInsert(const QVector<QString> &columns,
                      const QVector<QVector<QVariant>> &values);
+
+        /*! Returns the size of the result (number of rows returned). */
+        static int queryResultSize(QSqlQuery &query, DatabaseConnection &connection);
     };
 
-} // namespace Orm::Utils
+} // namespace Utils
+} // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 
