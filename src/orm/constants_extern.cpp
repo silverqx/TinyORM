@@ -42,6 +42,8 @@ namespace Orm::Constants
     const QString NOSPACE     = QStringLiteral("%1%2");
     const QString EMPTY       = QLatin1String("");
     const QString text_       = QStringLiteral("text");
+    const QString Prepared    = QStringLiteral("prepared");
+    const QString Unprepared  = QStringLiteral("unprepared");
 
     const QString QMYSQL      = QStringLiteral("QMYSQL");
     const QString QPSQL       = QStringLiteral("QPSQL");

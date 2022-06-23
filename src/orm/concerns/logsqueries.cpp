@@ -22,7 +22,12 @@ namespace Orm::Concerns
 /* public */
 
 void LogsQueries::logQueryForPretend(
-        const QString &query, const QVector<QVariant> &bindings) const
+        const QString &query, const QVector<QVariant> &bindings,
+#ifdef TINYORM_DEBUG_SQL
+        const QString &type) const
+#else
+        const QString &/*unused*/) const
+#endif
 {
     if (m_loggingQueries && m_queryLog)
         m_queryLog->append({query, bindings, Log::Type::NORMAL, ++m_queryLogId});
@@ -34,7 +39,8 @@ void LogsQueries::logQueryForPretend(
 
     const auto &connectionName = databaseConnection().getName();
 
-    qDebug("Pretended prepared query (%s) : %s",
+    qDebug("Pretended %s query (%s) : %s",
+           type.toUtf8().constData(),
            connectionName.isEmpty() ? "" : connectionName.toUtf8().constData(),
            QueryUtils::parseExecutedQueryForPretend(query,
                                                     bindings).toUtf8().constData());
@@ -141,8 +147,12 @@ LogsQueries::withFreshQueryLog(const std::function<QVector<Log>()> &callback)
 /* private */
 
 void LogsQueries::logQueryInternal(
-        const QSqlQuery &query,
-        const std::optional<qint64> elapsed = std::nullopt) const
+        const QSqlQuery &query, const std::optional<qint64> elapsed,
+#ifdef TINYORM_DEBUG_SQL
+        const QString &type) const
+#else
+        const QString &/*unused*/) const
+#endif
 {
     if (m_loggingQueries && m_queryLog) {
         auto executedQuery = query.executedQuery();
@@ -167,7 +177,8 @@ void LogsQueries::logQueryInternal(
 
     const auto &connectionName = databaseConnection().getName();
 
-    qDebug("Executed prepared query (%llims, %i results, %i affected%s) : %s",
+    qDebug("Executed %s query (%llims, %i results, %i affected%s) : %s",
+           type.toUtf8().constData(),
            elapsed ? *elapsed : -1,
            query.size(),
            query.numRowsAffected(),

@@ -35,13 +35,14 @@ namespace Concerns
         inline virtual ~LogsQueries() = default;
 
         /*! Log a query into the connection's query log. */
-        inline void logQuery(const QSqlQuery &query, std::optional<qint64> elapsed) const;
+        inline void logQuery(const QSqlQuery &query, std::optional<qint64> elapsed,
+                             const QString &type) const;
         /*! Log a query into the connection's query log. */
         inline void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
-                             std::optional<qint64> elapsed) const;
+                             std::optional<qint64> elapsed, const QString &type) const;
         /*! Log a query into the connection's query log in the pretending mode. */
-        void logQueryForPretend(const QString &query,
-                                const QVector<QVariant> &bindings) const;
+        void logQueryForPretend(const QString &query, const QVector<QVariant> &bindings,
+                                const QString &type) const;
         /*! Log a transaction query into the connection's query log. */
         void logTransactionQuery(const QString &query,
                                  std::optional<qint64> elapsed) const;
@@ -92,8 +93,8 @@ namespace Concerns
 
     private:
         /*! Log a query into the connection's query log. */
-        void logQueryInternal(const QSqlQuery &query,
-                              std::optional<qint64> elapsed) const;
+        void logQueryInternal(const QSqlQuery &query, std::optional<qint64> elapsed,
+                              const QString &type) const;
 
         /*! Convert a named bindings map to the positional bindings vector. */
         QVector<QVariant>
@@ -111,16 +112,17 @@ namespace Concerns
     /* public */
 
     void LogsQueries::logQuery(
-            const QSqlQuery &queryResult, std::optional<qint64> elapsed) const
+            const QSqlQuery &queryResult, std::optional<qint64> elapsed,
+            const QString &type) const
     {
-        logQueryInternal(queryResult, elapsed);
+        logQueryInternal(queryResult, elapsed, type);
     }
 
     void LogsQueries::logQuery(
             const std::tuple<int, QSqlQuery> &queryResult,
-            std::optional<qint64> elapsed) const
+            std::optional<qint64> elapsed, const QString &type) const
     {
-        logQueryInternal(std::get<1>(queryResult), elapsed);
+        logQueryInternal(std::get<1>(queryResult), elapsed, type);
     }
 
     std::shared_ptr<QVector<Log>> LogsQueries::getQueryLog() const

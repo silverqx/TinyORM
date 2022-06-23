@@ -249,7 +249,7 @@ namespace SchemaNs
         template<typename Return>
         Return run(
                 const QString &queryString, const QVector<QVariant> &bindings,
-                const RunCallback<Return> &callback);
+                const QString &type, const RunCallback<Return> &callback);
         /*! Run a SQL statement. */
         template<typename Return>
         Return runQueryCallback(
@@ -456,7 +456,7 @@ namespace SchemaNs
     Return
     DatabaseConnection::run(
             const QString &queryString, const QVector<QVariant> &bindings,
-            const RunCallback<Return> &callback)
+            const QString &type, const RunCallback<Return> &callback)
     {
         reconnectIfMissingConnection();
 
@@ -493,9 +493,9 @@ namespace SchemaNs
            to run and then log the query, bindings, and execution time. We'll
            log time in milliseconds. */
         if (m_pretending)
-            logQueryForPretend(queryString, bindings);
+            logQueryForPretend(queryString, bindings, type);
         else
-            logQuery(result, elapsed);
+            logQuery(result, elapsed, type);
 
         return result;
     }

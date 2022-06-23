@@ -85,7 +85,7 @@ DatabaseConnection::select(const QString &queryString,
 {
     const auto functionName = __tiny_func__;
 
-    return run<QSqlQuery>(queryString, bindings,
+    return run<QSqlQuery>(queryString, bindings, Prepared,
                [this, &functionName]
                (const QString &queryString_, const QVector<QVariant> &bindings_)
                -> QSqlQuery
@@ -133,7 +133,7 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
 {
     const auto functionName = __tiny_func__;
 
-    return run<QSqlQuery>(queryString, bindings,
+    return run<QSqlQuery>(queryString, bindings, Prepared,
                [this, &functionName]
                (const QString &queryString_, const QVector<QVariant> &bindings_)
                -> QSqlQuery
@@ -172,7 +172,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
 {
     const auto functionName = __tiny_func__;
 
-    return run<std::tuple<int, QSqlQuery>>(queryString, bindings,
+    return run<std::tuple<int, QSqlQuery>>(queryString, bindings, Prepared,
             [this, &functionName]
             (const QString &queryString_, const QVector<QVariant> &bindings_)
             -> std::tuple<int, QSqlQuery>
@@ -212,7 +212,7 @@ QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
 {
     const auto functionName = __tiny_func__;
 
-    return run<QSqlQuery>(queryString, {},
+    return run<QSqlQuery>(queryString, {}, Unprepared,
                [this, &functionName]
                (const QString &queryString_, const QVector<QVariant> &/*unused*/)
                -> QSqlQuery
