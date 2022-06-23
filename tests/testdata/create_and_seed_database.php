@@ -432,6 +432,8 @@ function fixPostgresSequences(): void
 function createAndSeedTables(array $connections, array $options): void
 {
     foreach ($connections as $connection) {
+//        $startTime = microtime(true);
+
         // Allow to skip dropping and creating tables for the given connection
         if ((array_key_exists('skip-mysql-migrate',    $options) && $connection === 'mysql') ||
             (array_key_exists('skip-postgres-migrate', $options) && $connection === 'pgsql') ||
@@ -445,6 +447,9 @@ function createAndSeedTables(array $connections, array $options): void
 
         if ($connection === 'pgsql')
             fixPostgresSequences();
+
+//        printf("Elapsed for %s : %sms\n", $connection,
+//            number_format((microtime(true) - $startTime) * 1000, 0));
     }
 }
 
