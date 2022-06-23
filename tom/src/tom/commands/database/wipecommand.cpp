@@ -29,7 +29,9 @@ WipeCommand::WipeCommand(Application &application, QCommandLineParser &parser)
 QList<QCommandLineOption> WipeCommand::optionsSignature() const
 {
     return {
-        {database_,  QStringLiteral("The database connection to use"), database_up}, // Value
+        {database_,  QStringLiteral("The database connection to use "
+                                    "<comment>(multiple values allowed)</comment>"),
+                     database_up}, // Value
         {drop_views, QStringLiteral("Drop all tables and views")},
         {drop_types, QStringLiteral("Drop all tables and types (Postgres only)")},
         {force,      QStringLiteral("Force the operation to run when in production")},
@@ -44,29 +46,40 @@ int WipeCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    const auto database = value(database_);
+    const auto databases = values(database_);
 
-    // Database connection to use
-    return usingConnection(database, isDebugVerbosity(), [this, &database]
-    {
-        if (isSet(drop_views)) {
-            dropAllViews(database);
+    auto result = EXIT_SUCCESS;
+    const auto shouldPrintConnection = databases.size() > 1;
+    auto first = true;
 
-            info(QStringLiteral("Dropped all views successfully."));
-        }
+    // Database connection to use (multiple connections supported)
+    for (const auto &database : databases) {
+        // Visually divide individual connections
+        printConnection(database, shouldPrintConnection, first);
 
-        dropAllTables(database);
+        result &= usingConnection(database, isDebugVerbosity(), [this, &database]
+        {
+            if (isSet(drop_views)) {
+                dropAllViews(database);
 
-        info(QStringLiteral("Dropped all tables successfully."));
+                info(QStringLiteral("Dropped all views successfully."));
+            }
 
-        if (isSet(drop_types)) {
-            dropAllTypes(database);
+            dropAllTables(database);
 
-            info(QStringLiteral("Dropped all types successfully."));
-        }
+            info(QStringLiteral("Dropped all tables successfully."));
 
-        return EXIT_SUCCESS;
-    });
+            if (isSet(drop_types)) {
+                dropAllTypes(database);
+
+                info(QStringLiteral("Dropped all types successfully."));
+            }
+
+            return EXIT_SUCCESS;
+        });
+    }
+
+    return result;
 }
 
 /* protected */

@@ -57,7 +57,9 @@ QList<QCommandLineOption> SeedCommand::optionsSignature() const
     return {
         {class_,    QStringLiteral("The class name of the root seeder"), class_up,
                     DatabaseSeeder}, // Value
-        {database_, QStringLiteral("The database connection to use"), database_up}, // Value
+        {database_, QStringLiteral("The database connection to use "
+                                   "<comment>(multiple values allowed)</comment>"),
+                    database_up}, // Value
         {force,     QStringLiteral("Force the operation to run when in production")},
     };
 }
@@ -70,37 +72,50 @@ int SeedCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    // Database connection to use
-    return usingConnection(value(database_), isDebugVerbosity(), [this]
-    {
-        auto seederResult = getSeeder();
+    auto databases = values(database_);
 
-        comment(QStringLiteral("Seeding: "), false);
-        note(QStringLiteral("%1 (root)").arg(seederResult.name));
+    auto result = EXIT_SUCCESS;
+    const auto shouldPrintConnection = databases.size() > 1;
+    auto first = true;
 
-        QElapsedTimer timer;
-        timer.start();
+    // Database connection to use (multiple connections supported)
+    for (auto &&database : databases) {
+        // Visually divide individual connections
+        printConnection(database, shouldPrintConnection, first);
 
-        // Fire it up 🔥
-#ifdef TINYORM_DISABLE_ORM
-        seederResult.seeder.get().run();
-#else
-        GuardedModel::unguarded([&seederResult]
+        result &= usingConnection(std::move(database), isDebugVerbosity(), [this]
         {
+            auto seederResult = getSeeder();
+
+            comment(QStringLiteral("Seeding: "), false);
+            note(QStringLiteral("%1 (root)").arg(seederResult.name));
+
+            QElapsedTimer timer;
+            timer.start();
+
+            // Fire it up 🔥
+#ifdef TINYORM_DISABLE_ORM
             seederResult.seeder.get().run();
-        });
+#else
+            GuardedModel::unguarded([&seederResult]
+            {
+                seederResult.seeder.get().run();
+            });
 #endif
 
-        const auto elapsedTime = timer.elapsed();
+            const auto elapsedTime = timer.elapsed();
 
-        info(QStringLiteral("Seeded:"), false);
-        note(QStringLiteral("  %1 (%2ms total)").arg(std::move(seederResult.name))
-                                                .arg(elapsedTime));
+            info(QStringLiteral("Seeded:"), false);
+            note(QStringLiteral("  %1 (%2ms total)").arg(std::move(seederResult.name))
+                                                    .arg(elapsedTime));
 
-        info("Database seeding completed successfully.");
+            info(QStringLiteral("Database seeding completed successfully."));
 
-        return EXIT_SUCCESS;
-    });
+            return EXIT_SUCCESS;
+        });
+    }
+
+    return result;
 }
 
 /* protected */

@@ -49,14 +49,14 @@ namespace Commands::Migrations
 
     protected:
         /*! Prepare the migration database for running. */
-        void prepareDatabase() const;
+        void prepareDatabase(const QString &connection) const;
         /*! Load the schema state to seed the initial database schema structure. */
         void loadSchemaState() const;
 
         /*! Determine if the developer has requested database seeding. */
         bool needsSeeding() const;
         /*! Run the database seeder command. */
-        void runSeeder() const;
+        void runSeeder(const QString &connection) const;
 
         /*! The migrator service instance. */
         std::shared_ptr<Migrator> m_migrator;

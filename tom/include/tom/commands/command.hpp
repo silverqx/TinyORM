@@ -88,12 +88,16 @@ namespace Tom::Commands
         bool isSet(const QString &name) const;
         /*! Returns the option value found for the given option name or empty string. */
         QString value(const QString &name) const;
+        /*! Returns the option values found for the given option name or empty list. */
+        QStringList values(const QString &name) const;
         /*! Get a full command-line value option if value is set in the parser. */
         QString valueCmd(const QString &name, const QString &key = "") const;
         /*! Get a full command-line boolean option if it's set in the parser. */
         QString boolCmd(const QString &name, const QString &key = "") const;
         /*! Get a long option name by the given name (prepend -- before the name). */
         static QString longOption(const QString &name);
+        /*! Create the long option with value (--database=xyz). */
+        static QString longOption(const QString &name, const QString &value);
 
         /*! Alias for the QList command-line option size type. */
         using ArgumentsSizeType = QStringList::size_type;
@@ -109,12 +113,18 @@ namespace Tom::Commands
         /*! Get a positional argument by the given name. */
         QString argument(const QString &name, bool useDefault = true) const;
 
+        /* Getters */
         /*! Get a database connection. */
         Orm::DatabaseConnection &connection(const QString &name) const;
         /*! Get a command-line parser. */
         QCommandLineParser &parser() const noexcept;
         /*! Get database connection resolver. */
         std::shared_ptr<ConnectionResolverInterface> resolver() const noexcept;
+
+        /* Others */
+        /*! Print currently used connection if passed more connections to --database=. */
+        void printConnection(const QString &name, bool shouldPrintConnection,
+                             bool &first) const;
 
         /*! Reference to the tom application. */
         std::reference_wrapper<Application> m_application;

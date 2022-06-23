@@ -36,7 +36,9 @@ MigrateCommand::MigrateCommand(
 QList<QCommandLineOption> MigrateCommand::optionsSignature() const
 {
     return {
-        {database_,     QStringLiteral("The database connection to use"), database_up}, // Value
+        {database_,     QStringLiteral("The database connection to use "
+                                       "<comment>(multiple values allowed)</comment>"),
+                        database_up}, // Value
         {force,         QStringLiteral("Force the operation to run when in production")},
         {pretend,       QStringLiteral("Dump the SQL queries that would be run")},
 //        {"schema-path", QStringLiteral("The path to a schema dump file")}, // Value
@@ -54,36 +56,49 @@ int MigrateCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    // Database connection to use
-    return usingConnection(value(database_), isDebugVerbosity(), m_migrator->repository(),
-                           [this]
-    {
-        // Install db repository and load schema state
-        prepareDatabase();
+    const auto databases = values(database_);
 
-        /* Next, we will check to see if a path option has been defined. If it has
-           we will use the path relative to the root of this installation folder
-           so that migrations may be run for any path within the applications. */
-        m_migrator->run({isSet(pretend), isSet(step_)});
+    auto result = EXIT_SUCCESS;
+    const auto shouldPrintConnection = databases.size() > 1;
+    auto first = true;
 
-        info("Database migaration completed successfully.");
+    // Database connection to use (multiple connections supported)
+    for (const auto &database : databases) {
+        // Visually divide individual connections
+        printConnection(database, shouldPrintConnection, first);
 
-        /* Finally, if the "seed" option has been given, we will re-run the database
-           seed task to re-populate the database, which is convenient when adding
-           a migration and a seed at the same time, as it is only this command. */
-        if (needsSeeding())
-            runSeeder();
+        result &= usingConnection(database, isDebugVerbosity(), m_migrator->repository(),
+                                  [this, &database]
+        {
+            // Install db repository and load schema state
+            prepareDatabase(database);
 
-        return EXIT_SUCCESS;
-    });
+            /* Next, we will check to see if a path option has been defined. If it has
+               we will use the path relative to the root of this installation folder
+               so that migrations may be run for any path within the applications. */
+            m_migrator->run({isSet(pretend), isSet(step_)});
+
+            info(QStringLiteral("Database migaration completed successfully."));
+
+            /* Finally, if the "seed" option has been given, we will re-run the database
+               seed task to re-populate the database, which is convenient when adding
+               a migration and a seed at the same time, as it is only this command. */
+            if (needsSeeding())
+                runSeeder(database);
+
+            return EXIT_SUCCESS;
+        });
+    }
+
+    return result;
 }
 
 /* protected */
 
-void MigrateCommand::prepareDatabase() const
+void MigrateCommand::prepareDatabase(const QString &connection) const
 {
     if (!m_migrator->repositoryExists())
-        call(MigrateInstall, {value(database_)});
+        call(MigrateInstall, {longOption(database_, connection)});
 
     if (!m_migrator->hasRunAnyMigrations() && !isSet(pretend))
         loadSchemaState();
@@ -99,9 +114,9 @@ bool MigrateCommand::needsSeeding() const
     return !isSet(pretend) && isSet(seed);
 }
 
-void MigrateCommand::runSeeder() const
+void MigrateCommand::runSeeder(const QString &connection) const
 {
-    call(DbSeed, {valueCmd(database_), longOption(force)});
+    call(DbSeed, {longOption(database_, connection), longOption(force)});
 }
 
 } // namespace Tom::Commands::Migrations

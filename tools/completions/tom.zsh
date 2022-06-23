@@ -52,7 +52,7 @@ __tom_connections() {
         fi
     done
 
-    _values connection $connections
+    _values -s , connection $connections
 }
 
 # Try to infer seeder class names if a user is in the right folder

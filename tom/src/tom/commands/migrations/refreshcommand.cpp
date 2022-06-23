@@ -41,7 +41,9 @@ RefreshCommand::RefreshCommand(
 QList<QCommandLineOption> RefreshCommand::optionsSignature() const
 {
     return {
-        {database_,    QStringLiteral("The database connection to use"), database_up}, // Value
+        {database_,    QStringLiteral("The database connection to use "
+                                      "<comment>(multiple values allowed)</comment>"),
+                       database_up}, // Value
         {force,        QStringLiteral("Force the operation to run when in production")},
         {seed,         QStringLiteral("Indicates if the seed task should be re-run")},
         {seeder,       QStringLiteral("The class name of the root seeder"), seeder_up}, // Value
@@ -60,26 +62,37 @@ int RefreshCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    // Database connection to use
-    auto databaseCmd = valueCmd(database_);
+    const auto databases = values(database_);
 
-    /* If the "step" option is specified it means we only want to rollback a small
-       number of migrations before migrating again. For example, the user might
-       only rollback and remigrate the latest four migrations instead of all. */
-    if (const auto step = value(step_).toInt(); step > 0)
-        call(MigrateRollback, {databaseCmd,
-                               longOption(force),
-                               valueCmd(step_)});
-    else
-        call(MigrateReset, {databaseCmd, longOption(force)});
+    const auto shouldPrintConnection = databases.size() > 1;
+    auto first = true;
 
-    call(Migrate, {databaseCmd,
-                   longOption(force),
-                   boolCmd(step_migrate, step_)});
+    // Database connection to use (multiple connections supported)
+    for (const auto &database : databases) {
+        // Visually divide individual connections
+        printConnection(database, shouldPrintConnection, first);
 
-    // Invoke seeder
-    if (needsSeeding())
-        runSeeder(std::move(databaseCmd));
+        // Database connection to use
+        auto databaseCmd = longOption(database_, database);
+
+        /* If the "step" option is specified it means we only want to rollback a small
+           number of migrations before migrating again. For example, the user might
+           only rollback and remigrate the latest four migrations instead of all. */
+        if (const auto step = value(step_).toInt(); step > 0)
+            call(MigrateRollback, {databaseCmd,
+                                   longOption(force),
+                                   valueCmd(step_)});
+        else
+            call(MigrateReset, {databaseCmd, longOption(force)});
+
+        call(Migrate, {databaseCmd,
+                       longOption(force),
+                       boolCmd(step_migrate, step_)});
+
+        // Invoke seeder
+        if (needsSeeding())
+            runSeeder(std::move(databaseCmd));
+    }
 
     return EXIT_SUCCESS;
 }

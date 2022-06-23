@@ -32,7 +32,9 @@ ResetCommand::ResetCommand(
 QList<QCommandLineOption> ResetCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use"), database_up}, // Value
+        {database_, QStringLiteral("The database connection to use "
+                                   "<comment>(multiple values allowed)</comment>"),
+                    database_up}, // Value
         {force,     QStringLiteral("Force the operation to run when in production")},
         {pretend,   QStringLiteral("Dump the SQL queries that would be run")},
     };
@@ -46,20 +48,33 @@ int ResetCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    // Database connection to use
-    return usingConnection(value(database_), isDebugVerbosity(), m_migrator->repository(),
-                           [this]
-    {
-        if (!m_migrator->repositoryExists()) {
-            comment(QStringLiteral("Migration table not found."));
+    auto databases = values(database_);
 
-            return EXIT_FAILURE;
-        }
+    auto result = EXIT_SUCCESS;
+    const auto shouldPrintConnection = databases.size() > 1;
+    auto first = true;
 
-        m_migrator->reset(isSet(pretend));
+    // Database connection to use (multiple connections supported)
+    for (auto &&database : databases) {
+        // Visually divide individual connections
+        printConnection(database, shouldPrintConnection, first);
 
-        return EXIT_SUCCESS;
-    });
+        result &= usingConnection(std::move(database), isDebugVerbosity(),
+                                  m_migrator->repository(), [this]
+        {
+            if (!m_migrator->repositoryExists()) {
+                comment(QStringLiteral("Migration table not found."));
+
+                return EXIT_FAILURE;
+            }
+
+            m_migrator->reset(isSet(pretend));
+
+            return EXIT_SUCCESS;
+        });
+    }
+
+    return result;
 }
 
 } // namespace Tom::Commands::Migrations

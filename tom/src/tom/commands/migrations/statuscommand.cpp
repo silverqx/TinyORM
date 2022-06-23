@@ -37,7 +37,9 @@ StatusCommand::StatusCommand(
 QList<QCommandLineOption> StatusCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use"), database_up}, // Value
+        {database_, QStringLiteral("The database connection to use "
+                                   "<comment>(multiple values allowed)</comment>"),
+                    database_up}, // Value
     };
 }
 
@@ -45,43 +47,56 @@ int StatusCommand::run()
 {
     Command::run();
 
-    // Database connection to use
-    return usingConnection(value(database_), isDebugVerbosity(), m_migrator->repository(),
-                           [this]
-    {
-        if (!m_migrator->repositoryExists()) {
-            error(QStringLiteral("Migration table not found."));
+    auto databases = values(database_);
 
-            return EXIT_FAILURE;
-        }
+    auto result = EXIT_SUCCESS;
+    const auto shouldPrintConnection = databases.size() > 1;
+    auto first = true;
 
-        const auto &repository = m_migrator->repository();
+    // Database connection to use (multiple connections supported)
+    for (auto &&database : databases) {
+        // Visually divide individual connections
+        printConnection(database, shouldPrintConnection, first);
 
-        if (auto migrations = getStatusFor(repository.getRanSimple(),
-                                           repository.getMigrationBatches());
-            !migrations.empty()
-        ) {
-            /* During testing save the result of a status command to the global
-               variable instead of outputting it, to be able to verify results. */
+        result &= usingConnection(std::move(database), isDebugVerbosity(),
+                                  m_migrator->repository(), [this]
+        {
+            if (!m_migrator->repositoryExists()) {
+                error(QStringLiteral("Migration table not found."));
+
+                return EXIT_FAILURE;
+            }
+
+            const auto &repository = m_migrator->repository();
+
+            if (auto migrations = getStatusFor(repository.getRanSimple(),
+                                               repository.getMigrationBatches());
+                !migrations.empty()
+            ) {
+                /* During testing save the result of a status command to the global
+                   variable instead of outputting it, to be able to verify results. */
+#ifdef TINYTOM_TESTS_CODE
+                if (m_inUnitTests)
+                    m_status = statusForUnitTest(std::move(migrations));
+                else
+#endif
+                    table({"Ran?", "Migration", "Batch"}, migrations);
+
+                return EXIT_SUCCESS;
+            }
+
 #ifdef TINYTOM_TESTS_CODE
             if (m_inUnitTests)
-                m_status = statusForUnitTest(std::move(migrations));
-            else
+                m_status.clear();
 #endif
-                table({"Ran?", "Migration", "Batch"}, migrations);
+
+            error(QStringLiteral("No migrations found"));
 
             return EXIT_SUCCESS;
-        }
+        });
+    }
 
-#ifdef TINYTOM_TESTS_CODE
-        if (m_inUnitTests)
-            m_status.clear();
-#endif
-
-        error(QStringLiteral("No migrations found"));
-
-        return EXIT_SUCCESS;
-    });
+    return result;
 }
 
 /* protected */

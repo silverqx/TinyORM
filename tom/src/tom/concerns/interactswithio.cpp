@@ -343,9 +343,13 @@ QString InteractsWithIO::parseOutput(QString string, const bool isAnsi) const
                 .replace(QStringLiteral("<info>"),     QStringLiteral("\033[32m"))
                 .replace(QStringLiteral("<error>"),    QStringLiteral("\033[37;41m"))
                 .replace(QStringLiteral("<comment>"),  QStringLiteral("\033[33m"))
+                .replace(QStringLiteral("<blue>"),     QStringLiteral("\033[34m"))
+                .replace(QStringLiteral("<b-white>"),  QStringLiteral("\033[97m"))
                 .replace(QStringLiteral("</info>"),    QStringLiteral("\033[0m"))
                 .replace(QStringLiteral("</error>"),   QStringLiteral("\033[0m"))
-                .replace(QStringLiteral("</comment>"), QStringLiteral("\033[0m"));
+                .replace(QStringLiteral("</comment>"), QStringLiteral("\033[0m"))
+                .replace(QStringLiteral("</blue>"),    QStringLiteral("\033[0m"))
+                .replace(QStringLiteral("</b-white>"), QStringLiteral("\033[0m"));
 
     // no-ansi output
     return stripTags(std::move(string));
@@ -359,9 +363,13 @@ QString InteractsWithIO::stripTags(QString string) const
             .replace(QStringLiteral("<info>"),     "")
             .replace(QStringLiteral("<error>"),    "")
             .replace(QStringLiteral("<comment>"),  "")
+            .replace(QStringLiteral("<blue>"),     "")
+            .replace(QStringLiteral("<b-white>"),  "")
             .replace(QStringLiteral("</info>"),    "")
             .replace(QStringLiteral("</error>"),   "")
-            .replace(QStringLiteral("</comment>"), "");
+            .replace(QStringLiteral("</comment>"), "")
+            .replace(QStringLiteral("</blue>"),    "")
+            .replace(QStringLiteral("</b-white>"), "");
 }
 
 InteractsWithIO::Verbosity

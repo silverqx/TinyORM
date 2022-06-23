@@ -40,7 +40,9 @@ FreshCommand::FreshCommand(
 QList<QCommandLineOption> FreshCommand::optionsSignature() const
 {
     return {
-        {database_,     QStringLiteral("The database connection to use"), database_up}, // Value
+        {database_,     QStringLiteral("The database connection to use "
+                                       "<comment>(multiple values allowed)</comment>"),
+                        database_up}, // Value
         {drop_views,    QStringLiteral("Drop all tables and views")},
         {drop_types,    QStringLiteral("Drop all tables and types (Postgres only)")},
         {force,         QStringLiteral("Force the operation to run when in production")},
@@ -60,22 +62,32 @@ int FreshCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    // Database connection to use
-    auto databaseCmd = valueCmd(database_);
+    const auto databases = values(database_);
 
-    call(DbWipe, {databaseCmd,
-                  longOption(force),
-                  boolCmd(drop_views),
-                  boolCmd(drop_types)});
+    const auto shouldPrintConnection = databases.size() > 1;
+    auto first = true;
 
-    call(Migrate, {databaseCmd,
-                   longOption(force),
-                   boolCmd(step_)});
-//                   valueCmd("schema-path")});
+    // Database connection to use (multiple connections supported)
+    for (const auto &database : databases) {
+        // Visually divide individual connections
+        printConnection(database, shouldPrintConnection, first);
 
-    // Invoke seeder
-    if (needsSeeding())
-        runSeeder(std::move(databaseCmd));
+        auto databaseCmd = longOption(database_, database);
+
+        call(DbWipe, {databaseCmd,
+                      longOption(force),
+                      boolCmd(drop_views),
+                      boolCmd(drop_types)});
+
+        call(Migrate, {databaseCmd,
+                       longOption(force),
+                       boolCmd(step_)});
+//                       valueCmd("schema-path")});
+
+        // Invoke seeder
+        if (needsSeeding())
+            runSeeder(std::move(databaseCmd));
+    }
 
     return EXIT_SUCCESS;
 }

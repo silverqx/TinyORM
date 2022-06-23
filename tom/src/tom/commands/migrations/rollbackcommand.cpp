@@ -34,7 +34,9 @@ RollbackCommand::RollbackCommand(
 QList<QCommandLineOption> RollbackCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use"), database_up}, // Value
+        {database_, QStringLiteral("The database connection to use "
+                                   "<comment>(multiple values allowed)</comment>"),
+                    database_up}, // Value
         {force,     QStringLiteral("Force the operation to run when in production")},
         {pretend,   QStringLiteral("Dump the SQL queries that would be run")},
         {step_,     QStringLiteral("The number of migrations to be reverted"), step_up}, // Value
@@ -49,16 +51,29 @@ int RollbackCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    // Database connection to use
-    return usingConnection(value(database_), isDebugVerbosity(), m_migrator->repository(),
-                           [this]
-    {
-        // Validation not needed as the toInt() returns 0 if conversion fails, like it
-        m_migrator->rollback({.pretend   = isSet(pretend),
-                              .stepValue = value(step_).toInt()});
+    auto databases = values(database_);
 
-        return EXIT_SUCCESS;
-    });
+    auto result = EXIT_SUCCESS;
+    const auto shouldPrintConnection = databases.size() > 1;
+    auto first = true;
+
+    // Database connection to use (multiple connections supported)
+    for (auto &&database : databases) {
+        // Visually divide individual connections
+        printConnection(database, shouldPrintConnection, first);
+
+        result &= usingConnection(std::move(database), isDebugVerbosity(),
+                                  m_migrator->repository(), [this]
+        {
+            // Validation not needed as the toInt() returns 0 if conversion fails, like it
+            m_migrator->rollback({.pretend   = isSet(pretend),
+                                  .stepValue = value(step_).toInt()});
+
+            return EXIT_SUCCESS;
+        });
+    }
+
+    return result;
 }
 
 } // namespace Tom::Commands::Migrations

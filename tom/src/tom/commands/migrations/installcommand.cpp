@@ -29,7 +29,9 @@ InstallCommand::InstallCommand(
 QList<QCommandLineOption> InstallCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use"), database_up}, // Value
+        {database_, QStringLiteral("The database connection to use "
+                                   "<comment>(multiple values allowed)</comment>"),
+                    database_up}, // Value
     };
 }
 
@@ -37,15 +39,29 @@ int InstallCommand::run()
 {
     Command::run();
 
-    // Database connection to use
-    return usingConnection(value(database_), isDebugVerbosity(), *m_repository, [this]
-    {
-        m_repository->createRepository();
+    auto databases = values(database_);
 
-        info(QStringLiteral("Migration table created successfully."));
+    auto result = EXIT_SUCCESS;
+    const auto shouldPrintConnection = databases.size() > 1;
+    auto first = true;
 
-        return EXIT_SUCCESS;
-    });
+    // Database connection to use (multiple connections supported)
+    for (auto &database : databases) {
+        // Visually divide individual connections
+        printConnection(database, shouldPrintConnection, first);
+
+        result &= usingConnection(std::move(database), isDebugVerbosity(), *m_repository,
+                                  [this]
+        {
+            m_repository->createRepository();
+
+            info(QStringLiteral("Migration table created successfully."));
+
+            return EXIT_SUCCESS;
+        });
+    }
+
+    return result;
 }
 
 } // namespace Tom::Commands::Migrations

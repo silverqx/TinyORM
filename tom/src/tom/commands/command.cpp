@@ -13,6 +13,7 @@
 #include "tom/version.hpp"
 
 using Orm::ConnectionResolverInterface;
+using Orm::Constants::COMMA_C;
 
 using Tom::Constants::Help;
 using Tom::Constants::LongOption;
@@ -102,6 +103,26 @@ QString Command::value(const QString &name) const
     return parser().value(name);
 }
 
+QStringList Command::values(const QString &name) const
+{
+    auto values = parser().values(name);
+
+    QStringList valuesSplitted;
+
+    // Support passing more values delimited by comma
+    for (auto &&value : values) {
+        if (!value.contains(COMMA_C)) {
+            valuesSplitted += std::move(value);
+
+            continue;
+        }
+
+        valuesSplitted += value.split(COMMA_C, Qt::SkipEmptyParts);
+    }
+
+    return valuesSplitted;
+}
+
 QString Command::valueCmd(const QString &name, const QString &key) const
 {
     if (auto value = parser().value(name);
@@ -124,6 +145,11 @@ QString Command::boolCmd(const QString &name, const QString &key) const
 QString Command::longOption(const QString &name)
 {
     return LongOption.arg(name);
+}
+
+QString Command::longOption(const QString &name, const QString &value)
+{
+    return QStringLiteral("--%1=%2").arg(name, value);
 }
 
 bool Command::hasArgument(const ArgumentsSizeType index) const
@@ -169,6 +195,8 @@ QString Command::argument(const QString &name, const bool useDefault) const
     return argument(m_positionalArguments.at(name), useDefault);
 }
 
+/* Getters */
+
 Orm::DatabaseConnection &Command::connection(const QString &name) const
 {
     return application().db().connection(name);
@@ -182,6 +210,24 @@ QCommandLineParser &Command::parser() const noexcept
 std::shared_ptr<ConnectionResolverInterface> Command::resolver() const noexcept
 {
     return application().resolver();
+}
+
+/* Others */
+
+void Command::printConnection(const QString &name, const bool shouldPrintConnection,
+                              bool &first) const
+{
+    // Nothing to print
+    if (!shouldPrintConnection)
+        return;
+
+    // Newline for second and subsequent connections only
+    if (first)
+        first = false;
+    else
+        newLine();
+
+    note(QStringLiteral("<blue>Connection:</blue> <b-white>%1</b-white>").arg(name));
 }
 
 /* private */

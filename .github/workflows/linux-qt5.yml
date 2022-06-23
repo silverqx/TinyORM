@@ -172,11 +172,12 @@ jobs:
 
     - name: Create and Seed tables for unit tests 🎉
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
-      run: |
+      run: >-
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
-        ./tom_testdata migrate --database=tinyorm_testdata_tom_mysql --seed --no-ansi
-        ./tom_testdata migrate --database=tinyorm_testdata_tom_postgres --seed --no-ansi
-        ./tom_testdata migrate --database=tinyorm_testdata_tom_sqlite --seed --no-ansi
+
+        ./tom_testdata migrate
+        --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
+        --seed --no-ansi
       env:
         DB_MYSQL_CHARSET: utf8mb4
         DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
