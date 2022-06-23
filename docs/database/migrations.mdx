@@ -53,11 +53,11 @@ The TinyORM `Schema` facade provides database agnostic support for creating and 
 `Tom` migrations is a small console application that depends on the `TinyORM` library. All migrations logic is compiled so recompilation is needed after adding a new migration class.
 
 :::caution
-Currently, TinyORM's schema builder provides first-party support for the MySQL and PostgreSQL database. Support for the SQLite databases is not implemented 😢.
+The [`schema builder`](database/migrations.mdx#tables) and [`migrations`](database/migrations.mdx) don't support [multi-threading](database/getting-started.mdx#multi-threading-support).
 :::
 
-:::caution
-The [`schema builder`](database/migrations.mdx#tables) and [`migrations`](database/migrations.mdx) don't support [multi-threading](database/getting-started.mdx#multi-threading-support).
+:::note
+TinyORM's schema builder supports all [supported databases](database/getting-started.mdx#introduction) out of the box.
 :::
 
 ## Generating Migrations
