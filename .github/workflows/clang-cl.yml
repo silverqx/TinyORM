@@ -188,7 +188,7 @@ jobs:
       run: >-
         $env:Path = '..\..;' + $env:Path
 
-        .\tom_testdata.exe migrate --database=tinyorm_testdata_tom_mysql
+        .\tom_testdata.exe migrate
         --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
         --seed --no-ansi
       env:
