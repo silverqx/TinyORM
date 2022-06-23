@@ -943,6 +943,19 @@ auto t4 = Torrent::find(1)->torrentFiles()->groupBy(std::move(s3), DB::raw(s2)).
 qDebug() << t4;
 
 
+Performance measure timer:
+--------------------------
+
+#include <QElapsedTimer>
+QElapsedTimer timer;
+timer.start();
+qDebug().noquote() << QStringLiteral("Elapsed in XX : %1ms").arg(timer.elapsed());
+
+$startTime = microtime(true);
+printf("Elapsed in %s : %sms\n", $connection,
+    number_format((microtime(true) - $startTime) * 1000, 2));
+
+
 Invoke-Tests.ps1:
 -----------------
 
