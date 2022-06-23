@@ -263,11 +263,11 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-clang-cl-cmake-debug/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
-        .\tom.exe migrate:install --database=tinyorm_testdata_tom_sqlite --no-ansi
-        .\tom.exe migrate:status --database=tinyorm_testdata_tom_sqlite --no-ansi
-        .\tom.exe migrate --database=tinyorm_testdata_tom_sqlite --seed --no-ansi
-        .\tom.exe migrate:refresh --database=tinyorm_testdata_tom_sqlite --seed --no-ansi
-        .\tom.exe migrate:status --database=tinyorm_testdata_tom_sqlite --no-ansi
+        .\tom.exe migrate:install --database=tinyorm_tom_sqlite --no-ansi
+        .\tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
+        .\tom.exe migrate --database=tinyorm_tom_sqlite --seed --no-ansi
+        .\tom.exe migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
+        .\tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
       env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
         TOM_EXAMPLE_ENV: testing
