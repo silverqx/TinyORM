@@ -1,5 +1,7 @@
 #include "orm/databasemanager.hpp"
 
+#include <range/v3/view/map.hpp>
+
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/schema.hpp"
@@ -260,7 +262,7 @@ DatabaseManager::addConnection(const QVariantHash &config, const QString &name)
                 QStringLiteral("The database connection '%1' already exists.")
                 .arg(name));
 
-    (*m_configuration).insert(name, config);
+    (*m_configuration).emplace(name, config);
 
     return *this;
 }
@@ -269,7 +271,7 @@ DatabaseManager &
 DatabaseManager::addConnections(const ConfigurationsType &configs)
 {
     for (auto itConfig = configs.cbegin(); itConfig != configs.cend(); ++itConfig)
-        addConnection(itConfig.value(), itConfig.key());
+        addConnection(itConfig->second, itConfig->first);
 
     return *this;
 }
@@ -303,7 +305,7 @@ bool DatabaseManager::removeConnection(const QString &name)
 
     // Not connected
     if (!(*m_connections).contains(name_)) {
-        (*m_configuration).remove(name_);
+        (*m_configuration).erase(name_);
         resetDefaultConnection_();
         return true;
     }
@@ -321,7 +323,7 @@ bool DatabaseManager::removeConnection(const QString &name)
         Schema::m_schemaBuildersCache.erase(name_);
 
     // Remove TinyORM configuration
-    (*m_configuration).remove(name_);
+    (*m_configuration).erase(name_);
     // Remove Qt's database connection
     QSqlDatabase::removeDatabase(name_);
 
@@ -364,7 +366,7 @@ QSqlDatabase DatabaseManager::connectEagerly(const QString &name)
 
 QStringList DatabaseManager::connectionNames() const
 {
-    return (*m_configuration).keys();
+    return (*m_configuration) | ranges::views::keys | ranges::to<QStringList>();
 }
 
 QStringList DatabaseManager::openedConnectionNames() const

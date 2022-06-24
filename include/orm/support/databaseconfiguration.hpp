@@ -7,6 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include <QVariantHash>
 
+#include <unordered_map>
+
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/threadlocal.hpp"
 
@@ -22,7 +24,7 @@ namespace Orm::Support
 
     public:
         /*! Type used for Database Connections map. */
-        using ConfigurationsType = QHash<QString, QVariantHash>;
+        using ConfigurationsType = std::unordered_map<QString, QVariantHash>;
 
         /*! Default constructor. */
         inline DatabaseConfiguration() = default;
