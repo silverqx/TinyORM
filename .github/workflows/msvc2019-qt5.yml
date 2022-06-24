@@ -123,8 +123,7 @@ jobs:
       run: >-
         $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_5_15_2
 
-        $filename = [System.Net.Mime.ContentDisposition]::new(
-        $response.Headers['Content-Disposition']).FileName
+        $filename = ($env:URL_QMYSQL_DLLS_MSVC_X64_5_15_2 -split '/')[-1]
 
         $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath $filename
 
