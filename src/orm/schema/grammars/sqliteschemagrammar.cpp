@@ -78,12 +78,7 @@ QString SQLiteSchemaGrammar::compileTableExists() const
 
 QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const
 {
-    auto table_ = table;
-
-    // TODO study, wtf is this 🤔 silverqx
-    table_.replace(DOT, "__");
-
-    return QStringLiteral("pragma table_info(%1)").arg(BaseGrammar::wrap(table_));
+    return QStringLiteral("pragma table_info(%1)").arg(BaseGrammar::wrap(table));
 }
 
 /* Compile methods for commands */
@@ -102,7 +97,7 @@ QVector<QString> SQLiteSchemaGrammar::compileCreate(const Blueprint &blueprint) 
 QVector<QString> SQLiteSchemaGrammar::compileDrop(const Blueprint &blueprint,
                                                   const BasicCommand &/*unused*/) const
 {
-    // CUR schema, duplicate silverqx
+    // DUP schema silverqx
     return {QStringLiteral("drop table %1").arg(wrapTable(blueprint))};
 }
 
@@ -110,14 +105,13 @@ QVector<QString>
 SQLiteSchemaGrammar::compileDropIfExists(const Blueprint &blueprint,
                                          const BasicCommand &/*unused*/) const
 {
-    // CUR schema, duplicate silverqx
+    // DUP schema silverqx
     return {QStringLiteral("drop table if exists %1").arg(wrapTable(blueprint))};
 }
 
 QVector<QString> SQLiteSchemaGrammar::compileRename(const Blueprint &blueprint,
                                                     const RenameCommand &command) const
 {
-    // CUR schema, duplicate silverqx
     return {QStringLiteral("alter table %1 rename to %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
@@ -160,7 +154,7 @@ QVector<QString>
 SQLiteSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                                          const RenameCommand &command) const
 {
-    // CUR schema, duplicate silverqx
+    // DUP schema silverqx
     return {QStringLiteral("alter table %1 rename column %2 to %3")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};
@@ -801,7 +795,6 @@ QString SQLiteSchemaGrammar::modifyNullable(const ColumnDefinition &column) cons
     if (column.virtualAs.isEmpty() && column.storedAs.isEmpty())
         return column.nullable ? QString() : notNull;
 
-    // CUR schema, find out why set 'not null' only for virtual/stored silverqx
     // Don't set null for virtual/stored columns, set 'not null' only
     if (column.nullable)
         return {};
@@ -811,7 +804,6 @@ QString SQLiteSchemaGrammar::modifyNullable(const ColumnDefinition &column) cons
 
 QString SQLiteSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
 {
-    // CUR schema, duplicate silverqx
     const auto &defaultValue = column.defaultValue;
 
     if (!defaultValue.isValid() || defaultValue.isNull() ||

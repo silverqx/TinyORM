@@ -171,7 +171,7 @@ bool SchemaBuilder::hasTable(const QString &table) const
     return QueryUtils::queryResultSize(query, m_connection) > 0;
 }
 
-// CUR schema, test in functional tests silverqx
+// TEST schema, test in functional tests silverqx
 bool SchemaBuilder::hasColumn(const QString &table, const QString &column) const
 {
     return ranges::contains(getColumnListing(table), column.toLower(),

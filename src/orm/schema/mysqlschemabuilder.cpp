@@ -25,7 +25,7 @@ MySqlSchemaBuilder::dropDatabaseIfExists(const QString &name) const
                 m_grammar.compileDropDatabaseIfExists(name));
 }
 
-// CUR schema, test in functional tests silverqx
+// TEST schema, test in functional tests silverqx
 void MySqlSchemaBuilder::dropAllTables() const
 {
     auto query = getAllTables();
@@ -51,7 +51,7 @@ void MySqlSchemaBuilder::dropAllTables() const
     enableForeignKeyConstraints();
 }
 
-// CUR schema, test in functional tests silverqx
+// TEST schema, test in functional tests silverqx
 void MySqlSchemaBuilder::dropAllViews() const
 {
     auto query = getAllViews();
@@ -75,7 +75,7 @@ void MySqlSchemaBuilder::dropAllViews() const
 
 QSqlQuery MySqlSchemaBuilder::getAllTables() const
 {
-    // CUR schema, use postproccessor processColumnListing() silverqx
+    // TODO schema, use postproccessor processColumnListing() silverqx
     return m_connection.selectFromWriteConnection(m_grammar.compileGetAllTables());
 }
 

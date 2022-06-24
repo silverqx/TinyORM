@@ -8,7 +8,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Processors
 {
 
-// CUR schema, duplicate silverqx
+// DUP processor silverqx
 QStringList MySqlProcessor::processColumnListing(QSqlQuery &query) const
 {
     QStringList columns;

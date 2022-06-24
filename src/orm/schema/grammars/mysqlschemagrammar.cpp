@@ -124,7 +124,6 @@ MySqlSchemaGrammar::compileDropIfExists(const Blueprint &blueprint,
 QVector<QString> MySqlSchemaGrammar::compileRename(const Blueprint &blueprint,
                                                    const RenameCommand &command) const
 {
-    // CUR schema, duplicate silverqx
     return {QStringLiteral("rename table %1 to %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
@@ -278,7 +277,6 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
         };
     };
 
-    // CUR schema, use enum, indexCommand() calls createIndexName() that needs also command.name silverqx
     /* Pointers to a command's compile member methods by a command name, yes yes c++ 😂.
        I have to map by QString instead of enum struct because a command.name is used
        to look up, I could use enum struct but I would have to map
@@ -889,7 +887,6 @@ QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const
     if (column.virtualAs.isEmpty() && column.storedAs.isEmpty())
         return column.nullable ? QStringLiteral(" null") : notNull;
 
-    // CUR schema, find out why set 'not null' only for virtual/stored silverqx
     // Don't set null for virtual/stored columns, set 'not null' only
     if (column.nullable)
         return {};
@@ -907,6 +904,7 @@ QString MySqlSchemaGrammar::modifyInvisible(const ColumnDefinition &column) cons
 
 QString MySqlSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
 {
+    // DUP schema silverqx
     const auto &defaultValue = column.defaultValue;
 
     if (!defaultValue.isValid() || defaultValue.isNull())

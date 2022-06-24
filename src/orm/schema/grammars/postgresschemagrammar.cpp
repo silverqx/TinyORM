@@ -28,7 +28,7 @@ QString PostgresSchemaGrammar::compileCreateDatabase(
 
 QString PostgresSchemaGrammar::compileDropDatabaseIfExists(const QString &name) const
 {
-    // CUR schema, duplicate silverqx
+    // DUP schema silverqx
     return QStringLiteral("drop database if exists %1").arg(wrapValue(name));
 }
 
@@ -111,7 +111,7 @@ QVector<QString>
 PostgresSchemaGrammar::compileDrop(const Blueprint &blueprint,
                                    const BasicCommand &/*unused*/) const
 {
-    // CUR schema, duplicate silverqx
+    // DUP schema silverqx
     return {QStringLiteral("drop table %1").arg(wrapTable(blueprint))};
 }
 
@@ -119,7 +119,7 @@ QVector<QString>
 PostgresSchemaGrammar::compileDropIfExists(const Blueprint &blueprint,
                                            const BasicCommand &/*unused*/) const
 {
-    // CUR schema, duplicate silverqx
+    // DUP schema silverqx
     return {QStringLiteral("drop table if exists %1").arg(wrapTable(blueprint))};
 }
 
@@ -127,7 +127,6 @@ QVector<QString>
 PostgresSchemaGrammar::compileRename(const Blueprint &blueprint,
                                      const RenameCommand &command) const
 {
-    // CUR schema, duplicate silverqx
     return {QStringLiteral("alter table %1 rename to %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
@@ -136,7 +135,6 @@ QVector<QString>
 PostgresSchemaGrammar::compileAdd(const Blueprint &blueprint,
                                   const BasicCommand &/*unused*/) const
 {
-    // CUR schema, duplicate, difference only in "add column" silverqx
     auto columns = prefixArray("add column", getColumns(blueprint));
 
     // Add autoIncrement starting values to the SQL query if have been supplied
@@ -162,7 +160,6 @@ QVector<QString>
 PostgresSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
                                          const DropColumnsCommand &command) const
 {
-    // CUR schema, duplicate, difference only in "drop column" silverqx
     return {QStringLiteral("alter table %1 %2")
                 .arg(wrapTable(blueprint),
                      columnizeWithoutWrap(prefixArray("drop column",
@@ -173,7 +170,7 @@ QVector<QString>
 PostgresSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                                            const RenameCommand &command) const
 {
-    // CUR schema, duplicate silverqx
+    // DUP schema silverqx
     return {QStringLiteral("alter table %1 rename column %2 to %3")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};
@@ -381,9 +378,9 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
 /* protected */
 
-// CUR schema, duplicate silverqx
 QString PostgresSchemaGrammar::compileCreateTable(const Blueprint &blueprint) const
 {
+    // DUP schema silverqx
     return QStringLiteral("%1 table %2 (%3)")
             .arg(blueprint.isTemporary() ? QStringLiteral("create temporary")
                                          : Create,
@@ -704,7 +701,6 @@ QString PostgresSchemaGrammar::typeReal(const ColumnDefinition &/*unused*/) cons
 
 QString PostgresSchemaGrammar::typeDecimal(const ColumnDefinition &column) const
 {
-    // CUR schema, duplicate and many others are duplicates silverqx
     Q_ASSERT(column.total && column.places);
 
     return QStringLiteral("decimal(%1, %2)").arg(*column.total).arg(*column.places);
@@ -889,7 +885,7 @@ QString PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) co
 
 QString PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
 {
-    // CUR schema, duplicate silverqx
+    // DUP schema silverqx
     const auto &defaultValue = column.defaultValue;
 
     if (!defaultValue.isValid() || defaultValue.isNull())

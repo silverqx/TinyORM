@@ -15,7 +15,7 @@ namespace Orm::SchemaNs
 
 std::optional<QSqlQuery> PostgresSchemaBuilder::createDatabase(const QString &name) const
 {
-    // CUR schema, duplicates silverqx
+    // DUP schema silverqx
     return m_connection.unprepared(
                 m_grammar.compileCreateDatabase(name, m_connection));
 }
@@ -23,12 +23,12 @@ std::optional<QSqlQuery> PostgresSchemaBuilder::createDatabase(const QString &na
 std::optional<QSqlQuery>
 PostgresSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 {
-    // CUR schema, duplicates silverqx
+    // DUP schema silverqx
     return m_connection.unprepared(
                 m_grammar.compileDropDatabaseIfExists(name));
 }
 
-// CUR schema, test in functional tests silverqx
+// TEST schema, test in functional tests silverqx
 void PostgresSchemaBuilder::dropAllTables() const
 {
     auto query = getAllTables();
@@ -57,8 +57,7 @@ void PostgresSchemaBuilder::dropAllTables() const
     m_connection.unprepared(m_grammar.compileDropAllTables(tables));
 }
 
-// CUR schema, duplicate silverqx
-// CUR schema, test in functional tests silverqx
+// TEST schema, test in functional tests silverqx
 void PostgresSchemaBuilder::dropAllViews() const
 {
     auto query = getAllViews();
@@ -95,7 +94,7 @@ QSqlQuery PostgresSchemaBuilder::getAllTables() const
     QVector<QString> schema;
     std::ranges::move(schemaList, std::back_inserter(schema));
 
-    // CUR schema, use postproccessor processColumnListing() silverqx
+    // TODO schema, use postproccessor processColumnListing() silverqx
     return m_connection.selectFromWriteConnection(
                 m_grammar.compileGetAllTables(std::move(schema)));
 }

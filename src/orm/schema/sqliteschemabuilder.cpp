@@ -48,7 +48,7 @@ SQLiteSchemaBuilder::dropDatabaseIfExists(const QString &name) const
     return std::nullopt;
 }
 
-// CUR schema, test in functional tests silverqx
+// TEST schema, test in functional tests silverqx
 void SQLiteSchemaBuilder::dropAllTables() const
 {
     if (m_connection.getDatabaseName() != QStringLiteral(":memory:")) {
@@ -68,7 +68,7 @@ void SQLiteSchemaBuilder::dropAllTables() const
     m_connection.selectFromWriteConnection(sqliteGrammar.compileRebuild());
 }
 
-// CUR schema, test in functional tests silverqx
+// TEST schema, test in functional tests silverqx
 void SQLiteSchemaBuilder::dropAllViews() const
 {
     const auto &sqliteGrammar =
@@ -85,7 +85,7 @@ void SQLiteSchemaBuilder::dropAllViews() const
 
 QSqlQuery SQLiteSchemaBuilder::getAllTables() const
 {
-    // CUR schema, use postproccessor processColumnListing() silverqx
+    // TODO schema, use postproccessor processColumnListing() silverqx
     return m_connection.selectFromWriteConnection(m_grammar.compileGetAllTables());
 }
 
