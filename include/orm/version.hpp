@@ -9,7 +9,7 @@ TINY_SYSTEM_HEADER
 #endif
 
 #define TINYORM_VERSION_MAJOR 0
-#define TINYORM_VERSION_MINOR 6
+#define TINYORM_VERSION_MINOR 7
 #define TINYORM_VERSION_BUGFIX 0
 #define TINYORM_VERSION_BUILD 0
 // Should be empty for stable releases, and use hypen before for SemVer compatibility!
