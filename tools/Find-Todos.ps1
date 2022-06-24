@@ -22,20 +22,22 @@ Param(
         HelpMessage = 'Specifies subfolders to search. The pattern value is treated ' +
             'as a regular expression, eg. (include|src|tests).')]
     [AllowEmptyString()]
-    [string] $InSubFoldersPattern = '(include|src|tests)'
+    [string] $InSubFoldersPattern = '(include|src|tests|tom)',
+
+    [Parameter(HelpMessage = 'Todo keywords regex pattern.')]
+    [ValidateNotNullOrEmpty()]
+    [string] $TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|CUR1|TMP|SEC) '
 )
 
 Set-StrictMode -Version 3.0
 
-$Script:TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|CUR1|TMP|SEC) '
-
 # If empty search all subfolders
 if ($InSubFoldersPattern.Length -eq 0) {
-    $Script:InFolders = @($(Get-Location).Path, '?.*') -join [IO.Path]::DirectorySeparatorChar
+    $Script:InFolders = @($Path.TrimEnd('\*'), '?.*') -join [IO.Path]::DirectorySeparatorChar
 }
 else {
     $Script:InFolders = `
-        (@($(Get-Location).Path, $InSubFoldersPattern) -join [IO.Path]::DirectorySeparatorChar) + `
+        (@($Path.TrimEnd('\*'), $InSubFoldersPattern) -join [IO.Path]::DirectorySeparatorChar) + `
         [IO.Path]::DirectorySeparatorChar
 }
 
@@ -43,9 +45,9 @@ if ($PSVersionTable.Platform -eq 'Win32NT') {
     $Script:InFolders = $Script:InFolders -replace '\\', '\\'
 }
 
-Get-ChildItem -Path $Path -Include $Include -Recurse
+Get-ChildItem -Path $Path -Include $Include -Recurse -File
     | Where-Object DirectoryName -Match "^$Script:InFolders"
-    | Select-String -Pattern $Script:TodoKeywordsPattern -CaseSensitive
+    | Select-String -Pattern $TodoKeywordsPattern.toUpper() -CaseSensitive
     | Select-Object -Property `
         @{
             Name       = 'Line'
