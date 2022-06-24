@@ -58,9 +58,9 @@ QList<QCommandLineOption> MigrationCommand::optionsSignature() const
         {table_,    QStringLiteral("The table to migrate"), table_.toUpper()}, // Value
         {path_,     QStringLiteral("The location where the migration file should be "
                                    "created"), path_up}, // Value
-        {realpath_, QStringLiteral("Indicate any provided migration file paths are "
+        {realpath_, QStringLiteral("Indicate that any provided migration file paths are "
                                    "pre-resolved absolute paths")},
-        {fullpath,  QStringLiteral("Output the full path of the migration")},
+        {fullpath,  QStringLiteral("Output the full path of the created migration")},
     };
 }
 

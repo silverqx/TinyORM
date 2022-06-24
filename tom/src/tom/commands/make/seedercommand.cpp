@@ -44,9 +44,9 @@ QList<QCommandLineOption> SeederCommand::optionsSignature() const
     return {
         {path_,     QStringLiteral("The location where the seeder file should be "
                                    "created"), path_.toUpper()}, // Value
-        {realpath_, QStringLiteral("Indicate any provided seeder file paths are "
+        {realpath_, QStringLiteral("Indicate that any provided seeder file paths are "
                                    "pre-resolved absolute paths")},
-        {fullpath,  QStringLiteral("Output the full path of the seeder")},
+        {fullpath,  QStringLiteral("Output the full path of the created seeder")},
     };
 }
 
