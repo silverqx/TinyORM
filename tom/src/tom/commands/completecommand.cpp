@@ -10,6 +10,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <orm/constants.hpp>
+#include <orm/tiny/utils/string.hpp>
 
 #include "tom/application.hpp"
 #include "tom/tomutils.hpp"
@@ -23,6 +24,8 @@ using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
 using Orm::Constants::database_;
+
+using StringUtils = Orm::Tiny::Utils::String;
 
 using Tom::Constants::DoubleDash;
 using Tom::Constants::Env;
@@ -131,8 +134,8 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
        --- */
 #ifdef _MSC_VER
     if (!isOptionArgument(wordArg) && !wordArg.isEmpty() &&
-        positionArg >= commandlineArgSize &&
-        (commandlineArg.count(SPACE) == 1 || currentCommandArg == Help)
+        (StringUtils::countBefore(commandlineArg, SPACE, positionArg) == 1 ||
+         currentCommandArg == Help)
     )
 #else
     if (!isOptionArgument(wordArg) && !wordArg.isEmpty() &&

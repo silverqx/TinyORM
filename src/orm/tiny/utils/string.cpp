@@ -263,6 +263,14 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
 
     return lines;
 }
+
+QString::size_type String::countBefore(QString string, QChar character,
+                                       QString::size_type position)
+{
+    string.truncate(position);
+
+    return string.count(character);
+}
 #endif
 
 #ifndef TINYORM_DISABLE_ORM
