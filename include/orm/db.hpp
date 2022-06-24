@@ -73,14 +73,20 @@ namespace Orm
             to be called before querying a database. */
         static QSqlDatabase connectEagerly(const QString &name = "");
 
-        /*! Get all of the support drivers. */
-        static QStringList supportedDrivers();
         /*! Returns a list containing the names of all connections. */
         static QStringList connectionNames();
         /*! Returns a list containing the names of opened connections. */
         static QStringList openedConnectionNames();
         /*! Get the number of registered connections. */
         static std::size_t connectionsSize();
+        /*! Get all of the support drivers. */
+        static QStringList supportedDrivers();
+        /*! Get all of the available drivers (loadable). */
+        static QStringList drivers();
+        /*! Is the given driver name available? */
+        static bool isDriverAvailable(const QString &driverName);
+        /*! Is a driver for the given connection available? */
+        static bool isConnectionDriverAvailable(const QString &connectionName);
 
         /*! Get the default connection name. */
         static const QString &getDefaultConnection();

@@ -82,11 +82,6 @@ QSqlDatabase DB::connectEagerly(const QString &name)
     return manager().connectEagerly(name);
 }
 
-QStringList DB::supportedDrivers()
-{
-    return manager().supportedDrivers();
-}
-
 QStringList DB::connectionNames()
 {
     return manager().connectionNames();
@@ -100,6 +95,26 @@ QStringList DB::openedConnectionNames()
 std::size_t DB::connectionsSize()
 {
     return manager().connectionsSize();
+}
+
+QStringList DB::supportedDrivers()
+{
+    return manager().supportedDrivers();
+}
+
+QStringList DB::drivers()
+{
+    return manager().drivers();
+}
+
+bool Orm::DB::isDriverAvailable(const QString &driverName)
+{
+    return manager().isDriverAvailable(driverName);
+}
+
+bool DB::isConnectionDriverAvailable(const QString &connectionName)
+{
+    return manager().isConnectionDriverAvailable(connectionName);
 }
 
 const QString &DB::getDefaultConnection()

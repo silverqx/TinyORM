@@ -71,10 +71,12 @@ const QStringList &Databases::createConnections(const QStringList &connections)
     throwIfConnectionsInitialized();
 
     // Ownership of a shared_ptr()
+    static const auto manager = *db = DB::create();
+
     /* The default connection is empty for tests, there is no default connection
        because it can produce hard to find bugs, I have to be explicit about
        the connection which will be used. */
-    static const auto manager = *db = DB::create(getConfigurations(connections), EMPTY);
+    manager->addConnections(createConfigurationsHash(connections), EMPTY);
 
     static const auto cachedConnectionNames = manager->connectionNames();
 
@@ -118,36 +120,32 @@ const std::shared_ptr<Orm::DatabaseManager> &Databases::manager()
 /* private */
 
 const Databases::ConfigurationsType &
-Databases::getConfigurations(const QStringList &connections)
-{
-    static auto configurations = createConfigurationsHash(connections);
-
-    // When connections variable is empty, then return all configurations
-    if (connections.isEmpty())
-        return configurations;
-
-    return configurations;
-}
-
-const Databases::ConfigurationsType &
 Databases::createConfigurationsHash(const QStringList &connections)
 {
     static ConfigurationsType configurations;
 
-    const auto shouldCreateConnection = [&connections](const auto &connection)
+    const auto shouldCreateConnection = [&connections]
+                                        (const auto &connection, auto &&driver)
     {
-        return connections.isEmpty() || connections.contains(connection);
+        const auto isAvailable = DB::isDriverAvailable(driver);
+
+        if (!isAvailable)
+            qWarning("%s driver not available, all tests for this database will be "
+                     "skipped.", driver.toLatin1().constData());
+
+        return isAvailable &&
+                (connections.isEmpty() || connections.contains(connection));
     };
 
-    if (shouldCreateConnection(MYSQL))
+    if (shouldCreateConnection(MYSQL, QMYSQL))
         if (auto [config, envDefined] = mysqlConfiguration(); envDefined)
             configurations[MYSQL] = std::move(config);
 
-    if (shouldCreateConnection(SQLITE))
+    if (shouldCreateConnection(SQLITE, QSQLITE))
         if (auto [config, envDefined] = sqliteConfiguration(); envDefined)
             configurations[SQLITE] = std::move(config);
 
-    if (shouldCreateConnection(POSTGRESQL))
+    if (shouldCreateConnection(POSTGRESQL, QPSQL))
         if (auto [config, envDefined] = postgresConfiguration(); envDefined)
             configurations[POSTGRESQL] = std::move(config);
 

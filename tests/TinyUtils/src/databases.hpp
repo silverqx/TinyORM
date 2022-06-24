@@ -45,10 +45,6 @@ namespace TestUtils
         static const std::shared_ptr<Orm::DatabaseManager> &manager();
 
     private:
-        /*! Obtain configurations for the given connection names. */
-        static const ConfigurationsType &
-        getConfigurations(const QStringList &connections = {});
-
         /*! Create database configurations hash. */
         static const ConfigurationsType &
         createConfigurationsHash(const QStringList &connections);

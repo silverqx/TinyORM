@@ -159,14 +159,20 @@ namespace Query
             to be called before querying a database. */
         QSqlDatabase connectEagerly(const QString &name = "");
 
-        /*! Get all of the support drivers. */
-        QStringList supportedDrivers() const;
         /*! Returns a list containing the names of all connections. */
         QStringList connectionNames() const;
         /*! Returns a list containing the names of opened connections. */
         QStringList openedConnectionNames() const;
         /*! Get the number of registered connections. */
         std::size_t connectionsSize() const;
+        /*! Get all of the support drivers. */
+        QStringList supportedDrivers() const;
+        /*! Get all of the available drivers (loadable). */
+        QStringList drivers() const;
+        /*! Is the given driver name available? */
+        bool isDriverAvailable(const QString &driverName) const;
+        /*! Is a driver for the given connection available? */
+        bool isConnectionDriverAvailable(const QString &connectionName);
 
         /*! Get the default connection name. */
         const QString &getDefaultConnection() const final;

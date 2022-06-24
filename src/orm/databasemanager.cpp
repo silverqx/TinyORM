@@ -362,13 +362,6 @@ QSqlDatabase DatabaseManager::connectEagerly(const QString &name)
     return connection(name).connectEagerly();
 }
 
-QStringList DatabaseManager::supportedDrivers() const
-{
-    // FUTURE add method to not only supported drivers, but also check if driver is available/loadable by qsqldatabase silverqx
-    // aaaaaaaaaaaaaachjo 🤔😁 -- 4 months later, looks much better, right?
-    return {QMYSQL, QPSQL, QSQLITE};
-}
-
 QStringList DatabaseManager::connectionNames() const
 {
     return (*m_configuration).keys();
@@ -389,6 +382,35 @@ QStringList DatabaseManager::openedConnectionNames() const
 std::size_t DatabaseManager::connectionsSize() const
 {
     return (*m_connections).size();
+}
+
+QStringList DatabaseManager::supportedDrivers() const
+{
+    // aaaaaaaaaaaaaachjo 🤔😁 -- 4 months later, looks much better, right?
+    return {QMYSQL, QPSQL, QSQLITE};
+}
+
+QStringList DatabaseManager::drivers() const
+{
+    return QSqlDatabase::drivers();
+}
+
+bool DatabaseManager::isDriverAvailable(const QString &driverName) const
+{
+    return QSqlDatabase::isDriverAvailable(driverName);
+}
+
+bool DatabaseManager::isConnectionDriverAvailable(const QString &connectionName)
+{
+    const auto driverName = configuration(connectionName)[driver_].value<QString>();
+
+    if (!supportedDrivers().contains(driverName))
+        throw Exceptions::LogicError(
+                QStringLiteral("An unsupported driver name '%1' has been defined for "
+                               "the '%2' connection.")
+                .arg(driverName, connectionName));
+
+    return QSqlDatabase::isDriverAvailable(driverName);
 }
 
 const QString &
