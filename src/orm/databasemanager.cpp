@@ -270,8 +270,8 @@ DatabaseManager::addConnection(const QVariantHash &config, const QString &name)
 DatabaseManager &
 DatabaseManager::addConnections(const ConfigurationsType &configs)
 {
-    for (auto itConfig = configs.cbegin(); itConfig != configs.cend(); ++itConfig)
-        addConnection(itConfig->second, itConfig->first);
+    for (const auto &[name, config] : configs)
+        addConnection(config, name);
 
     return *this;
 }
