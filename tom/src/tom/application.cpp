@@ -20,6 +20,7 @@
 #include "tom/commands/integratecommand.hpp"
 #include "tom/commands/listcommand.hpp"
 #include "tom/commands/make/migrationcommand.hpp"
+#include "tom/commands/make/modelcommand.hpp"
 //#include "tom/commands/make/projectcommand.hpp"
 #include "tom/commands/make/seedercommand.hpp"
 #include "tom/commands/migrations/freshcommand.hpp"
@@ -55,6 +56,7 @@ using Tom::Commands::InspireCommand;
 using Tom::Commands::IntegrateCommand;
 using Tom::Commands::ListCommand;
 using Tom::Commands::Make::MigrationCommand;
+using Tom::Commands::Make::ModelCommand;
 //using Tom::Commands::Make::ProjectCommand;
 using Tom::Commands::Make::SeederCommand;
 using Tom::Commands::Migrations::FreshCommand;
@@ -74,6 +76,7 @@ using Tom::Constants::Inspire;
 using Tom::Constants::Integrate;
 using Tom::Constants::List;
 using Tom::Constants::MakeMigration;
+using Tom::Constants::MakeModel;
 //using Tom::Constants::MakeProject;
 using Tom::Constants::MakeSeeder;
 using Tom::Constants::Migrate;
@@ -91,6 +94,7 @@ using Tom::Constants::NsMigrate;
 using Tom::Constants::NsNamespaced;
 using Tom::Constants::ansi;
 using Tom::Constants::env;
+using Tom::Constants::env_up;
 using Tom::Constants::help;
 using Tom::Constants::noansi;
 using Tom::Constants::nointeraction;
@@ -127,6 +131,7 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
     , m_environmentEnvName(environmentEnvName)
     , m_migrationTable(std::move(migrationTable))
     , m_migrationsPath(initializePath(TINYORM_STRINGIFY(TINYTOM_MIGRATIONS_DIR)))
+    , m_modelsPath(initializePath(TINYORM_STRINGIFY(TINYTOM_MODELS_DIR)))
     , m_seedersPath(initializePath(TINYORM_STRINGIFY(TINYTOM_SEEDERS_DIR)))
     , m_migrations(std::move(migrations))
     , m_seeders(std::move(seeders))
@@ -252,7 +257,7 @@ void Application::initializeParser(QCommandLineParser &parser)
         {      ansi,           QStringLiteral("Force ANSI output")},
         {      noansi,         QStringLiteral("Disable ANSI output")},
         {      env,            QStringLiteral("The environment the command should run "
-                                              "under"), env.toUpper()}, // Value
+                                              "under"), env_up}, // Value
         {{"h", help},          QStringLiteral("Display help for the given command. When "
                                               "no command is given display help for the "
                                               "<info>list</info> command")},
@@ -440,6 +445,9 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
     if (command == MakeMigration)
         return std::make_unique<MigrationCommand>(*this, parserRef);
 
+    if (command == MakeModel)
+        return std::make_unique<ModelCommand>(*this, parserRef);
+
 //    if (command == MakeProject)
 //        return std::make_unique<ProjectCommand>(*this, parserRef);
 
@@ -567,7 +575,7 @@ Application::commandNames() const
         // db
         DbSeed, DbWipe,
         // make
-        MakeMigration, /*MakeProject,*/ MakeSeeder,
+        MakeMigration, MakeModel, /*MakeProject,*/ MakeSeeder,
         // migrate
         MigrateFresh, MigrateInstall, MigrateRefresh, MigrateReset, MigrateRollback,
         MigrateStatus,
@@ -612,10 +620,10 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
         {0,   7}, // "" - also global
         {0,   7}, // global
         {7,   9}, // db
-        {9,  11}, // make
-        {11, 17}, // migrate
-        {7,  17}, // namespaced
-        {0,  17}, // all
+        {9,  12}, // make
+        {12, 18}, // migrate
+        {7,  18}, // namespaced
+        {0,  18}, // all
     };
 
     return cached;

@@ -22,11 +22,13 @@ using Orm::Constants::UNDERSCORE;
 using StringUtils = Orm::Tiny::Utils::String;
 
 using Tom::Constants::create_;
+using Tom::Constants::create_up;
 using Tom::Constants::fullpath;
 using Tom::Constants::path_;
 using Tom::Constants::path_up;
 using Tom::Constants::realpath_;
 using Tom::Constants::table_;
+using Tom::Constants::table_up;
 using Tom::Constants::DateTimePrefix;
 
 using TomUtils = Tom::Utils;
@@ -54,8 +56,8 @@ const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() c
 QList<QCommandLineOption> MigrationCommand::optionsSignature() const
 {
     return {
-        {create_,   QStringLiteral("The table to be created"), create_.toUpper()}, // Value
-        {table_,    QStringLiteral("The table to migrate"), table_.toUpper()}, // Value
+        {create_,   QStringLiteral("The table to be created"), create_up}, // Value
+        {table_,    QStringLiteral("The table to migrate"), table_up}, // Value
         {path_,     QStringLiteral("The location where the migration file should be "
                                    "created"), path_up}, // Value
         {realpath_, QStringLiteral("Indicate that any provided migration file paths are "

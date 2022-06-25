@@ -17,6 +17,7 @@ using StringUtils = Orm::Tiny::Utils::String;
 
 using Tom::Constants::fullpath;
 using Tom::Constants::path_;
+using Tom::Constants::path_up;
 using Tom::Constants::realpath_;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -43,7 +44,7 @@ QList<QCommandLineOption> SeederCommand::optionsSignature() const
 {
     return {
         {path_,     QStringLiteral("The location where the seeder file should be "
-                                   "created"), path_.toUpper()}, // Value
+                                   "created"), path_up}, // Value
         {realpath_, QStringLiteral("Indicate that any provided seeder file paths are "
                                    "pre-resolved absolute paths")},
         {fullpath,  QStringLiteral("Output the full path of the created seeder")},
@@ -86,6 +87,7 @@ QString SeederCommand::prepareSeederClassname(QString &&className)
     // Change Xyzseeder to XyzSeeder
     className[className.size() - Seeder_lc_size] = QChar('S');
 
+    // CUR stackoverflow, still confused about this moves, when I assign a new value silverqx
     return std::move(className);
 }
 

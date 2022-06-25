@@ -8,6 +8,9 @@
 # Will be stringified in the tom/application.cpp
 #DEFINES += TINYTOM_MIGRATIONS_DIR="\"database/migrations\""
 
+# Default models path as the string for the make:model command
+#DEFINES += TINYTOM_MODELS_DIR="\"database/models\""
+
 # Default seeders path as the string for the make:seeder command
 #DEFINES += TINYTOM_SEEDERS_DIR="\"database/seeders\""
 

@@ -122,6 +122,8 @@ namespace Concerns
 
         /*! Get the default migrations path used by the make:migration command. */
         inline const fspath &getMigrationsPath() const noexcept;
+        /*! Get the default models path used by the make:model command. */
+        inline const fspath &getModelsPath() const noexcept;
         /*! Get the default seeders path used by the make:seeder command. */
         inline const fspath &getSeedersPath() const noexcept;
 
@@ -279,6 +281,8 @@ namespace Concerns
         QString m_migrationTable;
         /*! Migrations path for the make:migration command. */
         std::filesystem::path m_migrationsPath;
+        /*! Models path for the make:model command. */
+        std::filesystem::path m_modelsPath;
         /*! Seeders path for the make:seeder command. */
         std::filesystem::path m_seedersPath;
 
@@ -365,6 +369,11 @@ namespace Concerns
     const std::filesystem::path &Application::getMigrationsPath() const noexcept
     {
         return m_migrationsPath;
+    }
+
+    const std::filesystem::path &Application::getModelsPath() const noexcept
+    {
+        return m_modelsPath;
     }
 
     const std::filesystem::path &Application::getSeedersPath() const noexcept

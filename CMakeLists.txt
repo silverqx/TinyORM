@@ -181,7 +181,7 @@ feature_option_dependent(TOM_EXAMPLE
 )
 
 # Depends on the TOM_EXAMPLE option so defined here
-tiny_init_tom_migrations_dir()
+tiny_init_tom_database_dirs()
 
 # TinyORM library header and source files
 # ---
@@ -310,6 +310,8 @@ if(TOM_EXAMPLE)
         PUBLIC
             # Will be stringified in the tom/application.cpp
             TINYTOM_MIGRATIONS_DIR=${TOM_MIGRATIONS_DIR}
+            # Will be stringified in the tom/application.cpp
+            TINYTOM_MODELS_DIR=${TOM_MODELS_DIR}
             # Will be stringified in the tom/application.cpp
             TINYTOM_SEEDERS_DIR=${TOM_SEEDERS_DIR}
     )

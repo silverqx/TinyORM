@@ -158,6 +158,8 @@ macro(tiny_init_tiny_variables_pre)
     set(TomExample_folder examples/tom)
     # Tom migrations folder for the make:migration command
     set(TomMigrations_folder database/migrations)
+    # Tom models folder for the make:model command
+    set(TomModels_folder database/models)
     # Tom seeders folder for the make:seeder command
     set(TomSeeders_folder database/seeders)
 
@@ -252,14 +254,20 @@ constants")
 
 endmacro()
 
-# Initialize the default migrations path for the make:migration command
-macro(tiny_init_tom_migrations_dir)
+# Initialize the default database paths for the make:migration/model/seeder commands
+macro(tiny_init_tom_database_dirs)
 
     if(TOM_EXAMPLE)
         # Provide the default migrations path for the make:migration command
         if(NOT DEFINED TOM_MIGRATIONS_DIR)
             # Relative path to the pwd
             set(TOM_MIGRATIONS_DIR ${TomMigrations_folder})
+        endif()
+
+        # Provide the default models path for the make:models command
+        if(NOT DEFINED TOM_MODELS_DIR)
+            # Relative path to the pwd
+            set(TOM_MODELS_DIR ${TomSeeders_folder})
         endif()
 
         # Provide the default seeders path for the make:seeders command
@@ -272,10 +280,13 @@ macro(tiny_init_tom_migrations_dir)
         set(TOM_MIGRATIONS_DIR "${TOM_MIGRATIONS_DIR}" CACHE PATH
             "Default migrations path for the make:migration command")
 
+        set(TOM_MODELS_DIR "${TOM_MODELS_DIR}" CACHE PATH
+            "Default models path for the make:model command")
+
         set(TOM_SEEDERS_DIR "${TOM_SEEDERS_DIR}" CACHE PATH
             "Default seeders path for the make:seeder command")
 
-        mark_as_advanced(TOM_MIGRATIONS_DIR TOM_SEEDERS_DIR)
+        mark_as_advanced(TOM_MIGRATIONS_DIR TOM_MODELS_DIR TOM_SEEDERS_DIR)
     endif()
 
 endmacro()

@@ -14,9 +14,11 @@ sourcesList += \
     $$PWD/tom/commands/integratecommand.cpp \
     $$PWD/tom/commands/listcommand.cpp \
     $$PWD/tom/commands/make/migrationcommand.cpp \
+    $$PWD/tom/commands/make/modelcommand.cpp \
 #    $$PWD/tom/commands/make/projectcommand.cpp \
     $$PWD/tom/commands/make/seedercommand.cpp \
     $$PWD/tom/commands/make/support/migrationcreator.cpp \
+    $$PWD/tom/commands/make/support/modelcreator.cpp \
     $$PWD/tom/commands/make/support/seedercreator.cpp \
     $$PWD/tom/commands/make/support/tableguesser.cpp \
     $$PWD/tom/commands/migrations/freshcommand.cpp \

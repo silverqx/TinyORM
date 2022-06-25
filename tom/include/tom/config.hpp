@@ -21,6 +21,13 @@ TINY_SYSTEM_HEADER
 #  define TINYTOM_MIGRATIONS_DIR database/migrations
 #endif
 
+/* Default models path for the make:model command, the path can be absolute or
+   relative (to the pwd at runtime) and will be stringified in the tom/application.cpp. */
+#ifndef TINYTOM_MODELS_DIR
+// NOLINTNEXTLINE(bugprone-macro-parentheses)
+#  define TINYTOM_MODELS_DIR database/models
+#endif
+
 /* Default seeders path for the make:seeder command, the path can be absolute or
    relative (to the pwd at runtime) and will be stringified in the tom/application.cpp. */
 #ifndef TINYTOM_SEEDERS_DIR

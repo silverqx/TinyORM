@@ -55,6 +55,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString step_;
     SHAREDLIB_EXPORT extern const QString path_;
     // Default value names
+    SHAREDLIB_EXPORT extern const QString env_up;
     SHAREDLIB_EXPORT extern const QString class_up;
     SHAREDLIB_EXPORT extern const QString database_up;
     SHAREDLIB_EXPORT extern const QString seeder_up;
@@ -64,6 +65,9 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString word_up;
     SHAREDLIB_EXPORT extern const QString cword_up;
     SHAREDLIB_EXPORT extern const QString path_up;
+    SHAREDLIB_EXPORT extern const QString create_up;
+    SHAREDLIB_EXPORT extern const QString table_up;
+    SHAREDLIB_EXPORT extern const QString connection_up;
     // complete
     SHAREDLIB_EXPORT extern const QString commandline;
     SHAREDLIB_EXPORT extern const QString position;
@@ -76,11 +80,14 @@ namespace Tom::Constants
     // db:wipe
     SHAREDLIB_EXPORT extern const QString drop_views;
     SHAREDLIB_EXPORT extern const QString drop_types;
-    // make:migration
+    // make:migration, make:model, make:seeder
     SHAREDLIB_EXPORT extern const QString create_;
     SHAREDLIB_EXPORT extern const QString table_;
     SHAREDLIB_EXPORT extern const QString realpath_;
     SHAREDLIB_EXPORT extern const QString fullpath;
+    // make:model
+    SHAREDLIB_EXPORT extern const QString connection_;
+    SHAREDLIB_EXPORT extern const QString disable_timestamps;
     // migrate:refresh
     SHAREDLIB_EXPORT extern const QString step_migrate;
     // integrate
@@ -108,6 +115,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString &Env;
     SHAREDLIB_EXPORT extern const QString &Help;
     SHAREDLIB_EXPORT extern const QString MakeMigration;
+    SHAREDLIB_EXPORT extern const QString MakeModel;
     SHAREDLIB_EXPORT extern const QString MakeProject;
     SHAREDLIB_EXPORT extern const QString MakeSeeder;
     SHAREDLIB_EXPORT extern const QString &Migrate;

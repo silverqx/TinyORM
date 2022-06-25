@@ -43,36 +43,43 @@ namespace Tom::Constants
     const QString step_        = QStringLiteral("step");
     const QString path_        = QStringLiteral("path");
     // Default value names
-    const QString class_up       = QStringLiteral("CLASS");
-    const QString database_up    = QStringLiteral("DATABASE");
-    const QString seeder_up      = QStringLiteral("SEEDER");
-    const QString step_up        = QStringLiteral("STEP");
-    const QString commandline_up = QStringLiteral("COMMANDLINE");
-    const QString position_up    = QStringLiteral("POSITION");
-    const QString word_up        = QStringLiteral("WORD");
-    const QString cword_up       = QStringLiteral("CWORD");
-    const QString path_up        = QStringLiteral("PATH");
+    const QString env_up             = QStringLiteral("ENV");
+    const QString class_up           = QStringLiteral("CLASS");
+    const QString database_up        = QStringLiteral("DATABASE");
+    const QString seeder_up          = QStringLiteral("SEEDER");
+    const QString step_up            = QStringLiteral("STEP");
+    const QString commandline_up     = QStringLiteral("COMMANDLINE");
+    const QString position_up        = QStringLiteral("POSITION");
+    const QString word_up            = QStringLiteral("WORD");
+    const QString cword_up           = QStringLiteral("CWORD");
+    const QString path_up            = QStringLiteral("PATH");
+    const QString create_up          = QStringLiteral("CREATE");
+    const QString table_up           = QStringLiteral("TABLE");
+    const QString connection_up      = QStringLiteral("CONNECTION");
     // complete
-    const QString commandline  = QStringLiteral("commandline");
-    const QString position     = QStringLiteral("position");
-    const QString word_        = QStringLiteral("word");
-    const QString cword_       = QStringLiteral("cword");
+    const QString commandline        = QStringLiteral("commandline");
+    const QString position           = QStringLiteral("position");
+    const QString word_              = QStringLiteral("word");
+    const QString cword_             = QStringLiteral("cword");
     // list
-    const QString raw_         = QStringLiteral("raw");
+    const QString raw_               = QStringLiteral("raw");
     // db:seed
-    const QString class_       = QStringLiteral("class");
+    const QString class_             = QStringLiteral("class");
     // db:wipe
-    const QString drop_views   = QStringLiteral("drop-views");
-    const QString drop_types   = QStringLiteral("drop-types");
-    // make:migration
-    const QString create_      = QStringLiteral("create");
-    const QString table_       = QStringLiteral("table");
-    const QString realpath_    = QStringLiteral("realpath");
-    const QString fullpath     = QStringLiteral("fullpath");
+    const QString drop_views         = QStringLiteral("drop-views");
+    const QString drop_types         = QStringLiteral("drop-types");
+    // make:migration, make:model, make:seeder
+    const QString create_            = QStringLiteral("create");
+    const QString table_             = QStringLiteral("table");
+    const QString realpath_          = QStringLiteral("realpath");
+    const QString fullpath           = QStringLiteral("fullpath");
+    // make:model
+    const QString connection_        = QStringLiteral("connection");
+    const QString disable_timestamps = QStringLiteral("disable-timestamps");
     // migrate:refresh
-    const QString step_migrate = QStringLiteral("step-migrate");
+    const QString step_migrate       = QStringLiteral("step-migrate");
     // integrate
-    const QString stdout_      = QStringLiteral("stdout");
+    const QString stdout_            = QStringLiteral("stdout");
 
     // Namespace names
     const QString NsGlobal     = QStringLiteral("global");
@@ -96,6 +103,7 @@ namespace Tom::Constants
     const QString &Env            = Tom::Constants::env;
     const QString &Help           = Tom::Constants::help;
     const QString MakeMigration   = QStringLiteral("make:migration");
+    const QString MakeModel       = QStringLiteral("make:model");
     const QString MakeProject     = QStringLiteral("make:project");
     const QString MakeSeeder      = QStringLiteral("make:seeder");
     const QString &Migrate        = Tom::Constants::NsMigrate;
