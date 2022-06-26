@@ -35,7 +35,7 @@ namespace Orm::Utils
     {
         QString columnized;
         // Estimate a size to avoid resizing, 7 for an item and 2 for the delimiter
-        columnized.reserve(container.size() * (7 + 2));
+        columnized.reserve(static_cast<QString::size_type>(container.size()) * (7 + 2));
 
         if (container.empty())
             return columnized;

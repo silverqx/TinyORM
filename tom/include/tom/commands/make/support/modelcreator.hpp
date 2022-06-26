@@ -104,9 +104,9 @@ namespace Tom::Commands::Make::Support
         QString createUsingsSection();
 
         /*! Include paths for the generated model. */
-        std::set<QString> m_includesList;
+        std::set<QString> m_includesList {};
         /*! Using directives for the generated model. */
-        std::set<QString> m_usingsList;
+        std::set<QString> m_usingsList {};
 
     private:
         /*! Ensure that a model with the given name doesn't already exist. */
