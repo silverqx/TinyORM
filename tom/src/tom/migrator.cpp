@@ -426,7 +426,7 @@ void Migrator::throwIfMigrationClassNameNotValid(const QString &migrationName)
 
     throw Exceptions::RuntimeError(
                 QStringLiteral(
-                    "Migration classname '%1' has to start with the datetime prefix.")
+                    "Migration class name '%1' has to start with the datetime prefix.")
                 .arg(migrationName));
 }
 

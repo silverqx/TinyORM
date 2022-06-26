@@ -128,7 +128,7 @@ namespace Tom
                                         const QString &migrationName) const;
         /*! Throw if migration filename is not valid. */
         static void throwIfMigrationFileNameNotValid(const QString &migrationName);
-        /*! Throw if migration classname is not valid. */
+        /*! Throw if migration class name is not valid. */
         static void throwIfMigrationClassNameNotValid(const QString &migrationName);
 
         /*! The migration repository instance. */
