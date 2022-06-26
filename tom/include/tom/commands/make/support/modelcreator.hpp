@@ -40,6 +40,8 @@ namespace Tom::Commands::Make::Support
             QString oneToMany;
             /*! Related class name for the belongs-to relationship. */
             QString belongsTo;
+            /*! Related class name for the belongs-to-many relationship. */
+            QString belongsToMany;
             /*! The connection name for the model. */
             QString connection;
             /*! The table associated with the model. */
@@ -75,6 +77,9 @@ namespace Tom::Commands::Make::Support
         /*! Create belongs-to relationship method. */
         static QString createBelongsToRelation(const QString &parentClass,
                                                const QString &relatedClass);
+        /*! Create belongs-to-many relationship method. */
+        static QString createBelongsToManyRelation(const QString &parentClass,
+                                                   const QString &relatedClass);
 
         /*! Convert the given class name for usage in the comment (singular). */
         static QString guessSingularComment(const QString &className);
@@ -104,6 +109,10 @@ namespace Tom::Commands::Make::Support
                     QString::size_type relationsMaxSize);
         /*! Create belongs-to relation mapping item for u_relations hash. */
         QString createBelongsToRelationItem(
+                    const QString &parentClass, const QString &relatedClass,
+                    QString::size_type relationsMaxSize);
+        /*! Create belongs-to-many relation mapping item for u_relations hash. */
+        QString createBelongsToManyRelationItem(
                     const QString &parentClass, const QString &relatedClass,
                     QString::size_type relationsMaxSize);
 

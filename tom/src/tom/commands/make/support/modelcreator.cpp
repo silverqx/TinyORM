@@ -24,6 +24,7 @@ using Orm::Constants::SPACE;
 using ContainerUtils = Orm::Utils::Container;
 using StringUtils    = Orm::Tiny::Utils::String;
 
+using Tom::Commands::Make::Stubs::BelongsToManyStub;
 using Tom::Commands::Make::Stubs::BelongsToStub;
 using Tom::Commands::Make::Stubs::ModelConnectionStub;
 using Tom::Commands::Make::Stubs::ModelDisableTimestampsStub;
@@ -81,14 +82,14 @@ void ModelCreator::ensureDirectoryExists(const fspath &path)
 std::string ModelCreator::populateStub(const QString &className,
                                        const CmdOptions &cmdOptions)
 {
-    const auto publicSection = createPublicSection(className, cmdOptions);
+    const auto publicSection  = createPublicSection(className, cmdOptions);
     const auto privateSection = createPrivateSection(className, cmdOptions,
                                                      !publicSection.isEmpty());
 
     const auto macroGuard = className.toUpper();
 
     const auto includesSection = createIncludesSection();
-    const auto usingsSection = createUsingsSection();
+    const auto usingsSection   = createUsingsSection();
 
     QString stub(ModelStub);
 
@@ -116,13 +117,14 @@ std::string ModelCreator::populateStub(const QString &className,
 QString ModelCreator::createPublicSection(const QString &className,
                                           const CmdOptions &cmdOptions)
 {
-    const auto &[oneToOne, oneToMany, belongsTo, _1, _2, _3] = cmdOptions;
+    const auto &[oneToOne, oneToMany, belongsTo, belongsToMany, _1, _2, _3] = cmdOptions;
 
     QStringList publicSectionList;
 
     publicSectionList << createOneToOneRelation(className, oneToOne);
     publicSectionList << createOneToManyRelation(className, oneToMany);
     publicSectionList << createBelongsToRelation(className, belongsTo);
+    publicSectionList << createBelongsToManyRelation(className, belongsToMany);
 
     // Remove empty parts
     publicSectionList |= ranges::actions::remove_if([](const auto &value)
@@ -144,8 +146,8 @@ QString ModelCreator::createOneToOneRelation(const QString &parentClass,
     if (relatedClass.isEmpty())
         return {};
 
-    const auto relationName = guessOneTypeRelationName(relatedClass);
-    const auto parentComment = guessSingularComment(parentClass);
+    const auto relationName   = guessOneTypeRelationName(relatedClass);
+    const auto parentComment  = guessSingularComment(parentClass);
     const auto relatedComment = guessSingularComment(relatedClass);
 
     return QString(OneToOneStub)
@@ -153,8 +155,10 @@ QString ModelCreator::createOneToOneRelation(const QString &parentClass,
             .replace(QStringLiteral("{{parentClass}}"),       parentClass)
             .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
             .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+
             .replace(QStringLiteral("{{ relationName }}"),    relationName)
             .replace(QStringLiteral("{{relationName}}"),      relationName)
+
             .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
             .replace(QStringLiteral("{{parentComment}}"),     parentComment)
             .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
@@ -167,8 +171,8 @@ QString ModelCreator::createOneToManyRelation(const QString &parentClass,
     if (relatedClass.isEmpty())
         return {};
 
-    const auto relationName = guessManyTypeRelationName(relatedClass);
-    const auto parentComment = guessSingularComment(parentClass);
+    const auto relationName   = guessManyTypeRelationName(relatedClass);
+    const auto parentComment  = guessSingularComment(parentClass);
     const auto relatedComment = guessPluralComment(relatedClass);
 
     return QString(OneToManyStub)
@@ -176,8 +180,10 @@ QString ModelCreator::createOneToManyRelation(const QString &parentClass,
             .replace(QStringLiteral("{{parentClass}}"),       parentClass)
             .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
             .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+
             .replace(QStringLiteral("{{ relationName }}"),    relationName)
             .replace(QStringLiteral("{{relationName}}"),      relationName)
+
             .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
             .replace(QStringLiteral("{{parentComment}}"),     parentComment)
             .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
@@ -190,8 +196,8 @@ QString ModelCreator::createBelongsToRelation(const QString &parentClass,
     if (relatedClass.isEmpty())
         return {};
 
-    const auto relationName = guessOneTypeRelationName(relatedClass);
-    const auto parentComment = guessSingularComment(parentClass);
+    const auto relationName   = guessOneTypeRelationName(relatedClass);
+    const auto parentComment  = guessSingularComment(parentClass);
     const auto relatedComment = guessSingularComment(relatedClass);
 
     return QString(BelongsToStub)
@@ -199,8 +205,35 @@ QString ModelCreator::createBelongsToRelation(const QString &parentClass,
             .replace(QStringLiteral("{{parentClass}}"),       parentClass)
             .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
             .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+
             .replace(QStringLiteral("{{ relationName }}"),    relationName)
             .replace(QStringLiteral("{{relationName}}"),      relationName)
+
+            .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
+            .replace(QStringLiteral("{{parentComment}}"),     parentComment)
+            .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
+            .replace(QStringLiteral("{{relatedComment}}"),    relatedComment);
+}
+
+QString ModelCreator::createBelongsToManyRelation(const QString &parentClass,
+                                                  const QString &relatedClass)
+{
+    if (relatedClass.isEmpty())
+        return {};
+
+    const auto relationName   = guessManyTypeRelationName(relatedClass);
+    const auto parentComment  = guessSingularComment(parentClass);
+    const auto relatedComment = guessPluralComment(relatedClass);
+
+    return QString(BelongsToManyStub)
+            .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
+            .replace(QStringLiteral("{{parentClass}}"),       parentClass)
+            .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
+            .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+
+            .replace(QStringLiteral("{{ relationName }}"),    relationName)
+            .replace(QStringLiteral("{{relationName}}"),      relationName)
+
             .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
             .replace(QStringLiteral("{{parentComment}}"),     parentComment)
             .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
@@ -231,7 +264,7 @@ QString ModelCreator::createPrivateSection(
             const QString &className, const CmdOptions &cmdOptions,
             const bool hasPublicSection)
 {
-    const auto &[_1, _2, _3, connection, table, disableTimestamps] = cmdOptions;
+    const auto &[_1, _2, _3, _4, connection, table, disableTimestamps] = cmdOptions;
 
     QString privateSection;
 
@@ -268,7 +301,7 @@ QString ModelCreator::createPrivateSection(
 QString ModelCreator::createRelationsHash(const QString &className,
                                           const CmdOptions &cmdOptions)
 {
-    const auto &[oneToOne, oneToMany, belongsTo, _1, _2, _3] = cmdOptions;
+    const auto &[oneToOne, oneToMany, belongsTo, belongsToMany, _1, _2, _3] = cmdOptions;
 
     // Nothing to create
     if (oneToOne.isEmpty() || oneToMany.isEmpty())
@@ -286,6 +319,8 @@ QString ModelCreator::createRelationsHash(const QString &className,
                                                      relationsMaxSize);
     relationItemsList << createBelongsToRelationItem(className, belongsTo,
                                                      relationsMaxSize);
+    relationItemsList << createBelongsToManyRelationItem(className, belongsToMany,
+                                                         relationsMaxSize);
 
     const auto relationItems = relationItemsList.join(NEWLINE);
 
@@ -350,7 +385,7 @@ QString ModelCreator::createOneToManyRelationItem(
 
 QString ModelCreator::createBelongsToRelationItem(
             const QString &parentClass, const QString &relatedClass,
-            QString::size_type relationsMaxSize)
+            const QString::size_type relationsMaxSize)
 {
     if (relatedClass.isEmpty())
         return {};
@@ -371,6 +406,34 @@ QString ModelCreator::createBelongsToRelationItem(
     // Insert to model includes and usings
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("BelongsTo")));
+
+    return result;
+}
+
+QString ModelCreator::createBelongsToManyRelationItem(
+            const QString &parentClass, const QString &relatedClass,
+            const QString::size_type relationsMaxSize)
+{
+    if (relatedClass.isEmpty())
+        return {};
+
+    const auto relationName = guessManyTypeRelationName(relatedClass);
+    const auto spaceAlign = QString(relationsMaxSize - relationName.size(), SPACE);
+
+    QString result = QString(ModelRelationItemStub)
+                     .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
+                     .replace(QStringLiteral("{{parentClass}}"),    parentClass)
+
+                     .replace(QStringLiteral("{{ relationName }}"), relationName)
+                     .replace(QStringLiteral("{{relationName}}"),   relationName)
+
+                     .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
+                     .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+
+    // Insert to model includes and usings
+    m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
+    m_usingsList.emplace(QString(ModelUsingItemStub)
+                         .arg(QStringLiteral("BelongsToMany")));
 
     return result;
 }

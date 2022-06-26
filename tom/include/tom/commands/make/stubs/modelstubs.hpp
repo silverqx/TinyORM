@@ -71,7 +71,7 @@ R"(
         return hasOne<{{ relatedClass }}>();
     })";
 
-/*! Belongs to type relation stub (inverse for oto and otm). */
+/*! Belongs-to type relation stub (inverse for oto and otm). */
 inline const auto *const BelongsToStub =
 R"(
     /*! Get a {{ relatedComment }} that owns the {{ parentComment }}. */
@@ -79,6 +79,16 @@ R"(
     {{ relationName }}()
     {
         return belongsTo<{{ relatedClass }}>();
+    })";
+
+/*! Belongs-to-many type relation stub (it's the many-to-many and also inverse). */
+inline const auto *const BelongsToManyStub =
+R"(
+    /*! Get {{ relatedComment }} that belong to the {{ parentComment }}. */
+    std::unique_ptr<BelongsToMany<{{ parentClass }}, {{ relatedClass }}>>
+    {{ relationName }}()
+    {
+        return belongsToMany<{{ relatedClass }}>();
     })";
 
 /*! Model private section stub. */
