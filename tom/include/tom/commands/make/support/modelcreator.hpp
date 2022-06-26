@@ -47,7 +47,7 @@ namespace Tom::Commands::Make::Support
         };
 
         /*! Create a new model at the given path. */
-        fspath create(const QString &className, CmdOptions &&cmdOptions,
+        fspath create(const QString &className, const CmdOptions &cmdOptions,
                       fspath &&modelsPath);
 
     protected:
@@ -58,7 +58,7 @@ namespace Tom::Commands::Make::Support
         static void ensureDirectoryExists(const fspath &path);
 
         /*! Populate the place-holders in the model stub. */
-        std::string populateStub(const QString &className, CmdOptions &&cmdOptions);
+        std::string populateStub(const QString &className, const CmdOptions &cmdOptions);
 
         /*! Create model's public section (relations). */
         static QString createPublicSection(const QString &className,

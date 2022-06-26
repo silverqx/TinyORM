@@ -44,11 +44,12 @@ namespace Tom::Commands::Make
         int run() override;
 
     protected:
-        /*! Prepare a model class name. */
-        static QString prepareModelClassname(QString &&className);
+        /*! Prepare a model class names. */
+        static std::tuple<QString, CmdOptions>
+        prepareModelClassnames(QString &&className, CmdOptions &&cmdOptions);
 
         /*! Write the model file to the disk. */
-        void writeModel(const QString &className);
+        void writeModel(const QString &className, const CmdOptions &cmdOptions);
 
         /*! Create command line options instance. */
         CmdOptions createCmdOptions() const;
@@ -61,7 +62,8 @@ namespace Tom::Commands::Make
 
     private:
         /*! Throw if the model name constains a namespace or path. */
-        static void throwIfContainsNamespaceOrPath(const QString &className);
+        static void throwIfContainsNamespaceOrPath(const QString &className,
+                                                   const QString &source);
     };
 
     /* public */

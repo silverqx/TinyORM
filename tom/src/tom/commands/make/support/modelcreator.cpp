@@ -44,7 +44,7 @@ namespace Tom::Commands::Make::Support
 
 /* public */
 
-fspath ModelCreator::create(const QString &className, CmdOptions &&cmdOptions,
+fspath ModelCreator::create(const QString &className, const CmdOptions &cmdOptions,
                             fspath &&modelsPath)
 {
     const auto basename = className.toLower();
@@ -57,7 +57,7 @@ fspath ModelCreator::create(const QString &className, CmdOptions &&cmdOptions,
 
     // Output it as binary stream to force line endings to LF
     std::ofstream(modelPath, std::ios::out | std::ios::binary)
-            << populateStub(className, std::move(cmdOptions));
+            << populateStub(className, cmdOptions);
 
     return modelPath;
 }
@@ -77,7 +77,8 @@ void ModelCreator::ensureDirectoryExists(const fspath &path)
     fs::create_directories(path);
 }
 
-std::string ModelCreator::populateStub(const QString &className, CmdOptions &&cmdOptions)
+std::string ModelCreator::populateStub(const QString &className,
+                                       const CmdOptions &cmdOptions)
 {
     const auto publicSection = createPublicSection(className, cmdOptions);
     const auto privateSection = createPrivateSection(className, cmdOptions,

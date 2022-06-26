@@ -33,6 +33,8 @@ using Tom::Constants::realpath_;
 using Tom::Constants::table_;
 using Tom::Constants::table_up;
 
+using CmdOptions = Tom::Commands::Make::Support::ModelCreator::CmdOptions;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Make
@@ -87,27 +89,36 @@ int ModelCommand::run()
     Command::run();
 
     // CUR make model, unify this prepare with all others options preparation and validation silverqx
-    const auto className = prepareModelClassname(argument(NAME));
+    auto [className, cmdOptions] = prepareModelClassnames(argument(NAME),
+                                                          createCmdOptions());
 
     // Ready to write the model to the disk 🧨✨
-    writeModel(className);
+    writeModel(className, cmdOptions);
 
     return EXIT_SUCCESS;
 }
 
 /* protected */
 
-QString ModelCommand::prepareModelClassname(QString &&className)
+std::tuple<QString, CmdOptions>
+ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOptions)
 {
-    // Validate the model name
-    throwIfContainsNamespaceOrPath(className);
+    // Validate the model class names
+    throwIfContainsNamespaceOrPath(className, QStringLiteral("argument 'name'"));
+    throwIfContainsNamespaceOrPath(cmdOptions.oneToOne,
+                                   QStringLiteral("option --one-to-one"));
+    throwIfContainsNamespaceOrPath(cmdOptions.oneToMany,
+                                   QStringLiteral("option --one-to-many"));
 
-    return StringUtils::studly(std::move(className));
+    cmdOptions.oneToOne = StringUtils::studly(std::move(cmdOptions.oneToOne));
+    cmdOptions.oneToMany = StringUtils::studly(std::move(cmdOptions.oneToMany));
+
+    return {StringUtils::studly(std::move(className)), std::move(cmdOptions)};
 }
 
-void ModelCommand::writeModel(const QString &className)
+void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions)
 {
-    auto modelFilePath = m_creator.create(className, createCmdOptions(), getModelPath());
+    auto modelFilePath = m_creator.create(className, cmdOptions, getModelPath());
 
     // make_preferred() returns reference and filename() creates a new fs::path instance
     const auto modelFile = isSet(fullpath) ? modelFilePath.make_preferred()
@@ -153,7 +164,8 @@ fspath ModelCommand::getModelPath() const
     return modelsPath;
 }
 
-void ModelCommand::throwIfContainsNamespaceOrPath(const QString &className)
+void ModelCommand::throwIfContainsNamespaceOrPath(const QString &className,
+                                                  const QString &source)
 {
     if (!className.contains(QStringLiteral("::")) && !className.contains(QChar('/')) &&
         !className.contains(QChar('\\'))
@@ -161,7 +173,9 @@ void ModelCommand::throwIfContainsNamespaceOrPath(const QString &className)
         return;
 
     throw Exceptions::InvalidArgumentError(
-                "Namespace or path is not allowed in the model name");
+                QStringLiteral("Namespace or path is not allowed in the model "
+                               "names (%1).")
+                .arg(source));
 }
 
 } // namespace Tom::Commands::Make

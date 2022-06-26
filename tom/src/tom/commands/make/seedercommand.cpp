@@ -136,7 +136,7 @@ void SeederCommand::throwIfContainsNamespaceOrPath(const QString &className)
         return;
 
     throw Exceptions::InvalidArgumentError(
-                "Namespace or path is not allowed in the seeder name");
+                "Namespace or path is not allowed in the seeder name.");
 }
 
 } // namespace Tom::Commands::Make
