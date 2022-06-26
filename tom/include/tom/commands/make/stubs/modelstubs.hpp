@@ -26,7 +26,7 @@ namespace Models
 using Orm::Tiny::Model;{{ usingsSection }}
 
 // NOLINTNEXTLINE(misc-no-recursion)
-class {{ class }} final : public Model<{{ class }}>
+class {{ class }} final : public Model<{{ class }}{{ relationsList }}>
 {
     friend Model;
     using Model::Model;{{ publicSection }}{{ privateSection }}

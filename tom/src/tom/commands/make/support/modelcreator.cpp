@@ -17,6 +17,7 @@ namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
 
+using Orm::Constants::COMMA;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
@@ -90,6 +91,7 @@ std::string ModelCreator::populateStub(const QString &className,
 
     const auto includesSection = createIncludesSection();
     const auto usingsSection   = createUsingsSection();
+    const auto relationsList   = createRelationsList();
 
     QString stub(ModelStub);
 
@@ -109,7 +111,10 @@ std::string ModelCreator::populateStub(const QString &className,
         .replace(QStringLiteral("{{ includesSection }}"), includesSection)
         .replace(QStringLiteral("{{includesSection}}"),   includesSection)
         .replace(QStringLiteral("{{ usingsSection }}"),   usingsSection)
-        .replace(QStringLiteral("{{usingsSection}}"),     usingsSection);
+        .replace(QStringLiteral("{{usingsSection}}"),     usingsSection)
+
+        .replace(QStringLiteral("{{ relationsList }}"), relationsList)
+        .replace(QStringLiteral("{{relationsList}}"),   relationsList);
 
     return stub.toStdString();
 }
@@ -352,6 +357,7 @@ QString ModelCreator::createOneToOneRelationItem(
     // Insert to model includes and usings
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("HasOne")));
+    m_relationsList.emplace(relatedClass);
 
     return result;
 }
@@ -379,6 +385,7 @@ QString ModelCreator::createOneToManyRelationItem(
     // Insert to model includes and usings
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("HasMany")));
+    m_relationsList.emplace(relatedClass);
 
     return result;
 }
@@ -406,6 +413,7 @@ QString ModelCreator::createBelongsToRelationItem(
     // Insert to model includes and usings
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("BelongsTo")));
+    m_relationsList.emplace(relatedClass);
 
     return result;
 }
@@ -434,11 +442,12 @@ QString ModelCreator::createBelongsToManyRelationItem(
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub)
                          .arg(QStringLiteral("BelongsToMany")));
+    m_relationsList.emplace(relatedClass);
 
     return result;
 }
 
-QString ModelCreator::createIncludesSection()
+QString ModelCreator::createIncludesSection() const
 {
     // Nothing to create
     if (m_includesList.empty())
@@ -447,13 +456,22 @@ QString ModelCreator::createIncludesSection()
     return NOSPACE.arg("\n\n", ContainerUtils::join(m_includesList, NEWLINE));
 }
 
-QString ModelCreator::createUsingsSection()
+QString ModelCreator::createUsingsSection() const
 {
     // Nothing to create
     if (m_usingsList.empty())
         return {};
 
     return NOSPACE.arg(NEWLINE, ContainerUtils::join(m_usingsList, NEWLINE));
+}
+
+QString ModelCreator::createRelationsList() const
+{
+    // Nothing to create
+    if (m_relationsList.empty())
+        return {};
+
+    return ContainerUtils::join(m_relationsList, COMMA).prepend(COMMA);
 }
 
 /* private */

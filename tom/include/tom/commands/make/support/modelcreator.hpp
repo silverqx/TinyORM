@@ -117,14 +117,18 @@ namespace Tom::Commands::Make::Support
                     QString::size_type relationsMaxSize);
 
         /*! Create model's includes section. */
-        QString createIncludesSection();
+        QString createIncludesSection() const;
         /*! Create model's usings section. */
-        QString createUsingsSection();
+        QString createUsingsSection() const;
+        /*! Create model's relations list for the Model base class. */
+        QString createRelationsList() const;
 
         /*! Include paths for the generated model. */
         std::set<QString> m_includesList {};
         /*! Using directives for the generated model. */
         std::set<QString> m_usingsList {};
+        /*! Relations list for the generated model's base class (all related classes). */
+        std::set<QString> m_relationsList {};
 
     private:
         /*! Ensure that a model with the given name doesn't already exist. */
