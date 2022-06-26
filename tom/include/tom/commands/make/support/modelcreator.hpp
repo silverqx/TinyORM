@@ -5,7 +5,7 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QString>
+#include <QStringList>
 
 #include <filesystem>
 #include <set>
@@ -42,6 +42,14 @@ namespace Tom::Commands::Make::Support
             QString belongsTo;
             /*! Related class name for the belongs-to-many relationship. */
             QString belongsToMany;
+            /*! The class name of the pivot class for the belongs-to-many relationship. */
+            QString pivot;
+            /*! The name for the pivot relation. */
+            QString as;
+            /*! Extra attributes for the pivot model. */
+            QStringList withPivot;
+            /*! Pivot table with timestamps. */
+            bool withTimestamps;
             /*! The connection name for the model. */
             QString connection;
             /*! The table associated with the model. */
@@ -64,22 +72,32 @@ namespace Tom::Commands::Make::Support
         /*! Populate the place-holders in the model stub. */
         std::string populateStub(const QString &className, const CmdOptions &cmdOptions);
 
+        /* Public model section */
         /*! Create model's public section (relations). */
-        static QString createPublicSection(const QString &className,
-                                           const CmdOptions &cmdOptions);
+        QString createPublicSection(const QString &className,
+                                    const CmdOptions &cmdOptions);
 
         /*! Create one-to-one relationship method. */
-        static QString createOneToOneRelation(const QString &parentClass,
-                                              const QString &relatedClass);
+        QString createOneToOneRelation(const QString &parentClass,
+                                       const QString &relatedClass);
         /*! Create one-to-many relationship method. */
-        static QString createOneToManyRelation(const QString &parentClass,
-                                               const QString &relatedClass);
+        QString createOneToManyRelation(const QString &parentClass,
+                                        const QString &relatedClass);
         /*! Create belongs-to relationship method. */
-        static QString createBelongsToRelation(const QString &parentClass,
-                                               const QString &relatedClass);
+        QString createBelongsToRelation(const QString &parentClass,
+                                        const QString &relatedClass);
+
         /*! Create belongs-to-many relationship method. */
-        static QString createBelongsToManyRelation(const QString &parentClass,
-                                                   const QString &relatedClass);
+        QString createBelongsToManyRelation(
+                    const QString &parentClass,   const QString &relatedClass,
+                    const QString &pivotClass,    const QString &as,
+                    const QStringList &withPivot, bool withTimestamps);
+        /*! Pivot class logic for belongs-to-many relation (--pivot option). */
+        void handlePivotClass(const QString &pivotClass, bool isPivotClassEmpty);
+        /*! Create method calls on the belongs-to-many relation. */
+        static QString createRelationCalls(
+                    const QString &as, const QStringList &withPivot,
+                    bool withTimestamps);
 
         /*! Convert the given class name for usage in the comment (singular). */
         static QString guessSingularComment(const QString &className);
@@ -90,32 +108,34 @@ namespace Tom::Commands::Make::Support
         /*! Guess the to-many relationship name (plural). */
         static QString guessManyTypeRelationName(const QString &className);
 
+        /* Private model section */
         /*! Create model's private section. */
-        QString createPrivateSection(
+        static QString createPrivateSection(
                     const QString &className, const CmdOptions &cmdOptions,
                     bool hasPublicSection);
 
         /*! Create model's u_relations hash. */
-        QString createRelationsHash(const QString &className,
-                                    const CmdOptions &cmdOptions);
+        static QString createRelationsHash(const QString &className,
+                                           const CmdOptions &cmdOptions);
 
         /*! Create one-to-one relation mapping item for u_relations hash. */
-        QString createOneToOneRelationItem(
+        static QString createOneToOneRelationItem(
                     const QString &parentClass, const QString &relatedClass,
                     QString::size_type relationsMaxSize);
         /*! Create one-to-many relation mapping item for u_relations hash. */
-        QString createOneToManyRelationItem(
+        static QString createOneToManyRelationItem(
                     const QString &parentClass, const QString &relatedClass,
                     QString::size_type relationsMaxSize);
         /*! Create belongs-to relation mapping item for u_relations hash. */
-        QString createBelongsToRelationItem(
+        static QString createBelongsToRelationItem(
                     const QString &parentClass, const QString &relatedClass,
                     QString::size_type relationsMaxSize);
         /*! Create belongs-to-many relation mapping item for u_relations hash. */
-        QString createBelongsToManyRelationItem(
+        static QString createBelongsToManyRelationItem(
                     const QString &parentClass, const QString &relatedClass,
                     QString::size_type relationsMaxSize);
 
+        /* Global */
         /*! Create model's includes section. */
         QString createIncludesSection() const;
         /*! Create model's usings section. */

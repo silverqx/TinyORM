@@ -72,6 +72,9 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString one_to_many_up;
     SHAREDLIB_EXPORT extern const QString belongs_to_up;
     SHAREDLIB_EXPORT extern const QString belongs_to_many_up;
+    SHAREDLIB_EXPORT extern const QString pivot_up;
+    SHAREDLIB_EXPORT extern const QString as_up;
+    SHAREDLIB_EXPORT extern const QString with_pivot_up;
     // complete
     SHAREDLIB_EXPORT extern const QString commandline;
     SHAREDLIB_EXPORT extern const QString position;
@@ -96,6 +99,10 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString belongs_to_many;
     SHAREDLIB_EXPORT extern const QString connection_;
     SHAREDLIB_EXPORT extern const QString disable_timestamps;
+    SHAREDLIB_EXPORT extern const QString pivot_;
+    SHAREDLIB_EXPORT extern const QString as_;
+    SHAREDLIB_EXPORT extern const QString with_timestamps;
+    SHAREDLIB_EXPORT extern const QString with_pivot;
     // migrate:refresh
     SHAREDLIB_EXPORT extern const QString step_migrate;
     // integrate

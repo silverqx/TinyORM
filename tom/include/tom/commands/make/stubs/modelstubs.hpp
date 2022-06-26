@@ -85,10 +85,25 @@ R"(
 inline const auto *const BelongsToManyStub =
 R"(
     /*! Get {{ relatedComment }} that belong to the {{ parentComment }}. */
-    std::unique_ptr<BelongsToMany<{{ parentClass }}, {{ relatedClass }}>>
+    std::unique_ptr<BelongsToMany<{{ parentClass }}, {{ relatedClass }}{{ pivotClass }}>>
     {{ relationName }}()
     {
-        return belongsToMany<{{ relatedClass }}>();
+        return belongsToMany<{{ relatedClass }}{{ pivotClass }}>();
+    })";
+
+/*! Belongs-to-many type relation stub v2 (it's the many-to-many and also inverse). */
+inline const auto *const BelongsToManyStub2 =
+R"(
+    /*! Get {{ relatedComment }} that belong to the {{ parentComment }}. */
+    std::unique_ptr<BelongsToMany<{{ parentClass }}, {{ relatedClass }}{{ pivotClass }}>>
+    {{ relationName }}()
+    {
+        // Ownership of a unique_ptr()
+        auto relation = belongsToMany<Tag{{ pivotClass }}>();
+
+        relation->{{ relationCalls }};
+
+        return relation;
     })";
 
 /*! Model private section stub. */

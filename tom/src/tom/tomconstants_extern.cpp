@@ -60,6 +60,9 @@ namespace Tom::Constants
     const QString one_to_many_up     = QStringLiteral("OTM");
     const QString belongs_to_up      = QStringLiteral("BT");
     const QString belongs_to_many_up = QStringLiteral("BTM");
+    const QString pivot_up           = QStringLiteral("PIVOT");
+    const QString as_up              = QStringLiteral("AS");
+    const QString with_pivot_up      = QStringLiteral("WITHPIVOT");
     // complete
     const QString commandline        = QStringLiteral("commandline");
     const QString position           = QStringLiteral("position");
@@ -84,6 +87,10 @@ namespace Tom::Constants
     const QString belongs_to_many    = QStringLiteral("belongs-to-many");
     const QString connection_        = QStringLiteral("connection");
     const QString disable_timestamps = QStringLiteral("disable-timestamps");
+    const QString pivot_             = QStringLiteral("pivot");
+    const QString as_                = QStringLiteral("as");
+    const QString with_timestamps    = QStringLiteral("with-timestamps");
+    const QString with_pivot         = QStringLiteral("with-pivot");
     // migrate:refresh
     const QString step_migrate       = QStringLiteral("step-migrate");
     // integrate

@@ -15,6 +15,8 @@ using Orm::Constants::NAME;
 
 using StringUtils = Orm::Tiny::Utils::String;
 
+using Tom::Constants::as_;
+using Tom::Constants::as_up;
 using Tom::Constants::belongs_to;
 using Tom::Constants::belongs_to_many;
 using Tom::Constants::belongs_to_many_up;
@@ -29,9 +31,14 @@ using Tom::Constants::one_to_many;
 using Tom::Constants::one_to_many_up;
 using Tom::Constants::path_;
 using Tom::Constants::path_up;
+using Tom::Constants::pivot_;
+using Tom::Constants::pivot_up;
 using Tom::Constants::realpath_;
 using Tom::Constants::table_;
 using Tom::Constants::table_up;
+using Tom::Constants::with_pivot;
+using Tom::Constants::with_pivot_up;
+using Tom::Constants::with_timestamps;
 
 using CmdOptions = Tom::Commands::Make::Support::ModelCreator::CmdOptions;
 
@@ -58,6 +65,7 @@ const std::vector<PositionalArgument> &ModelCommand::positionalArguments() const
 QList<QCommandLineOption> ModelCommand::optionsSignature() const
 {
     return {
+        // Relationship methods
         {one_to_one,         QStringLiteral("Create one-to-one relation to the given "
                                             "model"), one_to_one_up}, // Value
         {one_to_many,        QStringLiteral("Create one-to-many relation to the given "
@@ -70,12 +78,26 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
                                             "many-to-many)"),
                              belongs_to_many_up}, // Value
 
+        // Belongs-to-many related
+        {pivot_,             QStringLiteral("The class name of the pivot class for the "
+                                            "belongs-to-many relationship"),
+                             pivot_up}, // Value
+        {as_,                QStringLiteral("The name for the pivot relation"),
+                             as_up}, // Value
+        {with_pivot,         QStringLiteral("Extra attributes for the pivot model "
+                                            "<comment>(multiple values allowed)"
+                                            "</comment>"),
+                             with_pivot_up}, // Value
+        {with_timestamps,    QStringLiteral("Pivot table with timestamps")},
+
+        // Attributes in the private section
         {table_,             QStringLiteral("The table associated with the model"),
                              table_up}, // Value
         {connection_,        QStringLiteral("The connection name for the model"),
                              connection_up}, // Value
         {disable_timestamps, QStringLiteral("Disable timestamping of the model")},
 
+        // Paths related
         {path_,              QStringLiteral("The location where the model file should "
                                             "be created"), path_up}, // Value
         {realpath_,          QStringLiteral("Indicate that any provided model file "
@@ -110,11 +132,14 @@ ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOption
                                    QStringLiteral("option --one-to-many"));
     throwIfContainsNamespaceOrPath(cmdOptions.belongsToMany,
                                    QStringLiteral("option --belongs-to-many"));
+    throwIfContainsNamespaceOrPath(cmdOptions.pivot,
+                                   QStringLiteral("option --pivot"));
 
     cmdOptions.oneToOne      = StringUtils::studly(std::move(cmdOptions.oneToOne));
     cmdOptions.oneToMany     = StringUtils::studly(std::move(cmdOptions.oneToMany));
     cmdOptions.belongsTo     = StringUtils::studly(std::move(cmdOptions.belongsTo));
     cmdOptions.belongsToMany = StringUtils::studly(std::move(cmdOptions.belongsToMany));
+    cmdOptions.pivot         = StringUtils::studly(std::move(cmdOptions.pivot));
 
     return {StringUtils::studly(std::move(className)), std::move(cmdOptions)};
 }
@@ -135,13 +160,9 @@ void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOpt
 ModelCommand::CmdOptions ModelCommand::createCmdOptions() const
 {
     return {
-        value(one_to_one),
-        value(one_to_many),
-        value(belongs_to),
-        value(belongs_to_many),
-        value(connection_),
-        value(table_),
-        isSet(disable_timestamps),
+        value(one_to_one),  value(one_to_many),value(belongs_to),  value(belongs_to_many),
+        value(pivot_),      value(as_),        values(with_pivot), isSet(with_timestamps),
+        value(connection_), value(table_),     isSet(disable_timestamps),
     };
 }
 
