@@ -290,12 +290,23 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
     return lines;
 }
 
-QString::size_type String::countBefore(QString string, QChar character,
-                                       QString::size_type position)
+QString::size_type String::countBefore(QString string, const QChar character,
+                                       const QString::size_type position)
 {
     string.truncate(position);
 
     return string.count(character);
+}
+
+QString String::wrapValue(const QString &string, const QChar character)
+{
+    return QString().append(character).append(string).append(character);
+}
+
+QString String::wrapValue(const QString &string, const QChar firstCharacter,
+                          const QChar lastCharacter)
+{
+    return QString().append(firstCharacter).append(string).append(lastCharacter);
 }
 #endif
 

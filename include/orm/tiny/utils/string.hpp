@@ -40,10 +40,6 @@ namespace Orm::Tiny::Utils
         /*! Convert a string to kebab case. (kebab-case). */
         inline static QString kebab(const QString &string);
 
-        /*! Count number of the given character before the given position. */
-        static QString::size_type countBefore(QString string, QChar character,
-                                              QString::size_type position);
-
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
         /*! Check if the given string is the number, signed or unsigned. */
         static bool isNumber(QStringView string, bool allowFloating = false);
@@ -53,6 +49,16 @@ namespace Orm::Tiny::Utils
         /*! Split a string by the given width (not in the middle of a word). */
         static std::vector<QString>
         splitStringByWidth(const QString &string, int width);
+
+        /*! Count number of the given character before the given position. */
+        static QString::size_type countBefore(QString string, QChar character,
+                                              QString::size_type position);
+
+        /*! Wrap a string inside the given character. */
+        static QString wrapValue(const QString &string, QChar character);
+        /*! Wrap a string inside the given character. */
+        static QString wrapValue(const QString &string, QChar firstCharacter,
+                                 QChar lastCharacter);
 #endif
 
 #ifndef TINYORM_DISABLE_ORM
