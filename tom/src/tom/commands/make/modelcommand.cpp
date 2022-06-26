@@ -15,15 +15,23 @@ using Orm::Constants::NAME;
 
 using StringUtils = Orm::Tiny::Utils::String;
 
+using Tom::Constants::belongs_to;
+using Tom::Constants::belongs_to_many;
+using Tom::Constants::belongs_to_many_up;
+using Tom::Constants::belongs_to_up;
 using Tom::Constants::connection_;
 using Tom::Constants::connection_up;
+using Tom::Constants::disable_timestamps;
 using Tom::Constants::fullpath;
+using Tom::Constants::one_to_one;
+using Tom::Constants::one_to_one_up;
+using Tom::Constants::one_to_many;
+using Tom::Constants::one_to_many_up;
 using Tom::Constants::path_;
 using Tom::Constants::path_up;
 using Tom::Constants::realpath_;
 using Tom::Constants::table_;
 using Tom::Constants::table_up;
-using Tom::Constants::disable_timestamps;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -48,10 +56,22 @@ const std::vector<PositionalArgument> &ModelCommand::positionalArguments() const
 QList<QCommandLineOption> ModelCommand::optionsSignature() const
 {
     return {
-        {connection_,        QStringLiteral("The connection name for the model"),
-                             connection_up}, // Value
+        {one_to_one,         QStringLiteral("Create one-to-one relation to the given "
+                                            "model"), one_to_one_up}, // Value
+        {one_to_many,        QStringLiteral("Create one-to-many relation to the given "
+                                            "model"), one_to_many_up}, // Value
+        {belongs_to,         QStringLiteral("Create belongs-to relation to the given "
+                                            "model (inverse relation for oto and otm)"),
+                             belongs_to_up}, // Value
+        {belongs_to_many,    QStringLiteral("Create many-to-many relation to the "
+                                            "given model (also for inverse relation for "
+                                            "many-to-many)"),
+                             belongs_to_many_up}, // Value
+
         {table_,             QStringLiteral("The table associated with the model"),
                              table_up}, // Value
+        {connection_,        QStringLiteral("The connection name for the model"),
+                             connection_up}, // Value
         {disable_timestamps, QStringLiteral("Disable timestamping of the model")},
 
         {path_,              QStringLiteral("The location where the model file should "
@@ -66,6 +86,7 @@ int ModelCommand::run()
 {
     Command::run();
 
+    // CUR make model, unify this prepare with all others options preparation and validation silverqx
     const auto className = prepareModelClassname(argument(NAME));
 
     // Ready to write the model to the disk 🧨✨
@@ -84,7 +105,7 @@ QString ModelCommand::prepareModelClassname(QString &&className)
     return StringUtils::studly(std::move(className));
 }
 
-void ModelCommand::writeModel(const QString &className) const
+void ModelCommand::writeModel(const QString &className)
 {
     auto modelFilePath = m_creator.create(className, createCmdOptions(), getModelPath());
 
@@ -100,6 +121,8 @@ void ModelCommand::writeModel(const QString &className) const
 ModelCommand::CmdOptions ModelCommand::createCmdOptions() const
 {
     return {
+        value(one_to_one),
+        value(one_to_many),
         value(connection_),
         value(table_),
         isSet(disable_timestamps),

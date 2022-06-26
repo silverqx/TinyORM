@@ -67,6 +67,10 @@ namespace Tom::Constants
     inline const QString create_up          = QStringLiteral("CREATE");
     inline const QString table_up           = QStringLiteral("TABLE");
     inline const QString connection_up      = QStringLiteral("CONNECTION");
+    inline const QString one_to_one_up      = QStringLiteral("OTO");
+    inline const QString one_to_many_up     = QStringLiteral("OTM");
+    inline const QString belongs_to_up      = QStringLiteral("BT");
+    inline const QString belongs_to_many_up = QStringLiteral("BTM");
     // complete
     inline const QString commandline        = QStringLiteral("commandline");
     inline const QString position           = QStringLiteral("position");
@@ -85,6 +89,10 @@ namespace Tom::Constants
     inline const QString realpath_          = QStringLiteral("realpath");
     inline const QString fullpath           = QStringLiteral("fullpath");
     // make:model
+    inline const QString one_to_one         = QStringLiteral("one-to-one");
+    inline const QString one_to_many        = QStringLiteral("one-to-many");
+    inline const QString belongs_to         = QStringLiteral("belongs-to");
+    inline const QString belongs_to_many    = QStringLiteral("belongs-to-many");
     inline const QString connection_        = QStringLiteral("connection");
     inline const QString disable_timestamps = QStringLiteral("disable-timestamps");
     // migrate:refresh

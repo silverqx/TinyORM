@@ -11,6 +11,7 @@ TINY_SYSTEM_HEADER
 #  include <vector>
 #endif
 
+#include "orm/constants.hpp"
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
@@ -30,10 +31,14 @@ namespace Orm::Tiny::Utils
         /*! Deleted destructor. */
         ~String() = delete;
 
-        /*! Convert a string to snake case. */
+        /*! Convert a string to snake case (snake_case). */
         static QString snake(QString string, QChar delimiter = '_');
-        /*! Convert a value to studly caps case. */
+        /*! Convert a value to studly caps case (StudlyCase). */
         static QString studly(QString string);
+        /*! Convert a value to camel case (camelCase). */
+        static QString camel(QString string);
+        /*! Convert a string to kebab case. (kebab-case). */
+        inline static QString kebab(const QString &string);
 
         /*! Count number of the given character before the given position. */
         static QString::size_type countBefore(QString string, QChar character,
@@ -55,6 +60,13 @@ namespace Orm::Tiny::Utils
         static QString singular(const QString &string);
 #endif
     };
+
+    /* public */
+
+    QString String::kebab(const QString &string)
+    {
+        return snake(string, Orm::Constants::DASH);
+    }
 
 } // namespace Orm::Tiny::Utils
 

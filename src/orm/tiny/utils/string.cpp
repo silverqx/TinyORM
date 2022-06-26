@@ -71,10 +71,15 @@ QString String::snake(QString string, const QChar delimiter)
 
 namespace
 {
+    /*! Studly cache type. */
     using StudlyCache = std::unordered_map<QString, QString>;
+    /*! Camel cache type. */
+    using CamelCache  = std::unordered_map<QString, QString>;
 
     /*! Studly cache for already computed strings. */
     Q_GLOBAL_STATIC(StudlyCache, studlyCache); // NOLINT(readability-redundant-member-init)
+    /*! Camel cache for already computed strings. */
+    Q_GLOBAL_STATIC(CamelCache, camelCache); // NOLINT(readability-redundant-member-init)
 } // namespace
 
 QString String::studly(QString string)
@@ -111,6 +116,27 @@ QString String::studly(QString string)
     }
 
     return (*studlyCache)[std::move(key)] = value.replace(SPACE, "");
+}
+
+QString String::camel(QString string)
+{
+    auto value = string.trimmed();
+
+    // Nothing to do
+    if (value.isEmpty())
+        return string;
+
+    // Cache key
+    auto key = value;
+
+    if (camelCache->contains(key))
+        return (*camelCache)[key];
+
+    value = studly(value);
+
+    value[0] = value[0].toLower();
+
+    return (*camelCache)[std::move(key)] = value;
 }
 
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)

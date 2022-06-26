@@ -18,18 +18,18 @@ R"TTT(#pragma once
 #ifndef MODELS_{{ macroguard }}_HPP
 #define MODELS_{{ macroguard }}_HPP
 
-#include "orm/tiny/model.hpp"
+#include <orm/tiny/model.hpp>{{ includesSection }}
 
 namespace Models
 {
 
-using Orm::Tiny::Model;
+using Orm::Tiny::Model;{{ usingsSection }}
 
 // NOLINTNEXTLINE(misc-no-recursion)
 class {{ class }} final : public Model<{{ class }}>
 {
     friend Model;
-    using Model::Model;{{ privateSection }}
+    using Model::Model;{{ publicSection }}{{ privateSection }}
 };
 
 } // namespace Models
@@ -37,22 +37,69 @@ class {{ class }} final : public Model<{{ class }}>
 #endif // MODELS_{{ macroguard }}_HPP
 )TTT";
 
+/*! Include item stub. */
+inline const auto *const ModelIncludeItemStub =
+R"(#include "models/%1.hpp")";
+
+/*! Using item stub. */
+inline const auto *const ModelUsingItemStub =
+R"(using Orm::Tiny::Relations::%1;)";
+
+/*! Model public section stub. */
+inline const auto *const ModelPublicStub =
+R"(
+
+public:)";
+
+/*! One-to-one type relation stub. */
+inline const auto *const OneToOneStub =
+R"(
+    /*! Get a {{ relatedComment }} associated with the {{ parentComment }}. */
+    std::unique_ptr<HasOne<{{ parentClass }}, {{ relatedClass }}>>
+    {{ relationName }}()
+    {
+        return hasOne<{{ relatedClass }}>();
+    })";
+
+/*! One-to-many type relation stub. */
+inline const auto *const OneToManyStub =
+R"(
+    /*! Get a {{ relatedComment }} associated with the {{ parentComment }}. */
+    std::unique_ptr<HasMany<{{ parentClass }}, {{ relatedClass }}>>
+    {{ relationName }}()
+    {
+        return hasOne<{{ relatedClass }}>();
+    })";
+
 /*! Model private section stub. */
 inline const auto *const ModelPrivateStub =
 R"(
+
 private:)";
 
-/*! Model connection stub. */
-inline const auto *const ModelConnectionStub =
+/*! Model relations hash stub. */
+inline const auto *const ModelRelationsStub =
 R"(
-    /*! The connection name for the model. */
-    QString u_connection {"{{ connection }}"};)";
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+{{ relationItems }}
+    };)";
+
+/*! Relation item for model relations hash stub. */
+inline const auto *const ModelRelationItemStub =
+R"(        {"{{ relationName }}", {{ spaceAlign }}[](auto &v) { v(&{{ parentClass }}::{{ relationName }}); }},)";
 
 /*! Model table stub. */
 inline const auto *const ModelTableStub =
 R"(
     /*! The table associated with the model. */
     QString u_table {"{{ table }}"};)";
+
+/*! Model connection stub. */
+inline const auto *const ModelConnectionStub =
+R"(
+    /*! The connection name for the model. */
+    QString u_connection {"{{ connection }}"};)";
 
 /*! Model disable timestamps stub. */
 inline const auto *const ModelDisableTimestampsStub =

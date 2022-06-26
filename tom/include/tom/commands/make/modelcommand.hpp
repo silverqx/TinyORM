@@ -48,7 +48,7 @@ namespace Tom::Commands::Make
         static QString prepareModelClassname(QString &&className);
 
         /*! Write the model file to the disk. */
-        void writeModel(const QString &className) const;
+        void writeModel(const QString &className);
 
         /*! Create command line options instance. */
         CmdOptions createCmdOptions() const;
