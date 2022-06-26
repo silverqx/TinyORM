@@ -8,6 +8,8 @@ TINY_SYSTEM_HEADER
 #include <QString>
 #include <QVariant>
 
+#include <set>
+
 #include "orm/macros/commonnamespace.hpp"
 
 namespace std
@@ -69,6 +71,11 @@ namespace Query
     concept ColumnContainer = std::convertible_to<T, const QStringList &> ||
                               std::convertible_to<T, const QVector<QString> &> ||
                               std::convertible_to<T, const QVector<Column> &>;
+
+    /*! QString container concept (used by ContainerUtils::join()). */
+    template<typename T>
+    concept JoinContainer = ColumnContainer<T> ||
+                            std::convertible_to<T, const std::set<QString> &>;
 
     // CUR concepts, check if const QString & vs QString in convertible_to<> makes sense silverqx
     /*! Concept for delimiter for joining containers. */

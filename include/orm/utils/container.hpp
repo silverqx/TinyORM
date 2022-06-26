@@ -25,25 +25,26 @@ namespace Orm::Utils
         ~Container() = delete;
 
         /*! Convert a string container into a (comma) delimited string. */
-        template<ColumnContainer T, DelimiterConcept D = const QString &>
+        template<JoinContainer T, DelimiterConcept D = const QString &>
         static QString
         join(const T &container, D &&delimiter = Constants::COMMA);
     };
 
-    template<ColumnContainer T, DelimiterConcept D>
+    template<JoinContainer T, DelimiterConcept D>
     QString Container::join(const T &container, D &&delimiter)
     {
         QString columnized;
         // Estimate a size to avoid resizing, 7 for an item and 2 for the delimiter
         columnized.reserve(container.size() * (7 + 2));
 
-        if (container.isEmpty())
+        if (container.empty())
             return columnized;
 
-        const auto end = container.cend() - 1;
+        auto end = container.end();
+        --end;
         auto it = container.begin();
 
-        for (; it < end; ++it)
+        for (; it != end; ++it)
             columnized += Constants::NOSPACE.arg(*it).arg(std::forward<D>(delimiter));
 
         if (it == end)
