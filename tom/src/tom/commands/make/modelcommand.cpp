@@ -108,9 +108,12 @@ ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOption
                                    QStringLiteral("option --one-to-one"));
     throwIfContainsNamespaceOrPath(cmdOptions.oneToMany,
                                    QStringLiteral("option --one-to-many"));
+    throwIfContainsNamespaceOrPath(cmdOptions.belongsTo,
+                                   QStringLiteral("option --belongs-to"));
 
-    cmdOptions.oneToOne = StringUtils::studly(std::move(cmdOptions.oneToOne));
+    cmdOptions.oneToOne  = StringUtils::studly(std::move(cmdOptions.oneToOne));
     cmdOptions.oneToMany = StringUtils::studly(std::move(cmdOptions.oneToMany));
+    cmdOptions.belongsTo = StringUtils::studly(std::move(cmdOptions.belongsTo));
 
     return {StringUtils::studly(std::move(className)), std::move(cmdOptions)};
 }
@@ -133,6 +136,7 @@ ModelCommand::CmdOptions ModelCommand::createCmdOptions() const
     return {
         value(one_to_one),
         value(one_to_many),
+        value(belongs_to),
         value(connection_),
         value(table_),
         isSet(disable_timestamps),

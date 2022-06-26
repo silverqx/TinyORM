@@ -24,6 +24,7 @@ using Orm::Constants::SPACE;
 using ContainerUtils = Orm::Utils::Container;
 using StringUtils    = Orm::Tiny::Utils::String;
 
+using Tom::Commands::Make::Stubs::BelongsToStub;
 using Tom::Commands::Make::Stubs::ModelConnectionStub;
 using Tom::Commands::Make::Stubs::ModelDisableTimestampsStub;
 using Tom::Commands::Make::Stubs::ModelIncludeItemStub;
@@ -115,12 +116,13 @@ std::string ModelCreator::populateStub(const QString &className,
 QString ModelCreator::createPublicSection(const QString &className,
                                           const CmdOptions &cmdOptions)
 {
-    const auto &[oneToOne, oneToMany, _1, _2, _3] = cmdOptions;
+    const auto &[oneToOne, oneToMany, belongsTo, _1, _2, _3] = cmdOptions;
 
     QStringList publicSectionList;
 
     publicSectionList << createOneToOneRelation(className, oneToOne);
     publicSectionList << createOneToManyRelation(className, oneToMany);
+    publicSectionList << createBelongsToRelation(className, belongsTo);
 
     // Remove empty parts
     publicSectionList |= ranges::actions::remove_if([](const auto &value)
@@ -182,6 +184,29 @@ QString ModelCreator::createOneToManyRelation(const QString &parentClass,
             .replace(QStringLiteral("{{relatedComment}}"),    relatedComment);
 }
 
+QString ModelCreator::createBelongsToRelation(const QString &parentClass,
+                                              const QString &relatedClass)
+{
+    if (relatedClass.isEmpty())
+        return {};
+
+    const auto relationName = guessOneTypeRelationName(relatedClass);
+    const auto parentComment = guessSingularComment(parentClass);
+    const auto relatedComment = guessSingularComment(relatedClass);
+
+    return QString(BelongsToStub)
+            .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
+            .replace(QStringLiteral("{{parentClass}}"),       parentClass)
+            .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
+            .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+            .replace(QStringLiteral("{{ relationName }}"),    relationName)
+            .replace(QStringLiteral("{{relationName}}"),      relationName)
+            .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
+            .replace(QStringLiteral("{{parentComment}}"),     parentComment)
+            .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
+            .replace(QStringLiteral("{{relatedComment}}"),    relatedComment);
+}
+
 QString ModelCreator::guessSingularComment(const QString &className)
 {
     return StringUtils::snake(className, SPACE);
@@ -206,7 +231,7 @@ QString ModelCreator::createPrivateSection(
             const QString &className, const CmdOptions &cmdOptions,
             const bool hasPublicSection)
 {
-    const auto &[_1, _2, connection, table, disableTimestamps] = cmdOptions;
+    const auto &[_1, _2, _3, connection, table, disableTimestamps] = cmdOptions;
 
     QString privateSection;
 
@@ -243,7 +268,7 @@ QString ModelCreator::createPrivateSection(
 QString ModelCreator::createRelationsHash(const QString &className,
                                           const CmdOptions &cmdOptions)
 {
-    const auto &[oneToOne, oneToMany, _1, _2, _3] = cmdOptions;
+    const auto &[oneToOne, oneToMany, belongsTo, _1, _2, _3] = cmdOptions;
 
     // Nothing to create
     if (oneToOne.isEmpty() || oneToMany.isEmpty())
@@ -258,6 +283,8 @@ QString ModelCreator::createRelationsHash(const QString &className,
     relationItemsList << createOneToOneRelationItem(className, oneToOne,
                                                     relationsMaxSize);
     relationItemsList << createOneToManyRelationItem(className, oneToMany,
+                                                     relationsMaxSize);
+    relationItemsList << createBelongsToRelationItem(className, belongsTo,
                                                      relationsMaxSize);
 
     const auto relationItems = relationItemsList.join(NEWLINE);
@@ -317,6 +344,33 @@ QString ModelCreator::createOneToManyRelationItem(
     // Insert to model includes and usings
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("HasMany")));
+
+    return result;
+}
+
+QString ModelCreator::createBelongsToRelationItem(
+            const QString &parentClass, const QString &relatedClass,
+            QString::size_type relationsMaxSize)
+{
+    if (relatedClass.isEmpty())
+        return {};
+
+    const auto relationName = guessOneTypeRelationName(relatedClass);
+    const auto spaceAlign = QString(relationsMaxSize - relationName.size(), SPACE);
+
+    QString result = QString(ModelRelationItemStub)
+                     .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
+                     .replace(QStringLiteral("{{parentClass}}"),    parentClass)
+
+                     .replace(QStringLiteral("{{ relationName }}"), relationName)
+                     .replace(QStringLiteral("{{relationName}}"),   relationName)
+
+                     .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
+                     .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+
+    // Insert to model includes and usings
+    m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
+    m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("BelongsTo")));
 
     return result;
 }
