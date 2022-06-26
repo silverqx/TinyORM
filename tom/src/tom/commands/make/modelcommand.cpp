@@ -2,6 +2,7 @@
 
 #include <orm/constants.hpp>
 #include <orm/tiny/utils/string.hpp>
+#include <orm/utils/container.hpp>
 
 #include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
@@ -13,6 +14,7 @@ using fspath = std::filesystem::path;
 
 using Orm::Constants::NAME;
 
+using ContainerUtils = Orm::Utils::Container;
 using StringUtils = Orm::Tiny::Utils::String;
 
 using Tom::Constants::as_;
@@ -113,6 +115,8 @@ int ModelCommand::run()
     const auto [className, cmdOptions] = prepareModelClassnames(argument(NAME),
                                                                 createCmdOptions());
 
+    showUnusedOptionsWarnings(cmdOptions);
+
     // Ready to write the model to the disk 🧨✨
     writeModel(className, cmdOptions);
 
@@ -142,6 +146,42 @@ ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOption
     cmdOptions.pivot         = StringUtils::studly(std::move(cmdOptions.pivot));
 
     return {StringUtils::studly(std::move(className)), std::move(cmdOptions)};
+}
+
+void ModelCommand::showUnusedOptionsWarnings(const CmdOptions &cmdOptions) const
+{
+    const auto &[
+            _1, _2, _3, belongsToMany,
+            pivot, as, withPivot, withTimestamps,
+            _4, _5, _6
+    ] = cmdOptions;
+
+    if (!belongsToMany.isEmpty())
+        return;
+
+    std::set<QString> unusedOptions;
+
+    if (!pivot.isEmpty())
+        unusedOptions.emplace(QStringLiteral("--pivot"));
+
+    if (!as.isEmpty())
+        unusedOptions.emplace(QStringLiteral("--as"));
+
+    if (!withPivot.isEmpty())
+        unusedOptions.emplace(QStringLiteral("--with-pivot"));
+
+    if (withTimestamps)
+        unusedOptions.emplace(QStringLiteral("--with-timestamps"));
+
+    // Warning message templates
+    const auto singular = QStringLiteral("Unused option %1; it depends on the "
+                                         "--belongs-to-many= option.");
+    const auto plural =   QStringLiteral("Unused options %1; they depend on the "
+                                         "--belongs-to-many= option.");
+
+    comment((unusedOptions.size() == 1 ? singular : plural)
+            .arg(ContainerUtils::join(unusedOptions)));
+    newLine();
 }
 
 void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions)

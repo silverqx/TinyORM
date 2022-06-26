@@ -48,6 +48,9 @@ namespace Tom::Commands::Make
         static std::tuple<QString, CmdOptions>
         prepareModelClassnames(QString &&className, CmdOptions &&cmdOptions);
 
+        /*! Show unused options warning. */
+        void showUnusedOptionsWarnings(const CmdOptions &cmdOptions) const;
+
         /*! Write the model file to the disk. */
         void writeModel(const QString &className, const CmdOptions &cmdOptions);
 
