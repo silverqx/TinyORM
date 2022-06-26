@@ -92,6 +92,8 @@ std::string ModelCreator::populateStub(const QString &className,
     const auto includesSection = createIncludesSection();
     const auto usingsSection   = createUsingsSection();
     const auto relationsList   = createRelationsList();
+    // I want to have all pivots after the related classes because of that this set exists
+    const auto pivotsList      = createPivotsList();
 
     QString stub(ModelStub);
 
@@ -114,7 +116,9 @@ std::string ModelCreator::populateStub(const QString &className,
         .replace(QStringLiteral("{{usingsSection}}"),     usingsSection)
 
         .replace(QStringLiteral("{{ relationsList }}"), relationsList)
-        .replace(QStringLiteral("{{relationsList}}"),   relationsList);
+        .replace(QStringLiteral("{{relationsList}}"),   relationsList)
+        .replace(QStringLiteral("{{ pivotsList }}"),    pivotsList)
+        .replace(QStringLiteral("{{pivotsList}}"),      pivotsList);
 
     return stub.toStdString();
 }
@@ -442,7 +446,9 @@ QString ModelCreator::createBelongsToManyRelationItem(
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub)
                          .arg(QStringLiteral("BelongsToMany")));
+
     m_relationsList.emplace(relatedClass);
+    m_pivotsList.emplace(QStringLiteral("Pivot"));
 
     return result;
 }
@@ -472,6 +478,15 @@ QString ModelCreator::createRelationsList() const
         return {};
 
     return ContainerUtils::join(m_relationsList, COMMA).prepend(COMMA);
+}
+
+QString ModelCreator::createPivotsList() const
+{
+    // Nothing to create
+    if (m_pivotsList.empty())
+        return {};
+
+    return ContainerUtils::join(m_pivotsList, COMMA).prepend(COMMA);
 }
 
 /* private */

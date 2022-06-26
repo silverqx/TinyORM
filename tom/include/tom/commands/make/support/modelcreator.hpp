@@ -122,6 +122,8 @@ namespace Tom::Commands::Make::Support
         QString createUsingsSection() const;
         /*! Create model's relations list for the Model base class. */
         QString createRelationsList() const;
+        /*! Create model's pivots list for the Model base class. */
+        QString createPivotsList() const;
 
         /*! Include paths for the generated model. */
         std::set<QString> m_includesList {};
@@ -129,6 +131,8 @@ namespace Tom::Commands::Make::Support
         std::set<QString> m_usingsList {};
         /*! Relations list for the generated model's base class (all related classes). */
         std::set<QString> m_relationsList {};
+        /*! Pivots list for the generated model's base class. */
+        std::set<QString> m_pivotsList {};
 
     private:
         /*! Ensure that a model with the given name doesn't already exist. */
