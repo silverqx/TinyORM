@@ -88,9 +88,8 @@ int ModelCommand::run()
 {
     Command::run();
 
-    // CUR make model, unify this prepare with all others options preparation and validation silverqx
-    auto [className, cmdOptions] = prepareModelClassnames(argument(NAME),
-                                                          createCmdOptions());
+    const auto [className, cmdOptions] = prepareModelClassnames(argument(NAME),
+                                                                createCmdOptions());
 
     // Ready to write the model to the disk 🧨✨
     writeModel(className, cmdOptions);
