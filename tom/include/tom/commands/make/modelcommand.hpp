@@ -5,6 +5,8 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
+#include <unordered_set>
+
 #include "tom/commands/command.hpp"
 #include "tom/commands/make/support/modelcreator.hpp"
 #include "tom/tomconstants.hpp"
@@ -23,6 +25,8 @@ namespace Tom::Commands::Make
         using fspath = std::filesystem::path;
         /*! Alias for the command line option values. */
         using CmdOptions = Support::ModelCreator::CmdOptions;
+        /*! Alias for the foreign keys. */
+        using ForeignKeys = Support::ModelCreator::ForeignKeys;
 
     public:
         /*! Constructor. */
@@ -49,19 +53,48 @@ namespace Tom::Commands::Make
         prepareModelClassnames(QString &&className, CmdOptions &&cmdOptions);
 
         /*! Show unused options warning. */
-        void showUnusedOptionsWarnings(const CmdOptions &cmdOptions) const;
+        void showUnusedOptionsWarnings(const CmdOptions &cmdOptions);
 
         /*! Write the model file to the disk. */
         void writeModel(const QString &className, const CmdOptions &cmdOptions);
 
         /*! Create command line options instance. */
-        CmdOptions createCmdOptions() const;
+        CmdOptions createCmdOptions();
+
+        /* Foreign key names */
+        /*! Divide foreign key names by relation types. */
+        ForeignKeys prepareForeignKeys(const QStringList &foreignKeyValues);
+        /*! Try to start a new relation during foreign key names search. */
+        static bool startNewRelation(
+                    const std::unordered_set<QString> &relationNames, QString &option,
+                    QString &currentRelation, ForeignKeys &foreignKeys,
+                    bool &wasForeignKeySet, bool &wasForeignKeySetPartial);
+        /*! Insert the default value if no foreign key was passed on the cmd. line. */
+        static void insertEmptyForeignList(const QString &currentRelation,
+                                           ForeignKeys &foreignKeys);
+        /*! Foreign key name found, assign it to the correct relation type. */
+        static void insertForeignKeyName(
+                    const QString &currentRelation, ForeignKeys &foreignKeys,
+                    const QStringList &foreignKeyValues,
+                    QStringList::size_type &foreignIndex, bool &wasForeignKeySet,
+                    bool &wasForeignKeySetPartial);
+        /*! Foreign key name found, assign it to the correct relation type (for btm). */
+        static void insertForeignKeyNameBtm(
+                    ForeignKeys &foreignKeys, const QStringList &foreignKeyValues,
+                    QStringList::size_type &foreignIndex, bool &wasForeignKeySet,
+                    bool &wasForeignKeySetPartial);
+        /*! Show unused foreign key option warning. */
+        void showUnusedForeignKeyWarning();
+
+        /* Others */
         /*! Get the model path (either specified by the --path option or the default
             location). */
         fspath getModelPath() const;
 
         /*! The model creator instance. */
         Support::ModelCreator m_creator {};
+        /*! Indicates whether the unused warning have been shown. */
+        bool m_shownUnusedWarning = false;
 
     private:
         /*! Throw if the model name constains a namespace or path. */

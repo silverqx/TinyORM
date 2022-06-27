@@ -31,6 +31,28 @@ namespace Tom::Commands::Make::Support
         /*! Default destructor. */
         inline ~ModelCreator() = default;
 
+        /*! Foreign key names for the belongs-to-many relation. */
+        struct BelongToManyForeignKeys
+        {
+            /*! The foreign key of the parent model. */
+            QString foreignPivotKey;
+            /*! The associated key of the relation. */
+            QString relatedPivotKey;
+        };
+
+        /*! Foreign keys lists divided by relation types. */
+        struct ForeignKeys
+        {
+            /*! Foreign keys for one-to-one relations. */
+            QStringList oneToOne {};
+            /*! Foreign keys for one-to-many relations. */
+            QStringList oneToMany {};
+            /*! Foreign keys for belongs-to relations. */
+            QStringList belongsTo {};
+            /*! Foreign keys for belongs-to-many relations. */
+            std::vector<BelongToManyForeignKeys> belongsToMany {};
+        };
+
         /*! Struct to hold command line option values. */
         struct CmdOptions
         {
@@ -42,6 +64,10 @@ namespace Tom::Commands::Make::Support
             QString belongsTo;
             /*! Related class name for the belongs-to-many relationship. */
             QString belongsToMany;
+            /*! The foreign key names list, every relation can have one foreign key. */
+            ForeignKeys foreignKeys;
+            /*! The pivot table name. */
+            QString pivotTable;
             /*! The class name of the pivot class for the belongs-to-many relationship. */
             QString pivot;
             /*! The name for the pivot relation. */
@@ -78,20 +104,31 @@ namespace Tom::Commands::Make::Support
                                     const CmdOptions &cmdOptions);
 
         /*! Create one-to-one relationship method. */
-        QString createOneToOneRelation(const QString &parentClass,
-                                       const QString &relatedClass);
+        QString createOneToOneRelation(
+                    const QString &parentClass, const QString &relatedClass,
+                    const QStringList &foreignKeys);
         /*! Create one-to-many relationship method. */
-        QString createOneToManyRelation(const QString &parentClass,
-                                        const QString &relatedClass);
+        QString createOneToManyRelation(
+                    const QString &parentClass, const QString &relatedClass,
+                    const QStringList &foreignKeys);
         /*! Create belongs-to relationship method. */
-        QString createBelongsToRelation(const QString &parentClass,
-                                        const QString &relatedClass);
+        QString createBelongsToRelation(
+                    const QString &parentClass, const QString &relatedClass,
+                    const QStringList &foreignKeys);
+
+        /*! Create arguments list for the relation factory method (for oto, otm, bto). */
+        static QString createRelationArguments(const QString &foreignKey);
 
         /*! Create belongs-to-many relationship method. */
         QString createBelongsToManyRelation(
-                    const QString &parentClass,   const QString &relatedClass,
-                    const QString &pivotClass,    const QString &as,
-                    const QStringList &withPivot, bool withTimestamps);
+                    const QString &parentClass, const QString &relatedClass,
+                    const std::vector<BelongToManyForeignKeys> &foreignKeys,
+                    const QString &pivotTable, const QString &pivotClass,
+                    const QString &as, const QStringList &withPivot, bool withTimestamps);
+
+        /*! Create arguments list for the relation factory method (for btm). */
+        static QString createRelationArgumentsBtm(
+                    const QString &pivotTable, const BelongToManyForeignKeys &foreignKey);
         /*! Pivot class logic for belongs-to-many relation (--pivot option). */
         void handlePivotClass(const QString &pivotClass, bool isPivotClassEmpty);
         /*! Create method calls on the belongs-to-many relation. */

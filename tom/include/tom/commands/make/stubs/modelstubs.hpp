@@ -58,7 +58,7 @@ R"(
     std::unique_ptr<HasOne<{{ parentClass }}, {{ relatedClass }}>>
     {{ relationName }}()
     {
-        return hasOne<{{ relatedClass }}>();
+        return hasOne<{{ relatedClass }}>({{ relationArguments }});
     })";
 
 /*! One-to-many type relation stub. */
@@ -68,7 +68,7 @@ R"(
     std::unique_ptr<HasMany<{{ parentClass }}, {{ relatedClass }}>>
     {{ relationName }}()
     {
-        return hasOne<{{ relatedClass }}>();
+        return hasMany<{{ relatedClass }}>({{ relationArguments }});
     })";
 
 /*! Belongs-to type relation stub (inverse for oto and otm). */
@@ -78,7 +78,7 @@ R"(
     std::unique_ptr<BelongsTo<{{ parentClass }}, {{ relatedClass }}>>
     {{ relationName }}()
     {
-        return belongsTo<{{ relatedClass }}>();
+        return belongsTo<{{ relatedClass }}>({{ relationArguments }});
     })";
 
 /*! Belongs-to-many type relation stub (it's the many-to-many and also inverse). */
@@ -88,7 +88,7 @@ R"(
     std::unique_ptr<BelongsToMany<{{ parentClass }}, {{ relatedClass }}{{ pivotClass }}>>
     {{ relationName }}()
     {
-        return belongsToMany<{{ relatedClass }}{{ pivotClass }}>();
+        return belongsToMany<{{ relatedClass }}{{ pivotClass }}>({{ relationArguments }});
     })";
 
 /*! Belongs-to-many type relation stub v2 (it's the many-to-many and also inverse). */
@@ -99,7 +99,7 @@ R"(
     {{ relationName }}()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsToMany<Tag{{ pivotClass }}>();
+        auto relation = belongsToMany<Tag{{ pivotClass }}>({{ relationArguments }});
 
         relation->{{ relationCalls }};
 

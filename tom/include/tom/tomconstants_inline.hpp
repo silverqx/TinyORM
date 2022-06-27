@@ -74,6 +74,8 @@ namespace Tom::Constants
     inline const QString pivot_up           = QStringLiteral("PIVOT");
     inline const QString as_up              = QStringLiteral("AS");
     inline const QString with_pivot_up      = QStringLiteral("WITHPIVOT");
+    inline const QString foreign_key_up     = QStringLiteral("FOREIGNKEY");
+    inline const QString pivot_table_up     = QStringLiteral("PIVOTTABLE");
     // complete
     inline const QString commandline        = QStringLiteral("commandline");
     inline const QString position           = QStringLiteral("position");
@@ -96,6 +98,8 @@ namespace Tom::Constants
     inline const QString one_to_many        = QStringLiteral("one-to-many");
     inline const QString belongs_to         = QStringLiteral("belongs-to");
     inline const QString belongs_to_many    = QStringLiteral("belongs-to-many");
+    inline const QString foreign_key        = QStringLiteral("foreign-key");
+    inline const QString pivot_table        = QStringLiteral("pivot-table");
     inline const QString connection_        = QStringLiteral("connection");
     inline const QString disable_timestamps = QStringLiteral("disable-timestamps");
     inline const QString pivot_             = QStringLiteral("pivot");

@@ -135,19 +135,23 @@ QString ModelCreator::createPublicSection(const QString &className,
                                           const CmdOptions &cmdOptions)
 {
     const auto &[
-            oneToOne, oneToMany, belongsTo, belongsToMany,
-            pivot, as, withPivot, withTimestamps,
+            oneToOne,    oneToMany,  belongsTo, belongsToMany,
+            foreignKeys, pivotTable, pivot, as, withPivot, withTimestamps,
             _1, _2, _3
     ] = cmdOptions;
 
+    const auto &[
+            oneToOneForeign, oneToManyForeign, belongsToForeign, belongsToManyForeign
+    ] = foreignKeys;
+
     QStringList publicSectionList;
 
-    publicSectionList << createOneToOneRelation(className, oneToOne);
-    publicSectionList << createOneToManyRelation(className, oneToMany);
-    publicSectionList << createBelongsToRelation(className, belongsTo);
+    publicSectionList << createOneToOneRelation(className, oneToOne, oneToOneForeign);
+    publicSectionList << createOneToManyRelation(className, oneToMany, oneToManyForeign);
+    publicSectionList << createBelongsToRelation(className, belongsTo, belongsToForeign);
     publicSectionList << createBelongsToManyRelation(
-                             className, belongsToMany, pivot, as, withPivot,
-                             withTimestamps);
+                             className, belongsToMany, belongsToManyForeign,
+                             pivotTable, pivot, as, withPivot, withTimestamps);
 
     // Remove empty parts
     publicSectionList |= ranges::actions::remove_if([](const auto &value)
@@ -163,8 +167,9 @@ QString ModelCreator::createPublicSection(const QString &className,
     return publicSection;
 }
 
-QString ModelCreator::createOneToOneRelation(const QString &parentClass,
-                                             const QString &relatedClass)
+QString ModelCreator::createOneToOneRelation(
+            const QString &parentClass, const QString &relatedClass,
+            const QStringList &foreignKeys)
 {
     if (relatedClass.isEmpty())
         return {};
@@ -175,9 +180,10 @@ QString ModelCreator::createOneToOneRelation(const QString &parentClass,
     m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
     m_relationsList.emplace(relatedClass);
 
-    const auto relationName   = guessOneTypeRelationName(relatedClass);
-    const auto parentComment  = guessSingularComment(parentClass);
-    const auto relatedComment = guessSingularComment(relatedClass);
+    const auto relationName      = guessOneTypeRelationName(relatedClass);
+    const auto parentComment     = guessSingularComment(parentClass);
+    const auto relatedComment    = guessSingularComment(relatedClass);
+    const auto relationArguments = createRelationArguments(foreignKeys.constFirst());
 
     return QString(OneToOneStub)
             .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
@@ -191,11 +197,15 @@ QString ModelCreator::createOneToOneRelation(const QString &parentClass,
             .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
             .replace(QStringLiteral("{{parentComment}}"),     parentComment)
             .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-            .replace(QStringLiteral("{{relatedComment}}"),    relatedComment);
+            .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+
+            .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
+            .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
 }
 
-QString ModelCreator::createOneToManyRelation(const QString &parentClass,
-                                              const QString &relatedClass)
+QString ModelCreator::createOneToManyRelation(
+            const QString &parentClass, const QString &relatedClass,
+            const QStringList &foreignKeys)
 {
     if (relatedClass.isEmpty())
         return {};
@@ -206,9 +216,10 @@ QString ModelCreator::createOneToManyRelation(const QString &parentClass,
     m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
     m_relationsList.emplace(relatedClass);
 
-    const auto relationName   = guessManyTypeRelationName(relatedClass);
-    const auto parentComment  = guessSingularComment(parentClass);
-    const auto relatedComment = guessPluralComment(relatedClass);
+    const auto relationName      = guessManyTypeRelationName(relatedClass);
+    const auto parentComment     = guessSingularComment(parentClass);
+    const auto relatedComment    = guessPluralComment(relatedClass);
+    const auto relationArguments = createRelationArguments(foreignKeys.constFirst());
 
     return QString(OneToManyStub)
             .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
@@ -222,11 +233,15 @@ QString ModelCreator::createOneToManyRelation(const QString &parentClass,
             .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
             .replace(QStringLiteral("{{parentComment}}"),     parentComment)
             .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-            .replace(QStringLiteral("{{relatedComment}}"),    relatedComment);
+            .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+
+            .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
+            .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
 }
 
-QString ModelCreator::createBelongsToRelation(const QString &parentClass,
-                                              const QString &relatedClass)
+QString ModelCreator::createBelongsToRelation(
+            const QString &parentClass, const QString &relatedClass,
+            const QStringList &foreignKeys)
 {
     if (relatedClass.isEmpty())
         return {};
@@ -237,9 +252,10 @@ QString ModelCreator::createBelongsToRelation(const QString &parentClass,
     m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
     m_relationsList.emplace(relatedClass);
 
-    const auto relationName   = guessOneTypeRelationName(relatedClass);
-    const auto parentComment  = guessSingularComment(parentClass);
-    const auto relatedComment = guessSingularComment(relatedClass);
+    const auto relationName      = guessOneTypeRelationName(relatedClass);
+    const auto parentComment     = guessSingularComment(parentClass);
+    const auto relatedComment    = guessSingularComment(relatedClass);
+    const auto relationArguments = createRelationArguments(foreignKeys.constFirst());
 
     return QString(BelongsToStub)
             .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
@@ -253,13 +269,31 @@ QString ModelCreator::createBelongsToRelation(const QString &parentClass,
             .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
             .replace(QStringLiteral("{{parentComment}}"),     parentComment)
             .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-            .replace(QStringLiteral("{{relatedComment}}"),    relatedComment);
+            .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+
+            .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
+            .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+}
+
+QString ModelCreator::createRelationArguments(const QString &foreignKey)
+{
+    QStringList argumentsList;
+
+    if (!foreignKey.isEmpty())
+        argumentsList << StringUtils::wrapValue(foreignKey, QChar('"'));
+
+    // Nothing to create
+    if (argumentsList.isEmpty())
+        return {};
+
+    return argumentsList.join(COMMA);
 }
 
 QString ModelCreator::createBelongsToManyRelation(
             const QString &parentClass, const QString &relatedClass,
-            const QString &pivotClass, const QString &as, const QStringList &withPivot,
-            const bool withTimestamps)
+            const std::vector<BelongToManyForeignKeys> &foreignKeys,
+            const QString &pivotTable, const QString &pivotClass, const QString &as,
+            const QStringList &withPivot, const bool withTimestamps)
 {
     if (relatedClass.isEmpty())
         return {};
@@ -276,14 +310,18 @@ QString ModelCreator::createBelongsToManyRelation(
     // Pivot special logic
     handlePivotClass(pivotClass, isPivotClassEmpty);
 
-    const auto relationName   = guessManyTypeRelationName(relatedClass);
-    const auto parentComment  = guessSingularComment(parentClass);
-    const auto relatedComment = guessPluralComment(relatedClass);
-    const auto pivot          = isPivotClassEmpty ? EMPTY
-                                                  : NOSPACE.arg(COMMA, pivotClass);
-    const auto relationCalls = createRelationCalls(as, withPivot, withTimestamps);
+    const auto relationName      = guessManyTypeRelationName(relatedClass);
+    const auto parentComment     = guessSingularComment(parentClass);
+    const auto relatedComment    = guessPluralComment(relatedClass);
+    const auto pivot             = isPivotClassEmpty ? EMPTY
+                                                     : NOSPACE.arg(COMMA, pivotClass);
 
-    return QString(relationCalls.isEmpty() ? BelongsToManyStub : BelongsToManyStub2)
+    const auto relationCalls     = createRelationCalls(as, withPivot, withTimestamps);
+    const auto relationArguments = createRelationArgumentsBtm(pivotTable,
+                                                              foreignKeys.front());
+
+    return QString(relationCalls.isEmpty()
+                   ? BelongsToManyStub : BelongsToManyStub2)
             .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
             .replace(QStringLiteral("{{parentClass}}"),       parentClass)
             .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
@@ -300,7 +338,38 @@ QString ModelCreator::createBelongsToManyRelation(
             .replace(QStringLiteral("{{ pivotClass }}"),      pivot)
             .replace(QStringLiteral("{{pivotClass}}"),        pivot)
             .replace(QStringLiteral("{{ relationCalls }}"),   relationCalls)
-            .replace(QStringLiteral("{{relationCalls}}"),     relationCalls);
+            .replace(QStringLiteral("{{relationCalls}}"),     relationCalls)
+
+            .replace(QStringLiteral("{{ relationArguments }}"),  relationArguments)
+            .replace(QStringLiteral("{{relationArguments}}"),    relationArguments);
+}
+
+QString ModelCreator::createRelationArgumentsBtm(
+            const QString &pivotTable, const BelongToManyForeignKeys &foreignKey)
+{
+    const auto &[foreignPivotKey, relatedPivotKey] = foreignKey;
+
+    QStringList argumentsList;
+
+    if (!relatedPivotKey.isEmpty())
+        argumentsList << StringUtils::wrapValue(relatedPivotKey, QChar('"'));
+
+    if (!foreignPivotKey.isEmpty())
+        argumentsList.prepend(StringUtils::wrapValue(foreignPivotKey, QChar('"')));
+    else if (!relatedPivotKey.isEmpty())
+        argumentsList.prepend(QStringLiteral("{}"));
+
+    // Table name of the relationship's intermediate table
+    if (!pivotTable.isEmpty())
+        argumentsList.prepend(StringUtils::wrapValue(pivotTable, QChar('"')));
+    else if (!foreignPivotKey.isEmpty() || !relatedPivotKey.isEmpty())
+        argumentsList.prepend(QStringLiteral("{}"));
+
+    // Nothing to create
+    if (argumentsList.isEmpty())
+        return {};
+
+    return argumentsList.join(COMMA);
 }
 
 void ModelCreator::handlePivotClass(const QString &pivotClass,
@@ -389,7 +458,7 @@ QString ModelCreator::createPrivateSection(
             const bool hasPublicSection)
 {
     const auto &[
-            _1, _2, _3, _4, _5, _6, _7, _8,
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,
             connection, table, disableTimestamps
     ] = cmdOptions;
 
@@ -430,7 +499,7 @@ QString ModelCreator::createRelationsHash(const QString &className,
 {
     const auto &[
             oneToOne, oneToMany, belongsTo, belongsToMany,
-            _1, _2, _3, _4, _5, _6, _7
+            _1, _2, _3, _4, _5, _6, _7, _8, _10
     ] = cmdOptions;
 
     // Nothing to create
