@@ -76,10 +76,9 @@ public:
 //        relation->withDefault();
 //        relation->withDefault({{"seeds", 0}, {"total_seeds", -1}});
         // This callback variant is not yet implemented 😟
-//        relation->withDefault([](Torrent &torrent,
-//                              const TorrentPreviewableFile &/*torrentFile*/)
+//        relation->withDefault([](TorrentPeer &torrentPeer, const Torrent &/*torrent*/)
 //        {
-//            torrent[NAME] = "default_model_name";
+//            torrentPeer[NAME] = "default_peer_name";
 //        });
 //        return relation;
     }
