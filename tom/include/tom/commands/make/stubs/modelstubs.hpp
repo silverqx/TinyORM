@@ -24,7 +24,7 @@ namespace Models
 {
 
 using Orm::Tiny::Model;{{ usingsSection }}
-
+{{ forwardsSection }}
 // NOLINTNEXTLINE(misc-no-recursion)
 class {{ class }} final : public Model<{{ class }}{{ relationsList }}{{ pivotsList }}>
 {

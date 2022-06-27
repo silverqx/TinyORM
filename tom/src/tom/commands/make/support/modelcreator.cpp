@@ -97,6 +97,7 @@ std::string ModelCreator::populateStub(const QString &className,
     const auto relationsList   = createRelationsList();
     // I want to have all pivots after the related classes because of that this set exists
     const auto pivotsList      = createPivotsList();
+    const auto forwardsSection = createForwardsSection();
 
     QString stub(ModelStub);
 
@@ -117,6 +118,8 @@ std::string ModelCreator::populateStub(const QString &className,
         .replace(QStringLiteral("{{includesSection}}"),   includesSection)
         .replace(QStringLiteral("{{ usingsSection }}"),   usingsSection)
         .replace(QStringLiteral("{{usingsSection}}"),     usingsSection)
+        .replace(QStringLiteral("{{ forwardsSection }}"), forwardsSection)
+        .replace(QStringLiteral("{{forwardsSection}}"),   forwardsSection)
 
         .replace(QStringLiteral("{{ relationsList }}"), relationsList)
         .replace(QStringLiteral("{{relationsList}}"),   relationsList)
@@ -169,6 +172,7 @@ QString ModelCreator::createOneToOneRelation(const QString &parentClass,
     // Insert to model includes, usings, and relations lists
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("HasOne")));
+    m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
     m_relationsList.emplace(relatedClass);
 
     const auto relationName   = guessOneTypeRelationName(relatedClass);
@@ -199,6 +203,7 @@ QString ModelCreator::createOneToManyRelation(const QString &parentClass,
     // Insert to model includes, usings, and relations lists
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("HasMany")));
+    m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
     m_relationsList.emplace(relatedClass);
 
     const auto relationName   = guessManyTypeRelationName(relatedClass);
@@ -229,6 +234,7 @@ QString ModelCreator::createBelongsToRelation(const QString &parentClass,
     // Insert to model includes, usings, and relations lists
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("BelongsTo")));
+    m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
     m_relationsList.emplace(relatedClass);
 
     const auto relationName   = guessOneTypeRelationName(relatedClass);
@@ -262,6 +268,7 @@ QString ModelCreator::createBelongsToManyRelation(
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
     m_usingsList.emplace(QString(ModelUsingItemStub)
                          .arg(QStringLiteral("BelongsToMany")));
+    m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
     m_relationsList.emplace(relatedClass);
 
     const auto isPivotClassEmpty = pivotClass.isEmpty();
@@ -580,6 +587,16 @@ QString ModelCreator::createPivotsList() const
         return {};
 
     return ContainerUtils::join(m_pivotsList, COMMA).prepend(COMMA);
+}
+
+QString ModelCreator::createForwardsSection() const
+{
+    // Nothing to create
+    if (m_forwardsList.empty())
+        return {};
+
+    return StringUtils::wrapValue(ContainerUtils::join(m_forwardsList, NEWLINE),
+                                  QChar('\n'));
 }
 
 /* private */

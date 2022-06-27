@@ -144,6 +144,8 @@ namespace Tom::Commands::Make::Support
         QString createRelationsList() const;
         /*! Create model's pivots list for the Model base class. */
         QString createPivotsList() const;
+        /*! Create model's forward declarations section. */
+        QString createForwardsSection() const;
 
         /*! Include paths for the generated model. */
         std::set<QString> m_includesList {};
@@ -153,6 +155,8 @@ namespace Tom::Commands::Make::Support
         std::set<QString> m_relationsList {};
         /*! Pivots list for the generated model's base class. */
         std::set<QString> m_pivotsList {};
+        /*! Forward declarations list for related models. */
+        std::set<QString> m_forwardsList {};
 
     private:
         /*! Ensure that a model with the given name doesn't already exist. */
