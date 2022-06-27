@@ -217,7 +217,7 @@ namespace Orm::Tiny::Concerns
         /*! The storage format of the model's date columns. */
         T_THREAD_LOCAL
         inline static QString u_dateFormat;
-        /*! The attributes that should be mutated to dates. @deprecated */
+        /*! The attributes that should be mutated to dates. */
         T_THREAD_LOCAL
         inline static QStringList u_dates;
 
