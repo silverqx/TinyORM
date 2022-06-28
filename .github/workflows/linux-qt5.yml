@@ -28,6 +28,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: vcpkg upgrade
+      working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}
+      run: |
+        pwd
+
+    - run: exit 1
+
     - name: PostgreSQL start service
       run: |
         sudo systemctl start postgresql.service
@@ -145,10 +152,11 @@ jobs:
     - name: vcpkg upgrade
       working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}
       run: |
-        git pull
-        vcpkg update
-        vcpkg upgrade
-        vcpkg upgrade --no-dry-run
+        pwd
+        # git pull
+        # vcpkg update
+        # vcpkg upgrade
+        # vcpkg upgrade --no-dry-run
 
     - name: TinyORM cmake configure (${{ matrix.compiler.key }}-cmake-debug)
       run: >-
