@@ -17,11 +17,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: vcpkg upgrade
-      run: |
-        pwd
-        cd "$VCPKG_INSTALLATION_ROOT"
-        echo $VCPKG_INSTALLATION_ROOT
-        pwd
-        git pull
-        vcpkg update
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+
+    # - name: vcpkg upgrade
+    #   run: |
+    #     pwd
+    #     cd "$VCPKG_INSTALLATION_ROOT"
+    #     echo $VCPKG_INSTALLATION_ROOT
+    #     pwd
+    #     git pull
+    #     vcpkg update
