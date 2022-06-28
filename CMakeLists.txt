@@ -56,7 +56,7 @@ set(minRecClangVersion   12)
 set(minReqClangClVersion 14.0.3)
 # Packages
 set(minQtVersion       5.15.2)
-set(minRangeV3Version  0.11.0)
+set(minRangeV3Version  0.12.0)
 # tabulate doesn't provide Package Version File
 #set(minTabulateVersion 1.4.0)
 
