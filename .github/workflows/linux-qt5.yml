@@ -34,6 +34,10 @@ jobs:
         cd "$VCPKG_INSTALLATION_ROOT"
         echo $VCPKG_INSTALLATION_ROOT
         pwd
+        git pull
+        vcpkg update
+        vcpkg upgrade
+        vcpkg upgrade --no-dry-run
 
     - run: exit 1
 
