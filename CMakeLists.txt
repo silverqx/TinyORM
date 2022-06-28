@@ -56,7 +56,7 @@ set(minRecClangVersion   12)
 set(minReqClangClVersion 14.0.3)
 # Packages
 set(minQtVersion       5.15.2)
-# As range-v3 uses exact version policy in the package config file so passing version
+# As the range-v3 uses exact version policy in the package config file so passing version
 # makes real problems on CI pipelines where different OS images can have installed
 # different versions of range-v3 (doesn't matter if it's vcpkg or some package manager)
 #set(minRangeV3Version  0.12.0)
