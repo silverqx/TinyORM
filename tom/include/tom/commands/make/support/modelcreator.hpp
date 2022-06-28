@@ -56,12 +56,12 @@ namespace Tom::Commands::Make::Support
         /*! Struct to hold command line option values. */
         struct CmdOptions
         {
-            /*! Related class name for the one-to-one relationship. */
-            QString oneToOne;
-            /*! Related class name for the one-to-many relationship. */
-            QString oneToMany;
-            /*! Related class name for the belongs-to relationship. */
-            QString belongsTo;
+            /*! Related class names for the one-to-one relationship. */
+            QStringList oneToOneList;
+            /*! Related class names for the one-to-many relationship. */
+            QStringList oneToManyList;
+            /*! Related class names for the belongs-to relationship. */
+            QStringList belongsToList;
             /*! Related class name for the belongs-to-many relationship. */
             QString belongsToMany;
             /*! The foreign key names list, every relation can have one foreign key. */
@@ -105,15 +105,15 @@ namespace Tom::Commands::Make::Support
 
         /*! Create one-to-one relationship method. */
         QString createOneToOneRelation(
-                    const QString &parentClass, const QString &relatedClass,
+                    const QString &parentClass, const QStringList &relatedClasses,
                     const QStringList &foreignKeys);
         /*! Create one-to-many relationship method. */
         QString createOneToManyRelation(
-                    const QString &parentClass, const QString &relatedClass,
+                    const QString &parentClass, const QStringList &relatedClasses,
                     const QStringList &foreignKeys);
         /*! Create belongs-to relationship method. */
         QString createBelongsToRelation(
-                    const QString &parentClass, const QString &relatedClass,
+                    const QString &parentClass, const QStringList &relatedClasses,
                     const QStringList &foreignKeys);
 
         /*! Create arguments list for the relation factory method (for oto, otm, bto). */
@@ -154,18 +154,20 @@ namespace Tom::Commands::Make::Support
         /*! Create model's u_relations hash. */
         static QString createRelationsHash(const QString &className,
                                            const CmdOptions &cmdOptions);
+        /*! Get max. size of relation names for align. */
+        static QString::size_type getRelationNamesMaxSize(const CmdOptions &cmdOptions);
 
         /*! Create one-to-one relation mapping item for u_relations hash. */
         static QString createOneToOneRelationItem(
-                    const QString &parentClass, const QString &relatedClass,
+                    const QString &parentClass, const QStringList &relatedClasses,
                     QString::size_type relationsMaxSize);
         /*! Create one-to-many relation mapping item for u_relations hash. */
         static QString createOneToManyRelationItem(
-                    const QString &parentClass, const QString &relatedClass,
+                    const QString &parentClass, const QStringList &relatedClasses,
                     QString::size_type relationsMaxSize);
         /*! Create belongs-to relation mapping item for u_relations hash. */
         static QString createBelongsToRelationItem(
-                    const QString &parentClass, const QString &relatedClass,
+                    const QString &parentClass, const QStringList &relatedClasses,
                     QString::size_type relationsMaxSize);
         /*! Create belongs-to-many relation mapping item for u_relations hash. */
         static QString createBelongsToManyRelationItem(

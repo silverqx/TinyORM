@@ -130,7 +130,7 @@ int ModelCommand::run()
 
     showUnusedOptionsWarnings(cmdOptions);
 
-    if (m_shownUnusedWarning)
+    if (m_shownUnusedOption || m_shownUnusedForeign)
         newLine();
 
     // Ready to write the model to the disk 🧨✨
@@ -144,22 +144,29 @@ int ModelCommand::run()
 std::tuple<QString, CmdOptions>
 ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOptions)
 {
+    auto &&[
+            oneToOneList, oneToManyList, belongsToList, belongsToMany,
+            _1, _2, pivot, _3, _4, _5, _6, _7, _8
+    ] = cmdOptions;
+
     // Validate the model class names
     throwIfContainsNamespaceOrPath(className, QStringLiteral("argument 'name'"));
-    throwIfContainsNamespaceOrPath(cmdOptions.oneToOne,
+    throwIfContainsNamespaceOrPath(oneToOneList,
                                    QStringLiteral("option --one-to-one"));
-    throwIfContainsNamespaceOrPath(cmdOptions.oneToMany,
+    throwIfContainsNamespaceOrPath(oneToManyList,
                                    QStringLiteral("option --one-to-many"));
-    throwIfContainsNamespaceOrPath(cmdOptions.belongsToMany,
+    throwIfContainsNamespaceOrPath(belongsToList,
+                                   QStringLiteral("option --belongs-to"));
+    throwIfContainsNamespaceOrPath(belongsToMany,
                                    QStringLiteral("option --belongs-to-many"));
-    throwIfContainsNamespaceOrPath(cmdOptions.pivot,
+    throwIfContainsNamespaceOrPath(pivot,
                                    QStringLiteral("option --pivot"));
 
-    cmdOptions.oneToOne      = StringUtils::studly(std::move(cmdOptions.oneToOne));
-    cmdOptions.oneToMany     = StringUtils::studly(std::move(cmdOptions.oneToMany));
-    cmdOptions.belongsTo     = StringUtils::studly(std::move(cmdOptions.belongsTo));
-    cmdOptions.belongsToMany = StringUtils::studly(std::move(cmdOptions.belongsToMany));
-    cmdOptions.pivot         = StringUtils::studly(std::move(cmdOptions.pivot));
+    oneToOneList  = StringUtils::studly(std::move(oneToOneList));
+    oneToManyList = StringUtils::studly(std::move(oneToManyList));
+    belongsToList = StringUtils::studly(std::move(belongsToList));
+    belongsToMany = StringUtils::studly(std::move(belongsToMany));
+    pivot         = StringUtils::studly(std::move(pivot));
 
     return {StringUtils::studly(std::move(className)), std::move(cmdOptions)};
 }
@@ -201,7 +208,7 @@ void ModelCommand::showUnusedOptionsWarnings(const CmdOptions &cmdOptions)
     comment((unusedOptions.size() == 1 ? singular : plural)
             .arg(ContainerUtils::join(unusedOptions)));
 
-    m_shownUnusedWarning = true;
+    m_shownUnusedOption = true;
 }
 
 void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions)
@@ -220,7 +227,8 @@ void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOpt
 ModelCommand::CmdOptions ModelCommand::createCmdOptions()
 {
     return {
-        value(one_to_one), value(one_to_many), value(belongs_to), value(belongs_to_many),
+        values(one_to_one), values(one_to_many), values(belongs_to),
+        value(belongs_to_many),
 
         prepareForeignKeys(values(foreign_key)),
 
@@ -425,11 +433,15 @@ void ModelCommand::insertForeignKeyNameBtm(
 
 void ModelCommand::showUnusedForeignKeyWarning()
 {
+    // Already shown
+    if (m_shownUnusedForeign)
+        return;
+
     comment(QStringLiteral(
                 "Unused --foreign-key= option, it has to follow after any relation "
                 "option and should be defined only once for every relation option."));
 
-    m_shownUnusedWarning = true;
+    m_shownUnusedForeign = true;
 }
 
 /* Others */
@@ -456,6 +468,15 @@ fspath ModelCommand::getModelPath() const
                 .arg(modelsPath.c_str()));
 
     return modelsPath;
+}
+
+/* private */
+
+void ModelCommand::throwIfContainsNamespaceOrPath(const QStringList &classNames,
+                                                  const QString &source)
+{
+    for (const auto &className : classNames)
+        throwIfContainsNamespaceOrPath(className, source);
 }
 
 void ModelCommand::throwIfContainsNamespaceOrPath(const QString &className,

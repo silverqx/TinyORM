@@ -93,10 +93,15 @@ namespace Tom::Commands::Make
 
         /*! The model creator instance. */
         Support::ModelCreator m_creator {};
-        /*! Indicates whether the unused warning have been shown. */
-        bool m_shownUnusedWarning = false;
+        /*! Indicates whether the unused warning for options have been shown. */
+        bool m_shownUnusedOption = false;
+        /*! Indicates whether the unused warning for foreign-key option been shown. */
+        bool m_shownUnusedForeign = false;
 
     private:
+        /*! Throw if the model name constains a namespace or path. */
+        static void throwIfContainsNamespaceOrPath(const QStringList &classNames,
+                                                   const QString &source);
         /*! Throw if the model name constains a namespace or path. */
         static void throwIfContainsNamespaceOrPath(const QString &className,
                                                    const QString &source);

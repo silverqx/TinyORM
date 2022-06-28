@@ -14,6 +14,7 @@ TINY_SYSTEM_HEADER
 #include "orm/constants.hpp"
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
+#include "orm/ormconcepts.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -35,6 +36,9 @@ namespace Orm::Tiny::Utils
         static QString snake(QString string, QChar delimiter = '_');
         /*! Convert a value to studly caps case (StudlyCase). */
         static QString studly(QString string);
+        /*! Convert values in the container to studly caps case (StudlyCase). */
+        template<ColumnContainer T>
+        static T studly(T &&strings);
         /*! Convert a value to camel case (camelCase). */
         static QString camel(QString string);
         /*! Convert a string to kebab case. (kebab-case). */
@@ -66,6 +70,17 @@ namespace Orm::Tiny::Utils
         static QString singular(const QString &string);
 #endif
     };
+
+    template<ColumnContainer T>
+    T String::studly(T &&strings)
+    {
+        T result;
+
+        for (auto &&string : strings)
+            result.push_back(studly(std::forward<decltype (string)>(string)));
+
+        return result;
+    }
 
     /* public */
 
