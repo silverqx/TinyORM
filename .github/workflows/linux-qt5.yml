@@ -17,6 +17,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
+    #   with:
+    #     limit-access-to-actor: true
+
+    - name: Install latest CMake
+      uses: lukka/get-cmake@latest
+
+    - name: Install and prepare latest vcpkg
+      uses: lukka/run-vcpkg@v10
+
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
       with:
