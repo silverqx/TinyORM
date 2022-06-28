@@ -56,7 +56,10 @@ set(minRecClangVersion   12)
 set(minReqClangClVersion 14.0.3)
 # Packages
 set(minQtVersion       5.15.2)
-set(minRangeV3Version  0.12.0)
+# As range-v3 uses exact version policy in the package config file so passing version
+# makes real problems on CI pipelines where different OS images can have installed
+# different versions of range-v3 (doesn't matter if it's vcpkg or some package manager)
+#set(minRangeV3Version  0.12.0)
 # tabulate doesn't provide Package Version File
 #set(minTabulateVersion 1.4.0)
 
@@ -345,7 +348,7 @@ find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core Sql)
 tiny_find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
     REQUIRED COMPONENTS Core Sql
 )
-tiny_find_package(range-v3 ${minRangeV3Version} CONFIG REQUIRED)
+tiny_find_package(range-v3 CONFIG REQUIRED)
 
 target_link_libraries(${TinyOrm_target}
     PUBLIC
