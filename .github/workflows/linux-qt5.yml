@@ -14,30 +14,247 @@ jobs:
 
     runs-on: ubuntu-20.04
 
+    strategy:
+      matrix:
+        compiler:
+          - key: clang14
+            apt: [ clang-14, lld, g++-11 ]
+            command: clang++-14
+
+          - key: gcc11
+            apt: [ g++-11 ]
+            command: g++-11
+
     steps:
     - uses: actions/checkout@v3
 
-    # - name: Setup tmate session
-    #   uses: mxschmitt/action-tmate@v3
-    #   with:
-    #     limit-access-to-actor: true
+    - name: PostgreSQL start service
+      run: |
+        sudo systemctl start postgresql.service
 
-    - name: Install latest CMake
-      uses: lukka/get-cmake@latest
+    - name: PostgreSQL check service status
+      run: |
+        sudo systemctl status postgresql.service
+        pg_isready
 
-    - name: Install and prepare latest vcpkg
-      uses: lukka/run-vcpkg@v10
+    - name: PostgreSQL create TinyORM user
+      run: >-
+        sudo -u postgres
+        psql --command="CREATE USER $DB_PGSQL_USERNAME PASSWORD '$DB_PGSQL_PASSWORD'"
+      env:
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+    - name: PostgreSQL create TinyORM database
+      run: |
+        sudo -u postgres createdb --owner=$DB_PGSQL_USERNAME $DB_PGSQL_DATABASE
+      env:
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+
+    - name: MySQL start service
+      run: |
+        sudo systemctl start mysql.service
+
+    - name: MySQL change TinyORM password
+      run: >-
+        mysql --host=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD_DEFAULT
+        --execute="ALTER USER '$DB_MYSQL_USERNAME'@'$DB_MYSQL_HOST'
+        IDENTIFIED BY '$DB_MYSQL_PASSWORD';"
+      env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_PASSWORD_DEFAULT: ${{ secrets.DB_MYSQL_PASSWORD_DEFAULT }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: MySQL check service status
+      run: >-
+        sudo systemctl status mysql.service
+
+        mysqladmin --bind-address=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME
+        --password=$DB_MYSQL_PASSWORD ping
+      env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: MySQL create TinyORM database
+      run: >-
+        echo "
+        create database if not exists $DB_MYSQL_DATABASE
+        default character set utf8mb4
+        default collate utf8mb4_0900_ai_ci;" |
+        mysql --host=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD
+      env:
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: SQLite create TinyORM database
+      run: |
+        touch "$DB_SQLITE_DATABASE"
+      env:
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+
+    - name: add-apt-repository gcc 11 and Qt 5.15.2
+      run: |
+        sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        sudo add-apt-repository -y ppa:beineri/opt-qt-5.15.2-focal
+
+    - name: add-apt-repository Clang 14
+      if: ${{ matrix.compiler.key == 'clang14' }}
+      run: |
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo add-apt-repository -y "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"
+
+    - name: apt update
+      run: |
+        sudo apt update
+
+    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, Qt 5.15.2 base, and ccache
+      run: |
+        sudo apt install -y ${{ join(matrix.compiler.apt, ' ') }} qt515base ccache
+
+    - name: ninja install latest version
+      uses: seanmiddleditch/gha-setup-ninja@master
       with:
-        limit-access-to-actor: true
+        destination: ${{ runner.workspace }}/../ninja-build
 
-    # - name: vcpkg upgrade
-    #   run: |
-    #     pwd
-    #     cd "$VCPKG_INSTALLATION_ROOT"
-    #     echo $VCPKG_INSTALLATION_ROOT
-    #     pwd
-    #     git pull
-    #     vcpkg update
+    - name: TinyORM create build folder (${{ matrix.compiler.key }}-cmake-debug)
+      run: |
+        mkdir -p ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+
+    - name: ccache setup 🕺
+      uses: Chocobo1/setup-ccache-action@v1
+      with:
+        install_ccache: false
+        update_packager_index: false
+        ccache_options: |
+          compression = false
+          max_size = 3G
+
+    - name: vcpkg set-up environment
+      run: |
+        echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+        echo 'VCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/.github/resources/vcpkg-custom-triplets' \
+        >> $GITHUB_ENV
+        echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
+        echo 'VCPKG_MAX_CONCURRENCY=2' >> $GITHUB_ENV
+
+    - name: TinyORM cmake configure (${{ matrix.compiler.key }}-cmake-debug)
+      run: >-
+        source .github/resources/qt5env.sh
+
+        cmake
+        -S .
+        -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+        -G Ninja
+        -D CMAKE_CXX_COMPILER_LAUNCHER=/usr/bin/ccache
+        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/${{ matrix.compiler.command }}
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_BUILD_TYPE:BOOL=Debug
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D MYSQL_PING:BOOL=ON
+        -D BUILD_TESTS:BOOL=ON
+        -D ORM:BOOL=ON
+        -D TOM:BOOL=ON
+        -D TOM_EXAMPLE:BOOL=ON
+
+    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
+      run: >-
+        source .github/resources/qt5env.sh
+
+        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+        --target all --parallel 2
+
+    - name: Create and Seed tables for unit tests 🎉
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
+      run: >-
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+
+        ./tom_testdata migrate
+        --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
+        --seed --no-ansi
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        TOM_TESTDATA_ENV: testing
+
+    - name: TinyORM execute ctest 🔥
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+      run: ctest
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        TOM_TESTS_ENV: testing
+
+    - name: Tom example test some commands (MySQL) 🚀
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      run: |
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+        ./tom migrate:install --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate --database=tinyorm_tom_mysql --seed --no-ansi
+        ./tom migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        TOM_EXAMPLE_ENV: testing
+
+    - name: Tom example test some commands (PostgreSQL) 🙌
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      run: |
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+        ./tom migrate:install --database=tinyorm_tom_postgres --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
+        ./tom migrate --database=tinyorm_tom_postgres --seed --no-ansi
+        ./tom migrate:refresh --database=tinyorm_tom_postgres --seed --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
+      env:
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        TOM_EXAMPLE_ENV: testing
+
+    - name: Tom example test some commands (SQLite) 🏁
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      run: |
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+        ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
+        ./tom migrate --database=tinyorm_tom_sqlite --seed --no-ansi
+        # ./tom migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
+      env:
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        TOM_EXAMPLE_ENV: testing
