@@ -76,7 +76,7 @@ namespace Tom::Commands::Make::Support
         bool m_wasValueSetPartial = false;
 
         /*! Result list of all processed values. */
-        P m_preparedValues;
+        P m_preparedValues {};
     };
 
     /* public */

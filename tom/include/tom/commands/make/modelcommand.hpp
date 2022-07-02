@@ -118,7 +118,7 @@ namespace Support
         /*! Indicates whether the unused warning for foreign-key option been shown. */
         bool m_shownUnusedForeign = false;
         /*! Unused btm options, will be shown in the warning. */
-        std::set<QString> m_unusedBtmOptions;
+        std::set<QString> m_unusedBtmOptions {};
 
     private:
         /*! Throw if the model name constains a namespace or path. */
