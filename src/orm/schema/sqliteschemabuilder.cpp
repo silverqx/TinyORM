@@ -85,7 +85,7 @@ void SQLiteSchemaBuilder::dropAllViews() const
 
 QSqlQuery SQLiteSchemaBuilder::getAllTables() const
 {
-    // TODO schema, use postproccessor processColumnListing() silverqx
+    // TODO schema, use postprocessor processColumnListing() silverqx
     return m_connection.selectFromWriteConnection(m_grammar.compileGetAllTables());
 }
 

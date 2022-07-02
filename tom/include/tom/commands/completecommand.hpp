@@ -42,7 +42,7 @@ namespace Tom::Commands
 
     protected:
 #ifndef _MSC_VER
-        /*! Currently proccessed tom command. */
+        /*! Currently processed tom command. */
         static std::optional<QString>
         getCurrentTomCommand(const QString &commandlineArg, QString::size_type cword);
 #endif

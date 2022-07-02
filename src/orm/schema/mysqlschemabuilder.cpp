@@ -75,7 +75,7 @@ void MySqlSchemaBuilder::dropAllViews() const
 
 QSqlQuery MySqlSchemaBuilder::getAllTables() const
 {
-    // TODO schema, use postproccessor processColumnListing() silverqx
+    // TODO schema, use postprocessor processColumnListing() silverqx
     return m_connection.selectFromWriteConnection(m_grammar.compileGetAllTables());
 }
 

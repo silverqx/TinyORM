@@ -97,7 +97,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 
     const auto commandlineArgSize = commandlineArg.size();
 
-    // Currently proccessed tom command
+    // Currently processed tom command
     const auto currentCommandSplitted = commandlineArg.split(SPACE);
     Q_ASSERT(!currentCommandSplitted.isEmpty());
 
@@ -108,7 +108,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 #else
     const auto cwordArg = static_cast<QString::size_type>(value(cword_).toLongLong());
 
-    // Currently proccessed tom command
+    // Currently processed tom command
     const auto currentCommandArg = getCurrentTomCommand(commandlineArg, cwordArg);
 #endif
 

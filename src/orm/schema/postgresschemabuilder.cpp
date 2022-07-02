@@ -94,7 +94,7 @@ QSqlQuery PostgresSchemaBuilder::getAllTables() const
     QVector<QString> schema;
     std::ranges::move(schemaList, std::back_inserter(schema));
 
-    // TODO schema, use postproccessor processColumnListing() silverqx
+    // TODO schema, use postprocessor processColumnListing() silverqx
     return m_connection.selectFromWriteConnection(
                 m_grammar.compileGetAllTables(std::move(schema)));
 }
