@@ -99,7 +99,7 @@ R"(
     {{ relationName }}()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsToMany<Tag{{ pivotClass }}>({{ relationArguments }});
+        auto relation = belongsToMany<{{ relatedClass }}{{ pivotClass }}>({{ relationArguments }});
 
         relation->{{ relationCalls }};
 
