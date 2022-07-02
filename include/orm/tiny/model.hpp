@@ -1342,3 +1342,4 @@ TINYORM_END_COMMON_NAMESPACE
 // BUG qmake, in Makefile.Debug during debug\moc_predefs.h in all tests silverqx
 // BUG qmake, clang-cl (win32-clang-msvc) ctrl+shift+alt+b fails with: fatal error: PCH file 'debug\TinyOrm_pch.pch' not found: module file not found silverqx
 // BUG ccache, msvc and clang-cl support doesn't work because of /Zi param. https://github.com/ccache/ccache/issues/1040 silverqx
+// FUTURE security workflows, add ggshield https://github.com/GitGuardian/ggshield silverqx
