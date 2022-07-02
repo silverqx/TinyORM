@@ -98,6 +98,17 @@ bool Command::isSet(const QString &name) const
     return parser().isSet(name);
 }
 
+std::vector<bool> Command::isSetAll(const QString &name) const
+{
+    std::vector<bool> result;
+
+    for (auto &&option : parser().optionNames())
+        if (option == name)
+            result.push_back(true);
+
+    return result;
+}
+
 QString Command::value(const QString &name) const
 {
     return parser().value(name);

@@ -86,6 +86,8 @@ namespace Tom::Commands
         /* Parser helpers */
         /*! Check whether the option name was set in the parser. */
         bool isSet(const QString &name) const;
+        /*! Check whether the option name was set in the parser (multiple values). */
+        std::vector<bool> isSetAll(const QString &name) const;
         /*! Returns the option value found for the given option name or empty string. */
         QString value(const QString &name) const;
         /*! Returns the option values found for the given option name or empty list. */

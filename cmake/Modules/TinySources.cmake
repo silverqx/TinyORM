@@ -265,8 +265,10 @@ function(tinytom_sources out_headers out_sources)
         commands/inspirecommand.hpp
         commands/integratecommand.hpp
         commands/listcommand.hpp
+        commands/make/concerns/prepareoptionvalues.hpp
         commands/make/migrationcommand.hpp
         commands/make/modelcommand.hpp
+        commands/make/modelcommandconcepts.hpp
 #        commands/make/projectcommand.hpp
         commands/make/seedercommand.hpp
         commands/make/stubs/migrationstubs.hpp
@@ -275,6 +277,7 @@ function(tinytom_sources out_headers out_sources)
         commands/make/stubs/seederstubs.hpp
         commands/make/support/migrationcreator.hpp
         commands/make/support/modelcreator.hpp
+        commands/make/support/preparebtmoptionvalues.hpp
         commands/make/support/seedercreator.hpp
         commands/make/support/tableguesser.hpp
         commands/migrations/freshcommand.hpp
@@ -328,6 +331,7 @@ function(tinytom_sources out_headers out_sources)
         commands/inspirecommand.cpp
         commands/integratecommand.cpp
         commands/listcommand.cpp
+        commands/make/concerns/prepareoptionvalues.cpp
         commands/make/migrationcommand.cpp
         commands/make/modelcommand.cpp
 #        commands/make/projectcommand.cpp

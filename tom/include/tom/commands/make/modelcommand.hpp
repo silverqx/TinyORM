@@ -8,6 +8,8 @@ TINY_SYSTEM_HEADER
 #include <unordered_set>
 
 #include "tom/commands/command.hpp"
+#include "tom/commands/make/concerns/prepareoptionvalues.hpp"
+#include "tom/commands/make/modelcommandconcepts.hpp"
 #include "tom/commands/make/support/modelcreator.hpp"
 #include "tom/tomconstants.hpp"
 
@@ -16,10 +18,26 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands::Make
 {
 
+namespace Support
+{
+    template<BtmPreparedValuesConcept P, BtmValuesConcept V>
+    class PrepareBtmOptionValues;
+}
+
     /*! Create a new model class. */
-    class ModelCommand : public Command
+    class ModelCommand : public Command,
+                         protected Concerns::PrepareOptionValues
     {
         Q_DISABLE_COPY(ModelCommand)
+
+        // To access parser() and isSetAll()
+        friend Concerns::PrepareOptionValues;
+        // To access relationNames() and m_unusedBtmOptions
+        friend Support::PrepareBtmOptionValues<QStringList, QStringList>;
+        // To access relationNames() and m_unusedBtmOptions
+        friend Support::PrepareBtmOptionValues<std::vector<QStringList>, QStringList>;
+        // To access relationNames() and m_unusedBtmOptions
+        friend Support::PrepareBtmOptionValues<std::vector<bool>, std::vector<bool>>;
 
         /*! Alias for the filesystem path. */
         using fspath = std::filesystem::path;
@@ -54,6 +72,8 @@ namespace Tom::Commands::Make
 
         /*! Show unused options warning. */
         void showUnusedOptionsWarnings(const CmdOptions &cmdOptions);
+        /*! Find unused btm options if any --belongs-to-many= option is defined. */
+        void findUnusedBtmOptions(const CmdOptions &cmdOptions);
 
         /*! Write the model file to the disk. */
         void writeModel(const QString &className, const CmdOptions &cmdOptions);
@@ -90,13 +110,15 @@ namespace Tom::Commands::Make
         /*! Get the model path (either specified by the --path option or the default
             location). */
         fspath getModelPath() const;
+        /*! Set of all cmd. option relation names. */
+        const std::unordered_set<QString> &relationNames();
 
         /*! The model creator instance. */
         Support::ModelCreator m_creator {};
-        /*! Indicates whether the unused warning for options have been shown. */
-        bool m_shownUnusedOption = false;
         /*! Indicates whether the unused warning for foreign-key option been shown. */
         bool m_shownUnusedForeign = false;
+        /*! Unused btm options, will be shown in the warning. */
+        std::set<QString> m_unusedBtmOptions;
 
     private:
         /*! Throw if the model name constains a namespace or path. */

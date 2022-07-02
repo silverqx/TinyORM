@@ -56,6 +56,7 @@ namespace Tom::Commands::Make::Support
         /*! Struct to hold command line option values. */
         struct CmdOptions
         {
+            /* Relationship methods */
             /*! Related class names for the one-to-one relationship. */
             QStringList oneToOneList;
             /*! Related class names for the one-to-many relationship. */
@@ -63,19 +64,22 @@ namespace Tom::Commands::Make::Support
             /*! Related class names for the belongs-to relationship. */
             QStringList belongsToList;
             /*! Related class name for the belongs-to-many relationship. */
-            QString belongsToMany;
+            QStringList belongsToManyList;
+            /* Common for all relationship methods */
             /*! The foreign key names list, every relation can have one foreign key. */
             ForeignKeys foreignKeys;
+            /* Belongs-to-many related */
             /*! The pivot table name. */
-            QString pivotTable;
+            QStringList pivotTables;
             /*! The class name of the pivot class for the belongs-to-many relationship. */
-            QString pivot;
+            QStringList pivotClasses;
             /*! The name for the pivot relation. */
-            QString as;
+            QStringList asList;
             /*! Extra attributes for the pivot model. */
-            QStringList withPivot;
+            std::vector<QStringList> withPivotList;
             /*! Pivot table with timestamps. */
-            bool withTimestamps;
+            std::vector<bool> withTimestampsList;
+            /* Model related */
             /*! The connection name for the model. */
             QString connection;
             /*! The table associated with the model. */
@@ -121,10 +125,12 @@ namespace Tom::Commands::Make::Support
 
         /*! Create belongs-to-many relationship method. */
         QString createBelongsToManyRelation(
-                    const QString &parentClass, const QString &relatedClass,
+                    const QString &parentClass, const QStringList &relatedClasses,
                     const std::vector<BelongToManyForeignKeys> &foreignKeys,
-                    const QString &pivotTable, const QString &pivotClass,
-                    const QString &as, const QStringList &withPivot, bool withTimestamps);
+                    const QStringList &pivotTables, const QStringList &pivotClasses,
+                    const QStringList &asList,
+                    const std::vector<QStringList> &withPivotList,
+                    const std::vector<bool> &withTimestampsList);
 
         /*! Create arguments list for the relation factory method (for btm). */
         static QString createRelationArgumentsBtm(
@@ -171,7 +177,7 @@ namespace Tom::Commands::Make::Support
                     QString::size_type relationsMaxSize);
         /*! Create belongs-to-many relation mapping item for u_relations hash. */
         static QString createBelongsToManyRelationItem(
-                    const QString &parentClass, const QString &relatedClass,
+                    const QString &parentClass, const QStringList &relatedClasses,
                     QString::size_type relationsMaxSize);
 
         /* Global */

@@ -13,6 +13,7 @@ sourcesList += \
     $$PWD/tom/commands/inspirecommand.cpp \
     $$PWD/tom/commands/integratecommand.cpp \
     $$PWD/tom/commands/listcommand.cpp \
+    $$PWD/tom/commands/make/concerns/prepareoptionvalues.cpp \
     $$PWD/tom/commands/make/migrationcommand.cpp \
     $$PWD/tom/commands/make/modelcommand.cpp \
 #    $$PWD/tom/commands/make/projectcommand.cpp \

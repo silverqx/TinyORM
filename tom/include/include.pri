@@ -18,8 +18,10 @@ headersList += \
     $$PWD/tom/commands/inspirecommand.hpp \
     $$PWD/tom/commands/integratecommand.hpp \
     $$PWD/tom/commands/listcommand.hpp \
+    $$PWD/tom/commands/make/concerns/prepareoptionvalues.hpp \
     $$PWD/tom/commands/make/migrationcommand.hpp \
     $$PWD/tom/commands/make/modelcommand.hpp \
+    $$PWD/tom/commands/make/modelcommandconcepts.hpp \
 #    $$PWD/tom/commands/make/projectcommand.hpp \
     $$PWD/tom/commands/make/seedercommand.hpp \
     $$PWD/tom/commands/make/stubs/migrationstubs.hpp \
@@ -28,6 +30,7 @@ headersList += \
     $$PWD/tom/commands/make/stubs/seederstubs.hpp \
     $$PWD/tom/commands/make/support/migrationcreator.hpp \
     $$PWD/tom/commands/make/support/modelcreator.hpp \
+    $$PWD/tom/commands/make/support/preparebtmoptionvalues.hpp \
     $$PWD/tom/commands/make/support/seedercreator.hpp \
     $$PWD/tom/commands/make/support/tableguesser.hpp \
     $$PWD/tom/commands/migrations/freshcommand.hpp \

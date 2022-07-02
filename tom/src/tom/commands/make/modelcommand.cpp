@@ -130,7 +130,7 @@ int ModelCommand::run()
 
     showUnusedOptionsWarnings(cmdOptions);
 
-    if (m_shownUnusedOption || m_shownUnusedForeign)
+    if (!m_unusedBtmOptions.empty() || m_shownUnusedForeign)
         newLine();
 
     // Ready to write the model to the disk 🧨✨
@@ -145,8 +145,8 @@ std::tuple<QString, CmdOptions>
 ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOptions)
 {
     auto &&[
-            oneToOneList, oneToManyList, belongsToList, belongsToMany,
-            _1, _2, pivot, _3, _4, _5, _6, _7, _8
+            oneToOneList, oneToManyList, belongsToList, belongsToManyList,
+            _1, _2, pivotClasses, _3, _4, _5, _6, _7, _8
     ] = cmdOptions;
 
     // Validate the model class names
@@ -157,58 +157,58 @@ ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOption
                                    QStringLiteral("option --one-to-many"));
     throwIfContainsNamespaceOrPath(belongsToList,
                                    QStringLiteral("option --belongs-to"));
-    throwIfContainsNamespaceOrPath(belongsToMany,
+    throwIfContainsNamespaceOrPath(belongsToManyList,
                                    QStringLiteral("option --belongs-to-many"));
-    throwIfContainsNamespaceOrPath(pivot,
+    throwIfContainsNamespaceOrPath(pivotClasses,
                                    QStringLiteral("option --pivot"));
 
-    oneToOneList  = StringUtils::studly(std::move(oneToOneList));
-    oneToManyList = StringUtils::studly(std::move(oneToManyList));
-    belongsToList = StringUtils::studly(std::move(belongsToList));
-    belongsToMany = StringUtils::studly(std::move(belongsToMany));
-    pivot         = StringUtils::studly(std::move(pivot));
+    oneToOneList      = StringUtils::studly(std::move(oneToOneList));
+    oneToManyList     = StringUtils::studly(std::move(oneToManyList));
+    belongsToList     = StringUtils::studly(std::move(belongsToList));
+    belongsToManyList = StringUtils::studly(std::move(belongsToManyList));
+    pivotClasses      = StringUtils::studly(std::move(pivotClasses));
 
     return {StringUtils::studly(std::move(className)), std::move(cmdOptions)};
 }
 
 void ModelCommand::showUnusedOptionsWarnings(const CmdOptions &cmdOptions)
 {
-    const auto &[
-            _1, _2, _3, belongsToMany,
-            _4, pivotTable, pivot, as, withPivot, withTimestamps,
-            _5, _6, _7
-    ] = cmdOptions;
+    findUnusedBtmOptions(cmdOptions);
 
-    if (!belongsToMany.isEmpty())
+    // Nothing to show
+    if (m_unusedBtmOptions.empty())
         return;
 
-    std::set<QString> unusedOptions;
-
-    if (!pivotTable.isEmpty())
-        unusedOptions.emplace(QStringLiteral("--pivot-table"));
-
-    if (!pivot.isEmpty())
-        unusedOptions.emplace(QStringLiteral("--pivot"));
-
-    if (!as.isEmpty())
-        unusedOptions.emplace(QStringLiteral("--as"));
-
-    if (!withPivot.isEmpty())
-        unusedOptions.emplace(QStringLiteral("--with-pivot"));
-
-    if (withTimestamps)
-        unusedOptions.emplace(QStringLiteral("--with-timestamps"));
-
     // Warning message templates
-    const auto singular = QStringLiteral("Unused option %1; it depends on the "
-                                         "--belongs-to-many= option.");
-    const auto plural =   QStringLiteral("Unused options %1; they depend on the "
-                                         "--belongs-to-many= option.");
+    static const auto singular = QStringLiteral("Unused option %1; it depends on the "
+                                                "--belongs-to-many= option.");
+    static const auto plural =   QStringLiteral("Unused options %1; they depend on the "
+                                                "--belongs-to-many= option.");
 
-    comment((unusedOptions.size() == 1 ? singular : plural)
-            .arg(ContainerUtils::join(unusedOptions)));
+    comment((m_unusedBtmOptions.size() == 1 ? singular : plural)
+            .arg(ContainerUtils::join(m_unusedBtmOptions)));
+}
 
-    m_shownUnusedOption = true;
+void ModelCommand::findUnusedBtmOptions(const CmdOptions &cmdOptions)
+{
+    // Nothing to find, in this case algorithm in the btmValues() searches unused options
+    if (!cmdOptions.belongsToManyList.isEmpty())
+        return;
+
+    if (isSet(pivot_table))
+        m_unusedBtmOptions.emplace(QStringLiteral("--pivot-table"));
+
+    if (isSet(pivot_))
+        m_unusedBtmOptions.emplace(QStringLiteral("--pivot"));
+
+    if (isSet(as_))
+        m_unusedBtmOptions.emplace(QStringLiteral("--as"));
+
+    if (isSet(with_pivot))
+        m_unusedBtmOptions.emplace(QStringLiteral("--with-pivot"));
+
+    if (isSet(with_timestamps))
+        m_unusedBtmOptions.emplace(QStringLiteral("--with-timestamps"));
 }
 
 void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions)
@@ -227,14 +227,19 @@ void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOpt
 ModelCommand::CmdOptions ModelCommand::createCmdOptions()
 {
     return {
+        // Relationship methods
         values(one_to_one), values(one_to_many), values(belongs_to),
-        value(belongs_to_many),
+        values(belongs_to_many),
 
+        // Common for all relationship methods
         prepareForeignKeys(values(foreign_key)),
 
-        value(pivot_table),        value(pivot_),      value(as_),    values(with_pivot),
-        isSet(with_timestamps),    value(connection_), value(table_),
-        isSet(disable_timestamps),
+        // Belongs-to-many related
+        btmValues(pivot_table),      btmValues(pivot_), btmValues(as_),
+        btmMultiValues(with_pivot),  btmBoolValues(with_timestamps),
+
+        // Model related
+        value(connection_), value(table_), isSet(disable_timestamps),
     };
 }
 
@@ -244,6 +249,11 @@ ModelCommand::CmdOptions ModelCommand::createCmdOptions()
 ModelCommand::ForeignKeys
 ModelCommand::prepareForeignKeys(const QStringList &foreignKeyValues)
 {
+    // CUR make model, make it the same way like in the btmValues silverqx
+    // Nothing to prepare
+//    if (foreignKeyValues.isEmpty())
+//        return {};
+
     static const std::unordered_set relationNames {
         one_to_one, one_to_many, belongs_to, belongs_to_many
     };
@@ -268,11 +278,12 @@ ModelCommand::prepareForeignKeys(const QStringList &foreignKeyValues)
         if (option != foreign_key)
             continue;
 
-        // Foreign key name defined before a relation or more options set for one relation
+        /* Foreign key name defined before a relation or more options given for one
+           relation. */
         if (currentRelation.isEmpty() || wasForeignKeySet) {
             showUnusedForeignKeyWarning();
 
-            // Skip the value, one the first option's value is used
+            // Skip the value, only the first option's value is used
             if (wasForeignKeySet)
                 ++foreignIndex;
 
@@ -301,21 +312,18 @@ bool ModelCommand::startNewRelation(
     if (!relationNames.contains(option))
         return false;
 
-    // Relation related option passed on the cmd. line, start (found relation option)
-    // Parsing a first relation or foreign key name was already set
-    if (currentRelation.isEmpty() || wasForeignKeySet) {
-        currentRelation = std::move(option);
-        // Reset to defaults
-        wasForeignKeySet = false;
-        wasForeignKeySetPartial = false;
+    // Relation option passed on the cmd. line, start (found relation option)
 
-        return true;
-    }
-
-    // No foreign key name was passed on the cmd. line so insert the default value
-    insertEmptyForeignList(currentRelation, foreignKeys);
+    /* No foreign key name was passed on the cmd. line so insert the default value.
+       Don't insert the default value if the first relation have not been found. */
+    if (!currentRelation.isEmpty() && !wasForeignKeySet)
+        insertEmptyForeignList(currentRelation, foreignKeys);
 
     currentRelation = std::move(option);
+
+    // Reset to defaults
+    wasForeignKeySet = false;
+    wasForeignKeySetPartial = false;
 
     return true;
 }
@@ -370,10 +378,10 @@ void ModelCommand::insertForeignKeyNameBtm(
 {
     /* Both foreign key names can be assigned using one --foreign-key= option, but they
        must be divided by the colon character. */
-    if (const auto &keyValue = foreignKeyValues.at(foreignIndex++);
-        keyValue.contains(COLON)
+    if (const auto &foreignKeyValue = foreignKeyValues.at(foreignIndex++);
+        foreignKeyValue.contains(COLON)
     ) {
-        auto foreignKeyValuesSplitted = keyValue.split(COLON, Qt::KeepEmptyParts);
+        auto foreignKeyValuesSplitted = foreignKeyValue.split(COLON, Qt::KeepEmptyParts);
         Q_ASSERT(foreignKeyValuesSplitted.size() == 2);
 
 #ifdef __clang__
@@ -397,11 +405,11 @@ void ModelCommand::insertForeignKeyNameBtm(
         // First value
         if (!wasForeignKeySetPartial) {
             // Set the related pivot key name (one value was passed)
-            if (!keyValue.startsWith(PLUS)) {
+            if (!foreignKeyValue.startsWith(PLUS)) {
 #ifdef __clang__
-                foreignKeys.belongsToMany.push_back({{}, keyValue});
+                foreignKeys.belongsToMany.push_back({{}, foreignKeyValue});
 #else
-                foreignKeys.belongsToMany.emplace_back<QString>({}, keyValue);
+                foreignKeys.belongsToMany.emplace_back<QString>({}, foreignKeyValue);
 #endif
 
                 wasForeignKeySetPartial = true;
@@ -411,10 +419,10 @@ void ModelCommand::insertForeignKeyNameBtm(
             else {
 #ifdef __clang__
                 foreignKeys.belongsToMany.push_back(
-                            {keyValue.mid(1), foreignKeyValues.at(foreignIndex++)});
+                            {foreignKeyValue.mid(1), foreignKeyValues.at(foreignIndex++)});
 #else
                 foreignKeys.belongsToMany.emplace_back(
-                            keyValue.mid(1), foreignKeyValues.at(foreignIndex++));
+                            foreignKeyValue.mid(1), foreignKeyValues.at(foreignIndex++));
 #endif
 
                 wasForeignKeySet = true;
@@ -425,7 +433,7 @@ void ModelCommand::insertForeignKeyNameBtm(
             // Swap pivot keys, so it follows belongsToMany() parameters order
             auto &last = foreignKeys.belongsToMany.back();
             last.foreignPivotKey.swap(last.relatedPivotKey);
-            last.relatedPivotKey = keyValue;
+            last.relatedPivotKey = foreignKeyValue;
 
             wasForeignKeySet = true;
         }
@@ -471,6 +479,16 @@ fspath ModelCommand::getModelPath() const
 }
 
 /* private */
+
+const std::unordered_set<QString> &ModelCommand::relationNames()
+{
+    static const std::unordered_set cached {
+        Tom::Constants::one_to_one, Tom::Constants::one_to_many,
+        Tom::Constants::belongs_to, Tom::Constants::belongs_to_many
+    };
+
+    return cached;
+}
 
 void ModelCommand::throwIfContainsNamespaceOrPath(const QStringList &classNames,
                                                   const QString &source)
