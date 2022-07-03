@@ -71,21 +71,21 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
     return {
         // Relationship methods
         {one_to_one,         QStringLiteral("Create one-to-one relation to the given "
-                                            "model"), one_to_one_up}, // Value
+                                            "model <comment>(multiple options allowed)"
+                                            "</comment>"), one_to_one_up}, // Value
         {one_to_many,        QStringLiteral("Create one-to-many relation to the given "
-                                            "model"), one_to_many_up}, // Value
+                                            "model <comment>(multiple options allowed)"
+                                            "</comment>"), one_to_many_up}, // Value
         {belongs_to,         QStringLiteral("Create belongs-to relation to the given "
-                                            "model (inverse relation for oto and otm)"),
-                             belongs_to_up}, // Value
+                                            "model <comment>(multiple options allowed)"
+                                            "</comment>"), belongs_to_up}, // Value
         {belongs_to_many,    QStringLiteral("Create many-to-many relation to the "
-                                            "given model (also for inverse relation for "
-                                            "many-to-many)"),
-                             belongs_to_many_up}, // Value
+                                            "given model <comment>(multiple options "
+                                            "allowed)</comment>"), belongs_to_many_up}, // Value
 
         // Common for all relations
-        {foreign_key,        QStringLiteral("The foreign key name, every relation can "
-                                            "have one foreign key <comment>(multiple "
-                                            "values allowed) </comment>"),
+        {foreign_key,        QStringLiteral("The foreign key name <comment>(two values "
+                                            "allowed for btm)</comment>"),
                              foreign_key_up},
 
         // Belongs-to-many related
