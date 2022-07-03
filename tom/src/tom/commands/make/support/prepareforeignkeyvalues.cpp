@@ -62,7 +62,9 @@ ForeignKeys PrepareForeignKeyValues::prepareValues()
 
     // Handle the last relation
     // No foreign key name was passed on the cmd. line so insert the default value
-    if (!m_currentRelation.isEmpty() && !m_wasForeignKeySet)
+    if (!m_currentRelation.isEmpty() &&
+        !m_wasForeignKeySet && !m_wasForeignKeySetPartial
+    )
         insertEmptyForeignKeyValue();
 
     return m_preparedValues;
