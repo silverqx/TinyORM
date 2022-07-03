@@ -12,6 +12,7 @@
 #include <orm/tiny/utils/string.hpp>
 #include <orm/utils/container.hpp>
 
+#include "tom/commands/make/modelcommandconcepts.hpp"
 #include "tom/commands/make/stubs/modelstubs.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
 
@@ -330,6 +331,22 @@ QString ModelCreator::createRelationArguments(const QString &foreignKey)
     return argumentsList.join(COMMA);
 }
 
+namespace
+{
+    /*! Concept for the containers have same size algorithm. */
+    template<typename T>
+    concept ContainersSizeConcept =
+            BtmPreparedValuesConcept<T> ||
+            std::convertible_to<T, std::vector<BelongToManyForeignKeys>>;
+
+    /*! Check whether all containers have the same size. */
+    template<ContainersSizeConcept ...C>
+    bool allHaveSameSize(const std::size_t size, const C &...container)
+    {
+        return ((size == static_cast<std::size_t>(container.size())) && ...);
+    }
+} // namespace
+
 QString ModelCreator::createBelongsToManyRelation(
             const QString &parentClass, const QStringList &relatedClasses,
             const std::vector<BelongToManyForeignKeys> &foreignKeys,
@@ -341,14 +358,11 @@ QString ModelCreator::createBelongsToManyRelation(
         return {};
 
     const auto relatedClassesSize = relatedClasses.size();
-    const auto size = static_cast<std::size_t>(relatedClassesSize);
 
-    Q_ASSERT(size == foreignKeys.size() &&
-             size == static_cast<std::size_t>(pivotTables.size()) &&
-             size == static_cast<std::size_t>(pivotClasses.size()) &&
-             size == static_cast<std::size_t>(asList.size()) &&
-             size == withPivotList.size() &&
-             size == withTimestampsList.size());
+    // All lists must have the same number of items
+    Q_ASSERT(allHaveSameSize(static_cast<std::size_t>(relatedClassesSize),
+                             foreignKeys, pivotTables, pivotClasses, asList,
+                             withPivotList, withTimestampsList));
 
     QStringList result;
     result.reserve(relatedClassesSize);
