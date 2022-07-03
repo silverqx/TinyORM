@@ -134,7 +134,7 @@ namespace Tom::Commands::Make::Support
 
         // Handle the last btm relation
         // Any option value/s was passed on the cmd. line so insert the default value
-        if (m_isBtmRelation.value_or(false) && !m_wasValueSet)
+        if (m_isBtmRelation.value_or(false) && !m_wasValueSet && !m_wasValueSetPartial)
             insertEmptyBtmValue();
 
         return m_preparedValues;
