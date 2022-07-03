@@ -12,9 +12,7 @@ namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
 
-using Orm::Constants::COLON;
 using Orm::Constants::NAME;
-using Orm::Constants::PLUS;
 
 using ContainerUtils = Orm::Utils::Container;
 using StringUtils = Orm::Tiny::Utils::String;
@@ -47,8 +45,6 @@ using Tom::Constants::table_up;
 using Tom::Constants::with_pivot;
 using Tom::Constants::with_pivot_up;
 using Tom::Constants::with_timestamps;
-
-using CmdOptions = Tom::Commands::Make::Support::ModelCreator::CmdOptions;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -130,7 +126,7 @@ int ModelCommand::run()
 
     showUnusedOptionsWarnings(cmdOptions);
 
-    if (!m_unusedBtmOptions.empty() || m_shownUnusedForeign)
+    if (!m_unusedBtmOptions.empty() || m_shownUnusedForeignKey)
         newLine();
 
     // Ready to write the model to the disk 🧨✨
@@ -224,7 +220,7 @@ void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOpt
     note(QString::fromStdString(modelFile.string()));
 }
 
-ModelCommand::CmdOptions ModelCommand::createCmdOptions()
+CmdOptions ModelCommand::createCmdOptions()
 {
     return {
         // Relationship methods
@@ -232,7 +228,7 @@ ModelCommand::CmdOptions ModelCommand::createCmdOptions()
         values(belongs_to_many),
 
         // Common for all relationship methods
-        prepareForeignKeys(values(foreign_key)),
+        foreignKeyValues(),
 
         // Belongs-to-many related
         btmValues(pivot_table),      btmValues(pivot_), btmValues(as_),
@@ -241,215 +237,6 @@ ModelCommand::CmdOptions ModelCommand::createCmdOptions()
         // Model related
         value(connection_), value(table_), isSet(disable_timestamps),
     };
-}
-
-/* Foreign key names */
-
-// TODO tom, make model, detect passing more values to --foreign-key=post_id,xx, only one option I can think of to get whole command line and parse/detect it manually, Qt doesn't offer any API for this silverqx
-ModelCommand::ForeignKeys
-ModelCommand::prepareForeignKeys(const QStringList &foreignKeyValues)
-{
-    // CUR make model, make it the same way like in the btmValues silverqx
-    // Nothing to prepare
-//    if (foreignKeyValues.isEmpty())
-//        return {};
-
-    static const std::unordered_set relationNames {
-        one_to_one, one_to_many, belongs_to, belongs_to_many
-    };
-
-    auto optionsNames = parser().optionNames();
-
-    QString currentRelation;
-    ForeignKeys foreignKeys;
-    QStringList::size_type foreignIndex = 0;
-    bool wasForeignKeySet = false;
-    // belongs-to-many related, it allows to set two foreign keys for the pivot table
-    bool wasForeignKeySetPartial = false;
-
-    for (auto &&option : optionsNames) {
-        // Try to start a new relation during foreign key names search
-        if (startNewRelation(relationNames, option, currentRelation, foreignKeys,
-                             wasForeignKeySet, wasForeignKeySetPartial))
-            continue;
-
-        // Searching a foreign key name after the relation option on the cmd. line
-        // Nothing to do
-        if (option != foreign_key)
-            continue;
-
-        /* Foreign key name defined before a relation or more options given for one
-           relation. */
-        if (currentRelation.isEmpty() || wasForeignKeySet) {
-            showUnusedForeignKeyWarning();
-
-            // Skip the value, only the first option's value is used
-            if (wasForeignKeySet)
-                ++foreignIndex;
-
-            continue;
-        }
-
-        // Foreign key name found, assign it to the correct relation type
-        insertForeignKeyName(currentRelation, foreignKeys, foreignKeyValues, foreignIndex,
-                             wasForeignKeySet, wasForeignKeySetPartial);
-    }
-
-    // Handle the last relation
-    // No foreign key name was passed on the cmd. line so insert the default value
-    if (!currentRelation.isEmpty() && !wasForeignKeySet)
-        insertEmptyForeignList(currentRelation, foreignKeys);
-
-    return foreignKeys;
-}
-
-bool ModelCommand::startNewRelation(
-            const std::unordered_set<QString> &relationNames, QString &option,
-            QString &currentRelation, ForeignKeys &foreignKeys,
-            bool &wasForeignKeySet, bool &wasForeignKeySetPartial)
-{
-    // Nothing to start
-    if (!relationNames.contains(option))
-        return false;
-
-    // Relation option passed on the cmd. line, start (found relation option)
-
-    /* No foreign key name was passed on the cmd. line so insert the default value.
-       Don't insert the default value if the first relation have not been found. */
-    if (!currentRelation.isEmpty() && !wasForeignKeySet)
-        insertEmptyForeignList(currentRelation, foreignKeys);
-
-    currentRelation = std::move(option);
-
-    // Reset to defaults
-    wasForeignKeySet = false;
-    wasForeignKeySetPartial = false;
-
-    return true;
-}
-
-void ModelCommand::insertEmptyForeignList(const QString &currentRelation,
-                                          ForeignKeys &foreignKeys)
-{
-    if (currentRelation == one_to_one)
-        foreignKeys.oneToOne.push_back({});
-
-    else if (currentRelation == one_to_many)
-        foreignKeys.oneToMany.push_back({});
-
-    else if (currentRelation == belongs_to)
-        foreignKeys.belongsTo.push_back({});
-
-    else if (currentRelation == belongs_to_many)
-        foreignKeys.belongsToMany.push_back({});
-
-    else
-        Q_UNREACHABLE();
-}
-
-void ModelCommand::insertForeignKeyName(
-            const QString &currentRelation, ForeignKeys &foreignKeys,
-            const QStringList &foreignKeyValues, QStringList::size_type &foreignIndex,
-            bool &wasForeignKeySet, bool &wasForeignKeySetPartial)
-{
-    if (currentRelation == one_to_one) {
-        foreignKeys.oneToOne << foreignKeyValues.at(foreignIndex++);
-        wasForeignKeySet = true;
-    }
-    else if (currentRelation == one_to_many) {
-        foreignKeys.oneToMany << foreignKeyValues.at(foreignIndex++);
-        wasForeignKeySet = true;
-    }
-    else if (currentRelation == belongs_to) {
-        foreignKeys.belongsTo << foreignKeyValues.at(foreignIndex++);
-        wasForeignKeySet = true;
-    }
-    else if (currentRelation == belongs_to_many)
-        insertForeignKeyNameBtm(foreignKeys, foreignKeyValues, foreignIndex,
-                                wasForeignKeySet, wasForeignKeySetPartial);
-    else
-        Q_UNREACHABLE();
-}
-
-void ModelCommand::insertForeignKeyNameBtm(
-            ForeignKeys &foreignKeys,
-            const QStringList &foreignKeyValues, QStringList::size_type &foreignIndex,
-            bool &wasForeignKeySet, bool &wasForeignKeySetPartial)
-{
-    /* Both foreign key names can be assigned using one --foreign-key= option, but they
-       must be divided by the colon character. */
-    if (const auto &foreignKeyValue = foreignKeyValues.at(foreignIndex++);
-        foreignKeyValue.contains(COLON)
-    ) {
-        auto foreignKeyValuesSplitted = foreignKeyValue.split(COLON, Qt::KeepEmptyParts);
-        Q_ASSERT(foreignKeyValuesSplitted.size() == 2);
-
-#ifdef __clang__
-        foreignKeys.belongsToMany.push_back(
-                    {std::move(foreignKeyValuesSplitted.first()),
-                     std::move(foreignKeyValuesSplitted.last())});
-#else
-        foreignKeys.belongsToMany.emplace_back(
-                    std::move(foreignKeyValuesSplitted.first()),
-                    std::move(foreignKeyValuesSplitted.last()));
-#endif
-
-        wasForeignKeySet = true;
-    }
-    /* Or they can be assigned using two --foreign-key= options or one option and the
-       given value must be divided using the comma character (Qt specific behavior), in
-       this case the first value has to start with the + character, this is only one
-       option how to detect that there is also second value ready in the list.
-       If only one value was passed then set the related pivot key first. */
-    else
-        // First value
-        if (!wasForeignKeySetPartial) {
-            // Set the related pivot key name (one value was passed)
-            if (!foreignKeyValue.startsWith(PLUS)) {
-#ifdef __clang__
-                foreignKeys.belongsToMany.push_back({{}, foreignKeyValue});
-#else
-                foreignKeys.belongsToMany.emplace_back<QString>({}, foreignKeyValue);
-#endif
-
-                wasForeignKeySetPartial = true;
-            }
-            /* Set both values at once, a foreign and related pivot key names (two
-               values have been passed and the first value began with the + char.). */
-            else {
-#ifdef __clang__
-                foreignKeys.belongsToMany.push_back(
-                            {foreignKeyValue.mid(1), foreignKeyValues.at(foreignIndex++)});
-#else
-                foreignKeys.belongsToMany.emplace_back(
-                            foreignKeyValue.mid(1), foreignKeyValues.at(foreignIndex++));
-#endif
-
-                wasForeignKeySet = true;
-            }
-        }
-        // Second value (one value was passed)
-        else {
-            // Swap pivot keys, so it follows belongsToMany() parameters order
-            auto &last = foreignKeys.belongsToMany.back();
-            last.foreignPivotKey.swap(last.relatedPivotKey);
-            last.relatedPivotKey = foreignKeyValue;
-
-            wasForeignKeySet = true;
-        }
-}
-
-void ModelCommand::showUnusedForeignKeyWarning()
-{
-    // Already shown
-    if (m_shownUnusedForeign)
-        return;
-
-    comment(QStringLiteral(
-                "Unused --foreign-key= option, it has to follow after any relation "
-                "option and should be defined only once for every relation option."));
-
-    m_shownUnusedForeign = true;
 }
 
 /* Others */

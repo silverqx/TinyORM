@@ -65,7 +65,7 @@ namespace Tom::Commands::Make::Support
 
         /*! Is the btm relation currently being processed? */
         std::optional<bool> m_isBtmRelation = std::nullopt;
-        /*! Next index value to process to the given values list. */
+        /*! Next index value to process in the given values list. */
         typename V::size_type m_valueIndex = 0;
         /*! Next index value of the btm relation. */
         std::size_t m_btmIndex = 0;

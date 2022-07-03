@@ -22,7 +22,10 @@ namespace Support
 {
     template<BtmPreparedValuesConcept P, BtmValuesConcept V>
     class PrepareBtmOptionValues;
-}
+
+    class PrepareForeignKeyValues;
+
+} // namespace Support
 
     /*! Create a new model class. */
     class ModelCommand : public Command,
@@ -38,13 +41,11 @@ namespace Support
         friend Support::PrepareBtmOptionValues<std::vector<QStringList>, QStringList>;
         // To access relationNames() and m_unusedBtmOptions
         friend Support::PrepareBtmOptionValues<std::vector<bool>, std::vector<bool>>;
+        // To access relationNames(), parser(), and m_shownUnusedWarning
+        friend Support::PrepareForeignKeyValues;
 
         /*! Alias for the filesystem path. */
         using fspath = std::filesystem::path;
-        /*! Alias for the command line option values. */
-        using CmdOptions = Support::ModelCreator::CmdOptions;
-        /*! Alias for the foreign keys. */
-        using ForeignKeys = Support::ModelCreator::ForeignKeys;
 
     public:
         /*! Constructor. */
@@ -81,31 +82,6 @@ namespace Support
         /*! Create command line options instance. */
         CmdOptions createCmdOptions();
 
-        /* Foreign key names */
-        /*! Divide foreign key names by relation types. */
-        ForeignKeys prepareForeignKeys(const QStringList &foreignKeyValues);
-        /*! Try to start a new relation during foreign key names search. */
-        static bool startNewRelation(
-                    const std::unordered_set<QString> &relationNames, QString &option,
-                    QString &currentRelation, ForeignKeys &foreignKeys,
-                    bool &wasForeignKeySet, bool &wasForeignKeySetPartial);
-        /*! Insert the default value if no foreign key was passed on the cmd. line. */
-        static void insertEmptyForeignList(const QString &currentRelation,
-                                           ForeignKeys &foreignKeys);
-        /*! Foreign key name found, assign it to the correct relation type. */
-        static void insertForeignKeyName(
-                    const QString &currentRelation, ForeignKeys &foreignKeys,
-                    const QStringList &foreignKeyValues,
-                    QStringList::size_type &foreignIndex, bool &wasForeignKeySet,
-                    bool &wasForeignKeySetPartial);
-        /*! Foreign key name found, assign it to the correct relation type (for btm). */
-        static void insertForeignKeyNameBtm(
-                    ForeignKeys &foreignKeys, const QStringList &foreignKeyValues,
-                    QStringList::size_type &foreignIndex, bool &wasForeignKeySet,
-                    bool &wasForeignKeySetPartial);
-        /*! Show unused foreign key option warning. */
-        void showUnusedForeignKeyWarning();
-
         /* Others */
         /*! Get the model path (either specified by the --path option or the default
             location). */
@@ -115,8 +91,8 @@ namespace Support
 
         /*! The model creator instance. */
         Support::ModelCreator m_creator {};
-        /*! Indicates whether the unused warning for foreign-key option been shown. */
-        bool m_shownUnusedForeign = false;
+        /*! Was shown an unused warning for the foreign-key option? */
+        bool m_shownUnusedForeignKey = false;
         /*! Unused btm options, will be shown in the warning. */
         std::set<QString> m_unusedBtmOptions {};
 

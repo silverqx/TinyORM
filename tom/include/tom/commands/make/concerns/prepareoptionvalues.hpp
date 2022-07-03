@@ -7,7 +7,9 @@ TINY_SYSTEM_HEADER
 
 #include <QStringList>
 
-#include "orm/macros/commonnamespace.hpp"
+#include <orm/macros/commonnamespace.hpp>
+
+#include "tom/commands/make/modelcommandtypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -30,6 +32,9 @@ namespace Concerns
         inline virtual ~PrepareOptionValues() = default;
 
     protected:
+        /*! Prepare foreign key option values for the ModelCreator. */
+        ForeignKeys foreignKeyValues();
+
         /*! Prepare btm option values for the ModelCreator (multi-value option). */
         QStringList btmValues(const QString &optionName);
         /*! Prepare btm option values for the ModelCreator (multi-value option). */

@@ -20,6 +20,7 @@ sourcesList += \
     $$PWD/tom/commands/make/seedercommand.cpp \
     $$PWD/tom/commands/make/support/migrationcreator.cpp \
     $$PWD/tom/commands/make/support/modelcreator.cpp \
+    $$PWD/tom/commands/make/support/prepareforeignkeyvalues.cpp \
     $$PWD/tom/commands/make/support/seedercreator.cpp \
     $$PWD/tom/commands/make/support/tableguesser.cpp \
     $$PWD/tom/commands/migrations/freshcommand.cpp \

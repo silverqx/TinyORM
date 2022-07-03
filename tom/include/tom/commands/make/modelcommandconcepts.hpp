@@ -2,14 +2,14 @@
 #ifndef TOM_COMMANDS_MAKE_MODELCOMMANDCONCEPTS_HPP
 #define TOM_COMMANDS_MAKE_MODELCOMMANDCONCEPTS_HPP
 
-#include "orm/macros/systemheader.hpp"
+#include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
 #include <QStringList>
 
 #include <concepts>
 
-#include "orm/macros/commonnamespace.hpp"
+#include <orm/macros/commonnamespace.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
