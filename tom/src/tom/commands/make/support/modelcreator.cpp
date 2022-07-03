@@ -459,7 +459,8 @@ void ModelCreator::handlePivotClass(const QString &pivotClass,
     }
 }
 
-namespace
+QString ModelCreator::createRelationCalls(
+            const QString &as, const QStringList &withPivot, const bool withTimestamps)
 {
     /*! Align a method call on the newline. */
     const auto relationCallsAlign = [](const auto &relationCalls)
@@ -468,11 +469,7 @@ namespace
                                        : QStringLiteral("%1%2%3")
                                          .arg(NEWLINE, QString(16, SPACE)).arg(DOT);
     };
-} // namespace
 
-QString ModelCreator::createRelationCalls(
-            const QString &as, const QStringList &withPivot, const bool withTimestamps)
-{
     QString relationCalls;
 
     // The name for the pivot relation
