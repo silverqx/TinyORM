@@ -1,5 +1,6 @@
 #include "tom/commands/make/support/modelcreator.hpp"
 
+#include <deque>
 #include <fstream>
 
 #include <range/v3/action/remove_if.hpp>
@@ -102,34 +103,33 @@ std::string ModelCreator::populateStub(const QString &className,
     const auto pivotsList      = createPivotsList();
     const auto forwardsSection = createForwardsSection();
 
-    QString stub(ModelStub);
+    return QString(ModelStub)
+            .replace(QStringLiteral("DummyClass"),  className)
+            .replace(QStringLiteral("{{ class }}"), className)
+            .replace(QStringLiteral("{{class}}"),   className)
 
-    stub.replace(QStringLiteral("DummyClass"),  className)
-        .replace(QStringLiteral("{{ class }}"), className)
-        .replace(QStringLiteral("{{class}}"),   className)
+            .replace(QStringLiteral("{{ macroguard }}"), macroGuard)
+            .replace(QStringLiteral("{{macroguard}}"),   macroGuard)
 
-        .replace(QStringLiteral("{{ macroguard }}"), macroGuard)
-        .replace(QStringLiteral("{{macroguard}}"),   macroGuard)
+            .replace(QStringLiteral("{{ publicSection }}"), publicSection)
+            .replace(QStringLiteral("{{publicSection}}"),   publicSection)
 
-        .replace(QStringLiteral("{{ publicSection }}"), publicSection)
-        .replace(QStringLiteral("{{publicSection}}"),   publicSection)
+            .replace(QStringLiteral("{{ privateSection }}"), privateSection)
+            .replace(QStringLiteral("{{privateSection}}"),   privateSection)
 
-        .replace(QStringLiteral("{{ privateSection }}"), privateSection)
-        .replace(QStringLiteral("{{privateSection}}"),   privateSection)
+            .replace(QStringLiteral("{{ includesSection }}"), includesSection)
+            .replace(QStringLiteral("{{includesSection}}"),   includesSection)
+            .replace(QStringLiteral("{{ usingsSection }}"),   usingsSection)
+            .replace(QStringLiteral("{{usingsSection}}"),     usingsSection)
+            .replace(QStringLiteral("{{ forwardsSection }}"), forwardsSection)
+            .replace(QStringLiteral("{{forwardsSection}}"),   forwardsSection)
 
-        .replace(QStringLiteral("{{ includesSection }}"), includesSection)
-        .replace(QStringLiteral("{{includesSection}}"),   includesSection)
-        .replace(QStringLiteral("{{ usingsSection }}"),   usingsSection)
-        .replace(QStringLiteral("{{usingsSection}}"),     usingsSection)
-        .replace(QStringLiteral("{{ forwardsSection }}"), forwardsSection)
-        .replace(QStringLiteral("{{forwardsSection}}"),   forwardsSection)
+            .replace(QStringLiteral("{{ relationsList }}"), relationsList)
+            .replace(QStringLiteral("{{relationsList}}"),   relationsList)
+            .replace(QStringLiteral("{{ pivotsList }}"),    pivotsList)
+            .replace(QStringLiteral("{{pivotsList}}"),      pivotsList)
 
-        .replace(QStringLiteral("{{ relationsList }}"), relationsList)
-        .replace(QStringLiteral("{{relationsList}}"),   relationsList)
-        .replace(QStringLiteral("{{ pivotsList }}"),    pivotsList)
-        .replace(QStringLiteral("{{pivotsList}}"),      pivotsList);
-
-    return stub.toStdString();
+            .toStdString();
 }
 
 /* Public model section */
@@ -149,6 +149,7 @@ QString ModelCreator::createPublicSection(const QString &className,
     ] = foreignKeys;
 
     QStringList publicSectionList;
+    publicSectionList.reserve(4);
 
     publicSectionList << createOneToOneRelation(className, oneToOneList,
                                                 oneToOneForeign);
@@ -167,7 +168,7 @@ QString ModelCreator::createPublicSection(const QString &className,
         return value.isEmpty();
     });
 
-    QString publicSection = publicSectionList.join(NEWLINE);
+    auto publicSection = publicSectionList.join(NEWLINE);
 
     if (!publicSection.isEmpty())
         publicSection.prepend(ModelPublicStub);
@@ -319,16 +320,10 @@ QString ModelCreator::createBelongsToRelation(
 
 QString ModelCreator::createRelationArguments(const QString &foreignKey)
 {
-    QStringList argumentsList;
-
-    if (!foreignKey.isEmpty())
-        argumentsList << StringUtils::wrapValue(foreignKey, QChar('"'));
-
-    // Nothing to create
-    if (argumentsList.isEmpty())
+    if (foreignKey.isEmpty())
         return {};
 
-    return argumentsList.join(COMMA);
+    return StringUtils::wrapValue(foreignKey, QChar('"'));
 }
 
 namespace
@@ -425,27 +420,27 @@ QString ModelCreator::createRelationArgumentsBtm(
 {
     const auto &[foreignPivotKey, relatedPivotKey] = foreignKey;
 
-    QStringList argumentsList;
+    std::deque<QString> argumentsList;
 
     if (!relatedPivotKey.isEmpty())
-        argumentsList << StringUtils::wrapValue(relatedPivotKey, QChar('"'));
+        argumentsList.push_back(StringUtils::wrapValue(relatedPivotKey, QChar('"')));
 
     if (!foreignPivotKey.isEmpty())
-        argumentsList.prepend(StringUtils::wrapValue(foreignPivotKey, QChar('"')));
+        argumentsList.push_front(StringUtils::wrapValue(foreignPivotKey, QChar('"')));
     else if (!relatedPivotKey.isEmpty())
-        argumentsList.prepend(QStringLiteral("{}"));
+        argumentsList.push_front(QStringLiteral("{}"));
 
     // Table name of the relationship's intermediate table
     if (!pivotTable.isEmpty())
-        argumentsList.prepend(StringUtils::wrapValue(pivotTable, QChar('"')));
+        argumentsList.push_front(StringUtils::wrapValue(pivotTable, QChar('"')));
     else if (!foreignPivotKey.isEmpty() || !relatedPivotKey.isEmpty())
-        argumentsList.prepend(QStringLiteral("{}"));
+        argumentsList.push_front(QStringLiteral("{}"));
 
     // Nothing to create
-    if (argumentsList.isEmpty())
+    if (argumentsList.empty())
         return {};
 
-    return argumentsList.join(COMMA);
+    return ContainerUtils::join(argumentsList, COMMA);
 }
 
 void ModelCreator::handlePivotClass(const QString &pivotClass,
@@ -463,8 +458,7 @@ void ModelCreator::handlePivotClass(const QString &pivotClass,
     }
 }
 
-QString ModelCreator::createRelationCalls(
-            const QString &as, const QStringList &withPivot, const bool withTimestamps)
+namespace
 {
     /*! Align a method call on the newline. */
     const auto relationCallsAlign = [](const auto &relationCalls)
@@ -473,7 +467,11 @@ QString ModelCreator::createRelationCalls(
                                        : QStringLiteral("%1%2%3")
                                          .arg(NEWLINE, QString(16, SPACE)).arg(DOT);
     };
+} // namespace
 
+QString ModelCreator::createRelationCalls(
+            const QString &as, const QStringList &withPivot, const bool withTimestamps)
+{
     QString relationCalls;
 
     // The name for the pivot relation
@@ -588,6 +586,7 @@ QString ModelCreator::createRelationsHash(const QString &className,
     const auto relationsMaxSize = getRelationNamesMaxSize(cmdOptions);
 
     QStringList relationItemsList;
+    relationItemsList.reserve(4);
 
     relationItemsList << createOneToOneRelationItem(className, oneToOneList,
                                                     relationsMaxSize);
