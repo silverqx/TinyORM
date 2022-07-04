@@ -17,7 +17,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands::Make::Support
 {
 
-    /*! Prepare belongs-to-many's cmd. line options for the ModelCreator class. */
+    /*! Prepare belongs-to-many's command-line options for the ModelCreator class. */
     template<BtmPreparedValuesConcept P = QStringList, BtmValuesConcept V = QStringList>
     class PrepareBtmOptionValues
     {
@@ -29,7 +29,7 @@ namespace Tom::Commands::Make::Support
         /*! Default destructor. */
         inline ~PrepareBtmOptionValues() = default;
 
-        /*! Prepare belongs-to-many's cmd. line options for the ModelCreator class. */
+        /*! Prepare belongs-to-many's command-line options for the ModelCreator class. */
         P prepareValuesFor(const QString &optionName);
 
     private:
@@ -40,7 +40,7 @@ namespace Tom::Commands::Make::Support
         /*! Try to start a new btm relation during the given option values search. */
         bool startNewBtmRelation(const QString &option);
 
-        /*! Insert the default value if no option was passed on the cmd. line. */
+        /*! Insert the default value if no option was passed on the command-line. */
         void insertEmptyBtmValue();
 
         /*! Option found, assign it to the prepared values list. */
@@ -105,7 +105,7 @@ namespace Tom::Commands::Make::Support
             if (startNewBtmRelation(option))
                 continue;
 
-            // Searching for option value/s after the relation option on the cmd. line
+            // Searching for option value/s after the relation option on the command-line
             // Nothing to do
             if (option != optionName)
                 continue;
@@ -134,7 +134,7 @@ namespace Tom::Commands::Make::Support
         }
 
         // Handle the last btm relation
-        // Any option value/s was passed on the cmd. line so insert the default value
+        // Any option value/s was passed on the command-line so insert the default value
         if (m_isBtmRelation.value_or(false) && !m_wasValueSet && !m_wasValueSetPartial)
             insertEmptyBtmValue();
 
@@ -148,11 +148,11 @@ namespace Tom::Commands::Make::Support
     {
         const auto allBtmValues = modelCommand().values(Tom::Constants::belongs_to_many);
 
-        // Nothing to prepare, no btm relations on the cmd. line (return true)
+        // Nothing to prepare, no btm relations on the command-line (return true)
         if (allBtmValues.isEmpty())
             return {{}, true};
 
-        /* Nothing to prepare, btm relation/s defined on the cmd. line but no values
+        /* Nothing to prepare, btm relation/s defined on the command-line but no values
            (return true with default values) */
         if (m_values.empty()) {
             const auto valuesSize = static_cast<typename P::size_type>(
@@ -188,11 +188,11 @@ namespace Tom::Commands::Make::Support
         if (!m_isBtmRelation && option != Tom::Constants::belongs_to_many)
             return false;
 
-        // Relation option passed on the cmd. line, start (found relation option)
+        // Relation option passed on the command-line, start (found relation option)
 
         const auto wasPreviousBtm = m_isBtmRelation.value_or(false);
 
-        /* Any option value/s was passed on the cmd. line so insert the default value.
+        /* Any option value/s was passed on the command-line so insert the default value.
            Insert the default value only if a previous relation was the btm relation. */
         if (wasPreviousBtm && !m_wasValueSet && !m_wasValueSetPartial)
             insertEmptyBtmValue();

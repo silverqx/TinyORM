@@ -141,7 +141,7 @@ QStringList Command::optionNames() const
                                            .count(regex)) + 1); // +1 for sure
 
     /* Allows to loop through all values for every (unique) option name defined
-       on the cmd. line. */
+       on the command-line. */
     auto optionNamesUnique = optionNames;
     optionNamesUnique.removeDuplicates();
 

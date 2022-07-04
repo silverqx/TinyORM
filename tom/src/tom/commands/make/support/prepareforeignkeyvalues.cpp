@@ -39,7 +39,7 @@ ForeignKeys PrepareForeignKeyValues::prepareValues()
         if (startNewRelation(option))
             continue;
 
-        // Searching a foreign key name after the relation option on the cmd. line
+        // Searching a foreign key name after the relation option on the command-line
         // Nothing to do
         if (option != foreign_key)
             continue;
@@ -61,7 +61,7 @@ ForeignKeys PrepareForeignKeyValues::prepareValues()
     }
 
     // Handle the last relation
-    // No foreign key name was passed on the cmd. line so insert the default value
+    // No foreign key name was passed on the command-line so insert the default value
     if (!m_currentRelation.isEmpty() &&
         !m_wasForeignKeySet && !m_wasForeignKeySetPartial
     )
@@ -78,9 +78,9 @@ bool PrepareForeignKeyValues::startNewRelation(QString &option)
     if (!relationNames().contains(option))
         return false;
 
-    // Relation option passed on the cmd. line, start (found relation option)
+    // Relation option passed on the command-line, start (found relation option)
 
-    /* No foreign key name was passed on the cmd. line so insert the default value.
+    /* No foreign key name was passed on the command-line so insert the default value.
        Don't insert the default value if the first relation have not been found. */
     if (!m_currentRelation.isEmpty() &&
         !m_wasForeignKeySet && !m_wasForeignKeySetPartial

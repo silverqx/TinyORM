@@ -148,7 +148,7 @@ QString ModelCreator::createPublicSection(const QString &className,
             oneToOneForeign, oneToManyForeign, belongsToForeign, belongsToManyForeign
     ] = foreignKeys;
 
-    // FUTURE tom, make:model, preserve relations order defined on the cmd. line, add std::vector<std::size_t> relationsOrder to the CmdOptions and fill it during options search, add relationsOrder to ranges::zip() used in createXyzRelation() methods, below will return struct RelationItem { int order; QString content; } and then ranges::sort(), --preserve-order/-o option silverqx
+    // FUTURE tom, make:model, preserve relations order defined on the command-line, add std::vector<std::size_t> relationsOrder to the CmdOptions and fill it during options search, add relationsOrder to ranges::zip() used in createXyzRelation() methods, below will return struct RelationItem { int order; QString content; } and then ranges::sort(), --preserve-order/-o option silverqx
     QStringList publicSectionList;
     publicSectionList.reserve(4);
 
