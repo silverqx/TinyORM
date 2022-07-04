@@ -33,15 +33,15 @@ namespace Support
     {
         Q_DISABLE_COPY(ModelCommand)
 
-        // To access parser() and isSetAll()
+        // To access values() and isSetAll()
         friend Concerns::PrepareOptionValues;
-        // To access relationNames() and m_unusedBtmOptions
+        // To access relationNames(), values(), optionNames() and m_unusedBtmOptions
         friend Support::PrepareBtmOptionValues<QStringList, QStringList>;
         // To access relationNames() and m_unusedBtmOptions
         friend Support::PrepareBtmOptionValues<std::vector<QStringList>, QStringList>;
         // To access relationNames() and m_unusedBtmOptions
         friend Support::PrepareBtmOptionValues<std::vector<bool>, std::vector<bool>>;
-        // To access relationNames(), parser(), and m_shownUnusedWarning
+        // To access relationNames(), optionNames(), comment() and m_shownUnusedForeignKey
         friend Support::PrepareForeignKeyValues;
 
         /*! Alias for the filesystem path. */

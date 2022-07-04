@@ -26,7 +26,7 @@ ForeignKeys PrepareOptionValues::foreignKeyValues()
 QStringList PrepareOptionValues::btmValues(const QString &optionName)
 {
     return PrepareBtmOptionValues(modelCommand(),
-                                  modelCommand().parser().values(optionName))
+                                  modelCommand().values(optionName))
             .prepareValuesFor(optionName);
 }
 
@@ -34,8 +34,7 @@ std::vector<QStringList> PrepareOptionValues::btmMultiValues(const QString &opti
 {
     return PrepareBtmOptionValues<
             std::vector<QStringList>>(modelCommand(),
-                                      // CUR make model, test values() vs parser().values() silverqx
-                                      modelCommand().parser().values(optionName))
+                                      modelCommand().values(optionName))
             .prepareValuesFor(optionName);
 }
 

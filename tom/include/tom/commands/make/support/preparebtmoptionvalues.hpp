@@ -95,7 +95,7 @@ namespace Tom::Commands::Make::Support
         if (auto &&[defaults, result] = checkBtmNothingToPrepare(); result)
             return std::move(defaults);
 
-        auto optionsNames = modelCommand().parser().optionNames();
+        auto optionsNames = modelCommand().optionNames();
 
         m_preparedValues.reserve(static_cast<typename P::size_type>(
                                    optionsNames.size()) - 1);
@@ -110,6 +110,7 @@ namespace Tom::Commands::Make::Support
             if (option != optionName)
                 continue;
 
+            // CUR make model extract silverqx
             /* Btm option defined before a btm relation or more options given for
                the single value option. */
             if (!m_isBtmRelation || m_wasValueSet) {
@@ -193,7 +194,7 @@ namespace Tom::Commands::Make::Support
 
         /* Any option value/s was passed on the cmd. line so insert the default value.
            Insert the default value only if a previous relation was the btm relation. */
-        if (wasPreviousBtm && !m_wasValueSet)
+        if (wasPreviousBtm && !m_wasValueSet && !m_wasValueSetPartial)
             insertEmptyBtmValue();
 
         m_isBtmRelation = option == Tom::Constants::belongs_to_many;

@@ -34,7 +34,7 @@ ForeignKeys PrepareForeignKeyValues::prepareValues()
 //    if (m_foreignKeyValues.isEmpty())
 //        return {};
 
-    for (auto &&option : modelCommand().parser().optionNames()) {
+    for (auto &&option : modelCommand().optionNames()) {
         // Try to start a new relation during foreign key names search
         if (startNewRelation(option))
             continue;
@@ -82,7 +82,9 @@ bool PrepareForeignKeyValues::startNewRelation(QString &option)
 
     /* No foreign key name was passed on the cmd. line so insert the default value.
        Don't insert the default value if the first relation have not been found. */
-    if (!m_currentRelation.isEmpty() && !m_wasForeignKeySet)
+    if (!m_currentRelation.isEmpty() &&
+        !m_wasForeignKeySet && !m_wasForeignKeySetPartial
+    )
         insertEmptyForeignKeyValue();
 
     m_currentRelation = std::move(option);
@@ -134,65 +136,39 @@ void PrepareForeignKeyValues::insertForeignKeyValue()
 
 void PrepareForeignKeyValues::insertForeignKeyValueBtm()
 {
-    /* Both foreign key names can be assigned using one --foreign-key= option, but they
-       must be divided by the colon character. */
-    if (const auto &value = m_values.at(m_valueIndex++);
-        value.contains(COLON)
-    ) {
-        auto valuesSplitted = value.split(COLON, Qt::KeepEmptyParts);
-        Q_ASSERT(valuesSplitted.size() == 2);
+    Q_ASSERT(m_preparedValues.belongsToMany.size() <= 2);
 
-#ifdef __clang__
-        m_preparedValues.belongsToMany.push_back({std::move(valuesSplitted.first()),
-                                                  std::move(valuesSplitted.last())});
-#else
-        m_preparedValues.belongsToMany.emplace_back(std::move(valuesSplitted.first()),
-                                                    std::move(valuesSplitted.last()));
-#endif
-
-        m_wasForeignKeySet = true;
-    }
-    /* Or they can be assigned using two --foreign-key= options or one option and the
-       given value must be divided using the comma character (Qt specific behavior), in
-       this case the first value has to start with the + character, this is only one
-       option how to detect that there is also second value ready in the list.
+    /* Both foreign key names can be assigned using one --foreign-key= option, in this
+       case they must be divided by the , character.
+       Or they can be assigned by two --foreign-key= options.
        If only one value was passed then set the related pivot key first. */
-    else
-        // First value
-        if (!m_wasForeignKeySetPartial) {
-            // Set the related pivot key name (one value was passed)
-            if (!value.startsWith(PLUS)) {
+
+    const auto &value = m_values.at(m_valueIndex++);
+
+    // First value
+    if (!m_wasForeignKeySetPartial) {
 #ifdef __clang__
-                m_preparedValues.belongsToMany.push_back({{}, value});
+        m_preparedValues.belongsToMany.push_back({{}, value});
 #else
-                m_preparedValues.belongsToMany.emplace_back<QString>({}, value);
+        m_preparedValues.belongsToMany.emplace_back<QString>({}, value);
 #endif
 
-                m_wasForeignKeySetPartial = true;
-            }
-            /* Set both values at once, a foreign and related pivot key names (two
-               values have been passed and the first value began with the + char.). */
-            else {
-#ifdef __clang__
-                m_preparedValues.belongsToMany.push_back(
-                            {value.mid(1), m_values.at(m_valueIndex++)});
-#else
-                m_preparedValues.belongsToMany.emplace_back(
-                            value.mid(1), m_values.at(m_valueIndex++));
-#endif
+        m_wasForeignKeySetPartial = true;
 
-                m_wasForeignKeySet = true;
-            }
-        }
-        // Second value (one value was passed)
-        else {
-            // Swap pivot keys, so it follows belongsToMany() parameters order
-            auto &last = m_preparedValues.belongsToMany.back();
-            last.foreignPivotKey.swap(last.relatedPivotKey);
-            last.relatedPivotKey = value;
+        return;
+    }
 
-            m_wasForeignKeySet = true;
-        }
+    // Second value
+    /* Swap pivot keys, so it follows belongsToMany() parameters order.
+       It relates to this: if only one value was passed then set the related pivot key
+       first, what means that during second value insertion values have to be swapped. */
+    // Last record (we are currently processing)
+    auto &last = m_preparedValues.belongsToMany.back();
+
+    last.foreignPivotKey.swap(last.relatedPivotKey);
+    last.relatedPivotKey = value;
+
+    m_wasForeignKeySet = true;
 }
 
 void PrepareForeignKeyValues::showUnusedForeignKeyWarning()
@@ -204,7 +180,8 @@ void PrepareForeignKeyValues::showUnusedForeignKeyWarning()
     modelCommand().comment(
                 QStringLiteral(
                     "Unused --foreign-key= option, it has to follow after any relation "
-                    "option and should be defined only once for every relation option."));
+                    "option and should be defined only once for every relation option "
+                    "or can be defined twice for the --belongs-to-many= option."));
 
     modelCommand().m_shownUnusedForeignKey = true;
 }

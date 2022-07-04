@@ -1,6 +1,7 @@
 #include "tom/commands/command.hpp"
 
 #include <QCommandLineParser>
+#include <QRegularExpression>
 
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/iota.hpp>
@@ -13,7 +14,7 @@
 #include "tom/version.hpp"
 
 using Orm::ConnectionResolverInterface;
-using Orm::Constants::COMMA_C;
+using Orm::Constants::SPACE;
 
 using Tom::Constants::Help;
 using Tom::Constants::LongOption;
@@ -93,6 +94,93 @@ QStringList Command::passedArguments() const
 
 /* Parser helpers */
 
+namespace
+{
+    /*! Find n-th option with the given name in option names list. */
+    auto findNthOption(const QString &optionName, const int nthOptionIdx,
+                       const QStringList &optionNames)
+    {
+        auto nthOptionLooping = 0;
+
+        return std::ranges::find_if(optionNames,
+                                    [nthOptionIdx, &nthOptionLooping, &optionName]
+                                    (const auto &option)
+        {
+            if (option != optionName)
+                return false;
+
+            // Got it
+            if (nthOptionIdx == nthOptionLooping)
+                return true;
+
+            // Option name matches but we are at earlier index so increase and continue
+            return ++nthOptionLooping, false;
+        });
+    }
+} // namespace
+
+QStringList Command::optionNames() const
+{
+    /* This algorithm, inserts the same amount of option names as is a count of commas
+       in the option's value. Eg. xyz option at position 3 has value with 2 commas,
+       --xyz=aa,bb,cc; so insert two more xyz option names before 3. position.
+       This method is counterpart for our values() method and it's needed because our
+       values() method added support for more values per one option --xyz=aa,bb,cc
+       using the , character 🤯. */
+
+    // Allow to escape , char using \,
+    static const QRegularExpression regex(R"((?<!\\),)");
+
+    auto optionNames = parser().optionNames();
+
+    const auto optionNamesSize = optionNames.size();
+    // Number of a new option names can be estimated by counting the , characters
+    optionNames.reserve(
+                std::max(optionNamesSize * 2,
+                         optionNamesSize + application().arguments().join(SPACE)
+                                           .count(regex)) + 1); // +1 for sure
+
+    /* Allows to loop through all values for every (unique) option name defined
+       on the cmd. line. */
+    auto optionNamesUnique = optionNames;
+    optionNamesUnique.removeDuplicates();
+
+    for (const auto &optionName : std::as_const(optionNamesUnique)) {
+        // Obtain raw parser().values() so we can count the , char.
+        const auto values = parser().values(optionName);
+
+        /* Index of one option name eg. --with-pivot= in all arguments
+           (1. option = 0, 2. = 1). */
+        auto nthOptionIdx = 0;
+
+        for (const auto &value : values) {
+            const auto commasCount = value.count(regex);
+
+            // Nothing to do
+            if (commasCount == 0) {
+                ++nthOptionIdx;
+                continue;
+            }
+
+            // Iterator to the option name
+            const auto nthOption = findNthOption(optionName, nthOptionIdx, optionNames);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            optionNames.insert(nthOption, commasCount, optionName);
+#else
+            for (auto i = 0; i < commasCount ; ++i)
+                optionNames.insert(static_cast<int>(std::distance(optionNames.cbegin(),
+                                                                  nthOption)),
+                                   optionName);
+#endif
+            // Take into account also a newly inserted option names
+            ++nthOptionIdx += static_cast<decltype (nthOptionIdx)>(commasCount);
+        }
+    }
+
+    return optionNames;
+}
+
 bool Command::isSet(const QString &name) const
 {
     return parser().isSet(name);
@@ -120,15 +208,18 @@ QStringList Command::values(const QString &name) const
 
     QStringList valuesSplitted;
 
+    // Allow to escape , char using \,
+    static const QRegularExpression regex(R"((?<!\\),)");
+
     // Support passing more values delimited by comma
     for (auto &&value : values) {
-        if (!value.contains(COMMA_C)) {
+        if (!value.contains(regex)) {
             valuesSplitted += std::move(value);
 
             continue;
         }
 
-        valuesSplitted += value.split(COMMA_C, Qt::SkipEmptyParts);
+        valuesSplitted += value.split(regex, Qt::KeepEmptyParts);
     }
 
     return valuesSplitted;
