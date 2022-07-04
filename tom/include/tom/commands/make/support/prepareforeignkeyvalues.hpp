@@ -42,6 +42,10 @@ namespace Support
         /*! Try to start a new relation during foreign key names search. */
         bool startNewRelation(QString &option);
 
+        /*! Check whether the foreign key name was defined before a relation or more
+            foreign key options were given for one relation. */
+        bool isUnusedForeignKeyOption();
+
         /*! Insert the default value if no foreign key was passed on the command-line. */
         void insertEmptyForeignKeyValue();
         /*! Foreign key name found, assign it to the correct relation type. */

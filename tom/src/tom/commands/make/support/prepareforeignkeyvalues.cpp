@@ -42,15 +42,8 @@ ForeignKeys PrepareForeignKeyValues::prepareValues()
 
         /* Foreign key name defined before a relation or more options given for one
            relation. */
-        if (m_currentRelation.isEmpty() || m_wasForeignKeySet) {
-            showUnusedForeignKeyWarning();
-
-            // Skip the value, only the first option's value is used
-            if (m_wasForeignKeySet)
-                ++m_valueIndex;
-
+        if (isUnusedForeignKeyOption())
             continue;
-        }
 
         // Foreign key name found, assign it to the correct relation type
         insertForeignKeyValue();
@@ -88,6 +81,25 @@ bool PrepareForeignKeyValues::startNewRelation(QString &option)
     // Reset to defaults
     m_wasForeignKeySet = false;
     m_wasForeignKeySetPartial = false;
+
+    return true;
+}
+
+bool PrepareForeignKeyValues::isUnusedForeignKeyOption()
+{
+    /* m_currentRelation not empty means that any relation was defined
+       on the command-line and a value was not set yet.*/
+    if (!m_currentRelation.isEmpty() && !m_wasForeignKeySet)
+        return false;
+
+    /* Foreign key name defined before a relation or more options given for one
+       relation. */
+
+    showUnusedForeignKeyWarning();
+
+    // Skip the value, only the first option's value is used
+    if (m_wasForeignKeySet)
+        ++m_valueIndex;
 
     return true;
 }

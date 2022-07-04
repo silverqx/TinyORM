@@ -40,6 +40,10 @@ namespace Tom::Commands::Make::Support
         /*! Try to start a new btm relation during the given option values search. */
         bool startNewBtmRelation(const QString &option);
 
+        /*! Check whether the given btm option was defined before a btm relation or
+            more options given for the single value option. */
+        bool isUnusedBtmOption(const QString &option);
+
         /*! Insert the default value if no option was passed on the command-line. */
         void insertEmptyBtmValue();
 
@@ -110,19 +114,10 @@ namespace Tom::Commands::Make::Support
             if (option != optionName)
                 continue;
 
-            // CUR make:model extract silverqx
             /* Btm option defined before a btm relation or more options given for
                the single value option. */
-            if (!m_isBtmRelation || m_wasValueSet) {
-                // Will be shown in the warning
-                modelCommand().m_unusedBtmOptions.insert(std::move(option));
-
-                // Skip the value, only the first option's value is used
-                if (m_wasValueSet)
-                    ++m_valueIndex;
-
+            if (isUnusedBtmOption(option))
                 continue;
-            }
 
             // Option found, assign it to the prepared values list
             if constexpr (std::is_same_v<P, std::vector<QStringList>>)
@@ -207,6 +202,27 @@ namespace Tom::Commands::Make::Support
         // Reset to defaults
         m_wasValueSet = false;
         m_wasValueSetPartial = false;
+
+        return true;
+    }
+
+    template<BtmPreparedValuesConcept P, BtmValuesConcept V>
+    bool PrepareBtmOptionValues<P, V>::isUnusedBtmOption(const QString &option)
+    {
+        /* m_isBtmRelation != std::nullopt means that the btm relation was defined
+           on the command-line and a value was not set yet. */
+        if (m_isBtmRelation && !m_wasValueSet)
+            return false;
+
+        /* Btm option defined before a btm relation or more options given for
+           the single value option. */
+
+        // Will be shown in the warning
+        modelCommand().m_unusedBtmOptions.insert(std::move(option));
+
+        // Skip the value, only the first option's value is used
+        if (m_wasValueSet)
+            ++m_valueIndex;
 
         return true;
     }
