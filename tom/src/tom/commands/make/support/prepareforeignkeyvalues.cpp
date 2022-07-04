@@ -26,7 +26,6 @@ PrepareForeignKeyValues::PrepareForeignKeyValues(ModelCommand &modelCommand,
     , m_values(std::move(values))
 {}
 
-// TODO tom, make model, detect passing more values to --foreign-key=post_id,xx, only one option I can think of to get whole command line and parse/detect it manually, Qt doesn't offer any API for this silverqx
 ForeignKeys PrepareForeignKeyValues::prepareValues()
 {
     // CUR make model, make it the same way like in the btmValues silverqx
