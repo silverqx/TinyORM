@@ -4,9 +4,6 @@
 
 #include "tom/commands/make/modelcommand.hpp"
 
-using Orm::Constants::COLON;
-using Orm::Constants::PLUS;
-
 using Tom::Constants::belongs_to;
 using Tom::Constants::belongs_to_many;
 using Tom::Constants::foreign_key;
