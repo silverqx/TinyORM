@@ -110,7 +110,7 @@ namespace Tom::Commands::Make::Support
             if (option != optionName)
                 continue;
 
-            // CUR make model extract silverqx
+            // CUR make:model extract silverqx
             /* Btm option defined before a btm relation or more options given for
                the single value option. */
             if (!m_isBtmRelation || m_wasValueSet) {

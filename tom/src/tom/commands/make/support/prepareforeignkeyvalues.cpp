@@ -28,7 +28,7 @@ PrepareForeignKeyValues::PrepareForeignKeyValues(ModelCommand &modelCommand,
 
 ForeignKeys PrepareForeignKeyValues::prepareValues()
 {
-    // CUR make model, make it the same way like in the btmValues silverqx
+    // CUR make:model, make it the same way like in the btmValues silverqx
     // Nothing to prepare
 //    if (m_foreignKeyValues.isEmpty())
 //        return {};
