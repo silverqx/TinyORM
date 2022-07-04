@@ -79,7 +79,7 @@ namespace Support
         /*! Write the model file to the disk. */
         void writeModel(const QString &className, const CmdOptions &cmdOptions);
 
-        /*! Create command line options instance. */
+        /*! Create command-line options instance. */
         CmdOptions createCmdOptions();
 
         /* Others */

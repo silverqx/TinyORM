@@ -36,7 +36,7 @@ namespace Tom::Commands::Make
         std::vector<BelongToManyForeignKeys> belongsToMany {};
     };
 
-    /*! Struct to hold command line option values. */
+    /*! Struct to hold command-line option values. */
     struct CmdOptions
     {
         /* Relationship methods */
