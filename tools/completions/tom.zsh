@@ -13,6 +13,7 @@ __tom_commands() {
         'db\:seed:Seed the database with records'
         'db\:wipe:Drop all tables, views, and types'
         'make\:migration:Create a new migration file'
+        'make\:model:Create a new model class'
         'make\:seeder:Create a new seeder class'
         'migrate\:fresh:Drop all tables and re-run all migrations'
         'migrate\:install:Create the migration repository'
@@ -184,6 +185,28 @@ _tom() {
                 '1::migration:()' \
                 '--create=[The table to be created]:table name' \
                 '--table=[The table to migrate]:table name' \
+                '--path=[The location where the migration file should be created]:folder path:_files -/' \
+                '--realpath[Indicate any provided migration file paths are pre-resolved absolute paths]' \
+                '--fullpath[Output the full path of the migration]'
+            ;;
+
+        make:model)
+            _arguments \
+                $common_options \
+                '1::class name:()' \
+                '*--one-to-one=[Create one-to-one relation to the given model]:class name' \
+                '*--one-to-many=[Create one-to-many relation to the given model]:class name' \
+                '*--belongs-to=[Create belongs-to relation to the given model]:class name' \
+                '*--belongs-to-many=[Create many-to-many relation to the given model]:class name' \
+                '*--foreign-key=[The foreign key name]:column name' \
+                '*--pivot-table=[The pivot table name]:table name' \
+                '*--pivot=[The class name of the pivot class for the belongs-to-many relationship]:class name' \
+                '*--as=[The name for the pivot relation]:relation name' \
+                '*--with-pivot=[Extra attributes for the pivot model]:column names' \
+                '*--with-timestamps[Pivot table with timestamps]' \
+                '--table=[The table associated with the model]:table name' \
+                '--connection=[The connection name for the model]:connection name' \
+                '--disable-timestamps[Disable timestamping of the model]' \
                 '--path=[The location where the migration file should be created]:folder path:_files -/' \
                 '--realpath[Indicate any provided migration file paths are pre-resolved absolute paths]' \
                 '--fullpath[Output the full path of the migration]'

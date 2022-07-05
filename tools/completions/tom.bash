@@ -103,7 +103,7 @@ _tom()
     # Inaccurate completion if the tom command is not on the system path, it doesn't
     # provide all options
     commands='env help inspire integrate list migrate db:seed db:wipe
-        make:migration make:seeder migrate:fresh migrate:install
+        make:migration make:model make:seeder migrate:fresh migrate:install
         migrate:refresh migrate:reset migrate:rollback migrate:status'
 
     namespaces='global db make migrate namespaced all'
