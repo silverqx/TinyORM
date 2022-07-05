@@ -120,7 +120,9 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
 QString ModelCommand::help() const
 {
     return QStringLiteral(
-R"(  The <info>one-to-one</info>, <info>one-to-many</info>, <info>belongs-to</info>, and <info>belongs-to-many</info> options can be defined more than once:
+R"(  The <info>belongs-to</info> option is inverse relation for the <info>one-to-one</info>, and <info>one-to-many</info> relationships. The <info>belongs-to-many</info> can be used to define <comment>many-to-many</comment> relationship and also to define the inverse of a <comment>many-to-many</comment> relationship.
+
+  The <info>one-to-one</info>, <info>one-to-many</info>, <info>belongs-to</info>, and <info>belongs-to-many</info> options can be defined more than once:
 
     <info>tom make:model User --one-to-many=Posts --one-to-many=Comments</info>
 
