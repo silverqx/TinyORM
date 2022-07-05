@@ -63,6 +63,9 @@ namespace Support
         /*! The signature of the console command. */
         QList<QCommandLineOption> optionsSignature() const override;
 
+        /*! The console command help. */
+        QString help() const override;
+
         /*! Execute the console command. */
         int run() override;
 

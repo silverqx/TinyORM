@@ -344,11 +344,15 @@ QString InteractsWithIO::parseOutput(QString string, const bool isAnsi) const
                 .replace(QStringLiteral("<error>"),    QStringLiteral("\033[37;41m"))
                 .replace(QStringLiteral("<comment>"),  QStringLiteral("\033[33m"))
                 .replace(QStringLiteral("<blue>"),     QStringLiteral("\033[34m"))
+                .replace(QStringLiteral("<gray>"),     QStringLiteral("\033[90m")) // Bright black
+                .replace(QStringLiteral("<b-blue>"),   QStringLiteral("\033[94m"))
                 .replace(QStringLiteral("<b-white>"),  QStringLiteral("\033[97m"))
                 .replace(QStringLiteral("</info>"),    QStringLiteral("\033[0m"))
                 .replace(QStringLiteral("</error>"),   QStringLiteral("\033[0m"))
                 .replace(QStringLiteral("</comment>"), QStringLiteral("\033[0m"))
                 .replace(QStringLiteral("</blue>"),    QStringLiteral("\033[0m"))
+                .replace(QStringLiteral("</gray>"),    QStringLiteral("\033[0m"))
+                .replace(QStringLiteral("</b-blue>"),  QStringLiteral("\033[0m"))
                 .replace(QStringLiteral("</b-white>"), QStringLiteral("\033[0m"));
 
     // no-ansi output
@@ -364,11 +368,15 @@ QString InteractsWithIO::stripTags(QString string) const
             .replace(QStringLiteral("<error>"),    "")
             .replace(QStringLiteral("<comment>"),  "")
             .replace(QStringLiteral("<blue>"),     "")
+            .replace(QStringLiteral("<gray>"),     "")
+            .replace(QStringLiteral("<b-blue>"),   "")
             .replace(QStringLiteral("<b-white>"),  "")
             .replace(QStringLiteral("</info>"),    "")
             .replace(QStringLiteral("</error>"),   "")
             .replace(QStringLiteral("</comment>"), "")
             .replace(QStringLiteral("</blue>"),    "")
+            .replace(QStringLiteral("</gray>"),    "")
+            .replace(QStringLiteral("</b-blue>"),  "")
             .replace(QStringLiteral("</b-white>"), "");
 }
 

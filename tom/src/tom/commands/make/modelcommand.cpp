@@ -117,6 +117,31 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
     };
 }
 
+QString ModelCommand::help() const
+{
+    return QStringLiteral(
+R"(  The <info>one-to-one</info>, <info>one-to-many</info>, <info>belongs-to</info>, and <info>belongs-to-many</info> options can be defined more than once:
+
+    <info>tom make:model User --one-to-many=Posts --one-to-many=Comments</info>
+
+  The <info>foreign-key</info> option is common for all relation types, it must follow after the relation option and it should be defined max. one time for the <info>one-to-one</info>, <info>one-to-many</info>, and <info>belongs-to</info> relationships:
+
+    <info>tom make:model User --one-to-many=Posts --foreign-key=post_id --one-to-many=Comments --foreign-key=comment_id</info>
+
+  And max. two times for the <info>belongs-to-many</info> relation, if only one value was given then set the <comment>related pivot key</comment> first. If two values were given then they follow the <gray>Model::belongsToMany()</gray> parameters order, a first value will be the <comment>foreign pivot key</comment>, and a second value the <comment>related pivot key</comment>. Two values can be passed using one <info>foreign-key</info> option separated by the , character or by two separate <info>foreign-key</info> options <gray>(this is true also for all other options that accept multiple values)</gray>:
+
+    <info>tom make:model User --belongs-to-many=Tags --foreign-key=tag_id</info>
+    <info>tom make:model User --belongs-to-many=Tags --foreign-key=user_id,tag_id</info>
+    <info>tom make:model User --belongs-to-many=Tags --foreign-key=user_id --foreign-key=tag_id</info>
+
+  The <info>pivot-table</info>, <info>pivot</info>, <info>as</info>, <info>with-pivot</info>, and <info>with-timestamps</info> options can be given only after the <info>belongs-to-many</info> relationship.
+
+  The <info>table</info>, <info>connection</info>, and <info>disable-timestamps</info> options relate to the <blue>Model</blue> class itself, they have nothing to do with relationships and can be passed anywhere, best before relationship options:
+
+    <info>tom make:model User --table=users --connection=tinyorm_connection_name --one-to-many=Posts</info>
+)");
+}
+
 int ModelCommand::run()
 {
     Command::run();
