@@ -211,7 +211,7 @@ namespace Tom::Commands::Make::Support
     {
         /* m_isBtmRelation != std::nullopt means that the btm relation was defined
            on the command-line and a value was not set yet. */
-        if (m_isBtmRelation && !m_wasValueSet)
+        if (m_isBtmRelation && !m_wasValueSet && m_isBtmRelation.value_or(false))
             return false;
 
         /* Btm option defined before a btm relation or more options given for
@@ -220,7 +220,8 @@ namespace Tom::Commands::Make::Support
         // Will be shown in the warning
         modelCommand().m_unusedBtmOptions.insert(std::move(option));
 
-        // Skip the value, only the first option's value is used
+        /* Skip the value, only the first option's value is used (and
+           m_wasValueSetPartial doesn't matter). */
         if (m_wasValueSet)
             ++m_valueIndex;
 
