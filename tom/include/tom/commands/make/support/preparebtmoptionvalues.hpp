@@ -263,20 +263,10 @@ namespace Tom::Commands::Make::Support
 
         /* Multiple values can be assigned using one --xyz= option, but they must be
            divided by the colon character. */
-        if (const auto &optionValue = m_values.at(m_valueIndex++);
-            optionValue.contains(Orm::Constants::COLON)
-        ) {
-            m_preparedValues[m_btmIndex] = optionValue.split(Orm::Constants::COLON,
-                                                             Qt::SkipEmptyParts);
-
-            m_wasValueSet = true;
-        }
         // Or they can be assigned using more --xyz= options
-        else {
-            m_preparedValues[m_btmIndex] << optionValue;
+        m_preparedValues[m_btmIndex] << m_values.at(m_valueIndex++);
 
-            m_wasValueSetPartial = true;
-        }
+        m_wasValueSetPartial = true;
     }
 
     /* Getters */
