@@ -197,11 +197,14 @@ QString ModelCreator::createPublicSection(
     return publicSection;
 }
 
-size_t ModelCreator::computeReserveForPublicSection(
+std::size_t ModelCreator::computeReserveForPublicSection(
             const QStringList &oneToOne, const QStringList &oneToMany,
             const QStringList &belongsTo, const QStringList &belongsToMany)
 {
-    return oneToOne.size() + oneToMany.size() + belongsTo.size() + belongsToMany.size();
+    return static_cast<std::size_t>(oneToOne.size()) +
+           static_cast<std::size_t>(oneToMany.size()) +
+           static_cast<std::size_t>(belongsTo.size()) +
+           static_cast<std::size_t>(belongsToMany.size());
 }
 
 ModelCreator::RelationsWithOrder
