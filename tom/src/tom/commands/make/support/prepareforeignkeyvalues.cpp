@@ -25,12 +25,13 @@ PrepareForeignKeyValues::PrepareForeignKeyValues(ModelCommand &modelCommand,
 
 ForeignKeys PrepareForeignKeyValues::prepareValues()
 {
-    // CUR make:model, make it the same way like in the btmValues silverqx
-    // Nothing to prepare
-//    if (m_foreignKeyValues.isEmpty())
-//        return {};
+    auto optionNames = modelCommand().optionNames();
 
-    for (auto &&option : modelCommand().optionNames()) {
+    // Nothing to prepare
+    if (optionNames.isEmpty())
+        return {};
+
+    for (auto &&option : optionNames) {
         // Try to start a new relation during foreign key names search
         if (startNewRelation(option))
             continue;
