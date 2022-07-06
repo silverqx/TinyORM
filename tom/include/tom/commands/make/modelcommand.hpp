@@ -84,7 +84,7 @@ namespace Support
 
         /*! Create command-line options instance. */
         CmdOptions createCmdOptions();
-        /*! Get relationship methods order defined on the command-line. */
+        /*! Get the order of relationship methods defined on the command-line. */
         RelationsOrder relationsOrder();
 
         /* Others */
