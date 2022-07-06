@@ -107,6 +107,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString as_;
     SHAREDLIB_EXPORT extern const QString with_timestamps;
     SHAREDLIB_EXPORT extern const QString with_pivot;
+    SHAREDLIB_EXPORT extern const QString preserve_order;
     // migrate:refresh
     SHAREDLIB_EXPORT extern const QString step_migrate;
     // integrate

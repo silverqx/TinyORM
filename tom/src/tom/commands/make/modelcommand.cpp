@@ -39,6 +39,7 @@ using Tom::Constants::pivot_;
 using Tom::Constants::pivot_table;
 using Tom::Constants::pivot_table_up;
 using Tom::Constants::pivot_up;
+using Tom::Constants::preserve_order;
 using Tom::Constants::realpath_;
 using Tom::Constants::table_;
 using Tom::Constants::table_up;
@@ -101,12 +102,17 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
                              with_pivot_up}, // Value
         {with_timestamps,    QStringLiteral("Pivot table with timestamps")},
 
-        // Attributes in the private section
+        // Model related attributes in the private section
         {table_,             QStringLiteral("The table associated with the model"),
                              table_up}, // Value
         {connection_,        QStringLiteral("The connection name for the model"),
                              connection_up}, // Value
         {disable_timestamps, QStringLiteral("Disable timestamping of the model")},
+
+        // Others
+        {{"o",
+          preserve_order},   QStringLiteral("Preserve relations order defined on the "
+                                            "command-line")},
 
         // Paths related
         {path_,              QStringLiteral("The location where the model file should "
@@ -141,6 +147,8 @@ R"(  The <info>belongs-to</info> option is inverse relation for the <info>one-to
   The <info>table</info>, <info>connection</info>, and <info>disable-timestamps</info> options relate to the <blue>Model</blue> class itself, they have nothing to do with relationships and can be passed anywhere, best before relationship options:
 
     <info>tom make:model User --table=users --connection=tinyorm_connection_name --one-to-many=Posts</info>
+
+ The order of the generated relation methods will be <info>one-to-one</info>, <info>one-to-many</info>, <info>belongs-to</info>, and <info>belongs-to-many</info> until you pass the <info>preserve-order</info> option then the order will be preserved.
 )");
 }
 
@@ -168,8 +176,9 @@ std::tuple<QString, CmdOptions>
 ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOptions)
 {
     auto &&[
+            _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _1, _2, pivotClasses, _3, _4, _5, _6, _7, _8
+            _2, _3, pivotClasses, _4, _5, _6, _7, _8, _9
     ] = cmdOptions;
 
     // Validate the model class names
@@ -236,7 +245,8 @@ void ModelCommand::findUnusedBtmOptions(const CmdOptions &cmdOptions)
 
 void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions)
 {
-    auto modelFilePath = m_creator.create(className, cmdOptions, getModelPath());
+    auto modelFilePath = m_creator.create(className, cmdOptions, getModelPath(),
+                                          isSet(preserve_order));
 
     // make_preferred() returns reference and filename() creates a new fs::path instance
     const auto modelFile = isSet(fullpath) ? modelFilePath.make_preferred()
@@ -251,6 +261,8 @@ CmdOptions ModelCommand::createCmdOptions()
 {
     return {
         // Relationship methods
+        relationsOrder(),
+
         values(one_to_one), values(one_to_many), values(belongs_to),
         values(belongs_to_many),
 
@@ -264,6 +276,24 @@ CmdOptions ModelCommand::createCmdOptions()
         // Model related
         value(connection_), value(table_), isSet(disable_timestamps),
     };
+}
+
+RelationsOrder ModelCommand::relationsOrder()
+{
+    RelationsOrder preparedOrders;
+    std::size_t relationOrderIndex = 0;
+
+    for (auto &&option : optionNames())
+        if (option == one_to_one)
+            preparedOrders.oneToOne.push_back(relationOrderIndex++);
+        else if (option == one_to_many)
+            preparedOrders.oneToMany.push_back(relationOrderIndex++);
+        else if (option == belongs_to)
+            preparedOrders.belongsTo.push_back(relationOrderIndex++);
+        else if (option == belongs_to_many)
+            preparedOrders.belongsToMany.push_back(relationOrderIndex++);
+
+    return preparedOrders;
 }
 
 /* Others */

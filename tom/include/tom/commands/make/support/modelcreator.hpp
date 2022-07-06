@@ -35,7 +35,7 @@ namespace Tom::Commands::Make::Support
 
         /*! Create a new model at the given path. */
         fspath create(const QString &className, const CmdOptions &cmdOptions,
-                      fspath &&modelsPath);
+                      fspath &&modelsPath, bool isSetPreserveOrder);
 
     protected:
         /*! Get the full path to the model. */
@@ -45,33 +45,57 @@ namespace Tom::Commands::Make::Support
         static void ensureDirectoryExists(const fspath &path);
 
         /*! Populate the place-holders in the model stub. */
-        std::string populateStub(const QString &className, const CmdOptions &cmdOptions);
+        std::string populateStub(const QString &className, const CmdOptions &cmdOptions,
+                                 bool isSetPreserveOrder);
 
         /* Public model section */
         /*! Create model's public section (relations). */
-        QString createPublicSection(const QString &className,
-                                    const CmdOptions &cmdOptions);
+        QString createPublicSection(
+                    const QString &className, const CmdOptions &cmdOptions,
+                    bool isSetPreserveOrder);
+
+        /*! One relationship method with order for the public section list. */
+        struct RelationWithOrder
+        {
+            /*! Relationship method order. */
+            std::size_t relationOrder;
+            /*! Relationship method content. */
+            QString     content;
+        };
+        /*! Prepared public sections list with preserved order on the command-line. */
+        using RelationsWithOrder = std::vector<RelationWithOrder>;
+
+        /*! Compute reserve value for the public section list. */
+        static std::size_t computeReserveForPublicSection(
+                    const QStringList &oneToOne, const QStringList &oneToMany,
+                    const QStringList &belongsTo, const QStringList &belongsToMany);
 
         /*! Create one-to-one relationship method. */
-        QString createOneToOneRelation(
+        RelationsWithOrder createOneToOneRelation(
                     const QString &parentClass, const QStringList &relatedClasses,
-                    const QStringList &foreignKeys);
+                    const QStringList &foreignKeys,
+                    const std::vector<std::size_t> &orderList);
         /*! Create one-to-many relationship method. */
-        QString createOneToManyRelation(
+        RelationsWithOrder createOneToManyRelation(
                     const QString &parentClass, const QStringList &relatedClasses,
-                    const QStringList &foreignKeys);
+                    const QStringList &foreignKeys,
+                    const std::vector<std::size_t> &orderList);
         /*! Create belongs-to relationship method. */
-        QString createBelongsToRelation(
+        RelationsWithOrder createBelongsToRelation(
                     const QString &parentClass, const QStringList &relatedClasses,
-                    const QStringList &foreignKeys);
+                    const QStringList &foreignKeys,
+                    const std::vector<std::size_t> &orderList);
 
         /*! Create arguments list for the relation factory method (for oto, otm, bto). */
         static QString createRelationArguments(const QString &foreignKey);
+        /*! Join public sections. */
+        static QString joinPublicSectionList(RelationsWithOrder &&publicSectionList);
 
         /*! Create belongs-to-many relationship method. */
-        QString createBelongsToManyRelation(
+        RelationsWithOrder createBelongsToManyRelation(
                     const QString &parentClass, const QStringList &relatedClasses,
                     const std::vector<BelongToManyForeignKeys> &foreignKeys,
+                    const std::vector<std::size_t> &orderList,
                     const QStringList &pivotTables, const QStringList &pivotClasses,
                     const QStringList &asList,
                     const std::vector<QStringList> &withPivotList,

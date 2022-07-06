@@ -36,10 +36,25 @@ namespace Tom::Commands::Make
         std::vector<BelongToManyForeignKeys> belongsToMany {};
     };
 
+    /*! Relationship methods order defined on the command-line. */
+    struct RelationsOrder
+    {
+        /*! Oder of one-to-one relations. */
+        std::vector<std::size_t> oneToOne {};
+        /*! Oder of one-to-many relations. */
+        std::vector<std::size_t> oneToMany {};
+        /*! Oder of belongs-to relations. */
+        std::vector<std::size_t> belongsTo {};
+        /*! Oder of belongs-to-many relations. */
+        std::vector<std::size_t> belongsToMany {};
+    };
+
     /*! Struct to hold command-line option values. */
     struct CmdOptions
     {
         /* Relationship methods */
+        /*! Relationship methods order defined on the command-line. */
+        RelationsOrder relationsOrder;
         /*! Related class names for the one-to-one relationship. */
         QStringList oneToOneList;
         /*! Related class names for the one-to-many relationship. */

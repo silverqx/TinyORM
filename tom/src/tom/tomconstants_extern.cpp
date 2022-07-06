@@ -95,6 +95,7 @@ namespace Tom::Constants
     const QString as_                = QStringLiteral("as");
     const QString with_timestamps    = QStringLiteral("with-timestamps");
     const QString with_pivot         = QStringLiteral("with-pivot");
+    const QString preserve_order     = QStringLiteral("preserve-order");
     // migrate:refresh
     const QString step_migrate       = QStringLiteral("step-migrate");
     // integrate

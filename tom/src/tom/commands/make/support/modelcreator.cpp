@@ -3,9 +3,11 @@
 #include <deque>
 #include <fstream>
 
+#include <range/v3/action/push_back.hpp>
 #include <range/v3/action/remove_if.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/join.hpp>
+#include <range/v3/view/move.hpp>
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/zip.hpp>
 
@@ -55,7 +57,7 @@ namespace Tom::Commands::Make::Support
 /* public */
 
 fspath ModelCreator::create(const QString &className, const CmdOptions &cmdOptions,
-                            fspath &&modelsPath)
+                            fspath &&modelsPath, const bool isSetPreserveOrder)
 {
     const auto basename = className.toLower();
 
@@ -67,7 +69,7 @@ fspath ModelCreator::create(const QString &className, const CmdOptions &cmdOptio
 
     // Output it as binary stream to force line endings to LF
     std::ofstream(modelPath, std::ios::out | std::ios::binary)
-            << populateStub(className, cmdOptions);
+            << populateStub(className, cmdOptions, isSetPreserveOrder);
 
     return modelPath;
 }
@@ -87,10 +89,12 @@ void ModelCreator::ensureDirectoryExists(const fspath &path)
     fs::create_directories(path);
 }
 
-std::string ModelCreator::populateStub(const QString &className,
-                                       const CmdOptions &cmdOptions)
+std::string ModelCreator::populateStub(
+            const QString &className, const CmdOptions &cmdOptions,
+            const bool isSetPreserveOrder)
 {
-    const auto publicSection  = createPublicSection(className, cmdOptions);
+    const auto publicSection  = createPublicSection(className, cmdOptions,
+                                                    isSetPreserveOrder);
     const auto privateSection = createPrivateSection(className, cmdOptions,
                                                      !publicSection.isEmpty());
 
@@ -134,10 +138,12 @@ std::string ModelCreator::populateStub(const QString &className,
 
 /* Public model section */
 
-QString ModelCreator::createPublicSection(const QString &className,
-                                          const CmdOptions &cmdOptions)
+QString ModelCreator::createPublicSection(
+            const QString &className, const CmdOptions &cmdOptions,
+            const bool isSetPreserveOrder)
 {
     const auto &[
+            relationsOrder,
             oneToOneList, oneToManyList,  belongsToList, belongsToManyList,
             foreignKeys,  pivotTables,    pivotClasses,  asList, withPivotList,
             withTimestampsList,
@@ -148,49 +154,71 @@ QString ModelCreator::createPublicSection(const QString &className,
             oneToOneForeign, oneToManyForeign, belongsToForeign, belongsToManyForeign
     ] = foreignKeys;
 
-    // FUTURE tom, make:model, preserve relations order defined on the command-line, add std::vector<std::size_t> relationsOrder to the CmdOptions and fill it during options search, add relationsOrder to ranges::zip() used in createXyzRelation() methods, below will return struct RelationItem { int order; QString content; } and then ranges::sort(), --preserve-order/-o option silverqx
-    QStringList publicSectionList;
-    publicSectionList.reserve(4);
+    const auto &[
+            oneToOneOrder, oneToManyOrder, belongsToOrder, belongsToManyOrder
+    ] = relationsOrder;
 
-    publicSectionList << createOneToOneRelation(className, oneToOneList,
-                                                oneToOneForeign);
-    publicSectionList << createOneToManyRelation(className, oneToManyList,
-                                                 oneToManyForeign);
-    publicSectionList << createBelongsToRelation(className, belongsToList,
-                                                 belongsToForeign);
-    publicSectionList << createBelongsToManyRelation(
-                             className, belongsToManyList, belongsToManyForeign,
-                             pivotTables, pivotClasses, asList, withPivotList,
-                             withTimestampsList);
+    RelationsWithOrder publicSectionList;
+    publicSectionList.reserve(
+                computeReserveForPublicSection(
+                    oneToOneList, oneToManyList, belongsToList, belongsToManyList));
+
+    publicSectionList |= ranges::actions::push_back(
+                             createOneToOneRelation(className, oneToOneList,
+                                                    oneToOneForeign, oneToOneOrder));
+    publicSectionList |= ranges::actions::push_back(
+                             createOneToManyRelation(className, oneToManyList,
+                                                     oneToManyForeign, oneToManyOrder));
+    publicSectionList |= ranges::actions::push_back(
+                             createBelongsToRelation(className, belongsToList,
+                                                     belongsToForeign, belongsToOrder));
+    publicSectionList |= ranges::actions::push_back(
+                             createBelongsToManyRelation(
+                                 className, belongsToManyList, belongsToManyForeign,
+                                 belongsToManyOrder, pivotTables, pivotClasses, asList,
+                                 withPivotList, withTimestampsList));
 
     // Remove empty parts
     publicSectionList |= ranges::actions::remove_if([](const auto &value)
     {
-        return value.isEmpty();
+        return value.content.isEmpty();
     });
 
-    auto publicSection = publicSectionList.join(NEWLINE);
+    // Sort if the --preserve-order option was given on the command-line
+    if (isSetPreserveOrder)
+        std::ranges::sort(publicSectionList, {}, &RelationWithOrder::relationOrder);
 
+    auto publicSection = joinPublicSectionList(std::move(publicSectionList));
+
+    // Prepend public:
     if (!publicSection.isEmpty())
         publicSection.prepend(ModelPublicStub);
 
     return publicSection;
 }
 
-QString ModelCreator::createOneToOneRelation(
+size_t ModelCreator::computeReserveForPublicSection(
+            const QStringList &oneToOne, const QStringList &oneToMany,
+            const QStringList &belongsTo, const QStringList &belongsToMany)
+{
+    return oneToOne.size() + oneToMany.size() + belongsTo.size() + belongsToMany.size();
+}
+
+ModelCreator::RelationsWithOrder
+ModelCreator::createOneToOneRelation(
             const QString &parentClass, const QStringList &relatedClasses,
-            const QStringList &foreignKeys)
+            const QStringList &foreignKeys, const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
 
     Q_ASSERT(relatedClasses.size() == foreignKeys.size());
 
-    QStringList result;
-    result.reserve(relatedClasses.size());
+    RelationsWithOrder result;
+    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
 
-    for (const auto &[relatedClass, foreignKey] :
-         ranges::views::zip(relatedClasses, foreignKeys)
+    for (const auto &[relatedClass, foreignKey, relationOrder] :
+         ranges::views::zip(relatedClasses, foreignKeys, orderList)
     ) {
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
@@ -203,41 +231,49 @@ QString ModelCreator::createOneToOneRelation(
         const auto relatedComment    = guessSingularComment(relatedClass);
         const auto relationArguments = createRelationArguments(foreignKey);
 
-        result << QString(OneToOneStub)
-                  .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
-                  .replace(QStringLiteral("{{parentClass}}"),       parentClass)
-                  .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
-                  .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+        auto content =
+                QString(OneToOneStub)
+                .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
+                .replace(QStringLiteral("{{parentClass}}"),       parentClass)
+                .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
+                .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
 
-                  .replace(QStringLiteral("{{ relationName }}"),    relationName)
-                  .replace(QStringLiteral("{{relationName}}"),      relationName)
+                .replace(QStringLiteral("{{ relationName }}"),    relationName)
+                .replace(QStringLiteral("{{relationName}}"),      relationName)
 
-                  .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
-                  .replace(QStringLiteral("{{parentComment}}"),     parentComment)
-                  .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-                  .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+                .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
+                .replace(QStringLiteral("{{parentComment}}"),     parentComment)
+                .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
+                .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
 
-                  .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
-                  .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+                .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
+                .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+
+#ifdef __clang__
+        result.push_back({relationOrder, std::move(content)});
+#else
+        result.emplace_back(relationOrder, std::move(content));
+#endif
     }
 
-    return result.join(NEWLINE);
+    return result;
 }
 
-QString ModelCreator::createOneToManyRelation(
+ModelCreator::RelationsWithOrder
+ModelCreator::createOneToManyRelation(
             const QString &parentClass, const QStringList &relatedClasses,
-            const QStringList &foreignKeys)
+            const QStringList &foreignKeys, const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
 
     Q_ASSERT(relatedClasses.size() == foreignKeys.size());
 
-    QStringList result;
-    result.reserve(relatedClasses.size());
+    RelationsWithOrder result;
+    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
 
-    for (const auto &[relatedClass, foreignKey] :
-         ranges::views::zip(relatedClasses, foreignKeys)
+    for (const auto &[relatedClass, foreignKey, relationOrder] :
+         ranges::views::zip(relatedClasses, foreignKeys, orderList)
     ) {
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
@@ -250,41 +286,49 @@ QString ModelCreator::createOneToManyRelation(
         const auto relatedComment    = guessPluralComment(relatedClass);
         const auto relationArguments = createRelationArguments(foreignKey);
 
-        result << QString(OneToManyStub)
-                  .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
-                  .replace(QStringLiteral("{{parentClass}}"),       parentClass)
-                  .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
-                  .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+        auto content =
+                QString(OneToManyStub)
+                .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
+                .replace(QStringLiteral("{{parentClass}}"),       parentClass)
+                .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
+                .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
 
-                  .replace(QStringLiteral("{{ relationName }}"),    relationName)
-                  .replace(QStringLiteral("{{relationName}}"),      relationName)
+                .replace(QStringLiteral("{{ relationName }}"),    relationName)
+                .replace(QStringLiteral("{{relationName}}"),      relationName)
 
-                  .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
-                  .replace(QStringLiteral("{{parentComment}}"),     parentComment)
-                  .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-                  .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+                .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
+                .replace(QStringLiteral("{{parentComment}}"),     parentComment)
+                .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
+                .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
 
-                  .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
-                  .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+                .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
+                .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+
+#ifdef __clang__
+        result.push_back({relationOrder, std::move(content)});
+#else
+        result.emplace_back(relationOrder, std::move(content));
+#endif
     }
 
-    return result.join(NEWLINE);
+    return result;
 }
 
-QString ModelCreator::createBelongsToRelation(
+ModelCreator::RelationsWithOrder
+ModelCreator::createBelongsToRelation(
             const QString &parentClass, const QStringList &relatedClasses,
-            const QStringList &foreignKeys)
+            const QStringList &foreignKeys, const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
 
     Q_ASSERT(relatedClasses.size() == foreignKeys.size());
 
-    QStringList result;
-    result.reserve(relatedClasses.size());
+    RelationsWithOrder result;
+    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
 
-    for (const auto &[relatedClass, foreignKey] :
-         ranges::views::zip(relatedClasses, foreignKeys)
+    for (const auto &[relatedClass, foreignKey, relationOrder] :
+         ranges::views::zip(relatedClasses, foreignKeys, orderList)
     ) {
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
@@ -298,25 +342,32 @@ QString ModelCreator::createBelongsToRelation(
         const auto relatedComment    = guessSingularComment(relatedClass);
         const auto relationArguments = createRelationArguments(foreignKey);
 
-        result << QString(BelongsToStub)
-                  .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
-                  .replace(QStringLiteral("{{parentClass}}"),       parentClass)
-                  .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
-                  .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+        auto content =
+                QString(BelongsToStub)
+                .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
+                .replace(QStringLiteral("{{parentClass}}"),       parentClass)
+                .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
+                .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
 
-                  .replace(QStringLiteral("{{ relationName }}"),    relationName)
-                  .replace(QStringLiteral("{{relationName}}"),      relationName)
+                .replace(QStringLiteral("{{ relationName }}"),    relationName)
+                .replace(QStringLiteral("{{relationName}}"),      relationName)
 
-                  .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
-                  .replace(QStringLiteral("{{parentComment}}"),     parentComment)
-                  .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-                  .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+                .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
+                .replace(QStringLiteral("{{parentComment}}"),     parentComment)
+                .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
+                .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
 
-                  .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
-                  .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+                .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
+                .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+
+#ifdef __clang__
+        result.push_back({relationOrder, std::move(content)});
+#else
+        result.emplace_back(relationOrder, std::move(content));
+#endif
     }
 
-    return result.join(NEWLINE);
+    return result;
 }
 
 QString ModelCreator::createRelationArguments(const QString &foreignKey)
@@ -325,6 +376,18 @@ QString ModelCreator::createRelationArguments(const QString &foreignKey)
         return {};
 
     return StringUtils::wrapValue(foreignKey, QChar('"'));
+}
+
+QString ModelCreator::joinPublicSectionList(RelationsWithOrder &&publicSectionList)
+{
+    auto publicSectionQList = ranges::views::move(publicSectionList)
+            | ranges::views::transform([](auto &&section) -> QString
+    {
+        return section.content;
+    })
+            | ranges::to<QStringList>();
+
+    return publicSectionQList.join(NEWLINE);
 }
 
 namespace
@@ -343,30 +406,32 @@ namespace
     }
 } // namespace
 
-QString ModelCreator::createBelongsToManyRelation(
+ModelCreator::RelationsWithOrder
+ModelCreator::createBelongsToManyRelation(
             const QString &parentClass, const QStringList &relatedClasses,
             const std::vector<BelongToManyForeignKeys> &foreignKeys,
-            const QStringList &pivotTables, const QStringList &pivotClasses,
-            const QStringList &asList, const std::vector<QStringList> &withPivotList,
+            const std::vector<std::size_t> &orderList, const QStringList &pivotTables,
+            const QStringList &pivotClasses, const QStringList &asList,
+            const std::vector<QStringList> &withPivotList,
             const std::vector<bool> &withTimestampsList)
 {
     if (relatedClasses.isEmpty())
         return {};
 
-    const auto relatedClassesSize = relatedClasses.size();
+    const auto relatedClassesSize = static_cast<std::size_t>(relatedClasses.size());
 
     // All lists must have the same number of items
-    Q_ASSERT(allHaveSameSize(static_cast<std::size_t>(relatedClassesSize),
+    Q_ASSERT(allHaveSameSize(relatedClassesSize,
                              foreignKeys, pivotTables, pivotClasses, asList,
                              withPivotList, withTimestampsList));
 
-    QStringList result;
+    RelationsWithOrder result;
     result.reserve(relatedClassesSize);
 
-    for (const auto &[relatedClass, foreignKey, pivotTable, pivotClass, as, withPivot,
-                      withTimestamps] :
-         ranges::views::zip(relatedClasses, foreignKeys, pivotTables, pivotClasses,
-                            asList, withPivotList, withTimestampsList)
+    for (const auto &[relatedClass, foreignKey, relationOrder, pivotTable, pivotClass,
+                      as, withPivot, withTimestamps] :
+         ranges::views::zip(relatedClasses, foreignKeys, orderList, pivotTables,
+                            pivotClasses, asList, withPivotList, withTimestampsList)
     ) {
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
@@ -389,31 +454,38 @@ QString ModelCreator::createBelongsToManyRelation(
         const auto relationCalls     = createRelationCalls(as, withPivot, withTimestamps);
         const auto relationArguments = createRelationArgumentsBtm(pivotTable, foreignKey);
 
-        result << QString(relationCalls.isEmpty()
-                          ? BelongsToManyStub : BelongsToManyStub2)
-                  .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
-                  .replace(QStringLiteral("{{parentClass}}"),       parentClass)
-                  .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
-                  .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+        auto content =
+                QString(relationCalls.isEmpty() ? BelongsToManyStub
+                                                : BelongsToManyStub2)
+                .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
+                .replace(QStringLiteral("{{parentClass}}"),       parentClass)
+                .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
+                .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
 
-                  .replace(QStringLiteral("{{ relationName }}"),    relationName)
-                  .replace(QStringLiteral("{{relationName}}"),      relationName)
+                .replace(QStringLiteral("{{ relationName }}"),    relationName)
+                .replace(QStringLiteral("{{relationName}}"),      relationName)
 
-                  .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
-                  .replace(QStringLiteral("{{parentComment}}"),     parentComment)
-                  .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-                  .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+                .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
+                .replace(QStringLiteral("{{parentComment}}"),     parentComment)
+                .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
+                .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
 
-                  .replace(QStringLiteral("{{ pivotClass }}"),      pivot)
-                  .replace(QStringLiteral("{{pivotClass}}"),        pivot)
-                  .replace(QStringLiteral("{{ relationCalls }}"),   relationCalls)
-                  .replace(QStringLiteral("{{relationCalls}}"),     relationCalls)
+                .replace(QStringLiteral("{{ pivotClass }}"),      pivot)
+                .replace(QStringLiteral("{{pivotClass}}"),        pivot)
+                .replace(QStringLiteral("{{ relationCalls }}"),   relationCalls)
+                .replace(QStringLiteral("{{relationCalls}}"),     relationCalls)
 
-                  .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
-                  .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+                .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
+                .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+
+#ifdef __clang__
+        result.push_back({relationOrder, std::move(content)});
+#else
+        result.emplace_back(relationOrder, std::move(content));
+#endif
     }
 
-    return result.join(NEWLINE);
+    return result;
 }
 
 QString ModelCreator::createRelationArgumentsBtm(
@@ -530,7 +602,7 @@ QString ModelCreator::createPrivateSection(
             const bool hasPublicSection)
 {
     const auto &[
-            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11,
             connection, table, disableTimestamps
     ] = cmdOptions;
 
@@ -570,8 +642,9 @@ QString ModelCreator::createRelationsHash(const QString &className,
                                           const CmdOptions &cmdOptions)
 {
     const auto &[
+            _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _1, _2, _3, _4, _5, _6, _7, _8, _10
+            _2, _3, _4, _5, _6, _7, _8, _9, _10
     ] = cmdOptions;
 
     // Nothing to create
@@ -605,8 +678,9 @@ QString ModelCreator::createRelationsHash(const QString &className,
 QString::size_type ModelCreator::getRelationNamesMaxSize(const CmdOptions &cmdOptions)
 {
     const auto &[
+            _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _1, _2, _3, _4, _5, _6, _7, _8, _10
+            _2, _3, _4, _5, _6, _7, _8, _9, _10
     ] = cmdOptions;
 
     // Get max. size of relation names for align

@@ -207,6 +207,7 @@ _tom() {
                 '--table=[The table associated with the model]:table name' \
                 '--connection=[The connection name for the model]:connection name' \
                 '--disable-timestamps[Disable timestamping of the model]' \
+                '--preserve-order[Preserve relations order defined on the command-line]' \
                 '--path=[The location where the migration file should be created]:folder path:_files -/' \
                 '--realpath[Indicate any provided migration file paths are pre-resolved absolute paths]' \
                 '--fullpath[Output the full path of the migration]'
