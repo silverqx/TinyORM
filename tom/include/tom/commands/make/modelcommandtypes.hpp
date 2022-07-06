@@ -67,11 +67,11 @@ namespace Tom::Commands::Make
         /*! The foreign key names list, every relation can have one foreign key. */
         ForeignKeys foreignKeys;
         /* Belongs-to-many related */
-        /*! The pivot table name. */
+        /*! Pivot table names list. */
         QStringList pivotTables;
-        /*! The class name of the pivot class for the belongs-to-many relationship. */
+        /*! Pivot class names list for the belongs-to-many relationships. */
         QStringList pivotClasses;
-        /*! The name for the pivot relation. */
+        /*! Pivot relation names list. */
         QStringList asList;
         /*! Extra attributes for the pivot model. */
         std::vector<QStringList> withPivotList;
