@@ -201,6 +201,7 @@ _tom() {
                 '*--foreign-key=[The foreign key name]:column name' \
                 '*--pivot-table=[The pivot table name]:table name' \
                 '*--pivot=[The class name of the pivot class for the belongs-to-many relationship]:class name' \
+                '*--pivot-inverse=[The class name of the pivot class for the belongs-to-many inverse relationship]:class name' \
                 '*--as=[The name for the pivot relation]:relation name' \
                 '*--with-pivot=[Extra attributes for the pivot model]:column names' \
                 '*--with-timestamps[Pivot table with timestamps]' \

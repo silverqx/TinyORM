@@ -1,5 +1,9 @@
 #include "tom/commands/make/modelcommand.hpp"
 
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/move.hpp>
+#include <range/v3/view/transform.hpp>
+
 #include <orm/constants.hpp>
 #include <orm/tiny/utils/string.hpp>
 #include <orm/utils/container.hpp>
@@ -36,6 +40,8 @@ using Tom::Constants::one_to_many_up;
 using Tom::Constants::path_;
 using Tom::Constants::path_up;
 using Tom::Constants::pivot_;
+using Tom::Constants::pivot_inverse;
+using Tom::Constants::pivot_inverse_up;
 using Tom::Constants::pivot_table;
 using Tom::Constants::pivot_table_up;
 using Tom::Constants::pivot_up;
@@ -94,6 +100,11 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
         {pivot_,             QStringLiteral("The class name of the pivot class for the "
                                             "belongs-to-many relationship"),
                              pivot_up}, // Value
+        {pivot_inverse,      QStringLiteral("The class name of the pivot class for the "
+                                            "belongs-to-many inverse relationship"
+                                            "<comment>(multiple values allowed)"
+                                            "</comment>"),
+                             pivot_inverse_up}, // Value
         {as_,                QStringLiteral("The name for the pivot relation"),
                              as_up}, // Value
         {with_pivot,         QStringLiteral("Extra attributes for the pivot model "
@@ -172,13 +183,28 @@ int ModelCommand::run()
 
 /* protected */
 
+namespace
+{
+    /*! Studly all string lists in the given container. */
+    const auto studlyContainer = [](auto &&container)
+    {
+        return ranges::views::move(container)
+                | ranges::views::transform([](auto &&classNamesList)
+        {
+            return StringUtils::studly(
+                        std::forward<decltype (classNamesList)>(classNamesList));
+        })
+                | ranges::to<std::vector<QStringList>>();
+    };
+} // namespace
+
 std::tuple<QString, CmdOptions>
 ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOptions)
 {
     auto &&[
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _2, _3, pivotClasses, _4, _5, _6, _7, _8, _9
+            _2, _3, pivotClasses, pivotInverseClasses, _4, _5, _6, _7, _8, _9
     ] = cmdOptions;
 
     // Validate the model class names
@@ -193,12 +219,15 @@ ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOption
                                    QStringLiteral("option --belongs-to-many"));
     throwIfContainsNamespaceOrPath(pivotClasses,
                                    QStringLiteral("option --pivot"));
+    throwIfContainsNamespaceOrPath(pivotInverseClasses,
+                                   QStringLiteral("option --pivot-inverse"));
 
-    oneToOneList      = StringUtils::studly(std::move(oneToOneList));
-    oneToManyList     = StringUtils::studly(std::move(oneToManyList));
-    belongsToList     = StringUtils::studly(std::move(belongsToList));
-    belongsToManyList = StringUtils::studly(std::move(belongsToManyList));
-    pivotClasses      = StringUtils::studly(std::move(pivotClasses));
+    oneToOneList        = StringUtils::studly(std::move(oneToOneList));
+    oneToManyList       = StringUtils::studly(std::move(oneToManyList));
+    belongsToList       = StringUtils::studly(std::move(belongsToList));
+    belongsToManyList   = StringUtils::studly(std::move(belongsToManyList));
+    pivotClasses        = StringUtils::studly(std::move(pivotClasses));
+    pivotInverseClasses = studlyContainer(std::move(pivotInverseClasses));
 
     return {StringUtils::studly(std::move(className)), std::move(cmdOptions)};
 }
@@ -232,6 +261,9 @@ void ModelCommand::findUnusedBtmOptions(const CmdOptions &cmdOptions)
 
     if (isSet(pivot_))
         m_unusedBtmOptions.emplace(QStringLiteral("--pivot"));
+
+    if (isSet(pivot_inverse))
+        m_unusedBtmOptions.emplace(QStringLiteral("--pivot-inverse"));
 
     if (isSet(as_))
         m_unusedBtmOptions.emplace(QStringLiteral("--as"));
@@ -270,8 +302,9 @@ CmdOptions ModelCommand::createCmdOptions()
         foreignKeyValues(),
 
         // Belongs-to-many related
-        btmValues(pivot_table),      btmValues(pivot_), btmValues(as_),
-        btmMultiValues(with_pivot),  btmBoolValues(with_timestamps),
+        btmValues(pivot_table), btmValues(pivot_), btmMultiValues(pivot_inverse),
+        btmValues(as_),         btmMultiValues(with_pivot),
+        btmBoolValues(with_timestamps),
 
         // Model related
         value(connection_), value(table_), isSet(disable_timestamps),
@@ -332,6 +365,13 @@ const std::unordered_set<QString> &ModelCommand::relationNames()
     };
 
     return cached;
+}
+
+void ModelCommand::throwIfContainsNamespaceOrPath(
+            const std::vector<QStringList> &classNames, const QString &source)
+{
+    for (const auto &classNameList : classNames)
+        throwIfContainsNamespaceOrPath(classNameList, source);
 }
 
 void ModelCommand::throwIfContainsNamespaceOrPath(const QStringList &classNames,

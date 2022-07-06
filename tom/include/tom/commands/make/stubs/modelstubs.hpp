@@ -18,12 +18,12 @@ R"TTT(#pragma once
 #ifndef MODELS_{{ macroguard }}_HPP
 #define MODELS_{{ macroguard }}_HPP
 
-#include <orm/tiny/model.hpp>{{ includesSection }}
+{{ includesOrmSection }}{{ includesSection }}
 
 namespace Models
 {
 
-using Orm::Tiny::Model;{{ usingsSection }}
+{{ usingsSection }}
 {{ forwardsSection }}
 // NOLINTNEXTLINE(misc-no-recursion)
 class {{ class }} final : public Model<{{ class }}{{ relationsList }}{{ pivotsList }}>
@@ -37,6 +37,10 @@ class {{ class }} final : public Model<{{ class }}{{ relationsList }}{{ pivotsLi
 #endif // MODELS_{{ macroguard }}_HPP
 )TTT";
 
+/*! TinyORM include item stub. */
+inline const auto *const ModelIncludeOrmItemStub =
+R"(#include <orm/%1>")";
+
 /*! Include item stub. */
 inline const auto *const ModelIncludeItemStub =
 R"(#include "models/%1.hpp")";
@@ -44,6 +48,10 @@ R"(#include "models/%1.hpp")";
 /*! Using item stub. */
 inline const auto *const ModelUsingItemStub =
 R"(using Orm::Tiny::Relations::%1;)";
+
+/*! Forward class stub. */
+inline const auto *const ModelForwardItemStub =
+R"(class %1;)";
 
 /*! Model public section stub. */
 inline const auto *const ModelPublicStub =

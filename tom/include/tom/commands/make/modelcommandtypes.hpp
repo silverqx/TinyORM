@@ -71,6 +71,8 @@ namespace Tom::Commands::Make
         QStringList pivotTables;
         /*! Pivot class names list for the belongs-to-many relationships. */
         QStringList pivotClasses;
+        /*! Pivot class names list for the belongs-to-many inverse relationships. */
+        std::vector<QStringList> pivotInverseClasses;
         /*! Pivot relation names list. */
         QStringList asList;
         /*! Extra attributes for the pivot model. */

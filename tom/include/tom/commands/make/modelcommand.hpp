@@ -103,6 +103,9 @@ namespace Support
 
     private:
         /*! Throw if the model name constains a namespace or path. */
+        static void throwIfContainsNamespaceOrPath(
+                    const std::vector<QStringList> &classNames, const QString &source);
+        /*! Throw if the model name constains a namespace or path. */
         static void throwIfContainsNamespaceOrPath(const QStringList &classNames,
                                                    const QString &source);
         /*! Throw if the model name constains a namespace or path. */

@@ -72,6 +72,7 @@ namespace Tom::Constants
     inline const QString belongs_to_up      = QStringLiteral("BT");
     inline const QString belongs_to_many_up = QStringLiteral("BTM");
     inline const QString pivot_up           = QStringLiteral("PIVOT");
+    inline const QString pivot_inverse_up   = QStringLiteral("PIVOTINVERSE");
     inline const QString as_up              = QStringLiteral("AS");
     inline const QString with_pivot_up      = QStringLiteral("WITHPIVOT");
     inline const QString foreign_key_up     = QStringLiteral("FOREIGNKEY");
@@ -103,6 +104,7 @@ namespace Tom::Constants
     inline const QString connection_        = QStringLiteral("connection");
     inline const QString disable_timestamps = QStringLiteral("disable-timestamps");
     inline const QString pivot_             = QStringLiteral("pivot");
+    inline const QString pivot_inverse      = QStringLiteral("pivot-inverse");
     inline const QString as_                = QStringLiteral("as");
     inline const QString with_timestamps    = QStringLiteral("with-timestamps");
     inline const QString with_pivot         = QStringLiteral("with-pivot");

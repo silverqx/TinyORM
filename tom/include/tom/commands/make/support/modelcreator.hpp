@@ -97,6 +97,7 @@ namespace Tom::Commands::Make::Support
                     const std::vector<BelongToManyForeignKeys> &foreignKeys,
                     const std::vector<std::size_t> &orderList,
                     const QStringList &pivotTables, const QStringList &pivotClasses,
+                    const std::vector<QStringList> &pivotInverseClasses,
                     const QStringList &asList,
                     const std::vector<QStringList> &withPivotList,
                     const std::vector<bool> &withTimestampsList);
@@ -104,8 +105,10 @@ namespace Tom::Commands::Make::Support
         /*! Create arguments list for the relation factory method (for btm). */
         static QString createRelationArgumentsBtm(
                     const QString &pivotTable, const BelongToManyForeignKeys &foreignKey);
-        /*! Pivot class logic for belongs-to-many relation (--pivot option). */
+        /*! Pivot class logic for the belongs-to-many relation (--pivot option). */
         void handlePivotClass(const QString &pivotClass, bool isPivotClassEmpty);
+        /*! Pivot class logic for inverse belongs-to-many relation (--pivot-inverse). */
+        void handlePivotInverseClass(const QStringList &pivotInverseClasses);
         /*! Create method calls on the belongs-to-many relation. */
         static QString createRelationCalls(
                     const QString &as, const QStringList &withPivot,
@@ -150,10 +153,12 @@ namespace Tom::Commands::Make::Support
                     QString::size_type relationsMaxSize);
 
         /* Global */
+        /*! Create model's TinyORM includes section. */
+        QString createIncludesOrmSection();
         /*! Create model's includes section. */
         QString createIncludesSection() const;
         /*! Create model's usings section. */
-        QString createUsingsSection() const;
+        QString createUsingsSection();
         /*! Create model's relations list for the Model base class. */
         QString createRelationsList() const;
         /*! Create model's pivots list for the Model base class. */
@@ -161,6 +166,8 @@ namespace Tom::Commands::Make::Support
         /*! Create model's forward declarations section. */
         QString createForwardsSection() const;
 
+        /*! TinyORM include paths for the generated model. */
+        std::set<QString> m_includesOrmList {};
         /*! Include paths for the generated model. */
         std::set<QString> m_includesList {};
         /*! Using directives for the generated model. */

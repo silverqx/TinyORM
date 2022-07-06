@@ -38,7 +38,9 @@ using Tom::Commands::Make::Stubs::BelongsToManyStub2;
 using Tom::Commands::Make::Stubs::BelongsToStub;
 using Tom::Commands::Make::Stubs::ModelConnectionStub;
 using Tom::Commands::Make::Stubs::ModelDisableTimestampsStub;
+using Tom::Commands::Make::Stubs::ModelForwardItemStub;
 using Tom::Commands::Make::Stubs::ModelIncludeItemStub;
+using Tom::Commands::Make::Stubs::ModelIncludeOrmItemStub;
 using Tom::Commands::Make::Stubs::ModelPrivateStub;
 using Tom::Commands::Make::Stubs::ModelPublicStub;
 using Tom::Commands::Make::Stubs::ModelRelationItemStub;
@@ -100,12 +102,13 @@ std::string ModelCreator::populateStub(
 
     const auto macroGuard = className.toUpper();
 
-    const auto includesSection = createIncludesSection();
-    const auto usingsSection   = createUsingsSection();
-    const auto relationsList   = createRelationsList();
+    const auto includesOrmSection = createIncludesOrmSection();
+    const auto includesSection    = createIncludesSection();
+    const auto usingsSection      = createUsingsSection();
+    const auto relationsList      = createRelationsList();
     // I want to have all pivots after the related classes because of that this set exists
-    const auto pivotsList      = createPivotsList();
-    const auto forwardsSection = createForwardsSection();
+    const auto pivotsList         = createPivotsList();
+    const auto forwardsSection    = createForwardsSection();
 
     return QString(ModelStub)
             .replace(QStringLiteral("DummyClass"),  className)
@@ -121,12 +124,15 @@ std::string ModelCreator::populateStub(
             .replace(QStringLiteral("{{ privateSection }}"), privateSection)
             .replace(QStringLiteral("{{privateSection}}"),   privateSection)
 
-            .replace(QStringLiteral("{{ includesSection }}"), includesSection)
-            .replace(QStringLiteral("{{includesSection}}"),   includesSection)
-            .replace(QStringLiteral("{{ usingsSection }}"),   usingsSection)
-            .replace(QStringLiteral("{{usingsSection}}"),     usingsSection)
-            .replace(QStringLiteral("{{ forwardsSection }}"), forwardsSection)
-            .replace(QStringLiteral("{{forwardsSection}}"),   forwardsSection)
+            .replace(QStringLiteral("{{ includesOrmSection }}"), includesOrmSection)
+            .replace(QStringLiteral("{{includesOrmSection}}"),   includesOrmSection)
+            .replace(QStringLiteral("{{ includesSection }}"),    includesSection)
+            .replace(QStringLiteral("{{includesSection}}"),      includesSection)
+
+            .replace(QStringLiteral("{{ usingsSection }}"),      usingsSection)
+            .replace(QStringLiteral("{{usingsSection}}"),        usingsSection)
+            .replace(QStringLiteral("{{ forwardsSection }}"),    forwardsSection)
+            .replace(QStringLiteral("{{forwardsSection}}"),      forwardsSection)
 
             .replace(QStringLiteral("{{ relationsList }}"), relationsList)
             .replace(QStringLiteral("{{relationsList}}"),   relationsList)
@@ -144,9 +150,9 @@ QString ModelCreator::createPublicSection(
 {
     const auto &[
             relationsOrder,
-            oneToOneList, oneToManyList,  belongsToList, belongsToManyList,
-            foreignKeys,  pivotTables,    pivotClasses,  asList, withPivotList,
-            withTimestampsList,
+            oneToOneList, oneToManyList,  belongsToList,    belongsToManyList,
+            foreignKeys,  pivotTables,    pivotClasses,     pivotInverseClasses,
+            asList,       withPivotList,  withTimestampsList,
             _1, _2, _3
     ] = cmdOptions;
 
@@ -175,8 +181,9 @@ QString ModelCreator::createPublicSection(
     publicSectionList |= ranges::actions::push_back(
                              createBelongsToManyRelation(
                                  className, belongsToManyList, belongsToManyForeign,
-                                 belongsToManyOrder, pivotTables, pivotClasses, asList,
-                                 withPivotList, withTimestampsList));
+                                 belongsToManyOrder, pivotTables, pivotClasses,
+                                 pivotInverseClasses, asList, withPivotList,
+                                 withTimestampsList));
 
     // Remove empty parts
     publicSectionList |= ranges::actions::remove_if([](const auto &value)
@@ -226,7 +233,7 @@ ModelCreator::createOneToOneRelation(
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
         m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("HasOne")));
-        m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
+        m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
         const auto relationName      = guessOneTypeRelationName(relatedClass);
@@ -281,7 +288,7 @@ ModelCreator::createOneToManyRelation(
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
         m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("HasMany")));
-        m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
+        m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
         const auto relationName      = guessManyTypeRelationName(relatedClass);
@@ -337,7 +344,7 @@ ModelCreator::createBelongsToRelation(
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
         m_usingsList.emplace(QString(ModelUsingItemStub)
                              .arg(QStringLiteral("BelongsTo")));
-        m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
+        m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
         const auto relationName      = guessOneTypeRelationName(relatedClass);
@@ -414,8 +421,9 @@ ModelCreator::createBelongsToManyRelation(
             const QString &parentClass, const QStringList &relatedClasses,
             const std::vector<BelongToManyForeignKeys> &foreignKeys,
             const std::vector<std::size_t> &orderList, const QStringList &pivotTables,
-            const QStringList &pivotClasses, const QStringList &asList,
-            const std::vector<QStringList> &withPivotList,
+            const QStringList &pivotClasses,
+            const std::vector<QStringList> &pivotInverseClasses,
+            const QStringList &asList, const std::vector<QStringList> &withPivotList,
             const std::vector<bool> &withTimestampsList)
 {
     if (relatedClasses.isEmpty())
@@ -432,21 +440,24 @@ ModelCreator::createBelongsToManyRelation(
     result.reserve(relatedClassesSize);
 
     for (const auto &[relatedClass, foreignKey, relationOrder, pivotTable, pivotClass,
-                      as, withPivot, withTimestamps] :
+                      pivotInverseClass, as, withPivot, withTimestamps] :
          ranges::views::zip(relatedClasses, foreignKeys, orderList, pivotTables,
-                            pivotClasses, asList, withPivotList, withTimestampsList)
+                            pivotClasses, pivotInverseClasses, asList, withPivotList,
+                            withTimestampsList)
     ) {
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
         m_usingsList.emplace(QString(ModelUsingItemStub)
                              .arg(QStringLiteral("BelongsToMany")));
-        m_forwardsList.emplace(QStringLiteral("class %1;").arg(relatedClass));
+        m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
         const auto isPivotClassEmpty = pivotClass.isEmpty();
 
         // Pivot special logic
         handlePivotClass(pivotClass, isPivotClassEmpty);
+        // Pivot for an inverse belongs-to-many relation special logic
+        handlePivotInverseClass(pivotInverseClass);
 
         const auto relationName      = guessManyTypeRelationName(relatedClass);
         const auto parentComment     = guessSingularComment(parentClass);
@@ -522,16 +533,39 @@ QString ModelCreator::createRelationArgumentsBtm(
 void ModelCreator::handlePivotClass(const QString &pivotClass,
                                     const bool isPivotClassEmpty)
 {
-    // Basic Pivot
-    if (isPivotClassEmpty) {
-        m_pivotsList.emplace(QStringLiteral("Pivot"));
-        m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("Pivot")));
-    }
+    // Nothing to do
+    if (isPivotClassEmpty)
+        return;
+
     // User defined Pivot
-    else {
-        m_pivotsList.emplace(pivotClass);
-        m_includesList.emplace(QString(ModelIncludeItemStub).arg(pivotClass.toLower()));
-    }
+    m_includesList.emplace(QString(ModelIncludeItemStub).arg(pivotClass.toLower()));
+}
+
+void ModelCreator::handlePivotInverseClass(const QStringList &pivotInverseClasses)
+{
+    // Nothing to do
+    if (pivotInverseClasses.isEmpty())
+        return;
+
+    static const auto PivotConst = QStringLiteral("Pivot");
+
+    std::ranges::for_each(pivotInverseClasses, [this](const auto &inverseClass)
+    {
+        // Nothing to do
+        if (inverseClass.isEmpty())
+            return;
+
+        m_pivotsList.emplace(inverseClass);
+
+        // Pivot class needs <orm> include and also using Orm::...
+        if (inverseClass == PivotConst) {
+            m_usingsList.emplace(QString(ModelUsingItemStub).arg(PivotConst));
+            m_includesOrmList.emplace(QString(ModelIncludeOrmItemStub)
+                                      .arg(QStringLiteral("tiny/relations/pivot.hpp")));
+        } else
+            m_includesList.emplace(QString(ModelIncludeItemStub)
+                                   .arg(inverseClass.toLower()));
+    });
 }
 
 QString ModelCreator::createRelationCalls(
@@ -605,7 +639,7 @@ QString ModelCreator::createPrivateSection(
             const bool hasPublicSection)
 {
     const auto &[
-            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11,
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12,
             connection, table, disableTimestamps
     ] = cmdOptions;
 
@@ -647,7 +681,7 @@ QString ModelCreator::createRelationsHash(const QString &className,
     const auto &[
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _2, _3, _4, _5, _6, _7, _8, _9, _10
+            _2, _3, _4, _5, _6, _7, _8, _9, _10, _11
     ] = cmdOptions;
 
     // Nothing to create
@@ -683,7 +717,7 @@ QString::size_type ModelCreator::getRelationNamesMaxSize(const CmdOptions &cmdOp
     const auto &[
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _2, _3, _4, _5, _6, _7, _8, _9, _10
+            _2, _3, _4, _5, _6, _7, _8, _9, _10, _11
     ] = cmdOptions;
 
     // Get max. size of relation names for align
@@ -816,6 +850,15 @@ QString ModelCreator::createBelongsToManyRelationItem(
 
 /* Global */
 
+QString ModelCreator::createIncludesOrmSection()
+{
+    // Will always contain
+    m_includesOrmList.emplace(QString(ModelIncludeOrmItemStub)
+                              .arg(QStringLiteral("tiny/model.hpp")));
+
+    return ContainerUtils::join(m_includesOrmList, NEWLINE);
+}
+
 QString ModelCreator::createIncludesSection() const
 {
     // Nothing to create
@@ -825,13 +868,12 @@ QString ModelCreator::createIncludesSection() const
     return NOSPACE.arg("\n\n", ContainerUtils::join(m_includesList, NEWLINE));
 }
 
-QString ModelCreator::createUsingsSection() const
+QString ModelCreator::createUsingsSection()
 {
-    // Nothing to create
-    if (m_usingsList.empty())
-        return {};
+    // Will always contain
+    m_usingsList.emplace(QStringLiteral("using Orm::Tiny::Model;"));
 
-    return NOSPACE.arg(NEWLINE, ContainerUtils::join(m_usingsList, NEWLINE));
+    return ContainerUtils::join(m_usingsList, NEWLINE);
 }
 
 QString ModelCreator::createRelationsList() const
