@@ -656,7 +656,7 @@ QString ModelCreator::createPrivateSection(
 
 QString ModelCreator::createRelationsHash(
             const QString &className, const CmdOptions &cmdOptions,
-            const bool isSetPreserveOrder)
+            const bool isSetPreserveOrder) const
 {
     const auto &[
             relationsOrder,

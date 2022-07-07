@@ -125,7 +125,7 @@ namespace Tom::Commands::Make::Support
         /*! Create model's u_relations hash. */
         QString createRelationsHash(
                     const QString &className, const CmdOptions &cmdOptions,
-                    bool isSetPreserveOrder);
+                    bool isSetPreserveOrder) const;
         /*! Get max. size of relation names for align. */
         static QString::size_type getRelationNamesMaxSize(const CmdOptions &cmdOptions);
 
@@ -170,7 +170,7 @@ namespace Tom::Commands::Make::Support
                     const QStringList &oneToOne, const QStringList &oneToMany,
                     const QStringList &belongsTo, const QStringList &belongsToMany);
         /*! Join relations list. */
-        static QString joinRelationsList(RelationsWithOrder &&publicSectionList);
+        static QString joinRelationsList(RelationsWithOrder &&relationsList);
 
         /*! TinyORM include paths for the generated model. */
         std::set<QString> m_includesOrmList {};
