@@ -97,8 +97,9 @@ std::string ModelCreator::populateStub(
 {
     const auto publicSection  = createPublicSection(className, cmdOptions,
                                                     isSetPreserveOrder);
-    const auto privateSection = createPrivateSection(className, cmdOptions,
-                                                     !publicSection.isEmpty());
+    const auto privateSection = createPrivateSection(
+                                    className, cmdOptions, !publicSection.isEmpty(),
+                                    isSetPreserveOrder);
 
     const auto macroGuard = className.toUpper();
 
@@ -166,8 +167,8 @@ QString ModelCreator::createPublicSection(
 
     RelationsWithOrder publicSectionList;
     publicSectionList.reserve(
-                computeReserveForPublicSection(
-                    oneToOneList, oneToManyList, belongsToList, belongsToManyList));
+                computeReserveForRelationsList(
+                        oneToOneList, oneToManyList, belongsToList, belongsToManyList));
 
     publicSectionList |= ranges::actions::push_back(
                              createOneToOneRelation(className, oneToOneList,
@@ -195,23 +196,13 @@ QString ModelCreator::createPublicSection(
     if (isSetPreserveOrder)
         std::ranges::sort(publicSectionList, {}, &RelationWithOrder::relationOrder);
 
-    auto publicSection = joinPublicSectionList(std::move(publicSectionList));
+    auto publicSection = joinRelationsList(std::move(publicSectionList));
 
     // Prepend public:
     if (!publicSection.isEmpty())
         publicSection.prepend(ModelPublicStub);
 
     return publicSection;
-}
-
-std::size_t ModelCreator::computeReserveForPublicSection(
-            const QStringList &oneToOne, const QStringList &oneToMany,
-            const QStringList &belongsTo, const QStringList &belongsToMany)
-{
-    return static_cast<std::size_t>(oneToOne.size()) +
-           static_cast<std::size_t>(oneToMany.size()) +
-           static_cast<std::size_t>(belongsTo.size()) +
-           static_cast<std::size_t>(belongsToMany.size());
 }
 
 ModelCreator::RelationsWithOrder
@@ -386,18 +377,6 @@ QString ModelCreator::createRelationArguments(const QString &foreignKey)
         return {};
 
     return StringUtils::wrapValue(foreignKey, QChar('"'));
-}
-
-QString ModelCreator::joinPublicSectionList(RelationsWithOrder &&publicSectionList)
-{
-    auto publicSectionQList = ranges::views::move(publicSectionList)
-            | ranges::views::transform([](auto &&section) -> QString
-    {
-        return section.content;
-    })
-            | ranges::to<QStringList>();
-
-    return publicSectionQList.join(NEWLINE);
 }
 
 namespace
@@ -636,7 +615,7 @@ QString ModelCreator::guessManyTypeRelationName(const QString &className)
 
 QString ModelCreator::createPrivateSection(
             const QString &className, const CmdOptions &cmdOptions,
-            const bool hasPublicSection)
+            const bool hasPublicSection, const bool isSetPreserveOrder)
 {
     const auto &[
             _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12,
@@ -645,7 +624,7 @@ QString ModelCreator::createPrivateSection(
 
     QString privateSection;
 
-    privateSection += createRelationsHash(className, cmdOptions);
+    privateSection += createRelationsHash(className, cmdOptions, isSetPreserveOrder);
 
     // Append a newline after the relations hash
     if (!privateSection.isEmpty() && (!table.isEmpty() || !connection.isEmpty()))
@@ -675,13 +654,14 @@ QString ModelCreator::createPrivateSection(
     return privateSection;
 }
 
-QString ModelCreator::createRelationsHash(const QString &className,
-                                          const CmdOptions &cmdOptions)
+QString ModelCreator::createRelationsHash(
+            const QString &className, const CmdOptions &cmdOptions,
+            const bool isSetPreserveOrder)
 {
     const auto &[
-            _1,
+            relationsOrder,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _2, _3, _4, _5, _6, _7, _8, _9, _10, _11
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10
     ] = cmdOptions;
 
     // Nothing to create
@@ -693,19 +673,35 @@ QString ModelCreator::createRelationsHash(const QString &className,
     // Get max. size of relation names for align
     const auto relationsMaxSize = getRelationNamesMaxSize(cmdOptions);
 
-    QStringList relationItemsList;
-    relationItemsList.reserve(4);
+    const auto &[
+            oneToOneOrder, oneToManyOrder, belongsToOrder, belongsToManyOrder
+    ] = relationsOrder;
 
-    relationItemsList << createOneToOneRelationItem(className, oneToOneList,
-                                                    relationsMaxSize);
-    relationItemsList << createOneToManyRelationItem(className, oneToManyList,
-                                                     relationsMaxSize);
-    relationItemsList << createBelongsToRelationItem(className, belongsToList,
-                                                     relationsMaxSize);
-    relationItemsList << createBelongsToManyRelationItem(className, belongsToManyList,
-                                                         relationsMaxSize);
+    RelationsWithOrder relationItemsList;
+    relationItemsList.reserve(m_relationsListSize); // Use already the cached size value
 
-    const auto relationItems = relationItemsList.join(NEWLINE);
+    relationItemsList |= ranges::actions::push_back(
+                             createOneToOneRelationItem(
+                                 className, oneToOneList,
+                                 relationsMaxSize, oneToOneOrder));
+    relationItemsList |= ranges::actions::push_back(
+                             createOneToManyRelationItem(
+                                 className, oneToManyList, relationsMaxSize,
+                                 oneToManyOrder));
+    relationItemsList |= ranges::actions::push_back(
+                             createBelongsToRelationItem(
+                                 className, belongsToList, relationsMaxSize,
+                                 belongsToOrder));
+    relationItemsList |= ranges::actions::push_back(
+                             createBelongsToManyRelationItem(
+                                 className, belongsToManyList, relationsMaxSize,
+                                 belongsToManyOrder));
+
+    // Sort if the --preserve-order option was given on the command-line
+    if (isSetPreserveOrder)
+        std::ranges::sort(relationItemsList, {}, &RelationWithOrder::relationOrder);
+
+    auto relationItems = joinRelationsList(std::move(relationItemsList));
 
     return QString(ModelRelationsStub)
             .replace(QStringLiteral("{{ relationItems }}"), relationItems)
@@ -732,120 +728,156 @@ QString::size_type ModelCreator::getRelationNamesMaxSize(const CmdOptions &cmdOp
     return static_cast<QString::size_type>(*std::ranges::max_element(relationSizes));
 }
 
-QString ModelCreator::createOneToOneRelationItem(
+ModelCreator::RelationsWithOrder
+ModelCreator::createOneToOneRelationItem(
             const QString &parentClass, const QStringList &relatedClasses,
-            const QString::size_type relationsMaxSize)
+            const QString::size_type relationsMaxSize,
+            const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
 
-    QStringList result;
-    result.reserve(relatedClasses.size());
+    RelationsWithOrder result;
+    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
 
-    for (const auto &relatedClass : relatedClasses) {
-
+    for (const auto &[relatedClass, relationOrder] :
+         ranges::views::zip(relatedClasses, orderList)
+    ) {
         const auto relationName = guessOneTypeRelationName(relatedClass);
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
-        result << QString(ModelRelationItemStub)
-                  .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
-                  .replace(QStringLiteral("{{parentClass}}"),    parentClass)
+        auto content = QString(ModelRelationItemStub)
+                       .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
+                       .replace(QStringLiteral("{{parentClass}}"),    parentClass)
 
-                  .replace(QStringLiteral("{{ relationName }}"), relationName)
-                  .replace(QStringLiteral("{{relationName}}"),   relationName)
+                       .replace(QStringLiteral("{{ relationName }}"), relationName)
+                       .replace(QStringLiteral("{{relationName}}"),   relationName)
 
-                  .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
-                  .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+                       .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
+                       .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+
+#ifdef __clang__
+        result.push_back({relationOrder, std::move(content)});
+#else
+        result.emplace_back(relationOrder, std::move(content));
+#endif
     }
 
-    return result.join(NEWLINE);
+    return result;
 }
 
-QString ModelCreator::createOneToManyRelationItem(
+ModelCreator::RelationsWithOrder
+ModelCreator::createOneToManyRelationItem(
             const QString &parentClass, const QStringList &relatedClasses,
-            const QString::size_type relationsMaxSize)
+            const QString::size_type relationsMaxSize,
+            const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
 
-    QStringList result;
-    result.reserve(relatedClasses.size());
+    RelationsWithOrder result;
+    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
 
-    for (const auto &relatedClass : relatedClasses) {
-
+    for (const auto &[relatedClass, relationOrder] :
+         ranges::views::zip(relatedClasses, orderList)
+    ) {
         const auto relationName = guessManyTypeRelationName(relatedClass);
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
-        result << QString(ModelRelationItemStub)
-                  .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
-                  .replace(QStringLiteral("{{parentClass}}"),    parentClass)
+        auto content = QString(ModelRelationItemStub)
+                       .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
+                       .replace(QStringLiteral("{{parentClass}}"),    parentClass)
 
-                  .replace(QStringLiteral("{{ relationName }}"), relationName)
-                  .replace(QStringLiteral("{{relationName}}"),   relationName)
+                       .replace(QStringLiteral("{{ relationName }}"), relationName)
+                       .replace(QStringLiteral("{{relationName}}"),   relationName)
 
-                  .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
-                  .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+                       .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
+                       .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+
+#ifdef __clang__
+        result.push_back({relationOrder, std::move(content)});
+#else
+        result.emplace_back(relationOrder, std::move(content));
+#endif
     }
 
-    return result.join(NEWLINE);
+    return result;
 }
 
-QString ModelCreator::createBelongsToRelationItem(
+ModelCreator::RelationsWithOrder
+ModelCreator::createBelongsToRelationItem(
             const QString &parentClass, const QStringList &relatedClasses,
-            const QString::size_type relationsMaxSize)
+            const QString::size_type relationsMaxSize,
+            const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
 
-    QStringList result;
-    result.reserve(relatedClasses.size());
+    RelationsWithOrder result;
+    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
 
-    for (const auto &relatedClass : relatedClasses) {
-
+    for (const auto &[relatedClass, relationOrder] :
+         ranges::views::zip(relatedClasses, orderList)
+    ) {
         const auto relationName = guessOneTypeRelationName(relatedClass);
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
-        result << QString(ModelRelationItemStub)
-                  .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
-                  .replace(QStringLiteral("{{parentClass}}"),    parentClass)
+        auto content = QString(ModelRelationItemStub)
+                       .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
+                       .replace(QStringLiteral("{{parentClass}}"),    parentClass)
 
-                  .replace(QStringLiteral("{{ relationName }}"), relationName)
-                  .replace(QStringLiteral("{{relationName}}"),   relationName)
+                       .replace(QStringLiteral("{{ relationName }}"), relationName)
+                       .replace(QStringLiteral("{{relationName}}"),   relationName)
 
-                  .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
-                  .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+                       .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
+                       .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+
+#ifdef __clang__
+        result.push_back({relationOrder, std::move(content)});
+#else
+        result.emplace_back(relationOrder, std::move(content));
+#endif
     }
 
-    return result.join(NEWLINE);
+    return result;
 }
 
-QString ModelCreator::createBelongsToManyRelationItem(
+ModelCreator::RelationsWithOrder
+ModelCreator::createBelongsToManyRelationItem(
             const QString &parentClass, const QStringList &relatedClasses,
-            const QString::size_type relationsMaxSize)
+            const QString::size_type relationsMaxSize,
+            const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
 
-    QStringList result;
-    result.reserve(relatedClasses.size());
+    RelationsWithOrder result;
+    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
 
-    for (const auto &relatedClass : relatedClasses) {
-
+    for (const auto &[relatedClass, relationOrder] :
+         ranges::views::zip(relatedClasses, orderList)
+    ) {
         const auto relationName = guessManyTypeRelationName(relatedClass);
         const auto spaceAlign = QString(relationsMaxSize - relationName.size(), SPACE);
 
-        result << QString(ModelRelationItemStub)
-                  .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
-                  .replace(QStringLiteral("{{parentClass}}"),    parentClass)
+        auto content = QString(ModelRelationItemStub)
+                       .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
+                       .replace(QStringLiteral("{{parentClass}}"),    parentClass)
 
-                  .replace(QStringLiteral("{{ relationName }}"), relationName)
-                  .replace(QStringLiteral("{{relationName}}"),   relationName)
+                       .replace(QStringLiteral("{{ relationName }}"), relationName)
+                       .replace(QStringLiteral("{{relationName}}"),   relationName)
 
-                  .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
-                  .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+                       .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
+                       .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+
+#ifdef __clang__
+        result.push_back({relationOrder, std::move(content)});
+#else
+        result.emplace_back(relationOrder, std::move(content));
+#endif
     }
 
-    return result.join(NEWLINE);
+    return result;
 }
 
 /* Global */
@@ -902,6 +934,35 @@ QString ModelCreator::createForwardsSection() const
 
     return StringUtils::wrapValue(ContainerUtils::join(m_forwardsList, NEWLINE),
                                   QChar('\n'));
+}
+
+/* Common for public/private sections */
+
+std::size_t ModelCreator::computeReserveForRelationsList(
+            const QStringList &oneToOne, const QStringList &oneToMany,
+            const QStringList &belongsTo, const QStringList &belongsToMany)
+{
+    // Cache the computed reserve size to avoid recomputation in the private section
+    m_relationsListSize = static_cast<std::size_t>(oneToOne.size()) +
+                          static_cast<std::size_t>(oneToMany.size()) +
+                          static_cast<std::size_t>(belongsTo.size()) +
+                          static_cast<std::size_t>(belongsToMany.size());
+
+    Q_ASSERT(m_relationsListSize > 0);
+
+    return m_relationsListSize;
+}
+
+QString ModelCreator::joinRelationsList(RelationsWithOrder &&relationsList)
+{
+    auto relationsQList = ranges::views::move(relationsList)
+            | ranges::views::transform([](auto &&relationItem) -> QString
+    {
+        return relationItem.content;
+    })
+            | ranges::to<QStringList>();
+
+    return relationsQList.join(NEWLINE);
 }
 
 /* private */

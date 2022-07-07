@@ -65,11 +65,6 @@ namespace Tom::Commands::Make::Support
         /*! Prepared public sections list with preserved order on the command-line. */
         using RelationsWithOrder = std::vector<RelationWithOrder>;
 
-        /*! Compute reserve value for the public section list. */
-        static std::size_t computeReserveForPublicSection(
-                    const QStringList &oneToOne, const QStringList &oneToMany,
-                    const QStringList &belongsTo, const QStringList &belongsToMany);
-
         /*! Create one-to-one relationship method. */
         RelationsWithOrder createOneToOneRelation(
                     const QString &parentClass, const QStringList &relatedClasses,
@@ -88,8 +83,6 @@ namespace Tom::Commands::Make::Support
 
         /*! Create arguments list for the relation factory method (for oto, otm, bto). */
         static QString createRelationArguments(const QString &foreignKey);
-        /*! Join public sections. */
-        static QString joinPublicSectionList(RelationsWithOrder &&publicSectionList);
 
         /*! Create belongs-to-many relationship method. */
         RelationsWithOrder createBelongsToManyRelation(
@@ -125,32 +118,37 @@ namespace Tom::Commands::Make::Support
 
         /* Private model section */
         /*! Create model's private section. */
-        static QString createPrivateSection(
+        QString createPrivateSection(
                     const QString &className, const CmdOptions &cmdOptions,
-                    bool hasPublicSection);
+                    bool hasPublicSection, bool isSetPreserveOrder);
 
         /*! Create model's u_relations hash. */
-        static QString createRelationsHash(const QString &className,
-                                           const CmdOptions &cmdOptions);
+        QString createRelationsHash(
+                    const QString &className, const CmdOptions &cmdOptions,
+                    bool isSetPreserveOrder);
         /*! Get max. size of relation names for align. */
         static QString::size_type getRelationNamesMaxSize(const CmdOptions &cmdOptions);
 
         /*! Create one-to-one relation mapping item for u_relations hash. */
-        static QString createOneToOneRelationItem(
+        static RelationsWithOrder createOneToOneRelationItem(
                     const QString &parentClass, const QStringList &relatedClasses,
-                    QString::size_type relationsMaxSize);
+                    QString::size_type relationsMaxSize,
+                    const std::vector<std::size_t> &orderList);
         /*! Create one-to-many relation mapping item for u_relations hash. */
-        static QString createOneToManyRelationItem(
+        static RelationsWithOrder createOneToManyRelationItem(
                     const QString &parentClass, const QStringList &relatedClasses,
-                    QString::size_type relationsMaxSize);
+                    QString::size_type relationsMaxSize,
+                    const std::vector<std::size_t> &orderList);
         /*! Create belongs-to relation mapping item for u_relations hash. */
-        static QString createBelongsToRelationItem(
+        static RelationsWithOrder createBelongsToRelationItem(
                     const QString &parentClass, const QStringList &relatedClasses,
-                    QString::size_type relationsMaxSize);
+                    QString::size_type relationsMaxSize,
+                    const std::vector<std::size_t> &orderList);
         /*! Create belongs-to-many relation mapping item for u_relations hash. */
-        static QString createBelongsToManyRelationItem(
+        static RelationsWithOrder createBelongsToManyRelationItem(
                     const QString &parentClass, const QStringList &relatedClasses,
-                    QString::size_type relationsMaxSize);
+                    QString::size_type relationsMaxSize,
+                    const std::vector<std::size_t> &orderList);
 
         /* Global */
         /*! Create model's TinyORM includes section. */
@@ -166,6 +164,14 @@ namespace Tom::Commands::Make::Support
         /*! Create model's forward declarations section. */
         QString createForwardsSection() const;
 
+        /* Common for public/private sections */
+        /*! Compute reserve value for the public section list. */
+        std::size_t computeReserveForRelationsList(
+                    const QStringList &oneToOne, const QStringList &oneToMany,
+                    const QStringList &belongsTo, const QStringList &belongsToMany);
+        /*! Join relations list. */
+        static QString joinRelationsList(RelationsWithOrder &&publicSectionList);
+
         /*! TinyORM include paths for the generated model. */
         std::set<QString> m_includesOrmList {};
         /*! Include paths for the generated model. */
@@ -178,6 +184,9 @@ namespace Tom::Commands::Make::Support
         std::set<QString> m_pivotsList {};
         /*! Forward declarations list for related models. */
         std::set<QString> m_forwardsList {};
+
+        /*! Cached relations list size to avoid recomputation. */
+        std::size_t m_relationsListSize = 0;
 
     private:
         /*! Ensure that a model with the given name doesn't already exist. */
