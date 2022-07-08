@@ -723,7 +723,7 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
         {
             return QStringLiteral("%2\"%1\"").arg(value, prefix);
         })
-                | ranges::to<QVector<QString>>();
+                | ranges::to<std::vector<QString>>();
     };
 
     const auto listSize = list.size();
@@ -733,8 +733,9 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
        List with two values will be on a new line and values will be separated by the ,.
        If a list has >2 values then every value will be on a new line. */
 
-    auto listJoined = wrapValues(list, listSize > 2 ? QString(8, SPACE) : EMPTY)
-                      .join(listSize > 2 ? QStringLiteral(",\n") : COMMA);
+    auto listJoined = ContainerUtils::join(
+                          wrapValues(list, listSize > 2 ? QString(8, SPACE) : EMPTY),
+                          listSize > 2 ? QStringLiteral(",\n") : COMMA);
 
     if (listSize > 2)
         listJoined.prepend(NEWLINE);

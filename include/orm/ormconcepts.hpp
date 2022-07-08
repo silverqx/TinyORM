@@ -77,7 +77,8 @@ namespace Query
     template<typename T>
     concept JoinContainer = ColumnContainer<T> ||
                             std::convertible_to<T, const std::set<QString> &> ||
-                            std::convertible_to<T, const std::deque<QString> &>;
+                            std::convertible_to<T, const std::deque<QString> &> ||
+                            std::convertible_to<T, const std::vector<QString> &>;
 
     // CUR concepts, check if const QString & vs QString in convertible_to<> makes sense silverqx
     /*! Concept for delimiter for joining containers. */
