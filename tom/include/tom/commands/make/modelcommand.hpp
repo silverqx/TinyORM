@@ -82,6 +82,8 @@ namespace Support
         void findUnusedBtmOptions(const CmdOptions &cmdOptions);
         /*! Show unused options warning if generating a pivot model. */
         void showUnusedPivotModelOptionsWarnings();
+        /*! Show unused disable-incremening option if passed also incrementing option. */
+        void showUnusedIncrementingWarning();
 
         /*! Write the model file to the disk. */
         void writeModel(const QString &className, const CmdOptions &cmdOptions);
@@ -102,6 +104,8 @@ namespace Support
         Support::ModelCreator m_creator {};
         /*! Was shown an unused warning for the foreign-key option? */
         bool m_shownUnusedForeignKey = false;
+        /*! Was shown an unused warning for the disable-/incrementing option? */
+        bool m_shownUnusedIncrementing = false;
         /*! Unused btm options, will be shown in the warning. */
         std::set<QString> m_unusedBtmOptions {};
         /*! Unused options if generating a pivot model, will be shown in the warning. */

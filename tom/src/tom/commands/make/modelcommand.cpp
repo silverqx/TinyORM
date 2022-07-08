@@ -215,7 +215,7 @@ int ModelCommand::run()
     showUnusedOptionsWarnings(cmdOptions);
 
     if (!m_unusedBtmOptions.empty() || m_shownUnusedForeignKey ||
-        !m_unusedPivotModelOptions.empty()
+        !m_unusedPivotModelOptions.empty() || m_shownUnusedIncrementing
     )
         newLine();
 
@@ -283,6 +283,9 @@ void ModelCommand::showUnusedOptionsWarnings(const CmdOptions &cmdOptions)
         showUnusedPivotModelOptionsWarnings();
     else
         showUnusedBtmOptionsWarnings(cmdOptions);
+
+    // Show unused disable-incremening option if passed also incrementing option
+    showUnusedIncrementingWarning();
 }
 
 void ModelCommand::showUnusedBtmOptionsWarnings(const CmdOptions &cmdOptions)
@@ -357,6 +360,19 @@ void ModelCommand::showUnusedPivotModelOptionsWarnings()
 
     comment((m_unusedPivotModelOptions.size() == 1 ? singular : plural)
             .arg(ContainerUtils::join(m_unusedPivotModelOptions)));
+}
+
+void ModelCommand::showUnusedIncrementingWarning()
+{
+    // Nothing to show
+    if (!(isSet(incrementing) && isSet(disable_incrementing)))
+        return;
+
+    comment(QStringLiteral(
+                "Unused the --disable-incrementing option; the --incrementing option "
+                "has always precedence if both options were given."));
+
+    m_shownUnusedIncrementing = true;
 }
 
 void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions)
