@@ -150,6 +150,12 @@ R"(
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;)";
 
+/*! Model enable incrementing stub. */
+inline const auto *const ModelIncrementingStub =
+R"(
+    /*! Indicates if the ID is auto-incrementing. */
+    bool u_incrementing = true;)";
+
 } // namespace Tom::Commands::Make::Stubs
 
 TINYORM_END_COMMON_NAMESPACE

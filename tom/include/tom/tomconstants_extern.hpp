@@ -103,6 +103,8 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString foreign_key;
     SHAREDLIB_EXPORT extern const QString pivot_table;
     SHAREDLIB_EXPORT extern const QString connection_;
+    SHAREDLIB_EXPORT extern const QString pivot_model;
+    SHAREDLIB_EXPORT extern const QString incrementing;
     SHAREDLIB_EXPORT extern const QString disable_timestamps;
     SHAREDLIB_EXPORT extern const QString pivot_;
     SHAREDLIB_EXPORT extern const QString pivot_inverse;

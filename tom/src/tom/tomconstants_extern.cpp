@@ -91,6 +91,8 @@ namespace Tom::Constants
     const QString foreign_key        = QStringLiteral("foreign-key");
     const QString pivot_table        = QStringLiteral("pivot-table");
     const QString connection_        = QStringLiteral("connection");
+    const QString pivot_model        = QStringLiteral("pivot-model");
+    const QString incrementing       = QStringLiteral("incrementing");
     const QString disable_timestamps = QStringLiteral("disable-timestamps");
     const QString pivot_             = QStringLiteral("pivot");
     const QString pivot_inverse      = QStringLiteral("pivot-inverse");

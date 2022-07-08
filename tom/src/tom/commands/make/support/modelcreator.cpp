@@ -41,6 +41,7 @@ using Tom::Commands::Make::Stubs::ModelDisableTimestampsStub;
 using Tom::Commands::Make::Stubs::ModelForwardItemStub;
 using Tom::Commands::Make::Stubs::ModelIncludeItemStub;
 using Tom::Commands::Make::Stubs::ModelIncludeOrmItemStub;
+using Tom::Commands::Make::Stubs::ModelIncrementingStub;
 using Tom::Commands::Make::Stubs::ModelPrivateStub;
 using Tom::Commands::Make::Stubs::ModelPublicStub;
 using Tom::Commands::Make::Stubs::ModelRelationItemStub;
@@ -154,7 +155,7 @@ QString ModelCreator::createPublicSection(
             oneToOneList, oneToManyList,  belongsToList,    belongsToManyList,
             foreignKeys,  pivotTables,    pivotClasses,     pivotInverseClasses,
             asList,       withPivotList,  withTimestampsList,
-            _1, _2, _3
+            _1, _2, _3, _4
     ] = cmdOptions;
 
     const auto &[
@@ -619,7 +620,7 @@ QString ModelCreator::createPrivateSection(
 {
     const auto &[
             _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12,
-            connection, table, disableTimestamps
+            connection, table, disableTimestamps, incrementing
     ] = cmdOptions;
 
     QString privateSection;
@@ -627,13 +628,18 @@ QString ModelCreator::createPrivateSection(
     privateSection += createRelationsHash(className, cmdOptions, isSetPreserveOrder);
 
     // Append a newline after the relations hash
-    if (!privateSection.isEmpty() && (!table.isEmpty() || !connection.isEmpty()))
+    if (!privateSection.isEmpty() &&
+        (!table.isEmpty() || !connection.isEmpty() || incrementing || disableTimestamps)
+    )
         privateSection.append(NEWLINE);
 
     if (!table.isEmpty())
         privateSection += QString(ModelTableStub)
                           .replace(QStringLiteral("{{ table }}"), table)
                           .replace(QStringLiteral("{{table}}"),   table);
+
+    if (incrementing)
+        privateSection += ModelIncrementingStub;
 
     if (!connection.isEmpty())
         privateSection += QString(ModelConnectionStub)
@@ -661,7 +667,7 @@ QString ModelCreator::createRelationsHash(
     const auto &[
             relationsOrder,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11
     ] = cmdOptions;
 
     // Nothing to create
@@ -713,7 +719,7 @@ QString::size_type ModelCreator::getRelationNamesMaxSize(const CmdOptions &cmdOp
     const auto &[
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _2, _3, _4, _5, _6, _7, _8, _9, _10, _11
+            _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12
     ] = cmdOptions;
 
     // Get max. size of relation names for align

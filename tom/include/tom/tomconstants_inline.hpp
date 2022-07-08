@@ -103,6 +103,8 @@ namespace Tom::Constants
     inline const QString pivot_table        = QStringLiteral("pivot-table");
     inline const QString connection_        = QStringLiteral("connection");
     inline const QString disable_timestamps = QStringLiteral("disable-timestamps");
+    inline const QString pivot_model        = QStringLiteral("pivot-model");
+    inline const QString incrementing       = QStringLiteral("incrementing");
     inline const QString pivot_             = QStringLiteral("pivot");
     inline const QString pivot_inverse      = QStringLiteral("pivot-inverse");
     inline const QString as_                = QStringLiteral("as");

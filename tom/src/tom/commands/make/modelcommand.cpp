@@ -33,6 +33,7 @@ using Tom::Constants::disable_timestamps;
 using Tom::Constants::foreign_key;
 using Tom::Constants::foreign_key_up;
 using Tom::Constants::fullpath;
+using Tom::Constants::incrementing;
 using Tom::Constants::one_to_one;
 using Tom::Constants::one_to_one_up;
 using Tom::Constants::one_to_many;
@@ -119,6 +120,8 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
         {connection_,        QStringLiteral("The connection name for the model"),
                              connection_up}, // Value
         {disable_timestamps, QStringLiteral("Disable timestamping of the model")},
+        {incrementing,       QStringLiteral("Indicates if the model's ID is "
+                                            "auto-incrementing.")},
 
         // Others
         {{"o",
@@ -204,7 +207,7 @@ ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOption
     auto &&[
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _2, _3, pivotClasses, pivotInverseClasses, _4, _5, _6, _7, _8, _9
+            _2, _3, pivotClasses, pivotInverseClasses, _4, _5, _6, _7, _8, _9, _10
     ] = cmdOptions;
 
     // Validate the model class names
@@ -307,7 +310,8 @@ CmdOptions ModelCommand::createCmdOptions()
         btmBoolValues(with_timestamps),
 
         // Model related
-        value(connection_), value(table_), isSet(disable_timestamps),
+        value(connection_),  value(table_), isSet(disable_timestamps),
+        isSet(incrementing),
     };
 }
 

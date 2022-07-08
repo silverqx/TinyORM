@@ -86,6 +86,8 @@ namespace Tom::Commands::Make
         QString table;
         /*! Disable timestamping of the model. */
         bool disableTimestamps;
+        /*! Enable incrmenteing of model's primary key. */
+        bool incrementing;
     };
 
 } // namespace Tom::Commands::Make
