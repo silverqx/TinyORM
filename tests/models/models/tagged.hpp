@@ -2,7 +2,6 @@
 #ifndef MODELS_TAGGED_HPP
 #define MODELS_TAGGED_HPP
 
-#include "orm/tiny/model.hpp"
 #include "orm/tiny/relations/basepivot.hpp"
 
 namespace Models
