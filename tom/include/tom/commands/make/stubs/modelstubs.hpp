@@ -65,7 +65,7 @@ class {{ class }} final : public BasePivot<{{ class }}{{ relationsList }}{{ pivo
 
 /*! TinyORM include item stub. */
 inline const auto *const ModelIncludeOrmItemStub =
-R"(#include <orm/%1>")";
+R"(#include <orm/%1>)";
 
 /*! Include item stub. */
 inline const auto *const ModelIncludeItemStub =
