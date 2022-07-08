@@ -207,14 +207,14 @@ _tom() {
                 '*--with-timestamps[Pivot table with timestamps]' \
                 '--table=[The table associated with the model]:table name' \
                 '--primary-key=[The primary key associated with the table]:column name' \
-                '--incrementing=[Enable auto-incrementing for the model''s primary key]' \
-                '--disable-incrementing=[Disable auto-incrementing for the model''s primary key]' \
+                "--incrementing[Enable auto-incrementing for the model's primary key]" \
+                "--disable-incrementing[Disable auto-incrementing for the model's primary key]" \
                 '--connection=[The connection name for the model]:connection name' \
                 '--with=[The relations to eager load on every query]:relationship names' \
                 '--fillable=[The attributes that are mass assignable]:attribute names' \
-                '--guarded=[The guarded attributes that aren''t mass assignable]:attribute names' \
+                "--guarded=[The guarded attributes that aren't mass assignable]:attribute names" \
                 '--disable-timestamps[Disable timestamping of the model]' \
-                '--dateformat=[The storage format of the model''s date columns]:date format' \
+                "--dateformat=[The storage format of the model's date columns]:date format" \
                 '--dates=[The attributes that should be mutated to dates]:attribute names' \
                 '--touches=[All of the relationships to be touched]:relationship names' \
                 '(-o --preserve-order)'{-o,--preserve-order}'[Preserve relations order defined on the command-line]' \
