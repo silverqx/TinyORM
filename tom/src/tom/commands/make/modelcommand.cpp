@@ -27,12 +27,21 @@ using Tom::Constants::belongs_to;
 using Tom::Constants::belongs_to_many;
 using Tom::Constants::belongs_to_many_up;
 using Tom::Constants::belongs_to_up;
+using Tom::Constants::dateformat;
+using Tom::Constants::dateformat_up;
+using Tom::Constants::dates;
+using Tom::Constants::dates_up;
 using Tom::Constants::connection_;
 using Tom::Constants::connection_up;
+using Tom::Constants::disable_incrementing;
 using Tom::Constants::disable_timestamps;
+using Tom::Constants::fillable;
+using Tom::Constants::fillable_up;
 using Tom::Constants::foreign_key;
 using Tom::Constants::foreign_key_up;
 using Tom::Constants::fullpath;
+using Tom::Constants::guarded;
+using Tom::Constants::guarded_up;
 using Tom::Constants::incrementing;
 using Tom::Constants::one_to_one;
 using Tom::Constants::one_to_one_up;
@@ -48,9 +57,15 @@ using Tom::Constants::pivot_table;
 using Tom::Constants::pivot_table_up;
 using Tom::Constants::pivot_up;
 using Tom::Constants::preserve_order;
+using Tom::Constants::primary_key;
+using Tom::Constants::primary_key_up;
 using Tom::Constants::realpath_;
 using Tom::Constants::table_;
 using Tom::Constants::table_up;
+using Tom::Constants::touches;
+using Tom::Constants::touches_up;
+using Tom::Constants::with_;
+using Tom::Constants::with_up;
 using Tom::Constants::with_pivot;
 using Tom::Constants::with_pivot_up;
 using Tom::Constants::with_timestamps;
@@ -79,63 +94,85 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
 {
     return {
         // Relationship methods
-        {one_to_one,         QStringLiteral("Create one-to-one relation to the given "
-                                            "model <comment>(multiple options allowed)"
-                                            "</comment>"), one_to_one_up}, // Value
-        {one_to_many,        QStringLiteral("Create one-to-many relation to the given "
-                                            "model <comment>(multiple options allowed)"
-                                            "</comment>"), one_to_many_up}, // Value
-        {belongs_to,         QStringLiteral("Create belongs-to relation to the given "
-                                            "model <comment>(multiple options allowed)"
-                                            "</comment>"), belongs_to_up}, // Value
-        {belongs_to_many,    QStringLiteral("Create many-to-many relation to the "
-                                            "given model <comment>(multiple options "
-                                            "allowed)</comment>"), belongs_to_many_up}, // Value
+        {one_to_one,           QStringLiteral("Create one-to-one relation to the given "
+                                              "model <comment>(multiple options allowed)"
+                                              "</comment>"), one_to_one_up}, // Value
+        {one_to_many,          QStringLiteral("Create one-to-many relation to the given "
+                                              "model <comment>(multiple options allowed)"
+                                              "</comment>"), one_to_many_up}, // Value
+        {belongs_to,           QStringLiteral("Create belongs-to relation to the given "
+                                              "model <comment>(multiple options allowed)"
+                                              "</comment>"), belongs_to_up}, // Value
+        {belongs_to_many,      QStringLiteral("Create many-to-many relation to the "
+                                              "given model <comment>(multiple options "
+                                              "allowed)</comment>"), belongs_to_many_up}, // Value
 
         // Common for all relations
-        {foreign_key,        QStringLiteral("The foreign key name <comment>(two values "
-                                            "allowed for btm)</comment>"),
-                             foreign_key_up},
+        {foreign_key,          QStringLiteral("The foreign key name <comment>(two values "
+                                              "allowed for btm)</comment>"),
+                               foreign_key_up},
 
         // Belongs-to-many related
-        {pivot_table,        QStringLiteral("The pivot table name"), pivot_table_up}, // Value
-        {pivot_,             QStringLiteral("The class name of the pivot class for the "
-                                            "belongs-to-many relationship"),
-                             pivot_up}, // Value
-        {pivot_inverse,      QStringLiteral("The class name of the pivot class for the "
-                                            "belongs-to-many inverse relationship"
-                                            "<comment>(multiple values allowed)"
-                                            "</comment>"),
-                             pivot_inverse_up}, // Value
-        {as_,                QStringLiteral("The name for the pivot relation"),
-                             as_up}, // Value
-        {with_pivot,         QStringLiteral("Extra attributes for the pivot model "
-                                            "<comment>(multiple values allowed)"
-                                            "</comment>"),
-                             with_pivot_up}, // Value
-        {with_timestamps,    QStringLiteral("Pivot table with timestamps")},
+        {pivot_table,          QStringLiteral("The pivot table name"), pivot_table_up}, // Value
+        {pivot_,               QStringLiteral("The class name of the pivot class for the "
+                                              "belongs-to-many relationship"),
+                               pivot_up}, // Value
+        {pivot_inverse,        QStringLiteral("The class name of the pivot class for the "
+                                              "belongs-to-many inverse relationship"
+                                              "<comment>(multiple values allowed)"
+                                              "</comment>"),
+                               pivot_inverse_up}, // Value
+        {as_,                  QStringLiteral("The name for the pivot relation"),
+                               as_up}, // Value
+        {with_pivot,           QStringLiteral("Extra attributes for the pivot model "
+                                              "<comment>(multiple values allowed)"
+                                              "</comment>"),
+                               with_pivot_up}, // Value
+        {with_timestamps,      QStringLiteral("Pivot table with timestamps")},
 
         // Model related attributes in the private section
-        {table_,             QStringLiteral("The table associated with the model"),
-                             table_up}, // Value
-        {connection_,        QStringLiteral("The connection name for the model"),
-                             connection_up}, // Value
-        {disable_timestamps, QStringLiteral("Disable timestamping of the model")},
-        {incrementing,       QStringLiteral("Indicates if the model's ID is "
-                                            "auto-incrementing.")},
-        {pivot_model,        QStringLiteral("Genarate a custom pivot model class")},
+        {table_,               QStringLiteral("The table associated with the model"),
+                               table_up}, // Value
+        {primary_key,          QStringLiteral("The primary key associated with the "
+                                              "table"), primary_key_up}, // Value
+        {incrementing,         QStringLiteral("Enable auto-incrementing for the model's "
+                                              "primary key")},
+        {disable_incrementing, QStringLiteral("Disable auto-incrementing for the model's "
+                                              "primary key")},
+        {connection_,          QStringLiteral("The connection name for the model"),
+                               connection_up}, // Value
+        {with_,                QStringLiteral("The relations to eager load on every "
+                                              "query <comment>(multiple values allowed)"
+                                              "</comment>"), with_up}, // Value
+        {fillable,             QStringLiteral("The attributes that are mass assignable "
+                                              "<comment>(multiple values allowed)"
+                                              "</comment>"), fillable_up}, // Value
+        {guarded,              QStringLiteral("The guarded attributes that aren't mass "
+                                              "assignable <comment>(multiple values "
+                                              "allowed) </comment>"), guarded_up}, // Value
+        {disable_timestamps,   QStringLiteral("Disable timestamping of the model")},
+        {dateformat,           QStringLiteral("The storage format of the model's date "
+                                              "columns"), dateformat_up}, // Value
+        {dates,                QStringLiteral("The attributes that should be mutated to "
+                                              "dates <comment>(multiple values allowed)"
+                                              "</comment>"), dates_up}, // Value
+        {touches,              QStringLiteral("All of the relationships to be touched "
+                                              "<comment>(multiple values allowed)"
+                                              "</comment>"), touches_up}, // Value
+        {pivot_model,          QStringLiteral("Genarate a custom pivot model class")},
 
         // Others
         {{"o",
-          preserve_order},   QStringLiteral("Preserve relations order defined on the "
-                                            "command-line")},
+          preserve_order},     QStringLiteral("Preserve relations order defined on the "
+                                              "command-line")},
 
         // Paths related
-        {path_,              QStringLiteral("The location where the model file should "
-                                            "be created"), path_up}, // Value
-        {realpath_,          QStringLiteral("Indicate that any provided model file "
-                                            "paths are pre-resolved absolute paths")},
-        {fullpath,           QStringLiteral("Output the full path of the created model")},
+        {path_,                QStringLiteral("The location where the model file should "
+                                              "be created"), path_up}, // Value
+        {realpath_,            QStringLiteral("Indicate that any provided model file "
+                                              "paths are pre-resolved absolute paths")},
+        {fullpath,             QStringLiteral("Output the full path of the created "
+                                              "model")},
     };
 }
 
@@ -160,7 +197,7 @@ R"(  The <info>belongs-to</info> option is inverse relation for the <info>one-to
 
   The <info>pivot-table</info>, <info>pivot</info>, <info>as</info>, <info>with-pivot</info>, and <info>with-timestamps</info> options can be given only after the <info>belongs-to-many</info> relationship.
 
-  The <info>table</info>, <info>connection</info>, and <info>disable-timestamps</info> options relate to the <blue>Model</blue> class itself, they have nothing to do with relationships and can be passed anywhere, best before relationship options:
+  The <info>table</info>, <info>primary-key</info>, <info>incrementing</info>, <info>disable-incrementing</info>, <info>connection</info>, <info>with</info>, <info>fillable</info>, <info>guarded</info>, <info>disable-timestamps</info>, <info>dateformat</info>, <info>dates</info>, and <info>touches</info> options relate to the <blue>Model</blue> class itself, they have nothing to do with relationships and can be passed anywhere, best before relationship options:
 
     <info>tom make:model User --table=users --connection=tinyorm_connection_name --one-to-many=Posts</info>
 
@@ -211,7 +248,8 @@ ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOption
     auto &&[
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _2, _3, pivotClasses, pivotInverseClasses, _4, _5, _6, _7, _8, _9, _10, _11
+            _2, _3, pivotClasses, pivotInverseClasses, _4, _5, _6, _7, _8, _9, _10, _11,
+            _12, _13, _14, _15, _16, _17, _18, _19
     ] = cmdOptions;
 
     // Validate the model class names
@@ -241,7 +279,7 @@ ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOption
 
 void ModelCommand::showUnusedOptionsWarnings(const CmdOptions &cmdOptions)
 {
-    if (isSet(pivot_model))
+    if (m_isSetPivotModel)
         showUnusedPivotModelOptionsWarnings();
     else
         showUnusedBtmOptionsWarnings(cmdOptions);
@@ -296,6 +334,7 @@ void ModelCommand::showUnusedPivotModelOptionsWarnings()
         one_to_one, one_to_many, belongs_to, belongs_to_many,
         foreign_key,
         pivot_table, pivot_, pivot_inverse, as_, with_pivot, with_timestamps,
+        with_,
         preserve_order
     };
 
@@ -336,8 +375,11 @@ void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOpt
 
 CmdOptions ModelCommand::createCmdOptions()
 {
+    // Cache it as it's used multiple times
+    m_isSetPivotModel = isSet(pivot_model);
+
     // Pivot models don't support relations
-    if (isSet(pivot_model))
+    if (m_isSetPivotModel)
         return {
             // Relationship methods
             {},
@@ -351,8 +393,11 @@ CmdOptions ModelCommand::createCmdOptions()
             {}, {}, {}, {}, {}, {},
 
             // Model related
-            value(connection_),  value(table_),     isSet(disable_timestamps),
-            isSet(incrementing), isSet(pivot_model)
+            value(table_),       value(primary_key),          value(connection_),
+            {},                  values(fillable),            values(guarded),
+            value(dateformat),   values(dates),               values(touches),
+            isSet(incrementing), isSet(disable_incrementing), isSet(disable_timestamps),
+            m_isSetPivotModel
         };
 
     return {
@@ -371,8 +416,11 @@ CmdOptions ModelCommand::createCmdOptions()
         btmBoolValues(with_timestamps),
 
         // Model related
-        value(connection_),  value(table_),     isSet(disable_timestamps),
-        isSet(incrementing), isSet(pivot_model)
+        value(table_),       value(primary_key),          value(connection_),
+        values(with_),       values(fillable),            values(guarded),
+        value(dateformat),   values(dates),               values(touches),
+        isSet(incrementing), isSet(disable_incrementing), isSet(disable_timestamps),
+        m_isSetPivotModel
     };
 }
 

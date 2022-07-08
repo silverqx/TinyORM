@@ -66,7 +66,14 @@ namespace Tom::Constants
     inline const QString path_up            = QStringLiteral("PATH");
     inline const QString create_up          = QStringLiteral("CREATE");
     inline const QString table_up           = QStringLiteral("TABLE");
+    inline const QString primary_key_up     = QStringLiteral("PRIMARYKEY");
     inline const QString connection_up      = QStringLiteral("CONNECTION");
+    inline const QString with_up            = QStringLiteral("WITH");
+    inline const QString fillable_up        = QStringLiteral("FILLABLE");
+    inline const QString guarded_up         = QStringLiteral("GUARDED");
+    inline const QString dateformat_up      = QStringLiteral("DATEFORMAT");
+    inline const QString dates_up           = QStringLiteral("DATES");
+    inline const QString touches_up         = QStringLiteral("TOUCHES");
     inline const QString one_to_one_up      = QStringLiteral("OTO");
     inline const QString one_to_many_up     = QStringLiteral("OTM");
     inline const QString belongs_to_up      = QStringLiteral("BT");
@@ -95,26 +102,34 @@ namespace Tom::Constants
     inline const QString realpath_          = QStringLiteral("realpath");
     inline const QString fullpath           = QStringLiteral("fullpath");
     // make:model
-    inline const QString one_to_one         = QStringLiteral("one-to-one");
-    inline const QString one_to_many        = QStringLiteral("one-to-many");
-    inline const QString belongs_to         = QStringLiteral("belongs-to");
-    inline const QString belongs_to_many    = QStringLiteral("belongs-to-many");
-    inline const QString foreign_key        = QStringLiteral("foreign-key");
-    inline const QString pivot_table        = QStringLiteral("pivot-table");
-    inline const QString connection_        = QStringLiteral("connection");
-    inline const QString disable_timestamps = QStringLiteral("disable-timestamps");
-    inline const QString pivot_model        = QStringLiteral("pivot-model");
-    inline const QString incrementing       = QStringLiteral("incrementing");
-    inline const QString pivot_             = QStringLiteral("pivot");
-    inline const QString pivot_inverse      = QStringLiteral("pivot-inverse");
-    inline const QString as_                = QStringLiteral("as");
-    inline const QString with_timestamps    = QStringLiteral("with-timestamps");
-    inline const QString with_pivot         = QStringLiteral("with-pivot");
-    inline const QString preserve_order     = QStringLiteral("preserve-order");
+    inline const QString one_to_one           = QStringLiteral("one-to-one");
+    inline const QString one_to_many          = QStringLiteral("one-to-many");
+    inline const QString belongs_to           = QStringLiteral("belongs-to");
+    inline const QString belongs_to_many      = QStringLiteral("belongs-to-many");
+    inline const QString foreign_key          = QStringLiteral("foreign-key");
+    inline const QString pivot_table          = QStringLiteral("pivot-table");
+    inline const QString primary_key          = QStringLiteral("primary-key");
+    inline const QString incrementing         = QStringLiteral("incrementing");
+    inline const QString disable_incrementing = QStringLiteral("disable-incrementing");
+    inline const QString connection_          = QStringLiteral("connection");
+    inline const QString with_                = QStringLiteral("with");
+    inline const QString fillable             = QStringLiteral("fillable");
+    inline const QString guarded              = QStringLiteral("guarded");
+    inline const QString disable_timestamps   = QStringLiteral("disable-timestamps");
+    inline const QString dateformat           = QStringLiteral("dateformat");
+    inline const QString dates                = QStringLiteral("dates");
+    inline const QString touches              = QStringLiteral("touches");
+    inline const QString pivot_model          = QStringLiteral("pivot-model");
+    inline const QString pivot_               = QStringLiteral("pivot");
+    inline const QString pivot_inverse        = QStringLiteral("pivot-inverse");
+    inline const QString as_                  = QStringLiteral("as");
+    inline const QString with_timestamps      = QStringLiteral("with-timestamps");
+    inline const QString with_pivot           = QStringLiteral("with-pivot");
+    inline const QString preserve_order       = QStringLiteral("preserve-order");
     // migrate:refresh
-    inline const QString step_migrate       = QStringLiteral("step-migrate");
+    inline const QString step_migrate         = QStringLiteral("step-migrate");
     // integrate
-    inline const QString stdout_            = QStringLiteral("stdout");
+    inline const QString stdout_              = QStringLiteral("stdout");
 
     // Namespace names
     inline const QString NsGlobal     = QStringLiteral("global");

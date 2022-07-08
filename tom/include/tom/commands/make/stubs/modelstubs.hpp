@@ -162,13 +162,43 @@ R"(        {"{{ relationName }}", {{ spaceAlign }}[](auto &v) { v(&{{ parentClas
 inline const auto *const ModelTableStub =
 R"(
     /*! The table associated with the model. */
-    QString u_table {"{{ table }}"};)";
+    QString u_table {"%1"};)";
+
+/*! Model the primary key stub. */
+inline const auto *const ModelPrimaryKeyStub =
+R"(
+    /*! The primary key associated with the table. */
+    QString u_primaryKey {"%1"};)";
+
+/*! Model enable auto-incrementing stub. */
+inline const auto *const ModelIncrementingStub =
+R"(
+    /*! Indicates if the ID is auto-incrementing. */
+    bool u_incrementing = %1;)";
 
 /*! Model connection stub. */
 inline const auto *const ModelConnectionStub =
 R"(
     /*! The connection name for the model. */
-    QString u_connection {"{{ connection }}"};)";
+    QString u_connection {"%1"};)";
+
+/*! Model eager load 'with' stub. */
+inline const auto *const ModelWithStub =
+R"(
+    /*! The relations to eager load on every query. */
+    QVector<QString> u_with {%1};)";
+
+/*! Model fillable stub. */
+inline const auto *const ModelFillableStub =
+R"(
+    /*! The attributes that are mass assignable. */
+    inline static const QStringList u_fillable {%1};)";
+
+/*! Model guarded stub. */
+inline const auto *const ModelGuardedStub =
+R"(
+    /*! The attributes that aren't mass assignable. */
+    inline static QStringList u_guarded {%1};)";
 
 /*! Model disable timestamps stub. */
 inline const auto *const ModelDisableTimestampsStub =
@@ -176,11 +206,23 @@ R"(
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;)";
 
-/*! Model enable incrementing stub. */
-inline const auto *const ModelIncrementingStub =
+/*! Model dateformat stub. */
+inline const auto *const ModelDateFormatStub =
 R"(
-    /*! Indicates if the ID is auto-incrementing. */
-    bool u_incrementing = true;)";
+    /*! The storage format of the model's date columns. */
+    inline static QString u_dateFormat {"%1"};)";
+
+/*! Model dates stub. */
+inline const auto *const ModelDatesStub =
+R"(
+    /*! The attributes that should be mutated to dates. */
+    inline static QStringList u_dates {%1};)";
+
+/*! Model touches stub. */
+inline const auto *const ModelTouchesStub =
+R"(
+    /*! All of the relationships to be touched. */
+    QStringList u_touches {%1};)";
 
 } // namespace Tom::Commands::Make::Stubs
 

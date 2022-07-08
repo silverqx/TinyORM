@@ -55,7 +55,14 @@ namespace Tom::Constants
     const QString path_up            = QStringLiteral("PATH");
     const QString create_up          = QStringLiteral("CREATE");
     const QString table_up           = QStringLiteral("TABLE");
+    const QString primary_key_up     = QStringLiteral("PRIMARYKEY");
     const QString connection_up      = QStringLiteral("CONNECTION");
+    const QString with_up            = QStringLiteral("WITH");
+    const QString fillable_up        = QStringLiteral("FILLABLE");
+    const QString guarded_up         = QStringLiteral("GUARDED");
+    const QString dateformat_up      = QStringLiteral("DATEFORMAT");
+    const QString dates_up           = QStringLiteral("DATES");
+    const QString touches_up         = QStringLiteral("TOUCHES");
     const QString one_to_one_up      = QStringLiteral("OTO");
     const QString one_to_many_up     = QStringLiteral("OTM");
     const QString belongs_to_up      = QStringLiteral("BT");
@@ -84,26 +91,34 @@ namespace Tom::Constants
     const QString realpath_          = QStringLiteral("realpath");
     const QString fullpath           = QStringLiteral("fullpath");
     // make:model
-    const QString one_to_one         = QStringLiteral("one-to-one");
-    const QString one_to_many        = QStringLiteral("one-to-many");
-    const QString belongs_to         = QStringLiteral("belongs-to");
-    const QString belongs_to_many    = QStringLiteral("belongs-to-many");
-    const QString foreign_key        = QStringLiteral("foreign-key");
-    const QString pivot_table        = QStringLiteral("pivot-table");
-    const QString connection_        = QStringLiteral("connection");
-    const QString pivot_model        = QStringLiteral("pivot-model");
-    const QString incrementing       = QStringLiteral("incrementing");
-    const QString disable_timestamps = QStringLiteral("disable-timestamps");
-    const QString pivot_             = QStringLiteral("pivot");
-    const QString pivot_inverse      = QStringLiteral("pivot-inverse");
-    const QString as_                = QStringLiteral("as");
-    const QString with_timestamps    = QStringLiteral("with-timestamps");
-    const QString with_pivot         = QStringLiteral("with-pivot");
-    const QString preserve_order     = QStringLiteral("preserve-order");
+    const QString one_to_one           = QStringLiteral("one-to-one");
+    const QString one_to_many          = QStringLiteral("one-to-many");
+    const QString belongs_to           = QStringLiteral("belongs-to");
+    const QString belongs_to_many      = QStringLiteral("belongs-to-many");
+    const QString foreign_key          = QStringLiteral("foreign-key");
+    const QString pivot_table          = QStringLiteral("pivot-table");
+    const QString primary_key          = QStringLiteral("primary-key");
+    const QString incrementing         = QStringLiteral("incrementing");
+    const QString disable_incrementing = QStringLiteral("disable-incrementing");
+    const QString connection_          = QStringLiteral("connection");
+    const QString with_                = QStringLiteral("with");
+    const QString fillable             = QStringLiteral("fillable");
+    const QString guarded              = QStringLiteral("guarded");
+    const QString disable_timestamps   = QStringLiteral("disable-timestamps");
+    const QString dateformat           = QStringLiteral("dateformat");
+    const QString dates                = QStringLiteral("dates");
+    const QString touches              = QStringLiteral("touches");
+    const QString pivot_model          = QStringLiteral("pivot-model");
+    const QString pivot_               = QStringLiteral("pivot");
+    const QString pivot_inverse        = QStringLiteral("pivot-inverse");
+    const QString as_                  = QStringLiteral("as");
+    const QString with_timestamps      = QStringLiteral("with-timestamps");
+    const QString with_pivot           = QStringLiteral("with-pivot");
+    const QString preserve_order       = QStringLiteral("preserve-order");
     // migrate:refresh
-    const QString step_migrate       = QStringLiteral("step-migrate");
+    const QString step_migrate         = QStringLiteral("step-migrate");
     // integrate
-    const QString stdout_            = QStringLiteral("stdout");
+    const QString stdout_              = QStringLiteral("stdout");
 
     // Namespace names
     const QString NsGlobal     = QStringLiteral("global");

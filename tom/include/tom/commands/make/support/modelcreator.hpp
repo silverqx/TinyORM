@@ -122,6 +122,11 @@ namespace Tom::Commands::Make::Support
                     const QString &className, const CmdOptions &cmdOptions,
                     bool hasPublicSection, bool isSetPreserveOrder);
 
+        /*! Determine whether any model related option was given on the command-line. */
+        static bool anyModelOptionGiven(const CmdOptions &cmdOptions);
+        /*! Prepare string values for the initializer list. */
+        static QString prepareInitializerListValues(const QStringList &list);
+
         /*! Create model's u_relations hash. */
         QString createRelationsHash(
                     const QString &className, const CmdOptions &cmdOptions,

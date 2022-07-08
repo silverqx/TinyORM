@@ -106,6 +106,8 @@ namespace Support
         std::set<QString> m_unusedBtmOptions {};
         /*! Unused options if generating a pivot model, will be shown in the warning. */
         std::set<QString> m_unusedPivotModelOptions {};
+        /*! Was --pivot-model option given on the command-line? */
+        bool m_isSetPivotModel = false;
 
     private:
         /*! Throw if the model name constains a namespace or path. */

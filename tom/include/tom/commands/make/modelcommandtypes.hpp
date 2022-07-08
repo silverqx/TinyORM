@@ -80,14 +80,30 @@ namespace Tom::Commands::Make
         /*! Pivot table with timestamps. */
         std::vector<bool> withTimestampsList;
         /* Model related */
-        /*! The connection name for the model. */
-        QString connection;
         /*! The table associated with the model. */
         QString table;
+        /*! The primary key associated with the table. */
+        QString primaryKey;
+        /*! The connection name for the model. */
+        QString connection;
+        /*! The relations to eager load on every query. */
+        QStringList with;
+        /*! The attributes that are mass assignable. */
+        QStringList fillable;
+        /*! The guarded attributes that aren't mass assignable. */
+        QStringList guarded;
+        /*! The storage format of the model's date columns. */
+        QString dateFormat;
+        /*! The attributes that should be mutated to dates. */
+        QStringList dates;
+        /*! All of the relationships to be touched. */
+        QStringList touches;
+        /*! Enable auto-incrementing for the model's primary key. */
+        bool incrementing;
+        /*! Disable auto-incrementing for the model's primary key. */
+        bool disableIncrementing;
         /*! Disable timestamping of the model. */
         bool disableTimestamps;
-        /*! Enable incrmenteing of model's primary key. */
-        bool incrementing;
         /*! Genarate a custom pivot model class. */
         bool pivotModel;
     };

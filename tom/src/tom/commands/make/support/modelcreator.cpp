@@ -37,18 +37,25 @@ using Tom::Commands::Make::Stubs::BelongsToManyStub;
 using Tom::Commands::Make::Stubs::BelongsToManyStub2;
 using Tom::Commands::Make::Stubs::BelongsToStub;
 using Tom::Commands::Make::Stubs::ModelConnectionStub;
+using Tom::Commands::Make::Stubs::ModelDateFormatStub;
+using Tom::Commands::Make::Stubs::ModelDatesStub;
 using Tom::Commands::Make::Stubs::ModelDisableTimestampsStub;
+using Tom::Commands::Make::Stubs::ModelFillableStub;
 using Tom::Commands::Make::Stubs::ModelForwardItemStub;
+using Tom::Commands::Make::Stubs::ModelGuardedStub;
 using Tom::Commands::Make::Stubs::ModelIncludeItemStub;
 using Tom::Commands::Make::Stubs::ModelIncludeOrmItemStub;
 using Tom::Commands::Make::Stubs::ModelIncrementingStub;
+using Tom::Commands::Make::Stubs::ModelPrimaryKeyStub;
 using Tom::Commands::Make::Stubs::ModelPrivateStub;
 using Tom::Commands::Make::Stubs::ModelPublicStub;
 using Tom::Commands::Make::Stubs::ModelRelationItemStub;
 using Tom::Commands::Make::Stubs::ModelRelationsStub;
 using Tom::Commands::Make::Stubs::ModelStub;
 using Tom::Commands::Make::Stubs::ModelTableStub;
+using Tom::Commands::Make::Stubs::ModelTouchesStub;
 using Tom::Commands::Make::Stubs::ModelUsingItemStub;
+using Tom::Commands::Make::Stubs::ModelWithStub;
 using Tom::Commands::Make::Stubs::OneToOneStub;
 using Tom::Commands::Make::Stubs::OneToManyStub;
 using Tom::Commands::Make::Stubs::PivotModelStub;
@@ -156,7 +163,7 @@ QString ModelCreator::createPublicSection(
             oneToOneList, oneToManyList,  belongsToList,    belongsToManyList,
             foreignKeys,  pivotTables,    pivotClasses,     pivotInverseClasses,
             asList,       withPivotList,  withTimestampsList,
-            _1, _2, _3, _4, _5
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13
     ] = cmdOptions;
 
     const auto &[
@@ -626,7 +633,10 @@ QString ModelCreator::createPrivateSection(
 {
     const auto &[
             _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12,
-            connection, table, disableTimestamps, incrementing, _13
+            table,        primaryKey, connection,
+            with,         fillable,   guarded,
+            dateFormat,   dates,      touches,
+            incrementing, disableIncrementing, disableTimestamps, _13
     ] = cmdOptions;
 
     QString privateSection;
@@ -634,26 +644,47 @@ QString ModelCreator::createPrivateSection(
     privateSection += createRelationsHash(className, cmdOptions, isSetPreserveOrder);
 
     // Append a newline after the relations hash
-    if (!privateSection.isEmpty() &&
-        (!table.isEmpty() || !connection.isEmpty() || incrementing || disableTimestamps)
-    )
+    if (!privateSection.isEmpty() && anyModelOptionGiven(cmdOptions))
         privateSection.append(NEWLINE);
 
     if (!table.isEmpty())
-        privateSection += QString(ModelTableStub)
-                          .replace(QStringLiteral("{{ table }}"), table)
-                          .replace(QStringLiteral("{{table}}"),   table);
+        privateSection += QString(ModelTableStub).arg(table);
+
+    if (!primaryKey.isEmpty())
+        privateSection += QString(ModelPrimaryKeyStub).arg(primaryKey);
 
     if (incrementing)
-        privateSection += ModelIncrementingStub;
+        privateSection += QString(ModelIncrementingStub).arg(QStringLiteral("true"));
+    else if (disableIncrementing)
+        privateSection += QString(ModelIncrementingStub).arg(QStringLiteral("false"));
 
     if (!connection.isEmpty())
-        privateSection += QString(ModelConnectionStub)
-                          .replace(QStringLiteral("{{ connection }}"), connection)
-                          .replace(QStringLiteral("{{connection}}"),   connection);
+        privateSection += QString(ModelConnectionStub).arg(connection);
+
+    if (!with.isEmpty())
+        privateSection += QString(ModelWithStub).arg(prepareInitializerListValues(with));
+
+    if (!fillable.isEmpty())
+        privateSection += QString(ModelFillableStub)
+                          .arg(prepareInitializerListValues(fillable));
+
+    if (!guarded.isEmpty())
+        privateSection += QString(ModelGuardedStub)
+                          .arg(prepareInitializerListValues(guarded));
 
     if (disableTimestamps)
         privateSection += ModelDisableTimestampsStub;
+
+    if (!dateFormat.isEmpty())
+        privateSection += QString(ModelDateFormatStub).arg(dateFormat);
+
+    if (!dates.isEmpty())
+        privateSection += QString(ModelDatesStub)
+                          .arg(prepareInitializerListValues(dates));
+
+    if (!touches.isEmpty())
+        privateSection += QString(ModelTouchesStub)
+                          .arg(prepareInitializerListValues(touches));
 
     if (!privateSection.isEmpty()) {
         // Prepend the private: specifier if the public section exists
@@ -666,6 +697,56 @@ QString ModelCreator::createPrivateSection(
     return privateSection;
 }
 
+bool ModelCreator::anyModelOptionGiven(const CmdOptions &cmdOptions)
+{
+    const auto &[
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12,
+            table,        primaryKey, connection,
+            with,         fillable,   guarded,
+            dateFormat,   dates,      touches,
+            incrementing, disableIncrementing, disableTimestamps, _13
+    ] = cmdOptions;
+
+    return !table.isEmpty()       || !primaryKey.isEmpty() || !connection.isEmpty() ||
+           !with.isEmpty()        || !fillable.isEmpty()   || !guarded.isEmpty()    ||
+           !dateFormat.isEmpty()  || !dates.isEmpty()      || !touches.isEmpty()    ||
+           incrementing           || disableIncrementing   || disableTimestamps;
+}
+
+QString ModelCreator::prepareInitializerListValues(const QStringList &list)
+{
+    /*! Wrap values in quotes and add the given prefix. */
+    const auto wrapValues = [](const auto &values, const QString &prefix)
+    {
+        return values
+                | ranges::views::transform([&prefix](const auto &value)
+        {
+            return QStringLiteral("%2\"%1\"").arg(value, prefix);
+        })
+                | ranges::to<QVector<QString>>();
+    };
+
+    const auto listSize = list.size();
+
+    /* All values will be wrapped in the quotes.
+       List with one value will be simply {"xx"}.
+       List with two values will be on a new line and values will be separated by the ,.
+       If a list has >2 values then every value will be on a new line. */
+
+    auto listJoined = wrapValues(list, listSize > 2 ? QString(8, SPACE) : EMPTY)
+                      .join(listSize > 2 ? QStringLiteral(",\n") : COMMA);
+
+    if (listSize > 2)
+        listJoined.prepend(NEWLINE);
+    else if (listSize > 1)
+        listJoined.prepend(NOSPACE.arg(NEWLINE, QString(8, SPACE)));
+
+    if (listSize > 1)
+        listJoined.append(NOSPACE.arg(NEWLINE, QString(4, SPACE)));
+
+    return listJoined;
+}
+
 QString ModelCreator::createRelationsHash(
             const QString &className, const CmdOptions &cmdOptions,
             const bool isSetPreserveOrder) const
@@ -673,7 +754,8 @@ QString ModelCreator::createRelationsHash(
     const auto &[
             relationsOrder,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17,
+            _18, _19, _20
     ] = cmdOptions;
 
     // Nothing to create, no relations passed
@@ -723,16 +805,18 @@ QString::size_type ModelCreator::getRelationNamesMaxSize(const CmdOptions &cmdOp
     const auto &[
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13
+            _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18,
+            _19, _20, _21
     ] = cmdOptions;
 
     // Get max. size of relation names for align
     // +1 because the s character is appended for the many type relations
     const std::vector relationSizes {
-        std::ranges::max_element(oneToOneList)->size(),
-        std::ranges::max_element(oneToManyList)->size() + 1,
-        std::ranges::max_element(belongsToList)->size(),
-        std::ranges::max_element(belongsToManyList)->size() + 1,
+        oneToOneList.empty() ? 0 : std::ranges::max_element(oneToOneList)->size(),
+        oneToManyList.empty() ? 0 : std::ranges::max_element(oneToManyList)->size() + 1,
+        belongsToList.empty() ? 0 : std::ranges::max_element(belongsToList)->size(),
+        belongsToManyList.empty() ? 0 : std::ranges::max_element(
+                                            belongsToManyList)->size() + 1,
     };
 
     return static_cast<QString::size_type>(*std::ranges::max_element(relationSizes));
