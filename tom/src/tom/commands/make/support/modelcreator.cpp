@@ -51,6 +51,7 @@ using Tom::Commands::Make::Stubs::ModelTableStub;
 using Tom::Commands::Make::Stubs::ModelUsingItemStub;
 using Tom::Commands::Make::Stubs::OneToOneStub;
 using Tom::Commands::Make::Stubs::OneToManyStub;
+using Tom::Commands::Make::Stubs::PivotModelStub;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -104,15 +105,15 @@ std::string ModelCreator::populateStub(
 
     const auto macroGuard = className.toUpper();
 
-    const auto includesOrmSection = createIncludesOrmSection();
+    const auto includesOrmSection = createIncludesOrmSection(cmdOptions);
     const auto includesSection    = createIncludesSection();
-    const auto usingsSection      = createUsingsSection();
+    const auto usingsSection      = createUsingsSection(cmdOptions);
     const auto relationsList      = createRelationsList();
     // I want to have all pivots after the related classes because of that this set exists
     const auto pivotsList         = createPivotsList();
     const auto forwardsSection    = createForwardsSection();
 
-    return QString(ModelStub)
+    return QString(cmdOptions.pivotModel ? PivotModelStub : ModelStub)
             .replace(QStringLiteral("DummyClass"),  className)
             .replace(QStringLiteral("{{ class }}"), className)
             .replace(QStringLiteral("{{class}}"),   className)
@@ -155,7 +156,7 @@ QString ModelCreator::createPublicSection(
             oneToOneList, oneToManyList,  belongsToList,    belongsToManyList,
             foreignKeys,  pivotTables,    pivotClasses,     pivotInverseClasses,
             asList,       withPivotList,  withTimestampsList,
-            _1, _2, _3, _4
+            _1, _2, _3, _4, _5
     ] = cmdOptions;
 
     const auto &[
@@ -166,10 +167,15 @@ QString ModelCreator::createPublicSection(
             oneToOneOrder, oneToManyOrder, belongsToOrder, belongsToManyOrder
     ] = relationsOrder;
 
+    computeReserveForRelationsList(oneToOneList, oneToManyList, belongsToList,
+                                   belongsToManyList);
+
+    // Nothing to do, no relations passed
+    if (m_relationsListSize == 0)
+        return {};
+
     RelationsWithOrder publicSectionList;
-    publicSectionList.reserve(
-                computeReserveForRelationsList(
-                        oneToOneList, oneToManyList, belongsToList, belongsToManyList));
+    publicSectionList.reserve(m_relationsListSize);
 
     publicSectionList |= ranges::actions::push_back(
                              createOneToOneRelation(className, oneToOneList,
@@ -620,7 +626,7 @@ QString ModelCreator::createPrivateSection(
 {
     const auto &[
             _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12,
-            connection, table, disableTimestamps, incrementing
+            connection, table, disableTimestamps, incrementing, _13
     ] = cmdOptions;
 
     QString privateSection;
@@ -667,13 +673,11 @@ QString ModelCreator::createRelationsHash(
     const auto &[
             relationsOrder,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12
     ] = cmdOptions;
 
-    // Nothing to create
-    if (oneToOneList.isEmpty() || oneToManyList.isEmpty() || belongsToList.isEmpty() ||
-        belongsToManyList.isEmpty()
-    )
+    // Nothing to create, no relations passed
+    if (m_relationsListSize == 0)
         return {};
 
     // Get max. size of relation names for align
@@ -719,7 +723,7 @@ QString::size_type ModelCreator::getRelationNamesMaxSize(const CmdOptions &cmdOp
     const auto &[
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12
+            _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13
     ] = cmdOptions;
 
     // Get max. size of relation names for align
@@ -888,11 +892,13 @@ ModelCreator::createBelongsToManyRelationItem(
 
 /* Global */
 
-QString ModelCreator::createIncludesOrmSection()
+QString ModelCreator::createIncludesOrmSection(const CmdOptions &cmdOptions)
 {
     // Will always contain
     m_includesOrmList.emplace(QString(ModelIncludeOrmItemStub)
-                              .arg(QStringLiteral("tiny/model.hpp")));
+                              .arg(cmdOptions.pivotModel
+                                   ? QStringLiteral("tiny/relations/basepivot.hpp")
+                                   : QStringLiteral("tiny/model.hpp")));
 
     return ContainerUtils::join(m_includesOrmList, NEWLINE);
 }
@@ -906,10 +912,12 @@ QString ModelCreator::createIncludesSection() const
     return NOSPACE.arg("\n\n", ContainerUtils::join(m_includesList, NEWLINE));
 }
 
-QString ModelCreator::createUsingsSection()
+QString ModelCreator::createUsingsSection(const CmdOptions &cmdOptions)
 {
     // Will always contain
-    m_usingsList.emplace(QStringLiteral("using Orm::Tiny::Model;"));
+    m_usingsList.emplace(cmdOptions.pivotModel
+                         ? QStringLiteral("using Orm::Tiny::Relations::BasePivot;")
+                         : QStringLiteral("using Orm::Tiny::Model;"));
 
     return ContainerUtils::join(m_usingsList, NEWLINE);
 }
@@ -953,8 +961,6 @@ std::size_t ModelCreator::computeReserveForRelationsList(
                           static_cast<std::size_t>(oneToMany.size()) +
                           static_cast<std::size_t>(belongsTo.size()) +
                           static_cast<std::size_t>(belongsToMany.size());
-
-    Q_ASSERT(m_relationsListSize > 0);
 
     return m_relationsListSize;
 }

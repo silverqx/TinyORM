@@ -43,6 +43,7 @@ using Tom::Constants::path_up;
 using Tom::Constants::pivot_;
 using Tom::Constants::pivot_inverse;
 using Tom::Constants::pivot_inverse_up;
+using Tom::Constants::pivot_model;
 using Tom::Constants::pivot_table;
 using Tom::Constants::pivot_table_up;
 using Tom::Constants::pivot_up;
@@ -122,6 +123,7 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
         {disable_timestamps, QStringLiteral("Disable timestamping of the model")},
         {incrementing,       QStringLiteral("Indicates if the model's ID is "
                                             "auto-incrementing.")},
+        {pivot_model,        QStringLiteral("Genarate a custom pivot model class")},
 
         // Others
         {{"o",
@@ -175,7 +177,9 @@ int ModelCommand::run()
 
     showUnusedOptionsWarnings(cmdOptions);
 
-    if (!m_unusedBtmOptions.empty() || m_shownUnusedForeignKey)
+    if (!m_unusedBtmOptions.empty() || m_shownUnusedForeignKey ||
+        !m_unusedPivotModelOptions.empty()
+    )
         newLine();
 
     // Ready to write the model to the disk 🧨✨
@@ -207,7 +211,7 @@ ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOption
     auto &&[
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
-            _2, _3, pivotClasses, pivotInverseClasses, _4, _5, _6, _7, _8, _9, _10
+            _2, _3, pivotClasses, pivotInverseClasses, _4, _5, _6, _7, _8, _9, _10, _11
     ] = cmdOptions;
 
     // Validate the model class names
@@ -236,6 +240,14 @@ ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOption
 }
 
 void ModelCommand::showUnusedOptionsWarnings(const CmdOptions &cmdOptions)
+{
+    if (isSet(pivot_model))
+        showUnusedPivotModelOptionsWarnings();
+    else
+        showUnusedBtmOptionsWarnings(cmdOptions);
+}
+
+void ModelCommand::showUnusedBtmOptionsWarnings(const CmdOptions &cmdOptions)
 {
     findUnusedBtmOptions(cmdOptions);
 
@@ -278,6 +290,36 @@ void ModelCommand::findUnusedBtmOptions(const CmdOptions &cmdOptions)
         m_unusedBtmOptions.emplace(QStringLiteral("--with-timestamps"));
 }
 
+void ModelCommand::showUnusedPivotModelOptionsWarnings()
+{
+    static const std::unordered_set unsupportedOptions {
+        one_to_one, one_to_many, belongs_to, belongs_to_many,
+        foreign_key,
+        pivot_table, pivot_, pivot_inverse, as_, with_pivot, with_timestamps,
+        preserve_order
+    };
+
+    // Find unused options
+    for (auto &&option : parser().optionNames())
+        if (unsupportedOptions.contains(option))
+            m_unusedPivotModelOptions.insert(option);
+
+    // Nothing to show
+    if (m_unusedPivotModelOptions.empty())
+        return;
+
+    // Warning message templates
+    static const auto singular = QStringLiteral(
+                                     "Unused option %1; it's not supported along with "
+                                     "the --pivot-model option.");
+    static const auto plural =   QStringLiteral(
+                                     "Unused options %1; they are not supported along "
+                                     "with the --pivot-model option.");
+
+    comment((m_unusedPivotModelOptions.size() == 1 ? singular : plural)
+            .arg(ContainerUtils::join(m_unusedPivotModelOptions)));
+}
+
 void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions)
 {
     auto modelFilePath = m_creator.create(className, cmdOptions, getModelPath(),
@@ -294,6 +336,25 @@ void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOpt
 
 CmdOptions ModelCommand::createCmdOptions()
 {
+    // Pivot models don't support relations
+    if (isSet(pivot_model))
+        return {
+            // Relationship methods
+            {},
+
+            {}, {}, {}, {},
+
+            // Common for all relationship methods
+            {},
+
+            // Belongs-to-many related
+            {}, {}, {}, {}, {}, {},
+
+            // Model related
+            value(connection_),  value(table_),     isSet(disable_timestamps),
+            isSet(incrementing), isSet(pivot_model)
+        };
+
     return {
         // Relationship methods
         relationsOrder(),
@@ -310,8 +371,8 @@ CmdOptions ModelCommand::createCmdOptions()
         btmBoolValues(with_timestamps),
 
         // Model related
-        value(connection_),  value(table_), isSet(disable_timestamps),
-        isSet(incrementing),
+        value(connection_),  value(table_),     isSet(disable_timestamps),
+        isSet(incrementing), isSet(pivot_model)
     };
 }
 

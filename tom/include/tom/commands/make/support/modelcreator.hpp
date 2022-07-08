@@ -152,11 +152,11 @@ namespace Tom::Commands::Make::Support
 
         /* Global */
         /*! Create model's TinyORM includes section. */
-        QString createIncludesOrmSection();
+        QString createIncludesOrmSection(const CmdOptions &cmdOptions);
         /*! Create model's includes section. */
         QString createIncludesSection() const;
         /*! Create model's usings section. */
-        QString createUsingsSection();
+        QString createUsingsSection(const CmdOptions &cmdOptions);
         /*! Create model's relations list for the Model base class. */
         QString createRelationsList() const;
         /*! Create model's pivots list for the Model base class. */

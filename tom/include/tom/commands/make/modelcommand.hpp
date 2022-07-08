@@ -76,8 +76,12 @@ namespace Support
 
         /*! Show unused options warning. */
         void showUnusedOptionsWarnings(const CmdOptions &cmdOptions);
+        /*! Show unused btm options warning. */
+        void showUnusedBtmOptionsWarnings(const CmdOptions &cmdOptions);
         /*! Find unused btm options if any --belongs-to-many= option is defined. */
         void findUnusedBtmOptions(const CmdOptions &cmdOptions);
+        /*! Show unused options warning if generating a pivot model. */
+        void showUnusedPivotModelOptionsWarnings();
 
         /*! Write the model file to the disk. */
         void writeModel(const QString &className, const CmdOptions &cmdOptions);
@@ -100,6 +104,8 @@ namespace Support
         bool m_shownUnusedForeignKey = false;
         /*! Unused btm options, will be shown in the warning. */
         std::set<QString> m_unusedBtmOptions {};
+        /*! Unused options if generating a pivot model, will be shown in the warning. */
+        std::set<QString> m_unusedPivotModelOptions {};
 
     private:
         /*! Throw if the model name constains a namespace or path. */

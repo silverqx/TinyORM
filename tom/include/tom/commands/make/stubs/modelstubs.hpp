@@ -37,6 +37,32 @@ class {{ class }} final : public Model<{{ class }}{{ relationsList }}{{ pivotsLi
 #endif // MODELS_{{ macroguard }}_HPP
 )TTT";
 
+/*! Custom pivot model stub. */
+inline const auto *const PivotModelStub =
+R"TTT(#pragma once
+#ifndef MODELS_{{ macroguard }}_HPP
+#define MODELS_{{ macroguard }}_HPP
+
+{{ includesOrmSection }}{{ includesSection }}
+
+namespace Models
+{
+
+{{ usingsSection }}
+{{ forwardsSection }}
+class {{ class }} final : public BasePivot<{{ class }}{{ relationsList }}{{ pivotsList }}>
+{
+    friend Model;
+    friend BasePivot;
+
+    using BasePivot::BasePivot;{{ publicSection }}{{ privateSection }}
+};
+
+} // namespace Models
+
+#endif // MODELS_{{ macroguard }}_HPP
+)TTT";
+
 /*! TinyORM include item stub. */
 inline const auto *const ModelIncludeOrmItemStub =
 R"(#include <orm/%1>")";

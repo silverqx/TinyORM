@@ -88,6 +88,8 @@ namespace Tom::Commands::Make
         bool disableTimestamps;
         /*! Enable incrmenteing of model's primary key. */
         bool incrementing;
+        /*! Genarate a custom pivot model class. */
+        bool pivotModel;
     };
 
 } // namespace Tom::Commands::Make
