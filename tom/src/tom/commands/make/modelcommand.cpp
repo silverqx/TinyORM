@@ -202,6 +202,8 @@ R"(  The <info>belongs-to</info> option is inverse relation for the <info>one-to
     <info>tom make:model User --table=users --connection=tinyorm_connection_name --one-to-many=Posts</info>
 
  The order of the generated relation methods will be <info>one-to-one</info>, <info>one-to-many</info>, <info>belongs-to</info>, and <info>belongs-to-many</info> until you pass the <info>preserve-order</info> option then the order will be preserved.
+
+  The <info>pivot-inverse</info> option adds the pivot type to the Model's <gray>AllRelations</gray> template parameter pack but beware this template parameter is needed by the inverse belongs-to-many relation! It has nothing to do with relationships in the currently generated model. Closer explanation in the documentation. https://bit.ly/3PjlN2R
 )");
 }
 
