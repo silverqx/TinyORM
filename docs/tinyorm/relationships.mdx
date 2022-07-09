@@ -46,6 +46,10 @@ TinyORM relationships are defined as methods on your TinyORM model classes. Sinc
 
 But, before diving too deep into using relationships, let's learn how to define each type of relationship supported by TinyORM.
 
+:::tip
+If you want to see a model in which are used all possible TinyORM features you can look at the [`torrent.hpp`](https://github.com/silverqx/TinyORM/blob/main/tests/models/models/torrent.hpp) in the TinyORM's tests, this `Models::Torrent` class serves also as a showcase, so all possible features are defined in it.
+:::
+
 ### Common Rules
 
 Before you start defining relationship methods, you have to declare a model class, let's examine following model class with a "one" type relation:
@@ -695,6 +699,18 @@ Once the custom pivot model `RoleUser` has been defined, `getRelation` or `getRe
         for (auto *role : user.getRelation<Role>("roles"))
             qDebug() << role->getRelation<RoleUser, Orm::One>("pivot")
                             ->getAttribute("created_at");
+
+##### Closer Look To Defining Custom Intermediate Table Models
+
+I can tell that defining a custom intermediate table models is the most confusing part of the TinyORM framework, let's look closer at it.
+
+If you are defining a custom `RoleUser` intermediate table for the `Role` model like in the example above then you have to pass the `RoleUser` pivot type as the second template argument to the `User::roles()` `belongsToMany` relationship method and you have to pass the `RoleUser` pivot type to the `AllRelations` template parameter pack __on the `Role` model!__
+
+Do you see the confusing part? In short, if defining the `User::roles()` relation with the custom `UserRole` pivot model then add the `UserRole` type to the `AllRelations` template parameter pack on the `Role` model.
+
+The same is true for the basic `Pivot` model, if you are using a basic pivot model and not a custom pivot model you still need to add the `Pivot` type to the `AllRelations` template parameter pack on the `Model` class!
+
+The reason for all of this is so that the `Model` knows how to generate a `std::variant` to hold the pivot model in the `Model::m_relations` data member hash map, which you get using the `Model::getRelationValue` or `Model::getRelation` methods.
 
 #### Custom Pivot Models And Incrementing IDs
 
