@@ -93,7 +93,7 @@ namespace Tom::Commands
         /*! Determine whether the given command contains the given option. */
         bool commandHasLongOption(const QString &command, const QString &option);
 
-        /*! Obtain all connection names tagged with zsh:connection comment from
+        /*! Obtain all connection names tagged with shell:connection comment from
             the main.cpp file. */
         static QStringList getConnectionNamesFromFile();
 

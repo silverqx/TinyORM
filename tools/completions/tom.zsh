@@ -35,20 +35,20 @@ __tom_namespaces() {
 }
 
 # Try to infer database connection names if a user is in the right folder and have tagged
-# connection names with '// zsh:connection' comment
+# connection names with '// shell:connection' comment
 __tom_connections() {
     local -a connections
     local -a lines
 
     [[ -d database/migrations && -f main.cpp ]] || return
 
-    IFS=$'\n' lines=($(/bin/cat main.cpp | grep '// zsh:connection'))
+    IFS=$'\n' lines=($(/bin/cat main.cpp | grep '// shell:connection'))
 
     # Nothing found
     [[ $#lines -eq 0 ]] && return
 
     for line in $lines; do
-        if [[ $line =~ '.*"(\w+)".*// zsh:connection' ]]; then
+        if [[ $line =~ '.*"(\w+)".*// shell:connection' ]]; then
             connections+=$match[1]
         fi
     done

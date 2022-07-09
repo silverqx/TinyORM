@@ -9,19 +9,19 @@ __tom_filedir()
 }
 
 # Try to infer database connection names if a user is in the right folder and have tagged
-# connection names with '// zsh:connection' comment
+# connection names with '// shell:connection' comment
 __tom_connections() {
     declare -a connections
     declare -a lines
 
     [[ -d database/migrations && -f main.cpp ]] || return
 
-    IFS=$'\n' lines=($(/bin/cat main.cpp | grep '// zsh:connection'))
+    IFS=$'\n' lines=($(/bin/cat main.cpp | grep '// shell:connection'))
 
     # Nothing found
     [[ ${#lines[@]} -eq 0 ]] && return
 
-    regex='.*"(\w+)".*// zsh:connection'
+    regex='.*"(\w+)".*// shell:connection'
 
     for line in "${lines[@]}"; do
         if [[ $line =~ $regex ]]; then
