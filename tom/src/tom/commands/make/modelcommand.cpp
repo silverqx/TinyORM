@@ -17,16 +17,20 @@ namespace fs = std::filesystem;
 using fspath = std::filesystem::path;
 
 using Orm::Constants::NAME;
+using Orm::Constants::NOSPACE;
 
 using ContainerUtils = Orm::Utils::Container;
 using StringUtils = Orm::Tiny::Utils::String;
 
+using Tom::Constants::MakeMigration;
+using Tom::Constants::MakeSeeder;
 using Tom::Constants::as_;
 using Tom::Constants::as_up;
 using Tom::Constants::belongs_to;
 using Tom::Constants::belongs_to_many;
 using Tom::Constants::belongs_to_many_up;
 using Tom::Constants::belongs_to_up;
+using Tom::Constants::create_;
 using Tom::Constants::dateformat;
 using Tom::Constants::dateformat_up;
 using Tom::Constants::dates;
@@ -43,6 +47,7 @@ using Tom::Constants::fullpath;
 using Tom::Constants::guarded;
 using Tom::Constants::guarded_up;
 using Tom::Constants::incrementing;
+using Tom::Constants::migration_;
 using Tom::Constants::one_to_one;
 using Tom::Constants::one_to_one_up;
 using Tom::Constants::one_to_many;
@@ -60,6 +65,7 @@ using Tom::Constants::preserve_order;
 using Tom::Constants::primary_key;
 using Tom::Constants::primary_key_up;
 using Tom::Constants::realpath_;
+using Tom::Constants::seeder;
 using Tom::Constants::table_;
 using Tom::Constants::table_up;
 using Tom::Constants::touches;
@@ -93,6 +99,13 @@ const std::vector<PositionalArgument> &ModelCommand::positionalArguments() const
 QList<QCommandLineOption> ModelCommand::optionsSignature() const
 {
     return {
+        // Call other commands
+        {{QStringLiteral("m"),
+          migration_},         QStringLiteral("Create a new migration file for the "
+                                              "model")},
+        {{QStringLiteral("s"),
+          seeder},             QStringLiteral("Create a new seeder for the model")},
+
         // Relationship methods
         {one_to_one,           QStringLiteral("Create one-to-one relation to the given "
                                               "model <comment>(multiple options allowed)"
@@ -162,7 +175,7 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
         {pivot_model,          QStringLiteral("Genarate a custom pivot model class")},
 
         // Others
-        {{"o",
+        {{QStringLiteral("o"),
           preserve_order},     QStringLiteral("Preserve relations order defined on the "
                                               "command-line")},
 
@@ -223,6 +236,13 @@ int ModelCommand::run()
 
     // Ready to write the model to the disk 🧨✨
     writeModel(className, cmdOptions);
+
+    // Call other commands
+    if (isSet(migration_))
+        createMigration(className);
+
+    if (isSet(seeder))
+        createSeeder(className);
 
     return EXIT_SUCCESS;
 }
@@ -486,8 +506,6 @@ fspath ModelCommand::getModelPath() const
     return modelsPath;
 }
 
-/* private */
-
 const std::unordered_set<QString> &ModelCommand::relationNames()
 {
     static const std::unordered_set cached {
@@ -497,6 +515,29 @@ const std::unordered_set<QString> &ModelCommand::relationNames()
 
     return cached;
 }
+
+void ModelCommand::createMigration(const QString &className) const
+{
+    auto table = StringUtils::snake(className);
+
+    // Plural for a non-pivot models
+    if (!isSet(pivot_model))
+        table.append(QChar('s'));
+
+    call(MakeMigration, {longOption(create_, table),
+                         QStringLiteral("create_%1_table").arg(std::move(table))});
+}
+
+void ModelCommand::createSeeder(const QString &className) const
+{
+    auto seederClassName = NOSPACE.arg(className, QStringLiteral("Seeder"));
+
+    // FUTURE tom, add hidden options support to the tom's parser, add --table option for the make:seeder command and pass singular table name for pivot models because currently the make:seeder command generates eg. taggeds table name (even if this table name is in the commented code), command to reproduce: tom make:model Tagged --pivot-model --seeder silverqx
+
+    call(MakeSeeder, {std::move(seederClassName)});
+}
+
+/* private */
 
 void ModelCommand::throwIfContainsNamespaceOrPath(
             const std::vector<QStringList> &classNames, const QString &source)

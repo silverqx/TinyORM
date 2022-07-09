@@ -100,6 +100,11 @@ namespace Support
         /*! Set of all cmd. option relation names. */
         const std::unordered_set<QString> &relationNames();
 
+        /*! Create a migration file for the model. */
+        void createMigration(const QString &className) const;
+        /*! Create a seeder file for the model. */
+        void createSeeder(const QString &className) const;
+
         /*! The model creator instance. */
         Support::ModelCreator m_creator {};
         /*! Was shown an unused warning for the foreign-key option? */
