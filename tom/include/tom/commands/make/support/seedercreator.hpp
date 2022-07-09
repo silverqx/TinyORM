@@ -34,9 +34,6 @@ namespace Tom::Commands::Make::Support
         fspath create(const QString &className, fspath &&seedersPath) const;
 
     protected:
-        /*! Get the seeder stub file. */
-        static QString getStub();
-
         /*! Get the full path to the seeder. */
         static fspath getPath(const QString &basename, const fspath &path);
 
@@ -45,7 +42,7 @@ namespace Tom::Commands::Make::Support
 
         /*! Populate the place-holders in the seeder stub. */
         static std::string
-        populateStub(const QString &className, QString &&table, QString &&stub);
+        populateStub(const QString &className, QString &&table);
 
         /*! Get the table name from the seeder class name. */
         static QString getTableName(QString className);

@@ -30,26 +30,17 @@ fspath SeederCreator::create(const QString &className, fspath &&seedersPath) con
 
     throwIfSeederAlreadyExists(className, basename, seedersPath);
 
-    /* First we will get the stub file for the seeder, which serves as a type
-       of template for the seeder. Once we have those we will populate the
-       various place-holders, and save the file. */
-    auto stub = getStub();
-
     ensureDirectoryExists(seedersPath);
 
-    // Output it as binary stream to force line endings to LF
+    /* Populate the various place-holders, and save the file.
+       Output it as binary stream to force line endings to LF. */
     std::ofstream(seederPath, std::ios::out | std::ios::binary)
-            << populateStub(className, getTableName(className), std::move(stub));
+            << populateStub(className, getTableName(className));
 
     return seederPath;
 }
 
 /* protected */
-
-QString SeederCreator::getStub()
-{
-    return SeederStub;
-}
 
 fspath SeederCreator::getPath(const QString &basename, const fspath &path)
 {
@@ -65,8 +56,10 @@ void SeederCreator::ensureDirectoryExists(const fspath &path)
 }
 
 std::string
-SeederCreator::populateStub(const QString &className, QString &&table, QString &&stub)
+SeederCreator::populateStub(const QString &className, QString &&table)
 {
+    QString stub(SeederStub);
+
     stub.replace(QStringLiteral("DummyClass"), className)
         .replace(QStringLiteral("{{ class }}"), className)
         .replace(QStringLiteral("{{class}}"), className);
