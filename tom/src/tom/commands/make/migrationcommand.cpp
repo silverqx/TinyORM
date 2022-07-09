@@ -74,7 +74,7 @@ int MigrationCommand::run()
        schema operation. The developer may also specify if this table needs
        to be freshly created so we can create the appropriate migrations. */
     auto [datetimePrefix, migrationName, extension] =
-            prepareMigrationNameClassname(argument(NAME).trimmed());
+            prepareMigrationNameClassName(argument(NAME).trimmed());
 
     auto table = value(table_);
 
@@ -106,7 +106,7 @@ int MigrationCommand::run()
 /* protected */
 
 std::tuple<std::string, QString, std::string>
-MigrationCommand::prepareMigrationNameClassname(QString &&migration)
+MigrationCommand::prepareMigrationNameClassName(QString &&migration)
 {
     // Try to extract the extension from the migration name
     auto ext = fspath(migration.toStdString()).extension().string();

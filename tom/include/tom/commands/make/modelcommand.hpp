@@ -72,7 +72,7 @@ namespace Support
     protected:
         /*! Prepare a model class names. */
         static std::tuple<QString, CmdOptions>
-        prepareModelClassnames(QString &&className, CmdOptions &&cmdOptions);
+        prepareModelClassNames(QString &&className, CmdOptions &&cmdOptions);
 
         /*! Show unused options warning. */
         void showUnusedOptionsWarnings(const CmdOptions &cmdOptions);

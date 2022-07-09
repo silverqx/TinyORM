@@ -55,7 +55,7 @@ int SeederCommand::run()
 {
     Command::run();
 
-    const auto className = prepareSeederClassname(argument(NAME));
+    const auto className = prepareSeederClassName(argument(NAME));
 
     // Ready to write the seeder to the disk 🧨✨
     writeSeeder(className);
@@ -65,7 +65,7 @@ int SeederCommand::run()
 
 /* protected */
 
-QString SeederCommand::prepareSeederClassname(QString &&className)
+QString SeederCommand::prepareSeederClassName(QString &&className)
 {
     // Validate the seeder name
     throwIfContainsNamespaceOrPath(className);

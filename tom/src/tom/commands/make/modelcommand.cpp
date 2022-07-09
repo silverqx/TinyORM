@@ -224,7 +224,7 @@ int ModelCommand::run()
 {
     Command::run();
 
-    const auto [className, cmdOptions] = prepareModelClassnames(argument(NAME),
+    const auto [className, cmdOptions] = prepareModelClassNames(argument(NAME),
                                                                 createCmdOptions());
 
     showUnusedOptionsWarnings(cmdOptions);
@@ -265,7 +265,7 @@ namespace
 } // namespace
 
 std::tuple<QString, CmdOptions>
-ModelCommand::prepareModelClassnames(QString &&className, CmdOptions &&cmdOptions)
+ModelCommand::prepareModelClassNames(QString &&className, CmdOptions &&cmdOptions)
 {
     auto &&[
             _1,

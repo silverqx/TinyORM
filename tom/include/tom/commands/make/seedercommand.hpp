@@ -43,7 +43,7 @@ namespace Tom::Commands::Make
 
     protected:
         /*! Prepare a seeder class name (eg. appends Seeder if needed). */
-        static QString prepareSeederClassname(QString &&className);
+        static QString prepareSeederClassName(QString &&className);
 
         /*! Write the seeder file to the disk. */
         void writeSeeder(const QString &className) const;
