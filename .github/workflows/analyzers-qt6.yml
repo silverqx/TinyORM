@@ -1,0 +1,134 @@
+name: Clang Tidy/Clazy Qt6.2
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - gh-actions
+
+jobs:
+
+  clang-analyzers:
+    name: clang-tidy and clazy
+
+    runs-on: ubuntu-22.04
+
+    env:
+      TINY_CLANG_TIDY_EXECUTED: false
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: add-apt-repository Clang 14
+      run: |
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo add-apt-repository -y "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-14 main"
+
+    - name: apt update
+      run: |
+        sudo apt update
+
+    - name: apt install clang-14, lld, g++-12, clang-tidy-14, Qt 6.2.4 base, and ccache
+      run: >-
+        sudo apt install -y clang-14 lld g++-12 clang-tidy-14 ccache
+        qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql
+
+    - name: ninja install latest version
+      uses: seanmiddleditch/gha-setup-ninja@master
+      with:
+        destination: ${{ runner.workspace }}/../ninja-build
+
+    - name: TinyORM create build folder (clang14-cmake-debug)
+      run: |
+        mkdir -p ../TinyORM-builds-cmake/build-clang14-cmake-debug
+
+    - name: ccache setup 🕺
+      uses: Chocobo1/setup-ccache-action@v1
+      with:
+        install_ccache: false
+        update_packager_index: false
+        ccache_options: |
+          compression = false
+          max_size = 3G
+
+    - name: vcpkg set-up environment
+      run: |
+        echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+        echo 'VCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/.github/resources/vcpkg-custom-triplets' \
+        >> $GITHUB_ENV
+        echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
+        echo 'VCPKG_MAX_CONCURRENCY=2' >> $GITHUB_ENV
+
+    - name: TinyORM cmake configure (clang14-cmake-debug)
+      run: >-
+        cmake
+        -S .
+        -B ../TinyORM-builds-cmake/build-clang14-cmake-debug
+        -G Ninja
+        -D CMAKE_CXX_COMPILER_LAUNCHER=/usr/bin/ccache
+        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-14
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON
+        -D CMAKE_BUILD_TYPE:BOOL=Debug
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D MYSQL_PING:BOOL=ON
+        -D BUILD_TESTS:BOOL=ON
+        -D ORM:BOOL=ON
+        -D TOM:BOOL=ON
+        -D TOM_EXAMPLE:BOOL=ON
+
+    - name: TinyORM cmake build ✨ (clang14-cmake-debug)
+      run: |
+        source .github/resources/qt5env.sh
+        cmake --build ../TinyORM-builds-cmake/build-clang14-cmake-debug --target all --parallel 2
+
+    - name: clazy-standalone install
+      run: >-
+        wget $URL_CLAZY_STANDALONE_LINUX_X64
+        -O ${{ runner.temp }}/clazy-standalone.tar.bz2 --no-verbose
+
+        sudo tar xjvf ${{ runner.temp }}/clazy-standalone.tar.bz2 --directory /usr/local
+
+        clazy-standalone --version
+      env:
+        URL_CLAZY_STANDALONE_LINUX_X64: ${{ secrets.URL_CLAZY_STANDALONE_LINUX_X64 }}
+
+    - name: TinyORM execute clang-tidy 🔥
+      run: |
+        echo 'TINY_CLANG_TIDY_EXECUTED=true' >> $GITHUB_ENV
+
+        ln -s ../TinyORM-builds-cmake/build-clang14-cmake-debug/compile_commands.json \
+        compile_commands.json
+
+        run-clang-tidy-14 '(?:src\/|tests\/).+\/(?!mocs_)[\w_\-\+]+\.cpp$'
+
+    # Disabled checks
+    # Level 2      - qstring-allocations
+    # Manual level - qt4-qstring-from-array, qt6-qlatin1stringchar-to-u,qt-keywords,
+    #                qvariant-template-instantiation
+    - name: TinyORM execute clazy-standalone 🚀
+      if: env.TINY_CLANG_TIDY_EXECUTED == 'true' && (success() || failure())
+      run: |
+        checks=\
+        'level0,level1,level2,'\
+        `# Manual checks`\
+        'assert-with-side-effects,container-inside-loop,detaching-member,'\
+        'heap-allocated-small-trivial-type,ifndef-define-typo,isempty-vs-count,jni-signatures,'\
+        'qhash-with-char-pointer-key,qproperty-type-mismatch,qrequiredresult-candidates,'\
+        'qstring-varargs,qt6-deprecated-api-fixes,qt6-fwd-fixes,qt6-header-fixes,'\
+        'qt6-qhash-signature,raw-environment-function,reserve-candidates,'\
+        'signal-with-return-value,thread-with-slots,tr-non-literal,unneeded-cast,'\
+        'use-chrono-in-qtimer,'\
+        `# New in Clazy 1.11`\
+        'unexpected-flag-enumerator-value,'\
+        'use-arrow-operator-instead-of-data,'\
+        `# Checks Excluded from level2`\
+        'no-qstring-allocations'
+
+        tools/run-clazy-standalone -checks="$checks" \
+        -header-filter='(orm|tom|migrations)/.+\.(h|hpp)$' \
+        '(?:src\/|tests\/).+\/(?!mocs_)[\w_\-\+]+\.cpp$'
+
