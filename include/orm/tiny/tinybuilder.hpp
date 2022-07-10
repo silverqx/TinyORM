@@ -42,7 +42,7 @@ namespace Orm::Tiny
 
     public:
         /*! Constructor. */
-        Builder(const std::shared_ptr<QueryBuilder> &query, Model &model);
+        Builder(std::shared_ptr<QueryBuilder> query, Model &model);
 
         /*! Get the SQL representation of the query. */
         inline QString toSql() const;
@@ -214,9 +214,8 @@ namespace Orm::Tiny
     };
 
     template<typename Model>
-    Builder<Model>::Builder(const std::shared_ptr<QueryBuilder> &query,
-                            Model &model)
-        : m_query(query)
+    Builder<Model>::Builder(std::shared_ptr<QueryBuilder> query, Model &model)
+        : m_query(std::move(query))
         , m_model(model)
     {
         m_query->from(m_model.getTable());

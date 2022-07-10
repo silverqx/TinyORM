@@ -11,7 +11,7 @@
 #include "tom/tomtypes.hpp"
 
 class QSqlQuery;
-class QVariant;
+class QVariant; // clazy:exclude=qt6-fwd-fixes
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
