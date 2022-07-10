@@ -499,7 +499,7 @@ namespace Orm::Query
         /*! Get the table associated with the query builder. */
         inline const FromClause &getFrom() const;
         /*! Get the table joins for the query. */
-        inline const QVector<QSharedPointer<JoinClause>> &getJoins() const;
+        inline const QVector<std::shared_ptr<JoinClause>> &getJoins() const;
         /*! Get the where constraints for the query. */
         inline const QVector<WhereConditionItem> &getWheres() const;
         /*! Get the groupings for the query. */
@@ -517,18 +517,18 @@ namespace Orm::Query
 
         /* Other methods */
         /*! Get a new instance of the query builder. */
-        virtual QSharedPointer<Builder> newQuery() const;
+        virtual std::shared_ptr<Builder> newQuery() const;
         /*! Create a new query instance for nested where condition. */
-        QSharedPointer<Builder> forNestedWhere() const;
+        std::shared_ptr<Builder> forNestedWhere() const;
 
         /*! Create a raw database expression. */
         Expression raw(const QVariant &value) const;
 
         /*! Add another query builder as a nested where to the query builder. */
-        Builder &addNestedWhereQuery(const QSharedPointer<Builder> &query,
+        Builder &addNestedWhereQuery(const std::shared_ptr<Builder> &query,
                                      const QString &condition);
         /*! Add an "exists" clause to the query. */
-        Builder &addWhereExistsQuery(const QSharedPointer<Builder> &query,
+        Builder &addWhereExistsQuery(const std::shared_ptr<Builder> &query,
                                      const QString &condition = AND, bool nope = false);
 
         /*! Merge an array of where clauses and bindings. */
@@ -567,11 +567,11 @@ namespace Orm::Query
                          const QString &condition = AND);
 
         /*! Get a new join clause. */
-        QSharedPointer<JoinClause>
+        std::shared_ptr<JoinClause>
         newJoinClause(const Builder &query, const QString &type,
                       const QString &table) const;
         /*! Get a new join clause. */
-        QSharedPointer<JoinClause>
+        std::shared_ptr<JoinClause>
         newJoinClause(const Builder &query, const QString &type,
                       Expression &&table) const;
 
@@ -602,7 +602,7 @@ namespace Orm::Query
                 std::is_invocable_v<T, Orm::QueryBuilder &>;
 
         /*! Create a new query instance for a sub-query. */
-        inline virtual QSharedPointer<Builder> forSubQuery() const;
+        inline virtual std::shared_ptr<Builder> forSubQuery() const;
 
         /*! Prepend the database name if the given query is on another database. */
         Builder &prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const;
@@ -624,14 +624,14 @@ namespace Orm::Query
 
         /*! Add a join clause to the query, common code. */
         Builder &joinInternal(
-                QSharedPointer<JoinClause> &&join, const QString &first,
+                std::shared_ptr<JoinClause> &&join, const QString &first,
                 const QString &comparison, const QVariant &second, bool where);
         /*! Add an advanced join clause to the query, common code. */
         Builder &joinInternal(
-                QSharedPointer<JoinClause> &&join,
+                std::shared_ptr<JoinClause> &&join,
                 const std::function<void(JoinClause &)> &callback);
         /*! Add a join clause to the query, common code for the above two methods. */
-        Builder &joinInternal(QSharedPointer<JoinClause> &&join);
+        Builder &joinInternal(std::shared_ptr<JoinClause> &&join);
 
         /*! Add a subquery join clause to the query, common code. */
         Builder &joinSubInternal(
@@ -682,7 +682,7 @@ namespace Orm::Query
         /*! The table which the query is targeting. */
         FromClause m_from {};
         /*! The table joins for the query. */
-        QVector<QSharedPointer<JoinClause>> m_joins {};
+        QVector<std::shared_ptr<JoinClause>> m_joins {};
         /*! The where constraints for the query. */
         QVector<WhereConditionItem> m_wheres {};
         /*! The groupings for the query. */
@@ -841,7 +841,7 @@ namespace Orm::Query
     Builder::join(T &&table, const QString &first, const QString &comparison,
                   const QVariant &second, const QString &type, const bool where)
     {
-        // Ownership of the QSharedPointer<JoinClause>
+        // Ownership of the std::shared_ptr<JoinClause>
         return joinInternal(newJoinClause(*this, type, std::forward<T>(table)),
                             first, comparison, second, where);
     }
@@ -852,7 +852,7 @@ namespace Orm::Query
     Builder::join(T &&table, const std::function<void(JoinClause &)> &callback,
                   const QString &type)
     {
-        // Ownership of the QSharedPointer<JoinClause>
+        // Ownership of the std::shared_ptr<JoinClause>
         return joinInternal(newJoinClause(*this, type, std::forward<T>(table)),
                             callback);
     }
@@ -1176,7 +1176,7 @@ namespace Orm::Query
         return m_from;
     }
 
-    const QVector<QSharedPointer<JoinClause>> &
+    const QVector<std::shared_ptr<JoinClause>> &
     Builder::getJoins() const
     {
         return m_joins;
@@ -1224,7 +1224,7 @@ namespace Orm::Query
 
     /* protected */
 
-    QSharedPointer<Builder>
+    std::shared_ptr<Builder>
     Builder::forSubQuery() const
     {
         return newQuery();

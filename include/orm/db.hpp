@@ -100,15 +100,15 @@ namespace Orm
 
         /* Proxy methods to the DatabaseConnection */
         /*! Begin a fluent query against a database table for the connection. */
-        static QSharedPointer<QueryBuilder>
+        static std::shared_ptr<QueryBuilder>
         table(const QString &table, const QString &connection = "");
         /*! Begin a fluent query against a database table for the connection. */
-        static QSharedPointer<QueryBuilder>
+        static std::shared_ptr<QueryBuilder>
         tableAs(const QString &table, const QString &as = "",
                 const QString &connection = "");
 
         /*! Get a new query builder instance for the connection. */
-        static QSharedPointer<QueryBuilder> query(const QString &connection = "");
+        static std::shared_ptr<QueryBuilder> query(const QString &connection = "");
         /*! Get a new QSqlQuery instance for the connection. */
         static QSqlQuery qtQuery(const QString &connection = "");
 

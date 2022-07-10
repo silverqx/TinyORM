@@ -325,7 +325,7 @@ Builder &Builder::fromRaw(const QString &expression, const QVector<QVariant> &bi
 Builder &Builder::where(const std::function<void(Builder &)> &callback,
                         const QString &condition)
 {
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     const auto query = forNestedWhere();
 
     std::invoke(callback, *query);
@@ -750,15 +750,15 @@ Builder &Builder::setBindings(QVector<QVariant> &&bindings, const BindingType ty
 
 /* Other methods */
 
-// TODO next revisit QSharedPointer, after few weeks I'm pretty sure that this can/should be std::unique_pre, like in the TinyBuilder, I need to check if more instances need to save this pointer at once, if don't then I have to change it silverqx
-QSharedPointer<Builder> Builder::newQuery() const
+// TODO next revisit std::shared_ptr, after few weeks I'm pretty sure that this can/should be std::unique_pre, like in the TinyBuilder, I need to check if more instances need to save this pointer at once, if don't then I have to change it silverqx
+std::shared_ptr<Builder> Builder::newQuery() const
 {
-    return QSharedPointer<Builder>::create(m_connection, m_grammar);
+    return std::make_shared<Builder>(m_connection, m_grammar);
 }
 
-QSharedPointer<Builder> Builder::forNestedWhere() const
+std::shared_ptr<Builder> Builder::forNestedWhere() const
 {
-    // Ownership of the QSharedPointer
+    // Ownership of the std::shared_ptr
     auto query = newQuery();
 
     query->setFrom(m_from);
@@ -772,7 +772,7 @@ Expression Builder::raw(const QVariant &value) const
 }
 
 // TODO now, (still need to be revisited) it can be reference, shared owner will be callee, and copy will be made during m_wheres.append() silverqx
-Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> &query,
+Builder &Builder::addNestedWhereQuery(const std::shared_ptr<Builder> &query,
                                       const QString &condition)
 {
     if (query->m_wheres.isEmpty())
@@ -791,7 +791,7 @@ Builder &Builder::addNestedWhereQuery(const QSharedPointer<Builder> &query,
 
 // CUR1 add whereExists() silverqx
 // CUR1 also add exists() silverqx
-Builder &Builder::addWhereExistsQuery(const QSharedPointer<Builder> &query,
+Builder &Builder::addWhereExistsQuery(const std::shared_ptr<Builder> &query,
                                       const QString &condition, const bool nope)
 {
     const auto type = nope ? WhereType::NOT_EXISTS : WhereType::EXISTS;
@@ -908,20 +908,20 @@ Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values,
     }, condition);
 }
 
-QSharedPointer<JoinClause>
+std::shared_ptr<JoinClause>
 Builder::newJoinClause(const Builder &query, const QString &type,
                        const QString &table) const
 {
     /* It has to be shared pointer, because it can not be passed down to joinInternal()
        in join() as incomplete type. */
-    return QSharedPointer<JoinClause>::create(query, type, table);
+    return std::make_shared<JoinClause>(query, type, table);
 }
 
-QSharedPointer<JoinClause>
+std::shared_ptr<JoinClause>
 Builder::newJoinClause(const Builder &query, const QString &type,
                        Expression &&table) const
 {
-    return QSharedPointer<JoinClause>::create(query, type, std::move(table));
+    return std::make_shared<JoinClause>(query, type, std::move(table));
 }
 
 Builder &Builder::clearColumns()
@@ -955,7 +955,7 @@ Builder::onceWithColumns(
 std::pair<QString, QVector<QVariant>>
 Builder::createSub(const std::function<void(Builder &)> &callback) const
 {
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     const auto query = forSubQuery();
 
     std::invoke(callback, *query);
@@ -1037,7 +1037,7 @@ QSqlQuery Builder::runSelect()
 }
 
 Builder &Builder::joinInternal(
-            QSharedPointer<JoinClause> &&join, const QString &first,
+            std::shared_ptr<JoinClause> &&join, const QString &first,
             const QString &comparison, const QVariant &second, const bool where)
 {
     if (where)
@@ -1049,7 +1049,7 @@ Builder &Builder::joinInternal(
     return joinInternal(std::move(join));
 }
 
-Builder &Builder::joinInternal(QSharedPointer<JoinClause> &&join,
+Builder &Builder::joinInternal(std::shared_ptr<JoinClause> &&join,
                                const std::function<void(JoinClause &)> &callback)
 {
     std::invoke(callback, *join);
@@ -1058,7 +1058,7 @@ Builder &Builder::joinInternal(QSharedPointer<JoinClause> &&join,
     return joinInternal(std::move(join));
 }
 
-Builder &Builder::joinInternal(QSharedPointer<JoinClause> &&join)
+Builder &Builder::joinInternal(std::shared_ptr<JoinClause> &&join)
 {
     // For convenience, I want to append first and afterwards add bindings
     const auto &joinRef = *join;

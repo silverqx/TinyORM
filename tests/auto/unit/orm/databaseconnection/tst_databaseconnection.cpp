@@ -44,7 +44,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    [[nodiscard]] QSharedPointer<QueryBuilder>
+    [[nodiscard]] std::shared_ptr<QueryBuilder>
     createQuery(const QString &connection) const;
 };
 
@@ -254,7 +254,7 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
     }
 
     // Clean up
-    // Ownerships of the QSharedPointer<QueryBuilder>
+    // Ownerships of the std::shared_ptr<QueryBuilder>
     createQuery(connection)->from("users").remove(id1);
     createQuery(connection)->from("users").remove(id2);
 }
@@ -408,7 +408,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
 
     // Clean up
     while (query.next())
-        // Ownership of the QSharedPointer<QueryBuilder>
+        // Ownership of the std::shared_ptr<QueryBuilder>
         createQuery(connection)->from("users").remove(query.value(ID).value<quint64>());
 }
 
@@ -502,7 +502,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
 
     // Clean up
     while (query.next())
-        // Ownership of the QSharedPointer<QueryBuilder>
+        // Ownership of the std::shared_ptr<QueryBuilder>
         createQuery(connection)->from("users").remove(query.value(ID).value<quint64>());
 }
 
@@ -778,7 +778,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
     }
 }
 
-QSharedPointer<QueryBuilder>
+std::shared_ptr<QueryBuilder>
 tst_DatabaseConnection::createQuery(const QString &connection) const
 {
     return DB::connection(connection).query();

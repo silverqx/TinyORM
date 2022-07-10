@@ -55,11 +55,11 @@ namespace Orm::Query
         getTable() const;
 
         /*! Get a new instance of the join clause builder. */
-        QSharedPointer<Builder> newQuery() const final;
+        std::shared_ptr<Builder> newQuery() const final;
 
     protected:
         /*! Create a new query instance for a sub-query. */
-        QSharedPointer<Builder> forSubQuery() const final;
+        std::shared_ptr<Builder> forSubQuery() const final;
 
     private:
         /*! The type of join being performed. */

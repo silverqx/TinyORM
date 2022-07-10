@@ -9,7 +9,6 @@
 //#include <QDebug>
 #include <QHash>
 #include <QMap>
-#include <QSharedPointer>
 #include <QStringList>
 #include <QVariant>
 #include <QVector>

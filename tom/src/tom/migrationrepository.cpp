@@ -34,7 +34,7 @@ MigrationRepository::MigrationRepository(
 
 QVector<QVariant> MigrationRepository::getRanSimple() const
 {
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     return table()
             ->orderBy(batch_, ASC)
             .orderBy(migration_, ASC)
@@ -43,7 +43,7 @@ QVector<QVariant> MigrationRepository::getRanSimple() const
 
 std::vector<MigrationItem> MigrationRepository::getRan(const QString &order) const
 {
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     auto query = table()
                  ->orderBy(batch_, order)
                  .orderBy(migration_, order)
@@ -54,7 +54,7 @@ std::vector<MigrationItem> MigrationRepository::getRan(const QString &order) con
 
 std::vector<MigrationItem> MigrationRepository::getMigrations(const int steps) const
 {
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     auto query = table()->where(batch_, GE, 1)
                  .orderBy(batch_, DESC)
                  .orderBy(migration_, DESC)
@@ -66,7 +66,7 @@ std::vector<MigrationItem> MigrationRepository::getMigrations(const int steps) c
 
 std::vector<MigrationItem> MigrationRepository::getLast() const
 {
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     auto query = table()->whereEq(batch_, getLastBatchNumber())
                  .orderBy(migration_, DESC)
                  .get();
@@ -76,7 +76,7 @@ std::vector<MigrationItem> MigrationRepository::getLast() const
 
 std::map<QString, QVariant> MigrationRepository::getMigrationBatches() const
 {
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     return table()
             ->orderBy(batch_, ASC)
             .orderBy(migration_, ASC)
@@ -85,13 +85,13 @@ std::map<QString, QVariant> MigrationRepository::getMigrationBatches() const
 
 void MigrationRepository::log(const QString &file, const int batch) const
 {
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     table()->insert({{migration_, file}, {batch_, batch}});
 }
 
 void MigrationRepository::deleteMigration(const quint64 id) const
 {
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     table()->deleteRow(id);
 }
 
@@ -102,7 +102,7 @@ int MigrationRepository::getNextBatchNumber() const
 
 int MigrationRepository::getLastBatchNumber() const
 {
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     // Will be 0 on empty migrations table
     return table()->max(batch_).value<int>();
 }
@@ -144,7 +144,7 @@ DatabaseConnection &MigrationRepository::connection() const
 
 /* protected */
 
-QSharedPointer<QueryBuilder> MigrationRepository::table() const
+std::shared_ptr<QueryBuilder> MigrationRepository::table() const
 {
     return connection().table(m_table);
 }

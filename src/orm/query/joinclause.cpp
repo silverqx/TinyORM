@@ -58,12 +58,12 @@ JoinClause::orOn(const QString &first, const QString &comparison,
     return on(first, comparison, second, OR);
 }
 
-QSharedPointer<Builder> JoinClause::newQuery() const
+std::shared_ptr<Builder> JoinClause::newQuery() const
 {
-    return QSharedPointer<JoinClause>::create(*this, m_type, m_table);
+    return std::make_shared<JoinClause>(*this, m_type, m_table);
 }
 
-QSharedPointer<Builder> JoinClause::forSubQuery() const
+std::shared_ptr<Builder> JoinClause::forSubQuery() const
 {
     return Builder::newQuery();
 }

@@ -81,7 +81,7 @@ namespace SchemaNs
         inline ~DatabaseConnection() override = 0;
 
         /*! Begin a fluent query against a database table. */
-        QSharedPointer<QueryBuilder>
+        std::shared_ptr<QueryBuilder>
         table(const QString &table, const QString &as = "");
 
         /*! Get the table prefix for the connection. */
@@ -92,7 +92,7 @@ namespace SchemaNs
         BaseGrammar &withTablePrefix(BaseGrammar &grammar) const;
 
         /*! Get a new query builder instance. */
-        QSharedPointer<QueryBuilder> query();
+        std::shared_ptr<QueryBuilder> query();
 
         /*! Get a new raw query expression. */
         inline Query::Expression raw(const QVariant &value) const;

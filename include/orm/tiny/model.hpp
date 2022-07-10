@@ -172,7 +172,7 @@ namespace Orm::Tiny
         std::unique_ptr<TinyBuilder<Derived>> newQueryWithoutRelationships();
         /*! Create a new Tiny query builder for the model. */
         std::unique_ptr<TinyBuilder<Derived>>
-        newTinyBuilder(const QSharedPointer<QueryBuilder> &query);
+        newTinyBuilder(const std::shared_ptr<QueryBuilder> &query);
 
         /*! Create a new model instance that is existing. */
         Derived newFromBuilder(const QVector<AttributeItem> &attributes = {},
@@ -230,7 +230,7 @@ namespace Orm::Tiny
     protected:
         /* Model Instance methods */
         /*! Get a new query builder instance for the connection. */
-        QSharedPointer<QueryBuilder> newBaseQueryBuilder() const;
+        std::shared_ptr<QueryBuilder> newBaseQueryBuilder() const;
 
         /* Operations on a model instance */
         /*! Perform the actual delete query on this model instance. */
@@ -736,7 +736,7 @@ namespace Orm::Tiny
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newModelQuery()
     {
-        // Ownership of the QSharedPointer<QueryBuilder>
+        // Ownership of the std::shared_ptr<QueryBuilder>
         const auto query = newBaseQueryBuilder();
 
         /* Model is passed to the TinyBuilder ctor, because of that setModel()
@@ -755,7 +755,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newTinyBuilder(
-            const QSharedPointer<QueryBuilder> &query)
+            const std::shared_ptr<QueryBuilder> &query)
     {
         return std::make_unique<TinyBuilder<Derived>>(query, model());
     }
@@ -965,7 +965,7 @@ namespace Orm::Tiny
     /* Model Instance methods */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QSharedPointer<QueryBuilder>
+    std::shared_ptr<QueryBuilder>
     Model<Derived, AllRelations...>::newBaseQueryBuilder() const
     {
         return getConnection().query();

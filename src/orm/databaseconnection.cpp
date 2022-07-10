@@ -46,10 +46,10 @@ DatabaseConnection::DatabaseConnection(
     , m_hostName(getConfig(host_).value<QString>())
 {}
 
-QSharedPointer<QueryBuilder>
+std::shared_ptr<QueryBuilder>
 DatabaseConnection::table(const QString &table, const QString &as)
 {
-    auto builder = QSharedPointer<QueryBuilder>::create(*this, *m_queryGrammar);
+    auto builder = std::make_shared<QueryBuilder>(*this, *m_queryGrammar);
 
     builder->from(table, as);
 
@@ -72,9 +72,9 @@ BaseGrammar &DatabaseConnection::withTablePrefix(BaseGrammar &grammar) const
     return grammar;
 }
 
-QSharedPointer<QueryBuilder> DatabaseConnection::query()
+std::shared_ptr<QueryBuilder> DatabaseConnection::query()
 {
-    return QSharedPointer<QueryBuilder>::create(*this, *m_queryGrammar);
+    return std::make_shared<QueryBuilder>(*this, *m_queryGrammar);
 }
 
 /* Running SQL Queries */

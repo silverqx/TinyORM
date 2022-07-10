@@ -115,7 +115,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    [[nodiscard]] QSharedPointer<QueryBuilder> createQuery() const;
+    [[nodiscard]] std::shared_ptr<QueryBuilder> createQuery() const;
 
     /*! Connection name used in this test case. */
     QString m_connection {};
@@ -663,7 +663,7 @@ void tst_PostgreSQL_QueryBuilder::fromSub_QueryBuilderOverload_WithWhere() const
 {
     auto builder = createQuery();
 
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     auto subQuery = createQuery();
     subQuery->from("user_sessions")
             .select({ID, NAME})
@@ -721,7 +721,7 @@ void tst_PostgreSQL_QueryBuilder::joinSub_QueryBuilderOverload_WithWhere() const
 {
     auto builder = createQuery();
 
-    // Ownership of the QSharedPointer<QueryBuilder>
+    // Ownership of the std::shared_ptr<QueryBuilder>
     auto subQuery = createQuery();
     subQuery->from("user_sessions")
             .select({"id as files_id", "user_id", NAME})
@@ -1648,7 +1648,7 @@ void tst_PostgreSQL_QueryBuilder::remove_WithExpression() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-QSharedPointer<QueryBuilder>
+std::shared_ptr<QueryBuilder>
 tst_PostgreSQL_QueryBuilder::createQuery() const
 {
     return DB::connection(m_connection).query();

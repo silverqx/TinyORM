@@ -425,7 +425,7 @@ namespace Tiny
         /* Others proxy methods, not added to the Model and Relation */
         /*! Add an "exists" clause to the query. */
         TinyBuilder<Model> &
-        addWhereExistsQuery(const QSharedPointer<QueryBuilder> &query,
+        addWhereExistsQuery(const std::shared_ptr<QueryBuilder> &query,
                             const QString &condition = AND, bool nope = false);
 
         /*! Merge an array of where clauses and bindings. */
@@ -1412,7 +1412,7 @@ namespace Tiny
     template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::addWhereExistsQuery(
-            const QSharedPointer<QueryBuilder> &query, const QString &condition,
+            const std::shared_ptr<QueryBuilder> &query, const QString &condition,
             const bool nope)
     {
         toBase().addWhereExistsQuery(query, condition, nope);

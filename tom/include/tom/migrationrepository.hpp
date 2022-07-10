@@ -2,15 +2,16 @@
 #ifndef TOM_MIGRATIONREPOSITORY_HPP
 #define TOM_MIGRATIONREPOSITORY_HPP
 
-#include <QSharedPointer>
-
+#include <map>
 #include <optional>
+#include <vector>
 
 #include <orm/connectionresolverinterface.hpp>
 
 #include "tom/tomtypes.hpp"
 
 class QSqlQuery;
+class QVariant;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -73,7 +74,7 @@ namespace Tom
 
     protected:
         /*! Get a query builder for the migration table. */
-        QSharedPointer<QueryBuilder> table() const;
+        std::shared_ptr<QueryBuilder> table() const;
 
         /*! Hydrate a vector of migration items from a raw QSqlQuery. */
         std::vector<MigrationItem> hydrateMigrations(QSqlQuery &query) const;

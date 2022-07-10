@@ -1,7 +1,5 @@
 #include "orm/db.hpp"
 
-#include <QSharedPointer>
-
 #include "orm/macros/likely.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -138,19 +136,19 @@ DB::setReconnector(const ReconnectorType &reconnector)
     return manager().setReconnector(reconnector);
 }
 
-QSharedPointer<QueryBuilder>
+std::shared_ptr<QueryBuilder>
 DB::table(const QString &table, const QString &connection)
 {
     return manager().connection(connection).table(table);
 }
 
-QSharedPointer<QueryBuilder>
+std::shared_ptr<QueryBuilder>
 DB::tableAs(const QString &table, const QString &as, const QString &connection)
 {
     return manager().connection(connection).table(table, as);
 }
 
-QSharedPointer<QueryBuilder>
+std::shared_ptr<QueryBuilder>
 DB::query(const QString &connection)
 {
     return manager().connection(connection).query();

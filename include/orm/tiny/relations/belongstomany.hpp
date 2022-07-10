@@ -155,14 +155,14 @@ namespace Orm::Tiny::Relations
                            bool exists = false) const;
 
         /*! Create a new query builder for the pivot table. */
-        QSharedPointer<QueryBuilder> newPivotQuery() const;
+        std::shared_ptr<QueryBuilder> newPivotQuery() const;
         /*! Get a new plain query builder for the pivot table. */
-        QSharedPointer<QueryBuilder> newPivotStatement() const;
+        std::shared_ptr<QueryBuilder> newPivotStatement() const;
         /*! Get a new pivot statement for a given "other" / "related" ID. */
-        QSharedPointer<QueryBuilder>
+        std::shared_ptr<QueryBuilder>
         newPivotStatementForId(const QVector<QVariant> &ids) const;
         /*! Get a new pivot statement for a given "other" / "related" ID. */
-        QSharedPointer<QueryBuilder>
+        std::shared_ptr<QueryBuilder>
         inline newPivotStatementForId(const QVariant &id) const;
 
         /* TinyBuilder proxy methods */
@@ -838,10 +838,10 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QSharedPointer<QueryBuilder>
+    std::shared_ptr<QueryBuilder>
     BelongsToMany<Model, Related, PivotType>::newPivotQuery() const
     {
-        // Ownership of the QSharedPointer<QueryBuilder>
+        // Ownership of the std::shared_ptr<QueryBuilder>
         auto query = newPivotStatement();
 
         // FEATURE relations, add support for BelongsToMany::where/whereIn/whereNull silverqx
@@ -860,7 +860,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QSharedPointer<QueryBuilder>
+    std::shared_ptr<QueryBuilder>
     BelongsToMany<Model, Related, PivotType>::newPivotStatement() const
     {
         auto query = this->m_query->getQuery().newQuery();
@@ -871,11 +871,11 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QSharedPointer<QueryBuilder>
+    std::shared_ptr<QueryBuilder>
     BelongsToMany<Model, Related, PivotType>::newPivotStatementForId(
             const QVector<QVariant> &ids) const
     {
-        // Ownership of the QSharedPointer<QueryBuilder>
+        // Ownership of the std::shared_ptr<QueryBuilder>
         auto query = newPivotQuery();
 
         query->whereIn(m_relatedPivotKey, ids);
@@ -884,7 +884,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QSharedPointer<QueryBuilder>
+    std::shared_ptr<QueryBuilder>
     BelongsToMany<Model, Related, PivotType>::newPivotStatementForId(
             const QVariant &id) const
     {
@@ -1400,7 +1400,7 @@ namespace Orm::Tiny::Relations
     {
         QVector<QVariant> ids;
 
-        // Ownership of the QSharedPointer<QueryBuilder>
+        // Ownership of the std::shared_ptr<QueryBuilder>
         auto query = newPivotQuery()->get({m_relatedPivotKey});
 
         while (query.next())
@@ -1841,7 +1841,7 @@ namespace Orm::Tiny::Relations
             affected = detachUsingCustomClass(ids);
 
         else {
-            // Ownership of the QSharedPointer<QueryBuilder>
+            // Ownership of the std::shared_ptr<QueryBuilder>
             auto query = newPivotQuery();
 
             /* If associated IDs were passed to the method we will only delete those

@@ -8,7 +8,6 @@
 #include <QDebug>
 #include <QHash>
 #include <QMap>
-#include <QSharedPointer>
 #include <QStringList>
 #include <QTimer>
 #include <QVariant>

@@ -219,7 +219,7 @@ namespace Private
         /*! Add a sub-query count clause to this query. */
         TinyBuilder<Model> &
         addWhereCountQuery(
-                const QSharedPointer<QueryBuilder> &query,
+                const std::shared_ptr<QueryBuilder> &query,
                 const QString &comparison = GE, qint64 count = 1,
                 const QString &condition = AND);
 
@@ -508,7 +508,7 @@ namespace Private
     template<typename Model>
     TinyBuilder<Model> &
     QueriesRelationships<Model>::addWhereCountQuery(
-            const QSharedPointer<QueryBuilder> &query, const QString &comparison,
+            const std::shared_ptr<QueryBuilder> &query, const QString &comparison,
             const qint64 count, const QString &condition)
     {
         this->query().getQuery().addBinding(query->getBindings(), BindingType::WHERE);

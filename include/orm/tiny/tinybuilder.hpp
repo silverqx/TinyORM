@@ -42,7 +42,7 @@ namespace Orm::Tiny
 
     public:
         /*! Constructor. */
-        Builder(const QSharedPointer<QueryBuilder> &query, Model &model);
+        Builder(const std::shared_ptr<QueryBuilder> &query, Model &model);
 
         /*! Get the SQL representation of the query. */
         inline QString toSql() const;
@@ -158,8 +158,8 @@ namespace Orm::Tiny
         /*! Get the underlying query builder instance. */
         inline QueryBuilder &getQuery() const;
         // TODO now fix revisit silverqx
-        /*! Get the underlying query builder instance as a QSharedPointer. */
-        inline const QSharedPointer<QueryBuilder> &
+        /*! Get the underlying query builder instance as a std::shared_ptr. */
+        inline const std::shared_ptr<QueryBuilder> &
         getQuerySharedPointer() const;
 
         /*! Get a database connection. */
@@ -204,7 +204,7 @@ namespace Orm::Tiny
 //                           Args &&...parameters);
 
         /*! The base query builder instance. */
-        const QSharedPointer<QueryBuilder> m_query;
+        const std::shared_ptr<QueryBuilder> m_query;
         /* This can't be a reference because the model is created on the stack
            in Model::query(), then copied here and the original is destroyed
            immediately. */
@@ -215,7 +215,7 @@ namespace Orm::Tiny
     };
 
     template<typename Model>
-    Builder<Model>::Builder(const QSharedPointer<QueryBuilder> &query,
+    Builder<Model>::Builder(const std::shared_ptr<QueryBuilder> &query,
                             Model &model)
         : m_query(query)
         , m_model(model)
@@ -690,7 +690,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    const QSharedPointer<QueryBuilder> &
+    const std::shared_ptr<QueryBuilder> &
     Builder<Model>::getQuerySharedPointer() const
     {
         return m_query;

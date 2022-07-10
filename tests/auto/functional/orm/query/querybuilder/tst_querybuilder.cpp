@@ -43,7 +43,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    [[nodiscard]] QSharedPointer<QueryBuilder>
+    [[nodiscard]] std::shared_ptr<QueryBuilder>
     createQuery(const QString &connection) const;
 };
 
@@ -323,7 +323,7 @@ void tst_QueryBuilder::limit() const
     }
 }
 
-QSharedPointer<QueryBuilder>
+std::shared_ptr<QueryBuilder>
 tst_QueryBuilder::createQuery(const QString &connection) const
 {
     return DB::connection(connection).query();

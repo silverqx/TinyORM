@@ -5,10 +5,10 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QSharedPointer>
 #include <QVariant>
 #include <QVector>
 
+#include <memory>
 #include <variant>
 
 #include "orm/constants.hpp"
@@ -83,15 +83,15 @@ namespace Query
     /*! Where clause item, primarily used in grammars to build sql query. */
     struct WhereConditionItem
     {
-        Column                       column      {};
-        QVariant                     value       {};
-        QString                      comparison  {Orm::Constants::EQ};
-        QString                      condition   {Orm::Constants::AND};
-        WhereType                    type        {WhereType::UNDEFINED};
-        QSharedPointer<QueryBuilder> nestedQuery {nullptr};
-        QVector<QVariant>            values      {};
-        Column                       columnTwo   {};
-        QString                      sql         {};
+        Column                        column      {};
+        QVariant                      value       {};
+        QString                       comparison  {Orm::Constants::EQ};
+        QString                       condition   {Orm::Constants::AND};
+        WhereType                     type        {WhereType::UNDEFINED};
+        std::shared_ptr<QueryBuilder> nestedQuery {nullptr};
+        QVector<QVariant>             values      {};
+        Column                        columnTwo   {};
+        QString                       sql         {};
     };
 
     /*! Supported having types. */

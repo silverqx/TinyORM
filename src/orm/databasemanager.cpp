@@ -83,20 +83,20 @@ DatabaseManager::create(const ConfigurationsType &configs,
                             new DatabaseManager(configs, defaultConnection));
 }
 
-QSharedPointer<QueryBuilder>
+std::shared_ptr<QueryBuilder>
 DatabaseManager::table(const QString &table, const QString &connection)
 {
     return this->connection(connection).table(table);
 }
 
-QSharedPointer<QueryBuilder>
+std::shared_ptr<QueryBuilder>
 DatabaseManager::tableAs(const QString &table, const QString &as,
                          const QString &connection)
 {
     return this->connection(connection).table(table, as);
 }
 
-QSharedPointer<QueryBuilder>
+std::shared_ptr<QueryBuilder>
 DatabaseManager::query(const QString &connection)
 {
     return this->connection(connection).query();
