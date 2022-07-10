@@ -157,7 +157,6 @@ namespace Orm::Tiny
         inline Model &getModel();
         /*! Get the underlying query builder instance. */
         inline QueryBuilder &getQuery() const;
-        // TODO now fix revisit silverqx
         /*! Get the underlying query builder instance as a std::shared_ptr. */
         inline const std::shared_ptr<QueryBuilder> &
         getQuerySharedPointer() const;

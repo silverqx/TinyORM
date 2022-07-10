@@ -750,9 +750,10 @@ Builder &Builder::setBindings(QVector<QVariant> &&bindings, const BindingType ty
 
 /* Other methods */
 
-// TODO next revisit std::shared_ptr, after few weeks I'm pretty sure that this can/should be std::unique_pre, like in the TinyBuilder, I need to check if more instances need to save this pointer at once, if don't then I have to change it silverqx
 std::shared_ptr<Builder> Builder::newQuery() const
 {
+    /* It has to be the shared pointer because it is returned to the user so instances
+       counting is necessary, also saved internally eg. in the TinyBuilder::m_query. */
     return std::make_shared<Builder>(m_connection, m_grammar);
 }
 
@@ -771,7 +772,6 @@ Expression Builder::raw(const QVariant &value) const
     return m_connection.raw(value);
 }
 
-// TODO now, (still need to be revisited) it can be reference, shared owner will be callee, and copy will be made during m_wheres.append() silverqx
 Builder &Builder::addNestedWhereQuery(const std::shared_ptr<Builder> &query,
                                       const QString &condition)
 {
