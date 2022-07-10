@@ -187,7 +187,8 @@ _tom() {
                 '--table=[The table to migrate]:table name' \
                 '--path=[The location where the migration file should be created]:folder path:_files -/' \
                 '--realpath[Indicate any provided migration file paths are pre-resolved absolute paths]' \
-                '--fullpath[Output the full path of the migration]'
+                '--fullpath[Output the full path of the migration]' \
+                '(-f --force)'{-f,--force}'[Overwrite the model class if already exists]'
             ;;
 
         make:model)
@@ -220,7 +221,8 @@ _tom() {
                 '(-o --preserve-order)'{-o,--preserve-order}'[Preserve relations order defined on the command-line]' \
                 '--path=[The location where the migration file should be created]:folder path:_files -/' \
                 '--realpath[Indicate any provided migration file paths are pre-resolved absolute paths]' \
-                '--fullpath[Output the full path of the migration]'
+                '--fullpath[Output the full path of the migration]' \
+                '(-f --force)'{-f,--force}'[Overwrite the migration file if already exists]'
             ;;
 
         make:seeder)
@@ -229,7 +231,8 @@ _tom() {
                 '1::class name:()' \
                 '--path=[The location where the migration file should be created]:folder path:_files -/' \
                 '--realpath[Indicate any provided migration file paths are pre-resolved absolute paths]' \
-                '--fullpath[Output the full path of the migration]'
+                '--fullpath[Output the full path of the migration]' \
+                '(-f --force)'{-f,--force}'[Overwrite the seeder class if already exists]'
             ;;
 
         migrate:fresh)

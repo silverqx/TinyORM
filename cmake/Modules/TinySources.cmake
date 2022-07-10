@@ -266,6 +266,7 @@ function(tinytom_sources out_headers out_sources)
         commands/integratecommand.hpp
         commands/listcommand.hpp
         commands/make/concerns/prepareoptionvalues.hpp
+        commands/make/makecommand.hpp
         commands/make/migrationcommand.hpp
         commands/make/modelcommand.hpp
         commands/make/modelcommandconcepts.hpp
@@ -334,6 +335,7 @@ function(tinytom_sources out_headers out_sources)
         commands/integratecommand.cpp
         commands/listcommand.cpp
         commands/make/concerns/prepareoptionvalues.cpp
+        commands/make/makecommand.cpp
         commands/make/migrationcommand.cpp
         commands/make/modelcommand.cpp
 #        commands/make/projectcommand.cpp

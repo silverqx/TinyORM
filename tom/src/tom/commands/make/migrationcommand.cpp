@@ -23,6 +23,7 @@ using StringUtils = Orm::Tiny::Utils::String;
 
 using Tom::Constants::create_;
 using Tom::Constants::create_up;
+using Tom::Constants::force;
 using Tom::Constants::fullpath;
 using Tom::Constants::path_;
 using Tom::Constants::path_up;
@@ -41,7 +42,7 @@ namespace Tom::Commands::Make
 /* public */
 
 MigrationCommand::MigrationCommand(Application &application, QCommandLineParser &parser)
-    : Command(application, parser)
+    : MakeCommand(application, parser)
 {}
 
 const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() const
@@ -56,13 +57,16 @@ const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() c
 QList<QCommandLineOption> MigrationCommand::optionsSignature() const
 {
     return {
-        {create_,   QStringLiteral("The table name to be created"), create_up}, // Value
-        {table_,    QStringLiteral("The table name to migrate (update)"), table_up}, // Value
-        {path_,     QStringLiteral("The location where the migration file should be "
-                                   "created"), path_up}, // Value
-        {realpath_, QStringLiteral("Indicate that any provided migration file paths are "
-                                   "pre-resolved absolute paths")},
-        {fullpath,  QStringLiteral("Output the full path of the created migration")},
+        {create_,      QStringLiteral("The table name to be created"), create_up}, // Value
+        {table_,       QStringLiteral("The table name to migrate (update)"), table_up}, // Value
+        {path_,        QStringLiteral("The location where the migration file should be "
+                                      "created"), path_up}, // Value
+        {realpath_,    QStringLiteral("Indicate that any provided migration file paths "
+                                      "are pre-resolved absolute paths")},
+        {fullpath,     QStringLiteral("Output the full path of the created migration")},
+
+        {{QChar('f'),
+          force},      QStringLiteral("Overwrite the migration file if already exists")},
     };
 }
 
@@ -75,6 +79,9 @@ int MigrationCommand::run()
        to be freshly created so we can create the appropriate migrations. */
     auto [datetimePrefix, migrationName, extension] =
             prepareMigrationNameClassName(argument(NAME).trimmed());
+
+    // Check whether a migration file already exists and create parent folder if needed
+    prepareFileSystem(QStringLiteral("migration"), getMigrationPath(), migrationName);
 
     auto table = value(table_);
 
@@ -206,6 +213,11 @@ void MigrationCommand::writeMigration(
 
 fspath MigrationCommand::getMigrationPath() const
 {
+    static fspath cached;
+
+    if (!cached.empty())
+        return cached;
+
     // Default location
     if (!isSet(path_))
         return application().getMigrationsPath();
@@ -225,7 +237,7 @@ fspath MigrationCommand::getMigrationPath() const
                 QStringLiteral("Migrations path '%1' exists and it's not a directory.")
                 .arg(migrationsPath.c_str()));
 
-    return migrationsPath;
+    return cached = migrationsPath;
 }
 
 } // namespace Tom::Commands::Make

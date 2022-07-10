@@ -50,13 +50,6 @@ namespace Tom::Commands::Make::Support
         populateStub(const QString &name, QString &&stub, const QString &table);
         /*! Get the class name of a migration name. */
         static QString getClassName(const QString &name);
-        /*! Ensure a directory exists. */
-        static void ensureDirectoryExists(const fspath &path);
-
-    private:
-        /*! Ensure that a migration with the given name doesn't already exist. */
-        static void throwIfMigrationAlreadyExists(const QString &name,
-                                                  const fspath &migrationsPath);
     };
 
 } // namespace Tom::Commands::Make::Support

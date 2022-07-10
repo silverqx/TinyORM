@@ -7,8 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include <unordered_set>
 
-#include "tom/commands/command.hpp"
 #include "tom/commands/make/concerns/prepareoptionvalues.hpp"
+#include "tom/commands/make/makecommand.hpp"
 #include "tom/commands/make/modelcommandconcepts.hpp"
 #include "tom/commands/make/support/modelcreator.hpp"
 #include "tom/tomconstants.hpp"
@@ -28,7 +28,7 @@ namespace Support
 } // namespace Support
 
     /*! Create a new model class. */
-    class ModelCommand : public Command,
+    class ModelCommand : public MakeCommand,
                          protected Concerns::PrepareOptionValues
     {
         Q_DISABLE_COPY(ModelCommand)
@@ -121,13 +121,12 @@ namespace Support
     private:
         /*! Throw if the model name constains a namespace or path. */
         static void throwIfContainsNamespaceOrPath(
-                    const std::vector<QStringList> &classNames, const QString &source);
+                    const std::vector<QStringList> &classNames, const QString &source,
+                    const QString &commandType = QStringLiteral("model"));
         /*! Throw if the model name constains a namespace or path. */
-        static void throwIfContainsNamespaceOrPath(const QStringList &classNames,
-                                                   const QString &source);
-        /*! Throw if the model name constains a namespace or path. */
-        static void throwIfContainsNamespaceOrPath(const QString &className,
-                                                   const QString &source);
+        static void throwIfContainsNamespaceOrPath(
+                    const QStringList &classNames, const QString &source,
+                    const QString &commandType = QStringLiteral("model"));
     };
 
     /* public */

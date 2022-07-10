@@ -5,7 +5,7 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include "tom/commands/command.hpp"
+#include "tom/commands/make/makecommand.hpp"
 #include "tom/commands/make/support/migrationcreator.hpp"
 #include "tom/tomconstants.hpp"
 
@@ -15,7 +15,7 @@ namespace Tom::Commands::Make
 {
 
     /*! Create a new migration file. */
-    class MigrationCommand : public Command
+    class MigrationCommand : public MakeCommand
     {
         Q_DISABLE_COPY(MigrationCommand)
 

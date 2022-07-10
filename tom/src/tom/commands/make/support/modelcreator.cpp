@@ -17,9 +17,6 @@
 
 #include "tom/commands/make/modelcommandconcepts.hpp"
 #include "tom/commands/make/stubs/modelstubs.hpp"
-#include "tom/exceptions/invalidargumenterror.hpp"
-
-namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
 
@@ -74,10 +71,6 @@ fspath ModelCreator::create(const QString &className, const CmdOptions &cmdOptio
 
     auto modelPath = getPath(basename, modelsPath);
 
-    throwIfModelAlreadyExists(className, basename, modelsPath);
-
-    ensureDirectoryExists(modelsPath);
-
     // Output it as binary stream to force line endings to LF
     std::ofstream(modelPath, std::ios::out | std::ios::binary)
             << populateStub(className, cmdOptions, isSetPreserveOrder);
@@ -90,14 +83,6 @@ fspath ModelCreator::create(const QString &className, const CmdOptions &cmdOptio
 fspath ModelCreator::getPath(const QString &basename, const fspath &path)
 {
     return path / (basename.toStdString() + ".hpp");
-}
-
-void ModelCreator::ensureDirectoryExists(const fspath &path)
-{
-    if (fs::exists(path) && fs::is_directory(path))
-        return;
-
-    fs::create_directories(path);
 }
 
 std::string ModelCreator::populateStub(
@@ -1060,33 +1045,6 @@ QString ModelCreator::joinRelationsList(RelationsWithOrder &&relationsList)
             | ranges::to<QStringList>();
 
     return relationsQList.join(NEWLINE);
-}
-
-/* private */
-
-void ModelCreator::throwIfModelAlreadyExists(
-            const QString &className, const QString &basename, const fspath &modelsPath)
-{
-    // Nothing to check
-    if (!fs::exists(modelsPath))
-        return;
-
-    using options = fs::directory_options;
-
-    for (const auto &entry :
-         fs::directory_iterator(modelsPath, options::skip_permission_denied)
-    ) {
-        // Check only files
-        if (!entry.is_regular_file())
-            continue;
-
-        // Extract base filename without the extension
-        auto entryName = QString::fromStdString(entry.path().stem().string());
-
-        if (entryName == basename)
-            throw Exceptions::InvalidArgumentError(
-                    QStringLiteral("A '%1' model already exists.").arg(className));
-    }
 }
 
 } // namespace Tom::Commands::Make::Support

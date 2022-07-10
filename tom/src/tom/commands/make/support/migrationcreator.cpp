@@ -7,10 +7,7 @@
 #include <orm/tiny/utils/string.hpp>
 
 #include "tom/commands/make/stubs/migrationstubs.hpp"
-#include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
-
-namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
 
@@ -35,14 +32,10 @@ fspath MigrationCreator::create(
     auto migrationPath = getPath(std::move(datetimePrefix), name, std::move(extension),
                                  migrationsPath);
 
-    throwIfMigrationAlreadyExists(name, migrationsPath);
-
     /* First we will get the stub file for the migration, which serves as a type
        of template for the migration. Once we have those we will populate the
        various place-holders, and save the file. */
     auto stub = getStub(table, create);
-
-    ensureDirectoryExists(migrationsPath);
 
     // Output it as binary stream to force line endings to LF
     std::ofstream(migrationPath, std::ios::out | std::ios::binary)
@@ -110,42 +103,6 @@ MigrationCreator::populateStub(const QString &name, QString &&stub, const QStrin
 QString MigrationCreator::getClassName(const QString &name)
 {
     return StringUtils::studly(name);
-}
-
-void MigrationCreator::ensureDirectoryExists(const fspath &path)
-{
-    if (fs::exists(path) && fs::is_directory(path))
-        return;
-
-    fs::create_directories(path);
-}
-
-/* private */
-
-void MigrationCreator::throwIfMigrationAlreadyExists(const QString &name,
-                                                     const fspath &migrationsPath)
-{
-    // Nothing to check
-    if (!fs::exists(migrationsPath))
-        return;
-
-    using options = fs::directory_options;
-
-    for (const auto &entry :
-         fs::directory_iterator(migrationsPath, options::skip_permission_denied)
-    ) {
-        // Check only files
-        if (!entry.is_regular_file())
-            continue;
-
-        // Extract migration name without datetime prefix and extension
-        auto entryName = QString::fromStdString(entry.path().stem().string())
-                         .mid(DateTimePrefix.size() + 1);
-
-        if (entryName == name)
-            throw Exceptions::InvalidArgumentError(
-                    QStringLiteral("A '%1' migration already exists.").arg(name));
-    }
 }
 
 } // namespace Tom::Commands::Make::Support

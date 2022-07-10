@@ -5,9 +5,6 @@
 #include <orm/tiny/utils/string.hpp>
 
 #include "tom/commands/make/stubs/seederstubs.hpp"
-#include "tom/exceptions/invalidargumenterror.hpp"
-
-namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
 
@@ -28,10 +25,6 @@ fspath SeederCreator::create(const QString &className, fspath &&seedersPath) con
 
     auto seederPath = getPath(basename, seedersPath);
 
-    throwIfSeederAlreadyExists(className, basename, seedersPath);
-
-    ensureDirectoryExists(seedersPath);
-
     /* Populate the various place-holders, and save the file.
        Output it as binary stream to force line endings to LF. */
     std::ofstream(seederPath, std::ios::out | std::ios::binary)
@@ -45,14 +38,6 @@ fspath SeederCreator::create(const QString &className, fspath &&seedersPath) con
 fspath SeederCreator::getPath(const QString &basename, const fspath &path)
 {
     return path / (basename.toStdString() + ".hpp");
-}
-
-void SeederCreator::ensureDirectoryExists(const fspath &path)
-{
-    if (fs::exists(path) && fs::is_directory(path))
-        return;
-
-    fs::create_directories(path);
 }
 
 std::string
@@ -85,34 +70,6 @@ QString SeederCreator::getTableName(QString className)
         className.append(QChar('s'));
 
     return StringUtils::snake(className);
-}
-
-/* private */
-
-void SeederCreator::throwIfSeederAlreadyExists(
-            const QString &className, const QString &basename,
-            const fspath &seedersPath) const
-{
-    // Nothing to check
-    if (!fs::exists(seedersPath))
-        return;
-
-    using options = fs::directory_options;
-
-    for (const auto &entry :
-         fs::directory_iterator(seedersPath, options::skip_permission_denied)
-    ) {
-        // Check only files
-        if (!entry.is_regular_file())
-            continue;
-
-        // Extract base filename without the extension
-        auto entryName = QString::fromStdString(entry.path().stem().string());
-
-        if (entryName == basename)
-            throw Exceptions::InvalidArgumentError(
-                    QStringLiteral("A '%1' seeder already exists.").arg(className));
-    }
 }
 
 } // namespace Tom::Commands::Make::Support

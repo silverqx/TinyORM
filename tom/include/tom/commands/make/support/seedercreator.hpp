@@ -37,21 +37,12 @@ namespace Tom::Commands::Make::Support
         /*! Get the full path to the seeder. */
         static fspath getPath(const QString &basename, const fspath &path);
 
-        /*! Ensure a directory exists. */
-        static void ensureDirectoryExists(const fspath &path);
-
         /*! Populate the place-holders in the seeder stub. */
         static std::string
         populateStub(const QString &className, QString &&table);
 
         /*! Get the table name from the seeder class name. */
         static QString getTableName(QString className);
-
-    private:
-        /*! Ensure that a seeder with the given name doesn't already exist. */
-        void throwIfSeederAlreadyExists(
-                    const QString &className, const QString &basename,
-                    const fspath &seedersPath) const;
     };
 
 } // namespace Tom::Commands::Make::Support

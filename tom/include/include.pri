@@ -19,6 +19,7 @@ headersList += \
     $$PWD/tom/commands/integratecommand.hpp \
     $$PWD/tom/commands/listcommand.hpp \
     $$PWD/tom/commands/make/concerns/prepareoptionvalues.hpp \
+    $$PWD/tom/commands/make/makecommand.hpp \
     $$PWD/tom/commands/make/migrationcommand.hpp \
     $$PWD/tom/commands/make/modelcommand.hpp \
     $$PWD/tom/commands/make/modelcommandconcepts.hpp \

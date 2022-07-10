@@ -41,6 +41,7 @@ using Tom::Constants::disable_incrementing;
 using Tom::Constants::disable_timestamps;
 using Tom::Constants::fillable;
 using Tom::Constants::fillable_up;
+using Tom::Constants::force;
 using Tom::Constants::foreign_key;
 using Tom::Constants::foreign_key_up;
 using Tom::Constants::fullpath;
@@ -84,7 +85,7 @@ namespace Tom::Commands::Make
 /* public */
 
 ModelCommand::ModelCommand(Application &application, QCommandLineParser &parser)
-    : Command(application, parser)
+    : MakeCommand(application, parser)
 {}
 
 const std::vector<PositionalArgument> &ModelCommand::positionalArguments() const
@@ -186,6 +187,9 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
                                               "paths are pre-resolved absolute paths")},
         {fullpath,             QStringLiteral("Output the full path of the created "
                                               "model")},
+        {{QChar('f'),
+          force},              QStringLiteral("Overwrite the model class if already "
+                                              "exists")},
     };
 }
 
@@ -227,12 +231,17 @@ int ModelCommand::run()
     const auto [className, cmdOptions] = prepareModelClassNames(argument(NAME),
                                                                 createCmdOptions());
 
+    // Unused warnings
     showUnusedOptionsWarnings(cmdOptions);
 
     if (!m_unusedBtmOptions.empty() || m_shownUnusedForeignKey ||
         !m_unusedPivotModelOptions.empty() || m_shownUnusedIncrementing
     )
         newLine();
+
+    // Check whether a model file already exists and create parent folder if needed
+    prepareFileSystem(QStringLiteral("model"), getModelPath(), className.toLower(),
+                      className);
 
     // Ready to write the model to the disk 🧨✨
     writeModel(className, cmdOptions);
@@ -275,7 +284,8 @@ ModelCommand::prepareModelClassNames(QString &&className, CmdOptions &&cmdOption
     ] = cmdOptions;
 
     // Validate the model class names
-    throwIfContainsNamespaceOrPath(className, QStringLiteral("argument 'name'"));
+    MakeCommand::throwIfContainsNamespaceOrPath(QStringLiteral("model"), className,
+                                                QStringLiteral("argument 'name'"));
     throwIfContainsNamespaceOrPath(oneToOneList,
                                    QStringLiteral("option --one-to-one"));
     throwIfContainsNamespaceOrPath(oneToManyList,
@@ -285,9 +295,11 @@ ModelCommand::prepareModelClassNames(QString &&className, CmdOptions &&cmdOption
     throwIfContainsNamespaceOrPath(belongsToManyList,
                                    QStringLiteral("option --belongs-to-many"));
     throwIfContainsNamespaceOrPath(pivotClasses,
-                                   QStringLiteral("option --pivot"));
+                                   QStringLiteral("option --pivot"),
+                                   QStringLiteral("pivot model"));
     throwIfContainsNamespaceOrPath(pivotInverseClasses,
-                                   QStringLiteral("option --pivot-inverse"));
+                                   QStringLiteral("option --pivot-inverse"),
+                                   QStringLiteral("pivot model"));
 
     oneToOneList        = StringUtils::studly(std::move(oneToOneList));
     oneToManyList       = StringUtils::studly(std::move(oneToManyList));
@@ -484,6 +496,11 @@ RelationsOrder ModelCommand::relationsOrder()
 
 fspath ModelCommand::getModelPath() const
 {
+    static fspath cached;
+
+    if (!cached.empty())
+        return cached;
+
     // Default location
     if (!isSet(path_))
         return application().getModelsPath();
@@ -503,7 +520,7 @@ fspath ModelCommand::getModelPath() const
                 QStringLiteral("Models path '%1' exists and it's not a directory.")
                 .arg(modelsPath.c_str()));
 
-    return modelsPath;
+    return cached = modelsPath;
 }
 
 const std::unordered_set<QString> &ModelCommand::relationNames()
@@ -525,6 +542,7 @@ void ModelCommand::createMigration(const QString &className) const
         table.append(QChar('s'));
 
     call(MakeMigration, {longOption(create_, table),
+                         boolCmd(force),
                          QStringLiteral("create_%1_table").arg(std::move(table))});
 }
 
@@ -534,37 +552,25 @@ void ModelCommand::createSeeder(const QString &className) const
 
     // FUTURE tom, add hidden options support to the tom's parser, add --table option for the make:seeder command and pass singular table name for pivot models because currently the make:seeder command generates eg. taggeds table name (even if this table name is in the commented code), command to reproduce: tom make:model Tagged --pivot-model --seeder silverqx
 
-    call(MakeSeeder, {std::move(seederClassName)});
+    call(MakeSeeder, {boolCmd(force), std::move(seederClassName)});
 }
 
 /* private */
 
 void ModelCommand::throwIfContainsNamespaceOrPath(
-            const std::vector<QStringList> &classNames, const QString &source)
+            const std::vector<QStringList> &classNames, const QString &source,
+            const QString &commandType)
 {
     for (const auto &classNameList : classNames)
-        throwIfContainsNamespaceOrPath(classNameList, source);
+        throwIfContainsNamespaceOrPath(classNameList, source, commandType);
 }
 
-void ModelCommand::throwIfContainsNamespaceOrPath(const QStringList &classNames,
-                                                  const QString &source)
+void ModelCommand::throwIfContainsNamespaceOrPath(
+            const QStringList &classNames, const QString &source,
+            const QString &commandType)
 {
     for (const auto &className : classNames)
-        throwIfContainsNamespaceOrPath(className, source);
-}
-
-void ModelCommand::throwIfContainsNamespaceOrPath(const QString &className,
-                                                  const QString &source)
-{
-    if (!className.contains(QStringLiteral("::")) && !className.contains(QChar('/')) &&
-        !className.contains(QChar('\\'))
-    )
-        return;
-
-    throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Namespace or path is not allowed in the model "
-                               "names (%1).")
-                .arg(source));
+        MakeCommand::throwIfContainsNamespaceOrPath(commandType, className, source);
 }
 
 } // namespace Tom::Commands::Make

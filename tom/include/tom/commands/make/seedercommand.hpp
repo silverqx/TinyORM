@@ -5,7 +5,7 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include "tom/commands/command.hpp"
+#include "tom/commands/make/makecommand.hpp"
 #include "tom/commands/make/support/seedercreator.hpp"
 #include "tom/tomconstants.hpp"
 
@@ -15,7 +15,7 @@ namespace Tom::Commands::Make
 {
 
     /*! Create a new seeder class. */
-    class SeederCommand : public Command
+    class SeederCommand : public MakeCommand
     {
         Q_DISABLE_COPY(SeederCommand)
 
@@ -54,10 +54,6 @@ namespace Tom::Commands::Make
 
         /*! The seeder creator instance. */
         Support::SeederCreator m_creator {};
-
-    private:
-        /*! Throw if the seeder name constains a namespace or path. */
-        static void throwIfContainsNamespaceOrPath(const QString &className);
     };
 
     /* public */

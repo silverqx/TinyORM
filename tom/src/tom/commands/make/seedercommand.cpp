@@ -15,10 +15,12 @@ using Orm::Constants::NAME;
 
 using StringUtils = Orm::Tiny::Utils::String;
 
+using Tom::Constants::force;
 using Tom::Constants::fullpath;
 using Tom::Constants::path_;
 using Tom::Constants::path_up;
 using Tom::Constants::realpath_;
+using Tom::Constants::seeder;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -28,7 +30,7 @@ namespace Tom::Commands::Make
 /* public */
 
 SeederCommand::SeederCommand(Application &application, QCommandLineParser &parser)
-    : Command(application, parser)
+    : MakeCommand(application, parser)
 {}
 
 const std::vector<PositionalArgument> &SeederCommand::positionalArguments() const
@@ -43,11 +45,14 @@ const std::vector<PositionalArgument> &SeederCommand::positionalArguments() cons
 QList<QCommandLineOption> SeederCommand::optionsSignature() const
 {
     return {
-        {path_,     QStringLiteral("The location where the seeder file should be "
-                                   "created"), path_up}, // Value
-        {realpath_, QStringLiteral("Indicate that any provided seeder file paths are "
-                                   "pre-resolved absolute paths")},
-        {fullpath,  QStringLiteral("Output the full path of the created seeder")},
+        {path_,        QStringLiteral("The location where the seeder file should be "
+                                      "created"), path_up}, // Value
+        {realpath_,    QStringLiteral("Indicate that any provided seeder file paths are "
+                                      "pre-resolved absolute paths")},
+        {fullpath,     QStringLiteral("Output the full path of the created seeder")},
+
+        {{QChar('f'),
+          force},      QStringLiteral("Overwrite the seeder class if already exists")},
     };
 }
 
@@ -56,6 +61,9 @@ int SeederCommand::run()
     Command::run();
 
     const auto className = prepareSeederClassName(argument(NAME));
+
+    // Check whether a seeder file already exists and create parent folder if needed
+    prepareFileSystem(seeder, getSeederPath(), className.toLower(), className);
 
     // Ready to write the seeder to the disk 🧨✨
     writeSeeder(className);
@@ -68,7 +76,8 @@ int SeederCommand::run()
 QString SeederCommand::prepareSeederClassName(QString &&className)
 {
     // Validate the seeder name
-    throwIfContainsNamespaceOrPath(className);
+    throwIfContainsNamespaceOrPath(QStringLiteral("seeder"), className,
+                                   QStringLiteral("argument 'name'"));
 
     static const auto Seeder = QStringLiteral("Seeder");
     static const auto Seeder_lc = QStringLiteral("seeder");
@@ -106,6 +115,11 @@ void SeederCommand::writeSeeder(const QString &className) const
 
 fspath SeederCommand::getSeederPath() const
 {
+    static fspath cached;
+
+    if (!cached.empty())
+        return cached;
+
     // Default location
     if (!isSet(path_))
         return application().getSeedersPath();
@@ -125,18 +139,7 @@ fspath SeederCommand::getSeederPath() const
                 QStringLiteral("Seeders path '%1' exists and it's not a directory.")
                 .arg(seedersPath.c_str()));
 
-    return seedersPath;
-}
-
-void SeederCommand::throwIfContainsNamespaceOrPath(const QString &className)
-{
-    if (!className.contains(QStringLiteral("::")) && !className.contains(QChar('/')) &&
-        !className.contains(QChar('\\'))
-    )
-        return;
-
-    throw Exceptions::InvalidArgumentError(
-                "Namespace or path is not allowed in the seeder name.");
+    return cached = seedersPath;
 }
 
 } // namespace Tom::Commands::Make

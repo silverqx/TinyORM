@@ -41,9 +41,6 @@ namespace Tom::Commands::Make::Support
         /*! Get the full path to the model. */
         static fspath getPath(const QString &basename, const fspath &path);
 
-        /*! Ensure a directory exists. */
-        static void ensureDirectoryExists(const fspath &path);
-
         /*! Populate the place-holders in the model stub. */
         std::string populateStub(const QString &className, const CmdOptions &cmdOptions,
                                  bool isSetPreserveOrder);
@@ -192,12 +189,6 @@ namespace Tom::Commands::Make::Support
 
         /*! Cached relations list size to avoid recomputation. */
         std::size_t m_relationsListSize = 0;
-
-    private:
-        /*! Ensure that a model with the given name doesn't already exist. */
-        static void throwIfModelAlreadyExists(
-                    const QString &className, const QString &basename,
-                    const fspath &modelsPath);
     };
 
 } // namespace Tom::Commands::Make::Support
