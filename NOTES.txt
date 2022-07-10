@@ -1,3 +1,17 @@
+Increase/bump the release version:
+----------------------------------
+
+- increase in the following files
+
+include/orm/version.hpp
+tests/TinyUtils/src/version.hpp
+tom/include/tom/version.hpp
+
+- and also informational version in badges
+
+README.md
+
+
 Todos to check in TinyOrm:
 --------------------------
 
