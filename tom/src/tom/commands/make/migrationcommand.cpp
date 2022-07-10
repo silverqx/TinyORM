@@ -80,8 +80,10 @@ int MigrationCommand::run()
     auto [datetimePrefix, migrationName, extension] =
             prepareMigrationNameClassName(argument(NAME).trimmed());
 
+    auto migrationsPath = getMigrationsPath();
+
     // Check whether a migration file already exists and create parent folder if needed
-    prepareFileSystem(QStringLiteral("migration"), getMigrationPath(), migrationName);
+    prepareFileSystem(QStringLiteral("migration"), migrationsPath, migrationName);
 
     auto table = value(table_);
 
@@ -105,7 +107,7 @@ int MigrationCommand::run()
 
     // Ready to write the migration to the disk 🧨✨
     writeMigration(std::move(datetimePrefix), migrationName, std::move(extension),
-                   table, create);
+                   std::move(migrationsPath), table, create);
 
     return EXIT_SUCCESS;
 }
@@ -196,11 +198,11 @@ QString MigrationCommand::prepareFinalMigrationName(QString &&migration)
 
 void MigrationCommand::writeMigration(
             std::string &&datetimePrefix, const QString &name, std::string &&extension,
-            const QString &table, const bool create) const
+            fspath &&migrationsPath, const QString &table, const bool create) const
 {
     auto migrationFilePath = m_creator.create(
                                  std::move(datetimePrefix), name, std::move(extension),
-                                 getMigrationPath(), table, create);
+                                 std::move(migrationsPath), table, create);
 
     // make_preferred() returns reference and filename() creates a new fs::path instance
     const auto migrationFile = isSet(fullpath) ? migrationFilePath.make_preferred()
@@ -211,13 +213,8 @@ void MigrationCommand::writeMigration(
     note(QString::fromStdString(migrationFile.string()));
 }
 
-fspath MigrationCommand::getMigrationPath() const
+fspath MigrationCommand::getMigrationsPath() const
 {
-    static fspath cached;
-
-    if (!cached.empty())
-        return cached;
-
     // Default location
     if (!isSet(path_))
         return application().getMigrationsPath();
@@ -237,7 +234,7 @@ fspath MigrationCommand::getMigrationPath() const
                 QStringLiteral("Migrations path '%1' exists and it's not a directory.")
                 .arg(migrationsPath.c_str()));
 
-    return cached = migrationsPath;
+    return migrationsPath;
 }
 
 } // namespace Tom::Commands::Make

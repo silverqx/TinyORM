@@ -62,11 +62,13 @@ int SeederCommand::run()
 
     const auto className = prepareSeederClassName(argument(NAME));
 
+    auto seedersPath = getSeedersPath();
+
     // Check whether a seeder file already exists and create parent folder if needed
-    prepareFileSystem(seeder, getSeederPath(), className.toLower(), className);
+    prepareFileSystem(seeder, seedersPath, className.toLower(), className);
 
     // Ready to write the seeder to the disk 🧨✨
-    writeSeeder(className);
+    writeSeeder(className, std::move(seedersPath));
 
     return EXIT_SUCCESS;
 }
@@ -100,9 +102,9 @@ QString SeederCommand::prepareSeederClassName(QString &&className)
     return std::move(className);
 }
 
-void SeederCommand::writeSeeder(const QString &className) const
+void SeederCommand::writeSeeder(const QString &className, fspath &&seedersPath) const
 {
-    auto seederFilePath = m_creator.create(className, getSeederPath());
+    auto seederFilePath = m_creator.create(className, std::move(seedersPath));
 
     // make_preferred() returns reference and filename() creates a new fs::path instance
     const auto seederFile = isSet(fullpath) ? seederFilePath.make_preferred()
@@ -113,13 +115,8 @@ void SeederCommand::writeSeeder(const QString &className) const
     note(QString::fromStdString(seederFile.string()));
 }
 
-fspath SeederCommand::getSeederPath() const
+fspath SeederCommand::getSeedersPath() const
 {
-    static fspath cached;
-
-    if (!cached.empty())
-        return cached;
-
     // Default location
     if (!isSet(path_))
         return application().getSeedersPath();
@@ -139,7 +136,7 @@ fspath SeederCommand::getSeederPath() const
                 QStringLiteral("Seeders path '%1' exists and it's not a directory.")
                 .arg(seedersPath.c_str()));
 
-    return cached = seedersPath;
+    return seedersPath;
 }
 
 } // namespace Tom::Commands::Make

@@ -46,11 +46,11 @@ namespace Tom::Commands::Make
         static QString prepareSeederClassName(QString &&className);
 
         /*! Write the seeder file to the disk. */
-        void writeSeeder(const QString &className) const;
+        void writeSeeder(const QString &className, fspath &&seedersPath) const;
 
         /*! Get the seeder path (either specified by the --path option or the default
             location). */
-        fspath getSeederPath() const;
+        fspath getSeedersPath() const;
 
         /*! The seeder creator instance. */
         Support::SeederCreator m_creator {};

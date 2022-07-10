@@ -239,12 +239,14 @@ int ModelCommand::run()
     )
         newLine();
 
+    auto modelsPath = getModelsPath();
+
     // Check whether a model file already exists and create parent folder if needed
-    prepareFileSystem(QStringLiteral("model"), getModelPath(), className.toLower(),
+    prepareFileSystem(QStringLiteral("model"), modelsPath, className.toLower(),
                       className);
 
     // Ready to write the model to the disk 🧨✨
-    writeModel(className, cmdOptions);
+    writeModel(className, cmdOptions, std::move(modelsPath));
 
     // Call other commands
     if (isSet(migration_))
@@ -409,9 +411,10 @@ void ModelCommand::showUnusedIncrementingWarning()
     m_shownUnusedIncrementing = true;
 }
 
-void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions)
+void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions,
+                              fspath &&modelsPath)
 {
-    auto modelFilePath = m_creator.create(className, cmdOptions, getModelPath(),
+    auto modelFilePath = m_creator.create(className, cmdOptions, std::move(modelsPath),
                                           isSet(preserve_order));
 
     // make_preferred() returns reference and filename() creates a new fs::path instance
@@ -494,13 +497,8 @@ RelationsOrder ModelCommand::relationsOrder()
 
 /* Others */
 
-fspath ModelCommand::getModelPath() const
+fspath ModelCommand::getModelsPath() const
 {
-    static fspath cached;
-
-    if (!cached.empty())
-        return cached;
-
     // Default location
     if (!isSet(path_))
         return application().getModelsPath();
@@ -520,7 +518,7 @@ fspath ModelCommand::getModelPath() const
                 QStringLiteral("Models path '%1' exists and it's not a directory.")
                 .arg(modelsPath.c_str()));
 
-    return cached = modelsPath;
+    return modelsPath;
 }
 
 const std::unordered_set<QString> &ModelCommand::relationNames()

@@ -86,7 +86,8 @@ namespace Support
         void showUnusedIncrementingWarning();
 
         /*! Write the model file to the disk. */
-        void writeModel(const QString &className, const CmdOptions &cmdOptions);
+        void writeModel(const QString &className, const CmdOptions &cmdOptions,
+                        fspath &&modelsPath);
 
         /*! Create command-line options instance. */
         CmdOptions createCmdOptions();
@@ -96,7 +97,7 @@ namespace Support
         /* Others */
         /*! Get the model path (either specified by the --path option or the default
             location). */
-        fspath getModelPath() const;
+        fspath getModelsPath() const;
         /*! Set of all cmd. option relation names. */
         const std::unordered_set<QString> &relationNames();
 
