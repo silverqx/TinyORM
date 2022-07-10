@@ -36,6 +36,10 @@ TinyORM is an object-relational mapper (ORM) that makes it enjoyable to interact
 Before getting started, be sure to configure a database connection in your application. For more information on configuring your database, check out the [database configuration documentation](database/getting-started.mdx#configuration).
 :::
 
+:::tip
+If you want to see a model in which are used all possible TinyORM features you can look at the [`torrent.hpp`](https://github.com/silverqx/TinyORM/blob/main/tests/models/models/torrent.hpp) in the TinyORM's tests, this `Models::Torrent` class serves also as a showcase, so all possible features are defined in it.
+:::
+
 ## Generating Model Classes
 
 To get started, let's create the simplest TinyORM model. Models typically live in the `database\models` directory and extend the `Orm::Tiny::Model` class. You may use the `make:model` command to generate a new model:
