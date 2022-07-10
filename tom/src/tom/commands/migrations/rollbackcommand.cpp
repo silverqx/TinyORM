@@ -34,12 +34,13 @@ RollbackCommand::RollbackCommand(
 QList<QCommandLineOption> RollbackCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use "
-                                   "<comment>(multiple values allowed)</comment>"),
-                    database_up}, // Value
-        {force,     QStringLiteral("Force the operation to run when in production")},
-        {pretend,   QStringLiteral("Dump the SQL queries that would be run")},
-        {step_,     QStringLiteral("The number of migrations to be reverted"), step_up}, // Value
+        {database_,   QStringLiteral("The database connection to use "
+                                     "<comment>(multiple values allowed)</comment>"),
+                      database_up}, // Value
+        {{QChar('f'),
+          force},     QStringLiteral("Force the operation to run when in production")},
+        {pretend,     QStringLiteral("Dump the SQL queries that would be run")},
+        {step_,       QStringLiteral("The number of migrations to be reverted"), step_up}, // Value
     };
 }
 

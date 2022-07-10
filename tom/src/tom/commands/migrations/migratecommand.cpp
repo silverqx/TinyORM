@@ -39,7 +39,8 @@ QList<QCommandLineOption> MigrateCommand::optionsSignature() const
         {database_,     QStringLiteral("The database connection to use "
                                        "<comment>(multiple values allowed)</comment>"),
                         database_up}, // Value
-        {force,         QStringLiteral("Force the operation to run when in production")},
+        {{QChar('f'),
+          force},       QStringLiteral("Force the operation to run when in production")},
         {pretend,       QStringLiteral("Dump the SQL queries that would be run")},
 //        {"schema-path", QStringLiteral("The path to a schema dump file")}, // Value
         {seed,          QStringLiteral("Indicates if the seed task should be re-run")},

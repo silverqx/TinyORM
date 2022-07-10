@@ -140,7 +140,7 @@ _tom() {
         integrate)
             _arguments \
                 $common_options \
-                '1::shell:(bash pwsh zsh)' \
+                '1::shell name:(bash pwsh zsh)' \
                 '--stdout[Print content of the integrate command (instead of writing to disk)]' \
                 '--path=[The location where the completion file should be created (zsh only)]:folder path:_files -/'
             ;;
@@ -148,14 +148,14 @@ _tom() {
         list)
             _arguments \
                 $common_options \
-                '1::namepace:__tom_namespaces'
+                '1::namepace name:__tom_namespaces'
             ;;
 
         migrate)
             _arguments \
                 $common_options \
                 '--database=[The database connection to use]:connection:__tom_connections' \
-                '--force[Force the operation to run when in production]' \
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--pretend[Dump the SQL queries that would be run]' \
                 '--seed[Indicates if the seed task should be re-run]' \
                 '--step[Force the migrations to be run so they can be rolled back individually]'
@@ -167,7 +167,7 @@ _tom() {
                 '(--class)1::class name:__tom_seeders' \
                 '(1)--class=[The class name of the root seeder \[default: "Seeders::DatabaseSeeder"\]]:class name:__tom_seeders' \
                 '--database=[The database connection to use]:connection:__tom_connections' \
-                '--force[Force the operation to run when in production]'
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]'
             ;;
 
         db:wipe)
@@ -176,13 +176,13 @@ _tom() {
                 '--database=[The database connection to use]:connection:__tom_connections' \
                 '--drop-views[Drop all tables and views]' \
                 '--drop-types[Drop all tables and types (Postgres only)]' \
-                '--force[Force the operation to run when in production]'
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]'
             ;;
 
         make:migration)
             _arguments \
                 $common_options \
-                '1::migration:()' \
+                '1::migration name:()' \
                 '--create=[The table to be created]:table name' \
                 '--table=[The table to migrate]:table name' \
                 '--path=[The location where the migration file should be created]:folder path:_files -/' \
@@ -195,6 +195,8 @@ _tom() {
             _arguments \
                 $common_options \
                 '1::class name:()' \
+                '(-m --migration)'{-m,--migration}'[Create a new migration file for the model]' \
+                '(-s --seeder)'{-s,--seeder}'[Create a new seeder for the model]' \
                 '*--one-to-one=[Create one-to-one relation to the given model]:class name' \
                 '*--one-to-many=[Create one-to-many relation to the given model]:class name' \
                 '*--belongs-to=[Create belongs-to relation to the given model]:class name' \
@@ -241,7 +243,7 @@ _tom() {
                 '--database=[The database connection to use]:connection:__tom_connections' \
                 '--drop-views[Drop all tables and views]' \
                 '--drop-types[Drop all tables and types (Postgres only)]' \
-                '--force[Force the operation to run when in production]' \
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--seed[Indicates if the seed task should be re-run]' \
                 '--seeder=[The class name of the root seeder]:class name:__tom_seeders' \
                 '--step[Force the migrations to be run so they can be rolled back individually]'
@@ -257,7 +259,7 @@ _tom() {
             _arguments \
                 $common_options \
                 '--database=[The database connection to use]:connection:__tom_connections' \
-                '--force[Force the operation to run when in production]' \
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--seed[Indicates if the seed task should be re-run]' \
                 '--seeder=[The class name of the root seeder]:class name:__tom_seeders' \
                 '--step=[The number of migrations to be reverted & re-run]:number' \
@@ -268,7 +270,7 @@ _tom() {
             _arguments \
                 $common_options \
                 '--database=[The database connection to use]:connection:__tom_connections' \
-                '--force[Force the operation to run when in production]' \
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--pretend[Dump the SQL queries that would be run]'
             ;;
 
@@ -276,7 +278,7 @@ _tom() {
             _arguments \
                 $common_options \
                 '--database=[The database connection to use]:connection:__tom_connections' \
-                '--force[Force the operation to run when in production]' \
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--pretend[Dump the SQL queries that would be run]' \
                 '--step=[The number of migrations to be reverted & re-run]:number'
             ;;

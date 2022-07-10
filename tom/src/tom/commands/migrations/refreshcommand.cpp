@@ -44,7 +44,8 @@ QList<QCommandLineOption> RefreshCommand::optionsSignature() const
         {database_,    QStringLiteral("The database connection to use "
                                       "<comment>(multiple values allowed)</comment>"),
                        database_up}, // Value
-        {force,        QStringLiteral("Force the operation to run when in production")},
+        {{QChar('f'),
+          force},      QStringLiteral("Force the operation to run when in production")},
         {seed,         QStringLiteral("Indicates if the seed task should be re-run")},
         {seeder,       QStringLiteral("The class name of the root seeder"), seeder_up}, // Value
         {step_,        QStringLiteral("The number of migrations to be reverted & "

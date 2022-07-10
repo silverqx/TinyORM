@@ -32,11 +32,12 @@ ResetCommand::ResetCommand(
 QList<QCommandLineOption> ResetCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use "
-                                   "<comment>(multiple values allowed)</comment>"),
-                    database_up}, // Value
-        {force,     QStringLiteral("Force the operation to run when in production")},
-        {pretend,   QStringLiteral("Dump the SQL queries that would be run")},
+        {database_,   QStringLiteral("The database connection to use "
+                                     "<comment>(multiple values allowed)</comment>"),
+                      database_up}, // Value
+        {{QChar('f'),
+          force},     QStringLiteral("Force the operation to run when in production")},
+        {pretend,     QStringLiteral("Dump the SQL queries that would be run")},
     };
 }
 

@@ -101,10 +101,10 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
 {
     return {
         // Call other commands
-        {{QStringLiteral("m"),
+        {{QChar('m'),
           migration_},         QStringLiteral("Create a new migration file for the "
                                               "model")},
-        {{QStringLiteral("s"),
+        {{QChar('s'),
           seeder},             QStringLiteral("Create a new seeder for the model")},
 
         // Relationship methods
@@ -176,7 +176,7 @@ QList<QCommandLineOption> ModelCommand::optionsSignature() const
         {pivot_model,          QStringLiteral("Genarate a custom pivot model class")},
 
         // Others
-        {{QStringLiteral("o"),
+        {{QChar('o'),
           preserve_order},     QStringLiteral("Preserve relations order defined on the "
                                               "command-line")},
 

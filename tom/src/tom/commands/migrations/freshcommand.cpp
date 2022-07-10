@@ -45,7 +45,8 @@ QList<QCommandLineOption> FreshCommand::optionsSignature() const
                         database_up}, // Value
         {drop_views,    QStringLiteral("Drop all tables and views")},
         {drop_types,    QStringLiteral("Drop all tables and types (Postgres only)")},
-        {force,         QStringLiteral("Force the operation to run when in production")},
+        {{QChar('f'),
+          force},       QStringLiteral("Force the operation to run when in production")},
 //        {"schema-path", QStringLiteral("The path to a schema dump file")}, // Value
         {seed,          QStringLiteral("Indicates if the seed task should be re-run")},
         {seeder,        QStringLiteral("The class name of the root seeder"), seeder_up}, // Value

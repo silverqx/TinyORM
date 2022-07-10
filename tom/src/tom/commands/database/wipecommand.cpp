@@ -29,12 +29,14 @@ WipeCommand::WipeCommand(Application &application, QCommandLineParser &parser)
 QList<QCommandLineOption> WipeCommand::optionsSignature() const
 {
     return {
-        {database_,  QStringLiteral("The database connection to use "
-                                    "<comment>(multiple values allowed)</comment>"),
-                     database_up}, // Value
-        {drop_views, QStringLiteral("Drop all tables and views")},
-        {drop_types, QStringLiteral("Drop all tables and types (Postgres only)")},
-        {force,      QStringLiteral("Force the operation to run when in production")},
+        {database_,    QStringLiteral("The database connection to use "
+                                      "<comment>(multiple values allowed)</comment>"),
+                       database_up}, // Value
+        {drop_views,   QStringLiteral("Drop all tables and views")},
+        {drop_types,   QStringLiteral("Drop all tables and types (Postgres only)")},
+
+        {{QChar('f'),
+          force},      QStringLiteral("Force the operation to run when in production")},
     };
 }
 

@@ -55,12 +55,13 @@ const std::vector<PositionalArgument> &SeedCommand::positionalArguments() const
 QList<QCommandLineOption> SeedCommand::optionsSignature() const
 {
     return {
-        {class_,    QStringLiteral("The class name of the root seeder"), class_up,
-                    DatabaseSeeder}, // Value
-        {database_, QStringLiteral("The database connection to use "
-                                   "<comment>(multiple values allowed)</comment>"),
-                    database_up}, // Value
-        {force,     QStringLiteral("Force the operation to run when in production")},
+        {class_,       QStringLiteral("The class name of the root seeder"), class_up,
+                       DatabaseSeeder}, // Value
+        {database_,    QStringLiteral("The database connection to use "
+                                      "<comment>(multiple values allowed)</comment>"),
+                       database_up}, // Value
+        {{QChar('f'),
+         force},       QStringLiteral("Force the operation to run when in production")},
     };
 }
 

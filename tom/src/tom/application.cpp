@@ -258,13 +258,18 @@ void Application::initializeParser(QCommandLineParser &parser)
         {      noansi,         QStringLiteral("Disable ANSI output")},
         {      env,            QStringLiteral("The environment the command should run "
                                               "under"), env_up}, // Value
-        {{"h", help},          QStringLiteral("Display help for the given command. When "
+        {{QChar('h'),
+          help},               QStringLiteral("Display help for the given command. When "
                                               "no command is given display help for the "
                                               "<info>list</info> command")},
-        {{"n", nointeraction}, QStringLiteral("Do not ask any interactive question")},
-        {{"q", quiet},         QStringLiteral("Do not output any message")},
-        {{"V", version},       QStringLiteral("Display this application version")},
-        {{"v", verbose},       QStringLiteral("Increase the verbosity of messages: "
+        {{QChar('n'),
+          nointeraction},      QStringLiteral("Do not ask any interactive question")},
+        {{QChar('q'),
+          quiet},              QStringLiteral("Do not output any message")},
+        {{QChar('V'),
+          version},            QStringLiteral("Display this application version")},
+        {{QChar('v'),
+          verbose},            QStringLiteral("Increase the verbosity of messages: "
                                               "1 for normal output, "
                                               "2 for more verbose output and "
                                               "3 for debug")},
