@@ -8,6 +8,7 @@ keywords: [c++ orm, orm, getting started, tinyorm]
 # TinyORM: Getting Started
 
 - [Introduction](#introduction)
+- [Generating Model Classes](#generating-model-classes)
 - [TinyORM Model Conventions](#tinyorm-model-conventions)
     - [Table Names](#table-names)
     - [Primary Keys](#primary-keys)
@@ -32,7 +33,67 @@ keywords: [c++ orm, orm, getting started, tinyorm]
 TinyORM is an object-relational mapper (ORM) that makes it enjoyable to interact with your database. When using TinyORM, each database table has a corresponding "Model" that is used to interact with that table. In addition to retrieving records from the database table, TinyORM models allow you to insert, update, and delete records from the table as well.
 
 :::note
-Before getting started, be sure to configure a database connection in your application. For more information on configuring your database, check out [the database configuration documentation](database/getting-started.mdx#configuration).
+Before getting started, be sure to configure a database connection in your application. For more information on configuring your database, check out the [database configuration documentation](database/getting-started.mdx#configuration).
+:::
+
+## Generating Model Classes
+
+To get started, let's create the simplest TinyORM model. Models typically live in the `database\models` directory and extend the `Orm::Tiny::Model` class. You may use the `make:model` command to generate a new model:
+
+```bash
+tom make:model User
+```
+
+If you would like to generate a database [migration](/database/migrations.mdx) or [seeder](/database/seeding.mdx) when you generate the model, you may use the `--migration`/`-m` or `--seeder`/`-s` options:
+
+```bash
+tom make:model User --migration --seeder
+```
+
+The `--force` option forces overwriting of existing files:
+
+```bash
+tom make:model User --migration --seeder --force
+```
+
+The `make:model` is king 👑 among scaffolding commands that you can use to generate complete TinyORM model classes, it supports all features that TinyORM models offer. All advanced features are described in the `make:model` help command:
+
+```bash
+tom make:model --help
+```
+
+Few examples:
+
+```powershell
+# Setting some model attributes
+tom make:model User --table=users --fillable=name,email,banned_at `
+                    --guarded=password --dates=banned_at
+
+# Generate relationship methods
+tom make:model User --one-to-one=Passport `
+                    --one-to-many=Post --foreign-key=post_id `
+                    --one-to-many=Car
+
+# Generate a basic many-to-many relationship
+tom make:model User --belongs-to-many=Tag --with-timestamps
+
+# Generate a many-to-many relationship
+tom make:model User --belongs-to-many=Tag --foreign-key=tag_id `
+                    --pivot-table=user_tag --as=tagged `
+                    --with-pivot=active,soft --with-timestamps `
+                    --pivot=Tagged
+
+# Generate a pivot model
+tom make:model Tagged --pivot-model
+tom make:model Tagged --pivot-model --incrementing
+```
+
+:::tip
+Writing a `make:model` commands is superb with the [tab-completion](/database/migrations.mdx#tab-completion).
+:::
+
+:::note
+The `--path` and `--realpath` options work the same as for the [`make:migration`](/database/migrations.mdx#generating-migrations) command.
 :::
 
 ## TinyORM Model Conventions
