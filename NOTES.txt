@@ -1044,3 +1044,31 @@ Compilation time and Memory usage:
 MSVC2019          9.9GB 1:27
 MSVC2022          8.0GB 1:25
 clang-cl MSVC2022 5.5GB 1:35
+
+
+bugs:
+-----
+
+- BUG std::unordered_map can not be instantiated with the incomplete value type, reproducible only on the Linux GCC/Clang, MSYS2 and msvc don't have any problem with the incomplete type ✨🚀
+
+add this to the testforplay.cpp
+
+#include <filesystem>
+#include <iostream>
+#include <typeindex>
+#include <typeinfo>
+
+#include <unordered_map>
+
+namespace Models {
+class Torrent;
+}
+
+struct Test1
+{
+    std::unordered_map<QString, Models::Torrent> m_a {};
+};
+
+#include <range/v3/all.hpp>
+
+#include <orm/db.hpp>
