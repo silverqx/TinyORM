@@ -544,8 +544,6 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         forPage(int page, int perPage = 30);
 
-        // TODO next fuckin increment, finish later 👿 silverqx
-
         /* Pessimistic Locking */
         /*! Lock the selected rows in the table for updating. */
         static std::unique_ptr<TinyBuilder<Derived>>

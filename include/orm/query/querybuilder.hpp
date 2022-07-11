@@ -434,12 +434,12 @@ namespace Orm::Query
         Builder &forPage(int page, int perPage = 30);
 
         /*! Increment a column's value by a given amount. */
-        template<typename T> requires std::is_arithmetic_v<T>
+        template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         increment(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});
         /*! Decrement a column's value by a given amount. */
-        template<typename T> requires std::is_arithmetic_v<T>
+        template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});

@@ -398,12 +398,12 @@ namespace Tiny
         TinyBuilder<Model> &forPage(int page, int perPage = 30);
 
         /*! Increment a column's value by a given amount. */
-        template<typename T> requires std::is_arithmetic_v<T>
+        template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         increment(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {}) const;
         /*! Decrement a column's value by a given amount. */
-        template<typename T> requires std::is_arithmetic_v<T>
+        template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {}) const;
@@ -1349,22 +1349,18 @@ namespace Tiny
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
     BuilderProxies<Model>::increment(
-            const QString &column, const T amount,
-            const QVector<UpdateItem> &extra) const
+            const QString &column, const T amount, const QVector<UpdateItem> &extra) const
     {
-        return toBase().template increment<T>(column, amount,
-                                              builder().addUpdatedAtColumn(extra));
+        return toBase().increment(column, amount, builder().addUpdatedAtColumn(extra));
     }
 
     template<typename Model>
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
     BuilderProxies<Model>::decrement(
-            const QString &column, const T amount,
-            const QVector<UpdateItem> &extra) const
+            const QString &column, const T amount, const QVector<UpdateItem> &extra) const
     {
-        return toBase().template decrement<T>(column, amount,
-                                              builder().addUpdatedAtColumn(extra));
+        return toBase().decrement(column, amount, builder().addUpdatedAtColumn(extra));
     }
 
     template<typename Model>

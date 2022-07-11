@@ -129,6 +129,17 @@ namespace Orm::Tiny
         /*! Update records in the database. */
         bool update(const QVector<AttributeItem> &attributes, SaveOptions options = {});
 
+        /*! Increment a column's value by a given amount. */
+        template<typename T = std::size_t> requires std::is_arithmetic_v<T>
+        inline std::tuple<int, QSqlQuery>
+        increment(const QString &column, T amount = 1,
+                  const QVector<AttributeItem> &extra = {}, bool all = false);
+        /*! Decrement a column's value by a given amount. */
+        template<typename T = std::size_t> requires std::is_arithmetic_v<T>
+        inline std::tuple<int, QSqlQuery>
+        decrement(const QString &column, T amount = 1,
+                  const QVector<AttributeItem> &extra = {}, bool all = false);
+
         /*! Delete the model from the database. */
         bool remove();
         /*! Delete the model from the database (alias). */
@@ -281,6 +292,25 @@ namespace Orm::Tiny
         inline static const QString &UPDATED_AT = Constants::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
 
     private:
+        /* Operations on a model instance */
+        /*! Method to call in the incrementOrDecrement(). */
+        enum struct IncrementOrDecrement
+        {
+            INCREMENT,
+            DECREMENT,
+        };
+        /*! Call the increment() method. */
+        constexpr static auto Increment = IncrementOrDecrement::INCREMENT;
+        /*! Call the decrement() method. */
+        constexpr static auto Decrement = IncrementOrDecrement::DECREMENT;
+
+        /*! Run the increment or decrement method on the model. */
+        template<typename T> requires std::is_arithmetic_v<T>
+        std::tuple<int, QSqlQuery>
+        incrementOrDecrement(
+                    const QString &column, T amount, const QVector<AttributeItem> &extra,
+                    IncrementOrDecrement method, bool all);
+
         /* HasAttributes */
         /*! Throw InvalidArgumentError if attributes passed to the constructor contain
             some value, which will cause access of some data member in a derived
@@ -501,6 +531,27 @@ namespace Orm::Tiny
             return false;
 
         return fill(attributes).save(options);
+    }
+
+    // NOTE api different, I have added the 'all' bool param. to avoid updating all rows by mistake silverqx
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename T> requires std::is_arithmetic_v<T>
+    std::tuple<int, QSqlQuery>
+    Model<Derived, AllRelations...>::increment(
+            const QString &column, const T amount, const QVector<AttributeItem> &extra,
+            const bool all)
+    {
+        return incrementOrDecrement(column, amount, extra, Increment, all);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename T> requires std::is_arithmetic_v<T>
+    std::tuple<int, QSqlQuery>
+    Model<Derived, AllRelations...>::decrement(
+            const QString &column, const T amount, const QVector<AttributeItem> &extra,
+            const bool all)
+    {
+        return incrementOrDecrement(column, amount, extra, Decrement, all);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1121,6 +1172,69 @@ namespace Orm::Tiny
     }
 
     /* private */
+
+    /* Operations on a model instance */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename T> requires std::is_arithmetic_v<T>
+    std::tuple<int, QSqlQuery>
+    Model<Derived, AllRelations...>::incrementOrDecrement(
+            const QString &column, const T amount, const QVector<AttributeItem> &extra,
+            const IncrementOrDecrement method, const bool all)
+    {
+        // Ownership of a unique_ptr()
+        auto builder = newQueryWithoutRelationships();
+
+        // Increment/Decrement all rows in the database, this is damn dangerous 🙃
+        if (!exists) {
+            // This makes it much safer
+            if (!all)
+                return {-1, QSqlQuery()};
+
+            const auto extraConverted = AttributeUtils::convertVectorToUpdateItem(extra);
+
+            if (method == Increment)
+                return builder->increment(column, amount, extraConverted);
+            if (method == Decrement)
+                return builder->decrement(column, amount, extraConverted);
+
+            Q_UNREACHABLE();
+        }
+
+        // Prefill an amount and extra attributes on the current model
+        {
+            auto attributeReference = this->operator[](column);
+            attributeReference = attributeReference->template value<T>() + amount;
+
+            forceFill(extra);
+        }
+
+        // Execute the increment/decrement query on the database for the current model
+        std::tuple<int, QSqlQuery> result;
+        {
+            auto &model = this->model().setKeysForSaveQuery(*builder);
+            const auto extraConverted = AttributeUtils::convertVectorToUpdateItem(extra);
+
+            if (method == Increment)
+                result = model.increment(column, amount, extraConverted);
+            else if (method == Decrement)
+                result = model.decrement(column, amount, extraConverted);
+            else
+                Q_UNREACHABLE();
+        }
+
+        // Synchronize changes manually
+        this->syncChanges();
+
+        // Update originals so that they are not dirty
+        QStringList updatedAttributes {column};
+        std::ranges::transform(extra, std::back_inserter(updatedAttributes),
+                               [](const auto &attribute) { return attribute.key; });
+
+        this->syncOriginalAttributes(updatedAttributes);
+
+        return result;
+    }
 
     /* HasAttributes */
 

@@ -178,7 +178,13 @@ namespace Orm::Tiny::Concerns
         /*! Sync the changed attributes. */
         Derived &syncChanges();
 
-        /*! Determine if the new and old values for a given key are equivalent. */
+        /*! Sync a single original attribute with its current value. */
+        inline Derived &syncOriginalAttribute(const QString &attribute);
+        /*! Sync multiple original attribute with their current values. */
+        Derived &syncOriginalAttributes(const QStringList &attributes);
+
+        /*! Determine if the new and old values for a given key are equivalent
+            (used by the getDirty()). */
         bool originalIsEquivalent(const QString &key) const;
 
         /*! Determine if the given attribute is a date. */
@@ -357,7 +363,7 @@ namespace Orm::Tiny::Concerns
         return m_attributes.at(m_attributesHash.at(key)).value;
     }
 
-    // NOTE api different silverqx
+    // NOTE api different, doesn't support key = {} silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     HasAttributes<Derived, AllRelations...>::getOriginal(
@@ -767,6 +773,31 @@ namespace Orm::Tiny::Concerns
         m_changes = getDirty();
 
         rehashAttributePositions(m_changes, m_changesHash);
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &HasAttributes<Derived, AllRelations...>::syncOriginalAttribute(
+                const QString &attribute)
+    {
+        return syncOriginalAttributes({attribute});
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &HasAttributes<Derived, AllRelations...>::syncOriginalAttributes(
+                const QStringList &attributes)
+    {
+        const auto &modelAttributes = getAttributes();
+        const auto &modelAttributesHash = getAttributesHash();
+
+        for (const auto &attribute : attributes) {
+            const auto attributeIndex = m_originalHash.at(attribute);
+            Q_ASSERT(attributeIndex >= 0 && attributeIndex < m_original.size());
+
+            m_original[attributeIndex].value =
+                    modelAttributes.at(modelAttributesHash.at(attribute)).value;
+        }
 
         return model();
     }

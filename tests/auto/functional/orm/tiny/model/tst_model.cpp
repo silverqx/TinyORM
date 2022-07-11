@@ -86,6 +86,9 @@ private slots:
     void create() const;
     void create_Failed() const;
 
+    void incrementAndDecrement() const;
+    void incrementAndDecrement_OnNonExistentModel() const;
+
     void update() const;
     void update_OnNonExistentModel() const;
     void update_NonExistentAttribute() const;
@@ -1132,6 +1135,94 @@ void tst_Model::create_Failed() const
     QVERIFY(torrent.getAttributes().isEmpty());
 }
 
+void tst_Model::incrementAndDecrement() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto timeBeforeIncrement = QDateTime::currentDateTime();
+    // Reset milliseconds to 0
+    {
+        auto time = timeBeforeIncrement.time();
+        timeBeforeIncrement.setTime(QTime(time.hour(), time.minute(), time.second()));
+    }
+
+    auto torrent4_1 = Torrent::find(4);
+    QVERIFY(torrent4_1);
+    QVERIFY(torrent4_1->exists);
+
+    const auto &updatedAtColumn = torrent4_1->getUpdatedAtColumn();
+
+    auto sizeOriginal = torrent4_1->getAttribute(SIZE);
+    auto progressOriginal = torrent4_1->getAttribute("progress");
+    auto updatedAtOriginal = torrent4_1->getAttribute(updatedAtColumn);
+    QCOMPARE(sizeOriginal, QVariant(14));
+    QCOMPARE(progressOriginal, QVariant(400));
+    QCOMPARE(updatedAtOriginal,
+             QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
+
+    // Increment
+    torrent4_1->increment(SIZE, 2, {{"progress", 444}});
+
+    // Little unnecessary but the logic is true
+    QVERIFY(!torrent4_1->isDirty());
+    QVERIFY(!torrent4_1->isDirty(SIZE));
+    QVERIFY(!torrent4_1->isDirty("progress"));
+    QVERIFY(torrent4_1->wasChanged());
+    QVERIFY(torrent4_1->wasChanged(SIZE));
+    QVERIFY(torrent4_1->wasChanged("progress"));
+
+    auto torrent4_2 = Torrent::find(4);
+    QVERIFY(torrent4_2);
+    QVERIFY(torrent4_2->exists);
+    QCOMPARE(torrent4_2->getAttribute(SIZE), QVariant(16));
+    QCOMPARE(torrent4_2->getAttribute("progress"), QVariant(444));
+    QVERIFY(torrent4_2->getAttribute(updatedAtColumn).toDateTime()
+            >= timeBeforeIncrement);
+
+    // Decremented and restore updated at column
+    torrent4_2->decrement(SIZE, 2, {{"progress", 400},
+                                    {updatedAtColumn, updatedAtOriginal}});
+
+    // Little unnecessary but the logic is true
+    QVERIFY(!torrent4_2->isDirty());
+    QVERIFY(!torrent4_2->isDirty(SIZE));
+    QVERIFY(!torrent4_2->isDirty("progress"));
+    QVERIFY(!torrent4_2->isDirty(updatedAtColumn));
+    QVERIFY(torrent4_2->wasChanged());
+    QVERIFY(torrent4_2->wasChanged(SIZE));
+    QVERIFY(torrent4_2->wasChanged("progress"));
+    QVERIFY(torrent4_2->wasChanged(updatedAtColumn));
+
+    auto torrent4_3 = Torrent::find(4);
+    QVERIFY(torrent4_3);
+    QVERIFY(torrent4_3->exists);
+    QCOMPARE(torrent4_3->getAttribute(SIZE), QVariant(14));
+    QCOMPARE(torrent4_3->getAttribute("progress"), QVariant(400));
+    QCOMPARE(torrent4_3->getAttribute(updatedAtColumn), updatedAtOriginal);
+}
+
+void tst_Model::incrementAndDecrement_OnNonExistentModel() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Torrent torrent;
+
+    QVERIFY(!torrent.exists);
+
+    auto [affected, query] = torrent.increment(SIZE, 1, {{"progress", 101}});
+
+    // Must return -1 if updating all rows and the 'all' param. is in default (false)
+    QVERIFY(affected == -1);
+    QVERIFY(!query.isActive());
+    QVERIFY(!query.isValid());
+    QVERIFY(!torrent.isDirty());
+    QVERIFY(!torrent.wasChanged());
+}
+
 void tst_Model::update() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -1197,6 +1288,8 @@ void tst_Model::update_OnNonExistentModel() const
 
 void tst_Model::update_NonExistentAttribute() const
 {
+//    try {
+
     QFETCH_GLOBAL(QString, connection);
 
     ConnectionOverride::connection = connection;
@@ -1206,8 +1299,12 @@ void tst_Model::update_NonExistentAttribute() const
     QVERIFY(torrent->exists);
 
     /* Zero attributes will be changed because torrent.isDirty() == false and
-       Torrent::save() returns true in this case. */
+       Torrent::save() returns true in this case, it's like calling the update() with
+       no or empty attributes. */
     QVERIFY(torrent->update({{"progress-NON_EXISTENT", 333}}));
+//    }  catch (const std::exception &e) {
+//        qWarning() << e.what();
+//    }
 }
 
 void tst_Model::update_SameValue() const
