@@ -192,7 +192,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QCOMPARE(updatedAtOriginal,
              QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
 
-    // Incremented
+    // Increment
     Torrent::whereEq(ID, 4)->increment(SIZE, 2, {{"progress", 444}});
 
     auto torrent4_2 = Torrent::find(4);
@@ -203,10 +203,9 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QVERIFY(torrent4_2->getAttribute(updatedAtColumn).toDateTime()
             >= timeBeforeIncrement);
 
-    // Decremented and restore updated at column
-    Torrent::whereEq(ID, 4)->decrement(SIZE, 2,
-                                       {{"progress", 400},
-                                        {updatedAtColumn, updatedAtOriginal}});
+    // Decrement and restore updated at column
+    Torrent::whereEq(ID, 4)->decrement(SIZE, 2, {{"progress", 400},
+                                                 {updatedAtColumn, updatedAtOriginal}});
 
     auto torrent4_3 = Torrent::find(4);
     QVERIFY(torrent4_3);
