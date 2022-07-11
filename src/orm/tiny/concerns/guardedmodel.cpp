@@ -35,6 +35,8 @@ void GuardedModel::unguarded(const std::function<void()> &callback)
     try {
         std::invoke(callback);
 
+        reguard();
+
     }  catch (...) {
 
         reguard();
