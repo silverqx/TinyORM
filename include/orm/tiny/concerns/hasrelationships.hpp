@@ -226,7 +226,6 @@ namespace Concerns
         /*! Map of relation names to methods. */
         QHash<QString, RelationVisitor> u_relations;
 
-        // BUG std::unordered_map can not be instantiated with the incomplete value type, reproducible only on the Linux GCC/Clang (GCC >=12.1 fixed, Clang 14 don't), MSYS2 and msvc don't have any problem with the incomplete type ✨🚀 ; added section to the NOTES.txt how to reproduce ; OLD - std::unordered_map prevents to compile on GCC, if I comment out std::optional<AllRelations>... in the RelationsType<AllRelations...>, or I change it to the QHash, then it compile, I'm absolutelly lost why this is happening 😞😭, I can't change to the QHash because of 25734deb, I have created simple test project gcc_trivial_bug_test in merydeye-gentoo, but std::map works so it is a big win, because now I can compile whole project on gcc silverqx
         /* The libstdc++ shipped with the GCC <12.1 doesn't allow an incomplete
            mapped_type (value) in the std::unordered_map. */
 #ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
