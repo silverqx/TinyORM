@@ -392,7 +392,9 @@ namespace Concerns
         return getRelationFromHash<Related, Container>(relation);
     }
 
-    // TODO smart pointer for this relation stuffs? silverqx
+    /* Returning shared_ptr for getRelation()-related methods would be unperformant,
+       imagine 100 models with 2 relations and every relation would have another 100
+       models, it's houndreds of shared_ptr-s which would have to be counted. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Tag> requires std::same_as<Tag, One>
     Related *
