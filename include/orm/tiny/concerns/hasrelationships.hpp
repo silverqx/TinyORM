@@ -5,7 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
 #  include <map>
 #else
 #  include <unordered_map>
@@ -131,7 +131,7 @@ namespace Concerns
 
         /*! Get all the loaded relations for the instance. */
         inline
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
         const std::map<QString, RelationsType<AllRelations...>> &
 #else
         const std::unordered_map<QString, RelationsType<AllRelations...>> &
@@ -139,7 +139,7 @@ namespace Concerns
         getRelations() const;
         /*! Get all the loaded relations for the instance. */
         inline
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
         std::map<QString, RelationsType<AllRelations...>> &
 #else
         std::unordered_map<QString, RelationsType<AllRelations...>> &
@@ -169,7 +169,7 @@ namespace Concerns
 
         /*! Set the entire relations hash on the model. */
         Derived &setRelations(
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
                 const std::map<QString, RelationsType<AllRelations...>> &relations);
 #else
                 const std::unordered_map<QString,
@@ -177,7 +177,7 @@ namespace Concerns
 #endif
         /*! Set the entire relations hash on the model. */
         Derived &setRelations(
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
                 std::map<QString, RelationsType<AllRelations...>> &&relations);
 #else
                 std::unordered_map<QString, RelationsType<AllRelations...>> &&relations);
@@ -229,7 +229,7 @@ namespace Concerns
         // BUG std::unordered_map can not be instantiated with the incomplete value type, reproducible only on the Linux GCC/Clang (GCC >=12.1 fixed, Clang 14 don't), MSYS2 and msvc don't have any problem with the incomplete type ✨🚀 ; added section to the NOTES.txt how to reproduce ; OLD - std::unordered_map prevents to compile on GCC, if I comment out std::optional<AllRelations>... in the RelationsType<AllRelations...>, or I change it to the QHash, then it compile, I'm absolutelly lost why this is happening 😞😭, I can't change to the QHash because of 25734deb, I have created simple test project gcc_trivial_bug_test in merydeye-gentoo, but std::map works so it is a big win, because now I can compile whole project on gcc silverqx
         /* The libstdc++ shipped with the GCC <12.1 doesn't allow an incomplete
            mapped_type (value) in the std::unordered_map. */
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
         /*! The loaded relationships for the model. */
         std::map<QString, RelationsType<AllRelations...>> m_relations;
 #else
@@ -329,7 +329,7 @@ namespace Concerns
 
         /*! Replace relations in the m_relation. */
         void replaceRelations(
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
                 std::map<QString, RelationsType<AllRelations...>> &relations,
 #else
                 std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
@@ -635,7 +635,7 @@ namespace Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
     const std::map<QString, RelationsType<AllRelations...>> &
 #else
     const std::unordered_map<QString, RelationsType<AllRelations...>> &
@@ -646,7 +646,7 @@ namespace Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
     std::map<QString, RelationsType<AllRelations...>> &
 #else
     std::unordered_map<QString, RelationsType<AllRelations...>> &
@@ -710,7 +710,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelations(
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
             const std::map<QString, RelationsType<AllRelations...>> &relations)
 #else
             const std::unordered_map<QString, RelationsType<AllRelations...>> &relations)
@@ -724,7 +724,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelations(
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
             std::map<QString, RelationsType<AllRelations...>> &&relations)
 #else
             std::unordered_map<QString, RelationsType<AllRelations...>> &&relations)
@@ -1191,7 +1191,7 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationships<Derived, AllRelations...>::replaceRelations(
-#ifdef _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
             std::map<QString, RelationsType<AllRelations...>> &relations,
 #else
             std::unordered_map<QString, RelationsType<AllRelations...>> &relations,

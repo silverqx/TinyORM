@@ -43,7 +43,7 @@ TINY_SYSTEM_HEADER
    mapped_type (value) in the std::unordered_map. */
 #if defined(__GNUG__) && defined(_GLIBCXX_RELEASE) && defined(__GLIBCXX__) && \
     _GLIBCXX_RELEASE < 12 && __GLIBCXX__ < 20220513
-#  define _TINYORM_NO_INCOMPLETE_UNORDERED_MAP
+#  define TINY_NO_INCOMPLETE_UNORDERED_MAP
 #endif
 
 #endif // ORM_CONFIG_HPP
