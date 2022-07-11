@@ -1532,9 +1532,14 @@ void tst_SQLite_QueryBuilder::update() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents")
-                .whereEq(ID, 10)
-                .update({{NAME, "xyz"}, {SIZE, 6}});
+        const auto [affected, query] = connection.query()->from("torrents")
+                                       .whereEq(ID, 10)
+                                       .update({{NAME, "xyz"}, {SIZE, 6}});
+
+        // Affecting statements should return -1 if pretending
+        QVERIFY(affected == -1);
+        QVERIFY(!query.isActive());
+        QVERIFY(!query.isValid());
     });
 
     QVERIFY(!log.isEmpty());

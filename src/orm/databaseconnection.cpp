@@ -178,7 +178,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
             -> std::tuple<int, QSqlQuery>
     {
         if (m_pretending)
-            return {0, getQtQueryForPretend()};
+            return {-1, getQtQueryForPretend()};
 
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString_);
