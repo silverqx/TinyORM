@@ -1993,7 +1993,7 @@ void tst_MySql_QueryBuilder::update() const
                                        .whereEq(ID, 10)
                                        .update({{NAME, "xyz"}, {SIZE, 6}});
 
-        // Affecting statements should return -1 if pretending
+        // Affecting statements must return -1 if pretending
         QVERIFY(affected == -1);
         QVERIFY(!query.isActive());
         QVERIFY(!query.isValid());
