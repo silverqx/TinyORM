@@ -238,6 +238,9 @@ namespace Orm::Query
         template<JoinTable T>
         inline Builder &
         crossJoin(T &&table, const std::function<void(JoinClause &)> &callback);
+        /*! Add a "cross join" clause to the query. */
+        template<JoinTable T>
+        inline Builder &crossJoin(T &&table);
 
         /*! Add a subquery join clause to the query. */
         template<SubQuery T>
@@ -926,6 +929,16 @@ namespace Orm::Query
     Builder::crossJoin(T &&table, const std::function<void(JoinClause &)> &callback)
     {
         return join(table, callback, CROSS);
+    }
+
+    template<JoinTable T>
+    Builder &
+    Builder::crossJoin(T &&table)
+    {
+        // No need to call joinInternal() because no bindings
+        m_joins.append(newJoinClause(*this, CROSS, std::forward<T>(table)));
+
+        return *this;
     }
 
     template<SubQuery T>
