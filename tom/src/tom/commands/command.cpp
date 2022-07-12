@@ -329,7 +329,8 @@ void Command::printConnection(const QString &name, const bool shouldPrintConnect
     else
         newLine();
 
-    note(QStringLiteral("<blue>Connection:</blue> <b-white>%1</b-white>").arg(name));
+    note(QStringLiteral("<blue>Connection:</blue> <b-white>%1</b-white>").arg(name),
+         true, Quiet);
 }
 
 /* private */
