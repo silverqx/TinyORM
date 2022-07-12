@@ -1431,7 +1431,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
 // FUTURE divide Query Builder and TinyOrm to own packages (dlls)? think about it 🤔 silverqx
 // BUG clang on mingw inline static initialization with another static in the same class defined line before, all other compilers (on linux too) works silverqx
-// BUG docs many-to-many examples contain queries with created_at in pivot table, but pivot doesn't contain timestamp columns silverqx
 // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
 // CUR docs IdealImage silverqx
 // CUR docs, add all the implemented features summary somewhere silverqx
