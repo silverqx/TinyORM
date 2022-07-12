@@ -607,7 +607,7 @@ You may also insert several records at once by passing a `QVector<QVariantMap>`.
         {{"email", "janeway@example.com"}, {"votes", 0}},
     });
 
-The `insertOrIgnore` method will ignore duplicate record errors while inserting records into the database and also provides the same overloads like the `insert` method:
+The `insertOrIgnore` method will ignore duplicate record errors while inserting records into the database and also provides the same overloads like the `insert` method. When using this method, you should be aware that duplicate record errors will be ignored and other types of errors may also be ignored depending on the database engine. For example, `insertOrIgnore` will [bypass MySQL's strict mode](https://dev.mysql.com/doc/refman/en/sql-mode.html#ignore-effect-on-execution):
 
     DB::table("users")->insertOrIgnore({"id", "email"},
     {
