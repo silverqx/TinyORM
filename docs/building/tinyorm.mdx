@@ -586,6 +586,7 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `inline_constants`                  | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: <code>CONFIG(shared\|dll)</code></small> |
 | `link_pkgconfig_off`                | `OFF`   | Link against `libmariadb` with `PKGCONFIG`.<br/>Used only in the `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L27).<br/><small>Available when: <code>(win32-g++\|win32-clang-g++):mysql:!static:!staticlib</code></small> |
 | `mysql_ping`                        | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
+| `tiny_ccache`                       | `ON`    | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works only on the Windows systems. It works well with the MSYS2 `g++`,`clang++`, `msvc`, and `clang-cl` with `msvc`. It disables `precompile_header` as they are not supported on Windows and changes the `-Zi` compiler option to the `-Z7` for debug builds as the `-Zi` compiler option is not supported ([link](https://github.com/ccache/ccache/issues/1040) to the issue).</small> |
 | `tom_example`                       | `OFF`   | Build the <abbr title='TinyORM Migrations'>`Tom`</abbr> command-line application example (console application). |
 
 </APITable>
@@ -610,7 +611,8 @@ Important `qmake` options.
 
 | `CONFIG` <small>Option Name</small> | Default | Description |
 | ----------------------------------- | ------- | ----------- |
-| `precompile_header`                 | `-`     | Enable precompiled headers, you can disable them with:<br/> `CONFIG-=precompile_header`.<br/><small>The `precompile_header` is enabled by default on `msvc` and `g++` on `Windows` and disabled by default on `linux`.</small> |
+| `ccache`                            | `OFF`   | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works only on the Unix systems. It works well with the `g++` and `clang++` and also supports precompiled headers.</small> |
+| `precompile_header`                 | `-`     | Enable precompiled headers, you can disable them with:<br/> `CONFIG-=precompile_header`.<br/><small>The `precompile_header` is enabled by default on `msvc`, `g++`, `clang++`, `clang-cl` on `Windows` and disabled by default on `linux`.</small> |
 | `static`<br/>`staticlib`            | `OFF`   | Build as a static library (lib only). |
 
 </APITable>

@@ -1,7 +1,15 @@
-# MinGW
-win32-g++|win32-clang-g++ {
-    ccache_prefix = ccache
+# Target the g++, clang++, msvc, and clang-cl with msvc compilers
+!win32: return()
 
-    for(tool, $$list(QMAKE_CC QMAKE_CXX QMAKE_LINK QMAKE_LINK_SHLIB QMAKE_LINK_C)): \
-        $$tool = $$ccache_prefix $$eval($$tool)
-}
+# https://github.com/ccache/ccache/issues/1040
+QMAKE_CFLAGS ~= s/-Zi/-Z7
+QMAKE_CXXFLAGS ~= s/-Zi/-Z7
+
+# MSYS2 g++, clang++ work well with precompiled headers but the msvc doesn't
+win32-msvc|win32-clang-msvc: \
+    CONFIG -= precompile_header
+
+ccache_prefix = ccache
+
+for(tool, $$list(QMAKE_CC QMAKE_CXX QMAKE_LINK QMAKE_LINK_SHLIB QMAKE_LINK_C)): \
+    $$tool = $$ccache_prefix $$eval($$tool)

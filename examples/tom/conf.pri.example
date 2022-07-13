@@ -29,6 +29,9 @@ win32-g++|win32-clang-g++ {
     QMAKE_LFLAGS *= -fuse-ld=lld
 }
 else:win32-msvc|win32-clang-msvc {
+    # Enable ccache wrapper
+    CONFIG *= tiny_ccache
+
     # Includes
     # range-v3 and tabulate
     INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include/)
