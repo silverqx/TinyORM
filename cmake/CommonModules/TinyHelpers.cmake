@@ -299,3 +299,77 @@ function(tiny_print_linking_against target)
     message(VERBOSE "Linking against ${target} at ${libraryFilepath}")
 
 endfunction()
+
+# Helper function to replace /Zi by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> option
+function(tiny_replace_Zi_by_Z7_for option help_string)
+
+    if(DEFINED ${option} AND ${option} MATCHES "/Zi")
+        string(REPLACE "/Zi" "/Z7" ${option} "${${option}}")
+
+        get_property(help_string_property CACHE ${option} PROPERTY HELPSTRING)
+        if(NOT help_string_property)
+            set(help_string_property ${help_string})
+        endif()
+
+        set(${option} ${${option}} CACHE STRING ${help_string_property} FORCE)
+    endif()
+
+endfunction()
+
+# Fix cmake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
+# It applies fixes only on the Windows systems. It works well with the MSYS2 g++,
+# clang++, msvc, and clang-cl with msvc. It disables precompiled headers as they are not
+# supported on Windows and changes the -Zi compiler option to the -Z7 for debug builds
+# as the -Zi compiler option is not supported
+# (https://github.com/ccache/ccache/issues/1040)
+function(tiny_fix_ccache)
+
+    # I will check only the CMAKE_CXX_COMPILER_LAUNCHER and not also the
+    # CMAKE_C_COMPILER_LAUNCHER as this is a pure c++ project and c compiler is not used
+    # anyway but I will replace the Zi to Z7 compiler option in both
+    # CMAKE_<C|CXX>_FLAGS_<CONFIG> to be consistent 🤔
+
+    # Target the g++, clang++, msvc, and clang-cl with msvc compilers on Windows
+    if(NOT WIN32 OR NOT DEFINED CMAKE_CXX_COMPILER_LAUNCHER)
+        return()
+    endif()
+
+    # Support the ccache and also sccache
+    cmake_path(GET CMAKE_CXX_COMPILER_LAUNCHER STEM ccacheStem)
+    if(NOT ccacheStem STREQUAL "ccache" AND NOT ccacheStem STREQUAL "sccache")
+        return()
+    endif()
+
+    # MSYS2 g++, clang++ work well with the precompiled headers but the msvc doesn't
+    if(NOT MINGW)
+        get_property(help_string CACHE CMAKE_DISABLE_PRECOMPILE_HEADERS
+            PROPERTY HELPSTRING
+        )
+        if(NOT help_string)
+            set(help_string "Default value for DISABLE_PRECOMPILE_HEADERS of targets.")
+        endif()
+
+        set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON CACHE STRING ${help_string} FORCE)
+    endif()
+
+    # Replace /Zi by /Z7 by the build config type
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        tiny_replace_Zi_by_Z7_for(CMAKE_CXX_FLAGS_DEBUG
+            "Flags used by the CXX compiler during DEBUG builds.")
+        tiny_replace_Zi_by_Z7_for(CMAKE_C_FLAGS_DEBUG
+            "Flags used by the C compiler during DEBUG builds.")
+
+    elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+        tiny_replace_Zi_by_Z7_for(CMAKE_CXX_FLAGS_RELEASE
+            "Flags used by the CXX compiler during RELEASE builds.")
+        tiny_replace_Zi_by_Z7_for(CMAKE_C_FLAGS_RELEASE
+            "Flags used by the C compiler during RELEASE builds.")
+
+    elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        tiny_replace_Zi_by_Z7_for(CMAKE_CXX_FLAGS_RELWITHDEBINFO
+            "Flags used by the CXX compiler during RELWITHDEBINFO builds.")
+        tiny_replace_Zi_by_Z7_for(CMAKE_C_FLAGS_RELWITHDEBINFO
+            "Flags used by the C compiler during RELWITHDEBINFO builds.")
+    endif()
+
+endfunction()
