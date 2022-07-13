@@ -5,7 +5,7 @@
 QMAKE_CFLAGS ~= s/-Zi/-Z7
 QMAKE_CXXFLAGS ~= s/-Zi/-Z7
 
-# MSYS2 g++, clang++ work well with precompiled headers but the msvc doesn't
+# MSYS2 g++, clang++ work well with the precompiled headers but the msvc doesn't
 win32-msvc|win32-clang-msvc: \
     CONFIG -= precompile_header
 
