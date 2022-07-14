@@ -42,6 +42,7 @@ import {
     - [Configure & Build](#configure-and-build-qmake)
     - [qmake build options](#qmake-build-options)
     - [Consume TinyOrm library](#consume-tinyorm-library-qmake)
+- [Ccache support](#ccache-support)
 
 ## Introduction
 
@@ -713,4 +714,14 @@ On Linux `-isystem` marks the directory as a system directory, it prevents warni
 
 :::tip
 On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes, `#include <file>`.
+:::
+
+## Ccache support
+
+The TinyORM supports the [`ccache`](https://ccache.dev/) out of the box for all [supported compilers](supported-compilers.mdx). For qmake you can enable it using the `CONFIG+=ccache` on Linux or `CONFIG+=tiny_ccache` on Windows. For Cmake you can set the `CMAKE_CXX_COMPILER_LAUNCHER=ccache`.
+
+On Linux it's clear, the ccache is fully supported and works also with the precompiled headers. But was necessary to add some workarounds to the qmake/Cmake build systems to make out of the box support on Windows. When you enable the ccache on Windows then the build system disables precompiled headers and replaces the `-Zi` compiler option with the `-Z7` (link to the [issue](https://github.com/ccache/ccache/issues/1040)).
+
+:::tip
+You can install the ccache using the `scoop install ccache` command on Windows.
 :::
