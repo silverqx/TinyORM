@@ -154,6 +154,10 @@ If you already have a query builder instance and you wish to add a column to its
 
     auto users = query.addSelect("age").get();
 
+:::note
+You can also pass subqueries to the `select` and `addSelect` methods. A subquery can be a lambda expression, raw string, or the `QueryBuilder` instance.
+:::
+
 ## Raw Expressions
 
 Sometimes you may need to insert an arbitrary string into a query. To create a raw string expression, you may use the `raw` method provided by the `DB` facade:

@@ -817,7 +817,6 @@ namespace Orm::Query
         return selectSub(std::forward<T>(query), as);
     }
 
-    // TODO docs silverqx
     template<SubQuery T>
     Builder &Builder::selectSub(T &&query, const QString &as)
     {
