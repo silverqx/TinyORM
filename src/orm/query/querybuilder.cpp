@@ -101,13 +101,15 @@ QString Builder::toSql()
 namespace
 {
     /*! Flat bindings map for an insert statement. */
-    const auto flatValuesForInsert = [](auto &&values)
+    const auto flatValuesForInsert = [](const auto &values)
     {
+        // All 'values' are const lvalues so no need to for rvalue 'values'
+
         QVector<QVariant> flattenValues;
 
-        for (auto &&insertMap : values)
-            for (auto &&value : insertMap)
-                flattenValues << std::move(value);
+        for (const auto &insertMap : values)
+            for (const auto &value : insertMap)
+                flattenValues << value;
 
         return flattenValues;
     };
@@ -148,11 +150,11 @@ Builder::insert(const QVector<QString> &columns,
 // FEATURE dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
 quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
 {
-    QVector<QVariantMap> valuesVector {values};
+    const QVector<QVariantMap> valuesVector {values};
 
     auto query = m_connection.insert(
                      m_grammar.compileInsertGetId(*this, valuesVector, sequence),
-                     cleanBindings(flatValuesForInsert(std::move(valuesVector))));
+                     cleanBindings(flatValuesForInsert(valuesVector)));
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant, Processor::processInsertGetId() silverqx
     return query.lastInsertId().value<quint64>();
@@ -205,7 +207,7 @@ std::tuple<int, QSqlQuery> Builder::remove()
 
 void Builder::truncate()
 {
-    for (const auto [sql, bindings] : m_grammar.compileTruncate(*this))
+    for (auto &&[sql, bindings] : m_grammar.compileTruncate(*this))
         /* Postgres doesn't execute truncate statement as prepared query:
            https://www.postgresql.org/docs/13/sql-prepare.html */
         if (m_connection.driverName() == QPSQL)
