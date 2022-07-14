@@ -85,8 +85,7 @@ QVector<QVariant> Builder::pluck(const QString &column)
     const auto unqualifiedColumn = stripTableForPluck(column);
 
     QVector<QVariant> result;
-    if (size > 0)
-        result.reserve(size);
+    result.reserve(size);
 
     while (query.next())
         result << query.value(unqualifiedColumn);
@@ -101,12 +100,14 @@ QString Builder::toSql()
 
 namespace
 {
-    const auto flatValuesForInsert = [](const auto &values)
+    /*! Flat bindings map for an insert statement. */
+    const auto flatValuesForInsert = [](auto &&values)
     {
         QVector<QVariant> flattenValues;
-        for (const auto &insertMap : values)
-            for (const auto &value : insertMap)
-                flattenValues << value;
+
+        for (auto &&insertMap : values)
+            for (auto &&value : insertMap)
+                flattenValues << std::move(value);
 
         return flattenValues;
     };
@@ -147,11 +148,11 @@ Builder::insert(const QVector<QString> &columns,
 // FEATURE dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
 quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
 {
-    const QVector<QVariantMap> valuesVector {values};
+    QVector<QVariantMap> valuesVector {values};
 
     auto query = m_connection.insert(
                      m_grammar.compileInsertGetId(*this, valuesVector, sequence),
-                     cleanBindings(flatValuesForInsert(valuesVector)));
+                     cleanBindings(flatValuesForInsert(std::move(valuesVector))));
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant, Processor::processInsertGetId() silverqx
     return query.lastInsertId().value<quint64>();
@@ -204,7 +205,7 @@ std::tuple<int, QSqlQuery> Builder::remove()
 
 void Builder::truncate()
 {
-    for (const auto &[sql, bindings] : m_grammar.compileTruncate(*this))
+    for (const auto [sql, bindings] : m_grammar.compileTruncate(*this))
         /* Postgres doesn't execute truncate statement as prepared query:
            https://www.postgresql.org/docs/13/sql-prepare.html */
         if (m_connection.driverName() == QPSQL)
@@ -491,7 +492,7 @@ Builder &Builder::groupBy(const QVector<Column> &groups)
     if (groups.isEmpty())
         return *this;
 
-    std::copy(groups.cbegin(), groups.cend(), std::back_inserter(m_groups));
+    std::ranges::copy(groups, std::back_inserter(m_groups));
 
     return *this;
 }
@@ -590,7 +591,7 @@ Builder &Builder::reorder()
 {
     m_orders.clear();
 
-    m_bindings.find(BindingType::ORDER)->clear();
+    m_bindings[BindingType::ORDER].clear();
 
     return *this;
 }
@@ -693,12 +694,9 @@ QVector<QVariant> Builder::getBindings() const
 {
     QVector<QVariant> flattenBindings;
 
-    std::for_each(m_bindings.cbegin(), m_bindings.cend(),
-                  [&flattenBindings](const auto &bindings)
-    {
+    for (const auto &bindings : std::as_const(m_bindings))
         for (const auto &binding : bindings)
             flattenBindings.append(binding);
-    });
 
     return flattenBindings;
 }
@@ -834,7 +832,7 @@ Builder Builder::cloneWithout(const std::unordered_set<PropertyType> &properties
             break;
 
         default:
-            break;
+            Q_UNREACHABLE();
         }
 
     return copy;
@@ -852,7 +850,7 @@ Builder Builder::cloneWithoutBindings(
             break;
 
         default:
-            break;
+            Q_UNREACHABLE();
         }
 
     return copy;
@@ -868,16 +866,26 @@ bool Builder::invalidOperator(const QString &comparison) const
             !m_grammar.getOperators().contains(comparison_);
 }
 
-// TODO investigate extended lifetime of reference in cleanBindings(), important case 🤔 silverqx
 QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings) const
 {
-    // TODO investigate const, move, reserve() vs ctor(size), nice example of move semantics 😏 silverqx
     QVector<QVariant> cleanedBindings;
     cleanedBindings.reserve(bindings.size());
 
     for (const auto &binding : bindings)
         if (!binding.canConvert<Expression>())
-            cleanedBindings.append(binding);
+            cleanedBindings << binding;
+
+    return cleanedBindings;
+}
+
+QVector<QVariant> Builder::cleanBindings(QVector<QVariant> &&bindings) const
+{
+    QVector<QVariant> cleanedBindings;
+    cleanedBindings.reserve(bindings.size());
+
+    for (auto &&binding : bindings)
+        if (!binding.canConvert<Expression>())
+            cleanedBindings << std::move(binding);
 
     return cleanedBindings;
 }
@@ -934,12 +942,11 @@ Builder &Builder::clearColumns()
 }
 
 QSqlQuery
-Builder::onceWithColumns(
-            const QVector<Column> &columns,
-            const std::function<QSqlQuery()> &callback)
+Builder::onceWithColumns(const QVector<Column> &columns,
+                         const std::function<QSqlQuery()> &callback)
 {
     // Save orignal columns
-    const auto original = m_columns;
+    auto original = m_columns;
 
     if (original.isEmpty())
         m_columns = columns;
@@ -947,7 +954,7 @@ Builder::onceWithColumns(
     auto result = std::invoke(callback);
 
     // After running the callback, the columns are reset to the original value
-    m_columns = original;
+    m_columns = std::move(original);
 
     return result;
 }
@@ -988,13 +995,13 @@ Builder::createSub(QString &&query) const
 Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
 {
     const auto &queryDatabaseName = query.getConnection().getDatabaseName();
-    const auto queryFrom = std::get<QString>(query.m_from);
+    auto queryFrom = std::get<QString>(query.m_from);
 
     if (queryDatabaseName != getConnection().getDatabaseName() &&
         !queryFrom.startsWith(queryDatabaseName) &&
         !queryFrom.contains(DOT)
     )
-        query.from(QStringLiteral("%1.%2").arg(queryDatabaseName, queryFrom));
+        query.from(QStringLiteral("%1.%2").arg(queryDatabaseName, std::move(queryFrom)));
 
     return query;
 }
@@ -1080,7 +1087,7 @@ Builder &Builder::joinSubInternal(
 
     addBinding(std::move(bindings), BindingType::JOIN);
 
-    return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
+    return join(Expression(QStringLiteral("(%1) as %2").arg(std::move(queryString),
                                                             m_grammar.wrapTable(as))),
                 first, comparison, second, type, where);
 }
@@ -1094,7 +1101,7 @@ Builder &Builder::joinSubInternal(
 
     addBinding(std::move(bindings), BindingType::JOIN);
 
-    return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
+    return join(Expression(QStringLiteral("(%1) as %2").arg(std::move(queryString),
                                                             m_grammar.wrapTable(as))),
                 callback, type);
 }

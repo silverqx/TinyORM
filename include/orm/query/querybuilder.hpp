@@ -559,6 +559,8 @@ namespace Orm::Query
 
         /*! Remove all of the expressions from a list of bindings. */
         QVector<QVariant> cleanBindings(const QVector<QVariant> &bindings) const;
+        /*! Remove all of the expressions from a list of bindings. */
+        QVector<QVariant> cleanBindings(QVector<QVariant> &&bindings) const;
 
         /*! Add a vector of basic where clauses to the query. */
         Builder &
@@ -822,7 +824,7 @@ namespace Orm::Query
     {
         auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        return selectRaw(QStringLiteral("(%1) as %2").arg(queryString,
+        return selectRaw(QStringLiteral("(%1) as %2").arg(std::move(queryString),
                                                           m_grammar.wrap(as)),
                          bindings);
     }
@@ -833,7 +835,7 @@ namespace Orm::Query
     {
         auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        return fromRaw(QStringLiteral("(%1) as %2").arg(queryString,
+        return fromRaw(QStringLiteral("(%1) as %2").arg(std::move(queryString),
                                                         m_grammar.wrapTable(as)),
                        bindings);
     }
@@ -895,14 +897,14 @@ namespace Orm::Query
     Builder::rightJoin(T &&table, const QString &first, const QString &comparison,
                        const QVariant &second)
     {
-        return join(table, first, comparison, second, RIGHT);
+        return join(std::forward<T>(table), first, comparison, second, RIGHT);
     }
 
     template<JoinTable T>
     Builder &
     Builder::rightJoin(T &&table, const std::function<void(JoinClause &)> &callback)
     {
-        return join(table, callback, RIGHT);
+        return join(std::forward<T>(table), callback, RIGHT);
     }
 
     template<JoinTable T>
@@ -910,7 +912,7 @@ namespace Orm::Query
     Builder::rightJoinWhere(T &&table, const QString &first, const QString &comparison,
                             const QVariant &second)
     {
-        return joinWhere(table, first, comparison, second, RIGHT);
+        return joinWhere(std::forward<T>(table), first, comparison, second, RIGHT);
     }
 
     // TODO docs missing example, because of different api silverqx
@@ -920,14 +922,14 @@ namespace Orm::Query
     Builder::crossJoin(T &&table, const QString &first, const QString &comparison,
                        const QVariant &second)
     {
-        return join(table, first, comparison, second, CROSS);
+        return join(std::forward<T>(table), first, comparison, second, CROSS);
     }
 
     template<JoinTable T>
     Builder &
     Builder::crossJoin(T &&table, const std::function<void(JoinClause &)> &callback)
     {
-        return join(table, callback, CROSS);
+        return join(std::forward<T>(table), callback, CROSS);
     }
 
     template<JoinTable T>
@@ -1149,8 +1151,7 @@ namespace Orm::Query
         return m_aggregate;
     }
 
-    const std::variant<bool, QStringList> &
-    Builder::getDistinct() const
+    const std::variant<bool, QStringList> &Builder::getDistinct() const
     {
         return m_distinct;
     }
