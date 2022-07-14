@@ -93,13 +93,16 @@ if (-not (Test-Path $BuildPath\compile_commands.json)) {
         -D CMAKE_BUILD_TYPE:BOOL=$BuildType `
         -D CMAKE_TOOLCHAIN_FILE:PATH=E:/c_libs/vcpkg/scripts/buildsystems/vcpkg.cmake `
         -D CMAKE_INSTALL_PREFIX:PATH=E:/c/qMedia/tmp/dummy `
+        # -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='C:/Users/<username>/scoop/shims/ccache.exe' `
+        -D CMAKE_VERBOSE_MAKEFILE:BOOL=OFF `
         -D VERBOSE_CONFIGURE:BOOL=ON `
         -D BUILD_TESTS:BOOL=ON `
         -D MYSQL_PING:BOOL=ON `
         -D TOM_EXAMPLE:BOOL=ON `
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON `
         -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON `
-        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF `
+        -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
 }
 
 cmake --build $BuildPath --target all
