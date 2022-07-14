@@ -334,7 +334,7 @@ function(tiny_fix_ccache)
         return()
     endif()
 
-    # Support the ccache and also sccache
+    # Support the ccache and also sccache (I have tried and sccache doesn't work)
     cmake_path(GET CMAKE_CXX_COMPILER_LAUNCHER STEM ccacheStem)
     if(NOT ccacheStem STREQUAL "ccache" AND NOT ccacheStem STREQUAL "sccache")
         return()
