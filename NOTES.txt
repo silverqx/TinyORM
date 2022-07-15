@@ -190,6 +190,7 @@ https://drive.google.com/uc?id=some_id
       uses: mxschmitt/action-tmate@v3
       with:
         limit-access-to-actor: true
+    - run: exit 1
 
 - print all contexts:
 
@@ -222,6 +223,17 @@ https://drive.google.com/uc?id=some_id
         ENV_CONTEXT: ${{ toJSON(env) }}
       run: echo "$ENV_CONTEXT"
     - run: exit 1
+
+- query caches using the gh api
+
+# Print all caches usage summary
+gh api -H "Accept: application/vnd.github+json" /repos/silverqx/TinyORM/actions/cache/usage
+# List caches
+gh api -H "Accept: application/vnd.github+json" /repos/silverqx/TinyORM/actions/caches
+# Delete all caches for TinyORM repo
+gh api --method DELETE -H "Accept: application/vnd.github+json" /repos/silverqx/TinyORM/actions/caches
+# Delete a cache by ID for TinyORM repo
+gh api --method DELETE -H "Accept: application/vnd.github+json" /repos/silverqx/TinyORM/actions/caches/CACHE_ID
 
 
 RegExs:
