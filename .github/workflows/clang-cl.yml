@@ -130,17 +130,6 @@ jobs:
       env:
         URL_QMYSQL_DLLS_MSVC_X64_6_3_1: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_3_1 }}
 
-    - name: Build folder restore 🕺
-      id: cache-build-clang-cl-msvc2022-qt63
-      uses: actions/cache@v3
-      env:
-        cache-name: clang-cl-msvc2022-qt63
-      with:
-        path: ${{ runner.workspace }}/TinyORM-builds-cmake/build-clang-cl-cmake-debug
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-
     - name: vcpkg set-up environment
       run: |
         Write-Output "VCPKG_ROOT=${env:VCPKG_INSTALLATION_ROOT}" | `
