@@ -140,24 +140,26 @@ jobs:
       env:
         cache-name: msvc2022-qt63
       with:
-        path: ~/AppData/Roaming/ccache
-        key: ${{ runner.os }}-ccache-${{ env.cache-name }}
+        path: ${{ runner.workspace }}/TinyORM-builds-cmake/build-msvc-cmake-debug
+        key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-${{ env.cache-name }}-
 
-    - name: Ccache setup 🥳
-      run: |
-        echo "::group::Install ccache"
-        choco install ccache -y
-        echo "::endgroup::"
+    # - name: Ccache setup 🥳
+    #   run: |
+    #     echo "::group::Install ccache"
+    #     choco install ccache -y
+    #     echo "::endgroup::"
 
-        echo "::group::Prepare ccache config"
-        ccache --set-config max_size=600M
-        ccache --set-config sloppiness=pch_defines,time_macros
-        ccache --show-config
-        echo "::endgroup::"
+    #     echo "::group::Prepare ccache config"
+    #     ccache --set-config max_size=600M
+    #     ccache --set-config sloppiness=pch_defines,time_macros
+    #     ccache --show-config
+    #     echo "::endgroup::"
 
-        echo "::group::Clear ccache statistics"
-        ccache --zero-stats
-        echo "::endgroup::"
+    #     echo "::group::Clear ccache statistics"
+    #     ccache --zero-stats
+    #     echo "::endgroup::"
 
     - name: vcpkg set-up environment
       run: |
@@ -196,9 +198,9 @@ jobs:
       run: >-
         cmake --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
 
-    - name: Ccache statistics
-      run: |
-        ccache.exe --show-stats -vv
+    # - name: Ccache statistics
+    #   run: |
+    #     ccache.exe --show-stats -vv
 
     # - name: Create and Seed tables for unit tests 🎉
     #   working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/tests/testdata_tom
