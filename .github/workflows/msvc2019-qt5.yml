@@ -17,6 +17,41 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJSON(github) }}
+      run: echo "$GITHUB_CONTEXT"
+    - name: Dump job context
+      env:
+        JOB_CONTEXT: ${{ toJSON(job) }}
+      run: echo "$JOB_CONTEXT"
+    - name: Dump steps context
+      env:
+        STEPS_CONTEXT: ${{ toJSON(steps) }}
+      run: echo "$STEPS_CONTEXT"
+    - name: Dump runner context
+      env:
+        RUNNER_CONTEXT: ${{ toJSON(runner) }}
+      run: echo "$RUNNER_CONTEXT"
+    - name: Dump strategy context
+      env:
+        STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
+      run: echo "$STRATEGY_CONTEXT"
+    - name: Dump matrix context
+      env:
+        MATRIX_CONTEXT: ${{ toJSON(matrix) }}
+      run: echo "$MATRIX_CONTEXT"
+    - name: Dump env context
+      env:
+        ENV_CONTEXT: ${{ toJSON(env) }}
+      run: echo "$ENV_CONTEXT"
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+    - run: exit 1
+
     - name: PostgreSQL start service
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual
@@ -133,6 +168,25 @@ jobs:
         7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $filepath
       env:
         URL_QMYSQL_DLLS_MSVC_X64_5_15_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_5_15_2 }}
+
+    - name: Cache restore ccache
+      uses: actions/cache@v3
+      # env:
+      #   cache-name: cache-node-modules
+      with:
+        path: ~/AppData/Roaming/ccache
+        key: ${{ runner.os }}-ccache
+
+    - name: ccache set-up 🥳
+      run: |
+        echo "::group::Install ccache"
+        choco install ccache -y
+        echo "::endgroup::"
+
+        echo "::group::Prepare config"
+        ccache --set-config max_size=1.0G
+        ccache --set-config sloppiness=pch_defines,time_macros
+        echo "::endgroup::"
 
     - name: vcpkg set-up environment
       run: |
