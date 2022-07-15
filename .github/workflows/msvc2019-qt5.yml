@@ -17,21 +17,24 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: ccache set-up 🥳
-      run: |
-        echo "::group::Install ccache"
-        choco install ccache -y
-        echo "::endgroup::"
+    - run: |
+        $PSVersionTable
 
-        echo "::group::Prepare config"
-        ccache --set-config max_size=1.0G
-        ccache --set-config sloppiness=pch_defines,time_macros
-        echo "::endgroup::"
+    # - name: ccache set-up 🥳
+    #   run: |
+    #     echo "::group::Install ccache"
+    #     choco install ccache -y
+    #     echo "::endgroup::"
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
+    #     echo "::group::Prepare config"
+    #     ccache --set-config max_size=1.0G
+    #     ccache --set-config sloppiness=pch_defines,time_macros
+    #     echo "::endgroup::"
+
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
+    #   with:
+    #     limit-access-to-actor: true
     - run: exit 1
 
     - name: PostgreSQL start service
