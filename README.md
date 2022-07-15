@@ -1,7 +1,7 @@
 <h1><img src="https://github.com/silverqx/TinyORM/blob/main/resources/icons/logo-optim.svg" width="34" height="34" alt="TinyORM Logo" align="center">&nbsp;TinyORM</h1>
 
 [![MSVC2019 Qt5.15][action-msvc2019-qt5-badge]][action-msvc2019-qt5]
-[![MSVC2022 Qt6.2][action-msvc2022-qt6-badge]][action-msvc2022-qt6]
+[![MSVC2022 Qt6.3][action-msvc2022-qt6-badge]][action-msvc2022-qt6]
 [![Linux GCC/Clang Qt5.15][action-linux-badge-qt5]][action-linux-qt5]
 [![Linux GCC/Clang Qt6.2][action-linux-badge-qt6]][action-linux-qt6]
 [![MSYS2 UCRT64 GCC/Clang][action-mingw-badge]][action-mingw]

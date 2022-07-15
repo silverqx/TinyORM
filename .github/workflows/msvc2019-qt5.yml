@@ -17,22 +17,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # - name: ccache set-up 🥳
-    #   run: |
-    #     echo "::group::Install ccache"
-    #     choco install ccache -y
-    #     echo "::endgroup::"
-
-    #     echo "::group::Prepare config"
-    #     ccache --set-config max_size=1.0G
-    #     ccache --set-config sloppiness=pch_defines,time_macros
-    #     echo "::endgroup::"
-
-    # - name: Setup tmate session
-    #   uses: mxschmitt/action-tmate@v3
-    #   with:
-    #     limit-access-to-actor: true
-
     - name: PostgreSQL start service
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual
@@ -168,7 +152,7 @@ jobs:
         echo "::endgroup::"
 
         echo "::group::Prepare ccache config"
-        ccache --set-config max_size=1.0G
+        ccache --set-config max_size=600M
         ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
         echo "::endgroup::"

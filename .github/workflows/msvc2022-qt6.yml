@@ -1,4 +1,4 @@
-name: MSVC2022 Qt6.2
+name: MSVC2022 Qt6.3
 
 on:
   pull_request:
@@ -134,6 +134,33 @@ jobs:
       env:
         URL_QMYSQL_DLLS_MSVC_X64_6_3_1: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_3_1 }}
 
+    - name: Ccache restore cache 🕺
+      id: cache-ccache-msvc2022-qt63
+      uses: actions/cache@v3
+      env:
+        cache-name: msvc2022-qt63
+      with:
+        path: ~/AppData/Roaming/ccache
+        key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-${{ env.cache-name }}-
+
+    - name: Ccache setup 🥳
+      run: |
+        echo "::group::Install ccache"
+        choco install ccache -y
+        echo "::endgroup::"
+
+        echo "::group::Prepare ccache config"
+        ccache --set-config max_size=600M
+        ccache --set-config sloppiness=pch_defines,time_macros
+        ccache --show-config
+        echo "::endgroup::"
+
+        echo "::group::Clear ccache statistics"
+        ccache --zero-stats
+        echo "::endgroup::"
+
     - name: vcpkg set-up environment
       run: |
         Write-Output "VCPKG_ROOT=${env:VCPKG_INSTALLATION_ROOT}" | `
@@ -154,7 +181,9 @@ jobs:
         -S .
         -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
         -G Ninja
+        -D CMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache.exe
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:BOOL=Debug
         -D VERBOSE_CONFIGURE:BOOL=ON
         -D CMAKE_VERBOSE_MAKEFILE:BOOL=OFF
@@ -168,6 +197,10 @@ jobs:
     - name: TinyORM cmake build ✨ (msvc-cmake-debug)
       run: >-
         cmake --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
+
+    - name: Ccache statistics
+      run: |
+        ccache.exe --show-stats -vv
 
     - name: Create and Seed tables for unit tests 🎉
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/tests/testdata_tom
