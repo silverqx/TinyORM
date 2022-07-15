@@ -17,34 +17,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJSON(github) }}
-      run: echo "$GITHUB_CONTEXT"
-    - name: Dump job context
-      env:
-        JOB_CONTEXT: ${{ toJSON(job) }}
-      run: echo "$JOB_CONTEXT"
-    - name: Dump steps context
-      env:
-        STEPS_CONTEXT: ${{ toJSON(steps) }}
-      run: echo "$STEPS_CONTEXT"
-    - name: Dump runner context
-      env:
-        RUNNER_CONTEXT: ${{ toJSON(runner) }}
-      run: echo "$RUNNER_CONTEXT"
-    - name: Dump strategy context
-      env:
-        STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
-      run: echo "$STRATEGY_CONTEXT"
-    - name: Dump matrix context
-      env:
-        MATRIX_CONTEXT: ${{ toJSON(matrix) }}
-      run: echo "$MATRIX_CONTEXT"
-    - name: Dump env context
-      env:
-        ENV_CONTEXT: ${{ toJSON(env) }}
-      run: echo "$ENV_CONTEXT"
+    - name: ccache set-up 🥳
+      run: |
+        echo "::group::Install ccache"
+        choco install ccache -y
+        echo "::endgroup::"
+
+        echo "::group::Prepare config"
+        ccache --set-config max_size=1.0G
+        ccache --set-config sloppiness=pch_defines,time_macros
+        echo "::endgroup::"
 
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
