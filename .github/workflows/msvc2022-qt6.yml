@@ -134,11 +134,11 @@ jobs:
       env:
         URL_QMYSQL_DLLS_MSVC_X64_6_3_1: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_3_1 }}
 
-    - name: Ccache restore cache 🕺
-      id: cache-ccache-msvc2022-qt63
+    - name: Build cache restore 🕺
+      id: cache-build-msvc2022-qt63
       uses: actions/cache@v3
       env:
-        cache-name: msvc2022-qt63
+        cache-name: build-msvc2022-qt63-test
       with:
         path: ${{ runner.workspace }}/TinyORM-builds-cmake/build-msvc-cmake-debug
         key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
@@ -181,9 +181,7 @@ jobs:
         -S .
         -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache.exe
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:BOOL=Debug
         -D VERBOSE_CONFIGURE:BOOL=ON
         -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON
