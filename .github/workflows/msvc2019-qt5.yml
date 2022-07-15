@@ -33,7 +33,10 @@ jobs:
     #   with:
     #     limit-access-to-actor: true
 
-    # - run: exit 1
+    - name: test
+      run: |
+        gci env:
+    - run: exit 1
 
     - name: PostgreSQL start service
       run: |
