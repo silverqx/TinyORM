@@ -103,7 +103,7 @@ namespace
     /*! Flat bindings map for an insert statement. */
     const auto flatValuesForInsert = [](const auto &values)
     {
-        // All 'values' are const lvalues so no need to for rvalue 'values'
+        // All 'values' are const lvalues so no need to for the rvalue 'values'
 
         QVector<QVariant> flattenValues;
 
