@@ -134,32 +134,16 @@ jobs:
       env:
         URL_QMYSQL_DLLS_MSVC_X64_6_3_1: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_3_1 }}
 
-    - name: Build cache restore 🕺
+    - name: Build folder restore 🕺
       id: cache-build-msvc2022-qt63
       uses: actions/cache@v3
       env:
-        cache-name: build-msvc2022-qt63-test
+        cache-name: msvc2022-qt63
       with:
         path: ${{ runner.workspace }}/TinyORM-builds-cmake/build-msvc-cmake-debug
-        key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
         restore-keys: |
-          ${{ runner.os }}-ccache-${{ env.cache-name }}-
-
-    # - name: Ccache setup 🥳
-    #   run: |
-    #     echo "::group::Install ccache"
-    #     choco install ccache -y
-    #     echo "::endgroup::"
-
-    #     echo "::group::Prepare ccache config"
-    #     ccache --set-config max_size=600M
-    #     ccache --set-config sloppiness=pch_defines,time_macros
-    #     ccache --show-config
-    #     echo "::endgroup::"
-
-    #     echo "::group::Clear ccache statistics"
-    #     ccache --zero-stats
-    #     echo "::endgroup::"
+          ${{ runner.os }}-build-${{ env.cache-name }}-
 
     - name: vcpkg set-up environment
       run: |
@@ -187,104 +171,100 @@ jobs:
         -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
         -D MYSQL_PING:BOOL=ON
-        -D BUILD_TESTS:BOOL=OFF
+        -D BUILD_TESTS:BOOL=ON
         -D ORM:BOOL=ON
         -D TOM:BOOL=ON
-        -D TOM_EXAMPLE:BOOL=OFF
+        -D TOM_EXAMPLE:BOOL=ON
 
     - name: TinyORM cmake build ✨ (msvc-cmake-debug)
       run: >-
         cmake --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
 
-    # - name: Ccache statistics
-    #   run: |
-    #     ccache.exe --show-stats -vv
+    - name: Create and Seed tables for unit tests 🎉
+      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/tests/testdata_tom
+      run: >-
+        $env:Path = '..\..;' + $env:Path
 
-    # - name: Create and Seed tables for unit tests 🎉
-    #   working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/tests/testdata_tom
-    #   run: >-
-    #     $env:Path = '..\..;' + $env:Path
+        .\tom_testdata.exe migrate
+        --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
+        --seed --no-ansi
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        TOM_TESTDATA_ENV: testing
 
-    #     .\tom_testdata.exe migrate
-    #     --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
-    #     --seed --no-ansi
-    #   env:
-    #     DB_MYSQL_CHARSET: utf8mb4
-    #     DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
-    #     DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-    #     DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-    #     DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-    #     DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-    #     DB_PGSQL_CHARSET: utf8
-    #     DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-    #     DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-    #     DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
-    #     DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-    #     DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
-    #     TOM_TESTDATA_ENV: testing
+    - name: TinyORM execute ctest 🔥
+      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug
+      run: ctest
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        TOM_TESTS_ENV: testing
 
-    # - name: TinyORM execute ctest 🔥
-    #   working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug
-    #   run: ctest
-    #   env:
-    #     DB_MYSQL_CHARSET: utf8mb4
-    #     DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
-    #     DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-    #     DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-    #     DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-    #     DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-    #     DB_PGSQL_CHARSET: utf8
-    #     DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-    #     DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-    #     DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
-    #     DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-    #     DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
-    #     TOM_TESTS_ENV: testing
+    - name: Tom example test some commands (MySQL) 🚀
+      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
+      run: |
+        $env:Path = '..\..;' + $env:Path
+        .\tom.exe migrate:install --database=tinyorm_tom_mysql --no-ansi
+        .\tom.exe migrate:status --database=tinyorm_tom_mysql --no-ansi
+        .\tom.exe migrate --database=tinyorm_tom_mysql --seed --no-ansi
+        .\tom.exe migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
+        .\tom.exe migrate:status --database=tinyorm_tom_mysql --no-ansi
+      env:
+        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        TOM_EXAMPLE_ENV: testing
 
-    # - name: Tom example test some commands (MySQL) 🚀
-    #   working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
-    #   run: |
-    #     $env:Path = '..\..;' + $env:Path
-    #     .\tom.exe migrate:install --database=tinyorm_tom_mysql --no-ansi
-    #     .\tom.exe migrate:status --database=tinyorm_tom_mysql --no-ansi
-    #     .\tom.exe migrate --database=tinyorm_tom_mysql --seed --no-ansi
-    #     .\tom.exe migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
-    #     .\tom.exe migrate:status --database=tinyorm_tom_mysql --no-ansi
-    #   env:
-    #     DB_MYSQL_CHARSET: utf8mb4
-    #     DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
-    #     DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-    #     DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-    #     DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-    #     DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-    #     TOM_EXAMPLE_ENV: testing
+    - name: Tom example test some commands (PostgreSQL) 🙌
+      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
+      run: |
+        $env:Path = '..\..;' + $env:Path
+        .\tom.exe migrate:install --database=tinyorm_tom_postgres --no-ansi
+        .\tom.exe migrate:status --database=tinyorm_tom_postgres --no-ansi
+        .\tom.exe migrate --database=tinyorm_tom_postgres --seed --no-ansi
+        .\tom.exe migrate:refresh --database=tinyorm_tom_postgres --seed --no-ansi
+        .\tom.exe migrate:status --database=tinyorm_tom_postgres --no-ansi
+      env:
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        TOM_EXAMPLE_ENV: testing
 
-    # - name: Tom example test some commands (PostgreSQL) 🙌
-    #   working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
-    #   run: |
-    #     $env:Path = '..\..;' + $env:Path
-    #     .\tom.exe migrate:install --database=tinyorm_tom_postgres --no-ansi
-    #     .\tom.exe migrate:status --database=tinyorm_tom_postgres --no-ansi
-    #     .\tom.exe migrate --database=tinyorm_tom_postgres --seed --no-ansi
-    #     .\tom.exe migrate:refresh --database=tinyorm_tom_postgres --seed --no-ansi
-    #     .\tom.exe migrate:status --database=tinyorm_tom_postgres --no-ansi
-    #   env:
-    #     DB_PGSQL_CHARSET: utf8
-    #     DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-    #     DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-    #     DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
-    #     DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-    #     TOM_EXAMPLE_ENV: testing
-
-    # - name: Tom example test some commands (SQLite) 🏁
-    #   working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
-    #   run: |
-    #     $env:Path = '..\..;' + $env:Path
-    #     .\tom.exe migrate:install --database=tinyorm_tom_sqlite --no-ansi
-    #     .\tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
-    #     .\tom.exe migrate --database=tinyorm_tom_sqlite --seed --no-ansi
-    #     .\tom.exe migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
-    #     .\tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
-    #   env:
-    #     DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
-    #     TOM_EXAMPLE_ENV: testing
+    - name: Tom example test some commands (SQLite) 🏁
+      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
+      run: |
+        $env:Path = '..\..;' + $env:Path
+        .\tom.exe migrate:install --database=tinyorm_tom_sqlite --no-ansi
+        .\tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
+        .\tom.exe migrate --database=tinyorm_tom_sqlite --seed --no-ansi
+        .\tom.exe migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
+        .\tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
+      env:
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        TOM_EXAMPLE_ENV: testing
