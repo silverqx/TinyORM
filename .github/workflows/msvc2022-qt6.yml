@@ -17,11 +17,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: test
-      run: |
-        gci env:
-    - run: exit 1
-
     - name: PostgreSQL start service
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual

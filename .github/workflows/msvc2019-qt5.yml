@@ -33,11 +33,6 @@ jobs:
     #   with:
     #     limit-access-to-actor: true
 
-    - name: test
-      run: |
-        gci env:
-    - run: exit 1
-
     - name: PostgreSQL start service
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual
@@ -162,7 +157,9 @@ jobs:
         cache-name: msvc2019-qt515
       with:
         path: ~/AppData/Roaming/ccache
-        key: ${{ runner.os }}-ccache-${{ env.cache-name }}
+        key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-${{ env.cache-name }}-
 
     - name: Ccache setup 🥳
       run: |
