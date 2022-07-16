@@ -58,7 +58,7 @@ int UsingConnection::usingConnection(QString &&name, const bool debugSql,
 int UsingConnection::usingConnection(const QString &name, const bool debugSql,
                                      std::function<int()> &&callback)
 {
-    return usingConnection(std::move(name), debugSql, std::nullopt, std::move(callback));
+    return usingConnection(name, debugSql, std::nullopt, std::move(callback));
 }
 
 DatabaseConnection &UsingConnection::resolveConnection(const QString &name) const

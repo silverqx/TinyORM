@@ -60,7 +60,7 @@ CallsCommands::createCommandLineArguments(
     // Absolute path of the exe name
     QStringList newArguments {std::move(currentArguments[0])};
     // Command name
-    newArguments << std::move(command);
+    newArguments << command;
 
     // Remove a command exe name and tom's command name
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
