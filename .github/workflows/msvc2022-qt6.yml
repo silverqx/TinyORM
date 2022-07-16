@@ -162,8 +162,8 @@ jobs:
         echo "::endgroup::"
 
         echo "::group::Enable ccache debugging"
-        Write-Output "CCACHE_DEBUG=1" | Out-File -FilePath $env:GITHUB_ENV -Append
-        Write-Output "CCACHE_DEBUGDIR=${{ runner.temp }}/ccache-debug" | `
+        Write-Output 'CCACHE_DEBUG=1' | Out-File -FilePath $env:GITHUB_ENV -Append
+        Write-Output 'CCACHE_DEBUGDIR=${{ runner.temp }}/ccache-debug' | `
         Out-File -FilePath $env:GITHUB_ENV -Append
         echo "::endgroup::"
 
@@ -203,6 +203,11 @@ jobs:
     - name: TinyORM cmake build ✨ (msvc-cmake-debug)
       run: >-
         cmake --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
 
     - name: Ccache statistics
       run: |
