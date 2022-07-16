@@ -186,7 +186,8 @@ jobs:
         -S .
         -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache.exe
+        -D CMAKE_C_COMPILER_LAUNCHER:FILEPATH="C:/ProgramData/chocolatey/bin/ccache.exe"
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH="C:/ProgramData/chocolatey/bin/ccache.exe"
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:BOOL=Debug
