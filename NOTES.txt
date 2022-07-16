@@ -186,6 +186,10 @@ https://drive.google.com/uc?id=some_id
 
 - ssh into runner:
 
+  - shortcuts:
+    ctrl-b c   - new window
+    ctrl-b 0-9 - switch to window
+
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
       with:
