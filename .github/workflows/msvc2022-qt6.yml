@@ -162,9 +162,8 @@ jobs:
         echo "::endgroup::"
 
         echo "::group::Enable ccache debugging"
-        mkdir ${{ runner.temp }}/ccache_debug
         Write-Output 'CCACHE_DEBUG=1' | Out-File -FilePath $env:GITHUB_ENV -Append
-        Write-Output 'CCACHE_DEBUGDIR="${{ runner.temp }}/ccache_debug"' | `
+        Write-Output 'CCACHE_DEBUGDIR=D:/a/_temp/ccache_debug' | `
         Out-File -FilePath $env:GITHUB_ENV -Append
         echo "::endgroup::"
 
