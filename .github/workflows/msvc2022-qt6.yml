@@ -163,7 +163,7 @@ jobs:
 
         echo "::group::Enable ccache debugging"
         Write-Output 'CCACHE_DEBUG=1' | Out-File -FilePath $env:GITHUB_ENV -Append
-        Write-Output 'CCACHE_DEBUGDIR=${{ runner.temp }}/ccache-debug' | `
+        Write-Output 'CCACHE_DEBUGDIR=${{ runner.temp }}\ccache_debug' | `
         Out-File -FilePath $env:GITHUB_ENV -Append
         echo "::endgroup::"
 
@@ -204,10 +204,10 @@ jobs:
       run: >-
         cmake --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
+    #   with:
+    #     limit-access-to-actor: true
 
     - name: Ccache statistics
       run: |
@@ -217,7 +217,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ccache-debug
-        path: ${{ runner.temp }}/ccache-debug
+        path: ${{ runner.temp }}/ccache_debug
         retention-days: 1
 
     # - name: Create and Seed tables for unit tests 🎉
