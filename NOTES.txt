@@ -595,7 +595,7 @@ QtCreator common CMake options:
 
  - for QtCreator:
 
--D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH="C:/Users/<username>/scoop/shims/ccache.exe"
+-D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=C:/Users/<username>/scoop/shims/ccache.exe
 -D CMAKE_VERBOSE_MAKEFILE:BOOL=OFF
 -D VERBOSE_CONFIGURE:BOOL=ON
 -D BUILD_TESTS:BOOL=ON
