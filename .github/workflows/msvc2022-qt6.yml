@@ -154,6 +154,7 @@ jobs:
         echo "::group::Prepare ccache config"
         ccache --set-config max_size=600M
         ccache --set-config sloppiness=pch_defines,time_macros
+        ccache --set-config debug_dir=D:/ccache/
         ccache --show-config
         echo "::endgroup::"
 
@@ -163,8 +164,6 @@ jobs:
 
         echo "::group::Enable ccache debugging"
         Write-Output 'CCACHE_DEBUG=1' | Out-File -FilePath $env:GITHUB_ENV -Append
-        Write-Output 'CCACHE_DEBUGDIR=D:/ccache' | `
-        Out-File -FilePath $env:GITHUB_ENV -Append
         echo "::endgroup::"
 
     - name: vcpkg set-up environment
