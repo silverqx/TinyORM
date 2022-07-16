@@ -212,7 +212,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ccache-debug
-        path: ${{ runner.temp }}/ccache/debug
+        path: ${{ runner.temp }}/ccache-debug
         retention-days: 1
 
     # - name: Create and Seed tables for unit tests 🎉
