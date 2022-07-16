@@ -349,7 +349,7 @@ function(tiny_fix_ccache)
             set(help_string "Default value for DISABLE_PRECOMPILE_HEADERS of targets.")
         endif()
 
-        set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON CACHE STRING ${help_string} FORCE)
+        set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON CACHE BOOL ${help_string} FORCE)
     endif()
 
     # Replace /Zi by /Z7 by the build config type
