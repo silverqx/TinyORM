@@ -152,7 +152,7 @@ jobs:
         echo "::endgroup::"
 
         echo "::group::Prepare ccache config"
-        ccache --set-config max_size=1G
+        ccache --set-config max_size=600M
         ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
         echo "::endgroup::"

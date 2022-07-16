@@ -51,7 +51,7 @@ jobs:
         update_packager_index: false
         ccache_options: |
           compression = false
-          max_size = 3G
+          max_size = 800M
 
     - name: vcpkg set-up environment
       run: |
