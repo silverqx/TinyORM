@@ -43,7 +43,7 @@ QString String::snake(QString string, const QChar delimiter)
         return (*snakeCache)[key];
 
     // RegExp not used for performance reasons
-    std::vector<int> positions;
+    std::vector<QString::size_type> positions;
     positions.reserve(static_cast<std::size_t>(string.size() / 2) + 2);
 
     for (QString::size_type i = 0; i < string.size(); ++i) {
@@ -60,8 +60,8 @@ QString String::snake(QString string, const QChar delimiter)
     }
 
     // Positions stay valid after inserts because reverse iterators used
-    std::for_each(positions.crbegin(), positions.crend(),
-                  [&string, delimiter](const int pos)
+    std::ranges::for_each(positions,
+                          [&string, delimiter](const QString::size_type pos)
     {
         string.insert(pos, delimiter);
     });
