@@ -56,7 +56,7 @@ namespace Concerns
 
     int CallsCommands::call(const QString &command, QStringList &&arguments) const
     {
-        return runCommand(std::move(command), std::move(arguments));
+        return runCommand(command, std::move(arguments));
     }
 
 } // namespace Concerns

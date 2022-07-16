@@ -46,7 +46,7 @@ QString String::snake(QString string, const QChar delimiter)
     std::vector<int> positions;
     positions.reserve(static_cast<std::size_t>(string.size() / 2) + 2);
 
-    for (auto i = 0; i < string.size(); ++i) {
+    for (QString::size_type i = 0; i < string.size(); ++i) {
         const auto ch = string.at(i);
 
         if (i > 0 && ch >= QChar('A') && ch <= QChar('Z')) {

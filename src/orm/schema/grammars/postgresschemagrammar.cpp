@@ -47,7 +47,7 @@ PostgresSchemaGrammar::compileGetAllTables(const QVector<QString> &databases) co
 {
     return QStringLiteral("select tablename from pg_catalog.pg_tables "
                           "where schemaname in (%1)")
-            .arg(quoteString(std::move(databases)));
+            .arg(quoteString(databases));
 }
 
 QString
@@ -55,7 +55,7 @@ PostgresSchemaGrammar::compileGetAllViews(const QVector<QString> &databases) con
 {
     return QStringLiteral("select viewname from pg_catalog.pg_views "
                           "where schemaname in (%1)")
-            .arg(quoteString(std::move(databases)));
+            .arg(quoteString(databases));
 }
 
 QString PostgresSchemaGrammar::compileEnableForeignKeyConstraints() const

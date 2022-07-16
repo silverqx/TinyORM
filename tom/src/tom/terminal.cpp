@@ -232,7 +232,7 @@ void Terminal::enableUtf8ConsoleEncoding()
        unicode to utf8, eg. by QString::fromStdWString(), WideCharToMultiByte(), or
        std::codecvt(). It also works with msys2 ucrt64 gcc/clang. */
     SetConsoleCP(CP_UTF8);
-    _setmode(_fileno(stdin), _O_WTEXT);
+    std::ignore = _setmode(_fileno(stdin), _O_WTEXT); // std::ignore to suppress C6031
 }
 #endif
 

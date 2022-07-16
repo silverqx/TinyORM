@@ -367,9 +367,8 @@ int CompleteCommand::printEnvironmentNames(const QString &environmentName) const
         if (environment.startsWith(environmentName))
             environmentNames
                     << QStringLiteral("%1;%2").arg(
-                           NOSPACE.arg(LongOption.arg(Env).append(EQ_C),
-                                       environment),
-                           std::move(environment));
+                           NOSPACE.arg(LongOption.arg(Env).append(EQ_C), environment),
+                           environment);
 
     // Print
     note(environmentNames.join(NEWLINE));

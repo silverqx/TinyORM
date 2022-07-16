@@ -205,6 +205,10 @@ namespace Concerns
         return m_verbosity;
     }
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma warning(push)
+#pragma warning(disable : C26813)
+#endif
     bool InteractsWithIO::isQuietVerbosity() const noexcept
     {
         return m_verbosity == Quiet;
@@ -229,6 +233,9 @@ namespace Concerns
     {
         return m_verbosity == Debug;
     }
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma warning(pop)
+#endif
 
 } // namespace Concerns
 } // namespace Tom

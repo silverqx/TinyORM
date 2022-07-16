@@ -116,8 +116,8 @@ namespace
         if (!pwshProfileFile.open(openMode))
             throw Exceptions::RuntimeError(
                     QStringLiteral("Can not open '%1' file in openPwshProfileFile().")
-                    .arg(QStringLiteral("%1/%2").arg(std::move(pwshProfileFolder),
-                                                     std::move(profileFileRelative))));
+                    .arg(QStringLiteral("%1/%2").arg(pwshProfileFolder,
+                                                     profileFileRelative)));
     }
 
     /*! Detect whether PowerShell profile folder already exists and create it
@@ -137,8 +137,8 @@ namespace
         throw Exceptions::RuntimeError(
                     QStringLiteral("Can not create '%1' directory "
                                    "in preparePowerShellFolder().")
-                    .arg(QStringLiteral("%1/%2").arg(std::move(documentsFolder),
-                                                     std::move(powershellFolder))));
+                    .arg(QStringLiteral("%1/%2").arg(documentsFolder,
+                                                     powershellFolder)));
     }
 
     /*! Template string for tab-completion installed successfully. */
