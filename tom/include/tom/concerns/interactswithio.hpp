@@ -207,7 +207,7 @@ namespace Concerns
 
 #if defined(_MSC_VER) && !defined(__clang__)
 #pragma warning(push)
-#pragma warning(disable : C26813)
+#pragma warning(disable : 26813)
 #endif
     bool InteractsWithIO::isQuietVerbosity() const noexcept
     {

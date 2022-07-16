@@ -51,7 +51,7 @@ namespace
             RaiseException(0x406D1388, 0, sizeof (info) / sizeof (DWORD),
                            reinterpret_cast<const ULONG_PTR *>(&info));
         }
-        __except (EXCEPTION_CONTINUE_EXECUTION)
+        __except (EXCEPTION_EXECUTE_HANDLER)
         {}
     }
 #elif defined(Q_OS_LINUX) || defined(Q_OS_MAC) || defined(Q_OS_QNX)
