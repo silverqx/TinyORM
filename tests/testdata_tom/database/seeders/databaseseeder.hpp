@@ -164,7 +164,7 @@ namespace Seeders
         for (auto &&[sequence, id] : sequences)
             DB::connection().unprepared(
                     QStringLiteral("ALTER SEQUENCE %1 RESTART WITH %2")
-                    .arg(std::move(sequence)).arg(id));
+                    .arg(sequence).arg(id));
     }
 
 } // namespace Seeders
