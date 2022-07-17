@@ -279,6 +279,17 @@ inline constants :/.")
 don't enable INLINE_CONSTANTS cmake option :/.")
     endif()
 
+    if(MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND
+        CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"
+    )
+        # Determine whether the CMAKE_CXX_COMPILER_LAUNCHER contains ccache/sccache
+        tiny_is_ccache_compiler_launcher(isCcacheLauncher)
+        if(isCcacheLauncher)
+            message(WARNING "The TinyORM has 100% cache misses with the clang-cl \
+with msvc and the ccache/sccache enabled using the CMAKE_CXX_COMPILER_LAUNCHER :/.")
+        endif()
+    endif()
+
 endfunction()
 
 # Print a VERBOSE message against which library is project linking
@@ -297,6 +308,26 @@ function(tiny_print_linking_against target)
     endif()
 
     message(VERBOSE "Linking against ${target} at ${libraryFilepath}")
+
+endfunction()
+
+# Determine whether the CMAKE_CXX_COMPILER_LAUNCHER contains ccache/sccache
+function(tiny_is_ccache_compiler_launcher out_variable)
+
+    # Target the g++, clang++, msvc, and clang-cl with msvc compilers on Windows
+    if(NOT WIN32 OR NOT DEFINED CMAKE_CXX_COMPILER_LAUNCHER)
+        set(${out_variable} FALSE PARENT_SCOPE)
+        return()
+    endif()
+
+    # Support the ccache and also sccache (I have tried and sccache doesn't work)
+    cmake_path(GET CMAKE_CXX_COMPILER_LAUNCHER STEM ccacheStem)
+    if(NOT ccacheStem STREQUAL "ccache" AND NOT ccacheStem STREQUAL "sccache")
+        set(${out_variable} FALSE PARENT_SCOPE)
+        return()
+    endif()
+
+    set(${out_variable} TRUE PARENT_SCOPE)
 
 endfunction()
 
@@ -329,14 +360,9 @@ function(tiny_fix_ccache)
     # anyway but I will replace the Zi to Z7 compiler option in both
     # CMAKE_<C|CXX>_FLAGS_<CONFIG> to be consistent 🤔
 
-    # Target the g++, clang++, msvc, and clang-cl with msvc compilers on Windows
-    if(NOT WIN32 OR NOT DEFINED CMAKE_CXX_COMPILER_LAUNCHER)
-        return()
-    endif()
-
-    # Support the ccache and also sccache (I have tried and sccache doesn't work)
-    cmake_path(GET CMAKE_CXX_COMPILER_LAUNCHER STEM ccacheStem)
-    if(NOT ccacheStem STREQUAL "ccache" AND NOT ccacheStem STREQUAL "sccache")
+    # Determine whether the CMAKE_CXX_COMPILER_LAUNCHER contains ccache/sccache
+    tiny_is_ccache_compiler_launcher(isCcacheLauncher)
+    if(NOT isCcacheLauncher)
         return()
     endif()
 
