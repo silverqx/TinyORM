@@ -71,7 +71,7 @@ win32-g++|win32-clang-g++ {
 }
 else:win32-msvc|win32-clang-msvc {
     # Enable ccache wrapper
-    CONFIG *= tiny_ccache
+#    CONFIG *= tiny_ccache
 
     # Includes
     # range-v3
