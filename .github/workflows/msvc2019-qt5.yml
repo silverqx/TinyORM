@@ -195,7 +195,7 @@ jobs:
         -D TOM_EXAMPLE:BOOL=ON
 
     - name: TinyORM cmake build ✨ (msvc-cmake-debug)
-      run: >-
+      run: |
         cmake --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
 
     - name: Ccache statistics

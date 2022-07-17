@@ -179,7 +179,7 @@ jobs:
         -D TOM_EXAMPLE:BOOL=ON
 
     - name: TinyORM cmake build ✨ (clang-cl-cmake-debug)
-      run: >-
+      run: |
         cmake --build ../TinyORM-builds-cmake/build-clang-cl-cmake-debug --target all --parallel 2
 
     - name: Create and Seed tables for unit tests 🎉
