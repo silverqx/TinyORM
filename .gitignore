@@ -91,6 +91,7 @@ Thumbs.db
 # others
 ~$*.xlsx
 conf.pri
+/TODOS.silverqx.txt
 /compile_commands.json
 /database/
 /exports*.txt
