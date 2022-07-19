@@ -11,6 +11,7 @@ import CodeBlock from '@theme/CodeBlock'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
+import RootFolder from '@theme/RootFolder'
 import RootFolderInput from '@theme/RootFolderInput'
 import {
     shell,
@@ -95,12 +96,22 @@ Open `Local Security Policy`, go to `Local Policies - User Rights Assignment`, o
 
 All `tinyorm.org` examples are based on the following folders structure. The `tom` folder will contain a [migrations console application](building/migrations.mdx).
 
+:::tip
+You can set the root and application folder paths in the form below and they will be used across the whole www.tinyorm.org website. 🥳 The pwsh shell is supposed to use on Windows and the bash shell on Linux, but it is not a requirement.
+:::
+
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label} className='tiny-tree'>
+<div className='tiny-root-folder-info-wrapper'>
+    <span className='tiny-root-folder-info-prefix'>Current pwsh path</span>&nbsp;
+    <RootFolder groupId={pwsh} />
+</div>
 <RootFolderInput groupId={pwsh} label={pwsh_label} />
 <RootFolderInput groupId={application} label={application_label} />
 
 ```text
+
+
 
 ├──
 │   ├── HelloWorld/
@@ -137,10 +148,16 @@ All `tinyorm.org` examples are based on the following folders structure. The `to
 
 </TabItem>
 <TabItem value={bash} label={bash_label} className='tiny-tree'>
+<div className='tiny-root-folder-info-wrapper'>
+    <span className='tiny-root-folder-info-prefix'>Current bash path</span>&nbsp;
+    <RootFolder groupId={bash} />
+</div>
 <RootFolderInput groupId={bash} label={bash_label} />
 <RootFolderInput groupId={application} label={application} />
 
 ```text
+
+
 
 ├──
 │   ├── HelloWorld/
@@ -587,7 +604,7 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `inline_constants`                  | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: <code>CONFIG(shared\|dll)</code></small> |
 | `link_pkgconfig_off`                | `OFF`   | Link against `libmariadb` with `PKGCONFIG`.<br/>Used only in the `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L27).<br/><small>Available when: <code>(win32-g++\|win32-clang-g++):mysql:!static:!staticlib</code></small> |
 | `mysql_ping`                        | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
-| `tiny_ccache`                       | `ON`    | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works only on the Windows systems. It works well with the MSYS2 `g++`, `clang++`, `msvc`, and `clang-cl` with `msvc`. It disables `precompile_header` as they are not supported on Windows and changes the `-Zi` compiler option to the `-Z7` for debug builds as the `-Zi` compiler option is not supported ([link](https://github.com/ccache/ccache/issues/1040) to the issue).</small> |
+| `tiny_ccache`                       | `ON`    | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works only on Windows systems. It works well with the MSYS2 `g++`, `clang++`, `msvc`, and `clang-cl` with `msvc`. It disables `precompile_header` as they are not supported on Windows and changes the `-Zi` compiler option to the `-Z7` for debug builds as the `-Zi` compiler option is not supported ([link](https://github.com/ccache/ccache/issues/1040) to the issue).</small> |
 | `tom_example`                       | `OFF`   | Build the <abbr title='TinyORM Migrations'>`Tom`</abbr> command-line application example (console application). |
 
 </APITable>
