@@ -123,6 +123,10 @@ This is laravel/framework version, not laravel/laravel version:
    - https://github.com/laravel/framework/compare/v8.26.1...v8.41.0
    - https://github.com/laravel/framework/compare/v8.41.0...v8.80.0
 
+ - close all expanded sections in diff:
+
+document.querySelectorAll('.btn-octicon.js-details-target[aria-expanded=true]').forEach((value) => value.click())
+
 
 Maintenance:
 ------------
