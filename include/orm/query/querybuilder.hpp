@@ -275,6 +275,7 @@ namespace Orm::Query
         rightJoinSub(T &&query, const QString &as,
                      const std::function<void(JoinClause &)> &callback);
 
+        /* General where */
         /*! Add a basic where clause to the query. */
         template<WhereValue T>
         Builder &where(const Column &column, const QString &comparison,
@@ -290,18 +291,51 @@ namespace Orm::Query
         template<WhereValue T>
         Builder &orWhereEq(const Column &column, T &&value);
 
+        /* General where not */
+        /*! Add a basic "where not" clause to the query. */
+        template<WhereValue T>
+        Builder &whereNot(const Column &column, const QString &comparison,
+                          T &&value, const QString &condition = AND);
+        /*! Add an "or where not" clause to the query. */
+        template<WhereValue T>
+        Builder &orWhereNot(const Column &column, const QString &comparison, T &&value);
+        /*! Add a basic equal "where not" clause to the query. */
+        template<WhereValue T>
+        Builder &whereNotEq(const Column &column, T &&value,
+                            const QString &condition = AND);
+        /*! Add an equal "or where not" clause to the query. */
+        template<WhereValue T>
+        Builder &orWhereNotEq(const Column &column, T &&value);
+
+        /* Nested where */
         /*! Add a nested where clause to the query. */
         Builder &where(const std::function<void(Builder &)> &callback,
                        const QString &condition = AND);
         /*! Add a nested "or where" clause to the query. */
         Builder &orWhere(const std::function<void(Builder &)> &callback);
+        /*! Add a nested "where not" clause to the query. */
+        Builder &whereNot(const std::function<void(Builder &)> &callback,
+                          const QString &condition = AND);
+        /*! Add a nested "or where not" clause to the query. */
+        Builder &orWhereNot(const std::function<void(Builder &)> &callback);
 
+        /* Array where */
         /*! Add a vector of basic where clauses to the query. */
         Builder &where(const QVector<WhereItem> &values,
-                       const QString &condition = AND);
+                       const QString &condition = AND,
+                       const QString &defaultCondition = "");
         /*! Add a vector of basic "or where" clauses to the query. */
-        Builder &orWhere(const QVector<WhereItem> &values);
+        Builder &orWhere(const QVector<WhereItem> &values,
+                         const QString &defaultCondition = "");
+        /*! Add a vector of basic "where not" clauses to the query. */
+        Builder &whereNot(const QVector<WhereItem> &values,
+                          const QString &condition = AND,
+                          const QString &defaultCondition = "");
+        /*! Add a vector of basic "or where not" clauses to the query. */
+        Builder &orWhereNot(const QVector<WhereItem> &values,
+                            const QString &defaultCondition = "");
 
+        /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
         Builder &whereColumn(const QVector<WhereColumnItem> &values,
                              const QString &condition = AND);
@@ -320,6 +354,7 @@ namespace Orm::Query
         /*! Add an equal "or where" clause comparing two columns to the query. */
         Builder &orWhereColumnEq(const Column &first, const Column &second);
 
+        /* where IN */
         /*! Add a "where in" clause to the query. */
         Builder &whereIn(const Column &column, const QVector<QVariant> &values,
                          const QString &condition = AND, bool nope = false);
@@ -331,6 +366,7 @@ namespace Orm::Query
         /*! Add an "or where not in" clause to the query. */
         Builder &orWhereNotIn(const Column &column, const QVector<QVariant> &values);
 
+        /* where null */
         /*! Add a "where null" clause to the query. */
         Builder &whereNull(const QVector<Column> &columns = {ASTERISK},
                            const QString &condition = AND, bool nope = false);
@@ -352,6 +388,7 @@ namespace Orm::Query
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const Column &column);
 
+        /* where sub-queries */
         /*! Add a basic where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         Builder &where(C &&column, const QString &comparison, V &&value,
@@ -366,11 +403,29 @@ namespace Orm::Query
         template<Queryable C, WhereValue V>
         inline Builder &orWhereEq(C &&column, V &&value);
 
+        /* where not sub-queries */
+        /*! Add a basic "where not" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        Builder &whereNot(C &&column, const QString &comparison, V &&value,
+                          const QString &condition = AND);
+        /*! Add an "or where not" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        inline Builder &orWhereNot(C &&column, const QString &comparison, V &&value);
+        /*! Add a basic equal "where not" clause to the query with a full sub-select
+            column. */
+        template<Queryable C, WhereValue V>
+        inline Builder &whereNotEq(C &&column, V &&value, const QString &condition = AND);
+        /*! Add an equal "or where not" clause to the query with a full sub-select
+            column. */
+        template<Queryable C, WhereValue V>
+        inline Builder &orWhereNotEq(C &&column, V &&value);
+
         /*! Add a full sub-select to the "where" clause. */
         template<WhereValueSubQuery T>
         Builder &whereSub(const Column &column, const QString &comparison, T &&query,
                           const QString &condition = AND);
 
+        /* where raw */
         /*! Add a raw "where" clause to the query. */
         Builder &whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
                           const QString &condition = AND);
@@ -565,7 +620,8 @@ namespace Orm::Query
         /*! Add a vector of basic where clauses to the query. */
         Builder &
         addArrayOfWheres(const QVector<WhereItem> &values,
-                         const QString &condition = AND);
+                         const QString &condition = AND,
+                         const QString &defaultCondition = "");
         /*! Add a vector of where clauses comparing two columns to the query. */
         Builder &
         addArrayOfWheres(const QVector<WhereColumnItem> &values,
@@ -993,6 +1049,8 @@ namespace Orm::Query
         return joinSub(std::forward<T>(query), as, callback, RIGHT);
     }
 
+    /* Basic where */
+
     template<WhereValue T>
     Builder &
     Builder::where(const Column &column, const QString &comparison, T &&value,
@@ -1026,6 +1084,40 @@ namespace Orm::Query
     {
         return where(column, EQ, std::forward<T>(value), OR);
     }
+
+    /* Genral where not */
+
+    template<WhereValue T>
+    Builder &
+    Builder::whereNot(const Column &column, const QString &comparison, T &&value,
+                      const QString &condition)
+    {
+        return where(column, comparison, std::forward<T>(value),
+                     SPACE_IN.arg(condition, NOT));
+    }
+
+    template<WhereValue T>
+    Builder &
+    Builder::orWhereNot(const Column &column, const QString &comparison, T &&value)
+    {
+        return where(column, comparison, std::forward<T>(value),
+                     SPACE_IN.arg(OR, NOT));
+    }
+
+    template<WhereValue T>
+    Builder &
+    Builder::whereNotEq(const Column &column, T &&value, const QString &condition)
+    {
+        return where(column, EQ, std::forward<T>(value), SPACE_IN.arg(condition, NOT));
+    }
+
+    template<WhereValue T>
+    Builder &Builder::orWhereNotEq(const Column &column, T &&value)
+    {
+        return where(column, EQ, std::forward<T>(value), SPACE_IN.arg(OR, NOT));
+    }
+
+    /* where sub-queries */
 
     template<Queryable C, WhereValue V>
     Builder &
@@ -1062,6 +1154,38 @@ namespace Orm::Query
     Builder &Builder::orWhereEq(C &&column, V &&value)
     {
         return where(std::forward<C>(column), EQ, std::forward<V>(value), OR);
+    }
+
+    /* where not sub-queries */
+
+    template<Queryable C, WhereValue V>
+    Builder &
+    Builder::whereNot(C &&column, const QString &comparison, V &&value,
+                      const QString &condition)
+    {
+        return where(std::forward<C>(column), comparison, std::forward<V>(value),
+                     SPACE_IN.arg(condition, NOT));
+    }
+
+    template<Queryable C, WhereValue V>
+    Builder &Builder::orWhereNot(C &&column, const QString &comparison, V &&value)
+    {
+        return where(std::forward<C>(column), comparison, std::forward<V>(value),
+                     SPACE_IN.arg(OR, NOT));
+    }
+
+    template<Queryable C, WhereValue V>
+    Builder &Builder::whereNotEq(C &&column, V &&value, const QString &condition)
+    {
+        return where(std::forward<C>(column), EQ, std::forward<V>(value),
+                     SPACE_IN.arg(condition, NOT));
+    }
+
+    template<Queryable C, WhereValue V>
+    Builder &Builder::orWhereNotEq(C &&column, V &&value)
+    {
+        return where(std::forward<C>(column), EQ, std::forward<V>(value),
+                     SPACE_IN.arg(OR, NOT));
     }
 
     template<WhereValueSubQuery T>

@@ -6,12 +6,14 @@
 
 #include "databases.hpp"
 
+using Orm::Constants::AND;
 using Orm::Constants::ASC;
 using Orm::Constants::DESC;
 using Orm::Constants::ID;
 using Orm::Constants::LEFT;
 using Orm::Constants::LIKE;
 using Orm::Constants::NAME;
+using Orm::Constants::OR;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
@@ -67,11 +69,21 @@ private Q_SLOTS:
 
     void where() const;
     void where_WithVectorValue() const;
+    void where_WithVectorValue_DefaultCondition() const;
+
+    void whereNot() const;
+    void whereNot_WithVectorValue_DefaultCondition() const;
 
     void orWhere() const;
     void orWhere_ColumnExpression() const;
     void orWhere_WithVectorValue() const;
+    void orWhere_WithVectorValue_DefaultCondition() const;
     void orWhere_WithVectorValue_ColumnExpression() const;
+
+    void orWhereNot() const;
+    void orWhereNot_WithVectorValue() const;
+    void orWhereNot_WithVectorValue_DefaultCondition() const;
+    void orWhereNot_ColumnExpression() const;
 
     void whereColumn() const;
     void orWhereColumn() const;
@@ -84,7 +96,7 @@ private Q_SLOTS:
     void whereNotIn() const;
     void whereNotIn_ColumnExpression() const;
     void whereIn_Empty() const;
-    void WhereNotIn_Empty() const;
+    void whereNotIn_Empty() const;
     void whereIn_ValueExpression() const;
 
     void whereNull() const;
@@ -834,6 +846,108 @@ void tst_SQLite_QueryBuilder::where_WithVectorValue() const
     }
 }
 
+void tst_SQLite_QueryBuilder::where_WithVectorValue_DefaultCondition() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").where({{"progress", 100, ">="}})
+            .where({{ID, 3}, {SIZE, 10, ">"}}, AND, OR);
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" where (\"progress\" >= ?) and "
+             "(\"id\" = ? or \"size\" > ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+}
+
+void tst_SQLite_QueryBuilder::whereNot() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, "=", 3);
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" where not \"id\" = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNotEq(ID, 3);
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" where not \"id\" = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNotEq(ID, 3)
+                .whereNotEq(NAME, "test3");
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" where not \"id\" = ? and not \"name\" = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant("test3")}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, "!=", 3);
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" where not \"id\" != ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, "<>", 3);
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" where not \"id\" <> ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, ">", 3);
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" where not \"id\" > ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, ">", 3)
+                .whereNot(NAME, LIKE, "test%");
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" where not \"id\" > ? and "
+                 "not \"name\" like ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant("test%")}));
+    }
+}
+
+void tst_SQLite_QueryBuilder::whereNot_WithVectorValue_DefaultCondition() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").whereNot({{"progress", 100, ">="}})
+            .whereNot({{ID, 3}, {SIZE, 10, ">"}}, AND, OR);
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" where not (\"progress\" >= ?) and "
+             "not (\"id\" = ? or \"size\" > ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+}
+
 void tst_SQLite_QueryBuilder::orWhere() const
 {
     {
@@ -884,6 +998,19 @@ void tst_SQLite_QueryBuilder::orWhere_WithVectorValue() const
              QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
 }
 
+void tst_SQLite_QueryBuilder::orWhere_WithVectorValue_DefaultCondition() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").where({{"progress", 100, ">="}})
+            .orWhere({{ID, 3}, {SIZE, 10, ">"}}, AND);
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" where (\"progress\" >= ?) or "
+             "(\"id\" = ? and \"size\" > ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+}
+
 void tst_SQLite_QueryBuilder::orWhere_WithVectorValue_ColumnExpression() const
 {
     auto builder = createQuery();
@@ -896,6 +1023,70 @@ void tst_SQLite_QueryBuilder::orWhere_WithVectorValue_ColumnExpression() const
              "(progress >= ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+}
+
+void tst_SQLite_QueryBuilder::orWhereNot() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, ">", 4)
+                .orWhereNot("progress", ">=", 300);
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" where not \"id\" > ? or "
+                 "not \"progress\" >= ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(4), QVariant(300)}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, ">", 4)
+                .orWhereNotEq(NAME, "test3");
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" where not \"id\" > ? or not \"name\" = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(4), QVariant("test3")}));
+    }
+}
+
+void tst_SQLite_QueryBuilder::orWhereNot_WithVectorValue() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE, 10, ">"}})
+            .orWhereNot({{"progress", 100, ">="}});
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" where not (\"id\" = ? and \"size\" > ?) or "
+             "not (\"progress\" >= ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+}
+
+void tst_SQLite_QueryBuilder::orWhereNot_WithVectorValue_DefaultCondition() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").whereNot({{"progress", 100, ">="}})
+            .orWhereNot({{ID, 3}, {SIZE, 10, ">"}}, AND);
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" where not (\"progress\" >= ?) or "
+             "not (\"id\" = ? and \"size\" > ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+}
+
+void tst_SQLite_QueryBuilder::orWhereNot_ColumnExpression() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").whereNot(Raw(ID), ">", 4)
+            .orWhereNotEq(Raw("\"name\""), "test3");
+    QCOMPARE(builder->toSql(),
+             "select * from \"torrents\" where not id > ? or not \"name\" = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(4), QVariant("test3")}));
 }
 
 void tst_SQLite_QueryBuilder::whereColumn() const
@@ -1130,7 +1321,7 @@ void tst_SQLite_QueryBuilder::whereIn_Empty() const
     }
 }
 
-void tst_SQLite_QueryBuilder::WhereNotIn_Empty() const
+void tst_SQLite_QueryBuilder::whereNotIn_Empty() const
 {
     {
         auto builder = createQuery();

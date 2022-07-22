@@ -325,6 +325,8 @@ Builder &Builder::fromRaw(const QString &expression, const QVector<QVariant> &bi
     return *this;
 }
 
+/* Nested where */
+
 Builder &Builder::where(const std::function<void(Builder &)> &callback,
                         const QString &condition)
 {
@@ -341,19 +343,52 @@ Builder &Builder::orWhere(const std::function<void(Builder &)> &callback)
     return where(callback, OR);
 }
 
-Builder &Builder::where(const QVector<WhereItem> &values, const QString &condition)
+Builder &Builder::whereNot(const std::function<void(Builder &)> &callback,
+                           const QString &condition)
+{
+    return where(callback, SPACE_IN.arg(condition, NOT));
+}
+
+Builder &Builder::orWhereNot(const std::function<void(Builder &)> &callback)
+{
+    return where(callback, SPACE_IN.arg(OR, NOT));
+}
+
+/* Array where */
+
+Builder &Builder::where(const QVector<WhereItem> &values, const QString &condition,
+                        const QString &defaultCondition)
 {
     /* We will maintain the boolean we received when the method was called and pass it
        into the nested where.
        The parentheses in this query are ok:
        select * from xyz where (id = ?) */
-    return addArrayOfWheres(values, condition);
+    return addArrayOfWheres(values, condition, defaultCondition);
 }
 
-Builder &Builder::orWhere(const QVector<WhereItem> &values)
+Builder &Builder::orWhere(const QVector<WhereItem> &values,
+                          const QString &defaultCondition)
 {
-    return where(values, OR);
+    return where(values, OR, defaultCondition);
 }
+
+Builder &Builder::whereNot(const QVector<WhereItem> &values, const QString &condition,
+                           const QString &defaultCondition)
+{
+    return where(values, SPACE_IN.arg(condition, NOT),
+                 // Avoid "and/... not" between all WhereItem-s
+                 defaultCondition.isEmpty() ? condition : defaultCondition);
+}
+
+Builder &Builder::orWhereNot(const QVector<WhereItem> &values,
+                             const QString &defaultCondition)
+{
+    return where(values, SPACE_IN.arg(OR, NOT),
+                 // Avoid "or not" between all WhereItem-s
+                 defaultCondition.isEmpty() ? OR : defaultCondition);
+}
+
+/* where column */
 
 Builder &Builder::whereColumn(const QVector<WhereColumnItem> &values,
                               const QString &condition)
@@ -395,6 +430,8 @@ Builder &Builder::orWhereColumnEq(const Column &first, const Column &second)
     return whereColumn(first, EQ, second, OR);
 }
 
+/* where IN */
+
 Builder &Builder::whereIn(const Column &column, const QVector<QVariant> &values,
                           const QString &condition, const bool nope)
 {
@@ -426,6 +463,8 @@ Builder &Builder::orWhereNotIn(const Column &column, const QVector<QVariant> &va
 {
     return whereNotIn(column, values, OR);
 }
+
+/* where null */
 
 Builder &Builder::whereNull(const QVector<Column> &columns, const QString &condition,
                             const bool nope)
@@ -473,6 +512,8 @@ Builder &Builder::orWhereNotNull(const Column &column)
 {
     return orWhereNotNull(QVector<Column> {column});
 }
+
+/* where raw */
 
 Builder &Builder::whereRaw(const QString &sql, const QVector<QVariant> &bindings,
                            const QString &condition)
@@ -893,13 +934,17 @@ QVector<QVariant> Builder::cleanBindings(QVector<QVariant> &&bindings) const
 }
 
 Builder &
-Builder::addArrayOfWheres(const QVector<WhereItem> &values, const QString &condition)
+Builder::addArrayOfWheres(const QVector<WhereItem> &values, const QString &condition,
+                          const QString &defaultCondition)
 {
-    return where([&values, &condition](Builder &query)
+    return where([&values, &condition, &defaultCondition](Builder &query)
     {
         for (const auto &where : values)
             query.where(where.column, where.comparison, where.value,
-                        where.condition.isEmpty() ? condition : where.condition);
+                        where.condition.isEmpty()
+                        // Allow to pass a default condition for the QVector<WhereItem>
+                        ? (defaultCondition.isEmpty() ? condition : defaultCondition)
+                        : where.condition);
 
     }, condition);
 }

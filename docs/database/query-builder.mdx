@@ -16,6 +16,7 @@ keywords: [c++ orm, sql, c++ sql, c++ query builder, database, query builder, ti
 - [Basic Where Clauses](#basic-where-clauses)
     - [Where Clauses](#where-clauses)
     - [Or Where Clauses](#or-where-clauses)
+    - [Where Not Clauses](#where-not-clauses)
     - [Additional Where Clauses](#additional-where-clauses)
     - [Condition Operator Overriding](#condition-operator-overriding)
     - [Logical Grouping](#logical-grouping)
@@ -404,6 +405,17 @@ select * from users where (first_name = "John" or last_name = "Smith" and votes 
 :::tip
 Still, it is a better idea to use [Logical Grouping](#logical-grouping) described few lines below, which allows better control of the parentheses.
 :::
+
+### Where Not Clauses
+
+The `whereNot` and `orWhereNot` methods may be used to negate a given group of query constraints. For example, the following query excludes products that are on clearance or which have a price that is less than ten:
+
+    auto products = DB::table("products")
+                        ->whereNot([](auto &query) {
+                            query.whereEq("clearance", true)
+                                 .orWhere("price", "<", 10);
+                        })
+                        .get();
 
 ### Additional Where Clauses
 

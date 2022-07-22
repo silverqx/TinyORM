@@ -6,12 +6,14 @@
 
 #include "databases.hpp"
 
+using Orm::Constants::AND;
 using Orm::Constants::ASC;
 using Orm::Constants::DESC;
 using Orm::Constants::ID;
 using Orm::Constants::LEFT;
 using Orm::Constants::LIKE;
 using Orm::Constants::NAME;
+using Orm::Constants::OR;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
@@ -101,16 +103,33 @@ private Q_SLOTS:
 
     void where() const;
     void where_WithVectorValue() const;
+    void where_WithVectorValue_DefaultCondition() const;
     void where_QueryableValue() const;
     void where_QueryableColumn() const;
+
+    void whereNot() const;
+    void whereNot_WithVectorValue() const;
+    void whereNot_WithVectorValue_DefaultCondition() const;
+    void whereNot_QueryableValue() const;
+    void whereNot_QueryableColumn() const;
 
     void orWhere() const;
     void orWhere_ColumnExpression() const;
     void orWhere_WithVectorValue() const;
+    void orWhere_WithVectorValue_DefaultCondition() const;
     void orWhere_WithVectorValue_ColumnExpression() const;
     void orWhereEq_QueryableValue() const;
     void orWhereEq_QueryableColumn() const;
     void orWhereEq_QueryableColumnAndValue() const;
+
+    void orWhereNot() const;
+    void orWhereNot_ColumnExpression() const;
+    void orWhereNot_WithVectorValue() const;
+    void orWhereNot_WithVectorValue_DefaultCondition() const;
+    void orWhereNot_WithVectorValue_ColumnExpression() const;
+    void orWhereNotEq_QueryableValue() const;
+    void orWhereNotEq_QueryableColumn() const;
+    void orWhereNotEq_QueryableColumnAndValue() const;
 
     void whereColumn() const;
     void orWhereColumn() const;
@@ -1134,6 +1153,20 @@ void tst_MySql_QueryBuilder::where_WithVectorValue() const
     }
 }
 
+void tst_MySql_QueryBuilder::where_WithVectorValue_DefaultCondition() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .where({{"progress", 100, ">="}})
+            .where({{ID, 3}, {SIZE, 10, ">"}}, AND, OR);
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where (`progress` >= ?) and "
+             "(`id` = ? or `size` > ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+}
+
 void tst_MySql_QueryBuilder::where_QueryableValue() const
 {
     // With lambda expression
@@ -1196,6 +1229,192 @@ void tst_MySql_QueryBuilder::where_QueryableColumn() const
     }
 }
 
+void tst_MySql_QueryBuilder::whereNot() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, "=", 3);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not `id` = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNotEq(ID, 3);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not `id` = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNotEq(ID, 3)
+                .whereEq(NAME, "test3");
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not `id` = ? and `name` = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant("test3")}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, "!=", 3);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not `id` != ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, "<>", 3);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not `id` <> ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, ">", 3);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not `id` > ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, ">", 3)
+                .whereNot(NAME, LIKE, "test%");
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not `id` > ? and not `name` like ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant("test%")}));
+    }
+}
+
+void tst_MySql_QueryBuilder::whereNot_WithVectorValue() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot({{ID, 3}});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not (`id` = ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant> {QVariant(3)});
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE, 10, ">"}});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not (`id` = ? and `size` > ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant(10)}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE, 10, ">"}})
+                .whereNot({{"progress", 100, ">="}});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not (`id` = ? and `size` > ?) "
+                 "and not (`progress` >= ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::whereNot_WithVectorValue_DefaultCondition() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .whereNot({{"progress", 100, ">="}})
+            .whereNot({{ID, 3}, {SIZE, 10, ">"}}, AND, OR);
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where not (`progress` >= ?) and "
+             "not (`id` = ? or `size` > ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+}
+
+void tst_MySql_QueryBuilder::whereNot_QueryableValue() const
+{
+    // With lambda expression
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents").whereNot(ID, ">", [](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        });
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where not `id` > (select avg(t.size) from `torrents` as `t`)");
+        QVERIFY(builder->getBindings().isEmpty());
+    }
+    // With QueryBuilder
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents")
+                .whereNot(ID, ">",
+                          createQuery()->from("torrents", "t")
+                                        .selectRaw("avg(t.size)"));
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where not `id` > (select avg(t.size) from `torrents` as `t`)");
+        QVERIFY(builder->getBindings().isEmpty());
+    }
+}
+
+void tst_MySql_QueryBuilder::whereNot_QueryableColumn() const
+{
+    // With lambda expression
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents").whereNot([](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        }, ">", 13);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where not (select avg(t.size) from `torrents` as `t`) > ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(13)}));
+    }
+    // With QueryBuilder
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents")
+                .whereNot(createQuery()->from("torrents", "t")
+                                        .selectRaw("avg(t.size)"),
+                          ">", 13);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where not (select avg(t.size) from `torrents` as `t`) > ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(13)}));
+    }
+}
+
 void tst_MySql_QueryBuilder::orWhere() const
 {
     {
@@ -1244,6 +1463,19 @@ void tst_MySql_QueryBuilder::orWhere_WithVectorValue() const
              "(`progress` >= ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+}
+
+void tst_MySql_QueryBuilder::orWhere_WithVectorValue_DefaultCondition() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").where({{"progress", 100, ">="}})
+            .orWhere({{ID, 3}, {SIZE, 10, ">"}}, AND);
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where (`progress` >= ?) or "
+             "(`id` = ? and `size` > ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
 }
 
 void tst_MySql_QueryBuilder::orWhere_WithVectorValue_ColumnExpression() const
@@ -1362,6 +1594,197 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableColumnAndValue() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` "
                  "where `id` = ? or (select avg(t.size) from `torrents` as `t`) = "
+                 "(select avg(t.size) from `torrents` as `t`)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::orWhereNot() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, ">", 4)
+                .orWhereNot("progress", ">=", 300);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not `id` > ? or not `progress` >= ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(4), QVariant(300)}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNot(ID, ">", 4)
+                .orWhereNotEq(NAME, "test3");
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where not `id` > ? or not `name` = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(4), QVariant("test3")}));
+    }
+}
+
+void tst_MySql_QueryBuilder::orWhereNot_ColumnExpression() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").whereNot(Raw(ID), ">", 4)
+            .orWhereNotEq(Raw("`name`"), "test3");
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where not id > ? or not `name` = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(4), QVariant("test3")}));
+}
+
+void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE, 10, ">"}})
+            .orWhereNot({{"progress", 100, ">="}});
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where not (`id` = ? and `size` > ?) or "
+             "not (`progress` >= ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+}
+
+void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue_DefaultCondition() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").whereNot({{"progress", 100, ">="}})
+            .orWhereNot({{ID, 3}, {SIZE, 10, ">"}}, AND);
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where not (`progress` >= ?) or "
+             "not (`id` = ? and `size` > ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+}
+
+void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue_ColumnExpression() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .whereNot({{Raw(ID), 3}, {Raw("`size`"), 10, ">"}})
+            .orWhereNot({{Raw("progress"), 100, ">="}});
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where not (id = ? and `size` > ?) or "
+             "not (progress >= ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+}
+
+void tst_MySql_QueryBuilder::orWhereNotEq_QueryableValue() const
+{
+    // With lambda expression
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents")
+                .whereNotEq(ID, 2)
+                .orWhereNotEq(ID, [](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        });
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where not `id` = ? or "
+                 "not `id` = (select avg(t.size) from `torrents` as `t`)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+    // With QueryBuilder
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents")
+                .whereNotEq(ID, 2)
+                .orWhereNotEq(ID,
+                              createQuery()->from("torrents", "t")
+                                            .selectRaw("avg(t.size)"));
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where not `id` = ? or "
+                 "not `id` = (select avg(t.size) from `torrents` as `t`)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::orWhereNotEq_QueryableColumn() const
+{
+    // With lambda expression
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents")
+                .whereNotEq(ID, 2)
+                .orWhereNotEq([](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        }, 13);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where not `id` = ? or "
+                 "not (select avg(t.size) from `torrents` as `t`) = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2), QVariant(13)}));
+    }
+    // With QueryBuilder
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents")
+                .whereNotEq(ID, 2)
+                .orWhereNotEq(createQuery()->from("torrents", "t")
+                                            .selectRaw("avg(t.size)"), 13);
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where not `id` = ? or "
+                 "not (select avg(t.size) from `torrents` as `t`) = ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2), QVariant(13)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::orWhereNotEq_QueryableColumnAndValue() const
+{
+    // Following is extreme case, but it should work
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents")
+                .whereNotEq(ID, 2)
+                .orWhereNotEq([](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        }, createQuery()->from("torrents", "t")
+                         .selectRaw("avg(t.size)"));
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where not `id` = ? or "
+                 "not (select avg(t.size) from `torrents` as `t`) = "
+                 "(select avg(t.size) from `torrents` as `t`)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents")
+                .whereNotEq(ID, 2)
+                .orWhereNotEq(createQuery()->from("torrents", "t")
+                                            .selectRaw("avg(t.size)"), [](auto &query)
+        {
+            query.from("torrents", "t").selectRaw("avg(t.size)");
+        });
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` "
+                 "where not `id` = ? or "
+                 "not (select avg(t.size) from `torrents` as `t`) = "
                  "(select avg(t.size) from `torrents` as `t`)");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(2)}));
