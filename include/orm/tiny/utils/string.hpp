@@ -71,6 +71,8 @@ namespace Orm::Tiny::Utils
 #endif
     };
 
+    /* public */
+
     template<ColumnContainer T>
     T String::studly(T &&strings)
     {
@@ -81,8 +83,6 @@ namespace Orm::Tiny::Utils
 
         return result;
     }
-
-    /* public */
 
     QString String::kebab(const QString &string)
     {
