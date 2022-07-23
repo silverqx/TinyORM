@@ -117,9 +117,9 @@ Query::zipForInsert(const QVector<QString> &columns,
     return zippedValues;
 }
 
-int Query::queryResultSize(QSqlQuery &query, DatabaseConnection &connection)
+int Query::queryResultSize(QSqlQuery &query)
 {
-    if (connection.driver()->hasFeature(QSqlDriver::QuerySize))
+    if (query.driver()->hasFeature(QSqlDriver::QuerySize))
         return query.size();
 
     query.seek(QSql::BeforeFirstRow);

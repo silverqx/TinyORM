@@ -168,7 +168,7 @@ bool SchemaBuilder::hasTable(const QString &table) const
     auto query = m_connection.selectFromWriteConnection(
                      m_grammar.compileTableExists(), {table_});
 
-    return QueryUtils::queryResultSize(query, m_connection) > 0;
+    return QueryUtils::queryResultSize(query) > 0;
 }
 
 // TEST schema, test in functional tests silverqx

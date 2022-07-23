@@ -15,11 +15,7 @@ class QSqlQuery;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm
-{
-    class DatabaseConnection;
-
-namespace Utils
+namespace Orm::Utils
 {
 
     /*! Library class for database query. */
@@ -49,11 +45,10 @@ namespace Utils
                      const QVector<QVector<QVariant>> &values);
 
         /*! Returns the size of the result (number of rows returned). */
-        static int queryResultSize(QSqlQuery &query, DatabaseConnection &connection);
+        static int queryResultSize(QSqlQuery &query);
     };
 
-} // namespace Utils
-} // namespace Orm
+} // namespace Orm::Utils
 
 TINYORM_END_COMMON_NAMESPACE
 

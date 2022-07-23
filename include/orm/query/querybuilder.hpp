@@ -773,7 +773,7 @@ namespace Orm::Query
            the results and get the exact data that was requested for the query. */
         auto query = get({column, key});
 
-        const auto size = QueryUtils::queryResultSize(query, m_connection);
+        const auto size = QueryUtils::queryResultSize(query);
 
         // Empty result
         if (size == 0)
