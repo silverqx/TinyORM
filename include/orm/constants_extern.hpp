@@ -55,6 +55,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString text_;
     SHAREDLIB_EXPORT extern const QString Prepared;
     SHAREDLIB_EXPORT extern const QString Unprepared;
+    SHAREDLIB_EXPORT extern const QString null_;
 
     SHAREDLIB_EXPORT extern const QString QMYSQL;
     SHAREDLIB_EXPORT extern const QString QPSQL;

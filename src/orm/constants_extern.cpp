@@ -44,6 +44,7 @@ namespace Orm::Constants
     const QString text_       = QStringLiteral("text");
     const QString Prepared    = QStringLiteral("prepared");
     const QString Unprepared  = QStringLiteral("unprepared");
+    const QString null_       = QStringLiteral("null");
 
     const QString QMYSQL      = QStringLiteral("QMYSQL");
     const QString QPSQL       = QStringLiteral("QPSQL");
