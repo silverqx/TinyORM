@@ -91,7 +91,7 @@ namespace Query
         std::shared_ptr<QueryBuilder> nestedQuery {nullptr};
         QVector<QVariant>             values      {};
         Column                        columnTwo   {};
-        QString                       sql         {};
+        QString                       sql         {}; // for the raw version
     };
 
     /*! Supported having types. */
@@ -110,7 +110,7 @@ namespace Query
         QString    comparison {Orm::Constants::EQ};
         QString    condition  {Orm::Constants::AND};
         HavingType type       {HavingType::UNDEFINED};
-        QString    sql        {};
+        QString    sql        {}; // for the raw version
     };
 
     /*! Order by clause item. */
@@ -118,7 +118,7 @@ namespace Query
     {
         Column      column    {};
         QString     direction {Orm::Constants::ASC};
-        QString     sql       {};
+        QString     sql       {}; // for the raw version
     };
 
     /*! Update item. */
