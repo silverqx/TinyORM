@@ -1982,6 +1982,17 @@ namespace Relations
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::inRandomOrder(const QString &seed)
+    {
+        auto builder = query();
+
+        builder->inRandomOrder(seed);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orderByRaw(
             const QString &sql, const QVector<QVariant> &bindings)
     {

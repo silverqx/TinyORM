@@ -1788,6 +1788,15 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
+    RelationProxies<Model, Related>::inRandomOrder(const QString &seed) const
+    {
+        getQuery().inRandomOrder(seed);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
     RelationProxies<Model, Related>::orderByRaw(const QString &sql,
                                                 const QVector<QVariant> &bindings) const
     {

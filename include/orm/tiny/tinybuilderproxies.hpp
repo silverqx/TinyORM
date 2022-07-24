@@ -1270,6 +1270,14 @@ namespace Tiny
 
     template<typename Model>
     TinyBuilder<Model> &
+    BuilderProxies<Model>::inRandomOrder(const QString &seed)
+    {
+        toBase().inRandomOrder(seed);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
     BuilderProxies<Model>::orderByRaw(
             const QString &sql, const QVector<QVariant> &bindings)
     {
