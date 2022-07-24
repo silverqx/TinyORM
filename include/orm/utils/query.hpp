@@ -5,9 +5,9 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QString>
 #include <QVariant>
 
+#include "orm/constants.hpp"
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
@@ -17,6 +17,15 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Utils
 {
+
+    /*! Concept for a bindings type used in the replaceBindingsInSql(). */
+    template<typename T>
+    concept BindingsConcept = std::convertible_to<T, const QVector<QVariant> &> ||
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                              std::convertible_to<T, const QVariantList &>;
+#else
+                              std::convertible_to<T, const QVariantMap &>;
+#endif
 
     /*! Library class for database query. */
     class SHAREDLIB_EXPORT Query
@@ -32,8 +41,15 @@ namespace Orm::Utils
         /*! Get the last executed query with replaced placeholders (ideal for logging). */
         static QString parseExecutedQuery(const QSqlQuery &query);
         /*! Get pretended query with replaced placeholders ( ideal for logging ). */
-        static QString
-        parseExecutedQueryForPretend(QString query, const QVector<QVariant> &bindings);
+        inline static QString
+        parseExecutedQueryForPretend(QString queryString,
+                                     const QVector<QVariant> &bindings);
+
+        /*! Replace all bindings in the given SQL query. */
+        template<BindingsConcept T>
+        static std::pair<QString, QStringList>
+        replaceBindingsInSql(QString queryString, const T &bindings,
+                             bool simpleBindings = false);
 
         /*! Log the last executed query to the debug output. */
         [[maybe_unused]]
@@ -47,6 +63,52 @@ namespace Orm::Utils
         /*! Returns the size of the result (number of rows returned). */
         static int queryResultSize(QSqlQuery &query);
     };
+
+    /* public */
+
+    QString Query::parseExecutedQueryForPretend(QString queryString,
+                                                const QVector<QVariant> &bindings)
+    {
+        return replaceBindingsInSql(std::move(queryString), bindings).first;
+    }
+
+    template<BindingsConcept T>
+    std::pair<QString, QStringList>
+    Query::replaceBindingsInSql(QString queryString, const T &bindings,
+                                const bool simpleBindings)
+    {
+        static const auto Invalid = QStringLiteral("INVALID");
+
+        QString bindingValue;
+
+        QStringList simpleBindingsList;
+        simpleBindingsList.reserve(bindings.size());
+
+        for (const auto &binding : bindings) {
+
+            if (!binding.isValid())
+                bindingValue = Invalid;
+            else if (binding.isNull())
+                bindingValue = Orm::Constants::null_;
+            else
+                // Support for string quoting
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                bindingValue = (binding.typeId() == QMetaType::QString)
+#else
+                bindingValue = (binding.userType() == QMetaType::QString)
+#endif
+                               ? QStringLiteral("\"%1\"")
+                                 .arg(binding.template value<QString>())
+                               : binding.template value<QString>();
+
+            queryString.replace(queryString.indexOf(QChar('?')), 1, bindingValue);
+
+            if (simpleBindings)
+                simpleBindingsList << bindingValue;
+        }
+
+        return {queryString, simpleBindingsList};
+    }
 
 } // namespace Orm::Utils
 

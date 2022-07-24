@@ -752,6 +752,38 @@ Builder &Builder::lock(QString &&value)
     return *this;
 }
 
+/* Debugging */
+
+// NOTE api different, added the replaceBindings and simpleBindings parameters silverqx
+void Builder::dump(const bool replaceBindings, const bool simpleBindings)
+{
+    auto queryString = toSql();
+    auto bindings = getBindings();
+
+    auto [queryStringReplaced, simpleBindingsList] =
+            QueryUtils::replaceBindingsInSql(queryString, bindings, simpleBindings);
+
+    qDebug().noquote() << (replaceBindings ? std::move(queryStringReplaced)
+                                           : std::move(queryString));
+
+    if (replaceBindings)
+        return;
+
+    /* Show bindings on own line if replace bindings is disabled.
+       Simple bindings logs bindings without the type information. */
+    if (simpleBindings)
+        qDebug().noquote() << simpleBindingsList.join(COMMA);
+    else
+        qDebug() << std::move(bindings);
+}
+
+void Builder::dd(const bool replaceBindings, const bool simpleBindings)
+{
+    dump(replaceBindings, simpleBindings);
+
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+}
+
 /* Getters / Setters */
 
 QVector<QVariant> Builder::getBindings() const

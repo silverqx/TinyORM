@@ -32,6 +32,7 @@ keywords: [c++ orm, sql, c++ sql, c++ query builder, database, query builder, ti
 - [Delete Statements](#delete-statements)
     - [Truncate Statement](#truncate-statement)
 - [Pessimistic Locking](#pessimistic-locking)
+- [Debugging](#debugging)
 
 ## Introduction
 
@@ -734,3 +735,11 @@ Alternatively, you may use the `lockForUpdate` method. A "for update" lock preve
             ->where("votes", ">", 100)
             .lockForUpdate()
             .get();
+
+## Debugging
+
+You may use the `dd` and `dump` methods while building a query to dump the current query bindings and SQL. The `dd` method will display the debug information and then stop executing using the `exit(1)`. The `dump` method will display the debug information and continue executing:
+
+    DB::table("users")->where("votes", ">", 100).dd();
+
+    DB::table("users")->where("votes", ">", 100).dump();

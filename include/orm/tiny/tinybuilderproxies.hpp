@@ -440,6 +440,12 @@ namespace Tiny
         /*! Lock the selected rows in the table. */
         TinyBuilder<Model> &lock(QString &&value);
 
+        /* Debugging */
+        /*! Dump the current SQL and bindings. */
+        void dump(bool replaceBindings = true, bool simpleBindings = false) const;
+        /*! Die and dump the current SQL and bindings. */
+        void dd(bool replaceBindings = true, bool simpleBindings = false) const;
+
         /* Others proxy methods, not added to the Model and Relation */
         /*! Add an "exists" clause to the query. */
         TinyBuilder<Model> &
@@ -1470,6 +1476,22 @@ namespace Tiny
     {
         toBase().lock(std::move(value));
         return builder();
+    }
+
+    /* Debugging */
+
+    template<typename Model>
+    void BuilderProxies<Model>::dump(const bool replaceBindings,
+                                     const bool simpleBindings) const
+    {
+        toBase().dump(replaceBindings, simpleBindings);
+    }
+
+    template<typename Model>
+    void BuilderProxies<Model>::dd(const bool replaceBindings,
+                                   const bool simpleBindings) const
+    {
+        toBase().dd(replaceBindings, simpleBindings);
     }
 
     /* Others proxy methods, not added to the Model and Relation */

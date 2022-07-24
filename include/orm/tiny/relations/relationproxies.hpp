@@ -555,6 +555,12 @@ namespace Tiny::Relations
         /*! Lock the selected rows in the table. */
         const Relation<Model, Related> &lock(QString &&value) const;
 
+        /* Debugging */
+        /*! Dump the current SQL and bindings. */
+        void dump(bool replaceBindings = true, bool simpleBindings = false) const;
+        /*! Die and dump the current SQL and bindings. */
+        void dd(bool replaceBindings = true, bool simpleBindings = false) const;
+
         /* Querying Relationship Existence/Absence */
         /*! Add a relationship count / exists condition to the query. */
         template<typename HasRelated = void>
@@ -2019,6 +2025,22 @@ namespace Tiny::Relations
         getQuery().lock(std::move(value));
 
         return relation();
+    }
+
+    /* Debugging */
+
+    template<class Model, class Related>
+    void RelationProxies<Model, Related>::dump(const bool replaceBindings,
+                                               const bool simpleBindings) const
+    {
+        getQuery().dump(replaceBindings, simpleBindings);
+    }
+
+    template<class Model, class Related>
+    void RelationProxies<Model, Related>::dd(const bool replaceBindings,
+                                             const bool simpleBindings) const
+    {
+        getQuery().dd(replaceBindings, simpleBindings);
     }
 
     /* Querying Relationship Existence/Absence */

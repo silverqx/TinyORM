@@ -582,6 +582,12 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         lock(QString &&value);
 
+        /* Debugging */
+        /*! Dump the current SQL and bindings. */
+        static void dump(bool replaceBindings = true, bool simpleBindings = false);
+        /*! Die and dump the current SQL and bindings. */
+        static void dd(bool replaceBindings = true, bool simpleBindings = false);
+
         /* Querying Relationship Existence/Absence */
         /*! Add a relationship count / exists condition to the query. */
         template<typename Related = void>
@@ -2225,6 +2231,22 @@ namespace Relations
         builder->lock(std::move(value));
 
         return builder;
+    }
+
+    /* Debugging */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void ModelProxies<Derived, AllRelations...>::dump(const bool replaceBindings,
+                                                      const bool simpleBindings)
+    {
+        query()->dump(replaceBindings, simpleBindings);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void ModelProxies<Derived, AllRelations...>::dd(const bool replaceBindings,
+                                                    const bool simpleBindings)
+    {
+        query()->dd(replaceBindings, simpleBindings);
     }
 
     /* Querying Relationship Existence/Absence */

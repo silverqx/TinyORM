@@ -73,10 +73,6 @@ namespace Orm::Query
 
         /*! Get the SQL representation of the query. */
         QString toSql();
-        // TODO next implement dd silverqx
-        /*! Die and dump the current SQL and bindings. */
-//        void dd() const
-//        { dd($this->toSql(), $this->getBindings()); }
 
         /* Insert, Update, Delete */
         /*! Insert new records into the database. */
@@ -524,6 +520,12 @@ namespace Orm::Query
         Builder &lock(const QString &value);
         /*! Lock the selected rows in the table. */
         Builder &lock(QString &&value);
+
+        /* Debugging */
+        /*! Dump the current SQL and bindings. */
+        void dump(bool replaceBindings = true, bool simpleBindings = false);
+        /*! Die and dump the current SQL and bindings. */
+        void dd(bool replaceBindings = true, bool simpleBindings = false);
 
         /* Getters / Setters */
         /*! Get a database connection. */
