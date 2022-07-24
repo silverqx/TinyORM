@@ -54,6 +54,9 @@ namespace Tiny::Relations
         template<typename T>
         std::map<T, QVariant> pluck(const QString &column, const QString &key) const;
 
+        /*! Concatenate values of a given column as a string. */
+        QString implode(const QString &column, const QString &glue = "") const;
+
         /*! Find a model by its primary key. */
         virtual std::optional<Related>
         find(const QVariant &id, const QVector<Column> &columns = {ASTERISK}) const;
@@ -677,6 +680,14 @@ namespace Tiny::Relations
                                            const QString &key) const
     {
         return getQuery().template pluck<T>(column, key);
+    }
+
+    template<class Model, class Related>
+    QString
+    RelationProxies<Model, Related>::implode(const QString &column,
+                                             const QString &glue) const
+    {
+        return getQuery().implode(column, glue);
     }
 
     template<class Model, class Related>

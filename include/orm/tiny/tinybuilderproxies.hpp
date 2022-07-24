@@ -41,6 +41,10 @@ namespace Tiny
         /*! Default destructor. */
         inline ~BuilderProxies() = default;
 
+        /* Retrieving results */
+        /*! Concatenate values of a given column as a string. */
+        QString implode(const QString &column, const QString &glue = "") const;
+
         /* Insert, Update, Delete */
         /*! Insert a new record into the database. */
         std::optional<QSqlQuery>
@@ -445,6 +449,13 @@ namespace Tiny
         /*! Get a base query builder instance. */
         QueryBuilder &toBase() const;
     };
+
+    template<typename Model>
+    QString
+    BuilderProxies<Model>::implode(const QString &column, const QString &glue) const
+    {
+        return toBase().implode(column, glue);
+    }
 
     template<typename Model>
     std::optional<QSqlQuery>

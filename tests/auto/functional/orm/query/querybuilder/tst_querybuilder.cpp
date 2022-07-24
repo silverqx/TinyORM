@@ -9,6 +9,7 @@
 
 #include "databases.hpp"
 
+using Orm::Constants::COMMA;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::SIZE;
@@ -31,6 +32,10 @@ private Q_SLOTS:
     void pluck() const;
     void pluck_EmptyResult() const;
     void pluck_QualifiedColumnOrKey() const;
+
+    void implode() const;
+    void implode_EmptyResult() const;
+    void implode_QualifiedColumnOrKey() const;
 
     void count() const;
     void count_Distinct() const;
@@ -216,6 +221,77 @@ void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
             {5, "test5"}, {6, "test6"},
         };
         QCOMPARE(result, expected);
+    }
+}
+
+void tst_QueryBuilder::implode() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Simple implode without the glue
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents").orderBy(NAME).implode(NAME);
+
+        QCOMPARE(result, QString {"test1test2test3test4test5test6"});
+    }
+    // implode with the ', ' glue
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents").orderBy(NAME).implode(NAME, COMMA);
+
+        QCOMPARE(result, QString {"test1, test2, test3, test4, test5, test6"});
+    }
+}
+
+void tst_QueryBuilder::implode_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Simple implode without the glue
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents")
+                      .whereEq(NAME, "DUMMY_RECORD").orderBy(NAME)
+                      .implode(NAME);
+
+        QCOMPARE(result, QString());
+    }
+    // implode with the ', ' glue
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents")
+                      .whereEq(NAME, "DUMMY_RECORD").orderBy(NAME)
+                      .implode(NAME, COMMA);
+
+        QCOMPARE(result, QString());
+    }
+}
+
+void tst_QueryBuilder::implode_QualifiedColumnOrKey() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Simple implode without the glue
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents").orderBy(NAME).implode("torrents.name");
+
+        QCOMPARE(result, QString {"test1test2test3test4test5test6"});
+    }
+    // implode with the ', ' glue
+    {
+        auto builder = createQuery(connection);
+
+        auto result = builder->from("torrents").orderBy(NAME)
+                      .implode("torrents.name", COMMA);
+
+        QCOMPARE(result, QString {"test1, test2, test3, test4, test5, test6"});
     }
 }
 

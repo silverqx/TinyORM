@@ -51,6 +51,9 @@ namespace Relations
         template<typename T>
         static std::map<T, QVariant> pluck(const QString &column, const QString &key);
 
+        /*! Concatenate values of a given column as a string. */
+        static QString implode(const QString &column, const QString &glue = "");
+
         /*! Find a model by its primary key. */
         static std::optional<Derived>
         find(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
@@ -689,6 +692,13 @@ namespace Relations
                                                   const QString &key)
     {
         return query()->template pluck<T>(column, key);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString ModelProxies<Derived, AllRelations...>::implode(const QString &column,
+                                                            const QString &glue)
+    {
+        return query()->implode(column, glue);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

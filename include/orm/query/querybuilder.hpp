@@ -68,6 +68,9 @@ namespace Orm::Query
         template<typename T>
         std::map<T, QVariant> pluck(const QString &column, const QString &key);
 
+        /*! Concatenate values of a given column as a string. */
+        QString implode(const QString &column, const QString &glue = "");
+
         /*! Get the SQL representation of the query. */
         QString toSql();
         // TODO next implement dd silverqx
