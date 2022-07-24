@@ -108,6 +108,7 @@ private Q_SLOTS:
 
     void orderBy() const;
     void latestOldest() const;
+    void inRandomOrder() const;
 
     void limitOffset() const;
     void takeSkip() const;
@@ -1630,6 +1631,28 @@ void tst_PostgreSQL_QueryBuilder::latestOldest() const
     builder->reorder().oldest(NAME);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" order by \"name\" asc");
+}
+
+void tst_PostgreSQL_QueryBuilder::inRandomOrder() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents");
+
+        builder->inRandomOrder();
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" order by RANDOM()");
+    }
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents");
+
+        builder->inRandomOrder("seed123");
+        QCOMPARE(builder->toSql(),
+                 "select * from \"torrents\" order by RANDOM()");
+    }
 }
 
 void tst_PostgreSQL_QueryBuilder::limitOffset() const

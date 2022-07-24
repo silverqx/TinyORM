@@ -558,6 +558,14 @@ The `latest` and `oldest` methods allow you to easily order results by date. By 
                     ->latest()
                     .first();
 
+#### Random Ordering
+
+The `inRandomOrder` method may be used to sort the query results randomly. For example, you may use this method to fetch a random user:
+
+    auto randomUser = DB::table("users")
+                          ->inRandomOrder()
+                          .first();
+
 #### Removing Existing Orderings
 
 The `reorder` method removes all of the "order by" clauses that have previously been applied to the query:

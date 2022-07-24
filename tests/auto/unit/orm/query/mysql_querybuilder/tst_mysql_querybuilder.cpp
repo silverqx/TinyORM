@@ -153,6 +153,7 @@ private Q_SLOTS:
 
     void orderBy() const;
     void latestOldest() const;
+    void inRandomOrder() const;
 
     void limitOffset() const;
     void takeSkip() const;
@@ -2273,6 +2274,37 @@ void tst_MySql_QueryBuilder::latestOldest() const
     builder->reorder().oldest(NAME);
     QCOMPARE(builder->toSql(),
              "select * from `torrents` order by `name` asc");
+}
+
+void tst_MySql_QueryBuilder::inRandomOrder() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents");
+
+        builder->inRandomOrder();
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` order by RAND()");
+    }
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents");
+
+        builder->inRandomOrder("123");
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` order by RAND(123)");
+    }
+    {
+        auto builder = createQuery();
+
+        builder->from("torrents");
+
+        builder->inRandomOrder("`column_name`");
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` order by RAND(`column_name`)");
+    }
 }
 
 void tst_MySql_QueryBuilder::limitOffset() const

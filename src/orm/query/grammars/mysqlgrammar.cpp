@@ -35,6 +35,11 @@ QString MySqlGrammar::compileLock(const QueryBuilder &query) const
     return std::get<QString>(lock);
 }
 
+QString MySqlGrammar::compileRandom(const QString &seed) const
+{
+    return QStringLiteral("RAND(%1)").arg(seed);
+}
+
 const QVector<QString> &MySqlGrammar::getOperators() const
 {
     static const QVector<QString> cachedOperators {QLatin1String("sounds like")};

@@ -372,6 +372,8 @@ namespace Tiny
         template<Queryable T>
         TinyBuilder<Model> &orderByDesc(T &&query);
 
+        /*! Put the query's results in random order. */
+        TinyBuilder<Model> &inRandomOrder(const QString &seed = "");
         /*! Add a raw "order by" clause to the query. */
         TinyBuilder<Model> &orderByRaw(const QString &sql,
                                        const QVector<QVariant> &bindings = {});

@@ -468,6 +468,8 @@ namespace Orm::Query
         template<Queryable T>
         inline Builder &orderByDesc(T &&query);
 
+        /*! Put the query's results in random order. */
+        Builder &inRandomOrder(const QString &seed = "");
         /*! Add a raw "order by" clause to the query. */
         Builder &orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 

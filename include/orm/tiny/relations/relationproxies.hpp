@@ -487,6 +487,8 @@ namespace Tiny::Relations
         template<Queryable T>
         const Relation<Model, Related> &orderByDesc(T &&query) const;
 
+        /*! Put the query's results in random order. */
+        const Relation<Model, Related> &inRandomOrder(const QString &seed = "") const;
         /*! Add a raw "order by" clause to the query. */
         const Relation<Model, Related> &orderByRaw(
                 const QString &sql, const QVector<QVariant> &bindings = {}) const;

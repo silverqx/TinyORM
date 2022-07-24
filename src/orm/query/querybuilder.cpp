@@ -608,6 +608,11 @@ Builder &Builder::orderByDesc(const Column &column)
     return orderBy(column, DESC);
 }
 
+Builder &Builder::inRandomOrder(const QString &seed)
+{
+    return orderByRaw(m_grammar.compileRandom(seed));
+}
+
 Builder &Builder::orderByRaw(const QString &sql, const QVector<QVariant> &bindings)
 {
     m_orders.append({.sql = sql});

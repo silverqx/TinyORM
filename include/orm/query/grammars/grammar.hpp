@@ -62,6 +62,9 @@ namespace Orm::Query::Grammars
         virtual std::unordered_map<QString, QVector<QVariant>>
         compileTruncate(const QueryBuilder &query) const;
 
+        /*! Compile the random statement into SQL. */
+        virtual QString compileRandom(const QString &seed) const;
+
         /*! Get the grammar specific operators. */
         virtual const QVector<QString> &getOperators() const;
 

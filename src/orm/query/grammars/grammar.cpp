@@ -119,6 +119,11 @@ Grammar::compileTruncate(const QueryBuilder &query) const
     return {{QStringLiteral("truncate table %1").arg(wrapTable(query.getFrom())), {}}};
 }
 
+QString Grammar::compileRandom(const QString &/*unused*/) const
+{
+    return QStringLiteral("RANDOM()");
+}
+
 const QVector<QString> &Grammar::getOperators() const
 {
     /* I make it this way, I don't declare it as pure virtual intentionally, this gives

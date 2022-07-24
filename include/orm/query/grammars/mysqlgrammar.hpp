@@ -33,6 +33,9 @@ namespace Orm::Query::Grammars
         /*! Compile the lock into SQL. */
         QString compileLock(const QueryBuilder &query) const override;
 
+        /*! Compile the random statement into SQL. */
+        QString compileRandom(const QString &seed) const override;
+
         /*! Get the grammar specific operators. */
         const QVector<QString> &getOperators() const override;
 

@@ -511,6 +511,9 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         orderByDesc(T &&query);
 
+        /*! Put the query's results in random order. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        inRandomOrder(const QString &seed = "");
         /*! Add a raw "order by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
