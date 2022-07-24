@@ -21,8 +21,7 @@ Builder::Builder(DatabaseConnection &connection, const QueryGrammar &grammar)
 
 /* Retrieving results */
 
-QSqlQuery
-Builder::get(const QVector<Column> &columns)
+QSqlQuery Builder::get(const QVector<Column> &columns)
 {
     return onceWithColumns(columns, [this]
     {
@@ -30,8 +29,7 @@ Builder::get(const QVector<Column> &columns)
     });
 }
 
-QSqlQuery
-Builder::find(const QVariant &id, const QVector<Column> &columns)
+QSqlQuery Builder::find(const QVariant &id, const QVector<Column> &columns)
 {
     return where(ID, EQ, id).first(columns);
 }
