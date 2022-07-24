@@ -118,6 +118,12 @@ You may also use `pluck<quint64>("name", "id")`, it returns the `std::map<quint6
 This second `pluck` overload returns `std::map<T, QVariant>` so you have to provide a template argument for the key type.
 :::
 
+#### Concatenate column values
+
+The `implode` method can be used to join column values. For example, you may use this method to concatenate prices with the `, ` character as the glue:
+
+    DB::table("orders")->where("price", ">", 100).implode("price", ", ");
+
 ### Aggregates
 
 The query builder also provides a variety of methods for retrieving aggregate values like `count`, `max`, `min`, `avg`, and `sum`. You may call any of these methods after constructing your query:
