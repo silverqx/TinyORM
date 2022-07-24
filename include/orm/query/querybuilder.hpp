@@ -907,6 +907,8 @@ namespace Orm::Query
                        bindings);
     }
 
+    /* Joins */
+
     template<JoinTable T>
     Builder &
     Builder::join(T &&table, const QString &first, const QString &comparison,
@@ -1235,6 +1237,8 @@ namespace Orm::Query
     {
         return orderBy(std::forward<T>(query), DESC);
     }
+
+    /* Others */
 
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
