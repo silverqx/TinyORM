@@ -542,6 +542,8 @@ Builder &Builder::orWhereRaw(const QString &sql, const QVector<QVariant> &bindin
     return whereRaw(sql, bindings, OR);
 }
 
+/* Group by and having */
+
 Builder &Builder::groupBy(const QVector<Column> &groups)
 {
     if (groups.isEmpty())
@@ -601,6 +603,8 @@ Builder &Builder::orHavingRaw(const QString &sql, const QVector<QVariant> &bindi
 {
     return havingRaw(sql, bindings, OR);
 }
+
+/* Ordering */
 
 Builder &Builder::orderBy(const Column &column, const QString &direction)
 {

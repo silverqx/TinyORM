@@ -186,6 +186,7 @@ namespace Orm::Query
         Builder &fromRaw(const QString &expression,
                          const QVector<QVariant> &bindings = {});
 
+        /* Joins */
         /*! Add a join clause to the query. */
         template<JoinTable T>
         inline Builder &
@@ -435,6 +436,7 @@ namespace Orm::Query
         /*! Add a raw "or where" clause to the query. */
         Builder &orWhereRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
+        /* Group by and having */
         /*! Add a "group by" clause to the query. */
         Builder &groupBy(const QVector<Column> &groups);
         /*! Add a "group by" clause to the query. */
@@ -459,6 +461,7 @@ namespace Orm::Query
         /*! Add a raw "or having" clause to the query. */
         Builder &orHavingRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
+        /* Ordering */
         /*! Add an "order by" clause to the query. */
         Builder &orderBy(const Column &column, const QString &direction = ASC);
         /*! Add a descending "order by" clause to the query. */
@@ -496,6 +499,7 @@ namespace Orm::Query
         /*! Set the limit and offset for a given page. */
         Builder &forPage(int page, int perPage = 30);
 
+        /* Others */
         /*! Increment a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>

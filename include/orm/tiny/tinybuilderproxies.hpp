@@ -134,6 +134,7 @@ namespace Tiny
         /*! Force the query to only return distinct results. */
         TinyBuilder<Model> &distinct(QStringList &&columns);
 
+        /* Joins */
         /*! Add a join clause to the query. */
         template<JoinTable T>
         TinyBuilder<Model> &join(T &&table, const QString &first,
@@ -221,6 +222,7 @@ namespace Tiny
         rightJoinSub(T &&query, const QString &as,
                      const std::function<void(JoinClause &)> &callback);
 
+        /* General where */
         /*! Add a basic where clause to the query. */
         template<WhereValue T>
         TinyBuilder<Model> &where(const Column &column, const QString &comparison,
@@ -237,6 +239,7 @@ namespace Tiny
         template<WhereValue T>
         TinyBuilder<Model> &orWhereEq(const Column &column, T &&value);
 
+        /* Nested where */
         /*! Add a nested where clause to the query. */
         TinyBuilder<Model> &
         where(const std::function<void(TinyBuilder<Model> &)> &callback,
@@ -245,12 +248,14 @@ namespace Tiny
         TinyBuilder<Model> &
         orWhere(const std::function<void(TinyBuilder<Model> &)> &callback);
 
+        /* Array where */
         /*! Add a vector of basic where clauses to the query. */
         TinyBuilder<Model> &where(const QVector<WhereItem> &values,
                                   const QString &condition = AND);
         /*! Add a vector of basic "or where" clauses to the query. */
         TinyBuilder<Model> &orWhere(const QVector<WhereItem> &values);
 
+        /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
         TinyBuilder<Model> &whereColumn(const QVector<WhereColumnItem> &values,
                                         const QString &condition = AND);
@@ -270,6 +275,7 @@ namespace Tiny
         /*! Add an equal "or where" clause comparing two columns to the query. */
         TinyBuilder<Model> &orWhereColumnEq(const Column &first, const Column &second);
 
+        /* where IN */
         /*! Add a "where in" clause to the query. */
         TinyBuilder<Model> &whereIn(const Column &column,
                                     const QVector<QVariant> &values,
@@ -285,6 +291,7 @@ namespace Tiny
         TinyBuilder<Model> &orWhereNotIn(const Column &column,
                                          const QVector<QVariant> &values);
 
+        /* where null */
         /*! Add a "where null" clause to the query. */
         TinyBuilder<Model> &whereNull(const QVector<Column> &columns = {ASTERISK},
                                       const QString &condition = AND, bool nope = false);
@@ -307,6 +314,7 @@ namespace Tiny
         /*! Add an "or where not null" clause to the query. */
         TinyBuilder<Model> &orWhereNotNull(const Column &column);
 
+        /* where sub-queries */
         /*! Add a basic where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         TinyBuilder<Model> &where(C &&column, const QString &comparison, V &&value,
@@ -327,6 +335,7 @@ namespace Tiny
         TinyBuilder<Model> &whereSub(const Column &column, const QString &comparison,
                                      T &&query, const QString &condition = AND);
 
+        /* where raw */
         /*! Add a raw "where" clause to the query. */
         TinyBuilder<Model> &whereRaw(const QString &sql,
                                      const QVector<QVariant> &bindings = {},
@@ -335,6 +344,7 @@ namespace Tiny
         TinyBuilder<Model> &orWhereRaw(const QString &sql,
                                        const QVector<QVariant> &bindings = {});
 
+        /* Group by and having */
         /*! Add a "group by" clause to the query. */
         TinyBuilder<Model> &groupBy(const QVector<Column> &groups);
         /*! Add a "group by" clause to the query. */
@@ -363,6 +373,7 @@ namespace Tiny
         TinyBuilder<Model> &orHavingRaw(const QString &sql,
                                         const QVector<QVariant> &bindings = {});
 
+        /* Ordering */
         /*! Add an "order by" clause to the query. */
         TinyBuilder<Model> &orderBy(const Column &column,
                                     const QString &direction = ASC);
@@ -403,6 +414,7 @@ namespace Tiny
         /*! Set the limit and offset for a given page. */
         TinyBuilder<Model> &forPage(int page, int perPage = 30);
 
+        /* Others */
         /*! Increment a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
@@ -450,12 +462,18 @@ namespace Tiny
         QueryBuilder &toBase() const;
     };
 
+    /* public */
+
+    /* Retrieving results */
+
     template<typename Model>
     QString
     BuilderProxies<Model>::implode(const QString &column, const QString &glue) const
     {
         return toBase().implode(column, glue);
     }
+
+    /* Insert, Update, Delete */
 
     template<typename Model>
     std::optional<QSqlQuery>
@@ -537,6 +555,8 @@ namespace Tiny
     {
         toBase().truncate();
     }
+
+    /* Select */
 
     template<typename Model>
     quint64 BuilderProxies<Model>::count(const QVector<Column> &columns) const
@@ -679,6 +699,8 @@ namespace Tiny
         toBase().distinct(std::move(columns));
         return builder();
     }
+
+    /* Joins */
 
     template<typename Model>
     template<JoinTable T>
@@ -866,6 +888,8 @@ namespace Tiny
         return builder();
     }
 
+    /* General where */
+
     template<typename Model>
     template<WhereValue T>
     TinyBuilder<Model> &
@@ -906,6 +930,8 @@ namespace Tiny
         return builder();
     }
 
+    /* Nested where */
+
     template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::where(
@@ -930,6 +956,8 @@ namespace Tiny
         return where(callback, OR);
     }
 
+    /* Array where */
+
     template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::where(
@@ -946,6 +974,8 @@ namespace Tiny
         toBase().orWhere(values);
         return builder();
     }
+
+    /* where column */
 
     template<typename Model>
     TinyBuilder<Model> &
@@ -1000,6 +1030,8 @@ namespace Tiny
         return builder();
     }
 
+    /* where IN */
+
     template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::whereIn(
@@ -1037,6 +1069,8 @@ namespace Tiny
         toBase().orWhereNotIn(column, values);
         return builder();
     }
+
+    /* where null */
 
     template<typename Model>
     TinyBuilder<Model> &
@@ -1105,6 +1139,8 @@ namespace Tiny
         return builder();
     }
 
+    /* where sub-queries */
+
     template<typename Model>
     template<Queryable C, WhereValue V>
     TinyBuilder<Model> &
@@ -1154,6 +1190,8 @@ namespace Tiny
         return builder();
     }
 
+    /* where raw */
+
     template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::whereRaw(
@@ -1172,6 +1210,8 @@ namespace Tiny
         toBase().whereRaw(sql, bindings, OR);
         return builder();
     }
+
+    /* Group by and having */
 
     template<typename Model>
     TinyBuilder<Model> &
@@ -1244,6 +1284,8 @@ namespace Tiny
         toBase().havingRaw(sql, bindings, OR);
         return builder();
     }
+
+    /* Ordering */
 
     template<typename Model>
     TinyBuilder<Model> &
@@ -1366,6 +1408,8 @@ namespace Tiny
         return builder();
     }
 
+    /* Others */
+
     template<typename Model>
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, QSqlQuery>
@@ -1383,6 +1427,8 @@ namespace Tiny
     {
         return toBase().decrement(column, amount, builder().addUpdatedAtColumn(extra));
     }
+
+    /* Pessimistic Locking */
 
     template<typename Model>
     TinyBuilder<Model> &BuilderProxies<Model>::lockForUpdate()
@@ -1426,6 +1472,8 @@ namespace Tiny
         return builder();
     }
 
+    /* Others proxy methods, not added to the Model and Relation */
+
     template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::addWhereExistsQuery(
@@ -1453,6 +1501,8 @@ namespace Tiny
         toBase().mergeWheres(std::move(wheres), std::move(bindings));
         return builder();
     }
+
+    /* private */
 
     template<typename Model>
     const TinyBuilder<Model> &BuilderProxies<Model>::builder() const

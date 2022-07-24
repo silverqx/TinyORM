@@ -42,6 +42,7 @@ namespace Relations
         using RelationAlias = Orm::Tiny::Relations::Relation<Derived, Related>;
 
     public:
+        /* Retrieving results */
         /*! Get a single column's value from the first result of a query. */
         static QVariant value(const Column &column);
 
@@ -242,6 +243,7 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         distinct(QStringList &&columns);
 
+        /* Joins */
         /*! Add a join clause to the query. */
         template<JoinTable T>
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -333,6 +335,7 @@ namespace Relations
         rightJoinSub(T &&query, const QString &as,
                      const std::function<void(JoinClause &)> &callback);
 
+        /* General where */
         /*! Add a basic where clause to the query. */
         template<WhereValue T>
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -351,6 +354,7 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereEq(const Column &column, T &&value);
 
+        /* Nested where */
         /*! Add a nested where clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         where(const std::function<void(TinyBuilder<Derived> &)> &callback,
@@ -359,6 +363,7 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhere(const std::function<void(TinyBuilder<Derived> &)> &callback);
 
+        /* Array where */
         /*! Add a vector of basic where clauses to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         where(const QVector<WhereItem> &values, const QString &condition = AND);
@@ -366,6 +371,7 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhere(const QVector<WhereItem> &values);
 
+        /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         whereColumn(const QVector<WhereColumnItem> &values,
@@ -390,6 +396,7 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereColumnEq(const Column &first, const Column &second);
 
+        /* where IN */
         /*! Add a "where in" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         whereIn(const Column &column, const QVector<QVariant> &values,
@@ -405,6 +412,7 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereNotIn(const Column &column, const QVector<QVariant> &values);
 
+        /* where null */
         /*! Add a "where null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         whereNull(const QVector<Column> &columns = {ASTERISK},
@@ -434,6 +442,7 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereNotNull(const Column &column);
 
+        /* where sub-queries */
         /*! Add a basic where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -458,6 +467,7 @@ namespace Relations
         whereSub(const Column &column, const QString &comparison, T &&query,
                  const QString &condition = AND);
 
+        /* where raw */
         /*! Add a raw "where" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
@@ -466,6 +476,7 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
+        /* Group by and having */
         /*! Add a "group by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         groupBy(const QVector<Column> &groups);
@@ -498,6 +509,7 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         orHavingRaw(const QString &sql, const QVector<QVariant> &bindings = {});
 
+        /* Ordering */
         /*! Add an "order by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         orderBy(const Column &column, const QString &direction = ASC);
@@ -671,6 +683,10 @@ namespace Relations
         /*! Begin querying the model, proxy to Model::query(). */
         static std::unique_ptr<TinyBuilder<Derived>> query();
     };
+
+    /* public */
+
+    /* Retrieving results */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant ModelProxies<Derived, AllRelations...>::value(const Column &column)
@@ -904,6 +920,8 @@ namespace Relations
         return withOnly(QVector<WithItem> {{relation}});
     }
 
+    /* Insert, Update, Delete */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::create(
@@ -926,6 +944,10 @@ namespace Relations
     {
         return query()->updateOrCreate(attributes, values);
     }
+
+    /* Proxies to TinyBuilder -> QueryBuilder */
+
+    /* Insert, Update, Delete */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<QSqlQuery>
@@ -1021,6 +1043,8 @@ namespace Relations
     {
         query()->truncate();
     }
+
+    /* Select */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     quint64 ModelProxies<Derived, AllRelations...>::count(const QVector<Column> &columns)
@@ -1197,6 +1221,8 @@ namespace Relations
 
         return builder;
     }
+
+    /* Joins */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<JoinTable T>
@@ -1436,6 +1462,8 @@ namespace Relations
         return builder;
     }
 
+    /* General where */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<WhereValue T>
     std::unique_ptr<TinyBuilder<Derived>>
@@ -1489,6 +1517,8 @@ namespace Relations
         return builder;
     }
 
+    /* Nested where */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::where(
@@ -1514,6 +1544,8 @@ namespace Relations
         return builder;
     }
 
+    /* Array where */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::where(const QVector<WhereItem> &values,
@@ -1538,6 +1570,8 @@ namespace Relations
 
         return builder;
     }
+
+    /* where column */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
@@ -1612,6 +1646,8 @@ namespace Relations
         return builder;
     }
 
+    /* where IN */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereIn(
@@ -1661,6 +1697,8 @@ namespace Relations
 
         return builder;
     }
+
+    /* where null */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
@@ -1755,6 +1793,8 @@ namespace Relations
         return builder;
     }
 
+    /* where sub-queries */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<Queryable C, WhereValue V>
     std::unique_ptr<TinyBuilder<Derived>>
@@ -1822,6 +1862,8 @@ namespace Relations
         return builder;
     }
 
+    /* where raw */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereRaw(
@@ -1846,6 +1888,8 @@ namespace Relations
 
         return builder;
     }
+
+    /* Group by and having */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
@@ -1942,6 +1986,8 @@ namespace Relations
 
         return builder;
     }
+
+    /* Ordering */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
@@ -2113,6 +2159,8 @@ namespace Relations
         return builder;
     }
 
+    /* Pessimistic Locking */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::lockForUpdate()
@@ -2178,6 +2226,8 @@ namespace Relations
 
         return builder;
     }
+
+    /* Querying Relationship Existence/Absence */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
@@ -2368,6 +2418,8 @@ namespace Relations
 
         return builder;
     }
+
+    /* private */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>

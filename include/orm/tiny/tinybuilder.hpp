@@ -49,6 +49,7 @@ namespace Orm::Tiny
         /*! Get the current query value bindings as flattened QVector. */
         inline QVector<QVariant> getBindings() const;
 
+        /* Retrieving results */
         /*! Execute the query as a "select" statement. */
         QVector<Model> get(const QVector<Column> &columns = {ASTERISK});
 
@@ -213,6 +214,8 @@ namespace Orm::Tiny
         QVector<WithItem> m_eagerLoad;
     };
 
+    /* public */
+
     template<typename Model>
     Builder<Model>::Builder(std::shared_ptr<QueryBuilder> query, Model &model)
         : m_query(std::move(query))
@@ -232,6 +235,8 @@ namespace Orm::Tiny
     {
         return toBase().getBindings();
     }
+
+    /* Retrieving results */
 
     // TODO now name QVector<Model> model collections by using, eg CollectionType silverqx
     template<typename Model>
@@ -520,6 +525,8 @@ namespace Orm::Tiny
         return withOnly(QVector<WithItem> {{relation}});
     }
 
+    /* Insert, Update, Delete */
+
     template<typename Model>
     Model Builder<Model>::create(const QVector<AttributeItem> &attributes)
     {
@@ -550,6 +557,8 @@ namespace Orm::Tiny
 
         return instance;
     }
+
+    /* TinyBuilder methods */
 
     template<typename Model>
     Model Builder<Model>::newModelInstance(const QVector<AttributeItem> &attributes)
@@ -713,6 +722,8 @@ namespace Orm::Tiny
     {
         return m_model.qualifyColumn(column);
     }
+
+    /* protected */
 
     template<typename Model>
     QVector<WithItem>
