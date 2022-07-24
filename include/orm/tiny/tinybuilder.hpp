@@ -275,6 +275,7 @@ namespace Orm::Tiny
     template<typename Model>
     QVector<QVariant> Builder<Model>::pluck(const QString &column) const
     {
+        // CUR now, use newFromBuilder() to make and fill models and return attribute/column silverqx
         return toBase().pluck(column);
     }
 
