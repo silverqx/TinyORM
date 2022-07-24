@@ -17,6 +17,7 @@ namespace Migrations
                 table.id();
 
                 table.string(NAME).unique();
+                table.boolean("is_banned").defaultValue(false);
                 table.string("note").nullable();
             });
         }

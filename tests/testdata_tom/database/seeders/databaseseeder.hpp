@@ -21,11 +21,11 @@ namespace Seeders
             const auto NullULLong =    QVariant(QVariant::ULongLong);
 #endif
 
-            DB::table("users")->insert({ID, NAME, "note"},
+            DB::table("users")->insert({ID, NAME, "is_banned", "note"},
             {
-                {1, "andrej", NullString},
-                {2, "silver", NullString},
-                {3, "peter",  "no torrents no roles"},
+                {1, "andrej", false, NullString},
+                {2, "silver", false, NullString},
+                {3, "peter",  true,  "no torrents no roles"},
             });
 
             DB::table("roles")->insert({ID, NAME},

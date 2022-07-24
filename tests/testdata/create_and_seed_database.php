@@ -140,6 +140,7 @@ function createTables(string $connection): void
     $schema->create('users', function (Blueprint $table) {
         $table->id();
         $table->string('name')->unique();
+        $table->boolean('is_banned')->default(false);
         $table->string('note')->nullable();
     });
 
@@ -285,10 +286,10 @@ function createTables(string $connection): void
 function seedTables(string $connection): void
 {
     Capsule::table('users', null, $connection)->insert(
-        combineValues(['id', 'name', 'note'], [
-            [1, 'andrej', null],
-            [2, 'silver', null],
-            [3, 'peter', 'no torrents no roles'],
+        combineValues(['id', 'name', 'is_banned', 'note'], [
+            [1, 'andrej', false, null],
+            [2, 'silver', false, null],
+            [3, 'peter',  true,  'no torrents no roles'],
         ]));
 
     Capsule::table('roles', null, $connection)->insert(
