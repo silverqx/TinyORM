@@ -135,6 +135,7 @@ Builder::insert(const QVector<QVariantMap> &values)
     if (values.isEmpty())
         return std::nullopt;
 
+    // This method is for the multi-rows insert
     /* The logic described below is guaranteed by QVariantMap, keys are ordered
        by default.
        Here, we will sort the insert keys for every record so that each insert is
