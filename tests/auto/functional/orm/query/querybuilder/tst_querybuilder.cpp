@@ -471,7 +471,7 @@ void tst_QueryBuilder::existsOr_WithReturnType() const
     {
         auto builder = createQuery(connection);
 
-        bool result;
+        bool result = false;
         int returnValue = 0;
         std::tie(result, returnValue) =
                 builder->select("*").from("torrents").where(ID, GT, 100)
@@ -487,7 +487,7 @@ void tst_QueryBuilder::existsOr_WithReturnType() const
     {
         auto builder = createQuery(connection);
 
-        bool result;
+        bool result = false;
         int returnValue = 0;
         std::tie(result, returnValue) =
                 builder->select("*").from("torrents").where(ID, LT, 5)
@@ -509,7 +509,7 @@ void tst_QueryBuilder::doesntExistOr_WithReturnType() const
     {
         auto builder = createQuery(connection);
 
-        bool result;
+        bool result = false;
         int returnValue = 0;
         std::tie(result, returnValue) =
                 builder->select("*").from("torrents").where(ID, LT, 5)
@@ -525,7 +525,7 @@ void tst_QueryBuilder::doesntExistOr_WithReturnType() const
     {
         auto builder = createQuery(connection);
 
-        bool result;
+        bool result = false;
         int returnValue = 0;
         std::tie(result, returnValue) =
                 builder->select("*").from("torrents").where(ID, GT, 100)
