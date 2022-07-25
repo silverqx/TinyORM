@@ -75,13 +75,13 @@ namespace Orm::Query
         QString toSql();
 
         /* Insert, Update, Delete */
-        /*! Insert new records into the database. */
+        /*! Insert new records into the database (multi-rows insert). */
         std::optional<QSqlQuery>
         insert(const QVector<QVariantMap> &values);
         /*! Insert a new record into the database. */
         std::optional<QSqlQuery>
         insert(const QVariantMap &values);
-        /*! Insert new records into the database (multi insert). */
+        /*! Insert new records into the database (multi insert with separated columns). */
         std::optional<QSqlQuery>
         insert(const QVector<QString> &columns, const QVector<QVector<QVariant>> &values);
 
