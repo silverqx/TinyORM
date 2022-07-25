@@ -959,7 +959,7 @@ namespace Orm::Query
     std::pair<bool, R> Builder::existsOr(const std::function<R()> &callback)
     {
         if (exists())
-            return {true, {}};
+            return {true, R {}};
 
         return {false, std::invoke(callback)};
     }
@@ -968,7 +968,7 @@ namespace Orm::Query
     std::pair<bool, R> Builder::doesntExistOr(const std::function<R()> &callback)
     {
         if (doesntExist())
-            return {true, {}};
+            return {true, R {}};
 
         return {false, std::invoke(callback)};
     }
