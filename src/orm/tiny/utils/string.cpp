@@ -66,7 +66,7 @@ QString String::snake(QString string, const QChar delimiter)
         string.insert(pos, delimiter);
     });
 
-    return (*snakeCache)[std::move(key)] = string.toLower();;
+    return (*snakeCache)[std::move(key)] = string.toLower();
 }
 
 namespace
