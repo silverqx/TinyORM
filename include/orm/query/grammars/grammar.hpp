@@ -29,6 +29,9 @@ namespace Orm::Query::Grammars
         /*! Compile a select query into SQL. */
         QString compileSelect(QueryBuilder &query) const;
 
+        /*! Compile an exists statement into SQL. */
+        QString compileExists(QueryBuilder &query) const;
+
         /*! Compile an insert statement into SQL. */
         virtual QString
         compileInsert(const QueryBuilder &query,

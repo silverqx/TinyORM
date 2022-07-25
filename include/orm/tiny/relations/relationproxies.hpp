@@ -197,6 +197,22 @@ namespace Tiny::Relations
         QVariant aggregate(const QString &function,
                            const QVector<Column> &columns = {ASTERISK}) const;
 
+        /*! Determine if any rows exist for the current query. */
+        bool exists() const;
+        /*! Determine if no rows exist for the current query. */
+        bool doesntExist() const;
+
+        /*! Execute the given callback if no rows exist for the current query. */
+        bool existsOr(const std::function<void()> &callback) const;
+        /*! Execute the given callback if rows exist for the current query. */
+        bool doesntExistOr(const std::function<void()> &callback) const;
+        /*! Execute the given callback if no rows exist for the current query. */
+        template<typename R>
+        std::pair<bool, R> existsOr(const std::function<R()> &callback) const;
+        template<typename R>
+        /*! Execute the given callback if rows exist for the current query. */
+        std::pair<bool, R> doesntExistOr(const std::function<R()> &callback) const;
+
         /*! Set the columns to be selected. */
         const Relation<Model, Related> &
         select(const QVector<Column> &columns = {ASTERISK}) const;
@@ -447,6 +463,23 @@ namespace Tiny::Relations
         const Relation<Model, Related> &whereSub(
                 const Column &column, const QString &comparison, T &&query,
                 const QString &condition = AND) const;
+
+        /* where exists */
+        /*! Add an exists clause to the query. */
+        const Relation<Model, Related> &
+        whereExists(const std::function<void(Builder<Related> &)> &callback,
+                    const QString &condition = AND, bool nope = false) const;
+        /*! Add an or exists clause to the query. */
+        const Relation<Model, Related> &
+        orWhereExists(const std::function<void(Builder<Related> &)> &callback,
+                      bool nope = false) const;
+        /*! Add a where not exists clause to the query. */
+        const Relation<Model, Related> &
+        whereNotExists(const std::function<void(Builder<Related> &)> &callback,
+                       const QString &condition = AND) const;
+        /*! Add a where not exists clause to the query. */
+        const Relation<Model, Related> &
+        orWhereNotExists(const std::function<void(Builder<Related> &)> &callback) const;
 
         /* where raw */
         /*! Add a raw "where" clause to the query. */
@@ -1057,6 +1090,50 @@ namespace Tiny::Relations
             const QString &function, const QVector<Column> &columns) const
     {
         return getQuery().aggregate(function, columns);
+    }
+
+    template<class Model, class Related>
+    bool RelationProxies<Model, Related>::exists() const
+    {
+        return getQuery().exists();
+    }
+
+    template<class Model, class Related>
+    bool RelationProxies<Model, Related>::doesntExist() const
+    {
+        return getQuery().doesntExist();
+    }
+
+    template<class Model, class Related>
+    bool RelationProxies<Model, Related>::existsOr(
+            const std::function<void()> &callback) const
+    {
+        return getQuery().existsOr(callback);
+    }
+
+    template<class Model, class Related>
+    bool RelationProxies<Model, Related>::doesntExistOr(
+            const std::function<void()> &callback) const
+    {
+        return getQuery().doesntExistOr(callback);
+    }
+
+    template<class Model, class Related>
+    template<typename R>
+    std::pair<bool, R>
+    RelationProxies<Model, Related>::existsOr(
+            const std::function<R()> &callback) const
+    {
+        return getQuery().template existsOr<R>(callback);
+    }
+
+    template<class Model, class Related>
+    template<typename R>
+    std::pair<bool, R>
+    RelationProxies<Model, Related>::doesntExistOr(
+            const std::function<R()> &callback) const
+    {
+        return getQuery().template doesntExistOr<R>(callback);
     }
 
     template<class Model, class Related>
@@ -1700,6 +1777,51 @@ namespace Tiny::Relations
             const QString &condition) const
     {
         getQuery().whereSub(column, comparison, std::forward<T>(query), condition);
+
+        return relation();
+    }
+
+    /* where exists */
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereExists(
+            const std::function<void(Builder<Related> &)> &callback,
+            const QString &condition, const bool nope) const
+    {
+        getQuery().whereExists(callback, condition, nope);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereExists(
+            const std::function<void(Builder<Related> &)> &callback,
+            const bool nope) const
+    {
+        getQuery().whereExists(callback, OR, nope);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereNotExists(
+            const std::function<void(Builder<Related> &)> &callback,
+            const QString &condition) const
+    {
+        getQuery().whereExists(callback, condition, true);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereNotExists(
+            const std::function<void(Builder<Related> &)> &callback) const
+    {
+        getQuery().whereExists(callback, OR, true);
 
         return relation();
     }

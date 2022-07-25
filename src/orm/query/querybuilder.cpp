@@ -245,6 +245,39 @@ QVariant Builder::aggregate(const QString &function,
     return resultsQuery.value(QStringLiteral("aggregate"));
 }
 
+bool Builder::exists()
+{
+    auto results = m_connection.select(m_grammar.compileExists(*this), getBindings());
+
+    /* If the results have rows, we will get the row and see if the exists column is a
+       boolean true. If there are no results for this query we will return false as
+       there are no rows for this query at all, and we can return that info here. */
+    if (!results.first())
+        return false;
+
+    return results.value(QStringLiteral("exists")).template value<bool>();
+}
+
+bool Builder::existsOr(const std::function<void()> &callback)
+{
+    if (exists())
+        return true;
+
+    std::invoke(callback);
+
+    return false;
+}
+
+bool Builder::doesntExistOr(const std::function<void()> &callback)
+{
+    if (doesntExist())
+        return true;
+
+    std::invoke(callback);
+
+    return false;
+}
+
 Builder &Builder::select(const QVector<Column> &columns)
 {
     clearColumns();
@@ -523,6 +556,40 @@ Builder &Builder::whereNotNull(const Column &column, const QString &condition)
 Builder &Builder::orWhereNotNull(const Column &column)
 {
     return orWhereNotNull(QVector<Column> {column});
+}
+
+/* where exists */
+
+Builder &Builder::whereExists(
+            const std::function<void(Builder &)> &callback, const QString &condition,
+            const bool nope)
+{
+    // Ownership of the std::shared_ptr<QueryBuilder>
+    const auto query = forSubQuery();
+
+    /* Similar to the sub-select clause, we will create a new query instance so
+       the developer may cleanly specify the entire exists query and we will
+       compile the whole thing in the grammar and insert it into the SQL. */
+    std::invoke(callback, *query);
+
+    return addWhereExistsQuery(query, condition, nope);
+}
+
+Builder &Builder::orWhereExists(const std::function<void(Builder &)> &callback,
+                                const bool nope)
+{
+    return whereExists(callback, OR, nope);
+}
+
+Builder &Builder::whereNotExists(const std::function<void(Builder &)> &callback,
+                                 const QString &condition)
+{
+    return whereExists(callback, condition, true);
+}
+
+Builder &Builder::orWhereNotExists(const std::function<void(Builder &)> &callback)
+{
+    return whereExists(callback, OR, true);
 }
 
 /* where raw */
@@ -883,8 +950,6 @@ Builder &Builder::addNestedWhereQuery(const std::shared_ptr<Builder> &query,
     return *this;
 }
 
-// CUR1 add whereExists() silverqx
-// CUR1 also add exists() silverqx
 Builder &Builder::addWhereExistsQuery(const std::shared_ptr<Builder> &query,
                                       const QString &condition, const bool nope)
 {

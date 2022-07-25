@@ -203,6 +203,22 @@ namespace Relations
         static QVariant aggregate(const QString &function,
                                   const QVector<Column> &columns = {ASTERISK});
 
+        /*! Determine if any rows exist for the current query. */
+        static bool exists();
+        /*! Determine if no rows exist for the current query. */
+        static bool doesntExist();
+
+        /*! Execute the given callback if no rows exist for the current query. */
+        static bool existsOr(const std::function<void()> &callback);
+        /*! Execute the given callback if rows exist for the current query. */
+        static bool doesntExistOr(const std::function<void()> &callback);
+        /*! Execute the given callback if no rows exist for the current query. */
+        template<typename R>
+        static std::pair<bool, R> existsOr(const std::function<R()> &callback);
+        template<typename R>
+        /*! Execute the given callback if rows exist for the current query. */
+        static std::pair<bool, R> doesntExistOr(const std::function<R()> &callback);
+
         /*! Set the columns to be selected. */
         static std::unique_ptr<TinyBuilder<Derived>>
         select(const QVector<Column> &columns = {ASTERISK});
@@ -466,6 +482,23 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         whereSub(const Column &column, const QString &comparison, T &&query,
                  const QString &condition = AND);
+
+        /* where exists */
+        /*! Add an exists clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereExists(const std::function<void(TinyBuilder<Derived> &)> &callback,
+                    const QString &condition = AND, bool nope = false);
+        /*! Add an or exists clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereExists(const std::function<void(TinyBuilder<Derived> &)> &callback,
+                      bool nope = false);
+        /*! Add a where not exists clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereNotExists(const std::function<void(TinyBuilder<Derived> &)> &callback,
+                       const QString &condition = AND);
+        /*! Add a where not exists clause to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereNotExists(const std::function<void(TinyBuilder<Derived> &)> &callback);
 
         /* where raw */
         /*! Add a raw "where" clause to the query. */
@@ -1101,6 +1134,48 @@ namespace Relations
                                                const QVector<Column> &columns)
     {
         return query()->aggregate(function, columns);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool ModelProxies<Derived, AllRelations...>::exists()
+    {
+        return query()->exists();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool ModelProxies<Derived, AllRelations...>::doesntExist()
+    {
+        return query()->doesntExist();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool ModelProxies<Derived, AllRelations...>::existsOr(
+            const std::function<void()> &callback)
+    {
+        return query()->existsOr(callback);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool ModelProxies<Derived, AllRelations...>::doesntExistOr(
+            const std::function<void()> &callback)
+    {
+        return query()->doesntExistOr(callback);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename R>
+    std::pair<bool, R> ModelProxies<Derived, AllRelations...>::existsOr(
+            const std::function<R()> &callback)
+    {
+        return query()->template existsOr<R>(callback);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename R>
+    std::pair<bool, R> ModelProxies<Derived, AllRelations...>::doesntExistOr(
+            const std::function<R()> &callback)
+    {
+        return query()->template doesntExistOr<R>(callback);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1864,6 +1939,58 @@ namespace Relations
         auto builder = Derived::query();
 
         builder->whereSub(column, comparison, std::forward<T>(query), condition);
+
+        return builder;
+    }
+
+    /* where exists */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereExists(
+            const std::function<void(TinyBuilder<Derived> &)> &callback,
+            const QString &condition, const bool nope)
+    {
+        auto builder = query();
+
+        builder->whereExists(callback, condition, nope);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::orWhereExists(
+            const std::function<void(TinyBuilder<Derived> &)> &callback, const bool nope)
+    {
+        auto builder = query();
+
+        builder->whereExists(callback, OR, nope);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereNotExists(
+            const std::function<void(TinyBuilder<Derived> &)> &callback,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereExists(callback, condition, true);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::orWhereNotExists(
+            const std::function<void(TinyBuilder<Derived> &)> &callback)
+    {
+        auto builder = query();
+
+        builder->whereExists(callback, OR, true);
 
         return builder;
     }

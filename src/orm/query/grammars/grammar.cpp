@@ -30,6 +30,12 @@ QString Grammar::compileSelect(QueryBuilder &query) const
     return sql;
 }
 
+QString Grammar::compileExists(QueryBuilder &query) const
+{
+    return QStringLiteral("select exists(%1) as %2").arg(compileSelect(query),
+                                                         wrap(QStringLiteral("exists")));
+}
+
 QString Grammar::compileInsert(const QueryBuilder &query,
                                const QVector<QVariantMap> &values) const
 {

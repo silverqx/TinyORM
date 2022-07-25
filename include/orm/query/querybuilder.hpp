@@ -138,6 +138,22 @@ namespace Orm::Query
         QVariant aggregate(const QString &function,
                            const QVector<Column> &columns = {ASTERISK}) const;
 
+        /*! Determine if any rows exist for the current query. */
+        bool exists();
+        /*! Determine if no rows exist for the current query. */
+        inline bool doesntExist();
+
+        /*! Execute the given callback if no rows exist for the current query. */
+        bool existsOr(const std::function<void()> &callback);
+        /*! Execute the given callback if rows exist for the current query. */
+        bool doesntExistOr(const std::function<void()> &callback);
+        /*! Execute the given callback if no rows exist for the current query. */
+        template<typename R>
+        std::pair<bool, R> existsOr(const std::function<R()> &callback);
+        template<typename R>
+        /*! Execute the given callback if rows exist for the current query. */
+        std::pair<bool, R> doesntExistOr(const std::function<R()> &callback);
+
         /*! Set the columns to be selected. */
         Builder &select(const QVector<Column> &columns = {ASTERISK});
         /*! Set the column to be selected. */
@@ -424,6 +440,19 @@ namespace Orm::Query
         template<WhereValueSubQuery T>
         Builder &whereSub(const Column &column, const QString &comparison, T &&query,
                           const QString &condition = AND);
+
+        /* where exists */
+        /*! Add an exists clause to the query. */
+        Builder &whereExists(const std::function<void(Builder &)> &callback,
+                             const QString &condition = AND, bool nope = false);
+        /*! Add an or exists clause to the query. */
+        Builder &orWhereExists(const std::function<void(Builder &)> &callback,
+                               bool nope = false);
+        /*! Add a where not exists clause to the query. */
+        Builder &whereNotExists(const std::function<void(Builder &)> &callback,
+                                const QString &condition = AND);
+        /*! Add a where not exists clause to the query. */
+        Builder &orWhereNotExists(const std::function<void(Builder &)> &callback);
 
         /* where raw */
         /*! Add a raw "where" clause to the query. */
@@ -868,6 +897,29 @@ namespace Orm::Query
     QVariant Builder::average(const Column &column) const
     {
         return avg(column);
+    }
+
+    bool Builder::doesntExist()
+    {
+        return !exists();
+    }
+
+    template<typename R>
+    std::pair<bool, R> Builder::existsOr(const std::function<R()> &callback)
+    {
+        if (exists())
+            return {true, {}};
+
+        return {false, std::invoke(callback)};
+    }
+
+    template<typename R>
+    std::pair<bool, R> Builder::doesntExistOr(const std::function<R()> &callback)
+    {
+        if (doesntExist())
+            return {true, {}};
+
+        return {false, std::invoke(callback)};
     }
 
     template<Queryable T>

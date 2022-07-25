@@ -10,11 +10,14 @@
 #include "databases.hpp"
 
 using Orm::Constants::COMMA;
+using Orm::Constants::GT;
 using Orm::Constants::ID;
+using Orm::Constants::LT;
 using Orm::Constants::NAME;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
+using Orm::Query::Builder;
 
 using QueryBuilder = Orm::Query::Builder;
 
@@ -36,6 +39,14 @@ private Q_SLOTS:
     void implode() const;
     void implode_EmptyResult() const;
     void implode_QualifiedColumnOrKey() const;
+
+    void exists() const;
+    void doesntExist() const;
+
+    void existsOr() const;
+    void doesntExistOr() const;
+    void existsOr_WithReturnType() const;
+    void doesntExistOr_WithReturnType() const;
 
     void count() const;
     void count_Distinct() const;
@@ -292,6 +303,168 @@ void tst_QueryBuilder::implode_QualifiedColumnOrKey() const
                       .implode("torrents.name", COMMA);
 
         QCOMPARE(result, QString {"test1, test2, test3, test4, test5, test6"});
+    }
+}
+
+void tst_QueryBuilder::exists() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto builder = createQuery(connection);
+
+    auto result = builder->select("*").from("torrents").where(ID, LT, 5).exists();
+
+    QVERIFY(result);
+}
+
+void tst_QueryBuilder::doesntExist() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto builder = createQuery(connection);
+
+    auto result = builder->select("*").from("torrents").where(ID, GT, 100).doesntExist();
+
+    QVERIFY(result);
+}
+
+void tst_QueryBuilder::existsOr() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Callback invoked
+    {
+        auto builder = createQuery(connection);
+
+        auto callbackInvoked = false;
+        auto result = builder->select("*").from("torrents").where(ID, GT, 100)
+                      .existsOr([&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!result);
+    }
+    // Callback not invoked
+    {
+        auto builder = createQuery(connection);
+
+        auto callbackInvoked = false;
+        auto result = builder->select("*").from("torrents").where(ID, LT, 5)
+                      .existsOr([&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(result);
+    }
+}
+
+void tst_QueryBuilder::doesntExistOr() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Callback invoked
+    {
+        auto builder = createQuery(connection);
+
+        auto callbackInvoked = false;
+        auto result = builder->select("*").from("torrents").where(ID, LT, 5)
+                      .doesntExistOr([&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!result);
+    }
+    // Callback not invoked
+    {
+        auto builder = createQuery(connection);
+
+        auto callbackInvoked = false;
+        auto result = builder->select("*").from("torrents").where(ID, GT, 100)
+                      .doesntExistOr([&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(result);
+    }
+}
+
+void tst_QueryBuilder::existsOr_WithReturnType() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Callback invoked
+    {
+        auto builder = createQuery(connection);
+
+        bool result;
+        int returnValue = 0;
+        std::tie(result, returnValue) =
+                builder->select("*").from("torrents").where(ID, GT, 100)
+                .existsOr<int>([]()
+        {
+            return 1;
+        });
+
+        QVERIFY(!result);
+        QCOMPARE(returnValue, 1);
+    }
+    // Callback not invoked
+    {
+        auto builder = createQuery(connection);
+
+        bool result;
+        int returnValue = 0;
+        std::tie(result, returnValue) =
+                builder->select("*").from("torrents").where(ID, LT, 5)
+                .existsOr<int>([]()
+        {
+            return 1;
+        });
+
+        QVERIFY(result);
+        QCOMPARE(returnValue, 0);
+    }
+}
+
+void tst_QueryBuilder::doesntExistOr_WithReturnType() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Callback invoked
+    {
+        auto builder = createQuery(connection);
+
+        bool result;
+        int returnValue = 0;
+        std::tie(result, returnValue) =
+                builder->select("*").from("torrents").where(ID, LT, 5)
+                .doesntExistOr<int>([]()
+        {
+            return 1;
+        });
+
+        QVERIFY(!result);
+        QCOMPARE(returnValue, 1);
+    }
+    // Callback not invoked
+    {
+        auto builder = createQuery(connection);
+
+        bool result;
+        int returnValue = 0;
+        std::tie(result, returnValue) =
+                builder->select("*").from("torrents").where(ID, GT, 100)
+                .doesntExistOr<int>([]()
+        {
+            return 1;
+        });
+
+        QVERIFY(result);
+        QCOMPARE(returnValue, 0);
     }
 }
 

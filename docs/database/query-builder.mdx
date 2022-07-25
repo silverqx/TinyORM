@@ -21,6 +21,7 @@ keywords: [c++ orm, sql, c++ sql, c++ query builder, database, query builder, ti
     - [Condition Operator Overriding](#condition-operator-overriding)
     - [Logical Grouping](#logical-grouping)
 - [Advanced Where Clauses](#advanced-where-clauses)
+    - [Where Exists Clauses](#where-exists-clauses)
     - [Subquery Where Clauses](#subquery-where-clauses)
 - [Ordering, Grouping, Limit & Offset](#ordering-grouping-limit-and-offset)
     - [Ordering](#ordering)
@@ -139,6 +140,18 @@ Of course, you may combine these methods with other clauses to fine-tune how you
     auto price = DB::table("orders")
                      ->whereEq("finalized", 1)
                      .avg("price");
+
+#### Determining If Records Exist
+
+Instead of using the `count` method to determine if any records exist that match your query's constraints, you may use the `exists` and `doesntExist` methods:
+
+    if (DB::table("orders")->whereEq("finalized", 1).exists()) {
+        // ...
+    }
+
+    if (DB::table("orders")->whereEq("finalized", 1).doesntExist()) {
+        // ...
+    }
 
 ## Select Statements
 
@@ -513,6 +526,30 @@ select * from users where name = "John" and (votes > 100 or title = "Admin")
 ```
 
 ## Advanced Where Clauses
+
+### Where Exists Clauses
+
+The `whereExists` method allows you to write "where exists" SQL clauses. The `whereExists` method accepts a lambda expression which will receive a query builder instance, allowing you to define the query that should be placed inside of the "exists" clause:
+
+    auto users = DB::table("users")
+                     ->whereExists([](auto &query)
+                     {
+                         query.select(DB::raw(1))
+                              .from("orders")
+                              .whereColumnEq("orders.user_id", "users.id");
+                     })
+                     .get();
+
+The query above will produce the following SQL:
+
+```sql
+select * from users
+where exists (
+    select 1
+    from orders
+    where orders.user_id = users.id
+)
+```
 
 ### Subquery Where Clauses
 
