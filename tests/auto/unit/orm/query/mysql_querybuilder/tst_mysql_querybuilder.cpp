@@ -64,9 +64,6 @@ private Q_SLOTS:
     void value() const;
     void value_ColumnExpression() const;
 
-    void exists() const;
-    void doesntExist() const;
-
     void count() const;
     void count_Distinct() const;
     void min_Aggregate() const;
@@ -74,6 +71,9 @@ private Q_SLOTS:
     void max_Aggregate() const;
     void sum_Aggregate() const;
     void average_Aggregate() const;
+
+    void exists() const;
+    void doesntExist() const;
 
     void select() const;
     void select_ColumnExpression() const;
@@ -363,40 +363,6 @@ void tst_MySql_QueryBuilder::value_ColumnExpression() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_MySql_QueryBuilder::exists() const
-{
-    auto log = DB::connection(m_connection).pretend([](auto &connection)
-    {
-        connection.query()
-                ->select("*").from("torrent_peers").where(ID, LT, 7).exists();
-    });
-
-    QCOMPARE(log.size(), 1);
-    const auto &firstLog = log.first();
-
-    QCOMPARE(firstLog.query,
-             "select exists(select * from `torrent_peers` where `id` < ?) as `exists`");
-    QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(7)}));
-}
-
-void tst_MySql_QueryBuilder::doesntExist() const
-{
-    auto log = DB::connection(m_connection).pretend([](auto &connection)
-    {
-        connection.query()
-                ->select("*").from("torrent_peers").where(ID, LT, 7).doesntExist();
-    });
-
-    QCOMPARE(log.size(), 1);
-    const auto &firstLog = log.first();
-
-    QCOMPARE(firstLog.query,
-             "select exists(select * from `torrent_peers` where `id` < ?) as `exists`");
-    QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(7)}));
-}
-
 void tst_MySql_QueryBuilder::count() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
@@ -541,6 +507,40 @@ void tst_MySql_QueryBuilder::average_Aggregate() const
     QCOMPARE(firstLog.query,
              "select avg(`size`) as `aggregate` from `torrents`");
     QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::exists() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()
+                ->select("*").from("torrent_peers").where(ID, LT, 7).exists();
+    });
+
+    QCOMPARE(log.size(), 1);
+    const auto &firstLog = log.first();
+
+    QCOMPARE(firstLog.query,
+             "select exists(select * from `torrent_peers` where `id` < ?) as `exists`");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(7)}));
+}
+
+void tst_MySql_QueryBuilder::doesntExist() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()
+                ->select("*").from("torrent_peers").where(ID, LT, 7).doesntExist();
+    });
+
+    QCOMPARE(log.size(), 1);
+    const auto &firstLog = log.first();
+
+    QCOMPARE(firstLog.query,
+             "select exists(select * from `torrent_peers` where `id` < ?) as `exists`");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(7)}));
 }
 
 void tst_MySql_QueryBuilder::select() const

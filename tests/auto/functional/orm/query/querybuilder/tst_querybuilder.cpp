@@ -40,6 +40,12 @@ private Q_SLOTS:
     void implode_EmptyResult() const;
     void implode_QualifiedColumnOrKey() const;
 
+    void count() const;
+    void count_Distinct() const;
+    void min_Aggregate() const;
+    void sum_Aggregate() const;
+    void sum_Aggregate_ShouldReturnZeroInsteadOfNull() const;
+
     void exists() const;
     void doesntExist() const;
 
@@ -47,12 +53,6 @@ private Q_SLOTS:
     void doesntExistOr() const;
     void existsOr_WithReturnType() const;
     void doesntExistOr_WithReturnType() const;
-
-    void count() const;
-    void count_Distinct() const;
-    void min_Aggregate() const;
-    void sum_Aggregate() const;
-    void sum_Aggregate_ShouldReturnZeroInsteadOfNull() const;
 
     void limit() const;
 
@@ -306,6 +306,77 @@ void tst_QueryBuilder::implode_QualifiedColumnOrKey() const
     }
 }
 
+void tst_QueryBuilder::count() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    {
+        auto builder = createQuery(connection);
+
+        auto count = builder->from("torrent_peers").count();
+
+        QCOMPARE(typeid (quint64), typeid (count));
+        QCOMPARE(count, static_cast<quint64>(4));
+    }
+
+    // Should exclude columns with NULL values
+    {
+        auto builder = createQuery(connection);
+
+        auto count = builder->from("torrent_peers").count("seeds");
+
+        QCOMPARE(typeid (quint64), typeid (count));
+        QCOMPARE(count, static_cast<quint64>(3));
+    }
+}
+
+void tst_QueryBuilder::count_Distinct() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto builder = createQuery(connection);
+
+    auto count = builder->from("file_property_properties")
+                 .distinct()
+                 .count("file_property_id");
+
+    QCOMPARE(typeid (quint64), typeid (count));
+    QCOMPARE(count, static_cast<quint64>(5));
+}
+
+void tst_QueryBuilder::min_Aggregate() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto builder = createQuery(connection);
+
+    auto count = builder->from("torrent_peers").min("total_seeds");
+
+    QCOMPARE(count, QVariant(1));
+}
+
+void tst_QueryBuilder::sum_Aggregate() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto builder = createQuery(connection);
+
+    auto sum = builder->from("torrent_peers").sum("total_seeds");
+
+    QCOMPARE(sum, QVariant(10));
+}
+
+void tst_QueryBuilder::sum_Aggregate_ShouldReturnZeroInsteadOfNull() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto builder = createQuery(connection);
+
+    auto sum = builder->from("torrent_peers").whereEq(ID, 4).sum("seeds");
+
+    QCOMPARE(sum, QVariant(0));
+}
+
 void tst_QueryBuilder::exists() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -466,77 +537,6 @@ void tst_QueryBuilder::doesntExistOr_WithReturnType() const
         QVERIFY(result);
         QCOMPARE(returnValue, 0);
     }
-}
-
-void tst_QueryBuilder::count() const
-{
-    QFETCH_GLOBAL(QString, connection);
-
-    {
-        auto builder = createQuery(connection);
-
-        auto count = builder->from("torrent_peers").count();
-
-        QCOMPARE(typeid (quint64), typeid (count));
-        QCOMPARE(count, static_cast<quint64>(4));
-    }
-
-    // Should exclude columns with NULL values
-    {
-        auto builder = createQuery(connection);
-
-        auto count = builder->from("torrent_peers").count("seeds");
-
-        QCOMPARE(typeid (quint64), typeid (count));
-        QCOMPARE(count, static_cast<quint64>(3));
-    }
-}
-
-void tst_QueryBuilder::count_Distinct() const
-{
-    QFETCH_GLOBAL(QString, connection);
-
-    auto builder = createQuery(connection);
-
-    auto count = builder->from("file_property_properties")
-                 .distinct()
-                 .count("file_property_id");
-
-    QCOMPARE(typeid (quint64), typeid (count));
-    QCOMPARE(count, static_cast<quint64>(5));
-}
-
-void tst_QueryBuilder::min_Aggregate() const
-{
-    QFETCH_GLOBAL(QString, connection);
-
-    auto builder = createQuery(connection);
-
-    auto count = builder->from("torrent_peers").min("total_seeds");
-
-    QCOMPARE(count, QVariant(1));
-}
-
-void tst_QueryBuilder::sum_Aggregate() const
-{
-    QFETCH_GLOBAL(QString, connection);
-
-    auto builder = createQuery(connection);
-
-    auto sum = builder->from("torrent_peers").sum("total_seeds");
-
-    QCOMPARE(sum, QVariant(10));
-}
-
-void tst_QueryBuilder::sum_Aggregate_ShouldReturnZeroInsteadOfNull() const
-{
-    QFETCH_GLOBAL(QString, connection);
-
-    auto builder = createQuery(connection);
-
-    auto sum = builder->from("torrent_peers").whereEq(ID, 4).sum("seeds");
-
-    QCOMPARE(sum, QVariant(0));
 }
 
 void tst_QueryBuilder::limit() const
