@@ -471,11 +471,9 @@ void tst_QueryBuilder::existsOr_WithReturnType() const
     {
         auto builder = createQuery(connection);
 
-        bool result = false;
-        int returnValue = 0;
-        std::tie(result, returnValue) =
-                builder->select("*").from("torrents").where(ID, GT, 100)
-                .existsOr<int>([]()
+        auto [result, returnValue] = builder->select("*").from("torrents")
+                                     .where(ID, GT, 100)
+                                     .existsOr<int>([]()
         {
             return 1;
         });
@@ -487,11 +485,9 @@ void tst_QueryBuilder::existsOr_WithReturnType() const
     {
         auto builder = createQuery(connection);
 
-        bool result = false;
-        int returnValue = 0;
-        std::tie(result, returnValue) =
-                builder->select("*").from("torrents").where(ID, LT, 5)
-                .existsOr<int>([]()
+        auto [result, returnValue] = builder->select("*").from("torrents")
+                                     .where(ID, LT, 5)
+                                     .existsOr<int>([]()
         {
             return 1;
         });
@@ -509,11 +505,9 @@ void tst_QueryBuilder::doesntExistOr_WithReturnType() const
     {
         auto builder = createQuery(connection);
 
-        bool result = false;
-        int returnValue = 0;
-        std::tie(result, returnValue) =
-                builder->select("*").from("torrents").where(ID, LT, 5)
-                .doesntExistOr<int>([]()
+        auto [result, returnValue] = builder->select("*").from("torrents")
+                                     .where(ID, LT, 5)
+                                     .doesntExistOr<int>([]()
         {
             return 1;
         });
@@ -525,11 +519,9 @@ void tst_QueryBuilder::doesntExistOr_WithReturnType() const
     {
         auto builder = createQuery(connection);
 
-        bool result = false;
-        int returnValue = 0;
-        std::tie(result, returnValue) =
-                builder->select("*").from("torrents").where(ID, GT, 100)
-                .doesntExistOr<int>([]()
+        auto [result, returnValue] = builder->select("*").from("torrents")
+                                     .where(ID, GT, 100)
+                                     .doesntExistOr<int>([]()
         {
             return 1;
         });
