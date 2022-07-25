@@ -58,6 +58,23 @@ namespace Orm::Query
         QSqlQuery get(const QVector<Column> &columns = {ASTERISK});
         /*! Execute a query for a single record by ID. */
         QSqlQuery find(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
+
+        /*! Execute a query for a single record by ID or call a callback. */
+        QSqlQuery findOr(const QVariant &id, const QVector<Column> &columns = {ASTERISK},
+                         const std::function<void()> &callback = nullptr);
+        /*! Execute a query for a single record by ID or call a callback. */
+        inline QSqlQuery findOr(const QVariant &id,
+                                const std::function<void()> &callback = nullptr);
+        /*! Execute a query for a single record by ID or call a callback. */
+        template<typename R>
+        std::pair<QSqlQuery, R>
+        findOr(const QVariant &id, const QVector<Column> &columns = {ASTERISK},
+               const std::function<R()> &callback = nullptr);
+        /*! Execute a query for a single record by ID or call a callback. */
+        template<typename R>
+        std::pair<QSqlQuery, R>
+        findOr(const QVariant &id, const std::function<R()> &callback = nullptr);
+
         /*! Execute the query and get the first result. */
         QSqlQuery first(const QVector<Column> &columns = {ASTERISK});
         /*! Get a single column's value from the first result of a query. */
@@ -803,6 +820,40 @@ namespace Orm::Query
     /* public */
 
     /* Retrieving results */
+
+    QSqlQuery Builder::findOr(const QVariant &id,
+                              const std::function<void()> &callback)
+    {
+        return findOr(id, {ASTERISK}, callback);
+    }
+
+    template<typename R>
+    std::pair<QSqlQuery, R>
+    Builder::findOr(const QVariant &id, const QVector<Column> &columns,
+                    const std::function<R()> &callback)
+    {
+        auto query = find(id, columns);
+
+        if (query.isValid())
+            return {std::move(query), R {}};
+
+        /* Return invalid QSqlQuery if a record was not found. Don't return
+           the QSqlQuery() as an user can still obtain some info from the invalid
+           QSqlQuery. */
+
+        // Optionally invoke the callback
+        if (callback)
+            return {std::move(query), std::invoke(callback)};
+
+        return {std::move(query), R {}};
+    }
+
+    template<typename R>
+    std::pair<QSqlQuery, R>
+    Builder::findOr(const QVariant &id, const std::function<R()> &callback)
+    {
+        return findOr<R>(id, {ASTERISK}, callback);
+    }
 
     template<typename T>
     std::map<T, QVariant>

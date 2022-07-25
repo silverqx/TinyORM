@@ -34,6 +34,23 @@ QSqlQuery Builder::find(const QVariant &id, const QVector<Column> &columns)
     return where(ID, EQ, id).first(columns);
 }
 
+QSqlQuery Builder::findOr(const QVariant &id, const QVector<Column> &columns,
+                          const std::function<void()> &callback)
+{
+    auto query = find(id, columns);
+
+    if (query.isValid())
+        return query;
+
+    // Optionally invoke the callback
+    if (callback)
+        std::invoke(callback);
+
+    /* Return invalid QSqlQuery if a record was not found. Don't return the QSqlQuery()
+       as an user can still obtain some info from the invalid QSqlQuery. */
+    return query;
+}
+
 QSqlQuery Builder::first(const QVector<Column> &columns)
 {
     auto query = take(1).get(columns);

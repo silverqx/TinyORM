@@ -9,6 +9,7 @@
 
 #include "databases.hpp"
 
+using Orm::Constants::ASTERISK;
 using Orm::Constants::COMMA;
 using Orm::Constants::GT;
 using Orm::Constants::ID;
@@ -31,6 +32,9 @@ private Q_SLOTS:
     void initTestCase_data() const;
 
     void find() const;
+
+    void findOr() const;
+    void findOr_WithReturnType() const;
 
     void pluck() const;
     void pluck_EmptyResult() const;
@@ -89,6 +93,95 @@ void tst_QueryBuilder::find() const
 
     QCOMPARE(query.value(ID), QVariant(2));
     QCOMPARE(query.value(NAME), QVariant("test2"));
+}
+
+void tst_QueryBuilder::findOr() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Callback invoked
+    {
+        auto builder = createQuery(connection);
+
+        auto callbackInvoked = false;
+        auto query = builder->from("torrents")
+                     .findOr(100, {ASTERISK}, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!query.isValid());
+        QVERIFY(callbackInvoked);
+    }
+    // Callback invoked (second overload)
+    {
+        auto builder = createQuery(connection);
+
+        auto callbackInvoked = false;
+        auto query = builder->from("torrents").findOr(100, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!query.isValid());
+        QVERIFY(callbackInvoked);
+    }
+    // Callback not invoked
+    {
+        auto builder = createQuery(connection);
+
+        auto callbackInvoked = false;
+        auto query = builder->from("torrents").findOr(1, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(query.isValid());
+        QVERIFY(!callbackInvoked);
+    }
+}
+
+void tst_QueryBuilder::findOr_WithReturnType() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Callback invoked
+    {
+        auto builder = createQuery(connection);
+
+        auto [query, result] = builder->from("torrents").findOr<int>(100, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!query.isValid());
+        QCOMPARE(result, 1);
+    }
+    // Callback invoked (second overload)
+    {
+        auto builder = createQuery(connection);
+
+        auto [query, result] = builder->from("torrents")
+                               .findOr<int>(100, {ID, NAME}, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!query.isValid());
+        QCOMPARE(result, 1);
+    }
+    // Callback not invoked
+    {
+        auto builder = createQuery(connection);
+
+        auto [query, result] = builder->from("torrents").findOr<int>(1, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(query.isValid());
+        QCOMPARE(result, 0);
+    }
 }
 
 void tst_QueryBuilder::pluck() const
