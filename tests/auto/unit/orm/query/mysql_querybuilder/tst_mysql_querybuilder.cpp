@@ -2285,15 +2285,16 @@ void tst_MySql_QueryBuilder::whereExists() const
 {
     auto builder = createQuery();
 
+    // Query doesn't make sense (whereColumn() is missing) but it tests what is needed
     builder->select("*").from("torrent_peers").where(ID, LT, 7)
             .whereExists([](Builder &query)
     {
-        query.where(SIZE, LT, 15);
+        query.from("torrents").where(SIZE, LT, 15);
     });
 
     QCOMPARE(builder->toSql(),
              "select * from `torrent_peers` where `id` < ? and "
-             "exists (select * where `size` < ?)");
+             "exists (select * from `torrents` where `size` < ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(7), QVariant(15)}));
 }
@@ -2302,15 +2303,16 @@ void tst_MySql_QueryBuilder::whereNotExists() const
 {
     auto builder = createQuery();
 
+    // Query doesn't make sense (whereColumn() is missing) but it tests what is needed
     builder->select("*").from("torrent_peers").where(ID, LT, 7)
             .whereNotExists([](Builder &query)
     {
-        query.where(SIZE, LT, 15);
+        query.from("torrents").where(SIZE, LT, 15);
     });
 
     QCOMPARE(builder->toSql(),
              "select * from `torrent_peers` where `id` < ? and "
-             "not exists (select * where `size` < ?)");
+             "not exists (select * from `torrents` where `size` < ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(7), QVariant(15)}));
 }
@@ -2322,12 +2324,12 @@ void tst_MySql_QueryBuilder::orWhereExists() const
     builder->select("*").from("torrent_peers").where(ID, LT, 7)
             .orWhereExists([](Builder &query)
     {
-        query.where(SIZE, LT, 15);
+        query.from("torrents").where(SIZE, LT, 15);
     });
 
     QCOMPARE(builder->toSql(),
              "select * from `torrent_peers` where `id` < ? or "
-             "exists (select * where `size` < ?)");
+             "exists (select * from `torrents` where `size` < ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(7), QVariant(15)}));
 }
@@ -2339,12 +2341,12 @@ void tst_MySql_QueryBuilder::orWhereNotExists() const
     builder->select("*").from("torrent_peers").where(ID, LT, 7)
             .orWhereNotExists([](Builder &query)
     {
-        query.where(SIZE, LT, 15);
+        query.from("torrents").where(SIZE, LT, 15);
     });
 
     QCOMPARE(builder->toSql(),
              "select * from `torrent_peers` where `id` < ? or "
-             "not exists (select * where `size` < ?)");
+             "not exists (select * from `torrents` where `size` < ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(7), QVariant(15)}));
 }

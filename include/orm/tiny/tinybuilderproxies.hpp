@@ -354,19 +354,19 @@ namespace Tiny
         /* where exists */
         /*! Add an exists clause to the query. */
         TinyBuilder<Model> &
-        whereExists(const std::function<void(TinyBuilder<Model> &)> &callback,
+        whereExists(const std::function<void(QueryBuilder &)> &callback,
                     const QString &condition = AND, bool nope = false);
         /*! Add an or exists clause to the query. */
         TinyBuilder<Model> &
-        orWhereExists(const std::function<void(TinyBuilder<Model> &)> &callback,
+        orWhereExists(const std::function<void(QueryBuilder &)> &callback,
                       bool nope = false);
         /*! Add a where not exists clause to the query. */
         TinyBuilder<Model> &
-        whereNotExists(const std::function<void(TinyBuilder<Model> &)> &callback,
+        whereNotExists(const std::function<void(QueryBuilder &)> &callback,
                        const QString &condition = AND);
         /*! Add a where not exists clause to the query. */
         TinyBuilder<Model> &
-        orWhereNotExists(const std::function<void(TinyBuilder<Model> &)> &callback);
+        orWhereNotExists(const std::function<void(QueryBuilder &)> &callback);
 
         /* where raw */
         /*! Add a raw "where" clause to the query. */
@@ -1275,23 +1275,17 @@ namespace Tiny
     template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::whereExists(
-            const std::function<void(TinyBuilder<Model> &)> &callback,
+            const std::function<void(QueryBuilder &)> &callback,
             const QString &condition, const bool nope)
     {
-        // Ownership of a unique_ptr()
-        auto query = builder().m_model.newQueryWithoutRelationships();
-
-        std::invoke(callback, *query);
-
-        toBase().addWhereExistsQuery(query->getQuerySharedPointer(), condition, nope);
-
+        toBase().whereExists(callback, condition, nope);
         return builder();
     }
 
     template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereExists(
-            const std::function<void(TinyBuilder<Model> &)> &callback, const bool nope)
+            const std::function<void(QueryBuilder &)> &callback, const bool nope)
     {
         toBase().whereExists(callback, OR, nope);
         return builder();
@@ -1300,7 +1294,7 @@ namespace Tiny
     template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::whereNotExists(
-            const std::function<void(TinyBuilder<Model> &)> &callback,
+            const std::function<void(QueryBuilder &)> &callback,
             const QString &condition)
     {
         toBase().whereExists(callback, condition, true);
@@ -1310,7 +1304,7 @@ namespace Tiny
     template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereNotExists(
-            const std::function<void(TinyBuilder<Model> &)> &callback)
+            const std::function<void(QueryBuilder &)> &callback)
     {
         toBase().whereExists(callback, OR, true);
         return builder();

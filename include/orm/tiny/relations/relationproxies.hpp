@@ -467,19 +467,19 @@ namespace Tiny::Relations
         /* where exists */
         /*! Add an exists clause to the query. */
         const Relation<Model, Related> &
-        whereExists(const std::function<void(Builder<Related> &)> &callback,
+        whereExists(const std::function<void(QueryBuilder &)> &callback,
                     const QString &condition = AND, bool nope = false) const;
         /*! Add an or exists clause to the query. */
         const Relation<Model, Related> &
-        orWhereExists(const std::function<void(Builder<Related> &)> &callback,
+        orWhereExists(const std::function<void(QueryBuilder &)> &callback,
                       bool nope = false) const;
         /*! Add a where not exists clause to the query. */
         const Relation<Model, Related> &
-        whereNotExists(const std::function<void(Builder<Related> &)> &callback,
+        whereNotExists(const std::function<void(QueryBuilder &)> &callback,
                        const QString &condition = AND) const;
         /*! Add a where not exists clause to the query. */
         const Relation<Model, Related> &
-        orWhereNotExists(const std::function<void(Builder<Related> &)> &callback) const;
+        orWhereNotExists(const std::function<void(QueryBuilder &)> &callback) const;
 
         /* where raw */
         /*! Add a raw "where" clause to the query. */
@@ -1786,7 +1786,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::whereExists(
-            const std::function<void(Builder<Related> &)> &callback,
+            const std::function<void(QueryBuilder &)> &callback,
             const QString &condition, const bool nope) const
     {
         getQuery().whereExists(callback, condition, nope);
@@ -1797,8 +1797,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereExists(
-            const std::function<void(Builder<Related> &)> &callback,
-            const bool nope) const
+            const std::function<void(QueryBuilder &)> &callback, const bool nope) const
     {
         getQuery().whereExists(callback, OR, nope);
 
@@ -1808,8 +1807,8 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::whereNotExists(
-            const std::function<void(Builder<Related> &)> &callback,
-            const QString &condition) const
+            const std::function<void(QueryBuilder &)> &callback,
+                const QString &condition) const
     {
         getQuery().whereExists(callback, condition, true);
 
@@ -1819,7 +1818,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereNotExists(
-            const std::function<void(Builder<Related> &)> &callback) const
+            const std::function<void(QueryBuilder &)> &callback) const
     {
         getQuery().whereExists(callback, OR, true);
 
