@@ -134,6 +134,8 @@ private:
     QString m_connection {};
 };
 
+/* private slots */
+
 void tst_PostgreSQL_QueryBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::POSTGRESQL);
@@ -1866,6 +1868,8 @@ void tst_PostgreSQL_QueryBuilder::remove_WithExpression() const
              "delete from \"torrents\" where \"torrents\".\"id\" = 2223");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
+
+/* private */
 
 std::shared_ptr<QueryBuilder>
 tst_PostgreSQL_QueryBuilder::createQuery() const

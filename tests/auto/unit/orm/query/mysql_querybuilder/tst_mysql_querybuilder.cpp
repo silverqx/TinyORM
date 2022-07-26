@@ -189,6 +189,8 @@ private:
     QString m_connection {};
 };
 
+/* private slots */
+
 void tst_MySql_QueryBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::MYSQL);
@@ -2631,6 +2633,8 @@ void tst_MySql_QueryBuilder::remove_WithExpression() const
              "delete from `torrents` where `torrents`.`id` = 2223");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
+
+/* private */
 
 std::shared_ptr<QueryBuilder>
 tst_MySql_QueryBuilder::createQuery() const

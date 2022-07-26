@@ -70,6 +70,8 @@ private:
     createQuery(const QString &connection) const;
 };
 
+/* private slots */
+
 void tst_QueryBuilder::initTestCase_data() const
 {
     const auto &connections = Databases::createConnections();
@@ -761,6 +763,8 @@ void tst_QueryBuilder::limit() const
         QCOMPARE(query.size(), 4);
     }
 }
+
+/* private */
 
 std::shared_ptr<QueryBuilder>
 tst_QueryBuilder::createQuery(const QString &connection) const

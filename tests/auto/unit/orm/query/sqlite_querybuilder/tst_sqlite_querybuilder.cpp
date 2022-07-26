@@ -133,6 +133,8 @@ private:
     QString m_connection {};
 };
 
+/* private slots */
+
 void tst_SQLite_QueryBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::SQLITE);
@@ -1819,6 +1821,8 @@ void tst_SQLite_QueryBuilder::remove_WithExpression() const
              "delete from \"torrents\" where \"torrents\".\"id\" = 2223");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
+
+/* private */
 
 std::shared_ptr<QueryBuilder>
 tst_SQLite_QueryBuilder::createQuery() const
