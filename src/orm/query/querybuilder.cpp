@@ -222,6 +222,39 @@ Builder::update(const QVector<UpdateItem> &values)
                                                                  values)));
 }
 
+namespace
+{
+    /*! Merge attributes and values for the updateOrInsert() method. */
+    const auto mergeValuesForInsert = [](const QVector<WhereItem> &attributes,
+                                         const QVector<UpdateItem> &values)
+    {
+        QVariantMap result;
+
+        for (const auto &attribute : attributes)
+            /* Can not contain expression in the column name, throws
+               the std::bad_variant_access exception. */
+            result.insert(std::get<QString>(attribute.column), attribute.value);
+
+        for (const auto &value : values)
+            result.insert(value.column, value.value);
+
+        return result;
+    };
+} // namespace
+
+std::tuple<int, std::optional<QSqlQuery>>
+Builder::updateOrInsert(const QVector<WhereItem> &attributes,
+                        const QVector<UpdateItem> &values)
+{
+    if (!where(attributes).exists())
+        return {-1, insert(mergeValuesForInsert(attributes, values))};
+
+    if (values.isEmpty())
+        return {0, std::nullopt};
+
+    return limit(1).update(values);
+}
+
 std::tuple<int, QSqlQuery> Builder::deleteRow()
 {
     return remove();

@@ -119,6 +119,10 @@ namespace Orm::Query
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
         update(const QVector<UpdateItem> &values);
+        /*! Insert or update a record matching the attributes, and fill it with values. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        updateOrInsert(const QVector<WhereItem> &attributes,
+                       const QVector<UpdateItem> &values);
 
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery> deleteRow();

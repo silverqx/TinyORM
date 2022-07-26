@@ -44,6 +44,9 @@ private Q_SLOTS:
     void implode_EmptyResult() const;
     void implode_QualifiedColumnOrKey() const;
 
+    void updateOrInsert() const;
+    void updateOrInsert_EmptyValues() const;
+
     void count() const;
     void count_Distinct() const;
     void min_Aggregate() const;
@@ -397,6 +400,108 @@ void tst_QueryBuilder::implode_QualifiedColumnOrKey() const
 
         QCOMPARE(result, QString {"test1, test2, test3, test4, test5, test6"});
     }
+}
+
+void tst_QueryBuilder::updateOrInsert() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // update
+    {
+        auto [affected, query] = createQuery(connection)->from("user_phones").
+                                 updateOrInsert(
+                                     {{"user_id", 3}, {"number", "905111999"}},
+                                     {{"number", "905333999"}});
+
+        QVERIFY(query);
+        QVERIFY(!query->isValid() && !query->isSelect() && query->isActive());
+        QCOMPARE(affected, 1);
+
+        // validate
+        auto count = createQuery(connection)->from("user_phones")
+                     .whereEq("user_id", 3)
+                     .count();
+        QCOMPARE(count, 1);
+        auto number = createQuery(connection)->from("user_phones")
+                      .whereEq("user_id", 3)
+                      .value("number");
+        QCOMPARE(number, QString("905333999"));
+    }
+
+    // remove
+    {
+        auto [affected, query] = createQuery(connection)->from("user_phones")
+                                 .whereEq("user_id", 3)
+                                 .remove();
+
+        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
+        QCOMPARE(affected, 1);
+
+        // validate
+        QVERIFY(createQuery(connection)->from("user_phones")
+                .whereEq("user_id", 3)
+                .doesntExist());
+    }
+
+    // insert (also restore db)
+    {
+        auto [affected, query] = createQuery(connection)->from("user_phones").
+                                 updateOrInsert(
+                                     {{"user_id", 3}, {"number", "905000000"}},
+                                     {{"number", "905111999"}});
+
+        QVERIFY(query);
+        QVERIFY(!query->isValid() && !query->isSelect() && query->isActive());
+        QCOMPARE(affected, -1);
+
+        // validate
+        auto count = createQuery(connection)->from("user_phones")
+                     .whereEq("user_id", 3)
+                     .count();
+        QCOMPARE(count, 1);
+        auto number = createQuery(connection)->from("user_phones")
+                      .whereEq("user_id", 3)
+                      .value("number");
+        QCOMPARE(number, QString("905111999"));
+    }
+}
+
+void tst_QueryBuilder::updateOrInsert_EmptyValues() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // validate
+    auto count = createQuery(connection)->from("user_phones")
+                 .whereEq("user_id", 3)
+                 .count();
+    QCOMPARE(count, 1);
+
+    // Get a current ID, it can not change
+    auto expectedId = createQuery(connection)->from("user_phones")
+                      .whereEq("user_id", 3)
+                      .value(ID).value<quint64>();
+    QVERIFY(expectedId >= 3);
+
+    // main operation
+    auto [affected, query] = createQuery(connection)->from("user_phones").
+                             updateOrInsert(
+                                 {{"user_id", 3}, {"number", "905111999"}},
+                                 {});
+
+    QVERIFY(!query);
+    QCOMPARE(affected, 0);
+
+    // validate
+    count = createQuery(connection)->from("user_phones")
+            .whereEq("user_id", 3)
+            .count();
+    QCOMPARE(count, 1);
+
+    // ID is still the same
+    auto id = createQuery(connection)->from("user_phones")
+              .whereEq("user_id", 3)
+              .value(ID).value<quint64>();
+    QCOMPARE(id, expectedId);
 }
 
 void tst_QueryBuilder::count() const

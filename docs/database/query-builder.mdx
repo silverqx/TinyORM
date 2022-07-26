@@ -717,6 +717,18 @@ In addition to inserting records into the database, the query builder can also u
 An `update` and `delete` are affecting statements, so they return `std::tuple<int, QSqlQuery>`.
 :::
 
+#### Update Or Insert
+
+Sometimes you may want to update an existing record in the database or create it if no matching record exists. In this scenario, the `updateOrInsert` method may be used. The `updateOrInsert` method accepts two arguments: a vector of conditions by which to find the record, and a vector of column and value pairs indicating the columns to be updated.
+
+The `updateOrInsert` method will attempt to locate a matching database record using the first argument's column and value pairs. If the record exists, it will be updated with the values in the second argument. If the record can not be found, a new record will be inserted with the merged attributes of both arguments:
+
+    DB::table("users")
+        ->updateOrInsert(
+            {{"email", "john@example.com"}, {"name", "John"}},
+            {{"votes", 2}}
+        );
+
 ### Increment & Decrement {#increment-and-decrement}
 
 The query builder also provides convenient methods for incrementing or decrementing the value of a given column. Both of these methods accept at least one argument: the column to modify. A second argument may be provided to specify the amount by which the column should be incremented or decremented:
