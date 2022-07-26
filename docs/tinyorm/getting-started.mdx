@@ -18,8 +18,9 @@ keywords: [c++ orm, orm, getting started, tinyorm]
 - [Retrieving Models](#retrieving-models)
     - [Containers](#containers)
     - [Advanced Subqueries](#advanced-subqueries)
-- [Retrieving Single Models](#retrieving-single-models)
+- [Retrieving Single Models / Aggregates](#retrieving-single-models)
     - [Retrieving Or Creating Models](#retrieving-or-creating-models)
+    - [Retrieving Aggregates](#retrieving-aggregates)
 - [Inserting & Updating Models](#inserting-and-updating-models)
     - [Inserts](#inserts)
     - [Updates](#updates)
@@ -382,7 +383,7 @@ In addition, the query builder's `orderBy` function supports subqueries. Continu
                 .toBase())
         ->get();
 
-## Retrieving Single Models
+## Retrieving Single Models / Aggregates {#retrieving-single-models}
 
 In addition to retrieving all of the records matching a given query, you may also retrieve single records using the `find`, `first`, `firstWhere`, or `firstWhereEq` methods. Instead of returning a vector of models, these methods return a single model instance:
 
@@ -399,6 +400,22 @@ In addition to retrieving all of the records matching a given query, you may als
 
     // Alternative firstWhere method syntax
     auto flight = Flight::firstWhereEq("active", 1);
+
+Sometimes you may wish to perform some other action if no results are found. The `findOr` methods will return a single model instance or, if no results are found, execute the given lambda expression. The value returned by the lambda will be considered the result of the method:
+
+    auto flight = Flight::findOr(1, [] {
+        // ...
+    });
+
+    auto flight = Flight::findOr<int>(1, [] {
+        // ...
+        return 10;
+    });
+
+    auto flight = Flight::findOr<std::optional<Flight>>(1, [] {
+        // ...
+        return Flight::find(10);
+    });
 
 #### Not Found Exceptions
 
@@ -437,6 +454,14 @@ The `firstOrNew` method, like `firstOrCreate`, will attempt to locate a record i
         {{"name", "Tokyo to Sydney"}},
         {{"delayed", 1}, {"arrival_time", "11:30"}}
     );
+
+### Retrieving Aggregates
+
+When interacting with TinyORM models, you may also use the `count`, `sum`, `max`, and other [aggregate methods](/database/query-builder.mdx#aggregates) provided by the [query builder](/database/query-builder.mdx). As you might expect, these methods return a scalar value instead of a TinyORM model instance:
+
+    auto count = Flight::whereEq("active", 1)->count();
+
+    auto max = Flight::whereEq("active", 1)->max("price");
 
 ## Inserting & Updating Models {#inserting-and-updating-models}
 
