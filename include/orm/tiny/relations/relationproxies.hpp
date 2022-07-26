@@ -70,6 +70,23 @@ namespace Tiny::Relations
                    const QVector<Column> &columns = {ASTERISK}) const;
         // findMany() is missing intentionally doesn't make sense for one type relations
 
+        /*! Execute a query for a single record by ID or call a callback. */
+        std::optional<Related>
+        findOr(const QVariant &id, const QVector<Column> &columns,
+               const std::function<void()> &callback) const;
+        /*! Execute a query for a single record by ID or call a callback. */
+        std::optional<Related>
+        findOr(const QVariant &id, const std::function<void()> &callback) const;
+        /*! Execute a query for a single record by ID or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Related>, R>
+        findOr(const QVariant &id, const QVector<Column> &columns,
+               const std::function<R()> &callback) const;
+        /*! Execute a query for a single record by ID or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Related>, R>
+        findOr(const QVariant &id, const std::function<R()> &callback) const;
+
         /*! Execute the query and get the first result. */
         virtual std::optional<Related>
         first(const QVector<Column> &columns = {ASTERISK}) const;
@@ -768,6 +785,42 @@ namespace Tiny::Relations
                                                 const QVector<Column> &columns) const
     {
         return getQuery().findOrFail(id, columns);
+    }
+
+    template<class Model, class Related>
+    std::optional<Related>
+    RelationProxies<Model, Related>::findOr(
+            const QVariant &id, const QVector<Column> &columns,
+            const std::function<void()> &callback) const
+    {
+        return getQuery().findOr(id, columns, callback);
+    }
+
+    template<class Model, class Related>
+    std::optional<Related>
+    RelationProxies<Model, Related>::findOr(
+            const QVariant &id, const std::function<void()> &callback) const
+    {
+        return getQuery().findOr(id, {ASTERISK}, callback);
+    }
+
+    template<class Model, class Related>
+    template<typename R>
+    std::pair<std::optional<Related>, R>
+    RelationProxies<Model, Related>::findOr(
+            const QVariant &id, const QVector<Column> &columns,
+            const std::function<R()> &callback) const
+    {
+        return getQuery().template findOr<R>(id, columns, callback);
+    }
+
+    template<class Model, class Related>
+    template<typename R>
+    std::pair<std::optional<Related>, R>
+    RelationProxies<Model, Related>::findOr(
+            const QVariant &id, const std::function<R()> &callback) const
+    {
+        return getQuery().template findOr<R>(id, {ASTERISK}, callback);
     }
 
     template<class Model, class Related>

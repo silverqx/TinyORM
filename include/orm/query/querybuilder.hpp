@@ -60,20 +60,20 @@ namespace Orm::Query
         QSqlQuery find(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
 
         /*! Execute a query for a single record by ID or call a callback. */
-        QSqlQuery findOr(const QVariant &id, const QVector<Column> &columns = {ASTERISK},
-                         const std::function<void()> &callback = nullptr);
+        QSqlQuery findOr(const QVariant &id, const QVector<Column> &columns,
+                         const std::function<void()> &callback);
         /*! Execute a query for a single record by ID or call a callback. */
         inline QSqlQuery findOr(const QVariant &id,
-                                const std::function<void()> &callback = nullptr);
+                                const std::function<void()> &callback);
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         std::pair<QSqlQuery, R>
-        findOr(const QVariant &id, const QVector<Column> &columns = {ASTERISK},
-               const std::function<R()> &callback = nullptr);
+        findOr(const QVariant &id, const QVector<Column> &columns,
+               const std::function<R()> &callback);
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         std::pair<QSqlQuery, R>
-        findOr(const QVariant &id, const std::function<R()> &callback = nullptr);
+        findOr(const QVariant &id, const std::function<R()> &callback);
 
         /*! Execute the query and get the first result. */
         QSqlQuery first(const QVector<Column> &columns = {ASTERISK});

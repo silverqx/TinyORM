@@ -75,6 +75,23 @@ namespace Orm::Tiny
         findMany(const QVector<QVariant> &ids,
                  const QVector<Column> &columns = {ASTERISK});
 
+        /*! Execute a query for a single record by ID or call a callback. */
+        std::optional<Model>
+        findOr(const QVariant &id, const QVector<Column> &columns,
+               const std::function<void()> &callback = nullptr);
+        /*! Execute a query for a single record by ID or call a callback. */
+        std::optional<Model>
+        findOr(const QVariant &id, const std::function<void()> &callback = nullptr);
+        /*! Execute a query for a single record by ID or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Model>, R>
+        findOr(const QVariant &id, const QVector<Column> &columns,
+               const std::function<R()> &callback);
+        /*! Execute a query for a single record by ID or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Model>, R>
+        findOr(const QVariant &id, const std::function<R()> &callback);
+
         /*! Execute the query and get the first result. */
         std::optional<Model> first(const QVector<Column> &columns = {ASTERISK});
         /*! Get the first record matching the attributes or instantiate it. */
@@ -334,6 +351,59 @@ namespace Orm::Tiny
             return {};
 
         return whereKey(ids).get(columns);
+    }
+
+    template<typename Model>
+    std::optional<Model>
+    Builder<Model>::findOr(const QVariant &id, const QVector<Column> &columns,
+                           const std::function<void()> &callback)
+    {
+        auto model = find(id, columns);
+
+        if (model)
+            return model;
+
+        // Optionally invoke the callback
+        if (callback)
+            std::invoke(callback);
+
+        // Return an original model from the find() method
+        return model;
+    }
+
+    template<typename Model>
+    std::optional<Model>
+    Builder<Model>::findOr(const QVariant &id, const std::function<void()> &callback)
+    {
+        return findOr(id, {ASTERISK}, callback);
+    }
+
+    template<typename Model>
+    template<typename R>
+    std::pair<std::optional<Model>, R>
+    Builder<Model>::findOr(const QVariant &id, const QVector<Column> &columns,
+                           const std::function<R()> &callback)
+    {
+        auto model = find(id, columns);
+
+        if (model)
+            return {std::move(model), R {}};
+
+        // Return an original model from the find() method instead of the default Model{}
+
+        // Optionally invoke the callback
+        if (callback)
+            return {std::move(model), std::invoke(callback)};
+
+        return {std::move(model), R {}};
+    }
+
+    template<typename Model>
+    template<typename R>
+    std::pair<std::optional<Model>, R>
+    Builder<Model>::findOr(const QVariant &id, const std::function<R()> &callback)
+    {
+        return findOr<R>(id, {ASTERISK}, callback);
     }
 
     template<typename Model>

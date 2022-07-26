@@ -69,6 +69,23 @@ namespace Relations
         findMany(const QVector<QVariant> &ids,
                  const QVector<Column> &columns = {ASTERISK});
 
+        /*! Execute a query for a single record by ID or call a callback. */
+        static std::optional<Derived>
+        findOr(const QVariant &id, const QVector<Column> &columns,
+               const std::function<void()> &callback);
+        /*! Execute a query for a single record by ID or call a callback. */
+        static std::optional<Derived>
+        findOr(const QVariant &id, const std::function<void()> &callback);
+        /*! Execute a query for a single record by ID or call a callback. */
+        template<typename R>
+        static std::pair<std::optional<Derived>, R>
+        findOr(const QVariant &id, const QVector<Column> &columns,
+               const std::function<R()> &callback);
+        /*! Execute a query for a single record by ID or call a callback. */
+        template<typename R>
+        static std::pair<std::optional<Derived>, R>
+        findOr(const QVariant &id, const std::function<R()> &callback);
+
         /*! Execute the query and get the first result. */
         static std::optional<Derived>
         first(const QVector<Column> &columns = {ASTERISK});
@@ -786,6 +803,42 @@ namespace Relations
                                                      const QVector<Column> &columns)
     {
         return query()->findMany(ids, columns);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::optional<Derived>
+    ModelProxies<Derived, AllRelations...>::findOr(
+            const QVariant &id, const QVector<Column> &columns,
+            const std::function<void()> &callback)
+    {
+        return query()->findOr(id, columns, callback);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::optional<Derived>
+    ModelProxies<Derived, AllRelations...>::findOr(
+            const QVariant &id, const std::function<void()> &callback)
+    {
+        return query()->findOr(id, {ASTERISK}, callback);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename R>
+    std::pair<std::optional<Derived>, R>
+    ModelProxies<Derived, AllRelations...>::findOr(
+            const QVariant &id, const QVector<Column> &columns,
+            const std::function<R()> &callback)
+    {
+        return query()->template findOr<R>(id, columns, callback);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename R>
+    std::pair<std::optional<Derived>, R>
+    ModelProxies<Derived, AllRelations...>::findOr(
+            const QVariant &id, const std::function<R()> &callback)
+    {
+        return query()->template findOr<R>(id, {ASTERISK}, callback);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
