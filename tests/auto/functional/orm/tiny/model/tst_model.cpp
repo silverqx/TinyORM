@@ -16,6 +16,7 @@ using Models::Torrent_GuardableColumn;
 using Models::TorrentPeer;
 using Models::TorrentPreviewableFile;
 
+using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
@@ -66,6 +67,9 @@ private slots:
     void findOrNew_NotFound() const;
     void findOrFail_Found() const;
     void findOrFail_NotFoundFailed() const;
+
+    void findOr() const;
+    void findOr_WithReturnType() const;
 
     void firstWhere() const;
     void firstWhereEq() const;
@@ -741,6 +745,83 @@ void tst_Model::findOrFail_NotFoundFailed() const
                              ModelNotFoundError);
     QVERIFY_EXCEPTION_THROWN(Torrent::findOrFail(999999, {ID, NAME}),
                              ModelNotFoundError);
+}
+
+void tst_Model::findOr() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto callbackInvoked = false;
+        auto model = Torrent::findOr(100, {ASTERISK}, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!model);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback invoked (second overload)
+    {
+        auto callbackInvoked = false;
+        auto model = Torrent::findOr(100, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!model);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback not invoked
+    {
+        auto callbackInvoked = false;
+        auto model = Torrent::findOr(1, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(model);
+        QVERIFY(!callbackInvoked);
+    }
+}
+
+void tst_Model::findOr_WithReturnType() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Callback invoked
+    {
+        auto [model, result] = Torrent::findOr<int>(100, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!model);
+        QCOMPARE(result, 1);
+    }
+    // Callback invoked (second overload)
+    {
+        auto [model, result] = Torrent::findOr<int>(100, {ID, NAME}, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!model);
+        QCOMPARE(result, 1);
+    }
+    // Callback not invoked
+    {
+        auto [model, result] = Torrent::findOr<int>(1, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(model);
+        QCOMPARE(result, 0);
+    }
 }
 
 void tst_Model::firstWhere() const
