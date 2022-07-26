@@ -243,6 +243,12 @@ function createTables(string $connection): void
             ->cascadeOnUpdate()->cascadeOnDelete();
     });
 
+    // Add the table comment (MySQL only)
+    if ($connection === 'mysql')
+        Capsule::connection($connection)
+            ->unprepared('alter table `file_property_properties` comment = ' .
+                "'used in Builder::chunk() tests, must have exactly 8 rows'");
+
     $schema->create('torrent_tags', function (Blueprint $table) {
         $table->id();
         $table->string('name')->unique();

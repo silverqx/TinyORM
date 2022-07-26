@@ -1,5 +1,6 @@
 #pragma once
 
+#include <orm/db.hpp>
 #include <tom/migration.hpp>
 
 namespace Migrations
@@ -28,6 +29,16 @@ namespace Migrations
                      .references(ID).on("torrent_previewable_file_properties")
                      .cascadeOnDelete().cascadeOnUpdate();
             });
+
+            using Orm::DB;
+
+            // Add the table comment (MySQL only)
+            if (DB::getDefaultConnection() ==
+                QStringLiteral("tinyorm_testdata_tom_mysql")
+            )
+                DB::unprepared("alter table `file_property_properties` comment = "
+                               "'used in Builder::chunk() tests, must have exactly 8 "
+                               "rows'");
         }
 
         /*! Reverse the migrations. */
