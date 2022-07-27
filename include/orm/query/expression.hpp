@@ -35,9 +35,9 @@ namespace Orm::Query
         inline Expression &operator=(const Expression &) = default;
 
         /*! Move constructor. */
-        inline Expression(Expression &&) = default;
+        inline Expression(Expression &&) noexcept = default;
         /*! Move assignment operator. */
-        inline Expression &operator=(Expression &&) = default;
+        inline Expression &operator=(Expression &&) noexcept = default;
 
         /*! Converting operator, QVariant(Expression). */
         inline operator QVariant() const; // NOLINT(google-explicit-constructor)

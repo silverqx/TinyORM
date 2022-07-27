@@ -52,7 +52,7 @@ namespace Orm::Query
         Builder &operator=(const Builder &) = delete;
 
         /*! Move constructor. */
-        inline Builder(Builder &&) = default;
+        inline Builder(Builder &&) noexcept = default;
         /*! Deleted move assignment operator (class constains reference and const). */
         Builder &operator=(Builder &&) = delete;
 
