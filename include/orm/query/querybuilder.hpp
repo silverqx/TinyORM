@@ -28,7 +28,7 @@ namespace Orm::Query
     // TODO querybuilder, upsert, whereDay/Month/..., whereBetween, whereFullText silverqx
     // FUTURE querybuilder, paginator silverqx
     /*! Database query builder. */
-    class SHAREDLIB_EXPORT Builder : public Concerns::BuildsQueries // clazy:exclude=copyable-polymorphic
+    class SHAREDLIB_EXPORT Builder : public Concerns::BuildsQueries<QSqlQuery> // clazy:exclude=copyable-polymorphic
     {
         /*! Alias for the query grammar. */
         using QueryGrammar = Query::Grammars::Grammar;
@@ -36,7 +36,7 @@ namespace Orm::Query
         using QueryUtils = Orm::Utils::Query;
 
         // To access enforceOrderBy(), defaultKeyName(), clone(), forPageAfterId()
-        friend Concerns::BuildsQueries;
+        friend Concerns::BuildsQueries<QSqlQuery>;
 
     public:
         /*! Constructor. */

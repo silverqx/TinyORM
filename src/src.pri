@@ -25,7 +25,6 @@ sourcesList += \
     $$PWD/orm/libraryinfo.cpp \
     $$PWD/orm/mysqlconnection.cpp \
     $$PWD/orm/postgresconnection.cpp \
-    $$PWD/orm/query/concerns/buildsqueries.cpp \
     $$PWD/orm/query/grammars/grammar.cpp \
     $$PWD/orm/query/grammars/mysqlgrammar.cpp \
     $$PWD/orm/query/grammars/postgresgrammar.cpp \
