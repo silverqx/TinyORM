@@ -107,7 +107,7 @@ namespace Orm::Utils
                 simpleBindingsList << bindingValue; // clazy:exclude=reserve-candidates
         }
 
-        return {queryString, simpleBindingsList};
+        return {std::move(queryString), std::move(simpleBindingsList)};
     }
 
 } // namespace Orm::Utils
