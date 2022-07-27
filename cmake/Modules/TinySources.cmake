@@ -40,7 +40,10 @@ function(tinyorm_sources out_headers out_sources)
         exceptions/invalidformaterror.hpp
         exceptions/invalidtemplateargumenterror.hpp
         exceptions/logicerror.hpp
+        exceptions/multiplerecordsfounderror.hpp
+        exceptions/ormerror.hpp
         exceptions/queryerror.hpp
+        exceptions/recordsnotfounderror.hpp
         exceptions/runtimeerror.hpp
         exceptions/sqlerror.hpp
         exceptions/sqltransactionerror.hpp
@@ -57,6 +60,7 @@ function(tinyorm_sources out_headers out_sources)
         ormconcepts.hpp
         ormtypes.hpp
         postgresconnection.hpp
+        query/concerns/buildsqueries.hpp
         query/expression.hpp
         query/grammars/grammar.hpp
         query/grammars/mysqlgrammar.hpp
@@ -177,6 +181,7 @@ function(tinyorm_sources out_headers out_sources)
         libraryinfo.cpp
         mysqlconnection.cpp
         postgresconnection.cpp
+        query/concerns/buildsqueries.cpp
         query/grammars/grammar.cpp
         query/grammars/mysqlgrammar.cpp
         query/grammars/postgresgrammar.cpp

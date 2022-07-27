@@ -9,6 +9,7 @@ keywords: [c++ orm, sql, c++ sql, c++ query builder, database, query builder, ti
 
 - [Introduction](#introduction)
 - [Running Database Queries](#running-database-queries)
+    - [Chunking Results](#chunking-results)
     - [Aggregates](#aggregates)
 - [Select Statements](#select-statements)
 - [Raw Expressions](#raw-expressions)
@@ -124,6 +125,47 @@ This second `pluck` overload returns `std::map<T, QVariant>` so you have to prov
 The `implode` method can be used to join column values. For example, you may use this method to concatenate prices with the `, ` character as the glue:
 
     DB::table("orders")->where("price", ">", 100).implode("price", ", ");
+
+### Chunking Results
+
+If you need to work with thousands of database records, consider using the `chunk` method provided by the `DB` facade. This method retrieves a small chunk of results at a time and feeds each chunk into a lambda expression for processing. For example, let's retrieve the entire `users` table in chunks of 100 records at a time:
+
+    DB::table("users")->orderBy("id").chunk(100, [](QSqlQuery &users, const int page)
+    {
+        while (users.next()) {
+            //
+        }
+
+        return true;
+    });
+
+You may stop further chunks from being processed by returning `false` from the closure:
+
+    DB::table("users")->orderBy("id").chunk(100, [](QSqlQuery &users, const int page)
+    {
+        // Process the records...
+
+        return false;
+    });
+
+If you are updating database records while chunking results, your chunk results could change in unexpected ways. If you plan to update the retrieved records while chunking, it is always best to use the `chunkById` method instead. This method will automatically paginate the results based on the record's primary key:
+
+    DB::table("users")
+        ->whereEq("active", false)
+        .orderBy("id")
+        .chunkById(100, [](QSqlQuery &users, const int /*unused*/)
+        {
+            while (users.next())
+                DB::table("users")
+                    ->whereEq("id", users.value("id"))
+                    .update({{"active", true}});
+
+            return true;
+        });
+
+:::caution
+When updating or deleting records inside the chunk callback, any changes to the primary key or foreign keys could affect the chunk query. This could potentially result in records not being included in the chunked results, it can be avoided using the `chunkById` method.
+:::
 
 ### Aggregates
 

@@ -10,7 +10,7 @@ TINY_SYSTEM_HEADER
 #include <unordered_set>
 
 #include "orm/ormconcepts.hpp"
-#include "orm/ormtypes.hpp"
+#include "orm/query/concerns/buildsqueries.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/utils/query.hpp"
 
@@ -25,15 +25,18 @@ namespace Orm::Query
     concept Remove = std::convertible_to<T, quint64> ||
                      std::same_as<T, Query::Expression>;
 
-    // TODO add inRandomOrder() silverqx
-    // TODO QueryBuilder::updateOrInsert() silverqx
+    // TODO querybuilder, upsert, whereDay/Month/..., whereBetween, whereFullText silverqx
+    // FUTURE querybuilder, paginator silverqx
     /*! Database query builder. */
-    class SHAREDLIB_EXPORT Builder // clazy:exclude=copyable-polymorphic
+    class SHAREDLIB_EXPORT Builder : public Concerns::BuildsQueries // clazy:exclude=copyable-polymorphic
     {
         /*! Alias for the query grammar. */
         using QueryGrammar = Query::Grammars::Grammar;
         /*! Alias for query utils. */
         using QueryUtils = Orm::Utils::Query;
+
+        // To access enforceOrderBy(), defaultKeyName(), clone(), forPageAfterId()
+        friend Concerns::BuildsQueries;
 
     public:
         /*! Constructor. */
@@ -41,7 +44,7 @@ namespace Orm::Query
         /* Need to be the polymorphic type because of dynamic_cast<>
            in Grammar::concatenateWhereClauses(). */
         /*! Virtual destructor. */
-        inline virtual ~Builder() = default;
+        inline ~Builder() override = default;
 
         /*! Copy constructor. */
         inline Builder(const Builder &) = default;
@@ -79,6 +82,10 @@ namespace Orm::Query
         QSqlQuery first(const QVector<Column> &columns = {ASTERISK});
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
+        /*! Get a single column's value from the first result of a query if it's
+            the sole matching record. */
+        QVariant soleValue(const Column &column);
+
         /*! Get the vector with the values of a given column. */
         QVector<QVariant> pluck(const QString &column);
         /*! Get the vector with the values of a given column. */
@@ -544,6 +551,14 @@ namespace Orm::Query
         Builder &skip(int value);
         /*! Set the limit and offset for a given page. */
         Builder &forPage(int page, int perPage = 30);
+        /*! Constrain the query to the previous "page" of results before a given ID. */
+        Builder &forPageBeforeId(int perPage = 30, const QVariant &lastId = {},
+                                 const QString &column = Orm::Constants::ID,
+                                 bool prependOrder = false);
+        /*! Constrain the query to the next "page" of results after a given ID. */
+        Builder &forPageAfterId(int perPage = 30, const QVariant &lastId = {},
+                                const QString &column = Orm::Constants::ID,
+                                bool prependOrder = false);
 
         /* Others */
         /*! Increment a column's value by a given amount. */
@@ -578,6 +593,8 @@ namespace Orm::Query
         void dd(bool replaceBindings = true, bool simpleBindings = false);
 
         /* Getters / Setters */
+        /*! Get the default key name of the table. */
+        const QString &defaultKeyName() const;
         /*! Get a database connection. */
         inline DatabaseConnection &getConnection() const;
         /*! Get the query grammar instance. */
@@ -663,6 +680,8 @@ namespace Orm::Query
             COLUMNS,
         };
 
+        /*! Clone the query. */
+        inline Builder clone() const;
         /*! Clone the query without the given properties. */
         Builder cloneWithout(const std::unordered_set<PropertyType> &properties) const;
         /*! Clone the query without the given bindings. */
@@ -731,6 +750,11 @@ namespace Orm::Query
 
         /*! Strip off the table name or alias from a column identifier. */
         QString stripTableForPluck(const QString &column) const;
+
+        /*! Throw an exception if the query doesn't have an orderBy clause. */
+        void enforceOrderBy() const;
+        /*! Get an array with all orders with a given column removed. */
+        QVector<OrderByItem> removeExistingOrdersFor(const QString &column) const;
 
         /* Getters / Setters */
         /*! Set the aggregate property without running the query. */
@@ -1479,6 +1503,11 @@ namespace Orm::Query
     Builder::getLock() const
     {
         return m_lock;
+    }
+
+    Builder Builder::clone() const
+    {
+        return *this;
     }
 
     /* protected */

@@ -33,8 +33,10 @@ headersList += \
     $$PWD/orm/exceptions/invalidformaterror.hpp \
     $$PWD/orm/exceptions/invalidtemplateargumenterror.hpp \
     $$PWD/orm/exceptions/logicerror.hpp \
+    $$PWD/orm/exceptions/multiplerecordsfounderror.hpp \
     $$PWD/orm/exceptions/ormerror.hpp \
     $$PWD/orm/exceptions/queryerror.hpp \
+    $$PWD/orm/exceptions/recordsnotfounderror.hpp \
     $$PWD/orm/exceptions/runtimeerror.hpp \
     $$PWD/orm/exceptions/sqlerror.hpp \
     $$PWD/orm/exceptions/sqltransactionerror.hpp \
@@ -52,6 +54,7 @@ headersList += \
     $$PWD/orm/ormconcepts.hpp \
     $$PWD/orm/ormtypes.hpp \
     $$PWD/orm/postgresconnection.hpp \
+    $$PWD/orm/query/concerns/buildsqueries.hpp \
     $$PWD/orm/query/expression.hpp \
     $$PWD/orm/query/grammars/grammar.hpp \
     $$PWD/orm/query/grammars/mysqlgrammar.hpp \

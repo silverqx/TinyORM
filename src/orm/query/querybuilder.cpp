@@ -1,11 +1,12 @@
 #include "orm/query/querybuilder.hpp"
 
+#include <QDebug>
+
+#include <range/v3/view/remove_if.hpp>
+
 #include "orm/databaseconnection.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/query/joinclause.hpp"
-#include "orm/utils/query.hpp"
-
-using QueryUtils = Orm::Utils::Query;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -74,6 +75,24 @@ QVariant Builder::value(const Column &column)
         column_ = std::get<QString>(column);
 
     const auto query = first({column});
+
+    if (m_connection.pretending())
+        return {};
+
+    return query.value(column_);
+}
+
+QVariant Builder::soleValue(const Column &column)
+{
+    // Expression support
+    QString column_;
+
+    if (std::holds_alternative<Expression>(column))
+        column_ = std::get<Expression>(column).getValue().value<QString>();
+    else
+        column_ = std::get<QString>(column);
+
+    const auto query = sole({column});
 
     if (m_connection.pretending())
         return {};
@@ -822,6 +841,40 @@ Builder &Builder::forPage(const int page, const int perPage)
     return offset((page - 1) * perPage).limit(perPage);
 }
 
+// NOTE api little different, added bool prependOrder parameter silverqx
+Builder &Builder::forPageBeforeId(const int perPage, const QVariant &lastId,
+                                  const QString &column, const bool prependOrder)
+{
+    m_orders = removeExistingOrdersFor(column);
+
+    if (lastId.isValid() && !lastId.isNull())
+        where(column, LT, lastId);
+
+    if (prependOrder)
+        m_orders.prepend({column, DESC});
+    else
+        orderBy(column, DESC);
+
+    return limit(perPage);
+}
+
+// NOTE api little different, added bool prependOrder parameter silverqx
+Builder &Builder::forPageAfterId(const int perPage, const QVariant &lastId,
+                                 const QString &column, const bool prependOrder)
+{
+    m_orders = removeExistingOrdersFor(column);
+
+    if (lastId.isValid() && !lastId.isNull())
+        where(column, GT, lastId);
+
+    if (prependOrder)
+        m_orders.prepend({column, ASC});
+    else
+        orderBy(column, ASC);
+
+    return limit(perPage);
+}
+
 /* Pessimistic Locking */
 
 Builder &Builder::lockForUpdate()
@@ -902,6 +955,11 @@ void Builder::dd(const bool replaceBindings, const bool simpleBindings)
 }
 
 /* Getters / Setters */
+
+const QString &Builder::defaultKeyName() const
+{
+    return ID;
+}
 
 QVector<QVariant> Builder::getBindings() const
 {
@@ -1229,6 +1287,26 @@ QString Builder::stripTableForPluck(const QString &column) const
         return m_grammar.unqualifyColumn(column);
 
     return column.split(as).last().trimmed();
+}
+
+void Builder::enforceOrderBy() const
+{
+    if (m_orders.isEmpty())
+        throw Exceptions::RuntimeError(
+                "You must specify an orderBy clause when using this function.");
+}
+
+QVector<OrderByItem> Builder::removeExistingOrdersFor(const QString &column) const
+{
+    return m_orders
+            | ranges::views::remove_if([&column](const OrderByItem &order)
+    {
+        if (std::holds_alternative<Expression>(order.column))
+            return false;
+
+        return std::get<QString>(order.column) == column;
+    })
+            | ranges::to<QVector<OrderByItem>>();
 }
 
 /* Getters / Setters */

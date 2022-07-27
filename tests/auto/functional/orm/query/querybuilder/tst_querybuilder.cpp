@@ -18,9 +18,11 @@ using Orm::Constants::NAME;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
+using Orm::Exceptions::RuntimeError;
 using Orm::Query::Builder;
 
 using QueryBuilder = Orm::Query::Builder;
+using QueryUtils = Orm::Utils::Query;
 
 using TestUtils::Databases;
 
@@ -62,6 +64,33 @@ private Q_SLOTS:
     void doesntExistOr_WithReturnType() const;
 
     void limit() const;
+
+    /* Builds Queries */
+    void chunk() const;
+    void chunk_ReturnFalse() const;
+    void chunk_EnforceOrderBy() const;
+    void chunk_EmptyResult() const;
+
+    void each() const;
+    void each_ReturnFalse() const;
+    void each_EnforceOrderBy() const;
+    void each_EmptyResult() const;
+
+    void chunkById() const;
+    void chunkById_ReturnFalse() const;
+    void chunkById_EmptyResult() const;
+
+    void chunkById_WithAlias() const;
+    void chunkById_ReturnFalse_WithAlias() const;
+    void chunkById_EmptyResult_WithAlias() const;
+
+    void eachById() const;
+    void eachById_ReturnFalse() const;
+    void eachById_EmptyResult() const;
+
+    void eachById_WithAlias() const;
+    void eachById_ReturnFalse_WithAlias() const;
+    void eachById_EmptyResult_WithAlias() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -762,6 +791,558 @@ void tst_QueryBuilder::limit() const
 
         QCOMPARE(query.size(), 4);
     }
+}
+
+/* Builds Queries */
+
+void tst_QueryBuilder::chunk() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // <page, chunk_rowsCount>
+    const std::unordered_map<int, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    {
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .orderBy(ID)
+                  .chunk(3, [&compareResultSize, &ids](QSqlQuery &query, const int page)
+    {
+        compareResultSize(query, page);
+
+        while (query.next())
+            ids.emplace_back(query.value(ID).value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::chunk_ReturnFalse() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // <page, chunk_rowsCount> (I leave it here also in this test, doesn't matter much
+    const std::unordered_map<int, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    {
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .orderBy(ID)
+                  .chunk(3, [&compareResultSize, &ids](QSqlQuery &query, const int page)
+    {
+        compareResultSize(query, page);
+
+        while (query.next()) {
+            auto id = query.value(ID).value<quint64>();
+            ids.emplace_back(id);
+
+            // Intetrupt chunk-ing
+            if (id == 5)
+                return false;
+        }
+
+        return true;
+    });
+
+    QVERIFY(!result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::chunk_EnforceOrderBy() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    QVERIFY_EXCEPTION_THROWN(createQuery(connection)->from("file_property_properties")
+                             .chunk(3, [](QSqlQuery &/*unused*/, const int /*unused*/)
+    {
+        return true;
+    }),
+            RuntimeError);
+}
+
+void tst_QueryBuilder::chunk_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .chunk(3, [](QSqlQuery &/*unused*/, const int /*unused*/)
+    {
+        return true;
+    });
+
+    QVERIFY(result);
+}
+
+void tst_QueryBuilder::each() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    std::vector<int> indexes;
+    indexes.reserve(8);
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .orderBy(ID)
+                  .each([&indexes, &ids](QSqlQuery &query, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(query.value(ID).value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4, 5, 6, 7};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::each_ReturnFalse() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    std::vector<int> indexes;
+    indexes.reserve(5);
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .orderBy(ID)
+                  .each([&indexes, &ids](QSqlQuery &query, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(query.value(ID).value<quint64>());
+
+        return index != 4; // false/interrupt on 4
+    });
+
+    QVERIFY(!result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::each_EnforceOrderBy() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    QVERIFY_EXCEPTION_THROWN(createQuery(connection)->from("file_property_properties")
+                             .each([](QSqlQuery &/*unused*/, const int /*unused*/)
+    {
+        return true;
+    }),
+            RuntimeError);
+}
+
+void tst_QueryBuilder::each_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .each([](QSqlQuery &/*unused*/, const int /*unused*/)
+    {
+        return true;
+    });
+
+    QVERIFY(result);
+}
+
+void tst_QueryBuilder::chunkById() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // <page, chunk_rowsCount>
+    const std::unordered_map<int, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    {
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .orderBy(ID)
+                  .chunkById(3, [&compareResultSize, &ids]
+                                (QSqlQuery &query, const int page)
+    {
+        compareResultSize(query, page);
+
+        while (query.next())
+            ids.emplace_back(query.value(ID).value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::chunkById_ReturnFalse() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // <page, chunk_rowsCount> (I leave it here also in this test, doesn't matter much
+    const std::unordered_map<int, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    {
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .orderBy(ID)
+                  .chunkById(3, [&compareResultSize, &ids]
+                                (QSqlQuery &query, const int page)
+    {
+        compareResultSize(query, page);
+
+        while (query.next()) {
+            auto id = query.value(ID).value<quint64>();
+            ids.emplace_back(id);
+
+            // Intetrupt chunk-ing
+            if (id == 5)
+                return false;
+        }
+
+        return true;
+    });
+
+    QVERIFY(!result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::chunkById_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .chunkById(3, [](QSqlQuery &/*unused*/, const int /*unused*/)
+    {
+        return true;
+    });
+
+    QVERIFY(result);
+}
+
+void tst_QueryBuilder::chunkById_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // <page, chunk_rowsCount>
+    const std::unordered_map<int, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    {
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .select({ASTERISK, "id as id_as"})
+                  .orderBy(ID)
+                  .chunkById(3, [&compareResultSize, &ids]
+                                (QSqlQuery &query, const int page)
+    {
+        compareResultSize(query, page);
+
+        while (query.next())
+            ids.emplace_back(query.value(ID).value<quint64>());
+
+        return true;
+    },
+            ID, "id_as");
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::chunkById_ReturnFalse_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // <page, chunk_rowsCount> (I leave it here also in this test, doesn't matter much
+    const std::unordered_map<int, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    {
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .select({ASTERISK, "id as id_as"})
+                  .orderBy(ID)
+                  .chunkById(3, [&compareResultSize, &ids]
+                                (QSqlQuery &query, const int page)
+    {
+        compareResultSize(query, page);
+
+        while (query.next()) {
+            auto id = query.value(ID).value<quint64>();
+            ids.emplace_back(id);
+
+            // Intetrupt chunk-ing
+            if (id == 5)
+                return false;
+        }
+
+        return true;
+    },
+            ID, "id_as");
+
+    QVERIFY(!result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::chunkById_EmptyResult_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .select({ASTERISK, "id as id_as"})
+                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .chunkById(3, [](QSqlQuery &/*unused*/, const int /*unused*/)
+    {
+        return true;
+    },
+            ID, "id_as");
+
+    QVERIFY(result);
+}
+
+void tst_QueryBuilder::eachById() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    std::vector<int> indexes;
+    indexes.reserve(8);
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .orderBy(ID)
+                  .eachById([&indexes, &ids](QSqlQuery &query, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(query.value(ID).value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4, 5, 6, 7};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::eachById_ReturnFalse() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    std::vector<int> indexes;
+    indexes.reserve(5);
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .orderBy(ID)
+                  .eachById([&indexes, &ids](QSqlQuery &query, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(query.value(ID).value<quint64>());
+
+        return index != 4; // false/interrupt on 4
+    });
+
+    QVERIFY(!result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::eachById_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .eachById([](QSqlQuery &/*unused*/, const int /*unused*/)
+    {
+        return true;
+    });
+
+    QVERIFY(result);
+}
+
+void tst_QueryBuilder::eachById_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    std::vector<int> indexes;
+    indexes.reserve(8);
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .select({ASTERISK, "id as id_as"})
+                  .orderBy(ID)
+                  .eachById([&indexes, &ids](QSqlQuery &query, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(query.value(ID).value<quint64>());
+
+        return true;
+    },
+            1000, ID, "id_as");
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4, 5, 6, 7};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::eachById_ReturnFalse_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    std::vector<int> indexes;
+    indexes.reserve(5);
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .select({ASTERISK, "id as id_as"})
+                  .orderBy(ID)
+                  .eachById([&indexes, &ids](QSqlQuery &query, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(query.value(ID).value<quint64>());
+
+        return index != 4; // false/interrupt on 4
+    },
+            1000, ID, "id_as");
+
+    QVERIFY(!result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_QueryBuilder::eachById_EmptyResult_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("file_property_properties")
+                  .select({ASTERISK, "id as id_as"})
+                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .eachById([](QSqlQuery &/*unused*/, const int /*unused*/)
+    {
+        return true;
+    },
+            1000, ID, "id_as");
+
+    QVERIFY(result);
 }
 
 /* private */

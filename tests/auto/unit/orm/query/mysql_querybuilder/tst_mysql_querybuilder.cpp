@@ -2,6 +2,8 @@
 #include <QtTest>
 
 #include "orm/db.hpp"
+#include "orm/exceptions/multiplerecordsfounderror.hpp"
+#include "orm/exceptions/recordsnotfounderror.hpp"
 #include "orm/query/querybuilder.hpp"
 
 #include "databases.hpp"
@@ -18,6 +20,8 @@ using Orm::Constants::OR;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
+using Orm::Exceptions::MultipleRecordsFoundError;
+using Orm::Exceptions::RecordsNotFoundError;
 using Orm::Query::Builder;
 using Orm::Query::Expression;
 
@@ -179,6 +183,19 @@ private Q_SLOTS:
 
     void remove() const;
     void remove_WithExpression() const;
+
+    /* Builds Queries */
+    void tap() const;
+
+    void sole() const;
+    void sole_RecordsNotFoundError() const;
+    void sole_MultipleRecordsFoundError() const;
+    void sole_Pretending() const;
+
+    void soleValue() const;
+    void soleValue_RecordsNotFoundError() const;
+    void soleValue_MultipleRecordsFoundError() const;
+    void soleValue_Pretending() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -2632,6 +2649,112 @@ void tst_MySql_QueryBuilder::remove_WithExpression() const
     QCOMPARE(firstLog.query,
              "delete from `torrents` where `torrents`.`id` = 2223");
     QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+/* Builds Queries */
+
+void tst_MySql_QueryBuilder::tap() const
+{
+    auto builder = createQuery();
+
+    auto callbackInvoked = false;
+    auto &tappedBuilder = builder->tap([&callbackInvoked](QueryBuilder &query)
+    {
+        callbackInvoked = true;
+
+        return query;
+    });
+
+    QVERIFY(callbackInvoked);
+    // It must be the same QueryBuilder (the same memory address)
+    QVERIFY(reinterpret_cast<uintptr_t>(&*builder)
+            == reinterpret_cast<uintptr_t>(&tappedBuilder));
+}
+
+void tst_MySql_QueryBuilder::sole() const
+{
+    auto query = createQuery()->from("torrents").whereEq(ID, 1).sole();
+
+    QVERIFY(query.isValid() && query.isActive() && query.isSelect());
+    QCOMPARE(query.value(ID).value<quint64>(), static_cast<quint64>(1));
+    QCOMPARE(query.value(NAME).value<QString>(), QStringLiteral("test1"));
+}
+
+void tst_MySql_QueryBuilder::sole_RecordsNotFoundError() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+            createQuery()->from("torrents").whereEq("name", "dummy-NON_EXISTENT").sole(),
+            RecordsNotFoundError);
+}
+
+void tst_MySql_QueryBuilder::sole_MultipleRecordsFoundError() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+            createQuery()->from("torrents").whereEq("user_id", 1).sole(),
+                MultipleRecordsFoundError);
+}
+
+void tst_MySql_QueryBuilder::sole_Pretending() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").whereEq("name", "dummy-NON_EXISTENT").sole();
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select * from `torrents` where `name` = ? limit 2");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
+}
+
+void tst_MySql_QueryBuilder::soleValue() const
+{
+    auto value = createQuery()->from("torrents").whereEq(ID, 1).soleValue(NAME);
+
+    QVERIFY((std::is_same_v<decltype (value), QVariant>));
+    QVERIFY(value.isValid() && !value.isNull());
+    QCOMPARE(value, QVariant(QStringLiteral("test1")));
+}
+
+void tst_MySql_QueryBuilder::soleValue_RecordsNotFoundError() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+            createQuery()->from("torrents")
+                .whereEq("name", "dummy-NON_EXISTENT")
+                .soleValue(NAME),
+            RecordsNotFoundError);
+}
+
+void tst_MySql_QueryBuilder::soleValue_MultipleRecordsFoundError() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+            createQuery()->from("torrents")
+                .whereEq("user_id", 1)
+                .soleValue(NAME),
+            MultipleRecordsFoundError);
+}
+
+void tst_MySql_QueryBuilder::soleValue_Pretending() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents")
+                .whereEq("name", "dummy-NON_EXISTENT")
+                .soleValue(NAME);
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select `name` from `torrents` where `name` = ? limit 2");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
 }
 
 /* private */
