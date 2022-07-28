@@ -526,15 +526,21 @@ void tst_Model_Connection_Independent::chunk_EnforceOrderBy() const
 
 void tst_Model_Connection_Independent::chunk_EmptyResult() const
 {
+    auto callbackInvoked = false;
+
     auto result = FilePropertyProperty::whereEq(NAME,
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
-                  .chunk(3, [](QVector<FilePropertyProperty> &&/*unused*/,
-                               const int /*unused*/)
+                  .chunk(3, [&callbackInvoked]
+                            (QVector<FilePropertyProperty> &&/*unused*/,
+                             const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     });
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
@@ -625,14 +631,20 @@ void tst_Model_Connection_Independent::each_EnforceOrderBy() const
 
 void tst_Model_Connection_Independent::each_EmptyResult() const
 {
+    auto callbackInvoked = false;
+
     auto result = FilePropertyProperty::whereEq(NAME,
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
-                  .each([](FilePropertyProperty &&/*unused*/, const int /*unused*/)
+                  .each([&callbackInvoked]
+                        (FilePropertyProperty &&/*unused*/, const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     });
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
@@ -735,13 +747,19 @@ void tst_Model_Connection_Independent::chunkMap_EnforceOrderBy() const
 
 void tst_Model_Connection_Independent::chunkMap_EmptyResult() const
 {
+    auto callbackInvoked = false;
+
     auto result = FilePropertyProperty::whereEq(NAME,
                                                 QStringLiteral("dummy-NON_EXISTENT"))
-                  ->chunkMap([](FilePropertyProperty &&model)
+                  ->chunkMap([&callbackInvoked]
+                             (FilePropertyProperty &&model)
     {
+        callbackInvoked = true;
+
         return std::move(model);
     });
 
+    QVERIFY(!callbackInvoked);
     QVERIFY((std::is_same_v<decltype (result), QVector<FilePropertyProperty>>));
     QVERIFY(result.isEmpty());
 }
@@ -800,14 +818,20 @@ tst_Model_Connection_Independent::chunkMap_EnforceOrderBy_TemplatedReturnValue()
 
 void tst_Model_Connection_Independent::chunkMap_EmptyResult_TemplatedReturnValue() const
 {
+    auto callbackInvoked = false;
+
     auto result = FilePropertyProperty::whereEq(NAME,
                                                 QStringLiteral("dummy-NON_EXISTENT"))
-                  ->chunkMap<QString>([](FilePropertyProperty &&/*unused*/)
+                  ->chunkMap<QString>([&callbackInvoked]
+                                      (FilePropertyProperty &&/*unused*/)
                                       -> QString
     {
+        callbackInvoked = true;
+
         return {};
     });
 
+    QVERIFY(!callbackInvoked);
     QVERIFY((std::is_same_v<decltype (result), QVector<QString>>));
     QVERIFY(result.isEmpty());
 }
@@ -894,15 +918,21 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse() const
 
 void tst_Model_Connection_Independent::chunkById_EmptyResult() const
 {
+    auto callbackInvoked = false;
+
     auto result = FilePropertyProperty::whereEq(NAME,
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
-                  .chunkById(3, [](QVector<FilePropertyProperty> &&/*unused*/,
-                                   const int /*unused*/)
+                  .chunkById(3, [&callbackInvoked]
+                                (QVector<FilePropertyProperty> &&/*unused*/,
+                                 const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     });
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
@@ -992,16 +1022,22 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse_WithAlias() const
 
 void tst_Model_Connection_Independent::chunkById_EmptyResult_WithAlias() const
 {
+    auto callbackInvoked = false;
+
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
                   ->whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
-                  .chunkById(3, [](QVector<FilePropertyProperty> &&/*unused*/,
-                                   const int /*unused*/)
+                  .chunkById(3, [&callbackInvoked]
+                                (QVector<FilePropertyProperty> &&/*unused*/,
+                                 const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     },
             ID, "id_as");
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
@@ -1063,14 +1099,20 @@ void tst_Model_Connection_Independent::eachById_ReturnFalse() const
 
 void tst_Model_Connection_Independent::eachById_EmptyResult() const
 {
+    auto callbackInvoked = false;
+
     auto result = FilePropertyProperty::whereEq(NAME,
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
-                  .eachById([](FilePropertyProperty &&/*unused*/, const int /*unused*/)
+                  .eachById([&callbackInvoked]
+                            (FilePropertyProperty &&/*unused*/, const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     });
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
@@ -1136,15 +1178,21 @@ void tst_Model_Connection_Independent::eachById_ReturnFalse_WithAlias() const
 
 void tst_Model_Connection_Independent::eachById_EmptyResult_WithAlias() const
 {
+    auto callbackInvoked = false;
+
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
                   ->whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
-                  .eachById([](FilePropertyProperty &&/*unused*/, const int /*unused*/)
+                  .eachById([&callbackInvoked]
+                            (FilePropertyProperty &&/*unused*/, const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     },
             1000, ID, "id_as");
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 

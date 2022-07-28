@@ -891,14 +891,20 @@ void tst_QueryBuilder::chunk_EmptyResult() const
 {
     QFETCH_GLOBAL(QString, connection);
 
+    auto callbackInvoked = false;
+
     auto result = createQuery(connection)->from("file_property_properties")
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
-                  .chunk(3, [](QSqlQuery &/*unused*/, const int /*unused*/)
+                  .chunk(3, [&callbackInvoked]
+                            (QSqlQuery &/*unused*/, const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     });
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
@@ -978,14 +984,20 @@ void tst_QueryBuilder::each_EmptyResult() const
 {
     QFETCH_GLOBAL(QString, connection);
 
+    auto callbackInvoked = false;
+
     auto result = createQuery(connection)->from("file_property_properties")
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
-                  .each([](QSqlQuery &/*unused*/, const int /*unused*/)
+                  .each([&callbackInvoked]
+                        (QSqlQuery &/*unused*/, const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     });
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
@@ -1075,14 +1087,20 @@ void tst_QueryBuilder::chunkById_EmptyResult() const
 {
     QFETCH_GLOBAL(QString, connection);
 
+    auto callbackInvoked = false;
+
     auto result = createQuery(connection)->from("file_property_properties")
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
-                  .chunkById(3, [](QSqlQuery &/*unused*/, const int /*unused*/)
+                  .chunkById(3, [&callbackInvoked]
+                                (QSqlQuery &/*unused*/, const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     });
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
@@ -1176,16 +1194,22 @@ void tst_QueryBuilder::chunkById_EmptyResult_WithAlias() const
 {
     QFETCH_GLOBAL(QString, connection);
 
+    auto callbackInvoked = false;
+
     auto result = createQuery(connection)->from("file_property_properties")
                   .select({ASTERISK, "id as id_as"})
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
-                  .chunkById(3, [](QSqlQuery &/*unused*/, const int /*unused*/)
+                  .chunkById(3, [&callbackInvoked]
+                                (QSqlQuery &/*unused*/, const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     },
             ID, "id_as");
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
@@ -1253,14 +1277,20 @@ void tst_QueryBuilder::eachById_EmptyResult() const
 {
     QFETCH_GLOBAL(QString, connection);
 
+    auto callbackInvoked = false;
+
     auto result = createQuery(connection)->from("file_property_properties")
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
-                  .eachById([](QSqlQuery &/*unused*/, const int /*unused*/)
+                  .eachById([&callbackInvoked]
+                            (QSqlQuery &/*unused*/, const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     });
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
@@ -1332,16 +1362,22 @@ void tst_QueryBuilder::eachById_EmptyResult_WithAlias() const
 {
     QFETCH_GLOBAL(QString, connection);
 
+    auto callbackInvoked = false;
+
     auto result = createQuery(connection)->from("file_property_properties")
                   .select({ASTERISK, "id as id_as"})
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
-                  .eachById([](QSqlQuery &/*unused*/, const int /*unused*/)
+                  .eachById([&callbackInvoked]
+                            (QSqlQuery &/*unused*/, const int /*unused*/)
     {
+        callbackInvoked = true;
+
         return true;
     },
             1000, ID, "id_as");
 
+    QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
 
