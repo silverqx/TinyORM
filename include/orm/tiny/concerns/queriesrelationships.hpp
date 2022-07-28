@@ -72,8 +72,6 @@ namespace Private
     template<typename Model>
     class QueriesRelationships
     {
-        Q_DISABLE_COPY(QueriesRelationships)
-
         // Used by HasRelationStore::QueriesRelationshipsStore::visited()
         friend typename Model::template ModelTypeApply<HasRelationStore>;
         // Used by QueriesRelationships::hasInternalVisited()
@@ -99,6 +97,16 @@ namespace Private
         inline QueriesRelationships() = default;
         /*! Default destructor. */
         inline ~QueriesRelationships() = default;
+
+        /*! Copy constructor. */
+        inline QueriesRelationships(const QueriesRelationships &) = default;
+        /*! Deleted copy assignment operator (not needed). */
+        QueriesRelationships &operator=(const QueriesRelationships &) = delete;
+
+        /*! Move constructor. */
+        inline QueriesRelationships(QueriesRelationships &&) noexcept = default;
+        /*! Deleted move assignment operator (not needed). */
+        QueriesRelationships &operator=(QueriesRelationships &&) = delete;
 
         /*! Add a relationship count / exists condition to the query. */
         template<typename Related = void>

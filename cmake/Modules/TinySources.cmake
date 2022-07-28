@@ -106,6 +106,7 @@ function(tinyorm_sources out_headers out_sources)
 
     if(ORM)
         list(APPEND headers
+            tiny/concerns/buildsqueries.hpp
             tiny/concerns/guardedmodel.hpp
             tiny/concerns/guardsattributes.hpp
             tiny/concerns/hasattributes.hpp

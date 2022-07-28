@@ -11,7 +11,7 @@ TINY_SYSTEM_HEADER
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/remove_if.hpp>
 
-#include "orm/databaseconnection.hpp"
+#include "orm/tiny/concerns/buildsqueries.hpp"
 #include "orm/tiny/concerns/queriesrelationships.hpp"
 #include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/tinybuilderproxies.hpp"
@@ -22,14 +22,13 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny
 {
 
-    /*! ORM Tiny builder. */
+    /*! ORM Tiny builder (returns a hydrated models instead of the QSqlQuery). */
     template<typename Model>
     class Builder :
+            public Concerns::BuildsQueries<Model>,
             public BuilderProxies<Model>,
             public Concerns::QueriesRelationships<Model>
     {
-        Q_DISABLE_COPY(Builder)
-
         // Used by TinyBuilderProxies::where/latest/oldest/update()
         friend BuilderProxies<Model>;
 
@@ -40,9 +39,23 @@ namespace Orm::Tiny
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
+        // To access enforceOrderBy(), and defaultKeyName()
+        template<ModelConcept T>
+        friend class Concerns::BuildsQueries;
+
     public:
         /*! Constructor. */
         Builder(std::shared_ptr<QueryBuilder> query, Model &model);
+
+        /*! Copy constructor (needed by the chunkById() -> clone() method). */
+        inline Builder(const Builder &) = default;
+        /*! Deleted copy assignment operator (not needed). */
+        Builder &operator=(const Builder &) = delete;
+
+        /*! Move constructor (copy ctor needed so enable also the move ctor). */
+        inline Builder(Builder &&) noexcept = default;
+        /*! Deleted move assignment operator (not needed). */
+        Builder &operator=(Builder &&) = delete;
 
         /*! Get the SQL representation of the query. */
         inline QString toSql() const;
@@ -55,6 +68,9 @@ namespace Orm::Tiny
 
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
+        /*! Get a single column's value from the first result of a query if it's
+            the sole matching record. */
+        QVariant soleValue(const Column &column);
 
         /*! Get the vector with the values of a given column. */
         QVector<QVariant> pluck(const QString &column) const;
@@ -156,6 +172,7 @@ namespace Orm::Tiny
                              const QVector<AttributeItem> &values = {});
 
         /* TinyBuilder methods */
+        inline Builder clone() const;
         /*! Create a new instance of the model being queried. */
         Model newModelInstance(const QVector<AttributeItem> &attributes = {});
 
@@ -194,6 +211,9 @@ namespace Orm::Tiny
         /*! Expression alias. */
         using Expression = Orm::Query::Expression;
 
+        /*! Get the default key name of the table. */
+        inline const QString &defaultKeyName() const;
+
         /*! Parse a list of relations into individuals. */
         QVector<WithItem> parseWithRelations(const QVector<WithItem> &relations);
         /*! Create a constraint to select the given columns for the relation. */
@@ -214,6 +234,9 @@ namespace Orm::Tiny
 
         /*! Get the name of the "created at" column. */
         Column getCreatedAtColumnForLatestOldest(Column column) const;
+
+        /*! Add a generic "order by" clause if the query doesn't already have one. */
+        void enforceOrderBy();
 
         /*! Apply the given scope on the current builder instance. */
 //        template<typename ...Args>
@@ -292,6 +315,22 @@ namespace Orm::Tiny
             column_ = std::get<QString>(column);
 
         return model->getAttribute(column_.mid(column_.lastIndexOf(DOT) + 1));
+    }
+
+    template<typename Model>
+    QVariant Builder<Model>::soleValue(const Column &column)
+    {
+        auto model = this->sole({column});
+
+        // Expression support
+        QString column_;
+
+        if (std::holds_alternative<Expression>(column))
+            column_ = std::get<Expression>(column).getValue().value<QString>();
+        else
+            column_ = std::get<QString>(column);
+
+        return model.getAttribute(column_.mid(column_.lastIndexOf(DOT) + 1));
     }
 
     template<typename Model>
@@ -628,6 +667,12 @@ namespace Orm::Tiny
         return instance;
     }
 
+    template<typename Model>
+    Builder<Model> Builder<Model>::clone() const
+    {
+        return *this;
+    }
+
     /* TinyBuilder methods */
 
     template<typename Model>
@@ -794,6 +839,12 @@ namespace Orm::Tiny
     }
 
     /* protected */
+
+    template<typename Model>
+    const QString &Builder<Model>::defaultKeyName() const
+    {
+        return m_model.getKeyName();
+    }
 
     template<typename Model>
     QVector<WithItem>
@@ -980,6 +1031,15 @@ namespace Orm::Tiny
         }
 
         return column;
+    }
+
+    template<typename Model>
+    void Builder<Model>::enforceOrderBy()
+    {
+        if (!m_query->getOrders().isEmpty())
+            return;
+
+        this->orderBy(m_model.getQualifiedKeyName(), ASC);
     }
 
     // FEATURE scopes, anyway std::apply() do the same, will have to investigate it silverqx

@@ -28,8 +28,6 @@ namespace Tiny
     template<typename Model>
     class BuilderProxies
     {
-        Q_DISABLE_COPY(BuilderProxies)
-
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! JoinClause alias. */
@@ -40,6 +38,16 @@ namespace Tiny
         inline BuilderProxies() = default;
         /*! Default destructor. */
         inline ~BuilderProxies() = default;
+
+        /*! Copy constructor. */
+        inline BuilderProxies(const BuilderProxies &) = default;
+        /*! Deleted copy assignment operator (not needed). */
+        BuilderProxies &operator=(const BuilderProxies &) = delete;
+
+        /*! Move constructor. */
+        inline BuilderProxies(BuilderProxies &&) noexcept = default;
+        /*! Deleted move assignment operator (not needed). */
+        BuilderProxies &operator=(BuilderProxies &&) = delete;
 
         /* Retrieving results */
         /*! Concatenate values of a given column as a string. */
@@ -446,6 +454,17 @@ namespace Tiny
         TinyBuilder<Model> &skip(int value);
         /*! Set the limit and offset for a given page. */
         TinyBuilder<Model> &forPage(int page, int perPage = 30);
+
+        /*! Constrain the query to the previous "page" of results before a given ID. */
+        TinyBuilder<Model> &
+        forPageBeforeId(int perPage = 30, const QVariant &lastId = {},
+                        const QString &column = Orm::Constants::ID,
+                        bool prependOrder = false);
+        /*! Constrain the query to the next "page" of results after a given ID. */
+        TinyBuilder<Model> &
+        forPageAfterId(int perPage = 30, const QVariant &lastId = {},
+                       const QString &column = Orm::Constants::ID,
+                       bool prependOrder = false);
 
         /* Others */
         /*! Increment a column's value by a given amount. */
@@ -1525,6 +1544,24 @@ namespace Tiny
     BuilderProxies<Model>::forPage(const int page, const int perPage)
     {
         toBase().forPage(page, perPage);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::forPageBeforeId(const int perPage, const QVariant &lastId,
+                                           const QString &column, const bool prependOrder)
+    {
+        toBase().forPageBeforeId(perPage, lastId, column, prependOrder);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::forPageAfterId(const int perPage, const QVariant &lastId,
+                                          const QString &column, const bool prependOrder)
+    {
+        toBase().forPageAfterId(perPage, lastId, column, prependOrder);
         return builder();
     }
 

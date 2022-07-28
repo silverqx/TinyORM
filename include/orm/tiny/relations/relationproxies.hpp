@@ -48,6 +48,9 @@ namespace Tiny::Relations
         /* Retrieving results */
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column) const;
+        /*! Get a single column's value from the first result of a query if it's
+            the sole matching record. */
+        QVariant soleValue(const Column &column) const;
 
         /*! Get the vector with the values of a given column. */
         QVector<QVariant> pluck(const QString &column) const;
@@ -579,6 +582,17 @@ namespace Tiny::Relations
         /*! Set the limit and offset for a given page. */
         const Relation<Model, Related> &forPage(int page, int perPage = 30) const;
 
+        /*! Constrain the query to the previous "page" of results before a given ID. */
+        const Relation<Model, Related> &
+        forPageBeforeId(int perPage = 30, const QVariant &lastId = {},
+                        const QString &column = Orm::Constants::ID,
+                        bool prependOrder = false) const;
+        /*! Constrain the query to the next "page" of results after a given ID. */
+        const Relation<Model, Related> &
+        forPageAfterId(int perPage = 30, const QVariant &lastId = {},
+                       const QString &column = Orm::Constants::ID,
+                       bool prependOrder = false) const;
+
         /* Others */
         /*! Increment a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
@@ -610,6 +624,43 @@ namespace Tiny::Relations
         void dump(bool replaceBindings = true, bool simpleBindings = false) const;
         /*! Die and dump the current SQL and bindings. */
         void dd(bool replaceBindings = true, bool simpleBindings = false) const;
+
+        /* Builds Queries */
+        /*! Chunk the results of the query. */
+        bool chunk(int count,
+                   const std::function<
+                       bool(QVector<Related> &&models, int page)> &callback) const;
+        /*! Execute a callback over each item while chunking. */
+        bool each(const std::function<bool(Related &&model, int index)> &callback,
+                  int count = 1000) const;
+
+        /*! Run a map over each item while chunking. */
+        QVector<Related>
+        chunkMap(const std::function<Related(Related &&model)> &callback,
+                 int count = 1000) const;
+        /*! Run a map over each item while chunking. */
+        template<typename T>
+        QVector<T>
+        chunkMap(const std::function<T(Related &&model)> &callback,
+                 int count = 1000) const;
+
+        /*! Chunk the results of a query by comparing IDs. */
+        bool chunkById(int count,
+                       const std::function<
+                           bool(QVector<Related> &&models, int page)> &callback,
+                       const QString &column = "", const QString &alias = "") const;
+        /*! Execute a callback over each item while chunking by ID. */
+        bool eachById(const std::function<bool(Related &&model, int index)> &callback,
+                      int count = 1000, const QString &column = "",
+                      const QString &alias = "") const;
+
+        /*! Execute the query and get the first result if it's the sole matching
+            record. */
+        Related sole(const QVector<Column> &columns = {ASTERISK}) const;
+
+        /*! Pass the query to a given callback. */
+        Builder<Related> &
+        tap(const std::function<void(Builder<Related> &query)> &callback) const;
 
         /* Querying Relationship Existence/Absence */
         /*! Add a relationship count / exists condition to the query. */
@@ -737,6 +788,13 @@ namespace Tiny::Relations
     RelationProxies<Model, Related>::value(const Column &column) const
     {
         return getQuery().value(column);
+    }
+
+    template<class Model, class Related>
+    QVariant
+    RelationProxies<Model, Related>::soleValue(const Column &column) const
+    {
+        return getQuery().soleValue(column);
     }
 
     template<class Model, class Related>
@@ -2125,6 +2183,28 @@ namespace Tiny::Relations
         return relation();
     }
 
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::forPageBeforeId(
+            const int perPage, const QVariant &lastId, const QString &column,
+            const bool prependOrder) const
+    {
+        getQuery().forPageBeforeId(perPage, lastId, column, prependOrder);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::forPageAfterId(
+            const int perPage, const QVariant &lastId, const QString &column,
+            const bool prependOrder) const
+    {
+        getQuery().forPageAfterId(perPage, lastId, column, prependOrder);
+
+        return relation();
+    }
+
     /* Others */
 
     template<class Model, class Related>
@@ -2215,6 +2295,70 @@ namespace Tiny::Relations
                                              const bool simpleBindings) const
     {
         getQuery().dd(replaceBindings, simpleBindings);
+    }
+
+    /* Builds Queries */
+    template<class Model, class Related>
+    bool RelationProxies<Model, Related>::chunk(
+            const int count,
+            const std::function<bool(QVector<Related> &&, int)> &callback) const
+    {
+        return getQuery().chunk(count, callback);
+    }
+
+    template<class Model, class Related>
+    bool RelationProxies<Model, Related>::each(
+            const std::function<bool(Related &&, int)> &callback, const int count) const
+    {
+        return getQuery().each(callback, count);
+    }
+
+    template<class Model, class Related>
+    QVector<Related>
+    RelationProxies<Model, Related>::chunkMap(
+            const std::function<Related(Related &&)> &callback, const int count) const
+    {
+        return getQuery().chunkMap(callback, count);
+    }
+
+    template<class Model, class Related>
+    template<typename T>
+    QVector<T>
+    RelationProxies<Model, Related>::chunkMap(
+            const std::function<T(Related &&)> &callback, const int count) const
+    {
+        return getQuery().template chunkMap<T>(callback, count);
+    }
+
+    template<class Model, class Related>
+    bool RelationProxies<Model, Related>::chunkById(
+            const int count,
+            const std::function<bool(QVector<Related> &&, int)> &callback,
+            const QString &column, const QString &alias) const
+    {
+        return getQuery().chunkById(callback, count, column, alias);
+    }
+
+    template<class Model, class Related>
+    bool RelationProxies<Model, Related>::eachById(
+            const std::function<bool(Related &&, int)> &callback,
+            const int count, const QString &column, const QString &alias) const
+    {
+        return getQuery().eachById(callback, count, column, alias);
+    }
+
+    template<class Model, class Related>
+    Related RelationProxies<Model, Related>::sole(const QVector<Column> &columns) const
+    {
+        return getQuery().sole(columns);
+    }
+
+    template<class Model, class Related>
+    Builder<Related> &
+    RelationProxies<Model, Related>::tap(
+            const std::function<void(Builder<Related> &)> &callback) const
+    {
+        return getQuery().tap(callback);
     }
 
     /* Querying Relationship Existence/Absence */

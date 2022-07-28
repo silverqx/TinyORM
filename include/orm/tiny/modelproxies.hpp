@@ -45,6 +45,9 @@ namespace Relations
         /* Retrieving results */
         /*! Get a single column's value from the first result of a query. */
         static QVariant value(const Column &column);
+        /*! Get a single column's value from the first result of a query if it's
+            the sole matching record. */
+        static QVariant soleValue(const Column &column);
 
         /*! Get the vector with the values of a given column. */
         static QVector<QVariant> pluck(const QString &column);
@@ -612,6 +615,17 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         forPage(int page, int perPage = 30);
 
+        /*! Constrain the query to the previous "page" of results before a given ID. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        forPageBeforeId(int perPage = 30, const QVariant &lastId = {},
+                        const QString &column = Orm::Constants::ID,
+                        bool prependOrder = false);
+        /*! Constrain the query to the next "page" of results after a given ID. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        forPageAfterId(int perPage = 30, const QVariant &lastId = {},
+                       const QString &column = Orm::Constants::ID,
+                       bool prependOrder = false);
+
         /* Pessimistic Locking */
         /*! Lock the selected rows in the table for updating. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -637,6 +651,45 @@ namespace Relations
         static void dump(bool replaceBindings = true, bool simpleBindings = false);
         /*! Die and dump the current SQL and bindings. */
         static void dd(bool replaceBindings = true, bool simpleBindings = false);
+
+        /* Builds Queries */
+        /*! Chunk the results of the query. */
+        static bool
+        chunk(int count,
+              const std::function<bool(QVector<Derived> &&models, int page)> &callback);
+        /*! Execute a callback over each item while chunking. */
+        static bool
+        each(const std::function<bool(Derived &&model, int index)> &callback,
+             int count = 1000);
+
+        /*! Run a map over each item while chunking. */
+        static QVector<Derived>
+        chunkMap(const std::function<Derived(Derived &&model)> &callback,
+                 int count = 1000);
+        /*! Run a map over each item while chunking. */
+        template<typename T>
+        static QVector<T>
+        chunkMap(const std::function<T(Derived &&model)> &callback, int count = 1000);
+
+        /*! Chunk the results of a query by comparing IDs. */
+        static bool
+        chunkById(int count,
+                  const std::function<
+                      bool(QVector<Derived> &&models, int page)> &callback,
+                  const QString &column = "", const QString &alias = "");
+        /*! Execute a callback over each item while chunking by ID. */
+        static bool
+        eachById(const std::function<bool(Derived &&model, int index)> &callback,
+                 int count = 1000, const QString &column = "",
+                 const QString &alias = "");
+
+        /*! Execute the query and get the first result if it's the sole matching
+            record. */
+        static Derived sole(const QVector<Column> &columns = {ASTERISK});
+
+        /*! Pass the query to a given callback. */
+        static Builder<Derived> &
+        tap(const std::function<void(Builder<Derived> &query)> &callback);
 
         /* Querying Relationship Existence/Absence */
         /*! Add a relationship count / exists condition to the query. */
@@ -748,6 +801,12 @@ namespace Relations
     QVariant ModelProxies<Derived, AllRelations...>::value(const Column &column)
     {
         return query()->value(column);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant ModelProxies<Derived, AllRelations...>::soleValue(const Column &column)
+    {
+        return query()->soleValue(column);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2345,6 +2404,32 @@ namespace Relations
         return builder;
     }
 
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::forPageBeforeId(
+            const int perPage, const QVariant &lastId, const QString &column,
+            const bool prependOrder)
+    {
+        auto builder = query();
+
+        builder->forPageBeforeId(perPage, lastId, column, prependOrder);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::forPageAfterId(
+            const int perPage, const QVariant &lastId, const QString &column,
+            const bool prependOrder)
+    {
+        auto builder = query();
+
+        builder->forPageAfterId(perPage, lastId, column, prependOrder);
+
+        return builder;
+    }
+
     /* Pessimistic Locking */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2427,6 +2512,71 @@ namespace Relations
                                                     const bool simpleBindings)
     {
         query()->dd(replaceBindings, simpleBindings);
+    }
+
+    /* Builds Queries */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool ModelProxies<Derived, AllRelations...>::chunk(
+            const int count,
+            const std::function<bool(QVector<Derived> &&, int)> &callback)
+    {
+        return query()->chunk(count, callback);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool ModelProxies<Derived, AllRelations...>::each(
+            const std::function<bool(Derived &&, int)> &callback, const int count)
+    {
+        return query()->each(callback, count);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVector<Derived>
+    ModelProxies<Derived, AllRelations...>::chunkMap(
+            const std::function<Derived(Derived &&)> &callback, const int count)
+    {
+        return query()->chunkMap(callback, count);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename T>
+    QVector<T>
+    ModelProxies<Derived, AllRelations...>::chunkMap(
+            const std::function<T(Derived &&)> &callback, const int count)
+    {
+        return query()->template chunkMap<T>(callback, count);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool ModelProxies<Derived, AllRelations...>::chunkById(
+            const int count,
+            const std::function<bool(QVector<Derived> &&, int)> &callback,
+            const QString &column, const QString &alias)
+    {
+        return query()->chunkById(count, callback, column, alias);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool ModelProxies<Derived, AllRelations...>::eachById(
+            const std::function<bool(Derived &&, int)> &callback,
+            const int count, const QString &column, const QString &alias)
+    {
+        return query()->eachById(callback, count, column, alias);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived ModelProxies<Derived, AllRelations...>::sole(const QVector<Column> &columns)
+    {
+        return query()->sole(columns);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Builder<Derived> &
+    ModelProxies<Derived, AllRelations...>::tap(
+            const std::function<void(Builder<Derived> &)> &callback)
+    {
+        return query()->tap(callback);
     }
 
     /* Querying Relationship Existence/Absence */

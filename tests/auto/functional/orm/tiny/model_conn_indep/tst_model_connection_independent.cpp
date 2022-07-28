@@ -4,24 +4,29 @@
 
 #include "orm/db.hpp"
 
+#include "models/filepropertyproperty.hpp"
 #include "models/massassignmentmodels.hpp"
 #include "models/torrent.hpp"
 #include "models/torrenteager.hpp"
 
 #include "databases.hpp"
 
+using Models::FilePropertyProperty;
 using Models::Torrent;
 using Models::Torrent_AllowedMassAssignment;
 using Models::Torrent_GuardedAttribute;
 using Models::Torrent_TotallyGuarded;
 using Models::TorrentEager;
 
+using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
+using Orm::Exceptions::MultipleRecordsFoundError;
+using Orm::Exceptions::RecordsNotFoundError;
 
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::MassAssignmentError;
@@ -55,6 +60,53 @@ private slots:
 
     void with_WithSelectConstraint_QueryWithoutRelatedTable() const;
     void with_BelongsToMany_WithSelectConstraint_QualifiedColumnsForRelatedTable() const;
+
+    /* Builds Queries */
+    void chunk() const;
+    void chunk_ReturnFalse() const;
+    void chunk_EnforceOrderBy() const;
+    void chunk_EmptyResult() const;
+
+    void each() const;
+    void each_ReturnFalse() const;
+    void each_EnforceOrderBy() const;
+    void each_EmptyResult() const;
+
+    void chunkMap() const;
+    void chunkMap_EnforceOrderBy() const;
+    void chunkMap_EmptyResult() const;
+
+    void chunkMap_TemplatedReturnValue() const;
+    void chunkMap_EnforceOrderBy_TemplatedReturnValue() const;
+    void chunkMap_EmptyResult_TemplatedReturnValue() const;
+
+    void chunkById() const;
+    void chunkById_ReturnFalse() const;
+    void chunkById_EmptyResult() const;
+
+    void chunkById_WithAlias() const;
+    void chunkById_ReturnFalse_WithAlias() const;
+    void chunkById_EmptyResult_WithAlias() const;
+
+    void eachById() const;
+    void eachById_ReturnFalse() const;
+    void eachById_EmptyResult() const;
+
+    void eachById_WithAlias() const;
+    void eachById_ReturnFalse_WithAlias() const;
+    void eachById_EmptyResult_WithAlias() const;
+
+    void tap() const;
+
+    void sole() const;
+    void sole_RecordsNotFoundError() const;
+    void sole_MultipleRecordsFoundError() const;
+    void sole_Pretending() const;
+
+    void soleValue() const;
+    void soleValue_RecordsNotFoundError() const;
+    void soleValue_MultipleRecordsFoundError() const;
+    void soleValue_Pretending() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -348,6 +400,851 @@ void tst_Model_Connection_Independent
                      "inner join `tag_torrent` "
                          "on `torrent_tags`.`id` = `tag_torrent`.`tag_id` "
                  "where `tag_torrent`.`torrent_id` in (?)"));
+}
+
+/* Builds Queries */
+
+void tst_Model_Connection_Independent::chunk() const
+{
+    using SizeType = QVector<FilePropertyProperty>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = FilePropertyProperty::orderBy(ID)
+                  ->chunk(3, [&compareResultSize, &ids]
+                             (QVector<FilePropertyProperty> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&fileProperty : models)
+            ids.emplace_back(fileProperty[ID]->template value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::chunk_ReturnFalse() const
+{
+    using SizeType = QVector<FilePropertyProperty>::size_type;
+
+    // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much)
+    const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = FilePropertyProperty::orderBy(ID)
+                  ->chunk(3, [&compareResultSize, &ids]
+                             (QVector<FilePropertyProperty> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&fileProperty : models) {
+            auto id = fileProperty[ID]->template value<quint64>();
+            ids.emplace_back(id);
+
+            // Interrupt chunk-ing
+            if (id == 5)
+                return false;
+        }
+
+        return true;
+    });
+
+    QVERIFY(!result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::chunk_EnforceOrderBy() const
+{
+    /* The TinBuilder version doesn't throws exception if the 'order by' clause is not
+       specified, instead it adds a generic 'order by' clause
+       on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
+    using SizeType = QVector<FilePropertyProperty>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = FilePropertyProperty::chunk(
+                      3, [&compareResultSize, &ids]
+                         (QVector<FilePropertyProperty> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&fileProperty : models)
+            ids.emplace_back(fileProperty[ID]->template value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::chunk_EmptyResult() const
+{
+    auto result = FilePropertyProperty::whereEq(NAME,
+                                                QStringLiteral("dummy-NON_EXISTENT"))
+                  ->orderBy(ID)
+                  .chunk(3, [](QVector<FilePropertyProperty> &&/*unused*/,
+                               const int /*unused*/)
+    {
+        return true;
+    });
+
+    QVERIFY(result);
+}
+
+void tst_Model_Connection_Independent::each() const
+{
+    std::vector<int> indexes;
+    indexes.reserve(8);
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = FilePropertyProperty::orderBy(ID)
+                  ->each([&indexes, &ids]
+                         (FilePropertyProperty &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4, 5, 6, 7};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::each_ReturnFalse() const
+{
+    std::vector<int> indexes;
+    indexes.reserve(5);
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = FilePropertyProperty::orderBy(ID)
+                  ->each([&indexes, &ids](FilePropertyProperty &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+
+        return index != 4; // false/interrupt on 4
+    });
+
+    QVERIFY(!result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::each_EnforceOrderBy() const
+{
+    /* The TinBuilder version doesn't throws exception if the 'order by' clause is not
+       specified, instead it adds a generic 'order by' clause
+       on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
+    std::vector<int> indexes;
+    indexes.reserve(8);
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = FilePropertyProperty::each(
+                      [&indexes, &ids](FilePropertyProperty &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4, 5, 6, 7};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::each_EmptyResult() const
+{
+    auto result = FilePropertyProperty::whereEq(NAME,
+                                                QStringLiteral("dummy-NON_EXISTENT"))
+                  ->orderBy(ID)
+                  .each([](FilePropertyProperty &&/*unused*/, const int /*unused*/)
+    {
+        return true;
+    });
+
+    QVERIFY(result);
+}
+
+namespace
+{
+    /*! Used to compare results from the TinyBuilder::chunkMap() method for
+        the FilePropertyProperty model. */
+    struct IdAndName
+    {
+        /*! FilePropertyProperty ID. */
+        quint64 id;
+        /*! FilePropertyProperty name. */
+        QString name;
+
+        /*! Comparison operator for the IdAndName. */
+        inline bool operator==(const IdAndName &other) const noexcept
+        {
+            return id == other.id && name == other.name;
+        }
+    };
+} // namespace
+
+void tst_Model_Connection_Independent::chunkMap() const
+{
+    auto result = FilePropertyProperty::orderBy(ID)
+                  ->chunkMap([](FilePropertyProperty &&model)
+    {
+        auto nameRef = model[NAME];
+
+        // Modify the name attribute
+        nameRef = QStringLiteral("%1_mapped").arg(nameRef->template value<QString>());
+
+        return std::move(model);
+    });
+
+    QVector<IdAndName> expectedResult {
+        {1, "test2_file1_property1_mapped"},
+        {2, "test2_file2_property1_mapped"},
+        {3, "test3_file1_property1_mapped"},
+        {4, "test3_file1_property2_mapped"},
+        {5, "test4_file1_property1_mapped"},
+        {6, "test5_file1_property1_mapped"},
+        {7, "test5_file1_property2_mapped"},
+        {8, "test5_file1_property3_mapped"},
+    };
+
+    // Transform the result so we can compare it
+    auto resultTransformed = result
+            | ranges::views::transform([](const FilePropertyProperty &model)
+                                       -> IdAndName
+    {
+        return {model.getAttribute(ID).value<quint64>(),
+                model.getAttribute(NAME).value<QString>()};
+    })
+            | ranges::to<QVector<IdAndName>>();
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(resultTransformed, expectedResult);
+}
+
+void tst_Model_Connection_Independent::chunkMap_EnforceOrderBy() const
+{
+    /* The TinBuilder version doesn't throws exception if the 'order by' clause is not
+       specified, instead it adds a generic 'order by' clause
+       on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
+    auto result = FilePropertyProperty::chunkMap([](FilePropertyProperty &&model)
+    {
+        auto nameRef = model[NAME];
+
+        // Modify the name attribute
+        nameRef = QStringLiteral("%1_mapped").arg(nameRef->template value<QString>());
+
+        return std::move(model);
+    });
+
+    QVector<IdAndName> expectedResult {
+        {1, "test2_file1_property1_mapped"},
+        {2, "test2_file2_property1_mapped"},
+        {3, "test3_file1_property1_mapped"},
+        {4, "test3_file1_property2_mapped"},
+        {5, "test4_file1_property1_mapped"},
+        {6, "test5_file1_property1_mapped"},
+        {7, "test5_file1_property2_mapped"},
+        {8, "test5_file1_property3_mapped"},
+    };
+
+    // Transform the result so I can compare it
+    auto resultTransformed = result
+            | ranges::views::transform([](const FilePropertyProperty &model)
+                                       -> IdAndName
+    {
+        return {model.getAttribute(ID).value<quint64>(),
+                model.getAttribute(NAME).value<QString>()};
+    })
+            | ranges::to<QVector<IdAndName>>();
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(resultTransformed, expectedResult);
+}
+
+void tst_Model_Connection_Independent::chunkMap_EmptyResult() const
+{
+    auto result = FilePropertyProperty::whereEq(NAME,
+                                                QStringLiteral("dummy-NON_EXISTENT"))
+                  ->chunkMap([](FilePropertyProperty &&model)
+    {
+        return std::move(model);
+    });
+
+    QVERIFY((std::is_same_v<decltype (result), QVector<FilePropertyProperty>>));
+    QVERIFY(result.isEmpty());
+}
+
+void tst_Model_Connection_Independent::chunkMap_TemplatedReturnValue() const
+{
+    auto result = FilePropertyProperty::orderBy(ID)
+                  ->chunkMap<QString>([](FilePropertyProperty &&model)
+    {
+        // Return the modify name directly
+        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+    });
+
+    QVector<QString> expectedResult {
+        {"test2_file1_property1_mapped"},
+        {"test2_file2_property1_mapped"},
+        {"test3_file1_property1_mapped"},
+        {"test3_file1_property2_mapped"},
+        {"test4_file1_property1_mapped"},
+        {"test5_file1_property1_mapped"},
+        {"test5_file1_property2_mapped"},
+        {"test5_file1_property3_mapped"},
+    };
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(result, expectedResult);
+}
+
+void
+tst_Model_Connection_Independent::chunkMap_EnforceOrderBy_TemplatedReturnValue() const
+{
+    /* The TinBuilder version doesn't throws exception if the 'order by' clause is not
+       specified, instead it adds a generic 'order by' clause
+       on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
+    auto result = FilePropertyProperty::chunkMap<QString>(
+                      [](FilePropertyProperty &&model)
+    {
+        // Return the modify name directly
+        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+    });
+
+    QVector<QString> expectedResult {
+        {"test2_file1_property1_mapped"},
+        {"test2_file2_property1_mapped"},
+        {"test3_file1_property1_mapped"},
+        {"test3_file1_property2_mapped"},
+        {"test4_file1_property1_mapped"},
+        {"test5_file1_property1_mapped"},
+        {"test5_file1_property2_mapped"},
+        {"test5_file1_property3_mapped"},
+    };
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(result, expectedResult);
+}
+
+void tst_Model_Connection_Independent::chunkMap_EmptyResult_TemplatedReturnValue() const
+{
+    auto result = FilePropertyProperty::whereEq(NAME,
+                                                QStringLiteral("dummy-NON_EXISTENT"))
+                  ->chunkMap<QString>([](FilePropertyProperty &&/*unused*/)
+                                      -> QString
+    {
+        return {};
+    });
+
+    QVERIFY((std::is_same_v<decltype (result), QVector<QString>>));
+    QVERIFY(result.isEmpty());
+}
+
+void tst_Model_Connection_Independent::chunkById() const
+{
+    using SizeType = QVector<FilePropertyProperty>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = FilePropertyProperty::orderBy(ID)
+                  ->chunkById(3, [&compareResultSize, &ids]
+                                 (QVector<FilePropertyProperty> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&model : models)
+            ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::chunkById_ReturnFalse() const
+{
+    using SizeType = QVector<FilePropertyProperty>::size_type;
+
+    // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much
+    const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = FilePropertyProperty::orderBy(ID)
+                  ->chunkById(3, [&compareResultSize, &ids]
+                                (QVector<FilePropertyProperty> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&model : models) {
+            auto id = model.getAttribute(ID).value<quint64>();
+            ids.emplace_back(id);
+
+            // Interrupt chunk-ing
+            if (id == 5)
+                return false;
+        }
+
+        return true;
+    });
+
+    QVERIFY(!result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::chunkById_EmptyResult() const
+{
+    auto result = FilePropertyProperty::whereEq(NAME,
+                                                QStringLiteral("dummy-NON_EXISTENT"))
+                  ->orderBy(ID)
+                  .chunkById(3, [](QVector<FilePropertyProperty> &&/*unused*/,
+                                   const int /*unused*/)
+    {
+        return true;
+    });
+
+    QVERIFY(result);
+}
+
+void tst_Model_Connection_Independent::chunkById_WithAlias() const
+{
+    using SizeType = QVector<FilePropertyProperty>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
+                  ->orderBy(ID)
+                  .chunkById(3, [&compareResultSize, &ids]
+                                (QVector<FilePropertyProperty> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&model : models)
+            ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        return true;
+    },
+            ID, "id_as");
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::chunkById_ReturnFalse_WithAlias() const
+{
+    using SizeType = QVector<FilePropertyProperty>::size_type;
+
+    // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much
+    const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
+                  ->orderBy(ID)
+                  .chunkById(3, [&compareResultSize, &ids]
+                                (QVector<FilePropertyProperty> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&model : models) {
+            auto id = model.getAttribute(ID).value<quint64>();
+            ids.emplace_back(id);
+
+            // Interrupt chunk-ing
+            if (id == 5)
+                return false;
+        }
+
+        return true;
+    },
+            ID, "id_as");
+
+    QVERIFY(!result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::chunkById_EmptyResult_WithAlias() const
+{
+    auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
+                  ->whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .chunkById(3, [](QVector<FilePropertyProperty> &&/*unused*/,
+                                   const int /*unused*/)
+    {
+        return true;
+    },
+            ID, "id_as");
+
+    QVERIFY(result);
+}
+
+void tst_Model_Connection_Independent::eachById() const
+{
+    std::vector<int> indexes;
+    indexes.reserve(8);
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = FilePropertyProperty::orderBy(ID)
+                  ->eachById([&indexes, &ids]
+                             (FilePropertyProperty &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4, 5, 6, 7};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::eachById_ReturnFalse() const
+{
+    std::vector<int> indexes;
+    indexes.reserve(5);
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = FilePropertyProperty::orderBy(ID)
+                  ->eachById([&indexes, &ids]
+                             (FilePropertyProperty &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        return index != 4; // false/interrupt on 4
+    });
+
+    QVERIFY(!result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::eachById_EmptyResult() const
+{
+    auto result = FilePropertyProperty::whereEq(NAME,
+                                                QStringLiteral("dummy-NON_EXISTENT"))
+                  ->orderBy(ID)
+                  .eachById([](FilePropertyProperty &&/*unused*/, const int /*unused*/)
+    {
+        return true;
+    });
+
+    QVERIFY(result);
+}
+
+void tst_Model_Connection_Independent::eachById_WithAlias() const
+{
+    std::vector<int> indexes;
+    indexes.reserve(8);
+    std::vector<quint64> ids;
+    ids.reserve(8);
+
+    auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
+                  ->orderBy(ID)
+                  .eachById([&indexes, &ids]
+                            (FilePropertyProperty &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        return true;
+    },
+            1000, ID, "id_as");
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4, 5, 6, 7};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5, 6, 7, 8};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::eachById_ReturnFalse_WithAlias() const
+{
+    std::vector<int> indexes;
+    indexes.reserve(5);
+    std::vector<quint64> ids;
+    ids.reserve(5);
+
+    auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
+                  ->orderBy(ID)
+                  .eachById([&indexes, &ids]
+                            (FilePropertyProperty &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        return index != 4; // false/interrupt on 4
+    },
+            1000, ID, "id_as");
+
+    QVERIFY(!result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3, 4};
+    std::vector<quint64> expectedIds {1, 2, 3, 4, 5};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Connection_Independent::eachById_EmptyResult_WithAlias() const
+{
+    auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
+                  ->whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .eachById([](FilePropertyProperty &&/*unused*/, const int /*unused*/)
+    {
+        return true;
+    },
+            1000, ID, "id_as");
+
+    QVERIFY(result);
+}
+
+void tst_Model_Connection_Independent::tap() const
+{
+    auto builder = FilePropertyProperty::query();
+
+    auto callbackInvoked = false;
+    auto &tappedBuilder = builder->tap([&callbackInvoked]
+                                       (Orm::Tiny::Builder<FilePropertyProperty> &query)
+    {
+        callbackInvoked = true;
+
+        return query;
+    });
+
+    QVERIFY((std::is_same_v<decltype (tappedBuilder), decltype (*builder)>));
+    QVERIFY(callbackInvoked);
+    // It must be the same TinyBuilder (the same memory address)
+    QVERIFY(reinterpret_cast<uintptr_t>(&*builder)
+            == reinterpret_cast<uintptr_t>(&tappedBuilder));
+}
+
+void tst_Model_Connection_Independent::sole() const
+{
+    auto model = FilePropertyProperty::whereEq(ID, 1)->sole();
+
+    QCOMPARE(model[ID]->value<quint64>(), static_cast<quint64>(1));
+    QCOMPARE(model[NAME]->value<QString>(), QString("test2_file1_property1"));
+}
+
+void tst_Model_Connection_Independent::sole_RecordsNotFoundError() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+            FilePropertyProperty::whereEq("name", "dummy-NON_EXISTENT")->sole(),
+            RecordsNotFoundError);
+}
+
+void tst_Model_Connection_Independent::sole_MultipleRecordsFoundError() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+            FilePropertyProperty::whereEq("file_property_id", 5)->sole(),
+            MultipleRecordsFoundError);
+}
+
+void tst_Model_Connection_Independent::sole_Pretending() const
+{
+    auto log = DB::connection(m_connection).pretend([]()
+    {
+        FilePropertyProperty::whereEq("name", "dummy-NON_EXISTENT")->sole();
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select * from `file_property_properties` where `name` = ? limit 2");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
+}
+
+void tst_Model_Connection_Independent::soleValue() const
+{
+    auto value = FilePropertyProperty::whereEq(ID, 1)->soleValue(NAME);
+
+    QVERIFY((std::is_same_v<decltype (value), QVariant>));
+    QVERIFY(value.isValid() && !value.isNull());
+    QCOMPARE(value, QVariant(QString("test2_file1_property1")));
+}
+
+void tst_Model_Connection_Independent::soleValue_RecordsNotFoundError() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+            FilePropertyProperty::whereEq("name", "dummy-NON_EXISTENT")->soleValue(NAME),
+            RecordsNotFoundError);
+}
+
+void tst_Model_Connection_Independent::soleValue_MultipleRecordsFoundError() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+            FilePropertyProperty::soleValue(NAME),
+            MultipleRecordsFoundError);
+}
+
+void tst_Model_Connection_Independent::soleValue_Pretending() const
+{
+    auto log = DB::connection(m_connection).pretend([]()
+    {
+        FilePropertyProperty::whereEq("name", "dummy-NON_EXISTENT")->soleValue(NAME);
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select `name` from `file_property_properties` where `name` = ? limit 2");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
 }
 
 QTEST_MAIN(tst_Model_Connection_Independent)
