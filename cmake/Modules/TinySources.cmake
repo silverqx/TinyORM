@@ -181,6 +181,7 @@ function(tinyorm_sources out_headers out_sources)
         libraryinfo.cpp
         mysqlconnection.cpp
         postgresconnection.cpp
+        query/concerns/buildsqueries.cpp
         query/grammars/grammar.cpp
         query/grammars/mysqlgrammar.cpp
         query/grammars/postgresgrammar.cpp
