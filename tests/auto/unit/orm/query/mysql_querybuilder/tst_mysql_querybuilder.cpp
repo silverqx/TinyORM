@@ -2678,7 +2678,7 @@ void tst_MySql_QueryBuilder::sole() const
 
     QVERIFY(query.isValid() && query.isActive() && query.isSelect());
     QCOMPARE(query.value(ID).value<quint64>(), static_cast<quint64>(1));
-    QCOMPARE(query.value(NAME).value<QString>(), QStringLiteral("test1"));
+    QCOMPARE(query.value(NAME).value<QString>(), QString("test1"));
 }
 
 void tst_MySql_QueryBuilder::sole_RecordsNotFoundError() const
@@ -2718,7 +2718,7 @@ void tst_MySql_QueryBuilder::soleValue() const
 
     QVERIFY((std::is_same_v<decltype (value), QVariant>));
     QVERIFY(value.isValid() && !value.isNull());
-    QCOMPARE(value, QVariant(QStringLiteral("test1")));
+    QCOMPARE(value, QVariant(QString("test1")));
 }
 
 void tst_MySql_QueryBuilder::soleValue_RecordsNotFoundError() const
