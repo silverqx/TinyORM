@@ -2665,6 +2665,7 @@ void tst_MySql_QueryBuilder::tap() const
         return query;
     });
 
+    QVERIFY((std::is_same_v<decltype (tappedBuilder), decltype (*builder)>));
     QVERIFY(callbackInvoked);
     // It must be the same QueryBuilder (the same memory address)
     QVERIFY(reinterpret_cast<uintptr_t>(&*builder)
