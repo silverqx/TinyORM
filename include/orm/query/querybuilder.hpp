@@ -35,7 +35,7 @@ namespace Orm::Query
         /*! Alias for query utils. */
         using QueryUtils = Orm::Utils::Query;
 
-        // To access enforceOrderBy(), defaultKeyName(), clone(), forPageAfterId()
+        // To access enforceOrderBy()
         friend Concerns::BuildsQueries;
 
     public:
@@ -551,6 +551,7 @@ namespace Orm::Query
         Builder &skip(int value);
         /*! Set the limit and offset for a given page. */
         Builder &forPage(int page, int perPage = 30);
+
         /*! Constrain the query to the previous "page" of results before a given ID. */
         Builder &forPageBeforeId(int perPage = 30, const QVariant &lastId = {},
                                  const QString &column = Orm::Constants::ID,

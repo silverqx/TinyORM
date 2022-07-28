@@ -122,13 +122,13 @@ bool BuildsQueries::chunkById(
             break;
 
         /* Obtain the lastId before the results is passed to the user's callback because
-           an user can leave the results (QSqlQuery) in the invalid state. */
+           an user can leave the results (QSqlQuery) in the invalid/changed state. */
         results.last();
         lastId = results.value(aliasName);
         // Restore a cursor position
         results.seek(QSql::BeforeFirstRow);
 
-        /* And the check can also be made before a callback invocation, it saves
+        /* And this check can also be made before a callback invocation, it saves
            the unnecessary invocation if the lastId is invalid. It also helps to avoid
            passing invalid data to the user. */
         if (!lastId.isValid() || lastId.isNull())
