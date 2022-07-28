@@ -58,8 +58,8 @@ namespace Concerns
                        const QString &column = "", const QString &alias = "");
         /*! Execute a callback over each item while chunking by ID. */
         bool eachById(const std::function<bool(QSqlQuery &row, int index)> &callback,
-                  int count = 1000, const QString &column = "",
-                  const QString &alias = "");
+                      int count = 1000, const QString &column = "",
+                      const QString &alias = "");
 
 
         /*! Execute the query and get the first result if it's the sole matching
