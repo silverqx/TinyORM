@@ -859,7 +859,7 @@ void tst_QueryBuilder::chunk_ReturnFalse() const
             auto id = query.value(ID).value<quint64>();
             ids.emplace_back(id);
 
-            // Intetrupt chunk-ing
+            // Interrupt chunk-ing
             if (id == 5)
                 return false;
         }
@@ -1055,7 +1055,7 @@ void tst_QueryBuilder::chunkById_ReturnFalse() const
             auto id = query.value(ID).value<quint64>();
             ids.emplace_back(id);
 
-            // Intetrupt chunk-ing
+            // Interrupt chunk-ing
             if (id == 5)
                 return false;
         }
@@ -1155,7 +1155,7 @@ void tst_QueryBuilder::chunkById_ReturnFalse_WithAlias() const
             auto id = query.value(ID).value<quint64>();
             ids.emplace_back(id);
 
-            // Intetrupt chunk-ing
+            // Interrupt chunk-ing
             if (id == 5)
                 return false;
         }
