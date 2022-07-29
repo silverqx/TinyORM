@@ -323,6 +323,9 @@ namespace Tiny::Relations
         template<JoinTable T>
         const Relation<Model, Related> &crossJoin(
                 T &&table, const std::function<void(JoinClause &)> &callback) const;
+        /*! Add a "cross join" clause to the query. */
+        template<JoinTable T>
+        const Relation<Model, Related> &crossJoin(T &&table) const;
 
         /*! Add a subquery join clause to the query. */
         template<SubQuery T>
@@ -377,6 +380,25 @@ namespace Tiny::Relations
         template<WhereValue T>
         const Relation<Model, Related> &orWhereEq(const Column &column, T &&value) const;
 
+        /* General where not */
+        /*! Add a basic "where not" clause to the query. */
+        template<WhereValue T>
+        const Relation<Model, Related> &whereNot(
+                const Column &column, const QString &comparison, T &&value,
+                const QString &condition = AND) const;
+        /*! Add an "or where not" clause to the query. */
+        template<WhereValue T>
+        const Relation<Model, Related> &orWhereNot(
+                const Column &column, const QString &comparison, T &&value) const;
+        /*! Add a basic equal "where not" clause to the query. */
+        template<WhereValue T>
+        const Relation<Model, Related> &whereNotEq(
+                const Column &column, T &&value, const QString &condition = AND) const;
+        /*! Add an equal "or where not" clause to the query. */
+        template<WhereValue T>
+        const Relation<Model, Related> &orWhereNotEq(
+                const Column &column, T &&value) const;
+
         /* Nested where */
         /*! Add a nested where clause to the query. */
         const Relation<Model, Related> &where(
@@ -385,6 +407,12 @@ namespace Tiny::Relations
         /*! Add a nested "or where" clause to the query. */
         const Relation<Model, Related> &orWhere(
                 const std::function<void(Builder<Related> &)> &callback) const;
+        const Relation<Model, Related> &whereNot(
+                const std::function<void(Builder<Related> &)> &callback,
+                const QString &condition = AND) const;
+        /*! Add a nested "or where not" clause to the query. */
+        const Relation<Model, Related> &orWhereNot(
+                const std::function<void(Builder<Related> &)> &callback) const;
 
         /* Array where */
         /*! Add a vector of basic where clauses to the query. */
@@ -392,6 +420,14 @@ namespace Tiny::Relations
                 const QVector<WhereItem> &values, const QString &condition = AND) const;
         /*! Add a vector of basic "or where" clauses to the query. */
         const Relation<Model, Related> &orWhere(const QVector<WhereItem> &values) const;
+        /*! Add a vector of basic "where not" clauses to the query. */
+        const Relation<Model, Related> &whereNot(
+                const QVector<WhereItem> &values, const QString &condition = AND,
+                const QString &defaultCondition = "") const;
+        /*! Add a vector of basic "or where not" clauses to the query. */
+        const Relation<Model, Related> &orWhereNot(
+                const QVector<WhereItem> &values,
+                const QString &defaultCondition = "") const;
 
         /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
@@ -479,6 +515,26 @@ namespace Tiny::Relations
         /*! Add an equal "or where" clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         const Relation<Model, Related> &orWhereEq(C &&column, V &&value) const;
+
+        /* where not sub-queries */
+        /*! Add a basic "where not" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        const Relation<Model, Related> &whereNot(
+                C &&column, const QString &comparison, V &&value,
+                const QString &condition = AND) const;
+        /*! Add an "or where not" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        const Relation<Model, Related> &orWhereNot(
+                C &&column, const QString &comparison, V &&value) const;
+        /*! Add a basic equal "where not" clause to the query with a full sub-select
+            column. */
+        template<Queryable C, WhereValue V>
+        const Relation<Model, Related> &whereNotEq(
+                C &&column, V &&value, const QString &condition = AND) const;
+        /*! Add an equal "or where not" clause to the query with a full sub-select
+            column. */
+        template<Queryable C, WhereValue V>
+        const Relation<Model, Related> &orWhereNotEq(C &&column, V &&value) const;
 
         /*! Add a full sub-select to the "where" clause. */
         template<WhereValueSubQuery T>
@@ -1484,6 +1540,16 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
+    template<JoinTable T>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::crossJoin(T &&table) const
+    {
+        getQuery().crossJoin(std::forward<T>(table));
+
+        return relation();
+    }
+
+    template<class Model, class Related>
     template<SubQuery T>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::joinSub(
@@ -1604,6 +1670,52 @@ namespace Tiny::Relations
         return relation();
     }
 
+    /* General where not */
+
+    template<class Model, class Related>
+    template<WhereValue T>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereNot(
+            const Column &column, const QString &comparison, T &&value,
+            const QString &condition) const
+    {
+        getQuery().whereNot(column, comparison, std::forward<T>(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    template<WhereValue T>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereNot(
+            const Column &column, const QString &comparison, T &&value) const
+    {
+        getQuery().orWhereNot(column, comparison, std::forward<T>(value));
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    template<WhereValue T>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereNotEq(
+            const Column &column, T &&value, const QString &condition) const
+    {
+        getQuery().whereNotEq(column, std::forward<T>(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    template<WhereValue T>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereNotEq(const Column &column, T &&value) const
+    {
+        getQuery().orWhereNotEq(column, std::forward<T>(value));
+
+        return relation();
+    }
+
     /* Nested where */
 
     template<class Model, class Related>
@@ -1627,6 +1739,27 @@ namespace Tiny::Relations
         return relation();
     }
 
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereNot(
+            const std::function<void(Builder<Related> &)> &callback,
+            const QString &condition) const
+    {
+        getQuery().whereNot(callback, condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereNot(
+            const std::function<void(Builder<Related> &)> &callback) const
+    {
+        getQuery().orWhereNot(callback);
+
+        return relation();
+    }
+
     /* Array where */
 
     template<class Model, class Related>
@@ -1644,6 +1777,27 @@ namespace Tiny::Relations
     RelationProxies<Model, Related>::orWhere(const QVector<WhereItem> &values) const
     {
         getQuery().orWhere(values);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereNot(
+            const QVector<WhereItem> &values, const QString &condition,
+            const QString &defaultCondition) const
+    {
+        getQuery().whereNot(values, condition, defaultCondition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereNot(
+            const QVector<WhereItem> &values, const QString &defaultCondition) const
+    {
+        getQuery().orWhereNot(values, defaultCondition);
 
         return relation();
     }
@@ -1878,6 +2032,55 @@ namespace Tiny::Relations
     RelationProxies<Model, Related>::orWhereEq(C &&column, V &&value) const
     {
         getQuery().where(std::forward<C>(column), EQ, std::forward<V>(value), OR);
+
+        return relation();
+    }
+
+    /* where not sub-queries */
+
+    template<class Model, class Related>
+    template<Queryable C, WhereValue V>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereNot(
+            C &&column, const QString &comparison, V &&value,
+            const QString &condition) const
+    {
+        getQuery().whereNot(std::forward<C>(column), comparison,
+                            std::forward<V>(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    template<Queryable C, WhereValue V>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereNot(
+            C &&column, const QString &comparison, V &&value) const
+    {
+        getQuery().orWhereNot(std::forward<C>(column), comparison,
+                              std::forward<V>(value));
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    template<Queryable C, WhereValue V>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereNotEq(
+            C &&column, V &&value, const QString &condition) const
+    {
+        getQuery().whereNotEq(std::forward<C>(column), std::forward<V>(value),
+                              condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    template<Queryable C, WhereValue V>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereNotEq(C &&column, V &&value) const
+    {
+        getQuery().orWhereNotEq(std::forward<C>(column), std::forward<V>(value));
 
         return relation();
     }

@@ -213,6 +213,9 @@ namespace Tiny
         template<JoinTable T>
         TinyBuilder<Model> &crossJoin(T &&table,
                                       const std::function<void(JoinClause &)> &callback);
+        /*! Add a "cross join" clause to the query. */
+        template<JoinTable T>
+        TinyBuilder<Model> &crossJoin(T &&table);
 
         /*! Add a subquery join clause to the query. */
         template<SubQuery T>
@@ -264,6 +267,23 @@ namespace Tiny
         template<WhereValue T>
         TinyBuilder<Model> &orWhereEq(const Column &column, T &&value);
 
+        /* General where not */
+        /*! Add a basic "where not" clause to the query. */
+        template<WhereValue T>
+        TinyBuilder<Model> &whereNot(const Column &column, const QString &comparison,
+                                     T &&value, const QString &condition = AND);
+        /*! Add an "or where not" clause to the query. */
+        template<WhereValue T>
+        TinyBuilder<Model> &orWhereNot(const Column &column, const QString &comparison,
+                                       T &&value);
+        /*! Add a basic equal "where not" clause to the query. */
+        template<WhereValue T>
+        TinyBuilder<Model> &whereNotEq(const Column &column, T &&value,
+                                       const QString &condition = AND);
+        /*! Add an equal "or where not" clause to the query. */
+        template<WhereValue T>
+        TinyBuilder<Model> &orWhereNotEq(const Column &column, T &&value);
+
         /* Nested where */
         /*! Add a nested where clause to the query. */
         TinyBuilder<Model> &
@@ -272,6 +292,13 @@ namespace Tiny
         /*! Add a nested "or where" clause to the query. */
         TinyBuilder<Model> &
         orWhere(const std::function<void(TinyBuilder<Model> &)> &callback);
+        /*! Add a nested "where not" clause to the query. */
+        TinyBuilder<Model> &
+        whereNot(const std::function<void(TinyBuilder<Model> &)> &callback,
+                 const QString &condition = AND);
+        /*! Add a nested "or where not" clause to the query. */
+        TinyBuilder<Model> &
+        orWhereNot(const std::function<void(TinyBuilder<Model> &)> &callback);
 
         /* Array where */
         /*! Add a vector of basic where clauses to the query. */
@@ -279,6 +306,13 @@ namespace Tiny
                                   const QString &condition = AND);
         /*! Add a vector of basic "or where" clauses to the query. */
         TinyBuilder<Model> &orWhere(const QVector<WhereItem> &values);
+        /*! Add a vector of basic "where not" clauses to the query. */
+        TinyBuilder<Model> &whereNot(const QVector<WhereItem> &values,
+                                     const QString &condition = AND,
+                                     const QString &defaultCondition = "");
+        /*! Add a vector of basic "or where not" clauses to the query. */
+        TinyBuilder<Model> &orWhereNot(const QVector<WhereItem> &values,
+                                       const QString &defaultCondition = "");
 
         /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
@@ -354,6 +388,24 @@ namespace Tiny
         /*! Add an equal "or where" clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
         TinyBuilder<Model> &orWhereEq(C &&column, V &&value);
+
+        /* where not sub-queries */
+        /*! Add a basic "where not" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        TinyBuilder<Model> &whereNot(C &&column, const QString &comparison, V &&value,
+                                     const QString &condition = AND);
+        /*! Add an "or where not" clause to the query with a full sub-select column. */
+        template<Queryable C, WhereValue V>
+        TinyBuilder<Model> &orWhereNot(C &&column, const QString &comparison, V &&value);
+        /*! Add a basic equal "where not" clause to the query with a full sub-select
+            column. */
+        template<Queryable C, WhereValue V>
+        TinyBuilder<Model> &whereNotEq(C &&column, V &&value,
+                                       const QString &condition = AND);
+        /*! Add an equal "or where not" clause to the query with a full sub-select
+            column. */
+        template<Queryable C, WhereValue V>
+        TinyBuilder<Model> &orWhereNotEq(C &&column, V &&value);
 
         /*! Add a full sub-select to the "where" clause. */
         template<WhereValueSubQuery T>
@@ -921,6 +973,15 @@ namespace Tiny
     }
 
     template<typename Model>
+    template<JoinTable T>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::crossJoin(T &&table)
+    {
+        toBase().crossJoin(std::forward<T>(table));
+        return builder();
+    }
+
+    template<typename Model>
     template<SubQuery T>
     TinyBuilder<Model> &
     BuilderProxies<Model>::joinSub(
@@ -1030,6 +1091,48 @@ namespace Tiny
         return builder();
     }
 
+    /* General where not */
+
+    template<typename Model>
+    template<WhereValue T>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereNot(
+            const Column &column, const QString &comparison, T &&value,
+            const QString &condition)
+    {
+        toBase().whereNot(column, comparison, std::forward<T>(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    template<WhereValue T>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereNot(
+            const Column &column, const QString &comparison, T &&value)
+    {
+        toBase().orWhereNot(column, comparison, std::forward<T>(value));
+        return builder();
+    }
+
+    template<typename Model>
+    template<WhereValue T>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereNotEq(
+            const Column &column, T &&value, const QString &condition)
+    {
+        toBase().whereNotEq(column, std::forward<T>(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    template<WhereValue T>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereNotEq(const Column &column, T &&value)
+    {
+        toBase().orWhereNotEq(column, std::forward<T>(value));
+        return builder();
+    }
+
     /* Nested where */
 
     template<typename Model>
@@ -1056,6 +1159,23 @@ namespace Tiny
         return where(callback, OR);
     }
 
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereNot(
+            const std::function<void(TinyBuilder<Model> &)> &callback,
+            const QString &condition)
+    {
+        return where(callback, SPACE_IN.arg(condition, NOT));
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereNot(
+            const std::function<void(TinyBuilder<Model> &)> &callback)
+    {
+        return where(callback, SPACE_IN.arg(OR, NOT));
+    }
+
     /* Array where */
 
     template<typename Model>
@@ -1072,6 +1192,25 @@ namespace Tiny
     BuilderProxies<Model>::orWhere(const QVector<WhereItem> &values)
     {
         toBase().orWhere(values);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereNot(
+            const QVector<WhereItem> &values, const QString &condition,
+            const QString &defaultCondition)
+    {
+        toBase().whereNot(values, condition, defaultCondition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereNot(
+            const QVector<WhereItem> &values, const QString &defaultCondition)
+    {
+        toBase().orWhereNot(values, defaultCondition);
         return builder();
     }
 
@@ -1276,6 +1415,46 @@ namespace Tiny
     BuilderProxies<Model>::orWhereEq(C &&column, V &&value)
     {
         toBase().where(std::forward<C>(column), EQ, std::forward<V>(value), OR);
+        return builder();
+    }
+
+    /* where not sub-queries */
+
+    template<typename Model>
+    template<Queryable C, WhereValue V>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereNot(
+            C &&column, const QString &comparison, V &&value, const QString &condition)
+    {
+        toBase().whereNot(std::forward<C>(column), comparison, std::forward<V>(value),
+                          condition);
+        return builder();
+    }
+
+    template<typename Model>
+    template<Queryable C, WhereValue V>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereNot(C &&column, const QString &comparison, V &&value)
+    {
+        toBase().orWhereNot(std::forward<C>(column), comparison, std::forward<V>(value));
+        return builder();
+    }
+
+    template<typename Model>
+    template<Queryable C, WhereValue V>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereNotEq(C &&column, V &&value, const QString &condition)
+    {
+        toBase().whereNotEq(std::forward<C>(column), std::forward<V>(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    template<Queryable C, WhereValue V>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereNotEq(C &&column, V &&value)
+    {
+        toBase().orWhereNotEq(std::forward<C>(column), std::forward<V>(value));
         return builder();
     }
 
