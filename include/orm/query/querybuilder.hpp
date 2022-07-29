@@ -68,6 +68,7 @@ namespace Orm::Query
         /*! Execute a query for a single record by ID or call a callback. */
         inline QSqlQuery findOr(const QVariant &id,
                                 const std::function<void()> &callback);
+
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         std::pair<QSqlQuery, R>
@@ -175,6 +176,7 @@ namespace Orm::Query
         bool existsOr(const std::function<void()> &callback);
         /*! Execute the given callback if rows exist for the current query. */
         bool doesntExistOr(const std::function<void()> &callback);
+
         /*! Execute the given callback if no rows exist for the current query. */
         template<typename R>
         std::pair<bool, R> existsOr(const std::function<R()> &callback);
@@ -298,6 +300,7 @@ namespace Orm::Query
         joinSub(T &&query, const QString &as,
                 const std::function<void(JoinClause &)> &callback,
                 const QString &type = INNER);
+
         /*! Add a subquery left join to the query. */
         template<SubQuery T>
         inline Builder &
@@ -308,6 +311,7 @@ namespace Orm::Query
         inline Builder &
         leftJoinSub(T &&query, const QString &as,
                     const std::function<void(JoinClause &)> &callback);
+
         /*! Add a subquery right join to the query. */
         template<SubQuery T>
         inline Builder &

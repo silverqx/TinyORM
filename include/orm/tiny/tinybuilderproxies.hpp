@@ -121,6 +121,7 @@ namespace Tiny
         bool existsOr(const std::function<void()> &callback) const;
         /*! Execute the given callback if rows exist for the current query. */
         bool doesntExistOr(const std::function<void()> &callback) const;
+
         /*! Execute the given callback if no rows exist for the current query. */
         template<typename R>
         std::pair<bool, R> existsOr(const std::function<R()> &callback) const;

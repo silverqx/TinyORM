@@ -79,6 +79,7 @@ namespace Relations
         /*! Execute a query for a single record by ID or call a callback. */
         static std::optional<Derived>
         findOr(const QVariant &id, const std::function<void()> &callback);
+
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         static std::pair<std::optional<Derived>, R>
@@ -232,6 +233,7 @@ namespace Relations
         static bool existsOr(const std::function<void()> &callback);
         /*! Execute the given callback if rows exist for the current query. */
         static bool doesntExistOr(const std::function<void()> &callback);
+
         /*! Execute the given callback if no rows exist for the current query. */
         template<typename R>
         static std::pair<bool, R> existsOr(const std::function<R()> &callback);

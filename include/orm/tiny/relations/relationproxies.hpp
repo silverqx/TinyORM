@@ -80,6 +80,7 @@ namespace Tiny::Relations
         /*! Execute a query for a single record by ID or call a callback. */
         std::optional<Related>
         findOr(const QVariant &id, const std::function<void()> &callback) const;
+
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         std::pair<std::optional<Related>, R>
@@ -226,6 +227,7 @@ namespace Tiny::Relations
         bool existsOr(const std::function<void()> &callback) const;
         /*! Execute the given callback if rows exist for the current query. */
         bool doesntExistOr(const std::function<void()> &callback) const;
+
         /*! Execute the given callback if no rows exist for the current query. */
         template<typename R>
         std::pair<bool, R> existsOr(const std::function<R()> &callback) const;
@@ -445,8 +447,8 @@ namespace Tiny::Relations
                 const QVector<Column> &columns = {ASTERISK},
                 const QString &condition = AND) const;
         /*! Add an "or where not null" clause to the query. */
-        const Relation<Model, Related> &
-        orWhereNotNull(const QVector<Column> &columns = {ASTERISK}) const;
+        const Relation<Model, Related> &orWhereNotNull(
+                const QVector<Column> &columns = {ASTERISK}) const;
 
         /*! Add a "where null" clause to the query. */
         const Relation<Model, Related> &whereNull(
