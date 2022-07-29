@@ -764,32 +764,24 @@ void tst_QueryBuilder::limit() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    if (const auto qtConnection = QSqlDatabase::database(connection);
-        !qtConnection.driver()->hasFeature(QSqlDriver::QuerySize)
-    )
-        // ", " to prevent warning about variadic macro
-        QSKIP(QStringLiteral("'%1' driver doesn't support reporting the size "
-                             "of a query.")
-              .arg(qtConnection.driverName()).toUtf8().constData(), );
-
     auto builder = createQuery(connection);
 
     {
         auto query = builder->from("torrents").limit(1).get({ID});
 
-        QCOMPARE(query.size(), 1);
+        QCOMPARE(QueryUtils::queryResultSize(query), 1);
     }
 
     {
         auto query = builder->from("torrents").limit(3).get({ID});
 
-        QCOMPARE(query.size(), 3);
+        QCOMPARE(QueryUtils::queryResultSize(query), 3);
     }
 
     {
         auto query = builder->from("torrents").limit(4).get({ID});
 
-        QCOMPARE(query.size(), 4);
+        QCOMPARE(QueryUtils::queryResultSize(query), 4);
     }
 }
 
