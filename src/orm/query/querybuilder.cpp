@@ -113,9 +113,9 @@ QVector<QVariant> Builder::pluck(const QString &column)
     if (size == 0)
         return {};
 
-    /* If the columns are qualified with a table or have an alias, we cannot use
-       those directly in the "pluck" operations since the results from the DB
-       are only keyed by the column itself. We'll strip the table out here. */
+    /* If the column is qualified with a table or have an alias, we cannot use
+       those directly in the "pluck" operations, we have to strip the table out or
+       use the alias name instead. */
     const auto unqualifiedColumn = stripTableForPluck(column);
 
     QVector<QVariant> result;
@@ -1125,6 +1125,16 @@ Builder Builder::cloneWithoutBindings(
     return copy;
 }
 
+QString Builder::stripTableForPluck(const QString &column) const
+{
+    static const auto as = QStringLiteral(" as ");
+
+    if (!column.contains(as))
+        return m_grammar.unqualifyColumn(column);
+
+    return m_grammar.getAliasFromFrom(column);
+}
+
 /* protected */
 
 bool Builder::invalidOperator(const QString &comparison) const
@@ -1277,16 +1287,6 @@ Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
         query.from(QStringLiteral("%1.%2").arg(queryDatabaseName, std::move(queryFrom)));
 
     return query;
-}
-
-QString Builder::stripTableForPluck(const QString &column) const
-{
-    static const auto as = QStringLiteral(" as ");
-
-    if (!column.contains(as))
-        return m_grammar.unqualifyColumn(column);
-
-    return column.split(as).last().trimmed();
 }
 
 void Builder::enforceOrderBy() const

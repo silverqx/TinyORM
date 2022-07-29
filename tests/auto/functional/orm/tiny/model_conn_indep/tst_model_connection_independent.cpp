@@ -66,6 +66,10 @@ private slots:
     void pluck_EmptyResult() const;
     void pluck_QualifiedColumnOrKey() const;
 
+    void pluck_With_u_dates() const;
+    void pluck_EmptyResult_With_u_dates() const;
+    void pluck_QualifiedColumnOrKey_With_u_dates() const;
+
     /* Builds Queries */
     void chunk() const;
     void chunk_ReturnFalse() const;
@@ -439,15 +443,15 @@ void tst_Model_Connection_Independent::pluck() const
         QCOMPARE(result, expected);
     }
     // Templated pluck keyed by file_index<bool>, bool type is used intentionally 😎
-//    {
-//        auto result = TorrentPreviewableFile::orderBy(ID)
-//                      ->pluck<bool>("filepath", "file_index");
+    {
+        auto result = TorrentPreviewableFile::orderBy(ID)
+                      ->pluck<bool>("filepath", "file_index");
 
-//        std::map<bool, QVariant> expected {
-//            {false, "test1_file1.mkv"}, {true, "test2_file2.mkv"},
-//        };
-//        QCOMPARE(result, expected);
-//    }
+        std::map<bool, QVariant> expected {
+            {false, "test1_file1.mkv"}, {true, "test2_file2.mkv"},
+        };
+        QCOMPARE(result, expected);
+    }
 }
 
 void tst_Model_Connection_Independent::pluck_EmptyResult() const
@@ -513,6 +517,142 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey() const
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
             {5, "test5"}, {6, "test6"},
+        };
+        QCOMPARE(result, expected);
+    }
+}
+
+void tst_Model_Connection_Independent::pluck_With_u_dates() const
+{
+    // Simple pluck without keying
+    {
+        auto result = Torrent::pluck("added_on");
+
+        QVector<QVariant> expected {
+            QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate),
+        };
+        QCOMPARE(result, expected);
+    }
+    // Templated pluck keyed by id<quint64> and QVariant<QDateTime> as the value
+    {
+        auto result = Torrent::pluck<quint64>("added_on", ID);
+
+        std::map<quint64, QVariant> expected {
+            {1, QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate)},
+            {2, QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)},
+            {3, QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate)},
+            {4, QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate)},
+            {5, QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate)},
+            {6, QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate)},
+        };
+        QCOMPARE(result, expected);
+    }
+    // Templated pluck keyed by added_on<QDateTime>
+    {
+        auto result = Torrent::pluck<QDateTime>(ID, "added_on");
+
+        std::map<QDateTime, QVariant> expected {
+            {QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate), 1},
+            {QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate), 2},
+            {QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate), 3},
+            {QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate), 4},
+            {QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate), 5},
+            {QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate), 6},
+        };
+        QCOMPARE(result, expected);
+    }
+}
+
+void tst_Model_Connection_Independent::pluck_EmptyResult_With_u_dates() const
+{
+    {
+        auto result = Torrent::whereEq(NAME, "dummy-NON_EXISTENT")->pluck("added_on");
+
+        QCOMPARE(result, QVector<QVariant>());
+    }
+    {
+        auto result = Torrent::whereEq(NAME, "dummy-NON_EXISTENT")
+                      ->pluck<QDateTime>(ID, "added_on");
+
+        std::map<QDateTime, QVariant> expected;
+        QCOMPARE(result, expected);
+    }
+}
+
+void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates() const
+{
+    // Strip table name
+    {
+        auto result = Torrent::pluck("torrents.added_on");
+
+        QVector<QVariant> expected {
+            QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate),
+        };
+        QCOMPARE(result, expected);
+    }
+    // Strip table name
+    {
+        auto result = Torrent::pluck<quint64>("torrents.added_on", ID);
+
+        std::map<quint64, QVariant> expected {
+            {1, QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate)},
+            {2, QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)},
+            {3, QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate)},
+            {4, QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate)},
+            {5, QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate)},
+            {6, QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate)},
+        };
+        QCOMPARE(result, expected);
+    }
+    // Strip column alias
+    {
+        auto result = Torrent::orderBy(ID)->pluck("added_on as added_on_alt");
+
+        QVector<QVariant> expected {
+            QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate),
+        };
+        QCOMPARE(result, expected);
+    }
+    // Strip column alias
+    {
+        auto result = Torrent::pluck<quint64>("added_on as added_on_alt", "id as id_alt");
+
+        std::map<quint64, QVariant> expected {
+            {1, QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate)},
+            {2, QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)},
+            {3, QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate)},
+            {4, QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate)},
+            {5, QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate)},
+            {6, QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate)},
+        };
+        QCOMPARE(result, expected);
+    }
+    // Strip column alias and table name
+    {
+        auto result = Torrent::pluck<quint64>("torrents.added_on", "id as id_alt");
+
+        std::map<quint64, QVariant> expected {
+            {1, QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate)},
+            {2, QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)},
+            {3, QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate)},
+            {4, QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate)},
+            {5, QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate)},
+            {6, QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate)},
         };
         QCOMPARE(result, expected);
     }

@@ -693,6 +693,9 @@ namespace Orm::Query
         Builder cloneWithoutBindings(
                 const std::unordered_set<BindingType> &except) const;
 
+        /*! Strip off the table name or alias from a column identifier. */
+        QString stripTableForPluck(const QString &column) const;
+
     protected:
         /*! Determine if the given operator is supported. */
         bool invalidOperator(const QString &comparison) const;
@@ -752,9 +755,6 @@ namespace Orm::Query
 
         /*! Prepend the database name if the given query is on another database. */
         Builder &prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const;
-
-        /*! Strip off the table name or alias from a column identifier. */
-        QString stripTableForPluck(const QString &column) const;
 
         /*! Throw an exception if the query doesn't have an orderBy clause. */
         void enforceOrderBy() const;
@@ -903,9 +903,9 @@ namespace Orm::Query
         if (size == 0)
             return {};
 
-        /* If the columns are qualified with a table or have an alias, we cannot use
-           those directly in the "pluck" operations since the results from the DB
-           are only keyed by the column itself. We'll strip the table out here. */
+        /* If the column is qualified with a table or have an alias, we cannot use
+           those directly in the "pluck" operations, we have to strip the table out or
+           use the alias name instead. */
         const auto unqualifiedColumn = stripTableForPluck(column);
 
         const auto unqualifiedKey = stripTableForPluck(key);

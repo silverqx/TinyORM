@@ -185,7 +185,7 @@ private:
 //    inline static QString u_dateFormat {"yyyy-MM-dd HH:mm:ss"};
 
     /*! The attributes that should be mutated to dates. */
-    inline static const QStringList u_dates {"added_on"};
+    inline static const QStringList u_dates {"added_on", "added_on_alt"};
 
     /*! All of the relationships to be touched. */
 //    QStringList u_touches {"tags"};

@@ -118,6 +118,16 @@ QString BaseGrammar::unqualifyColumn(const QString &column) const
     return column.split(DOT).last().trimmed();
 }
 
+QString BaseGrammar::getFromWithoutAlias(const QString &from) const
+{
+    return std::move(getSegmentsFromFrom(from).first()); // clazy:exclude=detaching-temporary
+}
+
+QString BaseGrammar::getAliasFromFrom(const QString &from) const
+{
+    return std::move(getSegmentsFromFrom(from).last()); // clazy:exclude=detaching-temporary
+}
+
 /* protected */
 
 QString BaseGrammar::parameter(const QVariant &value) const
@@ -175,22 +185,6 @@ QStringList BaseGrammar::getSegmentsFromFrom(const QString &from) const
         segemnt = segemnt.trimmed();
 
     return segments;
-}
-
-QString BaseGrammar::getFromWithoutAlias(const QString &from) const
-{
-    // Prevent clazy warning
-    const auto segments = getSegmentsFromFrom(from);
-
-    return segments.first();
-}
-
-QString BaseGrammar::getAliasFromFrom(const QString &from) const
-{
-    // Prevent clazy warning
-    const auto segments = getSegmentsFromFrom(from);
-
-    return segments.last();
 }
 
 } // namespace Orm

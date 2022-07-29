@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include <QtSql/QSqlRecord>
 
+#include <range/v3/action/transform.hpp>
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/remove_if.hpp>
@@ -73,10 +74,10 @@ namespace Orm::Tiny
         QVariant soleValue(const Column &column);
 
         /*! Get the vector with the values of a given column. */
-        QVector<QVariant> pluck(const QString &column) const;
+        QVector<QVariant> pluck(const QString &column);
         /*! Get the vector with the values of a given column. */
         template<typename T>
-        std::map<T, QVariant> pluck(const QString &column, const QString &key) const;
+        std::map<T, QVariant> pluck(const QString &column, const QString &key);
 
         /*! Find a model by its primary key. */
         std::optional<Model>
@@ -335,18 +336,61 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<QVariant> Builder<Model>::pluck(const QString &column) const
+    QVector<QVariant> Builder<Model>::pluck(const QString &column)
     {
-        // CUR now, use newFromBuilder() to make and fill models and return attribute/column silverqx
-        return toBase().pluck(column);
+        auto result = toBase().pluck(column);
+
+        // Nothing to pluck-ing 😎
+        if (result.empty())
+            return result;
+
+        /* If the column is qualified with a table or have an alias, we cannot use
+           those directly in the "pluck" operations, we have to strip the table out or
+           use the alias name instead. */
+        const auto unqualifiedColumn = getQuery().stripTableForPluck(column);
+
+        /* If the model has a mutator for the requested column, we will spin through
+           the results and mutate the values so that the mutated version of these
+           columns are returned as you would expect from these Eloquent models. */
+        if (!m_model.getDates().contains(unqualifiedColumn))
+            return result;
+
+        return result |= ranges::actions::transform([this, &unqualifiedColumn]
+                                                    (auto &&value)
+        {
+            return m_model.newFromBuilder({{unqualifiedColumn,
+                                            std::forward<decltype (value)>(value)}})
+                    .getAttribute(unqualifiedColumn);
+        });
     }
 
     template<typename Model>
     template<typename T>
     std::map<T, QVariant>
-    Builder<Model>::pluck(const QString &column, const QString &key) const
+    Builder<Model>::pluck(const QString &column, const QString &key)
     {
-        return toBase().template pluck<T>(column, key);
+        auto result = toBase().template pluck<T>(column, key);
+
+        // Nothing to pluck-ing 😎
+        if (result.empty())
+            return result;
+
+        /* If the column is qualified with a table or have an alias, we cannot use
+           those directly in the "pluck" operations, we have to strip the table out or
+           use the alias name instead. */
+        const auto unqualifiedColumn = getQuery().stripTableForPluck(column);
+
+        /* If the model has a mutator for the requested column, we will spin through
+           the results and mutate the values so that the mutated version of these
+           columns are returned as you would expect from these Eloquent models. */
+        if (!m_model.getDates().contains(unqualifiedColumn))
+            return result;
+
+        for (auto &&[_, value] : result)
+            value = m_model.newFromBuilder({{unqualifiedColumn, std::move(value)}})
+                    .getAttribute(unqualifiedColumn);
+
+        return result;
     }
 
     // FEATURE dilemma primarykey, Model::KeyType for id silverqx
