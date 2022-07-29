@@ -1369,8 +1369,6 @@ void tst_Model::update_OnNonExistentModel() const
 
 void tst_Model::update_NonExistentAttribute() const
 {
-//    try {
-
     QFETCH_GLOBAL(QString, connection);
 
     ConnectionOverride::connection = connection;
@@ -1383,9 +1381,6 @@ void tst_Model::update_NonExistentAttribute() const
        Torrent::save() returns true in this case, it's like calling the update() with
        no or empty attributes. */
     QVERIFY(torrent->update({{"progress-NON_EXISTENT", 333}}));
-//    }  catch (const std::exception &e) {
-//        qWarning() << e.what();
-//    }
 }
 
 void tst_Model::update_SameValue() const
