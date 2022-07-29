@@ -1281,7 +1281,7 @@ Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
 
 QString Builder::stripTableForPluck(const QString &column) const
 {
-    const auto as = QStringLiteral(" as ");
+    static const auto as = QStringLiteral(" as ");
 
     if (!column.contains(as))
         return m_grammar.unqualifyColumn(column);
