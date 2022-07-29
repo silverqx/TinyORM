@@ -22,7 +22,7 @@ static bool g_unguarded = false;
 
 /* public */
 
-// NOTE api different, Eloquent returns whatever callback returns and catches all exceptions around the std::invoke() silverqx
+// NOTE api different, Eloquent returns whatever callback returns silverqx
 void GuardedModel::unguarded(const std::function<void()> &callback)
 {
     if (g_unguarded) {
