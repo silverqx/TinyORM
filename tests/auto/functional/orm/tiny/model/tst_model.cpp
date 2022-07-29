@@ -792,6 +792,8 @@ void tst_Model::findOr_WithReturnType() const
 {
     QFETCH_GLOBAL(QString, connection);
 
+    ConnectionOverride::connection = connection;
+
     // Callback invoked
     {
         auto [model, result] = Torrent::findOr<int>(100, []()
