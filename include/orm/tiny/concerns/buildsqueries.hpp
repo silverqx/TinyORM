@@ -269,7 +269,6 @@ namespace Orm::Tiny::Concerns
                 column, alias);
     }
 
-    // CUR buildsqueries, check if all are pretending compatible silverqx
     template<ModelConcept Model>
     Model BuildsQueries<Model>::sole(const QVector<Column> &columns)
     {

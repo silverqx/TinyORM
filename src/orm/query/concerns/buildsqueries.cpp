@@ -171,7 +171,6 @@ bool BuildsQueries::eachById(
     }, column, alias);
 }
 
-// CUR buildsqueries, check if all are pretending compatible silverqx
 QSqlQuery BuildsQueries::sole(const QVector<Column> &columns)
 {
     auto query = builder().take(2).get(columns);
