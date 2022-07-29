@@ -98,6 +98,7 @@ namespace Orm::Tiny
         /*! Execute a query for a single record by ID or call a callback. */
         std::optional<Model>
         findOr(const QVariant &id, const std::function<void()> &callback = nullptr);
+
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         std::pair<std::optional<Model>, R>
