@@ -203,8 +203,6 @@ namespace Orm::Tiny
 
         /*! Get a base query builder instance. */
         inline QueryBuilder &toBase() const;
-        // FUTURE add Query Scopes feature silverqx
-//        { return $this->applyScopes()->getQuery(); }
 
         /*! Qualify the given column name by the model's table. */
         inline QString qualifyColumn(const QString &column) const;
@@ -874,6 +872,8 @@ namespace Orm::Tiny
     template<typename Model>
     QueryBuilder &Builder<Model>::toBase() const
     {
+        // FUTURE add Query Scopes feature silverqx
+        // retutn applyScopes().getQuery();
         return getQuery();
     }
 
