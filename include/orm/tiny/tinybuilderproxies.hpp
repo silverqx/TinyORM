@@ -1857,6 +1857,11 @@ namespace Tiny
 
     /* private */
 
+    /* This builder() const vs non-const is correct, only the update() calls
+       the non-const version, all other proxy methods call the const version.
+       All TinyBuilderProxy methods can not be made const, I have verified this.
+       It would be possible to make all const, but it would not be correct. */
+
     template<typename Model>
     const TinyBuilder<Model> &BuilderProxies<Model>::builder() const
     {
