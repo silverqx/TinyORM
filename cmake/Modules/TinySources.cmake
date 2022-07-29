@@ -27,6 +27,7 @@ function(tinyorm_sources out_headers out_sources)
         connectionresolverinterface.hpp
         connectors/connectionfactory.hpp
         connectors/connector.hpp
+        config.hpp
         connectors/connectorinterface.hpp
         connectors/mysqlconnector.hpp
         connectors/postgresconnector.hpp
@@ -49,6 +50,7 @@ function(tinyorm_sources out_headers out_sources)
         exceptions/sqltransactionerror.hpp
         libraryinfo.hpp
         macros/archdetect.hpp
+        macros/commonnamespace.hpp
         macros/compilerdetect.hpp
         macros/export.hpp
         macros/export_common.hpp
