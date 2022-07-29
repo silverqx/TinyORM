@@ -279,7 +279,7 @@ void tst_QueryBuilder::pluck_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq(NAME, "DUMMY_RECORD").pluck(NAME);
+                      .whereEq(NAME, "dummy-NON_EXISTENT").pluck(NAME);
 
         QCOMPARE(result, QVector<QVariant>());
     }
@@ -287,7 +287,7 @@ void tst_QueryBuilder::pluck_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq(NAME, "DUMMY_RECORD").pluck<quint64>(NAME, ID);
+                      .whereEq(NAME, "dummy-NON_EXISTENT").pluck<quint64>(NAME, ID);
 
         std::map<quint64, QVariant> expected;
         QCOMPARE(result, expected);
@@ -393,7 +393,7 @@ void tst_QueryBuilder::implode_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq(NAME, "DUMMY_RECORD").orderBy(NAME)
+                      .whereEq(NAME, "dummy-NON_EXISTENT").orderBy(NAME)
                       .implode(NAME);
 
         QCOMPARE(result, QString());
@@ -403,7 +403,7 @@ void tst_QueryBuilder::implode_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq(NAME, "DUMMY_RECORD").orderBy(NAME)
+                      .whereEq(NAME, "dummy-NON_EXISTENT").orderBy(NAME)
                       .implode(NAME, COMMA);
 
         QCOMPARE(result, QString());
