@@ -175,7 +175,7 @@ namespace Query
         bool isConnectionDriverAvailable(const QString &connectionName);
 
         /*! Get the default connection name. */
-        const QString &getDefaultConnection() const final;
+        const QString &getDefaultConnection() const noexcept final;
         /*! Set the default connection name. */
         void setDefaultConnection(const QString &defaultConnection) final;
         /*! Reset the default connection name. */

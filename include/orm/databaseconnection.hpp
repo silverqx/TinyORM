@@ -142,7 +142,7 @@ namespace SchemaNs
         QSqlDatabase getRawQtConnection() const;
         /*! Get the connection resolver for an underlying database connection. */
         inline const std::function<Connectors::ConnectionName()> &
-        getQtConnectionResolver() const;
+        getQtConnectionResolver() const noexcept;
         /*! Set the connection resolver for an underlying database connection. */
         DatabaseConnection &setQtConnectionResolver(
                 const std::function<Connectors::ConnectionName()> &resolver);
@@ -191,7 +191,7 @@ namespace SchemaNs
         /*! Get an option from the configuration options. */
         QVariant getConfig(const QString &option) const;
         /*! Get the configuration for the current connection. */
-        inline const QVariantHash &getConfig() const;
+        inline const QVariantHash &getConfig() const noexcept;
         /*! Check whether the configuration contains the given option. */
         bool hasConfig(const QString &option) const;
 
@@ -201,11 +201,11 @@ namespace SchemaNs
         /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
         const QString &driverNamePrintable();
         /*! Get the database connection name. */
-        inline const QString &getName() const;
+        inline const QString &getName() const noexcept;
         /*! Get the name of the connected database. */
-        inline const QString &getDatabaseName() const;
+        inline const QString &getDatabaseName() const noexcept;
         /*! Get the host name of the connected database. */
-        inline const QString &getHostName() const;
+        inline const QString &getHostName() const noexcept;
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */
@@ -376,7 +376,7 @@ namespace SchemaNs
     /* Obtain connection instance */
 
     const std::function<Connectors::ConnectionName()> &
-    DatabaseConnection::getQtConnectionResolver() const
+    DatabaseConnection::getQtConnectionResolver() const noexcept
     {
         return m_qtConnectionResolver;
     }
@@ -408,24 +408,24 @@ namespace SchemaNs
         return *m_postProcessor;
     }
 
-    const QVariantHash &DatabaseConnection::getConfig() const
+    const QVariantHash &DatabaseConnection::getConfig() const noexcept
     {
         return m_config;
     }
 
     /* Getters */
 
-    const QString &DatabaseConnection::getName() const
+    const QString &DatabaseConnection::getName() const noexcept
     {
         return m_connectionName;
     }
 
-    const QString &DatabaseConnection::getDatabaseName() const
+    const QString &DatabaseConnection::getDatabaseName() const noexcept
     {
         return m_database;
     }
 
-    const QString &DatabaseConnection::getHostName() const
+    const QString &DatabaseConnection::getHostName() const noexcept
     {
         return m_hostName;
     }

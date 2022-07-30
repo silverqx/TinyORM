@@ -416,7 +416,7 @@ bool DatabaseManager::isConnectionDriverAvailable(const QString &connectionName)
 }
 
 const QString &
-DatabaseManager::getDefaultConnection() const
+DatabaseManager::getDefaultConnection() const noexcept
 {
     return Configuration::defaultConnection;
 }
