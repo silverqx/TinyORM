@@ -221,6 +221,12 @@ namespace Orm::Tiny
         /*! Parse the nested relationships in a relation. */
         void addNestedWiths(const QString &name, QVector<WithItem> &results) const;
 
+        /*! Size type used by the QVector<WithItem>. */
+        using VectorWithItemSizeType = QVector<WithItem>::size_type;
+        /*! Guess number of relations for the reserve (including nested relations). */
+        static VectorWithItemSizeType
+        guessParseWithRelationsSize(const QVector<WithItem> &relations);
+
         /*! Get the deeply nested relations for a given top-level relation. */
         QVector<WithItem>
         relationsNestedUnder(const QString &topRelationName) const;
@@ -835,7 +841,7 @@ namespace Orm::Tiny
         while (result.next()) {
             row.clear();
 
-            // Populate table row with data from the database
+            // Populate model attributes with data from the database (one table row)
             const auto record = result.record();
             for (int i = 0; i < record.count(); ++i)
                 row.append({record.fieldName(i), result.value(i)});
@@ -899,10 +905,15 @@ namespace Orm::Tiny
     QVector<WithItem>
     Builder<Model>::parseWithRelations(const QVector<WithItem> &relations)
     {
+        // Guess number of relations (including nested relations)
+        const auto relationsSize = guessParseWithRelationsSize(relations);
+
+        // Nothing to prepare (no nested relations)
+        if (relationsSize == 0)
+            return {};
+
         QVector<WithItem> results;
-        // CUR compute . for reserve instead of * 2 silverqx
-        // Can contain nested relations (because of the * 2)
-        results.reserve(relations.size() * 2);
+        results.reserve(relationsSize);
 
         for (auto relation : relations) {
             const auto isSelectConstraint = relation.name.contains(COLON);
@@ -1015,6 +1026,24 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
+    typename Builder<Model>::VectorWithItemSizeType
+    Builder<Model>::guessParseWithRelationsSize(const QVector<WithItem> &relations)
+    {
+        VectorWithItemSizeType size = 0;
+
+        for (const auto &[relation, _] : relations)
+            // Nested relations (x.y.z == 3 relations)
+            if (relation.contains(DOT))
+                size += relation.count(DOT) + 1;
+
+            // All others, with the ':' (Select Constraints) or only the relation name
+            else
+                ++size;
+
+        return size;
+    }
+
+    template<typename Model>
     QVector<WithItem>
     Builder<Model>::relationsNestedUnder(const QString &topRelationName) const
     {
@@ -1036,10 +1065,10 @@ namespace Orm::Tiny
         /* We are basically looking for any relationships that are nested deeper than
            the given top-level relationship. We will just check for any relations
            that start with the given top relations and add them to our vector. */
-        for (const auto &relation : m_eagerLoad)
-            if (isNestedUnder(topRelationName, relation.name))
-                nested.append({relation.name.mid(topRelationName.size() + 1),
-                               relation.constraints});
+        for (const auto &[relationName, constraints] : m_eagerLoad)
+            if (isNestedUnder(topRelationName, relationName))
+                nested.append({relationName.mid(topRelationName.size() + 1),
+                               constraints});
 
         return nested;
     }
