@@ -46,7 +46,7 @@ namespace Orm::Tiny
 
     public:
         /*! Constructor. */
-        Builder(std::shared_ptr<QueryBuilder> query, Model &model);
+        Builder(std::shared_ptr<QueryBuilder> &&query, const Model &model);
 
         /*! Copy constructor (needed by the chunkById() -> clone() method). */
         inline Builder(const Builder &) = default;
@@ -257,7 +257,7 @@ namespace Orm::Tiny
     /* public */
 
     template<typename Model>
-    Builder<Model>::Builder(std::shared_ptr<QueryBuilder> query, Model &model)
+    Builder<Model>::Builder(std::shared_ptr<QueryBuilder> &&query, const Model &model)
         : m_query(std::move(query))
         , m_model(model)
     {

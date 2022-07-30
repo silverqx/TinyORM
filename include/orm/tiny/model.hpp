@@ -183,7 +183,7 @@ namespace Orm::Tiny
         std::unique_ptr<TinyBuilder<Derived>> newQueryWithoutRelationships();
         /*! Create a new Tiny query builder for the model. */
         std::unique_ptr<TinyBuilder<Derived>>
-        newTinyBuilder(const std::shared_ptr<QueryBuilder> &query);
+        newTinyBuilder(std::shared_ptr<QueryBuilder> query);
 
         /*! Create a new model instance that is existing. */
         Derived newFromBuilder(const QVector<AttributeItem> &attributes = {},
@@ -788,12 +788,12 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::newModelQuery()
     {
         // Ownership of the std::shared_ptr<QueryBuilder>
-        const auto query = newBaseQueryBuilder();
+        auto query = newBaseQueryBuilder();
 
         /* Model is passed to the TinyBuilder ctor, because of that setModel()
            isn't used here. Can't be const because of passed non-const model
            to the TinyBuilder. */
-        return newTinyBuilder(query);
+        return newTinyBuilder(std::move(query));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -806,9 +806,9 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newTinyBuilder(
-            const std::shared_ptr<QueryBuilder> &query)
+            std::shared_ptr<QueryBuilder> query)
     {
-        return std::make_unique<TinyBuilder<Derived>>(query, model());
+        return std::make_unique<TinyBuilder<Derived>>(std::move(query), model());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
