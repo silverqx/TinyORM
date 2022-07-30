@@ -812,7 +812,7 @@ namespace Orm::Tiny
             std::invoke(relationItem.constraints, relation->getBaseQuery());
 
         /* Once we have the results, we just match those back up to their parent models
-           using the relationship instance. Then we just return the finished vectors
+           using the relationship instance. Then we just return the finished vector
            of models which have been eagerly hydrated and are readied for return. */
         relation->match(relation->initRelation(models, relationItem.name),
                         relation->getEager(), relationItem.name);
