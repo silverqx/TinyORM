@@ -35,6 +35,8 @@ namespace Orm::Tiny
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! Alias for the helper utils. */
         using Helpers = Orm::Utils::Helpers;
+        /*! Alias for the query utils. */
+        using QueryUtils = Orm::Utils::Query;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
@@ -822,6 +824,7 @@ namespace Orm::Tiny
         auto instance = newModelInstance();
 
         QVector<Model> models;
+        models.reserve(QueryUtils::queryResultSize(result));
 
         // Table row, instantiate the QVector once and then re-use
         QVector<AttributeItem> row;
