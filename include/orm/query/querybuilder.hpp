@@ -601,7 +601,7 @@ namespace Orm::Query
         /*! Get the default key name of the table. */
         const QString &defaultKeyName() const;
         /*! Get a database connection. */
-        inline DatabaseConnection &getConnection() const;
+        inline DatabaseConnection &getConnection() const noexcept;
         /*! Get the query grammar instance. */
         inline const QueryGrammar &getGrammar() const;
 
@@ -1406,7 +1406,7 @@ namespace Orm::Query
 
     /* Getters / Setters */
 
-    DatabaseConnection &Builder::getConnection() const
+    DatabaseConnection &Builder::getConnection() const noexcept
     {
         return m_connection;
     }

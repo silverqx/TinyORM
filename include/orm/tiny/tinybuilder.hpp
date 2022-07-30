@@ -191,15 +191,15 @@ namespace Orm::Tiny
         QVector<Model> hydrate(QSqlQuery &&result);
 
         /*! Get the model instance being queried. */
-        inline Model &getModel();
+        inline Model &getModel() noexcept;
         /*! Get the underlying query builder instance. */
-        inline QueryBuilder &getQuery() const;
+        inline QueryBuilder &getQuery() const noexcept;
         /*! Get the underlying query builder instance as a std::shared_ptr. */
         inline const std::shared_ptr<QueryBuilder> &
-        getQuerySharedPointer() const;
+        getQuerySharedPointer() const noexcept;
 
         /*! Get a database connection. */
-        inline DatabaseConnection &getConnection() const;
+        inline DatabaseConnection &getConnection() const noexcept;
 
         /*! Get a base query builder instance. */
         inline QueryBuilder &toBase() const;
@@ -845,27 +845,27 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    Model &Builder<Model>::getModel()
+    Model &Builder<Model>::getModel() noexcept
     {
         return m_model;
     }
 
     template<typename Model>
-    QueryBuilder &Builder<Model>::getQuery() const
+    QueryBuilder &Builder<Model>::getQuery() const noexcept
     {
         return *m_query;
     }
 
     template<typename Model>
     const std::shared_ptr<QueryBuilder> &
-    Builder<Model>::getQuerySharedPointer() const
+    Builder<Model>::getQuerySharedPointer() const noexcept
     {
         return m_query;
     }
 
     template<typename Model>
     DatabaseConnection &
-    Builder<Model>::getConnection() const
+    Builder<Model>::getConnection() const noexcept
     {
         return m_query->getConnection();
     }
