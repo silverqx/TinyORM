@@ -813,7 +813,7 @@ namespace Orm::Tiny
 
         relation->addEagerConstraints(models);
 
-        // Add relation constraints defined in a user callback
+        // Add relation constraints defined in the user callback
         // NOTE api different, Eloquent is passing the Relation reference into the lambda, it would be almost impossible to do it silverqx
         if (relationItem.constraints)
             std::invoke(relationItem.constraints, relation->getBaseQuery());
