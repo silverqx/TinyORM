@@ -294,8 +294,8 @@ namespace Orm::Tiny
             eagerLoadRelations(models);
 
         return models;
-        // Laravel does it this way
-//        return $builder->getModel()->newCollection($models);
+        // FUTURE if I will implement custom container for the Models, this is right place to do it silverqx
+//        return getModel().newCollection(models);
     }
 
     template<typename Model>
