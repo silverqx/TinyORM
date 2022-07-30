@@ -5,16 +5,21 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/databaseconnection.hpp"
 #include "orm/exceptions/multiplerecordsfounderror.hpp"
 #include "orm/exceptions/recordsnotfounderror.hpp"
+#include "orm/ormtypes.hpp"
 #include "orm/tiny/tinyconcepts.hpp"
 #include "orm/utils/query.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny::Concerns
+namespace Orm::Tiny
+{
+    template<typename Model>
+    class Builder;
+
+namespace Concerns
 {
 
     /*! More complex 'Retrieving results' methods that internally build queries. */
@@ -314,7 +319,8 @@ namespace Orm::Tiny::Concerns
         return static_cast<const Builder<Model> &>(*this);
     }
 
-} // namespace Orm::Tiny::Concerns
+} // namespace Concerns
+} // namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE
 
