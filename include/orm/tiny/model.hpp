@@ -33,9 +33,7 @@ namespace Orm::Tiny
     // TODO model missing methods Model::firstOr() silverqx
     // TODO model missing methods Model::updateOrInsert() silverqx
     // TODO model missing methods Model::loadMissing() silverqx
-    // TODO model missing methods Model::whereExists() silverqx
     // TODO model missing methods Model::whereBetween() silverqx
-    // TODO model missing methods Model::exists()/notExists() silverqx
     // TODO model missing methods Model::saveOrFail() silverqx
     // TODO model missing methods EloquentCollection::toQuery() silverqx
     // TODO model missing methods Model::whereRow() silverqx
