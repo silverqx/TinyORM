@@ -347,6 +347,7 @@ bool Builder::doesntExistOr(const std::function<void()> &callback)
     return false;
 }
 
+// TODO move, select() silverqx
 Builder &Builder::select(const QVector<Column> &columns)
 {
     clearColumns();
@@ -1284,7 +1285,7 @@ Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
         !queryFrom.startsWith(queryDatabaseName) &&
         !queryFrom.contains(DOT)
     )
-        query.from(QStringLiteral("%1.%2").arg(queryDatabaseName, std::move(queryFrom)));
+        query.from(DOT_IN.arg(queryDatabaseName, std::move(queryFrom)));
 
     return query;
 }

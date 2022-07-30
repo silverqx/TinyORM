@@ -49,6 +49,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString UPDATED_AT;
     SHAREDLIB_EXPORT extern const QString PARENTH_ONE;
     SHAREDLIB_EXPORT extern const QString NEWLINE;
+    SHAREDLIB_EXPORT extern const QString DOT_IN;
     SHAREDLIB_EXPORT extern const QString SPACE_IN;
     SHAREDLIB_EXPORT extern const QString NOSPACE;
     SHAREDLIB_EXPORT extern const QString EMPTY;

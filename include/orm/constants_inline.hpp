@@ -48,6 +48,7 @@ namespace Orm::Constants
     inline const QString UPDATED_AT  = QStringLiteral("updated_at");
     inline const QString PARENTH_ONE = QStringLiteral("(%1)");
     inline const QString NEWLINE     = QStringLiteral("\n");
+    inline const QString DOT_IN      = QStringLiteral("%1.%2");
     inline const QString SPACE_IN    = QStringLiteral("%1 %2");
     inline const QString NOSPACE     = QStringLiteral("%1%2");
     inline const QString EMPTY       = QLatin1String("");

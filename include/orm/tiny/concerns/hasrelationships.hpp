@@ -513,8 +513,7 @@ namespace Concerns
             localKey = basemodel().getKeyName();
 
         return newHasOne<Related>(std::move(instance), model(),
-                                  QStringLiteral("%1.%2").arg(instance->getTable(),
-                                                              foreignKey),
+                                  DOT_IN.arg(instance->getTable(), foreignKey),
                                   localKey);
     }
 
@@ -565,8 +564,7 @@ namespace Concerns
             localKey = basemodel().getKeyName();
 
         return newHasMany<Related>(std::move(instance), model(),
-                                   QStringLiteral("%1.%2").arg(instance->getTable(),
-                                                               foreignKey),
+                                   DOT_IN.arg(instance->getTable(), foreignKey),
                                    localKey);
     }
 

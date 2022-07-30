@@ -197,7 +197,7 @@ namespace Orm::Tiny::Relations
                of the related models matching on the foreign key that's on a parent. */
         const auto &table = this->m_related->getTable();
 
-        this->m_query->where(QStringLiteral("%1.%2").arg(table, m_ownerKey), EQ,
+        this->m_query->where(DOT_IN.arg(table, m_ownerKey), EQ,
                              m_child.getAttribute(m_foreignKey));
     }
 
@@ -209,7 +209,7 @@ namespace Orm::Tiny::Relations
            a non-standard name and not "id". We will then construct the constraint for
            our eagerly loading query so it returns the proper models from execution. */
         this->m_query->getQuery().whereIn(
-                    QStringLiteral("%1.%2").arg(this->m_related->getTable(), m_ownerKey),
+                    DOT_IN.arg(this->m_related->getTable(), m_ownerKey),
                     getEagerModelKeys(models));
     }
 

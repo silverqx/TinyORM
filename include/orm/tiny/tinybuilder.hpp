@@ -921,7 +921,7 @@ namespace Orm::Tiny
                the relationship with its own key in the vector of eager-load names. */
             addNestedWiths(relation.name, results);
 
-            results.append(std::move(relation));
+            results << std::move(relation);
         }
 
         return results;
@@ -934,48 +934,51 @@ namespace Orm::Tiny
         auto relation = splitted.at(0).trimmed();
         auto &columns = splitted[1];
 
+        /* Get the Related model table name if the relation is BelongsToMany, otherwise
+           return an empty std::optional. */
         auto belongsToManyRelatedTable =
                 m_model.getRelatedTableForBelongsToManyWithVisitor(relation);
 
+        // Move the relation and also values to the lambda, to avoid dangling references
         return {
             std::move(relation),
             [columns = std::move(columns),
-                    belongsToManyRelatedTable = std::move(belongsToManyRelatedTable)]
+             belongsToManyRelatedTable = std::move(belongsToManyRelatedTable)]
             (auto &query)
             {
+                auto columnsSplitted = columns.split(COMMA_C, Qt::SkipEmptyParts);
+
+                // Nothing to do
+                if (columnsSplitted.isEmpty())
+                    return;
+
                 QVector<Column> columnsList;
-                columnsList.reserve(columns.count(COMMA_C) + 1);
+                columnsList.reserve(columnsSplitted.size());
 
                 // Avoid 'clazy might detach' warning
-                for (const auto columns_ = columns.split(COMMA_C);
-                     auto column : columns_)
+                for (auto &&column : columnsSplitted)
                 {
-                    column = column.trimmed();
+                    column = std::move(column).trimmed();
 
-                    // Fully qualified column passed, not needed to process
+                    // Nothing to process (already a fully qualified column name)
                     if (column.contains(DOT)) {
                         columnsList << std::move(column);
                         continue;
                     }
 
-                    /* Generate fully qualified column name for the BelongsToMany
+                    /* Generate the fully qualified column name for the BelongsToMany
                        relation. */
                     if (belongsToManyRelatedTable) {
-#ifdef __GNUG__
-                        columnsList << QString("%1.%2")
-                                       .arg(*belongsToManyRelatedTable, column);
-#else
-                        columnsList << QStringLiteral("%1.%2")
-                                       .arg(*belongsToManyRelatedTable, column);
-#endif
+                        columnsList << DOT_IN.arg(*belongsToManyRelatedTable, column);
                         continue;
                     }
 
+                    // All other column names are unqualified (it's ok)
                     columnsList << std::move(column);
                 }
 
                 // TODO move, query.select() silverqx
-                query.select(std::move(columnsList));
+                query.select(columnsList);
             }
         };
     }
@@ -984,13 +987,16 @@ namespace Orm::Tiny
     void Builder<Model>::addNestedWiths(const QString &name,
                                         QVector<WithItem> &results) const
     {
-        QStringList progress;
-
         /* If the relation has already been set on the result vector, we will not set it
            again, since that would override any constraints that were already placed
            on the relationships. We will only set the ones that are not specified. */
         auto names = name.split(DOT, Qt::SkipEmptyParts, Qt::CaseSensitive);
 
+        // Nothing to do (no nested relations)
+        if (names.isEmpty())
+            return;
+
+        QStringList progress;
         progress.reserve(names.size());
 
         for (auto &&segment : names) {

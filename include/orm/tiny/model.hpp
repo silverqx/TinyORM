@@ -1008,7 +1008,7 @@ namespace Orm::Tiny
         if (column.contains(DOT))
             return column;
 
-        return QStringLiteral("%1.%2").arg(model().getTable(), column);
+        return DOT_IN.arg(model().getTable(), column);
     }
 
     /* protected */

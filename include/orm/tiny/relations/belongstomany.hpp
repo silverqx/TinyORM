@@ -627,7 +627,7 @@ namespace Orm::Tiny::Relations
         if (column.contains(DOT))
             return column;
 
-        return QStringLiteral("%1.%2").arg(m_table, column);
+        return DOT_IN.arg(m_table, column);
     }
 
     template<class Model, class Related, class PivotType>
