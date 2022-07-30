@@ -937,7 +937,7 @@ namespace Orm::Tiny
             std::move(relation),
             [columns = std::move(columns),
                     belongsToManyRelatedTable = std::move(belongsToManyRelatedTable)]
-                    (auto &query)
+            (auto &query)
             {
                 QVector<Column> columnsList;
                 columnsList.reserve(columns.count(COMMA_C) + 1);
@@ -1027,8 +1027,8 @@ namespace Orm::Tiny
     bool Builder<Model>::isNestedUnder(const QString &topRelation,
                                        const QString &nestedRelation) const
     {
-        return nestedRelation.contains(DOT)
-                && nestedRelation.startsWith(QStringLiteral("%1.").arg(topRelation));
+        return nestedRelation.contains(DOT) &&
+               nestedRelation.startsWith(QStringLiteral("%1.").arg(topRelation));
     }
 
     template<typename Model>
