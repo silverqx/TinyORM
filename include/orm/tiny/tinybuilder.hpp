@@ -790,12 +790,13 @@ namespace Orm::Tiny
             Relation &&relation, QVector<Model> &models,
             const WithItem &relationItem) const
     {
-        /* First we will "back up" the existing where conditions on the query so we can
-           add our eager constraints, this is done in the EagerRelationStore::visited()
-           by help of the Relations::Relation::noConstraints().
-           Following is not implemented for now, it is true for relationItem.constraints:
-           Then we will merge the wheres that were on the query back to it in order
-           that any where conditions might be specified. */
+        /* First we will "back up" the existing where conditions (Relation::noConstraints)
+           on the query so we can add our eager constraints, this is done
+           in the EagerRelationStore::visited() using the Relation::noConstraints().
+           Following is true for the relationItem.constraints (Constraining Eager Loads):
+           Then we will merge the user defined constraints that were on the query
+           back to it, this ensures that an user can specify any where constraints or
+           ordering (where, orderBy, and maybe more).*/
         const auto nested = relationsNestedUnder(relationItem.name);
 
         /* If there are nested relationships set on this query, we will put those onto
@@ -899,7 +900,8 @@ namespace Orm::Tiny
     Builder<Model>::parseWithRelations(const QVector<WithItem> &relations)
     {
         QVector<WithItem> results;
-        // Can contain nested relations
+        // CUR compute . for reserve instead of * 2 silverqx
+        // Can contain nested relations (because of the * 2)
         results.reserve(relations.size() * 2);
 
         for (auto relation : relations) {
@@ -987,13 +989,12 @@ namespace Orm::Tiny
         /* If the relation has already been set on the result vector, we will not set it
            again, since that would override any constraints that were already placed
            on the relationships. We will only set the ones that are not specified. */
-        // Prevent container detach
-        const auto names = name.split(DOT);
+        auto names = name.split(DOT, Qt::SkipEmptyParts, Qt::CaseSensitive);
 
         progress.reserve(names.size());
 
-        for (const auto &segment : names) {
-            progress << segment;
+        for (auto &&segment : names) {
+            progress << std::move(segment);
 
             auto last = progress.join(DOT);
             const auto containsRelation = [&last](const auto &relation)
@@ -1003,7 +1004,7 @@ namespace Orm::Tiny
             const auto contains = ranges::contains(results, true, containsRelation);
 
             // Don't add a relation in the 'name' variable
-            if (!contains && (last != name))
+            if (!contains && last != name)
                 results.append({std::move(last)});
         }
     }
@@ -1012,7 +1013,20 @@ namespace Orm::Tiny
     QVector<WithItem>
     Builder<Model>::relationsNestedUnder(const QString &topRelationName) const
     {
+        /*! Count the number of nested relations. */
+        const auto nestedSize = std::ranges::count_if(
+                                    m_eagerLoad, [this, &topRelationName]
+                                                 (const auto &relation)
+        {
+            return isNestedUnder(topRelationName, relation.name);
+        });
+
+        // Nothing to prepare (no nested relations)
+        if (nestedSize == 0)
+            return {};
+
         QVector<WithItem> nested;
+        nested.reserve(static_cast<QVector<WithItem>::size_type>(nestedSize));
 
         /* We are basically looking for any relationships that are nested deeper than
            the given top-level relationship. We will just check for any relations
@@ -1038,11 +1052,13 @@ namespace Orm::Tiny
     Builder<Model>::addUpdatedAtColumn(QVector<UpdateItem> values) const
     {
         const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
-        const auto &qualifiedUpdatedAtColumn = m_model.getQualifiedUpdatedAtColumn();
+        auto qualifiedUpdatedAtColumn = m_model.getQualifiedUpdatedAtColumn();
 
+        // Nothing to do (model doesn't use timestamps)
         if (!m_model.usesTimestamps() || updatedAtColumn.isEmpty())
             return values;
 
+        /*! Find updated_at column. */
         const auto valuesUpdatedAtColumn =
                 std::ranges::find_if(values,
                                      [&updatedAtColumn](const auto &updateItem)
@@ -1050,13 +1066,14 @@ namespace Orm::Tiny
             return updateItem.column == updatedAtColumn;
         });
 
-        // Not found
+        // Not found, append a fresh timestamp
         if (valuesUpdatedAtColumn == std::ranges::cend(values))
-            values.append({qualifiedUpdatedAtColumn,
+            values.append({std::move(qualifiedUpdatedAtColumn),
                            m_model.freshTimestampString()});
+
+        // Found, rename the updated_at column to the qualified column
         else
-            // Rename updated_at column to the qualified column
-            valuesUpdatedAtColumn->column = qualifiedUpdatedAtColumn;
+            valuesUpdatedAtColumn->column = std::move(qualifiedUpdatedAtColumn);
 
         return values;
     }

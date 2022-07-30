@@ -51,7 +51,7 @@ namespace Tiny
     struct WithItem
     {
         QString name;
-        std::function<void(QueryBuilder &)> constraints {nullptr};
+        std::function<void(QueryBuilder &)> constraints = nullptr;
     };
 
     /*! Comparison operator for the WithItem. */
