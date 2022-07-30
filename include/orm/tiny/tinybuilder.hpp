@@ -739,10 +739,9 @@ namespace Orm::Tiny
             return;
 
         for (const auto &relation : std::as_const(m_eagerLoad))
-            /* For nested eager loads we'll skip loading them here and they will be set
-               as an eager load on the query to retrieve the relation so that they will
-               be eager loaded on that query, because that is where they get hydrated
-               as models. */
+            /* For nested eager loads we'll skip loading them here and they will be
+               loaded later using the nested query which retrieves this nested relations,
+               because that is where they get hydrated as models. */
             if (!relation.name.contains(DOT))
                 /* Get the relation instance for the given relation name, have to be done
                    through the visitor pattern which obtains also the Related type.
@@ -762,50 +761,52 @@ namespace Orm::Tiny
            EagerRelationStore::visited() obtains a reference by the relation name
            to the relation method, these relation methods are defined on models
            as member functions.
-           A reference to the relation methods are defined in the Model::u_relations
+           References to the relation methods are defined in the Model::u_relations
            hash as lambda expressions. These lambda expressions will be visited/invoked
-           by EagerRelationStore::visited() to obtain references to the relation methods.
+           by the EagerRelationStore::visited() to obtain references to the relation
+           methods.
            Relation constraints will be disabled for eager relations by
-           Relation::noConstraints() method, these default constraints are only used
+           the Relation::noConstraints() method, these default constraints are only used
            for lazy loading, for eager constraints are used constraints, which are
-           defined by Relation::addEagerConstraints() virtual methods.
-           To the Relation::noConstraints() method is passed lambda, which invokes
+           defined by the Relation::addEagerConstraints() virtual methods.
+           To the Relation::noConstraints() method is passed a lambda, which invokes
            obtained reference to the relation method defined on the model and invokes it
-           on the 'new' model instance refered as 'dummyModel'.
+           on the 'new' model instance refered as the 'dummyModel'.
            The Relation instance is created by this relation method, this relation
-           method calls factory method, which creates the Relation instance.
+           method calls a factory method, which creates this Relation instance.
            Every Relation has it's own Relation::create() factory method, to which
-           the following parameters are passed, newly created Related model instance,
+           the following parameters are passed, a newly created Related model instance,
            current/parent model instance, database column names of the relationship, and
-           for a BelongsTo relation also the name of the relation.
+           for BelongsTo relations also the name of a relation.
            The Relation instance saves a non-const reference to the current/parent model
            instance, a copy of the related model instance because it is created
            on the stack.
            The Relation instance creates a new TinyBuilder instance from the Related
-           model instance by TinyBuilder::newQuery() and saves ownership as
+           model instance using the TinyBuilder::newQuery() and saves ownership as
            the unique pointer.
            Then eager constraints are applied to this newly created TinyBuilder and
            the result is returned back to the initial model.
            The result is transformed into models and these models are hydrated.
-           Hydrated models are saved to the Model::m_relations data member. */
+           Hydrated models are saved to the templated Model::m_relations data member
+           hash. */
 
         /* First we will "back up" the existing where conditions on the query so we can
            add our eager constraints, this is done in the EagerRelationStore::visited()
            by help of the Relations::Relation::noConstraints().
-           Folowing is not implemented for now, it is true for relationItem.constraints:
+           Following is not implemented for now, it is true for relationItem.constraints:
            Then we will merge the wheres that were on the query back to it in order
            that any where conditions might be specified. */
         const auto nested = relationsNestedUnder(relationItem.name);
 
-        /* If there are nested relationships set on the query, we will put those onto
-           the query instances so that they can be handled after this relationship
+        /* If there are nested relationships set on this query, we will put those onto
+           the relation's query instance so they can be handled after this relationship
            is loaded. In this way they will all trickle down as they are loaded. */
         if (nested.size() > 0)
             relation->getQuery().with(nested);
 
         relation->addEagerConstraints(models);
 
-        // Add relation contraints defined in a user callback
+        // Add relation constraints defined in a user callback
         // NOTE api different, Eloquent is passing the Relation reference into the lambda, it would be almost impossible to do it silverqx
         if (relationItem.constraints)
             std::invoke(relationItem.constraints, relation->getBaseQuery());
@@ -1015,7 +1016,7 @@ namespace Orm::Tiny
 
         /* We are basically looking for any relationships that are nested deeper than
            the given top-level relationship. We will just check for any relations
-           that start with the given top relations and adds them to our vectors. */
+           that start with the given top relations and add them to our vector. */
         for (const auto &relation : m_eagerLoad)
             if (isNestedUnder(topRelationName, relation.name))
                 nested.append({relation.name.mid(topRelationName.size() + 1),
