@@ -347,7 +347,6 @@ bool Builder::doesntExistOr(const std::function<void()> &callback)
     return false;
 }
 
-// TODO move, select() silverqx
 Builder &Builder::select(const QVector<Column> &columns)
 {
     clearColumns();
@@ -376,6 +375,38 @@ Builder &Builder::addSelect(const QVector<Column> &columns)
 Builder &Builder::addSelect(const Column &column)
 {
     m_columns << column;
+
+    return *this;
+}
+
+Builder &Builder::select(QVector<Column> &&columns)
+{
+    clearColumns();
+
+    std::ranges::move(columns, std::back_inserter(m_columns));
+
+    return *this;
+}
+
+Builder &Builder::select(Column &&column)
+{
+    clearColumns();
+
+    m_columns << std::move(column);
+
+    return *this;
+}
+
+Builder &Builder::addSelect(QVector<Column> &&columns)
+{
+    std::ranges::move(columns, std::back_inserter(m_columns));
+
+    return *this;
+}
+
+Builder &Builder::addSelect(Column &&column)
+{
+    m_columns << std::move(column);
 
     return *this;
 }

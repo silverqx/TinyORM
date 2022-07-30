@@ -254,6 +254,19 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         addSelect(const Column &column);
 
+        /*! Set the columns to be selected. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        select(QVector<Column> &&columns);
+        /*! Set the column to be selected. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        select(Column &&column);
+        /*! Add new select columns to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        addSelect(QVector<Column> &&columns);
+        /*! Add a new select column to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        addSelect(Column &&column);
+
         /*! Set a select subquery on the query. */
         template<Queryable T>
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -1391,6 +1404,50 @@ namespace Relations
         auto builder = query();
 
         builder->addSelect(column);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::select(QVector<Column> &&columns)
+    {
+        auto builder = query();
+
+        builder->select(std::move(columns));
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::select(Column &&column)
+    {
+        auto builder = query();
+
+        builder->select(std::move(column));
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::addSelect(QVector<Column> &&columns)
+    {
+        auto builder = query();
+
+        builder->addSelect(std::move(columns));
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::addSelect(Column &&column)
+    {
+        auto builder = query();
+
+        builder->addSelect(std::move(column));
 
         return builder;
     }

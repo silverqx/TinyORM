@@ -193,6 +193,15 @@ namespace Orm::Query
         /*! Add a new select column to the query. */
         Builder &addSelect(const Column &column);
 
+        /*! Set the columns to be selected. */
+        Builder &select(QVector<Column> &&columns);
+        /*! Set the column to be selected. */
+        Builder &select(Column &&column);
+        /*! Add new select columns to the query. */
+        Builder &addSelect(QVector<Column> &&columns);
+        /*! Add a new select column to the query. */
+        Builder &addSelect(Column &&column);
+
         /*! Set a select subquery on the query. */
         template<Queryable T>
         inline Builder &select(T &&query, const QString &as);

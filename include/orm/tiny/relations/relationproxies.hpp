@@ -245,6 +245,15 @@ namespace Tiny::Relations
         /*! Add a new select column to the query. */
         const Relation<Model, Related> &addSelect(const Column &column) const;
 
+        /*! Set the columns to be selected. */
+        const Relation<Model, Related> &select(QVector<Column> &&columns) const;
+        /*! Set the column to be selected. */
+        const Relation<Model, Related> &select(Column &&column) const;
+        /*! Add new select columns to the query. */
+        const Relation<Model, Related> &addSelect(QVector<Column> &&columns) const;
+        /*! Add a new select column to the query. */
+        const Relation<Model, Related> &addSelect(Column &&column) const;
+
         /*! Set a select subquery on the query. */
         template<Queryable T>
         const Relation<Model, Related> &select(T &&query, const QString &as) const;
@@ -1337,6 +1346,42 @@ namespace Tiny::Relations
     RelationProxies<Model, Related>::addSelect(const Column &column) const
     {
         getQuery().addSelect(column);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::select(QVector<Column> &&columns) const
+    {
+        getQuery().select(std::move(columns));
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::select(Column &&column) const
+    {
+        getQuery().select(std::move(column));
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::addSelect(QVector<Column> &&columns) const
+    {
+        getQuery().addSelect(std::move(columns));
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::addSelect(Column &&column) const
+    {
+        getQuery().addSelect(std::move(column));
 
         return relation();
     }

@@ -944,7 +944,7 @@ namespace Orm::Tiny
             std::move(relation),
             [columns = std::move(columns),
              belongsToManyRelatedTable = std::move(belongsToManyRelatedTable)]
-            (auto &query)
+            (QueryBuilder &query)
             {
                 auto columnsSplitted = columns.split(COMMA_C, Qt::SkipEmptyParts);
 
@@ -977,8 +977,7 @@ namespace Orm::Tiny
                     columnsList << std::move(column);
                 }
 
-                // TODO move, query.select() silverqx
-                query.select(columnsList);
+                query.select(std::move(columnsList));
             }
         };
     }

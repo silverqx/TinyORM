@@ -138,6 +138,15 @@ namespace Tiny
         /*! Add a new select column to the query. */
         TinyBuilder<Model> &addSelect(const Column &column);
 
+        /*! Set the columns to be selected. */
+        TinyBuilder<Model> &select(QVector<Column> &&columns);
+        /*! Set the column to be selected. */
+        TinyBuilder<Model> &select(Column &&column);
+        /*! Add new select columns to the query. */
+        TinyBuilder<Model> &addSelect(QVector<Column> &&columns);
+        /*! Add a new select column to the query. */
+        TinyBuilder<Model> &addSelect(Column &&column);
+
         /*! Set a select subquery on the query. */
         template<Queryable T>
         TinyBuilder<Model> &select(T &&query, const QString &as);
@@ -790,6 +799,38 @@ namespace Tiny
     BuilderProxies<Model>::addSelect(const Column &column)
     {
         toBase().addSelect(column);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::select(QVector<Column> &&columns)
+    {
+        toBase().select(std::move(columns));
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::select(Column &&column)
+    {
+        toBase().select(std::move(column));
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::addSelect(QVector<Column> &&columns)
+    {
+        toBase().addSelect(std::move(columns));
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::addSelect(Column &&column)
+    {
+        toBase().addSelect(std::move(column));
         return builder();
     }
 
