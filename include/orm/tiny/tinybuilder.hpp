@@ -643,7 +643,7 @@ namespace Orm::Tiny
     Builder<Model> &
     Builder<Model>::without(const QVector<QString> &relations)
     {
-        // Remove relations in the "relations" vector from m_eagerLoad vector
+        // Remove relations in the "relations" vector from the m_eagerLoad vector
         m_eagerLoad = m_eagerLoad
                       | ranges::views::remove_if([&relations](const WithItem &with)
         {
@@ -745,7 +745,8 @@ namespace Orm::Tiny
                as models. */
             if (!relation.name.contains(DOT))
                 /* Get the relation instance for the given relation name, have to be done
-                   through the visitor pattern. */
+                   through the visitor pattern which obtains also the Related type.
+                   After the visitation the eagerLoadRelationVisited() will be called. */
                 m_model.eagerLoadRelationWithVisitor(relation, *this, models);
     }
 
