@@ -1045,6 +1045,14 @@ printf("Elapsed in %s : %sms\n", $connection,
     number_format((microtime(true) - $startTime) * 1000, 2));
 
 
+Fastly write to the file:
+-------------------------
+
+#include <fstream>
+std::ofstream("E:/tmp/aa.txt", std::ios::out | std::ios::app) << "first\nsecond\n";
+std::ofstream("E:/tmp/aa.txt", std::ios::out | std::ios::app) << "another line\n";
+
+
 Invoke-Tests.ps1:
 -----------------
 
