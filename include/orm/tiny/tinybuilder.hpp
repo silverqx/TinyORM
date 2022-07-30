@@ -840,7 +840,7 @@ namespace Orm::Tiny
                 row.append({record.fieldName(i), result.value(i)});
 
             // Create a new model instance from the table row
-            models.append(instance.newFromBuilder(row));
+            models << instance.newFromBuilder(row);
         }
 
         return models;
