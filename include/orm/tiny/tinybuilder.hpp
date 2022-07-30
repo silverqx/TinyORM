@@ -732,6 +732,41 @@ namespace Orm::Tiny
         return hydrate(m_query->get(columns));
     }
 
+    // TODO docs add similar note for lazy load silverqx
+    /* Look also at EagerRelationStore::visited(), where the whole flow begins.
+       How this relation flow works:
+       EagerRelationStore::visited() obtains a reference by the relation name
+       to the relation method, these relation methods are defined on models
+       as member functions.
+       References to the relation methods are defined in the Model::u_relations
+       hash as lambda expressions. These lambda expressions will be visited/invoked
+       by the EagerRelationStore::visited() to obtain references to the relation
+       methods.
+       Relation constraints will be disabled for eager relations by
+       the Relation::noConstraints() method, these default constraints are only used
+       for lazy loading, for eager constraints are used constraints, which are
+       defined by the Relation::addEagerConstraints() virtual methods.
+       To the Relation::noConstraints() method is passed a lambda, which invokes
+       obtained reference to the relation method defined on the model and invokes it
+       on the 'new' model instance refered as the 'dummyModel'.
+       The Relation instance is created by this relation method, this relation
+       method calls a factory method, which creates this Relation instance.
+       Every Relation has it's own Relation::create() factory method, to which
+       the following parameters are passed, a newly created Related model instance,
+       current/parent model instance, database column names of the relationship, and
+       for BelongsTo relations also the name of a relation.
+       The Relation instance saves a non-const reference to the current/parent model
+       instance, a copy of the related model instance because it is created
+       on the stack.
+       The Relation instance creates a new TinyBuilder instance from the Related
+       model instance using the TinyBuilder::newQuery() and saves ownership as
+       the unique pointer.
+       Then eager constraints are applied to this newly created TinyBuilder and
+       the result is returned back to the initial model.
+       The result is transformed into models and these models are hydrated.
+       Hydrated models are saved to the templated Model::m_relations data member
+       hash. */
+
     template<typename Model>
     void Builder<Model>::eagerLoadRelations(QVector<Model> &models)
     {
@@ -755,41 +790,6 @@ namespace Orm::Tiny
             Relation &&relation, QVector<Model> &models,
             const WithItem &relationItem) const
     {
-        // TODO docs add similar note for lazy load silverqx
-        /* Look also at EagerRelationStore::visited(), where the whole flow begins.
-           How this relation flow works:
-           EagerRelationStore::visited() obtains a reference by the relation name
-           to the relation method, these relation methods are defined on models
-           as member functions.
-           References to the relation methods are defined in the Model::u_relations
-           hash as lambda expressions. These lambda expressions will be visited/invoked
-           by the EagerRelationStore::visited() to obtain references to the relation
-           methods.
-           Relation constraints will be disabled for eager relations by
-           the Relation::noConstraints() method, these default constraints are only used
-           for lazy loading, for eager constraints are used constraints, which are
-           defined by the Relation::addEagerConstraints() virtual methods.
-           To the Relation::noConstraints() method is passed a lambda, which invokes
-           obtained reference to the relation method defined on the model and invokes it
-           on the 'new' model instance refered as the 'dummyModel'.
-           The Relation instance is created by this relation method, this relation
-           method calls a factory method, which creates this Relation instance.
-           Every Relation has it's own Relation::create() factory method, to which
-           the following parameters are passed, a newly created Related model instance,
-           current/parent model instance, database column names of the relationship, and
-           for BelongsTo relations also the name of a relation.
-           The Relation instance saves a non-const reference to the current/parent model
-           instance, a copy of the related model instance because it is created
-           on the stack.
-           The Relation instance creates a new TinyBuilder instance from the Related
-           model instance using the TinyBuilder::newQuery() and saves ownership as
-           the unique pointer.
-           Then eager constraints are applied to this newly created TinyBuilder and
-           the result is returned back to the initial model.
-           The result is transformed into models and these models are hydrated.
-           Hydrated models are saved to the templated Model::m_relations data member
-           hash. */
-
         /* First we will "back up" the existing where conditions on the query so we can
            add our eager constraints, this is done in the EagerRelationStore::visited()
            by help of the Relations::Relation::noConstraints().
