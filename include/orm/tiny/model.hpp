@@ -1434,7 +1434,6 @@ TINYORM_END_COMMON_NAMESPACE
 // TODO cache static_cast<>(*this) in the model()/basemodel() CRTP as a class data member std::optional<std::reference_wrapper<Derived>> m_model = std::nullopt, but I will have to create copy ctor to set m_model {std::nullopt}, the same for other similar model() methods like Model::model(), then I can to check if (m_model) and return right away and I will call static_cast or dynamic_cast only once for every instance, it is casted everytime now 😟 silverqx
 // CUR docs exceptions, which methods throw which exceptions, so user know which exception classes to define in a catch blocks silverqx
 // CUR Belongs To Many firstOrNew, firstOrCreate, and updateOrCreate Methods, revisit first and second argument silverqx
-// CUR add attribute to touch() method silverqx
 // SEC fix LoadLibrary() before qsql plugin loads? https://www.qt.io/blog/security-advisory-qlockfile-qauthenticator-windows-platform-plugin silverqx
 // CUR cmake, make TinyUtils_target in TinyTestCommon.cmake optional, not always needed to link to silverqx
 // CUR docs, info about unsupported json column by qtsql drivers and link to schema.mdx Default Expressions silverqx

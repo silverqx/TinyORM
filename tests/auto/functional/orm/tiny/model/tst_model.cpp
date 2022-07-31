@@ -106,6 +106,9 @@ private slots:
     void truncate() const;
 
     void massAssignment_isGuardableColumn() const;
+
+    /* HasTimestamps */
+    void touch_WithAttribute() const;
 };
 
 void tst_Model::initTestCase_data() const
@@ -1559,6 +1562,44 @@ void tst_Model::massAssignment_isGuardableColumn() const
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent.getAttributes().size(), 1);
+}
+
+/* HasTimestamps */
+
+void tst_Model::touch_WithAttribute() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Verify an original added_on value
+    auto addedOnOriginal = Torrent::find(1)->getAttribute("added_on");
+    QCOMPARE(addedOnOriginal,
+             QVariant(QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate)));
+
+    // Save a time before touch
+    auto timeBeforeTouch = QDateTime::currentDateTime();
+    // Reset milliseconds to 0
+    {
+        auto time = timeBeforeTouch.time();
+        timeBeforeTouch.setTime(QTime(time.hour(), time.minute(), time.second()));
+    }
+
+    // Make touch
+    auto result = Torrent::find(1)->touch("added_on");
+    QVERIFY(result);
+
+    // Verify a new touched added_on value
+    auto addedOnTouched = Torrent::find(1)->getAttribute("added_on");
+    QVERIFY(addedOnTouched.toDateTime() >= timeBeforeTouch);
+
+    // Restore
+    result = Torrent::find(1)->update({{"added_on", addedOnOriginal}});
+    QVERIFY(result);
+
+    // Verify restored added_on value
+    auto addedOnRestored = Torrent::find(1)->getAttribute("added_on");
+    QCOMPARE(addedOnRestored, addedOnOriginal);
 }
 
 QTEST_MAIN(tst_Model)

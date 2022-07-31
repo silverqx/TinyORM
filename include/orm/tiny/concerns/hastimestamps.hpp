@@ -29,6 +29,8 @@ namespace Concerns
     public:
         /*! Update the model's update timestamp. */
         bool touch();
+        /*! Update the model's update timestamp. */
+        bool touch(const QString &attribute);
         /*! Update the creation and update timestamps. */
         void updateTimestamps();
 
@@ -81,6 +83,14 @@ namespace Concerns
             return false;
 
         updateTimestamps();
+
+        return basemodel().save();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool HasTimestamps<Derived, AllRelations...>::touch(const QString &attribute)
+    {
+        basemodel().setAttribute(attribute, freshTimestamp());
 
         return basemodel().save();
     }
