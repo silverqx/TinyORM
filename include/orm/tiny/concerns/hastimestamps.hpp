@@ -72,6 +72,8 @@ namespace Concerns
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
     };
 
+    /* public */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool HasTimestamps<Derived, AllRelations...>::touch()
     {
@@ -195,6 +197,8 @@ namespace Concerns
     {
         return basemodel().qualifyColumn(getUpdatedAtColumn());
     }
+
+    /* private */
 
     /* Static cast this to a child's instance type (CRTP) */
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasTimestamps)
