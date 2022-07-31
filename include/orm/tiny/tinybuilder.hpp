@@ -122,6 +122,23 @@ namespace Orm::Tiny
         /*! Execute the query and get the first result or throw an exception. */
         Model firstOrFail(const QVector<Column> &columns = {ASTERISK});
 
+        /*! Execute the query and get the first result or call a callback. */
+        std::optional<Model>
+        firstOr(const QVector<Column> &columns,
+                const std::function<void()> &callback = nullptr);
+        /*! Execute the query and get the first result or call a callback. */
+        std::optional<Model>
+        firstOr(const std::function<void()> &callback = nullptr);
+
+        /*! Execute the query and get the first result or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Model>, R>
+        firstOr(const QVector<Column> &columns, const std::function<R()> &callback);
+        /*! Execute the query and get the first result or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Model>, R>
+        firstOr(const std::function<R()> &callback);
+
         /*! Add a basic where clause to the query, and return the first result. */
         std::optional<Model>
         firstWhere(const Column &column, const QString &comparison,
@@ -550,6 +567,59 @@ namespace Orm::Tiny
             return *model;
 
         throw Exceptions::ModelNotFoundError(TypeUtils::classPureBasename<Model>());
+    }
+
+    template<typename Model>
+    std::optional<Model>
+    Builder<Model>::firstOr(const QVector<Column> &columns,
+                            const std::function<void()> &callback)
+    {
+        auto model = first(columns);
+
+        if (model)
+            return model;
+
+        // Optionally invoke the callback
+        if (callback)
+            std::invoke(callback);
+
+        // Return an original model from the find() method
+        return model;
+    }
+
+    template<typename Model>
+    std::optional<Model>
+    Builder<Model>::firstOr(const std::function<void()> &callback)
+    {
+        return firstOr({ASTERISK}, callback);
+    }
+
+    template<typename Model>
+    template<typename R>
+    std::pair<std::optional<Model>, R>
+    Builder<Model>::firstOr(const QVector<Column> &columns,
+                            const std::function<R()> &callback)
+    {
+        auto model = first(columns);
+
+        if (model)
+            return {std::move(model), R {}};
+
+        // Return an original model from the find() method instead of the default Model{}
+
+        // Optionally invoke the callback
+        if (callback)
+            return {std::move(model), std::invoke(callback)};
+
+        return {std::move(model), R {}};
+    }
+
+    template<typename Model>
+    template<typename R>
+    std::pair<std::optional<Model>, R>
+    Builder<Model>::firstOr(const std::function<R()> &callback)
+    {
+        return firstOr<R>({ASTERISK}, callback);
     }
 
     template<typename Model>

@@ -30,6 +30,7 @@ using Models::TorrentPreviewableFileProperty;
 using Models::TorrentPreviewableFilePropertyEager;
 
 using Orm::Constants::AND;
+using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
@@ -149,6 +150,17 @@ private slots:
     void hasNested_Basic_OnHasMany() const;
     void hasNested_Count_OnHasMany() const;
     void hasNested_Count_TinyBuilder_OnHasMany() const;
+
+    /* BelongsToMany related */
+    void find() const;
+
+    void findOr() const;
+    void findOr_WithReturnType() const;
+
+    void first() const;
+
+    void firstOr() const;
+    void firstOr_WithReturnType() const;
 };
 
 void tst_Model_Relations::initTestCase_data() const
@@ -2210,6 +2222,203 @@ void tst_Model_Relations::hasNested_Count_TinyBuilder_OnHasMany() const
 
     for (const auto &torrent : torrents)
         QVERIFY(expectedIds.contains(torrent.getKey()));
+}
+
+void tst_Model_Relations::find() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Torrent::find(3)->tags()->find(2);
+    QVERIFY(tag);
+    QCOMPARE(tag->getAttribute(ID), QVariant(2));
+    QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+}
+
+void tst_Model_Relations::findOr() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()
+                   ->findOr(100, {ASTERISK}, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!tag);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback invoked (second overload)
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()->findOr(100, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!tag);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback not invoked
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()->findOr(2, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(tag);
+        QVERIFY(!callbackInvoked);
+        QCOMPARE(tag->getAttribute(ID), QVariant(2));
+        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+    }
+}
+
+void tst_Model_Relations::findOr_WithReturnType() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto [tag, result] = Torrent::find(3)->tags()->findOr<int>(100, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!tag);
+        QCOMPARE(result, 1);
+    }
+    // Callback invoked (second overload)
+    {
+        auto [tag, result] = Torrent::find(3)->tags()
+                             ->findOr<int>(100, {ID, NAME}, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!tag);
+        QCOMPARE(result, 1);
+    }
+    // Callback not invoked
+    {
+        auto [tag, result] = Torrent::find(3)->tags()->findOr<int>(2, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(tag);
+        QCOMPARE(result, 0);
+        QCOMPARE(tag->getAttribute(ID), QVariant(2));
+        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+    }
+}
+
+void tst_Model_Relations::first() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Torrent::find(3)->tags()->whereKey(2).first();
+    QVERIFY(tag);
+    QCOMPARE(tag->getAttribute(ID), QVariant(2));
+    QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+}
+
+void tst_Model_Relations::firstOr() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()->whereKey(100)
+                   .firstOr({ASTERISK}, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!tag);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback invoked (second overload)
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()->whereKey(100)
+                   .firstOr([&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!tag);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback not invoked
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()->whereKey(2).firstOr([&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(tag);
+        QVERIFY(!callbackInvoked);
+        QCOMPARE(tag->getAttribute(ID), QVariant(2));
+        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+    }
+}
+
+void tst_Model_Relations::firstOr_WithReturnType() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto [tag, result] = Torrent::find(3)->tags()->whereKey(100)
+                             .firstOr<int>([]()
+        {
+            return 1;
+        });
+
+        QVERIFY(!tag);
+        QCOMPARE(result, 1);
+    }
+    // Callback invoked (second overload)
+    {
+        auto [tag, result] = Torrent::find(3)->tags()->whereKey(100)
+                             .firstOr<int>({ID, NAME}, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!tag);
+        QCOMPARE(result, 1);
+    }
+    // Callback not invoked
+    {
+        auto [tag, result] = Torrent::find(3)->tags()->whereKey(2)
+                             .firstOr<int>([]()
+        {
+            return 1;
+        });
+
+        QVERIFY(tag);
+        QCOMPARE(result, 0);
+        QCOMPARE(tag->getAttribute(ID), QVariant(2));
+        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+    }
 }
 
 QTEST_MAIN(tst_Model_Relations)

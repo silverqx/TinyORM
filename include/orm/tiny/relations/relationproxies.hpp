@@ -74,11 +74,11 @@ namespace Tiny::Relations
         // findMany() is missing intentionally doesn't make sense for one type relations
 
         /*! Execute a query for a single record by ID or call a callback. */
-        std::optional<Related>
+        virtual std::optional<Related>
         findOr(const QVariant &id, const QVector<Column> &columns,
                const std::function<void()> &callback) const;
         /*! Execute a query for a single record by ID or call a callback. */
-        std::optional<Related>
+        virtual std::optional<Related>
         findOr(const QVariant &id, const std::function<void()> &callback) const;
 
         /*! Execute a query for a single record by ID or call a callback. */
@@ -104,6 +104,23 @@ namespace Tiny::Relations
                       const QVector<AttributeItem> &values = {}) const;
         /*! Execute the query and get the first result or throw an exception. */
         virtual Related firstOrFail(const QVector<Column> &columns = {ASTERISK}) const;
+
+        /*! Execute the query and get the first result or call a callback. */
+        virtual std::optional<Related>
+        firstOr(const QVector<Column> &columns,
+                const std::function<void()> &callback = nullptr) const;
+        /*! Execute the query and get the first result or call a callback. */
+        virtual std::optional<Related>
+        firstOr(const std::function<void()> &callback = nullptr) const;
+
+        /*! Execute the query and get the first result or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Related>, R>
+        firstOr(const QVector<Column> &columns, const std::function<R()> &callback) const;
+        /*! Execute the query and get the first result or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Related>, R>
+        firstOr(const std::function<R()> &callback) const;
 
         /*! Add a basic where clause to the query, and return the first result. */
         virtual std::optional<Related>
@@ -978,6 +995,38 @@ namespace Tiny::Relations
             const QVector<Column> &columns) const
     {
         return getQuery().firstOrFail(columns);
+    }
+
+    template<class Model, class Related>
+    std::optional<Related>
+    RelationProxies<Model, Related>::firstOr(
+            const QVector<Column> &columns, const std::function<void()> &callback) const
+    {
+        return getQuery().firstOr(columns, callback);
+    }
+
+    template<class Model, class Related>
+    std::optional<Related>
+    RelationProxies<Model, Related>::firstOr(const std::function<void()> &callback) const
+    {
+        return getQuery().firstOr({ASTERISK}, callback);
+    }
+
+    template<class Model, class Related>
+    template<typename R>
+    std::pair<std::optional<Related>, R>
+    RelationProxies<Model, Related>::firstOr(
+            const QVector<Column> &columns, const std::function<R()> &callback) const
+    {
+        return getQuery().template firstOr<R>(columns, callback);
+    }
+
+    template<class Model, class Related>
+    template<typename R>
+    std::pair<std::optional<Related>, R>
+    RelationProxies<Model, Related>::firstOr(const std::function<R()> &callback) const
+    {
+        return getQuery().template firstOr<R>({ASTERISK}, callback);
     }
 
     template<class Model, class Related>

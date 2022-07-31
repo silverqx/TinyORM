@@ -183,6 +183,24 @@ namespace Orm::Tiny::Relations
         findMany(const QVector<QVariant> &ids,
                  const QVector<Column> &columns = {ASTERISK}) const;
 
+        /*! Execute a query for a single record by ID or call a callback. */
+        std::optional<Related>
+        findOr(const QVariant &id, const QVector<Column> &columns,
+               const std::function<void()> &callback) const override;
+        /*! Execute a query for a single record by ID or call a callback. */
+        std::optional<Related>
+        findOr(const QVariant &id, const std::function<void()> &callback) const override;
+
+        /*! Execute a query for a single record by ID or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Related>, R>
+        findOr(const QVariant &id, const QVector<Column> &columns,
+               const std::function<R()> &callback) const;
+        /*! Execute a query for a single record by ID or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Related>, R>
+        findOr(const QVariant &id, const std::function<R()> &callback) const;
+
         /*! Execute the query and get the first result. */
         std::optional<Related>
         first(const QVector<Column> &columns = {ASTERISK}) const override;
@@ -196,6 +214,23 @@ namespace Orm::Tiny::Relations
                               bool touch = true) const;
         /*! Execute the query and get the first result or throw an exception. */
         Related firstOrFail(const QVector<Column> &columns = {ASTERISK}) const override;
+
+        /*! Execute the query and get the first result or call a callback. */
+        std::optional<Related>
+        firstOr(const QVector<Column> &columns,
+                const std::function<void()> &callback = nullptr) const override;
+        /*! Execute the query and get the first result or call a callback. */
+        std::optional<Related>
+        firstOr(const std::function<void()> &callback = nullptr) const override;
+
+        /*! Execute the query and get the first result or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Related>, R>
+        firstOr(const QVector<Column> &columns, const std::function<R()> &callback) const;
+        /*! Execute the query and get the first result or call a callback. */
+        template<typename R>
+        std::pair<std::optional<Related>, R>
+        firstOr(const std::function<R()> &callback) const;
 
         /*! Add a basic where clause to the query, and return the first result. */
         std::optional<Related>
@@ -938,6 +973,63 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     std::optional<Related>
+    BelongsToMany<Model, Related, PivotType>::findOr(
+            const QVariant &id, const QVector<Column> &columns,
+            const std::function<void()> &callback) const
+    {
+        auto model = find(id, columns);
+
+        if (model)
+            return model;
+
+        // Optionally invoke the callback
+        if (callback)
+            std::invoke(callback);
+
+        // Return an original model from the find() method
+        return model;
+    }
+
+    template<class Model, class Related, class PivotType>
+    std::optional<Related>
+    BelongsToMany<Model, Related, PivotType>::findOr(
+            const QVariant &id, const std::function<void()> &callback) const
+    {
+        return findOr(id, {ASTERISK}, callback);
+    }
+
+    template<class Model, class Related, class PivotType>
+    template<typename R>
+    std::pair<std::optional<Related>, R>
+    BelongsToMany<Model, Related, PivotType>::findOr(
+            const QVariant &id, const QVector<Column> &columns,
+            const std::function<R()> &callback) const
+    {
+        auto model = find(id, columns);
+
+        if (model)
+            return {std::move(model), R {}};
+
+        // Return an original model from the find() method instead of the default Model{}
+
+        // Optionally invoke the callback
+        if (callback)
+            return {std::move(model), std::invoke(callback)};
+
+        return {std::move(model), R {}};
+    }
+
+    template<class Model, class Related, class PivotType>
+    template<typename R>
+    std::pair<std::optional<Related>, R>
+    BelongsToMany<Model, Related, PivotType>::findOr(
+            const QVariant &id, const std::function<R()> &callback) const
+    {
+        return findOr<R>(id, {ASTERISK}, callback);
+    }
+
+    template<class Model, class Related, class PivotType>
+    std::optional<Related>
     BelongsToMany<Model, Related, PivotType>::first(const QVector<Column> &columns) const
     {
         auto results = this->take(1).get(columns);
@@ -989,6 +1081,61 @@ namespace Orm::Tiny::Relations
             return *model;
 
         throw Exceptions::ModelNotFoundError(TypeUtils::classPureBasename<Related>());
+    }
+
+    template<class Model, class Related, class PivotType>
+    std::optional<Related>
+    BelongsToMany<Model, Related, PivotType>::firstOr(
+            const QVector<Column> &columns, const std::function<void()> &callback) const
+    {
+        auto model = first(columns);
+
+        if (model)
+            return model;
+
+        // Optionally invoke the callback
+        if (callback)
+            std::invoke(callback);
+
+        // Return an original model from the find() method
+        return model;
+    }
+
+    template<class Model, class Related, class PivotType>
+    std::optional<Related>
+    BelongsToMany<Model, Related, PivotType>::firstOr(
+            const std::function<void()> &callback) const
+    {
+        return firstOr({ASTERISK}, callback);
+    }
+
+    template<class Model, class Related, class PivotType>
+    template<typename R>
+    std::pair<std::optional<Related>, R>
+    BelongsToMany<Model, Related, PivotType>::firstOr(
+            const QVector<Column> &columns, const std::function<R()> &callback) const
+    {
+        auto model = first(columns);
+
+        if (model)
+            return {std::move(model), R {}};
+
+        // Return an original model from the find() method instead of the default Model{}
+
+        // Optionally invoke the callback
+        if (callback)
+            return {std::move(model), std::invoke(callback)};
+
+        return {std::move(model), R {}};
+    }
+
+    template<class Model, class Related, class PivotType>
+    template<typename R>
+    std::pair<std::optional<Related>, R>
+    BelongsToMany<Model, Related, PivotType>::firstOr(
+            const std::function<R()> &callback) const
+    {
+        return firstOr<R>({ASTERISK}, callback);
     }
 
     template<class Model, class Related, class PivotType>

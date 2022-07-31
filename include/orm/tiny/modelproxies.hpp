@@ -104,6 +104,23 @@ namespace Relations
         /*! Execute the query and get the first result or throw an exception. */
         static Derived firstOrFail(const QVector<Column> &columns = {ASTERISK});
 
+        /*! Execute the query and get the first result or call a callback. */
+        static std::optional<Derived>
+        firstOr(const QVector<Column> &columns,
+                const std::function<void()> &callback = nullptr);
+        /*! Execute the query and get the first result or call a callback. */
+        static std::optional<Derived>
+        firstOr(const std::function<void()> &callback = nullptr);
+
+        /*! Execute the query and get the first result or call a callback. */
+        template<typename R>
+        static std::pair<std::optional<Derived>, R>
+        firstOr(const QVector<Column> &columns, const std::function<R()> &callback);
+        /*! Execute the query and get the first result or call a callback. */
+        template<typename R>
+        static std::pair<std::optional<Derived>, R>
+        firstOr(const std::function<R()> &callback);
+
         /*! Add a basic where clause to the query, and return the first result. */
         static std::optional<Derived>
         firstWhere(const Column &column, const QString &comparison,
@@ -1004,6 +1021,38 @@ namespace Relations
     ModelProxies<Derived, AllRelations...>::firstOrFail(const QVector<Column> &columns)
     {
         return query()->firstOrFail(columns);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::optional<Derived>
+    ModelProxies<Derived, AllRelations...>::firstOr(
+            const QVector<Column> &columns, const std::function<void()> &callback)
+    {
+        return query()->firstOr(columns, callback);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::optional<Derived>
+    ModelProxies<Derived, AllRelations...>::firstOr(const std::function<void()> &callback)
+    {
+        return query()->firstOr({ASTERISK}, callback);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename R>
+    std::pair<std::optional<Derived>, R>
+    ModelProxies<Derived, AllRelations...>::firstOr(
+            const QVector<Column> &columns, const std::function<R()> &callback)
+    {
+        return query()->template firstOr<R>(columns, callback);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename R>
+    std::pair<std::optional<Derived>, R>
+    ModelProxies<Derived, AllRelations...>::firstOr(const std::function<R()> &callback)
+    {
+        return query()->template firstOr<R>({ASTERISK}, callback);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

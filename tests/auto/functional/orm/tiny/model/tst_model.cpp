@@ -71,6 +71,11 @@ private slots:
     void findOr() const;
     void findOr_WithReturnType() const;
 
+    void first() const;
+
+    void firstOr() const;
+    void firstOr_WithReturnType() const;
+
     void firstWhere() const;
     void firstWhereEq() const;
     void firstOrNew_Found() const;
@@ -661,6 +666,7 @@ void tst_Model::find() const
     auto torrent = Torrent::find(3);
     QVERIFY(torrent);
     QCOMPARE(torrent->getAttribute(ID), QVariant(3));
+    QCOMPARE(torrent->getAttribute(NAME), QVariant("test3"));
 }
 
 void tst_Model::findOrNew_Found() const
@@ -756,35 +762,37 @@ void tst_Model::findOr() const
     // Callback invoked
     {
         auto callbackInvoked = false;
-        auto model = Torrent::findOr(100, {ASTERISK}, [&callbackInvoked]()
+        auto torrent = Torrent::findOr(100, {ASTERISK}, [&callbackInvoked]()
         {
             callbackInvoked = true;
         });
 
-        QVERIFY(!model);
+        QVERIFY(!torrent);
         QVERIFY(callbackInvoked);
     }
     // Callback invoked (second overload)
     {
         auto callbackInvoked = false;
-        auto model = Torrent::findOr(100, [&callbackInvoked]()
+        auto torrent = Torrent::findOr(100, [&callbackInvoked]()
         {
             callbackInvoked = true;
         });
 
-        QVERIFY(!model);
+        QVERIFY(!torrent);
         QVERIFY(callbackInvoked);
     }
     // Callback not invoked
     {
         auto callbackInvoked = false;
-        auto model = Torrent::findOr(1, [&callbackInvoked]()
+        auto torrent = Torrent::findOr(1, [&callbackInvoked]()
         {
             callbackInvoked = true;
         });
 
-        QVERIFY(model);
+        QVERIFY(torrent);
         QVERIFY(!callbackInvoked);
+        QCOMPARE(torrent->getAttribute(ID), QVariant(1));
+        QCOMPARE(torrent->getAttribute(NAME), QVariant("test1"));
     }
 }
 
@@ -796,33 +804,130 @@ void tst_Model::findOr_WithReturnType() const
 
     // Callback invoked
     {
-        auto [model, result] = Torrent::findOr<int>(100, []()
+        auto [torrent, result] = Torrent::findOr<int>(100, []()
         {
             return 1;
         });
 
-        QVERIFY(!model);
+        QVERIFY(!torrent);
         QCOMPARE(result, 1);
     }
     // Callback invoked (second overload)
     {
-        auto [model, result] = Torrent::findOr<int>(100, {ID, NAME}, []()
+        auto [torrent, result] = Torrent::findOr<int>(100, {ID, NAME}, []()
         {
             return 1;
         });
 
-        QVERIFY(!model);
+        QVERIFY(!torrent);
         QCOMPARE(result, 1);
     }
     // Callback not invoked
     {
-        auto [model, result] = Torrent::findOr<int>(1, []()
+        auto [torrent, result] = Torrent::findOr<int>(1, []()
         {
             return 1;
         });
 
-        QVERIFY(model);
+        QVERIFY(torrent);
         QCOMPARE(result, 0);
+        QCOMPARE(torrent->getAttribute(ID), QVariant(1));
+        QCOMPARE(torrent->getAttribute(NAME), QVariant("test1"));
+    }
+}
+
+void tst_Model::first() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::whereKey(3)->first();
+    QVERIFY(torrent);
+    QCOMPARE(torrent->getAttribute(ID), QVariant(3));
+    QCOMPARE(torrent->getAttribute(NAME), QVariant("test3"));
+}
+
+void tst_Model::firstOr() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto callbackInvoked = false;
+        auto torrent = Torrent::whereKey(100)->firstOr({ASTERISK}, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!torrent);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback invoked (second overload)
+    {
+        auto callbackInvoked = false;
+        auto torrent = Torrent::whereKey(100)->firstOr([&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!torrent);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback not invoked
+    {
+        auto callbackInvoked = false;
+        auto torrent = Torrent::whereKey(1)->firstOr([&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(torrent);
+        QVERIFY(!callbackInvoked);
+        QCOMPARE(torrent->getAttribute(ID), QVariant(1));
+        QCOMPARE(torrent->getAttribute(NAME), QVariant("test1"));
+    }
+}
+
+void tst_Model::firstOr_WithReturnType() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto [torrent, result] = Torrent::whereKey(100)->firstOr<int>([]()
+        {
+            return 1;
+        });
+
+        QVERIFY(!torrent);
+        QCOMPARE(result, 1);
+    }
+    // Callback invoked (second overload)
+    {
+        auto [torrent, result] = Torrent::whereKey(100)->firstOr<int>({ID, NAME}, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!torrent);
+        QCOMPARE(result, 1);
+    }
+    // Callback not invoked
+    {
+        auto [torrent, result] = Torrent::whereKey(1)->firstOr<int>([]()
+        {
+            return 1;
+        });
+
+        QVERIFY(torrent);
+        QCOMPARE(result, 0);
+        QCOMPARE(torrent->getAttribute(ID), QVariant(1));
+        QCOMPARE(torrent->getAttribute(NAME), QVariant("test1"));
     }
 }
 

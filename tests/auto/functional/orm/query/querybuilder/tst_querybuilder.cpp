@@ -38,6 +38,8 @@ private Q_SLOTS:
     void findOr() const;
     void findOr_WithReturnType() const;
 
+    void first() const;
+
     void pluck() const;
     void pluck_EmptyResult() const;
     void pluck_QualifiedColumnOrKey() const;
@@ -172,6 +174,8 @@ void tst_QueryBuilder::findOr() const
 
         QVERIFY(query.isValid());
         QVERIFY(!callbackInvoked);
+        QCOMPARE(query.value(ID), QVariant(1));
+        QCOMPARE(query.value(NAME), QVariant("test1"));
     }
 }
 
@@ -215,7 +219,21 @@ void tst_QueryBuilder::findOr_WithReturnType() const
 
         QVERIFY(query.isValid());
         QCOMPARE(result, 0);
+        QCOMPARE(query.value(ID), QVariant(1));
+        QCOMPARE(query.value(NAME), QVariant("test1"));
     }
+}
+
+void tst_QueryBuilder::first() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto builder = createQuery(connection);
+
+    auto query = builder->from("torrents").whereEq(ID, 2).first();
+
+    QCOMPARE(query.value(ID), QVariant(2));
+    QCOMPARE(query.value(NAME), QVariant("test2"));
 }
 
 void tst_QueryBuilder::pluck() const
