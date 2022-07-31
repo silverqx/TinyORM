@@ -41,8 +41,6 @@ namespace Orm::Tiny::Relations
                           public Relation<Model, Related>,
                           public PivotRelation
     {
-        Q_DISABLE_COPY(BelongsToMany)
-
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! Alias for the type utils. */
@@ -59,12 +57,23 @@ namespace Orm::Tiny::Relations
                       const QString &relatedPivotKey = "", const QString &parentKey = "",
                       const QString &relatedKey = "", const QString &relationName = "");
 
+        /*! BelongsToMany's copy constructor (used by BelongsToMany::clone()). */
+        inline BelongsToMany(const BelongsToMany &) = default;
+
     public:
         /*! Related instance type passed to the relation. */
         using RelatedType = Related;
 
         /*! Virtual destructor. */
         inline ~BelongsToMany() override = default;
+
+        /*! BelongsToMany's move constructor. */
+        BelongsToMany(BelongsToMany &&) = delete;
+
+        /*! BelongsToMany's copy assignment operator. */
+        BelongsToMany &operator=(const BelongsToMany &) = delete;
+        /*! BelongsToMany's move assignment operator. */
+        BelongsToMany &operator=(BelongsToMany &&) = delete;
 
         /*! Instantiate and initialize a new BelongsToMany instance. */
         static std::unique_ptr<BelongsToMany<Model, Related, PivotType>>
@@ -457,6 +466,10 @@ namespace Orm::Tiny::Relations
         /*! Obtain ids from the QVector<AttributeItem>. */
         QVector<QVariant>
         getRelatedIds(QVector<PivotType> &&pivots) const;
+
+        /* Others */
+        /*! Clone the belongs to many relation. */
+        inline BelongsToMany<Model, Related, PivotType> clone() const;
 
         /* Querying Relationship Existence/Absence */
         /*! Add the constraints for a relationship query. */
@@ -1063,7 +1076,7 @@ namespace Orm::Tiny::Relations
             const bool touch) const
     {
         // Related model is attached and attributes were found
-        if (auto instance = this->where(attributes).first(); instance)
+        if (auto instance = clone().where(attributes).first(); instance)
             return std::move(*instance);
 
         // Attributes were not found
@@ -1539,7 +1552,7 @@ namespace Orm::Tiny::Relations
             const bool touch) const
     {
         // Related model is attached and attributes were found
-        if (auto instance = this->where(attributes).first(); instance)
+        if (auto instance = clone().where(attributes).first(); instance)
             return std::move(*instance);
 
         // Attributes were not found
@@ -2097,6 +2110,17 @@ namespace Orm::Tiny::Relations
 
         return ids;
     }
+
+    /* Others */
+
+    template<class Model, class Related, class PivotType>
+    BelongsToMany<Model, Related, PivotType>
+    BelongsToMany<Model, Related, PivotType>::clone() const
+    {
+        return *this;
+    }
+
+    /* Querying Relationship Existence/Absence */
 
     template<class Model, class Related, class PivotType>
     std::unique_ptr<Builder<Related>>

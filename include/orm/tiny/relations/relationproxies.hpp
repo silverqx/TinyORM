@@ -30,8 +30,6 @@ namespace Tiny::Relations
     template<class Model, class Related>
     class RelationProxies
     {
-        Q_DISABLE_COPY(RelationProxies)
-
         /*! JoinClause alias. */
         using JoinClause = Orm::Query::JoinClause;
         /*! Alias for the QueriesRelationships callback type. */
@@ -39,11 +37,22 @@ namespace Tiny::Relations
         using CallbackType = Orm::Tiny::Concerns
                                       ::QueriesRelationshipsCallback<HasRelated>;
 
+    protected:
+        /*! RelationProxies's copy constructor (used by BelongsToMany::clone()). */
+        inline RelationProxies(const RelationProxies &) = default;
+
     public:
         /*! Default constructor. */
         inline RelationProxies() = default;
         /*! Pure virtual destructor. */
         inline virtual ~RelationProxies() = 0;
+
+        /*! RelationProxies's copy assignment operator. */
+        RelationProxies &operator=(const RelationProxies &) = delete;
+        /*! RelationProxies's move constructor. */
+        RelationProxies(RelationProxies &&) = delete;
+        /*! RelationProxies's move assignment operator. */
+        RelationProxies &operator=(RelationProxies &&) = delete;
 
         /* Retrieving results */
         /*! Get a single column's value from the first result of a query. */

@@ -33,8 +33,6 @@ namespace Relations
     class Relation : public RelationProxies<Model, Related>,
                      public IsRelation
     {
-        Q_DISABLE_COPY(Relation)
-
         // Used by QueriesRelationships::getHasQueryByExistenceCheck()
         friend Concerns::QueriesRelationships<Model>;
 
@@ -46,12 +44,23 @@ namespace Relations
         Relation(std::unique_ptr<Related> &&related, Model &parent,
                  const QString &relatedKey = "");
 
+        /*! Relation's copy constructor (used by BelongsToMany::clone()). */
+        inline Relation(const Relation &) = default;
+
     public:
         /*! Related instance type passed to the relation. */
         using RelatedType = Related;
 
         /*! Pure virtual destructor. */
         inline ~Relation() override = 0;
+
+        /*! Relation's move constructor. */
+        Relation(Relation &&) = delete;
+
+        /*! Relation's copy assignment operator. */
+        Relation &operator=(const Relation &) = delete;
+        /*! Relation's move assignment operator. */
+        Relation &operator=(Relation &&) = delete;
 
         /*! Set the base constraints on the relation query. */
         virtual void addConstraints() const = 0;
@@ -143,12 +152,12 @@ namespace Relations
         /*! The parent model instance. */
         Model &m_parent;
         /*! The related model instance. */
-        const std::unique_ptr<Related> m_related;
+        std::shared_ptr<Related> m_related;
         /*! The key name of the related model. */
         QString m_relatedKey;
         // TODO next would be good to use TinyBuilder alias instead of Builder silverqx
         /*! The TinyORM TinyBuilder instance. */
-        std::unique_ptr<Builder<Related>> m_query;
+        std::shared_ptr<Builder<Related>> m_query;
         /*! Indicates if the relation is adding constraints. */
         T_THREAD_LOCAL
         inline static bool constraints = true;
