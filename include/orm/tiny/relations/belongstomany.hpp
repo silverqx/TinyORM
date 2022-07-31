@@ -1534,7 +1534,8 @@ namespace Orm::Tiny::Relations
 
         instance->fill(values);
 
-        instance->save({.touch = touch});
+        // The save() method already updates timestamps during Model::performUpdate()
+        instance->save({.touch = false});
 
         // TODO update also pivot attributes silverqx
 
