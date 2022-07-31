@@ -24,10 +24,9 @@ namespace Orm::Tiny
 
     /*! ORM Tiny builder (returns a hydrated models instead of the QSqlQuery). */
     template<typename Model>
-    class Builder :
-            public Concerns::BuildsQueries<Model>,
-            public BuilderProxies<Model>,
-            public Concerns::QueriesRelationships<Model>
+    class Builder : public Concerns::BuildsQueries<Model>,
+                    public BuilderProxies<Model>,
+                    public Concerns::QueriesRelationships<Model>
     {
         // Used by TinyBuilderProxies::where/latest/oldest/update()
         friend BuilderProxies<Model>;

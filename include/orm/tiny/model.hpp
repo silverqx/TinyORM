@@ -36,14 +36,13 @@ namespace Orm::Tiny
     // TODO model missing saveOrFail(), updateOrFail(), deleteOrFail(), I will need to implement ManagesTransaction::transaction(callback) method silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    class Model :
-            public Orm::Concerns::HasConnectionResolver,
-            public Tiny::Concerns::HasAttributes<Derived, AllRelations...>,
-            public Tiny::Concerns::GuardsAttributes<Derived, AllRelations...>,
-            public Tiny::Concerns::HasRelationships<Derived, AllRelations...>,
-            public Tiny::Concerns::HasTimestamps<Derived, AllRelations...>,
-            public ModelProxies<Derived, AllRelations...>,
-            public IsModel
+    class Model : public Orm::Concerns::HasConnectionResolver,
+                  public Concerns::HasAttributes<Derived, AllRelations...>,
+                  public Concerns::GuardsAttributes<Derived, AllRelations...>,
+                  public Concerns::HasRelationships<Derived, AllRelations...>,
+                  public Concerns::HasTimestamps<Derived, AllRelations...>,
+                  public ModelProxies<Derived, AllRelations...>,
+                  public IsModel
     {
         // To access getUserXx() methods
         friend Concerns::GuardsAttributes<Derived, AllRelations...>;

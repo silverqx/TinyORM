@@ -18,10 +18,9 @@ namespace Orm::Tiny::Relations
 
     /*! Belongs to relation. */
     template<class Model, class Related>
-    class BelongsTo :
-            public OneRelation,
-            public Relation<Model, Related>,
-            public Concerns::SupportsDefaultModels<Model, Related>
+    class BelongsTo : public OneRelation,
+                      public Relation<Model, Related>,
+                      public Concerns::SupportsDefaultModels<Model, Related>
     {
         Q_DISABLE_COPY(BelongsTo)
 

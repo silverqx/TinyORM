@@ -14,9 +14,8 @@ namespace Orm::Tiny::Relations
 
     /*! Has many relation. */
     template<class Model, class Related>
-    class HasMany :
-            public ManyRelation,
-            public HasOneOrMany<Model, Related>
+    class HasMany : public ManyRelation,
+                    public HasOneOrMany<Model, Related>
     {
         Q_DISABLE_COPY(HasMany)
 

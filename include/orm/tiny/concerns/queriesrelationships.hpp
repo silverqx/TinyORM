@@ -33,7 +33,7 @@ namespace Private
 
         // Used by QueriesRelationships::hasNested()
         template<typename T>
-        friend class Tiny::Concerns::QueriesRelationships;
+        friend class Concerns::QueriesRelationships;
 
         /*! Arguments needed to save for the last relation in a hasNested(). */
         template<typename Related>

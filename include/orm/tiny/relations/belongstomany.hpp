@@ -37,10 +37,9 @@ namespace Orm::Tiny::Relations
 
     /*! Belongs to many relation. */
     template<class Model, class Related, class PivotType = Pivot>
-    class BelongsToMany :
-            public ManyRelation,
-            public Relation<Model, Related>,
-            public PivotRelation
+    class BelongsToMany : public ManyRelation,
+                          public Relation<Model, Related>,
+                          public PivotRelation
     {
         Q_DISABLE_COPY(BelongsToMany)
 

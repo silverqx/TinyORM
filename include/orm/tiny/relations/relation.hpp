@@ -36,7 +36,7 @@ namespace Relations
         Q_DISABLE_COPY(Relation)
 
         // Used by QueriesRelationships::getHasQueryByExistenceCheck()
-        friend Orm::Tiny::Concerns::QueriesRelationships<Model>;
+        friend Concerns::QueriesRelationships<Model>;
 
         /*! Expression alias. */
         using Expression = Orm::Query::Expression;

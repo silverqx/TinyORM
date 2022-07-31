@@ -39,7 +39,7 @@ namespace Concerns
     /*! Model relationships. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasRelationships :
-            private Tiny::Concerns::HasRelationStore<Derived, AllRelations...>
+            private Concerns::HasRelationStore<Derived, AllRelations...>
     {
         /* Using starts in the BaseRelationStore::visit() and is used to access private
            visited methods. */
