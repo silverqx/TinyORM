@@ -888,7 +888,7 @@ namespace Orm::Tiny::Relations
 //        for (auto &[😭, condition, nope] : m_pivotWhereNulls)
 //            query->whereNull(columns, condition, nope);
 
-        query->whereEq(m_foreignPivotKey, this->m_parent[m_parentKey]);
+        query->whereEq(m_foreignPivotKey, this->m_parent.getAttribute(m_parentKey));
 
         return query;
     }
