@@ -1047,8 +1047,8 @@ namespace Orm::Tiny::Relations
             const QVector<AttributeItem> &values) const
     {
         // Model found in db
-        if (auto instance = this->where(attributes).first(); instance)
-            return *instance;
+        if (auto instance = this->m_related->where(attributes)->first(); instance)
+            return std::move(*instance);
 
         return this->m_related->newInstance(
                     AttributeUtils::joinAttributesForFirstOr(
@@ -1063,13 +1063,25 @@ namespace Orm::Tiny::Relations
             const QVector<AttributeItem> &pivotValues,
             const bool touch) const
     {
+        // Related model is attached and attributes were found
         if (auto instance = this->where(attributes).first(); instance)
-            return *instance;
+            return std::move(*instance);
 
-        // NOTE api different, Eloquent doen't use values argument silverqx
-        return create(AttributeUtils::joinAttributesForFirstOr(
-                          attributes, values, this->m_relatedKey),
-                      pivotValues, touch);
+        // Attributes were not found
+
+        auto instance = this->m_related->where(attributes)->first();
+
+        // Related model already exists so only attach (also updates pivot attributes)
+        if (instance)
+            attach(*instance, pivotValues, touch);
+
+        // Related model doesn't exist so create it and also attach
+        else
+            instance = create(AttributeUtils::joinAttributesForFirstOr(
+                                  attributes, values, this->m_relatedKey),
+                              pivotValues, touch);
+
+        return std::move(*instance);
     }
 
     template<class Model, class Related, class PivotType>
@@ -1527,21 +1539,34 @@ namespace Orm::Tiny::Relations
             const QVector<AttributeItem> &pivotValues,
             const bool touch) const
     {
-        auto instance = this->where(attributes).first();
+        // Related model is attached and attributes were found
+        if (auto instance = this->where(attributes).first(); instance)
+            return std::move(*instance);
 
+        // Attributes were not found
+
+        auto instance = this->m_related->where(attributes)->first();
+
+        /* Related model doesn't exist so create it and also attach (also updates pivot
+           attributes). */
         if (!instance)
             return create(AttributeUtils::joinAttributesForFirstOr(
                               attributes, values, this->m_relatedKey),
                           pivotValues, touch);
 
+        // Related model already exists so only attach (also updates pivot attributes)
+
+        /* Attach before an update because something may fail so even if an update
+           fails it will be already attached. */
+        attach(*instance, pivotValues, touch);
+
+        // Update the Related model
         instance->fill(values);
 
         // The save() method already updates timestamps during Model::performUpdate()
         instance->save({.touch = false});
 
-        // TODO update also pivot attributes silverqx
-
-        return *instance;
+        return std::move(*instance);
     }
 
     template<class Model, class Related, class PivotType>
