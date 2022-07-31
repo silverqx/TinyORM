@@ -2128,3 +2128,5 @@ namespace Orm::Tiny::Relations
 TINYORM_END_COMMON_NAMESPACE
 
 #endif // ORM_TINY_RELATIONS_BELONGSTOMANY_HPP
+
+// TODO buildsqueries, missing chunk, chunkById, each, eachById; models passed to the callback have to be modified, exactly create aliases with the pivot_ prefix for pivot attributes silverqx
