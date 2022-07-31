@@ -674,10 +674,10 @@ namespace Orm::Tiny
     bool Model<Derived, AllRelations...>::is(
             const std::optional<ModelToCompare> &model) const
     {
-        return model
-                && getKey() == model->getKey()
-                && this->model().getTable() == model->getTable()
-                && getConnectionName() == model->getConnectionName();
+        return model &&
+                getKey() == model->getKey() &&
+                this->model().getTable() == model->getTable() &&
+                getConnectionName() == model->getConnectionName();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
