@@ -1366,8 +1366,8 @@ void tst_Model::incrementAndDecrement() const
     QVERIFY(torrent4_2->exists);
     QCOMPARE(torrent4_2->getAttribute(SIZE), QVariant(16));
     QCOMPARE(torrent4_2->getAttribute("progress"), QVariant(444));
-    QVERIFY(torrent4_2->getAttribute(updatedAtColumn).toDateTime()
-            >= timeBeforeIncrement);
+    QVERIFY(torrent4_2->getAttribute(updatedAtColumn).toDateTime() >=
+            timeBeforeIncrement);
 
     // Decremented and restore updated at column
     torrent4_2->decrement(SIZE, 2, {{"progress", 400},
@@ -1447,8 +1447,8 @@ void tst_Model::update() const
     auto torrentVerify = Torrent::find(4);
     QVERIFY(torrentVerify->exists);
     QCOMPARE(torrentVerify->getAttribute("progress"), QVariant(449));
-    QVERIFY(torrentVerify->getAttribute(updatedAtColumn).toDateTime()
-            >= timeBeforeUpdate);
+    QVERIFY(torrentVerify->getAttribute(updatedAtColumn).toDateTime() >=
+            timeBeforeUpdate);
 
     // Revert value back
     auto resultRevert = torrent->update({{"progress", progressOriginal},
