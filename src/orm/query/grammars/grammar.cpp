@@ -435,6 +435,13 @@ QString Grammar::whereNotExists(const WhereConditionItem &where) const
     return QStringLiteral("not exists (%1)").arg(compileSelect(*where.nestedQuery));
 }
 
+QString Grammar::whereRowValues(const WhereConditionItem &where) const
+{
+    return QStringLiteral("(%1) %2 (%3)").arg(columnize(where.columns),
+                                              where.comparison,
+                                              parametrize(where.values));
+}
+
 QStringList
 Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
 {

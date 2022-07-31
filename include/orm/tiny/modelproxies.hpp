@@ -611,6 +611,23 @@ namespace Relations
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereNotExists(const std::function<void(QueryBuilder &)> &callback);
 
+        /* where row values */
+        /*! Adds a where condition using row values. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereRowValues(const QVector<Column> &columns, const QString &comparison,
+                       const QVector<QVariant> &values, const QString &condition = AND);
+        /*! Adds an or where condition using row values. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereRowValues(const QVector<Column> &columns, const QString &comparison,
+                         const QVector<QVariant> &values);
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereRowValuesEq(const QVector<Column> &columns, const QVector<QVariant> &values,
+                         const QString &condition = AND);
+        /*! Adds an or where condition using row values. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereRowValuesEq(const QVector<Column> &columns,
+                           const QVector<QVariant> &values);
+
         /* where raw */
         /*! Add a raw "where" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -2440,6 +2457,59 @@ namespace Relations
         auto builder = query();
 
         builder->whereExists(callback, OR, true);
+
+        return builder;
+    }
+
+    /* where row values */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereRowValues(
+            const QVector<Column> &columns, const QString &comparison,
+            const QVector<QVariant> &values, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereRowValues(columns, comparison, values, condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::orWhereRowValues(
+            const QVector<Column> &columns, const QString &comparison,
+            const QVector<QVariant> &values)
+    {
+        auto builder = query();
+
+        builder->whereRowValues(columns, comparison, values, OR);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereRowValuesEq(
+            const QVector<Column> &columns, const QVector<QVariant> &values,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereRowValues(columns, EQ, values, condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::orWhereRowValuesEq(
+            const QVector<Column> &columns, const QVector<QVariant> &values)
+    {
+        auto builder = query();
+
+        builder->whereRowValues(columns, EQ, values, OR);
 
         return builder;
     }

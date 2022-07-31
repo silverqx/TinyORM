@@ -438,6 +438,23 @@ namespace Tiny
         TinyBuilder<Model> &
         orWhereNotExists(const std::function<void(QueryBuilder &)> &callback);
 
+        /* where row values */
+        /*! Adds a where condition using row values. */
+        TinyBuilder<Model> &
+        whereRowValues(const QVector<Column> &columns, const QString &comparison,
+                       const QVector<QVariant> &values, const QString &condition = AND);
+        /*! Adds an or where condition using row values. */
+        TinyBuilder<Model> &
+        orWhereRowValues(const QVector<Column> &columns, const QString &comparison,
+                         const QVector<QVariant> &values);
+        TinyBuilder<Model> &
+        whereRowValuesEq(const QVector<Column> &columns, const QVector<QVariant> &values,
+                         const QString &condition = AND);
+        /*! Adds an or where condition using row values. */
+        TinyBuilder<Model> &
+        orWhereRowValuesEq(const QVector<Column> &columns,
+                           const QVector<QVariant> &values);
+
         /* where raw */
         /*! Add a raw "where" clause to the query. */
         TinyBuilder<Model> &whereRaw(const QString &sql,
@@ -1547,6 +1564,47 @@ namespace Tiny
             const std::function<void(QueryBuilder &)> &callback)
     {
         toBase().whereExists(callback, OR, true);
+        return builder();
+    }
+
+    /* where row values */
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereRowValues(
+            const QVector<Column> &columns, const QString &comparison,
+            const QVector<QVariant> &values, const QString &condition)
+    {
+        toBase().whereRowValues(columns, comparison, values, condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereRowValues(
+            const QVector<Column> &columns, const QString &comparison,
+            const QVector<QVariant> &values)
+    {
+        toBase().whereRowValues(columns, comparison, values, OR);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereRowValuesEq(
+            const QVector<Column> &columns, const QVector<QVariant> &values,
+            const QString &condition)
+    {
+        toBase().whereRowValues(columns, EQ, values, condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereRowValuesEq(const QVector<Column> &columns,
+                                              const QVector<QVariant> &values)
+    {
+        toBase().whereRowValues(columns, EQ, values, OR);
         return builder();
     }
 

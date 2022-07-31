@@ -155,6 +155,7 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
         bind(&SQLiteGrammar::whereRaw),
         bind(&SQLiteGrammar::whereExists),
         bind(&SQLiteGrammar::whereNotExists),
+        bind(&SQLiteGrammar::whereRowValues),
     };
 
     T_THREAD_LOCAL

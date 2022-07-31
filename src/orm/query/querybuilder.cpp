@@ -693,6 +693,47 @@ Builder &Builder::orWhereNotExists(const std::function<void(Builder &)> &callbac
     return whereExists(callback, OR, true);
 }
 
+/* where row values */
+
+Builder &
+Builder::whereRowValues(const QVector<Column> &columns, const QString &comparison,
+                        const QVector<QVariant> &values, const QString &condition)
+{
+    if (columns.size() != values.size() || columns.isEmpty())
+        throw Exceptions::InvalidArgumentError(
+                "The number of columns must match the number of values and "
+                "can not be empty.");
+
+    m_wheres.append({.comparison = comparison, .condition = condition,
+                     .type = WhereType::ROW_VALUES,
+                     .columns = columns, .values = values});
+
+    addBinding(cleanBindings(values), BindingType::WHERE);
+
+    return *this;
+}
+
+Builder &
+Builder::orWhereRowValues(const QVector<Column> &columns, const QString &comparison,
+                          const QVector<QVariant> &values)
+{
+    return whereRowValues(columns, comparison, values, OR);
+}
+
+Builder &
+Builder::whereRowValuesEq(const QVector<Column> &columns, const QVector<QVariant> &values,
+                          const QString &condition)
+{
+    return whereRowValues(columns, EQ, values, condition);
+}
+
+Builder &
+Builder::orWhereRowValuesEq(const QVector<Column> &columns,
+                            const QVector<QVariant> &values)
+{
+    return whereRowValues(columns, EQ, values, OR);
+}
+
 /* where raw */
 
 Builder &Builder::whereRaw(const QString &sql, const QVector<QVariant> &bindings,

@@ -495,6 +495,23 @@ namespace Orm::Query
         /*! Add a where not exists clause to the query. */
         Builder &orWhereNotExists(const std::function<void(Builder &)> &callback);
 
+        /* where row values */
+        /*! Adds a where condition using row values. */
+        Builder &
+        whereRowValues(const QVector<Column> &columns, const QString &comparison,
+                       const QVector<QVariant> &values, const QString &condition = AND);
+        /*! Adds an or where condition using row values. */
+        Builder &
+        orWhereRowValues(const QVector<Column> &columns, const QString &comparison,
+                         const QVector<QVariant> &values);
+        Builder &
+        whereRowValuesEq(const QVector<Column> &columns, const QVector<QVariant> &values,
+                         const QString &condition = AND);
+        /*! Adds an or where condition using row values. */
+        Builder &
+        orWhereRowValuesEq(const QVector<Column> &columns,
+                           const QVector<QVariant> &values);
+
         /* where raw */
         /*! Add a raw "where" clause to the query. */
         Builder &whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},

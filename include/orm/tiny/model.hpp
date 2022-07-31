@@ -35,7 +35,6 @@ namespace Orm::Tiny
     // TODO model missing methods Model::whereBetween() silverqx
     // TODO model missing methods Model::saveOrFail() silverqx
     // TODO model missing methods EloquentCollection::toQuery() silverqx
-    // TODO model missing methods Model::whereRow() silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model :

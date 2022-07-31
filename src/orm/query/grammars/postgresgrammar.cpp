@@ -179,6 +179,7 @@ PostgresGrammar::getWhereMethod(const WhereType whereType) const
         bind(&PostgresGrammar::whereRaw),
         bind(&PostgresGrammar::whereExists),
         bind(&PostgresGrammar::whereNotExists),
+        bind(&PostgresGrammar::whereRowValues),
     };
 
     T_THREAD_LOCAL

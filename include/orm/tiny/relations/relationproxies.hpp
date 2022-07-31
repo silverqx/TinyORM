@@ -585,6 +585,24 @@ namespace Tiny::Relations
         const Relation<Model, Related> &
         orWhereNotExists(const std::function<void(QueryBuilder &)> &callback) const;
 
+        /* where row values */
+        /*! Adds a where condition using row values. */
+        const Relation<Model, Related> &
+        whereRowValues(const QVector<Column> &columns, const QString &comparison,
+                       const QVector<QVariant> &values,
+                       const QString &condition = AND) const;
+        /*! Adds an or where condition using row values. */
+        const Relation<Model, Related> &
+        orWhereRowValues(const QVector<Column> &columns, const QString &comparison,
+                         const QVector<QVariant> &values) const;
+        const Relation<Model, Related> &
+        whereRowValuesEq(const QVector<Column> &columns, const QVector<QVariant> &values,
+                         const QString &condition = AND) const;
+        /*! Adds an or where condition using row values. */
+        const Relation<Model, Related> &
+        orWhereRowValuesEq(const QVector<Column> &columns,
+                           const QVector<QVariant> &values) const;
+
         /* where raw */
         /*! Add a raw "where" clause to the query. */
         const Relation<Model, Related> &whereRaw(
@@ -2231,6 +2249,51 @@ namespace Tiny::Relations
             const std::function<void(QueryBuilder &)> &callback) const
     {
         getQuery().whereExists(callback, OR, true);
+
+        return relation();
+    }
+
+    /* where row values */
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereRowValues(
+            const QVector<Column> &columns, const QString &comparison,
+            const QVector<QVariant> &values, const QString &condition) const
+    {
+        getQuery().whereRowValues(columns, comparison, values, condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereRowValues(
+            const QVector<Column> &columns, const QString &comparison,
+            const QVector<QVariant> &values) const
+    {
+        getQuery().whereRowValues(columns, comparison, values, OR);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereRowValuesEq(
+            const QVector<Column> &columns, const QVector<QVariant> &values,
+            const QString &condition) const
+    {
+        getQuery().whereRowValues(columns, EQ, values, condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereRowValuesEq(
+            const QVector<Column> &columns, const QVector<QVariant> &values) const
+    {
+        getQuery().whereRowValues(columns, EQ, values, OR);
 
         return relation();
     }

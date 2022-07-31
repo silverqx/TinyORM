@@ -78,6 +78,7 @@ namespace Query
         RAW,
         EXISTS,
         NOT_EXISTS,
+        ROW_VALUES,
     };
 
     /*! Where clause item, primarily used in grammars to build sql query. */
@@ -89,6 +90,7 @@ namespace Query
         QString                       condition   {Orm::Constants::AND};
         WhereType                     type        {WhereType::UNDEFINED};
         std::shared_ptr<QueryBuilder> nestedQuery {nullptr};
+        QVector<Column>               columns     {};
         QVector<QVariant>             values      {};
         Column                        columnTwo   {};
         QString                       sql         {}; // for the raw version

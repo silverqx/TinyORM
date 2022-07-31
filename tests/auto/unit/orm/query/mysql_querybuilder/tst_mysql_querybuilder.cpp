@@ -2,6 +2,7 @@
 #include <QtTest>
 
 #include "orm/db.hpp"
+#include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/exceptions/multiplerecordsfounderror.hpp"
 #include "orm/exceptions/recordsnotfounderror.hpp"
 #include "orm/query/querybuilder.hpp"
@@ -11,6 +12,8 @@
 using Orm::Constants::AND;
 using Orm::Constants::ASC;
 using Orm::Constants::DESC;
+using Orm::Constants::EQ;
+using Orm::Constants::GT;
 using Orm::Constants::ID;
 using Orm::Constants::LEFT;
 using Orm::Constants::LIKE;
@@ -20,6 +23,7 @@ using Orm::Constants::OR;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
+using Orm::Exceptions::InvalidArgumentError;
 using Orm::Exceptions::MultipleRecordsFoundError;
 using Orm::Exceptions::RecordsNotFoundError;
 using Orm::Query::Builder;
@@ -164,6 +168,11 @@ private Q_SLOTS:
     void whereNotExists() const;
     void orWhereExists() const;
     void orWhereNotExists() const;
+
+    void whereRowValues() const;
+    void whereRowValues_Empty() const;
+    void whereRowValues_ColumnExpression() const;
+    void whereRowValues_ValueExpression() const;
 
     void orderBy() const;
     void latestOldest() const;
@@ -2368,6 +2377,120 @@ void tst_MySql_QueryBuilder::orWhereNotExists() const
              "not exists (select * from `torrents` where `size` < ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(7), QVariant(15)}));
+}
+
+void tst_MySql_QueryBuilder::whereRowValues() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents")
+                .whereRowValues({NAME, SIZE}, EQ, {"test3", 3});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where (`name`, `size`) = (?, ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(QString("test3")), QVariant(3)}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents")
+                .whereRowValuesEq({NAME, SIZE}, {"test3", 3});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where (`name`, `size`) = (?, ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(QString("test3")), QVariant(3)}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents")
+                .whereRowValues({SIZE, "progress"}, GT, {3, 50});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where (`size`, `progress`) > (?, ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(3), QVariant(50)}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, EQ, 1)
+                .orWhereRowValuesEq({NAME, SIZE}, {"test3", 3});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` = ? or (`name`, `size`) = (?, ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(1), QVariant(QString("test3")),
+                                    QVariant(3)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::whereRowValues_Empty() const
+{
+    // Different size
+    QVERIFY_EXCEPTION_THROWN(
+                createQuery()->select("*").from("torrents")
+                .whereRowValues({NAME}, EQ, {"test3", 3}),
+                InvalidArgumentError);
+    QVERIFY_EXCEPTION_THROWN(
+            createQuery()->select("*").from("torrents")
+            .whereRowValues({}, EQ, {"test3", 3}),
+            InvalidArgumentError);
+    // Empty columns/values
+    QVERIFY_EXCEPTION_THROWN(
+            createQuery()->select("*").from("torrents")
+            .whereRowValues({}, EQ, {}),
+            InvalidArgumentError);
+}
+
+void tst_MySql_QueryBuilder::whereRowValues_ColumnExpression() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").where(ID, EQ, 1)
+            .orWhereRowValues({Raw(NAME), SIZE}, EQ, {"test3", 3});
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where `id` = ? or (name, `size`) = (?, ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(1), QVariant(QString("test3")),
+                                QVariant(3)}));
+}
+
+void tst_MySql_QueryBuilder::whereRowValues_ValueExpression() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents")
+                .whereRowValues({NAME, SIZE}, EQ, {"test3", Raw(3)});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where (`name`, `size`) = (?, 3)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(QString("test3"))}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents")
+                .whereRowValues({NAME, SIZE}, EQ, {Raw("'test3'"), 3});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where (`name`, `size`) = ('test3', ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(3)}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents")
+                .whereRowValuesEq({NAME, SIZE}, {Raw("'test3'"), Raw(3)});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where (`name`, `size`) = ('test3', 3)");
+        QVERIFY(builder->getBindings().isEmpty());
+    }
 }
 
 void tst_MySql_QueryBuilder::orderBy() const

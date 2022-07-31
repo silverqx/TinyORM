@@ -179,6 +179,7 @@ MySqlGrammar::getWhereMethod(const WhereType whereType) const
         bind(&MySqlGrammar::whereRaw),
         bind(&MySqlGrammar::whereExists),
         bind(&MySqlGrammar::whereNotExists),
+        bind(&MySqlGrammar::whereRowValues),
     };
 
     T_THREAD_LOCAL
