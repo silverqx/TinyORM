@@ -161,6 +161,8 @@ private slots:
 
     void firstOr() const;
     void firstOr_WithReturnType() const;
+
+    void whereRowValues() const;
 };
 
 void tst_Model_Relations::initTestCase_data() const
@@ -2419,6 +2421,21 @@ void tst_Model_Relations::firstOr_WithReturnType() const
         QCOMPARE(tag->getAttribute(ID), QVariant(2));
         QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
     }
+}
+
+void tst_Model_Relations::whereRowValues() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Torrent::find(2)->tags()
+               ->whereRowValuesEq({ID, NAME}, {1, "tag1"})
+               .first();
+
+    QVERIFY(tag);
+    QCOMPARE(tag->getAttribute(ID), QVariant(1));
+    QCOMPARE(tag->getAttribute(NAME), QVariant("tag1"));
 }
 
 QTEST_MAIN(tst_Model_Relations)

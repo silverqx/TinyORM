@@ -70,6 +70,8 @@ private slots:
     void pluck_EmptyResult_With_u_dates() const;
     void pluck_QualifiedColumnOrKey_With_u_dates() const;
 
+    void whereRowValues() const;
+
     /* Builds Queries */
     void chunk() const;
     void chunk_ReturnFalse() const;
@@ -656,6 +658,15 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         };
         QCOMPARE(result, expected);
     }
+}
+
+void tst_Model_Connection_Independent::whereRowValues() const
+{
+    auto tag = Torrent::whereRowValuesEq({ID, NAME}, {3, "test3"})->first();
+
+    QVERIFY(tag);
+    QCOMPARE(tag->getAttribute(ID), QVariant(3));
+    QCOMPARE(tag->getAttribute(NAME), QVariant("test3"));
 }
 
 /* Builds Queries */
