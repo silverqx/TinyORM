@@ -1530,7 +1530,9 @@ namespace Orm::Tiny::Relations
         auto instance = this->where(attributes).first();
 
         if (!instance)
-            return create(values, pivotValues, touch);
+            return create(AttributeUtils::joinAttributesForFirstOr(
+                              attributes, values, this->m_relatedKey),
+                          pivotValues, touch);
 
         instance->fill(values);
 
