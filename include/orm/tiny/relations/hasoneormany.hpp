@@ -184,7 +184,7 @@ namespace Orm::Tiny::Relations
     {
         // Found
         if (auto instance = this->find(id, columns); instance)
-            return *instance;
+            return std::move(*instance);
 
         auto newInstance = this->m_related->newInstance();
 
@@ -200,7 +200,7 @@ namespace Orm::Tiny::Relations
     {
         // Model found in db
         if (auto instance = this->where(attributes).first(); instance)
-            return *instance;
+            return std::move(*instance);
 
         auto newInstance =
                 this->m_related->newInstance(
@@ -221,7 +221,7 @@ namespace Orm::Tiny::Relations
 
         // Model found in db
         if (instance)
-            return *instance;
+            return std::move(*instance);
 
         return create(AttributeUtils::joinAttributesForFirstOr(
                           attributes, values, this->m_relatedKey));

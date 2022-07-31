@@ -941,7 +941,7 @@ namespace Orm::Tiny::Relations
     {
         // Found
         if (auto instance = find(id, columns); instance)
-            return *instance;
+            return std::move(*instance);
 
         return this->m_related->newInstance();
     }
@@ -954,7 +954,7 @@ namespace Orm::Tiny::Relations
 
         // Found
         if (model)
-            return *model;
+            return std::move(*model);
 
         throw Exceptions::ModelNotFoundError(
                     TypeUtils::classPureBasename<Related>(), {id});
@@ -1078,7 +1078,7 @@ namespace Orm::Tiny::Relations
             const QVector<Column> &columns) const
     {
         if (auto model = first(columns); model)
-            return *model;
+            return std::move(*model);
 
         throw Exceptions::ModelNotFoundError(TypeUtils::classPureBasename<Related>());
     }
