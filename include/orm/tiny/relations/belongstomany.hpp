@@ -1079,21 +1079,21 @@ namespace Orm::Tiny::Relations
         if (auto instance = clone().where(attributes).first(); instance)
             return std::move(*instance);
 
-        // Attributes were not found
-
-        auto instance = this->m_related->where(attributes)->first();
+        // Attributes were not found (Related model doesn't exist or isn't attached)
 
         // Related model already exists so only attach (also updates pivot attributes)
-        if (instance)
+        if (auto instance = this->m_related->where(attributes)->first();
+            instance
+         ) {
             attach(*instance, pivotValues, touch);
 
-        // Related model doesn't exist so create it and also attach
-        else
-            instance = create(AttributeUtils::joinAttributesForFirstOr(
-                                  attributes, values, this->m_relatedKey),
-                              pivotValues, touch);
+            return std::move(*instance);
+        }
 
-        return std::move(*instance);
+        // Related model doesn't exist so create it and also attach
+        return create(AttributeUtils::joinAttributesForFirstOr(
+                          attributes, values, this->m_relatedKey),
+                      pivotValues, touch);
     }
 
     template<class Model, class Related, class PivotType>
@@ -1551,26 +1551,27 @@ namespace Orm::Tiny::Relations
             const QVector<AttributeItem> &pivotValues,
             const bool touch) const
     {
-        // Related model is attached and attributes were found
-        if (auto instance = clone().where(attributes).first(); instance)
-            return std::move(*instance);
+        auto instance = clone().where(attributes).first();
 
-        // Attributes were not found
+        // if : attributes were not found (Related model doesn't exist or isn't attached)
+        if (!instance) {
+            instance = this->m_related->where(attributes)->first();
 
-        auto instance = this->m_related->where(attributes)->first();
+            /* Related model doesn't exist so create it and also attach (also updates
+               pivot attributes). */
+            if (!instance)
+                return create(AttributeUtils::joinAttributesForFirstOr(
+                                  attributes, values, this->m_relatedKey),
+                              pivotValues, touch);
 
-        /* Related model doesn't exist so create it and also attach (also updates pivot
-           attributes). */
-        if (!instance)
-            return create(AttributeUtils::joinAttributesForFirstOr(
-                              attributes, values, this->m_relatedKey),
-                          pivotValues, touch);
+            // Related model already exists so only attach (also updates pivot attributes)
 
-        // Related model already exists so only attach (also updates pivot attributes)
+            /* Attach before an update because something may fail so even if an update
+               fails it will be already attached. */
+            attach(*instance, pivotValues, touch);
+        }
 
-        /* Attach before an update because something may fail so even if an update
-           fails it will be already attached. */
-        attach(*instance, pivotValues, touch);
+        // else : related model is attached and attributes were found
 
         // Update the Related model
         instance->fill(values);
