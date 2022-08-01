@@ -431,7 +431,7 @@ namespace Orm::Tiny
 
         // Found
         if (model)
-            return *model;
+            return std::move(*model);
 
         return newModelInstance();
     }
@@ -443,7 +443,7 @@ namespace Orm::Tiny
 
         // Found
         if (model)
-            return *model;
+            return std::move(*model);
 
         throw Exceptions::ModelNotFoundError(
                     TypeUtils::classPureBasename<Model>(), {id});
@@ -534,7 +534,7 @@ namespace Orm::Tiny
 
         // Model found in db
         if (instance)
-            return *instance;
+            return std::move(*instance);
 
         return newModelInstance(AttributeUtils::joinAttributesForFirstOr(
                                     attributes, values, m_model.getKeyName()));
@@ -547,7 +547,7 @@ namespace Orm::Tiny
     {
         // Model found in db
         if (auto instance = this->where(attributes).first(); instance)
-            return *instance;
+            return std::move(*instance);
 
         return Helpers::tap<Model>(
                     newModelInstance(AttributeUtils::joinAttributesForFirstOr(
@@ -565,7 +565,7 @@ namespace Orm::Tiny
 
         // Found
         if (model)
-            return *model;
+            return std::move(*model);
 
         throw Exceptions::ModelNotFoundError(TypeUtils::classPureBasename<Model>());
     }
