@@ -70,6 +70,8 @@ private Q_SLOTS:
     void where() const;
     void where_WithVectorValue() const;
     void where_WithVectorValue_DefaultCondition() const;
+    void where_ColumnExpression() const;
+    void where_ValueExpression() const;
 
     void whereNot() const;
     void whereNot_WithVectorValue_DefaultCondition() const;
@@ -860,6 +862,28 @@ void tst_SQLite_QueryBuilder::where_WithVectorValue_DefaultCondition() const
              "(\"id\" = ? or \"size\" > ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+}
+
+void tst_SQLite_QueryBuilder::where_ColumnExpression() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").where(DB::raw(ID), "=", 3);
+    QCOMPARE(builder->toSql(),
+             R"(select * from "torrents" where id = ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant> {QVariant(3)});
+}
+
+void tst_SQLite_QueryBuilder::where_ValueExpression() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").where(ID, "=", DB::raw(3))
+            .orWhereEq(DB::raw(NAME), DB::raw("'test3'"));
+    QCOMPARE(builder->toSql(),
+             R"(select * from "torrents" where "id" = 3 or name = 'test3')");
+    QVERIFY(builder->getBindings().isEmpty());
 }
 
 void tst_SQLite_QueryBuilder::whereNot() const

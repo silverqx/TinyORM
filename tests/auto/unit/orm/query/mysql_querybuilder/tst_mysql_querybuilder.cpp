@@ -119,6 +119,8 @@ private Q_SLOTS:
     void where_WithVectorValue_DefaultCondition() const;
     void where_QueryableValue() const;
     void where_QueryableColumn() const;
+    void where_ColumnExpression() const;
+    void where_ValueExpression() const;
 
     void whereNot() const;
     void whereNot_WithVectorValue() const;
@@ -1300,6 +1302,28 @@ void tst_MySql_QueryBuilder::where_QueryableColumn() const
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(13)}));
     }
+}
+
+void tst_MySql_QueryBuilder::where_ColumnExpression() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").where(DB::raw(ID), "=", 3);
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where id = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant> {QVariant(3)});
+}
+
+void tst_MySql_QueryBuilder::where_ValueExpression() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents").where(ID, "=", DB::raw(3))
+            .orWhereEq(DB::raw(NAME), DB::raw("'test3'"));
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where `id` = 3 or name = 'test3'");
+    QVERIFY(builder->getBindings().isEmpty());
 }
 
 void tst_MySql_QueryBuilder::whereNot() const
