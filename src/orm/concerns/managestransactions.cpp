@@ -175,7 +175,6 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
     Q_ASSERT(m_inTransaction);
     Q_ASSERT(m_savepoints > 0);
 
-    // BUG getRawQtQuery() silverqx
     auto rollbackToSavepoint = databaseConnection().getQtQuery();
     const auto queryString =
             QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2").arg(m_savepointNamespace, id);
