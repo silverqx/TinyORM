@@ -48,7 +48,7 @@ namespace Orm::Tiny::Relations
         /*! Get the key for comparing against the parent key in "has" query. */
         inline QString getExistenceCompareKey() const override;
 
-        /* TinyBuilder proxy methods */
+        /* TinyBuilder methods that need modifications */
         /*! Find a model by its primary key or return a new instance of the related
             model. */
         Related findOrNew(const QVariant &id,
@@ -127,8 +127,7 @@ namespace Orm::Tiny::Relations
         inline static int selfJoinCount = 0;
     };
 
-    template<class Model, class Related>
-    HasOneOrMany<Model, Related>::~HasOneOrMany() = default;
+    /* protected */
 
     template<class Model, class Related>
     HasOneOrMany<Model, Related>::HasOneOrMany(
@@ -140,6 +139,11 @@ namespace Orm::Tiny::Relations
         , m_foreignKey(foreignKey)
         , m_localKey(localKey)
     {}
+
+    /* public */
+
+    template<class Model, class Related>
+    HasOneOrMany<Model, Related>::~HasOneOrMany() = default;
 
     template<class Model, class Related>
     void HasOneOrMany<Model, Related>::addConstraints() const
@@ -160,6 +164,8 @@ namespace Orm::Tiny::Relations
                                           this->getKeys(models, m_localKey));
     }
 
+    /* Getters / Setters */
+
     template<class Model, class Related>
     QVariant HasOneOrMany<Model, Related>::getParentKey() const
     {
@@ -177,6 +183,8 @@ namespace Orm::Tiny::Relations
     {
         return getQualifiedForeignKeyName();
     }
+
+    /* TinyBuilder methods that need modifications */
 
     template<class Model, class Related>
     Related HasOneOrMany<Model, Related>::findOrNew(const QVariant &id,
@@ -239,6 +247,8 @@ namespace Orm::Tiny::Relations
         return instance;
 
     }
+
+    /* Inserting operations on the relationship */
 
     // NOTE api different silverqx
     template<class Model, class Related>
@@ -331,6 +341,8 @@ namespace Orm::Tiny::Relations
         return instances;
     }
 
+    /* protected */
+
     template<class Model, class Related>
     template<typename RelationType>
     void HasOneOrMany<Model, Related>::matchOneOrMany(
@@ -374,6 +386,8 @@ namespace Orm::Tiny::Relations
         return dictionary;
     }
 
+    /* Getters / Setters */
+
     template<class Model, class Related>
     QString HasOneOrMany<Model, Related>::getForeignKeyName() const
     {
@@ -391,12 +405,16 @@ namespace Orm::Tiny::Relations
         return m_foreignKey;
     }
 
+    /* Inserting operations on the relationship */
+
     template<class Model, class Related>
     void
     HasOneOrMany<Model, Related>::setForeignAttributesForCreate(Related &model) const
     {
         model.setAttribute(getForeignKeyName(), getParentKey());
     }
+
+    /* Querying Relationship Existence/Absence */
 
     template<class Model, class Related>
     std::unique_ptr<Builder<Related>>

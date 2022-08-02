@@ -59,6 +59,8 @@ namespace Orm::Tiny::Relations
         inline QString relationTypeName() const override;
     };
 
+    /* protected */
+
     template<class Model, class Related>
     HasMany<Model, Related>::HasMany(
             std::unique_ptr<Related> &&related, Model &parent,
@@ -66,6 +68,8 @@ namespace Orm::Tiny::Relations
     )
         : HasOneOrMany<Model, Related>(std::move(related), parent, foreignKey, localKey)
     {}
+
+    /* public */
 
     template<class Model, class Related>
     std::unique_ptr<HasMany<Model, Related>>
@@ -121,6 +125,8 @@ namespace Orm::Tiny::Relations
     {
         return this->m_query->findMany(ids, columns);
     }
+
+    /* Others */
 
     template<class Model, class Related>
     QString HasMany<Model, Related>::relationTypeName() const

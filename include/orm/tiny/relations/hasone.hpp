@@ -59,6 +59,8 @@ namespace Orm::Tiny::Relations
         inline Related newRelatedInstanceFor(const Model &/*unused*/) const override;
     };
 
+    /* protected */
+
     template<class Model, class Related>
     HasOne<Model, Related>::HasOne(
             std::unique_ptr<Related> &&related, Model &parent,
@@ -66,6 +68,8 @@ namespace Orm::Tiny::Relations
     )
         : HasOneOrMany<Model, Related>(std::move(related), parent, foreignKey, localKey)
     {}
+
+    /* public */
 
     template<class Model, class Related>
     std::unique_ptr<HasOne<Model, Related>>
@@ -117,11 +121,15 @@ namespace Orm::Tiny::Relations
         return first ? first : this->getDefaultFor(this->m_parent);
     }
 
+    /* Others */
+
     template<class Model, class Related>
     QString HasOne<Model, Related>::relationTypeName() const
     {
-        return "HasOne";
+        return QStringLiteral("HasOne");
     }
+
+    /* protected */
 
     template<class Model, class Related>
     Related

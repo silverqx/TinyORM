@@ -169,8 +169,7 @@ namespace Relations
 
     PivotRelation::~PivotRelation() = default;
 
-    template<class Model, class Related>
-    Relation<Model, Related>::~Relation() = default;
+    /* protected */
 
     template<class Model, class Related>
     Relation<Model, Related>::Relation(std::unique_ptr<Related> &&related, Model &parent,
@@ -180,6 +179,11 @@ namespace Relations
         , m_relatedKey(relatedKey.isEmpty() ? m_related->getKeyName() : relatedKey)
         , m_query(m_related->newQuery())
     {}
+
+    /* public */
+
+    template<class Model, class Related>
+    Relation<Model, Related>::~Relation() = default;
 
     template<class Model, class Related>
     std::unique_ptr<Relation<Model, Related>>
@@ -208,6 +212,8 @@ namespace Relations
     {
         return m_query->get(columns);
     }
+
+    /* Getters / Setters */
 
     template<class Model, class Related>
     Builder<Related> &Relation<Model, Related>::getQuery() const
@@ -278,6 +284,8 @@ namespace Relations
                     .arg(__func__, relationTypeName()));
     }
 
+    /* Others */
+
     template<class Model, class Related>
     void Relation<Model, Related>::touch() const
     {
@@ -296,6 +304,8 @@ namespace Relations
         // FEATURE scopes silverqx
         return m_query->update(values);
     }
+
+    /* protected */
 
     template<class Model, class Related>
     void Relation<Model, Related>::init() const
@@ -320,6 +330,8 @@ namespace Relations
         })
                 | ranges::actions::unique;
     }
+
+    /* Querying Relationship Existence/Absence */
 
     template<class Model, class Related>
     std::unique_ptr<Builder<Related>>

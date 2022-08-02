@@ -98,6 +98,10 @@ namespace Orm::Tiny::Relations
         QString m_relatedKey;
     };
 
+    /* public */
+
+    /* AsPivot */
+
     template<typename PivotModel>
     template<typename Parent>
     PivotModel
@@ -173,6 +177,8 @@ namespace Orm::Tiny::Relations
     {
         return hasTimestampAttributes(this->m_attributes);
     }
+
+    /* Hide methods from a Model<PivotModel> */
 
     // NOTE api different silverqx
     template<typename PivotModel>
@@ -255,6 +261,10 @@ namespace Orm::Tiny::Relations
     {
         return m_relatedKey;
     }
+
+    /* protected */
+
+    /* AsPivot */
 
     template<typename PivotModel>
     std::unique_ptr<TinyBuilder<PivotModel>>

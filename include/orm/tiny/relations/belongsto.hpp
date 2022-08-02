@@ -112,6 +112,8 @@ namespace Orm::Tiny::Relations
         inline static int selfJoinCount = 0;
     };
 
+    /* protected */
+
     template<class Model, class Related>
     BelongsTo<Model, Related>::BelongsTo(
             std::unique_ptr<Related> &&related, Model &child,
@@ -130,6 +132,8 @@ namespace Orm::Tiny::Relations
         , m_relationName(relationName)
     {}
 
+    /* public */
+
     template<class Model, class Related>
     std::unique_ptr<BelongsTo<Model, Related>>
     BelongsTo<Model, Related>::instance(
@@ -144,6 +148,8 @@ namespace Orm::Tiny::Relations
 
         return instance;
     }
+
+    /* Updating relationship */
 
     template<class Model, class Related>
     Model &BelongsTo<Model, Related>::associate(const Related &model) const
@@ -277,6 +283,8 @@ namespace Orm::Tiny::Relations
         return first ? first : this->getDefaultFor(m_child);
     }
 
+    /* Getters / Setters */
+
     template<class Model, class Related>
     QString BelongsTo<Model, Related>::getRelationName() const
     {
@@ -289,11 +297,15 @@ namespace Orm::Tiny::Relations
         return m_child.qualifyColumn(m_foreignKey);
     }
 
+    /* Others */
+
     template<class Model, class Related>
     QString BelongsTo<Model, Related>::relationTypeName() const
     {
         return "BelongsTo";
     }
+
+    /* protected */
 
     template<class Model, class Related>
     QVector<QVariant>
@@ -325,6 +337,8 @@ namespace Orm::Tiny::Relations
     {
         return this->m_related->newInstance();
     }
+
+    /* Querying Relationship Existence/Absence */
 
     template<class Model, class Related>
     std::unique_ptr<Builder<Related>>
