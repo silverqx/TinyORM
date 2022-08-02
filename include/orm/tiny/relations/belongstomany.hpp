@@ -122,7 +122,7 @@ namespace Orm::Tiny::Relations
         /*! Get the parent key for the relationship. */
         inline const QString &getParentKeyName() const;
         /*! Get the relationship name for the relationship. */
-        inline const QString &getRelationName() const;
+        inline const QString &getRelationName() const noexcept;
 
         /*! Get the name of the pivot accessor for this relationship. */
         inline const QString &getPivotAccessor() const;
@@ -742,7 +742,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     const QString &
-    BelongsToMany<Model, Related, PivotType>::getRelationName() const
+    BelongsToMany<Model, Related, PivotType>::getRelationName() const noexcept
     {
         return m_relationName;
     }

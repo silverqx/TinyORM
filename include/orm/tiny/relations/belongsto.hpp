@@ -73,7 +73,7 @@ namespace Orm::Tiny::Relations
 
         /* Getters / Setters */
         /*! Get the name of the relationship. */
-        inline QString getRelationName() const;
+        inline const QString &getRelationName() const noexcept;
         /*! Get the fully qualified foreign key of the relationship. */
         inline QString getQualifiedForeignKeyName() const;
 
@@ -286,7 +286,7 @@ namespace Orm::Tiny::Relations
     /* Getters / Setters */
 
     template<class Model, class Related>
-    QString BelongsTo<Model, Related>::getRelationName() const
+    const QString &BelongsTo<Model, Related>::getRelationName() const noexcept
     {
         return m_relationName;
     }
