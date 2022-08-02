@@ -52,7 +52,7 @@ namespace Orm::Tiny::Relations
 
         /* Others */
         /*! The textual representation of the Relation type. */
-        inline QString relationTypeName() const override;
+        inline const QString &relationTypeName() const override;
 
     protected:
         /*! Make a new related instance for the given model. */
@@ -124,9 +124,10 @@ namespace Orm::Tiny::Relations
     /* Others */
 
     template<class Model, class Related>
-    QString HasOne<Model, Related>::relationTypeName() const
+    const QString &HasOne<Model, Related>::relationTypeName() const
     {
-        return QStringLiteral("HasOne");
+        static const auto cached = QStringLiteral("HasOne");
+        return cached;
     }
 
     /* protected */

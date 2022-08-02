@@ -121,7 +121,7 @@ namespace Relations
         rawUpdate(const QVector<UpdateItem> &values = {}) const;
 
         /*! The textual representation of the Relation type. */
-        virtual QString relationTypeName() const = 0;
+        virtual const QString &relationTypeName() const = 0;
 
     protected:
         /*! Initialize a Relation instance. */

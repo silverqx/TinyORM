@@ -357,7 +357,7 @@ namespace Orm::Tiny::Relations
         QVector<QVariant> allRelatedIds() const;
 
         /*! The textual representation of the Relation type. */
-        inline QString relationTypeName() const override;
+        inline const QString &relationTypeName() const override;
 
     protected:
         /*! Set the join clause for the relation query. */
@@ -491,7 +491,7 @@ namespace Orm::Tiny::Relations
         QString m_relationName;
 
         /*! The name of the accessor to use for the "pivot" relationship. */
-        QString m_accessor = QLatin1String("pivot");
+        QString m_accessor = QStringLiteral("pivot");
         // BUG should be QSet, duplicates are not allowed, check all the containers 😭 and use proper containers where I did mistake, from the point of view of duplicates silverqx
         /*! The pivot table columns to retrieve. */
         QStringList m_pivotColumns;
@@ -1598,10 +1598,11 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QString
+    const QString &
     BelongsToMany<Model, Related, PivotType>::relationTypeName() const
     {
-        return "BelongsToMany";
+        static const auto cached = QStringLiteral("BelongsToMany");
+        return cached;
     }
 
     template<class Model, class Related, class PivotType>

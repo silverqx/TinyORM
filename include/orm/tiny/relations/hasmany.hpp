@@ -56,7 +56,7 @@ namespace Orm::Tiny::Relations
 
         /* Others */
         /*! The textual representation of the Relation type. */
-        inline QString relationTypeName() const override;
+        inline const QString &relationTypeName() const override;
     };
 
     /* protected */
@@ -129,9 +129,10 @@ namespace Orm::Tiny::Relations
     /* Others */
 
     template<class Model, class Related>
-    QString HasMany<Model, Related>::relationTypeName() const
+    const QString &HasMany<Model, Related>::relationTypeName() const
     {
-        return "HasMany";
+        static const auto cached = QStringLiteral("HasMany");
+        return cached;
     }
 
 } // namespace Orm::Tiny::Relations
