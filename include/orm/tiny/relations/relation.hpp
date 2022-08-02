@@ -34,7 +34,7 @@ namespace Relations
                      public IsRelation
     {
         // Used by QueriesRelationships::getHasQueryByExistenceCheck()
-        friend Concerns::QueriesRelationships<Model>;
+        friend Tiny::Concerns::QueriesRelationships<Model>;
 
         /*! Expression alias. */
         using Expression = Orm::Query::Expression;
