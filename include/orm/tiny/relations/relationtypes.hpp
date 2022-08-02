@@ -50,6 +50,8 @@ namespace Orm::Tiny::Relations
         inline virtual ~OneRelation() = 0;
     };
 
+    OneRelation::~OneRelation() = default;
+
     /*! Tag for many type relation. */
     class ManyRelation
     {
@@ -72,6 +74,8 @@ namespace Orm::Tiny::Relations
         ManyRelation &operator=(ManyRelation &&) = delete;
     };
 
+    ManyRelation::~ManyRelation() = default;
+
     /*! Tag for the relation which contains pivot table, like many-to-many. */
     class PivotRelation
     {
@@ -93,6 +97,8 @@ namespace Orm::Tiny::Relations
         /*! PivotRelation's move assignment operator. */
         PivotRelation &operator=(PivotRelation &&) = delete;
     };
+
+    PivotRelation::~PivotRelation() = default;
 
 } // namespace Orm::Tiny::Relations
 

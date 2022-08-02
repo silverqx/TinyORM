@@ -165,12 +165,6 @@ namespace Relations
         inline static bool constraints = true;
     };
 
-    OneRelation::~OneRelation() = default;
-
-    ManyRelation::~ManyRelation() = default;
-
-    PivotRelation::~PivotRelation() = default;
-
     /* protected */
 
     template<class Model, class Related>
