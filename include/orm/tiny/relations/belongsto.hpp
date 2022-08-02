@@ -82,6 +82,7 @@ namespace Orm::Tiny::Relations
         inline const QString &relationTypeName() const override;
 
     protected:
+        /* Relation related operations */
         /*! Gather the keys from a vector of related models. */
         QVector<QVariant> getEagerModelKeys(const QVector<Model> &models) const;
         /*! Build model dictionary keyed by the parent's primary key. */
@@ -309,6 +310,8 @@ namespace Orm::Tiny::Relations
     }
 
     /* protected */
+
+    /* Relation related operations */
 
     template<class Model, class Related>
     QVector<QVariant>

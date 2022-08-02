@@ -35,7 +35,6 @@ namespace Orm::Tiny::Relations
         inline ~HasOneOrMany() override = 0;
 
         /* Relation related operations */
-
         /*! Set the base constraints on the relation query. */
         void addConstraints() const override;
 
@@ -50,7 +49,7 @@ namespace Orm::Tiny::Relations
         /*! Get the key for comparing against the parent key in "has" query. */
         inline QString getExistenceCompareKey() const override;
 
-        /* TinyBuilder methods that need modifications */
+        /* TinyBuilder proxy methods that need modifications */
         /*! Find a model by its primary key or return a new instance of the related
             model. */
         Related findOrNew(const QVariant &id,
@@ -91,6 +90,7 @@ namespace Orm::Tiny::Relations
         createMany(QVector<QVector<AttributeItem>> &&records) const;
 
     protected:
+        /* Relation related operations */
         /*! Match the eagerly loaded results to their many parents. */
         template<typename RelationType>
         void matchOneOrMany(QVector<Model> &models, QVector<Related> &results,
@@ -188,7 +188,7 @@ namespace Orm::Tiny::Relations
         return getQualifiedForeignKeyName();
     }
 
-    /* TinyBuilder methods that need modifications */
+    /* TinyBuilder proxy methods that need modifications */
 
     template<class Model, class Related>
     Related HasOneOrMany<Model, Related>::findOrNew(const QVariant &id,
@@ -346,6 +346,8 @@ namespace Orm::Tiny::Relations
     }
 
     /* protected */
+
+    /* Relation related operations */
 
     template<class Model, class Related>
     template<typename RelationType>

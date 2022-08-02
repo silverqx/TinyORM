@@ -37,7 +37,6 @@ namespace Orm::Tiny::Relations
                  const QString &foreignKey, const QString &localKey);
 
         /* Relation related operations */
-
         /*! Initialize the relation on a set of models. */
         QVector<Model> &
         initRelation(QVector<Model> &models, const QString &relation) const override;

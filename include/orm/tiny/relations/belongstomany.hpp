@@ -83,7 +83,6 @@ namespace Orm::Tiny::Relations
                  const QString &relatedKey = "", const QString &relation = "");
 
         /* Relation related operations */
-
         /*! Set the base constraints on the relation query. */
         void addConstraints() const override;
 
@@ -134,6 +133,7 @@ namespace Orm::Tiny::Relations
         /*! Get the pivot columns for this relationship. */
         inline const QStringList &getPivotColumns() const;
 
+        /* Timestamps */
         /*! Determine if the 'pivot' model uses timestamps. */
         inline bool usesTimestamps() const;
         /*! Specify that the pivot table has creation and update timestamps. */
@@ -252,7 +252,7 @@ namespace Orm::Tiny::Relations
         firstWhereEq(const Column &column, const QVariant &value,
                      const QString &condition = AND) const override;
 
-        /* Inserting operations on the relationship */
+        /* Inserting/Updating operations on the relationship */
         /*! Attach a model instance to the parent model. */
         std::tuple<bool, Related &>
         save(Related &model,
@@ -362,6 +362,7 @@ namespace Orm::Tiny::Relations
         inline const QString &relationTypeName() const override;
 
     protected:
+        /* Relation related operations */
         /*! Set the join clause for the relation query. */
         const BelongsToMany &performJoin() const;
         /*! Set the join clause for the relation query. */
@@ -517,6 +518,8 @@ namespace Orm::Tiny::Relations
                                       const QVariant &overwrite) const;
     };
 
+    /* protected */
+
     template<class Model, class Related, class PivotType>
     BelongsToMany<Model, Related, PivotType>::BelongsToMany(
             std::unique_ptr<Related> &&related, Model &parent,
@@ -534,6 +537,8 @@ namespace Orm::Tiny::Relations
         , m_parentKey(parentKey)
         , m_relationName(relationName)
     {}
+
+    /* public */
 
     template<class Model, class Related, class PivotType>
     std::unique_ptr<BelongsToMany<Model, Related, PivotType>>
@@ -773,6 +778,8 @@ namespace Orm::Tiny::Relations
     {
         return m_pivotColumns;
     }
+
+    /* Timestamps */
 
     template<class Model, class Related, class PivotType>
     bool BelongsToMany<Model, Related, PivotType>::usesTimestamps() const
@@ -1184,6 +1191,8 @@ namespace Orm::Tiny::Relations
         return firstWhere(column, EQ, value, condition);
     }
 
+    /* Inserting/Updating operations on the relationship */
+
     template<class Model, class Related, class PivotType>
     std::tuple<bool, Related &>
     BelongsToMany<Model, Related, PivotType>::save(
@@ -1586,6 +1595,8 @@ namespace Orm::Tiny::Relations
         return std::move(*instance);
     }
 
+    /* Others */
+
     template<class Model, class Related, class PivotType>
     QVector<QVariant>
     BelongsToMany<Model, Related, PivotType>::allRelatedIds() const
@@ -1608,6 +1619,10 @@ namespace Orm::Tiny::Relations
         static const auto cached = QStringLiteral("BelongsToMany");
         return cached;
     }
+
+    /* protected */
+
+    /* Relation related operations */
 
     template<class Model, class Related, class PivotType>
     const BelongsToMany<Model, Related, PivotType> &

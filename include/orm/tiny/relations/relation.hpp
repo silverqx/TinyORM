@@ -63,7 +63,6 @@ namespace Relations
         Relation &operator=(Relation &&) = delete;
 
         /* Relation related operations */
-
         /*! Set the base constraints on the relation query. */
         virtual void addConstraints() const = 0;
 
@@ -115,9 +114,11 @@ namespace Relations
         /*! Get the key for comparing against the parent key in "has" query. */
         inline virtual QString getExistenceCompareKey() const;
 
-        /* Others */
+        /* Timestamps */
         /*! Touch all of the related models for the relationship. */
         virtual void touch() const;
+
+        /* Others */
         /*! Run a raw update against the base query. */
         inline std::tuple<int, QSqlQuery>
         rawUpdate(const QVector<UpdateItem> &values = {}) const;
@@ -126,6 +127,7 @@ namespace Relations
         virtual const QString &relationTypeName() const = 0;
 
     protected:
+        /* Relation related operations */
         /*! Initialize a Relation instance. */
         inline void init() const;
 
@@ -282,7 +284,7 @@ namespace Relations
                     .arg(__func__, relationTypeName()));
     }
 
-    /* Others */
+    /* Timestamps */
 
     template<class Model, class Related>
     void Relation<Model, Related>::touch() const
@@ -295,6 +297,8 @@ namespace Relations
         });
     }
 
+    /* Others */
+
     template<class Model, class Related>
     std::tuple<int, QSqlQuery>
     Relation<Model, Related>::rawUpdate(const QVector<UpdateItem> &values) const
@@ -304,6 +308,8 @@ namespace Relations
     }
 
     /* protected */
+
+    /* Relation related operations */
 
     template<class Model, class Related>
     void Relation<Model, Related>::init() const

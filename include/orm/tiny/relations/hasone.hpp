@@ -39,7 +39,6 @@ namespace Orm::Tiny::Relations
                  const QString &foreignKey, const QString &localKey);
 
         /* Relation related operations */
-
         /*! Initialize the relation on a set of models. */
         QVector<Model> &
         initRelation(QVector<Model> &models, const QString &relation) const override;
@@ -57,6 +56,7 @@ namespace Orm::Tiny::Relations
         inline const QString &relationTypeName() const override;
 
     protected:
+        /* Relation related operations */
         /*! Make a new related instance for the given model. */
         inline Related newRelatedInstanceFor(const Model &/*unused*/) const override;
     };
@@ -135,6 +135,8 @@ namespace Orm::Tiny::Relations
     }
 
     /* protected */
+
+    /* Relation related operations */
 
     template<class Model, class Related>
     Related
