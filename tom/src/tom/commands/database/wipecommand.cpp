@@ -6,14 +6,14 @@
 
 #include "tom/tomconstants.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::database_;
 
 using Tom::Constants::database_up;
 using Tom::Constants::drop_types;
 using Tom::Constants::drop_views;
 using Tom::Constants::force;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Database
 {

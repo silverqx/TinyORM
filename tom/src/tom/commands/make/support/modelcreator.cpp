@@ -18,6 +18,8 @@
 #include "tom/commands/make/modelcommandconcepts.hpp"
 #include "tom/commands/make/stubs/modelstubs.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using fspath = std::filesystem::path;
 
 using Orm::Constants::COMMA;
@@ -56,8 +58,6 @@ using Tom::Commands::Make::Stubs::ModelWithStub;
 using Tom::Commands::Make::Stubs::OneToOneStub;
 using Tom::Commands::Make::Stubs::OneToManyStub;
 using Tom::Commands::Make::Stubs::PivotModelStub;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Make::Support
 {

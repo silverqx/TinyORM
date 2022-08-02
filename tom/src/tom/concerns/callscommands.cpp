@@ -11,14 +11,14 @@
 #include "tom/commands/command.hpp"
 #include "tom/tomconstants.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Tom::Constants::ansi;
 using Tom::Constants::noansi;
 using Tom::Constants::nointeraction;
 using Tom::Constants::quiet;
 using Tom::Constants::verbose;
 using Tom::Constants::LongOption;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Concerns
 {

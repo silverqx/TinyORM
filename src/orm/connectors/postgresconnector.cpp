@@ -9,12 +9,12 @@
 #include "orm/exceptions/queryerror.hpp"
 #include "orm/utils/type.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::charset_;
 using Orm::Constants::NAME;
 using Orm::Constants::schema_;
 using Orm::Constants::timezone_;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Connectors
 {

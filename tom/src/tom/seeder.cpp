@@ -6,9 +6,9 @@
 
 #include "tom/concerns/interactswithio.hpp"
 
-using TypeUtils = Orm::Utils::Type;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using TypeUtils = Orm::Utils::Type;
 
 namespace Tom
 {

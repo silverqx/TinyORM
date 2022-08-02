@@ -4,9 +4,9 @@
 #include "tom/commands/command.hpp"
 #include "tom/tomconstants.hpp"
 
-using Tom::Constants::force;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using Tom::Constants::force;
 
 namespace Tom::Concerns
 {

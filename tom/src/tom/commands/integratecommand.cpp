@@ -12,6 +12,8 @@
 #include "tom/commands/stubs/integratestubs.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::COMMA;
 
 using Tom::Constants::ShPwsh;
@@ -24,8 +26,6 @@ using Tom::Constants::stdout_;
 using Tom::Constants::ShBash;
 using Tom::Constants::ShZsh;
 #endif
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands
 {

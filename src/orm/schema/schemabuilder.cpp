@@ -9,9 +9,9 @@
 #include "orm/exceptions/logicerror.hpp"
 #include "orm/utils/query.hpp"
 
-using QueryUtils = Orm::Utils::Query;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using QueryUtils = Orm::Utils::Query;
 
 namespace Orm::SchemaNs
 {

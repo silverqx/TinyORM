@@ -7,11 +7,11 @@
 #include "orm/schema/grammars/sqliteschemagrammar.hpp"
 #include "orm/utils/type.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::SchemaNs
 {

@@ -7,9 +7,9 @@
 #include "orm/utils/container.hpp"
 #include "orm/utils/type.hpp"
 
-using ContainerUtils = Orm::Utils::Container;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using ContainerUtils = Orm::Utils::Container;
 
 namespace Orm::SchemaNs::Grammars
 {

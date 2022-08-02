@@ -10,13 +10,13 @@
 
 #include "tom/tomconstants.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::UNDERSCORE;
 
 using StringUtils = Orm::Tiny::Utils::String;
 
 using Tom::Constants::DateTimePrefix;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom
 {

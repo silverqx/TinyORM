@@ -7,6 +7,8 @@
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
@@ -21,8 +23,6 @@ using Tom::Constants::path_;
 using Tom::Constants::path_up;
 using Tom::Constants::realpath_;
 using Tom::Constants::seeder;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Make
 {

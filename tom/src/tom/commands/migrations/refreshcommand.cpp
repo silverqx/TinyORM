@@ -6,6 +6,8 @@
 
 #include "tom/migrator.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::database_;
 
 using Tom::Constants::class_;
@@ -21,8 +23,6 @@ using Tom::Constants::DbSeed;
 using Tom::Constants::Migrate;
 using Tom::Constants::MigrateReset;
 using Tom::Constants::MigrateRollback;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Migrations
 {

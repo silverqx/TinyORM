@@ -13,6 +13,8 @@
 #include "tom/exceptions/invalidtemplateargumenterror.hpp"
 #include "tom/seeder.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::database_;
 
 #ifndef TINYORM_DISABLE_ORM
@@ -25,8 +27,6 @@ using Tom::Constants::database_up;
 using Tom::Constants::force;
 
 using TypeUtils = Orm::Utils::Type;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Database
 {

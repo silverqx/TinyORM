@@ -15,6 +15,8 @@
 #include "tom/application.hpp"
 #include "tom/tomutils.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace fs = std::filesystem;
 
 using Orm::Constants::DASH;
@@ -50,10 +52,7 @@ using Tom::Constants::cword_;
 using Tom::Constants::cword_up;
 #endif
 
-
 using TomUtils = Tom::Utils;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands
 {

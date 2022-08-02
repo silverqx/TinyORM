@@ -6,13 +6,13 @@
 
 #include "tom/commands/make/stubs/seederstubs.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using fspath = std::filesystem::path;
 
 using StringUtils = Orm::Tiny::Utils::String;
 
 using Tom::Commands::Make::Stubs::SeederStub;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Make::Support
 {

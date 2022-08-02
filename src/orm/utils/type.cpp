@@ -11,6 +11,8 @@
 #  include "orm/exceptions/runtimeerror.hpp"
 #endif
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::ASTERISK_C;
 using Orm::Constants::LT_C;
 using Orm::Constants::SPACE;
@@ -18,8 +20,6 @@ using Orm::Constants::SPACE;
 #if !defined(_MSC_VER)
 using Orm::Exceptions::RuntimeError;
 #endif
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Utils
 {

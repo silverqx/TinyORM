@@ -10,11 +10,11 @@
 #  include "orm/utils/query.hpp"
 #endif
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 #ifdef TINYORM_DEBUG_SQL
 using QueryUtils = Orm::Utils::Query;
 #endif
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Concerns
 {

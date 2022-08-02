@@ -5,9 +5,9 @@
 
 #include "tom/migrationrepository.hpp"
 
-using Orm::DatabaseConnection;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using Orm::DatabaseConnection;
 
 namespace Tom::Concerns
 {

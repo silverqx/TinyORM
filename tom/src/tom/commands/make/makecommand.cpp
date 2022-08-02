@@ -3,14 +3,14 @@
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
 
 using Tom::Constants::DateTimePrefix;
 using Tom::Constants::force;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Make
 {

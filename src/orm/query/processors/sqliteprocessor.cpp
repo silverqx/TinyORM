@@ -5,9 +5,9 @@
 
 #include "orm/constants.hpp"
 
-using Orm::Constants::NAME;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using Orm::Constants::NAME;
 
 namespace Orm::Query::Processors
 {

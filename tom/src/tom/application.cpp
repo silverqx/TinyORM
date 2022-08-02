@@ -38,6 +38,11 @@
 #  include "tom/version.hpp"
 #endif
 
+/*! Invoke Qt's global post routines. */
+extern void Q_DECL_IMPORT qt_call_post_routines();
+
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using fspath = std::filesystem::path;
 
 using Orm::ConnectionResolverInterface;
@@ -101,11 +106,6 @@ using Tom::Constants::nointeraction;
 using Tom::Constants::quiet;
 using Tom::Constants::verbose;
 using Tom::Constants::version;
-
-/*! Invoke Qt's global post routines. */
-extern void Q_DECL_IMPORT qt_call_post_routines();
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom {
 

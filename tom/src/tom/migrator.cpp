@@ -17,6 +17,8 @@
 #include "tom/migrationrepository.hpp"
 #include "tom/tomutils.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::DatabaseConnection;
 
 using Orm::Constants::DESC;
@@ -25,8 +27,6 @@ using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
 
 using TomUtils = Tom::Utils;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom
 {

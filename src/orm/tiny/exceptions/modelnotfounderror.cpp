@@ -2,10 +2,10 @@
 
 #include "orm/constants.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::COMMA;
 using Orm::Constants::DOT;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny::Exceptions
 {

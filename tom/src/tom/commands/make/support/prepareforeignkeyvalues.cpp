@@ -4,13 +4,13 @@
 
 #include "tom/commands/make/modelcommand.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Tom::Constants::belongs_to;
 using Tom::Constants::belongs_to_many;
 using Tom::Constants::foreign_key;
 using Tom::Constants::one_to_many;
 using Tom::Constants::one_to_one;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Make::Support
 {

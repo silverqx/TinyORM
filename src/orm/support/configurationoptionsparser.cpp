@@ -4,11 +4,11 @@
 #include "orm/constants.hpp"
 #include "orm/exceptions/runtimeerror.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::EQ_C;
 using Orm::Constants::options_;
 using Orm::Constants::SEMICOLON;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Support
 {

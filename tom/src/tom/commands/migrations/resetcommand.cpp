@@ -6,13 +6,13 @@
 
 #include "tom/migrator.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::database_;
 
 using Tom::Constants::database_up;
 using Tom::Constants::force;
 using Tom::Constants::pretend;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Migrations
 {

@@ -10,6 +10,8 @@
 #include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::COMMA;
 using Orm::Constants::SPACE;
 
@@ -21,8 +23,6 @@ using Tom::Constants::LongOptionOnly;
 using Tom::Constants::LongOptionValue;
 
 using TomUtils = Tom::Utils;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Concerns
 {

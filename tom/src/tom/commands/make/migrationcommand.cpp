@@ -11,6 +11,8 @@
 #include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
@@ -33,8 +35,6 @@ using Tom::Constants::table_up;
 using Tom::Constants::DateTimePrefix;
 
 using TomUtils = Tom::Utils;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Make
 {

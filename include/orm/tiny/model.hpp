@@ -1417,7 +1417,6 @@ TINYORM_END_COMMON_NAMESPACE
 // TODO Visual Studio memory analyzer https://docs.microsoft.com/en-us/visualstudio/profiling/memory-usage-without-debugging2?view=vs-2019 silverqx
 // CUR fix all modernize-pass-by-value silverqx
 // CUR use using inside classes where appropriate silverqx
-// CUR I'm still not comfortable with using Orm::Constants, inside/outside namespace in cpp/hpp files silverqx
 // CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
 // CUR make all * to *const silverqx
 // CUR merge changes from latest Eloquent silverqx

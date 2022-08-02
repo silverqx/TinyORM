@@ -4,9 +4,9 @@
 
 #include "orm/constants.hpp"
 
-using Orm::Constants::COMMA;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using Orm::Constants::COMMA;
 
 namespace Orm::Exceptions
 {

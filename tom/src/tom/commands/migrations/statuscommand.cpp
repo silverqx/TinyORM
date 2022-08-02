@@ -14,11 +14,11 @@
 #  include "tom/exceptions/runtimeerror.hpp"
 #endif
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::database_;
 
 using Tom::Constants::database_up;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Migrations
 {

@@ -6,9 +6,9 @@
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/type.hpp"
 
-using QueryUtils = Orm::Utils::Query;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using QueryUtils = Orm::Utils::Query;
 
 namespace Orm::Query::Concerns
 {

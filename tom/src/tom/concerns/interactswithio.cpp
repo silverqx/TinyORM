@@ -8,6 +8,8 @@
 #include "tom/terminal.hpp"
 #include "tom/tomconstants.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using tabulate::Table;
 
 using Orm::Constants::ASTERISK;
@@ -21,8 +23,6 @@ using Tom::Constants::ansi;
 using Tom::Constants::noansi;
 using Tom::Constants::nointeraction;
 using Tom::Constants::quiet;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Concerns
 {

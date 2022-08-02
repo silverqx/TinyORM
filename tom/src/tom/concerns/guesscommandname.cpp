@@ -10,6 +10,8 @@
 #include "tom/commands/command.hpp"
 #include "tom/tomconstants.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::COLON;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
@@ -18,8 +20,6 @@ using Tom::Commands::Command;
 using Tom::Constants::NsAll;
 using Tom::Constants::NsGlobal;
 using Tom::Constants::NsNamespaced;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Concerns
 {

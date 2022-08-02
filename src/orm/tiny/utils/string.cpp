@@ -6,14 +6,14 @@
 
 #include "orm/constants.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::DASH;
 using Orm::Constants::DOT;
 using Orm::Constants::MINUS;
 using Orm::Constants::PLUS;
 using Orm::Constants::SPACE;
 using Orm::Constants::UNDERSCORE;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny::Utils
 {

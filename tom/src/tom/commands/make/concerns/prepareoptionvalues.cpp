@@ -6,11 +6,11 @@
 #include "tom/commands/make/support/preparebtmoptionvalues.hpp"
 #include "tom/commands/make/support/prepareforeignkeyvalues.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Tom::Commands::Make::Support::PrepareBtmOptionValues;
 using Tom::Commands::Make::Support::PrepareForeignKeyValues;
 using Tom::Constants::foreign_key;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Make::Concerns
 {

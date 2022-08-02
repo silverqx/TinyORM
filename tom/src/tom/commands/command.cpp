@@ -13,13 +13,13 @@
 #include "tom/tomconstants.hpp"
 #include "tom/version.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::ConnectionResolverInterface;
 using Orm::Constants::SPACE;
 
 using Tom::Constants::Help;
 using Tom::Constants::LongOption;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands
 {

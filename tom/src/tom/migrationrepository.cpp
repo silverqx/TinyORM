@@ -5,6 +5,8 @@
 
 #include "tom/tomconstants.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 using Orm::Constants::ASC;
 using Orm::Constants::DESC;
 using Orm::Constants::GE;
@@ -17,8 +19,6 @@ using QueryBuilder = Orm::Query::Builder;
 
 using Tom::Constants::batch_;
 using Tom::Constants::migration_;
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom
 {
