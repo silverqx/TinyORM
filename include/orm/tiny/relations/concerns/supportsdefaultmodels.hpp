@@ -56,7 +56,7 @@ namespace Concerns
         std::variant<bool, QVector<AttributeItem>/*, Callback*/> m_withDefault = false;
 
     private:
-        /*! Return cached reference to the base relation instance. */
+        /*! Dynamic cast *this to the Relation & derived type. */
         inline Relation<Model, Related> &relation();
     };
 
@@ -139,10 +139,8 @@ namespace Concerns
     Relation<Model, Related> &
     SupportsDefaultModels<Model, Related>::relation()
     {
-        T_THREAD_LOCAL
-        static auto &cached = dynamic_cast<Relation<Model, Related> &>(*this);
-
-        return cached;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
+        return dynamic_cast<Relation<Model, Related> &>(*this);
     }
 
 } // namespace Concerns
