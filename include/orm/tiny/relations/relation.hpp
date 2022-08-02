@@ -62,6 +62,8 @@ namespace Relations
         /*! Relation's move assignment operator. */
         Relation &operator=(Relation &&) = delete;
 
+        /* Relation related operations */
+
         /*! Set the base constraints on the relation query. */
         virtual void addConstraints() const = 0;
 
@@ -184,6 +186,8 @@ namespace Relations
 
     template<class Model, class Related>
     Relation<Model, Related>::~Relation() = default;
+
+    /* Relation related operations */
 
     template<class Model, class Related>
     std::unique_ptr<Relation<Model, Related>>

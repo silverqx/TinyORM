@@ -34,6 +34,8 @@ namespace Orm::Tiny::Relations
         /*! Pure virtual destructor. */
         inline ~HasOneOrMany() override = 0;
 
+        /* Relation related operations */
+
         /*! Set the base constraints on the relation query. */
         void addConstraints() const override;
 
@@ -144,6 +146,8 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     HasOneOrMany<Model, Related>::~HasOneOrMany() = default;
+
+    /* Relation related operations */
 
     template<class Model, class Related>
     void HasOneOrMany<Model, Related>::addConstraints() const

@@ -43,17 +43,7 @@ namespace Orm::Tiny::Relations
                  Model &child, const QString &foreignKey,
                  const QString &ownerKey, const QString &relation);
 
-        /* Updating relationship */
-        /*! Associate the model instance to the given parent. */
-        Model &associate(const Related &model) const;
-        /*! Associate the model instance to the given parent. */
-        Model &associate(const QVariant &id) const;
-        /*! Dissociate previously associated model from the given parent. */
-        Model &dissociate() const;
-        /*! Alias of "dissociate" method. */
-        inline Model &disassociate() const;
-
-        /* Basic operations */
+        /* Relation related operations */
         /*! Set the base constraints on the relation query. */
         void addConstraints() const override;
 
@@ -70,6 +60,16 @@ namespace Orm::Tiny::Relations
         /*! Get the results of the relationship. */
         std::variant<QVector<Related>, std::optional<Related>>
         getResults() const override;
+
+        /* Updating relationship */
+        /*! Associate the model instance to the given parent. */
+        Model &associate(const Related &model) const;
+        /*! Associate the model instance to the given parent. */
+        Model &associate(const QVariant &id) const;
+        /*! Dissociate previously associated model from the given parent. */
+        Model &dissociate() const;
+        /*! Alias of "dissociate" method. */
+        inline Model &disassociate() const;
 
         /* Getters / Setters */
         /*! Get the name of the relationship. */
@@ -149,47 +149,7 @@ namespace Orm::Tiny::Relations
         return instance;
     }
 
-    /* Updating relationship */
-
-    template<class Model, class Related>
-    Model &BelongsTo<Model, Related>::associate(const Related &model) const
-    {
-        m_child.setAttribute(m_foreignKey,
-                             model.getAttribute(m_ownerKey));
-
-        m_child.template setRelation<Related>(m_relationName, model);
-
-        return m_child;
-    }
-
-    // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
-    template<class Model, class Related>
-    Model &BelongsTo<Model, Related>::associate(const QVariant &id) const
-    {
-        m_child.setAttribute(m_foreignKey, id);
-
-        // FEATURE relations, check if relation is loaded and if has the same id, if so, then don't unset relation silverqx
-        m_child.unsetRelation(m_relationName);
-
-        return m_child;
-    }
-
-    template<class Model, class Related>
-    Model &BelongsTo<Model, Related>::dissociate() const
-    {
-        // TEST Model::save with null key silverqx
-        // FEATURE dilemma primarykey, Model::KeyType vs QVariant, set to null, will be different for Qt5 (QVariant(QVariant::Type(qMetaTypeId<Model::KeyType>()))) and Qt6 (QVariant(QMetaType(qMetaTypeId<Model::KeyType>())))) ; ALSO current problem is, that I check that foreignKey !isValid || isNull, but when QVariant with type (Model::KeyType) and also with null is created by the above commands, then it is still null (isNull == true), but is considered as !!VALID!! (isValid == true) silverqx
-        m_child.setAttribute(m_foreignKey, {});
-
-        // TEST operations that are related on the Model::m_relation data member how they behave, when m_relations value contains the std::nullopt value silverqx
-        return m_child.template setRelation<Related>(m_relationName, std::nullopt);
-    }
-
-    template<class Model, class Related>
-    Model &BelongsTo<Model, Related>::disassociate() const
-    {
-        return dissociate();
-    }
+    /* Relation related operations */
 
     template<class Model, class Related>
     void BelongsTo<Model, Related>::addConstraints() const
@@ -281,6 +241,48 @@ namespace Orm::Tiny::Relations
         const auto first = this->m_query->first();
 
         return first ? first : this->getDefaultFor(m_child);
+    }
+
+    /* Updating relationship */
+
+    template<class Model, class Related>
+    Model &BelongsTo<Model, Related>::associate(const Related &model) const
+    {
+        m_child.setAttribute(m_foreignKey,
+                             model.getAttribute(m_ownerKey));
+
+        m_child.template setRelation<Related>(m_relationName, model);
+
+        return m_child;
+    }
+
+    // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
+    template<class Model, class Related>
+    Model &BelongsTo<Model, Related>::associate(const QVariant &id) const
+    {
+        m_child.setAttribute(m_foreignKey, id);
+
+        // FEATURE relations, check if relation is loaded and if has the same id, if so, then don't unset relation silverqx
+        m_child.unsetRelation(m_relationName);
+
+        return m_child;
+    }
+
+    template<class Model, class Related>
+    Model &BelongsTo<Model, Related>::dissociate() const
+    {
+        // TEST Model::save with null key silverqx
+        // FEATURE dilemma primarykey, Model::KeyType vs QVariant, set to null, will be different for Qt5 (QVariant(QVariant::Type(qMetaTypeId<Model::KeyType>()))) and Qt6 (QVariant(QMetaType(qMetaTypeId<Model::KeyType>())))) ; ALSO current problem is, that I check that foreignKey !isValid || isNull, but when QVariant with type (Model::KeyType) and also with null is created by the above commands, then it is still null (isNull == true), but is considered as !!VALID!! (isValid == true) silverqx
+        m_child.setAttribute(m_foreignKey, {});
+
+        // TEST operations that are related on the Model::m_relation data member how they behave, when m_relations value contains the std::nullopt value silverqx
+        return m_child.template setRelation<Related>(m_relationName, std::nullopt);
+    }
+
+    template<class Model, class Related>
+    Model &BelongsTo<Model, Related>::disassociate() const
+    {
+        return dissociate();
     }
 
     /* Getters / Setters */

@@ -82,6 +82,8 @@ namespace Orm::Tiny::Relations
                  const QString &relatedPivotKey = "", const QString &parentKey = "",
                  const QString &relatedKey = "", const QString &relation = "");
 
+        /* Relation related operations */
+
         /*! Set the base constraints on the relation query. */
         void addConstraints() const override;
 
@@ -550,6 +552,8 @@ namespace Orm::Tiny::Relations
 
         return instance;
     }
+
+    /* Relation related operations */
 
     template<class Model, class Related, class PivotType>
     void BelongsToMany<Model, Related, PivotType>::addConstraints() const
