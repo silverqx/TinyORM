@@ -25,7 +25,9 @@ namespace Concerns
     {
         Q_DISABLE_COPY(SupportsDefaultModels)
 
+        /*! Alias for the AttributeItem. */
         using AttributeItem = Orm::Tiny::AttributeItem;
+        /*! Callback used to fill default attribute values for the default model. */
 //        using Callback      = std::function<void(Related &, const Model &)>;
 
     public:
@@ -57,6 +59,8 @@ namespace Concerns
         /*! Return cached reference to the base relation instance. */
         inline Relation<Model, Related> &relation();
     };
+
+    /* public */
 
     template<class Model, class Related>
     SupportsDefaultModels<Model, Related>::~SupportsDefaultModels() = default;
@@ -128,6 +132,8 @@ namespace Concerns
 
         return instance;
     }
+
+    /* private */
 
     template<class Model, class Related>
     Relation<Model, Related> &
