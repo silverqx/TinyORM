@@ -246,6 +246,7 @@ namespace Orm::Tiny
         setKeysForSaveQuery(TinyBuilder<Derived> &query);
         /*! Get the primary key value for a save query. */
         QVariant getKeyForSaveQuery() const;
+
         /*! Set the keys for a select query. */
         TinyBuilder<Derived> &
         setKeysForSelectQuery(TinyBuilder<Derived> &query);
@@ -316,7 +317,6 @@ namespace Orm::Tiny
         /*! Throw if an attempt to fill a guarded attribute is detected (mass assign.). */
         static void throwIfTotallyGuarded(QString &&key);
 
-        /* HasAttributes */
         /*! Get the u_dateFormat attribute from the Derived model. */
         inline QString &getUserDateFormat();
         /*! Get the u_dateFormat attribute from the Derived model. */
@@ -475,9 +475,9 @@ namespace Orm::Tiny
         if (exists)
             saved = this->isDirty() ? performUpdate(*query) : true;
 
-        // If the model is brand new, we'll insert it into our database and set the
-        // ID attribute on the model to the value of the newly inserted row's ID
-        // which is typically an auto-increment value managed by the database.
+        /* If the model is brand new, we'll insert it into our database and set the
+           ID attribute on the model to the value of the newly inserted row's ID
+           which is typically an auto-increment value managed by the database. */
         else {
             saved = performInsert(*query);
 
@@ -1021,8 +1021,8 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::performDeleteOnModel()
     {
-        /* Ownership of a unique_ptr(), if right passed down, then the
-           will be destroyed right after this command. */
+        /* Ownership of a unique_ptr(), dereferenced and passed down, will be
+           destroyed right after this command. */
         model().setKeysForSaveQuery(*newModelQuery()).remove();
 
         this->exists = false;
@@ -1039,7 +1039,7 @@ namespace Orm::Tiny
     QVariant Model<Derived, AllRelations...>::getKeyForSaveQuery() const
     {
         // Found
-        if (const auto keyName = getKeyName();
+        if (const auto &keyName = getKeyName();
             this->m_originalHash.contains(keyName)
         )
             return this->m_original.at(this->m_originalHash.at(keyName)).value;
@@ -1058,7 +1058,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant Model<Derived, AllRelations...>::getKeyForSelectQuery() const
     {
-        // Currently is the implementation exactly the same, so I can call it
+        // Currently is the implementation exactly in the same way
         return getKeyForSaveQuery();
     }
 
@@ -1156,7 +1156,7 @@ namespace Orm::Tiny
         const auto id = query.insertGetId(attributes, keyName);
 
         // NOTE api different, Eloquent doesn't check like below and returns void instead silverqx
-        // When insert was successful
+        // Insert was successful
         if (id != 0)
             this->setAttribute(keyName, id);
 
@@ -1274,8 +1274,6 @@ namespace Orm::Tiny
     /* Getters for u_ data members defined in the Derived models, helps to avoid
        'friend GuardsAttributes/HasTimestamps' declarations in models when a u_ data
        members are private/protected. */
-
-    /* HasAttributes */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QString &
