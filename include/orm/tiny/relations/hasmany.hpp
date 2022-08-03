@@ -122,6 +122,8 @@ namespace Orm::Tiny::Relations
         return this->m_query->get();
     }
 
+    /* TinyBuilder proxy methods */
+
     template<class Model, class Related>
     QVector<Related>
     HasMany<Model, Related>::findMany(
