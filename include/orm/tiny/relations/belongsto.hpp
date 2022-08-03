@@ -5,9 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <range/v3/action/sort.hpp>
-#include <range/v3/action/unique.hpp>
-
 #include "orm/tiny/relations/concerns/supportsdefaultmodels.hpp"
 #include "orm/tiny/relations/relation.hpp"
 
@@ -174,7 +171,7 @@ namespace Orm::Tiny::Relations
         /* We'll grab the primary key name of the related models since it could be set to
            a non-standard name and not "id". We will then construct the constraint for
            our eagerly loading query so it returns the proper models from execution. */
-        this->m_query->getQuery().whereIn(
+        this->getBaseQuery().whereIn(
                     DOT_IN.arg(this->m_related->getTable(), m_ownerKey),
                     getEagerModelKeys(models));
     }
@@ -239,9 +236,10 @@ namespace Orm::Tiny::Relations
         )
             return this->getDefaultFor(m_child);
 
-        const auto first = this->m_query->first();
+        // NRVO doesn't kick in so I have to move
+        auto first = this->m_query->first();
 
-        return first ? first : this->getDefaultFor(m_child);
+        return first ? std::move(first) : this->getDefaultFor(m_child);
     }
 
     /* Updating relationship */
@@ -318,21 +316,22 @@ namespace Orm::Tiny::Relations
     BelongsTo<Model, Related>::getEagerModelKeys(const QVector<Model> &models) const
     {
         QVector<QVariant> keys;
+        keys.reserve(models.size());
 
         /* First we need to gather all of the keys from the parent models so we know what
            to query for via the eager loading query. We will add them to the vector then
            execute a "where in" statement to gather up all of those related records. */
         for (const auto &model : models) {
-            const auto &value = model.getAttribute(m_foreignKey);
+            auto value = model.getAttribute(m_foreignKey);
 
-            if (!value.isNull())
+            if (value.isValid() && !value.isNull())
                 // TODO add support for non-int primary keys, ranges::actions doesn't accept QVariant container silverqx
-                keys.append(value);
+                keys << std::move(value);
         }
 
-        return keys |= ranges::actions::sort(ranges::less {}, [](auto key_)
+        return keys |= ranges::actions::sort(ranges::less {}, [](const auto &key)
         {
-            return key_.template value<typename Model::KeyType>();
+            return key.template value<typename Model::KeyType>();
         })
                 | ranges::actions::unique;
     }
@@ -360,6 +359,7 @@ namespace Orm::Tiny::Relations
 
         query->select(columns).whereColumnEq(getQualifiedForeignKeyName(),
                                              query->qualifyColumn(m_ownerKey));
+
         return std::move(query);
     }
 
