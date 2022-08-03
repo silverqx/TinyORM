@@ -5,7 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/macros/threadlocal.hpp"
 // FEATURE tiny types, only AttributeItem used silverqx
 #include "orm/tiny/tinytypes.hpp"
 
@@ -118,9 +117,9 @@ namespace Orm::Tiny::Relations::Concerns
 //            return instance;
 //        }
 
-        // If model attributes were passed, then fill them
+        // If model attributes were passed then fill them
         if (index == 1)
-            if (const auto attributes = std::get<QVector<AttributeItem>>(m_withDefault);
+            if (const auto &attributes = std::get<QVector<AttributeItem>>(m_withDefault);
                 !attributes.isEmpty()
             )
                 instance.forceFill(attributes);
@@ -134,7 +133,7 @@ namespace Orm::Tiny::Relations::Concerns
     Relation<Model, Related> &
     SupportsDefaultModels<Model, Related>::relation()
     {
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
+        // TODO mystery, can't use static_cast<> it fails at the concept RelationshipMethod check, I think that exactly this:             std::is_convertible_v<std::invoke_result_t<Method, Derived>, std::unique_ptr<Relations::IsRelation>> silverqx
         return dynamic_cast<Relation<Model, Related> &>(*this);
     }
 
