@@ -5,50 +5,34 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QDateTime>
-#include <QtSql/QSqlRecord>
-
-#include <range/v3/iterator/insert_iterators.hpp>
-#include <range/v3/range/conversion.hpp>
-#include <range/v3/view/set_algorithm.hpp>
 #include <range/v3/view/transform.hpp>
 
-#include "orm/exceptions/domainerror.hpp"
 #include "orm/macros/likely.hpp"
 #include "orm/tiny/exceptions/modelnotfounderror.hpp"
+#include "orm/tiny/relations/concerns/interactswithpivottable.hpp"
 #include "orm/tiny/relations/relation.hpp"
-#include "orm/tiny/types/syncchanges.hpp"
-#include "orm/tiny/utils/attribute.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny::Relations
 {
-    class Pivot;
-
-    /*! TinyORM's 'Pivot' class. */
-    template<typename PivotType>
-    concept OurPivot = std::same_as<PivotType, Pivot>;
-
-    /*! Custom pivot class, not TinyORM's 'Pivot' class. */
-    template<typename PivotType>
-    concept CustomPivot = !std::same_as<PivotType, Pivot>;
 
     /*! Belongs to many relation. */
     template<class Model, class Related, class PivotType = Pivot>
-    class BelongsToMany : public ManyRelation,
-                          public Relation<Model, Related>,
-                          public PivotRelation
+    class BelongsToMany :
+            public ManyRelation,
+            public Relation<Model, Related>,
+            public PivotRelation,
+            public Concerns::InteractsWithPivotTable<Model, Related, PivotType>
     {
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
-        /*! Model alias. */
-        template<typename Derived>
-        using BaseModel = Orm::Tiny::Model<Derived>;
+        /*! To access a private data members m_xyz and a few other methods. */
+        friend Concerns::InteractsWithPivotTable<Model, Related, PivotType>;
 
     protected:
         /*! Protected constructor. */
@@ -101,8 +85,6 @@ namespace Orm::Tiny::Relations
         QVector<Related> get(const QVector<Column> &columns = {ASTERISK}) const override;
 
         /* Getters / Setters */
-        /*! Qualify the given column name by the pivot table. */
-        QString qualifyPivotColumn(const QString &column) const;
         /*! Get the fully qualified foreign key for the relation. */
         inline QString getQualifiedForeignPivotKeyName() const;
         /*! Get the fully qualified "related key" for the relation. */
@@ -129,6 +111,8 @@ namespace Orm::Tiny::Relations
         inline const QString &getPivotAccessor() const noexcept;
         /*! Specify the custom pivot accessor to use for the relationship. */
         inline BelongsToMany &as(const QString &accessor);
+        /*! Specify the custom pivot accessor to use for the relationship. */
+        inline BelongsToMany &as(QString &&accessor);
 
         /*! Get the pivot columns for this relationship. */
         inline const QStringList &getPivotColumns() const noexcept;
@@ -149,33 +133,7 @@ namespace Orm::Tiny::Relations
             E.g.: Touch all roles associated with this user. */
         void touch() const override;
 
-        /* InteractsWithPivotTable */
-        /*! Set the columns on the pivot table to retrieve. */
-        BelongsToMany &withPivot(const QStringList &columns);
-        /*! Set the columns on the pivot table to retrieve. */
-        inline BelongsToMany &withPivot(const QString &column);
-
-        /*! Determine whether the given column is defined as a pivot column. */
-        inline bool hasPivotColumn(const QString &column) const;
-
-        /*! Create a new existing pivot model instance. */
-        PivotType newExistingPivot(const QVector<AttributeItem> &attributes = {}) const;
-        /*! Create a new pivot model instance. */
-        PivotType newPivot(const QVector<AttributeItem> &attributes = {},
-                           bool exists = false) const;
-
-        /*! Create a new query builder for the pivot table. */
-        std::shared_ptr<QueryBuilder> newPivotQuery() const;
-        /*! Get a new plain query builder for the pivot table. */
-        std::shared_ptr<QueryBuilder> newPivotStatement() const;
-        /*! Get a new pivot statement for a given "other" / "related" ID. */
-        std::shared_ptr<QueryBuilder>
-        newPivotStatementForId(const QVector<QVariant> &ids) const;
-        /*! Get a new pivot statement for a given "other" / "related" ID. */
-        std::shared_ptr<QueryBuilder>
-        inline newPivotStatementForId(const QVariant &id) const;
-
-        /* TinyBuilder proxy methods */
+        /* TinyBuilder proxy methods that need modifications */
         /*! Find a model by its primary key. */
         std::optional<Related>
         find(const QVariant &id,
@@ -289,64 +247,6 @@ namespace Orm::Tiny::Relations
         createMany(QVector<QVector<AttributeItem>> &&records,
                    const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
 
-        /* Inserting & Updating relationship */
-        /*! Attach models to the parent. */
-        void attach(const QVector<QVariant> &ids,
-                    const QVector<AttributeItem> &attributes = {},
-                    bool touch = true) const;
-        /*! Attach models to the parent. */
-        void attach(const QVector<std::reference_wrapper<Related>> &models,
-                    const QVector<AttributeItem> &attributes = {},
-                    bool touch = true) const;
-        /*! Attach a model to the parent. */
-        inline void
-        attach(const QVariant &id, const QVector<AttributeItem> &attributes = {},
-               bool touch = true) const;
-        /*! Attach a model to the parent. */
-        inline void
-        attach(const Related &model, const QVector<AttributeItem> &attributes = {},
-               bool touch = true) const;
-        /*! Attach models to the parent. */
-        void attach(const std::map<typename BaseModel<Related>::KeyType,
-                                   QVector<AttributeItem>> &idsWithAttributes,
-                    bool touch = true) const;
-
-        /*! Sync the intermediate tables with a list of IDs. */
-        SyncChanges sync(const std::map<typename BaseModel<Related>::KeyType,
-                                        QVector<AttributeItem>> &idsWithAttributes,
-                         bool detaching = true) const;
-        /*! Sync the intermediate tables with a vector of IDs. */
-        SyncChanges sync(const QVector<QVariant> &ids,
-                         bool detaching = true) const;
-
-        /*! Sync the intermediate tables with a vector of IDs without detaching. */
-        SyncChanges syncWithoutDetaching(
-                const std::map<typename BaseModel<Related>::KeyType,
-                QVector<AttributeItem>> &idsWithAttributes) const;
-        /*! Sync the intermediate tables with a vector of IDs without detaching. */
-        SyncChanges syncWithoutDetaching(const QVector<QVariant> &ids) const;
-
-        /*! Detach models from the relationship. */
-        int detach(const QVector<QVariant> &ids, bool touch = true) const;
-        /*! Detach models from the relationship. */
-        int detach(bool touch = true) const;
-        /*! Detach models from the relationship. */
-        inline int detach(const QVector<std::reference_wrapper<Related>> &models,
-                          bool touch = true) const;
-        /*! Detach model from the relationship. */
-        int detach(const QVariant &id, bool touch = true) const;
-        /*! Detach model from the relationship. */
-        inline int detach(const Related &model, bool touch = true) const;
-
-        /*! Update an existing pivot record on the table. */
-        int updateExistingPivot(const QVariant &id,
-                                QVector<AttributeItem> attributes,
-                                bool touch = true) const;
-        /*! Update an existing pivot record on the table. */
-        int updateExistingPivot(const Related &model,
-                                const QVector<AttributeItem> &attributes,
-                                bool touch = true) const;
-
         /*! Create or update a related record matching the attributes, and fill it
             with values. */
         Related updateOrCreate(const QVector<WhereItem> &attributes,
@@ -355,6 +255,9 @@ namespace Orm::Tiny::Relations
                                bool touch = true) const;
 
         /* Others */
+        /*! Qualify the given column name by the pivot table. */
+        QString qualifyPivotColumn(const QString &column) const;
+
         /*! Get all of the IDs for the related models. */
         QVector<QVariant> allRelatedIds() const;
 
@@ -386,89 +289,10 @@ namespace Orm::Tiny::Relations
         QVector<AttributeItem> migratePivotAttributes(Related &model) const;
 
         /* Inserting & Updating relationship */
-        /* InteractsWithPivotTable */
-        /*! Attach a model to the parent using a custom class. */
-        void attachUsingCustomClass(const QVector<QVariant> &ids,
-                                    const QVector<AttributeItem> &attributes) const;
-        /*! Create the vector of records to insert into the pivot table. */
-        QVector<QVector<AttributeItem>>
-        formatAttachRecords(const QVector<QVariant> &ids,
-                            const QVector<AttributeItem> &attributes) const;
-        /*! Create a full attachment record payload. */
-        QVector<AttributeItem>
-        formatAttachRecord(const QVariant &id, const QVector<AttributeItem> &attributes,
-                           bool hasTimestamps) const;
-        /*! Attach a model to the parent using a custom class. */
-        void attachUsingCustomClass(
-                const std::map<typename BaseModel<Related>::KeyType,
-                               QVector<AttributeItem>> &idsWithAttributes) const;
-        /*! Create the vector of records to insert into the pivot table. */
-        QVector<QVector<AttributeItem>>
-        formatAttachRecords(
-                const std::map<typename BaseModel<Related>::KeyType,
-                               QVector<AttributeItem>> &idsWithAttributes) const;
-        /*! Create a new pivot attachment record. */
-        QVector<AttributeItem>
-        baseAttachRecord(const QVariant &id, bool timed) const;
-        /*! Set the creation and update timestamps on an attach record. */
-        QVector<AttributeItem> &
-        addTimestampsToAttachment(QVector<AttributeItem> &record,
-                                  bool exists = false) const;
-
-        /*! Get the pivot models that are currently attached. */
-        QVector<PivotType> getCurrentlyAttachedPivots() const;
-        /*! Get the attached pivot model by related model ID. */
-        std::optional<PivotType> getAttachedPivot(const QVariant &id) const;
-        /*! Convert a QSqlRecord to the QVector<AttributeItem>. */
-        QVector<AttributeItem>
-        attributesFromRecord(const QSqlRecord &record) const;
-        /*! Cast the given key to primary key type. */
-        template<typename T>
-        T castKey(const QVariant &key) const;
-        /*! Update an existing pivot record on the table via a custom class. */
-        int updateExistingPivotUsingCustomClass(
-                const QVariant &id, const QVector<AttributeItem> &attributes,
-                bool touch = true) const;
-        /*! Attach all of the records that aren't in the given current records. */
-        SyncChanges
-        attachNew(const std::map<typename BaseModel<Related>::KeyType,
-                                 QVector<AttributeItem>> &records,
-                  const QVector<QVariant> &current, bool touch = true) const;
-        /*! Convert IDs vector to the map with attributes keyed by IDs. */
-        std::map<typename BaseModel<Related>::KeyType, QVector<AttributeItem>>
-        recordsFromIds(const QVector<QVariant> &ids) const;
-        /*! Convert IDs vector to the map with attributes keyed by IDs. */
-        QVector<QVariant>
-        idsFromRecords(const std::map<typename BaseModel<Related>::KeyType,
-                                      QVector<AttributeItem>> &idsWithAttributes) const;
-        /*! Cast the given pivot attributes. */
-        QVector<AttributeItem> &
-        castAttributes(QVector<AttributeItem> &attributes) const
-        requires OurPivot<PivotType>;
-        /*! Cast the given pivot attributes. */
-        QVector<AttributeItem>
-        castAttributes(const QVector<AttributeItem> &attributes) const
-        requires CustomPivot<PivotType>;
-
         /*! Determine if we should touch the parent on sync. */
         bool touchingParent() const;
         /*! Attempt to guess the name of the inverse of the relation. */
         QString guessInverseRelation() const;
-
-        /*! Detach models from the relationship. */
-        int detach(bool detachAll, const QVector<QVariant> &ids, bool touch) const;
-        /*! Detach models from the relationship using a custom class. */
-        int detachUsingCustomClass(const QVector<QVariant> &ids) const;
-
-        /*! Obtain ids from the Related models. */
-        QVector<QVariant>
-        getRelatedIds(const QVector<std::reference_wrapper<Related>> &models) const;
-        /*! Obtain ids from the QVector<AttributeItem>. */
-        QVector<QVariant>
-        getRelatedIds(const QVector<PivotType> &pivots) const;
-        /*! Obtain ids from the QVector<AttributeItem>. */
-        QVector<QVariant>
-        getRelatedIds(QVector<PivotType> &&pivots) const;
 
         /* Others */
         /*! Clone the belongs to many relation. */
@@ -505,17 +329,6 @@ namespace Orm::Tiny::Relations
         QString m_pivotCreatedAt;
         /*! The custom pivot table column for the updated_at timestamp. */
         QString m_pivotUpdatedAt;
-
-    private:
-        /*! Throw domain exception, when a user tries to override ID key
-            on the pivot table. */
-        void validateAttachAttribute(const AttributeItem &attribute,
-                                     const QVariant &id) const;
-        /*! Throw domain exception, when a user tries to override ID key
-            on the pivot table.  */
-        template<typename KeyType = typename BaseModel<Model>::KeyType>
-        void throwOverwritingKeyError(const QString &key, const QVariant &original,
-                                      const QVariant &overwrite) const;
     };
 
     /* protected */
@@ -655,14 +468,13 @@ namespace Orm::Tiny::Relations
         // FEATURE scopes silverqx
 //        $builder = $this->query->applyScopes();
 
-        auto l_columns = this->m_query->getQuery().getColumns().isEmpty()
+        auto l_columns = this->getBaseQuery().getColumns().isEmpty()
                          ? columns
                          : QVector<Column>();
 
         // Hydrated related models
-        auto models = this->m_query
-                      ->addSelect(shouldSelect(l_columns))
-                      .getModels();
+        auto models = this->m_query->addSelect(shouldSelect(l_columns))
+                                    .getModels();
 
         hydratePivotRelation(models);
 
@@ -675,16 +487,7 @@ namespace Orm::Tiny::Relations
         return models;
     }
 
-    template<class Model, class Related, class PivotType>
-    QString
-    BelongsToMany<Model, Related, PivotType>::qualifyPivotColumn(
-            const QString &column) const
-    {
-        if (column.contains(DOT))
-            return column;
-
-        return DOT_IN.arg(m_table, column);
-    }
+    /* Getters / Setters */
 
     template<class Model, class Related, class PivotType>
     QString
@@ -773,6 +576,15 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
+    BelongsToMany<Model, Related, PivotType> &
+    BelongsToMany<Model, Related, PivotType>::as(QString &&accessor)
+    {
+        m_accessor = std::move(accessor);
+
+        return *this;
+    }
+
+    template<class Model, class Related, class PivotType>
     const QStringList &
     BelongsToMany<Model, Related, PivotType>::getPivotColumns() const noexcept
     {
@@ -797,7 +609,7 @@ namespace Orm::Tiny::Relations
         m_pivotCreatedAt = createdAt;
         m_pivotUpdatedAt = updatedAt;
 
-        return withPivot({this->createdAt(), this->updatedAt()});
+        return this->withPivot({this->createdAt(), this->updatedAt()});
     }
 
     template<class Model, class Related, class PivotType>
@@ -842,111 +654,15 @@ namespace Orm::Tiny::Relations
 
         const auto ids = allRelatedIds();
 
+        if (ids.isEmpty())
+            return;
+
         /* If we actually have IDs for the relation, we will run the query to update all
            the related model's timestamps, to make sure these all reflect the changes
            to the parent models. This will help us keep any caching synced up here. */
-        if (!ids.isEmpty())
-            related->newQueryWithoutRelationships()
-                ->whereIn(key, ids)
+        related->newQueryWithoutRelationships()
+               ->whereIn(key, ids)
                 .update(record);
-    }
-
-    template<class Model, class Related, class PivotType>
-    BelongsToMany<Model, Related, PivotType> &
-    BelongsToMany<Model, Related, PivotType>::withPivot(const QStringList &columns)
-    {
-        std::ranges::copy_if(columns, std::back_inserter(m_pivotColumns),
-                             [this](const auto &column)
-        {
-            return !m_pivotColumns.contains(column);
-        });
-
-        return *this;
-    }
-
-    template<class Model, class Related, class PivotType>
-    BelongsToMany<Model, Related, PivotType> &
-    BelongsToMany<Model, Related, PivotType>::withPivot(const QString &column)
-    {
-        return withPivot(QStringList {column});
-    }
-
-    template<class Model, class Related, class PivotType>
-    bool BelongsToMany<Model, Related, PivotType>::hasPivotColumn(
-            const QString &column) const
-    {
-        return m_pivotColumns.contains(column);
-    }
-
-    template<class Model, class Related, class PivotType>
-    PivotType BelongsToMany<Model, Related, PivotType>::newExistingPivot(
-            const QVector<AttributeItem> &attributes) const
-    {
-        return newPivot(attributes, true);
-    }
-
-    template<class Model, class Related, class PivotType>
-    PivotType BelongsToMany<Model, Related, PivotType>::newPivot(
-            const QVector<AttributeItem> &attributes, const bool exists) const
-    {
-        return this->m_related->template newPivot<PivotType, Model>(
-                    this->m_parent, attributes, m_table, exists)
-
-                .setPivotKeys(m_foreignPivotKey, m_relatedPivotKey);
-    }
-
-    template<class Model, class Related, class PivotType>
-    std::shared_ptr<QueryBuilder>
-    BelongsToMany<Model, Related, PivotType>::newPivotQuery() const
-    {
-        // Ownership of the std::shared_ptr<QueryBuilder>
-        auto query = newPivotStatement();
-
-        // FEATURE relations, add support for BelongsToMany::where/whereIn/whereNull silverqx
-//        for (auto &[column, value, comparison, condition] : m_pivotWheres)
-//            query->where(column, value, comparison, condition);
-
-//        for (auto &[column, values, condition, nope] : m_pivotWhereIns)
-//            query->whereIn(column, values, condition, nope);
-
-//        for (auto &[😭, condition, nope] : m_pivotWhereNulls)
-//            query->whereNull(columns, condition, nope);
-
-        query->whereEq(m_foreignPivotKey, this->m_parent.getAttribute(m_parentKey));
-
-        return query;
-    }
-
-    template<class Model, class Related, class PivotType>
-    std::shared_ptr<QueryBuilder>
-    BelongsToMany<Model, Related, PivotType>::newPivotStatement() const
-    {
-        auto query = this->m_query->getQuery().newQuery();
-
-        query->from(m_table);
-
-        return query;
-    }
-
-    template<class Model, class Related, class PivotType>
-    std::shared_ptr<QueryBuilder>
-    BelongsToMany<Model, Related, PivotType>::newPivotStatementForId(
-            const QVector<QVariant> &ids) const
-    {
-        // Ownership of the std::shared_ptr<QueryBuilder>
-        auto query = newPivotQuery();
-
-        query->whereIn(m_relatedPivotKey, ids);
-
-        return query;
-    }
-
-    template<class Model, class Related, class PivotType>
-    std::shared_ptr<QueryBuilder>
-    BelongsToMany<Model, Related, PivotType>::newPivotStatementForId(
-            const QVariant &id) const
-    {
-        return newPivotStatementForId(QVector<QVariant> {id});
     }
 
     template<class Model, class Related, class PivotType>
@@ -1096,7 +812,7 @@ namespace Orm::Tiny::Relations
         if (auto instance = this->m_related->where(attributes)->first();
             instance
          ) {
-            attach(*instance, pivotValues, touch);
+            this->attach(*instance, pivotValues, touch);
 
             return std::move(*instance);
         }
@@ -1201,7 +917,7 @@ namespace Orm::Tiny::Relations
     {
         const auto result = model.save({.touch = false});
 
-        attach(model, pivotValues, touch);
+        this->attach(model, pivotValues, touch);
 
         return {result, model};
     }
@@ -1214,7 +930,7 @@ namespace Orm::Tiny::Relations
     {
         const auto result = model.save({.touch = false});
 
-        attach(model, pivotValues, touch);
+        this->attach(model, pivotValues, touch);
 
         return {result, std::move(model)};
     }
@@ -1274,7 +990,7 @@ namespace Orm::Tiny::Relations
            accomplish this which will insert the record and any more attributes. */
         instance.save({.touch = false});
 
-        attach(instance, pivotValues, touch);
+        this->attach(instance, pivotValues, touch);
 
         return instance;
     }
@@ -1292,7 +1008,7 @@ namespace Orm::Tiny::Relations
            accomplish this which will insert the record and any more attributes. */
         instance.save({.touch = false});
 
-        attach(instance, pivotValues, touch);
+        this->attach(instance, pivotValues, touch);
 
         return instance;
     }
@@ -1303,8 +1019,9 @@ namespace Orm::Tiny::Relations
             const QVector<QVector<AttributeItem>> &records,
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
-        QVector<Related> instances;
         const auto recordsSize = records.size();
+
+        QVector<Related> instances;
         instances.reserve(recordsSize);
 
         using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
@@ -1327,8 +1044,9 @@ namespace Orm::Tiny::Relations
             QVector<QVector<AttributeItem>> &&records,
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
-        QVector<Related> instances;
         const auto recordsSize = records.size();
+
+        QVector<Related> instances;
         instances.reserve(recordsSize);
 
         using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
@@ -1343,218 +1061,6 @@ namespace Orm::Tiny::Relations
         touchIfTouching();
 
         return instances;
-    }
-
-    // FEATURE move semantics, for attributes silverqx
-    template<class Model, class Related, class PivotType>
-    void BelongsToMany<Model, Related, PivotType>::attach(
-            const QVector<QVariant> &ids, const QVector<AttributeItem> &attributes,
-            const bool touch) const
-    {
-        // FUTURE add the number of affected/attached models as return value silverqx
-        if constexpr (std::is_same_v<PivotType, Pivot>)
-            /* Here we will insert the attachment records into the pivot table. Once
-               we have inserted the records, we will touch the relationships if
-               necessary and the function will return. */
-            newPivotStatement()->insert(
-                    AttributeUtils::convertVectorsToMaps(
-                        formatAttachRecords(ids, attributes)));
-        else
-            attachUsingCustomClass(ids, attributes);
-
-        if (touch)
-            touchIfTouching();
-    }
-
-    template<class Model, class Related, class PivotType>
-    void BelongsToMany<Model, Related, PivotType>::attach(
-            const QVector<std::reference_wrapper<Related>> &models,
-            const QVector<AttributeItem> &attributes, const bool touch) const
-    {
-        attach(getRelatedIds(models), attributes, touch);
-    }
-
-    template<class Model, class Related, class PivotType>
-    void BelongsToMany<Model, Related, PivotType>::attach(
-            const QVariant &id, const QVector<AttributeItem> &attributes,
-            const bool touch) const
-    {
-        attach(QVector<QVariant> {id}, attributes, touch);
-    }
-
-    template<class Model, class Related, class PivotType>
-    void BelongsToMany<Model, Related, PivotType>::attach(
-            const Related &model, const QVector<AttributeItem> &attributes,
-            const bool touch) const
-    {
-        attach(QVector<QVariant> {model.getAttribute(this->m_relatedKey)},
-               attributes, touch);
-    }
-
-    // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
-    template<class Model, class Related, class PivotType>
-    void BelongsToMany<Model, Related, PivotType>::attach(
-            const std::map<typename BaseModel<Related>::KeyType,
-                           QVector<AttributeItem>> &idsWithAttributes,
-            const bool touch) const
-    {
-        if constexpr (std::is_same_v<PivotType, Pivot>)
-            /* Here we will insert the attachment records into the pivot table. Once
-               we have inserted the records, we will touch the relationships if
-               necessary and the function will return. */
-            newPivotStatement()->insert(
-                    AttributeUtils::convertVectorsToMaps(
-                        formatAttachRecords(idsWithAttributes)));
-        else
-            attachUsingCustomClass(idsWithAttributes);
-
-        if (touch)
-            touchIfTouching();
-    }
-
-    template<class Model, class Related, class PivotType>
-    SyncChanges
-    BelongsToMany<Model, Related, PivotType>::sync(
-            const std::map<typename BaseModel<Related>::KeyType,
-                           QVector<AttributeItem>> &idsWithAttributes,
-            const bool detaching) const
-    {
-        const auto castKey = [this](const auto &id)
-        {
-            return this->castKey<typename Related::KeyType>(id);
-        };
-        SyncChanges changes;
-
-        /* First we need to attach any of the associated models that are not currently
-           in this joining table. We'll spin through the given IDs, checking to see
-           if they exist in the vector of current ones, and if not we will insert. */
-        auto current = getRelatedIds(getCurrentlyAttachedPivots());
-
-        // Compute different keys, these keys will be detached
-        auto ids = idsFromRecords(idsWithAttributes);
-
-        ranges::sort(ids, {}, castKey);
-        ranges::sort(current, {}, castKey);
-        auto detach = ranges::views::set_difference(current, ids, {}, castKey, castKey)
-                      | ranges::to<QVector<QVariant>>();
-
-        /* Next, we will take the differences of the currents and given IDs and detach
-           all of the entities that exist in the "current" vector but are not in the
-           vector of the new IDs given to the method which will complete the sync. */
-        if (detaching && !detach.isEmpty()) {
-            this->detach(detach);
-
-            changes["detached"] = std::move(detach);
-        }
-
-        /* Now we are finally ready to attach the new records. Note that we'll disable
-           touching until after the entire operation is complete so we don't fire a
-           ton of touch operations until we are totally done syncing the records. */
-        changes.merge<typename Related::KeyType>(
-                    attachNew(idsWithAttributes, current, false));
-
-        /* Once we have finished attaching or detaching the records, we will see if we
-           have done any attaching or detaching, and if we have we will touch these
-           relationships if they are configured to touch on any database updates. */
-        if (!changes["attached"].isEmpty() || !changes["updated"].isEmpty())
-            touchIfTouching();
-
-        return changes;
-    }
-
-    template<class Model, class Related, class PivotType>
-    SyncChanges BelongsToMany<Model, Related, PivotType>::sync(
-            const QVector<QVariant> &ids, const bool detaching) const
-    {
-        return sync(recordsFromIds(ids), detaching);
-    }
-
-    template<class Model, class Related, class PivotType>
-    SyncChanges BelongsToMany<Model, Related, PivotType>::syncWithoutDetaching(
-            const std::map<typename BaseModel<Related>::KeyType,
-                           QVector<AttributeItem>> &idsWithAttributes) const
-    {
-        return sync(idsWithAttributes, false);
-    }
-
-    template<class Model, class Related, class PivotType>
-    SyncChanges BelongsToMany<Model, Related, PivotType>::syncWithoutDetaching(
-            const QVector<QVariant> &ids) const
-    {
-        return sync(ids, false);
-    }
-
-    template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::detach(
-            const QVector<QVariant> &ids, const bool touch) const
-    {
-        return detach(false, ids, touch);
-    }
-
-    template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::detach(const bool touch) const
-    {
-        return detach(true, {}, touch);
-    }
-
-    template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::detach(
-            const QVector<std::reference_wrapper<Related>> &models,
-            const bool touch) const
-    {
-        return detach(getRelatedIds(models), touch);
-    }
-
-    template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::detach(
-            const QVariant &id, const bool touch) const
-    {
-        return detach(QVector<QVariant> {id}, touch);
-    }
-
-    template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::detach(
-            const Related &model, const bool touch) const
-    {
-        return detach(QVector<QVariant> {model.getAttribute(this->m_relatedKey)}, touch);
-    }
-
-    template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::updateExistingPivot(
-            const QVariant &id, QVector<AttributeItem> attributes,
-            const bool touch) const
-    {
-        if (!std::is_same_v<PivotType, Pivot>
-//            && m_pivotWheres.isEmpty()
-//            && m_pivotWhereIns.isEmpty()
-//            && m_pivotWhereNulls.isEmpty()
-        )
-            return updateExistingPivotUsingCustomClass(id, attributes, touch);
-
-        if (hasPivotColumn(updatedAt()))
-            addTimestampsToAttachment(attributes, true);
-
-        int updated = -1;
-        std::tie(updated, std::ignore) =
-                newPivotStatementForId(id)->update(
-                    AttributeUtils::convertVectorToUpdateItem(
-                        castAttributes(attributes)));
-
-        /* It will not touch if attributes size is 0, because this function is called
-           only when attributes are not empty. */
-        if (touch)
-            touchIfTouching();
-
-        return updated;
-    }
-
-    template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::updateExistingPivot(
-            const Related &model, const QVector<AttributeItem> &attributes,
-            const bool touch) const
-    {
-        return updateExistingPivot(model.getAttribute(this->m_relatedKey), attributes,
-                                   touch);
     }
 
     template<class Model, class Related, class PivotType>
@@ -1581,7 +1087,7 @@ namespace Orm::Tiny::Relations
 
             /* Attach before an update because something may fail so even if an update
                fails it will be already attached. */
-            attach(*instance, pivotValues, touch);
+            this->attach(*instance, pivotValues, touch);
         }
 
         // else : related model is attached and attributes were found
@@ -1598,13 +1104,24 @@ namespace Orm::Tiny::Relations
     /* Others */
 
     template<class Model, class Related, class PivotType>
+    QString
+    BelongsToMany<Model, Related, PivotType>::qualifyPivotColumn(
+            const QString &column) const
+    {
+        if (column.contains(DOT))
+            return column;
+
+        return DOT_IN.arg(m_table, column);
+    }
+
+    template<class Model, class Related, class PivotType>
     QVector<QVariant>
     BelongsToMany<Model, Related, PivotType>::allRelatedIds() const
     {
         QVector<QVariant> ids;
 
         // Ownership of the std::shared_ptr<QueryBuilder>
-        auto query = newPivotQuery()->get({m_relatedPivotKey});
+        auto query = this->newPivotQuery()->get({m_relatedPivotKey});
 
         while (query.next())
             ids << query.value(m_relatedPivotKey);
@@ -1663,14 +1180,19 @@ namespace Orm::Tiny::Relations
                                        .arg(this->m_related->getTable())};
 
         // Obtain aliased pivot columns
+        auto aliasedPivotColumns = this->aliasedPivotColumns();
+
+        // Will contain final result
         QVector<Column> mergedColumns;
-        std::ranges::move(aliasedPivotColumns(), std::back_inserter(mergedColumns));
+        mergedColumns.reserve(aliasedPivotColumns.size() + columns.size());
+
+        std::ranges::move(aliasedPivotColumns, std::back_inserter(mergedColumns));
 
         // Merge aliasedPivotColumns and columns
         for (auto &&column : columns) {
             // Avoid duplicates, expressions are not checked
-            if (std::holds_alternative<QString>(column)
-                && mergedColumns.contains(column)
+            if (std::holds_alternative<QString>(column) &&
+                mergedColumns.contains(column)
             )
                 continue;
 
@@ -1688,14 +1210,17 @@ namespace Orm::Tiny::Relations
             m_foreignPivotKey,
             m_relatedPivotKey,
         };
+        columns.reserve(columns.size() + m_pivotColumns.size());
 
         columns += m_pivotColumns;
 
         columns.removeDuplicates();
 
-        return columns | ranges::views::transform([this](const auto &column)
+        return columns
+                | ranges::views::transform([this](const auto &column)
         {
-            return QString("%1 as pivot_%2").arg(qualifyPivotColumn(column), column);
+            return QStringLiteral("%1 as pivot_%2").arg(qualifyPivotColumn(column),
+                                                        column);
         })
                 | ranges::to<QStringList>();
     }
@@ -1710,7 +1235,7 @@ namespace Orm::Tiny::Relations
         for (auto &model : models)
             model.template setRelation<PivotType>(
                         m_accessor,
-                        std::optional<PivotType>(newExistingPivot(
+                        std::optional<PivotType>(this->newExistingPivot(
                                                      migratePivotAttributes(model))));
     }
 
@@ -1718,9 +1243,12 @@ namespace Orm::Tiny::Relations
     QVector<AttributeItem>
     BelongsToMany<Model, Related, PivotType>::migratePivotAttributes(Related &model) const
     {
-        QVector<AttributeItem> values;
+        const auto &modelAttributes = model.getAttributes();
 
-        for (const auto &attribute : model.getAttributes())
+        QVector<AttributeItem> values;
+        values.reserve(modelAttributes.size());
+
+        for (const auto &attribute : modelAttributes)
             /* To get the pivots attributes we will just take any of the attributes which
                begin with "pivot_" and add those to this vector, as well as unsetting
                them from the parent's models since they exist in a different table. */
@@ -1733,287 +1261,6 @@ namespace Orm::Tiny::Relations
             }
 
         return values;
-    }
-
-    template<class Model, class Related, class PivotType>
-    void BelongsToMany<Model, Related, PivotType>::attachUsingCustomClass(
-            const QVector<QVariant> &ids,
-            const QVector<AttributeItem> &attributes) const
-    {
-        for (const auto &record : formatAttachRecords(ids, attributes))
-            newPivot(record).save();
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<QVector<AttributeItem>>
-    BelongsToMany<Model, Related, PivotType>::formatAttachRecords(
-            const QVector<QVariant> &ids,
-            const QVector<AttributeItem> &attributes) const
-    {
-        QVector<QVector<AttributeItem>> records;
-
-        const auto hasTimestamps = hasPivotColumn(createdAt()) ||
-                                   hasPivotColumn(updatedAt());
-
-        /* To create the attachment records, we will simply spin through the IDs given
-           and create a new record to insert for each ID with extra attributes to be
-           placed in other columns. */
-        for (const auto &id : ids)
-            records << formatAttachRecord(id, attributes, hasTimestamps);
-
-        return records;
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<AttributeItem>
-    BelongsToMany<Model, Related, PivotType>::formatAttachRecord(
-            const QVariant &id, const QVector<AttributeItem> &attributes,
-            const bool hasTimestamps) const
-    {
-        auto baseAttributes = baseAttachRecord(id, hasTimestamps);
-
-        for (const auto &attribute : attributes) {
-            // NOTE api different silverqx
-            validateAttachAttribute(attribute, id);
-
-            baseAttributes << attribute;
-        }
-
-        return baseAttributes;
-    }
-
-    template<class Model, class Related, class PivotType>
-    void BelongsToMany<Model, Related, PivotType>::attachUsingCustomClass(
-            const std::map<typename BaseModel<Related>::KeyType,
-                           QVector<AttributeItem>> &idsWithAttributes) const
-    {
-        for (const auto &record : formatAttachRecords(idsWithAttributes))
-            newPivot(record).save();
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<QVector<AttributeItem>>
-    BelongsToMany<Model, Related, PivotType>::formatAttachRecords(
-            const std::map<typename BaseModel<Related>::KeyType,
-                           QVector<AttributeItem>> &idsWithAttributes) const
-    {
-        QVector<QVector<AttributeItem>> records;
-
-        const auto hasTimestamps = hasPivotColumn(createdAt()) ||
-                                   hasPivotColumn(updatedAt());
-
-        /* To create the attachment records, we will simply spin through the IDs given
-           and create a new record to insert for each ID with extra attributes to be
-           placed in other columns. */
-        for (const auto &[id, attributes] : idsWithAttributes)
-            records << formatAttachRecord(id, attributes, hasTimestamps);
-
-        return records;
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<AttributeItem>
-    BelongsToMany<Model, Related, PivotType>::baseAttachRecord(
-            const QVariant &id, const bool timed) const
-    {
-        QVector<AttributeItem> record;
-
-        record.append({m_relatedPivotKey, id});
-        record.append({m_foreignPivotKey, this->m_parent[m_parentKey]});
-
-        /* If the record needs to have creation and update timestamps, we will make
-           them by calling the parent model's "freshTimestamp" method, which will
-           provide us with a fresh timestamp in this model's preferred format. */
-        if (timed)
-            addTimestampsToAttachment(record);
-
-        // FEATURE pivot, withPivotValues silverqx
-//        for (auto &[column, value] as m_pivotValues)
-//            record.append(column, value);
-
-        return record;
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<AttributeItem> &
-    BelongsToMany<Model, Related, PivotType>::addTimestampsToAttachment(
-            QVector<AttributeItem> &record, const bool exists) const
-    {
-        // QDateTime
-        QVariant fresh = this->m_parent.freshTimestamp();
-
-        /* If a custom pivot is used, then 'fresh' will be QString, formatted
-           datetime as defined in the custom pivot class. */
-        if constexpr (!std::is_same_v<PivotType, Pivot>)
-            fresh = fresh.toDateTime().toString(PivotType().getDateFormat());
-
-        if (!exists && hasPivotColumn(createdAt()))
-            record.append({createdAt(), fresh});
-
-        if (hasPivotColumn(updatedAt()))
-            record.append({updatedAt(), fresh});
-
-        return record;
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<PivotType>
-    BelongsToMany<Model, Related, PivotType>::getCurrentlyAttachedPivots() const
-    {
-        auto query = newPivotQuery()->get();
-
-        QVector<PivotType> pivots;
-
-        while (query.next())
-            pivots << std::move(PivotType::fromRawAttributes(
-                          this->m_parent, attributesFromRecord(query.record()),
-                          this->m_table, true)
-                      .setPivotKeys(m_foreignPivotKey, m_relatedPivotKey));
-
-        return pivots;
-    }
-
-    template<class Model, class Related, class PivotType>
-    std::optional<PivotType>
-    BelongsToMany<Model, Related, PivotType>::getAttachedPivot(const QVariant &id) const
-    {
-        auto query = newPivotStatementForId(id)->first();
-
-        return PivotType::fromRawAttributes(this->m_parent,
-                                            attributesFromRecord(query.record()),
-                                            this->m_table, true)
-                .setPivotKeys(m_foreignPivotKey, m_relatedPivotKey);
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<AttributeItem>
-    BelongsToMany<Model, Related, PivotType>::attributesFromRecord(
-            const QSqlRecord &record) const
-    {
-        QVector<AttributeItem> attributes;
-
-        const auto recordsCount = record.count();
-        attributes.reserve(recordsCount);
-
-        for (auto i = 0; i < recordsCount; ++i)
-            attributes.append({record.fieldName(i), record.value(i)});
-
-        return attributes;
-    }
-
-    template<class Model, class Related, class PivotType>
-    template<typename T>
-    T BelongsToMany<Model, Related, PivotType>::castKey(const QVariant &key) const
-    {
-        return key.value<T>();
-    }
-
-    template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::updateExistingPivotUsingCustomClass(
-            const QVariant &id, const QVector<AttributeItem> &attributes,
-            const bool touch) const
-    {
-        auto pivot = getAttachedPivot(id);
-
-        const auto updated = pivot ? pivot->fill(attributes).isDirty() : false;
-
-        if (updated)
-            pivot->save();
-
-        /* It will not touch if attributes size is 0, because this function is called
-           only when attributes are not empty. */
-        if (touch)
-            touchIfTouching();
-
-        return static_cast<int>(updated);
-    }
-
-    template<class Model, class Related, class PivotType>
-    SyncChanges
-    BelongsToMany<Model, Related, PivotType>::attachNew(
-                const std::map<typename BaseModel<Related>::KeyType,
-                               QVector<AttributeItem>> &records,
-                const QVector<QVariant> &current, const bool touch) const
-    {
-        SyncChanges changes;
-
-        for (const auto &[id, attributes] : records) {
-            /* If the ID is not in the list of existing pivot IDs, we will insert
-               a new pivot record, otherwise, we will just update this existing record
-               on this joining table, so that the developers will easily update these
-               records pain free. */
-            if (!current.contains(id)) {
-                attach(id, attributes, touch);
-
-                changes["attached"] << id;
-            }
-
-            /* If the pivot record already exists, we'll try to update the attributes
-               that were given to the method. If the model is actually updated, we will
-               add it to the list of updated pivot records, so we return them back
-               out to the consumer. */
-            else if (!attributes.isEmpty()
-                     && updateExistingPivot(id, attributes, touch)
-            )
-                changes["updated"] << id;
-        }
-
-        return changes;
-    }
-
-    template<class Model, class Related, class PivotType>
-    std::map<typename BelongsToMany<Model, Related, PivotType>
-            ::template BaseModel<Related>::KeyType, QVector<AttributeItem>>
-    BelongsToMany<Model, Related, PivotType>::recordsFromIds(
-                const QVector<QVariant> &ids) const
-    {
-        // FEATURE dilemma primarykey, when I solve this dilema, then add using for ModelKeyType and RelatedKeyType silverqx
-        std::map<typename BaseModel<Related>::KeyType, QVector<AttributeItem>> records;
-
-        for (const auto &id : ids)
-            records.emplace(castKey<typename Related::KeyType>(id),
-                            QVector<AttributeItem>());
-
-        return records;
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<QVariant>
-    BelongsToMany<Model, Related, PivotType>::idsFromRecords(
-                const std::map<typename BaseModel<Related>::KeyType,
-                               QVector<AttributeItem>> &idsWithAttributes) const
-    {
-        QVector<QVariant> ids;
-
-        for (const auto &record : idsWithAttributes)
-            ids << record.first;
-
-        return ids;
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<AttributeItem> &
-    BelongsToMany<Model, Related, PivotType>::castAttributes(
-                QVector<AttributeItem> &attributes) const
-    requires OurPivot<PivotType>
-    {
-        static_assert (std::is_same_v<PivotType, Pivot>,
-                "Bad castAttribute overload selected, PivotType != Pivot.");
-
-        return attributes;
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<AttributeItem>
-    BelongsToMany<Model, Related, PivotType>::castAttributes(
-                const QVector<AttributeItem> &attributes) const
-    requires CustomPivot<PivotType>
-    {
-        static_assert (!std::is_same_v<PivotType, Pivot>,
-                "Bad castAttribute overload selected, should be overload "
-                "for the custom pivot.");
-
-        return newPivot().fill(attributes).getAttributes();
     }
 
     template<class Model, class Related, class PivotType>
@@ -2031,105 +1278,6 @@ namespace Orm::Tiny::Relations
         relation[0] = relation[0].toLower();
 
         return QStringLiteral("%1s").arg(relation);
-    }
-
-    template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::detach(
-                const bool detachAll, const QVector<QVariant> &ids,
-                const bool touch) const
-    {
-        int affected = 0;
-        const auto idsAreEmpty = ids.isEmpty();
-
-        if (!detachAll && !idsAreEmpty && !std::is_same_v<PivotType, Pivot>
-//            && m_pivotWheres.isEmpty()
-//            && m_pivotWhereIns.isEmpty()
-//            && m_pivotWhereNulls.isEmpty()
-        )
-            affected = detachUsingCustomClass(ids);
-
-        else {
-            // Ownership of the std::shared_ptr<QueryBuilder>
-            auto query = newPivotQuery();
-
-            /* If associated IDs were passed to the method we will only delete those
-               associations, otherwise all of the association ties will be broken.
-               We'll return the numbers of affected rows when we do the deletes. */
-            if (!detachAll) {
-                // Nothing to delete/detach
-                if (idsAreEmpty)
-                    return 0;
-
-                query->whereIn(m_relatedPivotKey, ids);
-            }
-
-            /* Once we have all of the conditions set on the statement, we are ready
-               to run the delete on the pivot table. Then, if the touch parameter
-               is true, we will go ahead and touch all related models to sync. */
-            std::tie(affected, std::ignore) = query->remove();
-        }
-
-        if (touch)
-            touchIfTouching();
-
-        return affected;
-    }
-
-    template<class Model, class Related, class PivotType>
-    int BelongsToMany<Model, Related, PivotType>::detachUsingCustomClass(
-            const QVector<QVariant> &ids) const
-    {
-        int affected = 0;
-
-        for (const auto &id : ids)
-            affected += newPivot({
-                {m_foreignPivotKey, this->m_parent[this->m_parentKey]},
-                {m_relatedPivotKey, id},
-            }, true).remove();
-
-        return affected;
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<QVariant>
-    BelongsToMany<Model, Related, PivotType>::getRelatedIds(
-            const QVector<std::reference_wrapper<Related>> &models) const
-    {
-        QVector<QVariant> ids;
-        ids.reserve(models.size());
-
-        for (const auto &model : models)
-            ids << model.get().getAttribute(this->m_relatedKey);
-
-        return ids;
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<QVariant>
-    BelongsToMany<Model, Related, PivotType>::getRelatedIds(
-                const QVector<PivotType> &pivots) const
-    {
-        QVector<QVariant> ids;
-        ids.reserve(pivots.size());
-
-        for (const auto &pivot : pivots)
-            ids << pivot[m_relatedPivotKey];
-
-        return ids;
-    }
-
-    template<class Model, class Related, class PivotType>
-    QVector<QVariant>
-    BelongsToMany<Model, Related, PivotType>::getRelatedIds(
-                QVector<PivotType> &&pivots) const
-    {
-        QVector<QVariant> ids;
-        ids.reserve(pivots.size());
-
-        for (auto &pivot : pivots)
-            ids << std::move(pivot[m_relatedPivotKey]);
-
-        return ids;
     }
 
     /* Others */
@@ -2159,37 +1307,6 @@ namespace Orm::Tiny::Relations
 
         return Relation<Model, Related>::getRelationExistenceQuery(
                     std::move(query), parentQuery, columns);
-    }
-
-    template<class Model, class Related, class PivotType>
-    void BelongsToMany<Model, Related, PivotType>::validateAttachAttribute(
-            const AttributeItem &attribute, const QVariant &id) const
-    {
-        // Don't overwrite ID keys, throw domain exception
-        if (attribute.key == m_foreignPivotKey)
-            // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
-            throwOverwritingKeyError/*<Model::KeyType>*/(attribute.key,
-                                                         this->m_parent[m_parentKey],
-                                                         attribute.value);
-        else if (attribute.key == m_relatedPivotKey)
-            throwOverwritingKeyError/*<Related::KeyType>*/(attribute.key, id,
-                                                           attribute.value);
-    }
-
-    template<class Model, class Related, class PivotType>
-    template<typename KeyType>
-    void BelongsToMany<Model, Related, PivotType>::throwOverwritingKeyError(
-            const QString &key, const QVariant &original,
-            const QVariant &overwrite) const
-    {
-        static const auto overwriteMessage =
-                QStringLiteral("You can not overwrite '%1' ID key; "
-                               "original value : %2, your value : %3.");
-
-        throw Orm::Exceptions::DomainError(
-                    overwriteMessage.arg(qualifyPivotColumn(key),
-                                         QString::number(original.value<KeyType>()),
-                                         QString::number(overwrite.value<KeyType>())));
     }
 
 } // namespace Orm::Tiny::Relations
