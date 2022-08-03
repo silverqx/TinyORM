@@ -14,7 +14,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
-
 namespace Query
 {
     class JoinClause;
@@ -22,11 +21,6 @@ namespace Query
 
 namespace Tiny
 {
-namespace Relations
-{
-    template<class Model, class Related>
-    class Relation;
-}
 
     /*! Contains proxy methods to the TinyBuilder. */
     template<typename Derived, AllRelationsConcept ...AllRelations>

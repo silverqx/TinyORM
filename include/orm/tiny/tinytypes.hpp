@@ -17,6 +17,11 @@ namespace Orm
 {
 namespace Tiny
 {
+namespace Relations
+{
+    template<class Model, class Related>
+    class Relation;
+}
 
     template<typename Model>
     class Builder;

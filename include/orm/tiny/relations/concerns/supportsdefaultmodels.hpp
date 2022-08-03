@@ -11,12 +11,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny::Relations
-{
-    template<class Model, class Related>
-    class Relation;
-
-namespace Concerns
+namespace Orm::Tiny::Relations::Concerns
 {
 
     /*! Default models. */
@@ -143,8 +138,7 @@ namespace Concerns
         return dynamic_cast<Relation<Model, Related> &>(*this);
     }
 
-} // namespace Concerns
-} // namespace Orm::Tiny::Relations
+} // namespace Orm::Tiny::Relations::Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 

@@ -23,9 +23,6 @@ namespace Query
 namespace Tiny::Relations
 {
 
-    template<class Model, class Related>
-    class Relation;
-
     /*! Contains proxy methods to the TinyBuilder. */
     template<class Model, class Related>
     class RelationProxies
