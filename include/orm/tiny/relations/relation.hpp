@@ -77,7 +77,7 @@ namespace Relations
         virtual QVector<Model> &
         initRelation(QVector<Model> &models, const QString &relation) const = 0;
         /*! Match the eagerly loaded results to their parents. */
-        virtual void match(QVector<Model> &models, QVector<Related> results,
+        virtual void match(QVector<Model> &models, QVector<Related> &&results,
                            const QString &relation) const = 0;
         /*! Get the results of the relationship. */
         virtual std::variant<QVector<Related>, std::optional<Related>>

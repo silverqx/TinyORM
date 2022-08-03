@@ -93,12 +93,12 @@ namespace Orm::Tiny::Relations
         /* Relation related operations */
         /*! Match the eagerly loaded results to their many parents. */
         template<typename RelationType>
-        void matchOneOrMany(QVector<Model> &models, QVector<Related> &results,
+        void matchOneOrMany(QVector<Model> &models, QVector<Related> &&results,
                             const QString &relation) const;
         /*! Build model dictionary keyed by the relation's foreign key. */
         template<typename RelationType>
         QHash<typename Model::KeyType, RelationType>
-        buildDictionary(QVector<Related> &results) const;
+        buildDictionary(QVector<Related> &&results) const;
 
         /* Getters / Setters */
         /*! Get the plain foreign key. */
@@ -352,10 +352,10 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     template<typename RelationType>
     void HasOneOrMany<Model, Related>::matchOneOrMany(
-            QVector<Model> &models, QVector<Related> &results,
+            QVector<Model> &models, QVector<Related> &&results,
             const QString &relation) const
     {
-        auto dictionary = buildDictionary<RelationType>(results);
+        auto dictionary = buildDictionary<RelationType>(std::move(results));
 
         /* Once we have the dictionary we can simply spin through the parent models to
            link them up with their children using the keyed dictionary to make the
@@ -374,11 +374,11 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     template<typename RelationType>
     QHash<typename Model::KeyType, RelationType>
-    HasOneOrMany<Model, Related>::buildDictionary(QVector<Related> &results) const
+    HasOneOrMany<Model, Related>::buildDictionary(QVector<Related> &&results) const
     {
         QHash<typename Model::KeyType, RelationType> dictionary;
 
-        for (auto &result : results)
+        for (auto &&result : results)
             if constexpr (
                 const auto &foreign = result.getAttribute(getForeignKeyName())
                                       .template value<typename Model::KeyType>();

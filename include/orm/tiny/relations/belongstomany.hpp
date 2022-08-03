@@ -76,7 +76,7 @@ namespace Orm::Tiny::Relations
         QVector<Model> &
         initRelation(QVector<Model> &models, const QString &relation) const override;
         /*! Match the eagerly loaded results to their parents. */
-        void match(QVector<Model> &models, QVector<Related> results,
+        void match(QVector<Model> &models, QVector<Related> &&results,
                    const QString &relation) const override;
         /*! Get the results of the relationship. */
         std::variant<QVector<Related>, std::optional<Related>>
@@ -275,7 +275,7 @@ namespace Orm::Tiny::Relations
 
         /*! Build model dictionary keyed by the relation's foreign key. */
         QHash<typename Model::KeyType, QVector<Related>>
-        buildDictionary(QVector<Related> &results) const;
+        buildDictionary(QVector<Related> &&results) const;
 
         /*! Get the select columns for the relation query. */
         QVector<Column> shouldSelect(QVector<Column> columns = {ASTERISK}) const;
@@ -403,10 +403,10 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     void BelongsToMany<Model, Related, PivotType>::match(
-            QVector<Model> &models, QVector<Related> results,
+            QVector<Model> &models, QVector<Related> &&results,
             const QString &relation) const
     {
-        auto dictionary = buildDictionary(results);
+        auto dictionary = buildDictionary(std::move(results));
 
         /* Once we have the dictionary of child objects, we can easily match the
            children back to their parent using the dictionary and the keys on the
@@ -424,7 +424,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     QHash<typename Model::KeyType, QVector<Related>>
     BelongsToMany<Model, Related, PivotType>::buildDictionary(
-            QVector<Related> &results) const
+            QVector<Related> &&results) const
     {
         /* First we will build a dictionary of child models keyed by the foreign key
            of the relation so that we will easily and quickly match them to their
@@ -432,7 +432,7 @@ namespace Orm::Tiny::Relations
         QHash<typename Model::KeyType, QVector<Related>> dictionary;
 
         /*! Build model dictionary keyed by the parent's primary key. */
-        for (auto &result : results) {
+        for (auto &&result : results) {
 
             const auto foreignPivotKey =
                     result.template getRelation<PivotType, Orm::One>(m_accessor)

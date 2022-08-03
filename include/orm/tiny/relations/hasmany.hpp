@@ -42,7 +42,7 @@ namespace Orm::Tiny::Relations
         initRelation(QVector<Model> &models, const QString &relation) const override;
 
         /*! Match the eagerly loaded results to their parents. */
-        inline void match(QVector<Model> &models, QVector<Related> results,
+        inline void match(QVector<Model> &models, QVector<Related> &&results,
                           const QString &relation) const override;
 
         /*! Get the results of the relationship. */
@@ -102,10 +102,11 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     void HasMany<Model, Related>::match(
-            QVector<Model> &models,  QVector<Related> results,
+            QVector<Model> &models, QVector<Related> &&results,
             const QString &relation) const
     {
-        this->template matchOneOrMany<QVector<Related>>(models, results, relation);
+        this->template matchOneOrMany<QVector<Related>>(models, std::move(results),
+                                                        relation);
     }
 
     template<class Model, class Related>
