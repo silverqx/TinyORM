@@ -382,7 +382,8 @@ To populate the default model with attributes, you may pass the vector of attrib
         // Ownership of a unique_ptr()
         auto relation = belongsTo<User>();
 
-        relation->withDefault({{"name", "Guest Author"}, {"is_active", false}});
+        relation->withDefault({{"name", "Guest Author"},
+                               {"is_active", false}});
 
         return relation;
     }
