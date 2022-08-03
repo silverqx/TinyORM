@@ -14,7 +14,7 @@ namespace Orm::Tiny::Relations::Concerns
 {
 
     /*! Default models. */
-    template<class Model, class Related>
+    template<class Model, class Related, template<class, class> class RelationType>
     class SupportsDefaultModels
     {
         Q_DISABLE_COPY(SupportsDefaultModels)
@@ -31,13 +31,17 @@ namespace Orm::Tiny::Relations::Concerns
         inline virtual ~SupportsDefaultModels() = 0;
 
         /*! Return a new model instance in case the relationship does not exist. */
-        Relation<Model, Related> &withDefault(bool value = true);
+        RelationType<Model, Related> &
+        withDefault(bool value = true);
         /*! Return a new model instance in case the relationship does not exist. */
-        Relation<Model, Related> &withDefault(const QVector<AttributeItem> &attributes);
+        RelationType<Model, Related> &
+        withDefault(const QVector<AttributeItem> &attributes);
         /*! Return a new model instance in case the relationship does not exist. */
-        Relation<Model, Related> &withDefault(QVector<AttributeItem> &&attributes);
+        RelationType<Model, Related> &
+        withDefault(QVector<AttributeItem> &&attributes);
         /*! Return a new model instance in case the relationship does not exist. */
-//        Relation<Model, Related> &withDefault(Callback &&callback);
+//        RelationType<Model, Related> &
+//        withDefault(Callback &&callback);
 
     protected:
         /*! Make a new related instance for the given model. */
@@ -50,27 +54,28 @@ namespace Orm::Tiny::Relations::Concerns
         std::variant<bool, QVector<AttributeItem>/*, Callback*/> m_withDefault = false;
 
     private:
-        /*! Dynamic cast *this to the Relation & derived type. */
-        inline Relation<Model, Related> &relation();
+        /*! Static cast *this to the HasOne/BelongsTo & derived type. */
+        inline RelationType<Model, Related> &relation();
     };
 
     /* public */
 
-    template<class Model, class Related>
-    SupportsDefaultModels<Model, Related>::~SupportsDefaultModels() = default;
+    template<class Model, class Related, template<class, class> class RelationType>
+    SupportsDefaultModels<Model, Related, RelationType>::
+    ~SupportsDefaultModels() = default;
 
-    template<class Model, class Related>
-    Relation<Model, Related> &
-    SupportsDefaultModels<Model, Related>::withDefault(const bool value)
+    template<class Model, class Related, template<class, class> class RelationType>
+    RelationType<Model, Related> &
+    SupportsDefaultModels<Model, Related, RelationType>::withDefault(const bool value)
     {
         m_withDefault = value;
 
         return relation();
     }
 
-    template<class Model, class Related>
-    Relation<Model, Related> &
-    SupportsDefaultModels<Model, Related>::withDefault(
+    template<class Model, class Related, template<class, class> class RelationType>
+    RelationType<Model, Related> &
+    SupportsDefaultModels<Model, Related, RelationType>::withDefault(
             const QVector<AttributeItem> &attributes)
     {
         m_withDefault = attributes;
@@ -78,9 +83,9 @@ namespace Orm::Tiny::Relations::Concerns
         return relation();
     }
 
-    template<class Model, class Related>
-    Relation<Model, Related> &
-    SupportsDefaultModels<Model, Related>::withDefault(
+    template<class Model, class Related, template<class, class> class RelationType>
+    RelationType<Model, Related> &
+    SupportsDefaultModels<Model, Related, RelationType>::withDefault(
             QVector<AttributeItem> &&attributes)
     {
         m_withDefault = std::move(attributes);
@@ -88,18 +93,19 @@ namespace Orm::Tiny::Relations::Concerns
         return relation();
     }
 
-//    template<class Model, class Related>
-//    Relation<Model, Related> &
-//    SupportsDefaultModels<Model, Related>::withDefault(Callback &&callback)
+//    template<class Model, class Related, template<class, class> class RelationType>
+//    RelationType<Model, Related> &
+//    SupportsDefaultModels<Model, Related, RelationType>::withDefault(Callback &&callback)
 //    {
 //        m_withDefault = std::move(callback);
 
 //        return relation();
 //    }
 
-    template<class Model, class Related>
+    template<class Model, class Related, template<class, class> class RelationType>
     std::optional<Related>
-    SupportsDefaultModels<Model, Related>::getDefaultFor(const Model &parent) const
+    SupportsDefaultModels<Model, Related, RelationType>::getDefaultFor(
+            const Model &parent) const
     {
         const auto index = m_withDefault.index();
 
@@ -129,12 +135,11 @@ namespace Orm::Tiny::Relations::Concerns
 
     /* private */
 
-    template<class Model, class Related>
-    Relation<Model, Related> &
-    SupportsDefaultModels<Model, Related>::relation()
+    template<class Model, class Related, template<class, class> class RelationType>
+    RelationType<Model, Related> &
+    SupportsDefaultModels<Model, Related, RelationType>::relation()
     {
-        // TODO mystery, can't use static_cast<> it fails at the concept RelationshipMethod check, I think that exactly this:             std::is_convertible_v<std::invoke_result_t<Method, Derived>, std::unique_ptr<Relations::IsRelation>> silverqx
-        return dynamic_cast<Relation<Model, Related> &>(*this);
+        return static_cast<RelationType<Model, Related> &>(*this);
     }
 
 } // namespace Orm::Tiny::Relations::Concerns
