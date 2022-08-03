@@ -120,10 +120,10 @@ namespace Orm::Tiny::Relations
         )
             return this->getDefaultFor(this->m_parent);
 
-        // NRVO should kick in
+        // NRVO doesn't kick in so I have to move
         auto first = this->m_query->first();
 
-        return first ? first : this->getDefaultFor(this->m_parent);
+        return first ? std::move(first) : this->getDefaultFor(this->m_parent);
     }
 
     /* Others */
@@ -144,7 +144,7 @@ namespace Orm::Tiny::Relations
     HasOne<Model, Related>::newRelatedInstanceFor(const Model &parent) const
     {
         return this->m_related->newInstance().setAttribute(
-            this->getForeignKeyName(), parent[this->m_localKey]
+            this->getForeignKeyName(), parent.getAttribute(this->m_localKey)
         );
     }
 
