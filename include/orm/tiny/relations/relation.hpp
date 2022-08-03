@@ -323,14 +323,15 @@ namespace Relations
                                       const QString &key) const
     {
         QVector<QVariant> keys;
+        keys.reserve(models.size());
 
         for (const auto &model : models)
             keys.append(key.isEmpty() ? model.getKey()
                                       : model.getAttribute(key));
 
-        return keys |= ranges::actions::sort(ranges::less {}, [](auto key_)
+        return keys |= ranges::actions::sort(ranges::less {}, [](const auto &key)
         {
-            return key_.template value<typename Model::KeyType>();
+            return key.template value<typename Model::KeyType>();
         })
                 | ranges::actions::unique;
     }
@@ -345,6 +346,7 @@ namespace Relations
     {
         query->select(columns).whereColumnEq(getQualifiedParentKeyName(),
                                              getExistenceCompareKey());
+
         return std::move(query);
     }
 
@@ -356,7 +358,7 @@ namespace Relations
     {
         // Ownership of a unique_ptr()
         query = getRelationExistenceQuery(std::move(query), parentQuery,
-                                          {Expression("count(*)")});
+                                          {Expression(QStringLiteral("count(*)"))});
 
         query->getQuery().setBindings({}, BindingType::SELECT);
 
