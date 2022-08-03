@@ -18,7 +18,7 @@ namespace Orm::Tiny::Relations
 
     /*! Belongs to relation. */
     template<class Model, class Related>
-    class BelongsTo : public OneRelation,
+    class BelongsTo : public IsOneRelation,
                       public Relation<Model, Related>,
                       public Concerns::SupportsDefaultModels<Model, Related>
     {

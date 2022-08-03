@@ -1112,7 +1112,7 @@ namespace Concerns
         relation->touch();
 
         // Many type relation
-        if constexpr (std::is_base_of_v<Relations::ManyRelation,
+        if constexpr (std::is_base_of_v<Relations::IsManyRelation,
                                         typename Relation::element_type>)
         {
             for (auto *const relatedModel : getRelationValue<Related>(relationName))
@@ -1122,7 +1122,7 @@ namespace Concerns
         }
 
         // One type relation
-        else if constexpr (std::is_base_of_v<Relations::OneRelation,
+        else if constexpr (std::is_base_of_v<Relations::IsOneRelation,
                                              typename Relation::element_type>)
         {
             if (auto *const relatedModel = getRelationValue<Related, One>(relationName);

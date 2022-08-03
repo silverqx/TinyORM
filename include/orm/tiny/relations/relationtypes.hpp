@@ -39,66 +39,66 @@ namespace Orm::Tiny::Relations
     IsRelation::~IsRelation() = default;
 
     /*! Tag for one type relation. */
-    class OneRelation
+    class IsOneRelation
     {
-        Q_DISABLE_COPY(OneRelation)
+        Q_DISABLE_COPY(IsOneRelation)
 
     public:
         /*! Default constructor. */
-        inline OneRelation() = default;
+        inline IsOneRelation() = default;
         /*! Pure virtual destructor. */
-        inline virtual ~OneRelation() = 0;
+        inline virtual ~IsOneRelation() = 0;
     };
 
-    OneRelation::~OneRelation() = default;
+    IsOneRelation::~IsOneRelation() = default;
 
     /*! Tag for many type relation. */
-    class ManyRelation
+    class IsManyRelation
     {
     protected:
-        /*! ManyRelation's copy constructor (used by BelongsToMany::clone()). */
-        inline ManyRelation(const ManyRelation &) = default;
+        /*! IsManyRelation's copy constructor (used by BelongsToMany::clone()). */
+        inline IsManyRelation(const IsManyRelation &) = default;
 
     public:
         /*! Default constructor. */
-        inline ManyRelation() = default;
+        inline IsManyRelation() = default;
         /*! Pure virtual destructor. */
-        inline virtual ~ManyRelation() = 0;
+        inline virtual ~IsManyRelation() = 0;
 
-        /*! ManyRelation's move constructor. */
-        ManyRelation(ManyRelation &&) = delete;
+        /*! IsManyRelation's move constructor. */
+        IsManyRelation(IsManyRelation &&) = delete;
 
-        /*! ManyRelation's copy assignment operator. */
-        ManyRelation &operator=(const ManyRelation &) = delete;
-        /*! ManyRelation's move assignment operator. */
-        ManyRelation &operator=(ManyRelation &&) = delete;
+        /*! IsManyRelation's copy assignment operator. */
+        IsManyRelation &operator=(const IsManyRelation &) = delete;
+        /*! IsManyRelation's move assignment operator. */
+        IsManyRelation &operator=(IsManyRelation &&) = delete;
     };
 
-    ManyRelation::~ManyRelation() = default;
+    IsManyRelation::~IsManyRelation() = default;
 
     /*! Tag for the relation which contains pivot table, like many-to-many. */
-    class PivotRelation
+    class IsPivotRelation
     {
     protected:
-        /*! PivotRelation's copy constructor (used by BelongsToMany::clone()). */
-        inline PivotRelation(const PivotRelation &) = default;
+        /*! IsPivotRelation's copy constructor (used by BelongsToMany::clone()). */
+        inline IsPivotRelation(const IsPivotRelation &) = default;
 
     public:
         /*! Default constructor. */
-        inline PivotRelation() = default;
+        inline IsPivotRelation() = default;
         /*! Pure virtual destructor. */
-        inline virtual ~PivotRelation() = 0;
+        inline virtual ~IsPivotRelation() = 0;
 
-        /*! PivotRelation's move constructor. */
-        PivotRelation(PivotRelation &&) = delete;
+        /*! IsPivotRelation's move constructor. */
+        IsPivotRelation(IsPivotRelation &&) = delete;
 
-        /*! PivotRelation's copy assignment operator. */
-        PivotRelation &operator=(const PivotRelation &) = delete;
-        /*! PivotRelation's move assignment operator. */
-        PivotRelation &operator=(PivotRelation &&) = delete;
+        /*! IsPivotRelation's copy assignment operator. */
+        IsPivotRelation &operator=(const IsPivotRelation &) = delete;
+        /*! IsPivotRelation's move assignment operator. */
+        IsPivotRelation &operator=(IsPivotRelation &&) = delete;
     };
 
-    PivotRelation::~PivotRelation() = default;
+    IsPivotRelation::~IsPivotRelation() = default;
 
 } // namespace Orm::Tiny::Relations
 

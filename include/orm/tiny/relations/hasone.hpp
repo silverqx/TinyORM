@@ -15,7 +15,7 @@ namespace Orm::Tiny::Relations
 
     /*! Has one relation. */
     template<class Model, class Related>
-    class HasOne : public OneRelation,
+    class HasOne : public IsOneRelation,
                    public HasOneOrMany<Model, Related>,
                    public Concerns::SupportsDefaultModels<Model, Related>
     {
