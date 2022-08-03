@@ -91,16 +91,16 @@ namespace Relations
 
         /* Getters / Setters */
         /*! Get the underlying query for the relation. */
-        inline Builder<Related> &getQuery() const;
+        inline Builder<Related> &getQuery() const noexcept;
         /*! Get the base QueryBuilder driving the TinyBuilder. */
-        inline QueryBuilder &getBaseQuery() const;
+        inline QueryBuilder &getBaseQuery() const noexcept;
 
         /*! Get the parent model of the relation. */
-        inline const Model &getParent() const;
+        inline const Model &getParent() const noexcept;
         /*! Get the related model of the relation. */
-        inline const Related &getRelated() const;
+        inline const Related &getRelated() const noexcept;
         /*! Get the related model of the relation. */
-        inline Related &getRelated();
+        inline Related &getRelated() noexcept;
         /*! Get the name of the "created at" column. */
         inline const QString &createdAt() const;
         /*! Get the name of the "updated at" column. */
@@ -108,7 +108,7 @@ namespace Relations
         /*! Get the name of the related model's "updated at" column. */
         inline const QString &relatedUpdatedAt() const;
         /*! Get the related key for the relationship. */
-        inline const QString &getRelatedKeyName() const;
+        inline const QString &getRelatedKeyName() const noexcept;
         /*! Get the fully qualified parent key name. */
         inline virtual QString getQualifiedParentKeyName() const;
         /*! Get the key for comparing against the parent key in "has" query. */
@@ -216,31 +216,31 @@ namespace Relations
     /* Getters / Setters */
 
     template<class Model, class Related>
-    Builder<Related> &Relation<Model, Related>::getQuery() const
+    Builder<Related> &Relation<Model, Related>::getQuery() const noexcept
     {
         return *m_query;
     }
 
     template<class Model, class Related>
-    QueryBuilder &Relation<Model, Related>::getBaseQuery() const
+    QueryBuilder &Relation<Model, Related>::getBaseQuery() const noexcept
     {
         return m_query->getQuery();
     }
 
     template<class Model, class Related>
-    const Model &Relation<Model, Related>::getParent() const
+    const Model &Relation<Model, Related>::getParent() const noexcept
     {
         return m_parent;
     }
 
     template<class Model, class Related>
-    const Related &Relation<Model, Related>::getRelated() const
+    const Related &Relation<Model, Related>::getRelated() const noexcept
     {
         return *m_related;
     }
 
     template<class Model, class Related>
-    Related &Relation<Model, Related>::getRelated()
+    Related &Relation<Model, Related>::getRelated() noexcept
     {
         return *m_related;
     }
@@ -264,7 +264,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    const QString &Relation<Model, Related>::getRelatedKeyName() const
+    const QString &Relation<Model, Related>::getRelatedKeyName() const noexcept
     {
         return m_relatedKey;
     }

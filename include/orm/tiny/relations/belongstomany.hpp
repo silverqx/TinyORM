@@ -115,27 +115,27 @@ namespace Orm::Tiny::Relations
         inline QString getExistenceCompareKey() const override;
 
         /*! Get the intermediate table for the relationship. */
-        inline const QString &getTable() const;
+        inline const QString &getTable() const noexcept;
         /*! Get the foreign key for the relation. */
-        inline const QString &getForeignPivotKeyName() const;
+        inline const QString &getForeignPivotKeyName() const noexcept;
         /*! Get the "related key" for the relation. */
-        inline const QString &getRelatedPivotKeyName() const;
+        inline const QString &getRelatedPivotKeyName() const noexcept;
         /*! Get the parent key for the relationship. */
-        inline const QString &getParentKeyName() const;
+        inline const QString &getParentKeyName() const noexcept;
         /*! Get the relationship name for the relationship. */
         inline const QString &getRelationName() const noexcept;
 
         /*! Get the name of the pivot accessor for this relationship. */
-        inline const QString &getPivotAccessor() const;
+        inline const QString &getPivotAccessor() const noexcept;
         /*! Specify the custom pivot accessor to use for the relationship. */
         inline BelongsToMany &as(const QString &accessor);
 
         /*! Get the pivot columns for this relationship. */
-        inline const QStringList &getPivotColumns() const;
+        inline const QStringList &getPivotColumns() const noexcept;
 
         /* Timestamps */
         /*! Determine if the 'pivot' model uses timestamps. */
-        inline bool usesTimestamps() const;
+        inline bool usesTimestamps() const noexcept;
         /*! Specify that the pivot table has creation and update timestamps. */
         BelongsToMany &withTimestamps(const QString &createdAt = "",
                                       const QString &updatedAt = "");
@@ -723,28 +723,28 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     const QString &
-    BelongsToMany<Model, Related, PivotType>::getTable() const
+    BelongsToMany<Model, Related, PivotType>::getTable() const noexcept
     {
         return m_table;
     }
 
     template<class Model, class Related, class PivotType>
     const QString &
-    BelongsToMany<Model, Related, PivotType>::getForeignPivotKeyName() const
+    BelongsToMany<Model, Related, PivotType>::getForeignPivotKeyName() const noexcept
     {
         return m_foreignPivotKey;
     }
 
     template<class Model, class Related, class PivotType>
     const QString &
-    BelongsToMany<Model, Related, PivotType>::getRelatedPivotKeyName() const
+    BelongsToMany<Model, Related, PivotType>::getRelatedPivotKeyName() const noexcept
     {
         return m_relatedPivotKey;
     }
 
     template<class Model, class Related, class PivotType>
     const QString &
-    BelongsToMany<Model, Related, PivotType>::getParentKeyName() const
+    BelongsToMany<Model, Related, PivotType>::getParentKeyName() const noexcept
     {
         return m_parentKey;
     }
@@ -758,7 +758,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     const QString &
-    BelongsToMany<Model, Related, PivotType>::getPivotAccessor() const
+    BelongsToMany<Model, Related, PivotType>::getPivotAccessor() const noexcept
     {
         return m_accessor;
     }
@@ -774,7 +774,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     const QStringList &
-    BelongsToMany<Model, Related, PivotType>::getPivotColumns() const
+    BelongsToMany<Model, Related, PivotType>::getPivotColumns() const noexcept
     {
         return m_pivotColumns;
     }
@@ -782,7 +782,7 @@ namespace Orm::Tiny::Relations
     /* Timestamps */
 
     template<class Model, class Related, class PivotType>
-    bool BelongsToMany<Model, Related, PivotType>::usesTimestamps() const
+    bool BelongsToMany<Model, Related, PivotType>::usesTimestamps() const noexcept
     {
         return m_withTimestamps;
     }
