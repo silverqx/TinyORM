@@ -9,6 +9,7 @@ TINY_SYSTEM_HEADER
 #include <QVector>
 
 #include <map>
+#include <ranges>
 #include <unordered_set>
 
 #if defined(__clang__) || (defined(_MSC_VER) && _MSC_VER < 1929)
@@ -36,8 +37,9 @@ namespace Types
         /*! Merge changes into the current instance. */
         template<typename KeyType>
         SyncChanges &merge(SyncChanges &&changes);
+
         /*! Determine if the given key is supported. */
-        bool supportedKey(const QString &key) const;
+        static bool isValidKey(const QString &key);
 
     protected:
         /*! Cast the given key to primary key type. */
@@ -46,11 +48,7 @@ namespace Types
 
     private:
         /*! All of the supported keys. */
-        inline static const std::unordered_set<QString> SyncKeys {
-            QStringLiteral("attached"),
-            QStringLiteral("detached"),
-            QStringLiteral("updated")
-        };
+        static const std::unordered_set<QString> &syncKeys();
     };
 
     /* public */
@@ -64,7 +62,7 @@ namespace Types
 
             {
                 // If the current key value is empty, then simply move a new values
-                if (supportedKey(key) && currentValues.isEmpty()) {
+                if (isValidKey(key) && currentValues.isEmpty()) {
                     if (!values.isEmpty())
                         currentValues = std::move(values);
 
