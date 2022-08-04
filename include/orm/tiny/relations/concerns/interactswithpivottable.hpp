@@ -57,7 +57,7 @@ namespace Concerns
 
     public:
         /*! Alias for the current BelongsToMany type (for shorter name). */
-        using BelongsToMany = BelongsToMany<Model, Related, PivotType>;
+        using BelongsToManyType = BelongsToMany<Model, Related, PivotType>;
         /*! Alias for the parent model's key type (for shorter name). */
         using ParentKeyType = typename BaseModel<Model>::KeyType;
         /*! Alias for the related model's key type (for shorter name). */
@@ -77,13 +77,13 @@ namespace Concerns
         InteractsWithPivotTable &operator=(InteractsWithPivotTable &&) = delete;
 
         /*! Set the columns on the pivot table to retrieve. */
-        BelongsToMany &withPivot(const QStringList &columns);
+        BelongsToManyType &withPivot(const QStringList &columns);
         /*! Set the columns on the pivot table to retrieve. */
-        inline BelongsToMany &withPivot(const QString &column);
+        inline BelongsToManyType &withPivot(const QString &column);
         /*! Set the columns on the pivot table to retrieve. */
-        BelongsToMany &withPivot(QStringList &&columns);
+        BelongsToManyType &withPivot(QStringList &&columns);
         /*! Set the columns on the pivot table to retrieve. */
-        inline BelongsToMany &withPivot(QString &&column);
+        inline BelongsToManyType &withPivot(QString &&column);
 
         /*! Determine whether the given column is defined as a pivot column. */
         inline bool hasPivotColumn(const QString &column) const;
@@ -293,9 +293,9 @@ namespace Concerns
 
         /* InteractsWithPivotTable */
         /*! Static cast *this to the Relation & derived type. */
-        inline BelongsToMany &relation();
+        inline BelongsToManyType &relation();
         /*! Static cast *this to the Relation & derived type, const version. */
-        inline const BelongsToMany &relation() const;
+        inline const BelongsToManyType &relation() const;
     };
 
     /* public */
@@ -1187,7 +1187,7 @@ namespace Concerns
     InteractsWithPivotTable<Model, Related, PivotType>::relation()
     {
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
-        return static_cast<BelongsToMany &>(*this);
+        return static_cast<BelongsToManyType &>(*this);
     }
 
     template<class Model, class Related, class PivotType>
@@ -1195,7 +1195,7 @@ namespace Concerns
     InteractsWithPivotTable<Model, Related, PivotType>::relation() const
     {
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
-        return static_cast<const BelongsToMany &>(*this);
+        return static_cast<const BelongsToManyType &>(*this);
     }
 
 } // namespace Concerns
