@@ -93,12 +93,11 @@ QString SeederCommand::prepareSeederClassName(QString &&className)
 
     // Append Seeder
     if (!className.endsWith(Seeder_lc))
-        return className.append(Seeder);
+        return std::move(className.append(Seeder));
 
     // Change Xyzseeder to XyzSeeder
     className[className.size() - Seeder_lc_size] = QChar('S');
 
-    // CUR stackoverflow, still confused about this moves, when I assign a new value silverqx
     return std::move(className);
 }
 
