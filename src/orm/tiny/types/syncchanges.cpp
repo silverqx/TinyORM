@@ -5,9 +5,14 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny::Types
 {
 
+/* public */
+
 SyncChanges::SyncChanges()
-    : map {{"attached", {}}, {"detached", {}}, {"updated", {}}}
+    : map {{QStringLiteral("attached"), {}}, {QStringLiteral("detached"), {}},
+           {QStringLiteral("updated"), {}}}
 {}
+
+/* private */
 
 bool SyncChanges::supportedKey(const QString &key) const
 {

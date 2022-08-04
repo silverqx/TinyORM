@@ -9,8 +9,9 @@ TINY_SYSTEM_HEADER
 #include <QVector>
 
 #include <map>
+#include <unordered_set>
 
-#if defined(__clang__) || (defined(_MSC_VER) && _MSC_VER <= 1928)
+#if defined(__clang__) || (defined(_MSC_VER) && _MSC_VER < 1929)
 #  include <range/v3/algorithm/unique.hpp>
 #endif
 
@@ -45,24 +46,27 @@ namespace Types
 
     private:
         /*! All of the supported keys. */
-        inline static const QVector<QString> SyncKeys {
+        inline static const std::unordered_set<QString> SyncKeys {
             QStringLiteral("attached"),
             QStringLiteral("detached"),
             QStringLiteral("updated")
         };
     };
 
+    /* public */
+
     template<typename KeyType>
     SyncChanges &SyncChanges::merge(SyncChanges &&changes)
     {
         for (auto &&[key, values] : changes) {
-            {
-                auto &currentValues = (*this)[key];
 
+            auto &currentValues = (*this)[key];
+
+            {
                 // If the current key value is empty, then simply move a new values
                 if (supportedKey(key) && currentValues.isEmpty()) {
                     if (!values.isEmpty())
-                        (*this)[key] = std::move(values);
+                        currentValues = std::move(values);
 
                     continue;
                 }
@@ -71,19 +75,20 @@ namespace Types
             // Otherwise merge values
             const auto castKey = [this](const auto &id)
             {
-                return this->castKey<KeyType>(id);
+                return this->template castKey<KeyType>(id);
             };
 
             /* First we need to make a copy and then sort both values, vectors
                have to be sorted before the merge. */
-            auto currentValues = (*this)[key];
-            std::ranges::sort(currentValues, {}, castKey);
+            auto currentValuesCopy = currentValues;
+            std::ranges::sort(currentValuesCopy, {}, castKey);
             std::ranges::sort(values, {}, castKey);
 
             // Then merge two vectors
             QVector<QVariant> merged;
-            merged.reserve(currentValues.size() + values.size());
-            std::ranges::merge(currentValues, values, std::back_inserter(merged),
+            merged.reserve(currentValuesCopy.size() + values.size());
+
+            std::ranges::merge(currentValuesCopy, values, std::back_inserter(merged),
                                {}, castKey, castKey);
 
             // Remove duplicates
@@ -96,16 +101,18 @@ namespace Types
             merged.erase(it, ranges::end(merged));
 #endif
 
-            (*this)[key].swap(merged);
+            currentValues.swap(merged);
         }
 
         return *this;
     }
 
+    /* protected */
+
     template<typename T>
     T SyncChanges::castKey(const QVariant &key) const
     {
-        return key.value<T>();
+        return key.template value<T>();
     }
 
 } // namespace Types
