@@ -164,8 +164,8 @@ namespace Orm::Tiny::Relations
     void
     HasOneOrMany<Model, Related>::addEagerConstraints(const QVector<Model> &models) const
     {
-        this->m_query->getQuery().whereIn(m_foreignKey,
-                                          this->getKeys(models, m_localKey));
+        this->getBaseQuery().whereIn(m_foreignKey,
+                                     this->getKeys(models, m_localKey));
     }
 
     /* Getters / Setters */
@@ -361,9 +361,8 @@ namespace Orm::Tiny::Relations
            link them up with their children using the keyed dictionary to make the
            matching very convenient and easy work. Then we'll just return them. */
         for (auto &model : models) {
-            if (const auto &key = model.getAttribute(m_localKey)
-                .template value<typename Model::KeyType>();
-
+            if (const auto key = model.getAttribute(m_localKey)
+                                 .template value<typename Model::KeyType>();
                 dictionary.contains(key)
             )
                 model.setRelation(relation,
@@ -380,8 +379,8 @@ namespace Orm::Tiny::Relations
 
         for (auto &&result : results)
             if constexpr (
-                const auto &foreign = result.getAttribute(getForeignKeyName())
-                                      .template value<typename Model::KeyType>();
+                const auto foreign = result.getAttribute(getForeignKeyName())
+                                     .template value<typename Model::KeyType>();
                 std::is_same_v<RelationType, QVector<Related>>
             )
                 dictionary[foreign].append(std::move(result));
@@ -397,9 +396,9 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     QString HasOneOrMany<Model, Related>::getForeignKeyName() const
     {
-        const auto segments = getQualifiedForeignKeyName().split(DOT);
+        auto segments = getQualifiedForeignKeyName().split(DOT);
 
-        return segments.last();
+        return std::move(segments.last());
     }
 
     template<class Model, class Related>
