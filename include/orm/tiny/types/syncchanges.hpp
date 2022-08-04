@@ -9,7 +9,6 @@ TINY_SYSTEM_HEADER
 #include <QVector>
 
 #include <map>
-#include <ranges>
 #include <unordered_set>
 
 #if defined(__clang__) || (defined(_MSC_VER) && _MSC_VER < 1929)
