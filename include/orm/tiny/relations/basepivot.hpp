@@ -18,16 +18,17 @@ namespace Orm::Tiny::Relations
 
     /*! Base class for Pivot models. */
     template<typename PivotModel>
-    class BasePivot : public Model<PivotModel>, public IsPivotModel
+    class BasePivot : public Model<PivotModel>,
+                      public IsPivotModel
     {
+        friend Model<PivotModel>;
+
         /*! Alias for the string utils. */
         using StringUtils = Orm::Tiny::Utils::String;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
     public:
-        friend Model<PivotModel>;
-
         /*! Inherit constructors. */
         using Model<PivotModel>::Model;
 
@@ -70,9 +71,9 @@ namespace Orm::Tiny::Relations
         /*! Get the table associated with the model. */
         QString getTable() const;
         /*! Get the foreign key column name. */
-        QString getForeignKey() const;
+        const QString &getForeignKey() const noexcept;
         /*!  Get the "related key" column name. */
-        QString getRelatedKey() const;
+        const QString &getRelatedKey() const noexcept;
 
         // TODO fuckup, timestamps in pivot, I will solve it when I will have to use timestamps in the code, anyway may be I will not need it, because I can pass to the method right away what I will need silverqx
         // TODO also don't forget unsetRelations() if pivotParent will be implemented silverqx
@@ -225,16 +226,24 @@ namespace Orm::Tiny::Relations
     TinyBuilder<PivotModel> &
     BasePivot<PivotModel>::setKeysForSelectQuery(TinyBuilder<PivotModel> &query)
     {
-        // TODO now isset also check for NULL, so I have to check for QVariant::isNull/isValid too silverqx
-        if (this->m_attributesHash.contains(this->getKeyName()))
-            return Model<PivotModel>::setKeysForSelectQuery(query);
+        /* If the pivot table contains a primary key then use this primary key
+           in the where clause. */
+        if (const auto &primaryKeyName = this->getKeyName();
+            this->m_attributesHash.contains(primaryKeyName)
+        )
+            // Also check if this primary key is valid
+            if (const auto id = this->getKeyForSelectQuery();
+                id.isValid() && !id.isNull()
+            )
+                return Model<PivotModel>::setKeysForSelectQuery(query);
 
-        query.whereEq(m_foreignKey,
-                      this->getOriginal(m_foreignKey, this->getAttribute(m_foreignKey)));
-
-        return query.whereEq(m_relatedKey,
-                             this->getOriginal(m_relatedKey,
-                                               this->getAttribute(m_relatedKey)));
+        // NOTE api different, we are using parenthesis around the following keys, I think it's a little safer silverqx
+        return query.where({
+            {m_foreignKey, this->getOriginal(m_foreignKey,
+                                             this->getAttribute(m_foreignKey))},
+            {m_relatedKey, this->getOriginal(m_relatedKey,
+                                             this->getAttribute(m_relatedKey))},
+        });
     }
 
     template<typename PivotModel>
@@ -251,13 +260,13 @@ namespace Orm::Tiny::Relations
     }
 
     template<typename PivotModel>
-    QString BasePivot<PivotModel>::getForeignKey() const
+    const QString &BasePivot<PivotModel>::getForeignKey() const noexcept
     {
         return m_foreignKey;
     }
 
     template<typename PivotModel>
-    QString BasePivot<PivotModel>::getRelatedKey() const
+    const QString &BasePivot<PivotModel>::getRelatedKey() const noexcept
     {
         return m_relatedKey;
     }
