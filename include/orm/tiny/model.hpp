@@ -1058,7 +1058,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant Model<Derived, AllRelations...>::getKeyForSelectQuery() const
     {
-        // Currently is the implementation exactly in the same way
+        // Currently is implemented exactly in the same way
         return getKeyForSaveQuery();
     }
 
