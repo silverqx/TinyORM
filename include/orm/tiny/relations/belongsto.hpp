@@ -329,9 +329,9 @@ namespace Orm::Tiny::Relations
                 keys << std::move(value);
         }
 
-        return keys |= ranges::actions::sort(ranges::less {}, [](const auto &key)
+        return keys |= ranges::actions::sort(ranges::less {}, [](const auto &key_)
         {
-            return key.template value<typename Model::KeyType>();
+            return key_.template value<typename Model::KeyType>();
         })
                 | ranges::actions::unique;
     }
