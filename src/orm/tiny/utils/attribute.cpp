@@ -28,7 +28,7 @@ Attribute::convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attribute
     const auto size = attributesVector.size();
     QVector<QVariantMap> result(size);
 
-    for (int i = 0; i < size; ++i)
+    for (QVector<QVariantMap>::size_type i = 0; i < size; ++i)
         for (const auto &attribute : attributesVector[i])
             result[i][attribute.key] = attribute.value;
 
