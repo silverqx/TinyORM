@@ -13,9 +13,12 @@ using Models::Tagged;
 using Models::Torrent;
 using Models::TorrentPreviewableFile;
 
+using Orm::Constants::Attached;
+using Orm::Constants::Detached;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::SIZE;
+using Orm::Constants::Updated_;
 
 using Orm::Exceptions::QueryError;
 using Orm::One;
@@ -2449,16 +2452,15 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
                                     *torrent103[ID]});
 
     // Verify result
-    QCOMPARE(changed.size(), static_cast<std::size_t>(3));
-    QVERIFY(changed.contains("attached"));
-    QVERIFY(changed.contains("detached"));
-    QVERIFY(changed.contains("updated"));
+    QVERIFY(changed.isValidKey(Attached));
+    QVERIFY(changed.isValidKey(Detached));
+    QVERIFY(changed.isValidKey(Updated_));
 
-    const auto &attachedVector = changed.at("attached");
+    const auto &attachedVector = changed.at(Attached);
     QCOMPARE(attachedVector.size(), 2);
-    const auto &detachedVector = changed.at("detached");
+    const auto &detachedVector = changed.at(Detached);
     QCOMPARE(detachedVector.size(), 1);
-    QVERIFY(changed.at("updated").isEmpty());
+    QVERIFY(changed.at(Updated_).isEmpty());
 
     const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
     const QVector<QVariant> expectedDetached {torrent102[ID]};
@@ -2570,16 +2572,15 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
                             {torrent103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
-    QCOMPARE(changed.size(), static_cast<std::size_t>(3));
-    QVERIFY(changed.contains("attached"));
-    QVERIFY(changed.contains("detached"));
-    QVERIFY(changed.contains("updated"));
+    QVERIFY(changed.isValidKey(Attached));
+    QVERIFY(changed.isValidKey(Detached));
+    QVERIFY(changed.isValidKey(Updated_));
 
-    const auto &attachedVector = changed.at("attached");
+    const auto &attachedVector = changed.at(Attached);
     QCOMPARE(attachedVector.size(), 2);
-    const auto &detachedVector = changed.at("detached");
+    const auto &detachedVector = changed.at(Detached);
     QCOMPARE(detachedVector.size(), 1);
-    const auto &updatedVector = changed.at("updated");
+    const auto &updatedVector = changed.at(Updated_);
     QCOMPARE(updatedVector.size(), 1);
 
     const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
@@ -2681,16 +2682,15 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
             torrent5->tags()->sync({*tag100[ID], *tag101[ID], *tag103[ID]});
 
     // Verify result
-    QCOMPARE(changed.size(), static_cast<std::size_t>(3));
-    QVERIFY(changed.contains("attached"));
-    QVERIFY(changed.contains("detached"));
-    QVERIFY(changed.contains("updated"));
+    QVERIFY(changed.isValidKey(Attached));
+    QVERIFY(changed.isValidKey(Detached));
+    QVERIFY(changed.isValidKey(Updated_));
 
-    const auto &attachedVector = changed.at("attached");
+    const auto &attachedVector = changed.at(Attached);
     QCOMPARE(attachedVector.size(), 2);
-    const auto &detachedVector = changed.at("detached");
+    const auto &detachedVector = changed.at(Detached);
     QCOMPARE(detachedVector.size(), 1);
-    QVERIFY(changed.at("updated").isEmpty());
+    QVERIFY(changed.at(Updated_).isEmpty());
 
     const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
     const QVector<QVariant> expectedDetached {tag102[ID]};
@@ -2790,16 +2790,15 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
                         {tag103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
-    QCOMPARE(changed.size(), static_cast<std::size_t>(3));
-    QVERIFY(changed.contains("attached"));
-    QVERIFY(changed.contains("detached"));
-    QVERIFY(changed.contains("updated"));
+    QVERIFY(changed.isValidKey(Attached));
+    QVERIFY(changed.isValidKey(Detached));
+    QVERIFY(changed.isValidKey(Updated_));
 
-    const auto &attachedVector = changed.at("attached");
+    const auto &attachedVector = changed.at(Attached);
     QCOMPARE(attachedVector.size(), 2);
-    const auto &detachedVector = changed.at("detached");
+    const auto &detachedVector = changed.at(Detached);
     QCOMPARE(detachedVector.size(), 1);
-    const auto &updatedVector = changed.at("updated");
+    const auto &updatedVector = changed.at(Updated_);
     QCOMPARE(updatedVector.size(), 1);
 
     const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
@@ -2914,15 +2913,14 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
                                                     *torrent103[ID]});
 
     // Verify result
-    QCOMPARE(changed.size(), static_cast<std::size_t>(3));
-    QVERIFY(changed.contains("attached"));
-    QVERIFY(changed.contains("detached"));
-    QVERIFY(changed.contains("updated"));
+    QVERIFY(changed.isValidKey(Attached));
+    QVERIFY(changed.isValidKey(Detached));
+    QVERIFY(changed.isValidKey(Updated_));
 
-    const auto &attachedVector = changed.at("attached");
+    const auto &attachedVector = changed.at(Attached);
     QCOMPARE(attachedVector.size(), 2);
-    QVERIFY(changed.at("detached").isEmpty());
-    QVERIFY(changed.at("updated").isEmpty());
+    QVERIFY(changed.at(Detached).isEmpty());
+    QVERIFY(changed.at(Updated_).isEmpty());
 
     const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
 
@@ -3033,15 +3031,14 @@ void tst_Relations_Inserting_Updating
                             {torrent103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
-    QCOMPARE(changed.size(), static_cast<std::size_t>(3));
-    QVERIFY(changed.contains("attached"));
-    QVERIFY(changed.contains("detached"));
-    QVERIFY(changed.contains("updated"));
+    QVERIFY(changed.isValidKey(Attached));
+    QVERIFY(changed.isValidKey(Detached));
+    QVERIFY(changed.isValidKey(Updated_));
 
-    const auto &attachedVector = changed.at("attached");
+    const auto &attachedVector = changed.at(Attached);
     QCOMPARE(attachedVector.size(), 2);
-    QVERIFY(changed.at("detached").isEmpty());
-    const auto &updatedVector = changed.at("updated");
+    QVERIFY(changed.at(Detached).isEmpty());
+    const auto &updatedVector = changed.at(Updated_);
     QCOMPARE(updatedVector.size(), 1);
 
     const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
@@ -3142,19 +3139,18 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
                                                     *tag103[ID]});
 
     // Verify result
-    QCOMPARE(changed.size(), static_cast<std::size_t>(3));
-    QVERIFY(changed.contains("attached"));
-    QVERIFY(changed.contains("detached"));
-    QVERIFY(changed.contains("updated"));
+    QVERIFY(changed.isValidKey(Attached));
+    QVERIFY(changed.isValidKey(Detached));
+    QVERIFY(changed.isValidKey(Updated_));
 
-    const auto &attachedVector = changed.at("attached");
+    const auto &attachedVector = changed.at(Attached);
     QCOMPARE(attachedVector.size(), 2);
-    QVERIFY(changed.at("detached").isEmpty());
-    QVERIFY(changed.at("updated").isEmpty());
+    QVERIFY(changed.at(Detached).isEmpty());
+    QVERIFY(changed.at(Updated_).isEmpty());
 
     const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
 
-    for (const auto &attached : changed.at("attached"))
+    for (const auto &attached : changed.at(Attached))
         QVERIFY(expectedAttached.contains(attached));
 
     // Verify tagged values in the database
@@ -3249,15 +3245,14 @@ void tst_Relations_Inserting_Updating
                         {tag103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
-    QCOMPARE(changed.size(), static_cast<std::size_t>(3));
-    QVERIFY(changed.contains("attached"));
-    QVERIFY(changed.contains("detached"));
-    QVERIFY(changed.contains("updated"));
+    QVERIFY(changed.isValidKey(Attached));
+    QVERIFY(changed.isValidKey(Detached));
+    QVERIFY(changed.isValidKey(Updated_));
 
-    const auto &attachedVector = changed.at("attached");
+    const auto &attachedVector = changed.at(Attached);
     QCOMPARE(attachedVector.size(), 2);
-    QVERIFY(changed.at("detached").isEmpty());
-    const auto &updatedVector = changed.at("updated");
+    QVERIFY(changed.at(Detached).isEmpty());
+    const auto &updatedVector = changed.at(Updated_);
     QCOMPARE(updatedVector.size(), 1);
 
     const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};

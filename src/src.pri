@@ -63,7 +63,6 @@ sourcesList += \
         $$PWD/orm/tiny/exceptions/relationnotfounderror.cpp \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
         $$PWD/orm/tiny/tinytypes.cpp \
-        $$PWD/orm/tiny/types/syncchanges.cpp \
         $$PWD/orm/tiny/utils/attribute.cpp \
 
 !disable_orm|!disable_tom: \

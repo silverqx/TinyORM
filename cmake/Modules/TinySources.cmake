@@ -224,7 +224,6 @@ function(tinyorm_sources out_headers out_sources)
             tiny/exceptions/relationnotfounderror.cpp
             tiny/exceptions/relationnotloadederror.cpp
             tiny/tinytypes.cpp
-            tiny/types/syncchanges.cpp
             tiny/utils/attribute.cpp
         )
     endif()

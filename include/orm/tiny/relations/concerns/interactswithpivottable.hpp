@@ -451,19 +451,19 @@ namespace Concerns
         if (detaching && !detach.isEmpty()) {
             this->detach(detach);
 
-            changes["detached"] = std::move(detach);
+            changes.at(Detached) = std::move(detach);
         }
 
         /* Now we are finally ready to attach the new records. Note that we'll disable
            touching until after the entire operation is complete so we don't fire a
            ton of touch operations until we are totally done syncing the records. */
-        changes.merge<typename Related::KeyType>(
+        changes.template merge<typename Related::KeyType>(
                     attachNew(idsWithAttributes, current, false));
 
         /* Once we have finished attaching or detaching the records, we will see if we
            have done any attaching or detaching, and if we have we will touch these
            relationships if they are configured to touch on any database updates. */
-        if (!changes["attached"].isEmpty() || !changes["updated"].isEmpty())
+        if (!changes.at(Attached).isEmpty() || !changes.at(Updated_).isEmpty())
             touchIfTouching_();
 
         return changes;
@@ -876,7 +876,7 @@ namespace Concerns
             if (!current.contains(id)) {
                 attach(id, attributes, touch);
 
-                changes["attached"] << id;
+                changes.at(Attached) << id;
             }
 
             /* If the pivot record already exists, we'll try to update the attributes
@@ -886,7 +886,7 @@ namespace Concerns
             else if (!attributes.isEmpty() &&
                      updateExistingPivot(id, attributes, touch)
             )
-                changes["updated"] << id;
+                changes.at(Updated_) << id;
         }
 
         return changes;
