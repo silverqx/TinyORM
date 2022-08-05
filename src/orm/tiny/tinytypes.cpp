@@ -10,14 +10,14 @@ AttributeItem::operator UpdateItem() const
     return {key, value};
 }
 
-bool operator==(const AttributeItem &lhs, const AttributeItem &rhs)
+bool operator==(const AttributeItem &left, const AttributeItem &right)
 {
-    return lhs.key == rhs.key && lhs.value == rhs.value;
+    return left.key == right.key && left.value == right.value;
 }
 
-bool operator==(const WithItem &lhs, const WithItem &rhs)
+bool operator==(const WithItem &left, const WithItem &right)
 {
-    return lhs.name == rhs.name;
+    return left.name == right.name;
 }
 
 } // namespace Orm::Tiny

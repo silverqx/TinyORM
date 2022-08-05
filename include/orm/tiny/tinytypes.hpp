@@ -50,7 +50,8 @@ namespace Relations
     };
 
     /*! Comparison operator for the AttributeItem. */
-    SHAREDLIB_EXPORT bool operator==(const AttributeItem &lhs, const AttributeItem &rhs);
+    SHAREDLIB_EXPORT bool
+    operator==(const AttributeItem &left, const AttributeItem &right);
 
     /*! Eager load relation item. */
     struct WithItem
@@ -61,7 +62,7 @@ namespace Relations
 
     /*! Comparison operator for the WithItem. */
     [[maybe_unused]]
-    SHAREDLIB_EXPORT bool operator==(const WithItem &lhs, const WithItem &rhs);
+    SHAREDLIB_EXPORT bool operator==(const WithItem &left, const WithItem &right);
 
     /*! Tag for Model::getRelation() family methods to return Related type
         directly ( not container type ). */

@@ -927,9 +927,9 @@ namespace
         QString name;
 
         /*! Comparison operator for the IdAndName. */
-        inline bool operator==(const IdAndName &other) const noexcept
+        inline bool operator==(const IdAndName &right) const noexcept
         {
-            return id == other.id && name == other.name;
+            return id == right.id && name == right.name;
         }
     };
 } // namespace
