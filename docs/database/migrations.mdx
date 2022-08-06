@@ -60,6 +60,12 @@ The [`schema builder`](database/migrations.mdx#tables) and [`migrations`](databa
 TinyORM's schema builder supports all [supported databases](database/getting-started.mdx#introduction) out of the box.
 :::
 
+The following image shows what the `tom` console application looks like. ✨ As you can see it offers everything that is needed to generate and manage migrations and seeders and all of this is backed up with the tab completion.
+
+<img src={require('./assets/img/migrations/tom_cli.png').default}
+    alt='TinyORM - Tom console application - Showcase' width='760'
+    title='TinyORM - Tom console application - Showcase' />
+
 ## Generating Migrations
 
 You may use the `make:migration` `tom` command to generate a database migration. The new migration will be placed in your `database/migrations` directory. Each migration filename contains a timestamp that allows `tom` to determine the order of the migrations:
