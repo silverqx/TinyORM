@@ -42,21 +42,21 @@ Whole library is documented as markdown documents:
 
 ### Features Summary
 
- - simple database connections management 🧬
-   - database manager that helps with the database connections management
-   - `Orm::DB` facade class for nicer and shorter syntax
-   - MySQL, SQLite, and PostgreSQL support for all features
-   - multi-threading support 👀
- - overhauled query builder 🔧
-   - allows passing sub-queries and raw expressions practically everywhere, to column names, values, and to every SQL clause as select, where, joins, group by, having, order by 🔥
-   - a logical grouping that offers to wrap logical groups in parenthesis
-   - chunked results for lower memory footprint ✨
-   - raw methods for all SQL clauses
-   - all join types (left, right, cross, inner) and also join where clause support 🫤
-   - aggregate methods min, max, sum, increment, decrement, ...
-   - whereExists and exists methods for an existence queries
-   - transactions and pessimistic locking 🔒
-   - of course, insert, update, and delete SQL clauses support
+- simple database connections management 🧬
+  - database manager that helps with the database connections management
+  - `Orm::DB` facade class for nicer and shorter syntax
+  - MySQL, SQLite, and PostgreSQL support for all features
+  - multi-threading support 👀
+- overhauled query builder 🔧
+  - allows passing sub-queries and raw expressions practically everywhere, to column names, values, and to every SQL clause as select, where, joins, group by, having, order by 🔥
+  - a logical grouping that offers to wrap logical groups in parenthesis
+  - chunked results for lower memory footprint ✨
+  - raw methods for all SQL clauses
+  - all join types (left, right, cross, inner) and also join where clause support 🫤
+  - aggregate methods min, max, sum, increment, decrement, ...
+  - whereExists and exists methods for an existence queries
+  - transactions and pessimistic locking 🔒
+  - of course, insert, update, and delete SQL clauses support
 - clever ORM with all relation types support 🎉
   - one-to-one, one-to-many, and many-to-many relation types (also inverse relationships)
   - eager and lazy loading with custom select and constraints 🚀
