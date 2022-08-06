@@ -1437,7 +1437,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR schema, add tests for enum and set; and json and jsonb, storedAs / virtualAs silverqx
 // CUR tom, don't modify migrate:status command, rather extend it and add possibility to only call it through Application::runWithArguments() (this secure to not be able to call it from the command-line), do not show it in the list or help command output silverqx
 // CUR tom, think about remove TINYTOM_NO/_DEBUG and TINYTOM_TESTS_CODE and use TINYORM_ defines instead, or at least check also TINYORM_NO/_DEBUG if TINY_NO/_DEBUG is not set silverqx
-// CUR check all unique_ptr() of base clases, if base classes have virtual dtors, or find unique_ptrs of aggregates to base classes silverqx
 // CUR use EMPTY constant everywhere silverqx
 // CUR tom, squashing migrations silverqx
 // CUR tom, create icon silverqx
