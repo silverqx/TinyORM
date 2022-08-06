@@ -63,16 +63,16 @@ Whole library is documented as markdown documents:
   - all query builder methods are proxied to the model instances and also to the relation instances 🤯 (everything that can be called on the query builder can also be called on the model and relation instances)
   - clean active record pattern
   - advanced features like timestamps, touching parent timestamps, default models, and default model attributes
-  - querying relationships existence/absence using the has, whereHas, and hasNested (using dot notation for nested relationships _users.posts.comments_)
+  - querying relationships existence/absence using the has, whereHas, and hasNested methods (using dot notation for selecting nested relationships _users.posts.comments_)
 - compiled database migrations and seeders 🕺
 - the `tom` console application with tab completion for all shells (pwsh, bash, zsh) 🥳
   - the scaffolding of models, migrations, and seeders
-  - overhauled models scaffolding, every feature that is supported by models can be generated using the `tom` cli
+  - overhauled models scaffolding, every feature that is supported by models can be generated using the `tom make:model` cli command
 - a huge amount of code is unit tested, currently __1270 unit tests__ 🤯
-- C++20 only with all the latest features used like concepts/constraints, ranges, smart pointers (no `new` keyword in the whole code 😎), folding expressions
+- C++20 only, with all the latest features used like concepts/constraints, ranges, smart pointers (no `new` keyword in the whole code 😎), folding expressions
 - qmake and CMake build systems support
-- vcpkg support (also the vcpkg port, currently not committed to the vcpkg repository)
-- it's really fast, you can run 1000 complex queries in 500ms (heavily DB dependent, the PostgreSQL is by far the fastest) ⌚
+- vcpkg support (also the vcpkg port, currently not committed to the vcpkg repository ☹️)
+- it's really fast, you can run 1000 complex queries in 500ms (heavily DB dependant, the PostgreSQL is by far the fastest) ⌚
 
 [action-msvc2019-qt5]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2019-qt5.yml
 [action-msvc2019-qt5-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2019-qt5.yml/badge.svg
