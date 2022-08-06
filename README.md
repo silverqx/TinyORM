@@ -65,6 +65,11 @@ Whole library is documented as markdown documents:
   - advanced features like timestamps, touching parent timestamps, default models, and default model attributes
   - querying relationships existence/absence using the has, whereHas, and hasNested methods (using dot notation for selecting nested relationships _users.posts.comments_)
 - compiled database migrations and seeders 🕺
+  - create, update, drop, and rename database tables
+  - create, drop, and rename table columns
+  - extensive schema builder that allows creating of all possible columns types
+  - terser syntax for creating foreign keys and foreign key constraints
+  - supports creating, and dropping column indexes (primary, unique, fulltext, spatial)
 - the `tom` console application with tab completion for all shells (pwsh, bash, zsh) 🥳
   - the scaffolding of models, migrations, and seeders
   - overhauled models scaffolding, every feature that is supported by models can be generated using the `tom make:model` cli command
