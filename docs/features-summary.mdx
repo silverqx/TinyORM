@@ -1,0 +1,64 @@
+---
+sidebar_position: 6
+sidebar_label: 📄 Features Summary
+hide_table_of_contents: true
+description: List that fastly summarizes all TinyORM features.
+keywords: [c++ orm, tinyorm, features, summary, features summary]
+---
+
+# Features Summary
+
+The following list fastly summarizes all `TinyORM` features.
+
+- simple database connections management 🧬
+  - database manager that helps with the database connections management
+  - `Orm::DB` facade class for nicer and shorter syntax
+  - MySQL, SQLite, and PostgreSQL support for all features
+  - multi-threading support 👀
+- overhauled query builder 🔧
+  - allows passing sub-queries and raw expressions practically everywhere, to column names, values, and to every SQL clause as select, where, joins, group by, having, order by 🔥
+  - a logical grouping that offers to wrap logical groups in parenthesis
+  - chunked results for lower memory footprint ✨
+  - raw methods for all SQL clauses
+  - all join types (left, right, cross, inner) and also join where clause support 🫤
+  - aggregate methods min, max, sum, increment, decrement, ...
+  - whereExists and exists methods for an existence queries
+  - transactions and pessimistic locking 🔒
+  - of course, insert, update, and delete SQL clauses support
+- clever ORM with all relation types support 🎉
+  - one-to-one, one-to-many, and many-to-many relation types (also inverse relationships)
+  - eager and lazy loading with custom select and constraints 🚀
+  - all query builder methods are proxied to the model instances and also to the relation instances 🤯 (everything that can be called on the query builder can also be called on the model and relation instances)
+  - clean active record pattern
+  - advanced features like timestamps, touching parent timestamps, default models, and default model attributes
+  - querying relationships existence/absence using the has, whereHas, and hasNested methods (using dot notation for selecting nested relationships _users.posts.comments_)
+- compiled database migrations and seeders 🕺
+  - create, update, drop, and rename database tables
+  - create, drop, and rename table columns
+  - extensive schema builder that allows creating of all possible columns types
+  - terser syntax for creating foreign keys and foreign key constraints
+  - supports creating, and dropping column indexes (primary, unique, fulltext, spatial)
+- the `tom` console application with tab completion for all shells (pwsh, bash, zsh) 🥳
+  - the scaffolding of models, migrations, and seeders
+  - overhauled models scaffolding, every feature that is supported by models can be generated using the `tom make:model` cli command
+- a huge amount of code is unit tested, currently __1270 unit tests__ 🤯
+- C++20 only, with all the latest features used like concepts/constraints, ranges, smart pointers (no `new` keyword in the whole code 😎), folding expressions
+- qmake and CMake build systems support
+- vcpkg support (also the vcpkg port, currently not committed to the vcpkg repository ☹️)
+- it's really fast, you can run 1000 complex queries in 500ms (heavily DB dependant, the PostgreSQL is by far the fastest) ⌚
+- extensive documentation 📃
+- ...
+
+### Showcase Images
+
+###### Tom console application
+![Tom console application](./database/assets/img/migrations/tom_cli.png)
+
+###### Passed all unit tests 🥳
+![Passed all unit tests](./assets/img/features-summary/tinyorm-passed_all_unit_tests.png)
+
+###### TinyOrmPlayground single-threaded
+![Invoked TinyOrmPlayground single-threaded](./assets/img/features-summary/tinyormplayground-single-threaded.png)
+
+###### TinyOrmPlayground multi-threaded
+![Invoked TinyOrmPlayground multi-threaded](./assets/img/features-summary/tinyormplayground-multi-threaded.png)
