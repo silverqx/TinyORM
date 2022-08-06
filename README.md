@@ -40,6 +40,40 @@ Whole library is documented as markdown documents:
   - [Hello world](/docs/building/hello-world.mdx#building-hello-world)
   - [Migrations](/docs/building/migrations.mdx#building-migrations)
 
+## Features Summary
+
+ - simple database connections management 🧬
+   - database manager that helps with the database connections management
+   - `Orm::DB` facade class for nicer and shorter syntax
+   - MySQL, SQLite, and PostgreSQL support for all features
+   - multi-threading support 👀
+ - overhauled query builder 🔧
+   - allows passing sub-queries and raw expressions practically everywhere, to column names, values, and to every SQL clause as select, where, joins, group by, having, order by 🔥
+   - a logical grouping that offers to wrap logical groups in parenthesis
+   - chunked results for lower memory footprint ✨
+   - raw methods for all SQL clauses
+   - all join types (left, right, cross, inner) and also join where clause support 🫤
+   - aggregate methods min, max, sum, increment, decrement, ...
+   - whereExists and exists methods for an existence queries
+   - transactions and pessimistic locking 🔒
+   - of course, insert, update, and delete SQL clauses support
+- clever ORM with all relation types support 🎉
+  - one-to-one, one-to-many, and many-to-many relation types (also inverse relationships)
+  - eager and lazy loading with custom select and constraints 🚀
+  - all query builder methods are proxied to the model instances and also to the relation instances 🤯 (everything that can be called on the query builder can also be called on the model and relation instances)
+  - clean active record pattern
+  - advanced features like timestamps, touching parent timestamps, default models, and default model attributes
+  - querying relationships existence/absence using the has, whereHas, and hasNested (using dot notation for nested relationships _users.posts.comments_)
+- compiled database migrations and seeders 🕺
+- the `tom` console application with tab completion for all shells (pwsh, bash, zsh) 🥳
+  - the scaffolding of models, migrations, and seeders
+  - overhauled models scaffolding, every feature that is supported by models can be generated using the `tom` cli
+- a huge amount of code is unit tested, currently __1270 unit tests__ 🤯
+- C++20 only with all the latest features used like concepts/constraints, ranges, smart pointers (no `new` keyword in the whole code 😎), folding expressions
+- qmake and CMake build systems support
+- vcpkg support (also the vcpkg port, currently not committed to the vcpkg repository)
+- it's really fast, you can run 1000 complex queries in 500ms (heavily DB dependent, the PostgreSQL is by far the fastest) ⌚
+
 [action-msvc2019-qt5]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2019-qt5.yml
 [action-msvc2019-qt5-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2019-qt5.yml/badge.svg
 [action-msvc2022-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2022-qt6.yml
