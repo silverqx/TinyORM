@@ -73,6 +73,22 @@ Whole library is documented as markdown documents:
 - qmake and CMake build systems support
 - vcpkg support (also the vcpkg port, currently not committed to the vcpkg repository ☹️)
 - it's really fast, you can run 1000 complex queries in 500ms (heavily DB dependant, the PostgreSQL is by far the fastest) ⌚
+- extensive documentation 📃
+- ...
+
+### Showcase Images
+
+###### Tom console application
+![Tom console application](/docs/database/assets/img/migrations/tom_cli.png)
+
+###### Passed all unit tests 🥳
+![Passed all unit tests](/docs/assets/img/features-summary/tinyorm-passed_all_unit_tests.png)
+
+###### TinyOrmPlayground single-threaded
+![Invoked TinyOrmPlayground single-threaded](/docs/assets/img/features-summary/tinyormplayground-single-threaded.png)
+
+###### TinyOrmPlayground multi-threaded
+![Invoked TinyOrmPlayground multi-threaded](/docs/assets/img/features-summary/tinyormplayground-multi-threaded.png)
 
 [action-msvc2019-qt5]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2019-qt5.yml
 [action-msvc2019-qt5-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2019-qt5.yml/badge.svg
