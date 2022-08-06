@@ -40,7 +40,7 @@ Whole library is documented as markdown documents:
   - [Hello world](/docs/building/hello-world.mdx#building-hello-world)
   - [Migrations](/docs/building/migrations.mdx#building-migrations)
 
-## Features Summary
+### Features Summary
 
  - simple database connections management 🧬
    - database manager that helps with the database connections management
