@@ -5,3 +5,4 @@ Almost every modern application interacts with a database. TinyORM makes interac
 - [Getting Started](getting-started.mdx#database-getting-started)
 - [Query Builder](query-builder.mdx#database-query-builder)
 - [Migrations](migrations.mdx#database-migrations)
+- [Seeding](database/seeding.mdx#database-seeding)
