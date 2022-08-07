@@ -2704,7 +2704,7 @@ namespace Tiny::Relations
             const std::function<bool(QVector<Related> &&, int)> &callback,
             const QString &column, const QString &alias) const
     {
-        return getQuery().chunkById(callback, count, column, alias);
+        return getQuery().chunkById(count, callback, column, alias);
     }
 
     template<class Model, class Related>
