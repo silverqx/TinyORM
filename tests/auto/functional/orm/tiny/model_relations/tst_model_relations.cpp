@@ -151,6 +151,17 @@ private slots:
     void hasNested_Count_OnHasMany() const;
     void hasNested_Count_TinyBuilder_OnHasMany() const;
 
+    /* Relation related */
+    /* Builds Queries */
+    void chunk_Relation() const;
+    void each_Relation() const;
+    void chunkMap_Relation() const;
+    void chunkMap_TemplatedReturnValue_Relation() const;
+    void chunkById_Relation() const;
+    void chunkById_WithAlias_Relation() const;
+    void eachById_Relation() const;
+    void eachById_WithAlias_Relation() const;
+
     /* BelongsToMany related */
     void find() const;
 
@@ -2261,6 +2272,319 @@ void tst_Model_Relations::hasNested_Count_TinyBuilder_OnHasMany() const
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
+/* Relation related */
+
+/* Builds Queries */
+
+void tst_Model_Relations::chunk_Relation() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    using SizeType = QVector<FilePropertyProperty>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 1}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(3);
+
+    auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
+                  ->orderBy(ID)
+                  .chunk(2, [&compareResultSize, &ids]
+                            (QVector<FilePropertyProperty> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&fileProperty : models)
+            ids.emplace_back(fileProperty[ID]->template value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {6, 7, 8};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::each_Relation() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    std::vector<int> indexes;
+    indexes.reserve(3);
+    std::vector<quint64> ids;
+    ids.reserve(3);
+
+    auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
+                  ->orderBy(ID)
+                  .each([&indexes, &ids]
+                        (FilePropertyProperty &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2};
+    std::vector<quint64> expectedIds {6, 7, 8};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+namespace
+{
+    /*! Used to compare results from the TinyBuilder::chunkMap() method for
+        the FilePropertyProperty model. */
+    struct IdAndName
+    {
+        /*! FilePropertyProperty ID. */
+        quint64 id;
+        /*! FilePropertyProperty name. */
+        QString name;
+
+        /*! Comparison operator for the IdAndName. */
+        inline bool operator==(const IdAndName &right) const noexcept
+        {
+            return id == right.id && name == right.name;
+        }
+    };
+} // namespace
+
+void tst_Model_Relations::chunkMap_Relation() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
+                  ->orderBy(ID)
+                  .chunkMap([](FilePropertyProperty &&model)
+    {
+        auto nameRef = model[NAME];
+
+        // Modify the name attribute
+        nameRef = QStringLiteral("%1_mapped").arg(nameRef->template value<QString>());
+
+        return std::move(model);
+    });
+
+    QVector<IdAndName> expectedResult {
+        {6, "test5_file1_property1_mapped"},
+        {7, "test5_file1_property2_mapped"},
+        {8, "test5_file1_property3_mapped"},
+    };
+
+    // Transform the result so we can compare it
+    auto resultTransformed = result
+            | ranges::views::transform([](const FilePropertyProperty &model)
+                                       -> IdAndName
+    {
+        return {model.getAttribute(ID).value<quint64>(),
+                model.getAttribute(NAME).value<QString>()};
+    })
+            | ranges::to<QVector<IdAndName>>();
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(resultTransformed, expectedResult);
+}
+
+void tst_Model_Relations::chunkMap_TemplatedReturnValue_Relation() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
+                  ->chunkMap<QString>([](FilePropertyProperty &&model)
+    {
+        // Return the modify name directly
+        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+    });
+
+    QVector<QString> expectedResult {
+        {"test5_file1_property1_mapped"},
+        {"test5_file1_property2_mapped"},
+        {"test5_file1_property3_mapped"},
+    };
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(result, expectedResult);
+}
+
+void tst_Model_Relations::chunkById_Relation() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    using SizeType = QVector<FilePropertyProperty>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 1}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(3);
+
+    auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
+                  ->orderBy(ID)
+                  .chunkById(2, [&compareResultSize, &ids]
+                                (QVector<FilePropertyProperty> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&fileProperty : models)
+            ids.emplace_back(fileProperty.getAttribute(ID).value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {6, 7, 8};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::chunkById_WithAlias_Relation() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    using SizeType = QVector<FilePropertyProperty>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 1}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(3);
+
+    auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
+                  ->select({ASTERISK, "id as id_as"})
+                  .orderBy(ID)
+                  .chunkById(2, [&compareResultSize, &ids]
+                                (QVector<FilePropertyProperty> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&tag : models)
+            ids.emplace_back(tag.getAttribute(ID).value<quint64>());
+
+        return true;
+    },
+            ID, "id_as");
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {6, 7, 8};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::eachById_Relation() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    std::vector<int> indexes;
+    indexes.reserve(3);
+    std::vector<quint64> ids;
+    ids.reserve(3);
+
+    auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
+                  ->orderBy(ID)
+                  .eachById([&indexes, &ids]
+                            (FilePropertyProperty &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2};
+    std::vector<quint64> expectedIds {6, 7, 8};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::eachById_WithAlias_Relation() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    std::vector<int> indexes;
+    indexes.reserve(3);
+    std::vector<quint64> ids;
+    ids.reserve(3);
+
+    auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
+                  ->select({ASTERISK, "id as id_as"})
+                  .orderBy(ID)
+                  .eachById([&indexes, &ids]
+                            (FilePropertyProperty &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        return true;
+    },
+            1000, ID, "id_as");
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2};
+    std::vector<quint64> expectedIds {6, 7, 8};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
 void tst_Model_Relations::find() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -2789,25 +3113,6 @@ void tst_Model_Relations::each_EmptyResult() const
     QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
-
-namespace
-{
-    /*! Used to compare results from the TinyBuilder::chunkMap() method for
-        the FilePropertyProperty model. */
-    struct IdAndName
-    {
-        /*! FilePropertyProperty ID. */
-        quint64 id;
-        /*! FilePropertyProperty name. */
-        QString name;
-
-        /*! Comparison operator for the IdAndName. */
-        inline bool operator==(const IdAndName &right) const noexcept
-        {
-            return id == right.id && name == right.name;
-        }
-    };
-} // namespace
 
 void tst_Model_Relations::chunkMap() const
 {
