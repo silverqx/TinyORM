@@ -1126,8 +1126,8 @@ void tst_Model_Connection_Independent::chunkById() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&model : models)
-            ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        for (auto &&tag : models)
+            ids.emplace_back(tag.getAttribute(ID).value<quint64>());
 
         return true;
     });
@@ -1163,8 +1163,8 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&model : models) {
-            auto id = model.getAttribute(ID).value<quint64>();
+        for (auto &&tag : models) {
+            auto id = tag.getAttribute(ID).value<quint64>();
             ids.emplace_back(id);
 
             // Interrupt chunk-ing
@@ -1227,8 +1227,8 @@ void tst_Model_Connection_Independent::chunkById_WithAlias() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&model : models)
-            ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        for (auto &&tag : models)
+            ids.emplace_back(tag.getAttribute(ID).value<quint64>());
 
         return true;
     },
@@ -1266,8 +1266,8 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse_WithAlias() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&model : models) {
-            auto id = model.getAttribute(ID).value<quint64>();
+        for (auto &&tag : models) {
+            auto id = tag.getAttribute(ID).value<quint64>();
             ids.emplace_back(id);
 
             // Interrupt chunk-ing
