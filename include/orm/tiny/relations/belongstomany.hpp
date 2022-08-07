@@ -45,8 +45,12 @@ namespace Orm::Tiny::Relations
         inline BelongsToMany(const BelongsToMany &) = default;
 
     public:
-        /*! Related instance type passed to the relation. */
+        /*! Parent Model type. */
+        using ModelType = Model;
+        /*! Related type. */
         using RelatedType = Related;
+        /*! Pivot type. */
+        using PivotTypeType = PivotType;
 
         /*! Virtual destructor. */
         inline ~BelongsToMany() override = default;

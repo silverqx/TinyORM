@@ -48,7 +48,9 @@ namespace Relations
         inline Relation(const Relation &) = default;
 
     public:
-        /*! Related instance type passed to the relation. */
+        /*! Parent Model type. */
+        using ModelType = Model;
+        /*! Related type. */
         using RelatedType = Related;
 
         /*! Pure virtual destructor. */

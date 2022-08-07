@@ -28,7 +28,9 @@ namespace Orm::Tiny::Relations
                   const QString &relationName);
 
     public:
-        /*! Related instance type passed to the relation. */
+        /*! Parent Model type. */
+        using ModelType = Model;
+        /*! Related type. */
         using RelatedType = Related;
 
         /*! Virtual destructor. */

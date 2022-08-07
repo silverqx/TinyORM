@@ -39,6 +39,11 @@ namespace Tiny::Relations
         inline RelationProxies(const RelationProxies &) = default;
 
     public:
+        /*! Parent Model type. */
+        using ModelType = Model;
+        /*! Related type. */
+        using RelatedType = Related;
+
         /*! Default constructor. */
         inline RelationProxies() = default;
         /*! Pure virtual destructor. */
