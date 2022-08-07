@@ -735,15 +735,17 @@ namespace Tiny::Relations
 
         /* Builds Queries */
         /*! Chunk the results of the query. */
-        bool chunk(int count,
-                   const std::function<
-                       bool(QVector<Related> &&models, int page)> &callback) const;
+        virtual bool
+        chunk(int count,
+              const std::function<
+                  bool(QVector<Related> &&models, int page)> &callback) const;
         /*! Execute a callback over each item while chunking. */
-        bool each(const std::function<bool(Related &&model, int index)> &callback,
-                  int count = 1000) const;
+        virtual bool
+        each(const std::function<bool(Related &&model, int index)> &callback,
+             int count = 1000) const;
 
         /*! Run a map over each item while chunking. */
-        QVector<Related>
+        virtual QVector<Related>
         chunkMap(const std::function<Related(Related &&model)> &callback,
                  int count = 1000) const;
         /*! Run a map over each item while chunking. */
@@ -753,14 +755,16 @@ namespace Tiny::Relations
                  int count = 1000) const;
 
         /*! Chunk the results of a query by comparing IDs. */
-        bool chunkById(int count,
-                       const std::function<
-                           bool(QVector<Related> &&models, int page)> &callback,
-                       const QString &column = "", const QString &alias = "") const;
+        virtual bool
+        chunkById(int count,
+                  const std::function<
+                      bool(QVector<Related> &&models, int page)> &callback,
+                  const QString &column = "", const QString &alias = "") const;
         /*! Execute a callback over each item while chunking by ID. */
-        bool eachById(const std::function<bool(Related &&model, int index)> &callback,
-                      int count = 1000, const QString &column = "",
-                      const QString &alias = "") const;
+        virtual bool
+        eachById(const std::function<bool(Related &&model, int index)> &callback,
+                 int count = 1000, const QString &column = "",
+                 const QString &alias = "") const;
 
         /*! Execute the query and get the first result if it's the sole matching
             record. */

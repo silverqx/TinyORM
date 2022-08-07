@@ -163,6 +163,41 @@ private slots:
     void firstOr_WithReturnType() const;
 
     void whereRowValues() const;
+
+    /* Builds Queries */
+    void chunk() const;
+    void chunk_ReturnFalse() const;
+    void chunk_EnforceOrderBy() const;
+    void chunk_EmptyResult() const;
+
+    void each() const;
+    void each_ReturnFalse() const;
+    void each_EnforceOrderBy() const;
+    void each_EmptyResult() const;
+
+    void chunkMap() const;
+    void chunkMap_EnforceOrderBy() const;
+    void chunkMap_EmptyResult() const;
+
+    void chunkMap_TemplatedReturnValue() const;
+    void chunkMap_EnforceOrderBy_TemplatedReturnValue() const;
+    void chunkMap_EmptyResult_TemplatedReturnValue() const;
+
+    void chunkById() const;
+    void chunkById_ReturnFalse() const;
+    void chunkById_EmptyResult() const;
+
+    void chunkById_WithAlias() const;
+    void chunkById_ReturnFalse_WithAlias() const;
+    void chunkById_EmptyResult_WithAlias() const;
+
+    void eachById() const;
+    void eachById_ReturnFalse() const;
+    void eachById_EmptyResult() const;
+
+    void eachById_WithAlias() const;
+    void eachById_ReturnFalse_WithAlias() const;
+    void eachById_EmptyResult_WithAlias() const;
 };
 
 void tst_Model_Relations::initTestCase_data() const
@@ -2436,6 +2471,965 @@ void tst_Model_Relations::whereRowValues() const
     QVERIFY(tag);
     QCOMPARE(tag->getAttribute(ID), QVariant(1));
     QCOMPARE(tag->getAttribute(NAME), QVariant("tag1"));
+}
+
+/* Builds Queries */
+
+namespace
+{
+    /*! Verify whether the custom Tagged pivot attribute was correctly hydrated. */
+    const auto verifyTaggedPivot = [](Tag &tag)
+    {
+        /* Custom Pivot relation as the Tagged class, under the 'tagged'
+           key in the m_relations hash. */
+        auto *tagged = tag.getRelation<Tagged, One>("tagged");
+        QVERIFY(tagged);
+        QVERIFY(tagged->exists);
+        QCOMPARE(typeid (Tagged *), typeid (tagged));
+
+        QCOMPARE(tagged->getForeignKey(), QString("torrent_id"));
+        QCOMPARE(tagged->getRelatedKey(), QString("tag_id"));
+
+        const auto &attributesHash = tagged->getAttributesHash();
+
+        QCOMPARE(attributesHash.size(), static_cast<std::size_t>(5));
+
+        QCOMPARE(tagged->getAttribute("torrent_id"),
+                 QVariant(static_cast<quint64>(2)));
+    };
+} // namespace
+
+void tst_Model_Relations::chunk() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    using SizeType = QVector<Tag>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(4);
+
+    auto result = Torrent::find(2)->tags()->orderBy(ID)
+                  .chunk(2, [&compareResultSize, &ids]
+                            (QVector<Tag> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&tag : models) {
+            ids.emplace_back(tag[ID]->template value<quint64>());
+
+            verifyTaggedPivot(tag);
+        }
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::chunk_ReturnFalse() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    using SizeType = QVector<Tag>::size_type;
+
+    // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much)
+    const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(2);
+
+    auto result = Torrent::find(2)->tags()->orderBy(ID)
+                  .chunk(2, [&compareResultSize, &ids]
+                            (QVector<Tag> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&tag : models) {
+            auto id = tag[ID]->template value<quint64>();
+            ids.emplace_back(id);
+
+            verifyTaggedPivot(tag);
+
+            // Interrupt chunk-ing
+            if (id == 2)
+                return false;
+        }
+
+        return true;
+    });
+
+    QVERIFY(!result);
+
+    std::vector<quint64> expectedIds {1, 2};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::chunk_EnforceOrderBy() const
+{
+    /* The TinBuilder version doesn't throws exception if the 'order by' clause is not
+       specified, instead it adds a generic 'order by' clause
+       on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    using SizeType = QVector<Tag>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(4);
+
+    auto result = Torrent::find(2)->tags()
+                  ->chunk(2, [&compareResultSize, &ids]
+                             (QVector<Tag> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&tag : models) {
+            ids.emplace_back(tag[ID]->template value<quint64>());
+
+            verifyTaggedPivot(tag);
+        }
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::chunk_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto callbackInvoked = false;
+
+    auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
+                                                    QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .chunk(2, [&callbackInvoked]
+                            (QVector<Tag> &&/*unused*/, const int /*unused*/)
+    {
+        callbackInvoked = true;
+
+        return true;
+    });
+
+    QVERIFY(!callbackInvoked);
+    QVERIFY(result);
+}
+
+void tst_Model_Relations::each() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    std::vector<int> indexes;
+    indexes.reserve(4);
+    std::vector<quint64> ids;
+    ids.reserve(4);
+
+    auto result = Torrent::find(2)->tags()->orderBy(ID)
+                  .each([&indexes, &ids]
+                        (Tag &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+
+        verifyTaggedPivot(model);
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3};
+    std::vector<quint64> expectedIds {1, 2, 3, 4};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::each_ReturnFalse() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    std::vector<int> indexes;
+    indexes.reserve(2);
+    std::vector<quint64> ids;
+    ids.reserve(2);
+
+    auto result = Torrent::find(2)->tags()->orderBy(ID)
+                  .each([&indexes, &ids]
+                        (Tag &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+
+        verifyTaggedPivot(model);
+
+        return index != 1; // false/interrupt on 1
+    });
+
+    QVERIFY(!result);
+
+    std::vector<int> expectedIndexes {0, 1};
+    std::vector<quint64> expectedIds {1, 2};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::each_EnforceOrderBy() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    /* The TinBuilder version doesn't throws exception if the 'order by' clause is not
+       specified, instead it adds a generic 'order by' clause
+       on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
+    std::vector<int> indexes;
+    indexes.reserve(4);
+    std::vector<quint64> ids;
+    ids.reserve(4);
+
+    auto result = Torrent::find(2)->tags()
+                  ->each([&indexes, &ids]
+                         (Tag &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+
+        verifyTaggedPivot(model);
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3};
+    std::vector<quint64> expectedIds {1, 2, 3, 4};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::each_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto callbackInvoked = false;
+
+    auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
+                                                    QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .each([&callbackInvoked]
+                        (Tag &&/*unused*/, const int /*unused*/)
+    {
+        callbackInvoked = true;
+
+        return true;
+    });
+
+    QVERIFY(!callbackInvoked);
+    QVERIFY(result);
+}
+
+namespace
+{
+    /*! Used to compare results from the TinyBuilder::chunkMap() method for
+        the FilePropertyProperty model. */
+    struct IdAndName
+    {
+        /*! FilePropertyProperty ID. */
+        quint64 id;
+        /*! FilePropertyProperty name. */
+        QString name;
+
+        /*! Comparison operator for the IdAndName. */
+        inline bool operator==(const IdAndName &right) const noexcept
+        {
+            return id == right.id && name == right.name;
+        }
+    };
+} // namespace
+
+void tst_Model_Relations::chunkMap() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto result = Torrent::find(2)->tags()->orderBy(ID)
+                  .chunkMap([](Tag &&model)
+    {
+        auto nameRef = model[NAME];
+
+        // Modify the name attribute
+        nameRef = QStringLiteral("%1_mapped").arg(nameRef->template value<QString>());
+
+        verifyTaggedPivot(model);
+
+        return std::move(model);
+    });
+
+    QVector<IdAndName> expectedResult {
+        {1, "tag1_mapped"},
+        {2, "tag2_mapped"},
+        {3, "tag3_mapped"},
+        {4, "tag4_mapped"},
+    };
+
+    // Transform the result so we can compare it
+    auto resultTransformed = result
+            | ranges::views::transform([](const Tag &model) -> IdAndName
+    {
+        return {model.getAttribute(ID).value<quint64>(),
+                model.getAttribute(NAME).value<QString>()};
+    })
+            | ranges::to<QVector<IdAndName>>();
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(resultTransformed, expectedResult);
+}
+
+void tst_Model_Relations::chunkMap_EnforceOrderBy() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    /* The TinBuilder version doesn't throws exception if the 'order by' clause is not
+       specified, instead it adds a generic 'order by' clause
+       on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
+    auto result = Torrent::find(2)->tags()->chunkMap([](Tag &&model)
+    {
+        auto nameRef = model[NAME];
+
+        // Modify the name attribute
+        nameRef = QStringLiteral("%1_mapped").arg(nameRef->template value<QString>());
+
+        verifyTaggedPivot(model);
+
+        return std::move(model);
+    });
+
+    QVector<IdAndName> expectedResult {
+        {1, "tag1_mapped"},
+        {2, "tag2_mapped"},
+        {3, "tag3_mapped"},
+        {4, "tag4_mapped"},
+    };
+
+    // Transform the result so I can compare it
+    auto resultTransformed = result
+            | ranges::views::transform([](const Tag &model) -> IdAndName
+    {
+        return {model.getAttribute(ID).value<quint64>(),
+                model.getAttribute(NAME).value<QString>()};
+    })
+            | ranges::to<QVector<IdAndName>>();
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(resultTransformed, expectedResult);
+}
+
+void tst_Model_Relations::chunkMap_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto callbackInvoked = false;
+
+    auto result = Torrent::find(2)->tags()
+                  ->whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"))
+                  .chunkMap([&callbackInvoked](Tag &&model)
+    {
+        callbackInvoked = true;
+
+        return std::move(model);
+    });
+
+    QVERIFY(!callbackInvoked);
+    QVERIFY((std::is_same_v<decltype (result), QVector<Tag>>));
+    QVERIFY(result.isEmpty());
+}
+
+void tst_Model_Relations::chunkMap_TemplatedReturnValue() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Ownership of a unique_ptr()
+    const auto relation = Torrent::find(2)->tags();
+
+    relation->orderBy(ID);
+
+    auto result = relation->chunkMap<QString>([](Tag &&model)
+    {
+        verifyTaggedPivot(model);
+
+        // Return the modify name directly
+        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+    });
+
+    QVector<QString> expectedResult {
+        {"tag1_mapped"},
+        {"tag2_mapped"},
+        {"tag3_mapped"},
+        {"tag4_mapped"},
+    };
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(result, expectedResult);
+}
+
+void
+tst_Model_Relations::chunkMap_EnforceOrderBy_TemplatedReturnValue() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    /* The TinBuilder version doesn't throws exception if the 'order by' clause is not
+       specified, instead it adds a generic 'order by' clause
+       on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
+
+    // Ownership of a unique_ptr()
+    const auto relation = Torrent::find(2)->tags();
+
+    auto result = relation->chunkMap<QString>([](Tag &&model)
+    {
+        verifyTaggedPivot(model);
+
+        // Return the modify name directly
+        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+    });
+
+    QVector<QString> expectedResult {
+        {"tag1_mapped"},
+        {"tag2_mapped"},
+        {"tag3_mapped"},
+        {"tag4_mapped"},
+    };
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(result, expectedResult);
+}
+
+void tst_Model_Relations::chunkMap_EmptyResult_TemplatedReturnValue() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto callbackInvoked = false;
+
+    // Ownership of a unique_ptr()
+    const auto relation = Torrent::find(2)->tags();
+
+    relation->whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"));
+
+    auto result = relation->chunkMap<QString>([&callbackInvoked](Tag &&/*unused*/)
+                                              -> QString
+    {
+        callbackInvoked = true;
+
+        return {};
+    });
+
+    QVERIFY(!callbackInvoked);
+    QVERIFY((std::is_same_v<decltype (result), QVector<QString>>));
+    QVERIFY(result.isEmpty());
+}
+
+void tst_Model_Relations::chunkById() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    using SizeType = QVector<Tag>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(4);
+
+    auto result = Torrent::find(2)->tags()->orderBy(ID)
+                  .chunkById(2, [&compareResultSize, &ids]
+                                (QVector<Tag> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&tag : models) {
+            ids.emplace_back(tag.getAttribute(ID).value<quint64>());
+
+            verifyTaggedPivot(tag);
+        }
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::chunkById_ReturnFalse() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    using SizeType = QVector<Tag>::size_type;
+
+    // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much
+    const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(2);
+
+    auto result = Torrent::find(2)->tags()->orderBy(ID)
+                  .chunkById(2, [&compareResultSize, &ids]
+                                (QVector<Tag> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&tag : models) {
+            auto id = tag.getAttribute(ID).value<quint64>();
+            ids.emplace_back(id);
+
+            verifyTaggedPivot(tag);
+
+            // Interrupt chunk-ing
+            if (id == 2)
+                return false;
+        }
+
+        return true;
+    });
+
+    QVERIFY(!result);
+
+    std::vector<quint64> expectedIds {1, 2};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::chunkById_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto callbackInvoked = false;
+
+    auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
+                                                    QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .chunkById(2, [&callbackInvoked]
+                                (QVector<Tag> &&/*unused*/, const int /*unused*/)
+    {
+        callbackInvoked = true;
+
+        return true;
+    });
+
+    QVERIFY(!callbackInvoked);
+    QVERIFY(result);
+}
+
+void tst_Model_Relations::chunkById_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    using SizeType = QVector<Tag>::size_type;
+
+    // <page, chunk_modelsCount>
+    const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(4);
+
+    auto result = Torrent::find(2)->tags()
+                  ->select({ASTERISK, "torrent_tags.id as id_as"})
+                  .orderBy(ID)
+                  .chunkById(2, [&compareResultSize, &ids]
+                                (QVector<Tag> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&tag : models) {
+            ids.emplace_back(tag.getAttribute(ID).value<quint64>());
+
+            verifyTaggedPivot(tag);
+        }
+
+        return true;
+    },
+            ID, "id_as");
+
+    QVERIFY(result);
+
+    std::vector<quint64> expectedIds {1, 2, 3, 4};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::chunkById_ReturnFalse_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    using SizeType = QVector<Tag>::size_type;
+
+    // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much
+    const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
+
+    /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
+       and it causes compile error. */
+    const auto compareResultSize = [&expectedRows](const SizeType size, const int page)
+    {
+        QCOMPARE(size, expectedRows.at(page));
+    };
+
+    std::vector<quint64> ids;
+    ids.reserve(2);
+
+    auto result = Torrent::find(2)->tags()
+                  ->select({ASTERISK, "torrent_tags.id as id_as"})
+                  .orderBy(ID)
+                  .chunkById(2, [&compareResultSize, &ids]
+                                (QVector<Tag> &&models, const int page)
+    {
+        compareResultSize(models.size(), page);
+
+        for (auto &&tag : models) {
+            auto id = tag.getAttribute(ID).value<quint64>();
+            ids.emplace_back(id);
+
+            verifyTaggedPivot(tag);
+
+            // Interrupt chunk-ing
+            if (id == 2)
+                return false;
+        }
+
+        return true;
+    },
+            ID, "id_as");
+
+    QVERIFY(!result);
+
+    std::vector<quint64> expectedIds {1, 2};
+
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::chunkById_EmptyResult_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto callbackInvoked = false;
+
+    auto result = Torrent::find(2)->tags()
+                  ->select({ASTERISK, "torrent_tags.id as id_as"})
+                  .whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .chunkById(2, [&callbackInvoked]
+                                (QVector<Tag> &&/*unused*/, const int /*unused*/)
+    {
+        callbackInvoked = true;
+
+        return true;
+    },
+            ID, "id_as");
+
+    QVERIFY(!callbackInvoked);
+    QVERIFY(result);
+}
+
+void tst_Model_Relations::eachById() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    std::vector<int> indexes;
+    indexes.reserve(4);
+    std::vector<quint64> ids;
+    ids.reserve(4);
+
+    auto result = Torrent::find(2)->tags()
+                  ->orderBy(ID)
+                  .eachById([&indexes, &ids]
+                            (Tag &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        verifyTaggedPivot(model);
+
+        return true;
+    });
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3};
+    std::vector<quint64> expectedIds {1, 2, 3, 4};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::eachById_ReturnFalse() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    std::vector<int> indexes;
+    indexes.reserve(2);
+    std::vector<quint64> ids;
+    ids.reserve(2);
+
+    auto result = Torrent::find(2)->tags()
+                  ->orderBy(ID)
+                  .eachById([&indexes, &ids]
+                            (Tag &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        verifyTaggedPivot(model);
+
+        return index != 1; // false/interrupt on 1
+    });
+
+    QVERIFY(!result);
+
+    std::vector<int> expectedIndexes {0, 1};
+    std::vector<quint64> expectedIds {1, 2};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::eachById_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto callbackInvoked = false;
+
+    auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
+                                                    QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .eachById([&callbackInvoked]
+                            (Tag &&/*unused*/, const int /*unused*/)
+    {
+        callbackInvoked = true;
+
+        return true;
+    });
+
+    QVERIFY(!callbackInvoked);
+    QVERIFY(result);
+}
+
+void tst_Model_Relations::eachById_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    std::vector<int> indexes;
+    indexes.reserve(4);
+    std::vector<quint64> ids;
+    ids.reserve(4);
+
+    auto result = Torrent::find(2)->tags()
+                  ->select({ASTERISK, "torrent_tags.id as id_as"})
+                  .orderBy(ID)
+                  .eachById([&indexes, &ids]
+                            (Tag &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        verifyTaggedPivot(model);
+
+        return true;
+    },
+            1000, ID, "id_as");
+
+    QVERIFY(result);
+
+    std::vector<int> expectedIndexes {0, 1, 2, 3};
+    std::vector<quint64> expectedIds {1, 2, 3, 4};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::eachById_ReturnFalse_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    std::vector<int> indexes;
+    indexes.reserve(2);
+    std::vector<quint64> ids;
+    ids.reserve(2);
+
+    auto result = Torrent::find(2)->tags()
+                  ->select({ASTERISK, "torrent_tags.id as id_as"})
+                  .orderBy(ID)
+                  .eachById([&indexes, &ids]
+                            (Tag &&model, const int index)
+    {
+        indexes.emplace_back(index);
+        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+
+        verifyTaggedPivot(model);
+
+        return index != 1; // false/interrupt on 1
+    },
+            1000, ID, "id_as");
+
+    QVERIFY(!result);
+
+    std::vector<int> expectedIndexes {0, 1};
+    std::vector<quint64> expectedIds {1, 2};
+
+    QVERIFY(indexes.size() == expectedIndexes.size());
+    QCOMPARE(indexes, expectedIndexes);
+    QVERIFY(ids.size() == expectedIds.size());
+    QCOMPARE(ids, expectedIds);
+}
+
+void tst_Model_Relations::eachById_EmptyResult_WithAlias() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto callbackInvoked = false;
+
+    auto result = Torrent::find(2)->tags()
+                  ->select({ASTERISK, "torrent_tags.id as id_as"})
+                  .whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"))
+                  .orderBy(ID)
+                  .eachById([&callbackInvoked]
+                            (Tag &&/*unused*/, const int /*unused*/)
+    {
+        callbackInvoked = true;
+
+        return true;
+    },
+            1000, ID, "id_as");
+
+    QVERIFY(!callbackInvoked);
+    QVERIFY(result);
 }
 
 QTEST_MAIN(tst_Model_Relations)

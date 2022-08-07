@@ -19,7 +19,6 @@ namespace Orm::Query
 namespace Concerns
 {
 
-    // TODO buildsqueries, missing chunkMap() silverqx
     /*! More complex 'Retrieving results' methods that internally build queries. */
     class SHAREDLIB_EXPORT BuildsQueries // clazy:exclude=copyable-polymorphic
     {

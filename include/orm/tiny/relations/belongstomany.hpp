@@ -210,6 +210,36 @@ namespace Orm::Tiny::Relations
         firstWhereEq(const Column &column, const QVariant &value,
                      const QString &condition = AND) const override;
 
+        /* Builds Queries */
+        /*! Chunk the results of the query. */
+        bool chunk(int count,
+                   const std::function<bool(QVector<Related> &&models,
+                                            int page)> &callback) const override;
+        /*! Execute a callback over each item while chunking. */
+        bool each(const std::function<bool(Related &&model, int index)> &callback,
+                  int count = 1000) const override;
+
+        /*! Run a map over each item while chunking. */
+        QVector<Related>
+        chunkMap(const std::function<Related(Related &&model)> &callback,
+                 int count = 1000) const override;
+        /*! Run a map over each item while chunking. */
+        template<typename T>
+        QVector<T>
+        chunkMap(const std::function<T(Related &&model)> &callback,
+                 int count = 1000) const;
+
+        /*! Chunk the results of a query by comparing IDs. */
+        bool chunkById(int count,
+                       const std::function<
+                           bool(QVector<Related> &&models, int page)> &callback,
+                       const QString &column = "",
+                       const QString &alias = "") const override;
+        /*! Execute a callback over each item while chunking by ID. */
+        bool eachById(const std::function<bool(Related &&model, int index)> &callback,
+                      int count = 1000, const QString &column = "",
+                      const QString &alias = "") const override;
+
         /* Inserting/Updating operations on the relationship */
         /*! Attach a model instance to the parent model. */
         std::tuple<bool, Related &>
@@ -277,6 +307,8 @@ namespace Orm::Tiny::Relations
         QHash<typename Model::KeyType, QVector<Related>>
         buildDictionary(QVector<Related> &&results) const;
 
+        /*! Prepare the query builder for query execution. */
+        Builder<Related> &prepareQueryBuilder() const;
         /*! Get the select columns for the relation query. */
         QVector<Column> shouldSelect(QVector<Column> columns = {ASTERISK}) const;
         /*! Get the pivot columns for the relation, "pivot_" is prefixed
@@ -907,6 +939,126 @@ namespace Orm::Tiny::Relations
         return firstWhere(column, EQ, value, condition);
     }
 
+    /* Builds Queries */
+
+    template<class Model, class Related, class PivotType>
+    bool BelongsToMany<Model, Related, PivotType>::chunk(
+            const int count,
+            const std::function<bool(QVector<Related> &&, int)> &callback) const
+    {
+        return prepareQueryBuilder().chunk(count,
+                                           [this, &callback]
+                                           (QVector<Related> &&models, const int page)
+        {
+            hydratePivotRelation(models);
+
+            return std::invoke(callback, std::move(models), page);
+        });
+    }
+
+    template<class Model, class Related, class PivotType>
+    bool BelongsToMany<Model, Related, PivotType>::each(
+            const std::function<bool(Related &&, int)> &callback, int count) const
+    {
+        return chunk(count, [&callback](QVector<Related> &&models, const int /*unused*/)
+        {
+            int index = 0;
+
+            for (auto &&model : models)
+                if (const auto result = std::invoke(callback, std::move(model), index++);
+                    !result
+                )
+                    return false;
+
+            return true;
+        });
+    }
+
+    template<class Model, class Related, class PivotType>
+    QVector<Related>
+    BelongsToMany<Model, Related, PivotType>::chunkMap(
+            const std::function<Related(Related &&)> &callback, const int count) const
+    {
+        QVector<Related> result;
+
+        chunk(count, [&result, &callback]
+                     (QVector<Related> &&models, const int /*unused*/)
+        {
+            for (auto &&model : models)
+                result << std::invoke(callback, std::move(model));
+
+            return true;
+        });
+
+        return result;
+    }
+
+    template<class Model, class Related, class PivotType>
+    template<typename T>
+    QVector<T>
+    BelongsToMany<Model, Related, PivotType>::chunkMap(
+            const std::function<T(Related &&)> &callback, const int count) const
+    {
+        QVector<T> result;
+
+        chunk(count, [&result, &callback]
+                     (QVector<Related> &&models, const int /*unused*/)
+        {
+            for (auto &&model : models)
+                result << std::invoke(callback, std::move(model));
+
+            return true;
+        });
+
+        return result;
+    }
+
+    template<class Model, class Related, class PivotType>
+    bool BelongsToMany<Model, Related, PivotType>::chunkById(
+            const int count,
+            const std::function<bool(QVector<Related> &&, int)> &callback,
+            const QString &column, const QString &alias) const
+    {
+        const auto &relatedKeyName = this->getRelatedKeyName();
+
+        const auto columnName = column.isEmpty()
+                                ? this->m_related->qualifyColumn(relatedKeyName)
+                                : column;
+        const auto aliasName = alias.isEmpty() ? relatedKeyName : alias;
+
+        return prepareQueryBuilder()
+                .chunkById(count, [this, &callback]
+                                  (QVector<Related> &&models, const int page)
+        {
+            hydratePivotRelation(models);
+
+            return std::invoke(callback, std::move(models), page);
+        },
+                columnName, aliasName);
+    }
+
+    template<class Model, class Related, class PivotType>
+    bool BelongsToMany<Model, Related, PivotType>::eachById(
+            const std::function<bool(Related &&, int)> &callback,
+            const int count, const QString &column, const QString &alias) const
+    {
+        return chunkById(count, [&callback, count]
+                                (QVector<Related> &&models, const int page)
+        {
+            int index = 0;
+
+            for (auto &&model : models)
+                if (const auto result = std::invoke(callback, std::move(model),
+                                                    ((page - 1) * count) + index++);
+                    !result
+                )
+                    return false;
+
+            return true;
+        },
+                column, alias);
+    }
+
     /* Inserting/Updating operations on the relationship */
 
     template<class Model, class Related, class PivotType>
@@ -1172,6 +1324,13 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
+    Builder<Related> &
+    BelongsToMany<Model, Related, PivotType>::prepareQueryBuilder() const
+    {
+        return this->m_query->addSelect(shouldSelect());
+    }
+
+    template<class Model, class Related, class PivotType>
     QVector<Column>
     BelongsToMany<Model, Related, PivotType>::shouldSelect(QVector<Column> columns) const
     {
@@ -1314,5 +1473,3 @@ namespace Orm::Tiny::Relations
 TINYORM_END_COMMON_NAMESPACE
 
 #endif // ORM_TINY_RELATIONS_BELONGSTOMANY_HPP
-
-// TODO buildsqueries, missing chunk, chunkById, each, eachById; models passed to the callback have to be modified, exactly create aliases with the pivot_ prefix for pivot attributes silverqx
