@@ -871,15 +871,15 @@ TinyORM does not currently support querying for relationship existence across da
 
 #### Related template parameter
 
-All the `has` related methods are templated by the `Related` template parameter, it looks something like the following `has<Related>(..., const std::function<void(CallbackType<Related> &)> &callback = nullptr)`, you can pass a query callback to this parameter and on the base of the `Related` template argument will be decided whether the `Orm::QueryBuilder` or `Orm::TinyBuilder<Related>` will be passed to the callback. As you can see this `Related` parameter exists because the `Orm::TinyBuilder<Related>` needs it.
+All the `has`-related methods are templated by the `Related` template parameter, it looks something like the following `has<Related>(..., const std::function<void(CallbackType<Related> &)> &callback = nullptr)`, you can pass a query callback to this methods and on the base of the `Related` template argument will be decided whether the `Orm::QueryBuilder` or `Orm::TinyBuilder<Related>` will be passed to the callback. As you can see this `Related` parameter exists because the `Orm::TinyBuilder<Related>` needs it.
 
 The rule of thumbs are:
 
- - if you don't pass the `Related` template parameter  or you pass `void` then `Orm::QueryBuilder` will be passed to the callback
- - if you pass it, then `Orm::TinyBuilder<Related>` will be passed to the callback
- - `Related` has to be of the same type as a relation name passed to the `has` related method
- - you have to always pass the `Related` template parameter in nested relations, you can not use nested relations with `Related = void`
- - in nested relations, where you can pass more relation names using "dot" notation, `Related` has to be of the same type as the **last** relation name passed to the `has` related method like you can see in the nested example above or below
+ - if you don't pass the `Related` template parameter  or you pass `void` then the `Orm::QueryBuilder &` will be passed to the callback
+ - if you pass it, then the `Orm::TinyBuilder<Related> &` will be passed to the callback
+ - `Related` has to be of the same type as a relation name passed to the `has`-related method (a real type of the relation eg. type of the `posts` relation name is `Post`)
+ - you have to always pass the `Related` template parameter for nested relations, you can not use nested relations with `Related = void`
+ - in nested relations, where you can pass more relation names using "dot" notation, `Related` has to be of the same type as the **last** relation name passed to the `has`-related method like you can see in the nested example above or below
 
 ### Querying Relationship Absence
 
