@@ -191,6 +191,7 @@ private slots:
     void chunkMap_EmptyResult() const;
 
     void chunkMap_TemplatedReturnValue() const;
+    void chunkMap_TemplatedReturnValue_OnRelationRef() const;
     void chunkMap_EnforceOrderBy_TemplatedReturnValue() const;
     void chunkMap_EmptyResult_TemplatedReturnValue() const;
 
@@ -3230,6 +3231,35 @@ void tst_Model_Relations::chunkMap_TemplatedReturnValue() const
     auto result = relation->chunkMap<QString>([](Tag &&model)
     {
         verifyTaggedPivot(model);
+
+        // Return the modify name directly
+        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+    });
+
+    QVector<QString> expectedResult {
+        {"tag1_mapped"},
+        {"tag2_mapped"},
+        {"tag3_mapped"},
+        {"tag4_mapped"},
+    };
+
+    QVERIFY(expectedResult.size() == result.size());
+    QCOMPARE(result, expectedResult);
+}
+
+void tst_Model_Relations::chunkMap_TemplatedReturnValue_OnRelationRef() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    /* Even if the chunkMap<> is called on the Relation & it can't crash or fail, it
+       should normally works but the pivot table will not be hydrated. */
+    auto result = Torrent::find(2)->tags()->orderBy(ID)
+                  .chunkMap<QString>([](Tag &&model)
+    {
+        // Pivot table is not hydrated
+        Q_ASSERT(!model.relationLoaded("tagged"));
 
         // Return the modify name directly
         return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
