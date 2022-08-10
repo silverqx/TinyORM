@@ -31,6 +31,8 @@ namespace Orm::Connectors
         virtual ConnectionName connect(const QVariantHash &config) const = 0;
     };
 
+    /* public */
+
     ConnectorInterface::~ConnectorInterface() = default;
 
 } // namespace Orm::Connectors

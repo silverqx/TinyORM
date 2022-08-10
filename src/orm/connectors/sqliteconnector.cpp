@@ -17,6 +17,8 @@ using Orm::Constants::NAME;
 namespace Orm::Connectors
 {
 
+/* public */
+
 ConnectionName
 SQLiteConnector::connect(const QVariantHash &config) const
 {
@@ -60,6 +62,8 @@ SQLiteConnector::getConnectorOptions() const
 void SQLiteConnector::parseConfigOptions(QVariantHash &/*unused*/) const
 {}
 
+/* protected */
+
 void SQLiteConnector::configureForeignKeyConstraints(
         const QSqlDatabase &connection, const QVariantHash &config) const
 {
@@ -79,6 +83,8 @@ void SQLiteConnector::configureForeignKeyConstraints(
 
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
+
+/* private */
 
 void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const
 {

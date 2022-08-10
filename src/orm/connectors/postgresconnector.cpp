@@ -19,6 +19,8 @@ using Orm::Constants::timezone_;
 namespace Orm::Connectors
 {
 
+/* public */
+
 ConnectionName
 PostgresConnector::connect(const QVariantHash &config) const
 {
@@ -63,6 +65,8 @@ PostgresConnector::getConnectorOptions() const
 
 void PostgresConnector::parseConfigOptions(QVariantHash &/*unused*/) const
 {}
+
+/* protected */
 
 void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
                                           const QVariantHash &config) const

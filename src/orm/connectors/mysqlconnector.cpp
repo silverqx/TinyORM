@@ -20,6 +20,8 @@ using Orm::Constants::timezone_;
 namespace Orm::Connectors
 {
 
+/* public */
+
 ConnectionName
 MySqlConnector::connect(const QVariantHash &config) const
 {
@@ -85,6 +87,8 @@ void MySqlConnector::parseConfigOptions(QVariantHash &options) const
                     .arg(key, value.message));
     }
 }
+
+/* protected */
 
 void MySqlConnector::configureIsolationLevel(const QSqlDatabase &connection,
                                              const QVariantHash &config) const

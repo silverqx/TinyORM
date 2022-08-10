@@ -12,6 +12,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Connectors
 {
 
+/* public */
+
 std::unique_ptr<DatabaseConnection>
 ConnectionFactory::make(QVariantHash &config, const QString &name) const
 {
@@ -45,6 +47,8 @@ ConnectionFactory::createConnector(const QVariantHash &config) const
     throw Exceptions::RuntimeError(QStringLiteral("Unsupported driver '%1'.")
                                    .arg(driver));
 }
+
+/* protected */
 
 QVariantHash &
 ConnectionFactory::parseConfig(QVariantHash &config, const QString &name) const

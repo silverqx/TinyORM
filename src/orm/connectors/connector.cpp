@@ -17,8 +17,12 @@ using Orm::Constants::username_;
 namespace Orm::Connectors
 {
 
+/* protected */
+
 const QString Connector::m_configureErrorMessage =
         QStringLiteral("Connection configuration statement in %1() failed.");
+
+/* public */
 
 QSqlDatabase
 Connector::createConnection(const QString &name, const QVariantHash &config,
@@ -68,6 +72,8 @@ QString Connector::getOptions(const QVariantHash &config) const
     return Support::ConfigurationOptionsParser(*this)
             .parseConfiguration(config);
 }
+
+/* protected */
 
 QSqlDatabase
 Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
