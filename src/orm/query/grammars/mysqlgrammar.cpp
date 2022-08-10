@@ -24,6 +24,27 @@ QString MySqlGrammar::compileInsertOrIgnore(const QueryBuilder &query,
     return compileInsert(query, values).replace(0, 6, QStringLiteral("insert ignore"));
 }
 
+QString MySqlGrammar::compileUpsert(
+            QueryBuilder &query, const QVector<QVariantMap> &values,
+            const QVector<QString> &/*unused*/, const QVector<QString> &update) const
+{
+    auto sql = compileInsert(query, values);
+
+    sql += QStringLiteral(" on duplicate key update ");
+
+    QStringList columns;
+    columns.reserve(update.size());
+
+    for (const auto &column : update) {
+        auto wrappedColumn = wrap(column);
+
+        columns << QStringLiteral("%1 = values(%2)")
+                   .arg(wrappedColumn, std::move(wrappedColumn));
+    }
+
+    return NOSPACE.arg(std::move(sql), columns.join(COMMA));
+}
+
 QString MySqlGrammar::compileLock(const QueryBuilder &query) const
 {
     const auto &lock = query.getLock();

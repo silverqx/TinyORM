@@ -25,7 +25,7 @@ namespace Orm::Query
     concept Remove = std::convertible_to<T, quint64> ||
                      std::same_as<T, Query::Expression>;
 
-    // TODO querybuilder, upsert, whereDay/Month/..., whereBetween, whereFullText silverqx
+    // TODO querybuilder, whereDay/Month/..., whereBetween, whereFullText silverqx
     // FUTURE querybuilder, paginator silverqx
     /*! Database query builder. */
     class SHAREDLIB_EXPORT Builder : public Concerns::BuildsQueries // clazy:exclude=copyable-polymorphic
@@ -131,6 +131,13 @@ namespace Orm::Query
         std::tuple<int, std::optional<QSqlQuery>>
         updateOrInsert(const QVector<WhereItem> &attributes,
                        const QVector<UpdateItem> &values);
+        /*! Insert new records or update the existing ones. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        upsert(const QVector<QVariantMap> &values, const QVector<QString> &uniqueBy,
+               const QVector<QString> &update);
+        /*! Insert new records or update the existing ones (update all columns). */
+        std::tuple<int, std::optional<QSqlQuery>>
+        upsert(const QVector<QVariantMap> &values, const QVector<QString> &uniqueBy);
 
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery> deleteRow();

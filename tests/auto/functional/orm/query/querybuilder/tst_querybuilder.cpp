@@ -5,6 +5,7 @@
 #include <typeinfo>
 
 #include "orm/db.hpp"
+#include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/query/querybuilder.hpp"
 
 #include "databases.hpp"
@@ -15,9 +16,12 @@ using Orm::Constants::GT;
 using Orm::Constants::ID;
 using Orm::Constants::LT;
 using Orm::Constants::NAME;
+using Orm::Constants::OR;
+using Orm::Constants::QMYSQL;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
+using Orm::Exceptions::InvalidArgumentError;
 using Orm::Exceptions::RuntimeError;
 using Orm::Query::Builder;
 
@@ -50,6 +54,11 @@ private Q_SLOTS:
 
     void updateOrInsert() const;
     void updateOrInsert_EmptyValues() const;
+
+    void upsert() const;
+    void upsert_EmptyValues() const;
+    void upsert_EmptyUpdate() const;
+    void upsert_WithoutUpdate_UpdateAll() const;
 
     void count() const;
     void count_Distinct() const;
@@ -457,8 +466,8 @@ void tst_QueryBuilder::updateOrInsert() const
 
     // update
     {
-        auto [affected, query] = createQuery(connection)->from("user_phones").
-                                 updateOrInsert(
+        auto [affected, query] = createQuery(connection)->from("user_phones")
+                                 .updateOrInsert(
                                      {{"user_id", 3}, {"number", "905111999"}},
                                      {{"number", "905333999"}});
 
@@ -477,7 +486,7 @@ void tst_QueryBuilder::updateOrInsert() const
         QCOMPARE(number, QString("905333999"));
     }
 
-    // remove
+    // remove before insert test
     {
         auto [affected, query] = createQuery(connection)->from("user_phones")
                                  .whereEq("user_id", 3)
@@ -494,8 +503,8 @@ void tst_QueryBuilder::updateOrInsert() const
 
     // insert (also restore db)
     {
-        auto [affected, query] = createQuery(connection)->from("user_phones").
-                                 updateOrInsert(
+        auto [affected, query] = createQuery(connection)->from("user_phones")
+                                 .updateOrInsert(
                                      {{"user_id", 3}, {"number", "905000000"}},
                                      {{"number", "905111999"}});
 
@@ -532,8 +541,8 @@ void tst_QueryBuilder::updateOrInsert_EmptyValues() const
     QVERIFY(expectedId >= 3);
 
     // main operation
-    auto [affected, query] = createQuery(connection)->from("user_phones").
-                             updateOrInsert(
+    auto [affected, query] = createQuery(connection)->from("user_phones")
+                             .updateOrInsert(
                                  {{"user_id", 3}, {"number", "905111999"}},
                                  {});
 
@@ -551,6 +560,206 @@ void tst_QueryBuilder::updateOrInsert_EmptyValues() const
               .whereEq("user_id", 3)
               .value(ID).value<quint64>();
     QCOMPARE(id, expectedId);
+}
+
+void tst_QueryBuilder::upsert() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Should update one row (color column) and insert one row
+    {
+        auto [affected, query] =
+                createQuery(connection)->from("tag_properties")
+                .upsert({{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
+                         {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                        {"position"},
+                        {"color"});
+
+        QVERIFY(query);
+        QVERIFY(!query->isValid() && !query->isSelect() && query->isActive());
+        if (const auto driverName = DB::driverName(connection);
+            driverName == QMYSQL
+        )
+            /* For MySQL the affected-rows value per row is 1 if the row is inserted
+               as a new row, 2 if an existing row is updated, and 0 if an existing row
+               is set to its current values. */
+            QCOMPARE(affected, 3);
+        else
+            QCOMPARE(affected, 2);
+
+        // Validate one update and one insert
+        auto validateQuery = createQuery(connection)->from("tag_properties")
+                             .whereEq("tag_id", 1)
+                             .orderBy("position")
+                             .get();
+
+        QVERIFY(validateQuery.isSelect() && validateQuery.isActive());
+        auto validateQuerySize = QueryUtils::queryResultSize(validateQuery);
+        QCOMPARE(validateQuerySize, 2);
+
+        QVector<QVector<QVariant>> result;
+        result.reserve(validateQuerySize);
+
+        while (validateQuery.next()) {
+            QVERIFY(validateQuery.isValid());
+            result.append({validateQuery.value("color"),
+                           validateQuery.value("position"),
+                           validateQuery.value("tag_id")});
+        }
+
+        QVector<QVector<QVariant>> expextedResult {
+            {"pink",   0, 1},
+            {"purple", 4, 1},
+        };
+
+        QCOMPARE(result, expextedResult);
+    }
+
+    // Restore db
+    {
+        auto [affected, query] = createQuery(connection)->from("tag_properties")
+                                 .whereEq("position", 4)
+                                 .remove();
+
+        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
+        QCOMPARE(affected, 1);
+    }
+    {
+        auto [affected, query] = createQuery(connection)->from("tag_properties")
+                                 .whereEq("id", 1)
+                                 .update({{"color", "white"}});
+
+        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
+        QCOMPARE(affected, 1);
+    }
+
+    // Validate restored db
+    {
+        auto validateQuery = createQuery(connection)->from("tag_properties")
+                             .whereEq("tag_id", 1)
+                             .orderBy("position")
+                             .get();
+
+        QVERIFY(validateQuery.isSelect() && validateQuery.isActive());
+        QCOMPARE(QueryUtils::queryResultSize(validateQuery), 1);
+        QVERIFY(validateQuery.first());
+        QVERIFY(validateQuery.isValid());
+        QCOMPARE(validateQuery.value("color"), QVariant(QString("white")));
+        QCOMPARE(validateQuery.value("position").value<int>(), 0);
+    }
+}
+
+void tst_QueryBuilder::upsert_EmptyValues() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Should just return with no DB operations
+    {
+        auto [affected, query] =
+                createQuery(connection)->from("tag_properties")
+                .upsert({}, {"position"}, {"color"});
+
+        QVERIFY(!query);
+        QCOMPARE(affected, 0);
+    }
+}
+
+void tst_QueryBuilder::upsert_EmptyUpdate() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    QVERIFY_EXCEPTION_THROWN(
+                createQuery(connection)->from("tag_properties")
+                .upsert({{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
+                         {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                        {"position"}, {}),
+                InvalidArgumentError);
+}
+
+void tst_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Should update one row (all columns) and insert one row
+    {
+        auto [affected, query] =
+                createQuery(connection)->from("tag_properties")
+                .upsert({{{"tag_id", 2}, {"color", "pink"},   {"position", 0}},
+                         {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                        {"position"});
+
+        QVERIFY(query);
+        QVERIFY(!query->isValid() && !query->isSelect() && query->isActive());
+        if (const auto driverName = DB::driverName(connection);
+            driverName == QMYSQL
+        )
+            /* For MySQL the affected-rows value per row is 1 if the row is inserted
+               as a new row, 2 if an existing row is updated, and 0 if an existing row
+               is set to its current values. */
+            QCOMPARE(affected, 3);
+        else
+            QCOMPARE(affected, 2);
+
+        // Validate one update and one insert
+        auto validateQuery = createQuery(connection)->from("tag_properties")
+                             .where({{"position", 0}, {"position", 4}}, OR)
+                             .orderBy("position")
+                             .get();
+
+        QVERIFY(validateQuery.isSelect() && validateQuery.isActive());
+        auto validateQuerySize = QueryUtils::queryResultSize(validateQuery);
+        QCOMPARE(validateQuerySize, 2);
+
+        QVector<QVector<QVariant>> result;
+        result.reserve(validateQuerySize);
+
+        while (validateQuery.next()) {
+            QVERIFY(validateQuery.isValid());
+            result.append({validateQuery.value("color"),
+                           validateQuery.value("position"),
+                           validateQuery.value("tag_id")});
+        }
+
+        QVector<QVector<QVariant>> expextedResult {
+            {"pink",   0, 2},
+            {"purple", 4, 1},
+        };
+
+        QCOMPARE(result, expextedResult);
+    }
+
+    // Restore db
+    {
+        auto [affected, query] = createQuery(connection)->from("tag_properties")
+                                 .whereEq("position", 4)
+                                 .remove();
+
+        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
+        QCOMPARE(affected, 1);
+    }
+    {
+        auto [affected, query] = createQuery(connection)->from("tag_properties")
+                                 .whereEq("position", 0)
+                                 .update({{"color", "white"}, {"tag_id", 1}});
+
+        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
+        QCOMPARE(affected, 1);
+    }
+
+    // Validate restored db
+    {
+        auto validateQuery = createQuery(connection)->from("tag_properties")
+                             .whereEq("tag_id", 1)
+                             .orderBy("position")
+                             .get();
+
+        QVERIFY(validateQuery.isSelect() && validateQuery.isActive());
+        QCOMPARE(QueryUtils::queryResultSize(validateQuery), 1);
+        QVERIFY(validateQuery.first());
+        QVERIFY(validateQuery.isValid());
+        QCOMPARE(validateQuery.value("color"), QVariant(QString("white")));
+        QCOMPARE(validateQuery.value("position").value<int>(), 0);
+    }
 }
 
 void tst_QueryBuilder::count() const

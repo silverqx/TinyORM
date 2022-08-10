@@ -24,6 +24,26 @@ QString SQLiteGrammar::compileUpdate(QueryBuilder &query,
     return Grammar::compileUpdate(query, values);
 }
 
+QString SQLiteGrammar::compileUpsert(
+            QueryBuilder &query, const QVector<QVariantMap> &values,
+            const QVector<QString> &uniqueBy, const QVector<QString> &update) const
+{
+    auto sql = compileInsert(query, values);
+
+    sql += QStringLiteral(" on conflict (%1) do update set ").arg(columnize(uniqueBy));
+
+    QStringList columns;
+    columns.reserve(update.size());
+
+    for (const auto &column : update)
+        columns << QStringLiteral("%1 = %2")
+                   .arg(wrap(column),
+                        DOT_IN.arg(wrapValue(QStringLiteral("excluded")),
+                                   wrap(column)));
+
+    return NOSPACE.arg(std::move(sql), columns.join(COMMA));
+}
+
 QString SQLiteGrammar::compileDelete(QueryBuilder &query) const
 {
     if (!query.getJoins().isEmpty() || query.getLimit() > -1)

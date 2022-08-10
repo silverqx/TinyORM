@@ -274,6 +274,47 @@ Builder::updateOrInsert(const QVector<WhereItem> &attributes,
     return limit(1).update(values);
 }
 
+namespace
+{
+    /*! Flat bindings map for an upsert statement (proxy method for better naming). */
+    const auto flatValuesForUpsert = [](const auto &values)
+    {
+        return flatValuesForInsert(values);
+    };
+} // namespace
+
+std::tuple<int, std::optional<QSqlQuery>>
+Builder::upsert(const QVector<QVariantMap> &values, const QVector<QString> &uniqueBy,
+                const QVector<QString> &update)
+{
+    // Nothing to do, no values to insert or update
+    if (values.isEmpty())
+        return {0, std::nullopt};
+
+    // NOTE api different, don't call insert, it's useless silverqx
+    // If the update is an empty vector then throw and don't insert
+    if (update.isEmpty())
+        throw Exceptions::InvalidArgumentError(
+                "The upsert method doesn't support an empty update argument, please use "
+                "the insert method instead.");
+
+    return m_connection.affectingStatement(
+                m_grammar.compileUpsert(*this, values, uniqueBy, update),
+                cleanBindings(flatValuesForUpsert(values)));
+}
+
+std::tuple<int, std::optional<QSqlQuery>>
+Builder::upsert(const QVector<QVariantMap> &values, const QVector<QString> &uniqueBy)
+{
+    // Update all columns
+    // Columns are obtained only from a first QMap
+    const auto update = values.constFirst().keys();
+
+    return m_connection.affectingStatement(
+                m_grammar.compileUpsert(*this, values, uniqueBy, update),
+                cleanBindings(flatValuesForUpsert(values)));
+}
+
 std::tuple<int, QSqlQuery> Builder::deleteRow()
 {
     return remove();

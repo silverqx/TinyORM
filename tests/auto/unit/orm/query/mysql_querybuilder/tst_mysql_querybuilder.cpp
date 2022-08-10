@@ -192,6 +192,9 @@ private Q_SLOTS:
     void update() const;
     void update_WithExpression() const;
 
+    void upsert() const;
+    void upsert_WithoutUpdate_UpdateAll() const;
+
     void remove() const;
     void remove_WithExpression() const;
 
@@ -2763,6 +2766,55 @@ void tst_MySql_QueryBuilder::update_WithExpression() const
              "where `id` = ?");
     QCOMPARE(firstLog.boundValues,
              QVector<QVariant>({QVariant(6), QVariant(10)}));
+}
+
+void tst_MySql_QueryBuilder::upsert() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("tag_properties")
+                .upsert({{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
+                         {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                        {"position"},
+                        {"color"});
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "insert into `tag_properties` (`color`, `position`, `tag_id`) "
+             "values (?, ?, ?), (?, ?, ?) "
+             "on duplicate key update `color` = values(`color`)");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
+                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+}
+
+void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("tag_properties")
+                .upsert({{{"tag_id", 2}, {"color", "pink"},   {"position", 0}},
+                         {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                        {"position"});
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "insert into `tag_properties` (`color`, `position`, `tag_id`) "
+             "values (?, ?, ?), (?, ?, ?) "
+             "on duplicate key update `color` = values(`color`), "
+                                     "`position` = values(`position`), "
+                                     "`tag_id` = values(`tag_id`)");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
+                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
 void tst_MySql_QueryBuilder::remove() const

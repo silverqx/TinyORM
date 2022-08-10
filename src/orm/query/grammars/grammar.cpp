@@ -96,6 +96,13 @@ Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
     return preparedBindings;
 }
 
+QString Grammar::compileUpsert(
+            QueryBuilder &/*unused*/, const QVector<QVariantMap> &/*unused*/,
+            const QVector<QString> &/*unused*/, const QVector<QString> &/*unused*/) const
+{
+    throw Exceptions::RuntimeError("This database engine does not support upserts.");
+}
+
 QString Grammar::compileDelete(QueryBuilder &query) const
 {
     const auto table  = wrapTable(query.getFrom());

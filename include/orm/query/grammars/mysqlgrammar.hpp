@@ -30,6 +30,12 @@ namespace Orm::Query::Grammars
         QString compileInsertOrIgnore(const QueryBuilder &query,
                                       const QVector<QVariantMap> &values) const override;
 
+        /*! Compile an "upsert" statement into SQL. */
+        QString compileUpsert(
+                    QueryBuilder &query, const QVector<QVariantMap> &values,
+                    const QVector<QString> &uniqueBy,
+                    const QVector<QString> &update) const override;
+
         /*! Compile the lock into SQL. */
         QString compileLock(const QueryBuilder &query) const override;
 
