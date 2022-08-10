@@ -22,8 +22,6 @@ DatabaseManager::~DatabaseManager() = default;
 
 std::shared_ptr<DatabaseManager> DatabaseManager::m_instance;
 
-// FUTURE add support for ::read and ::write db connections silverx
-// TODO implement RepositoryFactory silverqx
 DatabaseManager::DatabaseManager(const QString &defaultConnection)
 {
     Configuration::defaultConnection = defaultConnection;
@@ -871,3 +869,6 @@ void DatabaseManager::checkInstance()
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
+
+// FUTURE add support for ::read and ::write db connections silverx
+// TODO implement RepositoryFactory silverqx
