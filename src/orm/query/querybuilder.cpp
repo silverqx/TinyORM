@@ -284,8 +284,8 @@ namespace
 } // namespace
 
 std::tuple<int, std::optional<QSqlQuery>>
-Builder::upsert(const QVector<QVariantMap> &values, const QVector<QString> &uniqueBy,
-                const QVector<QString> &update)
+Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+                const QStringList &update)
 {
     // Nothing to do, no values to insert or update
     if (values.isEmpty())
@@ -304,7 +304,7 @@ Builder::upsert(const QVector<QVariantMap> &values, const QVector<QString> &uniq
 }
 
 std::tuple<int, std::optional<QSqlQuery>>
-Builder::upsert(const QVector<QVariantMap> &values, const QVector<QString> &uniqueBy)
+Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy)
 {
     // Update all columns
     // Columns are obtained only from a first QMap

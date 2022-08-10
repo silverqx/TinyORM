@@ -98,7 +98,7 @@ Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
 
 QString Grammar::compileUpsert(
             QueryBuilder &/*unused*/, const QVector<QVariantMap> &/*unused*/,
-            const QVector<QString> &/*unused*/, const QVector<QString> &/*unused*/) const
+            const QStringList &/*unused*/, const QStringList &/*unused*/) const
 {
     throw Exceptions::RuntimeError("This database engine does not support upserts.");
 }

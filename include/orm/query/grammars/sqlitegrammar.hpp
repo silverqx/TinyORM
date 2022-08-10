@@ -33,8 +33,8 @@ namespace Orm::Query::Grammars
         /*! Compile an "upsert" statement into SQL. */
         QString compileUpsert(
                     QueryBuilder &query, const QVector<QVariantMap> &values,
-                    const QVector<QString> &uniqueBy,
-                    const QVector<QString> &update) const override;
+                    const QStringList &uniqueBy,
+                    const QStringList &update) const override;
 
         /*! Compile a delete statement into SQL. */
         QString compileDelete(QueryBuilder &query) const override;

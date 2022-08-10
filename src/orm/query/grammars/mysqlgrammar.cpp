@@ -26,7 +26,7 @@ QString MySqlGrammar::compileInsertOrIgnore(const QueryBuilder &query,
 
 QString MySqlGrammar::compileUpsert(
             QueryBuilder &query, const QVector<QVariantMap> &values,
-            const QVector<QString> &/*unused*/, const QVector<QString> &update) const
+            const QStringList &/*unused*/, const QStringList &update) const
 {
     auto sql = compileInsert(query, values);
 

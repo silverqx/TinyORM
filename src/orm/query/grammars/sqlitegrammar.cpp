@@ -26,7 +26,7 @@ QString SQLiteGrammar::compileUpdate(QueryBuilder &query,
 
 QString SQLiteGrammar::compileUpsert(
             QueryBuilder &query, const QVector<QVariantMap> &values,
-            const QVector<QString> &uniqueBy, const QVector<QString> &update) const
+            const QStringList &uniqueBy, const QStringList &update) const
 {
     auto sql = compileInsert(query, values);
 

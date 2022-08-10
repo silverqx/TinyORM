@@ -34,7 +34,7 @@ QString PostgresGrammar::compileUpdate(QueryBuilder &query,
 
 QString PostgresGrammar::compileUpsert(
             QueryBuilder &query, const QVector<QVariantMap> &values,
-            const QVector<QString> &uniqueBy, const QVector<QString> &update) const
+            const QStringList &uniqueBy, const QStringList &update) const
 {
     auto sql = compileInsert(query, values);
 

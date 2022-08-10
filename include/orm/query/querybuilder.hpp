@@ -133,11 +133,11 @@ namespace Orm::Query
                        const QVector<UpdateItem> &values);
         /*! Insert new records or update the existing ones. */
         std::tuple<int, std::optional<QSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QVector<QString> &uniqueBy,
-               const QVector<QString> &update);
+        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+               const QStringList &update);
         /*! Insert new records or update the existing ones (update all columns). */
         std::tuple<int, std::optional<QSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QVector<QString> &uniqueBy);
+        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
 
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery> deleteRow();
