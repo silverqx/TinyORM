@@ -7,7 +7,13 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
+/* private */
+
 std::shared_ptr<DatabaseManager> DB::m_manager;
+
+/* public */
+
+/* Proxy methods to the DatabaseManager */
 
 std::shared_ptr<DatabaseManager>
 DB::create(const QString &defaultConnection)
@@ -135,6 +141,8 @@ DB::setReconnector(const ReconnectorType &reconnector)
 {
     return manager().setReconnector(reconnector);
 }
+
+/* Proxy methods to the DatabaseConnection */
 
 std::shared_ptr<QueryBuilder>
 DB::table(const QString &table, const QString &connection)
@@ -270,6 +278,8 @@ QSqlDriver *DB::driver(const QString &connection)
     return manager().connection(connection).driver();
 }
 
+/* Queries execution time counter */
+
 bool DB::countingElapsed(const QString &connection)
 {
     return manager().connection(connection).countingElapsed();
@@ -354,6 +364,8 @@ void DB::resetElapsedCounters(const QStringList &connections)
 {
     manager().resetElapsedCounters(connections);
 }
+
+/* Queries executed counter */
 
 bool DB::countingStatements(const QString &connection)
 {
@@ -440,6 +452,8 @@ void DB::resetStatementCounters(const QStringList &connections)
     manager().resetStatementCounters(connections);
 }
 
+/* Logging */
+
 std::shared_ptr<QVector<Log>>
 DB::getQueryLog(const QString &connection)
 {
@@ -471,6 +485,8 @@ std::size_t DB::getQueryLogOrder()
     return manager().getQueryLogOrder();
 }
 
+/* Getters */
+
 QString DB::driverName(const QString &connection)
 {
     return manager().connection(connection).driverName();
@@ -491,6 +507,8 @@ const QString &DB::hostName(const QString &connection)
     return manager().connection(connection).getHostName();
 }
 
+/* Pretending */
+
 QVector<Log>
 DB::pretend(const std::function<void()> &callback, const QString &connection)
 {
@@ -503,6 +521,8 @@ DB::pretend(const std::function<void(DatabaseConnection &)> &callback,
 {
     return manager().connection(connection).pretend(callback);
 }
+
+/* Records was modified */
 
 bool DB::getRecordsHaveBeenModified(const QString &connection)
 {
@@ -518,6 +538,8 @@ void DB::forgetRecordModificationState(const QString &connection)
 {
     manager().connection(connection).forgetRecordModificationState();
 }
+
+/* private */
 
 DatabaseManager &DB::manager()
 {

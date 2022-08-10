@@ -291,7 +291,7 @@ namespace Query
         /*! Return the host name of the connected database. */
         const QString &hostName(const QString &connection = "");
 
-        /* Others */
+        /* Pretending */
         /*! Execute the given callback in "dry run" mode. */
         QVector<Log>
         pretend(const std::function<void()> &callback,
@@ -301,6 +301,7 @@ namespace Query
         pretend(const std::function<void(DatabaseConnection &)> &callback,
                 const QString &connection = "");
 
+        /* Records was modified */
         /*! Check if any records have been modified. */
         bool getRecordsHaveBeenModified(const QString &connection = "");
         /*! Indicate if any records have been modified. */
