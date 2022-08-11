@@ -451,7 +451,7 @@ Important `CMake` options.
 In your application or library `CMakeLists.txt` file add following `find_package()` call.
 
 ```cmake
-find_package(TinyOrm 0.1.0 CONFIG REQUIRED)
+find_package(TinyOrm 0.16.0 CONFIG REQUIRED)
 ```
 
 If the `TinyORM` build tree is not exported to the CMake's [`User Package Registry`](https://cmake.org/cmake/help/latest/manual/cmake-packages.7.html#user-package-registry) then also add the `TinyORM` build tree or `CMAKE_INSTALL_PREFIX` folder to the `CMAKE_PREFIX_PATH`, so CMake can find TinyORM's package configuration file during `find_package(TinyOrm)` call.
