@@ -277,9 +277,9 @@ Builder::updateOrInsert(const QVector<WhereItem> &attributes,
 namespace
 {
     /*! Flat bindings map for an upsert statement (proxy method for better naming). */
-    const auto flatValuesForUpsert = [](const auto &values)
+    const auto flatValuesForUpsert = [](auto &&values)
     {
-        return flatValuesForInsert(values);
+        return flatValuesForInsert(std::forward<decltype (values)>(values));
     };
 } // namespace
 
