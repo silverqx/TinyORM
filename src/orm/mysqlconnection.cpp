@@ -29,6 +29,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
+/* public */
+
 MySqlConnection::MySqlConnection(
         std::function<Connectors::ConnectionName()> &&connection,
         const QString &database, const QString &tablePrefix,
@@ -53,6 +55,8 @@ std::unique_ptr<SchemaBuilder> MySqlConnection::getSchemaBuilder()
     return std::make_unique<SchemaNs::MySqlSchemaBuilder>(*this);
 }
 
+/* Getters */
+
 bool MySqlConnection::isMaria()
 {
     // TEST now add MariaDB tests, install mariadb add connection and run all the tests against mariadb too silverqx
@@ -62,6 +66,8 @@ bool MySqlConnection::isMaria()
 
     return *m_isMaria;
 }
+
+/* Others */
 
 bool MySqlConnection::pingDatabase()
 {
@@ -132,6 +138,8 @@ bool MySqlConnection::pingDatabase()
                 .arg(driverName()));
 #endif
 }
+
+/* protected */
 
 std::unique_ptr<QueryGrammar> MySqlConnection::getDefaultQueryGrammar() const
 {

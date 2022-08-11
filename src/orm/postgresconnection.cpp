@@ -12,6 +12,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
+/* public */
+
 PostgresConnection::PostgresConnection(
         std::function<Connectors::ConnectionName()> &&connection,
         const QString &database, const QString &tablePrefix,
@@ -34,6 +36,8 @@ std::unique_ptr<SchemaBuilder> PostgresConnection::getSchemaBuilder()
 
     return std::make_unique<SchemaNs::PostgresSchemaBuilder>(*this);
 }
+
+/* protected */
 
 std::unique_ptr<QueryGrammar> PostgresConnection::getDefaultQueryGrammar() const
 {

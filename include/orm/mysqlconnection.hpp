@@ -29,9 +29,11 @@ namespace Orm
         /*! Get a schema builder instance for the connection. */
         std::unique_ptr<SchemaBuilder> getSchemaBuilder() final;
 
+        /* Getters */
         /*! Determine if the connected database is a MariaDB database. */
         bool isMaria();
 
+        /* Others */
         /*! Check database connection and show warnings when the state changed.
             MySQL reconnection logic is disabled (MYSQL_OPT_RECONNECT), TinyORM has
             own reconnector. */

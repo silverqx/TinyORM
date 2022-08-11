@@ -10,6 +10,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
+/* public */
+
 SQLiteConnection::SQLiteConnection(
         std::function<Connectors::ConnectionName()> &&connection,
         const QString &database, const QString &tablePrefix,
@@ -32,6 +34,8 @@ std::unique_ptr<SchemaBuilder> SQLiteConnection::getSchemaBuilder()
 
     return std::make_unique<SchemaNs::SQLiteSchemaBuilder>(*this);
 }
+
+/* protected */
 
 std::unique_ptr<QueryGrammar> SQLiteConnection::getDefaultQueryGrammar() const
 {
