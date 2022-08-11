@@ -12,7 +12,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
     target_precompile_headers(${name} PRIVATE
-        $<$<COMPILE_LANGUAGE:CXX>:"${CMAKE_SOURCE_DIR}/include/pch.h">
+        $<$<COMPILE_LANGUAGE:CXX>:"${${TinyOrm_ns}_SOURCE_DIR}/include/pch.h">
     )
 
     if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
@@ -56,11 +56,15 @@ ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
     if(TINY_INCLUDE_MIGRATIONS)
-        target_include_directories(${name} PRIVATE "${CMAKE_SOURCE_DIR}/tests/database")
+        target_include_directories(${name}
+            PRIVATE "${${TinyOrm_ns}_SOURCE_DIR}/tests/database"
+        )
     endif()
 
     if(TINY_INCLUDE_MODELS)
-        target_include_directories(${name} PRIVATE "${CMAKE_SOURCE_DIR}/tests/models")
+        target_include_directories(${name}
+            PRIVATE "${${TinyOrm_ns}_SOURCE_DIR}/tests/models"
+        )
     endif()
 
     target_link_libraries(${name}
@@ -75,7 +79,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     # Find Windows manifest file for MinGW
     if(MINGW)
-        tiny_set_rc_flags("-I \"${CMAKE_SOURCE_DIR}/tests/resources\"")
+        tiny_set_rc_flags("-I \"${${TinyOrm_ns}_SOURCE_DIR}/tests/resources\"")
 
         # I will not use output variables here, I like it this way 🤘
         set(CMAKE_RC_FLAGS ${CMAKE_RC_FLAGS} PARENT_SCOPE)
@@ -84,7 +88,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     tiny_resource_and_manifest(${name}
         OUTPUT_DIR "${TINY_BUILD_GENDIR}/tmp/"
-        TEST RESOURCES_DIR "${CMAKE_SOURCE_DIR}/tests/resources"
+        TEST RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tests/resources"
     )
 
 endfunction()

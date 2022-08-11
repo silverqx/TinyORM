@@ -25,7 +25,7 @@ if(TOM_EXAMPLE)
     target_compile_definitions(version PRIVATE TINYTOM_EXAMPLE)
 
     # To find tom/include/version.hpp
-    target_include_directories(version PRIVATE "${CMAKE_SOURCE_DIR}/tom/include")
+    target_include_directories(version PRIVATE "${${TinyOrm_ns}_SOURCE_DIR}/tom/include")
 endif()
 
 target_include_directories(version PRIVATE

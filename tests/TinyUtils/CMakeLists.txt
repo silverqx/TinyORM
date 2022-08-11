@@ -86,7 +86,7 @@ endif()
 
 # Find Windows manifest file
 if(MINGW)
-    tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\"")
+    tiny_set_rc_flags("-I \"${PROJECT_SOURCE_DIR}/resources\"")
 
 # To remove values from CMAKE_RC_FLAGS from the previous call
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -111,7 +111,7 @@ target_link_libraries(${TinyUtils_target}
 # ---
 
 # Create an empty SQLite database file when does not exist
-set(tiny_sqlite_db "${CMAKE_BINARY_DIR}/tests/q_tinyorm_test_1.sqlite3")
+set(tiny_sqlite_db "${${TinyOrm_ns}_BINARY_DIR}/tests/q_tinyorm_test_1.sqlite3")
 create_sqlite_db("${tiny_sqlite_db}")
 
 target_compile_definitions(${TinyUtils_target}

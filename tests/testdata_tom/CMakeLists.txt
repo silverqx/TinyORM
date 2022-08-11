@@ -7,7 +7,7 @@
 include(TinyHelpers)
 tiny_read_version(TINY_VERSION
     TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
-    VERSION_HEADER "${CMAKE_SOURCE_DIR}/tom/include/tom/version.hpp"
+    VERSION_HEADER "${${TinyOrm_ns}_SOURCE_DIR}/tom/include/tom/version.hpp"
     PREFIX TINYTOM
     HEADER_FOR "${TomTestData_ns}"
 )
@@ -58,13 +58,13 @@ target_compile_definitions(${TomTestData_target}
 
 # Find icons, tom/version.hpp, and Windows manifest file for MinGW
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    tiny_set_rc_flags("-I \"${CMAKE_SOURCE_DIR}/tom/resources\"")
+    tiny_set_rc_flags("-I \"${${TinyOrm_ns}_SOURCE_DIR}/tom/resources\"")
 endif()
 
 include(TinyResourceAndManifest)
 tiny_resource_and_manifest(${TomTestData_target}
     OUTPUT_DIR "${TINY_BUILD_GENDIR}/tmp/"
-    RESOURCES_DIR "${CMAKE_SOURCE_DIR}/tom/resources"
+    RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tom/resources"
     RESOURCE_BASENAME ${Tom_target}
     MANIFEST_BASENAME ${Tom_target}
 )

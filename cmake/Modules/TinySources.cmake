@@ -378,8 +378,8 @@ function(tinytom_sources out_headers out_sources)
     list(SORT headers)
     list(SORT sources)
 
-    list(TRANSFORM headers PREPEND "${CMAKE_SOURCE_DIR}/tom/include/tom/")
-    list(TRANSFORM sources PREPEND "${CMAKE_SOURCE_DIR}/tom/src/tom/")
+    list(TRANSFORM headers PREPEND "${PROJECT_SOURCE_DIR}/tom/include/tom/")
+    list(TRANSFORM sources PREPEND "${PROJECT_SOURCE_DIR}/tom/src/tom/")
 
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
