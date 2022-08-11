@@ -194,30 +194,24 @@ QString MySqlConnector::strictMode(const QSqlDatabase &connection,
 QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
                                         const QVariantHash &config) const
 {
-    QString version;
-
     // Get the MySQL version from the configuration if it was defined
     if (config.contains("version") && !config["version"].value<QString>().isEmpty())
-        version = config["version"].value<QString>();
+        return config["version"].value<QString>();
 
     // Obtain the MySQL version from the database
-    else {
-        QSqlQuery query(connection);
+    QSqlQuery query(connection);
 
-        if (!query.exec(QStringLiteral("select version()")))
-            throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__),
-                                         query);
+    if (!query.exec(QStringLiteral("select version()")))
+        throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__),
+                                     query);
 
-        if (!query.first())
-            throw Exceptions::RuntimeError(
-                        QStringLiteral("Error during connection configuration, can not "
-                                       "obtain the first record in %1().")
-                            .arg(__tiny_func__));
+    if (!query.first())
+        throw Exceptions::RuntimeError(
+                QStringLiteral("Error during connection configuration, can not "
+                               "obtain the first record in %1().")
+                .arg(__tiny_func__));
 
-        version = query.value(0).value<QString>();
-    }
-
-    return version;
+    return query.value(0).value<QString>();
 }
 
 void MySqlConnector::setCustomModes(const QSqlDatabase &connection,
