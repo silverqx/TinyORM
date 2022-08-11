@@ -343,6 +343,8 @@ target_link_libraries(HelloWorld
 </TabItem>
 </Tabs>
 
+#### How FetchContent module works
+
 The `FetchContent_Declare` command is like calling the git clone inside the build folder and then adding a cloned folder in a similar way as the `add_subdirectory(<cloned_folder>)` command does.
 
 The `FetchContent_MakeAvailable(<package>)` internally calls the `find_package(<package>)` command or if you pass the `OVERRIDE_FIND_PACKAGE` argument, then you don't have to call the the `FetchContent_MakeAvailable`, but you must call the `find_package(<package> x.y.z CONFIG REQUIRED)` command manually.
