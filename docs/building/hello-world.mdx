@@ -31,6 +31,7 @@ import {
 - [Source code](#source-code)
 - [Hello world with CMake](#hello-world-with-cmake)
     - [CMake project](#cmake-project)
+    - [FetchContent](#fetchcontent)
     - [Build Hello world](#build-hello-world-cmake)
     - [Execute Hello world](#execute-hello-world-cmake)
 - [Hello world with qmake](#hello-world-with-qmake)
@@ -254,6 +255,101 @@ target_link_libraries(HelloWorld
 </CodeBlock>
 </TabItem>
 </Tabs>
+
+### FetchContent
+
+If you didn't have cloned and built the TinyORM library, or you want to fastly try TinyORM without wasting time with cloning and building the TinyORM library, then you can use CMake's [`FetchContent`](https://cmake.org/cmake/help/latest/module/FetchContent.html) module that will do all of this for you.
+
+Instead of providing a path using the `CMAKE_PREFIX_PATH` (or using the `User Package Registry`):
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-cmake'>
+{`# build tree
+list(APPEND CMAKE_PREFIX_PATH "${convertToCmakeEnvVariable(pwsh, applicationFolderPath(pwsh))}/TinyORM/TinyORM-builds-cmake/build-debug")`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-cmake'>
+{`# build tree
+list(APPEND CMAKE_PREFIX_PATH "${convertToCmakeEnvVariable(bash, applicationFolderPath(bash))}/TinyORM/TinyORM-builds-cmake/build-debug")`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+You can use the [`FetchContent`](https://cmake.org/cmake/help/latest/module/FetchContent.html) module like in the following example.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-cmake'>
+{`cmake_minimum_required(VERSION VERSION 3.20...3.24 FATAL_ERROR)\n
+project(HelloWorld LANGUAGES CXX)\n
+# FetchContent method
+include(FetchContent)
+FetchContent_Declare(TinyORM
+    GIT_REPOSITORY https://github.com/silverqx/TinyORM.git
+    GIT_TAG        origin/main
+    OVERRIDE_FIND_PACKAGE
+)
+# Here you can configure TinyORM CMake options
+set(MYSQL_PING OFF)
+set(TOM_EXAMPLE ON)\n
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)\n
+add_executable(HelloWorld
+  main.cpp
+)\n
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt\${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
+find_package(TinyOrm 0.16.0 CONFIG REQUIRED)\n
+target_link_libraries(HelloWorld
+    PRIVATE
+        Qt\${QT_VERSION_MAJOR}::Core
+        TinyOrm::TinyOrm
+)`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-cmake'>
+{`cmake_minimum_required(VERSION VERSION 3.20...3.24 FATAL_ERROR)\n
+project(HelloWorld LANGUAGES CXX)\n
+# FetchContent method
+include(FetchContent)
+FetchContent_Declare(TinyORM
+    GIT_REPOSITORY https://github.com/silverqx/TinyORM.git
+    GIT_TAG        origin/main
+    OVERRIDE_FIND_PACKAGE
+)
+# Here you can configure TinyORM CMake options
+set(MYSQL_PING OFF)
+set(TOM_EXAMPLE ON)\n
+TinyORM-builds-cmake/build-debug")\n
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)\n
+add_executable(HelloWorld
+  main.cpp
+)\n
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt\${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
+find_package(TinyOrm 0.16.0 CONFIG REQUIRED)\n
+target_link_libraries(HelloWorld
+    PRIVATE
+        Qt\${QT_VERSION_MAJOR}::Core
+        TinyOrm::TinyOrm
+)`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+The `FetchContent_Declare` command is like calling the git clone inside the build folder and then adding a cloned folder in a similar way as the `add_subdirectory(<cloned_folder>)` command does.
+
+The `FetchContent_MakeAvailable(<package>)` internally calls the `find_package(<package>)` command or if you pass the `OVERRIDE_FIND_PACKAGE` argument, then you don't have to call the the `FetchContent_MakeAvailable`, but you must call the `find_package(<package> x.y.z CONFIG REQUIRED)` command manually.
+
+:::info
+An advantage of the `OVERRIDE_FIND_PACKAGE` argument is that you can call the `find_package` command much later, and you can insert additional configurations between.
+:::
 
 ### Build Hello world {#build-hello-world-cmake}
 
