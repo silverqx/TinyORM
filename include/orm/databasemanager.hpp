@@ -339,6 +339,8 @@ namespace Query
 
         /*! Get the configuration for a connection. */
         QVariantHash &configuration(const QString &name);
+        /*! Throw if a given database connection doesn't have any configuration. */
+        void throwIfNoConfiguration(const QString &connection) const;
 
         /*! Prepare the database connection instance. */
         std::unique_ptr<DatabaseConnection>

@@ -816,20 +816,27 @@ DatabaseManager::makeConnection(const QString &name)
 QVariantHash &
 DatabaseManager::configuration(const QString &name)
 {
-    const auto &name_ = parseConnectionName(name);
+    const auto &parsedName = parseConnectionName(name);
 
-    /* Get the database connection configuration by the given name.
-       If the configuration doesn't exist, we'll throw an exception and bail. */
-    if (!(*m_configuration).contains(name_))
-        throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Database connection '%1' not configured.")
-                .arg(name_));
+    throwIfNoConfiguration(parsedName);
 
-    return (*m_configuration)[name_]; // clazy:exclude=detaching-member
+    return (*m_configuration)[parsedName]; // clazy:exclude=detaching-member
 
     // TODO add ConfigurationUrlParser silverqx
-//    return (new ConfigurationUrlParser)
-//                ->parseConfiguration($config);
+//    return ConfigurationUrlParser()
+//            .parseConfiguration((*m_configuration)[parsedName]);
+}
+
+void DatabaseManager::throwIfNoConfiguration(const QString &connection) const
+{
+    /* Get the database connection configuration by the given name.
+       If the configuration doesn't exist, we'll throw an exception and bail. */
+    if ((*m_configuration).contains(connection))
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                QStringLiteral("Database connection '%1' is not configured.")
+                .arg(connection));
 }
 
 std::unique_ptr<DatabaseConnection>
