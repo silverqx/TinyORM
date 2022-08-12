@@ -191,7 +191,6 @@ namespace Orm::Tiny
                              const QVector<AttributeItem> &values = {});
 
         /* TinyBuilder methods */
-
         /*! Clone the Tiny query. */
         inline Builder clone() const;
         /*! Create a new instance of the model being queried. */
