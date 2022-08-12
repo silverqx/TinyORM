@@ -89,6 +89,7 @@ headersList += \
     $$PWD/orm/support/databaseconnectionsmap.hpp \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/statementscounter.hpp \
+    $$PWD/orm/utils/configuration.hpp \
     $$PWD/orm/utils/container.hpp \
     $$PWD/orm/utils/fs.hpp \
     $$PWD/orm/utils/helpers.hpp \

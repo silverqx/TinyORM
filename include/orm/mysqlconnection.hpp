@@ -29,9 +29,17 @@ namespace Orm
         /*! Get a schema builder instance for the connection. */
         std::unique_ptr<SchemaBuilder> getSchemaBuilder() final;
 
-        /* Getters */
-        /*! Determine if the connected database is a MariaDB database. */
+        /* Getters/Setters */
+        /*! Get the MySQL server version. */
+        std::optional<QString> version();
+        /*! Is currently connected the MariaDB database server? */
         bool isMaria();
+        /*! Determine whether to use the upsert alias (by MySQL version >=8.0.19). */
+        bool useUpsertAlias();
+#ifdef TINYORM_TESTS_CODE
+        /*! Override the version database configuration value. */
+        void setConfigVersion(QString value);
+#endif
 
         /* Others */
         /*! Check database connection and show warnings when the state changed.
@@ -47,8 +55,12 @@ namespace Orm
         /*! Get the default post processor instance. */
         std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const final;
 
-        /*! If the connected database is a MariaDB database. */
-        std::optional<bool> m_isMaria;
+        /*! MySQL server version. */
+        std::optional<QString> m_version = std::nullopt;
+        /*! Is currently connected the MariaDB database server? */
+        std::optional<bool> m_isMaria = std::nullopt;
+        /*! Determine whether to use the upsert alias (by MySQL version >=8.0.19). */
+        std::optional<bool> m_useUpsertAlias = std::nullopt;
     };
 
 } // namespace Orm

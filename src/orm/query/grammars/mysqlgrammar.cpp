@@ -1,6 +1,7 @@
 #include "orm/query/grammars/mysqlgrammar.hpp"
 
 #include "orm/macros/threadlocal.hpp"
+#include "orm/mysqlconnection.hpp"
 #include "orm/query/querybuilder.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -25,10 +26,20 @@ QString MySqlGrammar::compileInsertOrIgnore(const QueryBuilder &query,
 }
 
 QString MySqlGrammar::compileUpsert(
-            QueryBuilder &query, const QVector<QVariantMap> &values,
-            const QStringList &/*unused*/, const QStringList &update) const
+        QueryBuilder &query, const QVector<QVariantMap> &values,
+        const QStringList &/*unused*/, const QStringList &update) const
 {
+    static const auto TinyOrmUpsertAlias = QStringLiteral("tinyorm_upsert_alias");
+
+    // Use an upsert alias on the MySQL >=8.0.19
+    const auto useUpsertAlias = dynamic_cast<MySqlConnection &>(query.getConnection())
+                                .useUpsertAlias();
+
     auto sql = compileInsert(query, values);
+
+    if (useUpsertAlias)
+        sql += QStringLiteral(" as %1")
+               .arg(wrap(QStringLiteral("tinyorm_upsert_alias")));
 
     sql += QStringLiteral(" on duplicate key update ");
 
@@ -36,10 +47,14 @@ QString MySqlGrammar::compileUpsert(
     columns.reserve(update.size());
 
     for (const auto &column : update) {
-        auto wrappedColumn = wrap(column);
+        const auto wrappedColumn = wrap(column);
 
-        columns << QStringLiteral("%1 = values(%2)")
-                   .arg(wrappedColumn, std::move(wrappedColumn));
+        columns << (useUpsertAlias ? QStringLiteral("%1 = %2")
+                                     .arg(wrappedColumn,
+                                          DOT_IN.arg(wrap(TinyOrmUpsertAlias),
+                                                     wrappedColumn))
+                                   : QStringLiteral("%1 = values(%2)")
+                                     .arg(wrappedColumn, wrappedColumn));
     }
 
     return NOSPACE.arg(std::move(sql), columns.join(COMMA));

@@ -196,6 +196,7 @@ And paste the following code.
             {strict_,         true},
             {isolation_level, QStringLiteral("REPEATABLE READ")},
             {engine_,         InnoDB},
+            {Version,         {}}, // Autodetect
             {options_,        QVariantHash()},
         },
             QStringLiteral("tinyorm_tom"));

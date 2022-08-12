@@ -75,6 +75,9 @@ ConnectionFactory::parseConfig(QVariantHash &config, const QString &name) const
         // spatial_ref_sys table is used by the PostGIS
         config.insert(dont_drop, QStringList {QStringLiteral("spatial_ref_sys")});
 
+    if (config[driver_] == QMYSQL && !config.contains(Version))
+        config.insert(Version, {});
+
     return config;
 }
 

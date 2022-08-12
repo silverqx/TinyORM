@@ -86,6 +86,7 @@ std::shared_ptr<DatabaseManager> setupManager()
             {strict_,         true},
             {isolation_level, QStringLiteral("REPEATABLE READ")},
             {engine_,         InnoDB},
+            {Version,         {}}, // Autodetect
             {options_,        QVariantHash()},
         }},
 

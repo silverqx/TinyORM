@@ -97,6 +97,7 @@ function(tinyorm_sources out_headers out_sources)
         support/databaseconnectionsmap.hpp
         types/log.hpp
         types/statementscounter.hpp
+        utils/configuration.hpp
         utils/container.hpp
         utils/fs.hpp
         utils/helpers.hpp
@@ -211,6 +212,7 @@ function(tinyorm_sources out_headers out_sources)
         schema/sqliteschemabuilder.cpp
         sqliteconnection.cpp
         support/configurationoptionsparser.cpp
+        utils/configuration.cpp
         utils/fs.cpp
         utils/query.cpp
         utils/thread.cpp

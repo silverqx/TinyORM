@@ -5,6 +5,7 @@
 
 #include "orm/constants.hpp"
 #include "orm/exceptions/queryerror.hpp"
+#include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -16,6 +17,8 @@ using Orm::Constants::isolation_level;
 using Orm::Constants::NAME;
 using Orm::Constants::strict_;
 using Orm::Constants::timezone_;
+
+using ConfigUtils = Orm::Utils::Configuration;
 
 namespace Orm::Connectors
 {
@@ -194,9 +197,11 @@ QString MySqlConnector::strictMode(const QSqlDatabase &connection,
 QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
                                         const QVariantHash &config) const
 {
-    // Get the MySQL version from the configuration if it was defined
-    if (config.contains("version") && !config["version"].value<QString>().isEmpty())
-        return config["version"].value<QString>();
+    // Get the MySQL version from the configuration if it was defined and is valid
+    if (auto configVersionValue = ConfigUtils::getValidConfigVersion(config);
+        !configVersionValue.isEmpty()
+    )
+        return configVersionValue;
 
     // Obtain the MySQL version from the database
     QSqlQuery query(connection);

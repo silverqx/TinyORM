@@ -20,6 +20,7 @@ using Orm::Constants::UTC;
 using Orm::Constants::UTF8;
 using Orm::Constants::UTF8MB4;
 using Orm::Constants::UTF8MB40900aici;
+using Orm::Constants::Version;
 using Orm::Constants::database_;
 using Orm::Constants::driver_;
 using Orm::Constants::charset_;
@@ -171,6 +172,7 @@ Databases::mysqlConfiguration()
         {strict_,         true},
         {isolation_level, QStringLiteral("REPEATABLE READ")},
         {engine_,         InnoDB},
+        {Version,         {}}, // Autodetect
         {options_,        QVariantHash()},
         // FUTURE remove, when unit tested silverqx
         // Example

@@ -51,6 +51,7 @@ sourcesList += \
     $$PWD/orm/schema/sqliteschemabuilder.cpp \
     $$PWD/orm/sqliteconnection.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \
+    $$PWD/orm/utils/configuration.cpp \
     $$PWD/orm/utils/fs.cpp \
     $$PWD/orm/utils/query.cpp \
     $$PWD/orm/utils/thread.cpp \

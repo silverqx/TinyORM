@@ -5,6 +5,7 @@
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/exceptions/multiplerecordsfounderror.hpp"
 #include "orm/exceptions/recordsnotfounderror.hpp"
+#include "orm/mysqlconnection.hpp"
 #include "orm/query/querybuilder.hpp"
 
 #include "databases.hpp"
@@ -26,6 +27,7 @@ using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::Exceptions::MultipleRecordsFoundError;
 using Orm::Exceptions::RecordsNotFoundError;
+using Orm::MySqlConnection;
 using Orm::Query::Builder;
 using Orm::Query::Expression;
 
@@ -59,6 +61,14 @@ class tst_MySql_QueryBuilder : public QObject // clazy:exclude=ctor-missing-pare
 
 private Q_SLOTS:
     void initTestCase();
+
+    void version() const;
+    void version_InPretend() const;
+    void version_InPretend_DefaultValue() const;
+
+    void isMaria() const;
+    void isMaria_InPretend() const;
+    void isMaria_InPretend_DefaultValue() const;
 
     void get() const;
     void get_ColumnExpression() const;
@@ -192,8 +202,11 @@ private Q_SLOTS:
     void update() const;
     void update_WithExpression() const;
 
-    void upsert() const;
-    void upsert_WithoutUpdate_UpdateAll() const;
+    void upsert_UseUpsertAlias() const;
+    void upsert_UseUpsertAlias_Disabled() const;
+    void upsert_UseUpsertAlias_DefaultValue() const;
+    void upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() const;
+    void upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Disabled() const;
 
     void remove() const;
     void remove_WithExpression() const;
@@ -230,6 +243,84 @@ void tst_MySql_QueryBuilder::initTestCase()
         QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
                              "for '%2' connection have not been defined.")
               .arg("tst_MySql_QueryBuilder", Databases::MYSQL).toUtf8().constData(), );
+}
+
+void tst_MySql_QueryBuilder::version() const
+{
+    auto version = QStringLiteral("10.8.3-MariaDB");
+
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion(version);
+
+    QCOMPARE(mysqlConnection.version(), version);
+}
+
+void tst_MySql_QueryBuilder::version_InPretend() const
+{
+    auto version = QStringLiteral("10.8.3-MariaDB");
+
+    // Need to be set before pretending
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion(version);
+
+    auto log = mysqlConnection.pretend([&mysqlConnection, &version]
+    {
+        QCOMPARE(mysqlConnection.version(), version);
+    });
+
+    QVERIFY(log.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::version_InPretend_DefaultValue() const
+{
+    // Need to be set before pretending
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion({});
+
+    auto log = mysqlConnection.pretend([&mysqlConnection]
+    {
+        // No version set so it should return std::nullopt
+        QVERIFY(!mysqlConnection.version());
+    });
+
+    QVERIFY(log.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::isMaria() const
+{
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion("10.4.7-MariaDB");
+
+    QVERIFY(mysqlConnection.isMaria());
+}
+
+void tst_MySql_QueryBuilder::isMaria_InPretend() const
+{
+    // Need to be set before pretending
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion("10.4.7-MariaDB");
+
+    auto log = mysqlConnection.pretend([&mysqlConnection]
+    {
+        QVERIFY(mysqlConnection.isMaria());
+    });
+
+    QVERIFY(log.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::isMaria_InPretend_DefaultValue() const
+{
+    // Need to be set before pretending
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion({});
+
+    auto log = mysqlConnection.pretend([&mysqlConnection]
+    {
+        // No version set so it the default value is false
+        QVERIFY(!mysqlConnection.isMaria());
+    });
+
+    QVERIFY(log.isEmpty());
 }
 
 void tst_MySql_QueryBuilder::get() const
@@ -2768,9 +2859,13 @@ void tst_MySql_QueryBuilder::update_WithExpression() const
              QVector<QVariant>({QVariant(6), QVariant(10)}));
 }
 
-void tst_MySql_QueryBuilder::upsert() const
+void tst_MySql_QueryBuilder::upsert_UseUpsertAlias() const
 {
-    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    // Need to be set before pretending
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion("8.0.19");
+
+    auto log = mysqlConnection.pretend([](auto &connection)
     {
         connection.query()->from("tag_properties")
                 .upsert({{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
@@ -2779,28 +2874,137 @@ void tst_MySql_QueryBuilder::upsert() const
                         {"color"});
     });
 
-    QVERIFY(!log.isEmpty());
-    const auto &firstLog = log.first();
+    // MySQL >=8.0.19 uses upsert alias
+    const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
+    QVERIFY(useUpsertAlias);
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query,
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
              "insert into `tag_properties` (`color`, `position`, `tag_id`) "
-             "values (?, ?, ?), (?, ?, ?) "
-             "on duplicate key update `color` = values(`color`)");
-    QCOMPARE(firstLog.boundValues,
+             "values (?, ?, ?), (?, ?, ?) as `tinyorm_upsert_alias` "
+             "on duplicate key update "
+             "`color` = `tinyorm_upsert_alias`.`color`");
+    QCOMPARE(log0.boundValues,
              QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
                                 QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
-void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
+void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Disabled() const
 {
-    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    // Need to be set before pretending
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion("8.0.18");
+
+    auto log = mysqlConnection.pretend([](auto &connection)
+    {
+        connection.query()->from("tag_properties")
+                .upsert({{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
+                         {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                        {"position"},
+                        {"color"});
+    });
+
+    // MySQL <8.0.19 doesn't use upsert alias
+    const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
+    QVERIFY(!useUpsertAlias);
+
+    QCOMPARE(log.size(), 1);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "insert into `tag_properties` (`color`, `position`, `tag_id`) "
+             "values (?, ?, ?), (?, ?, ?) "
+             "on duplicate key update `color` = values(`color`)");
+    QCOMPARE(log0.boundValues,
+             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
+                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+}
+
+void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_DefaultValue() const
+{
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion({});
+
+    auto log = mysqlConnection.pretend([&mysqlConnection](auto &connection)
+    {
+        connection.query()->from("tag_properties")
+                .upsert({{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
+                         {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                        {"position"},
+                        {"color"});
+
+        /* Default value for the use upsert alias feature during pretending will be false
+           because no version was provided through the database configuration. */
+        const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
+        QVERIFY(!useUpsertAlias);
+    });
+
+    QCOMPARE(log.size(), 1);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "insert into `tag_properties` (`color`, `position`, `tag_id`) "
+             "values (?, ?, ?), (?, ?, ?) "
+             "on duplicate key update `color` = values(`color`)");
+    QCOMPARE(log0.boundValues,
+             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
+                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+}
+
+void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() const
+{
+    // Need to be set before pretending
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion("8.0.19");
+
+    auto log = mysqlConnection.pretend([](auto &connection)
     {
         connection.query()->from("tag_properties")
                 .upsert({{{"tag_id", 2}, {"color", "pink"},   {"position", 0}},
                          {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
                         {"position"});
     });
+
+    // MySQL >=8.0.19 uses upsert alias
+    const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
+    QVERIFY(useUpsertAlias);
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "insert into `tag_properties` (`color`, `position`, `tag_id`) "
+             "values (?, ?, ?), (?, ?, ?) as `tinyorm_upsert_alias` "
+             "on duplicate key update "
+             "`color` = `tinyorm_upsert_alias`.`color`, "
+             "`position` = `tinyorm_upsert_alias`.`position`, "
+             "`tag_id` = `tinyorm_upsert_alias`.`tag_id`");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
+                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+}
+
+void tst_MySql_QueryBuilder
+::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Disabled() const
+{
+    // Need to be set before pretending
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion("8.0.18");
+
+    auto log = mysqlConnection.pretend([](auto &connection)
+    {
+        connection.query()->from("tag_properties")
+                .upsert({{{"tag_id", 2}, {"color", "pink"},   {"position", 0}},
+                         {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                        {"position"});
+    });
+
+    // MySQL <8.0.19 doesn't use upsert alias
+    const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
+    QVERIFY(!useUpsertAlias);
 
     QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
@@ -2810,8 +3014,8 @@ void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
              "insert into `tag_properties` (`color`, `position`, `tag_id`) "
              "values (?, ?, ?), (?, ?, ?) "
              "on duplicate key update `color` = values(`color`), "
-                                     "`position` = values(`position`), "
-                                     "`tag_id` = values(`tag_id`)");
+             "`position` = values(`position`), "
+             "`tag_id` = values(`tag_id`)");
     QCOMPARE(firstLog.boundValues,
              QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
                                 QVariant(QString("purple")), QVariant(4), QVariant(1)}));

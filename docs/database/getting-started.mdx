@@ -39,17 +39,22 @@ You can create and configure new database connection by `create` method provided
 
     // Ownership of a shared_ptr()
     auto manager = DB::create({
-        {"driver",    "QMYSQL"},
-        {"host",      qEnvironmentVariable("DB_HOST", "127.0.0.1")},
-        {"port",      qEnvironmentVariable("DB_PORT", "3306")},
-        {"database",  qEnvironmentVariable("DB_DATABASE", "")},
-        {"username",  qEnvironmentVariable("DB_USERNAME", "root")},
-        {"password",  qEnvironmentVariable("DB_PASSWORD", "")},
-        {"charset",   qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
-        {"collation", qEnvironmentVariable("DB_COLLATION", "utf8mb4_0900_ai_ci")},
-        {"timezone",  "+00:00"},
-        {"strict",    true},
-        {"options",   QVariantHash()},
+        {"driver",          "QMYSQL"},
+        {"host",            qEnvironmentVariable("DB_HOST", "127.0.0.1")},
+        {"port",            qEnvironmentVariable("DB_PORT", "3306")},
+        {"database",        qEnvironmentVariable("DB_DATABASE", "")},
+        {"username",        qEnvironmentVariable("DB_USERNAME", "root")},
+        {"password",        qEnvironmentVariable("DB_PASSWORD", "")},
+        {"charset",         qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
+        {"collation",       qEnvironmentVariable("DB_COLLATION", "utf8mb4_0900_ai_ci")},
+        {"timezone",        "+00:00"},
+        {"prefix",          ""},
+        {"strict",          true},
+        {"engine",          InnoDB},
+        {"version",         {}}, // Autodetect
+        {"options",         QVariantHash()},
+        {"prefix_indexes",  true},
+        {"isolation_level", "REPEATABLE READ"},
     });
 
 The first argument is configuration hash which is of type `QVariantHash` and the second argument specifies the name of the *connection*, this connection will also be a *default connection*. You can configure multiple database connections at once and choose the needed one before executing SQL query, section [Using Multiple Database Connections](#using-multiple-database-connections) describes how to create and use multiple database connections.
@@ -57,6 +62,10 @@ The first argument is configuration hash which is of type `QVariantHash` and the
 You may also configure connection options by `options` key as `QVariantHash` or `QString`, you can pass any [connection options](https://doc.qt.io/qt-5/qsqldatabase.html#setConnectOptions) supported by `QSqlDatabase`.
 
 You can also configure [Transaction Isolation Levels](https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html) for MySQL connection with the `isolation_level` configuration option.
+
+The `version` option is relevant only for the MySQL connections and you can save/avoid one database query (select version()) if you provide it manually. On the base of this version will be decided which [session variables](https://github.com/silverqx/TinyORM/blob/main/src/orm/connectors/mysqlconnector.cpp#L183) will be set if strict mode is enabled and whether to use an [alias](https://github.com/silverqx/TinyORM/blob/main/src/orm/query/grammars/mysqlgrammar.cpp#L32) during the `upsert` method call.
+
+Breaking values are as follows; use an upsert alias on the MySQL >=8.0.19 and remove the `NO_AUTO_CREATE_USER` sql mode on the MySQL >=8.0.11 if the strict mode is enabled.
 
 :::info
 A database connection is resolved lazily, which means that the connection configuration is only saved after the `DB::create` method call. The connection will be resolved after you run some query or you can create it using the `DB::connection` method.
@@ -78,6 +87,7 @@ SQLite databases are contained within a single file on your filesystem. You can 
         {"database",  qEnvironmentVariable("DB_DATABASE", "/absolute/path/to/database.sqlite3")},
         {"foreign_key_constraints", qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
         {"check_database_exists",   true},
+        {"prefix",                  ""},
     });
 
 The `database` configuration value is the absolute path to the database. To enable foreign key constraints for SQLite connections, you should set the `foreign_key_constraints` configuration value to `true`, if this configuration value is not set, then the default of the SQLite driver will be used.
@@ -196,6 +206,7 @@ You can configure multiple database connections at once during `DatabaseManager`
             {"database",  qEnvironmentVariable("DB_SQLITE_DATABASE", "")},
             {"foreign_key_constraints", qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS", "true")},
             {"check_database_exists",   true},
+            {"prefix",                  ""},
         }},
     }, "mysql");
 
