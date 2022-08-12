@@ -1157,7 +1157,6 @@ namespace Orm::Tiny
     Builder<Model>::addUpdatedAtColumn(QVector<UpdateItem> values) const
     {
         const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
-        auto qualifiedUpdatedAtColumn = m_model.getQualifiedUpdatedAtColumn();
 
         // Nothing to do (model doesn't use timestamps)
         if (!m_model.usesTimestamps() || updatedAtColumn.isEmpty())
@@ -1170,6 +1169,8 @@ namespace Orm::Tiny
         {
             return updateItem.column == updatedAtColumn;
         });
+
+        auto qualifiedUpdatedAtColumn = m_model.getQualifiedUpdatedAtColumn();
 
         // Not found, append a fresh timestamp
         if (valuesUpdatedAtColumn == std::ranges::cend(values))
