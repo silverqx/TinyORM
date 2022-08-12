@@ -507,7 +507,7 @@ const QString &DB::hostName(const QString &connection)
     return manager().connection(connection).getHostName();
 }
 
-/* Connection configuration - saved in the DatabaseManager */
+/* Connection configurations - saved in the DatabaseManager */
 
 /* Difference between a connection config. saved in the DatabaseManager and
    DatabaseConnection can differ in some cases. A configuration saved
@@ -527,7 +527,7 @@ DB::originalConfigValue(const QString &option, const QString &connection)
     return manager().originalConfigValue(option, connection);
 }
 
-/* Connection configuration - proxies to the DatabaseConnection */
+/* Connection configurations - proxies to the DatabaseConnection */
 
 const QVariantHash &DB::getConfig(const QString &connection)
 {

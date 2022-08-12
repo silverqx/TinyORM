@@ -291,7 +291,7 @@ namespace Query
         /*! Return the host name of the connected database. */
         const QString &hostName(const QString &connection = "");
 
-        /* Connection configuration - saved in the DatabaseManager */
+        /* Connection configurations - saved in the DatabaseManager */
         /*! Get an original configuration for the given connection
             (passed to the DB::create, original/unchanged). */
         const QVariantHash &originalConfig(const QString &connection = "") const;
@@ -300,7 +300,7 @@ namespace Query
         QVariant originalConfigValue(const QString &option,
                                      const QString &connection = "") const;
 
-        /* Connection configuration - proxies to the DatabaseConnection */
+        /* Connection configurations - proxies to the DatabaseConnection */
         /*! Get the configuration for the current connection. */
         const QVariantHash &getConfig(const QString &connection = "");
         /*! Get an option value from the configuration options. */

@@ -290,14 +290,14 @@ namespace Orm
         /*! Return the host name of the connected database. */
         static const QString &hostName(const QString &connection = "");
 
-        /* Connection configuration - saved in the DatabaseManager */
+        /* Connection configurations - saved in the DatabaseManager */
         /*! Get the configuration for a connection. */
         static const QVariantHash &originalConfig(const QString &connection = "");
         /*! Get a configuration option value from the configuration for a connection. */
         static QVariant originalConfigValue(const QString &option,
                                             const QString &connection = "");
 
-        /* Connection configuration - proxies to the DatabaseConnection */
+        /* Connection configurations - proxies to the DatabaseConnection */
         /*! Get the configuration for the current connection. */
         static const QVariantHash &getConfig(const QString &connection = "");
         /*! Get an option value from the configuration options. */

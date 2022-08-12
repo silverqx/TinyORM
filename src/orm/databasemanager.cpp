@@ -759,7 +759,7 @@ DatabaseManager::hostName(const QString &connection)
     return this->connection(connection).getHostName();
 }
 
-/* Connection configuration - saved in the DatabaseManager */
+/* Connection configurations - saved in the DatabaseManager */
 
 QVariant
 DatabaseManager::originalConfigValue(const QString &option,
@@ -778,7 +778,7 @@ DatabaseManager::originalConfig(const QString &connection) const
     return (*m_configuration).at(connectionName);
 }
 
-/* Connection configuration - proxies to the DatabaseConnection */
+/* Connection configurations - proxies to the DatabaseConnection */
 
 QVariant DatabaseManager::getConfig(const QString &option, const QString &connection)
 {
