@@ -290,6 +290,22 @@ namespace Orm
         /*! Return the host name of the connected database. */
         static const QString &hostName(const QString &connection = "");
 
+        /* Connection configuration - saved in the DatabaseManager */
+        /*! Get the configuration for a connection. */
+        static const QVariantHash &originalConfig(const QString &connection = "");
+        /*! Get a configuration option value from the configuration for a connection. */
+        static QVariant originalConfigValue(const QString &option,
+                                            const QString &connection = "");
+
+        /* Connection configuration - proxies to the DatabaseConnection */
+        /*! Get the configuration for the current connection. */
+        static const QVariantHash &getConfig(const QString &connection = "");
+        /*! Get an option value from the configuration options. */
+        static QVariant getConfigValue(const QString &option,
+                                       const QString &connection = "");
+        /*! Check whether the configuration contains the given option. */
+        static bool hasConfigValue(const QString &option, const QString &connection = "");
+
         /* Pretending */
         /*! Execute the given callback in "dry run" mode. */
         static QVector<Log>

@@ -507,6 +507,43 @@ const QString &DB::hostName(const QString &connection)
     return manager().connection(connection).getHostName();
 }
 
+/* Connection configuration - saved in the DatabaseManager */
+
+/* Difference between a connection config. saved in the DatabaseManager and
+   DatabaseConnection can differ in some cases. A configuration saved
+   in the DatabaseConnection is already processed by the ConnectionFactory and Connector.
+   Eg. the host config. option can differ because a user can pass a QStringList of hosts,
+   so in the DM will be this QStringList, but in the DatabaseConnection will be only
+   the QString, a hostname to which the connection was successful. */
+
+const QVariantHash &DB::originalConfig(const QString &connection)
+{
+    return manager().originalConfig(connection);
+}
+
+QVariant
+DB::originalConfigValue(const QString &option, const QString &connection)
+{
+    return manager().originalConfigValue(option, connection);
+}
+
+/* Connection configuration - proxies to the DatabaseConnection */
+
+const QVariantHash &DB::getConfig(const QString &connection)
+{
+    return manager().connection(connection).getConfig();
+}
+
+QVariant DB::getConfigValue(const QString &option, const QString &connection)
+{
+    return manager().connection(connection).getConfig(option);
+}
+
+bool DB::hasConfigValue(const QString &option, const QString &connection)
+{
+    return manager().connection(connection).hasConfig(option);
+}
+
 /* Pretending */
 
 QVector<Log>

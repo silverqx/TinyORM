@@ -759,6 +759,42 @@ DatabaseManager::hostName(const QString &connection)
     return this->connection(connection).getHostName();
 }
 
+/* Connection configuration - saved in the DatabaseManager */
+
+QVariant
+DatabaseManager::originalConfigValue(const QString &option,
+                                     const QString &connection) const
+{
+    return originalConfig(connection).value(option);
+}
+
+const QVariantHash &
+DatabaseManager::originalConfig(const QString &connection) const
+{
+    const auto &connectionName = parseConnectionName(connection);
+
+    throwIfNoConfiguration(connectionName);
+
+    return (*m_configuration).at(connectionName);
+}
+
+/* Connection configuration - proxies to the DatabaseConnection */
+
+QVariant DatabaseManager::getConfig(const QString &option, const QString &connection)
+{
+    return this->connection(connection).getConfig(option);
+}
+
+const QVariantHash &DatabaseManager::getConfig(const QString &connection)
+{
+    return this->connection(connection).getConfig();
+}
+
+bool DatabaseManager::hasConfig(const QString &option, const QString &connection)
+{
+    return this->connection(connection).hasConfig(option);
+}
+
 /* Pretending */
 
 QVector<Log>
