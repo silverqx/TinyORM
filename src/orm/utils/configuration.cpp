@@ -1,6 +1,5 @@
 #include "orm/utils/configuration.hpp"
 
-#include <QVariantHash>
 #include <QVersionNumber>
 
 #include "orm/constants.hpp"
