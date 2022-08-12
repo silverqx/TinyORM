@@ -23,23 +23,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
-namespace Query
-{
-namespace Grammars
-{
-    class Grammar;
-}
-namespace Processors
-{
-    class Processor;
-}
-} // namespace Query
-
-namespace SchemaNs
-{
-    class SchemaBuilder;
-}
-
     /*! QueryGrammar alias. */
     using QueryGrammar   = Query::Grammars::Grammar;
     /*! QueryProcessor alias. */
