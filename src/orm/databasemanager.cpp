@@ -850,17 +850,17 @@ DatabaseManager::makeConnection(const QString &name)
 /* Can not be const because I'm modifying the Configuration (QVariantHash)
    in ConnectionFactory. */
 QVariantHash &
-DatabaseManager::configuration(const QString &name)
+DatabaseManager::configuration(const QString &connection)
 {
-    const auto &parsedName = parseConnectionName(name);
+    const auto &connectionName = parseConnectionName(connection);
 
-    throwIfNoConfiguration(parsedName);
+    throwIfNoConfiguration(connectionName);
 
-    return (*m_configuration)[parsedName]; // clazy:exclude=detaching-member
+    return (*m_configuration)[connectionName]; // clazy:exclude=detaching-member
 
     // TODO add ConfigurationUrlParser silverqx
 //    return ConfigurationUrlParser()
-//            .parseConfiguration((*m_configuration)[parsedName]);
+//            .parseConfiguration((*m_configuration)[connectionName]);
 }
 
 void DatabaseManager::throwIfNoConfiguration(const QString &connection) const

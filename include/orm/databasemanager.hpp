@@ -355,7 +355,7 @@ namespace Query
         makeConnection(const QString &name);
 
         /*! Get the configuration for a connection. */
-        QVariantHash &configuration(const QString &name);
+        QVariantHash &configuration(const QString &connection);
         /*! Throw if a given database connection doesn't have any configuration. */
         void throwIfNoConfiguration(const QString &connection) const;
 
