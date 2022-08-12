@@ -111,7 +111,7 @@ QStringList DB::drivers()
     return manager().drivers();
 }
 
-bool Orm::DB::isDriverAvailable(const QString &driverName)
+bool DB::isDriverAvailable(const QString &driverName)
 {
     return manager().isDriverAvailable(driverName);
 }
