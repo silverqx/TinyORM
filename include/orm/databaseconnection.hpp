@@ -172,10 +172,10 @@ namespace Orm
         DatabaseConnection &setReconnector(const ReconnectorType &reconnector);
 
         /* Connection configuration */
-        /*! Get an option value from the configuration options. */
-        QVariant getConfig(const QString &option) const;
         /*! Get the configuration for the current connection. */
         inline const QVariantHash &getConfig() const noexcept;
+        /*! Get an option value from the configuration options. */
+        QVariant getConfig(const QString &option) const;
         /*! Check whether the configuration contains the given option. */
         bool hasConfig(const QString &option) const;
 
