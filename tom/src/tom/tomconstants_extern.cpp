@@ -24,8 +24,7 @@ namespace Tom::Constants
     const QString help          = QStringLiteral("help");
     const QString nointeraction = QStringLiteral("no-interaction");
     const QString quiet         = QStringLiteral("quiet");
-    const QString version       = QStringLiteral("version"); // unused
-    const QString verbose       = QStringLiteral("verbose"); // unused
+    const QString verbose       = QStringLiteral("verbose");
 
     // Commands' positional options
     // help

@@ -36,8 +36,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString help;
     SHAREDLIB_EXPORT extern const QString nointeraction;
     SHAREDLIB_EXPORT extern const QString quiet;
-    SHAREDLIB_EXPORT extern const QString version; // unused
-    SHAREDLIB_EXPORT extern const QString verbose; // unused
+    SHAREDLIB_EXPORT extern const QString verbose;
 
     // Commands' positional options
     // help

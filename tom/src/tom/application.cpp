@@ -48,6 +48,7 @@ using fspath = std::filesystem::path;
 using Orm::ConnectionResolverInterface;
 using Orm::Constants::EMPTY;
 using Orm::Constants::NEWLINE;
+using Orm::Constants::Version;
 
 using TypeUtils = Orm::Utils::Type;
 
@@ -105,7 +106,6 @@ using Tom::Constants::noansi;
 using Tom::Constants::nointeraction;
 using Tom::Constants::quiet;
 using Tom::Constants::verbose;
-using Tom::Constants::version;
 
 namespace Tom {
 
@@ -267,7 +267,7 @@ void Application::initializeParser(QCommandLineParser &parser)
         {{QChar('q'),
           quiet},              QStringLiteral("Do not output any message")},
         {{QChar('V'),
-          version},            QStringLiteral("Display this application version")},
+          Version},            QStringLiteral("Display this application version")},
         {{QChar('v'),
           verbose},            QStringLiteral("Increase the verbosity of messages: "
                                               "1 for normal output, "
@@ -319,7 +319,7 @@ void Application::parseCommandLine()
     if (m_parser.isSet(nointeraction))
         m_interactive = false;
 
-    if (m_parser.isSet(version))
+    if (m_parser.isSet(Version))
         showVersion();
 }
 
