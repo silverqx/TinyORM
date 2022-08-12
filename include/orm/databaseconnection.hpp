@@ -188,7 +188,8 @@ namespace SchemaNs
         /*! Set the reconnect instance on the connection. */
         DatabaseConnection &setReconnector(const ReconnectorType &reconnector);
 
-        /*! Get an option from the configuration options. */
+        /* Connection configuration */
+        /*! Get an option value from the configuration options. */
         QVariant getConfig(const QString &option) const;
         /*! Get the configuration for the current connection. */
         inline const QVariantHash &getConfig() const noexcept;

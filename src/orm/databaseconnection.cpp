@@ -423,6 +423,8 @@ DatabaseConnection::setReconnector(const ReconnectorType &reconnector)
     return *this;
 }
 
+/* Connection configuration */
+
 QVariant DatabaseConnection::getConfig(const QString &option) const
 {
     return m_config.value(option);
