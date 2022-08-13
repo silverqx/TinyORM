@@ -134,7 +134,7 @@ namespace Query
         DatabaseConnection &connection(const QString &name = "") final;
         /*! Begin a fluent query against the database on a given connection (alias for
             the connection() method). */
-        inline DatabaseConnection &on(const QString &name);
+        inline DatabaseConnection &on(const QString &connection);
         /*! Register a connection with the manager. */
         DatabaseManager &
         addConnection(const QVariantHash &config,
@@ -172,7 +172,7 @@ namespace Query
         /*! Is the given driver name available? */
         bool isDriverAvailable(const QString &driverName) const;
         /*! Is a driver for the given connection available? */
-        bool isConnectionDriverAvailable(const QString &connectionName);
+        bool isConnectionDriverAvailable(const QString &connection);
 
         /*! Get the default connection name. */
         const QString &getDefaultConnection() const noexcept final;
@@ -336,7 +336,7 @@ namespace Query
             connection as default connection at once. */
         explicit DatabaseManager(
                 const QVariantHash &config,
-                const QString &name = Configuration::defaultConnectionName,
+                const QString &connection = Configuration::defaultConnectionName,
                 const QString &defaultConnection = Configuration::defaultConnectionName);
         /*! Private constructor to create DatabaseManager instance and set connections
             at once. */
@@ -352,7 +352,7 @@ namespace Query
 
         /*! Make the database connection instance. */
         std::unique_ptr<DatabaseConnection>
-        makeConnection(const QString &name);
+        makeConnection(const QString &connection);
 
         /*! Get the configuration for a connection. */
         QVariantHash &configuration(const QString &connection);
@@ -365,7 +365,7 @@ namespace Query
 
         /*! Refresh an underlying QSqlDatabase connection resolver on a given
             TinyORM connection. */
-        DatabaseConnection &refreshQtConnection(const QString &name);
+        DatabaseConnection &refreshQtConnection(const QString &connection);
 
         /*! Throw exception if DatabaseManager instance already exists. */
         static void checkInstance();
@@ -395,9 +395,9 @@ namespace Query
 
     /* DatabaseManager */
 
-    DatabaseConnection &DatabaseManager::on(const QString &name)
+    DatabaseConnection &DatabaseManager::on(const QString &connection)
     {
-        return connection(name);
+        return this->connection(connection);
     }
 
 } // namespace Orm

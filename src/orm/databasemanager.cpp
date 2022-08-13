@@ -32,11 +32,11 @@ DatabaseManager::DatabaseManager(const QString &defaultConnection)
     setupDefaultReconnector();
 }
 
-DatabaseManager::DatabaseManager(const QVariantHash &config, const QString &name,
+DatabaseManager::DatabaseManager(const QVariantHash &config, const QString &connection,
                                  const QString &defaultConnection)
     : DatabaseManager(defaultConnection)
 {
-    addConnection(config, name);
+    addConnection(config, connection);
 }
 
 DatabaseManager::DatabaseManager(const ConfigurationsType &configs,
@@ -410,15 +410,15 @@ bool DatabaseManager::isDriverAvailable(const QString &driverName) const
     return QSqlDatabase::isDriverAvailable(driverName);
 }
 
-bool DatabaseManager::isConnectionDriverAvailable(const QString &connectionName)
+bool DatabaseManager::isConnectionDriverAvailable(const QString &connection)
 {
-    const auto driverName = configuration(connectionName)[driver_].value<QString>();
+    const auto driverName = configuration(connection)[driver_].value<QString>();
 
     if (!supportedDrivers().contains(driverName))
         throw Exceptions::LogicError(
                 QStringLiteral("An unsupported driver name '%1' has been defined for "
                                "the '%2' connection.")
-                .arg(driverName, connectionName));
+                .arg(driverName, connection));
 
     return QSqlDatabase::isDriverAvailable(driverName);
 }
@@ -838,13 +838,13 @@ DatabaseManager::parseConnectionName(const QString &name) const
 }
 
 std::unique_ptr<DatabaseConnection>
-DatabaseManager::makeConnection(const QString &name)
+DatabaseManager::makeConnection(const QString &connection)
 {
-    auto &config = configuration(name);
+    auto &config = configuration(connection);
 
     // FUTURE add support for extensions silverqx
 
-    return m_factory.make(config, name);
+    return m_factory.make(config, connection);
 }
 
 /* Can not be const because I'm modifying the Configuration (QVariantHash)
@@ -887,16 +887,16 @@ DatabaseManager::configure(std::unique_ptr<DatabaseConnection> &&connection) con
 }
 
 DatabaseConnection &
-DatabaseManager::refreshQtConnection(const QString &name)
+DatabaseManager::refreshQtConnection(const QString &connection)
 {
-    const auto &name_ = parseConnectionName(name);
+    const auto &connectionName = parseConnectionName(connection);
 
     /* Make OUR new connection and copy the connection resolver from this new
        connection to the current connection, this ensures that the connection
        will be again resolved/connected lazily. */
-    auto fresh = configure(makeConnection(name_));
+    auto fresh = configure(makeConnection(connectionName));
 
-    return (*m_connections)[name_]->setQtConnectionResolver(
+    return (*m_connections)[connectionName]->setQtConnectionResolver(
                 fresh->getQtConnectionResolver());
 }
 

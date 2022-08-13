@@ -38,9 +38,9 @@ DatabaseConnection &DB::connection(const QString &name)
     return manager().connection(name);
 }
 
-DatabaseConnection &DB::on(const QString &name)
+DatabaseConnection &DB::on(const QString &connection)
 {
-    return manager().connection(name);
+    return manager().connection(connection);
 }
 
 DatabaseManager &
@@ -116,9 +116,9 @@ bool DB::isDriverAvailable(const QString &driverName)
     return manager().isDriverAvailable(driverName);
 }
 
-bool DB::isConnectionDriverAvailable(const QString &connectionName)
+bool DB::isConnectionDriverAvailable(const QString &connection)
 {
-    return manager().isConnectionDriverAvailable(connectionName);
+    return manager().isConnectionDriverAvailable(connection);
 }
 
 const QString &DB::getDefaultConnection()

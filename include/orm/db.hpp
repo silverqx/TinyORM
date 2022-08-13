@@ -48,7 +48,7 @@ namespace Orm
         static DatabaseConnection &connection(const QString &name = "");
         /*! Begin a fluent query against the database on a given connection (alias for
             the connection() method). */
-        static DatabaseConnection &on(const QString &name);
+        static DatabaseConnection &on(const QString &connection);
         /*! Register a connection with the manager. */
         static DatabaseManager &
         addConnection(const QVariantHash &config,
@@ -86,7 +86,7 @@ namespace Orm
         /*! Is the given driver name available? */
         static bool isDriverAvailable(const QString &driverName);
         /*! Is a driver for the given connection available? */
-        static bool isConnectionDriverAvailable(const QString &connectionName);
+        static bool isConnectionDriverAvailable(const QString &connection);
 
         /*! Get the default connection name. */
         static const QString &getDefaultConnection();
