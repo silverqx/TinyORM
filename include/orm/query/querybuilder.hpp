@@ -131,6 +131,7 @@ namespace Orm::Query
         std::tuple<int, std::optional<QSqlQuery>>
         updateOrInsert(const QVector<WhereItem> &attributes,
                        const QVector<UpdateItem> &values);
+
         /*! Insert new records or update the existing ones. */
         std::tuple<int, std::optional<QSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
