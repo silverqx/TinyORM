@@ -100,12 +100,12 @@ namespace Concerns
     {
         const auto time = freshTimestamp();
 
-        const QString &updatedAtColumn = getUpdatedAtColumn();
+        const auto &updatedAtColumn = getUpdatedAtColumn();
 
         if (!updatedAtColumn.isEmpty() && !basemodel().isDirty(updatedAtColumn))
             setUpdatedAt(time);
 
-        const QString &createdAtColumn = getCreatedAtColumn();
+        const auto &createdAtColumn = getCreatedAtColumn();
 
         if (!basemodel().exists && !createdAtColumn.isEmpty() &&
             !basemodel().isDirty(createdAtColumn)
