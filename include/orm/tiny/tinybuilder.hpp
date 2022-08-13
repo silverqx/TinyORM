@@ -190,6 +190,15 @@ namespace Orm::Tiny
         Model updateOrCreate(const QVector<WhereItem> &attributes,
                              const QVector<AttributeItem> &values = {});
 
+        /* QueryBuilder proxy methods that need modifications */
+        /*! Insert new records or update the existing ones. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+               const QStringList &update) const;
+        /*! Insert new records or update the existing ones (update all columns). */
+        std::tuple<int, std::optional<QSqlQuery>>
+        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy) const;
+
         /* TinyBuilder methods */
         /*! Clone the Tiny query. */
         inline Builder clone() const;
@@ -255,6 +264,12 @@ namespace Orm::Tiny
         /*! Add the "updated at" column to the vector of values. */
         QVector<UpdateItem>
         addUpdatedAtColumn(QVector<UpdateItem> values) const;
+
+        /*! Add timestamps to the inserted values. */
+        QVector<QVariantMap>
+        addTimestampsToUpsertValues(const QVector<QVariantMap> &values) const;
+        /*! Add the "updated at" column to the updated columns. */
+        QStringList addUpdatedAtToUpsertColumns(const QStringList &update) const;
 
         /*! Get the name of the "created at" column. */
         Column getCreatedAtColumnForLatestOldest(Column column) const;
@@ -787,6 +802,41 @@ namespace Orm::Tiny
         return instance;
     }
 
+    /* QueryBuilder proxy methods that need modifications */
+
+    template<typename Model>
+    std::tuple<int, std::optional<QSqlQuery>>
+    Builder<Model>::upsert(
+            const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+            const QStringList &update) const
+    {
+        // Nothing to do, no values to insert or update
+        if (values.isEmpty())
+            return {0, std::nullopt};
+
+        // NOTE api different, don't call insert, it's useless silverqx
+        // If the update is an empty vector then throw and don't insert
+        if (update.isEmpty())
+            throw Orm::Exceptions::InvalidArgumentError(
+                    "The upsert method doesn't support an empty update argument, please "
+                    "use the insert method instead.");
+
+        return toBase().upsert(addTimestampsToUpsertValues(values), uniqueBy,
+                               addUpdatedAtToUpsertColumns(update));
+    }
+
+    template<typename Model>
+    std::tuple<int, std::optional<QSqlQuery>>
+    Builder<Model>::upsert(
+            const QVector<QVariantMap> &values, const QStringList &uniqueBy) const
+    {
+        // Update all columns
+        // Columns are obtained only from a first QMap
+        const auto update = values.constFirst().keys();
+
+        return upsert(values, uniqueBy, update);
+    }
+
     template<typename Model>
     Builder<Model> Builder<Model>::clone() const
     {
@@ -1182,6 +1232,64 @@ namespace Orm::Tiny
             valuesUpdatedAtColumn->column = std::move(qualifiedUpdatedAtColumn);
 
         return values;
+    }
+
+    template<typename Model>
+    QVector<QVariantMap>
+    Builder<Model>::addTimestampsToUpsertValues(const QVector<QVariantMap> &values) const
+    {
+        // Nothing to do (model doesn't use timestamps)
+        if (!m_model.usesTimestamps())
+            return values;
+
+        // Prepare timestamp columns to add
+        std::vector<QString> columns;
+        columns.reserve(2);
+
+        // Don't use qualified columns here, they are not needed
+        if (const auto &createdAtColumn = m_model.getCreatedAtColumn();
+            !createdAtColumn.isEmpty()
+        )
+            columns.push_back(createdAtColumn);
+        if (const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
+            !updatedAtColumn.isEmpty()
+        )
+            columns.push_back(updatedAtColumn);
+
+        // Nothing to insert, both timestamp column names are empty 🙃
+        if (columns.empty())
+            return values;
+
+        const auto timestamp = m_model.freshTimestampString();
+        auto valuesCopy = values;
+
+        // Insert timestamp columns if a row doesn't already contain one
+        for (const auto &column : columns)
+            for (auto &row : valuesCopy)
+                if (!row.contains(column))
+                    row.insert(column, timestamp);
+
+        return valuesCopy;
+    }
+
+    template<typename Model>
+    QStringList
+    Builder<Model>::addUpdatedAtToUpsertColumns(const QStringList &update) const
+    {
+        // Nothing to do (model doesn't use timestamps)
+        if (!m_model.usesTimestamps())
+            return update;
+
+        const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
+
+        // Nothing to do
+        if (updatedAtColumn.isEmpty() || update.contains(updatedAtColumn))
+            return update;
+
+        auto updateCopy = update;
+
+        // Don't use qualified column here, it's not needed
+        return updateCopy << updatedAtColumn;
     }
 
     template<typename Model>

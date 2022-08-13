@@ -217,6 +217,14 @@ namespace Tiny::Relations
         std::tuple<int, QSqlQuery>
         update(const QVector<UpdateItem> &values) const;
 
+        /*! Insert new records or update the existing ones. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+               const QStringList &update) const;
+        /*! Insert new records or update the existing ones (update all columns). */
+        std::tuple<int, std::optional<QSqlQuery>>
+        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy) const;
+
         /*! Delete records from the database. */
         std::tuple<int, QSqlQuery> remove() const;
         /*! Delete records from the database. */
@@ -1278,6 +1286,23 @@ namespace Tiny::Relations
     RelationProxies<Model, Related>::update(const QVector<UpdateItem> &values) const
     {
         return getQuery().update(values);
+    }
+
+    template<class Model, class Related>
+    std::tuple<int, std::optional<QSqlQuery>>
+    RelationProxies<Model, Related>::upsert(
+            const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+            const QStringList &update) const
+    {
+        return getQuery().upsert(values, uniqueBy, update);
+    }
+
+    template<class Model, class Related>
+    std::tuple<int, std::optional<QSqlQuery>>
+    RelationProxies<Model, Related>::upsert(
+            const QVector<QVariantMap> &values, const QStringList &uniqueBy) const
+    {
+        return getQuery().upsert(values, uniqueBy);
     }
 
     template<class Model, class Related>

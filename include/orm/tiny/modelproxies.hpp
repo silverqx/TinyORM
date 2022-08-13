@@ -206,6 +206,14 @@ namespace Tiny
         insertOrIgnore(const QVector<QString> &columns,
                        QVector<QVector<QVariant>> values);
 
+        /*! Insert new records or update the existing ones. */
+        static std::tuple<int, std::optional<QSqlQuery>>
+        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+               const QStringList &update);
+        /*! Insert new records or update the existing ones (update all columns). */
+        static std::tuple<int, std::optional<QSqlQuery>>
+        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
+
         /*! Destroy the models for the given IDs. */
         static std::size_t destroy(const QVector<QVariant> &ids);
         /*! Destroy the model by the given ID. */
@@ -1289,6 +1297,23 @@ namespace Tiny
             const QVector<QString> &columns, QVector<QVector<QVariant>> values)
     {
         return query()->insertOrIgnore(columns, std::move(values));
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::tuple<int, std::optional<QSqlQuery>>
+    ModelProxies<Derived, AllRelations...>::upsert(
+            const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+            const QStringList &update)
+    {
+        return query()->upsert(values, uniqueBy, update);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::tuple<int, std::optional<QSqlQuery>>
+    ModelProxies<Derived, AllRelations...>::upsert(
+            const QVector<QVariantMap> &values, const QStringList &uniqueBy)
+    {
+        return query()->upsert(values, uniqueBy);
     }
 
     // TODO cpp check all int types and use std::size_t where appropriate silverqx

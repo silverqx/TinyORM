@@ -3,6 +3,7 @@
 #include <QtTest>
 
 #include "orm/db.hpp"
+#include "orm/utils/query.hpp"
 
 #include "models/massassignmentmodels.hpp"
 #include "models/setting.hpp"
@@ -11,6 +12,7 @@
 #include "databases.hpp"
 
 using Models::Setting;
+using Models::TagProperty;
 using Models::Torrent;
 using Models::Torrent_GuardableColumn;
 using Models::TorrentPeer;
@@ -20,6 +22,7 @@ using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::QMYSQL;
 using Orm::Constants::QSQLITE;
 using Orm::Constants::SIZE;
 using Orm::Constants::UPDATED_AT;
@@ -28,6 +31,8 @@ using Orm::DB;
 using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
+
+using QueryUtils = Orm::Utils::Query;
 
 using TestUtils::Databases;
 
@@ -102,6 +107,8 @@ private slots:
     void update_OnNonExistentModel() const;
     void update_NonExistentAttribute() const;
     void update_SameValue() const;
+
+    void upsert() const;
 
     void truncate() const;
 
@@ -1517,6 +1524,125 @@ void tst_Model::update_SameValue() const
     auto torrentVerify = Torrent::find(3);
     QVERIFY(torrentVerify->exists);
     QCOMPARE(torrentVerify->getAttribute(updatedAtColumn), updatedAt);
+}
+
+void tst_Model::upsert() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto timeBeforeUpdate = QDateTime::currentDateTime();
+    // Reset milliseconds to 0
+    {
+        auto time = timeBeforeUpdate.time();
+        timeBeforeUpdate.setTime(QTime(time.hour(), time.minute(), time.second()));
+    }
+
+    // Get an original timestamp values for compare and restoration
+    const auto &createdAtColumn = TagProperty::getCreatedAtColumn();
+    const auto &updatedAtColumn = TagProperty::getUpdatedAtColumn();
+    auto tagProperty1Original = TagProperty::whereEq("tag_id", 1)
+                                ->orderBy("position")
+                                .first();
+    auto createdAtOriginal = tagProperty1Original->getAttribute(createdAtColumn);
+    auto updatedAtOriginal = tagProperty1Original->getAttribute(updatedAtColumn);
+
+    // Should update one row (color column) and insert one row
+    {
+        auto [affected, query] =
+                TagProperty::upsert(
+                    {{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
+                     {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                    {"position"},
+                    {"color"});
+
+        QVERIFY(query);
+        QVERIFY(!query->isValid() && !query->isSelect() && query->isActive());
+        if (const auto driverName = DB::driverName(connection);
+            driverName == QMYSQL
+        )
+            /* For MySQL the affected-rows value per row is 1 if the row is inserted
+               as a new row, 2 if an existing row is updated, and 0 if an existing row
+               is set to its current values. */
+            QCOMPARE(affected, 3);
+        else
+            QCOMPARE(affected, 2);
+
+        // Validate one update and one insert
+        auto tagProperties = TagProperty::whereEq("tag_id", 1)
+                             ->orderBy("position")
+                             .get();
+
+        auto tagPropertiesSize = tagProperties.size();
+        QCOMPARE(tagPropertiesSize, 2);
+
+        QVector<QVector<QVariant>> result;
+        result.reserve(tagPropertiesSize);
+
+        for (const auto &tagProperty : tagProperties)
+            result.append({tagProperty.getAttribute("color"),
+                           tagProperty.getAttribute("position"),
+                           tagProperty.getAttribute("tag_id")});
+
+        QVector<QVector<QVariant>> expextedResult {
+            {"pink",   0, 1},
+            {"purple", 4, 1},
+        };
+
+        QCOMPARE(result, expextedResult);
+
+        // Timestamps must be compared manually
+        auto tagProperty1 = tagProperties.at(0);
+        QCOMPARE(tagProperty1.getAttribute(createdAtColumn).toDateTime(),
+                 createdAtOriginal);
+        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).toDateTime() >=
+                timeBeforeUpdate);
+        auto tagProperty2 = tagProperties.at(1);
+        QVERIFY(tagProperty2.getAttribute(createdAtColumn).toDateTime() >=
+                timeBeforeUpdate);
+        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).toDateTime() >=
+                timeBeforeUpdate);
+    }
+
+    // Restore db
+    {
+        auto [affected, query] = DB::table("tag_properties", connection)
+                                 ->whereEq("position", 4)
+                                 .remove();
+
+        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
+        QCOMPARE(affected, 1);
+    }
+    {
+        auto [affected, query] = DB::table("tag_properties", connection)
+                                 ->whereEq("id", 1)
+                                 .update({{"color", "white"},
+                                          {createdAtColumn, createdAtOriginal},
+                                          {updatedAtColumn, updatedAtOriginal}});
+
+        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
+        QCOMPARE(affected, 1);
+    }
+
+    // Validate restored db
+    {
+        auto validateQuery = DB::table("tag_properties", connection)
+                             ->whereEq("tag_id", 1)
+                             .orderBy("position")
+                             .get();
+
+        QVERIFY(validateQuery.isSelect() && validateQuery.isActive());
+        QCOMPARE(QueryUtils::queryResultSize(validateQuery), 1);
+        QVERIFY(validateQuery.first());
+        QVERIFY(validateQuery.isValid());
+        QCOMPARE(validateQuery.value("color"), QVariant(QString("white")));
+        QCOMPARE(validateQuery.value("position").value<int>(), 0);
+        QCOMPARE(validateQuery.value(createdAtColumn).value<QDateTime>(),
+                 createdAtOriginal);
+        QCOMPARE(validateQuery.value(updatedAtColumn).value<QDateTime>(),
+                 updatedAtOriginal);
+    }
 }
 
 void tst_Model::truncate() const
