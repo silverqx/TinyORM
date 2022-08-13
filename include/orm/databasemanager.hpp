@@ -383,11 +383,17 @@ namespace Query
         static std::shared_ptr<DatabaseManager> m_instance;
     };
 
+    /* public */
+
+    /* Proxy methods to the DatabaseConnection */
+
     Query::Expression
     DatabaseManager::raw(const QVariant &value)
     {
         return Query::Expression(value);
     }
+
+    /* DatabaseManager */
 
     DatabaseConnection &DatabaseManager::on(const QString &name)
     {

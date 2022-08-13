@@ -333,6 +333,10 @@ namespace Orm
         static std::shared_ptr<DatabaseManager> m_manager;
     };
 
+    /* public */
+
+    /* Proxy methods to the DatabaseConnection */
+
     Query::Expression DB::raw(const QVariant &value)
     {
         return Query::Expression(value);
