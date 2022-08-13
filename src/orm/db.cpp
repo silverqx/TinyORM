@@ -559,7 +559,7 @@ DB::pretend(const std::function<void(DatabaseConnection &)> &callback,
     return manager().connection(connection).pretend(callback);
 }
 
-/* Records was modified */
+/* Records were modified */
 
 bool DB::getRecordsHaveBeenModified(const QString &connection)
 {

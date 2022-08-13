@@ -316,7 +316,7 @@ namespace Orm
         pretend(const std::function<void(DatabaseConnection &)> &callback,
                 const QString &connection = "");
 
-        /* Records was modified */
+        /* Records were modified */
         /*! Check if any records have been modified. */
         static bool getRecordsHaveBeenModified(const QString &connection = "");
         /*! Indicate if any records have been modified. */
