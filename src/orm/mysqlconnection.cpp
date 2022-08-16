@@ -59,7 +59,7 @@ std::unique_ptr<SchemaBuilder> MySqlConnection::getSchemaBuilder()
     return std::make_unique<SchemaNs::MySqlSchemaBuilder>(*this);
 }
 
-/* Getters/Setters */
+/* Getters / Setters */
 
 std::optional<QString> MySqlConnection::version()
 {

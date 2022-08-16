@@ -29,7 +29,7 @@ namespace Orm
         /*! Get a schema builder instance for the connection. */
         std::unique_ptr<SchemaBuilder> getSchemaBuilder() final;
 
-        /* Getters/Setters */
+        /* Getters / Setters */
         /*! Get the MySQL server version. */
         std::optional<QString> version();
         /*! Is currently connected the MariaDB database server? */
