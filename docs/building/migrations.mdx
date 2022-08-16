@@ -162,7 +162,7 @@ And paste the following code.
             // Ownership of the shared_ptr()
             auto db = setupManager();
 
-            return TomApplication(argc, argv, db, "TOM_MIGRATIONS_ENV")
+            return TomApplication(argc, argv, std::move(db), "TOM_MIGRATIONS_ENV")
                     .migrations<CreatePostsTable>()
                     .seeders<DatabaseSeeder>()
                     // Fire it up 🔥🚀✨
