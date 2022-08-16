@@ -432,7 +432,7 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
         return std::make_unique<CompleteCommand>(*this, parserRef);
 
     if (command == DbSeed)
-        return std::make_unique<SeedCommand>(*this, parserRef, m_db);
+        return std::make_unique<SeedCommand>(*this, parserRef);
 
     if (command == DbWipe)
         return std::make_unique<WipeCommand>(*this, parserRef);

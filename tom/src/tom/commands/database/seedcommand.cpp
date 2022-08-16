@@ -35,12 +35,10 @@ const QString SeedCommand::DatabaseSeeder = QStringLiteral("Seeders::DatabaseSee
 
 /* public */
 
-SeedCommand::SeedCommand(Application &application, QCommandLineParser &parser,
-                         std::shared_ptr<ConnectionResolverInterface> &&resolver)
+SeedCommand::SeedCommand(Application &application, QCommandLineParser &parser)
     : Command(application, parser)
     , Concerns::Confirmable(*this, 0)
-    , Concerns::UsingConnection(this->resolver())
-    , m_resolver(std::move(resolver))
+    , Concerns::UsingConnection(resolver())
 {}
 
 const std::vector<PositionalArgument> &SeedCommand::positionalArguments() const

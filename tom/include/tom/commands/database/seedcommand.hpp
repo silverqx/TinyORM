@@ -33,8 +33,7 @@ namespace Commands::Database
 
     public:
         /*! Constructor. */
-        SeedCommand(Application &application, QCommandLineParser &parser,
-                    std::shared_ptr<ConnectionResolverInterface> &&resolver);
+        SeedCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
         inline ~SeedCommand() override = default;
 
@@ -66,9 +65,6 @@ namespace Commands::Database
 
         /*! Get a reference to the all seeder instances. */
         const std::vector<std::shared_ptr<Seeder>> &seeders() const noexcept;
-
-        /*! The database connection resolver instance. */
-        std::shared_ptr<ConnectionResolverInterface> m_resolver;
 
     private:
         /*! Default name of the root database seeder. */
