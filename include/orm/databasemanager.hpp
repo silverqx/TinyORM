@@ -164,8 +164,9 @@ namespace Query
         QStringList connectionNames() const;
         /*! Returns a list containing the names of opened connections. */
         QStringList openedConnectionNames() const;
-        /*! Get the number of registered connections. */
-        std::size_t connectionsSize() const;
+        /*! Get the number of opened connections. */
+        std::size_t openedConnectionsSize() const;
+
         /*! Get all of the support drivers. */
         QStringList supportedDrivers() const;
         /*! Get all of the available drivers (loadable). */
@@ -300,6 +301,8 @@ namespace Query
             (passed to the DB::create, original/unchanged). */
         QVariant originalConfigValue(const QString &option,
                                      const QString &connection = "") const;
+        /*! Get the number of registered connection configurations. */
+        std::size_t originalConfigsSize() const;
 
         /* Connection configurations - proxies to the DatabaseConnection */
         /*! Get the configuration for the current connection. */

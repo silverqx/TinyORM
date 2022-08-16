@@ -96,9 +96,9 @@ QStringList DB::openedConnectionNames()
     return manager().openedConnectionNames();
 }
 
-std::size_t DB::connectionsSize()
+std::size_t DB::openedConnectionsSize()
 {
-    return manager().connectionsSize();
+    return manager().openedConnectionsSize();
 }
 
 QStringList DB::supportedDrivers()

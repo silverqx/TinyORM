@@ -78,8 +78,9 @@ namespace Orm
         static QStringList connectionNames();
         /*! Returns a list containing the names of opened connections. */
         static QStringList openedConnectionNames();
-        /*! Get the number of registered connections. */
-        static std::size_t connectionsSize();
+        /*! Get the number of opened connections. */
+        static std::size_t openedConnectionsSize();
+
         /*! Get all of the support drivers. */
         static QStringList supportedDrivers();
         /*! Get all of the available drivers (loadable). */

@@ -389,7 +389,7 @@ QStringList DatabaseManager::openedConnectionNames() const
     return names;
 }
 
-std::size_t DatabaseManager::connectionsSize() const
+std::size_t DatabaseManager::openedConnectionsSize() const
 {
     return (*m_connections).size();
 }
@@ -766,6 +766,11 @@ DatabaseManager::originalConfigValue(const QString &option,
                                      const QString &connection) const
 {
     return originalConfig(connection).value(option);
+}
+
+size_t DatabaseManager::originalConfigsSize() const
+{
+    return (*m_configuration).size();
 }
 
 const QVariantHash &
