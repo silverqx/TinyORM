@@ -244,6 +244,8 @@ namespace Concerns
         /*! Get database connection resolver. */
         std::shared_ptr<ConnectionResolverInterface> resolver() const noexcept;
 
+        /*! Throw if no connection configuration is registered. */
+        void throwIfNoConnectionConfig() const;
         /*! Throw if a default connection is empty. */
         void throwIfEmptyDefaultConnection() const;
 

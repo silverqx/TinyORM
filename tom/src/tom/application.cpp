@@ -159,6 +159,8 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
 
 int Application::run()
 {
+    // Throw if no database connection configuration is registered
+    throwIfNoConnectionConfig();
     // Default database connection is required if exactly one connection is registered
     throwIfEmptyDefaultConnection();
 
@@ -651,6 +653,18 @@ fspath Application::initializePath(fspath &&path)
 std::shared_ptr<ConnectionResolverInterface> Application::resolver() const noexcept
 {
     return std::dynamic_pointer_cast<ConnectionResolverInterface>(m_db);
+}
+
+void Application::throwIfNoConnectionConfig() const
+{
+    // Nothing to do, some database connection configuration/s are already registered
+    if (m_db->originalConfigsSize() > 0)
+        return;
+
+    throw Exceptions::RuntimeError(
+                "No connection configuration is registered, please add at least one "
+                "database configuration to the DatabaseManager (eg. using "
+                "DB::create()).");
 }
 
 void Application::throwIfEmptyDefaultConnection() const
