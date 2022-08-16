@@ -19,10 +19,11 @@ namespace Orm
 
         /*! Type for the Database Configuration. */
         using Configuration = Orm::Support::DatabaseConfiguration;
+
+    public:
         /*! Type used for Database Connections map. */
         using ConfigurationsType = Configuration::ConfigurationsType;
 
-    public:
         /*! Deleted default constructor, this is a pure library class. */
         DB() = delete;
         /*! Deleted destructor. */

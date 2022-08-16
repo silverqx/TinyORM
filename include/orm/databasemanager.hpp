@@ -26,10 +26,11 @@ namespace Query
 
         /*! Type for the Database Configuration. */
         using Configuration = Orm::Support::DatabaseConfiguration;
+
+    public:
         /*! Type used for Database Connections map. */
         using ConfigurationsType = Configuration::ConfigurationsType;
 
-    public:
         /*! Virtual destructor. */
         ~DatabaseManager() final;
 
