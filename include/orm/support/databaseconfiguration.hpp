@@ -34,7 +34,7 @@ namespace Orm::Support
         T_THREAD_LOCAL
         inline static QString defaultConnectionName = QStringLiteral("tinyorm_default");
 
-        /*! Currently set Default Database Connection Name in a current thread. */
+        /*! Currently set Default Database Connection Name for a current thread. */
         T_THREAD_LOCAL
         inline static QString defaultConnection;
 
