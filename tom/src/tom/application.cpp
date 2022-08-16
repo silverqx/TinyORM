@@ -660,7 +660,7 @@ void Application::throwIfEmptyDefaultConnection() const
         return;
 
     // Throw if exactly one database connection is registered
-    throw Exceptions::RuntimeError("Default database connection not configured.");
+    throw Exceptions::RuntimeError("Default database connection is not configured.");
 }
 
 /* Auto tests helpers */
