@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
         // Ownership of the shared_ptr()
         auto db = setupManager();
 
-        return TomApplication(argc, argv, db, "TOM_EXAMPLE_ENV",
+        return TomApplication(argc, argv, std::move(db), "TOM_EXAMPLE_ENV",
                               QStringLiteral("migrations_example"))
                 /* Default migrations path for the make:migration command, the path
                    can be absolute or relative (to the pwd at runtime). */
@@ -120,7 +120,8 @@ std::shared_ptr<DatabaseManager> setupManager()
 }
 
 /* Alternative syntax to instantiate migration classes. */
-//        return TomApplication(argc, argv, db, "TOM_EXAMPLE_ENV",
+//        return TomApplication(argc, argv, std::move(db), "TOM_EXAMPLE_ENV",
+//                              QStringLiteral("migrations_table")
 //        {
 //            std::make_shared<CreatePostsTable>(),
 //            std::make_shared<AddFactorColumnToPostsTable>(),
