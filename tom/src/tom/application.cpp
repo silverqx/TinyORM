@@ -159,7 +159,7 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
 
 int Application::run()
 {
-    // Default database connection is required in the migrations application
+    // Default database connection is required if exactly one connection is registered
     throwIfEmptyDefaultConnection();
 
     // Process the actual command-line arguments given by the user
