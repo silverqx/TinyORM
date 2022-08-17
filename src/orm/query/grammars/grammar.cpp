@@ -48,7 +48,7 @@ QString Grammar::compileInsert(const QueryBuilder &query,
     return QStringLiteral("insert into %1 (%2) values %3").arg(
                 table,
                 // Columns are obtained only from a first QMap
-                columnize(values.at(0).keys()),
+                columnize(values.constFirst().keys()),
                 columnizeWithoutWrap(compileInsertToVector(values)));
 }
 

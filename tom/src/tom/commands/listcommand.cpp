@@ -280,7 +280,7 @@ QString ListCommand::commandNamespace(const QString &commandName) const
     if (!commandName.contains(COLON))
         return {};
 
-    return commandName.split(COLON).at(0);
+    return commandName.split(COLON).constFirst();
 }
 
 const std::vector<std::shared_ptr<Command>> &

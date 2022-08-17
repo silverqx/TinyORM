@@ -129,7 +129,7 @@ QString PostgresConnector::formatSchema(QStringList schema) const
     if (schema.size() == 1) {
         static const QRegularExpression regex("\\s*(?:,|;)\\s*");
 
-        schema = schema.at(0).trimmed().split(regex, Qt::SkipEmptyParts);
+        schema = schema.constFirst().trimmed().split(regex, Qt::SkipEmptyParts);
     }
 
     // Really nice 😎

@@ -1209,7 +1209,7 @@ namespace Concerns
                     return relation.name == key;
 
                 // Support for select constraints
-                return relation.name.split(COLON).at(0).trimmed() == key;
+                return relation.name.split(COLON).constFirst().trimmed() == key;
             });
 
             if (!relationsContainKey)

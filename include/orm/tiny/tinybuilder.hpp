@@ -1063,7 +1063,7 @@ namespace Orm::Tiny
     WithItem Builder<Model>::createSelectWithConstraint(const QString &name)
     {
         auto splitted = name.split(COLON);
-        auto relation = splitted.at(0).trimmed();
+        auto relation = splitted.constFirst().trimmed();
         auto &columns = splitted[1];
 
         /* Get the Related model table name if the relation is BelongsToMany, otherwise

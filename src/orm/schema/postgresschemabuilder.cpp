@@ -146,7 +146,7 @@ PostgresSchemaBuilder::parseSchemaAndTable(const QString &table) const
         auto schemaConfig = m_connection.getConfig(schema_).value<QStringList>();
 
         // table was specified with the schema, like schema.table, so use this schema
-        if (schemaConfig.contains(table_.at(0)))
+        if (schemaConfig.contains(table_.constFirst()))
             return {table_.takeFirst(), table_.join(DOT)};
 
         // Instead, get a schema from the configuration

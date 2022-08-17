@@ -292,7 +292,7 @@ InteractsWithIO::table(const TableRow &headers, const std::vector<TableRow> &row
             table.row(i).format().hide_border_top();
 
         // Ran? column : Yes - green, No - red
-        const auto &ran = rows.at(i - 1).at(0);
+        const auto &ran = rows.at(i - 1).front();
 
         if (!std::holds_alternative<std::string>(ran))
             continue;
