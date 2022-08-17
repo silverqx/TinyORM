@@ -28,14 +28,18 @@ namespace Orm::Support
         using ConnectionsType =
                 std::unordered_map<QString, std::unique_ptr<DatabaseConnection>>;
 
+        /*! Return a pointer to the database connections map. */
+        constexpr ConnectionsType *operator->() noexcept;
+        /*! Return a pointer to the database connections map. */
+        constexpr const ConnectionsType *operator->() const noexcept;
         /*! Return a reference to the database connections map. */
-        inline ConnectionsType &operator*();
+        constexpr ConnectionsType &operator*() noexcept;
         /*! Return a reference to the database connections map. */
-        inline const ConnectionsType &operator*() const;
+        constexpr const ConnectionsType &operator*() const noexcept;
         /*! Return a reference to the database connections map. */
-        inline ConnectionsType &get();
+        constexpr ConnectionsType &get() noexcept;
         /*! Return a reference to the database connections map. */
-        inline const ConnectionsType &get() const;
+        constexpr const ConnectionsType &get() const noexcept;
 
     private:
         /*! Database connections for the current thread. */
@@ -43,26 +47,40 @@ namespace Orm::Support
         inline static ConnectionsType m_connections;
     };
 
-    DatabaseConnectionsMap::ConnectionsType &
-    DatabaseConnectionsMap::operator*()
+    /* public */
+
+    constexpr DatabaseConnectionsMap::ConnectionsType *
+    DatabaseConnectionsMap::operator->() noexcept
+    {
+        return std::addressof(m_connections);
+    }
+
+    constexpr const DatabaseConnectionsMap::ConnectionsType *
+    DatabaseConnectionsMap::operator->() const noexcept
+    {
+        return std::addressof(m_connections);
+    }
+
+    constexpr DatabaseConnectionsMap::ConnectionsType &
+    DatabaseConnectionsMap::operator*() noexcept
     {
         return m_connections;
     }
 
-    const DatabaseConnectionsMap::ConnectionsType &
-    DatabaseConnectionsMap::operator*() const
+    constexpr const DatabaseConnectionsMap::ConnectionsType &
+    DatabaseConnectionsMap::operator*() const noexcept
     {
         return m_connections;
     }
 
-    DatabaseConnectionsMap::ConnectionsType &
-    DatabaseConnectionsMap::get()
+    constexpr DatabaseConnectionsMap::ConnectionsType &
+    DatabaseConnectionsMap::get() noexcept
     {
         return m_connections;
     }
 
-    const DatabaseConnectionsMap::ConnectionsType &
-    DatabaseConnectionsMap::get() const
+    constexpr const DatabaseConnectionsMap::ConnectionsType &
+    DatabaseConnectionsMap::get() const noexcept
     {
         return m_connections;
     }

@@ -43,14 +43,18 @@ namespace Orm::Support
         inline static
         QString defaultSavepointNamespace = QStringLiteral("tinyorm_savepoint");
 
+        /*! Return a pointer to the database connection configurations map. */
+        constexpr ConfigurationsType *operator->() noexcept;
+        /*! Return a pointer to the database connection configurations map. */
+        constexpr const ConfigurationsType *operator->() const noexcept;
         /*! Return a reference to the database connection configurations map. */
-        inline ConfigurationsType &operator*();
+        constexpr ConfigurationsType &operator*() noexcept;
         /*! Return a reference to the database connection configurations map. */
-        inline const ConfigurationsType &operator*() const;
+        constexpr const ConfigurationsType &operator*() const noexcept;
         /*! Return a reference to the database connection configurations map. */
-        inline ConfigurationsType &get();
+        constexpr ConfigurationsType &get() noexcept;
         /*! Return a reference to the database connection configurations map. */
-        inline const ConfigurationsType &get() const;
+        constexpr const ConfigurationsType &get() const noexcept;
 
     private:
         /*! Database connection configurations. */
@@ -58,26 +62,40 @@ namespace Orm::Support
         inline static ConfigurationsType m_configurations;
     };
 
-    DatabaseConfiguration::ConfigurationsType &
-    DatabaseConfiguration::operator*()
+    /* public */
+
+    constexpr DatabaseConfiguration::ConfigurationsType *
+    DatabaseConfiguration::operator->() noexcept
+    {
+        return std::addressof(m_configurations);
+    }
+
+    constexpr const DatabaseConfiguration::ConfigurationsType *
+    DatabaseConfiguration::operator->() const noexcept
+    {
+        return std::addressof(m_configurations);
+    }
+
+    constexpr DatabaseConfiguration::ConfigurationsType &
+    DatabaseConfiguration::operator*() noexcept
     {
         return m_configurations;
     }
 
-    const DatabaseConfiguration::ConfigurationsType &
-    DatabaseConfiguration::operator*() const
+    constexpr const DatabaseConfiguration::ConfigurationsType &
+    DatabaseConfiguration::operator*() const noexcept
     {
         return m_configurations;
     }
 
-    DatabaseConfiguration::ConfigurationsType &
-    DatabaseConfiguration::get()
+    constexpr DatabaseConfiguration::ConfigurationsType &
+    DatabaseConfiguration::get() noexcept
     {
         return m_configurations;
     }
 
-    const DatabaseConfiguration::ConfigurationsType &
-    DatabaseConfiguration::get() const
+    constexpr const DatabaseConfiguration::ConfigurationsType &
+    DatabaseConfiguration::get() const noexcept
     {
         return m_configurations;
     }

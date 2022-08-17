@@ -43,7 +43,7 @@ DatabaseManager::DatabaseManager(const ConfigurationsType &configs,
                                  const QString &defaultConnection)
     : DatabaseManager(defaultConnection)
 {
-    (*m_configuration) = configs;
+    *m_configuration = configs;
 }
 
 DatabaseManager &DatabaseManager::setupDefaultReconnector()
@@ -256,8 +256,8 @@ DatabaseConnection &DatabaseManager::connection(const QString &name)
 
     /* If we haven't created this connection, we'll create it based on the provided
        config. Once we've created the connections we will configure it. */
-    (*m_connections).try_emplace(connectionName,
-                                 configure(makeConnection(connectionName)));
+    m_connections->try_emplace(connectionName,
+                               configure(makeConnection(connectionName)));
 
     return *(*m_connections)[connectionName];
 }
@@ -265,12 +265,12 @@ DatabaseConnection &DatabaseManager::connection(const QString &name)
 DatabaseManager &
 DatabaseManager::addConnection(const QVariantHash &config, const QString &name)
 {
-    if ((*m_configuration).contains(name))
+    if (m_configuration->contains(name))
         throw Exceptions::InvalidArgumentError(
                 QStringLiteral("The database connection '%1' already exists.")
                 .arg(name));
 
-    (*m_configuration).emplace(name, config);
+    m_configuration->emplace(name, config);
 
     return *this;
 }
@@ -312,18 +312,18 @@ bool DatabaseManager::removeConnection(const QString &name)
     };
 
     // Not connected
-    if (!(*m_connections).contains(name_)) {
-        (*m_configuration).erase(name_);
+    if (!m_connections->contains(name_)) {
+        m_configuration->erase(name_);
         resetDefaultConnection_();
         return true;
     }
 
     // Disconnect first to be nice 😁 and safe 😂
-    (*m_connections).find(name_)->second->disconnect();
+    m_connections->find(name_)->second->disconnect();
 
     /* If connection was not removed, return false and don't remove Qt's database
        connection and also don't remove connection configuration. */
-    if ((*m_connections).erase(name_) == 0)
+    if (m_connections->erase(name_) == 0)
         return false;
 
     // Remove a cached schema builder for the currently removing connection
@@ -331,7 +331,7 @@ bool DatabaseManager::removeConnection(const QString &name)
         Schema::m_schemaBuildersCache.erase(name_);
 
     // Remove TinyORM configuration
-    (*m_configuration).erase(name_);
+    m_configuration->erase(name_);
     // Remove Qt's database connection
     QSqlDatabase::removeDatabase(name_);
 
@@ -342,7 +342,7 @@ bool DatabaseManager::removeConnection(const QString &name)
 
 bool DatabaseManager::containsConnection(const QString &name)
 {
-    return (*m_connections).contains(name);
+    return m_connections->contains(name);
 }
 
 DatabaseConnection &DatabaseManager::reconnect(const QString &name)
@@ -351,7 +351,7 @@ DatabaseConnection &DatabaseManager::reconnect(const QString &name)
 
     disconnect(name_);
 
-    if (!(*m_connections).contains(name_))
+    if (!m_connections->contains(name_))
         return connection(name_);
 
     return refreshQtConnection(name_);
@@ -361,10 +361,10 @@ void DatabaseManager::disconnect(const QString &name) const
 {
     const auto &name_ = parseConnectionName(name);
 
-    if (!(*m_connections).contains(name_))
+    if (!m_connections->contains(name_))
         return;
 
-    (*m_connections).find(name_)->second->disconnect();
+    m_connections->find(name_)->second->disconnect();
 }
 
 QSqlDatabase DatabaseManager::connectEagerly(const QString &name)
@@ -374,16 +374,16 @@ QSqlDatabase DatabaseManager::connectEagerly(const QString &name)
 
 QStringList DatabaseManager::connectionNames() const
 {
-    return (*m_configuration) | ranges::views::keys | ranges::to<QStringList>();
+    return *m_configuration | ranges::views::keys | ranges::to<QStringList>();
 }
 
 QStringList DatabaseManager::openedConnectionNames() const
 {
     QStringList names;
     // TODO overflow, add check code https://stackoverflow.com/questions/22184403/how-to-cast-the-size-t-to-double-or-int-c/22184657#22184657 silverqx
-    names.reserve(static_cast<int>((*m_connections).size()));
+    names.reserve(static_cast<decltype (names)::size_type>(m_connections->size()));
 
-    for (const auto &connection : (*m_connections))
+    for (const auto &connection : *m_connections)
         names << connection.first;
 
     return names;
@@ -391,7 +391,7 @@ QStringList DatabaseManager::openedConnectionNames() const
 
 std::size_t DatabaseManager::openedConnectionsSize() const
 {
-    return (*m_connections).size();
+    return m_connections->size();
 }
 
 QStringList DatabaseManager::supportedDrivers() const
@@ -770,7 +770,7 @@ DatabaseManager::originalConfigValue(const QString &option,
 
 size_t DatabaseManager::originalConfigsSize() const
 {
-    return (*m_configuration).size();
+    return m_configuration->size();
 }
 
 const QVariantHash &
@@ -780,7 +780,7 @@ DatabaseManager::originalConfig(const QString &connection) const
 
     throwIfNoConfiguration(connectionName);
 
-    return (*m_configuration).at(connectionName);
+    return m_configuration->at(connectionName);
 }
 
 /* Connection configurations - proxies to the DatabaseConnection */
@@ -872,7 +872,7 @@ void DatabaseManager::throwIfNoConfiguration(const QString &connection) const
 {
     /* Get the database connection configuration by the given name.
        If the configuration doesn't exist, we'll throw an exception and bail. */
-    if ((*m_configuration).contains(connection))
+    if (m_configuration->contains(connection))
         return;
 
     throw Exceptions::InvalidArgumentError(
