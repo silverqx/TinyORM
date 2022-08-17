@@ -46,6 +46,9 @@ QString Type::prettyFunction(const QString &function)
                 "Unsupported compiler in Utils::Type::prettyFunction().");
 #endif
 
+    Q_ASSERT_X(!function.isEmpty(), "empty string",
+               "The function name can't be empty in Utils::Type::prettyFunction().");
+
     const auto match = regex.match(function);
 
     // This should never happen, but who knows 🤔
@@ -118,6 +121,9 @@ Type::classPureBasenameInternal(const char *typeName, const bool withNamespace)
 QString
 Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
 {
+    Q_ASSERT_X(!className.isEmpty(), "empty string",
+               "The class name can't be empty in Utils::Type::classPureBasenameMsvc().");
+
     auto findBeginWithoutNS = [&className]
     {
         return className.indexOf(SPACE) + 1;
@@ -158,6 +164,9 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
 QString
 Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
 {
+    Q_ASSERT_X(!className.isEmpty(), "empty string",
+               "The class name can't be empty in Utils::Type::classPureBasenameGcc().");
+
     // Find the beginning of the class name
     const auto *itBegin = className.cbegin();
 
