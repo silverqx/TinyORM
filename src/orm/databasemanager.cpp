@@ -58,6 +58,8 @@ DatabaseManager &DatabaseManager::setupDefaultReconnector()
 
 /* public */
 
+/* DatabaseManager factories */
+
 std::shared_ptr<DatabaseManager>
 DatabaseManager::create(const QString &defaultConnection)
 {
@@ -447,6 +449,139 @@ DatabaseManager::setReconnector(const ReconnectorType &reconnector)
     return *this;
 }
 
+/* Getters */
+
+QString DatabaseManager::driverName(const QString &connection)
+{
+    return this->connection(connection).driverName();
+}
+
+const QString &
+DatabaseManager::driverNamePrintable(const QString &connection)
+{
+    return this->connection(connection).driverNamePrintable();
+}
+
+const QString &
+DatabaseManager::databaseName(const QString &connection)
+{
+    return this->connection(connection).getDatabaseName();
+}
+
+const QString &
+DatabaseManager::hostName(const QString &connection)
+{
+    return this->connection(connection).getHostName();
+}
+
+/* Connection configurations - saved in the DatabaseManager */
+
+QVariant
+DatabaseManager::originalConfigValue(const QString &option,
+                                     const QString &connection) const
+{
+    return originalConfig(connection).value(option);
+}
+
+const QVariantHash &
+DatabaseManager::originalConfig(const QString &connection) const
+{
+    const auto &connectionName = parseConnectionName(connection);
+
+    throwIfNoConfiguration(connectionName);
+
+    return m_configuration->at(connectionName);
+}
+
+size_t DatabaseManager::originalConfigsSize() const
+{
+    return m_configuration->size();
+}
+
+/* Connection configurations - proxies to the DatabaseConnection */
+
+QVariant DatabaseManager::getConfigValue(const QString &option, const QString &connection)
+{
+    return this->connection(connection).getConfig(option);
+}
+
+const QVariantHash &DatabaseManager::getConfig(const QString &connection)
+{
+    return this->connection(connection).getConfig();
+}
+
+bool DatabaseManager::hasConfigValue(const QString &option, const QString &connection)
+{
+    return this->connection(connection).hasConfig(option);
+}
+
+/* Pretending */
+
+QVector<Log>
+DatabaseManager::pretend(const std::function<void()> &callback,
+                         const QString &connection)
+{
+    return this->connection(connection).pretend(callback);
+}
+
+QVector<Log>
+DatabaseManager::pretend(const std::function<void(DatabaseConnection &)> &callback,
+                         const QString &connection)
+{
+    return this->connection(connection).pretend(callback);
+}
+
+/* Records were modified */
+
+bool DatabaseManager::getRecordsHaveBeenModified(const QString &connection)
+{
+    return this->connection(connection).getRecordsHaveBeenModified();
+}
+
+void DatabaseManager::recordsHaveBeenModified(const bool value,
+                                              const QString &connection)
+{
+    this->connection(connection).recordsHaveBeenModified(value);
+}
+
+void DatabaseManager::forgetRecordModificationState(const QString &connection)
+{
+    this->connection(connection).forgetRecordModificationState();
+}
+
+/* Logging */
+
+std::shared_ptr<QVector<Log>>
+DatabaseManager::getQueryLog(const QString &connection)
+{
+    return this->connection(connection).getQueryLog();
+}
+
+void DatabaseManager::flushQueryLog(const QString &connection)
+{
+    this->connection(connection).flushQueryLog();
+}
+
+void DatabaseManager::enableQueryLog(const QString &connection)
+{
+    this->connection(connection).enableQueryLog();
+}
+
+void DatabaseManager::disableQueryLog(const QString &connection)
+{
+    this->connection(connection).disableQueryLog();
+}
+
+bool DatabaseManager::logging(const QString &connection)
+{
+    return this->connection(connection).logging();
+}
+
+std::size_t DatabaseManager::getQueryLogOrder()
+{
+    return DatabaseConnection::getQueryLogOrder();
+}
+
 /* Queries execution time counter */
 
 bool DatabaseManager::countingElapsed(const QString &connection)
@@ -699,139 +834,6 @@ void DatabaseManager::resetStatementCounters(const QStringList &connections)
         if (connection.countingElapsed())
             connection.resetStatementsCounter();
     }
-}
-
-/* Logging */
-
-std::shared_ptr<QVector<Log>>
-DatabaseManager::getQueryLog(const QString &connection)
-{
-    return this->connection(connection).getQueryLog();
-}
-
-void DatabaseManager::flushQueryLog(const QString &connection)
-{
-    this->connection(connection).flushQueryLog();
-}
-
-void DatabaseManager::enableQueryLog(const QString &connection)
-{
-    this->connection(connection).enableQueryLog();
-}
-
-void DatabaseManager::disableQueryLog(const QString &connection)
-{
-    this->connection(connection).disableQueryLog();
-}
-
-bool DatabaseManager::logging(const QString &connection)
-{
-    return this->connection(connection).logging();
-}
-
-std::size_t DatabaseManager::getQueryLogOrder()
-{
-    return DatabaseConnection::getQueryLogOrder();
-}
-
-/* Getters */
-
-QString DatabaseManager::driverName(const QString &connection)
-{
-    return this->connection(connection).driverName();
-}
-
-const QString &
-DatabaseManager::driverNamePrintable(const QString &connection)
-{
-    return this->connection(connection).driverNamePrintable();
-}
-
-const QString &
-DatabaseManager::databaseName(const QString &connection)
-{
-    return this->connection(connection).getDatabaseName();
-}
-
-const QString &
-DatabaseManager::hostName(const QString &connection)
-{
-    return this->connection(connection).getHostName();
-}
-
-/* Connection configurations - saved in the DatabaseManager */
-
-QVariant
-DatabaseManager::originalConfigValue(const QString &option,
-                                     const QString &connection) const
-{
-    return originalConfig(connection).value(option);
-}
-
-size_t DatabaseManager::originalConfigsSize() const
-{
-    return m_configuration->size();
-}
-
-const QVariantHash &
-DatabaseManager::originalConfig(const QString &connection) const
-{
-    const auto &connectionName = parseConnectionName(connection);
-
-    throwIfNoConfiguration(connectionName);
-
-    return m_configuration->at(connectionName);
-}
-
-/* Connection configurations - proxies to the DatabaseConnection */
-
-QVariant DatabaseManager::getConfig(const QString &option, const QString &connection)
-{
-    return this->connection(connection).getConfig(option);
-}
-
-const QVariantHash &DatabaseManager::getConfig(const QString &connection)
-{
-    return this->connection(connection).getConfig();
-}
-
-bool DatabaseManager::hasConfig(const QString &option, const QString &connection)
-{
-    return this->connection(connection).hasConfig(option);
-}
-
-/* Pretending */
-
-QVector<Log>
-DatabaseManager::pretend(const std::function<void()> &callback,
-                         const QString &connection)
-{
-    return this->connection(connection).pretend(callback);
-}
-
-QVector<Log>
-DatabaseManager::pretend(const std::function<void(DatabaseConnection &)> &callback,
-                         const QString &connection)
-{
-    return this->connection(connection).pretend(callback);
-}
-
-/* Records were modified */
-
-bool DatabaseManager::getRecordsHaveBeenModified(const QString &connection)
-{
-    return this->connection(connection).getRecordsHaveBeenModified();
-}
-
-void DatabaseManager::recordsHaveBeenModified(const bool value,
-                                              const QString &connection)
-{
-    this->connection(connection).recordsHaveBeenModified(value);
-}
-
-void DatabaseManager::forgetRecordModificationState(const QString &connection)
-{
-    this->connection(connection).forgetRecordModificationState();
 }
 
 /* private */

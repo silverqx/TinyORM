@@ -34,6 +34,7 @@ namespace Query
         /*! Virtual destructor. */
         ~DatabaseManager() final;
 
+        /* DatabaseManager factories */
         /*! Factory method to create DatabaseManager instance and set a default connection
             at once. */
         static std::shared_ptr<DatabaseManager>
@@ -186,6 +187,69 @@ namespace Query
         /*! Set the database reconnector callback. */
         DatabaseManager &setReconnector(const ReconnectorType &reconnector);
 
+        /* Getters */
+        /*! Return the connection's driver name. */
+        QString driverName(const QString &connection = "");
+        /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        const QString &driverNamePrintable(const QString &connection = "");
+        /*! Return the name of the connected database. */
+        const QString &databaseName(const QString &connection = "");
+        /*! Return the host name of the connected database. */
+        const QString &hostName(const QString &connection = "");
+
+        /* Connection configurations - saved in the DatabaseManager */
+        /*! Get an original configuration option value for the given connection
+            (passed to the DB::create, original/unchanged). */
+        QVariant originalConfigValue(const QString &option,
+                                     const QString &connection = "") const;
+        /*! Get an original configuration for the given connection
+            (passed to the DB::create, original/unchanged). */
+        const QVariantHash &originalConfig(const QString &connection = "") const;
+        /*! Get the number of registered connection configurations. */
+        std::size_t originalConfigsSize() const;
+
+        /* Connection configurations - proxies to the DatabaseConnection */
+        /*! Get an option value from the configuration options. */
+        QVariant getConfigValue(const QString &option, const QString &connection = "");
+        /*! Get the configuration for the current connection. */
+        const QVariantHash &getConfig(const QString &connection = "");
+        /*! Check whether the configuration contains the given option. */
+        bool hasConfigValue(const QString &option, const QString &connection = "");
+
+        /* Pretending */
+        /*! Execute the given callback in "dry run" mode. */
+        QVector<Log>
+        pretend(const std::function<void()> &callback,
+                const QString &connection = "");
+        /*! Execute the given callback in "dry run" mode. */
+        QVector<Log>
+        pretend(const std::function<void(DatabaseConnection &)> &callback,
+                const QString &connection = "");
+
+        /* Records were modified */
+        /*! Check if any records have been modified. */
+        bool getRecordsHaveBeenModified(const QString &connection = "");
+        /*! Indicate if any records have been modified. */
+        void recordsHaveBeenModified(bool value = true,
+                                     const QString &connection = "");
+        /*! Reset the record modification state. */
+        void forgetRecordModificationState(const QString &connection = "");
+
+        /* Logging */
+        /*! Get the connection query log. */
+        std::shared_ptr<QVector<Log>>
+        getQueryLog(const QString &connection = "");
+        /*! Clear the query log. */
+        void flushQueryLog(const QString &connection = "");
+        /*! Enable the query log on the connection. */
+        void enableQueryLog(const QString &connection = "");
+        /*! Disable the query log on the connection. */
+        void disableQueryLog(const QString &connection = "");
+        /*! Determine whether we're logging queries. */
+        bool logging(const QString &connection = "");
+        /*! The current order value for a query log record. */
+        std::size_t getQueryLogOrder();
+
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */
         bool countingElapsed(const QString &connection = "");
@@ -267,69 +331,6 @@ namespace Query
         StatementsCounter takeStatementCounters(const QStringList &connections);
         /*! Reset the number of executed queries on given connections. */
         void resetStatementCounters(const QStringList &connections);
-
-        /* Logging */
-        /*! Get the connection query log. */
-        std::shared_ptr<QVector<Log>>
-        getQueryLog(const QString &connection = "");
-        /*! Clear the query log. */
-        void flushQueryLog(const QString &connection = "");
-        /*! Enable the query log on the connection. */
-        void enableQueryLog(const QString &connection = "");
-        /*! Disable the query log on the connection. */
-        void disableQueryLog(const QString &connection = "");
-        /*! Determine whether we're logging queries. */
-        bool logging(const QString &connection = "");
-        /*! The current order value for a query log record. */
-        std::size_t getQueryLogOrder();
-
-        /* Getters */
-        /*! Return the connection's driver name. */
-        QString driverName(const QString &connection = "");
-        /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
-        const QString &driverNamePrintable(const QString &connection = "");
-        /*! Return the name of the connected database. */
-        const QString &databaseName(const QString &connection = "");
-        /*! Return the host name of the connected database. */
-        const QString &hostName(const QString &connection = "");
-
-        /* Connection configurations - saved in the DatabaseManager */
-        /*! Get an original configuration for the given connection
-            (passed to the DB::create, original/unchanged). */
-        const QVariantHash &originalConfig(const QString &connection = "") const;
-        /*! Get an original configuration option value for the given connection
-            (passed to the DB::create, original/unchanged). */
-        QVariant originalConfigValue(const QString &option,
-                                     const QString &connection = "") const;
-        /*! Get the number of registered connection configurations. */
-        std::size_t originalConfigsSize() const;
-
-        /* Connection configurations - proxies to the DatabaseConnection */
-        /*! Get the configuration for the current connection. */
-        const QVariantHash &getConfig(const QString &connection = "");
-        /*! Get an option value from the configuration options. */
-        QVariant getConfig(const QString &option, const QString &connection = "");
-        /*! Check whether the configuration contains the given option. */
-        bool hasConfig(const QString &option, const QString &connection = "");
-
-        /* Pretending */
-        /*! Execute the given callback in "dry run" mode. */
-        QVector<Log>
-        pretend(const std::function<void()> &callback,
-                const QString &connection = "");
-        /*! Execute the given callback in "dry run" mode. */
-        QVector<Log>
-        pretend(const std::function<void(DatabaseConnection &)> &callback,
-                const QString &connection = "");
-
-        /* Records were modified */
-        /*! Check if any records have been modified. */
-        bool getRecordsHaveBeenModified(const QString &connection = "");
-        /*! Indicate if any records have been modified. */
-        void recordsHaveBeenModified(bool value = true,
-                                     const QString &connection = "");
-        /*! Reset the record modification state. */
-        void forgetRecordModificationState(const QString &connection = "");
 
     private:
         /*! Private constructor to create DatabaseManager instance and set a default

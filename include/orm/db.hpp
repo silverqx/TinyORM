@@ -29,7 +29,7 @@ namespace Orm
         /*! Deleted destructor. */
         ~DB() = delete;
 
-        /* Proxy methods to the DatabaseManager */
+        /* DatabaseManager factories */
         /*! Factory method to create DatabaseManager instance and set a default connection
             at once. */
         static std::shared_ptr<DatabaseManager>
@@ -44,61 +44,6 @@ namespace Orm
         static std::shared_ptr<DatabaseManager>
         create(const ConfigurationsType &configs,
                const QString &defaultConnection = Configuration::defaultConnectionName);
-
-        /*! Get a database connection instance. */
-        static DatabaseConnection &connection(const QString &name = "");
-        /*! Begin a fluent query against the database on a given connection (alias for
-            the connection() method). */
-        static DatabaseConnection &on(const QString &connection);
-        /*! Register a connection with the manager. */
-        static DatabaseManager &
-        addConnection(const QVariantHash &config,
-                      const QString &name = Configuration::defaultConnectionName);
-        /*! Register connections with the manager. */
-        static DatabaseManager &
-        addConnections(const ConfigurationsType &configs);
-        /*! Register connections with the manager and also set a default connection. */
-        static DatabaseManager &
-        addConnections(const ConfigurationsType &configs,
-                       const QString &defaultConnection);
-        /*! Remove the given connection from the manager. */
-        static bool removeConnection(const QString &name = "");
-        /*! Determine whether a given connection is already registered. */
-        static bool containsConnection(const QString &name = "");
-
-        /*! Reconnect to the given database. */
-        static DatabaseConnection &reconnect(const QString &name = "");
-        /*! Disconnect from the given database. */
-        static void disconnect(const QString &name = "");
-        /*! Force connection to the database (creates physical connection), doesn't have
-            to be called before querying a database. */
-        static QSqlDatabase connectEagerly(const QString &name = "");
-
-        /*! Returns a list containing the names of all connections. */
-        static QStringList connectionNames();
-        /*! Returns a list containing the names of opened connections. */
-        static QStringList openedConnectionNames();
-        /*! Get the number of opened connections. */
-        static std::size_t openedConnectionsSize();
-
-        /*! Get all of the support drivers. */
-        static QStringList supportedDrivers();
-        /*! Get all of the available drivers (loadable). */
-        static QStringList drivers();
-        /*! Is the given driver name available? */
-        static bool isDriverAvailable(const QString &driverName);
-        /*! Is a driver for the given connection available? */
-        static bool isConnectionDriverAvailable(const QString &connection);
-
-        /*! Get the default connection name. */
-        static const QString &getDefaultConnection();
-        /*! Set the default connection name. */
-        static void setDefaultConnection(const QString &defaultConnection);
-        /*! Reset the default connection name. */
-        static void resetDefaultConnection();
-
-        /*! Set the database reconnector callback. */
-        static DatabaseManager &setReconnector(const ReconnectorType &reconnector);
 
         /* Proxy methods to the DatabaseConnection */
         /*! Begin a fluent query against a database table for the connection. */
@@ -177,6 +122,124 @@ namespace Orm
 
         /*! Returns the database driver used to access the database connection. */
         static QSqlDriver *driver(const QString &connection = "");
+
+        /* Proxy methods to the DatabaseManager */
+        /*! Get a database connection instance. */
+        static DatabaseConnection &connection(const QString &name = "");
+        /*! Begin a fluent query against the database on a given connection (alias for
+            the connection() method). */
+        static DatabaseConnection &on(const QString &connection);
+        /*! Register a connection with the manager. */
+        static DatabaseManager &
+        addConnection(const QVariantHash &config,
+                      const QString &name = Configuration::defaultConnectionName);
+        /*! Register connections with the manager. */
+        static DatabaseManager &
+        addConnections(const ConfigurationsType &configs);
+        /*! Register connections with the manager and also set a default connection. */
+        static DatabaseManager &
+        addConnections(const ConfigurationsType &configs,
+                       const QString &defaultConnection);
+        /*! Remove the given connection from the manager. */
+        static bool removeConnection(const QString &name = "");
+        /*! Determine whether a given connection is already registered. */
+        static bool containsConnection(const QString &name = "");
+
+        /*! Reconnect to the given database. */
+        static DatabaseConnection &reconnect(const QString &name = "");
+        /*! Disconnect from the given database. */
+        static void disconnect(const QString &name = "");
+        /*! Force connection to the database (creates physical connection), doesn't have
+            to be called before querying a database. */
+        static QSqlDatabase connectEagerly(const QString &name = "");
+
+        /*! Returns a list containing the names of all connections. */
+        static QStringList connectionNames();
+        /*! Returns a list containing the names of opened connections. */
+        static QStringList openedConnectionNames();
+        /*! Get the number of opened connections. */
+        static std::size_t openedConnectionsSize();
+
+        /*! Get all of the support drivers. */
+        static QStringList supportedDrivers();
+        /*! Get all of the available drivers (loadable). */
+        static QStringList drivers();
+        /*! Is the given driver name available? */
+        static bool isDriverAvailable(const QString &driverName);
+        /*! Is a driver for the given connection available? */
+        static bool isConnectionDriverAvailable(const QString &connection);
+
+        /*! Get the default connection name. */
+        static const QString &getDefaultConnection();
+        /*! Set the default connection name. */
+        static void setDefaultConnection(const QString &defaultConnection);
+        /*! Reset the default connection name. */
+        static void resetDefaultConnection();
+
+        /*! Set the database reconnector callback. */
+        static DatabaseManager &setReconnector(const ReconnectorType &reconnector);
+
+        /* Getters */
+        /*! Return the connection's driver name. */
+        static QString driverName(const QString &connection = "");
+        /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
+        static const QString &driverNamePrintable(const QString &connection = "");
+        /*! Return the name of the connected database. */
+        static const QString &databaseName(const QString &connection = "");
+        /*! Return the host name of the connected database. */
+        static const QString &hostName(const QString &connection = "");
+
+        /* Connection configurations - saved in the DatabaseManager */
+        /*! Get a configuration option value from the configuration for a connection. */
+        static QVariant originalConfigValue(const QString &option,
+                                            const QString &connection = "");
+        /*! Get the configuration for a connection. */
+        static const QVariantHash &originalConfig(const QString &connection = "");
+        /*! Get the number of registered connection configurations. */
+        static std::size_t originalConfigsSize();
+
+        /* Connection configurations - proxies to the DatabaseConnection */
+        /*! Get an option value from the configuration options. */
+        static QVariant getConfigValue(const QString &option,
+                                       const QString &connection = "");
+        /*! Get the configuration for the current connection. */
+        static const QVariantHash &getConfig(const QString &connection = "");
+        /*! Check whether the configuration contains the given option. */
+        static bool hasConfigValue(const QString &option, const QString &connection = "");
+
+        /* Pretending */
+        /*! Execute the given callback in "dry run" mode. */
+        static QVector<Log>
+        pretend(const std::function<void()> &callback,
+                const QString &connection = "");
+        /*! Execute the given callback in "dry run" mode. */
+        static QVector<Log>
+        pretend(const std::function<void(DatabaseConnection &)> &callback,
+                const QString &connection = "");
+
+        /* Records were modified */
+        /*! Check if any records have been modified. */
+        static bool getRecordsHaveBeenModified(const QString &connection = "");
+        /*! Indicate if any records have been modified. */
+        static void recordsHaveBeenModified(bool value = true,
+                                            const QString &connection = "");
+        /*! Reset the record modification state. */
+        static void forgetRecordModificationState(const QString &connection = "");
+
+        /* Logging */
+        /*! Get the connection query log. */
+        static std::shared_ptr<QVector<Log>>
+        getQueryLog(const QString &connection = "");
+        /*! Clear the query log. */
+        static void flushQueryLog(const QString &connection = "");
+        /*! Enable the query log on the connection. */
+        static void enableQueryLog(const QString &connection = "");
+        /*! Disable the query log on the connection. */
+        static void disableQueryLog(const QString &connection = "");
+        /*! Determine whether we're logging queries. */
+        static bool logging(const QString &connection = "");
+        /*! The current order value for a query log record. */
+        static std::size_t getQueryLogOrder();
 
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */
@@ -266,66 +329,6 @@ namespace Orm
         static StatementsCounter takeStatementCounters(const QStringList &connections);
         /*! Reset the number of executed queries on given connections. */
         static void resetStatementCounters(const QStringList &connections);
-
-        /* Logging */
-        /*! Get the connection query log. */
-        static std::shared_ptr<QVector<Log>>
-        getQueryLog(const QString &connection = "");
-        /*! Clear the query log. */
-        static void flushQueryLog(const QString &connection = "");
-        /*! Enable the query log on the connection. */
-        static void enableQueryLog(const QString &connection = "");
-        /*! Disable the query log on the connection. */
-        static void disableQueryLog(const QString &connection = "");
-        /*! Determine whether we're logging queries. */
-        static bool logging(const QString &connection = "");
-        /*! The current order value for a query log record. */
-        static std::size_t getQueryLogOrder();
-
-        /* Getters */
-        /*! Return the connection's driver name. */
-        static QString driverName(const QString &connection = "");
-        /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
-        static const QString &driverNamePrintable(const QString &connection = "");
-        /*! Return the name of the connected database. */
-        static const QString &databaseName(const QString &connection = "");
-        /*! Return the host name of the connected database. */
-        static const QString &hostName(const QString &connection = "");
-
-        /* Connection configurations - saved in the DatabaseManager */
-        /*! Get the configuration for a connection. */
-        static const QVariantHash &originalConfig(const QString &connection = "");
-        /*! Get a configuration option value from the configuration for a connection. */
-        static QVariant originalConfigValue(const QString &option,
-                                            const QString &connection = "");
-
-        /* Connection configurations - proxies to the DatabaseConnection */
-        /*! Get the configuration for the current connection. */
-        static const QVariantHash &getConfig(const QString &connection = "");
-        /*! Get an option value from the configuration options. */
-        static QVariant getConfigValue(const QString &option,
-                                       const QString &connection = "");
-        /*! Check whether the configuration contains the given option. */
-        static bool hasConfigValue(const QString &option, const QString &connection = "");
-
-        /* Pretending */
-        /*! Execute the given callback in "dry run" mode. */
-        static QVector<Log>
-        pretend(const std::function<void()> &callback,
-                const QString &connection = "");
-        /*! Execute the given callback in "dry run" mode. */
-        static QVector<Log>
-        pretend(const std::function<void(DatabaseConnection &)> &callback,
-                const QString &connection = "");
-
-        /* Records were modified */
-        /*! Check if any records have been modified. */
-        static bool getRecordsHaveBeenModified(const QString &connection = "");
-        /*! Indicate if any records have been modified. */
-        static void recordsHaveBeenModified(bool value = true,
-                                            const QString &connection = "");
-        /*! Reset the record modification state. */
-        static void forgetRecordModificationState(const QString &connection = "");
 
     private:
         /*! Get a reference to the DatabaseManager. */

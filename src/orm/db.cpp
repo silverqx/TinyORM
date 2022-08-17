@@ -13,7 +13,7 @@ std::shared_ptr<DatabaseManager> DB::m_manager;
 
 /* public */
 
-/* Proxy methods to the DatabaseManager */
+/* DatabaseManager factories */
 
 std::shared_ptr<DatabaseManager>
 DB::create(const QString &defaultConnection)
@@ -31,115 +31,6 @@ std::shared_ptr<DatabaseManager>
 DB::create(const ConfigurationsType &configs, const QString &defaultConnection)
 {
     return DatabaseManager::create(configs, defaultConnection);
-}
-
-DatabaseConnection &DB::connection(const QString &name)
-{
-    return manager().connection(name);
-}
-
-DatabaseConnection &DB::on(const QString &connection)
-{
-    return manager().connection(connection);
-}
-
-DatabaseManager &
-DB::addConnection(const QVariantHash &config, const QString &name)
-{
-    return manager().addConnection(config, name);
-}
-
-DatabaseManager &
-DB::addConnections(const ConfigurationsType &configs)
-{
-    return manager().addConnections(configs);
-}
-
-DatabaseManager &
-DB::addConnections(const ConfigurationsType &configs, const QString &defaultConnection)
-{
-    return manager().addConnections(configs, defaultConnection);
-}
-
-bool DB::removeConnection(const QString &name)
-{
-    return manager().removeConnection(name);
-}
-
-bool DB::containsConnection(const QString &name)
-{
-    return manager().containsConnection(name);
-}
-
-DatabaseConnection &DB::reconnect(const QString &name)
-{
-    return manager().reconnect(name);
-}
-
-void DB::disconnect(const QString &name)
-{
-    manager().disconnect(name);
-}
-
-QSqlDatabase DB::connectEagerly(const QString &name)
-{
-    return manager().connectEagerly(name);
-}
-
-QStringList DB::connectionNames()
-{
-    return manager().connectionNames();
-}
-
-QStringList DB::openedConnectionNames()
-{
-    return manager().openedConnectionNames();
-}
-
-std::size_t DB::openedConnectionsSize()
-{
-    return manager().openedConnectionsSize();
-}
-
-QStringList DB::supportedDrivers()
-{
-    return manager().supportedDrivers();
-}
-
-QStringList DB::drivers()
-{
-    return manager().drivers();
-}
-
-bool DB::isDriverAvailable(const QString &driverName)
-{
-    return manager().isDriverAvailable(driverName);
-}
-
-bool DB::isConnectionDriverAvailable(const QString &connection)
-{
-    return manager().isConnectionDriverAvailable(connection);
-}
-
-const QString &DB::getDefaultConnection()
-{
-    return manager().getDefaultConnection();
-}
-
-void DB::setDefaultConnection(const QString &defaultConnection)
-{
-    manager().setDefaultConnection(defaultConnection);
-}
-
-void DB::resetDefaultConnection()
-{
-    manager().resetDefaultConnection();
-}
-
-DatabaseManager &
-DB::setReconnector(const ReconnectorType &reconnector)
-{
-    return manager().setReconnector(reconnector);
 }
 
 /* Proxy methods to the DatabaseConnection */
@@ -276,6 +167,246 @@ bool DB::pingDatabase(const QString &connection)
 QSqlDriver *DB::driver(const QString &connection)
 {
     return manager().connection(connection).driver();
+}
+
+/* Proxy methods to the DatabaseManager */
+
+DatabaseConnection &DB::connection(const QString &name)
+{
+    return manager().connection(name);
+}
+
+DatabaseConnection &DB::on(const QString &connection)
+{
+    return manager().connection(connection);
+}
+
+DatabaseManager &
+DB::addConnection(const QVariantHash &config, const QString &name)
+{
+    return manager().addConnection(config, name);
+}
+
+DatabaseManager &
+DB::addConnections(const ConfigurationsType &configs)
+{
+    return manager().addConnections(configs);
+}
+
+DatabaseManager &
+DB::addConnections(const ConfigurationsType &configs, const QString &defaultConnection)
+{
+    return manager().addConnections(configs, defaultConnection);
+}
+
+bool DB::removeConnection(const QString &name)
+{
+    return manager().removeConnection(name);
+}
+
+bool DB::containsConnection(const QString &name)
+{
+    return manager().containsConnection(name);
+}
+
+DatabaseConnection &DB::reconnect(const QString &name)
+{
+    return manager().reconnect(name);
+}
+
+void DB::disconnect(const QString &name)
+{
+    manager().disconnect(name);
+}
+
+QSqlDatabase DB::connectEagerly(const QString &name)
+{
+    return manager().connectEagerly(name);
+}
+
+QStringList DB::connectionNames()
+{
+    return manager().connectionNames();
+}
+
+QStringList DB::openedConnectionNames()
+{
+    return manager().openedConnectionNames();
+}
+
+std::size_t DB::openedConnectionsSize()
+{
+    return manager().openedConnectionsSize();
+}
+
+QStringList DB::supportedDrivers()
+{
+    return manager().supportedDrivers();
+}
+
+QStringList DB::drivers()
+{
+    return manager().drivers();
+}
+
+bool DB::isDriverAvailable(const QString &driverName)
+{
+    return manager().isDriverAvailable(driverName);
+}
+
+bool DB::isConnectionDriverAvailable(const QString &connection)
+{
+    return manager().isConnectionDriverAvailable(connection);
+}
+
+const QString &DB::getDefaultConnection()
+{
+    return manager().getDefaultConnection();
+}
+
+void DB::setDefaultConnection(const QString &defaultConnection)
+{
+    manager().setDefaultConnection(defaultConnection);
+}
+
+void DB::resetDefaultConnection()
+{
+    manager().resetDefaultConnection();
+}
+
+DatabaseManager &
+DB::setReconnector(const ReconnectorType &reconnector)
+{
+    return manager().setReconnector(reconnector);
+}
+
+/* Getters */
+
+QString DB::driverName(const QString &connection)
+{
+    return manager().connection(connection).driverName();
+}
+
+const QString &DB::driverNamePrintable(const QString &connection)
+{
+    return manager().connection(connection).driverNamePrintable();
+}
+
+const QString &DB::databaseName(const QString &connection)
+{
+    return manager().connection(connection).getDatabaseName();
+}
+
+const QString &DB::hostName(const QString &connection)
+{
+    return manager().connection(connection).getHostName();
+}
+
+/* Connection configurations - saved in the DatabaseManager */
+
+/* Difference between a connection config. saved in the DatabaseManager and
+   DatabaseConnection can differ in some cases. A configuration saved
+   in the DatabaseConnection is already processed by the ConnectionFactory and Connector.
+   Eg. the host config. option can differ because a user can pass a QStringList of hosts,
+   so in the DM will be this QStringList, but in the DatabaseConnection will be only
+   the QString, a hostname to which the connection was successful. */
+
+QVariant
+DB::originalConfigValue(const QString &option, const QString &connection)
+{
+    return manager().originalConfigValue(option, connection);
+}
+
+const QVariantHash &DB::originalConfig(const QString &connection)
+{
+    return manager().originalConfig(connection);
+}
+
+size_t DB::originalConfigsSize()
+{
+    return manager().originalConfigsSize();
+}
+
+/* Connection configurations - proxies to the DatabaseConnection */
+
+QVariant DB::getConfigValue(const QString &option, const QString &connection)
+{
+    return manager().connection(connection).getConfig(option);
+}
+
+const QVariantHash &DB::getConfig(const QString &connection)
+{
+    return manager().connection(connection).getConfig();
+}
+
+bool DB::hasConfigValue(const QString &option, const QString &connection)
+{
+    return manager().connection(connection).hasConfig(option);
+}
+
+/* Pretending */
+
+QVector<Log>
+DB::pretend(const std::function<void()> &callback, const QString &connection)
+{
+    return manager().connection(connection).pretend(callback);
+}
+
+QVector<Log>
+DB::pretend(const std::function<void(DatabaseConnection &)> &callback,
+            const QString &connection)
+{
+    return manager().connection(connection).pretend(callback);
+}
+
+/* Records were modified */
+
+bool DB::getRecordsHaveBeenModified(const QString &connection)
+{
+    return manager().connection(connection).getRecordsHaveBeenModified();
+}
+
+void DB::recordsHaveBeenModified(const bool value, const QString &connection)
+{
+    manager().connection(connection).recordsHaveBeenModified(value);
+}
+
+void DB::forgetRecordModificationState(const QString &connection)
+{
+    manager().connection(connection).forgetRecordModificationState();
+}
+
+/* Logging */
+
+std::shared_ptr<QVector<Log>>
+DB::getQueryLog(const QString &connection)
+{
+    return manager().connection(connection).getQueryLog();
+}
+
+void DB::flushQueryLog(const QString &connection)
+{
+    manager().connection(connection).flushQueryLog();
+}
+
+void DB::enableQueryLog(const QString &connection)
+{
+    manager().connection(connection).enableQueryLog();
+}
+
+void DB::disableQueryLog(const QString &connection)
+{
+    manager().connection(connection).disableQueryLog();
+}
+
+bool DB::logging(const QString &connection)
+{
+    return manager().connection(connection).logging();
+}
+
+std::size_t DB::getQueryLogOrder()
+{
+    return manager().getQueryLogOrder();
 }
 
 /* Queries execution time counter */
@@ -450,130 +581,6 @@ StatementsCounter DB::takeStatementCounters(const QStringList &connections)
 void DB::resetStatementCounters(const QStringList &connections)
 {
     manager().resetStatementCounters(connections);
-}
-
-/* Logging */
-
-std::shared_ptr<QVector<Log>>
-DB::getQueryLog(const QString &connection)
-{
-    return manager().connection(connection).getQueryLog();
-}
-
-void DB::flushQueryLog(const QString &connection)
-{
-    manager().connection(connection).flushQueryLog();
-}
-
-void DB::enableQueryLog(const QString &connection)
-{
-    manager().connection(connection).enableQueryLog();
-}
-
-void DB::disableQueryLog(const QString &connection)
-{
-    manager().connection(connection).disableQueryLog();
-}
-
-bool DB::logging(const QString &connection)
-{
-    return manager().connection(connection).logging();
-}
-
-std::size_t DB::getQueryLogOrder()
-{
-    return manager().getQueryLogOrder();
-}
-
-/* Getters */
-
-QString DB::driverName(const QString &connection)
-{
-    return manager().connection(connection).driverName();
-}
-
-const QString &DB::driverNamePrintable(const QString &connection)
-{
-    return manager().connection(connection).driverNamePrintable();
-}
-
-const QString &DB::databaseName(const QString &connection)
-{
-    return manager().connection(connection).getDatabaseName();
-}
-
-const QString &DB::hostName(const QString &connection)
-{
-    return manager().connection(connection).getHostName();
-}
-
-/* Connection configurations - saved in the DatabaseManager */
-
-/* Difference between a connection config. saved in the DatabaseManager and
-   DatabaseConnection can differ in some cases. A configuration saved
-   in the DatabaseConnection is already processed by the ConnectionFactory and Connector.
-   Eg. the host config. option can differ because a user can pass a QStringList of hosts,
-   so in the DM will be this QStringList, but in the DatabaseConnection will be only
-   the QString, a hostname to which the connection was successful. */
-
-const QVariantHash &DB::originalConfig(const QString &connection)
-{
-    return manager().originalConfig(connection);
-}
-
-QVariant
-DB::originalConfigValue(const QString &option, const QString &connection)
-{
-    return manager().originalConfigValue(option, connection);
-}
-
-/* Connection configurations - proxies to the DatabaseConnection */
-
-const QVariantHash &DB::getConfig(const QString &connection)
-{
-    return manager().connection(connection).getConfig();
-}
-
-QVariant DB::getConfigValue(const QString &option, const QString &connection)
-{
-    return manager().connection(connection).getConfig(option);
-}
-
-bool DB::hasConfigValue(const QString &option, const QString &connection)
-{
-    return manager().connection(connection).hasConfig(option);
-}
-
-/* Pretending */
-
-QVector<Log>
-DB::pretend(const std::function<void()> &callback, const QString &connection)
-{
-    return manager().connection(connection).pretend(callback);
-}
-
-QVector<Log>
-DB::pretend(const std::function<void(DatabaseConnection &)> &callback,
-            const QString &connection)
-{
-    return manager().connection(connection).pretend(callback);
-}
-
-/* Records were modified */
-
-bool DB::getRecordsHaveBeenModified(const QString &connection)
-{
-    return manager().connection(connection).getRecordsHaveBeenModified();
-}
-
-void DB::recordsHaveBeenModified(const bool value, const QString &connection)
-{
-    manager().connection(connection).recordsHaveBeenModified(value);
-}
-
-void DB::forgetRecordModificationState(const QString &connection)
-{
-    manager().connection(connection).forgetRecordModificationState();
 }
 
 /* private */
