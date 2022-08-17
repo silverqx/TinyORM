@@ -35,6 +35,7 @@ RefreshCommand::RefreshCommand(
 )
     : Command(application, parser)
     , Concerns::Confirmable(*this, 0)
+    , Concerns::UsingConnection(resolver())
     , m_migrator(std::move(migrator))
 {}
 
@@ -63,39 +64,35 @@ int RefreshCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    const auto databases = values(database_);
-
-    const auto shouldPrintConnection = databases.size() > 1;
-    auto first = true;
-
     // Database connection to use (multiple connections supported)
-    for (const auto &database : databases) {
-        // Visually divide individual connections
-        printConnection(database, shouldPrintConnection, first);
-
+    return usingConnections(values(database_), isDebugVerbosity(),
+                           [this](const QString &database)
+    {
         // Database connection to use
         auto databaseCmd = longOption(database_, database);
+        int exitCode = EXIT_SUCCESS;
 
         /* If the "step" option is specified it means we only want to rollback a small
            number of migrations before migrating again. For example, the user might
            only rollback and remigrate the latest four migrations instead of all. */
         if (const auto step = value(step_).toInt(); step > 0)
-            call(MigrateRollback, {databaseCmd,
-                                   longOption(force),
-                                   valueCmd(step_)});
+            exitCode |= call(MigrateRollback, {databaseCmd,
+                                               longOption(force),
+                                               valueCmd(step_)});
         else
-            call(MigrateReset, {databaseCmd, longOption(force)});
+            exitCode |= call(MigrateReset, {databaseCmd, longOption(force)});
 
-        call(Migrate, {databaseCmd,
-                       longOption(force),
-                       boolCmd(step_migrate, step_)});
+        exitCode |= call(Migrate, {databaseCmd,
+                                   longOption(force),
+                                   boolCmd(step_migrate, step_)});
 
         // Invoke seeder
         if (needsSeeding())
-            runSeeder(std::move(databaseCmd));
-    }
+            exitCode |= runSeeder(std::move(databaseCmd));
 
-    return EXIT_SUCCESS;
+        // Return success only, if all executed commands were successful
+        return exitCode == EXIT_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE;
+    });
 }
 
 /* protected */
@@ -105,11 +102,11 @@ bool RefreshCommand::needsSeeding() const
     return isSet(seed) || !value(seeder).isEmpty();
 }
 
-void RefreshCommand::runSeeder(QString &&databaseCmd) const
+int RefreshCommand::runSeeder(QString &&databaseCmd) const
 {
-    call(DbSeed, {std::move(databaseCmd),
-                  longOption(force),
-                  valueCmd(seeder, class_)});
+    return call(DbSeed, {std::move(databaseCmd),
+                         longOption(force),
+                         valueCmd(seeder, class_)});
 }
 
 } // namespace Tom::Commands::Migrations

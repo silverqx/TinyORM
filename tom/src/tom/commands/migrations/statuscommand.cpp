@@ -47,56 +47,44 @@ int StatusCommand::run()
 {
     Command::run();
 
-    auto databases = values(database_);
-
-    auto result = EXIT_SUCCESS;
-    const auto shouldPrintConnection = databases.size() > 1;
-    auto first = true;
-
     // Database connection to use (multiple connections supported)
-    for (auto &&database : databases) {
-        // Visually divide individual connections
-        printConnection(database, shouldPrintConnection, first);
+    return usingConnections(
+                values(database_), isDebugVerbosity(), m_migrator->repository(),
+                [this]
+    {
+        if (!m_migrator->repositoryExists()) {
+            error(QStringLiteral("Migration table not found."));
 
-        result &= usingConnection(std::move(database), isDebugVerbosity(),
-                                  m_migrator->repository(), [this]
-        {
-            if (!m_migrator->repositoryExists()) {
-                error(QStringLiteral("Migration table not found."));
+            return EXIT_FAILURE;
+        }
 
-                return EXIT_FAILURE;
-            }
+        const auto &repository = m_migrator->repository();
 
-            const auto &repository = m_migrator->repository();
-
-            if (auto migrations = getStatusFor(repository.getRanSimple(),
-                                               repository.getMigrationBatches());
-                !migrations.empty()
-            ) {
-                /* During testing save the result of a status command to the global
+        if (auto migrations = getStatusFor(repository.getRanSimple(),
+                                           repository.getMigrationBatches());
+            !migrations.empty()
+        ) {
+            /* During testing save the result of a status command to the global
                    variable instead of outputting it, to be able to verify results. */
 #ifdef TINYTOM_TESTS_CODE
-                if (m_inUnitTests)
-                    m_status = statusForUnitTest(std::move(migrations));
-                else
-#endif
-                    table({"Ran?", "Migration", "Batch"}, migrations);
-
-                return EXIT_SUCCESS;
-            }
-
-#ifdef TINYTOM_TESTS_CODE
             if (m_inUnitTests)
-                m_status.clear();
+                m_status = statusForUnitTest(std::move(migrations));
+            else
 #endif
-
-            error(QStringLiteral("No migrations found"));
+                table({"Ran?", "Migration", "Batch"}, migrations);
 
             return EXIT_SUCCESS;
-        });
-    }
+        }
 
-    return result;
+#ifdef TINYTOM_TESTS_CODE
+        if (m_inUnitTests)
+            m_status.clear();
+#endif
+
+        error(QStringLiteral("No migrations found"));
+
+        return EXIT_SUCCESS;
+    });
 }
 
 /* protected */

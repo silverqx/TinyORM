@@ -34,6 +34,7 @@ FreshCommand::FreshCommand(
 )
     : Command(application, parser)
     , Concerns::Confirmable(*this, 0)
+    , Concerns::UsingConnection(resolver())
     , m_migrator(std::move(migrator))
 {}
 
@@ -63,34 +64,31 @@ int FreshCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    const auto databases = values(database_);
-
-    const auto shouldPrintConnection = databases.size() > 1;
-    auto first = true;
-
     // Database connection to use (multiple connections supported)
-    for (const auto &database : databases) {
-        // Visually divide individual connections
-        printConnection(database, shouldPrintConnection, first);
-
+    return usingConnections(values(database_), isDebugVerbosity(),
+                           [this](const QString &database)
+    {
         auto databaseCmd = longOption(database_, database);
 
-        call(DbWipe, {databaseCmd,
-                      longOption(force),
-                      boolCmd(drop_views),
-                      boolCmd(drop_types)});
+        int exitCode = EXIT_SUCCESS;
 
-        call(Migrate, {databaseCmd,
-                       longOption(force),
-                       boolCmd(step_)});
-//                       valueCmd("schema-path")});
+        exitCode |= call(DbWipe, {databaseCmd,
+                                  longOption(force),
+                                  boolCmd(drop_views),
+                                  boolCmd(drop_types)});
+
+        exitCode |= call(Migrate, {databaseCmd,
+                                   longOption(force),
+                                   boolCmd(step_)});
+//                                   valueCmd("schema-path")});
 
         // Invoke seeder
         if (needsSeeding())
-            runSeeder(std::move(databaseCmd));
-    }
+            exitCode |= runSeeder(std::move(databaseCmd));
 
-    return EXIT_SUCCESS;
+        // Return success only, if all executed commands were successful
+        return exitCode == EXIT_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE;
+    });
 }
 
 /* protected */
@@ -100,11 +98,11 @@ bool FreshCommand::needsSeeding() const
     return isSet(seed) || !value(seeder).isEmpty();
 }
 
-void FreshCommand::runSeeder(QString &&databaseCmd) const
+int FreshCommand::runSeeder(QString &&databaseCmd) const
 {
-    call(DbSeed, {std::move(databaseCmd),
-                  longOption(force),
-                  valueCmd(seeder, class_)});
+    return call(DbSeed, {std::move(databaseCmd),
+                         longOption(force),
+                         valueCmd(seeder, class_)});
 }
 
 } // namespace Tom::Commands::Migrations

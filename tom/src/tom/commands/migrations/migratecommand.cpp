@@ -57,49 +57,40 @@ int MigrateCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    const auto databases = values(database_);
-
-    auto result = EXIT_SUCCESS;
-    const auto shouldPrintConnection = databases.size() > 1;
-    auto first = true;
-
     // Database connection to use (multiple connections supported)
-    for (const auto &database : databases) {
-        // Visually divide individual connections
-        printConnection(database, shouldPrintConnection, first);
+    return usingConnections(
+                values(database_), isDebugVerbosity(), m_migrator->repository(),
+                [this](const auto &database)
+    {
+        // Install db repository and load schema state
+        prepareDatabase(database);
 
-        result &= usingConnection(database, isDebugVerbosity(), m_migrator->repository(),
-                                  [this, &database]
-        {
-            // Install db repository and load schema state
-            prepareDatabase(database);
-
-            /* Next, we will check to see if a path option has been defined. If it has
+        /* Next, we will check to see if a path option has been defined. If it has
                we will use the path relative to the root of this installation folder
                so that migrations may be run for any path within the applications. */
-            m_migrator->run({isSet(pretend), isSet(step_)});
+        m_migrator->run({isSet(pretend), isSet(step_)});
 
-            info(QStringLiteral("Database migaration completed successfully."));
+        info(QStringLiteral("Database migaration completed successfully."));
 
-            /* Finally, if the "seed" option has been given, we will re-run the database
+        int exitCode = EXIT_SUCCESS;
+
+        /* Finally, if the "seed" option has been given, we will re-run the database
                seed task to re-populate the database, which is convenient when adding
                a migration and a seed at the same time, as it is only this command. */
-            if (needsSeeding())
-                runSeeder(database);
+        if (needsSeeding())
+            exitCode |= runSeeder(database);
 
-            return EXIT_SUCCESS;
-        });
-    }
-
-    return result;
+        // Return success only, if all executed commands were successful
+        return exitCode == EXIT_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE;
+    });
 }
 
 /* protected */
 
-void MigrateCommand::prepareDatabase(const QString &connection) const
+void MigrateCommand::prepareDatabase(const QString &database) const
 {
     if (!m_migrator->repositoryExists())
-        call(MigrateInstall, {longOption(database_, connection)});
+        call(MigrateInstall, {longOption(database_, database)});
 
     if (!m_migrator->hasRunAnyMigrations() && !isSet(pretend))
         loadSchemaState();
@@ -115,9 +106,10 @@ bool MigrateCommand::needsSeeding() const
     return !isSet(pretend) && isSet(seed);
 }
 
-void MigrateCommand::runSeeder(const QString &connection) const
+int MigrateCommand::runSeeder(const QString &database) const
 {
-    call(DbSeed, {longOption(database_, connection), longOption(force)});
+    return call(DbSeed, {longOption(database_, database),
+                         longOption(force)});
 }
 
 } // namespace Tom::Commands::Migrations

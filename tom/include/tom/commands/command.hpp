@@ -125,11 +125,6 @@ namespace Tom::Commands
         /*! Get database connection resolver. */
         std::shared_ptr<ConnectionResolverInterface> resolver() const noexcept;
 
-        /* Others */
-        /*! Print currently used connection if passed more connections to --database=. */
-        void printConnection(const QString &name, bool shouldPrintConnection,
-                             bool &first) const;
-
         /*! Reference to the tom application. */
         std::reference_wrapper<Application> m_application;
         /*! Command-line parser. */

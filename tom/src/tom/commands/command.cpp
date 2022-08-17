@@ -314,25 +314,6 @@ std::shared_ptr<ConnectionResolverInterface> Command::resolver() const noexcept
     return application().resolver();
 }
 
-/* Others */
-
-void Command::printConnection(const QString &name, const bool shouldPrintConnection,
-                              bool &first) const
-{
-    // Nothing to print
-    if (!shouldPrintConnection)
-        return;
-
-    // Newline for second and subsequent connections only
-    if (first)
-        first = false;
-    else
-        newLine();
-
-    note(QStringLiteral("<blue>Connection:</blue> <b-white>%1</b-white>").arg(name),
-         true, Quiet);
-}
-
 /* private */
 
 void Command::initializePositionalArguments()

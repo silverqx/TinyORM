@@ -27,6 +27,14 @@ namespace Tom
 namespace Concerns
 {
 
+    class InteractsWithIO;
+
+    /*! Concept for the usingConnection() method callback parameter. */
+    template<typename T>
+    concept UsingConnectionCallback =
+            std::convertible_to<T, std::function<int(const QString &)>> ||
+            std::convertible_to<T, std::function<int()>>;
+
     /*! Invoke the given callback inside the defined connection and restore connection
         to the previous state after finish. */
     class UsingConnection
@@ -44,32 +52,64 @@ namespace Concerns
         /*! Virtual destructor. */
         inline virtual ~UsingConnection() = default;
 
+        /*! Execute the given callback using the given connections as the default
+            connections (in the loop). */
+        int usingConnections(
+                QStringList &&names, bool debugSql,
+                std::optional<std::reference_wrapper<MigrationRepository>> repository,
+                const std::function<int(const QString &database)> &callback);
+        /*! Execute the given callback using the given connections as the default
+            connections (in the loop). */
+        int usingConnections(
+                QStringList &&names, bool debugSql,
+                std::optional<std::reference_wrapper<MigrationRepository>> repository,
+                const std::function<int()> &callback);
+
+        /*! Execute the given callback using the given connections as the default
+            connections (in the loop). */
+        int usingConnections(
+                QStringList &&names, bool debugSql,
+                const std::function<int(const QString &database)> &callback);
+        /*! Execute the given callback using the given connections as the default
+            connections (in the loop). */
+        int usingConnections(QStringList &&names, bool debugSql,
+                            const std::function<int()> &callback);
+
         /*! Execute the given callback using the given connection as the default
-            connection. */
-        int usingConnection(QString name, bool debugSql,
-                            std::optional<std::reference_wrapper<
-                                            MigrationRepository>> repository,
-                            std::function<int()> &&callback);
-        /*! Execute the given callback using the given connection as the default
-            connection. */
+            connection (in the loop). */
         int usingConnection(QString &&name, bool debugSql,
-                            std::function<int()> &&callback);
+                            const std::function<int()> &callback);
         /*! Execute the given callback using the given connection as the default
-            connection. */
+            connection (in the loop). */
         int usingConnection(const QString &name, bool debugSql,
-                            std::function<int()> &&callback);
+                            const std::function<int()> &callback);
 
         /*! Resolve the database connection instance. */
         DatabaseConnection &resolveConnection(const QString &name = "") const;
 
-        /* Getters / Setters */
+        /* Getters */
         /*! Get the currently used connection name. */
         inline const QString &getConnectionName() const noexcept;
 
     private:
+        /*! Execute the given callback using the given connections as the default
+            connections (in the loop). */
+        template<UsingConnectionCallback F>
+        int usingConnectionsInternal(
+                QStringList &&names, bool debugSql,
+                std::optional<std::reference_wrapper<MigrationRepository>> repository,
+                const F &callback);
+        /*! Execute the given callback using the given connections as the default
+            connections. */
+        template<UsingConnectionCallback F>
+        int usingConnectionInternal(
+                QString name, bool debugSql,
+                std::optional<std::reference_wrapper<MigrationRepository>> repository,
+                const F &callback);
+
         /*! Set the default connection name. */
         void setConnection(
-                QString &&name, std::optional<bool> &&debugSql,
+                const QString &name, std::optional<bool> &&debugSql,
                 std::optional<std::reference_wrapper<
                                 MigrationRepository>> repository = std::nullopt,
                 bool restore = false);
@@ -78,6 +118,13 @@ namespace Concerns
         std::optional<bool> getConnectionDebugSql(const QString &name) const;
         /*! Set the debug sql for the current repository connection. */
         void setConnectionDebugSql(std::optional<bool> &&debugSql) const;
+
+        /*! Print currently used connection if passed more connections to --database=. */
+        void printConnection(const QString &name, bool shouldPrintConnection,
+                             bool &first) const;
+
+        /*! Get the reference to the base InteractsWithIO concern. */
+        const Concerns::InteractsWithIO &io() const;
 
         /*! The database connection resolver instance. */
         std::shared_ptr<ConnectionResolverInterface> m_resolver = nullptr;

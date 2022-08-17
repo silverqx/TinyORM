@@ -48,40 +48,28 @@ int WipeCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    const auto databases = values(database_);
-
-    auto result = EXIT_SUCCESS;
-    const auto shouldPrintConnection = databases.size() > 1;
-    auto first = true;
-
     // Database connection to use (multiple connections supported)
-    for (const auto &database : databases) {
-        // Visually divide individual connections
-        printConnection(database, shouldPrintConnection, first);
+    return usingConnections(values(database_), isDebugVerbosity(),
+                           [this](const QString &database)
+    {
+        if (isSet(drop_views)) {
+            dropAllViews(database);
 
-        result &= usingConnection(database, isDebugVerbosity(), [this, &database]
-        {
-            if (isSet(drop_views)) {
-                dropAllViews(database);
+            info(QStringLiteral("Dropped all views successfully."));
+        }
 
-                info(QStringLiteral("Dropped all views successfully."));
-            }
+        dropAllTables(database);
 
-            dropAllTables(database);
+        info(QStringLiteral("Dropped all tables successfully."));
 
-            info(QStringLiteral("Dropped all tables successfully."));
+        if (isSet(drop_types)) {
+            dropAllTypes(database);
 
-            if (isSet(drop_types)) {
-                dropAllTypes(database);
+            info(QStringLiteral("Dropped all types successfully."));
+        }
 
-                info(QStringLiteral("Dropped all types successfully."));
-            }
-
-            return EXIT_SUCCESS;
-        });
-    }
-
-    return result;
+        return EXIT_SUCCESS;
+    });
 }
 
 /* protected */

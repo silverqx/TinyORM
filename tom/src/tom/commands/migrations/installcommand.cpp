@@ -39,29 +39,16 @@ int InstallCommand::run()
 {
     Command::run();
 
-    auto databases = values(database_);
-
-    auto result = EXIT_SUCCESS;
-    const auto shouldPrintConnection = databases.size() > 1;
-    auto first = true;
-
     // Database connection to use (multiple connections supported)
-    for (auto &database : databases) {
-        // Visually divide individual connections
-        printConnection(database, shouldPrintConnection, first);
+    return usingConnections(values(database_), isDebugVerbosity(), *m_repository,
+                           [this]
+    {
+        m_repository->createRepository();
 
-        result &= usingConnection(std::move(database), isDebugVerbosity(), *m_repository,
-                                  [this]
-        {
-            m_repository->createRepository();
+        info(QStringLiteral("Migration table created successfully."));
 
-            info(QStringLiteral("Migration table created successfully."));
-
-            return EXIT_SUCCESS;
-        });
-    }
-
-    return result;
+        return EXIT_SUCCESS;
+    });
 }
 
 } // namespace Tom::Commands::Migrations

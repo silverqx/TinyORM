@@ -71,50 +71,37 @@ int SeedCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    auto databases = values(database_);
-
-    auto result = EXIT_SUCCESS;
-    const auto shouldPrintConnection = databases.size() > 1;
-    auto first = true;
-
     // Database connection to use (multiple connections supported)
-    for (auto &&database : databases) {
-        // Visually divide individual connections
-        printConnection(database, shouldPrintConnection, first);
+    return usingConnections(values(database_), isDebugVerbosity(), [this]
+    {
+        auto seederResult = getSeeder();
 
-        result &= usingConnection(std::move(database), isDebugVerbosity(), [this]
-        {
-            auto seederResult = getSeeder();
+        comment(QStringLiteral("Seeding: "), false);
+        note(QStringLiteral("%1 (root)").arg(seederResult.name));
 
-            comment(QStringLiteral("Seeding: "), false);
-            note(QStringLiteral("%1 (root)").arg(seederResult.name));
+        QElapsedTimer timer;
+        timer.start();
 
-            QElapsedTimer timer;
-            timer.start();
-
-            // Fire it up 🔥
+        // Fire it up 🔥
 #ifdef TINYORM_DISABLE_ORM
-            seederResult.seeder.get().run();
+        seederResult.seeder.get().run();
 #else
-            GuardedModel::unguarded([&seederResult]
-            {
-                seederResult.seeder.get().run();
-            });
+        GuardedModel::unguarded([&seederResult]
+        {
+            seederResult.seeder.get().run();
+        });
 #endif
 
-            const auto elapsedTime = timer.elapsed();
+        const auto elapsedTime = timer.elapsed();
 
-            info(QStringLiteral("Seeded:"), false);
-            note(QStringLiteral("  %1 (%2ms total)").arg(std::move(seederResult.name))
-                                                    .arg(elapsedTime));
+        info(QStringLiteral("Seeded:"), false);
+        note(QStringLiteral("  %1 (%2ms total)").arg(std::move(seederResult.name))
+                                                .arg(elapsedTime));
 
-            info(QStringLiteral("Database seeding completed successfully."));
+        info(QStringLiteral("Database seeding completed successfully."));
 
-            return EXIT_SUCCESS;
-        });
-    }
-
-    return result;
+        return EXIT_SUCCESS;
+    });
 }
 
 /* protected */

@@ -52,29 +52,17 @@ int RollbackCommand::run()
     if (!confirmToProceed())
         return EXIT_FAILURE;
 
-    auto databases = values(database_);
-
-    auto result = EXIT_SUCCESS;
-    const auto shouldPrintConnection = databases.size() > 1;
-    auto first = true;
-
     // Database connection to use (multiple connections supported)
-    for (auto &&database : databases) {
-        // Visually divide individual connections
-        printConnection(database, shouldPrintConnection, first);
+    return usingConnections(
+                values(database_), isDebugVerbosity(), m_migrator->repository(),
+                [this]
+    {
+        // Validation not needed as the toInt() returns 0 if conversion fails, like it
+        m_migrator->rollback({.pretend   = isSet(pretend),
+                              .stepValue = value(step_).toInt()});
 
-        result &= usingConnection(std::move(database), isDebugVerbosity(),
-                                  m_migrator->repository(), [this]
-        {
-            // Validation not needed as the toInt() returns 0 if conversion fails, like it
-            m_migrator->rollback({.pretend   = isSet(pretend),
-                                  .stepValue = value(step_).toInt()});
-
-            return EXIT_SUCCESS;
-        });
-    }
-
-    return result;
+        return EXIT_SUCCESS;
+    });
 }
 
 } // namespace Tom::Commands::Migrations
