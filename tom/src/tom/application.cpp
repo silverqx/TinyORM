@@ -350,7 +350,7 @@ QString Application::getCommandName()
     if (arguments.isEmpty())
         return {};
 
-    return getCommandName(arguments[0], ShowCommandsList);
+    return getCommandName(arguments.constFirst(), ShowCommandsList);
 }
 
 QString Application::getCommandName(const QString &name, CommandNotFound notFound)

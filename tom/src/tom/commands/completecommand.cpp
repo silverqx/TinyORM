@@ -103,7 +103,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     const auto currentCommandArg = currentCommandSplitted.size() >= 2
                                    ? std::make_optional(currentCommandSplitted[1])
                                    : std::nullopt;
-    const auto tomCommandSize = currentCommandSplitted[0].size();
+    const auto tomCommandSize = currentCommandSplitted.constFirst().size();
 #else
     const auto cwordArg = static_cast<QString::size_type>(value(cword_).toLongLong());
 
@@ -489,8 +489,9 @@ QString CompleteCommand::getOptionDefaultValue(const QCommandLineOption &option)
     // More default values is not supported
     Q_ASSERT(defaultValues.size() <= 1);
 
-    return defaultValues.isEmpty() ? EMPTY
-                                   : TomUtils::defaultValueText(defaultValues[0]);
+    return defaultValues.isEmpty()
+            ? EMPTY
+            : TomUtils::defaultValueText(defaultValues.constFirst());
 }
 
 QList<QCommandLineOption>

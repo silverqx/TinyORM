@@ -60,7 +60,8 @@ GuessCommandName::guessCommandsWithNamespace(const QString &name)
 
         Q_ASSERT(nameSplitted.size() == 2 && commandNameSplitted.size() == 2);
 
-        return commandNameSplitted[0].startsWith(nameSplitted[0], Qt::CaseInsensitive) &&
+        return commandNameSplitted.constFirst().startsWith(nameSplitted.constFirst(),
+                                                           Qt::CaseInsensitive) &&
                 commandNameSplitted[1].startsWith(nameSplitted[1], Qt::CaseInsensitive);
     })
             /* I have to materialize this view because namespacedCommands variable is

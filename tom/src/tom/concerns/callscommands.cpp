@@ -58,7 +58,7 @@ CallsCommands::createCommandLineArguments(
        on the current command-line, and as the last thing append passed arguments. */
 
     // Absolute path of the exe name
-    QStringList newArguments {std::move(currentArguments[0])};
+    QStringList newArguments {std::move(currentArguments.first())};
     // Command name
     newArguments << command;
 

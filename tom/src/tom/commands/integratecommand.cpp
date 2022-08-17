@@ -375,10 +375,10 @@ namespace
     /*! Paths to the TinyORM tom zsh completion files. */
     Q_GLOBAL_STATIC_WITH_ARGS(
             QVector<ZshCompletionPathsItem>, TomZshCompletionPaths,
-            ({{(*ZshCompletionsDirPaths)[0],
-               QString("%1/_tom").arg((*ZshCompletionsDirPaths)[0])},
-              {(*ZshCompletionsDirPaths)[1],
-               QString("%1/_tom").arg((*ZshCompletionsDirPaths)[1])}}));
+            ({{ZshCompletionsDirPaths->constFirst(),
+               QString("%1/_tom").arg(ZshCompletionsDirPaths->constFirst())},
+              {ZshCompletionsDirPaths->at(1),
+               QString("%1/_tom").arg(ZshCompletionsDirPaths->at(1))}}));
 
 } // namespace
 
@@ -400,7 +400,7 @@ bool IntegrateCommand::writeTomZshCompletionWrapper() const
         createZshCompletionFolder();
 
         // And try to write the completion file again
-        if (writeTomZshCompletion((*TomZshCompletionPaths)[0].filePath))
+        if (writeTomZshCompletion(TomZshCompletionPaths->constFirst().filePath))
             return true;
     }
 
@@ -471,14 +471,14 @@ bool IntegrateCommand::writeTomZshCompletion(const QString &filepath)
 void IntegrateCommand::createZshCompletionFolder()
 {
     if (QDir(QStringLiteral("/"))
-            .mkpath((*TomZshCompletionPaths)[0].dirPath)
+            .mkpath(TomZshCompletionPaths->constFirst().dirPath)
     )
         return;
 
     throw Exceptions::RuntimeError(
                 QStringLiteral("Can not create '%1' directory in %2(), please run "
                                "with sudo.")
-                .arg((*TomZshCompletionPaths)[0].dirPath, __tiny_func__));
+                .arg(TomZshCompletionPaths->constFirst().dirPath, __tiny_func__));
 }
 
 QStringList IntegrateCommand::getCompletionFilepaths()

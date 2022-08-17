@@ -140,7 +140,7 @@ void PrintsOptions::printOptionDefaultValue(const QCommandLineOption &option) co
     if (defaultValues.isEmpty())
         io().newLine();
     else
-        io().comment(TomUtils::defaultValueText(defaultValues[0]));
+        io().comment(TomUtils::defaultValueText(defaultValues.constFirst()));
 }
 
 void PrintsOptions::validateOption(const QCommandLineOption &option) const
@@ -160,12 +160,12 @@ void PrintsOptions::validateOption(const QCommandLineOption &option) const
 
     // One option name was passed
     if (optionsSize == 1) {
-        if (const auto &longOption = optionNames[0]; longOption.size() <= 1)
+        if (const auto &longOption = optionNames.constFirst(); longOption.size() <= 1)
             throw Exceptions::RuntimeError(longOptionTmpl.arg(longOption));
     }
     // Two option names were passed
     else if (optionsSize == 2) {
-        if (const auto &shortOption = optionNames[0]; shortOption.size() != 1)
+        if (const auto &shortOption = optionNames.constFirst(); shortOption.size() != 1)
             throw Exceptions::RuntimeError(
                     QStringLiteral("Short option size has to be 1 (option: %1).")
                     .arg(shortOption));

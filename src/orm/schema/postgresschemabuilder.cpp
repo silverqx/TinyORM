@@ -151,7 +151,7 @@ PostgresSchemaBuilder::parseSchemaAndTable(const QString &table) const
 
         // Instead, get a schema from the configuration
         if (!schemaConfig.isEmpty())
-            schema = std::move(schemaConfig[0]);
+            schema = std::move(schemaConfig.first());
     }
 
     // Default schema

@@ -76,7 +76,7 @@ ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options) const
     for (const auto &value : list) {
         const auto option = value.split(EQ_C);
 
-        preparedOptions.insert(option[0].trimmed(),
+        preparedOptions.insert(option.constFirst().trimmed(),
                                option[1].trimmed());
     }
 

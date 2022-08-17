@@ -249,7 +249,7 @@ PostgresSchemaGrammar::compileForeign(const Blueprint &blueprint,
 
     Q_ASSERT(sqlCommands.size() == 1);
 
-    auto &sql = sqlCommands[0];
+    auto &sql = sqlCommands.first();
 
     const auto isDeferrable = command.deferrable.has_value();
 

@@ -147,7 +147,8 @@ QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAli
     if (prefixAlias)
         segments[1] = NOSPACE.arg(m_tablePrefix, segments[1]);
 
-    return QStringLiteral("%1 as %2").arg(wrap(segments[0]), wrapValue(segments[1]));
+    return QStringLiteral("%1 as %2").arg(wrap(segments.constFirst()),
+                                          wrapValue(segments[1]));
 }
 
 QString BaseGrammar::wrapValue(QString value) const
