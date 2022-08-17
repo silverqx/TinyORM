@@ -79,7 +79,7 @@ int UsingConnection::usingConnectionsInternal(
     auto first = true;
 
     if (names.isEmpty())
-        names = {m_connectionResolver->getDefaultConnection()};
+        names << m_connectionResolver->getDefaultConnection();
 
     for (auto &&name : names) {
         // Visually divide individual connections
