@@ -23,7 +23,7 @@ namespace Tom::Commands::Database
 WipeCommand::WipeCommand(Application &application, QCommandLineParser &parser)
     : Command(application, parser)
     , Concerns::Confirmable(*this, 0)
-    , Concerns::UsingConnection(resolver())
+    , Concerns::UsingConnection(connectionResolver())
 {}
 
 QList<QCommandLineOption> WipeCommand::optionsSignature() const

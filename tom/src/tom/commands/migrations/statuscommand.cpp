@@ -30,7 +30,7 @@ StatusCommand::StatusCommand(
         std::shared_ptr<Migrator> migrator
 )
     : Command(application, parser)
-    , Concerns::UsingConnection(resolver())
+    , Concerns::UsingConnection(connectionResolver())
     , m_migrator(std::move(migrator))
 {}
 

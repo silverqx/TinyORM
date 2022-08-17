@@ -37,8 +37,9 @@ namespace Tom
 
     public:
         /*! Constructor. */
-        MigrationRepository(std::shared_ptr<ConnectionResolverInterface> &&resolver,
-                            QString table);
+        MigrationRepository(
+                std::shared_ptr<ConnectionResolverInterface> &&connectionResolver,
+                QString table);
         /*! Default destructor. */
         inline ~MigrationRepository() = default;
 
@@ -80,7 +81,7 @@ namespace Tom
         std::vector<MigrationItem> hydrateMigrations(QSqlQuery &query) const;
 
         /*! The database connection resolver instance. */
-        std::shared_ptr<ConnectionResolverInterface> m_resolver;
+        std::shared_ptr<ConnectionResolverInterface> m_connectionResolver;
         /*! The name of the migration table. */
         QString m_table;
         /*! The name of the database connection to use. */

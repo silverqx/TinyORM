@@ -35,7 +35,7 @@ RefreshCommand::RefreshCommand(
 )
     : Command(application, parser)
     , Concerns::Confirmable(*this, 0)
-    , Concerns::UsingConnection(resolver())
+    , Concerns::UsingConnection(connectionResolver())
     , m_migrator(std::move(migrator))
 {}
 

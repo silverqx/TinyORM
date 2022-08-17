@@ -123,7 +123,7 @@ namespace Tom::Commands
         /*! Get a command-line parser. */
         QCommandLineParser &parser() const noexcept;
         /*! Get database connection resolver. */
-        std::shared_ptr<ConnectionResolverInterface> resolver() const noexcept;
+        std::shared_ptr<ConnectionResolverInterface> connectionResolver() const noexcept;
 
         /*! Reference to the tom application. */
         std::reference_wrapper<Application> m_application;

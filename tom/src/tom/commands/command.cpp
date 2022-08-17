@@ -309,9 +309,10 @@ QCommandLineParser &Command::parser() const noexcept
     return m_parser;
 }
 
-std::shared_ptr<ConnectionResolverInterface> Command::resolver() const noexcept
+std::shared_ptr<ConnectionResolverInterface>
+Command::connectionResolver() const noexcept
 {
-    return application().resolver();
+    return application().connectionResolver();
 }
 
 /* private */

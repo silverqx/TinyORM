@@ -650,7 +650,8 @@ fspath Application::initializePath(fspath &&path)
     return path.make_preferred();
 }
 
-std::shared_ptr<ConnectionResolverInterface> Application::resolver() const noexcept
+std::shared_ptr<ConnectionResolverInterface>
+Application::connectionResolver() const noexcept
 {
     return std::dynamic_pointer_cast<ConnectionResolverInterface>(m_db);
 }

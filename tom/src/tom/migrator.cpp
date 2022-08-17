@@ -35,7 +35,7 @@ namespace Tom
 
 Migrator::Migrator(
         std::shared_ptr<MigrationRepository> &&repository,
-        std::shared_ptr<ConnectionResolverInterface> &&resolver,
+        std::shared_ptr<ConnectionResolverInterface> &&connectionResolver,
         const std::vector<std::shared_ptr<Migration>> &migrations,
         const std::unordered_map<std::type_index,
                                  MigrationProperties> &migrationsProperties,
@@ -43,7 +43,7 @@ Migrator::Migrator(
 )
     : Concerns::InteractsWithIO(parser)
     , m_repository(std::move(repository))
-    , m_resolver(std::move(resolver))
+    , m_connectionResolver(std::move(connectionResolver))
     , m_migrations(migrations)
     , m_migrationsProperties(migrationsProperties)
 {
@@ -122,7 +122,7 @@ bool Migrator::hasRunAnyMigrations() const
 
 DatabaseConnection &Migrator::resolveConnection(const QString &name) const
 {
-    return m_resolver->connection(name);
+    return m_connectionResolver->connection(name);
 }
 
 /* Migration instances lists and hashes */

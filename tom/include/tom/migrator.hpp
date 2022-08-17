@@ -33,7 +33,7 @@ namespace Tom
     public:
         /*! Constructor. */
         Migrator(std::shared_ptr<MigrationRepository> &&repository,
-                 std::shared_ptr<ConnectionResolverInterface> &&resolver,
+                 std::shared_ptr<ConnectionResolverInterface> &&connectionResolver,
                  const std::vector<std::shared_ptr<Migration>> &migrations,
                  const std::unordered_map<std::type_index,
                                           MigrationProperties> &migrationsProperties,
@@ -134,7 +134,7 @@ namespace Tom
         /*! The migration repository instance. */
         std::shared_ptr<MigrationRepository> m_repository;
         /*! The database connection resolver instance. */
-        std::shared_ptr<ConnectionResolverInterface> m_resolver;
+        std::shared_ptr<ConnectionResolverInterface> m_connectionResolver;
 
         /*! Reference to the migrations vector to process. */
         std::reference_wrapper<

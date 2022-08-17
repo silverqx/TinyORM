@@ -48,7 +48,8 @@ namespace Concerns
 
     public:
         /*! Constructor. */
-        explicit UsingConnection(std::shared_ptr<ConnectionResolverInterface> &&resolver);
+        explicit UsingConnection(
+                std::shared_ptr<ConnectionResolverInterface> &&connectionResolver);
         /*! Virtual destructor. */
         inline virtual ~UsingConnection() = default;
 
@@ -127,7 +128,7 @@ namespace Concerns
         const Concerns::InteractsWithIO &io() const;
 
         /*! The database connection resolver instance. */
-        std::shared_ptr<ConnectionResolverInterface> m_resolver = nullptr;
+        std::shared_ptr<ConnectionResolverInterface> m_connectionResolver = nullptr;
         /*! The name of the database connection to use. */
         QString m_connection {};
     };

@@ -242,7 +242,7 @@ namespace Concerns
         static fspath initializePath(fspath &&path);
 
         /*! Get database connection resolver. */
-        std::shared_ptr<ConnectionResolverInterface> resolver() const noexcept;
+        std::shared_ptr<ConnectionResolverInterface> connectionResolver() const noexcept;
 
         /*! Throw if no connection configuration is registered. */
         void throwIfNoConnectionConfig() const;

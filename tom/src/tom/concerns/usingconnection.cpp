@@ -14,8 +14,10 @@ namespace Tom::Concerns
 
 /* public */
 
-UsingConnection::UsingConnection(std::shared_ptr<ConnectionResolverInterface> &&resolver)
-    : m_resolver(std::move(resolver))
+UsingConnection::UsingConnection(
+        std::shared_ptr<ConnectionResolverInterface> &&connectionResolver
+)
+    : m_connectionResolver(std::move(connectionResolver))
 {}
 
 int UsingConnection::usingConnections(
@@ -61,7 +63,7 @@ int UsingConnection::usingConnection(const QString &name, const bool debugSql,
 
 DatabaseConnection &UsingConnection::resolveConnection(const QString &name) const
 {
-    return m_resolver->connection(name.isEmpty() ? m_connection : name);
+    return m_connectionResolver->connection(name.isEmpty() ? m_connection : name);
 }
 
 /* private */
@@ -77,7 +79,7 @@ int UsingConnection::usingConnectionsInternal(
     auto first = true;
 
     if (names.isEmpty())
-        names = {m_resolver->getDefaultConnection()};
+        names = {m_connectionResolver->getDefaultConnection()};
 
     for (auto &&name : names) {
         // Visually divide individual connections
@@ -97,7 +99,7 @@ int UsingConnection::usingConnectionInternal(
         std::optional<std::reference_wrapper<MigrationRepository>> repository,
         const F &callback)
 {
-    auto previousConnection = m_resolver->getDefaultConnection();
+    auto previousConnection = m_connectionResolver->getDefaultConnection();
     /* Default connection can also be "" empty string, eg. auto tests are using empty
        string as the default connection. */
     auto previousDebugSql = getConnectionDebugSql(previousConnection);
@@ -138,7 +140,7 @@ void UsingConnection::setConnection(
 {
     // Restore even an empty "" connection, it makes sense
     if (restore || !name.isEmpty())
-        m_resolver->setDefaultConnection(name);
+        m_connectionResolver->setDefaultConnection(name);
 
     if (repository)
         repository->get().setConnection(name);
@@ -151,7 +153,8 @@ void UsingConnection::setConnection(
 std::optional<bool> UsingConnection::getConnectionDebugSql(const QString &name) const
 {
     return name.isEmpty() ? std::nullopt
-                          : std::make_optional(m_resolver->connection(name).debugSql());
+                          : std::make_optional(m_connectionResolver->connection(name)
+                                               .debugSql());
 }
 
 void UsingConnection::setConnectionDebugSql(std::optional<bool> &&debugSql) const

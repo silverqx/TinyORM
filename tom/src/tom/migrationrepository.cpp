@@ -26,9 +26,9 @@ namespace Tom
 /* public */
 
 MigrationRepository::MigrationRepository(
-        std::shared_ptr<ConnectionResolverInterface> &&resolver, QString table
+        std::shared_ptr<ConnectionResolverInterface> &&connectionResolver, QString table
 )
-    : m_resolver(std::move(resolver))
+    : m_connectionResolver(std::move(connectionResolver))
     , m_table(std::move(table))
 {}
 
@@ -139,7 +139,7 @@ void MigrationRepository::deleteRepository() const
 
 DatabaseConnection &MigrationRepository::connection() const
 {
-    return m_resolver->connection(m_connection);
+    return m_connectionResolver->connection(m_connection);
 }
 
 /* protected */

@@ -22,7 +22,7 @@ InstallCommand::InstallCommand(
         std::shared_ptr<MigrationRepository> repository
 )
     : Command(application, parser)
-    , Concerns::UsingConnection(resolver())
+    , Concerns::UsingConnection(connectionResolver())
     , m_repository(std::move(repository))
 {}
 
