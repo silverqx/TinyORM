@@ -703,8 +703,8 @@ Builder &Builder::orWhereNotNull(const Column &column)
 /* where exists */
 
 Builder &Builder::whereExists(
-            const std::function<void(Builder &)> &callback, const QString &condition,
-            const bool nope)
+        const std::function<void(Builder &)> &callback, const QString &condition,
+        const bool nope)
 {
     // Ownership of the std::shared_ptr<QueryBuilder>
     const auto query = forSubQuery();
