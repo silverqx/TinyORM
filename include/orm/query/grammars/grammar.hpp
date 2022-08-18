@@ -182,6 +182,10 @@ namespace Orm::Query::Grammars
         QString whereNotExists(const WhereConditionItem &where) const;
         /*! Compile a where row values condition. */
         QString whereRowValues(const WhereConditionItem &where) const;
+        /*! Compile a "between" where clause. */
+        QString whereBetween(const WhereConditionItem &where) const;
+        /*! Compile a "between" where clause using columns. */
+        QString whereBetweenColumns(const WhereConditionItem &where) const;
 
         /*! Compile a insert values lists. */
         QStringList compileInsertToVector(const QVector<QVariantMap> &values) const;

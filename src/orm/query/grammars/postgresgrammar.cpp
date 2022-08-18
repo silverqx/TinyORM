@@ -200,6 +200,8 @@ PostgresGrammar::getWhereMethod(const WhereType whereType) const
         bind(&PostgresGrammar::whereExists),
         bind(&PostgresGrammar::whereNotExists),
         bind(&PostgresGrammar::whereRowValues),
+        bind(&PostgresGrammar::whereBetween),
+        bind(&PostgresGrammar::whereBetweenColumns),
     };
 
     T_THREAD_LOCAL

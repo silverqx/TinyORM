@@ -482,6 +482,38 @@ The `whereNot` and `orWhereNot` methods may be used to negate a given group of q
 
 ### Additional Where Clauses
 
+**whereBetween / orWhereBetween**
+
+The `whereBetween` method verifies that a column's value is between two values:
+
+    auto users = DB::table("users")
+                     ->whereBetween("votes", {1, 100})
+                     .get();
+
+**whereNotBetween / orWhereNotBetween**
+
+The `whereNotBetween` method verifies that a column's value lies outside of two values:
+
+    auto users = DB::table("users")
+                     ->whereNotBetween("votes", {1, 100})
+                     .get();
+
+**whereBetweenColumns / orWhereBetweenColumns**
+
+The `whereBetweenColumns` method verifies that a column's value is between two values in given columns:
+
+    auto files = DB::table("files")
+                     ->whereBetweenColumns("quota", {"min_allowed_quota", "max_allowed_quota"})
+                     .get();
+
+**whereNotBetweenColumns / orWhereNotBetweenColumns**
+
+The `whereNotBetweenColumns` method verifies that a column's value lies outside of two values in given columns:
+
+    auto files = DB::table("files")
+                     ->whereNotBetweenColumns("quota", {"min_allowed_quota", "max_allowed_quota"})
+                     .get();
+
 **whereIn / whereNotIn / orWhereIn / orWhereNotIn**
 
 The `whereIn` method verifies that a given column's value is contained within the given `QVector<QVariant>`:

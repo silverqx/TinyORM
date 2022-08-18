@@ -176,6 +176,14 @@ private Q_SLOTS:
     void whereNull_WithVectorValue() const;
     void whereNotNull_WithVectorValue() const;
 
+    void whereBetween() const;
+    void whereNotBetween() const;
+    void whereBetween_ColumnExpression() const;
+
+    void whereBetweenColumns() const;
+    void whereNotBetweenColumns() const;
+    void whereBetweenColumns_ColumnExpression() const;
+
     void whereExists() const;
     void whereNotExists() const;
     void orWhereExists() const;
@@ -2424,6 +2432,181 @@ void tst_MySql_QueryBuilder::whereNotNull_WithVectorValue() const
                  "or `total_seeds` is not null");
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::whereBetween() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereBetween("size", {12, 14});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `size` between ? and ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(12), QVariant(14)}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, GT, 2)
+                .orWhereBetween("size", {12, 14});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` > ? or `size` between ? and ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2), QVariant(12), QVariant(14)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::whereNotBetween() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").whereNotBetween("size", {12, 14});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `size` not between ? and ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(12), QVariant(14)}));
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, GT, 2)
+                .orWhereNotBetween("size", {12, 14});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` > ? or `size` not between ? and ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2), QVariant(12), QVariant(14)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::whereBetween_ColumnExpression() const
+{
+    // min. value as expression
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, GT, 2)
+                .orWhereBetween("size", {DB::raw(12), 14});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` > ? or `size` between 12 and ?");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2), QVariant(14)}));
+    }
+    // max. value as expression
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, GT, 2)
+                .orWhereBetween("size", {12, DB::raw(14)});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` > ? or `size` between ? and 14");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2), QVariant(12)}));
+    }
+    // Both min. and max. values as expressions
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, GT, 2)
+                .orWhereBetween("size", {DB::raw(12), DB::raw(14)});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` > ? or `size` between 12 and 14");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::whereBetweenColumns() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents")
+                .whereBetweenColumns("size", {"min", "max"});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `size` between `min` and `max`");
+        QVERIFY(builder->getBindings().isEmpty());
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, GT, 2)
+                .orWhereBetweenColumns("size", {"min", "max"});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` > ? or "
+                 "`size` between `min` and `max`");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::whereNotBetweenColumns() const
+{
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents")
+                .whereNotBetweenColumns("size", {"min", "max"});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `size` not between `min` and `max`");
+        QVERIFY(builder->getBindings().isEmpty());
+    }
+
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, GT, 2)
+                .orWhereNotBetweenColumns("size", {"min", "max"});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` > ? or "
+                 "`size` not between `min` and `max`");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+}
+
+void tst_MySql_QueryBuilder::whereBetweenColumns_ColumnExpression() const
+{
+    // min. column name as expression
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, GT, 2)
+                .orWhereBetweenColumns("size", {DB::raw("min"), "max"});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` > ? or "
+                 "`size` between min and `max`");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+    // max. column name as expression
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, GT, 2)
+                .orWhereBetweenColumns("size", {"min", DB::raw("max")});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` > ? or "
+                 "`size` between `min` and max");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
+    }
+    // Both min. and max. column names as expressions
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrents").where(ID, GT, 2)
+                .orWhereBetweenColumns("size", {DB::raw("min"), DB::raw("max")});
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrents` where `id` > ? or "
+                 "`size` between min and max");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(2)}));
     }
 }
 

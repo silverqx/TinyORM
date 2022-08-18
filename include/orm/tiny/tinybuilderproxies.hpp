@@ -382,6 +382,38 @@ namespace Tiny
         /*! Add an "or where not null" clause to the query. */
         TinyBuilder<Model> &orWhereNotNull(const Column &column);
 
+        /* where between */
+        /*! Add a "where between" statement to the query. */
+        TinyBuilder<Model> &whereBetween(
+                const Column &column, const WhereBetweenItem &values,
+                const QString &condition = AND, bool nope = false);
+        /*! Add an "or where between" statement to the query. */
+        TinyBuilder<Model> &orWhereBetween(
+                const Column &column, const WhereBetweenItem &values);
+        /*! Add a "where not between" statement to the query. */
+        TinyBuilder<Model> &whereNotBetween(
+                const Column &column, const WhereBetweenItem &values,
+                const QString &condition = AND);
+        /*! Add an "or where not between" statement to the query. */
+        TinyBuilder<Model> &orWhereNotBetween(
+                const Column &column, const WhereBetweenItem &values);
+
+        /* where between columns */
+        /*! Add a "where between" statement using columns to the query. */
+        TinyBuilder<Model> &whereBetweenColumns(
+                const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+                const QString &condition = AND, bool nope = false);
+        /*! Add an "or where between" statement using columns to the query. */
+        TinyBuilder<Model> &orWhereBetweenColumns(
+                const Column &column, const WhereBetweenColumnsItem &betweenColumns);
+        /*! Add a "where not between" statement using columns to the query. */
+        TinyBuilder<Model> &whereNotBetweenColumns(
+                const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+                const QString &condition = AND);
+        /*! Add an "or where not between" statement using columns to the query. */
+        TinyBuilder<Model> &orWhereNotBetweenColumns(
+                const Column &column, const WhereBetweenColumnsItem &betweenColumns);
+
         /* where sub-queries */
         /*! Add a basic where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
@@ -1433,6 +1465,86 @@ namespace Tiny
     BuilderProxies<Model>::orWhereNotNull(const Column &column)
     {
         toBase().orWhereNotNull(column);
+        return builder();
+    }
+
+    /* where between columns */
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereBetween(
+            const Column &column, const WhereBetweenItem &values,
+            const QString &condition, const bool nope)
+    {
+        toBase().whereBetween(column, values, condition, nope);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereBetween(
+            const Column &column, const WhereBetweenItem &values)
+    {
+        toBase().whereBetween(column, values, OR);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereNotBetween(
+            const Column &column, const WhereBetweenItem &values,
+            const QString &condition)
+    {
+        toBase().whereBetween(column, values, condition, true);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereNotBetween(
+            const Column &column, const WhereBetweenItem &values)
+    {
+        toBase().whereBetween(column, values, OR, true);
+        return builder();
+    }
+
+    /* where between columns */
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereBetweenColumns(
+            const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+            const QString &condition, const bool nope)
+    {
+        toBase().whereBetweenColumns(column, betweenColumns, condition, nope);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereBetweenColumns(
+            const Column &column, const WhereBetweenColumnsItem &betweenColumns)
+    {
+        toBase().whereBetweenColumns(column, betweenColumns, OR);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereNotBetweenColumns(
+            const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+            const QString &condition)
+    {
+        toBase().whereBetweenColumns(column, betweenColumns, condition, true);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereNotBetweenColumns(
+            const Column &column, const WhereBetweenColumnsItem &betweenColumns)
+    {
+        toBase().whereBetweenColumns(column, betweenColumns, OR, true);
         return builder();
     }
 

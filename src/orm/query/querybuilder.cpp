@@ -700,6 +700,68 @@ Builder &Builder::orWhereNotNull(const Column &column)
     return orWhereNotNull(QVector<Column> {column});
 }
 
+/* where between */
+
+Builder &Builder::whereBetween(const Column &column, const WhereBetweenItem &values,
+                               const QString &condition, const bool nope)
+{
+    m_wheres.append({.column = column, .condition = condition,
+                     .type = WhereType::BETWEEN, .nope = nope,
+                     .between = values});
+
+    addBinding(cleanBindings(values), BindingType::WHERE);
+
+    return *this;
+}
+
+Builder &Builder::orWhereBetween(const Column &column, const WhereBetweenItem &values)
+{
+    return whereBetween(column, values, OR);
+}
+
+Builder &Builder::whereNotBetween(const Column &column, const WhereBetweenItem &values,
+                                  const QString &condition)
+{
+    return whereBetween(column, values, condition, true);
+}
+
+Builder &Builder::orWhereNotBetween(const Column &column, const WhereBetweenItem &values)
+{
+    return whereBetween(column, values, OR, true);
+}
+
+/* where between columns */
+
+Builder &Builder::whereBetweenColumns(
+        const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+        const QString &condition, const bool nope)
+{
+    m_wheres.append({.column = column, .condition = condition,
+                     .type = WhereType::BETWEEN_COLUMNS, .nope = nope,
+                     .betweenColumns = betweenColumns});
+
+    return *this;
+}
+
+Builder &Builder::orWhereBetweenColumns(const Column &column,
+                                        const WhereBetweenColumnsItem &betweenColumns)
+{
+    return whereBetweenColumns(column, betweenColumns, OR);
+}
+
+Builder &Builder::whereNotBetweenColumns(
+        const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+        const QString &condition)
+{
+    return whereBetweenColumns(column, betweenColumns, condition, true);
+}
+
+Builder &Builder::orWhereNotBetweenColumns(const Column &column,
+                                           const WhereBetweenColumnsItem &betweenColumns)
+{
+    return whereBetweenColumns(column, betweenColumns, OR, true);
+}
+
 /* where exists */
 
 Builder &Builder::whereExists(
@@ -1279,6 +1341,24 @@ QVector<QVariant> Builder::cleanBindings(QVector<QVariant> &&bindings) const
     for (auto &&binding : bindings)
         if (!binding.canConvert<Expression>())
             cleanedBindings << std::move(binding);
+
+    return cleanedBindings;
+}
+
+QVector<QVariant> Builder::cleanBindings(const WhereBetweenItem &bindings) const
+{
+    QVector<QVariant> cleanedBindings;
+    cleanedBindings.reserve(2);
+
+    if (const auto &min = bindings.min;
+        !min.canConvert<Expression>()
+    )
+        cleanedBindings << min;
+
+    if (const auto &max = bindings.max;
+        !max.canConvert<Expression>()
+    )
+        cleanedBindings << max;
 
     return cleanedBindings;
 }

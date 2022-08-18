@@ -449,6 +449,28 @@ QString Grammar::whereRowValues(const WhereConditionItem &where) const
                                               parametrize(where.values));
 }
 
+QString Grammar::whereBetween(const WhereConditionItem &where) const
+{
+    auto between = where.nope ? QStringLiteral("not between")
+                              : QStringLiteral("between");
+
+    return QStringLiteral("%1 %2 %3 and %4").arg(wrap(where.column),
+                                                 std::move(between),
+                                                 parameter(where.between.min),
+                                                 parameter(where.between.max));
+}
+
+QString Grammar::whereBetweenColumns(const WhereConditionItem &where) const
+{
+    auto between = where.nope ? QStringLiteral("not between")
+                              : QStringLiteral("between");
+
+    return QStringLiteral("%1 %2 %3 and %4").arg(wrap(where.column),
+                                                 std::move(between),
+                                                 wrap(where.betweenColumns.min),
+                                                 wrap(where.betweenColumns.max));
+}
+
 QStringList
 Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
 {

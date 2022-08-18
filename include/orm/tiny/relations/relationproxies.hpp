@@ -543,6 +543,40 @@ namespace Tiny::Relations
         /*! Add an "or where not null" clause to the query. */
         const Relation<Model, Related> &orWhereNotNull(const Column &column) const;
 
+        /* where between */
+        /*! Add a "where between" statement to the query. */
+        const Relation<Model, Related> &whereBetween(
+                const Column &column, const WhereBetweenItem &values,
+                const QString &condition = AND, bool nope = false) const;
+        /*! Add an "or where between" statement to the query. */
+        const Relation<Model, Related> &orWhereBetween(
+                const Column &column, const WhereBetweenItem &values) const;
+        /*! Add a "where not between" statement to the query. */
+        const Relation<Model, Related> &whereNotBetween(
+                const Column &column, const WhereBetweenItem &values,
+                const QString &condition = AND) const;
+        /*! Add an "or where not between" statement to the query. */
+        const Relation<Model, Related> &orWhereNotBetween(
+                const Column &column, const WhereBetweenItem &values) const;
+
+        /* where between columns */
+        /*! Add a "where between" statement using columns to the query. */
+        const Relation<Model, Related> &whereBetweenColumns(
+                const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+                const QString &condition = AND, bool nope = false) const;
+        /*! Add an "or where between" statement using columns to the query. */
+        const Relation<Model, Related> &orWhereBetweenColumns(
+                const Column &column,
+                const WhereBetweenColumnsItem &betweenColumns) const;
+        /*! Add a "where not between" statement using columns to the query. */
+        const Relation<Model, Related> &whereNotBetweenColumns(
+                const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+                const QString &condition = AND) const;
+        /*! Add an "or where not between" statement using columns to the query. */
+        const Relation<Model, Related> &orWhereNotBetweenColumns(
+                const Column &column,
+                const WhereBetweenColumnsItem &betweenColumns) const;
+
         /* where sub-queries */
         /*! Add a basic where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
@@ -2136,6 +2170,94 @@ namespace Tiny::Relations
     RelationProxies<Model, Related>::orWhereNotNull(const Column &column) const
     {
         getQuery().orWhereNotNull(column);
+
+        return relation();
+    }
+
+    /* where between */
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereBetween(
+            const Column &column, const WhereBetweenItem &values,
+            const QString &condition, const bool nope) const
+    {
+        getQuery().whereBetween(column, values, condition, nope);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereBetween(
+            const Column &column, const WhereBetweenItem &values) const
+    {
+        getQuery().whereBetween(column, values, OR);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereNotBetween(
+            const Column &column, const WhereBetweenItem &values,
+            const QString &condition) const
+    {
+        getQuery().whereBetween(column, values, condition, true);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereNotBetween(
+            const Column &column, const WhereBetweenItem &values) const
+    {
+        getQuery().whereBetween(column, values, OR, true);
+
+        return relation();
+    }
+
+    /* where between columns */
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereBetweenColumns(
+            const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+            const QString &condition, const bool nope) const
+    {
+        getQuery().whereBetweenColumns(column, betweenColumns, condition, nope);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereBetweenColumns(
+            const Column &column, const WhereBetweenColumnsItem &betweenColumns) const
+    {
+        getQuery().whereBetweenColumns(column, betweenColumns, OR);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereNotBetweenColumns(
+            const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+            const QString &condition) const
+    {
+        getQuery().whereBetweenColumns(column, betweenColumns, condition, true);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereNotBetweenColumns(
+            const Column &column, const WhereBetweenColumnsItem &betweenColumns) const
+    {
+        getQuery().whereBetweenColumns(column, betweenColumns, OR, true);
 
         return relation();
     }

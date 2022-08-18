@@ -25,7 +25,7 @@ namespace Orm::Query
     concept Remove = std::convertible_to<T, quint64> ||
                      std::same_as<T, Query::Expression>;
 
-    // TODO querybuilder, whereDay/Month/..., whereBetween, whereFullText silverqx
+    // TODO querybuilder, whereDay/Month/..., whereFullText silverqx
     // FUTURE querybuilder, paginator silverqx
     /*! Database query builder. */
     class SHAREDLIB_EXPORT Builder : public Concerns::BuildsQueries // clazy:exclude=copyable-polymorphic
@@ -453,6 +453,34 @@ namespace Orm::Query
         /*! Add an "or where not null" clause to the query. */
         Builder &orWhereNotNull(const Column &column);
 
+        /* where between */
+        /*! Add a "where between" statement to the query. */
+        Builder &whereBetween(const Column &column, const WhereBetweenItem &values,
+                              const QString &condition = AND, bool nope = false);
+        /*! Add an "or where between" statement to the query. */
+        Builder &orWhereBetween(const Column &column, const WhereBetweenItem &values);
+        /*! Add a "where not between" statement to the query. */
+        Builder &whereNotBetween(const Column &column, const WhereBetweenItem &values,
+                                 const QString &condition = AND);
+        /*! Add an "or where not between" statement to the query. */
+        Builder &orWhereNotBetween(const Column &column, const WhereBetweenItem &values);
+
+        /* where between columns */
+        /*! Add a "where between" statement using columns to the query. */
+        Builder &whereBetweenColumns(
+                const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+                const QString &condition = AND, bool nope = false);
+        /*! Add an "or where between" statement using columns to the query. */
+        Builder &orWhereBetweenColumns(
+                const Column &column, const WhereBetweenColumnsItem &betweenColumns);
+        /*! Add a "where not between" statement using columns to the query. */
+        Builder &whereNotBetweenColumns(
+                const Column &column, const WhereBetweenColumnsItem &betweenColumns,
+                const QString &condition = AND);
+        /*! Add an "or where not between" statement using columns to the query. */
+        Builder &orWhereNotBetweenColumns(
+                const Column &column, const WhereBetweenColumnsItem &betweenColumns);
+
         /* where sub-queries */
         /*! Add a basic where clause to the query with a full sub-select column. */
         template<Queryable C, WhereValue V>
@@ -738,6 +766,8 @@ namespace Orm::Query
         QVector<QVariant> cleanBindings(const QVector<QVariant> &bindings) const;
         /*! Remove all of the expressions from a list of bindings. */
         QVector<QVariant> cleanBindings(QVector<QVariant> &&bindings) const;
+        /*! Remove all of the expressions from the WhereBetweenItem bindings. */
+        QVector<QVariant> cleanBindings(const WhereBetweenItem &bindings) const;
 
         /*! Add a vector of basic where clauses to the query. */
         Builder &

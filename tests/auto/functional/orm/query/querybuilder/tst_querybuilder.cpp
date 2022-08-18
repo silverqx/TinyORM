@@ -52,6 +52,8 @@ private Q_SLOTS:
     void implode_EmptyResult() const;
     void implode_QualifiedColumnOrKey() const;
 
+    void whereBetween() const;
+
     void updateOrInsert() const;
     void updateOrInsert_EmptyValues() const;
 
@@ -458,6 +460,29 @@ void tst_QueryBuilder::implode_QualifiedColumnOrKey() const
 
         QCOMPARE(result, QString {"test1, test2, test3, test4, test5, test6"});
     }
+}
+
+void tst_QueryBuilder::whereBetween() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereBetween("size", {12, 14})
+                  .orderBy(ID)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QVERIFY(QueryUtils::queryResultSize(result) == 3);
+
+    QVector<quint64> expectedIds {2, 3, 4};
+
+    QVector<quint64> actualIds;
+    actualIds.reserve(expectedIds.size());
+
+    while (result.next())
+        actualIds << result.value("id").value<quint64>();
+
+    QCOMPARE(actualIds, expectedIds);
 }
 
 void tst_QueryBuilder::updateOrInsert() const

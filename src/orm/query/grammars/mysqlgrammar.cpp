@@ -216,6 +216,8 @@ MySqlGrammar::getWhereMethod(const WhereType whereType) const
         bind(&MySqlGrammar::whereExists),
         bind(&MySqlGrammar::whereNotExists),
         bind(&MySqlGrammar::whereRowValues),
+        bind(&MySqlGrammar::whereBetween),
+        bind(&MySqlGrammar::whereBetweenColumns),
     };
 
     T_THREAD_LOCAL

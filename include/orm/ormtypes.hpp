@@ -79,21 +79,8 @@ namespace Query
         EXISTS,
         NOT_EXISTS,
         ROW_VALUES,
-    };
-
-    /*! Where clause item, primarily used in grammars to build sql query. */
-    struct WhereConditionItem
-    {
-        Column                        column      {};
-        QVariant                      value       {};
-        QString                       comparison  {Orm::Constants::EQ};
-        QString                       condition   {Orm::Constants::AND};
-        WhereType                     type        {WhereType::UNDEFINED};
-        std::shared_ptr<QueryBuilder> nestedQuery {nullptr};
-        QVector<Column>               columns     {};
-        QVector<QVariant>             values      {};
-        Column                        columnTwo   {};
-        QString                       sql         {}; // for the raw version
+        BETWEEN,
+        BETWEEN_COLUMNS,
     };
 
     /*! Supported having types. */
@@ -146,6 +133,38 @@ namespace Query
         Column  second;
         QString comparison {Orm::Constants::EQ};
         QString condition  {};
+    };
+
+    /*! Where item that stores values for the where between clause. */
+    struct WhereBetweenItem
+    {
+        QVariant min {};
+        QVariant max {};
+    };
+
+    /*! Where item that stores column names for the where between clause. */
+    struct WhereBetweenColumnsItem
+    {
+        Column min {};
+        Column max {};
+    };
+
+    /*! Where clause item, primarily used in grammars to build sql query. */
+    struct WhereConditionItem
+    {
+        Column                        column         {};
+        QVariant                      value          {};
+        QString                       comparison     {Orm::Constants::EQ};
+        QString                       condition      {Orm::Constants::AND};
+        WhereType                     type           {WhereType::UNDEFINED};
+        std::shared_ptr<QueryBuilder> nestedQuery    {nullptr};
+        QVector<Column>               columns        {};
+        QVector<QVariant>             values         {};
+        Column                        columnTwo      {};
+        QString                       sql            {}; // for the raw version
+        bool                          nope           {false};
+        WhereBetweenItem              between        {};
+        WhereBetweenColumnsItem       betweenColumns {};
     };
 
 } // namespace Orm
