@@ -5,6 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <range/v3/view/filter.hpp>
+
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/tiny/concerns/guardsattributes.hpp"
@@ -18,6 +20,7 @@ TINY_SYSTEM_HEADER
 #ifdef TINYORM_TESTS_CODE
 #  include "orm/tiny/types/connectionoverride.hpp"
 #endif
+#include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -61,6 +64,8 @@ namespace Orm::Tiny
 
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
+        /*! Alias for the helper utils. */
+        using Helpers = Orm::Utils::Helpers;
         /*! Alias for the string utils. */
         using StringUtils = Orm::Tiny::Utils::String;
         /*! Alias for the type utils. */
@@ -189,6 +194,10 @@ namespace Orm::Tiny
         /*! Create a new instance of the given model. */
         Derived newInstance(QVector<AttributeItem> &&attributes,
                             bool exists = false);
+
+        /*! Clone the model into a new, non-existing instance. */
+        Derived replicate(const std::optional<
+                                  std::unordered_set<QString>> &except = std::nullopt);
 
         /*! Create a new pivot model instance. */
         template<typename PivotType = Relations::Pivot, typename Parent>
@@ -870,6 +879,50 @@ namespace Orm::Tiny
         model.setTable(this->model().getTable());
 
         return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived Model<Derived, AllRelations...>::replicate(
+            const std::optional<std::unordered_set<QString>> &except)
+    {
+        std::unordered_set<QString> defaults {
+            getKeyName(),
+            this->getCreatedAtColumn(),
+            this->getUpdatedAtColumn(),
+        };
+        // Remove empty attribute names
+        std::erase_if(defaults, [](const auto &attribute)
+        {
+            return attribute.isEmpty();
+        });
+
+        // Merge defaults into except
+        std::unordered_set<QString> exceptMerged(defaults.size() +
+                                                 (except ? except->size() : 0));
+        if (except) {
+            exceptMerged = *except;
+            exceptMerged.merge(defaults);
+        }
+        else
+            exceptMerged = std::move(defaults);
+
+        // Get all attributes excluding those in the exceptMerged set
+        auto attributes = this->getAttributes()
+                | ranges::views::filter([&exceptMerged](const AttributeItem &attribute)
+        {
+            return !exceptMerged.contains(attribute.key);
+        })
+                | ranges::to<QVector<AttributeItem>>();
+
+        /* Create a new instance (with correctly set a table and connection names),
+           set obtained attributes and relations. */
+        return Helpers::tap<Derived>(newInstance(),
+                                     [this, &attributes](Derived &instance)
+        {
+            instance.setRawAttributes(std::move(attributes));
+
+            instance.setRelations(this->getRelations());
+        });
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

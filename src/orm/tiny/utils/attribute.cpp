@@ -68,7 +68,9 @@ Attribute::removeDuplicitKeys(const QVector<AttributeItem> &attributes)
     QVector<AttributeItem> dedupedAttributes;
     dedupedAttributes.reserve(size);
 
-    // If I want to leave only the last duplicate, I have to loop in the reverse order
+    /* If I want to get only the last duplicate, I have to loop in the reverse order,
+       so the previous attributes will be skipped and only the last attribute
+       will be copied. */
     for (auto i = size - 1; i > -1; --i) {
         const auto &attribute = attributes.at(i);
         const auto &key = attribute.key;
@@ -83,6 +85,35 @@ Attribute::removeDuplicitKeys(const QVector<AttributeItem> &attributes)
 
     // Reverse order
     return {dedupedAttributes.crbegin(), dedupedAttributes.crend()};
+}
+
+QVector<AttributeItem>
+Attribute::removeDuplicitKeys(QVector<AttributeItem> &&attributes)
+{
+    const auto size = attributes.size();
+    std::unordered_set<QString> added(static_cast<std::size_t>(size));
+    QVector<AttributeItem> dedupedAttributes;
+    dedupedAttributes.reserve(size);
+
+    /* If I want to get only the last duplicate, I have to loop in the reverse order,
+       so the previous attributes will be skipped and only the last attribute
+       will be moved. */
+    for (auto i = size - 1; i > -1; --i) {
+        auto &attribute = attributes[i];
+        const auto &key = attribute.key;
+
+        // If duplicit key then skip
+        if (added.contains(key))
+            continue;
+
+        added.emplace(key);
+        dedupedAttributes.append(std::move(attribute));
+    }
+
+    // Reverse order
+    std::ranges::reverse(dedupedAttributes);
+
+    return dedupedAttributes;
 }
 
 QVector<AttributeItem>

@@ -34,6 +34,9 @@ namespace Orm::Tiny::Concerns
         /*! Set a vector of model attributes. No checking is done. */
         Derived &setRawAttributes(const QVector<AttributeItem> &attributes,
                                   bool sync = false);
+        /*! Set a vector of model attributes. No checking is done. */
+        Derived &setRawAttributes(QVector<AttributeItem> &&attributes,
+                                  bool sync = false);
         /*! Sync the original attributes with the current. */
         Derived &syncOriginal();
         /*! Get all of the current attributes on the model (insert order). */
@@ -276,6 +279,27 @@ namespace Orm::Tiny::Concerns
     {
         m_attributes.reserve(attributes.size());
         m_attributes = AttributeUtils::removeDuplicitKeys(attributes);
+
+        // Build attributes hash
+        m_attributesHash.clear();
+        m_attributesHash.reserve(static_cast<std::size_t>(m_attributes.size()));
+
+        rehashAttributePositions(m_attributes, m_attributesHash);
+
+        if (sync)
+            syncOriginal();
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::setRawAttributes(
+            QVector<AttributeItem> &&attributes,
+            const bool sync)
+    {
+        m_attributes.reserve(attributes.size());
+        m_attributes = AttributeUtils::removeDuplicitKeys(std::move(attributes));
 
         // Build attributes hash
         m_attributesHash.clear();
