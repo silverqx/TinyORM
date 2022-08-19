@@ -30,7 +30,7 @@ using Orm::SchemaNs::Constants::Restrict;
 
 using TestUtils::Databases;
 
-class tst_Mysql_SchemaBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
+class tst_MySql_SchemaBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 
@@ -107,16 +107,16 @@ private:
 
 /* private slots */
 
-void tst_Mysql_SchemaBuilder::initTestCase()
+void tst_MySql_SchemaBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())
-        QSKIP(TestUtils::AutoTestSkipped.arg("tst_Mysql_SchemaBuilder", Databases::MYSQL)
+        QSKIP(TestUtils::AutoTestSkipped.arg("tst_MySql_SchemaBuilder", Databases::MYSQL)
                                         .toUtf8().constData(), );
 }
 
-void tst_Mysql_SchemaBuilder::createDatabase() const
+void tst_MySql_SchemaBuilder::createDatabase() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -133,7 +133,7 @@ void tst_Mysql_SchemaBuilder::createDatabase() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::createDatabase_Charset_Collation() const
+void tst_MySql_SchemaBuilder::createDatabase_Charset_Collation() const
 {
     static const auto mysqlCreateDb = QStringLiteral("tinyorm_mysql_tests_create_db");
 
@@ -162,7 +162,7 @@ void tst_Mysql_SchemaBuilder::createDatabase_Charset_Collation() const
     DB::removeConnection(mysqlCreateDb);
 }
 
-void tst_Mysql_SchemaBuilder::dropDatabaseIfExists() const
+void tst_MySql_SchemaBuilder::dropDatabaseIfExists() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -178,7 +178,7 @@ void tst_Mysql_SchemaBuilder::dropDatabaseIfExists() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::createTable() const
+void tst_MySql_SchemaBuilder::createTable() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -246,7 +246,7 @@ void tst_Mysql_SchemaBuilder::createTable() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::createTable_Temporary() const
+void tst_MySql_SchemaBuilder::createTable_Temporary() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -273,7 +273,7 @@ void tst_Mysql_SchemaBuilder::createTable_Temporary() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::createTable_Charset_Collation_Engine() const
+void tst_MySql_SchemaBuilder::createTable_Charset_Collation_Engine() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -302,7 +302,7 @@ void tst_Mysql_SchemaBuilder::createTable_Charset_Collation_Engine() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
+void tst_MySql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -365,7 +365,7 @@ void tst_Mysql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
     QVERIFY(log3.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::modifyTable() const
+void tst_MySql_SchemaBuilder::modifyTable() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -440,7 +440,7 @@ void tst_Mysql_SchemaBuilder::modifyTable() const
     QVERIFY(log5.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropTable() const
+void tst_MySql_SchemaBuilder::dropTable() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -455,7 +455,7 @@ void tst_Mysql_SchemaBuilder::dropTable() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropTableIfExists() const
+void tst_MySql_SchemaBuilder::dropTableIfExists() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -470,7 +470,7 @@ void tst_Mysql_SchemaBuilder::dropTableIfExists() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::rename() const
+void tst_MySql_SchemaBuilder::rename() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -485,7 +485,7 @@ void tst_Mysql_SchemaBuilder::rename() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropColumns() const
+void tst_MySql_SchemaBuilder::dropColumns() const
 {
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
@@ -528,7 +528,7 @@ void tst_Mysql_SchemaBuilder::dropColumns() const
     }
 }
 
-void tst_Mysql_SchemaBuilder::renameColumn() const
+void tst_MySql_SchemaBuilder::renameColumn() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -544,12 +544,12 @@ void tst_Mysql_SchemaBuilder::renameColumn() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropAllTypes() const
+void tst_MySql_SchemaBuilder::dropAllTypes() const
 {
     QVERIFY_EXCEPTION_THROWN(Schema::on(m_connection).dropAllTypes(), LogicError);
 }
 
-void tst_Mysql_SchemaBuilder::getAllTables() const
+void tst_MySql_SchemaBuilder::getAllTables() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -564,7 +564,7 @@ void tst_Mysql_SchemaBuilder::getAllTables() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::getAllViews() const
+void tst_MySql_SchemaBuilder::getAllViews() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -579,7 +579,7 @@ void tst_Mysql_SchemaBuilder::getAllViews() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::enableForeignKeyConstraints() const
+void tst_MySql_SchemaBuilder::enableForeignKeyConstraints() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -594,7 +594,7 @@ void tst_Mysql_SchemaBuilder::enableForeignKeyConstraints() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::disableForeignKeyConstraints() const
+void tst_MySql_SchemaBuilder::disableForeignKeyConstraints() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -609,7 +609,7 @@ void tst_Mysql_SchemaBuilder::disableForeignKeyConstraints() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::getColumnListing() const
+void tst_MySql_SchemaBuilder::getColumnListing() const
 {
     auto &connection = DB::connection(m_connection);
 
@@ -631,7 +631,7 @@ void tst_Mysql_SchemaBuilder::getColumnListing() const
                                 QVariant(Firewalls)}));
 }
 
-void tst_Mysql_SchemaBuilder::hasTable() const
+void tst_MySql_SchemaBuilder::hasTable() const
 {
     auto &connection = DB::connection(m_connection);
 
@@ -654,7 +654,7 @@ void tst_Mysql_SchemaBuilder::hasTable() const
                                 QVariant(Firewalls)}));
 }
 
-void tst_Mysql_SchemaBuilder::defaultStringLength_Set() const
+void tst_MySql_SchemaBuilder::defaultStringLength_Set() const
 {
     QVERIFY(Blueprint::DefaultStringLength == Orm::SchemaNs::DefaultStringLength);
 
@@ -666,7 +666,7 @@ void tst_Mysql_SchemaBuilder::defaultStringLength_Set() const
     QVERIFY(Blueprint::DefaultStringLength == Orm::SchemaNs::DefaultStringLength);
 }
 
-void tst_Mysql_SchemaBuilder::modifiers() const
+void tst_MySql_SchemaBuilder::modifiers() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -734,7 +734,7 @@ void tst_Mysql_SchemaBuilder::modifiers() const
     QVERIFY(log3.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::modifier_defaultValue_WithExpression() const
+void tst_MySql_SchemaBuilder::modifier_defaultValue_WithExpression() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -759,7 +759,7 @@ void tst_Mysql_SchemaBuilder::modifier_defaultValue_WithExpression() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::modifier_defaultValue_WithBoolean() const
+void tst_MySql_SchemaBuilder::modifier_defaultValue_WithBoolean() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -790,7 +790,7 @@ void tst_Mysql_SchemaBuilder::modifier_defaultValue_WithBoolean() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::modifier_defaultValue_Escaping() const
+void tst_MySql_SchemaBuilder::modifier_defaultValue_Escaping() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -817,7 +817,7 @@ and tab	end)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::useCurrent() const
+void tst_MySql_SchemaBuilder::useCurrent() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -847,7 +847,7 @@ void tst_Mysql_SchemaBuilder::useCurrent() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::useCurrentOnUpdate() const
+void tst_MySql_SchemaBuilder::useCurrentOnUpdate() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -877,7 +877,7 @@ void tst_Mysql_SchemaBuilder::useCurrentOnUpdate() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::indexes_Fluent() const
+void tst_MySql_SchemaBuilder::indexes_Fluent() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -956,7 +956,7 @@ void tst_Mysql_SchemaBuilder::indexes_Fluent() const
     QVERIFY(log7.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::indexes_Blueprint() const
+void tst_MySql_SchemaBuilder::indexes_Blueprint() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1056,7 +1056,7 @@ void tst_Mysql_SchemaBuilder::indexes_Blueprint() const
     QVERIFY(log8.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::renameIndex() const
+void tst_MySql_SchemaBuilder::renameIndex() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1098,7 +1098,7 @@ void tst_Mysql_SchemaBuilder::renameIndex() const
     QVERIFY(log2.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropIndex_ByIndexName() const
+void tst_MySql_SchemaBuilder::dropIndex_ByIndexName() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1194,7 +1194,7 @@ void tst_Mysql_SchemaBuilder::dropIndex_ByIndexName() const
     QVERIFY(log10.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropIndex_ByColumn() const
+void tst_MySql_SchemaBuilder::dropIndex_ByColumn() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1290,7 +1290,7 @@ void tst_Mysql_SchemaBuilder::dropIndex_ByColumn() const
     QVERIFY(log10.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::dropIndex_ByMultipleColumns() const
+void tst_MySql_SchemaBuilder::dropIndex_ByMultipleColumns() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1386,7 +1386,7 @@ void tst_Mysql_SchemaBuilder::dropIndex_ByMultipleColumns() const
     QVERIFY(log8.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::foreignKey() const
+void tst_MySql_SchemaBuilder::foreignKey() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1449,7 +1449,7 @@ void tst_Mysql_SchemaBuilder::foreignKey() const
     QVERIFY(log3.boundValues.isEmpty());
 }
 
-void tst_Mysql_SchemaBuilder::foreignKey_TerserSyntax() const
+void tst_MySql_SchemaBuilder::foreignKey_TerserSyntax() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1509,7 +1509,7 @@ void tst_Mysql_SchemaBuilder::foreignKey_TerserSyntax() const
 }
 
 #ifndef TINYORM_DISABLE_ORM
-void tst_Mysql_SchemaBuilder::foreignKey_WithModel() const
+void tst_MySql_SchemaBuilder::foreignKey_WithModel() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1560,7 +1560,7 @@ void tst_Mysql_SchemaBuilder::foreignKey_WithModel() const
 }
 #endif
 
-void tst_Mysql_SchemaBuilder::dropForeign() const
+void tst_MySql_SchemaBuilder::dropForeign() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -1647,6 +1647,6 @@ void tst_Mysql_SchemaBuilder::dropForeign() const
     QVERIFY(log7.boundValues.isEmpty());
 }
 
-QTEST_MAIN(tst_Mysql_SchemaBuilder)
+QTEST_MAIN(tst_MySql_SchemaBuilder)
 
 #include "tst_mysql_schemabuilder.moc"
