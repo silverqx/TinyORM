@@ -71,10 +71,20 @@ namespace Orm::Tiny::Relations
         inline Model &disassociate() const;
 
         /* Getters / Setters */
-        /*! Get the name of the relationship. */
-        inline const QString &getRelationName() const noexcept;
+        /*! Get the child of the relationship. */
+        inline const Model &getChild() const noexcept;
+        /*! Get the key value of the child's foreign key. */
+        inline QVariant getParentKey() const;
+        /*! Get the associated key of the relationship. */
+        inline const QString &getOwnerKeyName() const noexcept;
+        /*! Get the fully qualified associated key of the relationship. */
+        inline QString getQualifiedOwnerKeyName() const;
+        /*! Get the foreign key of the relationship. */
+        inline const QString &getForeignKeyName() const noexcept;
         /*! Get the fully qualified foreign key of the relationship. */
         inline QString getQualifiedForeignKeyName() const;
+        /*! Get the name of the relationship. */
+        inline const QString &getRelationName() const noexcept;
 
         /* Others */
         /*! The textual representation of the Relation type. */
@@ -289,15 +299,45 @@ namespace Orm::Tiny::Relations
     /* Getters / Setters */
 
     template<class Model, class Related>
-    const QString &BelongsTo<Model, Related>::getRelationName() const noexcept
+    const Model &BelongsTo<Model, Related>::getChild() const noexcept
     {
-        return m_relationName;
+        return m_child;
+    }
+
+    template<class Model, class Related>
+    QVariant BelongsTo<Model, Related>::getParentKey() const
+    {
+        return m_child.getAttribute(m_foreignKey);
+    }
+
+    template<class Model, class Related>
+    const QString &BelongsTo<Model, Related>::getOwnerKeyName() const noexcept
+    {
+        return m_ownerKey;
+    }
+
+    template<class Model, class Related>
+    QString BelongsTo<Model, Related>::getQualifiedOwnerKeyName() const
+    {
+        return this->m_related->qualifyColumn(m_ownerKey);
+    }
+
+    template<class Model, class Related>
+    const QString &BelongsTo<Model, Related>::getForeignKeyName() const noexcept
+    {
+        return m_foreignKey;
     }
 
     template<class Model, class Related>
     QString BelongsTo<Model, Related>::getQualifiedForeignKeyName() const
     {
         return m_child.qualifyColumn(m_foreignKey);
+    }
+
+    template<class Model, class Related>
+    const QString &BelongsTo<Model, Related>::getRelationName() const noexcept
+    {
+        return m_relationName;
     }
 
     /* Others */
