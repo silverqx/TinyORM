@@ -196,8 +196,7 @@ namespace Orm::Tiny
                             bool exists = false);
 
         /*! Clone the model into a new, non-existing instance. */
-        Derived replicate(const std::optional<
-                                  std::unordered_set<QString>> &except = std::nullopt);
+        Derived replicate(const std::unordered_set<QString> &except = {});
 
         /*! Create a new pivot model instance. */
         template<typename PivotType = Relations::Pivot, typename Parent>
@@ -883,7 +882,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived Model<Derived, AllRelations...>::replicate(
-            const std::optional<std::unordered_set<QString>> &except)
+            const std::unordered_set<QString> &except)
     {
         std::unordered_set<QString> defaults {
             getKeyName(),
@@ -897,10 +896,9 @@ namespace Orm::Tiny
         });
 
         // Merge defaults into except
-        std::unordered_set<QString> exceptMerged(defaults.size() +
-                                                 (except ? except->size() : 0));
-        if (except) {
-            exceptMerged = *except;
+        std::unordered_set<QString> exceptMerged(defaults.size() + except.size());
+        if (!except.empty()) {
+            exceptMerged = except;
             exceptMerged.merge(defaults);
         }
         else
