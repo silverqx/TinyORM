@@ -146,8 +146,8 @@ namespace Orm::Tiny::Relations
     HasOne<Model, Related>::newRelatedInstanceFor(const Model &parent) const
     {
         return this->m_related->newInstance().setAttribute(
-            this->getForeignKeyName(), parent.getAttribute(this->m_localKey)
-        );
+                    this->getForeignKeyName(),
+                    parent.getAttribute(this->m_localKey));
     }
 
 } // namespace Orm::Tiny::Relations
