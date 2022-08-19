@@ -1,6 +1,8 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include "orm/utils/type.hpp"
+
 #include "tom/application.hpp"
 #include "tom/commands/migrations/statuscommand.hpp"
 
@@ -10,6 +12,8 @@
 #include "migrations/2014_10_12_100000_add_factor_column_to_posts_table.hpp"
 #include "migrations/2014_10_12_200000_create_properties_table.hpp"
 #include "migrations/2014_10_12_300000_create_phones_table.hpp"
+
+using TypeUtils = Orm::Utils::Type;
 
 using TomApplication = Tom::Application;
 
@@ -142,7 +146,8 @@ void tst_Migrate::initTestCase()
             Databases::createConnections({Databases::MYSQL, Databases::POSTGRESQL});
 
     if (connections.isEmpty())
-        QSKIP(TestUtils::AutoTestSkippedAny.arg("tst_Migrate").toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
+                                           .toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");
 

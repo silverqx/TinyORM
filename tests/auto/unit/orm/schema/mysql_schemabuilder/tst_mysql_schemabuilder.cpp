@@ -28,6 +28,8 @@ using Orm::SchemaNs::Blueprint;
 using Orm::SchemaNs::Constants::Cascade;
 using Orm::SchemaNs::Constants::Restrict;
 
+using TypeUtils = Orm::Utils::Type;
+
 using TestUtils::Databases;
 
 class tst_MySql_SchemaBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
@@ -112,8 +114,9 @@ void tst_MySql_SchemaBuilder::initTestCase()
     m_connection = Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())
-        QSKIP(TestUtils::AutoTestSkipped.arg("tst_MySql_SchemaBuilder", Databases::MYSQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
 }
 
 void tst_MySql_SchemaBuilder::createDatabase() const

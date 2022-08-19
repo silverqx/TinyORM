@@ -3,6 +3,7 @@
 
 #include "orm/db.hpp"
 #include "orm/query/querybuilder.hpp"
+#include "orm/utils/type.hpp"
 
 #include "databases.hpp"
 
@@ -21,6 +22,7 @@ using Orm::Query::Expression;
 
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
+using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
@@ -147,7 +149,7 @@ void tst_PostgreSQL_QueryBuilder::initTestCase()
 
     if (m_connection.isEmpty())
         QSKIP(TestUtils::AutoTestSkipped
-              .arg("tst_PostgreSQL_QueryBuilder", Databases::POSTGRESQL)
+              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
               .toUtf8().constData(), );
 }
 

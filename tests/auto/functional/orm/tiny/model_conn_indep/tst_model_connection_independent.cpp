@@ -24,6 +24,8 @@ using Orm::Exceptions::RecordsNotFoundError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::MassAssignmentError;
 
+using TypeUtils = Orm::Utils::Type;
+
 using TestUtils::Databases;
 
 using Models::FilePropertyProperty;
@@ -132,7 +134,7 @@ void tst_Model_Connection_Independent::initTestCase()
 
     if (m_connection.isEmpty())
         QSKIP(TestUtils::AutoTestSkipped
-              .arg("tst_Model_Connection_Independent", Databases::MYSQL)
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
               .toUtf8().constData(), );
 }
 

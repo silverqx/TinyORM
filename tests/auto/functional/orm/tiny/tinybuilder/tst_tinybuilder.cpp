@@ -17,6 +17,7 @@ using Orm::Tiny::Exceptions::ModelNotFoundError;
 
 template<typename Model>
 using TinyBuilder = Orm::Tiny::Builder<Model>;
+using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
@@ -56,7 +57,7 @@ void tst_TinyBuilder::initTestCase_data() const
     const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
-        QSKIP(TestUtils::AutoTestSkippedAny.arg("tst_TinyBuilder")
+        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
                                            .toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");

@@ -38,6 +38,7 @@ using Orm::Tiny::Relations::Relation;
 using Orm::Tiny::TinyBuilder;
 
 using QueryUtils = Orm::Utils::Query;
+using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
@@ -226,7 +227,7 @@ void tst_Model_Relations::initTestCase_data() const
     const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
-        QSKIP(TestUtils::AutoTestSkippedAny.arg("tst_Model_Relations")
+        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
                                            .toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");

@@ -21,6 +21,8 @@ using Orm::One;
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
 
+using TypeUtils = Orm::Utils::Type;
+
 using TestUtils::Databases;
 
 using Models::Tag;
@@ -112,7 +114,7 @@ void tst_Relations_Inserting_Updating::initTestCase_data() const
     const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
-        QSKIP(TestUtils::AutoTestSkippedAny.arg("tst_Relations_Inserting_Updating")
+        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
                                            .toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");

@@ -5,6 +5,7 @@
 #include "orm/db.hpp"
 #include "orm/mysqlconnection.hpp"
 #include "orm/query/querybuilder.hpp"
+#include "orm/utils/type.hpp"
 
 #include "databases.hpp"
 
@@ -16,6 +17,7 @@ using Orm::DB;
 using Orm::MySqlConnection;
 
 using QueryBuilder = Orm::Query::Builder;
+using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
@@ -53,7 +55,7 @@ void tst_DatabaseConnection::initTestCase_data() const
     const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
-        QSKIP(TestUtils::AutoTestSkippedAny.arg("tst_DatabaseConnection")
+        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
                                            .toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");

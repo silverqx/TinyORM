@@ -9,6 +9,8 @@ using Orm::Constants::EMPTY;
 
 using Orm::Tiny::ConnectionOverride;
 
+using TypeUtils = Orm::Utils::Type;
+
 using TestUtils::Databases;
 
 using Models::Phone;
@@ -45,7 +47,7 @@ void tst_Relations_Connection_Independent::initTestCase()
 
     if (m_connection.isEmpty())
         QSKIP(TestUtils::AutoTestSkipped
-              .arg("tst_Relations_Connection_Independent", Databases::MYSQL)
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
               .toUtf8().constData(), );
 }
 

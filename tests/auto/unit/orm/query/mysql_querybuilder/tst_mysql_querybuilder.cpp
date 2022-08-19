@@ -7,6 +7,7 @@
 #include "orm/exceptions/recordsnotfounderror.hpp"
 #include "orm/mysqlconnection.hpp"
 #include "orm/query/querybuilder.hpp"
+#include "orm/utils/type.hpp"
 
 #include "databases.hpp"
 
@@ -33,6 +34,7 @@ using Orm::Query::Expression;
 
 using QueryBuilder = Orm::Query::Builder;
 using Raw = Orm::Query::Expression;
+using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
@@ -248,8 +250,9 @@ void tst_MySql_QueryBuilder::initTestCase()
     m_connection = Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())
-        QSKIP(TestUtils::AutoTestSkipped.arg("tst_MySql_QueryBuilder", Databases::MYSQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
 }
 
 void tst_MySql_QueryBuilder::version() const

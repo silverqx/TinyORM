@@ -33,6 +33,8 @@ using Orm::SchemaNs::Constants::Cascade;
 using Orm::SchemaNs::Constants::Restrict;
 using Orm::SchemaNs::Grammars::SQLiteSchemaGrammar;
 
+using TypeUtils = Orm::Utils::Type;
+
 using TestUtils::Databases;
 
 class tst_SQLite_SchemaBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
@@ -132,7 +134,7 @@ void tst_SQLite_SchemaBuilder::initTestCase()
 
     if (m_connection.isEmpty())
         QSKIP(TestUtils::AutoTestSkipped
-              .arg("tst_SQLite_SchemaBuilder", Databases::SQLITE)
+              .arg(TypeUtils::classPureBasename(*this), Databases::SQLITE)
               .toUtf8().constData(), );
 }
 

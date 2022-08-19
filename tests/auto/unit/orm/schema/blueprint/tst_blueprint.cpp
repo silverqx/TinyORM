@@ -3,6 +3,7 @@
 
 #include "orm/db.hpp"
 #include "orm/schema/grammars/mysqlschemagrammar.hpp"
+#include "orm/utils/type.hpp"
 
 #include "databases.hpp"
 
@@ -14,6 +15,8 @@ using Orm::DB;
 using Orm::SchemaNs::Blueprint;
 using Orm::SchemaNs::IndexCommand;
 using Orm::SchemaNs::Grammars::MySqlSchemaGrammar;
+
+using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
@@ -47,8 +50,9 @@ void tst_Blueprint::initTestCase()
     m_connection = Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())
-        QSKIP(TestUtils::AutoTestSkipped.arg("tst_Blueprint", Databases::MYSQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
 }
 
 void tst_Blueprint::index_DefaultNames() const

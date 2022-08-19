@@ -28,6 +28,8 @@ using Orm::SchemaNs::Blueprint;
 using Orm::SchemaNs::Constants::Cascade;
 using Orm::SchemaNs::Constants::Restrict;
 
+using TypeUtils = Orm::Utils::Type;
+
 using TestUtils::Databases;
 
 class tst_PostgreSQL_SchemaBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
@@ -113,7 +115,7 @@ void tst_PostgreSQL_SchemaBuilder::initTestCase()
 
     if (m_connection.isEmpty())
         QSKIP(TestUtils::AutoTestSkipped
-              .arg("tst_PostgreSQL_SchemaBuilder", Databases::POSTGRESQL)
+              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
               .toUtf8().constData(), );
 }
 

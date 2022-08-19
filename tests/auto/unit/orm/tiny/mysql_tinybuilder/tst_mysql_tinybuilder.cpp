@@ -16,6 +16,8 @@ using Orm::Exceptions::InvalidArgumentError;
 using Orm::QueryBuilder;
 using Orm::Tiny::TinyBuilder;
 
+using TypeUtils = Orm::Utils::Type;
+
 using TestUtils::Databases;
 
 using Models::FilePropertyProperty;
@@ -93,8 +95,9 @@ void tst_MySql_TinyBuilder::initTestCase()
     m_connection = Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())
-        QSKIP(TestUtils::AutoTestSkipped.arg("tst_MySql_TinyBuilder", Databases::MYSQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
 }
 
 void tst_MySql_TinyBuilder::has_Basic_OnHasMany() const
