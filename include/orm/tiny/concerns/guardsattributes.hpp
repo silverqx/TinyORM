@@ -217,11 +217,11 @@ namespace Orm::Tiny::Concerns
         if (isGuarded(key))
             return false;
 
-        return fillable.isEmpty()
-                // Don't allow mass filling with table names
-                && !key.contains(DOT);
-                // NOTE api different, isFillable() !key.startsWith(), what is this good for? silverqx
-//                && !key.startsWith(UNDERSCORE);
+        return fillable.isEmpty() &&
+               // Don't allow mass filling with table names
+               !key.contains(DOT);
+               // NOTE api different, isFillable() !key.startsWith(), what is this good for? silverqx
+//               && !key.startsWith(UNDERSCORE);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -233,19 +233,18 @@ namespace Orm::Tiny::Concerns
         if (guarded.isEmpty())
             return false;
 
-        return guarded == QStringList {ASTERISK}
-                // NOTE api different, Eloquent uses CaseInsensitive compare, silverqx
-                || guarded.contains(key)
-                /* Not a VALID guardable column is guarded, so it is not possible to fill
-                   a column that is not in the database. */
-                || !isGuardableColumn(key);
+        return guarded == QStringList {ASTERISK} ||
+               guarded.contains(key) ||
+               /* Not a VALID guardable column is guarded, so it is not possible to fill
+                  a column that is not in the database. */
+               !isGuardableColumn(key);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool GuardsAttributes<Derived, AllRelations...>::totallyGuarded() const
     {
-        return basemodel().getUserFillable().isEmpty()
-                && basemodel().getUserGuarded() == QStringList {ASTERISK};
+        return basemodel().getUserFillable().isEmpty() &&
+               basemodel().getUserGuarded() == QStringList {ASTERISK};
     }
 
     /* protected */

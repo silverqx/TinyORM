@@ -862,8 +862,8 @@ namespace Orm::Tiny::Concerns
 //                   $this->castAttribute($key, $original);
 //        }
 
-//        return is_numeric($attribute) && is_numeric($original)
-//               && strcmp((string) $attribute, (string) $original) === 0;
+//        return is_numeric($attribute) && is_numeric($original) &&
+//               strcmp((string) $attribute, (string) $original) === 0;
 
         return false;
     }
