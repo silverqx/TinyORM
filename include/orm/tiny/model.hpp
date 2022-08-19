@@ -680,9 +680,9 @@ namespace Orm::Tiny
             const std::optional<ModelToCompare> &model) const
     {
         return model &&
-                getKey() == model->getKey() &&
-                this->model().getTable() == model->getTable() &&
-                getConnectionName() == model->getConnectionName();
+               getKey() == model->getKey() &&
+               this->model().getTable() == model->getTable() &&
+               getConnectionName() == model->getConnectionName();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
