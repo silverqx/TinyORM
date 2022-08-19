@@ -28,6 +28,7 @@ keywords: [c++ orm, orm, getting started, tinyorm]
     - [Mass Assignment](#mass-assignment)
 - [Deleting Models](#deleting-models)
     - [Truncate Table](#truncate-table)
+- [Replicating Models](#replicating-models)
 - [Comparing Models](#comparing-models)
 
 ## Introduction
@@ -677,6 +678,40 @@ Of course, you may build the query to delete all models matching your query's cr
 You may call the `truncate` method to delete all of the model's associated database records. The `truncate` operation will also reset any auto-incrementing IDs on the model's associated table:
 
     Flight::truncate();
+
+## Replicating Models
+
+You may create an unsaved copy of an existing model instance using the `replicate` method. This method is particularly useful when you have model instances that share many of the same attributes:
+
+    auto shipping = Address::create({
+        {"type", "shipping"},
+        {"line_1", "123 Example Street"},
+        {"city", "Victorville"},
+        {"state", "CA"},
+        {"postcode", "90001"},
+    });
+
+    auto billing = shipping.replicate();
+
+    billing.fill({
+        {"type", "billing"},
+    });
+
+    billing.save();
+
+To exclude one or more attributes from being replicated to the new model, you may pass an unordered_set to the `replicate` method:
+
+    auto flight = Flight::create({
+        {"destination", "LAX"},
+        {"origin", "LHR"},
+        {"last_flown", "2020-03-04 11:00:00"},
+        {"last_pilot_id", 747},
+    });
+
+    flight = flight.replicate({
+        "last_flown",
+        "last_pilot_id",
+    });
 
 ## Comparing Models
 
