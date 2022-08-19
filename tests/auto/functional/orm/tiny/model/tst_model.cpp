@@ -1195,13 +1195,13 @@ void tst_Model::isNot() const
 
     // Different primary key
     QVERIFY(torrent2_1->isNot(torrent3));
-    // Different table name
+    // Different table name (also different type)
     QVERIFY(torrent2_1->isNot(file4));
 
     // Different connection name
     torrent2_2->setConnection("dummy_connection");
-    /* Disable connection override, so isNot() can pickup a connection from the model
-       itself and not overriden connection. */
+    /* Disable connection override, so the isNot() can pickup a connection from the model
+       itself (don't pickup an overridden connection). */
     ConnectionOverride::connection = "";
     QVERIFY(torrent2_1->isNot(torrent2_2));
 }
