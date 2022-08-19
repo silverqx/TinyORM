@@ -327,7 +327,7 @@ void Application::parseCommandLine()
 
 void Application::initializeEnvironment()
 {
-    /*! Order is as follow, the default value is development, can be overriden by
+    /*! Order is as follow, the default value is development, can be overridden by
         a env. variable which name is in the m_environmentEnvName data member, highest
         priority has --env command-line argument. */
     if (auto environmentOpt = m_parser.value(env);

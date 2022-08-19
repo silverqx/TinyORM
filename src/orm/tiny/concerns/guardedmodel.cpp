@@ -47,7 +47,7 @@ void GuardedModel::unguarded(const std::function<void()> &callback)
 
 void GuardedModel::unguard(const bool state) noexcept
 {
-    // NOTE api different, Eloquent use late static binding for unguarded, what means that it can be overriden in the user defined model silverqx
+    // NOTE api different, Eloquent use late static binding for unguarded, what means that it can be overridden in the user defined model silverqx
     g_unguarded = state;
 }
 
