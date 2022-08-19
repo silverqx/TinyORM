@@ -32,7 +32,7 @@ namespace Orm::Tiny
 
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::replicate() silverqx
-    // TODO model missing methods Comparing Models silverqx
+    // TODO model comparing operator==() silverqx
     // TODO model missing methods Model::loadMissing() silverqx
     // TODO model missing methods EloquentCollection::toQuery() silverqx
     // TODO model missing saveOrFail(), updateOrFail(), deleteOrFail(), I will need to implement ManagesTransaction::transaction(callback) method silverqx
