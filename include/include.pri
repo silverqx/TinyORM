@@ -119,6 +119,7 @@ headersList += \
         $$PWD/orm/tiny/relations/basepivot.hpp \
         $$PWD/orm/tiny/relations/belongsto.hpp \
         $$PWD/orm/tiny/relations/belongstomany.hpp \
+        $$PWD/orm/tiny/relations/concerns/comparesrelatedmodels.hpp \
         $$PWD/orm/tiny/relations/concerns/interactswithpivottable.hpp \
         $$PWD/orm/tiny/relations/concerns/supportsdefaultmodels.hpp \
         $$PWD/orm/tiny/relations/hasmany.hpp \

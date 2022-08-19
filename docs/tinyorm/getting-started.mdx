@@ -715,8 +715,18 @@ To exclude one or more attributes from being replicated to the new model, you ma
 
 ## Comparing Models
 
-Sometimes you may need to determine if two models are the "same". The `is` and `isNot` methods may be used to quickly verify two models have the same primary key, table, and database connection:
+Sometimes you may need to determine if two models are the "same" or not. The `is` and `isNot` methods may be used to quickly verify two models have the same primary key, table, and database connection or not:
 
-    if (post.is(anotherPost)) {
+    if (post->is(anotherPost)) {
+        //
+    }
+
+    if (post->isNot(anotherPost)) {
+        //
+    }
+
+The `is` and `isNot` methods are also available when using the `belongsTo` and `hasOne` [relationships](/tinyorm/relationships.mdx). This method is particularly helpful when you would like to compare a related model without issuing a query to retrieve that model:
+
+    if (post->author()->is(user)) {
         //
     }

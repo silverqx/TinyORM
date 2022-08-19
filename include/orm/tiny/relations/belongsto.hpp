@@ -5,6 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/tiny/relations/concerns/comparesrelatedmodels.hpp"
 #include "orm/tiny/relations/concerns/supportsdefaultmodels.hpp"
 #include "orm/tiny/relations/relation.hpp"
 
@@ -17,9 +18,13 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     class BelongsTo : public IsOneRelation,
                       public Relation<Model, Related>,
-                      public Concerns::SupportsDefaultModels<Model, Related, BelongsTo>
+                      public Concerns::SupportsDefaultModels<Model, Related, BelongsTo>,
+                      public Concerns::ComparesRelatedModels<Model, Related, BelongsTo>
     {
         Q_DISABLE_COPY(BelongsTo)
+
+        // To access getRelatedKeyFrom()
+        friend Concerns::ComparesRelatedModels<Model, Related, BelongsTo>;
 
     protected:
         /*! Protected constructor. */
@@ -100,6 +105,11 @@ namespace Orm::Tiny::Relations
 
         /*! Make a new related instance for the given model. */
         inline Related newRelatedInstanceFor(const Model &/*unused*/) const override;
+
+        /* Getters */
+        /*! Get the value of the model's foreign key. */
+        template<ModelConcept M>
+        QVariant getRelatedKeyFrom(const M &model) const;
 
         /* Querying Relationship Existence/Absence */
         /*! Add the constraints for a relationship query. */
@@ -383,6 +393,15 @@ namespace Orm::Tiny::Relations
     BelongsTo<Model, Related>::newRelatedInstanceFor(const Model &/*unused*/) const
     {
         return this->m_related->newInstance();
+    }
+
+    /* Getters */
+
+    template<class Model, class Related>
+    template<ModelConcept M>
+    QVariant BelongsTo<Model, Related>::getRelatedKeyFrom(const M &model) const
+    {
+        return model.getAttribute(m_ownerKey);
     }
 
     /* Querying Relationship Existence/Absence */

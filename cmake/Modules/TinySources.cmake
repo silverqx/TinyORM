@@ -128,6 +128,7 @@ function(tinyorm_sources out_headers out_sources)
             tiny/relations/basepivot.hpp
             tiny/relations/belongsto.hpp
             tiny/relations/belongstomany.hpp
+            tiny/relations/concerns/comparesrelatedmodels.hpp
             tiny/relations/concerns/interactswithpivottable.hpp
             tiny/relations/concerns/supportsdefaultmodels.hpp
             tiny/relations/hasmany.hpp

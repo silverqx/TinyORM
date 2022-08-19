@@ -5,6 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/tiny/relations/concerns/comparesrelatedmodels.hpp"
 #include "orm/tiny/relations/concerns/supportsdefaultmodels.hpp"
 #include "orm/tiny/relations/hasoneormany.hpp"
 
@@ -17,9 +18,13 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     class HasOne : public IsOneRelation,
                    public HasOneOrMany<Model, Related>,
-                   public Concerns::SupportsDefaultModels<Model, Related, HasOne>
+                   public Concerns::SupportsDefaultModels<Model, Related, HasOne>,
+                   public Concerns::ComparesRelatedModels<Model, Related, HasOne>
     {
         Q_DISABLE_COPY(HasOne)
+
+        // To access getRelatedKeyFrom()
+        friend Concerns::ComparesRelatedModels<Model, Related, HasOne>;
 
     protected:
         /*! Protected constructor. */
@@ -61,6 +66,11 @@ namespace Orm::Tiny::Relations
         /* Relation related operations */
         /*! Make a new related instance for the given model. */
         inline Related newRelatedInstanceFor(const Model &/*unused*/) const override;
+
+        /* Getters */
+        /*! Get the value of the model's foreign key. */
+        template<ModelConcept M>
+        QVariant getRelatedKeyFrom(const M &model) const;
     };
 
     /* protected */
@@ -148,6 +158,15 @@ namespace Orm::Tiny::Relations
         return this->m_related->newInstance().setAttribute(
                     this->getForeignKeyName(),
                     parent.getAttribute(this->m_localKey));
+    }
+
+    /* Getters */
+
+    template<class Model, class Related>
+    template<ModelConcept M>
+    QVariant HasOne<Model, Related>::getRelatedKeyFrom(const M &model) const
+    {
+        return model.getAttribute(this->getForeignKeyName());
     }
 
 } // namespace Orm::Tiny::Relations
