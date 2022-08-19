@@ -155,10 +155,10 @@ namespace Orm::Tiny
         Derived &load(const QString &relation);
 
         /*! Determine if two models have the same ID and belong to the same table. */
-        template<typename ModelToCompare>
+        template<ModelConcept ModelToCompare>
         bool is(const std::optional<ModelToCompare> &model) const;
         /*! Determine if two models are not the same. */
-        template<typename ModelToCompare>
+        template<ModelConcept ModelToCompare>
         bool isNot(const std::optional<ModelToCompare> &model) const;
 
         /*! Fill the model with a vector of attributes. */
@@ -675,18 +675,23 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename ModelToCompare>
+    template<ModelConcept ModelToCompare>
     bool Model<Derived, AllRelations...>::is(
             const std::optional<ModelToCompare> &model) const
     {
+        /* The model's type doesn't have to be checked because this check checks, if
+           two models have the same ID and belong to the same table.
+           So if the type will be different and will be the same ID and table, then
+           it returns true. */
         return model &&
-               getKey() == model->getKey() &&
+               // First compare the same table (same model type)
                this->model().getTable() == model->getTable() &&
+               getKey() == model->getKey() &&
                getConnectionName() == model->getConnectionName();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename ModelToCompare>
+    template<ModelConcept ModelToCompare>
     bool Model<Derived, AllRelations...>::isNot(
             const std::optional<ModelToCompare> &model) const
     {
