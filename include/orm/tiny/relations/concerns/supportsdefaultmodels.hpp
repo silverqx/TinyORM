@@ -102,6 +102,8 @@ namespace Orm::Tiny::Relations::Concerns
 //        return relation();
 //    }
 
+    /* protected */
+
     template<class Model, class Related, template<class, class> class RelationType>
     std::optional<Related>
     SupportsDefaultModels<Model, Related, RelationType>::getDefaultFor(
