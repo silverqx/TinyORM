@@ -20,6 +20,7 @@ using Models::TorrentPreviewableFile;
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
+using Orm::Constants::EMPTY;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::QMYSQL;
@@ -1189,21 +1190,30 @@ void tst_Model::isNot() const
     ConnectionOverride::connection = connection;
 
     auto torrent2_1 = Torrent::find(2);
-    auto torrent2_2 = Torrent::find(2);
-    auto torrent3 = Torrent::find(3);
-    auto file4 = TorrentPreviewableFile::find(4);
 
     // Different primary key
-    QVERIFY(torrent2_1->isNot(torrent3));
-    // Different table name (also different type)
-    QVERIFY(torrent2_1->isNot(file4));
+    {
+        auto torrent3 = Torrent::find(3);
 
+        QVERIFY(torrent2_1->isNot(torrent3));
+    }
+    // Different table name (also different type)
+    {
+        auto file4 = TorrentPreviewableFile::find(4);
+
+        QVERIFY(torrent2_1->isNot(file4));
+    }
     // Different connection name
-    torrent2_2->setConnection("dummy_connection");
-    /* Disable connection override, so the isNot() can pickup a connection from the model
-       itself (don't pickup an overridden connection). */
-    ConnectionOverride::connection = "";
-    QVERIFY(torrent2_1->isNot(torrent2_2));
+    {
+        auto torrent2_2 = Torrent::find(2);
+
+        torrent2_2->setConnection("dummy_connection");
+        /* Disable connection override, so the isNot() can pickup a connection from
+           the model itself (don't pickup an overridden connection). */
+        ConnectionOverride::connection = EMPTY;
+
+        QVERIFY(torrent2_1->isNot(torrent2_2));
+    }
 }
 
 void tst_Model::fresh_OnlyAttributes() const
