@@ -8,11 +8,6 @@
 
 #include "databases.hpp"
 
-using Models::Tag;
-using Models::Tagged;
-using Models::Torrent;
-using Models::TorrentPreviewableFile;
-
 using Orm::Constants::Attached;
 using Orm::Constants::Detached;
 using Orm::Constants::ID;
@@ -27,6 +22,11 @@ using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
 
 using TestUtils::Databases;
+
+using Models::Tag;
+using Models::Tagged;
+using Models::Torrent;
+using Models::TorrentPreviewableFile;
 
 class tst_Relations_Inserting_Updating : public QObject // clazy:exclude=ctor-missing-parent-argument
 {

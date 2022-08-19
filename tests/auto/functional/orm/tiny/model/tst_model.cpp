@@ -11,13 +11,6 @@
 
 #include "databases.hpp"
 
-using Models::Setting;
-using Models::TagProperty;
-using Models::Torrent;
-using Models::Torrent_GuardableColumn;
-using Models::TorrentPeer;
-using Models::TorrentPreviewableFile;
-
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::EMPTY;
@@ -36,6 +29,13 @@ using Orm::Tiny::Exceptions::ModelNotFoundError;
 using QueryUtils = Orm::Utils::Query;
 
 using TestUtils::Databases;
+
+using Models::Setting;
+using Models::TagProperty;
+using Models::Torrent;
+using Models::Torrent_GuardableColumn;
+using Models::TorrentPeer;
+using Models::TorrentPreviewableFile;
 
 // TEST tests, look at commit history for inspiration for new tests silverqx
 class tst_Model : public QObject // clazy:exclude=ctor-missing-parent-argument

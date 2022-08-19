@@ -11,14 +11,6 @@
 
 #include "databases.hpp"
 
-using Models::FilePropertyProperty;
-using Models::Torrent;
-using Models::TorrentPreviewableFile;
-using Models::Torrent_AllowedMassAssignment;
-using Models::Torrent_GuardedAttribute;
-using Models::Torrent_TotallyGuarded;
-using Models::TorrentEager;
-
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
@@ -33,6 +25,14 @@ using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::MassAssignmentError;
 
 using TestUtils::Databases;
+
+using Models::FilePropertyProperty;
+using Models::Torrent;
+using Models::TorrentPreviewableFile;
+using Models::Torrent_AllowedMassAssignment;
+using Models::Torrent_GuardedAttribute;
+using Models::Torrent_TotallyGuarded;
+using Models::TorrentEager;
 
 class tst_Model_Connection_Independent : public QObject // clazy:exclude=ctor-missing-parent-argument
 {

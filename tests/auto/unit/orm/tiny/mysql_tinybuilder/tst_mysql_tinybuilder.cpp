@@ -7,14 +7,6 @@
 
 #include "databases.hpp"
 
-using Models::FilePropertyProperty;
-using Models::Tag;
-using Models::TagProperty;
-using Models::Torrent;
-using Models::TorrentPeer;
-using Models::TorrentPreviewableFile;
-using Models::TorrentPreviewableFileProperty;
-
 using Orm::Constants::AND;
 using Orm::Constants::LIKE;
 using Orm::Constants::OR;
@@ -25,6 +17,14 @@ using Orm::QueryBuilder;
 using Orm::Tiny::TinyBuilder;
 
 using TestUtils::Databases;
+
+using Models::FilePropertyProperty;
+using Models::Tag;
+using Models::TagProperty;
+using Models::Torrent;
+using Models::TorrentPeer;
+using Models::TorrentPreviewableFile;
+using Models::TorrentPreviewableFileProperty;
 
 class tst_MySql_TinyBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {

@@ -15,23 +15,6 @@
 
 #include "databases.hpp"
 
-using Models::FilePropertyProperty;
-using Models::Tag;
-using Models::TagProperty;
-using Models::Tagged;
-using Models::Torrent;
-using Models::TorrentEager;
-using Models::TorrentEager_Failed;
-using Models::TorrentEager_WithDefault;
-using Models::TorrentPeer;
-using Models::TorrentPeerEager;
-using Models::TorrentPeerEager_NoRelations;
-using Models::TorrentPreviewableFile;
-using Models::TorrentPreviewableFileEager;
-using Models::TorrentPreviewableFileEager_WithDefault;
-using Models::TorrentPreviewableFileProperty;
-using Models::TorrentPreviewableFilePropertyEager;
-
 using Orm::Constants::AND;
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
@@ -57,6 +40,23 @@ using Orm::Tiny::TinyBuilder;
 using QueryUtils = Orm::Utils::Query;
 
 using TestUtils::Databases;
+
+using Models::FilePropertyProperty;
+using Models::Tag;
+using Models::TagProperty;
+using Models::Tagged;
+using Models::Torrent;
+using Models::TorrentEager;
+using Models::TorrentEager_Failed;
+using Models::TorrentEager_WithDefault;
+using Models::TorrentPeer;
+using Models::TorrentPeerEager;
+using Models::TorrentPeerEager_NoRelations;
+using Models::TorrentPreviewableFile;
+using Models::TorrentPreviewableFileEager;
+using Models::TorrentPreviewableFileEager_WithDefault;
+using Models::TorrentPreviewableFileProperty;
+using Models::TorrentPreviewableFilePropertyEager;
 
 class tst_Model_Relations : public QObject // clazy:exclude=ctor-missing-parent-argument
 {

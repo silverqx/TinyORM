@@ -7,8 +7,6 @@
 
 #include "databases.hpp"
 
-using Models::Torrent;
-
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::SIZE;
@@ -21,6 +19,8 @@ template<typename Model>
 using TinyBuilder = Orm::Tiny::Builder<Model>;
 
 using TestUtils::Databases;
+
+using Models::Torrent;
 
 class tst_TinyBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
