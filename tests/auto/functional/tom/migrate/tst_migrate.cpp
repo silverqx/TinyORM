@@ -142,9 +142,7 @@ void tst_Migrate::initTestCase()
             Databases::createConnections({Databases::MYSQL, Databases::POSTGRESQL});
 
     if (connections.isEmpty())
-        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
-                             "for ANY connection have not been defined.")
-              .arg("tst_Migrate").toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkippedAny.arg("tst_Migrate").toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");
 

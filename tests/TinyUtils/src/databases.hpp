@@ -15,6 +15,15 @@ namespace Orm
 
 namespace TestUtils
 {
+    /* I will not create a separate constants file for these two constants, define them
+       here is ok because every test that will include databases.hpp will also use
+       one of these constants. */
+    inline const QString AutoTestSkipped =
+            QStringLiteral("%1 autotest skipped, environment variables "
+                           "for '%2' connection have not been defined.");
+    inline const QString AutoTestSkippedAny =
+            QStringLiteral("%1 autotest skipped, environment variables "
+                           "for ANY connection have not been defined.");
 
     class TINYUTILS_EXPORT Databases
     {

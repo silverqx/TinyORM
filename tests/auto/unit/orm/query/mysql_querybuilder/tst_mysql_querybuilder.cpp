@@ -248,9 +248,8 @@ void tst_MySql_QueryBuilder::initTestCase()
     m_connection = Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())
-        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
-                             "for '%2' connection have not been defined.")
-              .arg("tst_MySql_QueryBuilder", Databases::MYSQL).toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped.arg("tst_MySql_QueryBuilder", Databases::MYSQL)
+                                        .toUtf8().constData(), );
 }
 
 void tst_MySql_QueryBuilder::version() const

@@ -112,8 +112,7 @@ void tst_PostgreSQL_SchemaBuilder::initTestCase()
     m_connection = Databases::createConnection(Databases::POSTGRESQL);
 
     if (m_connection.isEmpty())
-        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
-                             "for '%2' connection have not been defined.")
+        QSKIP(TestUtils::AutoTestSkipped
               .arg("tst_PostgreSQL_SchemaBuilder", Databases::POSTGRESQL)
               .toUtf8().constData(), );
 }

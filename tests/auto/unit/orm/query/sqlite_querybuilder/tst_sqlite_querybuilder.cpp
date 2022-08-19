@@ -145,9 +145,9 @@ void tst_SQLite_QueryBuilder::initTestCase()
     m_connection = Databases::createConnection(Databases::SQLITE);
 
     if (m_connection.isEmpty())
-        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
-                             "for '%2' connection have not been defined.")
-              .arg("tst_SQLite_QueryBuilder", Databases::SQLITE).toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg("tst_SQLite_QueryBuilder", Databases::SQLITE)
+              .toUtf8().constData(), );
 }
 
 void tst_SQLite_QueryBuilder::get() const

@@ -131,10 +131,9 @@ void tst_Model_Connection_Independent::initTestCase()
             Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())
-        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
-                             "for '%2' connection have not been defined.")
-              .arg("tst_Model_Connection_Independent",
-                   Databases::MYSQL).toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg("tst_Model_Connection_Independent", Databases::MYSQL)
+              .toUtf8().constData(), );
 }
 
 void tst_Model_Connection_Independent::subscriptOperator() const

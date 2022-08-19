@@ -124,9 +124,7 @@ void tst_Model::initTestCase_data() const
     const auto &connections = Databases::createConnections();
 
     if (connections.isEmpty())
-        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
-                             "for ANY connection have not been defined.")
-              .arg("tst_Model").toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkippedAny.arg("tst_Model").toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");
 

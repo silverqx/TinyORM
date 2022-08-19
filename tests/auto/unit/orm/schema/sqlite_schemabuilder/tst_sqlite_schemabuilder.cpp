@@ -131,8 +131,7 @@ void tst_SQLite_SchemaBuilder::initTestCase()
     m_connection = Databases::createConnection(Databases::SQLITE);
 
     if (m_connection.isEmpty())
-        QSKIP(QStringLiteral("%1 autotest skipped, environment variables "
-                             "for '%2' connection have not been defined.")
+        QSKIP(TestUtils::AutoTestSkipped
               .arg("tst_SQLite_SchemaBuilder", Databases::SQLITE)
               .toUtf8().constData(), );
 }
