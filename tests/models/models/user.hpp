@@ -62,6 +62,13 @@ private:
         {"torrents", [](auto &v) { v(&User::torrents); }},
     };
 
+    /*! The attributes that are mass assignable. */
+    inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
+        NAME,
+        "is_banned",
+        "note",
+    };
+
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;
 };
