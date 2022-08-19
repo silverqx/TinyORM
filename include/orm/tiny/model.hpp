@@ -31,7 +31,6 @@ namespace Orm::Tiny
     using GuardedModel = Concerns::GuardedModel;
 
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
-    // TODO model missing methods Model::replicate() silverqx
     // TODO model comparing operator==() silverqx
     // TODO model missing methods Model::loadMissing() silverqx
     // TODO model missing methods EloquentCollection::toQuery() silverqx
