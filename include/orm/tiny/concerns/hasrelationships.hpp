@@ -104,6 +104,28 @@ namespace Concerns
         requires std::is_base_of_v<Relations::IsPivotModel, Related>
         Derived &setRelation(const QString &relation, std::optional<Related> &&model);
 
+        /*! Get all the loaded relations for the instance. */
+        inline
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
+        const std::map<QString, RelationsType<AllRelations...>> &
+#else
+        const std::unordered_map<QString, RelationsType<AllRelations...>> &
+#endif
+        getRelations() const;
+        /*! Get all the loaded relations for the instance. */
+        inline
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
+        std::map<QString, RelationsType<AllRelations...>> &
+#else
+        std::unordered_map<QString, RelationsType<AllRelations...>> &
+#endif
+        getRelations();
+
+        /*! Unset all the loaded relations for the instance. */
+        Derived &unsetRelations();
+        /*! Unset a loaded relationship. */
+        Derived &unsetRelation(const QString &relation);
+
         /* Relationships factory methods */
         /*! Define a one-to-one relationship. */
         template<typename Related>
@@ -132,28 +154,6 @@ namespace Concerns
         inline const QStringList &getTouchedRelations() const;
         /*! Determine if the model touches a given relation. */
         inline bool touches(const QString &relation) const;
-
-        /*! Get all the loaded relations for the instance. */
-        inline
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-        const std::map<QString, RelationsType<AllRelations...>> &
-#else
-        const std::unordered_map<QString, RelationsType<AllRelations...>> &
-#endif
-        getRelations() const;
-        /*! Get all the loaded relations for the instance. */
-        inline
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-        std::map<QString, RelationsType<AllRelations...>> &
-#else
-        std::unordered_map<QString, RelationsType<AllRelations...>> &
-#endif
-        getRelations();
-
-        /*! Unset all the loaded relations for the instance. */
-        Derived &unsetRelations();
-        /*! Unset a loaded relationship. */
-        Derived &unsetRelation(const QString &relation);
 
     protected:
         /*! Relation visitor lambda type. */
@@ -502,6 +502,45 @@ namespace Concerns
         return this->model();
     }
 
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
+    const std::map<QString, RelationsType<AllRelations...>> &
+#else
+    const std::unordered_map<QString, RelationsType<AllRelations...>> &
+#endif
+    HasRelationships<Derived, AllRelations...>::getRelations() const
+    {
+        return m_relations;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
+    std::map<QString, RelationsType<AllRelations...>> &
+#else
+    std::unordered_map<QString, RelationsType<AllRelations...>> &
+#endif
+    HasRelationships<Derived, AllRelations...>::getRelations()
+    {
+        return m_relations;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &HasRelationships<Derived, AllRelations...>::unsetRelations()
+    {
+        m_relations.clear();
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasRelationships<Derived, AllRelations...>::unsetRelation(const QString &relation)
+    {
+        m_relations.erase(relation);
+
+        return model();
+    }
+
     /* Relationships factory methods */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -637,45 +676,6 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::touches(const QString &relation) const
     {
         return getTouchedRelations().contains(relation);
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-    const std::map<QString, RelationsType<AllRelations...>> &
-#else
-    const std::unordered_map<QString, RelationsType<AllRelations...>> &
-#endif
-    HasRelationships<Derived, AllRelations...>::getRelations() const
-    {
-        return m_relations;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-    std::map<QString, RelationsType<AllRelations...>> &
-#else
-    std::unordered_map<QString, RelationsType<AllRelations...>> &
-#endif
-    HasRelationships<Derived, AllRelations...>::getRelations()
-    {
-        return m_relations;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &HasRelationships<Derived, AllRelations...>::unsetRelations()
-    {
-        m_relations.clear();
-
-        return model();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &
-    HasRelationships<Derived, AllRelations...>::unsetRelation(const QString &relation)
-    {
-        m_relations.erase(relation);
-
-        return model();
     }
 
     /* protected */
