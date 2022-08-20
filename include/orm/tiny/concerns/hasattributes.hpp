@@ -237,6 +237,8 @@ namespace Orm::Tiny::Concerns
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
     };
 
+    /* public */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     HasAttributes<Derived, AllRelations...>::setAttribute(
@@ -625,6 +627,8 @@ namespace Orm::Tiny::Concerns
 
     /* Model::AttributeReference - begin */
 
+    /* private */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasAttributes<Derived, AllRelations...>::AttributeReference::AttributeReference(
             Model<Derived, AllRelations...> &model,
@@ -634,6 +638,8 @@ namespace Orm::Tiny::Concerns
         : m_model(model)
         , m_attribute(attribute)
     {}
+
+    /* public */
 
     // NOLINTNEXTLINE(misc-unconventional-assign-operator)
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -693,6 +699,8 @@ namespace Orm::Tiny::Concerns
 
     /* Model::AttributeReference - end */
 
+    /* public */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasAttributes<Derived, AllRelations...>::AttributeReference
     HasAttributes<Derived, AllRelations...>::operator[](
@@ -724,6 +732,8 @@ namespace Orm::Tiny::Concerns
     {
         return getAttribute(attribute);
     }
+
+    /* protected */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant HasAttributes<Derived, AllRelations...>::transformModelValue(
@@ -931,6 +941,8 @@ namespace Orm::Tiny::Concerns
             // 'i' is the position
             attributesHash[attributes.at(i).key] = i;
     }
+
+    /* private */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QStringList
