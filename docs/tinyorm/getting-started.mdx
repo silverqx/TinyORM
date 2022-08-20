@@ -730,3 +730,9 @@ The `is` and `isNot` methods are also available when using the `belongsTo` and `
     if (post->author()->is(user)) {
         //
     }
+
+##### Equality comparison
+
+The base `Model` class also defines the `operator==` that allows precisely comparing two models. It compares the content of all the model's data members, from all base classes to the most derived model class. The `model1 == model2` expression guarantees that these two models are exactly the same.
+
+It would be appropriate to mention that this comparison also includes relations, which means it will also compare __all__ models (including their data members) these relations contain.
