@@ -13,7 +13,6 @@
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
-using Orm::Constants::EMPTY;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::QMYSQL;
@@ -90,11 +89,7 @@ private slots:
     void firstOrCreate_Found() const;
     void firstOrCreate_NotFound() const;
 
-    void isCleanAndIsDirty() const;
     void wasChanged() const;
-
-    void is() const;
-    void isNot() const;
 
     void fresh_OnlyAttributes() const;
     void refresh_OnlyAttributes() const;
@@ -1107,42 +1102,6 @@ void tst_Model::firstOrCreate_NotFound() const
     QVERIFY(!torrent.exists);
 }
 
-void tst_Model::isCleanAndIsDirty() const
-{
-    QFETCH_GLOBAL(QString, connection);
-
-    ConnectionOverride::connection = connection;
-
-    auto torrent = Torrent::find(3);
-
-    QVERIFY(torrent->isClean());
-    QVERIFY(!torrent->isDirty());
-    QVERIFY(torrent->isClean(NAME));
-    QVERIFY(!torrent->isDirty(NAME));
-
-    torrent->setAttribute(NAME, "test3 dirty");
-
-    QVERIFY(!torrent->isClean());
-    QVERIFY(torrent->isDirty());
-    QVERIFY(!torrent->isClean(NAME));
-    QVERIFY(torrent->isDirty(NAME));
-    QVERIFY(torrent->isClean(SIZE));
-    QVERIFY(!torrent->isDirty(SIZE));
-
-    torrent->save();
-
-    QVERIFY(torrent->isClean());
-    QVERIFY(!torrent->isDirty());
-    QVERIFY(torrent->isClean(NAME));
-    QVERIFY(!torrent->isDirty(NAME));
-    QVERIFY(torrent->isClean(SIZE));
-    QVERIFY(!torrent->isDirty(SIZE));
-
-    // Restore the name
-    torrent->setAttribute(NAME, "test3");
-    torrent->save();
-}
-
 void tst_Model::wasChanged() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -1168,52 +1127,6 @@ void tst_Model::wasChanged() const
     // Restore the name
     torrent->setAttribute(NAME, "test3");
     torrent->save();
-}
-
-void tst_Model::is() const
-{
-    QFETCH_GLOBAL(QString, connection);
-
-    ConnectionOverride::connection = connection;
-
-    auto torrent2_1 = Torrent::find(2);
-    auto torrent2_2 = Torrent::find(2);
-
-    // The same primary key, table name and connection name
-    QVERIFY(torrent2_1->is(torrent2_2));
-}
-
-void tst_Model::isNot() const
-{
-    QFETCH_GLOBAL(QString, connection);
-
-    ConnectionOverride::connection = connection;
-
-    auto torrent2_1 = Torrent::find(2);
-
-    // Different primary key
-    {
-        auto torrent3 = Torrent::find(3);
-
-        QVERIFY(torrent2_1->isNot(torrent3));
-    }
-    // Different table name (also different type)
-    {
-        auto file4 = TorrentPreviewableFile::find(4);
-
-        QVERIFY(torrent2_1->isNot(file4));
-    }
-    // Different connection name
-    {
-        auto torrent2_2 = Torrent::find(2);
-
-        torrent2_2->setConnection("dummy_connection");
-        /* Disable connection override, so the isNot() can pickup a connection from
-           the model itself (don't pickup an overridden connection). */
-        ConnectionOverride::connection = EMPTY;
-
-        QVERIFY(torrent2_1->isNot(torrent2_2));
-    }
 }
 
 void tst_Model::fresh_OnlyAttributes() const
