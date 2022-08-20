@@ -31,7 +31,6 @@ namespace Orm::Tiny
     using GuardedModel = Concerns::GuardedModel;
 
     // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
-    // TODO model comparing operator==() silverqx
     // TODO model missing methods Model::loadMissing() silverqx
     // TODO model missing methods EloquentCollection::toQuery() silverqx
     // TODO model missing saveOrFail(), updateOrFail(), deleteOrFail(), I will need to implement ManagesTransaction::transaction(callback) method silverqx
@@ -160,6 +159,9 @@ namespace Orm::Tiny
         /*! Determine if two models are not the same. */
         template<ModelConcept ModelToCompare>
         bool isNot(const std::optional<ModelToCompare> &model) const;
+
+        /*! Comparison operator for the Model. */
+        bool operator==(const Model &right) const;
 
         /*! Fill the model with a vector of attributes. */
         Derived &fill(const QVector<AttributeItem> &attributes);
@@ -696,6 +698,60 @@ namespace Orm::Tiny
             const std::optional<ModelToCompare> &model) const
     {
         return !is(model);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool Model<Derived, AllRelations...>::operator==(const Model &right) const
+    {
+        /* Comparing the HasConnectionResolver, GuardsAttributes, ModelProxies, and
+           IsModel is not needed as they don't contain any data members or they
+           contain ony a static data members. */
+
+        // Compare the HasAttributes concern
+        using HasAttributes = Concerns::HasAttributes<Derived, AllRelations...>;
+        if (static_cast<const HasAttributes &>(*this) !=
+            static_cast<const HasAttributes &>(right)
+        )
+            return false;
+
+        // Compare the HasRelationships concern
+        using HasRelationships = Concerns::HasRelationships<Derived, AllRelations...>;
+        if (static_cast<const HasRelationships &>(*this) !=
+            static_cast<const HasRelationships &>(right)
+        )
+            return false;
+
+        // Compare the HasTimestamps concern
+        using HasTimestamps = Concerns::HasTimestamps<Derived, AllRelations...>;
+        if (static_cast<const HasTimestamps &>(*this) !=
+            static_cast<const HasTimestamps &>(right)
+        )
+            return false;
+
+        // Compare the Base Model
+        if (true != (exists         == right.exists         &&
+                     u_table        == right.u_table        &&
+                     u_connection   == right.u_connection   &&
+                     u_incrementing == right.u_incrementing &&
+                     u_primaryKey   == right.u_primaryKey   &&
+                     u_with         == right.u_with)
+//                   u_withCount    == right.u_withCount
+        )
+            return false;
+
+        // Compare the Derived Model 😮🤯😎
+        const auto &derivedRight = static_cast<const Derived &>(right);
+
+        // model().u_relations == derivedRight.u_relations
+        /* It compares only the size and keys and doesn't compare hash values because
+           the std::function doesn't have a full/complete operator==() (it only compares
+           for the nullptr). */
+        if (!HasRelationships::compareURelations(model().u_relations,
+                                                 derivedRight.u_relations))
+            return false;
+
+        return model().u_touches    == derivedRight.u_touches   &&
+               model().u_timestamps == derivedRight.u_timestamps;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

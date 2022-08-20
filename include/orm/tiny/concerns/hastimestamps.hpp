@@ -27,6 +27,9 @@ namespace Concerns
     class HasTimestamps
     {
     public:
+        /*! Comparison operator for the HasTimestamps concern. */
+        inline bool operator==(const HasTimestamps &) const noexcept = default;
+
         /*! Update the model's update timestamp. */
         bool touch();
         /*! Update the model's update timestamp. */

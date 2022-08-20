@@ -29,6 +29,9 @@ namespace Orm::Tiny::Concerns
         using StringUtils = Orm::Tiny::Utils::String;
 
     public:
+        /*! Comparison operator for the HasAttributes concern. */
+        inline bool operator==(const HasAttributes &) const = default;
+
         /*! Set a given attribute on the model. */
         Derived &setAttribute(const QString &key, QVariant value);
         /*! Set a vector of model attributes. No checking is done. */

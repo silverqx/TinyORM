@@ -155,6 +155,10 @@ namespace Concerns
         /*! Determine if the model touches a given relation. */
         inline bool touches(const QString &relation) const;
 
+        /* Others */
+        /*! Comparison operator for the HasRelationships concern. */
+        bool operator==(const HasRelationships &right) const;
+
     protected:
         /*! Relation visitor lambda type. */
         using RelationVisitor = std::function<void(
@@ -225,6 +229,12 @@ namespace Concerns
         /*! Get the joining table name for a many-to-many relation. */
         template<typename Related>
         QString pivotTableName() const;
+
+        /* Others */
+        /*! Compare the u_relations hash (size and keys only). */
+        static bool compareURelations(
+                    const QHash<QString, RelationVisitor> &left,
+                    const QHash<QString, RelationVisitor> &right) noexcept;
 
         /* Data members */
         /*! Map of relation names to methods. */
@@ -678,6 +688,24 @@ namespace Concerns
         return getTouchedRelations().contains(relation);
     }
 
+    /* Others */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool HasRelationships<Derived, AllRelations...>::operator==(
+            const HasRelationships &right) const
+    {
+        // u_relations == right.u_relations
+        /* It compares only the size and keys and doesn't compare hash values because
+           the std::function doesn't have a full/complete operator==() (it only compares
+           for the nullptr). */
+        if (!compareURelations(u_relations, right.u_relations))
+            return false;
+
+        return m_relations == right.m_relations &&
+               u_touches   == right.u_touches   &&
+               m_pivots    == right.m_pivots;
+    }
+
     /* protected */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -856,6 +884,23 @@ namespace Concerns
         segments.sort(Qt::CaseInsensitive);
 
         return segments.join(UNDERSCORE).toLower();
+    }
+
+    /* Others */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool HasRelationships<Derived, AllRelations...>::compareURelations(
+            const QHash<QString, RelationVisitor> &left,
+            const QHash<QString, RelationVisitor> &right) noexcept
+    {
+        if (left.size() != right.size())
+            return false;
+
+        for (auto it = right.keyBegin(); it != right.keyEnd(); ++it)
+            if (left.find(*it) == left.constEnd())
+                return false;
+
+        return true;
     }
 
     /* private */
