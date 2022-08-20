@@ -84,6 +84,7 @@ namespace Concerns
         /*! Set the given relationship on the model. */
         template<typename Related>
         Derived &setRelation(const QString &relation, QVector<Related> &&models);
+
         /*! Set the given relationship on the model. */
         template<typename Related>
         Derived &setRelation(const QString &relation,
@@ -91,6 +92,7 @@ namespace Concerns
         /*! Set the given relationship on the model. */
         template<typename Related>
         Derived &setRelation(const QString &relation, std::optional<Related> &&model);
+
         /*! Set the given relationship on the model. */
         template<typename Related>
         requires std::is_base_of_v<Relations::IsPivotModel, Related>
