@@ -55,6 +55,7 @@ namespace Concerns
         using TypeUtils = Orm::Utils::Type;
 
     public:
+        /* HasRelationships related */
         /*! Get a relationship for Many types relation. */
         template<typename Related,
                  template<typename> typename Container = QVector>
@@ -123,6 +124,7 @@ namespace Concerns
                       QString relatedPivotKey = "", QString parentKey = "",
                       QString relatedKey = "", QString relation = "");
 
+        /* Touching timestamps */
         /*! Touch the owning relations of the model. */
         void touchOwners();
 
@@ -342,6 +344,8 @@ namespace Concerns
     };
 
     /* public */
+
+    /* HasRelationships related */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, template<typename> typename Container>
@@ -611,6 +615,8 @@ namespace Concerns
                     std::move(instance), model(), table, foreignPivotKey,
                     relatedPivotKey, parentKey, relatedKey, relation);
     }
+
+    /* Touching timestamps */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationships<Derived, AllRelations...>::touchOwners()
