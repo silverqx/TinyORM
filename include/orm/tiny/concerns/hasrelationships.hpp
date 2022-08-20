@@ -111,7 +111,7 @@ namespace Concerns
 #else
         const std::unordered_map<QString, RelationsType<AllRelations...>> &
 #endif
-        getRelations() const;
+        getRelations() const noexcept;
         /*! Get all the loaded relations for the instance. */
         inline
 #ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
@@ -119,7 +119,7 @@ namespace Concerns
 #else
         std::unordered_map<QString, RelationsType<AllRelations...>> &
 #endif
-        getRelations();
+        getRelations() noexcept;
 
         /*! Unset all the loaded relations for the instance. */
         Derived &unsetRelations();
@@ -508,7 +508,7 @@ namespace Concerns
 #else
     const std::unordered_map<QString, RelationsType<AllRelations...>> &
 #endif
-    HasRelationships<Derived, AllRelations...>::getRelations() const
+    HasRelationships<Derived, AllRelations...>::getRelations() const noexcept
     {
         return m_relations;
     }
@@ -519,7 +519,7 @@ namespace Concerns
 #else
     std::unordered_map<QString, RelationsType<AllRelations...>> &
 #endif
-    HasRelationships<Derived, AllRelations...>::getRelations()
+    HasRelationships<Derived, AllRelations...>::getRelations() noexcept
     {
         return m_relations;
     }
