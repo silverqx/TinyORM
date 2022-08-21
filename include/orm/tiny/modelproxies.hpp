@@ -175,8 +175,8 @@ namespace Tiny
         static Derived create(QVector<AttributeItem> &&attributes = {});
 
         /*! Create or update a record matching the attributes, and fill it with values. */
-        Derived updateOrCreate(const QVector<WhereItem> &attributes,
-                               const QVector<AttributeItem> &values = {});
+        static Derived updateOrCreate(const QVector<WhereItem> &attributes,
+                                      const QVector<AttributeItem> &values = {});
 
         /* Proxies to TinyBuilder -> QueryBuilder */
         /* Insert, Update, Delete */
