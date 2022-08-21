@@ -53,6 +53,9 @@ private slots:
     void is() const;
     void isNot() const;
 
+    void equalComparison() const;
+    void notEqualComparison() const;
+
     void defaultAttributeValues() const;
 
     void massAssignment_Fillable() const;
@@ -267,6 +270,8 @@ void tst_Model_Connection_Independent::isNot() const
     // Different connection name
     {
         auto torrent2_2 = Torrent::find(2);
+        // Check before the connection changed
+        QVERIFY(torrent2_1->is(torrent2_2));
 
         torrent2_2->setConnection("dummy_connection");
         /* Disable connection override, so the isNot() can pickup a connection from
@@ -278,6 +283,67 @@ void tst_Model_Connection_Independent::isNot() const
 
     // Restore
     ConnectionOverride::connection = m_connection;
+}
+
+void tst_Model_Connection_Independent::equalComparison() const
+{
+    // Is equal without relations
+    {
+        auto torrent1_1 = Torrent::find(1);
+        auto torrent1_2 = Torrent::find(1);
+
+        QVERIFY(*torrent1_1 == *torrent1_2);
+    }
+    // Is equal with relations
+    {
+        auto torrent1_1 = Torrent::with("torrentFiles")->find(1);
+        auto torrent1_2 = Torrent::with("torrentFiles")->find(1);
+
+        QVERIFY(*torrent1_1 == *torrent1_2);
+    }
+    // Is equal with sub-relations
+    {
+        auto torrent1_1 = Torrent::with("torrentFiles.fileProperty")->find(1);
+        auto torrent1_2 = Torrent::with("torrentFiles.fileProperty")->find(1);
+
+        QVERIFY(*torrent1_1 == *torrent1_2);
+    }
+}
+
+void tst_Model_Connection_Independent::notEqualComparison() const
+{
+    auto torrent1_1 = Torrent::with("torrentFiles.fileProperty")->find(1);
+    auto torrent2 = Torrent::with("torrentFiles.fileProperty")->find(2);
+
+    // Different torrent
+    QVERIFY(*torrent1_1 != *torrent2);
+
+    // Different attribute
+    {
+        auto torrent1_2 = Torrent::with("torrentFiles.fileProperty")->find(1);
+        // Check before change
+        QVERIFY(*torrent1_1 == *torrent1_2);
+
+        torrent1_2->setAttribute("name", "test1 changed");
+
+        QVERIFY(*torrent1_1 != *torrent1_2);
+    }
+    // Different relations
+    {
+        auto torrent1_2 = Torrent::with("torrentFiles.fileProperty")->find(1);
+        // Check before change
+        QVERIFY(*torrent1_1 == *torrent1_2);
+
+        torrent1_1->load("user");
+
+        QVERIFY(*torrent1_1 != *torrent1_2);
+    }
+    // Different sub-relation
+    {
+        auto torrent1_2 = Torrent::with("torrentFiles")->find(1);
+
+        QVERIFY(*torrent1_1 != *torrent1_2);
+    }
 }
 
 void tst_Model_Connection_Independent::defaultAttributeValues() const
