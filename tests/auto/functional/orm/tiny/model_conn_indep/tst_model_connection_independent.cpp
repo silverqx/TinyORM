@@ -292,6 +292,8 @@ void tst_Model_Connection_Independent::equalComparison() const
         auto torrent1_1 = Torrent::find(1);
         auto torrent1_2 = Torrent::find(1);
 
+        QVERIFY(torrent1_1);
+        QVERIFY(torrent1_2);
         QVERIFY(*torrent1_1 == *torrent1_2);
     }
     // Is equal with relations
@@ -299,6 +301,8 @@ void tst_Model_Connection_Independent::equalComparison() const
         auto torrent1_1 = Torrent::with("torrentFiles")->find(1);
         auto torrent1_2 = Torrent::with("torrentFiles")->find(1);
 
+        QVERIFY(torrent1_1);
+        QVERIFY(torrent1_2);
         QVERIFY(*torrent1_1 == *torrent1_2);
     }
     // Is equal with sub-relations
@@ -306,6 +310,8 @@ void tst_Model_Connection_Independent::equalComparison() const
         auto torrent1_1 = Torrent::with("torrentFiles.fileProperty")->find(1);
         auto torrent1_2 = Torrent::with("torrentFiles.fileProperty")->find(1);
 
+        QVERIFY(torrent1_1);
+        QVERIFY(torrent1_2);
         QVERIFY(*torrent1_1 == *torrent1_2);
     }
 }
@@ -314,6 +320,8 @@ void tst_Model_Connection_Independent::notEqualComparison() const
 {
     auto torrent1_1 = Torrent::with("torrentFiles.fileProperty")->find(1);
     auto torrent2 = Torrent::with("torrentFiles.fileProperty")->find(2);
+    QVERIFY(torrent1_1);
+    QVERIFY(torrent2);
 
     // Different torrent
     QVERIFY(*torrent1_1 != *torrent2);
@@ -321,6 +329,8 @@ void tst_Model_Connection_Independent::notEqualComparison() const
     // Different attribute
     {
         auto torrent1_2 = Torrent::with("torrentFiles.fileProperty")->find(1);
+        QVERIFY(torrent1_2);
+
         // Check before change
         QVERIFY(*torrent1_1 == *torrent1_2);
 
@@ -331,6 +341,8 @@ void tst_Model_Connection_Independent::notEqualComparison() const
     // Different relations
     {
         auto torrent1_2 = Torrent::with("torrentFiles.fileProperty")->find(1);
+        QVERIFY(torrent1_2);
+
         // Check before change
         QVERIFY(*torrent1_1 == *torrent1_2);
 
@@ -341,6 +353,7 @@ void tst_Model_Connection_Independent::notEqualComparison() const
     // Different sub-relation
     {
         auto torrent1_2 = Torrent::with("torrentFiles")->find(1);
+        QVERIFY(torrent1_2);
 
         QVERIFY(*torrent1_1 != *torrent1_2);
     }
