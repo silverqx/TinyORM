@@ -1900,12 +1900,11 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
 
     QCOMPARE(affected, 2);
 
-    // FEATURE aggregates, use count silverqx
-    taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
-              ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-              .get({"torrent_id"});
+    auto taggedsSize = Tagged::whereEq("tag_id", (*tag4)[ID])
+                       ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+                       .count();
 
-    QCOMPARE(taggeds.size(), 0);
+    QCOMPARE(taggedsSize, 0);
 
     // Restore db
     torrent100.remove();
@@ -1961,12 +1960,11 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
 
     QCOMPARE(affected, 2);
 
-    // FEATURE aggregates, use count silverqx
-    taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
-              ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-              .get({"torrent_id"});
+    auto taggedsSize = Tagged::whereEq("tag_id", (*tag4)[ID])
+                       ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+                       .count();
 
-    QCOMPARE(taggeds.size(), 0);
+    QCOMPARE(taggedsSize, 0);
 
     // Restore db
     torrent100.remove();
@@ -2022,12 +2020,11 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
 
     QCOMPARE(affected, 2);
 
-    // FEATURE aggregates, use count silverqx
-    taggeds = Tagged::whereEq("tag_id", (*tag5)[ID])
-              ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-              .get({"torrent_id"});
+    auto taggedsSize = Tagged::whereEq("tag_id", (*tag5)[ID])
+                       ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+                       .count();
 
-    QCOMPARE(taggeds.size(), 0);
+    QCOMPARE(taggedsSize, 0);
 
     // Restore db
     torrent100.remove();
@@ -2079,12 +2076,11 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
 
     QCOMPARE(affected, 2);
 
-    // FEATURE aggregates, use count silverqx
-    taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-              ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-              .get({"tag_id"});
+    auto taggedsSize = Tagged::whereEq("torrent_id", torrent5Id)
+                       ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+                       .count();
 
-    QCOMPARE(taggeds.size(), 0);
+    QCOMPARE(taggedsSize, 0);
 
     // Restore db
     tag100.remove();
@@ -2136,12 +2132,11 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
 
     QCOMPARE(affected, 2);
 
-    // FEATURE aggregates, use count silverqx
-    taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-              ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-              .get({"tag_id"});
+    auto taggedsSize = Tagged::whereEq("torrent_id", torrent5Id)
+                       ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+                       .count();
 
-    QCOMPARE(taggeds.size(), 0);
+    QCOMPARE(taggedsSize, 0);
 
     // Restore db
     tag100.remove();
@@ -2193,12 +2188,11 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
 
     QCOMPARE(affected, 2);
 
-    // FEATURE aggregates, use count silverqx
-    taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-              ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-              .get({"tag_id"});
+    auto taggedsSize = Tagged::whereEq("torrent_id", torrent5Id)
+                       ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+                       .count();
 
-    QCOMPARE(taggeds.size(), 0);
+    QCOMPARE(taggedsSize, 0);
 
     // Restore db
     tag100.remove();
