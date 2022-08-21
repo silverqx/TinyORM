@@ -283,7 +283,7 @@ namespace Orm::Tiny::Relations
     {
         m_child.setAttribute(m_foreignKey, id);
 
-        // FEATURE relations, check if relation is loaded and if has the same id, if so, then don't unset relation silverqx
+        // FEATURE relations, check if relation is loaded and if has the same id, if so, then don't unset relation; many months later I don't know if this is a good idea, how it will behave if the relation will not be unset? and comparing only ID is not enough there can be changed attributes or relations, I think best to no remove this and if I decide to remove it test it carefully silverqx
         m_child.unsetRelation(m_relationName);
 
         return m_child;
