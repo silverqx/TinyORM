@@ -1572,8 +1572,8 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
                              false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-            .get();
+                   ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -1622,8 +1622,8 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
                              false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-            .get();
+                   ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -1668,8 +1668,8 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithIds() const
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-            .get();
+                   ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -1714,8 +1714,8 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithModels() const
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-            .get();
+                   ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -1765,8 +1765,8 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
     }, false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-            .get();
+                   ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -1819,8 +1819,8 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() co
     }, false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-            .get();
+                   ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -1876,8 +1876,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
                              false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-            .get();
+                   ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -1902,8 +1902,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
 
     // FEATURE aggregates, use count silverqx
     taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-            .get({"torrent_id"});
+              ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+              .get({"torrent_id"});
 
     QCOMPARE(taggeds.size(), 0);
 
@@ -1938,8 +1938,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
                              false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-            .get();
+                   ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -1963,8 +1963,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
 
     // FEATURE aggregates, use count silverqx
     taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-            .get({"torrent_id"});
+              ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+              .get({"torrent_id"});
 
     QCOMPARE(taggeds.size(), 0);
 
@@ -1999,8 +1999,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
                              false);
 
     auto taggeds = Tagged::whereEq("tag_id", (*tag5)[ID])
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-            .get();
+                   ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -2024,8 +2024,8 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
 
     // FEATURE aggregates, use count silverqx
     taggeds = Tagged::whereEq("tag_id", (*tag5)[ID])
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
-            .get({"torrent_id"});
+              ->whereIn("torrent_id", {torrent100[ID], torrent101[ID]})
+              .get({"torrent_id"});
 
     QCOMPARE(taggeds.size(), 0);
 
@@ -2056,8 +2056,8 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-            .get();
+                   ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -2081,8 +2081,8 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
 
     // FEATURE aggregates, use count silverqx
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-            .get({"tag_id"});
+              ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+              .get({"tag_id"});
 
     QCOMPARE(taggeds.size(), 0);
 
@@ -2113,8 +2113,8 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-            .get();
+                   ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -2138,8 +2138,8 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
 
     // FEATURE aggregates, use count silverqx
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-            .get({"tag_id"});
+              ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+              .get({"tag_id"});
 
     QCOMPARE(taggeds.size(), 0);
 
@@ -2170,8 +2170,8 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
                              false);
 
     auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-            .get();
+                   ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+                   .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -2195,8 +2195,8 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
 
     // FEATURE aggregates, use count silverqx
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID]})
-            .get({"tag_id"});
+              ->whereIn("tag_id", {tag100[ID], tag101[ID]})
+              .get({"tag_id"});
 
     QCOMPARE(taggeds.size(), 0);
 
@@ -2219,8 +2219,8 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithId() c
 
     // Check values before update
     auto taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereEq("torrent_id", 3)
-            .get();
+                   ->whereEq("torrent_id", 3)
+                   .get();
 
     {
         QCOMPARE(taggeds.size(), 1);
@@ -2235,8 +2235,8 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithId() c
 
     // Check values after update
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereEq("torrent_id", 3)
-            .get();
+              ->whereEq("torrent_id", 3)
+              .get();
 
     {
         QCOMPARE(taggeds.size(), 1);
@@ -2264,8 +2264,8 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithModel(
 
     // Check values before update
     auto taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereEq("torrent_id", 3)
-            .get();
+                   ->whereEq("torrent_id", 3)
+                   .get();
 
     {
         QCOMPARE(taggeds.size(), 1);
@@ -2282,8 +2282,8 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithModel(
 
     // Check values after update
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereEq("torrent_id", 3)
-            .get();
+              ->whereEq("torrent_id", 3)
+              .get();
 
     {
         QCOMPARE(taggeds.size(), 1);
@@ -2311,8 +2311,8 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithId() 
 
     // Check values before update
     auto taggeds = Tagged::whereEq("torrent_id", torrentId)
-            ->whereEq("tag_id", 4)
-            .get();
+                   ->whereEq("tag_id", 4)
+                   .get();
 
     {
         QCOMPARE(taggeds.size(), 1);
@@ -2327,8 +2327,8 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithId() 
 
     // Check values after update
     taggeds = Tagged::whereEq("torrent_id", torrentId)
-            ->whereEq("tag_id", 4)
-            .get();
+              ->whereEq("tag_id", 4)
+              .get();
 
     {
         QCOMPARE(taggeds.size(), 1);
@@ -2356,8 +2356,8 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithModel
 
     // Check values before update
     auto taggeds = Tagged::whereEq("torrent_id", torrentId)
-            ->whereEq("tag_id", 4)
-            .get();
+                   ->whereEq("tag_id", 4)
+                   .get();
 
     {
         QCOMPARE(taggeds.size(), 1);
@@ -2374,8 +2374,8 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithModel
 
     // Check values after update
     taggeds = Tagged::whereEq("torrent_id", torrentId)
-            ->whereEq("tag_id", 4)
-            .get();
+              ->whereEq("tag_id", 4)
+              .get();
 
     {
         QCOMPARE(taggeds.size(), 1);
@@ -2430,8 +2430,8 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
     // Verify attached tags
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
-            .get();
+              ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -2474,9 +2474,9 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
-                                     torrent102[ID], torrent103[ID]})
-            .get();
+              ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
+                                       torrent102[ID], torrent103[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 3);
 
@@ -2549,8 +2549,8 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
     // Verify attached tags
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
-            .get();
+              ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -2598,9 +2598,9 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
-                                     torrent102[ID], torrent103[ID]})
-            .get();
+              ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
+                                       torrent102[ID], torrent103[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 3);
 
@@ -2661,8 +2661,8 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
     // Verify attached tags
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag101[ID], tag102[ID]})
-            .get();
+              ->whereIn("tag_id", {tag101[ID], tag102[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -2704,9 +2704,8 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID],
-                                 tag102[ID], tag103[ID]})
-            .get();
+              ->whereIn("tag_id", {tag100[ID], tag101[ID], tag102[ID], tag103[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 3);
 
@@ -2767,8 +2766,8 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
     // Verify attached tags
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag101[ID], tag102[ID]})
-            .get();
+              ->whereIn("tag_id", {tag101[ID], tag102[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -2816,9 +2815,8 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID],
-                                 tag102[ID], tag103[ID]})
-            .get();
+              ->whereIn("tag_id", {tag100[ID], tag101[ID], tag102[ID], tag103[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 3);
 
@@ -2891,8 +2889,8 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
 
     // Verify attached tags
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
-            .get();
+              ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -2931,9 +2929,9 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
-                                     torrent102[ID], torrent103[ID]})
-            .get();
+              ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
+                                       torrent102[ID], torrent103[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 4);
 
@@ -3008,8 +3006,8 @@ void tst_Relations_Inserting_Updating
 
     // Verify attached tags
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
-            .get();
+              ->whereIn("torrent_id", {torrent101[ID], torrent102[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -3053,9 +3051,9 @@ void tst_Relations_Inserting_Updating
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("tag_id", tagId)
-            ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
-                                     torrent102[ID], torrent103[ID]})
-            .get();
+              ->whereIn("torrent_id", {torrent100[ID], torrent101[ID],
+                                       torrent102[ID], torrent103[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 4);
 
@@ -3117,8 +3115,8 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
 
     // Verify attached tags
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag101[ID], tag102[ID]})
-            .get();
+              ->whereIn("tag_id", {tag101[ID], tag102[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -3157,9 +3155,8 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID],
-                                 tag102[ID], tag103[ID]})
-            .get();
+              ->whereIn("tag_id", {tag100[ID], tag101[ID], tag102[ID], tag103[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 4);
 
@@ -3222,8 +3219,8 @@ void tst_Relations_Inserting_Updating
 
     // Verify attached tags
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag101[ID], tag102[ID]})
-            .get();
+              ->whereIn("tag_id", {tag101[ID], tag102[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 2);
 
@@ -3267,9 +3264,8 @@ void tst_Relations_Inserting_Updating
 
     // Verify tagged values in the database
     taggeds = Tagged::whereEq("torrent_id", torrent5Id)
-            ->whereIn("tag_id", {tag100[ID], tag101[ID],
-                                 tag102[ID], tag103[ID]})
-            .get();
+              ->whereIn("tag_id", {tag100[ID], tag101[ID], tag102[ID], tag103[ID]})
+              .get();
 
     QCOMPARE(taggeds.size(), 4);
 
