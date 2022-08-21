@@ -1361,7 +1361,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     QVERIFY(verifyTorrent5->exists);
     QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
     QVERIFY(verifyTorrent5->is(torrent));
-    // TEST ideal place for comparing models, verifyTorrent5 == torrent, have to have the same attribtues silverqx
+    QVERIFY(torrent == *verifyTorrent5);
 
     file.save();
 
@@ -1371,7 +1371,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     QVERIFY(verifyTorrent5->exists);
     QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
     QVERIFY(verifyTorrent5->is(torrent));
-    // TEST ideal place for comparing models, verifyTorrent5 == torrent, have to have the same attribtues silverqx
+    QVERIFY(torrent == *verifyTorrent5);
 
     // Obtain file from the database and verify saved values
     auto verifyFile = TorrentPreviewableFile::find(file[ID]);
@@ -1472,7 +1472,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
     QVERIFY(verifyTorrent5->exists);
     QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
     QVERIFY(verifyTorrent5->is(torrent));
-    // TEST ideal place for comparing models, verifyTorrent5 == torrent, have to have the same attribtues silverqx
+    QVERIFY(torrent == *verifyTorrent5);
 
     /* Have to unset current relationship, this is clearly visible in the Eqloquent's
        associate implementation. */
@@ -1527,6 +1527,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
     QVERIFY(verifyTorrent5->exists);
     QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
     QVERIFY(verifyTorrent5->is(torrent));
+    QVERIFY(torrent == *verifyTorrent5);
 
     auto &fileRefDissociate = file.torrent()->dissociate();
 
