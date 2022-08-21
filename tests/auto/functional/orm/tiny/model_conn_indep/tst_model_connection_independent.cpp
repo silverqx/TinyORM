@@ -21,10 +21,12 @@ using Orm::Constants::SIZE;
 using Orm::DB;
 using Orm::Exceptions::MultipleRecordsFoundError;
 using Orm::Exceptions::RecordsNotFoundError;
+using Orm::One;
 
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::MassAssignmentError;
 
+using AttributeUtils = Orm::Tiny::Utils::Attribute;
 using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
@@ -36,6 +38,8 @@ using Models::Torrent_AllowedMassAssignment;
 using Models::Torrent_GuardedAttribute;
 using Models::Torrent_TotallyGuarded;
 using Models::TorrentEager;
+using Models::TorrentPreviewableFileProperty;
+using Models::User;
 
 class tst_Model_Connection_Independent : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
@@ -55,6 +59,10 @@ private slots:
 
     void equalComparison() const;
     void notEqualComparison() const;
+
+    void replicate() const;
+    void replicate_WithCreate() const;
+    void replicate_WithRelations() const;
 
     void defaultAttributeValues() const;
 
@@ -356,6 +364,119 @@ void tst_Model_Connection_Independent::notEqualComparison() const
         QVERIFY(torrent1_2);
 
         QVERIFY(*torrent1_1 != *torrent1_2);
+    }
+}
+
+void tst_Model_Connection_Independent::replicate() const
+{
+    auto user1 = User::find(1);
+    QVERIFY(user1);
+    QVERIFY(user1->exists);
+
+    auto user1Replicated = user1->replicate();
+
+    auto user1Attributes = AttributeUtils::exceptAttributesForReplicate(*user1);
+    auto user1ReplicatedAttributes = AttributeUtils::exceptAttributesForReplicate(
+                                         user1Replicated);
+
+    QVERIFY(!user1Replicated.exists);
+    QVERIFY(user1Attributes == user1ReplicatedAttributes);
+    QVERIFY(user1->getRelations().empty());
+    QVERIFY(user1Replicated.getRelations().empty());
+}
+
+void tst_Model_Connection_Independent::replicate_WithCreate() const
+{
+    // Following is the most used case for the replicate method so I will test it
+    auto user = User::create({{"name", "xyz"},
+                              {"is_banned", true},
+                              {"note", "test"}});
+    QVERIFY(user.exists);
+
+    std::unordered_set except {NAME};
+
+    auto userReplicated = user.replicate(except);
+
+    auto userAttributes = AttributeUtils::exceptAttributesForReplicate(user, except);
+    auto userReplicatedAttributes = AttributeUtils::exceptAttributesForReplicate(
+                                         userReplicated);
+
+    QVERIFY(!userReplicated.exists);
+    QVERIFY(userAttributes == userReplicatedAttributes);
+
+    QCOMPARE(user.getAttribute(NAME), QVariant("xyz"));
+    QVERIFY(!userReplicated.getAttribute(NAME).isValid());
+
+    QVERIFY(user.getRelations().empty());
+    QVERIFY(userReplicated.getRelations().empty());
+
+    // Restore db
+    QVERIFY(user.remove());
+}
+
+void tst_Model_Connection_Independent::replicate_WithRelations() const
+{
+    auto torrent2 = Torrent::with("torrentFiles.fileProperty")->find(2);
+    QVERIFY(torrent2);
+    QVERIFY(torrent2->exists);
+
+    auto torrent2Replicated = torrent2->replicate();
+
+    auto torrent2Attributes = AttributeUtils::exceptAttributesForReplicate(*torrent2);
+    auto torrent2ReplicatedAttributes = AttributeUtils::exceptAttributesForReplicate(
+                                            torrent2Replicated);
+
+    const auto &torrent2Relations = torrent2->getRelations();
+    const auto &torrent2ReplicatedRelations = torrent2Replicated.getRelations();
+
+    /* Crazy, but I'm going to check all relations 😮😎, yeah it's definitely crazy and
+       overmotivated, but it checks almost everything I wanted. 🙃🤙 */
+    // Torrent
+    QVERIFY(!torrent2Replicated.exists);
+    QVERIFY(torrent2Attributes == torrent2ReplicatedAttributes);
+    QVERIFY(torrent2Relations.size() == torrent2ReplicatedRelations.size());
+    QVERIFY(torrent2->relationLoaded("torrentFiles"));
+    QVERIFY(torrent2Replicated.relationLoaded("torrentFiles"));
+    // The Model::operator== was needed to make this real
+    QVERIFY(torrent2Relations == torrent2ReplicatedRelations);
+
+    // TorrentPreviewableFile
+    const auto torrentFiles2 =
+            torrent2->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    const auto torrentFiles2Replicated =
+            torrent2Replicated.getRelationValue<TorrentPreviewableFile>("torrentFiles");
+
+    QVERIFY(torrentFiles2.size() == torrentFiles2Replicated.size());
+
+    for (std::remove_cvref_t<decltype (torrentFiles2)>::size_type i = 0;
+         torrentFiles2.size() < i; ++i
+    ) {
+        auto *torrentFile = torrentFiles2.value(i);
+        QVERIFY(torrentFile->exists);
+        QVERIFY(torrentFile->relationLoaded("fileProperty"));
+
+        auto *torrentFileReplicated = torrentFiles2Replicated.value(i);
+        QVERIFY(torrentFileReplicated->exists);
+        QVERIFY(torrentFileReplicated->relationLoaded("fileProperty"));
+
+        QVERIFY(torrentFile->getAttributes() == torrentFileReplicated->getAttributes());
+        // The Model::operator== was needed to make this real
+        QVERIFY(torrentFile->getRelations() == torrentFileReplicated->getRelations());
+
+        // TorrentPreviewableFileProperty
+        auto *fileProperty =
+                torrentFile->getRelationValue<TorrentPreviewableFileProperty, One>(
+                    "fileProperty");
+        auto *filePropertyReplicated =
+                torrentFileReplicated->getRelationValue<TorrentPreviewableFileProperty,
+                                                        One>("fileProperty");
+
+        QVERIFY(fileProperty->exists);
+        QVERIFY(fileProperty->getRelations().empty());
+        QVERIFY(filePropertyReplicated->exists);
+        QVERIFY(filePropertyReplicated->getRelations().empty());
+        QVERIFY(fileProperty->getAttributes() ==
+                filePropertyReplicated->getAttributes());
     }
 }
 

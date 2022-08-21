@@ -944,33 +944,9 @@ namespace Orm::Tiny
     Derived Model<Derived, AllRelations...>::replicate(
             const std::unordered_set<QString> &except)
     {
-        std::unordered_set<QString> defaults {
-            getKeyName(),
-            this->getCreatedAtColumn(),
-            this->getUpdatedAtColumn(),
-        };
-        // Remove empty attribute names
-        std::erase_if(defaults, [](const auto &attribute)
-        {
-            return attribute.isEmpty();
-        });
-
-        // Merge defaults into except
-        std::unordered_set<QString> exceptMerged(defaults.size() + except.size());
-        if (!except.empty()) {
-            exceptMerged = except;
-            exceptMerged.merge(defaults);
-        }
-        else
-            exceptMerged = std::move(defaults);
-
-        // Get all attributes excluding those in the exceptMerged set
-        auto attributes = this->getAttributes()
-                | ranges::views::filter([&exceptMerged](const AttributeItem &attribute)
-        {
-            return !exceptMerged.contains(attribute.key);
-        })
-                | ranges::to<QVector<AttributeItem>>();
+        /* Get all attributes excluding the primary key, created_at, and updated_at
+           attributes and those in the except set. */
+        auto attributes = AttributeUtils::exceptAttributesForReplicate(*this, except);
 
         /* Create a new instance (with correctly set a table and connection names),
            set obtained attributes and relations. */

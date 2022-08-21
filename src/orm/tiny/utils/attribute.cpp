@@ -3,8 +3,6 @@
 #include <unordered_set>
 
 #include <range/v3/algorithm/contains.hpp>
-#include <range/v3/range/conversion.hpp>
-#include <range/v3/view/remove_if.hpp>
 #include <range/v3/view/transform.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE

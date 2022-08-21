@@ -5,6 +5,11 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <unordered_set>
+
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
+
 #include "orm/tiny/tinytypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -49,7 +54,50 @@ namespace Orm::Tiny::Utils
         joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
                                  const QVector<AttributeItem> &values,
                                  const QString &keyName);
+
+        /*! Remove a given attributes from the model attributes vector and return
+            a copy. */
+        template<typename Model>
+        static QVector<AttributeItem>
+        exceptAttributesForReplicate(const Model &model,
+                                     const std::unordered_set<QString> &except = {});
     };
+
+    /* public */
+
+    template<typename Model>
+    QVector<AttributeItem>
+    Attribute::exceptAttributesForReplicate(const Model &model,
+                                            const std::unordered_set<QString> &except)
+    {
+        std::unordered_set<QString> defaults {
+            model.getKeyName(),
+            model.getCreatedAtColumn(),
+            model.getUpdatedAtColumn(),
+        };
+        // Remove empty attribute names
+        std::erase_if(defaults, [](const auto &attribute)
+        {
+            return attribute.isEmpty();
+        });
+
+        // Merge defaults into except
+        std::unordered_set<QString> exceptMerged(defaults.size() + except.size());
+        if (!except.empty()) {
+            exceptMerged = except;
+            exceptMerged.merge(defaults);
+        }
+        else
+            exceptMerged = std::move(defaults);
+
+        // Get all attributes excluding those in the exceptMerged set
+        return model.getAttributes()
+                | ranges::views::filter([&exceptMerged](const AttributeItem &attribute)
+        {
+            return !exceptMerged.contains(attribute.key);
+        })
+                | ranges::to<QVector<AttributeItem>>();
+    }
 
 } // namespace Orm::Tiny::Utils
 

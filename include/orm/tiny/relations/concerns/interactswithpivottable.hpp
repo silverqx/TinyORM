@@ -9,7 +9,6 @@ TINY_SYSTEM_HEADER
 #include <QtSql/QSqlRecord>
 
 #include <range/v3/algorithm/sort.hpp>
-#include <range/v3/range/conversion.hpp>
 #include <range/v3/view/set_algorithm.hpp>
 
 #include "orm/exceptions/domainerror.hpp"
