@@ -425,7 +425,7 @@ namespace Concerns
         /*! Cast the primary key to the Related::KeyType, for ranges::sort(). */
         const auto castKey = [this](const auto &id)
         {
-            return this->template castKey<typename Related::KeyType>(id);
+            return this->template castKey<RelatedKeyType>(id);
         };
 
         SyncChanges changes;
@@ -456,7 +456,7 @@ namespace Concerns
         /* Now we are finally ready to attach the new records. Note that we'll disable
            touching until after the entire operation is complete so we don't fire a
            ton of touch operations until we are totally done syncing the records. */
-        changes.template merge<typename Related::KeyType>(
+        changes.template merge<RelatedKeyType>(
                     attachNew(idsWithAttributes, current, false));
 
         /* Once we have finished attaching or detaching the records, we will see if we
@@ -897,12 +897,10 @@ namespace Concerns
     InteractsWithPivotTable<Model, Related, PivotType>::recordsFromIds(
             const QVector<QVariant> &ids) const
     {
-        // FEATURE dilemma primarykey, when I solve this dilema, then add using for ModelKeyType and RelatedKeyType silverqx
         std::map<RelatedKeyType, QVector<AttributeItem>> records;
 
         for (const auto &id : ids)
-            records.emplace(castKey<typename Related::KeyType>(id),
-                            QVector<AttributeItem>());
+            records.emplace(castKey<RelatedKeyType>(id), QVector<AttributeItem>());
 
         return records;
     }
@@ -1044,14 +1042,14 @@ namespace Concerns
         // Don't overwrite ID keys, throw domain exception
         if (attribute.key == getForeignPivotKeyName_())
             // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
-            throwOverwritingKeyError/*<Model::KeyType>*/(
+            throwOverwritingKeyError/*<ParentKeyType>*/(
                         attribute.key,
                         getParent_().getAttribute(getParentKeyName_()),
                         attribute.value);
 
         else if (attribute.key == getRelatedPivotKeyName_())
-            throwOverwritingKeyError/*<Related::KeyType>*/(attribute.key, id,
-                                                           attribute.value);
+            throwOverwritingKeyError/*<RelatedKeyType>*/(attribute.key, id,
+                                                         attribute.value);
     }
 
     template<class Model, class Related, class PivotType>
