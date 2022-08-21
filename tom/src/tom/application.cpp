@@ -697,4 +697,4 @@ int Application::runWithArguments(QStringList &&arguments)
 
 TINYORM_END_COMMON_NAMESPACE
 
-// CUR tom, commands I want to implement; test, schema:dump silverqx
+// CUR tom, commands I want to implement; test, schema:dump, model:show silverqx
