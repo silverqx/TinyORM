@@ -359,9 +359,9 @@ namespace Orm::Tiny
         /*! Get the u_timestamps attribute from the Derived model. */
         inline bool getUserTimestamps() const;
         /*! Get the CREATED_AT attribute from the Derived model. */
-        inline static const QString &getUserCreatedAtColumn();
+        inline static const QString &getUserCreatedAtColumn() noexcept;
         /*! Get the UPDATED_AT attribute from the Derived model. */
-        inline static const QString &getUserUpdatedAtColumn();
+        inline static const QString &getUserUpdatedAtColumn() noexcept;
     };
 
     /* public */
@@ -1445,14 +1445,14 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QString &
-    Model<Derived, AllRelations...>::getUserCreatedAtColumn()
+    Model<Derived, AllRelations...>::getUserCreatedAtColumn() noexcept
     {
         return Derived::CREATED_AT;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QString &
-    Model<Derived, AllRelations...>::getUserUpdatedAtColumn()
+    Model<Derived, AllRelations...>::getUserUpdatedAtColumn() noexcept
     {
         return Derived::UPDATED_AT;
     }

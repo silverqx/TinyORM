@@ -57,9 +57,9 @@ namespace Concerns
         inline Derived &setUseTimestamps(bool value);
 
         /*! Get the name of the "created at" column. */
-        inline static const QString &getCreatedAtColumn();
+        inline static const QString &getCreatedAtColumn() noexcept;
         /*! Get the name of the "updated at" column. */
-        inline static const QString &getUpdatedAtColumn();
+        inline static const QString &getUpdatedAtColumn() noexcept;
 
         /*! Obtain timestamp column names. */
         inline static const QStringList &timestampColumnNames();
@@ -171,14 +171,14 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QString &
-    HasTimestamps<Derived, AllRelations...>::getCreatedAtColumn()
+    HasTimestamps<Derived, AllRelations...>::getCreatedAtColumn() noexcept
     {
         return Model<Derived, AllRelations...>::getUserCreatedAtColumn();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QString &
-    HasTimestamps<Derived, AllRelations...>::getUpdatedAtColumn()
+    HasTimestamps<Derived, AllRelations...>::getUpdatedAtColumn() noexcept
     {
         return Model<Derived, AllRelations...>::getUserUpdatedAtColumn();
     }
