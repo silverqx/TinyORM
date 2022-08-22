@@ -37,14 +37,12 @@ namespace Concerns
 
         /*! Copy constructor. */
         inline BuildsQueries(const BuildsQueries &) = default;
-        /*! Deleted copy assignment operator (QueryBuilder class constains reference and
-            const). */
+        /*! Deleted copy assignment operator (not needed). */
         BuildsQueries &operator=(const BuildsQueries &) = delete;
 
         /*! Move constructor. */
         inline BuildsQueries(BuildsQueries &&) noexcept = default;
-        /*! Deleted move assignment operator (QueryBuilder class constains reference and
-            const). */
+        /*! Deleted move assignment operator (not needed). */
         BuildsQueries &operator=(BuildsQueries &&) = delete;
 
         /*! Chunk the results of the query. */
