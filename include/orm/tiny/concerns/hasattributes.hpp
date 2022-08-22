@@ -186,7 +186,7 @@ namespace Orm::Tiny::Concerns
 
         /*! Sync a single original attribute with its current value. */
         inline Derived &syncOriginalAttribute(const QString &attribute);
-        /*! Sync multiple original attribute with their current values. */
+        /*! Sync multiple original attributes with their current values. */
         Derived &syncOriginalAttributes(const QStringList &attributes);
 
         /*! Determine if the new and old values for a given key are equivalent
