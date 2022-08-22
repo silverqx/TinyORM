@@ -80,6 +80,12 @@ namespace Grammars
         void dropTimestamps();
         /*! Indicate that the timestamp columns should be dropped. */
         inline void dropTimestampsTz();
+
+        /*! Indicate that the soft delete column should be dropped. */
+        inline void dropSoftDeletes(const QString &column = Orm::Constants::DELETED_AT);
+        /*! Indicate that the soft delete column should be dropped. */
+        inline void dropSoftDeletesTz(const QString &column = Orm::Constants::DELETED_AT);
+
         /*! Indicate that the remember token column should be dropped. */
         inline void dropRememberToken();
 
@@ -323,6 +329,15 @@ namespace Grammars
         /*! Add creation and update timestampTz columns to the table. */
         void timestampsTz(int precision = 0);
 
+        /*! Add a "deleted at" timestamp for the table. */
+        ColumnDefinitionReference<>
+        softDeletes(const QString &column = Orm::Constants::DELETED_AT,
+                    int precision = 0);
+        /*! Add a "deleted at" timestampTz for the table. */
+        ColumnDefinitionReference<>
+        softDeletesTz(const QString &column = Orm::Constants::DELETED_AT,
+                      int precision = 0);
+
         /*! Create a new year column on the table. */
         ColumnDefinitionReference<> year(const QString &column);
 
@@ -494,6 +509,16 @@ namespace Grammars
     void Blueprint::dropTimestampsTz()
     {
         dropTimestamps();
+    }
+
+    void Blueprint::dropSoftDeletes(const QString &column)
+    {
+        dropColumns(QVector<QString> {column});
+    }
+
+    void Blueprint::dropSoftDeletesTz(const QString &column)
+    {
+        dropSoftDeletes(column);
     }
 
     void Blueprint::dropRememberToken()

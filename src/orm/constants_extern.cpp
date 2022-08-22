@@ -36,6 +36,7 @@ namespace Orm::Constants
     const QString &SIZE_      = Orm::Constants::SIZE;
     const QString CREATED_AT  = QStringLiteral("created_at");
     const QString UPDATED_AT  = QStringLiteral("updated_at");
+    const QString DELETED_AT  = QStringLiteral("deleted_at");
     const QString PARENTH_ONE = QStringLiteral("(%1)");
     const QString NEWLINE     = QStringLiteral("\n");
     const QString DOT_IN      = QStringLiteral("%1.%2");

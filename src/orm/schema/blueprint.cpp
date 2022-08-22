@@ -397,6 +397,18 @@ void Blueprint::timestampsTz(const int precision)
     timestampTz(UPDATED_AT, precision).nullable();
 }
 
+ColumnDefinitionReference<>
+Blueprint::softDeletes(const QString &column, const int precision)
+{
+    return timestamp(column, precision).nullable();
+}
+
+ColumnDefinitionReference<>
+Blueprint::softDeletesTz(const QString &column, const int precision)
+{
+    return timestampTz(column, precision).nullable();
+}
+
 ColumnDefinitionReference<> Blueprint::year(const QString &column)
 {
     return addColumn(ColumnType::Year, column);
