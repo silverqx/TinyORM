@@ -1245,13 +1245,13 @@ namespace Tiny::Relations
     /* Proxies to TinyBuilder -> QueryBuilder */
 
     template<class Model, class Related>
-    inline QString RelationProxies<Model, Related>::toSql() const
+    QString RelationProxies<Model, Related>::toSql() const
     {
         return getBaseQuery().toSql();
     }
 
     template<class Model, class Related>
-    inline QVector<QVariant>
+    QVector<QVariant>
     RelationProxies<Model, Related>::getBindings() const
     {
         return getBaseQuery().getBindings();
