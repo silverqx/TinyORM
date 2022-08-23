@@ -242,8 +242,9 @@ namespace Orm::Tiny::Concerns
         QStringList getDatesInternal() const;
 
         /*! Throw if the m_attributesHash doesn't contain a given attribute. */
-        static void throwIfNoAttributeInHash(const QString &attribute,
-                                             const QString &functionName);
+        static void throwIfNoAttributeInHash(
+                    const std::unordered_map<QString, int> &attributesHash,
+                    const QString &attribute, const QString &functionName);
 
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
@@ -838,8 +839,7 @@ namespace Orm::Tiny::Concerns
         const auto &modelAttributesHash = getAttributesHash();
 
         for (const auto &attribute : attributes) {
-            if (!modelAttributesHash.contains(attribute))
-                throwIfNoAttributeInHash(attribute, __tiny_func__);
+            throwIfNoAttributeInHash(modelAttributesHash, attribute, __tiny_func__);
 
             const auto &modelAttributeValue =
                     modelAttributes.at(modelAttributesHash.at(attribute)).value;
@@ -990,8 +990,12 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::throwIfNoAttributeInHash(
+            const std::unordered_map<QString, int> &attributesHash,
             const QString &attribute, const QString &functionName)
     {
+        if (attributesHash.contains(attribute))
+            return;
+
         throw Orm::Exceptions::InvalidArgumentError(
                 QStringLiteral("The '%1' attribute doesn't exist in the '%2' "
                                "model's m_attributes vector in %3().")
