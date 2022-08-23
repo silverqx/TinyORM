@@ -49,6 +49,9 @@ namespace Tiny
         /*! Deleted move assignment operator (not needed). */
         BuilderProxies &operator=(BuilderProxies &&) = delete;
 
+        /*! The table which the query is targeting. */
+        const FromClause &from() const;
+
         /* Retrieving results */
         /*! Concatenate values of a given column as a string. */
         QString implode(const QString &column, const QString &glue = "") const;
@@ -632,6 +635,12 @@ namespace Tiny
     };
 
     /* public */
+
+    template<typename Model>
+    const FromClause &BuilderProxies<Model>::from() const
+    {
+        return toBase().getFrom();
+    }
 
     /* Retrieving results */
 

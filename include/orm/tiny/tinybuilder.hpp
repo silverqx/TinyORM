@@ -227,6 +227,8 @@ namespace Orm::Tiny
 
         /*! Get a database connection. */
         inline DatabaseConnection &getConnection() const noexcept;
+        /*! Get the query grammar instance. */
+        inline const QueryGrammar &getGrammar();
 
         /*! Get a base query builder instance. */
         inline QueryBuilder &toBase() const;
@@ -998,6 +1000,13 @@ namespace Orm::Tiny
     Builder<Model>::getConnection() const noexcept
     {
         return m_query->getConnection();
+    }
+
+    template<typename Model>
+    const QueryGrammar &
+    Builder<Model>::getGrammar()
+    {
+        return toBase().getGrammar();
     }
 
     template<typename Model>
