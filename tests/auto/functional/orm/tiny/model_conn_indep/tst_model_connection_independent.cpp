@@ -390,7 +390,7 @@ void tst_Model_Connection_Independent::replicate_WithCreate() const
     // Following is the most used case for the replicate method so I will test it
     auto user = User::create({{"name", "xyz"},
                               {"is_banned", true},
-                              {"note", "test"}});
+                              {"note", "test replicate"}});
     QVERIFY(user.exists);
 
     std::unordered_set except {NAME};
