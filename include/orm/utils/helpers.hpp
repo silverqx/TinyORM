@@ -31,6 +31,10 @@ namespace Orm::Utils
         template<typename T>
         static T &&tap(std::remove_reference_t<T> &&value,
                        std::function<void(T &)> &&callback = nullptr) noexcept;
+        /*! Call the given callback with the given value then return the value. */
+        template<typename T>
+        static T &&tap(std::remove_reference_t<T> &&value,
+                       std::function<void()> &&callback = nullptr) noexcept;
     };
 
     /* public */
@@ -41,6 +45,16 @@ namespace Orm::Utils
     {
         if (callback)
             std::invoke(callback, value);
+
+        return std::move(value);
+    }
+
+    template<typename T>
+    T &&Helpers::tap(std::remove_reference_t<T> &&value,
+                     std::function<void()> &&callback) noexcept
+    {
+        if (callback)
+            std::invoke(callback);
 
         return std::move(value);
     }
