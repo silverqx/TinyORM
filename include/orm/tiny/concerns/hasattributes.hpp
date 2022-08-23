@@ -234,6 +234,7 @@ namespace Orm::Tiny::Concerns
         inline static QStringList u_dates;
 
     private:
+        /*! Get the attributes that should be converted to dates. */
         QStringList getDatesInternal() const;
 
         /* Static cast this to a child's instance type (CRTP) */
