@@ -7,12 +7,14 @@ TINY_SYSTEM_HEADER
 
 #include <QDateTime>
 
+#include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/exceptions/invalidformaterror.hpp"
 #include "orm/macros/threadlocal.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/utils/attribute.hpp"
 #include "orm/tiny/utils/string.hpp"
+#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -27,6 +29,8 @@ namespace Orm::Tiny::Concerns
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! Alias for the string utils. */
         using StringUtils = Orm::Tiny::Utils::String;
+        /*! Alias for the type utils. */
+        using TypeUtils = Orm::Utils::Type;
 
     public:
         /*! Comparison operator for the HasAttributes concern. */
@@ -236,6 +240,10 @@ namespace Orm::Tiny::Concerns
     private:
         /*! Get the attributes that should be converted to dates. */
         QStringList getDatesInternal() const;
+
+        /*! Throw if the m_attributesHash doesn't contain a given attribute. */
+        static void throwIfNoAttributeInHash(const QString &attribute,
+                                             const QString &functionName);
 
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
@@ -830,11 +838,28 @@ namespace Orm::Tiny::Concerns
         const auto &modelAttributesHash = getAttributesHash();
 
         for (const auto &attribute : attributes) {
-            const auto attributeIndex = m_originalHash.at(attribute);
-            Q_ASSERT(attributeIndex >= 0 && attributeIndex < m_original.size());
+            if (!modelAttributesHash.contains(attribute))
+                throwIfNoAttributeInHash(attribute, __tiny_func__);
 
-            m_original[attributeIndex].value =
+            const auto &modelAttributeValue =
                     modelAttributes.at(modelAttributesHash.at(attribute)).value;
+
+            // The 'attribute' already exists in the m_original/Hash, update it
+            if (m_originalHash.contains(attribute)) {
+                const auto attributeIndex = m_originalHash.at(attribute);
+                Q_ASSERT(attributeIndex >= 0 && attributeIndex < m_original.size());
+
+                m_original[attributeIndex].value = modelAttributeValue;
+            }
+            /* The 'attribute' doesn't exist in the m_original/Hash, so create it and
+               rehash m_originalHash, but only from the addition position. */
+            else {
+                const auto rehashFrom = static_cast<int>(modelAttributes.size()) - 1;
+
+                m_original.append({attribute, modelAttributeValue});
+
+                rehashAttributePositions(m_original, m_originalHash, rehashFrom);
+            }
         }
 
         return model();
@@ -961,6 +986,17 @@ namespace Orm::Tiny::Concerns
         dates.removeDuplicates();
 
         return dates;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::throwIfNoAttributeInHash(
+            const QString &attribute, const QString &functionName)
+    {
+        throw Orm::Exceptions::InvalidArgumentError(
+                QStringLiteral("The '%1' attribute doesn't exist in the '%2' "
+                               "model's m_attributes vector in %3().")
+                .arg(attribute, TypeUtils::classPureBasename<Derived>(),
+                     functionName));
     }
 
     /* Static cast this to a child's instance type (CRTP) */
