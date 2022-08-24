@@ -24,7 +24,7 @@ namespace Concerns
 
     /*! More complex 'Retrieving results' methods that internally build queries. */
     template<ModelConcept Model>
-    class BuildsQueries // clazy:exclude=copyable-polymorphic
+    class BuildsQueries
     {
         /*! Alias for the query utils. */
         using QueryUtils = Orm::Utils::Query;
@@ -32,8 +32,8 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline BuildsQueries() = default;
-        /*! Virtual destructor, to pass -Weffc++. */
-        inline virtual ~BuildsQueries() = default;
+        /*! Default destructor. */
+        inline ~BuildsQueries() = default;
 
         /*! Copy constructor. */
         inline BuildsQueries(const BuildsQueries &) = default;
