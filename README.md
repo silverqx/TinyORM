@@ -63,7 +63,7 @@ Whole library is documented as markdown documents:
   - eager and lazy loading with custom select and constraints 🚀
   - all query builder methods are proxied to the model instances and also to the relation instances 🤯 (everything that can be called on the query builder can also be called on the model and relation instances)
   - clean active record pattern
-  - advanced features like timestamps, touching parent timestamps, default models, and default model attributes
+  - advanced features like timestamps, touching parent timestamps, __soft deleting__, default models, and default model attributes
   - querying relationships existence/absence using the has, whereHas, and hasNested methods (using dot notation for selecting nested relationships _users.posts.comments_)
 - compiled database migrations and seeders 🕺
   - create, update, drop, and rename database tables
