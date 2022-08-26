@@ -13,6 +13,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/databaseconnection.hpp"
 #include "orm/tiny/concerns/buildsqueries.hpp"
+#include "orm/tiny/concerns/buildssoftdeletes.hpp"
 #include "orm/tiny/concerns/queriesrelationships.hpp"
 #include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/tinybuilderproxies.hpp"
@@ -22,14 +23,18 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny
 {
 
-    /*! ORM Tiny builder (returns a hydrated models instead of the QSqlQuery). */
+    /*! ORM Tiny builder (returns hydrated models instead of the QSqlQuery). */
     template<typename Model>
     class Builder : public Concerns::BuildsQueries<Model>,
                     public BuilderProxies<Model>,
-                    public Concerns::QueriesRelationships<Model>
+                    public Concerns::QueriesRelationships<Model>,
+                    public Concerns::BuildsSoftDeletes<Model, Model::extendsSoftDeletes()>
     {
         // Used by TinyBuilderProxies::where/latest/oldest/update()
         friend BuilderProxies<Model>;
+        // To access enforceOrderBy(), and defaultKeyName()
+        template<ModelConcept T>
+        friend class Concerns::BuildsQueries;
 
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
@@ -39,10 +44,6 @@ namespace Orm::Tiny
         using QueryUtils = Orm::Utils::Query;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
-
-        // To access enforceOrderBy(), and defaultKeyName()
-        template<ModelConcept T>
-        friend class Concerns::BuildsQueries;
 
     public:
         /*! Constructor. */
@@ -59,7 +60,7 @@ namespace Orm::Tiny
         Builder &operator=(Builder &&) = delete;
 
         /*! Get the SQL representation of the query. */
-        inline QString toSql() const;
+        inline QString toSql();
         /*! Get the current query value bindings as flattened QVector. */
         inline QVector<QVariant> getBindings() const;
 
@@ -191,13 +192,22 @@ namespace Orm::Tiny
                              const QVector<AttributeItem> &values = {});
 
         /* QueryBuilder proxy methods that need modifications */
+        /*! Update records in the database. */
+        std::tuple<int, QSqlQuery>
+        update(const QVector<UpdateItem> &values);
+
+        /*! Delete records from the database. */
+        std::tuple<int, QSqlQuery> remove();
+        /*! Delete records from the database, alias. */
+        inline std::tuple<int, QSqlQuery> deleteModels();
+
         /*! Insert new records or update the existing ones. */
         std::tuple<int, std::optional<QSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
-               const QStringList &update) const;
+               const QStringList &update);
         /*! Insert new records or update the existing ones (update all columns). */
         std::tuple<int, std::optional<QSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy) const;
+        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
 
         /* TinyBuilder methods */
         /*! Clone the Tiny query. */
@@ -226,15 +236,25 @@ namespace Orm::Tiny
         getQuerySharedPointer() const noexcept;
 
         /*! Get a database connection. */
-        inline DatabaseConnection &getConnection() const noexcept;
+        inline DatabaseConnection &getConnection();
         /*! Get the query grammar instance. */
         inline const QueryGrammar &getGrammar();
 
         /*! Get a base query builder instance. */
-        inline QueryBuilder &toBase() const;
+        QueryBuilder &toBase();
 
         /*! Qualify the given column name by the model's table. */
         inline QString qualifyColumn(const QString &column) const;
+
+        /*! Register a replacement for the default delete function. */
+        inline void
+        onDelete(std::function<std::tuple<int, QSqlQuery>(Builder<Model> &)> &&callback);
+
+        /* BuildsSoftDeletes */
+        /*! Apply the SoftDeletes where null condition for the deleted_at column. */
+        Builder<Model> &applySoftDeletes();
+        /*! Determine whether the Model the TinyBuilder manages extends SoftDeletes. */
+        constexpr static bool extendsSoftDeletes() noexcept;
 
     protected:
         /*! Expression alias. */
@@ -293,6 +313,13 @@ namespace Orm::Tiny
         Model m_model;
         /*! The relationships that should be eager loaded. */
         QVector<WithItem> m_eagerLoad;
+
+        /*! A replacement for the typical delete function. */
+        std::function<std::tuple<int, QSqlQuery>(Builder<Model> &)> m_onDelete = nullptr;
+
+        /* BuildsSoftDeletes */
+        /*! Determine whether the Model the TinyBuilder manages extends SoftDeletes. */
+        constexpr static bool m_extendsSoftDeletes = Model::extendsSoftDeletes();
     };
 
     /* public */
@@ -303,10 +330,14 @@ namespace Orm::Tiny
         , m_model(model)
     {
         m_query->from(m_model.getTable());
+
+        // Initialize the BuildsSoftDeletes concern (registers onDelete callback)
+        if constexpr (m_extendsSoftDeletes)
+            this->initializeBuildsSoftDeletes();
     }
 
     template<typename Model>
-    QString Builder<Model>::toSql() const
+    QString Builder<Model>::toSql()
     {
         return toBase().toSql();
     }
@@ -314,7 +345,8 @@ namespace Orm::Tiny
     template<typename Model>
     QVector<QVariant> Builder<Model>::getBindings() const
     {
-        return toBase().getBindings();
+        // toBase() not needed as the BuildsSoftDeletes is not adding any new bindings
+        return getQuery().getBindings();
     }
 
     /* Retrieving results */
@@ -324,6 +356,8 @@ namespace Orm::Tiny
     QVector<Model>
     Builder<Model>::get(const QVector<Column> &columns)
     {
+        applySoftDeletes();
+
         auto models = getModels(columns);
 
         /* If we actually found models we will also eager load any relationships that
@@ -807,10 +841,33 @@ namespace Orm::Tiny
     /* QueryBuilder proxy methods that need modifications */
 
     template<typename Model>
+    std::tuple<int, QSqlQuery>
+    Builder<Model>::update(const QVector<UpdateItem> &values)
+    {
+        return toBase().update(addUpdatedAtColumn(values));
+    }
+
+    template<typename Model>
+    std::tuple<int, QSqlQuery> Builder<Model>::remove()
+    {
+        // Custom onDelete callback registered
+        if (m_onDelete)
+            return std::invoke(m_onDelete, *this);
+
+        return toBase().deleteRow();
+    }
+
+    template<typename Model>
+    std::tuple<int, QSqlQuery> Builder<Model>::deleteModels()
+    {
+        return remove();
+    }
+
+    template<typename Model>
     std::tuple<int, std::optional<QSqlQuery>>
     Builder<Model>::upsert(
             const QVector<QVariantMap> &values, const QStringList &uniqueBy,
-            const QStringList &update) const
+            const QStringList &update)
     {
         // Nothing to do, no values to insert or update
         if (values.isEmpty())
@@ -830,7 +887,7 @@ namespace Orm::Tiny
     template<typename Model>
     std::tuple<int, std::optional<QSqlQuery>>
     Builder<Model>::upsert(
-            const QVector<QVariantMap> &values, const QStringList &uniqueBy) const
+            const QVector<QVariantMap> &values, const QStringList &uniqueBy)
     {
         // Update all columns
         // Columns are obtained only from a first QMap
@@ -997,9 +1054,9 @@ namespace Orm::Tiny
 
     template<typename Model>
     DatabaseConnection &
-    Builder<Model>::getConnection() const noexcept
+    Builder<Model>::getConnection()
     {
-        return m_query->getConnection();
+        return toBase().getConnection();
     }
 
     template<typename Model>
@@ -1010,17 +1067,42 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QueryBuilder &Builder<Model>::toBase() const
+    QueryBuilder &Builder<Model>::toBase()
     {
         // FUTURE add Query Scopes feature silverqx
         // retutn applyScopes().getQuery();
-        return getQuery();
+
+        return applySoftDeletes().getQuery();
     }
 
     template<typename Model>
     QString Builder<Model>::qualifyColumn(const QString &column) const
     {
         return m_model.qualifyColumn(column);
+    }
+
+    template<typename Model>
+    void Builder<Model>::onDelete(
+            std::function<std::tuple<int, QSqlQuery>(Builder<Model> &)> &&callback)
+    {
+        m_onDelete = std::move(callback);
+    }
+
+    /* BuildsSoftDeletes */
+
+    template<typename Model>
+    Builder<Model> &Builder<Model>::applySoftDeletes()
+    {
+        if constexpr (m_extendsSoftDeletes)
+            return Concerns::BuildsSoftDeletes<Model, true>::applySoftDeletes();
+
+        return *this;
+    }
+
+    template<typename Model>
+    constexpr bool Builder<Model>::extendsSoftDeletes() noexcept
+    {
+        return m_extendsSoftDeletes;
     }
 
     /* protected */

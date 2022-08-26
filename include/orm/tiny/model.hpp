@@ -20,17 +20,17 @@ TINY_SYSTEM_HEADER
 #ifdef TINYORM_TESTS_CODE
 #  include "orm/tiny/types/connectionoverride.hpp"
 #endif
-#include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny
 {
+    template<typename Derived>
+    class SoftDeletes;
 
     /*! Alias for the GuardedModel. */
     using GuardedModel = Concerns::GuardedModel;
 
-    // TODO model missing methods Soft Deleting, Model::trashed()/restore()/withTrashed()/forceDelete()/onlyTrashed(), check this methods also on EloquentBuilder and SoftDeletes trait silverqx
     // TODO model missing methods Model::loadMissing() silverqx
     // TODO model missing methods EloquentCollection::toQuery() silverqx
     // TODO model missing saveOrFail(), updateOrFail(), deleteOrFail(), I will need to implement ManagesTransaction::transaction(callback) method silverqx
@@ -56,6 +56,8 @@ namespace Orm::Tiny
         friend Concerns::HasRelationships<Derived, AllRelations...>;
         // Used by QueriesRelationships::has()
         friend Concerns::QueriesRelationships<Derived>;
+        // To access setKeysForSaveQuery(), and appendToUserDates()
+        friend SoftDeletes<Derived>;
         // FUTURE try to solve problem with forward declarations for friend methods, to allow only relevant methods from TinyBuilder silverqx
         // Used by TinyBuilder::eagerLoadRelations()
         friend TinyBuilder<Derived>;
@@ -138,7 +140,7 @@ namespace Orm::Tiny
 
         /*! Delete the model from the database. */
         bool remove();
-        /*! Delete the model from the database (alias). */
+        /*! Delete the model from the database, alias. */
         bool deleteModel();
 
         /*! Reload a fresh model instance from the database. */
@@ -235,6 +237,8 @@ namespace Orm::Tiny
         /* Others */
         /*! Qualify the given column name by the model's table. */
         QString qualifyColumn(const QString &column) const;
+        /*! Determina whether the Derived Model extends the SoftDeletes. */
+        constexpr static bool extendsSoftDeletes();
 
         /* Data members */
         /*! Indicates if the model exists. */
@@ -362,6 +366,12 @@ namespace Orm::Tiny
         inline static const QString &getUserCreatedAtColumn() noexcept;
         /*! Get the UPDATED_AT attribute from the Derived model. */
         inline static const QString &getUserUpdatedAtColumn() noexcept;
+
+        /* SoftDeletes */
+        /*! Initialize the SoftDeletes (add the deleted_at column to the u_dates). */
+        void initializeSoftDeletes() const;
+        /*! Append the given column to the u_dates attribute. */
+        static void appendToUserDates(const QString &column);
     };
 
     /* public */
@@ -373,6 +383,9 @@ namespace Orm::Tiny
     {
         // Compile time check if a primary key type is supported by a QVariant
         qMetaTypeId<typename Derived::KeyType>();
+
+        // Initialize the SoftDeletes (add the deleted_at column to the u_dates)
+        initializeSoftDeletes();
 
         // Default Attribute Values
         fill(Derived::u_attributes);
@@ -413,6 +426,9 @@ namespace Orm::Tiny
     {
         Derived model;
 
+        // Initialize the SoftDeletes (add the deleted_at column to the u_dates)
+        model.initializeSoftDeletes();
+
         model.fill(attributes);
 
         return model;
@@ -423,6 +439,9 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::instance(QVector<AttributeItem> &&attributes)
     {
         Derived model;
+
+        // Initialize the SoftDeletes (add the deleted_at column to the u_dates)
+        model.initializeSoftDeletes();
 
         model.fill(std::move(attributes));
 
@@ -584,7 +603,10 @@ namespace Orm::Tiny
 
         // FUTURE performDeleteOnModel() and return value, check logic here, eg what happens when no model is delete and combinations silverqx
         // FUTURE inconsistent return values save(), update(), remove(), ... silverqx
-        performDeleteOnModel();
+        if constexpr (Model::extendsSoftDeletes())
+            model().SoftDeletes<Derived>::performDeleteOnModel();
+        else
+            Model::performDeleteOnModel();
 
         /* Once the model has been deleted, we will fire off the deleted event so that
            the developers may hook into post-delete operations. We will then return
@@ -820,7 +842,13 @@ namespace Orm::Tiny
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newQuery()
     {
-        return newQueryWithoutScopes();
+        // Ownership of the std::shared_ptr<QueryBuilder>
+        auto query = newQueryWithoutScopes();
+
+        if constexpr (extendsSoftDeletes())
+            query->enableSoftDeletes();
+
+        return query;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -839,7 +867,7 @@ namespace Orm::Tiny
         // Ownership of a unique_ptr()
         auto tinyBuilder = newModelQuery();
 
-        tinyBuilder->with(relationsConverted);
+        tinyBuilder->with(std::move(relationsConverted));
 
         return tinyBuilder;
     }
@@ -861,7 +889,13 @@ namespace Orm::Tiny
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newQueryWithoutRelationships()
     {
-        return newModelQuery();
+        // Ownership of the std::shared_ptr<QueryBuilder>
+        auto query = newModelQuery();
+
+        if constexpr (extendsSoftDeletes())
+            query->enableSoftDeletes();
+
+        return query;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1089,6 +1123,12 @@ namespace Orm::Tiny
             return column;
 
         return DOT_IN.arg(model().getTable(), column);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    constexpr bool Model<Derived, AllRelations...>::extendsSoftDeletes()
+    {
+        return std::is_base_of_v<SoftDeletes<Derived>, Derived>;
     }
 
     /* protected */
@@ -1455,6 +1495,21 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::getUserUpdatedAtColumn() noexcept
     {
         return Derived::UPDATED_AT;
+    }
+
+    /* SoftDeletes */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void Model<Derived, AllRelations...>::initializeSoftDeletes() const
+    {
+        if constexpr (extendsSoftDeletes())
+            model().SoftDeletes<Derived>::initializeSoftDeletes();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void Model<Derived, AllRelations...>::appendToUserDates(const QString &column)
+    {
+        const_cast<QStringList &>(Derived::u_dates).append(column);
     }
 
 } // namespace Orm::Tiny

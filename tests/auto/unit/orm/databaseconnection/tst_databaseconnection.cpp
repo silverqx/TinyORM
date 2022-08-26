@@ -174,7 +174,7 @@ void tst_DatabaseConnection::transaction_RollBack() const
     auto query = builder->from("users").find(id);
 
     QVERIFY(query.isActive());
-    QVERIFY(query.record().count() == 4);
+    QVERIFY(query.record().count() == 7);
     // QSQLITE driver doesn't report a size
     if (DB::connection(connection).driverName() != QSQLITE)
         QVERIFY(query.size() == 0);
@@ -291,7 +291,7 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
         auto query = builder->from("users").find(id);
 
         QVERIFY(query.isActive());
-        QVERIFY(query.record().count() == 4);
+        QVERIFY(query.record().count() == 7);
         // QSQLITE driver doesn't report a size
         if (DB::connection(connection).driverName() != QSQLITE)
             QVERIFY(query.size() == 0);
@@ -323,7 +323,7 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
         auto query = builder->from("users").find(id);
 
         QVERIFY(query.isActive());
-        QVERIFY(query.record().count() == 4);
+        QVERIFY(query.record().count() == 7);
         // QSQLITE driver doesn't report a size
         if (DB::connection(connection).driverName() != QSQLITE)
             QVERIFY(query.size() == 0);
@@ -390,7 +390,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
 
     // Check query result
     QVERIFY(query.isActive());
-    QVERIFY(query.record().count() == 4);
+    QVERIFY(query.record().count() == 7);
     // QSQLITE driver doesn't report a size
     if (DB::connection(connection).driverName() != QSQLITE)
         QVERIFY(query.size() == 3);
@@ -484,7 +484,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
 
     // Check query result
     QVERIFY(query.isActive());
-    QVERIFY(query.record().count() == 4);
+    QVERIFY(query.record().count() == 7);
     // QSQLITE driver doesn't report a size
     if (DB::connection(connection).driverName() != QSQLITE)
         QVERIFY(query.size() == 2);
@@ -594,7 +594,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
 
     // Check query result
     QVERIFY(query.isActive());
-    QVERIFY(query.record().count() == 4);
+    QVERIFY(query.record().count() == 7);
     // QSQLITE driver doesn't report a size
     if (DB::connection(connection).driverName() != QSQLITE)
         QVERIFY(query.size() == 0);
@@ -687,7 +687,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
 
         // Check query result
         QVERIFY(query.isActive());
-        QVERIFY(query.record().count() == 4);
+        QVERIFY(query.record().count() == 7);
         // QSQLITE driver doesn't report a size
         if (DB::connection(connection).driverName() != QSQLITE)
             QVERIFY(query.size() == 0);
@@ -775,7 +775,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
 
         // Check query result
         QVERIFY(query.isActive());
-        QVERIFY(query.record().count() == 4);
+        QVERIFY(query.record().count() == 7);
         // QSQLITE driver doesn't report a size
         if (DB::connection(connection).driverName() != QSQLITE)
             QVERIFY(query.size() == 0);

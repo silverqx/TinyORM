@@ -39,6 +39,12 @@ private Q_SLOTS:
 
     void removeColumn() const;
 
+    void softDeletes() const;
+    void softDeletes_Custom_ColumnName() const;
+
+    void dropSoftDeletes() const;
+    void dropSoftDeletes_Custom_ColumnName() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
@@ -276,6 +282,52 @@ void tst_Blueprint::removeColumn() const
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
              QVector<QString> {"alter table `torrents` "
                                "add `name` varchar(255) not null"});
+}
+
+void tst_Blueprint::softDeletes() const
+{
+    Blueprint blueprint("torrents", [](Blueprint &table)
+    {
+        table.softDeletes();
+    });
+
+    QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
+             QVector<QString> {"alter table `torrents` "
+                               "add `deleted_at` timestamp null"});
+}
+
+void tst_Blueprint::softDeletes_Custom_ColumnName() const
+{
+    Blueprint blueprint("torrents", [](Blueprint &table)
+    {
+        table.softDeletes("deleted_on");
+    });
+
+    QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
+             QVector<QString> {"alter table `torrents` "
+                               "add `deleted_on` timestamp null"});
+}
+
+void tst_Blueprint::dropSoftDeletes() const
+{
+    Blueprint blueprint("torrents", [](Blueprint &table)
+    {
+        table.dropSoftDeletes();
+    });
+
+    QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
+             QVector<QString> {"alter table `torrents` drop `deleted_at`"});
+}
+
+void tst_Blueprint::dropSoftDeletes_Custom_ColumnName() const
+{
+    Blueprint blueprint("torrents", [](Blueprint &table)
+    {
+        table.dropSoftDeletes("deleted_on");
+    });
+
+    QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
+             QVector<QString> {"alter table `torrents` drop `deleted_on`"});
 }
 
 QTEST_MAIN(tst_Blueprint)

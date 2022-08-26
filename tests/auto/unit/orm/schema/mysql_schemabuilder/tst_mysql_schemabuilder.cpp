@@ -47,7 +47,7 @@ private Q_SLOTS:
     void createTable_Temporary() const;
     void createTable_Charset_Collation_Engine() const;
 
-    void timestamps_rememberToken_CreateAndDrop() const;
+    void timestamps_rememberToken_softDeletes_CreateAndDrop() const;
 
     void modifyTable() const;
 
@@ -305,7 +305,7 @@ void tst_MySql_SchemaBuilder::createTable_Charset_Collation_Engine() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_MySql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
+void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -316,6 +316,7 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
 
             table.timestamps();
             table.rememberToken();
+            table.softDeletes();
         });
 
         Schema::on(connection.getName())
@@ -323,6 +324,7 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
         {
             table.dropTimestamps();
             table.dropRememberToken();
+            table.dropSoftDeletes();
         });
 
         Schema::on(connection.getName())
@@ -334,7 +336,7 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
         });
     });
 
-    QCOMPARE(log.size(), 4);
+    QCOMPARE(log.size(), 5);
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
@@ -342,7 +344,8 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
              "`id` bigint unsigned not null auto_increment primary key, "
              "`created_at` timestamp null, "
              "`updated_at` timestamp null, "
-             "`remember_token` varchar(100) null) "
+             "`remember_token` varchar(100) null, "
+             "`deleted_at` timestamp null) "
              "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
              "engine = InnoDB");
     QVERIFY(log0.boundValues.isEmpty());
@@ -359,13 +362,18 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
+             "alter table `firewalls` drop `deleted_at`");
+    QVERIFY(log3.boundValues.isEmpty());
+
+    const auto &log4 = log.at(4);
+    QCOMPARE(log4.query,
              "create table `firewalls` ("
              "`id` bigint unsigned not null auto_increment primary key, "
              "`created_at` timestamp(3) null, "
              "`updated_at` timestamp(3) null) "
              "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
              "engine = InnoDB");
-    QVERIFY(log3.boundValues.isEmpty());
+    QVERIFY(log4.boundValues.isEmpty());
 }
 
 void tst_MySql_SchemaBuilder::modifyTable() const

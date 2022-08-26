@@ -5,6 +5,7 @@
 #include "orm/db.hpp"
 #include "orm/tiny/model.hpp"
 #include "orm/tiny/relations/pivot.hpp"
+//#include "orm/tiny/softdeletes.hpp"
 
 #include "models/tag.hpp"
 #include "models/tagged.hpp"
@@ -30,6 +31,7 @@ using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;
 using Orm::Tiny::Relations::Pivot;
+//using Orm::Tiny::SoftDeletes;
 
 #ifdef PROJECT_TINYORM_PLAYGROUND
 using TinyPlay::Configuration;
@@ -46,6 +48,7 @@ class User;
 class Torrent final :
         public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, User, Pivot>
 //        public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, User, Tagged>
+//        public SoftDeletes<Torrent>
 {
     friend Model;
     using Model::Model;

@@ -110,6 +110,7 @@ function(tinyorm_sources out_headers out_sources)
     if(ORM)
         list(APPEND headers
             tiny/concerns/buildsqueries.hpp
+            tiny/concerns/buildssoftdeletes.hpp
             tiny/concerns/guardedmodel.hpp
             tiny/concerns/guardsattributes.hpp
             tiny/concerns/hasattributes.hpp
@@ -138,6 +139,7 @@ function(tinyorm_sources out_headers out_sources)
             tiny/relations/relation.hpp
             tiny/relations/relationproxies.hpp
             tiny/relations/relationtypes.hpp
+            tiny/softdeletes.hpp
             tiny/tinybuilder.hpp
             tiny/tinybuilderproxies.hpp
             tiny/tinyconcepts.hpp

@@ -12,6 +12,7 @@ using Orm::Constants::LIKE;
 using Orm::Constants::OR;
 using Orm::Constants::SIZE;
 
+using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::QueryBuilder;
 using Orm::Tiny::TinyBuilder;
@@ -21,12 +22,15 @@ using TypeUtils = Orm::Utils::Type;
 using TestUtils::Databases;
 
 using Models::FilePropertyProperty;
+using Models::Phone;
+using Models::Role;
 using Models::Tag;
 using Models::TagProperty;
 using Models::Torrent;
 using Models::TorrentPeer;
 using Models::TorrentPreviewableFile;
 using Models::TorrentPreviewableFileProperty;
+using Models::User;
 
 class tst_MySql_TinyBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
@@ -38,6 +42,9 @@ private slots:
     /* Querying Relationship Existence/Absence on HasMany */
     void has_Basic_OnHasMany() const;
     void has_Count_OnHasMany() const;
+
+    void has_Basic_OnBelongsTo_WithSoftDeletes() const;
+    void has_Count_OnBelongsToMany_WithSoftDeletes() const;
 
     void whereHas_Basic_QueryBuilder_OnHasMany() const;
     void whereHas_Basic_TinyBuilder_OnHasMany() const;
@@ -80,6 +87,10 @@ private slots:
     void hasNested_Count_TinyBuilder_OnBelongsToMany_NestedAsLast() const;
     void hasNested_Count_TinyBuilder_OnBelongsToMany_NestedInMiddle() const;
 
+    /* SoftDeletes */
+    void deletedAt_Column_WithoutJoins() const;
+    void deletedAt_Column_WithJoins() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create TinyBuilder instance for the given connection. */
@@ -89,6 +100,8 @@ private:
     /*! Connection name used in this test case. */
     QString m_connection {};
 };
+
+/* private slots */
 
 void tst_MySql_TinyBuilder::initTestCase()
 {
@@ -123,6 +136,35 @@ void tst_MySql_TinyBuilder::has_Count_OnHasMany() const
              "select * from `torrents` where "
                "(select count(*) from `torrent_previewable_files` "
                "where `torrents`.`id` = `torrent_previewable_files`.`torrent_id`) > 3");
+    QVERIFY(builder->getBindings().isEmpty());
+}
+
+void tst_MySql_TinyBuilder::has_Basic_OnBelongsTo_WithSoftDeletes() const
+{
+    auto builder = createTinyQuery<Phone>();
+
+    builder->has("user");
+
+    QCOMPARE(builder->toSql(),
+             "select * from `user_phones` where exists "
+               "(select * from `users` "
+               "where `user_phones`.`user_id` = `users`.`id` and "
+                 "`users`.`deleted_at` is null)");
+    QVERIFY(builder->getBindings().isEmpty());
+}
+
+void tst_MySql_TinyBuilder::has_Count_OnBelongsToMany_WithSoftDeletes() const
+{
+    auto builder = createTinyQuery<Role>();
+
+    builder->has("users", ">", 3);
+
+    QCOMPARE(builder->toSql(),
+             "select * from `roles` where "
+               "(select count(*) from `users` "
+                 "inner join `role_user` on `users`.`id` = `role_user`.`user_id` "
+                 "where `roles`.`id` = `role_user`.`role_id` and "
+                   "`users`.`deleted_at` is null) > 3");
     QVERIFY(builder->getBindings().isEmpty());
 }
 
@@ -789,6 +831,48 @@ void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnBelongsToMany_NestedIn
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(1)}));
 }
+
+/* SoftDeletes */
+
+void tst_MySql_TinyBuilder::deletedAt_Column_WithoutJoins() const
+{
+    // deleted_at column will be unqualified
+    auto log = DB::connection(m_connection).pretend([this]
+    {
+        User::on(m_connection)->whereKey(3).remove();
+    });
+
+    QCOMPARE(log.size(), 1);
+    const auto &firstLog = log.first();
+
+    QCOMPARE(firstLog.query,
+             "update `users` set `deleted_at` = ?, `users`.`updated_at` = ? "
+             "where `users`.`id` = ? and `users`.`deleted_at` is null");
+    QVERIFY(firstLog.boundValues.size() == 3);
+}
+
+void tst_MySql_TinyBuilder::deletedAt_Column_WithJoins() const
+{
+    // deleted_at column will be qualified if joins are in the game
+    auto log = DB::connection(m_connection).pretend([this]
+    {
+        User::on(m_connection)
+                ->join("contacts", "users.id", "=", "contacts.user_id")
+                .whereKey(3).remove();
+    });
+
+    QCOMPARE(log.size(), 1);
+    const auto &firstLog = log.first();
+
+    QCOMPARE(firstLog.query,
+             "update `users` "
+             "inner join `contacts` on `users`.`id` = `contacts`.`user_id` "
+             "set `users`.`deleted_at` = ?, `users`.`updated_at` = ? "
+             "where `users`.`id` = ? and `users`.`deleted_at` is null");
+    QVERIFY(firstLog.boundValues.size() == 3);
+}
+
+/* private */
 
 template<typename Model>
 std::unique_ptr<TinyBuilder<Model>>

@@ -101,6 +101,7 @@ headersList += \
 !disable_orm: \
     headersList += \
         $$PWD/orm/tiny/concerns/buildsqueries.hpp \
+        $$PWD/orm/tiny/concerns/buildssoftdeletes.hpp \
         $$PWD/orm/tiny/concerns/guardedmodel.hpp \
         $$PWD/orm/tiny/concerns/guardsattributes.hpp \
         $$PWD/orm/tiny/concerns/hasattributes.hpp \
@@ -129,6 +130,7 @@ headersList += \
         $$PWD/orm/tiny/relations/relation.hpp \
         $$PWD/orm/tiny/relations/relationproxies.hpp \
         $$PWD/orm/tiny/relations/relationtypes.hpp \
+        $$PWD/orm/tiny/softdeletes.hpp \
         $$PWD/orm/tiny/tinybuilder.hpp \
         $$PWD/orm/tiny/tinybuilderproxies.hpp \
         $$PWD/orm/tiny/tinyconcepts.hpp \

@@ -177,6 +177,8 @@ namespace Seeders
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::CREATED_AT; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "updated_at". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::UPDATED_AT; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "deleted_at". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::DELETED_AT; // NOLINT(misc-unused-using-decls)
 
     /*! Alias for the string constant "MySQL". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::MYSQL_; // NOLINT(misc-unused-using-decls)

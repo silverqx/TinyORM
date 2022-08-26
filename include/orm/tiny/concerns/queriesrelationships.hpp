@@ -502,13 +502,14 @@ namespace Private
     {
         hasQuery.mergeConstraintsFrom(relation.getQuery());
 
-        if (canUseExistsForExistenceCheck(comparison, count))
-            return query().addWhereExistsQuery(
-                        // FEATURE scopes, here should be toBase() silverqx
-                        hasQuery.getQuerySharedPointer(), condition,
-                        comparison == LT && count == 1);
+        // The same as toBase()
+        hasQuery.applySoftDeletes();
 
-        // FEATURE scopes, here should be toBase() too silverqx
+        if (canUseExistsForExistenceCheck(comparison, count))
+            return query().addWhereExistsQuery(hasQuery.getQuerySharedPointer(),
+                                               condition,
+                                               comparison == LT && count == 1);
+
         return query().addWhereCountQuery(hasQuery.getQuerySharedPointer(), comparison,
                                           count, condition);
     }

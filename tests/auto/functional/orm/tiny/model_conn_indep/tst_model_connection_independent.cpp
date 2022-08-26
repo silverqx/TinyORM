@@ -411,7 +411,7 @@ void tst_Model_Connection_Independent::replicate_WithCreate() const
     QVERIFY(userReplicated.getRelations().empty());
 
     // Restore db
-    QVERIFY(user.remove());
+    QVERIFY(user.forceDelete());
 }
 
 void tst_Model_Connection_Independent::replicate_WithRelations() const

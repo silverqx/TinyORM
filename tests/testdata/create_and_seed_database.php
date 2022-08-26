@@ -142,6 +142,9 @@ function createTables(string $connection): void
         $table->string('name')->unique();
         $table->boolean('is_banned')->default(false);
         $table->string('note')->nullable();
+
+        $table->timestamps();
+        $table->softDeletes();
     });
 
     $schema->create('roles', function (Blueprint $table) {
@@ -292,10 +295,12 @@ function createTables(string $connection): void
 function seedTables(string $connection): void
 {
     Capsule::table('users', null, $connection)->insert(
-        combineValues(['id', 'name', 'is_banned', 'note'], [
-            [1, 'andrej', false, null],
-            [2, 'silver', false, null],
-            [3, 'peter',  true,  'no torrents no roles'],
+        combineValues(['id', 'name', 'is_banned', 'note', 'created_at', 'updated_at', 'deleted_at'], [
+            [1, 'andrej', false, null,                   '2022-01-01 14:51:23', '2022-01-01 17:46:31', null],
+            [2, 'silver', false, null,                   '2022-01-02 14:51:23', '2022-01-02 17:46:31', null],
+            [3, 'peter',  true,  'no torrents no roles', '2022-01-03 14:51:23', '2022-01-03 17:46:31', null],
+            [5, 'obiwan', true,  'test SoftDeletes',     '2022-01-04 14:51:23', '2022-01-04 17:46:31', '2022-01-04 20:46:31'],
+            [4, 'jack',   true,  'test SoftDeletes',     '2022-01-05 14:51:23', '2022-01-05 17:46:31', '2022-01-05 20:46:31'],
         ]));
 
     Capsule::table('roles', null, $connection)->insert(
@@ -411,16 +416,16 @@ function seedTables(string $connection): void
 function fixPostgresSequences(): void
 {
     $sequences = [
+        'users_id_seq'                               => 6,
+        'roles_id_seq'                               => 4,
+        'user_phones_id_seq'                         => 4,
         'torrents_id_seq'                            => 7,
         'torrent_peers_id_seq'                       => 5,
         'torrent_previewable_files_id_seq'           => 10,
         'torrent_previewable_file_properties_id_seq' => 6,
-        'file_property_properties_id_seq'            => 7,
+        'file_property_properties_id_seq'            => 9,
         'torrent_tags_id_seq'                        => 6,
         'tag_properties_id_seq'                      => 5,
-        'users_id_seq'                               => 4,
-        'roles_id_seq'                               => 4,
-        'user_phones_id_seq'                         => 4,
     ];
 
     foreach ($sequences as $sequence => $id)

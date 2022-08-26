@@ -179,6 +179,9 @@ namespace Tiny
                                       const QVector<AttributeItem> &values = {});
 
         /* Proxies to TinyBuilder -> QueryBuilder */
+        /*! The table which the query is targeting. */
+        static const FromClause &from();
+
         /* Insert, Update, Delete */
         /*! Insert a new record into the database. */
         static std::optional<QSqlQuery>
@@ -934,6 +937,23 @@ namespace Tiny
                  const std::function<void(TinyBuilder<Related> &)> &callback = nullptr,
                  const QString &comparison = GE, qint64 count = 1);
 
+        /* Soft Deleting */
+        /*! Constraint the TinyBuilder query to exclude trashed models
+            (where deleted_at IS NULL). */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        withoutTrashed();
+        /*! Constraint the TinyBuilder query to include trashed models
+            (no where added). */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        withTrashed(bool withTrashed = true);
+        /*! Constraint the TinyBuilder query to select only trashed models
+            (where deleted_at IS NOT NULL). */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        onlyTrashed();
+
+        /*! Restore all trashed models (calls update on deleted_at column). */
+        static std::tuple<int, QSqlQuery> restoreAll();
+
     private:
         /*! Begin querying the model, proxy to Model::query(). */
         static std::unique_ptr<TinyBuilder<Derived>> query();
@@ -1275,6 +1295,13 @@ namespace Tiny
     }
 
     /* Proxies to TinyBuilder -> QueryBuilder */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const FromClause &
+    ModelProxies<Derived, AllRelations...>::from()
+    {
+        return query()->from();
+    }
 
     /* Insert, Update, Delete */
 
@@ -3335,6 +3362,49 @@ namespace Tiny
         builder->template whereHas<Related>(relation, callback, comparison, count);
 
         return builder;
+    }
+
+    /* Soft Deleting */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::withoutTrashed()
+    {
+        auto builder = query();
+
+        builder->withoutTrashed();
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::withTrashed(const bool withTrashed)
+    {
+        auto builder = query();
+
+        builder->withTrashed(withTrashed);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::onlyTrashed()
+    {
+        auto builder = query();
+
+        builder->onlyTrashed();
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::tuple<int, QSqlQuery>
+    ModelProxies<Derived, AllRelations...>::restoreAll()
+    {
+        // restoreAll() to avoid ambiguous call (SoftDeletes also contains restore())
+        return query()->restore();
     }
 
     /* private */

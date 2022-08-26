@@ -15,17 +15,21 @@ namespace Seeders
             const auto NullString =    QVariant(QMetaType(QMetaType::QString));
             const auto NullInt =       QVariant(QMetaType(QMetaType::Int));
             const auto NullULLong =    QVariant(QMetaType(QMetaType::ULongLong));
+            const auto NullQDateTime = QVariant(QMetaType(QMetaType::QDateTime));
 #else
             const auto NullString =    QVariant(QVariant::String);
             const auto NullInt =       QVariant(QVariant::Int);
             const auto NullULLong =    QVariant(QVariant::ULongLong);
+            const auto NullQDateTime = QVariant(QVariant::DateTime);
 #endif
 
-            DB::table("users")->insert({ID, NAME, "is_banned", "note"},
+            DB::table("users")->insert({ID, NAME, "is_banned", "note", CREATED_AT, UPDATED_AT, DELETED_AT},
             {
-                {1, "andrej", false, NullString},
-                {2, "silver", false, NullString},
-                {3, "peter",  true,  "no torrents no roles"},
+                {1, "andrej", false, NullString,             "2022-01-01 14:51:23", "2022-01-01 17:46:31", NullQDateTime},
+                {2, "silver", false, NullString,             "2022-01-02 14:51:23", "2022-01-02 17:46:31", NullQDateTime},
+                {3, "peter",  true,  "no torrents no roles", "2022-01-03 14:51:23", "2022-01-03 17:46:31", NullQDateTime},
+                {4, "jack",   false, "test SoftDeletes",     "2022-01-04 14:51:23", "2022-01-04 17:46:31", "2022-01-04 20:46:31"},
+                {5, "obiwan", true,  "test SoftDeletes",     "2022-01-05 14:51:23", "2022-01-05 17:46:31", "2022-01-05 20:46:31"},
             });
 
             DB::table("roles")->insert({ID, NAME},
@@ -149,16 +153,16 @@ namespace Seeders
            it doesn't increment sequences. */
 
         std::unordered_map<QString, quint64> sequences {
+            {QStringLiteral("users_id_seq"),                                6},
+            {QStringLiteral("roles_id_seq"),                                4},
+            {QStringLiteral("user_phones_id_seq"),                          4},
             {QStringLiteral("torrents_id_seq"),                             7},
             {QStringLiteral("torrent_peers_id_seq"),                        5},
             {QStringLiteral("torrent_previewable_files_id_seq"),           10},
             {QStringLiteral("torrent_previewable_file_properties_id_seq"),  6},
-            {QStringLiteral("file_property_properties_id_seq"),             7},
+            {QStringLiteral("file_property_properties_id_seq"),             9},
             {QStringLiteral("torrent_tags_id_seq"),                         6},
             {QStringLiteral("tag_properties_id_seq"),                       5},
-            {QStringLiteral("users_id_seq"),                                4},
-            {QStringLiteral("roles_id_seq"),                                4},
-            {QStringLiteral("user_phones_id_seq"),                          4},
         };
 
         for (auto &&[sequence, id] : sequences)

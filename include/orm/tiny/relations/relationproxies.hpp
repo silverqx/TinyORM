@@ -182,6 +182,9 @@ namespace Tiny::Relations
                                const QVector<AttributeItem> &values = {}) const;
 
         /* Proxies to TinyBuilder -> QueryBuilder */
+        /*! The table which the query is targeting. */
+        const FromClause &from() const;
+
         /*! Get the SQL representation of the query. */
         QString toSql() const;
         /*! Get the current query value bindings as flattened QVector. */
@@ -924,6 +927,25 @@ namespace Tiny::Relations
                      TinyBuilder<HasRelated> &)> &callback = nullptr,
                  const QString &comparison = GE, qint64 count = 1) const;
 
+        /* Soft Deleting */
+        /*! Constraint the TinyBuilder query to exclude trashed models
+            (where deleted_at IS NULL). */
+        const Relation<Model, Related> &withoutTrashed() const;
+        /*! Constraint the TinyBuilder query to include trashed models
+            (no where added). */
+        const Relation<Model, Related> &withTrashed(bool withTrashed = true) const;
+        /*! Constraint the TinyBuilder query to select only trashed models
+            (where deleted_at IS NOT NULL). */
+        const Relation<Model, Related> &onlyTrashed() const;
+
+        /*! Restore all trashed models (calls update on deleted_at column). */
+        std::tuple<int, QSqlQuery> restore() const;
+        /*! Run the default delete function on the builder (sidestep soft deleting). */
+        std::tuple<int, QSqlQuery> forceDelete() const;
+        /*! Run the default delete function on the builder (sidestep soft deleting),
+            alias. */
+        std::tuple<int, QSqlQuery> forceRemove() const;
+
     private:
         /*! Static cast this to a child's instance Relation type. */
         const Relation<Model, Related> &relation() const;
@@ -1245,9 +1267,19 @@ namespace Tiny::Relations
     /* Proxies to TinyBuilder -> QueryBuilder */
 
     template<class Model, class Related>
+    const FromClause &RelationProxies<Model, Related>::from() const
+    {
+        /* The getQuery() to apply the SoftDeletes where null condition for
+           the deleted_at column (of course if the SoftDeletes is enabled). */
+        return getQuery().from();
+    }
+
+    template<class Model, class Related>
     QString RelationProxies<Model, Related>::toSql() const
     {
-        return getBaseQuery().toSql();
+        /* The getQuery() to apply the SoftDeletes where null condition for
+           the deleted_at column (of course if the SoftDeletes is enabled). */
+        return getQuery().toSql();
     }
 
     template<class Model, class Related>
@@ -3050,6 +3082,56 @@ namespace Tiny::Relations
         getQuery().template whereHas<HasRelated>(relation, callback, comparison, count);
 
         return this->relation();
+    }
+
+    /* Soft Deleting */
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::withoutTrashed() const
+    {
+        getQuery().withoutTrashed();
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::withTrashed(const bool withTrashed) const
+    {
+        getQuery().withTrashed(withTrashed);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::onlyTrashed() const
+    {
+        getQuery().onlyTrashed();
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    std::tuple<int, QSqlQuery>
+    RelationProxies<Model, Related>::restore() const
+    {
+        return getQuery().restore();
+    }
+
+    template<class Model, class Related>
+    std::tuple<int, QSqlQuery>
+    RelationProxies<Model, Related>::forceDelete() const
+    {
+        return getQuery().forceDelete();
+    }
+
+    template<class Model, class Related>
+    std::tuple<int, QSqlQuery>
+    RelationProxies<Model, Related>::forceRemove() const
+    {
+        return getQuery().forceRemove();
     }
 
     /* private */

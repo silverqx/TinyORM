@@ -112,7 +112,7 @@ namespace Orm::Tiny::Concerns
         /*! Convert a DateTime to a storable string. */
         QString fromDateTime(const QDateTime &value) const;
         /*! Get the attributes that should be converted to dates. */
-        const QStringList &getDates() const;
+        QStringList getDates() const;
 
         /*! Proxy for an attribute element used in the operator[] &. */
         class AttributeReference
@@ -238,9 +238,6 @@ namespace Orm::Tiny::Concerns
         inline static QStringList u_dates;
 
     private:
-        /*! Get the attributes that should be converted to dates. */
-        QStringList getDatesInternal() const;
-
         /*! Throw if the m_attributesHash doesn't contain a given attribute. */
         static void throwIfNoAttributeInHash(
                     const std::unordered_map<QString, int> &attributesHash,
@@ -630,12 +627,26 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QStringList &
+    QStringList
     HasAttributes<Derived, AllRelations...>::getDates() const
     {
-        static const QStringList cached = getDatesInternal();
+        /* The getDates() is also called from the SoftDeletes::initializeSoftDeletes()
+           that is called from the Model::constructor() which means that
+           the Derived::u_timestamps data member is not yet initialized, so it will be
+           everytime false. This can be considered as a bug but it doesn't matter,
+           it doesn't affect the logic in any way and the result will be correct.
+           The result is that I'm still successfully avoiding the need to add
+           a separate Model initialization method, which I'm super happy with 🙌. */
 
-        return cached;
+        if (!basemodel().usesTimestamps())
+            return Model<Derived, AllRelations...>::getUserDates();
+
+        auto dates = Model<Derived, AllRelations...>::getUserDates() +
+                     Model<Derived, AllRelations...>::timestampColumnNames();
+
+        dates.removeDuplicates();
+
+        return dates;
     }
 
     /* Model::AttributeReference - begin */
@@ -972,21 +983,6 @@ namespace Orm::Tiny::Concerns
     }
 
     /* private */
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    QStringList
-    HasAttributes<Derived, AllRelations...>::getDatesInternal() const
-    {
-        if (!basemodel().usesTimestamps())
-            return Model<Derived, AllRelations...>::getUserDates();
-
-        auto dates = Model<Derived, AllRelations...>::getUserDates() +
-                Model<Derived, AllRelations...>::timestampColumnNames();
-
-        dates.removeDuplicates();
-
-        return dates;
-    }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::throwIfNoAttributeInHash(

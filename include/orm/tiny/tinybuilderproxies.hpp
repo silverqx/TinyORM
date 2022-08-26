@@ -50,12 +50,71 @@ namespace Tiny
         BuilderProxies &operator=(BuilderProxies &&) = delete;
 
         /*! The table which the query is targeting. */
-        const FromClause &from() const;
+        const FromClause &from();
 
+        /* Proxy methods that internally call the toBase() (applySoftDeletes) */
         /* Retrieving results */
         /*! Concatenate values of a given column as a string. */
-        QString implode(const QString &column, const QString &glue = "") const;
+        QString implode(const QString &column, const QString &glue = "");
 
+        /* Aggregates */
+        /*! Retrieve the "count" result of the query. */
+        quint64 count(const QVector<Column> &columns = {ASTERISK});
+        /*! Retrieve the "count" result of the query. */
+        template<typename = void>
+        quint64 count(const Column &column);
+        /*! Retrieve the minimum value of a given column. */
+        QVariant min(const Column &column);
+        /*! Retrieve the maximum value of a given column. */
+        QVariant max(const Column &column);
+        /*! Retrieve the sum of the values of a given column. */
+        QVariant sum(const Column &column);
+        /*! Retrieve the average of the values of a given column. */
+        QVariant avg(const Column &column);
+        /*! Alias for the "avg" method. */
+        QVariant average(const Column &column);
+
+        /*! Execute an aggregate function on the database. */
+        QVariant aggregate(const QString &function,
+                           const QVector<Column> &columns = {ASTERISK});
+
+        /* Records exist */
+        /*! Determine if any rows exist for the current query. */
+        bool exists();
+        /*! Determine if no rows exist for the current query. */
+        bool doesntExist();
+
+        /*! Execute the given callback if no rows exist for the current query. */
+        bool existsOr(const std::function<void()> &callback);
+        /*! Execute the given callback if rows exist for the current query. */
+        bool doesntExistOr(const std::function<void()> &callback);
+
+        /*! Execute the given callback if no rows exist for the current query. */
+        template<typename R>
+        std::pair<bool, R> existsOr(const std::function<R()> &callback);
+        template<typename R>
+        /*! Execute the given callback if rows exist for the current query. */
+        std::pair<bool, R> doesntExistOr(const std::function<R()> &callback);
+
+        /* Debugging */
+        /*! Dump the current SQL and bindings. */
+        void dump(bool replaceBindings = true, bool simpleBindings = false);
+        /*! Die and dump the current SQL and bindings. */
+        void dd(bool replaceBindings = true, bool simpleBindings = false);
+
+        /* Others */
+        /*! Increment a column's value by a given amount. */
+        template<typename T = std::size_t> requires std::is_arithmetic_v<T>
+        std::tuple<int, QSqlQuery>
+        increment(const QString &column, T amount = 1,
+                  const QVector<UpdateItem> &extra = {});
+        /*! Decrement a column's value by a given amount. */
+        template<typename T = std::size_t> requires std::is_arithmetic_v<T>
+        std::tuple<int, QSqlQuery>
+        decrement(const QString &column, T amount = 1,
+                  const QVector<UpdateItem> &extra = {});
+
+        /* Proxy methods that internally call the getQuery() (don't applySoftDeletes) */
         /* Insert, Update, Delete */
         /*! Insert a new record into the database. */
         std::optional<QSqlQuery>
@@ -82,56 +141,16 @@ namespace Tiny
         insertOrIgnore(const QVector<QString> &columns,
                        QVector<QVector<QVariant>> values) const;
 
-        /*! Update records in the database. */
-        std::tuple<int, QSqlQuery>
-        update(const QVector<UpdateItem> &values) const;
-
-        /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> remove() const;
-        /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> deleteModels() const;
+        /*! Run the default delete function on the builder (sidestep soft deleting). */
+        std::tuple<int, QSqlQuery> forceDelete() const;
+        /*! Run the default delete function on the builder (sidestep soft deleting),
+            alias. */
+        std::tuple<int, QSqlQuery> forceRemove() const;
 
         /*! Run a truncate statement on the table. */
         void truncate() const;
 
         /* Select */
-        /*! Retrieve the "count" result of the query. */
-        quint64 count(const QVector<Column> &columns = {ASTERISK}) const;
-        /*! Retrieve the "count" result of the query. */
-        template<typename = void>
-        quint64 count(const Column &column) const;
-        /*! Retrieve the minimum value of a given column. */
-        QVariant min(const Column &column) const;
-        /*! Retrieve the maximum value of a given column. */
-        QVariant max(const Column &column) const;
-        /*! Retrieve the sum of the values of a given column. */
-        QVariant sum(const Column &column) const;
-        /*! Retrieve the average of the values of a given column. */
-        QVariant avg(const Column &column) const;
-        /*! Alias for the "avg" method. */
-        QVariant average(const Column &column) const;
-
-        /*! Execute an aggregate function on the database. */
-        QVariant aggregate(const QString &function,
-                           const QVector<Column> &columns = {ASTERISK}) const;
-
-        /*! Determine if any rows exist for the current query. */
-        bool exists() const;
-        /*! Determine if no rows exist for the current query. */
-        bool doesntExist() const;
-
-        /*! Execute the given callback if no rows exist for the current query. */
-        bool existsOr(const std::function<void()> &callback) const;
-        /*! Execute the given callback if rows exist for the current query. */
-        bool doesntExistOr(const std::function<void()> &callback) const;
-
-        /*! Execute the given callback if no rows exist for the current query. */
-        template<typename R>
-        std::pair<bool, R> existsOr(const std::function<R()> &callback) const;
-        template<typename R>
-        /*! Execute the given callback if rows exist for the current query. */
-        std::pair<bool, R> doesntExistOr(const std::function<R()> &callback) const;
-
         /*! Set the columns to be selected. */
         TinyBuilder<Model> &select(const QVector<Column> &columns = {ASTERISK});
         /*! Set the column to be selected. */
@@ -580,18 +599,6 @@ namespace Tiny
                        const QString &column = Orm::Constants::ID,
                        bool prependOrder = false);
 
-        /* Others */
-        /*! Increment a column's value by a given amount. */
-        template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        std::tuple<int, QSqlQuery>
-        increment(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {}) const;
-        /*! Decrement a column's value by a given amount. */
-        template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        std::tuple<int, QSqlQuery>
-        decrement(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {}) const;
-
         /* Pessimistic Locking */
         /*! Lock the selected rows in the table for updating. */
         TinyBuilder<Model> &lockForUpdate();
@@ -605,12 +612,6 @@ namespace Tiny
         TinyBuilder<Model> &lock(const QString &value);
         /*! Lock the selected rows in the table. */
         TinyBuilder<Model> &lock(QString &&value);
-
-        /* Debugging */
-        /*! Dump the current SQL and bindings. */
-        void dump(bool replaceBindings = true, bool simpleBindings = false) const;
-        /*! Die and dump the current SQL and bindings. */
-        void dd(bool replaceBindings = true, bool simpleBindings = false) const;
 
         /* Others proxy methods, not added to the Model and Relation */
         /*! Add an "exists" clause to the query. */
@@ -630,41 +631,178 @@ namespace Tiny
         const TinyBuilder<Model> &builder() const;
         /*! Static cast this to a child's instance TinyBuilder type, const version. */
         TinyBuilder<Model> &builder();
-        /*! Get a base query builder instance. */
-        QueryBuilder &toBase() const;
+        /*! Get a base query builder instance with applied SoftDeletes. */
+        QueryBuilder &toBase();
+        /*! Get a base query builder instance with applied SoftDeletes. */
+        QueryBuilder &getQuery() const;
     };
 
     /* public */
 
     template<typename Model>
-    const FromClause &BuilderProxies<Model>::from() const
+    const FromClause &BuilderProxies<Model>::from()
     {
         return toBase().getFrom();
     }
+
+    /* Proxy methods that internally call the toBase() (applySoftDeletes) */
 
     /* Retrieving results */
 
     template<typename Model>
     QString
-    BuilderProxies<Model>::implode(const QString &column, const QString &glue) const
+    BuilderProxies<Model>::implode(const QString &column, const QString &glue)
     {
         return toBase().implode(column, glue);
     }
 
+    /* Aggregates */
+
+    template<typename Model>
+    quint64 BuilderProxies<Model>::count(const QVector<Column> &columns)
+    {
+        return toBase().count(columns);
+    }
+
+    template<typename Model>
+    template<typename>
+    quint64 BuilderProxies<Model>::count(const Column &column)
+    {
+        return toBase().count(QVector<Column> {column});
+    }
+
+    template<typename Model>
+    QVariant BuilderProxies<Model>::min(const Column &column)
+    {
+        return toBase().min(column);
+    }
+
+    template<typename Model>
+    QVariant BuilderProxies<Model>::max(const Column &column)
+    {
+        return toBase().max(column);
+    }
+
+    template<typename Model>
+    QVariant BuilderProxies<Model>::sum(const Column &column)
+    {
+        return toBase().sum(column);
+    }
+
+    template<typename Model>
+    QVariant BuilderProxies<Model>::avg(const Column &column)
+    {
+        return toBase().avg(column);
+    }
+
+    template<typename Model>
+    QVariant BuilderProxies<Model>::average(const Column &column)
+    {
+        return toBase().avg(column);
+    }
+
+    template<typename Model>
+    QVariant
+    BuilderProxies<Model>::aggregate(const QString &function,
+                                     const QVector<Column> &columns)
+    {
+        return toBase().aggregate(function, columns);
+    }
+
+    /* Records exist */
+
+    template<typename Model>
+    bool BuilderProxies<Model>::exists()
+    {
+        return toBase().exists();
+    }
+
+    template<typename Model>
+    bool BuilderProxies<Model>::doesntExist()
+    {
+        return toBase().doesntExist();
+    }
+
+    template<typename Model>
+    bool BuilderProxies<Model>::existsOr(const std::function<void()> &callback)
+    {
+        return toBase().existsOr(callback);
+    }
+
+    template<typename Model>
+    bool
+    BuilderProxies<Model>::doesntExistOr(const std::function<void()> &callback)
+    {
+        return toBase().doesntExistOr(callback);
+    }
+
+    template<typename Model>
+    template<typename R>
+    std::pair<bool, R>
+    BuilderProxies<Model>::existsOr(const std::function<R()> &callback)
+    {
+        return toBase().template existsOr<R>(callback);
+    }
+
+    template<typename Model>
+    template<typename R>
+    std::pair<bool, R>
+    BuilderProxies<Model>::doesntExistOr(const std::function<R()> &callback)
+    {
+        return toBase().template doesntExistOr<R>(callback);
+    }
+
+    /* Debugging */
+
+    template<typename Model>
+    void BuilderProxies<Model>::dump(const bool replaceBindings,
+                                     const bool simpleBindings)
+    {
+        toBase().dump(replaceBindings, simpleBindings);
+    }
+
+    template<typename Model>
+    void BuilderProxies<Model>::dd(const bool replaceBindings, const bool simpleBindings)
+    {
+        toBase().dd(replaceBindings, simpleBindings);
+    }
+
+    /* Others */
+
+    template<typename Model>
+    template<typename T> requires std::is_arithmetic_v<T>
+    std::tuple<int, QSqlQuery>
+    BuilderProxies<Model>::increment(
+            const QString &column, const T amount, const QVector<UpdateItem> &extra)
+    {
+        return toBase().increment(column, amount, builder().addUpdatedAtColumn(extra));
+    }
+
+    template<typename Model>
+    template<typename T> requires std::is_arithmetic_v<T>
+    std::tuple<int, QSqlQuery>
+    BuilderProxies<Model>::decrement(
+            const QString &column, const T amount, const QVector<UpdateItem> &extra)
+    {
+        return toBase().decrement(column, amount, builder().addUpdatedAtColumn(extra));
+    }
+
     /* Insert, Update, Delete */
+
+    /* Proxy methods that internally call the getQuery() (don't applySoftDeletes) */
 
     template<typename Model>
     std::optional<QSqlQuery>
     BuilderProxies<Model>::insert(const QVector<AttributeItem> &values) const
     {
-        return toBase().insert(AttributeUtils::convertVectorToMap(values));
+        return getQuery().insert(AttributeUtils::convertVectorToMap(values));
     }
 
     template<typename Model>
     std::optional<QSqlQuery>
     BuilderProxies<Model>::insert(const QVector<QVector<AttributeItem>> &values) const
     {
-        return toBase().insert(AttributeUtils::convertVectorsToMaps(values));
+        return getQuery().insert(AttributeUtils::convertVectorsToMaps(values));
     }
 
     template<typename Model>
@@ -672,7 +810,7 @@ namespace Tiny
     BuilderProxies<Model>::insert(
             const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
     {
-        return toBase().insert(columns, std::move(values));
+        return getQuery().insert(columns, std::move(values));
     }
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
@@ -681,15 +819,15 @@ namespace Tiny
     BuilderProxies<Model>::insertGetId(const QVector<AttributeItem> &values,
                                        const QString &sequence) const
     {
-        return toBase().insertGetId(AttributeUtils::convertVectorToMap(values),
-                                    sequence);
+        return getQuery().insertGetId(AttributeUtils::convertVectorToMap(values),
+                                      sequence);
     }
 
     template<typename Model>
     std::tuple<int, std::optional<QSqlQuery>>
     BuilderProxies<Model>::insertOrIgnore(const QVector<AttributeItem> &values) const
     {
-        return toBase().insertOrIgnore(AttributeUtils::convertVectorToMap(values));
+        return getQuery().insertOrIgnore(AttributeUtils::convertVectorToMap(values));
     }
 
     template<typename Model>
@@ -697,7 +835,7 @@ namespace Tiny
     BuilderProxies<Model>::insertOrIgnore(
             const QVector<QVector<AttributeItem>> &values) const
     {
-        return toBase().insertOrIgnore(AttributeUtils::convertVectorsToMaps(values));
+        return getQuery().insertOrIgnore(AttributeUtils::convertVectorsToMaps(values));
     }
 
     template<typename Model>
@@ -705,134 +843,36 @@ namespace Tiny
     BuilderProxies<Model>::insertOrIgnore(
             const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
     {
-        return toBase().insertOrIgnore(columns, std::move(values));
+        return getQuery().insertOrIgnore(columns, std::move(values));
     }
 
     template<typename Model>
-    std::tuple<int, QSqlQuery>
-    BuilderProxies<Model>::update(const QVector<UpdateItem> &values) const
+    std::tuple<int, QSqlQuery> BuilderProxies<Model>::forceDelete() const
     {
-        return toBase().update(builder().addUpdatedAtColumn(values));
-    }
-
-    // FUTURE add onDelete (and similar) callback feature silverqx
-    template<typename Model>
-    std::tuple<int, QSqlQuery> BuilderProxies<Model>::remove() const
-    {
-        return toBase().deleteRow();
+        // Skip applying SoftDeletes (getQuery()) to actually delete
+        return getQuery().remove();
     }
 
     template<typename Model>
-    std::tuple<int, QSqlQuery> BuilderProxies<Model>::deleteModels() const
+    std::tuple<int, QSqlQuery> BuilderProxies<Model>::forceRemove() const
     {
-        return remove();
+        // Skip applying SoftDeletes (getQuery()) to actually delete
+        return getQuery().remove();
     }
 
     template<typename Model>
     void BuilderProxies<Model>::truncate() const
     {
-        toBase().truncate();
+        getQuery().truncate();
     }
 
     /* Select */
 
     template<typename Model>
-    quint64 BuilderProxies<Model>::count(const QVector<Column> &columns) const
-    {
-        return toBase().count(columns);
-    }
-
-    template<typename Model>
-    template<typename>
-    quint64 BuilderProxies<Model>::count(const Column &column) const
-    {
-        return toBase().count(QVector<Column> {column});
-    }
-
-    template<typename Model>
-    QVariant BuilderProxies<Model>::min(const Column &column) const
-    {
-        return toBase().min(column);
-    }
-
-    template<typename Model>
-    QVariant BuilderProxies<Model>::max(const Column &column) const
-    {
-        return toBase().max(column);
-    }
-
-    template<typename Model>
-    QVariant BuilderProxies<Model>::sum(const Column &column) const
-    {
-        return toBase().sum(column);
-    }
-
-    template<typename Model>
-    QVariant BuilderProxies<Model>::avg(const Column &column) const
-    {
-        return toBase().avg(column);
-    }
-
-    template<typename Model>
-    QVariant BuilderProxies<Model>::average(const Column &column) const
-    {
-        return toBase().avg(column);
-    }
-
-    template<typename Model>
-    QVariant
-    BuilderProxies<Model>::aggregate(const QString &function,
-                                     const QVector<Column> &columns) const
-    {
-        return toBase().aggregate(function, columns);
-    }
-
-    template<typename Model>
-    bool BuilderProxies<Model>::exists() const
-    {
-        return toBase().exists();
-    }
-
-    template<typename Model>
-    bool BuilderProxies<Model>::doesntExist() const
-    {
-        return toBase().doesntExist();
-    }
-
-    template<typename Model>
-    bool BuilderProxies<Model>::existsOr(const std::function<void()> &callback) const
-    {
-        return toBase().existsOr(callback);
-    }
-
-    template<typename Model>
-    bool
-    BuilderProxies<Model>::doesntExistOr(const std::function<void()> &callback) const
-    {
-        return toBase().doesntExistOr(callback);
-    }
-
-    template<typename Model>
-    template<typename R>
-    std::pair<bool, R>
-    BuilderProxies<Model>::existsOr(const std::function<R()> &callback) const
-    {
-        return toBase().template existsOr<R>(callback);
-    }
-
-    template<typename Model>
-    template<typename R>
-    std::pair<bool, R>
-    BuilderProxies<Model>::doesntExistOr(const std::function<R()> &callback) const
-    {
-        return toBase().template doesntExistOr<R>(callback);
-    }
-
-    template<typename Model>
     TinyBuilder<Model> &
     BuilderProxies<Model>::select(const QVector<Column> &columns)
     {
-        toBase().select(columns);
+        getQuery().select(columns);
         return builder();
     }
 
@@ -840,7 +880,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::select(const Column &column)
     {
-        toBase().select(column);
+        getQuery().select(column);
         return builder();
     }
 
@@ -848,7 +888,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::addSelect(const QVector<Column> &columns)
     {
-        toBase().addSelect(columns);
+        getQuery().addSelect(columns);
         return builder();
     }
 
@@ -856,7 +896,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::addSelect(const Column &column)
     {
-        toBase().addSelect(column);
+        getQuery().addSelect(column);
         return builder();
     }
 
@@ -864,7 +904,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::select(QVector<Column> &&columns)
     {
-        toBase().select(std::move(columns));
+        getQuery().select(std::move(columns));
         return builder();
     }
 
@@ -872,7 +912,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::select(Column &&column)
     {
-        toBase().select(std::move(column));
+        getQuery().select(std::move(column));
         return builder();
     }
 
@@ -880,7 +920,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::addSelect(QVector<Column> &&columns)
     {
-        toBase().addSelect(std::move(columns));
+        getQuery().addSelect(std::move(columns));
         return builder();
     }
 
@@ -888,7 +928,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::addSelect(Column &&column)
     {
-        toBase().addSelect(std::move(column));
+        getQuery().addSelect(std::move(column));
         return builder();
     }
 
@@ -897,7 +937,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::select(T &&query, const QString &as)
     {
-        toBase().select(std::forward<T>(query), as);
+        getQuery().select(std::forward<T>(query), as);
         return builder();
     }
 
@@ -906,7 +946,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::addSelect(T &&query, const QString &as)
     {
-        toBase().addSelect(std::forward<T>(query), as);
+        getQuery().addSelect(std::forward<T>(query), as);
         return builder();
     }
 
@@ -915,7 +955,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::selectSub(T &&query, const QString &as)
     {
-        toBase().selectSub(std::forward<T>(query), as);
+        getQuery().selectSub(std::forward<T>(query), as);
         return builder();
     }
 
@@ -924,14 +964,14 @@ namespace Tiny
     BuilderProxies<Model>::selectRaw(const QString &expression,
                                      const QVector<QVariant> &bindings)
     {
-        toBase().selectRaw(expression, bindings);
+        getQuery().selectRaw(expression, bindings);
         return builder();
     }
 
     template<typename Model>
     TinyBuilder<Model> &BuilderProxies<Model>::distinct()
     {
-        toBase().distinct();
+        getQuery().distinct();
         return builder();
     }
 
@@ -939,7 +979,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::distinct(const QStringList &columns)
     {
-        toBase().distinct(columns);
+        getQuery().distinct(columns);
         return builder();
     }
 
@@ -947,7 +987,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::distinct(QStringList &&columns)
     {
-        toBase().distinct(std::move(columns));
+        getQuery().distinct(std::move(columns));
         return builder();
     }
 
@@ -960,7 +1000,7 @@ namespace Tiny
             T &&table, const QString &first, const QString &comparison,
             const QString &second, const QString &type, const bool where)
     {
-        toBase().join(std::forward<T>(table), first, comparison, second, type, where);
+        getQuery().join(std::forward<T>(table), first, comparison, second, type, where);
         return builder();
     }
 
@@ -971,7 +1011,7 @@ namespace Tiny
             T &&table, const std::function<void(JoinClause &)> &callback,
             const QString &type)
     {
-        toBase().join(std::forward<T>(table), callback, type);
+        getQuery().join(std::forward<T>(table), callback, type);
         return builder();
     }
 
@@ -982,7 +1022,7 @@ namespace Tiny
             T &&table, const QString &first, const QString &comparison,
             const QVariant &second, const QString &type)
     {
-        toBase().joinWhere(std::forward<T>(table), first, comparison, second, type);
+        getQuery().joinWhere(std::forward<T>(table), first, comparison, second, type);
         return builder();
     }
 
@@ -993,7 +1033,7 @@ namespace Tiny
             T &&table, const QString &first, const QString &comparison,
             const QString &second)
     {
-        toBase().leftJoin(std::forward<T>(table), first, comparison, second);
+        getQuery().leftJoin(std::forward<T>(table), first, comparison, second);
         return builder();
     }
 
@@ -1003,7 +1043,7 @@ namespace Tiny
     BuilderProxies<Model>::leftJoin(
             T &&table, const std::function<void(JoinClause &)> &callback)
     {
-        toBase().leftJoin(std::forward<T>(table), callback);
+        getQuery().leftJoin(std::forward<T>(table), callback);
         return builder();
     }
 
@@ -1014,7 +1054,7 @@ namespace Tiny
             T &&table, const QString &first, const QString &comparison,
             const QVariant &second)
     {
-        toBase().leftJoinWhere(std::forward<T>(table), first, comparison, second);
+        getQuery().leftJoinWhere(std::forward<T>(table), first, comparison, second);
         return builder();
     }
 
@@ -1025,7 +1065,7 @@ namespace Tiny
             T &&table, const QString &first, const QString &comparison,
             const QString &second)
     {
-        toBase().rightJoin(std::forward<T>(table), first, comparison, second);
+        getQuery().rightJoin(std::forward<T>(table), first, comparison, second);
         return builder();
     }
 
@@ -1035,7 +1075,7 @@ namespace Tiny
     BuilderProxies<Model>::rightJoin(
             T &&table, const std::function<void(JoinClause &)> &callback)
     {
-        toBase().rightJoin(std::forward<T>(table), callback);
+        getQuery().rightJoin(std::forward<T>(table), callback);
         return builder();
     }
 
@@ -1046,7 +1086,7 @@ namespace Tiny
             T &&table, const QString &first, const QString &comparison,
             const QVariant &second)
     {
-        toBase().rightJoinWhere(std::forward<T>(table), first, comparison, second);
+        getQuery().rightJoinWhere(std::forward<T>(table), first, comparison, second);
         return builder();
     }
 
@@ -1057,7 +1097,7 @@ namespace Tiny
             T &&table, const QString &first, const QString &comparison,
             const QString &second)
     {
-        toBase().crossJoin(std::forward<T>(table), first, comparison, second);
+        getQuery().crossJoin(std::forward<T>(table), first, comparison, second);
         return builder();
     }
 
@@ -1067,7 +1107,7 @@ namespace Tiny
     BuilderProxies<Model>::crossJoin(
             T &&table, const std::function<void(JoinClause &)> &callback)
     {
-        toBase().crossJoin(std::forward<T>(table), callback);
+        getQuery().crossJoin(std::forward<T>(table), callback);
         return builder();
     }
 
@@ -1076,7 +1116,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::crossJoin(T &&table)
     {
-        toBase().crossJoin(std::forward<T>(table));
+        getQuery().crossJoin(std::forward<T>(table));
         return builder();
     }
 
@@ -1088,8 +1128,8 @@ namespace Tiny
             const QString &comparison, const QVariant &second, const QString &type,
             const bool where)
     {
-        toBase().joinSub(std::forward<T>(query), as, first, comparison, second, type,
-                         where);
+        getQuery().joinSub(std::forward<T>(query), as, first, comparison, second, type,
+                           where);
         return builder();
     }
 
@@ -1100,7 +1140,7 @@ namespace Tiny
             T &&query, const QString &as,
             const std::function<void(JoinClause &)> &callback, const QString &type)
     {
-        toBase().joinSub(std::forward<T>(query), as, callback, type);
+        getQuery().joinSub(std::forward<T>(query), as, callback, type);
         return builder();
     }
 
@@ -1111,7 +1151,7 @@ namespace Tiny
             T &&query, const QString &as, const QString &first,
             const QString &comparison, const QVariant &second)
     {
-        toBase().leftJoinSub(std::forward<T>(query), as, first, comparison, second);
+        getQuery().leftJoinSub(std::forward<T>(query), as, first, comparison, second);
         return builder();
     }
 
@@ -1122,7 +1162,7 @@ namespace Tiny
             T &&query, const QString &as,
             const std::function<void(JoinClause &)> &callback)
     {
-        toBase().joinSub(std::forward<T>(query), as, callback, LEFT);
+        getQuery().joinSub(std::forward<T>(query), as, callback, LEFT);
         return builder();
     }
 
@@ -1133,7 +1173,7 @@ namespace Tiny
             T &&query, const QString &as, const QString &first,
             const QString &comparison, const QVariant &second)
     {
-        toBase().rightJoinSub(std::forward<T>(query), as, first, comparison, second);
+        getQuery().rightJoinSub(std::forward<T>(query), as, first, comparison, second);
         return builder();
     }
 
@@ -1144,7 +1184,7 @@ namespace Tiny
             T &&query, const QString &as,
             const std::function<void(JoinClause &)> &callback)
     {
-        toBase().joinSub(std::forward<T>(query), as, callback, RIGHT);
+        getQuery().joinSub(std::forward<T>(query), as, callback, RIGHT);
         return builder();
     }
 
@@ -1157,7 +1197,7 @@ namespace Tiny
             const Column &column, const QString &comparison, T &&value,
             const QString &condition)
     {
-        toBase().where(column, comparison, std::forward<T>(value), condition);
+        getQuery().where(column, comparison, std::forward<T>(value), condition);
         return builder();
     }
 
@@ -1167,7 +1207,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhere(
             const Column &column, const QString &comparison, T &&value)
     {
-        toBase().orWhere(column, comparison, std::forward<T>(value));
+        getQuery().orWhere(column, comparison, std::forward<T>(value));
         return builder();
     }
 
@@ -1177,7 +1217,7 @@ namespace Tiny
     BuilderProxies<Model>::whereEq(
             const Column &column, T &&value, const QString &condition)
     {
-        toBase().whereEq(column, std::forward<T>(value), condition);
+        getQuery().whereEq(column, std::forward<T>(value), condition);
         return builder();
     }
 
@@ -1186,7 +1226,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereEq(const Column &column, T &&value)
     {
-        toBase().orWhereEq(column, std::forward<T>(value));
+        getQuery().orWhereEq(column, std::forward<T>(value));
         return builder();
     }
 
@@ -1199,7 +1239,7 @@ namespace Tiny
             const Column &column, const QString &comparison, T &&value,
             const QString &condition)
     {
-        toBase().whereNot(column, comparison, std::forward<T>(value), condition);
+        getQuery().whereNot(column, comparison, std::forward<T>(value), condition);
         return builder();
     }
 
@@ -1209,7 +1249,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereNot(
             const Column &column, const QString &comparison, T &&value)
     {
-        toBase().orWhereNot(column, comparison, std::forward<T>(value));
+        getQuery().orWhereNot(column, comparison, std::forward<T>(value));
         return builder();
     }
 
@@ -1219,7 +1259,7 @@ namespace Tiny
     BuilderProxies<Model>::whereNotEq(
             const Column &column, T &&value, const QString &condition)
     {
-        toBase().whereNotEq(column, std::forward<T>(value), condition);
+        getQuery().whereNotEq(column, std::forward<T>(value), condition);
         return builder();
     }
 
@@ -1228,7 +1268,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereNotEq(const Column &column, T &&value)
     {
-        toBase().orWhereNotEq(column, std::forward<T>(value));
+        getQuery().orWhereNotEq(column, std::forward<T>(value));
         return builder();
     }
 
@@ -1245,7 +1285,7 @@ namespace Tiny
 
         std::invoke(callback, *query);
 
-        toBase().addNestedWhereQuery(query->getQuerySharedPointer(), condition);
+        getQuery().addNestedWhereQuery(query->getQuerySharedPointer(), condition);
 
         return builder();
     }
@@ -1282,7 +1322,7 @@ namespace Tiny
     BuilderProxies<Model>::where(
             const QVector<WhereItem> &values, const QString &condition)
     {
-        toBase().where(values, condition);
+        getQuery().where(values, condition);
         return builder();
     }
 
@@ -1290,7 +1330,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhere(const QVector<WhereItem> &values)
     {
-        toBase().orWhere(values);
+        getQuery().orWhere(values);
         return builder();
     }
 
@@ -1300,7 +1340,7 @@ namespace Tiny
             const QVector<WhereItem> &values, const QString &condition,
             const QString &defaultCondition)
     {
-        toBase().whereNot(values, condition, defaultCondition);
+        getQuery().whereNot(values, condition, defaultCondition);
         return builder();
     }
 
@@ -1309,7 +1349,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereNot(
             const QVector<WhereItem> &values, const QString &defaultCondition)
     {
-        toBase().orWhereNot(values, defaultCondition);
+        getQuery().orWhereNot(values, defaultCondition);
         return builder();
     }
 
@@ -1320,7 +1360,7 @@ namespace Tiny
     BuilderProxies<Model>::whereColumn(
             const QVector<WhereColumnItem> &values, const QString &condition)
     {
-        toBase().whereColumn(values, condition);
+        getQuery().whereColumn(values, condition);
         return builder();
     }
 
@@ -1328,7 +1368,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereColumn(const QVector<WhereColumnItem> &values)
     {
-        toBase().orWhereColumn(values);
+        getQuery().orWhereColumn(values);
         return builder();
     }
 
@@ -1338,7 +1378,7 @@ namespace Tiny
             const Column &first, const QString &comparison, const Column &second,
             const QString &condition)
     {
-        toBase().whereColumn(first, comparison, second, condition);
+        getQuery().whereColumn(first, comparison, second, condition);
         return builder();
     }
 
@@ -1347,7 +1387,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereColumn(
             const Column &first, const QString &comparison, const Column &second)
     {
-        toBase().orWhereColumn(first, comparison, second);
+        getQuery().orWhereColumn(first, comparison, second);
         return builder();
     }
 
@@ -1356,7 +1396,7 @@ namespace Tiny
     BuilderProxies<Model>::whereColumnEq(
             const Column &first, const Column &second, const QString &condition)
     {
-        toBase().whereColumnEq(first, second, condition);
+        getQuery().whereColumnEq(first, second, condition);
         return builder();
     }
 
@@ -1364,7 +1404,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereColumnEq(const Column &first, const Column &second)
     {
-        toBase().orWhereColumnEq(first, second);
+        getQuery().orWhereColumnEq(first, second);
         return builder();
     }
 
@@ -1376,7 +1416,7 @@ namespace Tiny
             const Column &column, const QVector<QVariant> &values,
             const QString &condition, const bool nope)
     {
-        toBase().whereIn(column, values, condition, nope);
+        getQuery().whereIn(column, values, condition, nope);
         return builder();
     }
 
@@ -1385,7 +1425,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereIn(
             const Column &column, const QVector<QVariant> &values)
     {
-        toBase().orWhereIn(column, values);
+        getQuery().orWhereIn(column, values);
         return builder();
     }
 
@@ -1395,7 +1435,7 @@ namespace Tiny
             const Column &column, const QVector<QVariant> &values,
             const QString &condition)
     {
-        toBase().whereNotIn(column, values, condition);
+        getQuery().whereNotIn(column, values, condition);
         return builder();
     }
 
@@ -1404,7 +1444,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereNotIn(
             const Column &column, const QVector<QVariant> &values)
     {
-        toBase().orWhereNotIn(column, values);
+        getQuery().orWhereNotIn(column, values);
         return builder();
     }
 
@@ -1415,7 +1455,7 @@ namespace Tiny
     BuilderProxies<Model>::whereNull(
             const QVector<Column> &columns, const QString &condition, const bool nope)
     {
-        toBase().whereNull(columns, condition, nope);
+        getQuery().whereNull(columns, condition, nope);
         return builder();
     }
 
@@ -1423,7 +1463,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereNull(const QVector<Column> &columns)
     {
-        toBase().orWhereNull(columns);
+        getQuery().orWhereNull(columns);
         return builder();
     }
 
@@ -1432,7 +1472,7 @@ namespace Tiny
     BuilderProxies<Model>::whereNotNull(
             const QVector<Column> &columns, const QString &condition)
     {
-        toBase().whereNotNull(columns, condition);
+        getQuery().whereNotNull(columns, condition);
         return builder();
     }
 
@@ -1440,7 +1480,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereNotNull(const QVector<Column> &columns)
     {
-        toBase().orWhereNotNull(columns);
+        getQuery().orWhereNotNull(columns);
         return builder();
     }
 
@@ -1449,7 +1489,7 @@ namespace Tiny
     BuilderProxies<Model>::whereNull(
             const Column &column, const QString &condition, const bool nope)
     {
-        toBase().whereNull(column, condition, nope);
+        getQuery().whereNull(column, condition, nope);
         return builder();
     }
 
@@ -1457,7 +1497,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereNull(const Column &column)
     {
-        toBase().orWhereNull(column);
+        getQuery().orWhereNull(column);
         return builder();
     }
 
@@ -1465,7 +1505,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::whereNotNull(const Column &column, const QString &condition)
     {
-        toBase().whereNotNull(column, condition);
+        getQuery().whereNotNull(column, condition);
         return builder();
     }
 
@@ -1473,7 +1513,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereNotNull(const Column &column)
     {
-        toBase().orWhereNotNull(column);
+        getQuery().orWhereNotNull(column);
         return builder();
     }
 
@@ -1485,7 +1525,7 @@ namespace Tiny
             const Column &column, const WhereBetweenItem &values,
             const QString &condition, const bool nope)
     {
-        toBase().whereBetween(column, values, condition, nope);
+        getQuery().whereBetween(column, values, condition, nope);
         return builder();
     }
 
@@ -1494,7 +1534,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereBetween(
             const Column &column, const WhereBetweenItem &values)
     {
-        toBase().whereBetween(column, values, OR);
+        getQuery().whereBetween(column, values, OR);
         return builder();
     }
 
@@ -1504,7 +1544,7 @@ namespace Tiny
             const Column &column, const WhereBetweenItem &values,
             const QString &condition)
     {
-        toBase().whereBetween(column, values, condition, true);
+        getQuery().whereBetween(column, values, condition, true);
         return builder();
     }
 
@@ -1513,7 +1553,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereNotBetween(
             const Column &column, const WhereBetweenItem &values)
     {
-        toBase().whereBetween(column, values, OR, true);
+        getQuery().whereBetween(column, values, OR, true);
         return builder();
     }
 
@@ -1525,7 +1565,7 @@ namespace Tiny
             const Column &column, const WhereBetweenColumnsItem &betweenColumns,
             const QString &condition, const bool nope)
     {
-        toBase().whereBetweenColumns(column, betweenColumns, condition, nope);
+        getQuery().whereBetweenColumns(column, betweenColumns, condition, nope);
         return builder();
     }
 
@@ -1534,7 +1574,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereBetweenColumns(
             const Column &column, const WhereBetweenColumnsItem &betweenColumns)
     {
-        toBase().whereBetweenColumns(column, betweenColumns, OR);
+        getQuery().whereBetweenColumns(column, betweenColumns, OR);
         return builder();
     }
 
@@ -1544,7 +1584,7 @@ namespace Tiny
             const Column &column, const WhereBetweenColumnsItem &betweenColumns,
             const QString &condition)
     {
-        toBase().whereBetweenColumns(column, betweenColumns, condition, true);
+        getQuery().whereBetweenColumns(column, betweenColumns, condition, true);
         return builder();
     }
 
@@ -1553,7 +1593,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereNotBetweenColumns(
             const Column &column, const WhereBetweenColumnsItem &betweenColumns)
     {
-        toBase().whereBetweenColumns(column, betweenColumns, OR, true);
+        getQuery().whereBetweenColumns(column, betweenColumns, OR, true);
         return builder();
     }
 
@@ -1565,8 +1605,8 @@ namespace Tiny
     BuilderProxies<Model>::where(
             C &&column, const QString &comparison, V &&value, const QString &condition)
     {
-        toBase().where(std::forward<C>(column), comparison, std::forward<V>(value),
-                       condition);
+        getQuery().where(std::forward<C>(column), comparison, std::forward<V>(value),
+                         condition);
         return builder();
     }
 
@@ -1575,7 +1615,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhere(C &&column, const QString &comparison, V &&value)
     {
-        toBase().where(std::forward<C>(column), comparison, std::forward<V>(value), OR);
+        getQuery().where(std::forward<C>(column), comparison, std::forward<V>(value), OR);
         return builder();
     }
 
@@ -1584,7 +1624,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::whereEq(C &&column, V &&value, const QString &condition)
     {
-        toBase().where(std::forward<C>(column), EQ, std::forward<V>(value), condition);
+        getQuery().where(std::forward<C>(column), EQ, std::forward<V>(value), condition);
         return builder();
     }
 
@@ -1593,7 +1633,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereEq(C &&column, V &&value)
     {
-        toBase().where(std::forward<C>(column), EQ, std::forward<V>(value), OR);
+        getQuery().where(std::forward<C>(column), EQ, std::forward<V>(value), OR);
         return builder();
     }
 
@@ -1605,8 +1645,8 @@ namespace Tiny
     BuilderProxies<Model>::whereNot(
             C &&column, const QString &comparison, V &&value, const QString &condition)
     {
-        toBase().whereNot(std::forward<C>(column), comparison, std::forward<V>(value),
-                          condition);
+        getQuery().whereNot(std::forward<C>(column), comparison, std::forward<V>(value),
+                            condition);
         return builder();
     }
 
@@ -1615,7 +1655,8 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereNot(C &&column, const QString &comparison, V &&value)
     {
-        toBase().orWhereNot(std::forward<C>(column), comparison, std::forward<V>(value));
+        getQuery().orWhereNot(std::forward<C>(column), comparison,
+                              std::forward<V>(value));
         return builder();
     }
 
@@ -1624,7 +1665,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::whereNotEq(C &&column, V &&value, const QString &condition)
     {
-        toBase().whereNotEq(std::forward<C>(column), std::forward<V>(value), condition);
+        getQuery().whereNotEq(std::forward<C>(column), std::forward<V>(value), condition);
         return builder();
     }
 
@@ -1633,7 +1674,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereNotEq(C &&column, V &&value)
     {
-        toBase().orWhereNotEq(std::forward<C>(column), std::forward<V>(value));
+        getQuery().orWhereNotEq(std::forward<C>(column), std::forward<V>(value));
         return builder();
     }
 
@@ -1644,7 +1685,7 @@ namespace Tiny
             const Column &column, const QString &comparison, T &&query,
             const QString &condition)
     {
-        toBase().whereSub(column, comparison, std::forward<T>(query), condition);
+        getQuery().whereSub(column, comparison, std::forward<T>(query), condition);
         return builder();
     }
 
@@ -1656,7 +1697,7 @@ namespace Tiny
             const std::function<void(QueryBuilder &)> &callback,
             const QString &condition, const bool nope)
     {
-        toBase().whereExists(callback, condition, nope);
+        getQuery().whereExists(callback, condition, nope);
         return builder();
     }
 
@@ -1665,7 +1706,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereExists(
             const std::function<void(QueryBuilder &)> &callback, const bool nope)
     {
-        toBase().whereExists(callback, OR, nope);
+        getQuery().whereExists(callback, OR, nope);
         return builder();
     }
 
@@ -1675,7 +1716,7 @@ namespace Tiny
             const std::function<void(QueryBuilder &)> &callback,
             const QString &condition)
     {
-        toBase().whereExists(callback, condition, true);
+        getQuery().whereExists(callback, condition, true);
         return builder();
     }
 
@@ -1684,7 +1725,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereNotExists(
             const std::function<void(QueryBuilder &)> &callback)
     {
-        toBase().whereExists(callback, OR, true);
+        getQuery().whereExists(callback, OR, true);
         return builder();
     }
 
@@ -1696,7 +1737,7 @@ namespace Tiny
             const QVector<Column> &columns, const QString &comparison,
             const QVector<QVariant> &values, const QString &condition)
     {
-        toBase().whereRowValues(columns, comparison, values, condition);
+        getQuery().whereRowValues(columns, comparison, values, condition);
         return builder();
     }
 
@@ -1706,7 +1747,7 @@ namespace Tiny
             const QVector<Column> &columns, const QString &comparison,
             const QVector<QVariant> &values)
     {
-        toBase().whereRowValues(columns, comparison, values, OR);
+        getQuery().whereRowValues(columns, comparison, values, OR);
         return builder();
     }
 
@@ -1716,7 +1757,7 @@ namespace Tiny
             const QVector<Column> &columns, const QVector<QVariant> &values,
             const QString &condition)
     {
-        toBase().whereRowValues(columns, EQ, values, condition);
+        getQuery().whereRowValues(columns, EQ, values, condition);
         return builder();
     }
 
@@ -1725,7 +1766,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereRowValuesEq(const QVector<Column> &columns,
                                               const QVector<QVariant> &values)
     {
-        toBase().whereRowValues(columns, EQ, values, OR);
+        getQuery().whereRowValues(columns, EQ, values, OR);
         return builder();
     }
 
@@ -1737,7 +1778,7 @@ namespace Tiny
             const QString &sql, const QVector<QVariant> &bindings,
             const QString &condition)
     {
-        toBase().whereRaw(sql, bindings, condition);
+        getQuery().whereRaw(sql, bindings, condition);
         return builder();
     }
 
@@ -1746,7 +1787,7 @@ namespace Tiny
     BuilderProxies<Model>::orWhereRaw(
             const QString &sql, const QVector<QVariant> &bindings)
     {
-        toBase().whereRaw(sql, bindings, OR);
+        getQuery().whereRaw(sql, bindings, OR);
         return builder();
     }
 
@@ -1756,7 +1797,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::groupBy(const QVector<Column> &groups)
     {
-        toBase().groupBy(groups);
+        getQuery().groupBy(groups);
         return builder();
     }
 
@@ -1764,7 +1805,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::groupBy(const Column &group)
     {
-        toBase().groupBy(group);
+        getQuery().groupBy(group);
         return builder();
     }
 
@@ -1773,7 +1814,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::groupBy(Args &&...groups)
     {
-        toBase().groupBy(QVector<Column> {std::forward<Args>(groups)...});
+        getQuery().groupBy(QVector<Column> {std::forward<Args>(groups)...});
         return builder();
     }
 
@@ -1782,7 +1823,7 @@ namespace Tiny
     BuilderProxies<Model>::groupByRaw(
             const QString &sql, const QVector<QVariant> &bindings)
     {
-        toBase().groupByRaw(sql, bindings);
+        getQuery().groupByRaw(sql, bindings);
         return builder();
     }
 
@@ -1792,7 +1833,7 @@ namespace Tiny
             const Column &column, const QString &comparison, const QVariant &value,
             const QString &condition)
     {
-        toBase().having(column, comparison, value, condition);
+        getQuery().having(column, comparison, value, condition);
         return builder();
     }
 
@@ -1801,7 +1842,7 @@ namespace Tiny
     BuilderProxies<Model>::orHaving(
             const Column &column, const QString &comparison, const QVariant &value)
     {
-        toBase().orHaving(column, comparison, value);
+        getQuery().orHaving(column, comparison, value);
         return builder();
     }
 
@@ -1811,7 +1852,7 @@ namespace Tiny
             const QString &sql, const QVector<QVariant> &bindings,
             const QString &condition)
     {
-        toBase().havingRaw(sql, bindings, condition);
+        getQuery().havingRaw(sql, bindings, condition);
         return builder();
     }
 
@@ -1820,7 +1861,7 @@ namespace Tiny
     BuilderProxies<Model>::orHavingRaw(
             const QString &sql, const QVector<QVariant> &bindings)
     {
-        toBase().havingRaw(sql, bindings, OR);
+        getQuery().havingRaw(sql, bindings, OR);
         return builder();
     }
 
@@ -1830,7 +1871,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orderBy(const Column &column, const QString &direction)
     {
-        toBase().orderBy(column, direction);
+        getQuery().orderBy(column, direction);
         return builder();
     }
 
@@ -1838,7 +1879,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orderByDesc(const Column &column)
     {
-        toBase().orderByDesc(column);
+        getQuery().orderByDesc(column);
         return builder();
     }
 
@@ -1847,7 +1888,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orderBy(T &&query, const QString &direction)
     {
-        toBase().orderBy(std::forward<T>(query), direction);
+        getQuery().orderBy(std::forward<T>(query), direction);
         return builder();
     }
 
@@ -1856,7 +1897,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orderByDesc(T &&query)
     {
-        toBase().orderBy(std::forward<T>(query), DESC);
+        getQuery().orderBy(std::forward<T>(query), DESC);
         return builder();
     }
 
@@ -1864,7 +1905,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::inRandomOrder(const QString &seed)
     {
-        toBase().inRandomOrder(seed);
+        getQuery().inRandomOrder(seed);
         return builder();
     }
 
@@ -1873,7 +1914,7 @@ namespace Tiny
     BuilderProxies<Model>::orderByRaw(
             const QString &sql, const QVector<QVariant> &bindings)
     {
-        toBase().orderByRaw(sql, bindings);
+        getQuery().orderByRaw(sql, bindings);
         return builder();
     }
 
@@ -1881,7 +1922,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::latest(const Column &column)
     {
-        toBase().latest(builder().getCreatedAtColumnForLatestOldest(column));
+        getQuery().latest(builder().getCreatedAtColumnForLatestOldest(column));
         return builder();
     }
 
@@ -1889,7 +1930,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::oldest(const Column &column)
     {
-        toBase().oldest(builder().getCreatedAtColumnForLatestOldest(column));
+        getQuery().oldest(builder().getCreatedAtColumnForLatestOldest(column));
         return builder();
     }
 
@@ -1897,7 +1938,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::reorder()
     {
-        toBase().reorder();
+        getQuery().reorder();
         return builder();
     }
 
@@ -1905,7 +1946,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::reorder(const Column &column, const QString &direction)
     {
-        toBase().reorder(column, direction);
+        getQuery().reorder(column, direction);
         return builder();
     }
 
@@ -1913,7 +1954,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::limit(const int value)
     {
-        toBase().limit(value);
+        getQuery().limit(value);
         return builder();
     }
 
@@ -1928,7 +1969,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::offset(const int value)
     {
-        toBase().offset(value);
+        getQuery().offset(value);
         return builder();
     }
 
@@ -1943,7 +1984,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::forPage(const int page, const int perPage)
     {
-        toBase().forPage(page, perPage);
+        getQuery().forPage(page, perPage);
         return builder();
     }
 
@@ -1952,7 +1993,7 @@ namespace Tiny
     BuilderProxies<Model>::forPageBeforeId(const int perPage, const QVariant &lastId,
                                            const QString &column, const bool prependOrder)
     {
-        toBase().forPageBeforeId(perPage, lastId, column, prependOrder);
+        getQuery().forPageBeforeId(perPage, lastId, column, prependOrder);
         return builder();
     }
 
@@ -1961,28 +2002,8 @@ namespace Tiny
     BuilderProxies<Model>::forPageAfterId(const int perPage, const QVariant &lastId,
                                           const QString &column, const bool prependOrder)
     {
-        toBase().forPageAfterId(perPage, lastId, column, prependOrder);
+        getQuery().forPageAfterId(perPage, lastId, column, prependOrder);
         return builder();
-    }
-
-    /* Others */
-
-    template<typename Model>
-    template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
-    BuilderProxies<Model>::increment(
-            const QString &column, const T amount, const QVector<UpdateItem> &extra) const
-    {
-        return toBase().increment(column, amount, builder().addUpdatedAtColumn(extra));
-    }
-
-    template<typename Model>
-    template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
-    BuilderProxies<Model>::decrement(
-            const QString &column, const T amount, const QVector<UpdateItem> &extra) const
-    {
-        return toBase().decrement(column, amount, builder().addUpdatedAtColumn(extra));
     }
 
     /* Pessimistic Locking */
@@ -1990,59 +2011,43 @@ namespace Tiny
     template<typename Model>
     TinyBuilder<Model> &BuilderProxies<Model>::lockForUpdate()
     {
-        toBase().lock(true);
+        getQuery().lock(true);
         return builder();
     }
 
     template<typename Model>
     TinyBuilder<Model> &BuilderProxies<Model>::sharedLock()
     {
-        toBase().lock(false);
+        getQuery().lock(false);
         return builder();
     }
 
     template<typename Model>
     TinyBuilder<Model> &BuilderProxies<Model>::lock(const bool value)
     {
-        toBase().lock(value);
+        getQuery().lock(value);
         return builder();
     }
 
     template<typename Model>
     TinyBuilder<Model> &BuilderProxies<Model>::lock(const char *value)
     {
-        toBase().lock(value);
+        getQuery().lock(value);
         return builder();
     }
 
     template<typename Model>
     TinyBuilder<Model> &BuilderProxies<Model>::lock(const QString &value)
     {
-        toBase().lock(value);
+        getQuery().lock(value);
         return builder();
     }
 
     template<typename Model>
     TinyBuilder<Model> &BuilderProxies<Model>::lock(QString &&value)
     {
-        toBase().lock(std::move(value));
+        getQuery().lock(std::move(value));
         return builder();
-    }
-
-    /* Debugging */
-
-    template<typename Model>
-    void BuilderProxies<Model>::dump(const bool replaceBindings,
-                                     const bool simpleBindings) const
-    {
-        toBase().dump(replaceBindings, simpleBindings);
-    }
-
-    template<typename Model>
-    void BuilderProxies<Model>::dd(const bool replaceBindings,
-                                   const bool simpleBindings) const
-    {
-        toBase().dd(replaceBindings, simpleBindings);
     }
 
     /* Others proxy methods, not added to the Model and Relation */
@@ -2053,7 +2058,7 @@ namespace Tiny
             const std::shared_ptr<QueryBuilder> &query, const QString &condition,
             const bool nope)
     {
-        toBase().addWhereExistsQuery(query, condition, nope);
+        getQuery().addWhereExistsQuery(query, condition, nope);
         return builder();
     }
 
@@ -2062,7 +2067,7 @@ namespace Tiny
     BuilderProxies<Model>::mergeWheres(
             const QVector<WhereConditionItem> &wheres, const QVector<QVariant> &bindings)
     {
-        toBase().mergeWheres(wheres, bindings);
+        getQuery().mergeWheres(wheres, bindings);
         return builder();
     }
 
@@ -2071,7 +2076,7 @@ namespace Tiny
     BuilderProxies<Model>::mergeWheres(
             QVector<WhereConditionItem> &&wheres, QVector<QVariant> &&bindings)
     {
-        toBase().mergeWheres(std::move(wheres), std::move(bindings));
+        getQuery().mergeWheres(std::move(wheres), std::move(bindings));
         return builder();
     }
 
@@ -2095,7 +2100,13 @@ namespace Tiny
     }
 
     template<typename Model>
-    QueryBuilder &BuilderProxies<Model>::toBase() const
+    QueryBuilder &BuilderProxies<Model>::toBase()
+    {
+        return builder().toBase();
+    }
+
+    template<typename Model>
+    QueryBuilder &BuilderProxies<Model>::getQuery() const
     {
         return builder().getQuery();
     }

@@ -28,6 +28,8 @@ keywords: [c++ orm, orm, getting started, tinyorm]
     - [Mass Assignment](#mass-assignment)
     - [Upserts](#upserts)
 - [Deleting Models](#deleting-models)
+    - [Soft Deleting](#soft-deleting)
+    - [Querying Soft Deleted Models](#querying-soft-deleted-models)
     - [Truncate Table](#truncate-table)
 - [Replicating Models](#replicating-models)
 - [Comparing Models](#comparing-models)
@@ -705,6 +707,115 @@ The `destroy` method loads models from the database and calls the `remove` metho
 Of course, you may build the query to delete all models matching your query's criteria. In this example, we will delete all flights that are marked as inactive:
 
     auto deletedRows = Flight::whereEq("active", 0)->remove();
+
+### Soft Deleting
+
+In addition to actually removing records from your database, TinyORM can also "soft delete" models. When models are soft deleted, they are not actually removed from your database. Instead, a `deleted_at` attribute is set on the model indicating the date and time at which the model was "deleted". To enable soft deletes for a model, add the `Orm::Tiny::SoftDeletes` base class to the model:
+
+    #include <orm/tiny/model.hpp>
+    #include <orm/tiny/softdeletes.hpp>
+
+    using Orm::Tiny::Model;
+    using Orm::Tiny::SoftDeletes;
+
+    class Flight final : public Model<Flight>,
+                         public SoftDeletes<Flight>
+    {
+        friend Model;
+        using Model::Model;
+
+    private:
+        /*! The table associated with the model. */
+        QString u_table {"flights"};
+    };
+
+:::info
+The `SoftDeletes` base class will automatically cast the `deleted_at` attribute to the `QDateTime` instance for you (it adds the `deleted_at` column to the model's `u_dates` list).
+:::
+
+You should also add the `deleted_at` column to your database table. The TinyORM [schema builder](/database/migrations.mdx) contains a helper method to create this column:
+
+    Schema::table("flights", [](Blueprint &table)
+    {
+        table.softDeletes();
+    });
+
+    Schema::table("flights", [](Blueprint &table)
+    {
+        table.dropSoftDeletes();
+    });
+
+Now, when you call the `remove` or `deleteModel` method on the model, the `deleted_at` column will be set to the current date and time. However, the model's database record will be left in the table. When querying a model that uses soft deletes, the soft deleted models will automatically be excluded from all query results.
+
+To determine if a given model instance has been soft deleted, you may use the `trashed` method:
+
+    if (flight->trashed()) {
+        //
+    }
+
+#### Restoring Soft Deleted Models
+
+Sometimes you may wish to "un-delete" a soft deleted model. To restore a soft deleted model, you may call the `restore` method on a model instance. The `restore` method will set the model's `deleted_at` column to `null`:
+
+    flight->restore();
+
+You may also use the `restore` method in a query to restore multiple models:
+
+    Flight::withTrashed()
+            ->whereEq("airline_id", 1)
+            .restore();
+
+The `restore` method may also be used when building [relationship](/tinyorm/relationships.mdx) queries:
+
+    flight->history()->restore();
+
+#### Permanently Deleting Models
+
+Sometimes you may need to truly remove a model from your database. You may use the `forceDelete` method (or it's alias `forceRemove`) to permanently remove a soft deleted model from the database table:
+
+    flight->forceDelete();
+
+You may also use the `forceDelete` method when building TinyORM relationship queries:
+
+    flight->history()->forceDelete();
+
+### Querying Soft Deleted Models
+
+#### Including Soft Deleted Models
+
+As noted above, soft deleted models will automatically be excluded from query results. However, you may force soft deleted models to be included in a query's results by calling the `withTrashed` method on the query:
+
+    auto flights = Flight::withTrashed()
+                           ->whereEq("account_id", 1)
+                           .get();
+
+The `withTrashed` method may also be called when building a [relationship](/tinyorm/relationships.mdx) query:
+
+    flight->history()->withTrashed().get();
+
+#### Retrieving Only Soft Deleted Models
+
+The `onlyTrashed` method will retrieve **only** soft deleted models:
+
+    auto flights = Flight::onlyTrashed()
+                           ->whereEq("airline_id", 1)
+                           .get();
+
+The `onlyTrashed` method may also be called when building a [relationship](/tinyorm/relationships.mdx) query:
+
+    flight->history()->onlyTrashed().get();
+
+#### Excluding Soft Deleted Models
+
+As noted above, soft deleted models will automatically be excluded from query results. However, you may force soft deleted models to be **excluded** in a query's results by calling the `withoutTrashed` method on the query:
+
+    auto flights = Flight::withoutTrashed()
+                           ->whereEq("account_id", 1)
+                           .get();
+
+The `withoutTrashed` method may also be called when building a [relationship](/tinyorm/relationships.mdx) query:
+
+    flight->history()->withoutTrashed().get();
 
 ### Truncate Table
 

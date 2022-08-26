@@ -12,6 +12,60 @@ tom/include/tom/version.hpp
 README.md
 
 
+Proxy methods that internally call the toBase() (applySoftDeletes):
+-------------------------------------------------------------------
+
+I have little misunderstood when the SoftDeletes constraint will be applied, I thought that it will be applied only
+during the TinyBuilder::toBase(), that is not absolutely true because whether it will be applied is controlled by
+the Model::newQueryXyz() methods. These Model::newQueryXyz() methods are called on various places, somehwhere
+the newQuery() (applies SoftDeletes) is called and on another places the newModelQuery() (doesn't apply SoftDeletes) or newQueryWithoutRelationships() is called.
+
+Anyway I leave this new structure of proxy methods that are divided by the toBase() or getQuery() internal method calls,
+it makes sense.
+
+Proxy methods on the TinyBuilder that need to apply SoftDeletes (call toBase() internally).
+
+aggregate
+average
+avg
+count
+dd
+decrement
+doesntExist
+doesntExistOr
+dump
+exists
+existsOr
+explain (currently not implemented)
+implode
+increment
+max
+min
+pluck
+remove
+sum
+toSql
+update
+upsert
+
+These three getters are discutable, but I will apply SoftDeletes, it won't hurt anything:
+from
+getConnection
+getGrammar
+
+There is not need to apply SoftDeletes for the getBindings() as the BuildsSoftDeletes is not adding any new bindings:
+getBindings
+
+There is not need to apply SoftDeletes on insert methods:
+insert
+insertGetId
+insertOrIgnore
+insertUsing
+
+There is not need to apply SoftDeletes on these:
+raw
+
+
 Todos to check in TinyOrm:
 --------------------------
 
