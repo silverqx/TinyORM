@@ -381,7 +381,7 @@ cmake.exe -S E:/c/qMedia/TinyOrm/TinyOrm -B E:/c/qMedia/TinyOrm/TinyOrm-builds-c
 dot -Tpng -o .\graph\graph.png .\graph\graph.dot; `
 .\graph\graph.png
 
- - running ctest
+ - running ctest (use CTEST_OUTPUT_ON_FAILURE=1 env. or --output-on-failure, to see what failed)
 
 E:\c\qMedia\TinyOrm\TinyOrm\tests\auto\utils\testdata\dotenv.ps1
 $env:Path = "E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake;E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug-cmake\tests\auto\utils;" + $env:Path
