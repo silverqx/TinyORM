@@ -129,7 +129,7 @@ Let's examine a basic model class and discuss some of TinyORM's key conventions:
 
 ### Table Names
 
-After glancing at the example above, you may have noticed that we did not tell TinyORM which database table corresponds to our `Flight` model. By convention, the "snake case", plural name of the class will be used as the table name unless another name is explicitly specified. So, in this case, TinyOrm will assume the `Flight` model stores records in the `flights` table, while an `AirTrafficController` model would store records in an `air_traffic_controllers` table.
+After glancing at the example above, you may have noticed that we did not tell TinyORM which database table corresponds to our `Flight` model. By convention, the "snake case", plural name of the class will be used as the table name unless another name is explicitly specified. So, in this case, TinyORM will assume the `Flight` model stores records in the `flights` table, while an `AirTrafficController` model would store records in an `air_traffic_controllers` table.
 
 If your model's corresponding database table does not fit this convention, you may manually specify the model's table name by defining the private `u_table` data member on the model:
 
@@ -187,11 +187,11 @@ Non-numeric primary keys are not currently implemented, `u_incrementing` code lo
 
 #### "Composite" Primary Keys
 
-TinyOrm requires each model to have at least one uniquely identifying "ID" that can serve as its primary key. "Composite" primary keys are not supported by TinyOrm models. However, you are free to add additional multi-column unique indexes to your database tables, in addition to the table's uniquely identifying primary key.
+TinyORM requires each model to have at least one uniquely identifying "ID" that can serve as its primary key. "Composite" primary keys are not supported by TinyORM models. However, you are free to add additional multi-column unique indexes to your database tables, in addition to the table's uniquely identifying primary key.
 
 ### Timestamps
 
-By default, TinyOrm expects `created_at` and `updated_at` columns to exist on your model's corresponding database table.  TinyOrm will automatically set these column's values when models are created or updated. If you do not want these columns to be automatically managed by TinyOrm, you should define a private `u_timestamps` data member on your model with a value of `false`:
+By default, TinyORM expects `created_at` and `updated_at` columns to exist on your model's corresponding database table.  TinyORM will automatically set these column's values when models are created or updated. If you do not want these columns to be automatically managed by TinyORM, you should define a private `u_timestamps` data member on your model with a value of `false`:
 
     #include <orm/tiny/model.hpp>
 
@@ -251,7 +251,7 @@ You may also use `Orm::CREATED_AT` and `Orm::UPDATED_AT` string constants instea
 
 ### Database Connections
 
-By default, all TinyOrm models will use the default database connection that is configured for your application. If you would like to specify a different connection that should be used when interacting with a particular model, you should define a `u_connection` private data member on the model:
+By default, all TinyORM models will use the default database connection that is configured for your application. If you would like to specify a different connection that should be used when interacting with a particular model, you should define a `u_connection` private data member on the model:
 
     #include <orm/tiny/model.hpp>
 
@@ -298,7 +298,7 @@ By default, a newly instantiated model instance will not contain any attribute v
 
 ## Retrieving Models
 
-Once you have created a model and its associated database table, you are ready to start retrieving data from your database. You can think of each TinyOrm model as a powerful [query builder](database/query-builder.mdx) allowing you to fluently query the database table associated with the model. The model's `all` method will retrieve all of the records from the model's associated database table:
+Once you have created a model and its associated database table, you are ready to start retrieving data from your database. You can think of each TinyORM model as a powerful [query builder](database/query-builder.mdx) allowing you to fluently query the database table associated with the model. The model's `all` method will retrieve all of the records from the model's associated database table:
 
     #include <QDebug>
 
@@ -309,7 +309,7 @@ Once you have created a model and its associated database table, you are ready t
 
 #### Building Queries
 
-The TinyOrm `all` method will return all of the results in the model's table. However, since each TinyOrm model serves as a [query builder](database/query-builder.mdx), you may add additional constraints to queries and then invoke the `get` method to retrieve the results:
+The TinyORM `all` method will return all of the results in the model's table. However, since each TinyORM model serves as a [query builder](database/query-builder.mdx), you may add additional constraints to queries and then invoke the `get` method to retrieve the results:
 
     auto flights = Flight::whereEq("active", 1)
                ->orderBy("name")
@@ -317,7 +317,7 @@ The TinyOrm `all` method will return all of the results in the model's table. Ho
                .get();
 
 :::tip
-Since TinyOrm models are query builders, you should review all of the methods provided by TinyORM's [query builder](database/query-builder.mdx). You may use any of these methods when writing your TinyOrm queries.
+Since TinyORM models are query builders, you should review all of the methods provided by TinyORM's [query builder](database/query-builder.mdx). You may use any of these methods when writing your TinyORM queries.
 :::
 
 :::note
@@ -326,7 +326,7 @@ All the static methods defined on the `Orm::Tiny::Model<Derived, AllRelations...
 
 #### Refreshing Models
 
-If you already have an instance of the TinyOrm model that was retrieved from the database, you can "refresh" the model using the `fresh` and `refresh` methods. The `fresh` method will re-retrieve the model from the database. The existing model instance will not be affected:
+If you already have an instance of the TinyORM model that was retrieved from the database, you can "refresh" the model using the `fresh` and `refresh` methods. The `fresh` method will re-retrieve the model from the database. The existing model instance will not be affected:
 
     auto flight = Flight::whereEq("number", "FR 900")->first();
 
@@ -500,7 +500,7 @@ When interacting with TinyORM models, you may also use the `count`, `sum`, `max`
 
 ### Inserts
 
-Of course, when using TinyOrm, we don't only need to retrieve models from the database. We also need to insert new records. Thankfully, TinyOrm makes it simple. To insert a new record into the database, you should instantiate a new model instance and set attributes on the model. Then, call the `save` method on the model instance:
+Of course, when using TinyORM, we don't only need to retrieve models from the database. We also need to insert new records. Thankfully, TinyORM makes it simple. To insert a new record into the database, you should instantiate a new model instance and set attributes on the model. Then, call the `save` method on the model instance:
 
     #include "models/flight.hpp"
 
@@ -545,7 +545,7 @@ The `update` method expects the `QVector<Orm::UpdateItem>` of column and value p
 
 #### Examining Attribute Changes
 
-TinyOrm provides the `isDirty`, `isClean`, and `wasChanged` methods to examine the internal state of your model and determine how its attributes have changed from when the model was originally retrieved.
+TinyORM provides the `isDirty`, `isClean`, and `wasChanged` methods to examine the internal state of your model and determine how its attributes have changed from when the model was originally retrieved.
 
 The `isDirty` method determines if any of the model's attributes have been changed since the model was retrieved. You may pass a specific attribute name to the `isDirty` method to determine if a particular attribute is dirty. The `isClean` will determine if an attribute has remained unchanged since the model was retrieved. This method also accepts an optional attribute argument:
 
