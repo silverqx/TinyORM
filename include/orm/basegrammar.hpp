@@ -38,7 +38,7 @@ namespace Query
         /*! Default constructor. */
         inline BaseGrammar() = default;
         /*! Virtual destructor. */
-        inline virtual ~BaseGrammar() = default;
+        inline virtual ~BaseGrammar() = 0;
 
         /*! Get the format for database stored dates. */
         virtual const QString &getDateFormat() const;
@@ -113,6 +113,12 @@ namespace Query
         /*! The grammar table prefix. */
         QString m_tablePrefix {};
     };
+
+    /* public */
+
+    BaseGrammar::~BaseGrammar() = default;
+
+    /* protected */
 
     template<ColumnContainer T>
     QString BaseGrammar::columnize(T &&columns) const

@@ -30,7 +30,7 @@ namespace Concerns
         /*! Default constructor. */
         inline CallsCommands() = default;
         /*! Virtual destructor. */
-        inline virtual ~CallsCommands() = default;
+        inline virtual ~CallsCommands() = 0;
 
         /*! Call another console command. */
         inline int call(const QString &command, QStringList &&arguments = {}) const;
@@ -53,6 +53,8 @@ namespace Concerns
     };
 
     /* public */
+
+    CallsCommands::~CallsCommands() = default;
 
     int CallsCommands::call(const QString &command, QStringList &&arguments) const
     {

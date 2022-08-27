@@ -37,7 +37,7 @@ namespace Concerns
 
     public:
         /*! Virtual destructor. */
-        inline virtual ~GuessCommandName() = default;
+        inline virtual ~GuessCommandName() = 0;
 
     protected:
         /*! Default constructor.*/
@@ -81,6 +81,10 @@ namespace Concerns
         /*! Get the tom application, const version. */
         const Application &application() const noexcept;
     };
+
+    /* public */
+
+    GuessCommandName::~GuessCommandName() = default;
 
 } // namespace Concerns
 } // namespace Tom

@@ -39,6 +39,8 @@ namespace Orm
         virtual void resetDefaultConnection() = 0;
     };
 
+    /* public */
+
     ConnectionResolverInterface::~ConnectionResolverInterface() = default;
 
 } // namespace Orm

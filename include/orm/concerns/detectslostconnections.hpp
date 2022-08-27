@@ -34,13 +34,17 @@ namespace Concerns
         /*! Default constructor. */
         inline DetectsLostConnections() = default;
         /*! Virtual destructor, to pass -Weffc++. */
-        inline virtual ~DetectsLostConnections() = default;
+        inline virtual ~DetectsLostConnections() = 0;
 
         /*! Determine if the given exception was caused by a lost connection. */
         bool causedByLostConnection(const Exceptions::SqlError &e) const;
         /*! Determine if the given exception was caused by a lost connection. */
         bool causedByLostConnection(const QSqlError &e) const;
     };
+
+    /* public */
+
+    DetectsLostConnections::~DetectsLostConnections() = default;
 
 } // namespace Concerns
 } // namespace Orm

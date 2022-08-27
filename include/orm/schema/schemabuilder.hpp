@@ -37,7 +37,7 @@ namespace Grammars
     public:
         /*! Constructor. */
         explicit SchemaBuilder(DatabaseConnection &connection);
-        /*! Virtual destructor. */
+        /*! Virtual destructor, this class is used so can not be pure. */
         inline virtual ~SchemaBuilder() = default;
 
         /*! Create a database in the schema. */
@@ -121,6 +121,8 @@ namespace Grammars
         /*! The schema grammar instance. */
         const SchemaGrammar &m_grammar;
     };
+
+    /* public */
 
     template<QStringConcept ...Args>
     void SchemaBuilder::dropColumns(const QString &table, Args &&...columns)

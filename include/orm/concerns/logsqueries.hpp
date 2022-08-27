@@ -32,7 +32,7 @@ namespace Concerns
         /*! Default constructor. */
         inline LogsQueries() = default;
         /*! Virtual destructor, to pass -Weffc++. */
-        inline virtual ~LogsQueries() = default;
+        inline virtual ~LogsQueries() = 0;
 
         /*! Log a query into the connection's query log. */
         inline void logQuery(const QSqlQuery &query, std::optional<qint64> elapsed,
@@ -110,6 +110,8 @@ namespace Concerns
     };
 
     /* public */
+
+    LogsQueries::~LogsQueries() = default;
 
     void LogsQueries::logQuery(
             const QSqlQuery &queryResult, std::optional<qint64> elapsed,

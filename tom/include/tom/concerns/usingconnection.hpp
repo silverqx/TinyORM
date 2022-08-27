@@ -51,7 +51,7 @@ namespace Concerns
         explicit UsingConnection(
                 std::shared_ptr<ConnectionResolverInterface> &&connectionResolver);
         /*! Virtual destructor. */
-        inline virtual ~UsingConnection() = default;
+        inline virtual ~UsingConnection() = 0;
 
         /*! Execute the given callback using the given connections as the default
             connections (in the loop). */
@@ -134,6 +134,8 @@ namespace Concerns
     };
 
     /* public */
+
+    UsingConnection::~UsingConnection() = default;
 
     const QString &UsingConnection::getConnectionName() const noexcept
     {

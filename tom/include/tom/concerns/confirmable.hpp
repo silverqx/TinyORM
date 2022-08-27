@@ -35,7 +35,7 @@ namespace Concerns
         /*! Constructor (int param. to avoid interpret it as copy ctor). */
         Confirmable(Command &command, int /*unused*/);
         /*! Virtual destructor. */
-        inline virtual ~Confirmable() = default;
+        inline virtual ~Confirmable() = 0;
 
         /*! Confirm before proceeding with the action (only in production environment). */
         bool confirmToProceed(
@@ -49,6 +49,10 @@ namespace Concerns
         /*! Reference to a command that should be confimable. */
         std::reference_wrapper<Command> m_command;
     };
+
+    /* public */
+
+    Confirmable::~Confirmable() = default;
 
 } // namespace Concerns
 } // namespace Tom

@@ -34,7 +34,7 @@ namespace Concerns
         /*! Default constructor. */
         inline CountsQueries() = default;
         /*! Virtual destructor, to pass -Weffc++. */
-        inline virtual ~CountsQueries() = default;
+        inline virtual ~CountsQueries() = 0;
 
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */
@@ -85,6 +85,10 @@ namespace Concerns
         /*! Dynamic cast *this to the DatabaseConnection & derived type. */
         DatabaseConnection &databaseConnection();
     };
+
+    /* public */
+
+    CountsQueries::~CountsQueries() = default;
 
 } // namespace Concerns
 } // namespace Orm

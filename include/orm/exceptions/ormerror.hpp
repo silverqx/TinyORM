@@ -17,8 +17,12 @@ namespace Orm::Exceptions
     {
     public:
         /*! Virtual destructor. */
-        inline virtual ~OrmError() = default;
+        inline virtual ~OrmError() = 0;
     };
+
+    /* public */
+
+    OrmError::~OrmError() = default;
 
 } // namespace Orm::Exceptions
 

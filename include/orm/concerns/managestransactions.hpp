@@ -41,7 +41,7 @@ namespace Concerns
         /*! Default constructor. */
         ManagesTransactions();
         /*! Virtual destructor, to pass -Weffc++. */
-        inline virtual ~ManagesTransactions() = default;
+        inline virtual ~ManagesTransactions() = 0;
 
         /*! Start a new database transaction. */
         bool beginTransaction();
@@ -100,6 +100,8 @@ namespace Concerns
     };
 
     /* public */
+
+    ManagesTransactions::~ManagesTransactions() = default;
 
     std::size_t ManagesTransactions::transactionLevel() const
     {

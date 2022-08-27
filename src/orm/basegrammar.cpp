@@ -33,6 +33,8 @@ namespace Orm
    the quoteString(), all these methods support container types.
 */
 
+/* public */
+
 const QString &BaseGrammar::getDateFormat() const
 {
     static const auto cachedFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");

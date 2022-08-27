@@ -29,7 +29,7 @@ namespace Concerns
         /*! Default constructor. */
         inline PrepareOptionValues() = default;
         /*! Virtual destructor. */
-        inline virtual ~PrepareOptionValues() = default;
+        inline virtual ~PrepareOptionValues() = 0;
 
     protected:
         /*! Prepare foreign key option values for the ModelCreator. */
@@ -46,6 +46,10 @@ namespace Concerns
         /*! Static cast *this to the ModelCommand & derived type. */
         ModelCommand &modelCommand();
     };
+
+    /* public */
+
+    PrepareOptionValues::~PrepareOptionValues() = default;
 
 } // namespace Concerns
 } // namespace Tom::Commands::Make

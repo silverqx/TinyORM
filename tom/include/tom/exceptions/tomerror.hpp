@@ -17,8 +17,12 @@ namespace Tom::Exceptions
     {
     public:
         /*! Virtual destructor. */
-        inline virtual ~TomError() = default;
+        inline virtual ~TomError() = 0;
     };
+
+    /* public */
+
+    TomError::~TomError() = default;
 
 } // namespace Tom::Exceptions
 

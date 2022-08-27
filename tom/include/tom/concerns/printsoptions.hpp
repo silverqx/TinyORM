@@ -34,7 +34,7 @@ namespace Concerns
         PrintsOptions(const QList<QCommandLineOption> &options,
                       const Concerns::InteractsWithIO &io);
         /*! Virtual destructor. */
-        inline virtual ~PrintsOptions() = default;
+        inline virtual ~PrintsOptions() = 0;
 
         /*! Print options section. */
         int printOptionsSection(bool commonOptions) const;
@@ -64,6 +64,10 @@ namespace Concerns
         /*! Reference to the IO. */
         std::reference_wrapper<const Concerns::InteractsWithIO> m_io;
     };
+
+    /* public */
+
+    PrintsOptions::~PrintsOptions() = default;
 
     /* private */
 
