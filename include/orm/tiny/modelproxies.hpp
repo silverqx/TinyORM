@@ -3413,6 +3413,7 @@ namespace Tiny
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::query()
     {
+        // Model::query() creates a new Model instance and returns a newQuery()
         return Model<Derived, AllRelations...>::query();
     }
 
