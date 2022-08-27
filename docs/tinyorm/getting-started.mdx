@@ -249,6 +249,24 @@ You can make these static constants non-inline and initialize them in the cpp fi
 You may also use `Orm::CREATED_AT` and `Orm::UPDATED_AT` string constants instead of `QStringLiteral("created_at")`.
 :::
 
+#### Touching timestamps
+
+You can explicitly touch timestamps using the `touch` method defined on the Model:
+
+    auto flight = Flight::find(1);
+
+    flight->touch();
+    flight->touch("added_on"); // Custom column name
+
+You can also touch multiple rows at once using the `touch` method defined on the TinyBuilder:
+
+    auto [affected, query] = Flight::whereEq("status", "new")->touch();
+
+The `touch` method may also be called when building a [relationship](/tinyorm/relationships.mdx) query:
+
+    flight->history()->touch();
+    flight->history()->whereEq("status", "new").touch();
+
 ### Database Connections
 
 By default, all TinyORM models will use the default database connection that is configured for your application. If you would like to specify a different connection that should be used when interacting with a particular model, you should define a `u_connection` private data member on the model:

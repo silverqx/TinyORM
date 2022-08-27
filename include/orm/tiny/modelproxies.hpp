@@ -225,6 +225,11 @@ namespace Tiny
         /*! Run a truncate statement on the table. */
         static void truncate();
 
+        /* Touching timestamps */
+        /*! Update the column's update timestamp on all Models. */
+        static std::tuple<int, std::optional<QSqlQuery>>
+        touchAll(const QString &column = "");
+
         /* Select */
         /*! Retrieve the "count" result of the query. */
         static quint64 count(const QVector<Column> &columns = {ASTERISK});
@@ -1415,6 +1420,15 @@ namespace Tiny
     void ModelProxies<Derived, AllRelations...>::truncate()
     {
         query()->truncate();
+    }
+
+    /* Touching timestamps */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::tuple<int, std::optional<QSqlQuery>>
+    ModelProxies<Derived, AllRelations...>::touchAll(const QString &column)
+    {
+        return query()->touch(column);
     }
 
     /* Select */

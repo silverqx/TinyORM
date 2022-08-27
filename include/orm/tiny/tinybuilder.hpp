@@ -191,6 +191,10 @@ namespace Orm::Tiny
         Model updateOrCreate(const QVector<WhereItem> &attributes,
                              const QVector<AttributeItem> &values = {});
 
+        /*! Update the column's update timestamp. */
+        std::tuple<int, std::optional<QSqlQuery>>
+        touch(const QString &column = "");
+
         /* QueryBuilder proxy methods that need modifications */
         /*! Update records in the database. */
         std::tuple<int, QSqlQuery>
@@ -836,6 +840,23 @@ namespace Orm::Tiny
         instance.fill(values).save();
 
         return instance;
+    }
+
+    template<typename Model>
+    std::tuple<int, std::optional<QSqlQuery>>
+    Builder<Model>::touch(const QString &column)
+    {
+        auto time = m_model.freshTimestamp();
+
+        if (!column.isEmpty())
+            return toBase().update({{column, std::move(time)}});
+
+        const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
+
+        if (!m_model.usesTimestamps() || updatedAtColumn.isEmpty())
+            return {0, std::nullopt};
+
+        return toBase().update({{updatedAtColumn, std::move(time)}});
     }
 
     /* QueryBuilder proxy methods that need modifications */

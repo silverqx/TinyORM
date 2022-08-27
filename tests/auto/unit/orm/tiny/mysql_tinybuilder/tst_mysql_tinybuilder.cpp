@@ -39,6 +39,10 @@ class tst_MySql_TinyBuilder : public QObject // clazy:exclude=ctor-missing-paren
 private slots:
     void initTestCase();
 
+    void touch() const;
+    void touch_CustomColumn() const;
+    void touch_NotUsesTimestamps() const;
+
     /* Querying Relationship Existence/Absence on HasMany */
     void has_Basic_OnHasMany() const;
     void has_Count_OnHasMany() const;
@@ -111,6 +115,79 @@ void tst_MySql_TinyBuilder::initTestCase()
         QSKIP(TestUtils::AutoTestSkipped
               .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
               .toUtf8().constData(), );
+}
+
+void tst_MySql_TinyBuilder::touch() const
+{
+    auto timeBeforeTouch = QDateTime::currentDateTime();
+    // Reset milliseconds to 0
+    {
+        auto time = timeBeforeTouch.time();
+        timeBeforeTouch.setTime(QTime(time.hour(), time.minute(), time.second()));
+    }
+
+    auto log = DB::connection(m_connection).pretend([this]
+    {
+        User::on(m_connection)
+                ->whereEq("status", "new")
+                .touch();
+    });
+
+    QCOMPARE(log.size(), 1);
+    const auto &firstLog = log.first();
+
+    QCOMPARE(firstLog.query,
+             "update `users` "
+             "set `updated_at` = ? "
+             "where `status` = ? and `users`.`deleted_at` is null");
+    QVERIFY(firstLog.boundValues.size() == 2);
+    QVERIFY(firstLog.boundValues.at(0).value<QDateTime>() >= timeBeforeTouch);
+    QCOMPARE(firstLog.boundValues.at(1), QVariant(QString("new")));
+}
+
+void tst_MySql_TinyBuilder::touch_CustomColumn() const
+{
+    auto timeBeforeTouch = QDateTime::currentDateTime();
+    // Reset milliseconds to 0
+    {
+        auto time = timeBeforeTouch.time();
+        timeBeforeTouch.setTime(QTime(time.hour(), time.minute(), time.second()));
+    }
+
+    auto log = DB::connection(m_connection).pretend([this]
+    {
+        User::on(m_connection)
+                ->whereEq("status", "new")
+                .touch("updated_on");
+    });
+
+    QCOMPARE(log.size(), 1);
+    const auto &firstLog = log.first();
+
+    QCOMPARE(firstLog.query,
+             "update `users` "
+             "set `updated_on` = ? "
+             "where `status` = ? and `users`.`deleted_at` is null");
+    QVERIFY(firstLog.boundValues.size() == 2);
+    QVERIFY(firstLog.boundValues.at(0).value<QDateTime>() >= timeBeforeTouch);
+    QCOMPARE(firstLog.boundValues.at(1), QVariant(QString("new")));
+}
+
+void tst_MySql_TinyBuilder::touch_NotUsesTimestamps() const
+{
+    int affected = -1;
+    std::optional<QSqlQuery> query = std::nullopt;
+
+    auto log = DB::connection(m_connection).pretend([this, &affected, &query]
+    {
+        std::tie(affected, query) = Phone::on(m_connection)
+                                    ->whereEq("status", "new")
+                                    .touch();
+    });
+
+    QVERIFY(log.isEmpty());
+    QCOMPARE(affected, 0);
+    QCOMPARE(query, std::nullopt);
 }
 
 void tst_MySql_TinyBuilder::has_Basic_OnHasMany() const
