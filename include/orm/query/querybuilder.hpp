@@ -30,13 +30,13 @@ namespace Orm::Query
     /*! Database query builder. */
     class SHAREDLIB_EXPORT Builder : public Concerns::BuildsQueries // clazy:exclude=copyable-polymorphic
     {
+        // To access enforceOrderBy()
+        friend Concerns::BuildsQueries;
+
         /*! Alias for the query grammar. */
         using QueryGrammar = Query::Grammars::Grammar;
         /*! Alias for query utils. */
         using QueryUtils = Orm::Utils::Query;
-
-        // To access enforceOrderBy()
-        friend Concerns::BuildsQueries;
 
     public:
         /*! Constructor. */

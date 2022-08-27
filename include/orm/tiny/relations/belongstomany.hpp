@@ -26,13 +26,13 @@ namespace Orm::Tiny::Relations
             public IsPivotRelation,
             public Concerns::InteractsWithPivotTable<Model, Related, PivotType>
     {
+        /*! To access a private data members m_xyz and a few other methods. */
+        friend Concerns::InteractsWithPivotTable<Model, Related, PivotType>;
+
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
-
-        /*! To access a private data members m_xyz and a few other methods. */
-        friend Concerns::InteractsWithPivotTable<Model, Related, PivotType>;
 
     protected:
         /*! Protected constructor. */
