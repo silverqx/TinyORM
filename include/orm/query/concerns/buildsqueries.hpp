@@ -25,8 +25,8 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline BuildsQueries() = default;
-        /*! Virtual destructor, to pass -Weffc++. */
-        inline virtual ~BuildsQueries() = default;
+        /*! Pure virtual destructor, to pass -Weffc++. */
+        inline virtual ~BuildsQueries() = 0;
 
         /*! Copy constructor. */
         inline BuildsQueries(const BuildsQueries &) = default;
@@ -74,6 +74,10 @@ namespace Concerns
         /*! Static cast *this to the QueryBuilder & derived type, const version. */
         const Builder &builder() const;
     };
+
+    /* public */
+
+    BuildsQueries::~BuildsQueries() = default;
 
 } // namespace Concerns
 } // namespace Orm::Query
