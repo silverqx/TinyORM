@@ -236,17 +236,13 @@ If you need to customize the names of the columns used to store the timestamps, 
 
     private:
         /*! The name of the "created at" column. */
-        inline static const QString CREATED_AT = QStringLiteral("created_at");
+        inline static const QString CREATED_AT = QStringLiteral("creation_date");
         /*! The name of the "updated at" column. */
-        inline static const QString UPDATED_AT = QStringLiteral("updated_at");
+        inline static const QString UPDATED_AT = QStringLiteral("updated_date");
     };
 
 :::tip
 You can make these static constants non-inline and initialize them in the cpp file.
-:::
-
-:::tip
-You may also use `Orm::CREATED_AT` and `Orm::UPDATED_AT` string constants instead of `QStringLiteral("created_at")`.
 :::
 
 #### Touching timestamps
