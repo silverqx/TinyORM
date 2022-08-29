@@ -944,7 +944,7 @@ namespace Orm::Tiny::Concerns
             return value.value<QDateTime>();
 
         /* If this value is an integer, we will assume it is a UNIX timestamp's value
-           and format a Carbon object from this timestamp. This allows flexibility
+           and format a QDateTime object from this timestamp. This allows flexibility
            when defining your date fields as they might be UNIX timestamps here. */
         if (value.canConvert<QString>() &&
             StringUtils::isNumber(value.value<QString>())
