@@ -3172,8 +3172,8 @@ void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() con
                                 QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
-void tst_MySql_QueryBuilder
-::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Disabled() const
+void tst_MySql_QueryBuilder::
+upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Disabled() const
 {
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));

@@ -295,8 +295,8 @@ void tst_Model_Relations::getRelation_EagerLoad_BelongsTo() const
     QCOMPARE(typeid (TorrentEager *), typeid (torrent));
 }
 
-void tst_Model_Relations
-::getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
+void tst_Model_Relations::
+getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -344,8 +344,8 @@ void tst_Model_Relations
     }
 }
 
-void tst_Model_Relations
-::getRelationValue_EagerLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
+void tst_Model_Relations::
+getRelationValue_EagerLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -395,8 +395,8 @@ void tst_Model_Relations
     }
 }
 
-void tst_Model_Relations
-::getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
+void tst_Model_Relations::
+getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -538,8 +538,8 @@ void tst_Model_Relations::getRelationValue_LazyLoad_BelongsTo() const
     QCOMPARE(typeid (Torrent *), typeid (torrent));
 }
 
-void tst_Model_Relations
-::getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
+void tst_Model_Relations::
+getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -587,8 +587,8 @@ void tst_Model_Relations
     }
 }
 
-void tst_Model_Relations
-::getRelationValue_LazyLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
+void tst_Model_Relations::
+getRelationValue_LazyLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -638,8 +638,8 @@ void tst_Model_Relations
     }
 }
 
-void tst_Model_Relations
-::getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
+void tst_Model_Relations::
+getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
