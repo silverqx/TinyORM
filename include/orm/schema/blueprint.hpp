@@ -229,7 +229,7 @@ namespace Grammars
         ColumnDefinitionReference<>
         mediumInteger(const QString &column, bool autoIncrement = false,
                       bool isUnsigned = false);
-        /*! Create a new unsigned big integer (8-byte) column on the table. */
+        /*! Create a new big integer (8-byte) column on the table. */
         ColumnDefinitionReference<>
         bigInteger(const QString &column, bool autoIncrement = false,
                    bool isUnsigned = false);
