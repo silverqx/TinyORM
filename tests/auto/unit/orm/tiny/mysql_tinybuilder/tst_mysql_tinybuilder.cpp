@@ -264,7 +264,7 @@ setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat() const
     // 2022-08-03 15:36:56
     qint64 timestamp = 1659533816;
     // Prepare without u_dateFormat but with u_dates
-    Role_CustomUDate::u_dates = {"added_on"};
+    Role_CustomUDate::u_dates = QStringList {"added_on"};
     /* Expected format without u_dateFormat is - 2022-08-03 15:36:56, even if the input
        is the unix timestamp. */
     auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp)
@@ -311,7 +311,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
     // 2022-08-03 15:36:56
     qint64 timestamp = 1659533816;
     // Prepare without u_dates and also without u_dateFormat
-    Role_CustomUDate::u_dates = {};
+    Role_CustomUDate::u_dates.clear();
 
     // QDateTime
     {
@@ -399,7 +399,7 @@ void tst_MySql_TinyBuilder::
 setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat_Null() const
 {
     // Prepare without u_dateFormat but with u_dates
-    Role_CustomUDate::u_dates = {"added_on"};
+    Role_CustomUDate::u_dates = QStringList {"added_on"};
 
     /* As the added_on is in u_dates it autodetects QDateTime values even if the string
        will be with all chars as numbers. */
@@ -438,7 +438,7 @@ setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat_Null() const
 void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates_Null() const
 {
     // Prepare without u_dates and also without u_dateFormat
-    Role_CustomUDate::u_dates = {};
+    Role_CustomUDate::u_dates.clear();
 
     // Whatever is passed to the setAttribute() will be saved into the storage
 
