@@ -602,7 +602,7 @@ namespace Orm::Tiny
         this->touchOwners();
 
         // FUTURE performDeleteOnModel() and return value, check logic here, eg what happens when no model is delete and combinations silverqx
-        // FUTURE inconsistent return values save(), update(), remove(), ... silverqx
+        // FUTURE inconsistent return values save(), update(), remove(), ..., also Pivot::remove() silverqx
         if constexpr (Model::extendsSoftDeletes())
             model().SoftDeletes<Derived>::performDeleteOnModel();
         else
