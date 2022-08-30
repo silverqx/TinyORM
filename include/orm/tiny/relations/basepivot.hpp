@@ -61,13 +61,6 @@ namespace Orm::Tiny::Relations
         /*! Delete the pivot model record from the database (alias). */
         inline bool deleteModel();
 
-        /*! Set the keys for a save update query. */
-        TinyBuilder<PivotModel> &
-        setKeysForSaveQuery(TinyBuilder<PivotModel> &query);
-        /*! Set the keys for a select query. */
-        TinyBuilder<PivotModel> &
-        setKeysForSelectQuery(TinyBuilder<PivotModel> &query);
-
         /*! Get the table associated with the model. */
         QString getTable() const;
         /*! Get the foreign key column name. */
@@ -83,6 +76,13 @@ namespace Orm::Tiny::Relations
 
     protected:
         /* AsPivot */
+        /*! Set the keys for a save update query. */
+        TinyBuilder<PivotModel> &
+        setKeysForSaveQuery(TinyBuilder<PivotModel> &query);
+        /*! Set the keys for a select query. */
+        TinyBuilder<PivotModel> &
+        setKeysForSelectQuery(TinyBuilder<PivotModel> &query);
+
         /*! Get the query builder for a delete operation on the pivot. */
         std::unique_ptr<TinyBuilder<PivotModel>> getDeleteQuery();
 
@@ -217,6 +217,35 @@ namespace Orm::Tiny::Relations
     }
 
     template<typename PivotModel>
+    QString BasePivot<PivotModel>::getTable() const
+    {
+        const auto &table = this->model().u_table;
+
+        // Get singularizes snake-case table name
+        if (table.isEmpty())
+            return StringUtils::singular(
+                        StringUtils::snake(TypeUtils::classPureBasename<PivotModel>()));
+
+        return table;
+    }
+
+    template<typename PivotModel>
+    const QString &BasePivot<PivotModel>::getForeignKey() const noexcept
+    {
+        return m_foreignKey;
+    }
+
+    template<typename PivotModel>
+    const QString &BasePivot<PivotModel>::getRelatedKey() const noexcept
+    {
+        return m_relatedKey;
+    }
+
+    /* protected */
+
+    /* AsPivot */
+
+    template<typename PivotModel>
     TinyBuilder<PivotModel> &
     BasePivot<PivotModel>::setKeysForSaveQuery(TinyBuilder<PivotModel> &query)
     {
@@ -246,35 +275,6 @@ namespace Orm::Tiny::Relations
                                              this->getAttribute(m_relatedKey))},
         });
     }
-
-    template<typename PivotModel>
-    QString BasePivot<PivotModel>::getTable() const
-    {
-        const auto &table = this->model().u_table;
-
-        // Get singularizes snake-case table name
-        if (table.isEmpty())
-            return StringUtils::singular(
-                        StringUtils::snake(TypeUtils::classPureBasename<PivotModel>()));
-
-        return table;
-    }
-
-    template<typename PivotModel>
-    const QString &BasePivot<PivotModel>::getForeignKey() const noexcept
-    {
-        return m_foreignKey;
-    }
-
-    template<typename PivotModel>
-    const QString &BasePivot<PivotModel>::getRelatedKey() const noexcept
-    {
-        return m_relatedKey;
-    }
-
-    /* protected */
-
-    /* AsPivot */
 
     template<typename PivotModel>
     std::unique_ptr<TinyBuilder<PivotModel>>
