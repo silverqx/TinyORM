@@ -844,7 +844,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &HasAttributes<Derived, AllRelations...>::syncOriginalAttributes(
-                const QStringList &attributes)
+            const QStringList &attributes)
     {
         const auto &modelAttributes = getAttributes();
         const auto &modelAttributesHash = getAttributesHash();
@@ -919,7 +919,8 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool HasAttributes<Derived, AllRelations...>::isDateAttribute(const QString &key) const
+    bool HasAttributes<Derived, AllRelations...>::isDateAttribute(
+            const QString &key) const
     {
         // FEATURE castable silverqx
         /* I don't have support for castable attributes, this solution is temporary. */
