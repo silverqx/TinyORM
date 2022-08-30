@@ -59,6 +59,7 @@ namespace Orm::Tiny::Relations
         /*! Delete the pivot model record from the database (alias). */
         inline bool deleteModel();
 
+        /* Getters / Setters */
         /*! Get the table associated with the model. */
         QString getTable() const;
         /*! Get the foreign key column name. */
@@ -217,6 +218,8 @@ namespace Orm::Tiny::Relations
     {
         return this->model().remove();
     }
+
+    /* Getters / Setters */
 
     template<typename PivotModel>
     QString BasePivot<PivotModel>::getTable() const
