@@ -15,6 +15,7 @@ using Orm::Constants::SIZE;
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::QueryBuilder;
+using Orm::Tiny::Model;
 using Orm::Tiny::TinyBuilder;
 
 using TypeUtils = Orm::Utils::Type;
@@ -43,6 +44,15 @@ private slots:
     void touch() const;
     void touch_CustomColumn() const;
     void touch_NotUsesTimestamps() const;
+
+    /* Attributes - unix timestamps - u_dateFormat = 'U' */
+    void setAttribute_UnixTimestamp_With_UDates_UDateFormat() const;
+    void setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat() const;
+    void setAttribute_UnixTimestamp_WithOut_UDates() const;
+
+    void setAttribute_UnixTimestamp_With_UDates_UDateFormat_Null() const;
+    void setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat_Null() const;
+    void setAttribute_UnixTimestamp_WithOut_UDates_Null() const;
 
     /* Querying Relationship Existence/Absence on HasMany */
     void has_Basic_OnHasMany() const;
@@ -191,6 +201,273 @@ void tst_MySql_TinyBuilder::touch_NotUsesTimestamps() const
     QVERIFY(log.isEmpty());
     QCOMPARE(affected, 0);
     QCOMPARE(query, std::nullopt);
+}
+
+/* Attributes - unix timestamps - u_dateFormat = 'U' */
+
+void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_With_UDates_UDateFormat() const
+{
+    // 2022-08-03 15:36:56
+    qint64 timestamp = 1659533816;
+
+    // QDateTime
+    {
+        Role role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp));
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        QCOMPARE(addedOn, QVariant(timestamp));
+    }
+    // qint64 - QVariant
+    {
+        Role role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", timestamp);
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        QCOMPARE(addedOn, QVariant(timestamp));
+    }
+}
+
+namespace
+{
+    /*! Role class to test without u_dates and u_dateFormat. */
+    class Role_CustomUDate final : public Model<Role_CustomUDate> // NOLINT(misc-no-recursion)
+    {
+        friend Model;
+        using Model::Model;
+
+        /*! The table associated with the model. */
+        QString u_table {"roles"};
+
+        /*! Indicates whether the model should be timestamped. */
+        bool u_timestamps = false;
+
+    public:
+        /*! The attributes that should be mutated to dates. */
+        inline static QStringList u_dates {"added_on"};
+    };
+} // namespace
+
+void tst_MySql_TinyBuilder::
+setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat() const
+{
+    // 2022-08-03 15:36:56
+    qint64 timestamp = 1659533816;
+    // Prepare without u_dateFormat but with u_dates
+    Role_CustomUDate::u_dates = {"added_on"};
+    /* Expected format without u_dateFormat is - 2022-08-03 15:36:56, even if the input
+       is the unix timestamp. */
+    auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp)
+                             .toString(Role_CustomUDate()
+                                       .setConnection(m_connection)
+                                       .getDateFormat());
+
+    // QDateTime
+    {
+        Role_CustomUDate role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp));
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        /* Here comes into the play the variant.typeId() == QDateTime in setAttribute()
+           and special handling for pure number string in asDateTime(), so the QDateTime
+           is autodetected. */
+        QCOMPARE(addedOn, QVariant(expectedTimestamp));
+    }
+    // qint64 - QVariant
+    {
+        Role_CustomUDate role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", timestamp);
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        /* Here comes into the play the variant.typeId() == QDateTime in setAttribute()
+           and special handling for pure number string in asDateTime(), so the QDateTime
+           is autodetected. */
+        QCOMPARE(addedOn, QVariant(expectedTimestamp));
+    }
+}
+
+void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
+{
+    // 2022-08-03 15:36:56
+    qint64 timestamp = 1659533816;
+    // Prepare without u_dates and also without u_dateFormat
+    Role_CustomUDate::u_dates = {};
+
+    // QDateTime
+    {
+        /* Expected format without u_dateFormat is - 2022-08-03 15:36:56, even if
+           the input is the unix timestamp. */
+        auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp)
+                                 .toString(Role_CustomUDate()
+                                           .setConnection(m_connection)
+                                           .getDateFormat());
+
+        Role_CustomUDate role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp));
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        /* Here comes into the play the variant.typeId() == QDateTime in setAttribute()
+           and special handling for pure number string in asDateTime(), so the QDateTime
+           is autodetected. */
+        QCOMPARE(addedOn, QVariant(expectedTimestamp));
+    }
+    // qint64 - QVariant
+    {
+        Role_CustomUDate role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", timestamp);
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        QCOMPARE(addedOn, QVariant(timestamp));
+    }
+}
+
+namespace
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            const auto NullLLong =    QVariant(QMetaType(QMetaType::LongLong));
+            const auto NullQDateTime = QVariant(QMetaType(QMetaType::QDateTime));
+#else
+            const auto NullLLong =    QVariant(QVariant::LongLong);
+            const auto NullQDateTime = QVariant(QVariant::DateTime);
+#endif
+} // namespace
+
+void tst_MySql_TinyBuilder::
+setAttribute_UnixTimestamp_With_UDates_UDateFormat_Null() const
+{
+    // Because the u_dateFormat = 'U' the result type will be qint64
+
+    // QDateTime
+    {
+        Role role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", NullQDateTime);
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        QCOMPARE(addedOn, NullLLong);
+    }
+    // qint64 - QVariant
+    {
+        Role role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", NullLLong);
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        QCOMPARE(addedOn, NullLLong);
+    }
+}
+
+void tst_MySql_TinyBuilder::
+setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat_Null() const
+{
+    // Prepare without u_dateFormat but with u_dates
+    Role_CustomUDate::u_dates = {"added_on"};
+
+    /* As the added_on is in u_dates it autodetects QDateTime values even if the string
+       will be with all chars as numbers. */
+
+    // QDateTime
+    {
+        Role_CustomUDate role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", NullQDateTime);
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        QCOMPARE(addedOn, NullQDateTime);
+    }
+    // qint64 - QVariant
+    {
+        Role_CustomUDate role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", NullLLong);
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        /* Here comes into the play the variant.typeId() == QDateTime in setAttribute()
+           and special handling for pure number string in asDateTime(), so the QDateTime
+           is autodetected. */
+        QCOMPARE(addedOn, NullQDateTime);
+    }
+}
+
+void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates_Null() const
+{
+    // Prepare without u_dates and also without u_dateFormat
+    Role_CustomUDate::u_dates = {};
+
+    // Whatever is passed to the setAttribute() will be saved into the storage
+
+    // QDateTime
+    {
+        Role_CustomUDate role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", NullQDateTime);
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        QCOMPARE(addedOn, NullQDateTime);
+    }
+    // qint64 - QVariant
+    {
+        Role_CustomUDate role;
+        role.setConnection(m_connection);
+        role.setAttribute("added_on", NullLLong);
+
+        const auto &attributes = role.getAttributes();
+
+        QVERIFY(attributes.size() == 1);
+
+        const auto &[_, addedOn] = attributes.constFirst();
+        QCOMPARE(addedOn, NullLLong);
+    }
 }
 
 /* Querying Relationship Existence/Absence on HasMany */

@@ -32,11 +32,11 @@ namespace Seeders
                 {5, "obiwan", true,  "test SoftDeletes",     "2022-01-05 14:51:23", "2022-01-05 17:46:31", "2022-01-05 20:46:31"},
             });
 
-            DB::table("roles")->insert({ID, NAME},
+            DB::table("roles")->insert({ID, NAME, "added_on"},
             {
-                {1, "role one"},
-                {2, "role two"},
-                {3, "role three"},
+                {1, "role one",   1659361016},
+                {2, "role two",   1659447416},
+                {3, "role three", NullULLong},
             });
 
             DB::table("role_user")->insert({"role_id", "user_id", "active"},

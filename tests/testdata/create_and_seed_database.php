@@ -150,6 +150,10 @@ function createTables(string $connection): void
     $schema->create('roles', function (Blueprint $table) {
         $table->id();
         $table->string('name')->unique();
+
+        // To test unix timestamps, u_dateFormat = 'U'
+        $table->bigInteger('added_on')->nullable()
+            ->comment("To test unix timestamps, u_dateFormat = 'U'");
     });
 
     $schema->create('role_user', function (Blueprint $table) {
@@ -304,10 +308,10 @@ function seedTables(string $connection): void
         ]));
 
     Capsule::table('roles', null, $connection)->insert(
-        combineValues(['id', 'name'], [
-            [1, 'role one'],
-            [2, 'role two'],
-            [3, 'role three'],
+        combineValues(['id', 'name', 'added_on'], [
+            [1, 'role one',   1659361016],
+            [2, 'role two',   1659447416],
+            [3, 'role three', null],
         ]));
 
     Capsule::table('role_user', null, $connection)->insert(

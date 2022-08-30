@@ -229,7 +229,6 @@ namespace Orm::Tiny::Concerns
         /*! The changed model attributes (for fast lookup). */
         std::unordered_map<QString, int> m_changesHash;
 
-        // TODO add support for 'U' like in PHP to support unix timestamp, I will have to manually check if u_dateFormat contains 'U' and use QDateTime::fromSecsSinceEpoch() silverqx
         /*! The storage format of the model's date columns. */
         T_THREAD_LOCAL
         inline static QString u_dateFormat;
@@ -257,7 +256,8 @@ namespace Orm::Tiny::Concerns
         /* If an attribute is listed as a "date", we'll convert it from a DateTime
            instance into a form proper for storage on the database tables using
            the connection grammar's date format. We will auto set the values. */
-        if (value.isValid() && !value.isNull() && (isDateAttribute(key) ||
+        if (value.isValid() && (isDateAttribute(key) ||
+            // NOTE api different, if the QDateTime is detected then take it as datetime silverqx
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             value.typeId() == QMetaType::QDateTime
 #else
@@ -610,20 +610,63 @@ namespace Orm::Tiny::Concerns
     QVariant
     HasAttributes<Derived, AllRelations...>::fromDateTime(const QVariant &value) const
     {
-        if (value.isNull())
-            return value;
+        // This method is called from the setAttribute() and is expecting user input
 
-        return asDateTime(value).toString(getDateFormat());
+        /* The value argument must be the QDateTime type, this is how this method
+           is designed. */
+        Q_ASSERT(value.isValid() &&
+                 value.canConvert<QDateTime>() || value.canConvert<qint64>());
+
+        const auto &format = getDateFormat();
+
+        // Special logic for the null values, fix a null value on the base of the format
+        if (value.isNull()) {
+            if (format == QChar('U'))
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                return QVariant(QMetaType(QMetaType::LongLong));
+
+            return QVariant(QMetaType(QMetaType::QDateTime));
+#else
+                return QVariant(QVariant::LongLong);
+
+            return QVariant(QVariant::DateTime);
+#endif
+        }
+
+        const auto datetime = asDateTime(value);
+
+        // Support unix timestamps
+        if (format == QChar('U'))
+            return datetime.toSecsSinceEpoch();
+
+        return datetime.toString(format);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QString
     HasAttributes<Derived, AllRelations...>::fromDateTime(const QDateTime &value) const
     {
-        if (value.isValid())
-            return value.toString(getDateFormat());
+        /* This method is called from the HasTimestamps and SoftDeletes and the given
+           value argument will be a result from the HasTimestamps::freshTimestampString().
+           So it's used to create/update model timestamps and it's internal, so special
+           logic for handling a user input is not needed. */
 
-        return {};
+        /* As this is the internal method a passed value must be valid and also the null
+           value will never be passed into. */
+        Q_ASSERT(value.isValid() && !value.isNull());
+
+        const auto &format = getDateFormat();
+
+        // Support unix timestamps
+        /* This should be templated and for the unix timestamps the return type should be
+           qint64, but it would make the code more complex because I would have to move
+           the getDateFormat() outside, so I will simply return QString, it's not a big
+           deal, INSERT/UPDATE clauses with '1604xxx' for the bigint columns are totaly
+           ok, instead of 1604xxx as integer type. */
+        if (format == QChar('U'))
+            return QString::number(value.toSecsSinceEpoch());
+
+        return value.toString(format);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

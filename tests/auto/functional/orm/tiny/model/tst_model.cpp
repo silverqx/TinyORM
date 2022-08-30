@@ -24,12 +24,14 @@ using Orm::DB;
 using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
+using Orm::Tiny::Model;
 
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
+using Models::Role;
 using Models::Setting;
 using Models::TagProperty;
 using Models::Torrent;
@@ -113,6 +115,13 @@ private slots:
 
     /* HasTimestamps */
     void touch_WithAttribute() const;
+
+    /* Attributes - unix timestamps */
+    void getAttribute_UnixTimestamp_With_UDates() const;
+    void getAttribute_UnixTimestamp_WithOut_UDates() const;
+
+    void getAttribute_UnixTimestamp_With_UDates_Null() const;
+    void getAttribute_UnixTimestamp_WithOut_UDates_Null() const;
 };
 
 void tst_Model::initTestCase_data() const
@@ -1649,6 +1658,152 @@ void tst_Model::touch_WithAttribute() const
     // Verify restored added_on value
     auto addedOnRestored = Torrent::find(1)->getAttribute("added_on");
     QCOMPARE(addedOnRestored, addedOnOriginal);
+}
+
+/* Attributes - unix timestamps - u_dateFormat = 'U' */
+
+namespace
+{
+    // NOLINTNEXTLINE(misc-no-recursion)
+    class Role_WithoutUDates final : public Model<Role_WithoutUDates>
+    {
+        friend Model;
+        using Model::Model;
+
+        /*! The table associated with the model. */
+        QString u_table {"roles"};
+
+        /*! Indicates whether the model should be timestamped. */
+        bool u_timestamps = false;
+    };
+} // namespace
+
+void tst_Model::getAttribute_UnixTimestamp_With_UDates() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto role = Role::find(1);
+    QVERIFY(role);
+    QVERIFY(role->exists);
+
+    auto addedOn = role->getAttribute("added_on");
+    QVERIFY(addedOn.isValid() && !addedOn.isNull());
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // SQLite doesn't return correct underlying type in the QVariant
+    if (DB::connection(connection).driverName() != QSQLITE)
+        QCOMPARE(addedOn.typeId(), QMetaType::QDateTime);
+    else
+        QVERIFY(addedOn.canConvert<QDateTime>());
+#else
+    if (DB::connection(connection).driverName() != QSQLITE)
+        QCOMPARE(addedOn.userType(), QMetaType::QDateTime);
+    else
+        QVERIFY(addedOn.canConvert<QDateTime>());
+#endif
+    // This is most important, should return QDateTime and not int
+    QCOMPARE(addedOn.value<QDateTime>(), QDateTime::fromSecsSinceEpoch(1659361016));
+}
+
+void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto role = Role_WithoutUDates::find(1);
+    QVERIFY(role);
+    QVERIFY(role->exists);
+
+    auto addedOn = role->getAttribute("added_on");
+    QVERIFY(addedOn.isValid() && !addedOn.isNull());
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    /* Only MySQL returns correct underlying type, the SQLite doesn't care and PostgreSQL
+       returns ULongLong. */
+    if (DB::connection(connection).driverName() == QMYSQL)
+        QCOMPARE(addedOn.typeId(), QMetaType::LongLong);
+    else
+        QVERIFY(addedOn.canConvert<qint64>());
+#else
+    if (DB::connection(connection).driverName() == QMYSQL)
+        QCOMPARE(addedOn.userType(), QMetaType::LongLong);
+    else
+        QVERIFY(addedOn.canConvert<qint64>());
+#endif
+    // This is most important, should return int and not QDateTime
+    QCOMPARE(addedOn, QVariant(static_cast<qint64>(1659361016)));
+}
+
+namespace
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            const auto NullLLong     = QVariant(QMetaType(QMetaType::LongLong));
+            const auto NullQDateTime = QVariant(QMetaType(QMetaType::QDateTime));
+#else
+            const auto NullLLong     = QVariant(QVariant::LongLong);
+            const auto NullQDateTime = QVariant(QVariant::DateTime);
+#endif
+} // namespace
+
+void tst_Model::getAttribute_UnixTimestamp_With_UDates_Null() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto role = Role_WithoutUDates::find(3);
+    QVERIFY(role);
+    QVERIFY(role->exists);
+
+    auto addedOn = role->getAttribute("added_on");
+    // Compare is null
+    QVERIFY(addedOn.isValid() && addedOn.isNull());
+
+    // Compare also the type (excluding SQLite)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // SQLite doesn't return correct underlying type in the QVariant
+    if (DB::connection(connection).driverName() != QSQLITE)
+        QCOMPARE(addedOn.typeId(), QMetaType::LongLong);
+#else
+    if (DB::connection(connection).driverName() != QSQLITE)
+        QCOMPARE(addedOn.userType(), QMetaType::LongLong);
+#endif
+    /* SQLite doesn't return correct underlying type in the QVariant for null values
+       like MySQL driver does, skip this compare for the SQLite database. */
+    if (DB::connection(connection).driverName() != QSQLITE)
+        QCOMPARE(addedOn, NullLLong);
+}
+
+void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates_Null() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto role = Role_WithoutUDates::find(3);
+    QVERIFY(role);
+    QVERIFY(role->exists);
+
+    auto addedOn = role->getAttribute("added_on");
+    // Compare is null
+    QVERIFY(addedOn.isValid() && addedOn.isNull());
+
+    // Compare also the type (excluding SQLite)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // SQLite doesn't return correct underlying type in the QVariant
+    if (DB::connection(connection).driverName() != QSQLITE)
+        QCOMPARE(addedOn.typeId(), QMetaType::LongLong);
+#else
+    if (DB::connection(connection).driverName() != QSQLITE)
+        QCOMPARE(addedOn.userType(), QMetaType::LongLong);
+#endif
+    /* SQLite doesn't return correct underlying type in the QVariant for null values
+       like MySQL driver does, skip this compare for the SQLite database. */
+    if (DB::connection(connection).driverName() != QSQLITE)
+        QCOMPARE(addedOn, NullLLong);
 }
 
 QTEST_MAIN(tst_Model)
