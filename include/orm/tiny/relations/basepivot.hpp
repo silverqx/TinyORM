@@ -44,8 +44,6 @@ namespace Orm::Tiny::Relations
         fromRawAttributes(const Parent &parent, const QVector<AttributeItem> &attributes,
                           const QString &table, bool exists = false);
 
-        /*! Set the key names for the pivot model instance. */
-        PivotModel &setPivotKeys(const QString &foreignKey, const QString &relatedKey);
         /*! Determine if the pivot model or given attributes has timestamp attributes. */
         bool hasTimestampAttributes(const QVector<AttributeItem> &attributes) const;
         /*! Determine if the pivot model or given attributes has timestamp attributes. */
@@ -67,6 +65,9 @@ namespace Orm::Tiny::Relations
         const QString &getForeignKey() const noexcept;
         /*!  Get the "related key" column name. */
         const QString &getRelatedKey() const noexcept;
+
+        /*! Set the key names for the pivot model instance. */
+        PivotModel &setPivotKeys(const QString &foreignKey, const QString &relatedKey);
 
         // TODO fuckup, timestamps in pivot, the solution is to set CREATED_AT and UPDATED_AT right away in the fromAttributes method when I still have access to the parent, then I won't have to save a pointer to the parent. I can still save pointer to parent, but not for obtaining this timestamp column names. old - I will solve it when I will have to use timestamps in the code, anyway may be I will not need it, because I can pass to the method right away what I will need silverqx
         // TODO also don't forget unsetRelations() if pivotParent will be implemented silverqx
@@ -163,18 +164,6 @@ namespace Orm::Tiny::Relations
     }
 
     template<typename PivotModel>
-    PivotModel &
-    BasePivot<PivotModel>::setPivotKeys(const QString &foreignKey,
-                                        const QString &relatedKey)
-    {
-        m_foreignKey = foreignKey;
-
-        m_relatedKey = relatedKey;
-
-        return this->model();
-    }
-
-    template<typename PivotModel>
     bool BasePivot<PivotModel>::hasTimestampAttributes(
             const QVector<AttributeItem> &attributes) const
     {
@@ -253,6 +242,18 @@ namespace Orm::Tiny::Relations
     const QString &BasePivot<PivotModel>::getRelatedKey() const noexcept
     {
         return m_relatedKey;
+    }
+
+    template<typename PivotModel>
+    PivotModel &
+    BasePivot<PivotModel>::setPivotKeys(const QString &foreignKey,
+                                        const QString &relatedKey)
+    {
+        m_foreignKey = foreignKey;
+
+        m_relatedKey = relatedKey;
+
+        return this->model();
     }
 
     /* protected */
