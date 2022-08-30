@@ -75,9 +75,10 @@ namespace Orm::Tiny::Relations
         /*!  Get the "related key" column name. */
         const QString &getRelatedKey() const noexcept;
 
-        // TODO fuckup, timestamps in pivot, I will solve it when I will have to use timestamps in the code, anyway may be I will not need it, because I can pass to the method right away what I will need silverqx
+        // TODO fuckup, timestamps in pivot, the solution is to set CREATED_AT and UPDATED_AT right away in the fromAttributes method when I still have access to the parent, then I won't have to save a pointer to the parent. I can still save pointer to parent, but not for obtaining this timestamp column names. old - I will solve it when I will have to use timestamps in the code, anyway may be I will not need it, because I can pass to the method right away what I will need silverqx
         // TODO also don't forget unsetRelations() if pivotParent will be implemented silverqx
         /*! The parent model of the relationship. */
+//        template<typename Parent>
 //        inline static const Parent *pivotParent = nullptr;
 
     protected:
@@ -125,7 +126,7 @@ namespace Orm::Tiny::Relations
         /* We store off the parent instance so we will access the timestamp column names
            for the model, since the pivot model timestamps aren't easily configurable
            from the developer's point of view. We can use the parents to get these. */
-//        PivotModel::template pivotParent = &parent;
+//        pivotParent<Parent> = &parent;
 
         instance.exists = exists;
 
