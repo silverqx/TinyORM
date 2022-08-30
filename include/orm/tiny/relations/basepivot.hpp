@@ -234,12 +234,13 @@ namespace Orm::Tiny::Relations
     {
         const auto &table = this->model().u_table;
 
-        // Get singularizes snake-case table name
-        if (table.isEmpty())
-            return StringUtils::singular(
-                        StringUtils::snake(TypeUtils::classPureBasename<PivotModel>()));
+        if (!table.isEmpty())
+            return table;
 
-        return table;
+        // Guess as singularized snake_case table name
+        return StringUtils::singular(
+                    StringUtils::snake(TypeUtils::classPureBasename<PivotModel>()));
+
     }
 
     template<typename PivotModel>
