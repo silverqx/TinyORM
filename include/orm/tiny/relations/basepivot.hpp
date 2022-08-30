@@ -86,6 +86,11 @@ namespace Orm::Tiny::Relations
         /*! Get the query builder for a delete operation on the pivot. */
         std::unique_ptr<TinyBuilder<PivotModel>> getDeleteQuery();
 
+        /*! Merge attributes from the database to the original (default) attributes. */
+        static QVector<AttributeItem>
+        mergeAttributes(const QVector<AttributeItem> &rawOriginals,
+                        const QVector<AttributeItem> &attributes);
+
         /* BasePivot */
         /*! Indicates if the ID is auto-incrementing. */
         bool u_incrementing = false;
@@ -144,7 +149,15 @@ namespace Orm::Tiny::Relations
 
         instance.setUseTimestamps(instance.hasTimestampAttributes(attributes));
 
-        instance.setRawAttributes(attributes, exists);
+        // Support Default Attribute Values
+        // No merge needed, default attributes are empty
+        if (const auto &rawOriginals = instance.getRawOriginals();
+            rawOriginals.isEmpty()
+        )
+            instance.setRawAttributes(attributes, exists);
+        // Merge a new attributes from the database to the default attributes
+        else
+            instance.setRawAttributes(mergeAttributes(rawOriginals, attributes), exists);
 
         return instance;
     }
@@ -291,6 +304,35 @@ namespace Orm::Tiny::Relations
         });
 
         return builder;
+    }
+
+    template<typename PivotModel>
+    QVector<AttributeItem>
+    BasePivot<PivotModel>::mergeAttributes(const QVector<AttributeItem> &rawOriginals,
+                                           const QVector<AttributeItem> &attributes)
+    {
+        QVector<AttributeItem> mergedAttributes;
+        mergedAttributes.reserve(rawOriginals.size() + attributes.size());
+
+        mergedAttributes = rawOriginals;
+
+        const auto keyProj = [](const auto &attribute)
+        {
+            return attribute.key;
+        };
+
+        for (const auto &attribute : attributes) {
+            const auto it = std::ranges::find(mergedAttributes, attribute.key, keyProj);
+
+            // Doesn't contain, so append
+            if (it == mergedAttributes.cend())
+                mergedAttributes << attribute;
+            // Already contains, update value
+            else
+                it->value = attribute.value;
+        }
+
+        return mergedAttributes;
     }
 
 } // namespace Orm::Tiny::Relations
