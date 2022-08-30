@@ -254,7 +254,7 @@ namespace
 
     public:
         /*! The attributes that should be mutated to dates. */
-        inline static QStringList u_dates {"added_on"};
+        inline static QStringList u_dates {"added_on"}; // clazy:exclude=non-pod-global-static
     };
 } // namespace
 
@@ -354,11 +354,11 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
 namespace
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            const auto NullLLong =    QVariant(QMetaType(QMetaType::LongLong));
-            const auto NullQDateTime = QVariant(QMetaType(QMetaType::QDateTime));
+            const auto NullLLong =    QVariant(QMetaType(QMetaType::LongLong)); // clazy:exclude=non-pod-global-static
+            const auto NullQDateTime = QVariant(QMetaType(QMetaType::QDateTime)); // clazy:exclude=non-pod-global-static
 #else
-            const auto NullLLong =    QVariant(QVariant::LongLong);
-            const auto NullQDateTime = QVariant(QVariant::DateTime);
+            const auto NullLLong =    QVariant(QVariant::LongLong); // clazy:exclude=non-pod-global-static
+            const auto NullQDateTime = QVariant(QVariant::DateTime); // clazy:exclude=non-pod-global-static
 #endif
 } // namespace
 
