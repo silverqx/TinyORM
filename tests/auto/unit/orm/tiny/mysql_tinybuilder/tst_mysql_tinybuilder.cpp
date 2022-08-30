@@ -39,6 +39,7 @@ class tst_MySql_TinyBuilder : public QObject // clazy:exclude=ctor-missing-paren
 private slots:
     void initTestCase();
 
+    /* Touching timestamps */
     void touch() const;
     void touch_CustomColumn() const;
     void touch_NotUsesTimestamps() const;
@@ -117,6 +118,8 @@ void tst_MySql_TinyBuilder::initTestCase()
               .toUtf8().constData(), );
 }
 
+/* Touching timestamps */
+
 void tst_MySql_TinyBuilder::touch() const
 {
     auto timeBeforeTouch = QDateTime::currentDateTime();
@@ -189,6 +192,8 @@ void tst_MySql_TinyBuilder::touch_NotUsesTimestamps() const
     QCOMPARE(affected, 0);
     QCOMPARE(query, std::nullopt);
 }
+
+/* Querying Relationship Existence/Absence on HasMany */
 
 void tst_MySql_TinyBuilder::has_Basic_OnHasMany() const
 {
@@ -679,6 +684,8 @@ void tst_MySql_TinyBuilder::orHas_Count_OnHasMany() const
     QVERIFY(builder->getBindings().isEmpty());
 }
 
+/* Querying Relationship Absence on HasMany */
+
 void tst_MySql_TinyBuilder::doesntHave_Basic_OnHasMany() const
 {
     auto builder = createTinyQuery<Torrent>();
@@ -733,6 +740,8 @@ void tst_MySql_TinyBuilder::orDoesntHave_OnHasMany() const
     QVERIFY(builder->getBindings().isEmpty());
 }
 
+/* Querying Relationship Existence/Absence on BelongsTo */
+
 void tst_MySql_TinyBuilder::has_QueryBuilder_OnBelongsTo() const
 {
     auto builder = createTinyQuery<TorrentPreviewableFile>();
@@ -786,6 +795,8 @@ void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnBelongsTo_NestedAsLast
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(6)}));
 }
+
+/* Querying Relationship Existence/Absence on BelongsToMany */
 
 void tst_MySql_TinyBuilder::has_Basic_TinyBuilder_OnBelongsToMany() const
 {
