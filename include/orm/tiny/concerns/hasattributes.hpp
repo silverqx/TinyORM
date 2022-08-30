@@ -627,9 +627,9 @@ namespace Orm::Tiny::Concerns
 
             return QVariant(QMetaType(QMetaType::QDateTime));
 #else
-                return QVariant(QVariant::LongLong);
+                return QVariant(QVariant::LongLong); // NOLINT(modernize-return-braced-init-list)
 
-            return QVariant(QVariant::DateTime);
+            return QVariant(QVariant::DateTime); // NOLINT(modernize-return-braced-init-list)
 #endif
         }
 
