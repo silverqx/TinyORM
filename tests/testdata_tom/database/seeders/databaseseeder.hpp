@@ -12,14 +12,14 @@ namespace Seeders
         void run() override
         {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            const auto NullString =    QVariant(QMetaType(QMetaType::QString));
-            const auto NullInt =       QVariant(QMetaType(QMetaType::Int));
-            const auto NullULLong =    QVariant(QMetaType(QMetaType::ULongLong));
+            const auto NullString    = QVariant(QMetaType(QMetaType::QString));
+            const auto NullInt       = QVariant(QMetaType(QMetaType::Int));
+            const auto NullULLong    = QVariant(QMetaType(QMetaType::ULongLong));
             const auto NullQDateTime = QVariant(QMetaType(QMetaType::QDateTime));
 #else
-            const auto NullString =    QVariant(QVariant::String);
-            const auto NullInt =       QVariant(QVariant::Int);
-            const auto NullULLong =    QVariant(QVariant::ULongLong);
+            const auto NullString    = QVariant(QVariant::String);
+            const auto NullInt       = QVariant(QVariant::Int);
+            const auto NullULLong    = QVariant(QVariant::ULongLong);
             const auto NullQDateTime = QVariant(QVariant::DateTime);
 #endif
 
