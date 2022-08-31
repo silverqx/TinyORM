@@ -697,7 +697,18 @@ Once the custom pivot model `RoleUser` has been defined, `getRelation` or `getRe
             qDebug() << role->getRelation<RoleUser, Orm::One>("pivot")
                             ->getAttribute("created_at");
 
-##### Closer Look To Defining Custom Intermediate Table Models
+:::caution
+Custom Pivot models may not use the `SoftDeletes` base class. If you need to soft delete pivot records consider converting your pivot model to an actual TinyORM model.
+:::
+
+#### Custom Pivot Models And Incrementing IDs
+
+If you have defined a many-to-many relationship that uses a custom pivot model, and that pivot model has an auto-incrementing primary key, you should ensure your custom pivot model class defines an `u_incrementing` data member that is set to `true`.
+
+    /*! Indicates if the IDs are auto-incrementing. */
+    bool u_incrementing = true;
+
+#### Closer Look At Defining Custom Intermediate Table Models
 
 I can tell that defining a custom intermediate table models is the most confusing part of the TinyORM framework, let's look closer at it.
 
@@ -708,13 +719,6 @@ Do you see the confusing part? In short, if defining the `User::roles()` relatio
 The same is true for the basic `Pivot` model, if you are using a basic pivot model and not a custom pivot model you still need to add the `Pivot` type to the `AllRelations` template parameter pack on the `Model` class!
 
 The reason for all of this is so that the `Model` knows how to generate a `std::variant` to hold the pivot model in the `Model::m_relations` data member hash map, which you get using the `Model::getRelationValue` or `Model::getRelation` methods.
-
-#### Custom Pivot Models And Incrementing IDs
-
-If you have defined a many-to-many relationship that uses a custom pivot model, and that pivot model has an auto-incrementing primary key, you should ensure your custom pivot model class defines an `u_incrementing` data member that is set to `true`.
-
-    /*! Indicates if the IDs are auto-incrementing. */
-    bool u_incrementing = true;
 
 ## Querying Relations
 
