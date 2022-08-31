@@ -125,8 +125,8 @@ namespace Orm::Tiny::Relations
         /*! Determine if the 'pivot' model uses timestamps. */
         inline bool usesTimestamps() const noexcept;
         /*! Specify that the pivot table has creation and update timestamps. */
-        BelongsToMany &withTimestamps(const QString &createdAt = "",
-                                      const QString &updatedAt = "");
+        BelongsToMany &withTimestamps(const QString &createdAt = Constants::CREATED_AT,
+                                      const QString &updatedAt = Constants::UPDATED_AT);
         /*! Get the name of the "created at" column. */
         const QString &createdAt() const;
         /*! Get the name of the "updated at" column. */
@@ -635,6 +635,7 @@ namespace Orm::Tiny::Relations
         return m_withTimestamps;
     }
 
+    // NOTE api different, the createdAt and updatedAt parameters have default column values, so they are less confusing silverqx
     template<class Model, class Related, class PivotType>
     BelongsToMany<Model, Related, PivotType> &
     BelongsToMany<Model, Related, PivotType>::withTimestamps(
@@ -651,19 +652,17 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     const QString &BelongsToMany<Model, Related, PivotType>::createdAt() const
     {
-        if (m_pivotCreatedAt.isEmpty())
-            return this->m_parent.getCreatedAtColumn();
-
-        return m_pivotCreatedAt;
+        // NOTE api different, checking the m_withTimestamps instead of m_pivotCreatedAt.isEmpty() silverqx
+        return m_withTimestamps ? m_pivotCreatedAt
+                                : this->m_parent.getCreatedAtColumn();
     }
 
     template<class Model, class Related, class PivotType>
     const QString &BelongsToMany<Model, Related, PivotType>::updatedAt() const
     {
-        if (m_pivotUpdatedAt.isEmpty())
-            return this->m_parent.getUpdatedAtColumn();
-
-        return m_pivotUpdatedAt;
+        // NOTE api different, checking the m_withTimestamps instead of m_pivotCreatedAt.isEmpty() silverqx
+        return m_withTimestamps ? m_pivotUpdatedAt
+                                : this->m_parent.getUpdatedAtColumn();
     }
 
     template<class Model, class Related, class PivotType>

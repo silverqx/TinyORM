@@ -37,15 +37,21 @@ namespace Orm::Tiny::Relations
         template<typename Parent>
         static PivotModel
         fromAttributes(const Parent &parent, const QVector<AttributeItem> &attributes,
-                       const QString &table, bool exists = false);
+                       const QString &table, bool exists = false,
+                       bool withTimestamps = false,
+                       const QString &createdAt = Constants::CREATED_AT,
+                       const QString &updatedAt = Constants::UPDATED_AT);
         template<typename Parent>
         /*! Create a new pivot model from raw values returned from a query. */
         static PivotModel
         fromRawAttributes(const Parent &parent, const QVector<AttributeItem> &attributes,
-                          const QString &table, bool exists = false);
+                          const QString &table, bool exists = false,
+                          bool withTimestamps = false,
+                          const QString &createdAt = Constants::CREATED_AT,
+                          const QString &updatedAt = Constants::UPDATED_AT);
 
         /*! Determine if the pivot model or given attributes has timestamp attributes. */
-        bool hasTimestampAttributes(const QVector<AttributeItem> &attributes) const;
+        static bool hasTimestampAttributes(const QVector<AttributeItem> &attributes);
         /*! Determine if the pivot model or given attributes has timestamp attributes. */
         bool hasTimestampAttributes() const;
 
@@ -70,11 +76,14 @@ namespace Orm::Tiny::Relations
         /*! Set the key names for the pivot model instance. */
         PivotModel &setPivotKeys(const QString &foreignKey, const QString &relatedKey);
 
-        // TODO fuckup, timestamps in pivot, the solution is to set CREATED_AT and UPDATED_AT right away in the fromAttributes method when I still have access to the parent, then I won't have to save a pointer to the parent. I can still save pointer to parent, but not for obtaining this timestamp column names. old - I will solve it when I will have to use timestamps in the code, anyway may be I will not need it, because I can pass to the method right away what I will need silverqx
-        // TODO also don't forget unsetRelations() if pivotParent will be implemented silverqx
-        /*! The parent model of the relationship. */
-//        template<typename Parent>
-//        inline static const Parent *pivotParent = nullptr;
+        /*! Determine whether the PivotType is a custom pivot. */
+        constexpr static bool isCustomPivot();
+
+        /* HasTimestamps */
+        /*! The name of the "created at" column. */
+        inline static const QString CREATED_AT = Constants::CREATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
+        /*! The name of the "updated at" column. */
+        inline static const QString UPDATED_AT = Constants::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
 
     protected:
         /* AsPivot */
@@ -105,21 +114,39 @@ namespace Orm::Tiny::Relations
         QString m_foreignKey;
         /*! The name of the "other key" column. */
         QString m_relatedKey;
+
+    private:
+        /* AsPivot */
+        /*! Set timestamp column names from a parent if they are not the same. */
+        template<typename Parent>
+        static void
+        syncTimestampsFromParent(bool withTimestamps, const QString &createdAt,
+                                 const QString &updatedAt) noexcept;
     };
 
     /* public */
 
     /* AsPivot */
 
+    // NOTE api different, passing down a pivot timestamps data silverqx
     template<typename PivotModel>
     template<typename Parent>
     PivotModel
     BasePivot<PivotModel>::fromAttributes(
             const Parent &parent, const QVector<AttributeItem> &attributes,
-            const QString &table, const bool exists)
+            const QString &table, const bool exists, const bool withTimestamps,
+            const QString &createdAt, const QString &updatedAt)
     {
+        // Set timestamp column names from the parent if they are not the same
+        syncTimestampsFromParent<Parent>(withTimestamps, createdAt, updatedAt);
+
         PivotModel instance;
 
+        /* I will not store a pointer to the parent model because we don't have
+           the reference to it, the parent argument is the reference to a copy and
+           this copy will be destroyed before the BTM relationship method returns. */
+
+        // Guess whether the pivot uses timestamps (u_timestamps)
         instance.setUseTimestamps(instance.hasTimestampAttributes(attributes));
 
         /* The pivot model is a "dynamic" model since we will set the tables dynamically
@@ -130,25 +157,24 @@ namespace Orm::Tiny::Relations
             .forceFill(attributes)
             .syncOriginal();
 
-        /* We store off the parent instance so we will access the timestamp column names
-           for the model, since the pivot model timestamps aren't easily configurable
-           from the developer's point of view. We can use the parents to get these. */
-//        pivotParent<Parent> = &parent;
-
         instance.exists = exists;
 
         return instance;
     }
 
+    // NOTE api different, passing down a pivot timestamps data silverqx
     template<typename PivotModel>
     template<typename Parent>
     PivotModel
     BasePivot<PivotModel>::fromRawAttributes(
             const Parent &parent, const QVector<AttributeItem> &attributes,
-            const QString &table, const bool exists)
+            const QString &table, const bool exists, const bool withTimestamps,
+            const QString &createdAt, const QString &updatedAt)
     {
-        auto instance = fromAttributes(parent, {}, table, exists);
+        auto instance = fromAttributes(parent, {}, table, exists, withTimestamps,
+                                       createdAt, updatedAt);
 
+        // Guess whether the pivot uses timestamps (u_timestamps)
         instance.setUseTimestamps(instance.hasTimestampAttributes(attributes));
 
         // Support Default Attribute Values
@@ -157,6 +183,7 @@ namespace Orm::Tiny::Relations
             rawOriginals.isEmpty()
         )
             instance.setRawAttributes(attributes, exists);
+
         // Merge a new attributes from the database to the default attributes
         else
             instance.setRawAttributes(mergeAttributes(rawOriginals, attributes), exists);
@@ -166,15 +193,22 @@ namespace Orm::Tiny::Relations
 
     template<typename PivotModel>
     bool BasePivot<PivotModel>::hasTimestampAttributes(
-            const QVector<AttributeItem> &attributes) const
+            const QVector<AttributeItem> &attributes)
     {
-        const auto &createdAtColumn = this->getCreatedAtColumn();
+        // NOTE api different, has to contain both timestamp columns silverqx
+        auto hasCreatedAt = false;
+        auto hasUpdatedAt = false;
 
-        for (const auto &attribute : attributes)
-            if (attribute.key == createdAtColumn)
-                return true;
+        for (const auto &attribute : attributes) {
+            const auto &attributeKey = attribute.key;
 
-        return false;
+            if (attributeKey == PivotModel::CREATED_AT)
+                hasCreatedAt = true;
+            else if (attributeKey == PivotModel::UPDATED_AT)
+                hasUpdatedAt = true;
+        }
+
+        return hasCreatedAt && hasUpdatedAt;
     }
 
     template<typename PivotModel>
@@ -259,6 +293,12 @@ namespace Orm::Tiny::Relations
         return this->model();
     }
 
+    template<typename PivotModel>
+    constexpr bool BasePivot<PivotModel>::isCustomPivot()
+    {
+        return !std::is_same_v<PivotModel, Relations::Pivot>;
+    }
+
     /* protected */
 
     /* AsPivot */
@@ -338,6 +378,45 @@ namespace Orm::Tiny::Relations
         }
 
         return mergedAttributes;
+    }
+
+    /* AsPivot */
+
+    /* private */
+
+    template<typename PivotModel>
+    template<typename Parent>
+    void BasePivot<PivotModel>::syncTimestampsFromParent(
+            const bool withTimestamps, const QString &createdAt,
+            const QString &updatedAt) noexcept
+    {
+        // NOTE api different, timestamp column names passed to the withTimestamps() are also considered silverqx
+        /* Pivot timestamp column names are configured/set using the withTimestamps()
+           method or they will be inferred from the parent model if they are not set.
+           The logic has to be the same as in the BelongsToMany::createdAt/updatedAt
+           methods! */
+
+        // Configured using the withTimestamps() method
+        if (withTimestamps) {
+            if (createdAt != CREATED_AT)
+                const_cast<QString &>(CREATED_AT) = createdAt;
+
+            if (updatedAt != UPDATED_AT)
+                const_cast<QString &>(UPDATED_AT) = updatedAt;
+        }
+
+        // Inferre from the parent model
+        else {
+            if (const auto &parentCreatedAt = Parent::getCreatedAtColumn();
+                parentCreatedAt != CREATED_AT
+            )
+                const_cast<QString &>(CREATED_AT) = parentCreatedAt;
+
+            if (const auto &parentUpdatedAt = Parent::getUpdatedAtColumn();
+                parentUpdatedAt != UPDATED_AT
+            )
+                const_cast<QString &>(UPDATED_AT) = parentUpdatedAt;
+        }
     }
 
 } // namespace Orm::Tiny::Relations

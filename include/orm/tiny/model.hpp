@@ -79,6 +79,11 @@ namespace Orm::Tiny
         /*! The "type" of the primary key ID. */
         using KeyType = quint64;
 
+        /*! The base model type. */
+        using BaseModelType = Model<Derived, AllRelations...>;
+        /*! The Derived model type. */
+        using DerivedType = Derived;
+
         /* Constructors */
         /*! Create a new TinORM model instance. */
         Model();
@@ -205,7 +210,9 @@ namespace Orm::Tiny
         template<typename PivotType = Relations::Pivot, typename Parent>
         PivotType
         newPivot(const Parent &parent, const QVector<AttributeItem> &attributes,
-                 const QString &table, bool exists) const;
+                 const QString &table, bool exists, bool withTimestamps = false,
+                 const QString &createdAt = Constants::CREATED_AT,
+                 const QString &updatedAt = Constants::UPDATED_AT) const;
 
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_DECLARATIONS
@@ -993,19 +1000,23 @@ namespace Orm::Tiny
         });
     }
 
+    // NOTE api different, passing down a pivot timestamps data silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename PivotType, typename Parent>
     PivotType
     Model<Derived, AllRelations...>::newPivot(
             const Parent &parent, const QVector<AttributeItem> &attributes,
-            const QString &table, const bool exists_) const
+            const QString &table, const bool exists_, const bool withTimestamps,
+            const QString &createdAt, const QString &updatedAt) const
     {
         if constexpr (std::is_same_v<PivotType, Relations::Pivot>)
             return PivotType::template fromAttributes<Parent>(
-                        parent, attributes, table, exists_);
+                        parent, attributes, table, exists_, withTimestamps,
+                        createdAt, updatedAt);
         else
             return PivotType::template fromRawAttributes<Parent>(
-                        parent, attributes, table, exists_);
+                        parent, attributes, table, exists_, withTimestamps,
+                        createdAt, updatedAt);
     }
 
     /* Static cast this to a child's instance type (CRTP) */

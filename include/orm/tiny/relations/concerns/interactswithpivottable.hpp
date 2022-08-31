@@ -285,6 +285,10 @@ namespace Concerns
         inline const QString &updatedAt_() const;
         /*! If we're touching the parent model, touch. */
         void touchIfTouching_() const;
+        /*! Get the name of the "created at" column passed to the withTimestamps(). */
+        inline const QString &pivotCreatedAt() const;
+        /*! Get the name of the "updated at" column passed to the withTimestamps(). */
+        inline const QString &pivotUpdatedAt() const;
 
         /* Others */
         /*! Qualify the given column name by the pivot table. */
@@ -580,7 +584,9 @@ namespace Concerns
             const QVector<AttributeItem> &attributes, const bool exists) const
     {
         return getRelated_().template newPivot<PivotType, Model>(
-                    getParent_(), attributes, getTable_(), exists)
+                    getParent_(), attributes, getTable_(), exists,
+                    relation().usesTimestamps(),
+                    pivotCreatedAt(), pivotUpdatedAt())
 
                 .setPivotKeys(getForeignPivotKeyName_(), getRelatedPivotKeyName_());
     }
@@ -789,7 +795,8 @@ namespace Concerns
             pivots << std::move(
                           PivotType::fromRawAttributes(
                               getParent_(), attributesFromRecord(query.record()),
-                              getTable_(), true)
+                              getTable_(), true, relation().usesTimestamps(),
+                              pivotCreatedAt(), pivotUpdatedAt())
 
                           .setPivotKeys(getForeignPivotKeyName_(),
                                         getRelatedPivotKeyName_()));
@@ -805,9 +812,10 @@ namespace Concerns
         auto query = newPivotStatementForId(id)->first();
 
         return std::move(
-                    PivotType::fromRawAttributes(getParent_(),
-                                                 attributesFromRecord(query.record()),
-                                                 getTable_(), true)
+                    PivotType::fromRawAttributes(
+                        getParent_(), attributesFromRecord(query.record()),
+                        getTable_(), true, relation().usesTimestamps(),
+                        pivotCreatedAt(), pivotUpdatedAt())
 
                     .setPivotKeys(getForeignPivotKeyName_(),
                                   getRelatedPivotKeyName_()));
@@ -1165,6 +1173,20 @@ namespace Concerns
     void InteractsWithPivotTable<Model, Related, PivotType>::touchIfTouching_() const
     {
         return relation().touchIfTouching();
+    }
+
+    template<class Model, class Related, class PivotType>
+    const QString &
+    InteractsWithPivotTable<Model, Related, PivotType>::pivotCreatedAt() const
+    {
+        return relation().m_pivotCreatedAt;
+    }
+
+    template<class Model, class Related, class PivotType>
+    const QString &
+    InteractsWithPivotTable<Model, Related, PivotType>::pivotUpdatedAt() const
+    {
+        return relation().m_pivotUpdatedAt;
     }
 
     /* Others */
