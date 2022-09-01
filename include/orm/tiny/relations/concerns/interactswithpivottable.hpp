@@ -12,6 +12,7 @@ TINY_SYSTEM_HEADER
 #include <range/v3/view/set_algorithm.hpp>
 
 #include "orm/exceptions/domainerror.hpp"
+#include "orm/ormconcepts.hpp"
 #include "orm/tiny/types/syncchanges.hpp"
 #include "orm/tiny/utils/attribute.hpp"
 #include "orm/utils/query.hpp"
@@ -83,6 +84,9 @@ namespace Concerns
         BelongsToManyType &withPivot(QStringList &&columns);
         /*! Set the columns on the pivot table to retrieve. */
         inline BelongsToManyType &withPivot(QString &&column);
+        /*! Set the columns on the pivot table to retrieve. */
+        template<QStringConcept ...Args>
+        BelongsToManyType &withPivot(Args &&...columns);
 
         /*! Determine whether the given column is defined as a pivot column. */
         inline bool hasPivotColumn(const QString &column) const;
@@ -345,6 +349,14 @@ namespace Concerns
     InteractsWithPivotTable<Model, Related, PivotType>::withPivot(QString &&column)
     {
         return withPivot(QStringList {std::move(column)});
+    }
+
+    template<class Model, class Related, class PivotType>
+    template<QStringConcept ...Args>
+    BelongsToMany<Model, Related, PivotType> &
+    InteractsWithPivotTable<Model, Related, PivotType>::withPivot(Args &&...columns)
+    {
+        return withPivot(QStringList {std::forward<Args>(columns)...});
     }
 
     template<class Model, class Related, class PivotType>
