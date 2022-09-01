@@ -1070,7 +1070,7 @@ namespace Orm::Tiny
     {
         const auto &table = model().u_table;
 
-        // Get pluralized snake-case table name
+        // Guess as pluralized snake_case table name and set the u_table
         if (table.isEmpty())
             const_cast<QString &>(model().u_table) =
                 QStringLiteral("%1s").arg(
