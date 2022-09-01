@@ -35,8 +35,7 @@ namespace Orm
 
 DatabaseConnection::DatabaseConnection(
         std::function<Connectors::ConnectionName()> &&connection,
-        // NOLINTNEXTLINE(modernize-pass-by-value)
-        const QString &database, const QString &tablePrefix, const QVariantHash &config
+        const QString &database, const QString &tablePrefix, const QVariantHash &config // NOLINT(modernize-pass-by-value)
 )
     : m_qtConnectionResolver(std::move(connection))
     , m_database(database)

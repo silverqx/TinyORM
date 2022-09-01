@@ -150,8 +150,7 @@ namespace Orm::Tiny::Concerns
         private:
             /*! AttributeReference's private constructor. */
             AttributeReference(Model<Derived, AllRelations...> &model,
-                               // NOLINTNEXTLINE(modernize-pass-by-value)
-                               const QString &attribute);
+                               const QString &attribute);  // NOLINT(modernize-pass-by-value)
 
             /*! The model on which is an attribute set. */
             std::reference_wrapper<Model<Derived, AllRelations...>> m_model;
@@ -699,8 +698,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasAttributes<Derived, AllRelations...>::AttributeReference::AttributeReference(
             Model<Derived, AllRelations...> &model,
-            // NOLINTNEXTLINE(modernize-pass-by-value)
-            const QString &attribute
+            const QString &attribute // NOLINT(modernize-pass-by-value)
     )
         : m_model(model)
         , m_attribute(attribute)

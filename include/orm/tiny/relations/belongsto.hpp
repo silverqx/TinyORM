@@ -137,10 +137,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     BelongsTo<Model, Related>::BelongsTo(
             std::unique_ptr<Related> &&related, Model &child,
-            // NOLINTNEXTLINE(modernize-pass-by-value)
-            const QString &foreignKey, const QString &ownerKey,
-            // NOLINTNEXTLINE(modernize-pass-by-value)
-            const QString &relationName
+            const QString &foreignKey, const QString &ownerKey, // NOLINT(modernize-pass-by-value)
+            const QString &relationName // NOLINT(modernize-pass-by-value)
     )
         : Relation<Model, Related>(std::move(related), child)
         /* In the underlying base relationship class, this variable is referred to as
