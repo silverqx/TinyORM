@@ -827,8 +827,8 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    const typename HasRelationStore<Derived, AllRelations...>
-                   ::template LazyRelationStore<Related> &
+    const typename HasRelationStore<Derived, AllRelations...>::
+          template LazyRelationStore<Related> &
     HasRelationStore<Derived, AllRelations...>::lazyStore() const
     {
         return *std::static_pointer_cast<
@@ -836,8 +836,8 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const typename HasRelationStore<Derived, AllRelations...>
-                   ::BelongsToManyRelatedTableStore &
+    const typename HasRelationStore<Derived, AllRelations...>::
+                   BelongsToManyRelatedTableStore &
     HasRelationStore<Derived, AllRelations...>::belongsToManyRelatedTableStore() const
     {
         return *std::static_pointer_cast<
@@ -846,8 +846,8 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    const typename HasRelationStore<Derived, AllRelations...>
-                   ::template QueriesRelationshipsStore<Related> &
+    const typename HasRelationStore<Derived, AllRelations...>::
+          template QueriesRelationshipsStore<Related> &
     HasRelationStore<Derived, AllRelations...>::queriesRelationshipsStore() const
     {
         return *std::static_pointer_cast<

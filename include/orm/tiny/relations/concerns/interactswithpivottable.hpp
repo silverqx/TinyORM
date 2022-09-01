@@ -304,8 +304,8 @@ namespace Concerns
     /* public */
 
     template<class Model, class Related, class PivotType>
-    InteractsWithPivotTable<Model, Related, PivotType>
-            ::~InteractsWithPivotTable() = default;
+    InteractsWithPivotTable<Model, Related, PivotType>::
+    ~InteractsWithPivotTable() = default;
 
     template<class Model, class Related, class PivotType>
     BelongsToMany<Model, Related, PivotType> &

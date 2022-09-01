@@ -259,7 +259,7 @@ namespace
 } // namespace
 
 void tst_MySql_TinyBuilder::
-setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat() const
+     setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat() const
 {
     // 2022-08-03 15:36:56
     qint64 timestamp = 1659533816;
@@ -363,7 +363,7 @@ namespace
 } // namespace
 
 void tst_MySql_TinyBuilder::
-setAttribute_UnixTimestamp_With_UDates_UDateFormat_Null() const
+     setAttribute_UnixTimestamp_With_UDates_UDateFormat_Null() const
 {
     // Because the u_dateFormat = 'U' the result type will be qint64
 
@@ -396,7 +396,7 @@ setAttribute_UnixTimestamp_With_UDates_UDateFormat_Null() const
 }
 
 void tst_MySql_TinyBuilder::
-setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat_Null() const
+     setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat_Null() const
 {
     // Prepare without u_dateFormat but with u_dates
     Role_CustomUDate::u_dates = QStringList {"added_on"};
@@ -833,8 +833,8 @@ void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnHasMany() const
     }
 }
 
-void tst_MySql_TinyBuilder
-     ::whereHas_hasNested_Basic_TinyBuilder_WhereHasInCallback_OnHasMany() const
+void tst_MySql_TinyBuilder::
+     whereHas_hasNested_Basic_TinyBuilder_WhereHasInCallback_OnHasMany() const
 {
     auto builder1 = createTinyQuery<Torrent>();
 

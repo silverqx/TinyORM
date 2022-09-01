@@ -185,8 +185,8 @@ void tst_Model_Connection_Independent::subscriptOperator_OnLhs() const
     QCOMPARE(torrent->getAttribute(SIZE), QVariant(size));
 }
 
-void tst_Model_Connection_Independent
-        ::subscriptOperator_OnLhs_AssignAttributeReference() const
+void tst_Model_Connection_Independent::
+     subscriptOperator_OnLhs_AssignAttributeReference() const
 {
     auto torrent2 = Torrent::find(2);
     QVERIFY(torrent2->exists);
@@ -552,8 +552,8 @@ void tst_Model_Connection_Independent::massAssignment_Guarded() const
     QCOMPARE(torrent.getAttributes().size(), 0);
 }
 
-void tst_Model_Connection_Independent
-     ::massAssignment_GuardedAll_NonExistentAttribute() const
+void tst_Model_Connection_Independent::
+     massAssignment_GuardedAll_NonExistentAttribute() const
 {
     Torrent torrent;
 
@@ -563,8 +563,8 @@ void tst_Model_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 0);
 }
 
-void tst_Model_Connection_Independent
-     ::massAssignment_GuardedDisabled_ExistentAttribute() const
+void tst_Model_Connection_Independent::
+     massAssignment_GuardedDisabled_ExistentAttribute() const
 {
     Torrent_AllowedMassAssignment torrent;
 
@@ -575,8 +575,8 @@ void tst_Model_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
-void tst_Model_Connection_Independent
-     ::massAssignment_GuardedDisabled_NonExistentAttribute() const
+void tst_Model_Connection_Independent::
+     massAssignment_GuardedDisabled_NonExistentAttribute() const
 {
     Torrent_AllowedMassAssignment torrent;
 
@@ -597,8 +597,8 @@ tst_Model_Connection_Independent::massAssignment_TotallyGuarded_Exception() cons
                              MassAssignmentError);
 }
 
-void tst_Model_Connection_Independent
-     ::massAssignment_CantMassFillAttributesWithTableNamesWhenUsingGuarded() const
+void tst_Model_Connection_Independent::
+     massAssignment_CantMassFillAttributesWithTableNamesWhenUsingGuarded() const
 {
     Torrent torrent;
 
@@ -608,8 +608,8 @@ void tst_Model_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 0);
 }
 
-void tst_Model_Connection_Independent
-     ::massAssignment_forceFill_OnTotallyGuardedModel() const
+void tst_Model_Connection_Independent::
+     massAssignment_forceFill_OnTotallyGuardedModel() const
 {
     Torrent_TotallyGuarded torrent;
     torrent.forceFill({{NAME, "foo"}, {SIZE, 12}, {"progress", 20}});
@@ -621,8 +621,8 @@ void tst_Model_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 3);
 }
 
-void tst_Model_Connection_Independent
-     ::massAssignment_forceFill_OnGuardedAttribute() const
+void tst_Model_Connection_Independent::
+     massAssignment_forceFill_OnGuardedAttribute() const
 {
     Torrent_GuardedAttribute torrent;
 
@@ -635,8 +635,8 @@ void tst_Model_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
-void tst_Model_Connection_Independent
-     ::massAssignment_forceFill_NonExistentAttribute() const
+void tst_Model_Connection_Independent::
+     massAssignment_forceFill_NonExistentAttribute() const
 {
     Torrent_TotallyGuarded torrent;
     torrent.forceFill({{"dummy-NON_EXISTENT", "foo"}});
@@ -646,8 +646,8 @@ void tst_Model_Connection_Independent
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
-void tst_Model_Connection_Independent
-     ::with_WithSelectConstraint_QueryWithoutRelatedTable() const
+void tst_Model_Connection_Independent::
+     with_WithSelectConstraint_QueryWithoutRelatedTable() const
 {
     DB::flushQueryLog(m_connection);
     DB::enableQueryLog(m_connection);
@@ -665,8 +665,8 @@ void tst_Model_Connection_Independent
                      "where `torrent_previewable_files`.`torrent_id` in (?)"));
 }
 
-void tst_Model_Connection_Independent
-     ::with_BelongsToMany_WithSelectConstraint_QualifiedColumnsForRelatedTable() const
+void tst_Model_Connection_Independent::
+     with_BelongsToMany_WithSelectConstraint_QualifiedColumnsForRelatedTable() const
 {
     DB::flushQueryLog(m_connection);
     DB::enableQueryLog(m_connection);

@@ -2958,8 +2958,8 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
     torrent103.remove();
 }
 
-void tst_Relations_Inserting_Updating
-        ::syncWithoutDetaching_BasicPivot_IdsWithAttributes() const
+void tst_Relations_Inserting_Updating::
+     syncWithoutDetaching_BasicPivot_IdsWithAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -3183,8 +3183,8 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
     tag103.remove();
 }
 
-void tst_Relations_Inserting_Updating
-        ::syncWithoutDetaching_CustomPivot_IdsWithAttributes() const
+void tst_Relations_Inserting_Updating::
+     syncWithoutDetaching_CustomPivot_IdsWithAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 

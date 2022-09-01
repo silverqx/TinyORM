@@ -1043,8 +1043,8 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<QString>
-    HasRelationships<Derived, AllRelations...>
-    ::getRelatedTableForBelongsToManyWithVisitor(const QString &relation)
+    HasRelationships<Derived, AllRelations...>::
+    getRelatedTableForBelongsToManyWithVisitor(const QString &relation)
     {
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation);

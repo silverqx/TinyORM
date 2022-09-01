@@ -3173,7 +3173,7 @@ void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() con
 }
 
 void tst_MySql_QueryBuilder::
-upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Disabled() const
+     upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Disabled() const
 {
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));

@@ -296,7 +296,7 @@ void tst_Model_Relations::getRelation_EagerLoad_BelongsTo() const
 }
 
 void tst_Model_Relations::
-getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
+     getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -345,7 +345,7 @@ getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
 }
 
 void tst_Model_Relations::
-getRelationValue_EagerLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
+     getRelationValue_EagerLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -396,7 +396,7 @@ getRelationValue_EagerLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
 }
 
 void tst_Model_Relations::
-getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
+     getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -539,7 +539,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_BelongsTo() const
 }
 
 void tst_Model_Relations::
-getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
+     getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -588,7 +588,7 @@ getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
 }
 
 void tst_Model_Relations::
-getRelationValue_LazyLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
+     getRelationValue_LazyLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -639,7 +639,7 @@ getRelationValue_LazyLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
 }
 
 void tst_Model_Relations::
-getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
+     getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
 {
     QFETCH_GLOBAL(QString, connection);
 
