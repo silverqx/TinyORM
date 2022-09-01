@@ -1116,8 +1116,8 @@ namespace Orm::Tiny
     {
         if constexpr (m_extendsSoftDeletes)
             return Concerns::BuildsSoftDeletes<Model, true>::applySoftDeletes();
-
-        return *this;
+        else
+            return *this;
     }
 
     template<typename Model>
