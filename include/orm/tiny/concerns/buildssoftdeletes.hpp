@@ -160,7 +160,7 @@ namespace Concerns
         m_trashed = WithoutTrashed;
 
         /* Disable the default soft deletes constraint on the TinyBuilder because
-           manually overriden and we are applying another whereNull clause here. */
+           manually overridden and we are applying another whereNull clause here. */
         disableSoftDeletes();
 
         auto &builder = this->builder();
@@ -192,7 +192,7 @@ namespace Concerns
         m_trashed = OnlyTrashed;
 
         /* Disable the default soft deletes constraint on the TinyBuilder because
-           manually overriden and we are applying another whereNotNull clause here. */
+           manually overridden and we are applying another whereNotNull clause here. */
         disableSoftDeletes();
 
         auto &builder = this->builder();
