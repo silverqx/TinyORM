@@ -128,6 +128,22 @@ namespace Orm::Tiny::Relations
 
     /* AsPivot */
 
+    /* Custom Pivot models only:
+       Below is true, only during obtaining pivot records from the database during
+       the lazy or eager loading.
+       It's not true eg. if you call Tagged::create()/save()/update()/..., in all this
+       cases the Ignored u_xyz data members are taken into account normally❗
+
+       Ignored  : u_connection, u_timestamps, CREATED_AT, UPDATED_AT
+       Accepted : u_attributes, u_dates, u_dateFormat, u_fillable, u_guarded,
+                  u_incrementing, u_table
+
+       Notes : u_connection - inferred from the parent model
+               u_timestamps - true if attributes contain both CREATED_AT and UPDATED_AT
+               CREATED/UPDATED_AT - inferred from the parent model, can be overriden
+                                    using the withTimestamps() method
+    */
+
     // NOTE api different, passing down a pivot timestamps data silverqx
     template<typename PivotModel>
     template<typename Parent>
