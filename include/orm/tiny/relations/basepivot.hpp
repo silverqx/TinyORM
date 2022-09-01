@@ -67,7 +67,7 @@ namespace Orm::Tiny::Relations
 
         /* Getters / Setters */
         /*! Get the table associated with the model. */
-        QString getTable() const;
+        inline QString getTable() const;
         /*! Get the foreign key column name. */
         const QString &getForeignKey() const noexcept;
         /*!  Get the "related key" column name. */
@@ -258,14 +258,8 @@ namespace Orm::Tiny::Relations
     template<typename PivotModel>
     QString BasePivot<PivotModel>::getTable() const
     {
-        const auto &table = this->model().u_table;
-
-        if (!table.isEmpty())
-            return table;
-
-        // Guess as singularized snake_case table name
-        return StringUtils::singular(
-                    StringUtils::snake(TypeUtils::classPureBasename<PivotModel>()));
+        // NOTE api different, if the u_table is not defined on the Custom Pivot model, then return the guessed table name from the HasRelationships::pivotTableName() silverqx
+        return this->model().u_table;
     }
 
     template<typename PivotModel>

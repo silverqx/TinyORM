@@ -300,6 +300,9 @@ namespace Orm::Tiny::Relations
 
     protected:
         /* Relation related operations */
+        /*! Attempt to resolve the intermediate table name from the given string. */
+        static QString resolveTableName(const QString &table);
+
         /*! Set the join clause for the relation query. */
         const BelongsToMany &performJoin() const;
         /*! Set the join clause for the relation query. */
@@ -377,7 +380,7 @@ namespace Orm::Tiny::Relations
             const QString &relatedKey, const QString &relationName  // NOLINT(modernize-pass-by-value)
     )
         : Relation<Model, Related>(std::move(related), parent, relatedKey)
-        , m_table(table)
+        , m_table(resolveTableName(table))
         , m_foreignPivotKey(foreignPivotKey)
         , m_relatedPivotKey(relatedPivotKey)
         , m_parentKey(parentKey)
@@ -1287,6 +1290,27 @@ namespace Orm::Tiny::Relations
     {
         static const auto cached = QStringLiteral("BelongsToMany");
         return cached;
+    }
+
+    // NOTE api different, Eloquent always use the guessed table name if the table is null during the belongsToMany() call, the table property is used only when the Model::class (class name) is passed to the belongsToMany() silverqx
+    template<class Model, class Related, class PivotType>
+    QString
+    BelongsToMany<Model, Related, PivotType>::resolveTableName(const QString &table)
+    {
+        // The u_table cannot be set on the Basic Pivot model
+        if constexpr (!PivotType::isCustomPivot())
+            return table;
+
+        /* User can define the u_table on a Custom Pivot model, it has higher priority
+           than the guessed table name in the HasRelationships::pivotTableName(). */
+        else {
+            auto pivotTable = PivotType().getTable();
+
+            if (!pivotTable.isEmpty())
+                return pivotTable;
+
+            return table;
+        }
     }
 
     /* protected */
