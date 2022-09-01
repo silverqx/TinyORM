@@ -266,7 +266,6 @@ namespace Orm::Tiny::Relations
         // Guess as singularized snake_case table name
         return StringUtils::singular(
                     StringUtils::snake(TypeUtils::classPureBasename<PivotModel>()));
-
     }
 
     template<typename PivotModel>
