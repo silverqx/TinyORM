@@ -207,6 +207,22 @@ By default, TinyORM expects `created_at` and `updated_at` columns to exist on yo
         bool u_timestamps = false;
     };
 
+<a id='timestamps-u_dates' />
+
+The `u_dates` static data member controls the casting of timestamp attributes. The `created_at` and `updated_at` columns are automatically added to the `u_dates` string list when the `u_timestamps` is `true`. Also, the [`Soft Deleting`](#soft-deleting) feature adds the `deleted_at` column to the `u_dates`.
+
+You may add additional columns to the `u_dates` list. After that, these columns will be automatically formatted using the format in the `u_dateFormat` data member during the `setAttribute` method call:
+
+    class Flight final : public Model<Flight>
+    {
+        friend Model;
+        using Model::Model;
+
+    private:
+        /*! The attributes that should be mutated to dates. */
+        inline static const QStringList u_dates {"departure_at"};
+    };
+
 If you need to customize the format of your model's timestamps, set the private `u_dateFormat` data member on your model. This data member determines how date attributes are stored in the database, supported formats are described in the `QDateTime` documentation:
 
     #include <orm/tiny/model.hpp>
@@ -762,7 +778,7 @@ In addition to actually removing records from your database, TinyORM can also "s
     };
 
 :::info
-The `SoftDeletes` base class will automatically cast the `deleted_at` attribute to the `QDateTime` instance for you (it adds the `deleted_at` column to the model's `u_dates` list).
+The `SoftDeletes` base class will automatically cast the `deleted_at` attribute to the `QDateTime` instance for you (it adds the `deleted_at` column to the model's [`u_dates`](#timestamps-u_dates) list).
 :::
 
 You should also add the `deleted_at` column to your database table. The TinyORM [schema builder](/database/migrations.mdx) contains a helper method to create this column:
