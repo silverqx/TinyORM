@@ -389,7 +389,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     HasAttributes<Derived, AllRelations...>::getAttributeFromArray(
-                const QString &key) const
+            const QString &key) const
     {
         // Not found
         if (!m_attributesHash.contains(key))
@@ -572,7 +572,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
     HasAttributes<Derived, AllRelations...>::wasChanged(
-                const QStringList &attributes) const
+            const QStringList &attributes) const
     {
         return hasChanges(getChangesHash(), attributes);
     }
@@ -768,32 +768,28 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasAttributes<Derived, AllRelations...>::AttributeReference
-    HasAttributes<Derived, AllRelations...>::operator[](
-                const QString &attribute) &
+    HasAttributes<Derived, AllRelations...>::operator[](const QString &attribute) &
     {
         return AttributeReference(basemodel(), attribute);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
-    HasAttributes<Derived, AllRelations...>::operator[](
-                const QString &attribute) const &
+    HasAttributes<Derived, AllRelations...>::operator[](const QString &attribute) const &
     {
         return getAttribute(attribute);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
-    HasAttributes<Derived, AllRelations...>::operator[](
-                const QString &attribute) &&
+    HasAttributes<Derived, AllRelations...>::operator[](const QString &attribute) &&
     {
         return getAttribute(attribute);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
-    HasAttributes<Derived, AllRelations...>::operator[](
-                const QString &attribute) const &&
+    HasAttributes<Derived, AllRelations...>::operator[](const QString &attribute) const &&
     {
         return getAttribute(attribute);
     }
@@ -878,7 +874,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &HasAttributes<Derived, AllRelations...>::syncOriginalAttribute(
-                const QString &attribute)
+            const QString &attribute)
     {
         return syncOriginalAttributes({attribute});
     }
@@ -920,7 +916,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
     HasAttributes<Derived, AllRelations...>::originalIsEquivalent(
-                const QString &key) const
+            const QString &key) const
     {
         if (!m_originalHash.contains(key))
             return false;
