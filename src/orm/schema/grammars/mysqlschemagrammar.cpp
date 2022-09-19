@@ -669,9 +669,14 @@ QString MySqlSchemaGrammar::typeDouble(const ColumnDefinition &column) const
 
 QString MySqlSchemaGrammar::typeDecimal(const ColumnDefinition &column) const
 {
-    Q_ASSERT(column.total && column.places);
+    // Follow the SQL standard
+    if (column.total && !column.places)
+        const_cast<int &>(*column.places) = 0;
 
-    return QStringLiteral("decimal(%1, %2)").arg(*column.total).arg(*column.places);
+    if (column.total && column.places)
+        return QStringLiteral("decimal(%1, %2)").arg(*column.total).arg(*column.places);
+
+    return QStringLiteral("decimal");
 }
 
 QString MySqlSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const
