@@ -94,6 +94,7 @@ namespace Concerns
 } // namespace Concerns
 } // namespace Tiny
 
+    /*! Alias for the Orm::Tiny::One, shortcut alias. */
     using One = Orm::Tiny::One;
 
 } // namespace Orm
