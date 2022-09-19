@@ -57,7 +57,7 @@ bool Utils::startsWithDatetimePrefix(const QString &migrationName)
 QString Utils::defaultValueText(const QString &value)
 {
     // Quote the string type
-    auto defaultValue = StringUtils::isNumber(value, true)
+    auto defaultValue = StringUtils::isNumber(value, true, true)
                         ? value
                         : QStringLiteral("\"%1\"").arg(value);
 

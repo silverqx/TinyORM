@@ -46,7 +46,8 @@ namespace Orm::Tiny::Utils
 
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
         /*! Check if the given string is the number, signed or unsigned. */
-        static bool isNumber(QStringView string, bool allowFloating = false);
+        static bool isNumber(QStringView string, bool allowFloating = false,
+                             bool allowPlusMinus = false);
 #endif
 
 #ifndef TINYORM_DISABLE_TOM

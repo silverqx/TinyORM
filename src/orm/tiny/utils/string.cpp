@@ -140,7 +140,8 @@ QString String::camel(QString string)
 }
 
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
-bool String::isNumber(const QStringView string, const bool allowFloating)
+bool String::isNumber(const QStringView string, const bool allowFloating,
+                      const bool allowPlusMinus)
 {
     /* Performance boost was amazing after the QRegularExpression has been removed,
        around 50% on the Playground app 👀, from 800ms to 400ms. */
@@ -148,8 +149,12 @@ bool String::isNumber(const QStringView string, const bool allowFloating)
         return false;
 
     const auto *itBegin = string.cbegin();
-    if (string.front() == PLUS || string.front() == MINUS)
-        ++itBegin;
+    if (string.front() == PLUS || string.front() == MINUS) {
+        if (allowPlusMinus)
+            ++itBegin;
+        else
+            return false;
+    }
 
     // Only one dot allowed
     auto dotAlreadyFound = false;
