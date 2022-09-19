@@ -15,6 +15,17 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Utils
 {
+    /*! Tests if the std::hash can hash T with noexcept. */
+    template <class T, class = void>
+    struct IsNothrowHashable : std::false_type
+    {};
+
+    /*! Tests if the std::hash can hash T with noexcept. */
+    template <class T>
+    struct IsNothrowHashable<T, std::void_t<decltype(std::hash<T>()(
+                                                         std::declval<const T &>()))>>
+        : std::bool_constant<noexcept(std::hash<T>()(std::declval<const T &>()))>
+    {};
 
     /*! Helpers library class. */
     class Helpers
@@ -35,6 +46,12 @@ namespace Orm::Utils
         template<typename T>
         static T &&tap(std::remove_reference_t<T> &&value,
                        std::function<void()> &&callback = nullptr) noexcept;
+
+        /*! Call repeatedly to incrementally create a hash value from several
+            variables. */
+        template <typename T>
+        inline static std::size_t &hashCombine(std::size_t &seed, const T &value)
+        noexcept(IsNothrowHashable<std::remove_const_t<T>>::value);
     };
 
     /* public */
@@ -57,6 +74,13 @@ namespace Orm::Utils
             std::invoke(callback);
 
         return std::move(value);
+    }
+
+    template<typename T>
+    std::size_t &Helpers::hashCombine(std::size_t &seed, const T &value)
+    noexcept(IsNothrowHashable<std::remove_const_t<T>>::value)
+    {
+        return seed ^= std::hash<T>()(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     }
 
 } // namespace Orm::Utils
