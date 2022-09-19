@@ -829,6 +829,39 @@ public:
 };
 
 
+Example of the std::hash<> specialization:
+------------------------------------------
+
+/*! The std::hash specialization for the CastItem. */
+template<>
+class std::hash<TINYORM_END_COMMON_NAMESPACE::Orm::Tiny::CastItem>
+{
+    /*! Alias for the CastItem. */
+    using CastItem = TINYORM_END_COMMON_NAMESPACE::Orm::Tiny::CastItem;
+    /*! Alias for the CastType. */
+    using CastType = TINYORM_END_COMMON_NAMESPACE::Orm::Tiny::CastType;
+    /*! Alias for the helper utils. */
+    using Helpers = Orm::Utils::Helpers;
+
+public:
+    /*! Generate hash for the given CastItem. */
+    inline std::size_t operator()(const CastItem &castItem) const noexcept
+    {
+        /*! CastType underlying type. */
+        using CastTypeUnderlying = std::underlying_type_t<CastType>;
+
+        std::size_t resultHash = 0;
+
+        const auto castType = static_cast<CastTypeUnderlying>(castItem.type());
+
+        Helpers::hashCombine<CastTypeUnderlying>(resultHash, castType);
+        Helpers::hashCombine<QString>(resultHash, castItem.modifier());
+
+        return resultHash;
+    }
+};
+
+
 EntityManager.hpp:
 ------------------
 
