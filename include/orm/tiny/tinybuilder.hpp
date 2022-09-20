@@ -917,13 +917,13 @@ namespace Orm::Tiny
         return upsert(values, uniqueBy, update);
     }
 
+    /* TinyBuilder methods */
+
     template<typename Model>
     Builder<Model> Builder<Model>::clone() const
     {
         return *this;
     }
-
-    /* TinyBuilder methods */
 
     template<typename Model>
     Model Builder<Model>::newModelInstance(const QVector<AttributeItem> &attributes)
