@@ -284,7 +284,7 @@ void tst_Model_Connection_Independent::isNot() const
         torrent2_2->setConnection("dummy_connection");
         /* Disable connection override, so the isNot() can pickup a connection from
            the model itself (don't pickup an overridden connection). */
-        ConnectionOverride::connection = EMPTY;
+        ConnectionOverride::connection.clear();
 
         QVERIFY(torrent2_1->isNot(torrent2_2));
     }

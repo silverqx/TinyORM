@@ -85,7 +85,7 @@ void tst_Relations_Connection_Independent::isNot_HasOne() const
         phone1->setConnection("dummy_connection");
         /* Disable connection override, so the isNot() can pickup a connection from
            the model itself (don't pickup an overridden connection). */
-        ConnectionOverride::connection = EMPTY;
+        ConnectionOverride::connection.clear();
 
         QVERIFY(user1->phone()->isNot(phone1));
 
@@ -128,7 +128,7 @@ void tst_Relations_Connection_Independent::isNot_BelongsTo() const
         user1->setConnection("dummy_connection");
         /* Disable connection override, so the isNot() can pickup a connection from
            the model itself (don't pickup an overridden connection). */
-        ConnectionOverride::connection = EMPTY;
+        ConnectionOverride::connection.clear();
 
         QVERIFY(phone1->user()->isNot(user1));
 
