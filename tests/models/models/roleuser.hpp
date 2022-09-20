@@ -7,6 +7,8 @@
 namespace Models
 {
 
+using Orm::Tiny::CastItem;
+using Orm::Tiny::CastType;
 using Orm::Tiny::Relations::BasePivot;
 
 class RoleUser final : public BasePivot<RoleUser>
@@ -18,6 +20,11 @@ class RoleUser final : public BasePivot<RoleUser>
 
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;
+
+    /*! The attributes that should be cast. */
+    std::unordered_map<QString, CastItem> u_casts {
+        {"active", CastType::Boolean},
+    };
 };
 
 } // namespace Models

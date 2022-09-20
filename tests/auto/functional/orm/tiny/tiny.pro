@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
+    castattributes \
     model \
     model_conn_indep \
     model_relations \

@@ -959,6 +959,17 @@ namespace Tiny
         /*! Restore all trashed models (calls update on deleted_at column). */
         static std::tuple<int, QSqlQuery> restoreAll();
 
+        /* Casting Attributes */
+        /*! Apply query-time casts to the model instance. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        withCasts(const std::unordered_map<QString, CastItem> &casts);
+        /*! Apply query-time casts to the model instance. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        withCasts(std::unordered_map<QString, CastItem> &casts);
+        /*! Apply query-time casts to the model instance. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        withCasts(std::unordered_map<QString, CastItem> &&casts);
+
     private:
         /*! Begin querying the model, proxy to Model::query(). */
         static std::unique_ptr<TinyBuilder<Derived>> query();
@@ -3419,6 +3430,44 @@ namespace Tiny
     {
         // restoreAll() to avoid ambiguous call (SoftDeletes also contains restore())
         return query()->restore();
+    }
+
+    /* Casting Attributes */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::withCasts(
+            const std::unordered_map<QString, CastItem> &casts)
+    {
+        auto builder = query();
+
+        builder->withCasts(casts);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::withCasts(
+            std::unordered_map<QString, CastItem> &casts)
+    {
+        auto builder = query();
+
+        builder->withCasts(casts);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::withCasts(
+            std::unordered_map<QString, CastItem> &&casts)
+    {
+        auto builder = query();
+
+        builder->withCasts(std::move(casts));
+
+        return builder;
     }
 
     /* private */

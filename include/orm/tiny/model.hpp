@@ -342,6 +342,10 @@ namespace Orm::Tiny
         inline const QString &getUserDateFormat() const;
         /*! Get the u_dates attribute from the Derived model. */
         inline static const QStringList &getUserDates();
+        /*! Get the casts hash. */
+        inline std::unordered_map<QString, CastItem> &getUserCasts();
+        /*! Get the casts hash. */
+        inline const std::unordered_map<QString, CastItem> &getUserCasts() const;
 
         /* GuardsAttributes */
         /*! Get the u_fillable attributes from the Derived model. */
@@ -950,8 +954,10 @@ namespace Orm::Tiny
            the connection have to be set before fill(). */
         model.setConnection(getConnectionName());
 
+        model.mergeCasts(std::as_const(*this).getUserCasts());
         model.fill(attributes);
 
+        // I want to have these two as the last thing
         model.exists = exists_;
         model.setTable(this->model().getTable());
 
@@ -973,8 +979,10 @@ namespace Orm::Tiny
            the connection have to be set before fill(). */
         model.setConnection(getConnectionName());
 
+        model.mergeCasts(std::as_const(*this).getUserCasts());
         model.fill(std::move(attributes));
 
+        // I want to have these two as the last thing
         model.exists = exists_;
         model.setTable(this->model().getTable());
 
@@ -989,7 +997,7 @@ namespace Orm::Tiny
            attributes and those in the except set. */
         auto attributes = AttributeUtils::exceptAttributesForReplicate(*this, except);
 
-        /* Create a new instance (with correctly set a table and connection names),
+        /* Create a new instance (with correctly set a table, connection name, and casts),
            set obtained attributes and relations. */
         return Helpers::tap<Derived>(newInstance(),
                                      [this, &attributes](Derived &instance)
@@ -1431,6 +1439,20 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::getUserDates()
     {
         return Derived::u_dates;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unordered_map<QString, CastItem> &
+    Model<Derived, AllRelations...>::getUserCasts()
+    {
+        return model().u_casts;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const std::unordered_map<QString, CastItem> &
+    Model<Derived, AllRelations...>::getUserCasts() const
+    {
+        return model().u_casts;
     }
 
     /* GuardsAttributes */

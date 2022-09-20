@@ -13,6 +13,8 @@
 namespace Models
 {
 
+using Orm::Tiny::CastItem;
+using Orm::Tiny::CastType;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;
@@ -74,6 +76,11 @@ private:
 
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = true;
+
+    /*! The attributes that should be cast. */
+    std::unordered_map<QString, CastItem> u_casts {
+        {"is_banned", CastType::Boolean},
+    };
 };
 
 } // namespace Models

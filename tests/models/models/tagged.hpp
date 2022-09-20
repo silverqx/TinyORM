@@ -7,6 +7,8 @@
 namespace Models
 {
 
+using Orm::Tiny::CastItem;
+using Orm::Tiny::CastType;
 using Orm::Tiny::Relations::BasePivot;
 
 class Tagged final : public BasePivot<Tagged>
@@ -21,6 +23,11 @@ class Tagged final : public BasePivot<Tagged>
 
     /*! Indicates if the ID is auto-incrementing. */
 //    bool u_incrementing = true;
+
+    /*! The attributes that should be cast. */
+    std::unordered_map<QString, CastItem> u_casts {
+        {"active", CastType::Boolean},
+    };
 
     /* Below is true, only when obtaining pivot records from the database during
        the lazy or eager loading with the Custom Pivot models only.

@@ -213,6 +213,14 @@ namespace Orm::Tiny
         std::tuple<int, std::optional<QSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
 
+        /* Casting Attributes */
+        /*! Apply query-time casts to the model instance. */
+        inline Builder &withCasts(const std::unordered_map<QString, CastItem> &casts);
+        /*! Apply query-time casts to the model instance. */
+        inline Builder &withCasts(std::unordered_map<QString, CastItem> &casts);
+        /*! Apply query-time casts to the model instance. */
+        inline Builder &withCasts(std::unordered_map<QString, CastItem> &&casts);
+
         /* TinyBuilder methods */
         /*! Clone the Tiny query. */
         inline Builder clone() const;
@@ -915,6 +923,35 @@ namespace Orm::Tiny
         const auto update = values.constFirst().keys();
 
         return upsert(values, uniqueBy, update);
+    }
+
+    /* Casting Attributes */
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::withCasts(const std::unordered_map<QString, CastItem> &casts)
+    {
+        m_model.mergeCasts(casts);
+
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::withCasts(std::unordered_map<QString, CastItem> &casts)
+    {
+        m_model.mergeCasts(casts);
+
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::withCasts(std::unordered_map<QString, CastItem> &&casts)
+    {
+        m_model.mergeCasts(std::move(casts));
+
+        return *this;
     }
 
     /* TinyBuilder methods */

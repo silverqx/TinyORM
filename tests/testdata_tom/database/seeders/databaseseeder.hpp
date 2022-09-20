@@ -12,15 +12,30 @@ namespace Seeders
         void run() override
         {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            const auto NullString    = QVariant(QMetaType(QMetaType::QString));
-            const auto NullInt       = QVariant(QMetaType(QMetaType::Int));
-            const auto NullULLong    = QVariant(QMetaType(QMetaType::ULongLong));
-            const auto NullQDateTime = QVariant(QMetaType(QMetaType::QDateTime));
+            const auto NullBool       = QVariant(QMetaType(QMetaType::Bool));
+            const auto NullString     = QVariant(QMetaType(QMetaType::QString));
+            const auto NullShort      = QVariant(QMetaType(QMetaType::Short));
+            const auto NullUShort     = QVariant(QMetaType(QMetaType::UShort));
+            const auto NullInt        = QVariant(QMetaType(QMetaType::Int));
+            const auto NullUInt       = QVariant(QMetaType(QMetaType::UInt));
+            const auto NullLLong      = QVariant(QMetaType(QMetaType::LongLong));
+            const auto NullULLong     = QVariant(QMetaType(QMetaType::ULongLong));
+            const auto NullDouble     = QVariant(QMetaType(QMetaType::Double));
+            const auto NullQDateTime  = QVariant(QMetaType(QMetaType::QDateTime));
+            const auto NullQByteArray = QVariant(QMetaType(QMetaType::QByteArray));
 #else
-            const auto NullString    = QVariant(QVariant::String);
-            const auto NullInt       = QVariant(QVariant::Int);
-            const auto NullULLong    = QVariant(QVariant::ULongLong);
-            const auto NullQDateTime = QVariant(QVariant::DateTime);
+            const auto NullBool       = QVariant(QVariant::Bool);
+            const auto NullString     = QVariant(QVariant::String);
+            // Qt5 QVariant doesn't support unsigned/ short int
+            const auto NullShort      = QVariant(QVariant::Int);
+            const auto NullUShort     = QVariant(QVariant::UInt);
+            const auto NullInt        = QVariant(QVariant::Int);
+            const auto NullUInt       = QVariant(QVariant::UInt);
+            const auto NullLLong      = QVariant(QVariant::LongLong);
+            const auto NullULLong     = QVariant(QVariant::ULongLong);
+            const auto NullDouble     = QVariant(QVariant::Double);
+            const auto NullQDateTime  = QVariant(QVariant::DateTime);
+            const auto NullQByteArray = QVariant(QVariant::ByteArray);
 #endif
 
             DB::table("users")->insert({ID, NAME, "is_banned", "note", CREATED_AT, UPDATED_AT, DELETED_AT},
@@ -133,10 +148,27 @@ namespace Seeders
                 {4, 4, "orange", 3, "2021-02-14 12:41:28", "2021-02-14 22:17:11"},
             });
 
+            // Table - types
+            const auto isPostgreSql = DB::driverName() == Orm::QPSQL;
+
+            QVariant double_nan = isPostgreSql
+                                  ? std::numeric_limits<double>::quiet_NaN()
+                                  : NullDouble;
+            QVariant double_infinity = isPostgreSql
+                                       ? std::numeric_limits<double>::infinity()
+                                       : NullDouble;
+
+            // Insert
+            DB::table("types")->insert({ID, "bool_true", "bool_false", "smallint", "smallint_u", "int", "int_u", "bigint", "bigint_u", "double", "double_nan", "double_infinity", "decimal", "decimal_nan", "decimal_infinity", "decimal_down", "decimal_up", "string", "text", "timestamp", "datetime", "date", "binary"},
+            {
+                {1, true, false, 32760, 32761, 2147483640, 2147483641, 9223372036854775800, 9223372036854775801, static_cast<double>(1000000.123), double_nan, double_infinity, static_cast<double>(100000.12), double_nan, double_infinity, static_cast<double>(100.124), static_cast<double>(100.125), "string text", "text text", "2022-09-09 08:41:28", "2022-09-10 08:41:28", "2022-09-11", QByteArray::fromHex("517420697320677265617421")},
+                {2, NullBool, NullBool, -32762, NullUShort, -2147483642, NullUInt, -9223372036854775802, NullULLong, static_cast<double>(-1000000.123), NullDouble, NullDouble, static_cast<double>(-100000.12), NullDouble, NullDouble, static_cast<double>(-100.125), static_cast<double>(-100.124), NullString, NullString, NullQDateTime, NullQDateTime, NullQDateTime, NullQByteArray},
+                // All types null
+                {3, NullBool, NullBool, NullShort, NullUShort, NullInt, NullUInt, NullLLong, NullULLong, NullDouble, NullDouble, NullDouble, NullDouble, NullDouble, NullDouble, NullDouble, NullDouble, NullString, NullString, NullQDateTime, NullQDateTime, NullQDateTime, NullQByteArray},
+            });
+
             // Fix sequence numbers for the PostgreSQL
-            if (DB::getDefaultConnection() ==
-                QLatin1String("tinyorm_testdata_tom_postgres")
-            )
+            if (isPostgreSql)
                 fixPostgresSequences();
         }
 
@@ -163,6 +195,7 @@ namespace Seeders
             {QStringLiteral("file_property_properties_id_seq"),             9},
             {QStringLiteral("torrent_tags_id_seq"),                         6},
             {QStringLiteral("tag_properties_id_seq"),                       5},
+            {QStringLiteral("types_id_seq"),                                4},
         };
 
         for (auto &&[sequence, id] : sequences)

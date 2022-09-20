@@ -6,9 +6,15 @@
 TINY_SYSTEM_HEADER
 
 #include <QDateTime>
+#ifdef TINYORM_DEBUG
+#  include <QDebug>
+#endif
+
+#include <cmath>
 
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/exceptions/invalidformaterror.hpp"
+#include "orm/macros/likely.hpp"
 #include "orm/macros/threadlocal.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
@@ -171,6 +177,24 @@ namespace Orm::Tiny::Concerns
         /*! Return an attribute by the given key. */
         inline QVariant operator[](const QString &attribute) const &&;
 
+        /* Casting Attributes */
+        /*! Get the casts hash. */
+        std::unordered_map<QString, CastItem> getCasts() const;
+        /*! Determine whether an attribute should be cast to a native type. */
+        inline bool hasCast(const QString &key) const;
+        /*! Determine whether an attribute should be cast to a native type. */
+        inline bool hasCast(const QString &key,
+                            const std::unordered_set<CastType> &types) const;
+
+        /*! Merge new casts with existing casts on the model. */
+        Derived &mergeCasts(const std::unordered_map<QString, CastItem> &casts);
+        /*! Merge new casts with existing casts on the model. */
+        Derived &mergeCasts(std::unordered_map<QString, CastItem> &casts);
+        /*! Merge new casts with existing casts on the model. */
+        Derived &mergeCasts(std::unordered_map<QString, CastItem> &&casts);
+        /*! Reset the Type::u_casts. */
+        inline Derived &resetCasts();
+
     protected:
         /*! Transform a raw model value using mutators, casts, etc. */
         QVariant transformModelValue(const QString &key, const QVariant &value) const;
@@ -198,8 +222,15 @@ namespace Orm::Tiny::Concerns
 
         /*! Determine if the given attribute is a date. */
         bool isDateAttribute(const QString &key) const;
-        /*! Return a timestamp as DateTime object. */
+        /*! Determine if the given value is a standard date format. */
+        static bool isStandardDateFormat(const QString &value);
+
+        /*! Return a timestamp as QDateTime object. */
         QDateTime asDateTime(const QVariant &value) const;
+        /*! Return a timestamp as QDate object. */
+        inline QDate asDate(const QVariant &value) const;
+        /*! Return a timestamp as unix timestamp. */
+        inline qint64 asTimestamp(const QVariant &value) const;
 
         /*! Rehash attribute positions from the given index. */
         void rehashAttributePositions(
@@ -207,6 +238,24 @@ namespace Orm::Tiny::Concerns
                 std::unordered_map<QString, int> &attributesHash,
                 int from = 0);
 
+        /* Casting Attributes */
+        /*! Cast an attribute, convert a QVariant value. */
+        QVariant castAttribute(const QString &key, const QVariant &value) const;
+        /*! Get the type of cast for a model attribute. */
+        inline CastItem getCastItem(const QString &key) const;
+        /*! Get the type of cast for a model attribute. */
+        inline CastType getCastType(const QString &key) const;
+
+        /*! Determine whether a value is Date / DateTime castable. */
+        inline bool isDateCastable(const QString &key) const;
+        /*! Determine if the cast type is a custom date time cast. */
+//        static bool isCustomDateTimeCast(const CastItem &cast);
+
+        /*! Round a QVariant(double) to the given decimals (used by castAttribute()). */
+        inline static QVariant
+        roundDecimals(const QVariant &value, const QVariant &decimals);
+
+        /* Data members */
         /*! The model's default values for attributes. */
         T_THREAD_LOCAL
         inline static QVector<AttributeItem> u_attributes;
@@ -235,12 +284,42 @@ namespace Orm::Tiny::Concerns
         T_THREAD_LOCAL
         inline static QStringList u_dates;
 
+        /* Casting Attributes */
+        /*! The attributes that should be cast. */
+        std::unordered_map<QString, CastItem> u_casts;
+
     private:
         /*! Throw if the m_attributesHash doesn't contain a given attribute. */
         static void throwIfNoAttributeInHash(
                     const std::unordered_map<QString, int> &attributesHash,
                     const QString &attribute, const QString &functionName);
 
+        /* Casting Attributes */
+        /* QMetaType isn't trivially copyable in Qt5, so const-lvalue reference needed. */
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        /*! QMetaType used in a function declaration. */
+        using QMetaTypeDecl = QMetaType;
+        /*! QMetaType used in a function definition. */
+        using QMetaTypeDef  = const QMetaType;
+#else
+        /*! QMetaType used in a function declaration. */
+        using QMetaTypeDecl = std::add_lvalue_reference_t<const QMetaType>;
+        /*! QMetaType used in a function definition. */
+        using QMetaTypeDef  = QMetaTypeDecl;
+#endif
+        /*! Throw if the given attribute can not be converted to the given cast type. */
+        static void throwIfCanNotCastAttribute(
+                    const QString &key, CastType castType, QMetaTypeDecl metaType,
+                    const QVariant &value, const QString &functionName);
+        /*! Log if the QVariant::convert() for the given attribute failed. */
+        static void logIfConvertAttributeFailed(
+                    const QString &key, CastType castType, QMetaTypeDecl metaType,
+                    const QString &functionName);
+
+        /*! Return the string name of the given cast type. */
+        static QString castTypeName(CastType type);
+
+        /* Others */
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
     };
@@ -362,14 +441,9 @@ namespace Orm::Tiny::Concerns
         if (key.isEmpty() || key.isNull())
             return {};
 
-        /* If the attribute exists in the attribute hash or has a "get" mutator we will
-           get the attribute's value. Otherwise, we will proceed as if the developers
-           are asking for a relationship's value. This covers both types of values. */
-        if (m_attributesHash.contains(key)
-//            || array_key_exists($key, $this->casts)
-//            || hasGetMutator(key)
-//            || isClassCastable(key)
-        )
+        /* If the attribute exists in the attribute hash or has a cast we will
+           get the attribute's value. Otherwise, we will return invalid QVariant. */
+        if (m_attributesHash.contains(key) || model().getUserCasts().contains(key))
             return getAttributeValue(key);
 
         // FUTURE add getRelationValue() overload without Related template argument, after that I will be able to use it here, Related template parameter will be obtained by the visitor, I think this task is impossible to do silverqx
@@ -794,6 +868,97 @@ namespace Orm::Tiny::Concerns
         return getAttribute(attribute);
     }
 
+    /* Casting Attributes */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unordered_map<QString, CastItem>
+    HasAttributes<Derived, AllRelations...>::getCasts() const
+    {
+        const auto &model = this->model();
+
+        const auto &keyName = model.getKeyName();
+
+        /* Needed to make a copy because it can interfere with the check
+           in the getAttribute() method (getUserCasts().contains(key)), so don't modify
+           the user's u_casts and add the 'id' cast on the fly on the casts copy. */
+        auto casts = model.getUserCasts();
+
+        if (model.getIncrementing() && !casts.contains(keyName))
+            // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
+            casts.emplace(keyName, CastType::ULongLong);
+
+        return casts;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool HasAttributes<Derived, AllRelations...>::hasCast(const QString &key) const
+    {
+        return getCasts().contains(key);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool HasAttributes<Derived, AllRelations...>::hasCast(
+            const QString &key, const std::unordered_set<CastType> &types) const
+    {
+        return hasCast(key) && types.contains(getCastType(key));
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::mergeCasts(
+            const std::unordered_map<QString, CastItem> &casts)
+    {
+        auto &model = this->model();
+        auto &userCasts = model.getUserCasts();
+
+        std::remove_cvref_t<decltype (casts)> mergedCasts;
+        mergedCasts.reserve(userCasts.size() + casts.size());
+
+        mergedCasts = userCasts;
+
+        for (const auto &[attribute, castItem] : casts)
+            mergedCasts.insert_or_assign(attribute, castItem);
+
+        // Swap user casts
+        userCasts = std::move(mergedCasts);
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::mergeCasts(
+            std::unordered_map<QString, CastItem> &casts)
+    {
+        auto &model = this->model();
+
+        model.getUserCasts().merge(casts);
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::mergeCasts(
+            std::unordered_map<QString, CastItem> &&casts)
+    {
+        auto &model = this->model();
+
+        model.getUserCasts().merge(std::move(casts));
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &HasAttributes<Derived, AllRelations...>::resetCasts()
+    {
+        auto &model = this->model();
+
+        model.getUserCasts().clear();
+
+        return model;
+    }
+
     /* protected */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -810,13 +975,20 @@ namespace Orm::Tiny::Concerns
            the database is datetime, the same is true for all other types, Qt's driver
            detects it and creates QVariant with proper types. */
 
-        if (!value.isValid() || value.isNull())
+        /* Nothing to do, no transformation possible, don't check for value.isNull()!
+           (to support a null QVariant-s). */
+        if (!value.isValid())
             return value;
 
-        /* If the attribute is listed as a date, we will convert it to a QDateTime
+        /* If the attribute exists within the u_casts hash, we will convert it to
+           an appropriate QVariant type. */
+        if (hasCast(key))
+            return castAttribute(key, value);
+
+        /* If the attribute is listed as a date, we will convert it to the QDateTime
            instance on retrieval, which makes it quite convenient to work with
-           date fields without having to create a mutator for each property. */
-        if (getDates().contains(key))
+           date fields without having to create a cast for each attribute. */
+        if (!value.isNull() && getDates().contains(key))
             return asDateTime(value);
 
         return value;
@@ -936,32 +1108,56 @@ namespace Orm::Tiny::Concerns
         if (isDateAttribute(key))
             return fromDateTime(attribute) == fromDateTime(original);
 
-//        if (hasCast(key, ['object', 'collection']))
-//            return castAttribute(key, attribute) == castAttribute(key, original);
-//        if (hasCast(key, ['real', 'float', 'double'])) {
-//            if (($attribute === null && $original !== null) || ($attribute !== null && $original === null))
-//                return false;
+        if (hasCast(key, {CastType::Real, CastType::Float, CastType::Double})) {
+            if (!original.isValid() || original.isNull())
+                return false;
 
-//            return abs($this->castAttribute($key, $attribute) - $this->castAttribute($key, $original)) < PHP_FLOAT_EPSILON * 4;
-//        }
-//        if ($this->hasCast($key, static::$primitiveCastTypes)) {
-//            return $this->castAttribute($key, $attribute) ===
-//                   $this->castAttribute($key, $original);
-//        }
+            return std::abs(castAttribute(key, attribute).template value<double>() -
+                            castAttribute(key, original).template value<double>()) <
+                    // * 4 is still very high precision whether two numbers are the same
+                    std::numeric_limits<double>::epsilon() * 4;
+        }
 
-//        return is_numeric($attribute) && is_numeric($original) &&
-//               strcmp((string) $attribute, (string) $original) === 0;
+        // FEATURE castable, update this if I will support eg. class casts, this check is only for primitive types silverqx
+        if (hasCast(key))
+            return castAttribute(key, attribute) == castAttribute(key, original);
 
         return false;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool HasAttributes<Derived, AllRelations...>::isDateAttribute(
-            const QString &key) const
+    bool
+    HasAttributes<Derived, AllRelations...>::isDateAttribute(const QString &key) const
     {
-        // FEATURE castable silverqx
-        /* I don't have support for castable attributes, this solution is temporary. */
-        return getDates().contains(key);
+        return getDates().contains(key) || isDateCastable(key);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool
+    HasAttributes<Derived, AllRelations...>::isStandardDateFormat(const QString &value)
+    {
+        // Avoid RegEx for performance reasons
+        const auto splitted = value.split(DASH, Qt::KeepEmptyParts);
+
+        if (splitted.size() != 3)
+            return false;
+
+        // Year
+        if (const auto &year = splitted.at(0);
+            !(year.size() == 4 && StringUtils::isNumber(year))
+        )
+            return false;
+
+        // Month
+        const auto &month = splitted.at(1);
+        const auto monthSize = month.size();
+        if (!((monthSize == 1 || monthSize == 2) && StringUtils::isNumber(month)))
+            return false;
+
+        // Day
+        const auto &day = splitted.at(2);
+        const auto daySize = day.size();
+        return (daySize == 1 || daySize == 2) && StringUtils::isNumber(day);
     }
 
     // TODO would be good to make it the c++ way, make overload for every type, asDateTime() is protected, so I have full control over it, but I leave it for now, because there will be more methods which will use this method in the future, and it will be more clear later on silverqx
@@ -969,6 +1165,10 @@ namespace Orm::Tiny::Concerns
     QDateTime
     HasAttributes<Derived, AllRelations...>::asDateTime(const QVariant &value) const
     {
+        // CUR softdeletes fails with this, also check isNull() check in transformModelValue() silverqx
+//        if (value.isNull())
+//            return {};
+
         /* If this value is already a QDateTime instance, we shall just return it as is.
            This prevents us having to re-parse a QDateTime instance when we know
            it already is one. */
@@ -981,21 +1181,41 @@ namespace Orm::Tiny::Concerns
         )
             return value.value<QDateTime>();
 
+        // The value has to be convertible to the QString so we can work with it
+        if (!value.canConvert<QString>())
+            throw Orm::Exceptions::InvalidFormatError(
+                        QStringLiteral("Could not parse the datetime, could not convert "
+                                       "the 'value' to the QString in %1().")
+                        .arg(__tiny_func__));
+
+        const auto valueString = value.value<QString>();
+
         /* If this value is an integer, we will assume it is a UNIX timestamp's value
            and format a QDateTime object from this timestamp. This allows flexibility
            when defining your date fields as they might be UNIX timestamps here. */
-        if (value.canConvert<QString>() &&
-            StringUtils::isNumber(value.value<QString>())
-        )
+        if (StringUtils::isNumber(valueString))
             // TODO switch ms accuracy? For the u_dateFormat too? silverqx
-            return QDateTime::fromSecsSinceEpoch(value.value<qint64>());
+            if (auto date = QDateTime::fromSecsSinceEpoch(value.value<qint64>());
+                date.isValid()
+            )
+                return date;
+
+        /* If the value is in simply year, month, day format, we will instantiate the
+           QDate instances from that format. Again, this provides for simple date
+           fields on the database, while still supporting Carbonized conversion. */
+        if (isStandardDateFormat(valueString))
+            if (auto date = QDateTime::fromString(valueString,
+                                                  QStringLiteral("yyyy-M-d"));
+                date.isValid()
+            )
+                return date;
 
         const auto &format = getDateFormat();
 
         /* Finally, we will just assume this date is in the format used by default on
            the database connection and use that format to create the QDateTime object
            that is returned back out to the developers after we convert it here. */
-        if (auto date = QDateTime::fromString(value.value<QString>(), format);
+        if (auto date = QDateTime::fromString(valueString, format);
             date.isValid()
         )
             return date;
@@ -1003,7 +1223,21 @@ namespace Orm::Tiny::Concerns
         throw Orm::Exceptions::InvalidFormatError(
                     QStringLiteral("Could not parse the datetime '%1' using "
                                    "the given format '%2'.")
-                    .arg(value.value<QString>(), format));
+                    .arg(valueString, format));
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QDate
+    HasAttributes<Derived, AllRelations...>::asDate(const QVariant &value) const
+    {
+        return asDateTime(value).date();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    qint64
+    HasAttributes<Derived, AllRelations...>::asTimestamp(const QVariant &value) const
+    {
+        return asDateTime(value).toSecsSinceEpoch();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1018,6 +1252,174 @@ namespace Orm::Tiny::Concerns
         for (auto i = from; i < attributes.size(); ++i)
             // 'i' is the position
             attributesHash[attributes.at(i).key] = i;
+    }
+
+    /* Casting Attributes */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant
+    HasAttributes<Derived, AllRelations...>::castAttribute(
+            const QString &key, const QVariant &value) const
+    {
+        /* Nothing to do, no cast possible, don't check for value.isNull()! (to support
+           a null QVariant-s).
+           Don't convert/cast invalid QVariant because it changes validity from false
+           to true and sets a QVariant to null, so no cast can't happen. */
+        if (!value.isValid())
+            return value;
+
+        auto value_ = value;
+        const auto &castItem = getCastItem(key);
+        const auto castType = castItem.type();
+        const auto functionName = __tiny_func__;
+
+        /*! Convert the QVariant value of a attribute. */
+        const auto convertAttribute = [this, &key, &value_, castType, &functionName]
+                                      (QMetaTypeDef metaType)
+        {
+            // Throw if the given attribute can not be converted to the given cast type
+            throwIfCanNotCastAttribute(key, castType, metaType, value_, functionName);
+
+            const auto wasNull = value_.isNull();
+
+            /* Still check for the false value and log to the debug stream, but not if
+               the value_ is null, because converting null QVariant will always return
+               false and the QVariant type will be changed anyway. */
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            if (!value_.convert(metaType) && !wasNull)
+#else
+            if (!value_.convert(metaType.id()) && !wasNull)
+#endif
+                // Log if the QVariant::convert() for the given attribute failed
+#ifdef TINYORM_DEBUG
+                logIfConvertAttributeFailed(key, castType, metaType, functionName);
+#else
+                ;
+#endif
+
+            return value_;
+        };
+
+        switch (castType) {
+        // Int 64-bit
+        case CastType::LongLong:
+            return convertAttribute(QMetaType(QMetaType::LongLong));
+        case CastType::ULongLong:
+            return convertAttribute(QMetaType(QMetaType::ULongLong));
+        // QString
+        case CastType::QString:
+            return convertAttribute(QMetaType(QMetaType::QString));
+        // Int 32-bit
+        case CastType::Int:
+        case CastType::Integer:
+            return convertAttribute(QMetaType(QMetaType::Int));
+        case CastType::UInt:
+        case CastType::UInteger:
+            return convertAttribute(QMetaType(QMetaType::UInt));
+        // QDateTime
+        case CastType::QDate:
+            return asDate(value_);
+        case CastType::QDateTime:
+//        case CastType::CustomQDateTime:
+            return asDateTime(value_);
+        case CastType::Timestamp:
+            return asTimestamp(value_);
+        // Bool
+        case CastType::Bool:
+        case CastType::Boolean:
+            return convertAttribute(QMetaType(QMetaType::Bool));
+        // Int 16-bit
+        case CastType::Short:
+            /* Qt5 QVariant doesn't define the short int type QVariant::Short, but
+               it can be bypassed using the QMetaType. */
+            return convertAttribute(QMetaType(QMetaType::Short));
+        case CastType::UShort:
+            /* Qt5 QVariant doesn't define the short int type QVariant::Short, but
+               it can be bypassed using the QMetaType. */
+            return convertAttribute(QMetaType(QMetaType::UShort));
+        // Float
+        case CastType::Real:
+        case CastType::Float:
+        case CastType::Double:
+            /* The fromFloat() not needed here because this logic is handled in the
+               QSqlDriver and currently only the PostgreSQL supports NaN and Infinity
+               values. The MySQL and SQLite doesn't care. */
+            return convertAttribute(QMetaType(QMetaType::Double));
+
+        case CastType::Decimal:
+        {
+            auto converted = convertAttribute(QMetaType(QMetaType::Double));
+            const auto &modifier = castItem.modifier();
+
+            /* This is pure for the performance reasons, in the Qt6 the isNull()
+               internally also checks if isValid(). In the Qt5 the logic is different. */
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            if (modifier.isNull() || converted.isNull()
+#else
+            if (!modifier.isValid()  || modifier.isNull() ||
+                !converted.isValid() || converted.isNull()
+#endif
+            ) T_LIKELY
+                return converted;
+            else T_UNLIKELY
+                return roundDecimals(converted, modifier);
+        }
+        // Others
+        case CastType::QByteArray:
+            return convertAttribute(QMetaType(QMetaType::QByteArray));
+
+        default:
+            Q_UNREACHABLE();
+        }
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    CastItem
+    HasAttributes<Derived, AllRelations...>::getCastItem(const QString &key) const
+    {
+        return getCasts().at(key);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    CastType
+    HasAttributes<Derived, AllRelations...>::getCastType(const QString &key) const
+    {
+        return getCasts().at(key).type();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool
+    HasAttributes<Derived, AllRelations...>::isDateCastable(const QString &key) const
+    {
+        return hasCast(key, {CastType::QDate, CastType::QDateTime});
+    }
+
+//    template<typename Derived, AllRelationsConcept ...AllRelations>
+//    bool
+//    HasAttributes<Derived, AllRelations...>::isCustomDateTimeCast(
+//            const CastItem &cast)
+//    {
+//        const auto &modifier = cast.modifier();
+
+//        return (cast.type() == CastType::QDateTime || cast.type() == CastType::QDate) &&
+//                modifier.template canConvert<QString>() &&
+//                !modifier.template value<QString>().isEmpty();
+//    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant
+    HasAttributes<Derived, AllRelations...>::roundDecimals(const QVariant &value,
+                                                           const QVariant &decimals)
+    {
+        /* All parameters and the return value are the QVariant to simplify and
+           for outsource the code from the castAttribute() method, this method is
+           designed especially for the castAttribute() method. */
+        const double multiplier = std::pow(static_cast<double>(10.0),
+                                           decimals.template value<int>());
+
+        return static_cast<double>(
+                    std::round(value.template value<double>() * multiplier) /
+                    multiplier);
     }
 
     /* private */
@@ -1036,6 +1438,102 @@ namespace Orm::Tiny::Concerns
                 .arg(attribute, TypeUtils::classPureBasename<Derived>(),
                      functionName));
     }
+
+    /* Casting Attributes */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::throwIfCanNotCastAttribute(
+            const QString &key, const CastType castType, QMetaTypeDef metaType,
+            const QVariant &value, const QString &functionName)
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        if (value.canConvert(metaType))
+#else
+        if (value.canConvert(metaType.id()))
+#endif
+            return;
+
+        throw Orm::Exceptions::InvalidArgumentError(
+                    QStringLiteral(
+                        "Bad cast type was defined in the %1::u_casts hash, the '%2' "
+                        "attribute can not be casted to the 'CastType::%3' "
+                        "(using the QMetaType::%4) in %5().")
+                    .arg(TypeUtils::template classPureBasename<Derived>(), key,
+                         castTypeName(castType), metaType.name(), functionName));
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::logIfConvertAttributeFailed(
+            const QString &key, const CastType castType, QMetaTypeDef metaType,
+            const QString &functionName)
+    {
+        /* This should not happen because the QVariant::canConvert() is called before
+           the QVariant::convert(), but the convert() return value is still checked
+           for the false value and in this case this method will be called. */
+        qDebug().noquote()
+                << QStringLiteral(
+                        "The QVariant::convert() to the 'QMetaType::%1' for the '%2' "
+                        "attribute returned 'false', defined cast type on the "
+                        "'%3::u_casts' model was 'CastType::%4' in %5().")
+                    .arg(metaType.name(), key,
+                         TypeUtils::template classPureBasename<Derived>(),
+                         castTypeName(castType), functionName);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString
+    HasAttributes<Derived, AllRelations...>::castTypeName(const CastType type)
+    {
+        switch (type) {
+        // Int 64-bit
+        case CastType::LongLong:
+            return QStringLiteral("LongLong");
+        case CastType::ULongLong:
+            return QStringLiteral("ULongLong");
+        // QString
+        case CastType::QString:
+            return QStringLiteral("QString");
+        // Int 32-bit
+        case CastType::Int:
+        case CastType::Integer:
+            return QStringLiteral("Integer");
+        case CastType::UInt:
+        case CastType::UInteger:
+            return QStringLiteral("UInteger");
+        // QDateTime
+        case CastType::QDate:
+            return QStringLiteral("QDate");
+        case CastType::QDateTime:
+            return QStringLiteral("QDateTime");
+        case CastType::Timestamp:
+            return QStringLiteral("Timestamp");
+        // Bool
+        case CastType::Bool:
+        case CastType::Boolean:
+            return QStringLiteral("Boolean");
+        // Int 16-bit
+        case CastType::Short:
+            return QStringLiteral("Short");
+        case CastType::UShort:
+            return QStringLiteral("UShort");
+        // Float
+        case CastType::Real:
+            return QStringLiteral("Real");
+        case CastType::Float:
+            return QStringLiteral("Float");
+        case CastType::Double:
+            return QStringLiteral("Double");
+        case CastType::Decimal:
+            return QStringLiteral("Decimal");
+        // Others
+        case CastType::QByteArray:
+            return QStringLiteral("QByteArray");
+        default:
+            Q_UNREACHABLE();
+        }
+    }
+
+    /* Others */
 
     /* Static cast this to a child's instance type (CRTP) */
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasAttributes)

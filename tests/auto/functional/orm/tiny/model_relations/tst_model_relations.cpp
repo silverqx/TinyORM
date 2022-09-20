@@ -220,6 +220,9 @@ private slots:
     void eachById_EmptyResult_WithAlias() const;
 
     void upsert() const;
+
+    /* Casting Attributes */
+    void withCasts_OnRelation() const;
 };
 
 void tst_Model_Relations::initTestCase_data() const
@@ -3893,6 +3896,46 @@ void tst_Model_Relations::upsert() const
         QCOMPARE(validateQuery.value(updatedAtColumn).value<QDateTime>(),
                  updatedAtOriginal);
     }
+}
+
+/* Casting Attributes */
+
+void tst_Model_Relations::withCasts_OnRelation() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrentFile = Torrent::find(1)->torrentFiles()
+                       ->withCasts({{"progress", Orm::Tiny::CastType::UInteger}})
+                       .first();
+
+    QVERIFY(torrentFile);
+    QVERIFY(torrentFile->exists);
+    QCOMPARE(torrentFile->getAttribute(ID).toULongLong(), 1);
+
+    auto attribute = torrentFile->getAttribute("progress");
+
+    /* It helps to avoid #ifdef-s for QT_VERSION for the QVariant::typeId/userType
+       for Qt5/6. */
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    auto typeId = std::bind_front(&QVariant::typeId, attribute);
+#else
+    auto typeId = std::bind_front(&QVariant::userType, attribute);
+#endif
+
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL
+    )
+        QCOMPARE(typeId(), QMetaType::UInt);
+    else if (driverName == Orm::QPSQL)
+        QCOMPARE(typeId(), QMetaType::UInt);
+    else if (driverName == Orm::QSQLITE)
+        QCOMPARE(typeId(), QMetaType::UInt);
+    else
+        Q_UNREACHABLE();
+
+    QCOMPARE(attribute.toUInt(), 200);
 }
 
 QTEST_MAIN(tst_Model_Relations)

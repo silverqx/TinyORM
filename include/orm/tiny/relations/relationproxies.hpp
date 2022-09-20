@@ -946,6 +946,17 @@ namespace Tiny::Relations
             alias. */
         std::tuple<int, QSqlQuery> forceRemove() const;
 
+        /* Casting Attributes */
+        /*! Apply query-time casts to the model instance. */
+        const Relation<Model, Related> &
+        withCasts(const std::unordered_map<QString, CastItem> &casts) const;
+        /*! Apply query-time casts to the model instance. */
+        const Relation<Model, Related> &
+        withCasts(std::unordered_map<QString, CastItem> &casts) const;
+        /*! Apply query-time casts to the model instance. */
+        const Relation<Model, Related> &
+        withCasts(std::unordered_map<QString, CastItem> &&casts) const;
+
     private:
         /*! Static cast this to a child's instance Relation type. */
         const Relation<Model, Related> &relation() const;
@@ -3132,6 +3143,38 @@ namespace Tiny::Relations
     RelationProxies<Model, Related>::forceRemove() const
     {
         return getQuery().forceRemove();
+    }
+
+    /* Casting Attributes */
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::withCasts(
+            const std::unordered_map<QString, CastItem> &casts) const
+    {
+        getQuery().withCasts(casts);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::withCasts(
+            std::unordered_map<QString, CastItem> &casts) const
+    {
+        getQuery().withCasts(casts);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::withCasts(
+            std::unordered_map<QString, CastItem> &&casts) const
+    {
+        getQuery().withCasts(std::move(casts));
+
+        return relation();
     }
 
     /* private */

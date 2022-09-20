@@ -1,3 +1,4 @@
+add_subdirectory(castattributes)
 add_subdirectory(model)
 add_subdirectory(model_conn_indep)
 add_subdirectory(model_relations)

@@ -15,6 +15,7 @@
 #include "migrations/2022_05_11_171000_create_torrent_tags_table.hpp"
 #include "migrations/2022_05_11_171100_create_tag_torrent_table.hpp"
 #include "migrations/2022_05_11_171200_create_tag_properties_table.hpp"
+#include "migrations/2022_05_11_171300_create_types_table.hpp"
 
 #include "seeders/databaseseeder.hpp"
 
@@ -50,7 +51,8 @@ int main(int argc, char *argv[])
                             CreateFilePropertyPropertiesTable,
                             CreateTorrentTagsTable,
                             CreateTagTorrentTable,
-                            CreateTagPropertiesTable>()
+                            CreateTagPropertiesTable,
+                            CreateTypesTable>()
                 .seeders<DatabaseSeeder>()
                 // Fire it up 🔥🚀✨
                 .run();

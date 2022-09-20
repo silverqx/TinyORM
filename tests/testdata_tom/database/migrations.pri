@@ -14,3 +14,4 @@ HEADERS += \
     $$PWD/migrations/2022_05_11_171000_create_torrent_tags_table.hpp \
     $$PWD/migrations/2022_05_11_171100_create_tag_torrent_table.hpp \
     $$PWD/migrations/2022_05_11_171200_create_tag_properties_table.hpp \
+    $$PWD/migrations/2022_05_11_171300_create_types_table.hpp \
