@@ -1664,7 +1664,7 @@ void tst_Model::touch_WithAttribute() const
 
 namespace
 {
-    // NOLINTNEXTLINE(misc-no-recursion)
+    // NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
     class Role_WithoutUDates final : public Model<Role_WithoutUDates>
     {
         friend Model;

@@ -5,8 +5,6 @@
 
 #include "databases.hpp"
 
-using Orm::Constants::EMPTY;
-
 using Orm::Tiny::ConnectionOverride;
 
 using TypeUtils = Orm::Utils::Type;
