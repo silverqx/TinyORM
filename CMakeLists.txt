@@ -264,8 +264,9 @@ else()
     target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_INLINE_CONSTANTS)
 endif()
 
-# Enable code needed by tests, eg. connection overriding in the Model
-if(BUILD_TESTS AND ORM)
+# Enable code needed by tests, eg. connection overriding in the Model or
+# MySqlConnection::setConfigVersion().
+if(BUILD_TESTS)
     target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_TESTS_CODE)
 endif()
 

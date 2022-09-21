@@ -68,8 +68,9 @@ mysql_ping: DEFINES *= TINYORM_MYSQL_PING
 CONFIG(release, debug|release): DEFINES += TINYORM_NO_DEBUG_SQL
 CONFIG(debug, debug|release): DEFINES *= TINYORM_DEBUG_SQL
 
-# Enable code needed by tests, eg. connection overriding in the Model
-!disable_orm:build_tests: \
+# Enable code needed by tests, eg. connection overriding in the Model or
+# MySqlConnection::setConfigVersion().
+build_tests: \
     DEFINES *= TINYORM_TESTS_CODE
 
 # TinyTom related defines
