@@ -45,7 +45,7 @@ namespace Orm::Query
         /*! Obtain expression's value. */
         inline const QVariant &getValue() const;
 
-        /*! Equality operator, the inequality operator is automatically generated. */
+        /*! Equality comparison operator for the Expression. */
         inline bool operator==(const Expression &) const = default;
 
     private:

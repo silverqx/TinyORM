@@ -1205,7 +1205,7 @@ namespace
         /*! FilePropertyProperty name. */
         QString name;
 
-        /*! Comparison operator for the IdAndName. */
+        /*! Equality comparison operator for the IdAndName. */
         inline bool operator==(const IdAndName &right) const noexcept
         {
             return id == right.id && name == right.name;

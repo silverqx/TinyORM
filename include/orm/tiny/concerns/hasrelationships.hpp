@@ -156,7 +156,7 @@ namespace Concerns
         inline bool touches(const QString &relation) const;
 
         /* Others */
-        /*! Comparison operator for the HasRelationships concern. */
+        /*! Equality comparison operator for the HasRelationships concern. */
         bool operator==(const HasRelationships &right) const;
 
     protected:

@@ -149,7 +149,7 @@ namespace Types
         noexcept(std::is_nothrow_swappable_v<ContainerType>);
 
         /* Comparison */
-        /*! Comparison operator for the SyncChanges. */
+        /*! Equality comparison operator for the SyncChanges. */
         inline bool operator==(const SyncChanges &) const = default;
 
     protected:

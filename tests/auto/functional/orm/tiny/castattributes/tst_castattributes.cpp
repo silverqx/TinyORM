@@ -51,7 +51,7 @@ struct ModelCacheKey
     /*! Row type. */
     RowType rowType;
 
-    /*! Comparison operator for the ModelCacheKey. */
+    /*! Equality comparison operator for the ModelCacheKey. */
     inline bool operator==(const ModelCacheKey &) const noexcept = default;
 };
 

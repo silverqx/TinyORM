@@ -39,7 +39,7 @@ namespace Orm::Tiny::Concerns
         using TypeUtils = Orm::Utils::Type;
 
     public:
-        /*! Comparison operator for the HasAttributes concern. */
+        /*! Equality comparison operator for the HasAttributes concern. */
         inline bool operator==(const HasAttributes &) const = default;
 
         /*! Set a given attribute on the model. */

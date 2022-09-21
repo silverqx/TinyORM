@@ -167,7 +167,7 @@ namespace Orm::Tiny
         template<ModelConcept ModelToCompare>
         bool isNot(const std::optional<ModelToCompare> &model) const;
 
-        /*! Comparison operator for the Model. */
+        /*! Equality comparison operator for the Model. */
         bool operator==(const Model &right) const;
 
         /*! Fill the model with a vector of attributes. */

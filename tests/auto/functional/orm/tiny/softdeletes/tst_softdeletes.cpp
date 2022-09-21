@@ -80,7 +80,7 @@ struct UserType
     /*! Is model trashed? */
     bool trashed;
 
-    /*! Equality operator. */
+    /*! Equality comparison operator for the UserType. */
     inline bool operator==(const UserType &) const = default;
 };
 

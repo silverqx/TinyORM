@@ -49,7 +49,7 @@ namespace Relations
         explicit operator UpdateItem() const;
     };
 
-    /*! Comparison operator for the AttributeItem. */
+    /*! Equality comparison operator for the AttributeItem. */
     SHAREDLIB_EXPORT bool
     operator==(const AttributeItem &left, const AttributeItem &right);
 
@@ -60,7 +60,7 @@ namespace Relations
         std::function<void(QueryBuilder &)> constraints = nullptr;
     };
 
-    /*! Comparison operator for the WithItem. */
+    /*! Equality comparison operator for the WithItem. */
     [[maybe_unused]]
     SHAREDLIB_EXPORT bool operator==(const WithItem &left, const WithItem &right);
 
@@ -119,7 +119,7 @@ namespace Relations
         /*! Converting constructor from the CastType. */
         inline CastItem(CastType castType, QVariant modifier = {}) noexcept; // NOLINT(google-explicit-constructor)
 
-        /*! Comparison operator for the CastItem. */
+        /*! Equality comparison operator for the CastItem. */
         inline bool operator==(const CastItem &) const = default;
 
         /* Getters */
