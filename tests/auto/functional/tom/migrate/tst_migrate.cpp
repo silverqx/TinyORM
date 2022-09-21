@@ -40,7 +40,7 @@ public:
     using Status = std::vector<StatusRow>;
 
 private Q_SLOTS:
-    void initTestCase();
+    void initTestCase() const;
     void cleanup() const;
 
     void migrate() const;
@@ -140,7 +140,7 @@ namespace
 
 /* private slots */
 
-void tst_Migrate::initTestCase()
+void tst_Migrate::initTestCase() const
 {
     const auto &connections =
             Databases::createConnections({Databases::MYSQL, Databases::POSTGRESQL});
