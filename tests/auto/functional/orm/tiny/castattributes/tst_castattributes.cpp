@@ -2364,7 +2364,7 @@ void tst_CastAttributes::cast_timestamp_to_Timestamp() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toLongLong(), static_cast<qint64>(1662712888));
+//    QCOMPARE(attribute.toLongLong(), static_cast<qint64>(1662712888));
     // This is not 100% ok, but I want to do also this QCOMPARE()
     QCOMPARE(QDateTime::fromSecsSinceEpoch(attribute.toLongLong()),
              QDateTime::fromString("2022-09-09 08:41:28", Qt::ISODate));
