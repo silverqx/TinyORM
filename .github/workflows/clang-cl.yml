@@ -105,21 +105,21 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
 
-    - name: Qt 6.3.1 install base components
+    - name: Qt 6.3.2 install base components
       uses: jurplel/install-qt-action@v2
       with:
-        version: 6.3.1
+        version: 6.3.2
         arch: win64_msvc2019_64
         setup-python: false
         extra: --external 7z.exe
         dir: '${{ runner.workspace }}/../'
 
-    - name: QMYSQL install driver dlls (Qt 6.3.1)
+    - name: QMYSQL install driver dlls (Qt 6.3.2)
       working-directory: ${{ runner.temp }}
       run: >-
-        $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_3_1
+        $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_3_2
 
-        $filename = ($env:URL_QMYSQL_DLLS_MSVC_X64_6_3_1 -split '/')[-1]
+        $filename = ($env:URL_QMYSQL_DLLS_MSVC_X64_6_3_2 -split '/')[-1]
 
         $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath $filename
 
@@ -128,7 +128,7 @@ jobs:
 
         7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $filepath
       env:
-        URL_QMYSQL_DLLS_MSVC_X64_6_3_1: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_3_1 }}
+        URL_QMYSQL_DLLS_MSVC_X64_6_3_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_3_2 }}
 
     - name: vcpkg set-up environment
       run: |
@@ -145,12 +145,12 @@ jobs:
       with:
         path: |
           C:/Program Files/LLVM
-        key: llvm-14.0.4
+        key: llvm-14.0.6
 
-    - name: Install LLVM and Clang 14.0.4
+    - name: Install LLVM and Clang 14.0.6
       uses: KyleMayes/install-llvm-action@v1
       with:
-        version: "14.0.4"
+        version: "14.0.6"
         force-version: true
         cached: ${{ steps.llvm-cached.outputs.cache-hit }}
 
