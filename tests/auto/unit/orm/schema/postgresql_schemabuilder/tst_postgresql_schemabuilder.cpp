@@ -5,11 +5,11 @@
 #include "orm/exceptions/logicerror.hpp"
 #include "orm/schema.hpp"
 
+#include "databases.hpp"
+
 #ifndef TINYORM_DISABLE_ORM
 #  include "models/user.hpp"
 #endif
-
-#include "databases.hpp"
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;

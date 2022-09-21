@@ -3,9 +3,9 @@
 
 #include "orm/tiny/tinybuilder.hpp"
 
-#include "models/torrent.hpp"
-
 #include "databases.hpp"
+
+#include "models/torrent.hpp"
 
 using Orm::Constants::AND;
 using Orm::Constants::LIKE;

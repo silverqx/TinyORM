@@ -3,10 +3,10 @@
 
 #include <typeinfo>
 
+#include "databases.hpp"
+
 #include "models/torrent.hpp"
 #include "models/torrentpreviewablefile.hpp"
-
-#include "databases.hpp"
 
 using Orm::Constants::Attached;
 using Orm::Constants::Detached;

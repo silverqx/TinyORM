@@ -5,11 +5,11 @@
 #include "orm/db.hpp"
 #include "orm/utils/query.hpp"
 
+#include "databases.hpp"
+
 #include "models/massassignmentmodels.hpp"
 #include "models/setting.hpp"
 #include "models/torrent.hpp"
-
-#include "databases.hpp"
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;

@@ -5,6 +5,8 @@
 
 #include "orm/utils/query.hpp"
 
+#include "databases.hpp"
+
 #include "models/torrent.hpp"
 #include "models/torrenteager.hpp"
 #include "models/torrenteager_failed.hpp"
@@ -12,8 +14,6 @@
 #include "models/torrentpeereager.hpp"
 #include "models/torrentpeereager_norelations.hpp"
 #include "models/torrentpreviewablefileeager_withdefault.hpp"
-
-#include "databases.hpp"
 
 using Orm::Constants::AND;
 using Orm::Constants::ASTERISK;

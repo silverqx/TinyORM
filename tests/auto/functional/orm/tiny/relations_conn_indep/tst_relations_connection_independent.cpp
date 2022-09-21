@@ -1,9 +1,9 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-#include "models/user.hpp"
-
 #include "databases.hpp"
+
+#include "models/user.hpp"
 
 using Orm::Tiny::ConnectionOverride;
 

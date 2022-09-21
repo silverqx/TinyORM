@@ -3,10 +3,10 @@
 
 #include "orm/db.hpp"
 
+#include "databases.hpp"
+
 #include "models/setting.hpp"
 #include "models/user.hpp"
-
-#include "databases.hpp"
 
 using Orm::Constants::DELETED_AT;
 using Orm::Constants::ID;

@@ -8,11 +8,11 @@
 #include "orm/schema.hpp"
 #include "orm/schema/grammars/sqliteschemagrammar.hpp"
 
+#include "databases.hpp"
+
 #ifndef TINYORM_DISABLE_ORM
 #  include "models/user.hpp"
 #endif
-
-#include "databases.hpp"
 
 namespace fs = std::filesystem;
 

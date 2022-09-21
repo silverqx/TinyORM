@@ -3,9 +3,9 @@
 
 #include "orm/db.hpp"
 
-#include "models/torrent.hpp"
-
 #include "databases.hpp"
+
+#include "models/torrent.hpp"
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;

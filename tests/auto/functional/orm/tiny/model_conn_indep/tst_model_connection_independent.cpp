@@ -4,12 +4,12 @@
 
 #include "orm/db.hpp"
 
+#include "databases.hpp"
+
 #include "models/filepropertyproperty.hpp"
 #include "models/massassignmentmodels.hpp"
 #include "models/torrent.hpp"
 #include "models/torrenteager.hpp"
-
-#include "databases.hpp"
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
