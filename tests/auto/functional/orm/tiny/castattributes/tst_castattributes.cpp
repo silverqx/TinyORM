@@ -403,7 +403,7 @@ void tst_CastAttributes::withCasts_OnTinyBuilder() const
 
     QVERIFY(type);
     QVERIFY(type->exists);
-    QCOMPARE(type->getAttribute(Orm::ID).toULongLong(), 1);
+    QCOMPARE(type->getAttribute(Orm::ID).value<quint64>(), 1);
 
     auto attribute = type->getAttribute("smallint");
     auto typeId = typeIdWrapper(attribute);
@@ -419,7 +419,7 @@ void tst_CastAttributes::withCasts_OnTinyBuilder() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toUInt(), 32760);
+    QCOMPARE(attribute.value<uint>(), 32760);
 }
 
 void tst_CastAttributes::withCasts_OnModel() const
@@ -432,7 +432,7 @@ void tst_CastAttributes::withCasts_OnModel() const
 
     QVERIFY(type);
     QVERIFY(type->exists);
-    QCOMPARE(type->getAttribute(Orm::ID).toULongLong(), 1);
+    QCOMPARE(type->getAttribute(Orm::ID).value<quint64>(), 1);
 
     auto attribute = type->getAttribute("smallint");
     auto typeId = typeIdWrapper(attribute);
@@ -448,7 +448,7 @@ void tst_CastAttributes::withCasts_OnModel() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toUInt(), 32760);
+    QCOMPARE(attribute.value<uint>(), 32760);
 
     // Restore
     Orm::Tiny::ConnectionOverride::connection.clear();
@@ -506,7 +506,7 @@ void tst_CastAttributes::defaultCast_bool_true() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toBool(), true);
+    QCOMPARE(attribute.value<bool>(), true);
 }
 
 void tst_CastAttributes::defaultCast_bool_false() const
@@ -529,7 +529,7 @@ void tst_CastAttributes::defaultCast_bool_false() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toBool(), false);
+    QCOMPARE(attribute.value<bool>(), false);
 }
 
 void tst_CastAttributes::defaultCast_smallint() const
@@ -552,7 +552,7 @@ void tst_CastAttributes::defaultCast_smallint() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toInt(), 32760);
+    QCOMPARE(attribute.value<int>(), 32760);
 }
 
 void tst_CastAttributes::defaultCast_smallint_u() const
@@ -575,7 +575,7 @@ void tst_CastAttributes::defaultCast_smallint_u() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toUInt(), 32761);
+    QCOMPARE(attribute.value<uint>(), 32761);
 }
 
 void tst_CastAttributes::defaultCast_int() const
@@ -598,7 +598,7 @@ void tst_CastAttributes::defaultCast_int() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toInt(), 2147483640);
+    QCOMPARE(attribute.value<int>(), 2147483640);
 }
 
 void tst_CastAttributes::defaultCast_int_u() const
@@ -621,7 +621,7 @@ void tst_CastAttributes::defaultCast_int_u() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toUInt(), 2147483641);
+    QCOMPARE(attribute.value<uint>(), 2147483641);
 }
 
 void tst_CastAttributes::defaultCast_bigint() const
@@ -644,7 +644,7 @@ void tst_CastAttributes::defaultCast_bigint() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toLongLong(), 9223372036854775800);
+    QCOMPARE(attribute.value<qint64>(), 9223372036854775800);
 }
 
 void tst_CastAttributes::defaultCast_bigint_u() const
@@ -667,7 +667,7 @@ void tst_CastAttributes::defaultCast_bigint_u() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toULongLong(), 9223372036854775801);
+    QCOMPARE(attribute.value<quint64>(), 9223372036854775801);
 }
 
 void tst_CastAttributes::defaultCast_smallint_Negative() const
@@ -690,7 +690,7 @@ void tst_CastAttributes::defaultCast_smallint_Negative() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toInt(), -32762);
+    QCOMPARE(attribute.value<int>(), -32762);
 }
 
 void tst_CastAttributes::defaultCast_int_Negative() const
@@ -713,7 +713,7 @@ void tst_CastAttributes::defaultCast_int_Negative() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toInt(), -2147483642);
+    QCOMPARE(attribute.value<int>(), -2147483642);
 }
 
 void tst_CastAttributes::defaultCast_bigint_Negative() const
@@ -736,7 +736,7 @@ void tst_CastAttributes::defaultCast_bigint_Negative() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toLongLong(), -9223372036854775802);
+    QCOMPARE(attribute.value<qint64>(), -9223372036854775802);
 }
 
 void tst_CastAttributes::defaultCast_double() const
@@ -762,7 +762,7 @@ void tst_CastAttributes::defaultCast_double() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDouble(), static_cast<double>(1000000.123));
+    QCOMPARE(attribute.value<double>(), static_cast<double>(1000000.123));
 }
 
 void tst_CastAttributes::defaultCast_double_Negative() const
@@ -788,7 +788,7 @@ void tst_CastAttributes::defaultCast_double_Negative() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDouble(), static_cast<double>(-1000000.123));
+    QCOMPARE(attribute.value<double>(), static_cast<double>(-1000000.123));
 }
 
 void tst_CastAttributes::defaultCast_double_NaN() const
@@ -810,7 +810,7 @@ void tst_CastAttributes::defaultCast_double_NaN() const
     auto typeId = typeIdWrapper(attribute);
 
     QCOMPARE(typeId(), QMetaType::Double);
-    QCOMPARE(attribute.toDouble(), std::numeric_limits<double>::quiet_NaN());
+    QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::quiet_NaN());
 }
 
 void tst_CastAttributes::defaultCast_double_Infinity() const
@@ -832,7 +832,7 @@ void tst_CastAttributes::defaultCast_double_Infinity() const
     auto typeId = typeIdWrapper(attribute);
 
     QCOMPARE(typeId(), QMetaType::Double);
-    QCOMPARE(attribute.toDouble(), std::numeric_limits<double>::infinity());
+    QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::infinity());
 }
 
 void tst_CastAttributes::defaultCast_decimal() const
@@ -858,7 +858,7 @@ void tst_CastAttributes::defaultCast_decimal() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDouble(), static_cast<double>(100000.12));
+    QCOMPARE(attribute.value<double>(), static_cast<double>(100000.12));
 }
 
 void tst_CastAttributes::defaultCast_decimal_Negative() const
@@ -884,7 +884,7 @@ void tst_CastAttributes::defaultCast_decimal_Negative() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDouble(), static_cast<double>(-100000.12));
+    QCOMPARE(attribute.value<double>(), static_cast<double>(-100000.12));
 }
 
 void tst_CastAttributes::defaultCast_decimal_NaN() const
@@ -906,7 +906,7 @@ void tst_CastAttributes::defaultCast_decimal_NaN() const
     auto typeId = typeIdWrapper(attribute);
 
     QCOMPARE(typeId(), QMetaType::Double);
-    QCOMPARE(attribute.toDouble(), std::numeric_limits<double>::quiet_NaN());
+    QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::quiet_NaN());
 }
 
 void tst_CastAttributes::defaultCast_decimal_Infinity() const
@@ -928,7 +928,7 @@ void tst_CastAttributes::defaultCast_decimal_Infinity() const
     auto typeId = typeIdWrapper(attribute);
 
     QCOMPARE(typeId(), QMetaType::Double);
-    QCOMPARE(attribute.toDouble(), std::numeric_limits<double>::infinity());
+    QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::infinity());
 }
 
 void tst_CastAttributes::defaultCast_string() const
@@ -941,7 +941,7 @@ void tst_CastAttributes::defaultCast_string() const
     auto typeId = typeIdWrapper(attribute);
 
     QCOMPARE(typeId(), QMetaType::QString);
-    QCOMPARE(attribute.toString(), QStringLiteral("string text"));
+    QCOMPARE(attribute.value<QString>(), QStringLiteral("string text"));
 }
 
 void tst_CastAttributes::defaultCast_text() const
@@ -954,7 +954,7 @@ void tst_CastAttributes::defaultCast_text() const
     auto typeId = typeIdWrapper(attribute);
 
     QCOMPARE(typeId(), QMetaType::QString);
-    QCOMPARE(attribute.toString(), QStringLiteral("text text"));
+    QCOMPARE(attribute.value<QString>(), QStringLiteral("text text"));
 }
 
 void tst_CastAttributes::defaultCast_timestamp() const
@@ -973,7 +973,7 @@ void tst_CastAttributes::defaultCast_timestamp() const
     else
         QCOMPARE(typeId(), QMetaType::QDateTime);
 
-    QCOMPARE(attribute.toDateTime(),
+    QCOMPARE(attribute.value<QDateTime>(),
              QDateTime::fromString("2022-09-09 08:41:28", Qt::ISODate));
 }
 
@@ -993,7 +993,7 @@ void tst_CastAttributes::defaultCast_datetime() const
     else
         QCOMPARE(typeId(), QMetaType::QDateTime);
 
-    QCOMPARE(attribute.toDateTime(),
+    QCOMPARE(attribute.value<QDateTime>(),
              QDateTime::fromString("2022-09-10 08:41:28", Qt::ISODate));
 }
 
@@ -1013,7 +1013,7 @@ void tst_CastAttributes::defaultCast_date() const
     else
         QCOMPARE(typeId(), QMetaType::QDate);
 
-    QCOMPARE(attribute.toDate(),
+    QCOMPARE(attribute.value<QDate>(),
              QDateTime::fromString("2022-09-11", Qt::ISODate).date());
 }
 
@@ -1037,7 +1037,8 @@ void tst_CastAttributes::defaultCast_blob() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toByteArray(), QByteArray::fromHex("517420697320677265617421"));
+    QCOMPARE(attribute.value<QByteArray>(),
+             QByteArray::fromHex("517420697320677265617421"));
 }
 
 /* Default Null casts */
@@ -1491,7 +1492,7 @@ void tst_CastAttributes::cast_bool_true_to_bool() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toBool(), true);
+    QCOMPARE(attribute.value<bool>(), true);
 }
 
 void tst_CastAttributes::cast_bool_true_to_int() const
@@ -1516,7 +1517,7 @@ void tst_CastAttributes::cast_bool_true_to_int() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toInt(), 1);
+    QCOMPARE(attribute.value<int>(), 1);
 }
 
 void tst_CastAttributes::cast_bool_false_to_bool() const
@@ -1541,7 +1542,7 @@ void tst_CastAttributes::cast_bool_false_to_bool() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toBool(), false);
+    QCOMPARE(attribute.value<bool>(), false);
 }
 
 void tst_CastAttributes::cast_bool_false_to_int() const
@@ -1566,7 +1567,7 @@ void tst_CastAttributes::cast_bool_false_to_int() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toInt(), 0);
+    QCOMPARE(attribute.value<int>(), 0);
 }
 
 void tst_CastAttributes::cast_smallint_to_uint() const
@@ -1591,7 +1592,7 @@ void tst_CastAttributes::cast_smallint_to_uint() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toUInt(), 32760);
+    QCOMPARE(attribute.value<uint>(), 32760);
 }
 
 void tst_CastAttributes::cast_smallint_u_to_ulonglong() const
@@ -1616,7 +1617,7 @@ void tst_CastAttributes::cast_smallint_u_to_ulonglong() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toULongLong(), 32761);
+    QCOMPARE(attribute.value<quint64>(), 32761);
 }
 
 void tst_CastAttributes::cast_int_to_ulonglong() const
@@ -1641,7 +1642,7 @@ void tst_CastAttributes::cast_int_to_ulonglong() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toULongLong(), 2147483640);
+    QCOMPARE(attribute.value<quint64>(), 2147483640);
 }
 
 void tst_CastAttributes::cast_int_u_to_ulonglong() const
@@ -1666,7 +1667,7 @@ void tst_CastAttributes::cast_int_u_to_ulonglong() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toULongLong(), 2147483641);
+    QCOMPARE(attribute.value<quint64>(), 2147483641);
 }
 
 void tst_CastAttributes::cast_bigint_to_QString() const
@@ -1691,7 +1692,7 @@ void tst_CastAttributes::cast_bigint_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("9223372036854775800"));
+    QCOMPARE(attribute.value<QString>(), QString("9223372036854775800"));
 }
 
 void tst_CastAttributes::cast_bigint_u_to_QString() const
@@ -1716,7 +1717,7 @@ void tst_CastAttributes::cast_bigint_u_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("9223372036854775801"));
+    QCOMPARE(attribute.value<QString>(), QString("9223372036854775801"));
 }
 
 void tst_CastAttributes::cast_smallint_Negative_to_short() const
@@ -1741,7 +1742,7 @@ void tst_CastAttributes::cast_smallint_Negative_to_short() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toInt(), -32762);
+    QCOMPARE(attribute.value<int>(), -32762);
 }
 
 void tst_CastAttributes::cast_smallint_Negative_to_int() const
@@ -1766,7 +1767,7 @@ void tst_CastAttributes::cast_smallint_Negative_to_int() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toInt(), -32762);
+    QCOMPARE(attribute.value<int>(), -32762);
 }
 
 void tst_CastAttributes::cast_smallint_Negative_to_QString() const
@@ -1791,7 +1792,7 @@ void tst_CastAttributes::cast_smallint_Negative_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("-32762"));
+    QCOMPARE(attribute.value<QString>(), QString("-32762"));
 }
 
 void tst_CastAttributes::cast_int_Negative_to_longlong() const
@@ -1816,7 +1817,7 @@ void tst_CastAttributes::cast_int_Negative_to_longlong() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toLongLong(), -2147483642);
+    QCOMPARE(attribute.value<qint64>(), -2147483642);
 }
 
 void tst_CastAttributes::cast_int_Negative_to_QString() const
@@ -1841,7 +1842,7 @@ void tst_CastAttributes::cast_int_Negative_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("-2147483642"));
+    QCOMPARE(attribute.value<QString>(), QString("-2147483642"));
 }
 
 void tst_CastAttributes::cast_bigint_Negative_to_longlong() const
@@ -1866,7 +1867,7 @@ void tst_CastAttributes::cast_bigint_Negative_to_longlong() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toLongLong(), -9223372036854775802);
+    QCOMPARE(attribute.value<qint64>(), -9223372036854775802);
 }
 
 void tst_CastAttributes::cast_bigint_Negative_to_QString() const
@@ -1891,7 +1892,7 @@ void tst_CastAttributes::cast_bigint_Negative_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("-9223372036854775802"));
+    QCOMPARE(attribute.value<QString>(), QString("-9223372036854775802"));
 }
 
 void tst_CastAttributes::cast_double_to_longlong() const
@@ -1919,7 +1920,7 @@ void tst_CastAttributes::cast_double_to_longlong() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toLongLong(), static_cast<qint64>(1000000));
+    QCOMPARE(attribute.value<qint64>(), static_cast<qint64>(1000000));
 }
 
 void tst_CastAttributes::cast_double_to_QString() const
@@ -1947,7 +1948,7 @@ void tst_CastAttributes::cast_double_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("1000000.123"));
+    QCOMPARE(attribute.value<QString>(), QString("1000000.123"));
 }
 
 void tst_CastAttributes::cast_double_Negative_to_longlong() const
@@ -1975,7 +1976,7 @@ void tst_CastAttributes::cast_double_Negative_to_longlong() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toLongLong(), static_cast<qint64>(-1000000));
+    QCOMPARE(attribute.value<qint64>(), static_cast<qint64>(-1000000));
 }
 
 void tst_CastAttributes::cast_double_Negative_to_QString() const
@@ -2003,7 +2004,7 @@ void tst_CastAttributes::cast_double_Negative_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("-1000000.123"));
+    QCOMPARE(attribute.value<QString>(), QString("-1000000.123"));
 }
 
 void tst_CastAttributes::cast_decimal_to_Decimal() const
@@ -2031,7 +2032,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDouble(), static_cast<double>(100000.12));
+    QCOMPARE(attribute.value<double>(), static_cast<double>(100000.12));
 }
 
 void tst_CastAttributes::cast_decimal_to_longlong() const
@@ -2059,7 +2060,7 @@ void tst_CastAttributes::cast_decimal_to_longlong() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toLongLong(), static_cast<qint64>(100000));
+    QCOMPARE(attribute.value<qint64>(), static_cast<qint64>(100000));
 }
 
 void tst_CastAttributes::cast_decimal_to_QString() const
@@ -2087,7 +2088,7 @@ void tst_CastAttributes::cast_decimal_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("100000.12"));
+    QCOMPARE(attribute.value<QString>(), QString("100000.12"));
 }
 
 void tst_CastAttributes::cast_decimal_Negative_to_Decimal() const
@@ -2115,7 +2116,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_Decimal() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDouble(), static_cast<double>(-100000.12));
+    QCOMPARE(attribute.value<double>(), static_cast<double>(-100000.12));
 }
 
 void tst_CastAttributes::cast_decimal_Negative_to_longlong() const
@@ -2143,7 +2144,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_longlong() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toLongLong(), static_cast<qint64>(-100000));
+    QCOMPARE(attribute.value<qint64>(), static_cast<qint64>(-100000));
 }
 
 void tst_CastAttributes::cast_decimal_Negative_to_QString() const
@@ -2171,7 +2172,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("-100000.12"));
+    QCOMPARE(attribute.value<QString>(), QString("-100000.12"));
 }
 
 void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down() const
@@ -2199,7 +2200,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDouble(), static_cast<double>(100.12));
+    QCOMPARE(attribute.value<double>(), static_cast<double>(100.12));
 }
 
 void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up() const
@@ -2227,7 +2228,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDouble(), static_cast<double>(100.13));
+    QCOMPARE(attribute.value<double>(), static_cast<double>(100.13));
 }
 
 void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down_Negative() const
@@ -2255,7 +2256,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down_Negative()
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDouble(), static_cast<double>(-100.13));
+    QCOMPARE(attribute.value<double>(), static_cast<double>(-100.13));
 }
 
 void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up_Negative() const
@@ -2283,7 +2284,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up_Negative() c
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDouble(), static_cast<double>(-100.12));
+    QCOMPARE(attribute.value<double>(), static_cast<double>(-100.12));
 }
 
 void tst_CastAttributes::cast_timestamp_to_QDateTime() const
@@ -2308,7 +2309,7 @@ void tst_CastAttributes::cast_timestamp_to_QDateTime() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDateTime(),
+    QCOMPARE(attribute.value<QDateTime>(),
              QDateTime::fromString("2022-09-09T08:41:28", Qt::ISODate));
 }
 
@@ -2338,7 +2339,7 @@ void tst_CastAttributes::cast_timestamp_to_QString() const
        and PostgreSQL drivers, then it's converted to the QString by Cast Attributes
        feature and then I'm converting it back to the QDateTime and comparing.
        At least, it tests that nothing weird happened during all these conversions. */
-    QCOMPARE(attribute.toDateTime().toString(Qt::ISODate),
+    QCOMPARE(attribute.value<QDateTime>().toString(Qt::ISODate),
              QString("2022-09-09T08:41:28"));
 }
 
@@ -2364,9 +2365,9 @@ void tst_CastAttributes::cast_timestamp_to_Timestamp() const
     else
         Q_UNREACHABLE();
 
-//    QCOMPARE(attribute.toLongLong(), static_cast<qint64>(1662712888));
+//    QCOMPARE(attribute.value<qint64>(), static_cast<qint64>(1662712888));
     // This is not 100% ok, but I want to do also this QCOMPARE()
-    QCOMPARE(QDateTime::fromSecsSinceEpoch(attribute.toLongLong()),
+    QCOMPARE(QDateTime::fromSecsSinceEpoch(attribute.value<qint64>()),
              QDateTime::fromString("2022-09-09 08:41:28", Qt::ISODate));
 }
 
@@ -2392,7 +2393,7 @@ void tst_CastAttributes::cast_datetime_to_QDateTime() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDateTime(),
+    QCOMPARE(attribute.value<QDateTime>(),
              QDateTime::fromString("2022-09-10 08:41:28", Qt::ISODate));
 }
 
@@ -2422,7 +2423,7 @@ void tst_CastAttributes::cast_datetime_to_QString() const
        and PostgreSQL drivers, then it's converted to the QString by Cast Attributes
        feature and then I'm converting it back to the QDateTime and comparing.
        At least, it tests that nothing weird happened during all these conversions. */
-    QCOMPARE(attribute.toDateTime().toString(Qt::ISODate),
+    QCOMPARE(attribute.value<QDateTime>().toString(Qt::ISODate),
              QString("2022-09-10T08:41:28"));
 }
 
@@ -2448,7 +2449,7 @@ void tst_CastAttributes::cast_date_to_QDate() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toDate(),
+    QCOMPARE(attribute.value<QDate>(),
              QDateTime::fromString("2022-09-11", Qt::ISODate).date());
 }
 
@@ -2474,7 +2475,7 @@ void tst_CastAttributes::cast_date_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("2022-09-11"));
+    QCOMPARE(attribute.value<QString>(), QString("2022-09-11"));
 }
 
 void tst_CastAttributes::cast_blob_to_QByteArray() const
@@ -2499,7 +2500,8 @@ void tst_CastAttributes::cast_blob_to_QByteArray() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toByteArray(), QByteArray::fromHex("517420697320677265617421"));
+    QCOMPARE(attribute.value<QByteArray>(),
+             QByteArray::fromHex("517420697320677265617421"));
 }
 
 void tst_CastAttributes::cast_blob_to_QString() const
@@ -2524,7 +2526,7 @@ void tst_CastAttributes::cast_blob_to_QString() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toString(), QString("Qt is great!"));
+    QCOMPARE(attribute.value<QString>(), QString("Qt is great!"));
 }
 
 void tst_CastAttributes::cast_null_bool_true_to_bool() const

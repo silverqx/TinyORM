@@ -200,7 +200,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QVERIFY(torrent4_2->exists);
     QCOMPARE(torrent4_2->getAttribute(SIZE), QVariant(16));
     QCOMPARE(torrent4_2->getAttribute("progress"), QVariant(444));
-    QVERIFY(torrent4_2->getAttribute(updatedAtColumn).toDateTime()
+    QVERIFY(torrent4_2->getAttribute(updatedAtColumn).value<QDateTime>()
             >= timeBeforeIncrement);
 
     // Decrement and restore updated at column
@@ -248,7 +248,7 @@ void tst_TinyBuilder::update() const
     auto torrentVerify = Torrent::find(4);
     QVERIFY(torrentVerify->exists);
     QCOMPARE(torrentVerify->getAttribute("progress"), QVariant(447));
-    QVERIFY(torrentVerify->getAttribute(updatedAtColumn).toDateTime()
+    QVERIFY(torrentVerify->getAttribute(updatedAtColumn).value<QDateTime>()
             >= timeBeforeUpdate);
 
     // Revert value back
@@ -260,8 +260,8 @@ void tst_TinyBuilder::update() const
     QCOMPARE(torrent->getAttribute("progress"), progressOriginal);
     /* Needed to convert toDateTime() because TinyBuilder::update() set update_at
        attribute as QString. */
-    QCOMPARE(torrent->getAttribute(updatedAtColumn).toDateTime(),
-             updatedAtOriginal.toDateTime());
+    QCOMPARE(torrent->getAttribute(updatedAtColumn).value<QDateTime>(),
+             updatedAtOriginal.value<QDateTime>());
 }
 
 void tst_TinyBuilder::update_Failed() const
@@ -304,7 +304,7 @@ void tst_TinyBuilder::update_SameValue() const
     // Verify value in the database
     auto torrentVerify = Torrent::find(5);
     QVERIFY(torrentVerify->exists);
-    QVERIFY(torrentVerify->getAttribute(torrent->getUpdatedAtColumn()).toDateTime()
+    QVERIFY(torrentVerify->getAttribute(torrent->getUpdatedAtColumn()).value<QDateTime>()
             >= timeBeforeUpdate);
 }
 

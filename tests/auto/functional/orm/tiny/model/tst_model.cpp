@@ -537,10 +537,10 @@ void tst_Model::latest() const
 
     auto itTorrent = torrents.constBegin();
     while (itTorrent != torrents.constEnd()) {
-        auto firstDate = itTorrent->getAttribute(createdAtColumn).toDateTime();
+        auto firstDate = itTorrent->getAttribute(createdAtColumn).value<QDateTime>();
         ++itTorrent;
         if (itTorrent != torrents.constEnd()) {
-            auto secondDate = itTorrent->getAttribute(createdAtColumn).toDateTime();
+            auto secondDate = itTorrent->getAttribute(createdAtColumn).value<QDateTime>();
             QVERIFY(firstDate > secondDate);
         }
     }
@@ -557,10 +557,10 @@ void tst_Model::oldest() const
 
     auto itTorrent = torrents.constBegin();
     while (itTorrent != torrents.constEnd()) {
-        auto firstDate = itTorrent->getAttribute(createdAtColumn).toDateTime();
+        auto firstDate = itTorrent->getAttribute(createdAtColumn).value<QDateTime>();
         ++itTorrent;
         if (itTorrent != torrents.constEnd()) {
-            auto secondDate = itTorrent->getAttribute(createdAtColumn).toDateTime();
+            auto secondDate = itTorrent->getAttribute(createdAtColumn).value<QDateTime>();
             QVERIFY(firstDate < secondDate);
         }
     }
@@ -1308,7 +1308,7 @@ void tst_Model::incrementAndDecrement() const
     QVERIFY(torrent4_2->exists);
     QCOMPARE(torrent4_2->getAttribute(SIZE), QVariant(16));
     QCOMPARE(torrent4_2->getAttribute("progress"), QVariant(444));
-    QVERIFY(torrent4_2->getAttribute(updatedAtColumn).toDateTime() >=
+    QVERIFY(torrent4_2->getAttribute(updatedAtColumn).value<QDateTime>() >=
             timeBeforeIncrement);
 
     // Decremented and restore updated at column
@@ -1389,7 +1389,7 @@ void tst_Model::update() const
     auto torrentVerify = Torrent::find(4);
     QVERIFY(torrentVerify->exists);
     QCOMPARE(torrentVerify->getAttribute("progress"), QVariant(449));
-    QVERIFY(torrentVerify->getAttribute(updatedAtColumn).toDateTime() >=
+    QVERIFY(torrentVerify->getAttribute(updatedAtColumn).value<QDateTime>() >=
             timeBeforeUpdate);
 
     // Revert value back
@@ -1399,8 +1399,8 @@ void tst_Model::update() const
     QCOMPARE(torrent->getAttribute("progress"), progressOriginal);
     /* Needed to convert toDateTime() because Model::update() set update_at
        attribute as QString. */
-    QCOMPARE(torrent->getAttribute(updatedAtColumn).toDateTime(),
-             updatedAtOriginal.toDateTime());
+    QCOMPARE(torrent->getAttribute(updatedAtColumn).value<QDateTime>(),
+             updatedAtOriginal.value<QDateTime>());
 }
 
 void tst_Model::update_OnNonExistentModel() const
@@ -1526,14 +1526,14 @@ void tst_Model::upsert() const
 
         // Timestamps must be compared manually
         auto tagProperty1 = tagProperties.at(0);
-        QCOMPARE(tagProperty1.getAttribute(createdAtColumn).toDateTime(),
+        QCOMPARE(tagProperty1.getAttribute(createdAtColumn).value<QDateTime>(),
                  createdAtOriginal);
-        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).toDateTime() >=
+        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).value<QDateTime>() >=
                 timeBeforeUpdate);
         auto tagProperty2 = tagProperties.at(1);
-        QVERIFY(tagProperty2.getAttribute(createdAtColumn).toDateTime() >=
+        QVERIFY(tagProperty2.getAttribute(createdAtColumn).value<QDateTime>() >=
                 timeBeforeUpdate);
-        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).toDateTime() >=
+        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).value<QDateTime>() >=
                 timeBeforeUpdate);
     }
 
@@ -1649,7 +1649,7 @@ void tst_Model::touch_WithAttribute() const
 
     // Verify a new touched added_on value
     auto addedOnTouched = Torrent::find(1)->getAttribute("added_on");
-    QVERIFY(addedOnTouched.toDateTime() >= timeBeforeTouch);
+    QVERIFY(addedOnTouched.value<QDateTime>() >= timeBeforeTouch);
 
     // Restore
     result = Torrent::find(1)->update({{"added_on", addedOnOriginal}});

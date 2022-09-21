@@ -3847,14 +3847,14 @@ void tst_Model_Relations::upsert() const
 
         // Timestamps must be compared manually
         auto tagProperty1 = tagProperties.at(0);
-        QCOMPARE(tagProperty1.getAttribute(createdAtColumn).toDateTime(),
+        QCOMPARE(tagProperty1.getAttribute(createdAtColumn).value<QDateTime>(),
                  createdAtOriginal);
-        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).toDateTime() >=
+        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).value<QDateTime>() >=
                 timeBeforeUpdate);
         auto tagProperty2 = tagProperties.at(1);
-        QVERIFY(tagProperty2.getAttribute(createdAtColumn).toDateTime() >=
+        QVERIFY(tagProperty2.getAttribute(createdAtColumn).value<QDateTime>() >=
                 timeBeforeUpdate);
-        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).toDateTime() >=
+        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).value<QDateTime>() >=
                 timeBeforeUpdate);
     }
 
@@ -3912,7 +3912,7 @@ void tst_Model_Relations::withCasts_OnRelation() const
 
     QVERIFY(torrentFile);
     QVERIFY(torrentFile->exists);
-    QCOMPARE(torrentFile->getAttribute(ID).toULongLong(), 1);
+    QCOMPARE(torrentFile->getAttribute(ID).value<quint64>(), 1);
 
     auto attribute = torrentFile->getAttribute("progress");
 
@@ -3935,7 +3935,7 @@ void tst_Model_Relations::withCasts_OnRelation() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.toUInt(), 200);
+    QCOMPARE(attribute.value<uint>(), 200);
 }
 
 QTEST_MAIN(tst_Model_Relations)
