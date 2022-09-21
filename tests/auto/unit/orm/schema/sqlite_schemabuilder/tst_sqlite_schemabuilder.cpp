@@ -7,6 +7,7 @@
 #include "orm/exceptions/logicerror.hpp"
 #include "orm/schema.hpp"
 #include "orm/schema/grammars/sqliteschemagrammar.hpp"
+#include "orm/utils/type.hpp"
 
 #include "databases.hpp"
 
