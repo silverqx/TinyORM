@@ -29,7 +29,7 @@ defineTest(tiny_resource_and_manifest) {
     RC_FILE = $$rcFile
 
     # Manifest file
-    CONFIG -= embed_manifest_dll
+    CONFIG -= embed_manifest_dll embed_manifest_exe
 
     # Allow to pass RC/manifest file basename as 3. argument (default is a $$TARGET value)
     defined(3, var):!isEmpty(3): manifestBasename = $$3
