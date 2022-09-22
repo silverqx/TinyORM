@@ -158,12 +158,6 @@ jobs:
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
-    - run: exit 1
-
     - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
       run: >-
         source .github/resources/qt5env.sh
