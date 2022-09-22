@@ -29,9 +29,9 @@ jobs:
       run: |
         sudo apt update
 
-    - name: apt install clang-14, lld, g++-12, clang-tidy-14, Qt 6.2.4 base, and ccache
+    - name: apt install clang-14, lld-14, g++-12, clang-tidy-14, Qt 6.2.4 base, and ccache
       run: >-
-        sudo apt install -y clang-14 lld g++-12 clang-tidy-14 ccache
+        sudo apt install -y clang-14 lld-14 g++-12 clang-tidy-14 ccache
         qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql
 
     - name: ninja install latest version

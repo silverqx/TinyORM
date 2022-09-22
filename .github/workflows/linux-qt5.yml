@@ -18,7 +18,7 @@ jobs:
       matrix:
         compiler:
           - key: clang14
-            apt: [ clang-14, lld, g++-11 ]
+            apt: [ clang-14, lld-14, g++-11 ]
             command: clang++-14
 
           - key: gcc11

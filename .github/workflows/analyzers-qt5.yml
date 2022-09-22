@@ -34,9 +34,9 @@ jobs:
       run: |
         sudo apt update
 
-    - name: apt install clang-14, lld, g++-11, clang-tidy-14, Qt 5.15.2 base, and ccache
+    - name: apt install clang-14, lld-14, g++-11, clang-tidy-14, Qt 5.15.2 base, and ccache
       run: |
-        sudo apt install -y clang-14 lld g++-11 clang-tidy-14 qt515base ccache
+        sudo apt install -y clang-14 lld-14 g++-11 clang-tidy-14 qt515base ccache
 
     - name: ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
