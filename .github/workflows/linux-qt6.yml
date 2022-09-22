@@ -17,12 +17,12 @@ jobs:
     strategy:
       matrix:
         compiler:
-          - key: clang14
-            apt: [ lld ]
-            command: clang++-14
+          - key: clang15
+            apt: [ clang-15, lld-15 ]
+            command: clang++-15
 
           - key: gcc12
-            apt: [g++-12]
+            apt: [ g++-12 ]
             command: g++-12
 
     steps:
@@ -97,11 +97,11 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
 
-    - name: add-apt-repository Clang 14
-      if: ${{ matrix.compiler.key == 'clang14' }}
+    - name: add-apt-repository Clang 15
+      if: ${{ matrix.compiler.key == 'clang15' }}
       run: |
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository -y "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-14 main"
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm-15.asc
+        sudo add-apt-repository --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main'
 
     - name: apt update
       run: |
@@ -157,6 +157,12 @@ jobs:
         -D ORM:BOOL=ON
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+    - run: exit 1
 
     - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
       run: >-
