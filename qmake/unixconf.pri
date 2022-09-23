@@ -23,6 +23,11 @@ QMAKE_CXXFLAGS_WARN_ON *= \
     -pedantic \
     -pedantic-errors \
 
+clang: \
+    QMAKE_CXXFLAGS_WARN_ON *= -Wdeprecated
+gcc: \
+    QMAKE_CXXFLAGS_WARN_ON *= -Wdeprecated-copy-dtor
+
 # Clang 12 still doesn't support -Wstrict-null-sentinel
 !clang: QMAKE_CXXFLAGS_WARN_ON *= -Wstrict-null-sentinel
 

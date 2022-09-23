@@ -24,8 +24,6 @@ namespace Orm::SchemaNs
     public:
         /*! Constructor. */
         ForeignKeyDefinitionReference(ForeignKeyCommand &foreignKeyCommandDefinition); // NOLINT(google-explicit-constructor)
-        /*! Default destructor. */
-        inline ~ForeignKeyDefinitionReference() = default;
 
         /*! Specify the referenced columns. */
         ForeignKeyDefinitionReference &references(const QVector<QString> &columns);
