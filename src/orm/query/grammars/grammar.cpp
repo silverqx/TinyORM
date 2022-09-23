@@ -182,10 +182,12 @@ QStringList Grammar::compileComponents(const QueryBuilder &query) const
 
 QString Grammar::compileAggregate(const QueryBuilder &query) const
 {
-    const auto &aggregate = query.getAggregate();
+    /* Whether the aggregate contains a value is checked earlier by
+       the shouldCompileAggregate() method. */
+    const auto &[function, columns] = *query.getAggregate(); // NOLINT(bugprone-unchecked-optional-access)
     const auto &distinct = query.getDistinct();
 
-    auto column = columnize(aggregate->columns);
+    auto column = columnize(columns);
 
     /* If the query has a "distinct" constraint and we're not asking for all columns
        we need to prepend "distinct" onto the column name so that the query takes
@@ -199,7 +201,7 @@ QString Grammar::compileAggregate(const QueryBuilder &query) const
         column = QStringLiteral("distinct %1")
                  .arg(columnize(std::get<QStringList>(distinct)));
 
-    return QStringLiteral("select %1(%2) as %3").arg(aggregate->function, column,
+    return QStringLiteral("select %1(%2) as %3").arg(function, column,
                                                      wrap(QStringLiteral("aggregate")));
 }
 

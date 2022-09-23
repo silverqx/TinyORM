@@ -105,7 +105,7 @@ int UsingConnection::usingConnectionInternal(
     auto previousDebugSql = getConnectionDebugSql(previousConnection);
 
     /* Case, when no connection name was passed on the command-line (--database argument),
-       in this case, set a current connection to the default connection. */
+       in this case, set a default/previous connection as a current connection. */
     if (name.isEmpty())
         name = previousConnection;
 
@@ -127,14 +127,14 @@ int UsingConnection::usingConnectionInternal(
         Q_UNREACHABLE();
 
     if (!isSameConnection)
-        setConnection(std::move(previousConnection), std::move(previousDebugSql),
+        setConnection(std::move(previousConnection), previousDebugSql,
                       repository, true);
 
     return exitCode;
 }
 
 void UsingConnection::setConnection(
-        const QString &name, std::optional<bool> &&debugSql,
+        const QString &name, const std::optional<bool> &debugSql,
         std::optional<std::reference_wrapper<MigrationRepository>> repository,
         const bool restore)
 {
@@ -147,7 +147,8 @@ void UsingConnection::setConnection(
 
     m_connection = name;
 
-    setConnectionDebugSql(std::move(debugSql));
+    if (debugSql)
+        setConnectionDebugSql(*debugSql);
 }
 
 std::optional<bool> UsingConnection::getConnectionDebugSql(const QString &name) const
@@ -157,14 +158,15 @@ std::optional<bool> UsingConnection::getConnectionDebugSql(const QString &name) 
                                                .debugSql());
 }
 
-void UsingConnection::setConnectionDebugSql(std::optional<bool> &&debugSql) const
+void UsingConnection::setConnectionDebugSql(const bool &debugSql) const
 {
+    // Nothing to restore, a previous/default connection name was empty
     if (m_connection.isEmpty())
         return;
 
     auto &connection = resolveConnection(m_connection);
 
-    if (*debugSql)
+    if (debugSql)
         connection.enableDebugSql();
     else
         connection.disableDebugSql();

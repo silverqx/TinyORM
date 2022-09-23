@@ -34,8 +34,8 @@ ConfigurationOptionsParser::parseConfiguration(const QVariantHash &config) const
     m_connector.parseConfigOptions(preparedConfigOptions);
 
     // Merge TinyORM default connector options with user's provided connection options
-    QVariantHash mergedOptions = mergeOptions(m_connector.getConnectorOptions(),
-                                              preparedConfigOptions);
+    const auto mergedOptions = mergeOptions(m_connector.getConnectorOptions(),
+                                            preparedConfigOptions);
 
     // Return in the format expected by QSqlDatabase
     return joinOptions(mergedOptions);

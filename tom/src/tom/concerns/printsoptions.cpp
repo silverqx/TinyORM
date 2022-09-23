@@ -42,7 +42,7 @@ int PrintsOptions::printOptionsSection(const bool commonOptions) const
                                : QStringLiteral("Options:"));
 
     // Get max. option size in all options
-    int optionsMaxSize = this->optionsMaxSize();
+    const auto optionsMaxSize = this->optionsMaxSize();
 
     // Print options to the console
     printOptions(optionsMaxSize);

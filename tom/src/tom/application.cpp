@@ -178,7 +178,7 @@ void Application::logException(const std::exception &e, const bool noAnsi)
 
     /* Want to have this method static, downside is that the InteractsWithIO has to be
        instantiated again. */
-    Concerns::InteractsWithIO io(noAnsi);
+    const Concerns::InteractsWithIO io(noAnsi);
 
     static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, "%1");
 

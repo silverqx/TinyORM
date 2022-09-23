@@ -110,7 +110,7 @@ namespace Concerns
 
         /*! Set the default connection name. */
         void setConnection(
-                const QString &name, std::optional<bool> &&debugSql,
+                const QString &name, const std::optional<bool> &debugSql,
                 std::optional<std::reference_wrapper<
                                 MigrationRepository>> repository = std::nullopt,
                 bool restore = false);
@@ -118,7 +118,7 @@ namespace Concerns
         /*! Get the debug sql by the connection name. */
         std::optional<bool> getConnectionDebugSql(const QString &name) const;
         /*! Set the debug sql for the current repository connection. */
-        void setConnectionDebugSql(std::optional<bool> &&debugSql) const;
+        void setConnectionDebugSql(const bool &debugSql) const;
 
         /*! Print currently used connection if passed more connections to --database=. */
         void printConnection(const QString &name, bool shouldPrintConnection,

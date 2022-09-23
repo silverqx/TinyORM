@@ -635,7 +635,7 @@ void Blueprint::addFluentIndexes()
     for (auto &column : m_columns)
         /* Loop over all column's index data members to check if any index has been
            defined. */
-        for (std::array indexes {
+        for (const std::array indexes {
                  std::to_array<FluentIndexItem>({
                      {std::ref(column.index),        Index},
                      {std::ref(column.primary),      Primary},

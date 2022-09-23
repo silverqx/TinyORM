@@ -701,14 +701,12 @@ QString PostgresSchemaGrammar::typeReal(const ColumnDefinition &/*unused*/) cons
 
 QString PostgresSchemaGrammar::typeDecimal(const ColumnDefinition &column) const
 {
-    // Follow the SQL standard
-    if (column.total && !column.places)
-        const_cast<int &>(*column.places) = 0;
+    if (!column.total)
+        return QStringLiteral("decimal");
 
-    if (column.total && column.places)
-        return QStringLiteral("decimal(%1, %2)").arg(*column.total).arg(*column.places);
-
-    return QStringLiteral("decimal");
+    return QStringLiteral("decimal(%1, %2)").arg(*column.total)
+                                            // Follow the SQL standard
+                                            .arg(column.places ? *column.places : 0);
 }
 
 QString PostgresSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const

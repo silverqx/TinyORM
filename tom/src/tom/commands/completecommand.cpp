@@ -557,7 +557,7 @@ QStringList CompleteCommand::getConnectionNamesFromFile()
     std::string line;
     line.reserve(256);
 
-    static QRegularExpression regex(".*\"(\\w+)\".*// shell:connection");
+    static const QRegularExpression regex(".*\"(\\w+)\".*// shell:connection");
 
     while (getline(mainFileStream, line)) {
         const auto match = regex.match(QString::fromStdString(line));

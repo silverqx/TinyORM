@@ -1144,14 +1144,14 @@ namespace Orm::Tiny::Concerns
 
         // Year
         if (const auto &year = splitted.at(0);
-            !(year.size() == 4 && StringUtils::isNumber(year))
+            year.size() != 4 || !StringUtils::isNumber(year)
         )
             return false;
 
         // Month
         const auto &month = splitted.at(1);
         const auto monthSize = month.size();
-        if (!((monthSize == 1 || monthSize == 2) && StringUtils::isNumber(month)))
+        if ((monthSize != 1 && monthSize != 2) || !StringUtils::isNumber(month))
             return false;
 
         // Day

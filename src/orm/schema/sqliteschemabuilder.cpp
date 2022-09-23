@@ -20,14 +20,15 @@ namespace Orm::SchemaNs
 
 std::optional<QSqlQuery> SQLiteSchemaBuilder::createDatabase(const QString &name) const
 {
-    fspath databaseName(name.toUtf8().constData());
+    const fspath databaseName(name.toUtf8().constData());
 
     if (fs::exists(databaseName))
         throw Exceptions::RuntimeError(
                     QStringLiteral("SQLite database '%1' already exists in %2().")
                     .arg(QString::fromStdString(databaseName.string()), __tiny_func__));
 
-    std::ofstream fs(databaseName, std::ios::out | std::ios::binary | std::ios::trunc);
+    const std::ofstream fs(databaseName,
+                           std::ios::out | std::ios::binary | std::ios::trunc);
 
     if (!fs.fail())
         return std::nullopt;
@@ -98,8 +99,8 @@ void SQLiteSchemaBuilder::refreshDatabaseFile() const
 {
     const auto &databaseName = m_connection.getDatabaseName();
 
-    std::ofstream fs(databaseName.toUtf8().constData(),
-                     std::ios::out | std::ios::binary | std::ios::trunc);
+    const std::ofstream fs(databaseName.toUtf8().constData(),
+                           std::ios::out | std::ios::binary | std::ios::trunc);
 
     if (!fs.fail())
         return;
