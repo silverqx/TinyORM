@@ -134,7 +134,7 @@ int UsingConnection::usingConnectionInternal(
 }
 
 void UsingConnection::setConnection(
-        const QString &name, const std::optional<bool> &debugSql,
+        const QString &name, const std::optional<bool> debugSql,
         std::optional<std::reference_wrapper<MigrationRepository>> repository,
         const bool restore)
 {
@@ -158,7 +158,7 @@ std::optional<bool> UsingConnection::getConnectionDebugSql(const QString &name) 
                                                .debugSql());
 }
 
-void UsingConnection::setConnectionDebugSql(const bool &debugSql) const
+void UsingConnection::setConnectionDebugSql(const bool debugSql) const
 {
     // Nothing to restore, a previous/default connection name was empty
     if (m_connection.isEmpty())
