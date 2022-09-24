@@ -184,7 +184,7 @@ namespace Seeders
         /* I have to fix sequences in Postgres because I'm inserting IDs manually, and
            it doesn't increment sequences. */
 
-        std::unordered_map<QString, quint64> sequences {
+        const std::unordered_map<QString, quint64> sequences {
             {QStringLiteral("users_id_seq"),                                6},
             {QStringLiteral("roles_id_seq"),                                4},
             {QStringLiteral("user_phones_id_seq"),                          4},
@@ -198,7 +198,7 @@ namespace Seeders
             {QStringLiteral("types_id_seq"),                                4},
         };
 
-        for (auto &&[sequence, id] : sequences)
+        for (const auto &[sequence, id] : sequences)
             DB::connection().unprepared(
                     QStringLiteral("ALTER SEQUENCE %1 RESTART WITH %2")
                     .arg(sequence).arg(id));

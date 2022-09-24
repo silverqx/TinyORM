@@ -644,7 +644,7 @@ void Blueprint::addFluentIndexes()
                      {std::ref(column.unique),       Unique}
                  })
              };
-             auto &&indexItem : indexes
+             const auto &indexItem : indexes
         ) {
             auto &index = indexItem.name.get();
 
@@ -665,16 +665,21 @@ void Blueprint::addFluentIndexes()
             /* If the index has been specified on the given column, and it has a string
                value, we'll go ahead and call the index method and pass the name for
                the index since the developer specified the explicit name for this. */
-            else if(const auto indexName = std::get<QString>(index); // NOLINT(readability-else-after-return)
-                    std::holds_alternative<QString>(index) &&
+            if (std::holds_alternative<QString>(index))
+                if (const auto &indexName = std::get<QString>(index);
                     !indexName.isEmpty()
-            ) {
-                indexCommand(indexItem.type, {column.name}, indexName);
+                ) {
+                    indexCommand(indexItem.type, {column.name}, indexName);
 
-                index = false;
+                    index = false;
 
-                break;
-            }
+                    break;
+                }
+
+            /* Here still can be case where:
+               std::holds_alternative<bool>(index) && std::get<bool>(index) == false,
+               Because of that the previous block still has to be wrapped in the
+               if (std::holds_alternative<QString>(index)). */
         }
 }
 

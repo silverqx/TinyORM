@@ -103,7 +103,7 @@ Type::classPureBasenameInternal(const char *typeName, const bool withNamespace)
 #elif __GNUG__
     // Demangle a type name
     int status = 0;
-    std::unique_ptr<char, decltype (std::free) &> typeNameDemangled_(
+    const std::unique_ptr<char, decltype (std::free) &> typeNameDemangled_(
         abi::__cxa_demangle(typeName, nullptr, nullptr, &status), std::free);
 
     // Throw when abi::__cxa_demangle() status < 0
