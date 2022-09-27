@@ -2365,7 +2365,24 @@ void tst_CastAttributes::cast_timestamp_to_Timestamp() const
     else
         Q_UNREACHABLE();
 
-//    QCOMPARE(attribute.value<qint64>(), static_cast<qint64>(1662712888));
+    /* The reason why this unix timestamp has to be corrected:
+       The QDateTime instance is created from a datetime value (exactly timestamp column
+       type) returned from the database, but this QDateTime instance is Qt::LocalTime
+       and when this value is converted to the CastType::Timestamp using
+       asDateTime(value).toSecsSinceEpoch() (qint64) then this local timezone is involved
+       and the resulting unix timestamp is shifted.
+       Solution for this is to provide some global config that will correct this problem,
+       but the real solution would be if Qt would allow to configure this, so a user
+       could set that all QDateTime instances will be eg. UTC BY DEFAULT and not
+       Qt::LocalTime that is currently a default. */
+    auto correctedUnixTimestamp = attribute.value<qint64>();
+    if (const auto offsetFromUtc = QDateTime::currentDateTime().offsetFromUtc();
+        offsetFromUtc != 0
+    )
+        correctedUnixTimestamp = QDateTime::fromSecsSinceEpoch(correctedUnixTimestamp)
+                                 .addSecs(offsetFromUtc).toSecsSinceEpoch();
+
+    QCOMPARE(correctedUnixTimestamp, static_cast<qint64>(1662712888));
     // This is not 100% ok, but I want to do also this QCOMPARE()
     QCOMPARE(QDateTime::fromSecsSinceEpoch(attribute.value<qint64>()),
              QDateTime::fromString("2022-09-09 08:41:28", Qt::ISODate));
