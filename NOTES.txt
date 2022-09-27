@@ -66,6 +66,51 @@ There is not need to apply SoftDeletes on these:
 raw
 
 
+QDateTime and database date/time types:
+---------------------------------------
+
+The TinyORM ignores QDateTime timezone, it simply converts the QDateTime instance
+to a string using the Model::u_dateFormat, look at the Model::setAttribute() -> Model::fromDateTime().
+
+MySQL:
+  It's not so simple, first, it ignores QDateTime timezone, it simply takes
+  a datetime value that was given during the QDateTime creation
+  (ctor/fromString/...) and exatly this value will be sent to the MySQL database.
+  datetime type : will save exactly the same value that was sent to DB.
+  timestamp type : is another story, here is important the timezone
+  MySQL session variable, the MySQL server converts the datetime value that was
+  sent to the UTC and this UTC value will be saved in the DB, the same is true
+  for retrieval of this value, so it converts it from UTC to session timezone.
+
+  MySQL database converts TIMESTAMP values from the current time zone to UTC
+  for storage, and back from UTC to the current time zone for retrieval.
+  This does not occur for other types such as DATETIME.
+  By default, the current time zone for each connection is the server's time.
+  The time zone can be set on a per-connection basis using the time_zone system
+  variable.
+
+SQLite:
+  It's simple, it ignores QDateTime timezone, it simply takes a datetime value
+  that was given during the QDateTime creation (ctor/fromString/...) and exatly
+  this value will be saved to the SQLite database.
+
+  SQLite database doesn't support a timezone for datetime-related types, but
+  has functions for converting between timezones (strftime).
+
+PostgreSQL:
+  It's not so simple, all datetime-related types can be with or without timezone.
+  All datetime types without timezone behaves exatly the same like in the SQLite
+  database, so it ignores QDateTime timezone, it simply takes a datetime value
+  that was given during the QDateTime creation (ctor/fromString/...) and exatly
+  this value will be saved to the SQLite database.
+
+  The datetime types with timezone, behavior is the same like the MySQL timestamp
+  type.
+
+  The PostgreSQL server timezone can be set using set TIME ZONE or set TIMEZONE
+  variable or by the PGTZ env. variable.
+
+
 Todos to check in TinyOrm:
 --------------------------
 
