@@ -228,7 +228,6 @@ private:
     /*! Create QueryBuilder instance for the given connection. */
     [[nodiscard]] std::shared_ptr<QueryBuilder> createQuery() const;
 
-    /* Data members */
     /*! Connection name used in this test case. */
     QString m_connection {};
 };
