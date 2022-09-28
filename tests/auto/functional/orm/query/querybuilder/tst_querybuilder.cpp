@@ -6,6 +6,8 @@
 
 #include "orm/db.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
+#include "orm/exceptions/multiplerecordsfounderror.hpp"
+#include "orm/exceptions/recordsnotfounderror.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/type.hpp"
 
@@ -23,6 +25,8 @@ using Orm::Constants::SIZE;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
+using Orm::Exceptions::MultipleRecordsFoundError;
+using Orm::Exceptions::RecordsNotFoundError;
 using Orm::Exceptions::RuntimeError;
 using Orm::Query::Builder;
 
@@ -81,6 +85,14 @@ private Q_SLOTS:
     void limit() const;
 
     /* Builds Queries */
+    void sole() const;
+    void sole_RecordsNotFoundError() const;
+    void sole_MultipleRecordsFoundError() const;
+
+    void soleValue() const;
+    void soleValue_RecordsNotFoundError() const;
+    void soleValue_MultipleRecordsFoundError() const;
+
     void chunk() const;
     void chunk_ReturnFalse() const;
     void chunk_EnforceOrderBy() const;
@@ -1039,6 +1051,71 @@ void tst_QueryBuilder::limit() const
 }
 
 /* Builds Queries */
+
+void tst_QueryBuilder::sole() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto query = createQuery(connection)->from("torrents").whereEq(ID, 1).sole();
+
+    QVERIFY(query.isValid() && query.isActive() && query.isSelect());
+    QCOMPARE(query.value(ID).value<quint64>(), static_cast<quint64>(1));
+    QCOMPARE(query.value(NAME).value<QString>(), QString("test1"));
+}
+
+void tst_QueryBuilder::sole_RecordsNotFoundError() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    QVERIFY_EXCEPTION_THROWN(
+            createQuery(connection)->from("torrents")
+                .whereEq("name", "dummy-NON_EXISTENT")
+                .sole(),
+            RecordsNotFoundError);
+}
+
+void tst_QueryBuilder::sole_MultipleRecordsFoundError() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    QVERIFY_EXCEPTION_THROWN(
+            createQuery(connection)->from("torrents").whereEq("user_id", 1).sole(),
+            MultipleRecordsFoundError);
+}
+
+void tst_QueryBuilder::soleValue() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto value = createQuery(connection)->from("torrents").whereEq(ID, 1)
+                 .soleValue(NAME);
+
+    QVERIFY((std::is_same_v<decltype (value), QVariant>));
+    QVERIFY(value.isValid() && !value.isNull());
+    QCOMPARE(value, QVariant(QString("test1")));
+}
+
+void tst_QueryBuilder::soleValue_RecordsNotFoundError() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    QVERIFY_EXCEPTION_THROWN(
+            createQuery(connection)->from("torrents")
+                .whereEq("name", "dummy-NON_EXISTENT")
+                .soleValue(NAME),
+            RecordsNotFoundError);
+}
+
+void tst_QueryBuilder::soleValue_MultipleRecordsFoundError() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    QVERIFY_EXCEPTION_THROWN(
+            createQuery(connection)->from("torrents")
+                .whereEq("user_id", 1)
+                .soleValue(NAME),
+            MultipleRecordsFoundError);
+}
 
 void tst_QueryBuilder::chunk() const
 {

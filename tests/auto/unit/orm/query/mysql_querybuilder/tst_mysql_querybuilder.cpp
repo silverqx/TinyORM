@@ -3,8 +3,6 @@
 
 #include "orm/db.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
-#include "orm/exceptions/multiplerecordsfounderror.hpp"
-#include "orm/exceptions/recordsnotfounderror.hpp"
 #include "orm/mysqlconnection.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/type.hpp"
@@ -26,8 +24,6 @@ using Orm::Constants::SIZE;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
-using Orm::Exceptions::MultipleRecordsFoundError;
-using Orm::Exceptions::RecordsNotFoundError;
 using Orm::MySqlConnection;
 using Orm::Query::Builder;
 using Orm::Query::Expression;
@@ -225,20 +221,14 @@ private Q_SLOTS:
     void tap() const;
 
     void sole() const;
-    void sole_RecordsNotFoundError() const;
-    void sole_MultipleRecordsFoundError() const;
-    void sole_Pretending() const;
-
     void soleValue() const;
-    void soleValue_RecordsNotFoundError() const;
-    void soleValue_MultipleRecordsFoundError() const;
-    void soleValue_Pretending() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
     [[nodiscard]] std::shared_ptr<QueryBuilder> createQuery() const;
 
+    /* Data members */
     /*! Connection name used in this test case. */
     QString m_connection {};
 };
@@ -3262,29 +3252,6 @@ void tst_MySql_QueryBuilder::tap() const
 
 void tst_MySql_QueryBuilder::sole() const
 {
-    auto query = createQuery()->from("torrents").whereEq(ID, 1).sole();
-
-    QVERIFY(query.isValid() && query.isActive() && query.isSelect());
-    QCOMPARE(query.value(ID).value<quint64>(), static_cast<quint64>(1));
-    QCOMPARE(query.value(NAME).value<QString>(), QString("test1"));
-}
-
-void tst_MySql_QueryBuilder::sole_RecordsNotFoundError() const
-{
-    QVERIFY_EXCEPTION_THROWN(
-            createQuery()->from("torrents").whereEq("name", "dummy-NON_EXISTENT").sole(),
-            RecordsNotFoundError);
-}
-
-void tst_MySql_QueryBuilder::sole_MultipleRecordsFoundError() const
-{
-    QVERIFY_EXCEPTION_THROWN(
-            createQuery()->from("torrents").whereEq("user_id", 1).sole(),
-                MultipleRecordsFoundError);
-}
-
-void tst_MySql_QueryBuilder::sole_Pretending() const
-{
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         connection.query()->from("torrents").whereEq("name", "dummy-NON_EXISTENT").sole();
@@ -3301,33 +3268,6 @@ void tst_MySql_QueryBuilder::sole_Pretending() const
 }
 
 void tst_MySql_QueryBuilder::soleValue() const
-{
-    auto value = createQuery()->from("torrents").whereEq(ID, 1).soleValue(NAME);
-
-    QVERIFY((std::is_same_v<decltype (value), QVariant>));
-    QVERIFY(value.isValid() && !value.isNull());
-    QCOMPARE(value, QVariant(QString("test1")));
-}
-
-void tst_MySql_QueryBuilder::soleValue_RecordsNotFoundError() const
-{
-    QVERIFY_EXCEPTION_THROWN(
-            createQuery()->from("torrents")
-                .whereEq("name", "dummy-NON_EXISTENT")
-                .soleValue(NAME),
-            RecordsNotFoundError);
-}
-
-void tst_MySql_QueryBuilder::soleValue_MultipleRecordsFoundError() const
-{
-    QVERIFY_EXCEPTION_THROWN(
-            createQuery()->from("torrents")
-                .whereEq("user_id", 1)
-                .soleValue(NAME),
-            MultipleRecordsFoundError);
-}
-
-void tst_MySql_QueryBuilder::soleValue_Pretending() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
