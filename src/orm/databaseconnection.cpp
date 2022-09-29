@@ -320,9 +320,9 @@ DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
 #else
         switch (binding.userType()) {
 #endif
-        /* We need to transform all instances of DateTimeInterface into the actual
-           date string. Each query grammar maintains its own date string format
-           so we'll just ask the grammar for the format to get from the date. */
+        /* We need to transform all instances of QDateTime into the actual date string.
+           Each query grammar maintains its own date string format so we'll just ask
+           the grammar for the format to get from the date. */
         case QMetaType::QDate:
         case QMetaType::QDateTime:
             binding = binding.value<QDateTime>()
@@ -330,14 +330,12 @@ DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
             break;
 
         /* I have decided to not handle the QMetaType::Bool here, little info:
-           - Qt's MySql driver handles bool values internally, it doesn't matter if you
+           - Qt's QMYSQL driver handles bool values internally, it doesn't matter if you
              pass true/false or 0/1
-           - I have not investigated how Qt's Postgres driver works internally, but
-             Postgres is very sensitive about bool columns and bool values, so if you
-             have bool column then you have to pass bool type to the driver
-           - I don't remember about Qt's Sqlite driver exactly, but I'm pretty sure that
-             it doesn't handle bool values as Qt's mysql driver does, because I had some
-             problems with bool values when I have added Sqlite support */
+           - Qt's QPSQL driver calls QVariant(bool).toBool() ? QStringLiteral("TRUE")
+                                                             : QStringLiteral("FALSE")
+           - Qt's QSQLITE driver calls toInt() on the QVariant(bool):
+             sqlite3_bind_int(d->stmt, i + 1, value.toInt()); */
 
         default:
             break;
