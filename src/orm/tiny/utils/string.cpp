@@ -164,13 +164,15 @@ bool String::isNumber(const QStringView string, const bool allowFloating,
     {
         // Integer type
         if (!allowFloating)
-            return !std::isdigit(ch.toLatin1());
+            // Is not numeric == 0
+            return std::isdigit(ch.toLatin1()) == 0;
 
         // Floating-point type
         // Only one dot allowed
         const auto isDot = ch.toLatin1() == DOT;
 
-        const auto result = !std::isdigit(ch.toLatin1()) &&
+        // Is not numeric == 0
+        const auto result = std::isdigit(ch.toLatin1()) == 0 &&
                             (!isDot || (isDot && dotAlreadyFound));
 
         if (isDot)
