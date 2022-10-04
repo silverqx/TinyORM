@@ -258,7 +258,8 @@ DatabaseConnection &DatabaseManager::connection(const QString &name)
 
     /* If we haven't created this connection, we'll create it based on the provided
        config. Once we've created the connections we will configure it. */
-    m_connections->try_emplace(connectionName,
+    if (!m_connections->contains(connectionName))
+        m_connections->emplace(connectionName,
                                configure(makeConnection(connectionName)));
 
     return *(*m_connections)[connectionName];
