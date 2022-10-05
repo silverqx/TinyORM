@@ -106,16 +106,16 @@ namespace Orm
         remove(const QString &queryString,
                const QVector<QVariant> &bindings = {});
 
-        /*! Execute an SQL statement, should be used for DDL queries, internally calls
-            DatabaseConnection::recordsHaveBeenModified(). */
+        /*! Execute an SQL statement, should be used for DDL/DML queries, internally
+            calls DatabaseConnection::recordsHaveBeenModified(). */
         QSqlQuery statement(const QString &queryString,
                             const QVector<QVariant> &bindings = {});
-        /*! Run an SQL statement and get the number of rows affected. */
+        /*! Run an SQL statement and get the number of rows affected (for DML queries). */
         std::tuple<int, QSqlQuery>
         affectingStatement(const QString &queryString,
                            const QVector<QVariant> &bindings = {});
 
-        /*! Run a raw, unprepared query against the database. */
+        /*! Run a raw, unprepared query against the database (good for DDL queries). */
         QSqlQuery unprepared(const QString &queryString);
 
         /* Obtain connection instance */
