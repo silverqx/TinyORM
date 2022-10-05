@@ -24,9 +24,9 @@ namespace Orm::Query
         /*! Default destructor. */
         inline ~Expression() = default;
 
-        /*! Converting constructor from QVariant type. */
+        /*! Converting constructor from the QVariant type. */
         inline explicit Expression(const QVariant &value);
-        /*! Converting constructor from QVariant type. */
+        /*! Converting constructor from the QVariant type. */
         inline explicit Expression(QVariant &&value);
 
         /*! Copy constructor. */
