@@ -688,7 +688,7 @@ namespace Orm::Tiny::Concerns
         /* The value argument must be the QDateTime type, this is how this method
            is designed. */
         Q_ASSERT(value.isValid() &&
-                 value.canConvert<QDateTime>() || value.canConvert<qint64>());
+                 (value.canConvert<QDateTime>() || value.canConvert<qint64>()));
 
         const auto &format = getDateFormat();
 
