@@ -683,7 +683,8 @@ namespace Orm::Tiny::Concerns
     QVariant
     HasAttributes<Derived, AllRelations...>::fromDateTime(const QVariant &value) const
     {
-        // This method is called from the setAttribute() and is expecting user input
+        /* This method is called from the setAttribute() and originalIsEquivalent() and
+           is expecting user input. */
 
         /* The value argument must be the QDateTime type, this is how this method
            is designed. */
@@ -722,7 +723,7 @@ namespace Orm::Tiny::Concerns
         /* This method is called from the HasTimestamps and SoftDeletes and the given
            value argument will be a result from the HasTimestamps::freshTimestampString().
            So it's used to create/update model timestamps and it's internal, so special
-           logic for handling a user input is not needed. */
+           logic for handling a user input and null values is not needed. */
 
         /* As this is the internal method a passed value must be valid and also the null
            value will never be passed into. */
