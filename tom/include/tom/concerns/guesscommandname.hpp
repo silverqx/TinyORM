@@ -27,7 +27,7 @@ namespace Commands
 namespace Concerns
 {
 
-    /*! Try to guess the command name by the given name (name can be partial).. */
+    /*! Try to guess the command name by the given name (name can be partial). */
     class SHAREDLIB_EXPORT GuessCommandName
     {
         Q_DISABLE_COPY(GuessCommandName)

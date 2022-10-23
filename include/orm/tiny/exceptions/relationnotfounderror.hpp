@@ -35,7 +35,7 @@ namespace Orm::Tiny::Exceptions
         inline const QString &getRelation() const;
 
     protected:
-        /*! The name of the affected TinyORM model.. */
+        /*! The name of the affected TinyORM model. */
         QString m_model;
         /*! The name of the relation. */
         QString m_relation;
