@@ -1203,7 +1203,7 @@ namespace Orm::Tiny::Concerns
 
         /* If the value is in simply year, month, day format, we will instantiate the
            QDate instances from that format. Again, this provides for simple date
-           fields on the database, while still supporting Carbonized conversion. */
+           fields on the database, while still supporting QDateTime conversion. */
         if (isStandardDateFormat(valueString))
             if (auto date = QDateTime::fromString(valueString,
                                                   QStringLiteral("yyyy-M-d"));
