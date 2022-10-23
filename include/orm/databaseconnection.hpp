@@ -23,13 +23,13 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
-    /*! QueryGrammar alias. */
+    /*! Alias for the QueryGrammar. */
     using QueryGrammar   = Query::Grammars::Grammar;
-    /*! QueryProcessor alias. */
+    /*! Alias for the QueryProcessor. */
     using QueryProcessor = Query::Processors::Processor;
-    /*! SchemaBuilder alias. */
+    /*! Alias for the SchemaBuilder. */
     using SchemaBuilder  = SchemaNs::SchemaBuilder;
-    /*! SchemaGrammar alias. */
+    /*! Alias for the SchemaGrammar. */
     using SchemaGrammar  = SchemaNs::Grammars::SchemaGrammar;
 
     /*! Database connection base class.

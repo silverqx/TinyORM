@@ -269,7 +269,7 @@ namespace Orm::Tiny
         constexpr static bool extendsSoftDeletes() noexcept;
 
     protected:
-        /*! Expression alias. */
+        /*! Alias for the Expression. */
         using Expression = Orm::Query::Expression;
 
         /*! Get the default key name of the table. */

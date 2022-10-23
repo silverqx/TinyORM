@@ -30,7 +30,7 @@ namespace Tiny
     {
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
-        /*! JoinClause alias. */
+        /*! Alias for the JoinClause. */
         using JoinClause = Orm::Query::JoinClause;
 
     public:

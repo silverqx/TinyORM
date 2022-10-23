@@ -36,7 +36,7 @@ namespace Relations
         // Used by QueriesRelationships::getHasQueryByExistenceCheck()
         friend Tiny::Concerns::QueriesRelationships<Model>;
 
-        /*! Expression alias. */
+        /*! Alias for the Expression. */
         using Expression = Orm::Query::Expression;
 
     protected:

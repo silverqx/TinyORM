@@ -31,7 +31,7 @@ namespace Query
         Q_DISABLE_COPY(BaseGrammar)
 
     protected:
-        /*! Expression alias. */
+        /*! Alias for the Expression. */
         using Expression = Query::Expression;
 
     public:

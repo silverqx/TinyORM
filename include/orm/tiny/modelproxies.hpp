@@ -26,7 +26,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class ModelProxies
     {
-        /*! JoinClause alias. */
+        /*! Alias for the JoinClause. */
         using JoinClause = Orm::Query::JoinClause;
         /*! Alias for the QueriesRelationships callback type. */
         template<typename Related>

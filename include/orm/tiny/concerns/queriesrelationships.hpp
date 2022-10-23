@@ -78,7 +78,7 @@ namespace Private
         template<typename T>
         friend class QueriesRelationships;
 
-        /*! Expression alias. */
+        /*! Alias for the Expression. */
         using Expression = Orm::Query::Expression;
         /*! QueriesRelationships builder type passed to the callback, shortcut alias. */
         template<typename Related>
