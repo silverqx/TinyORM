@@ -522,7 +522,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -554,7 +554,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OnReturnQDateTime() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -584,7 +584,7 @@ void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OnReturnQDateTime() con
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -616,7 +616,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OnReturnQDateTime() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -649,7 +649,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_OnReturnQDateTime() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -679,7 +679,7 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OnReturnQDateTime() co
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -715,7 +715,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OffReturnQDateTime() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -751,7 +751,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OffReturnQDateTime() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -785,7 +785,7 @@ void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OffReturnQDateTime() co
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -821,7 +821,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OffReturnQDateTime() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -858,7 +858,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_OffReturnQDateTime() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -892,7 +892,7 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OffReturnQDateTime() c
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -1043,7 +1043,7 @@ tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OnReturnQDateTime() co
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -1069,7 +1069,7 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OnReturnQDateTime() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -1100,7 +1100,7 @@ tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OffReturnQDateTime() c
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
@@ -1129,7 +1129,7 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OffReturnQDateTime() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 

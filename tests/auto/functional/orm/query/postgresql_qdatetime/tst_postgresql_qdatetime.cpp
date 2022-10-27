@@ -889,7 +889,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -925,7 +925,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -959,7 +959,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DatetimeColumn_UtcOnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -995,7 +995,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1032,7 +1032,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1066,7 +1066,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_TimestampColumn_UtcOnServer() cons
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1113,7 +1113,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1151,7 +1151,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1187,7 +1187,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DatetimeColumn_0200OnServer() cons
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1225,7 +1225,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1264,7 +1264,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1300,7 +1300,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_TimestampColumn_0200OnServer() con
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1572,7 +1572,7 @@ void tst_PostgreSQL_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer()
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1600,7 +1600,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DateColumn_UtcOnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1633,7 +1633,7 @@ insert_QDate_UtcTimezone_DateColumn_0200OnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1663,7 +1663,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DateColumn_0200OnServer() const
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
 
         QCOMPARE(query.size(), 1);
 
