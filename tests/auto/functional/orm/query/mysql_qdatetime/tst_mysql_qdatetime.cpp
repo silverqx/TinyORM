@@ -157,6 +157,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -219,6 +220,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -278,6 +280,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -339,6 +342,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -401,6 +405,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -461,6 +466,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -525,6 +531,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -588,6 +595,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -648,6 +656,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -710,6 +719,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -773,6 +783,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -833,6 +844,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -1348,6 +1360,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -1402,6 +1415,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -1460,6 +1474,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() 
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -1516,6 +1531,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify

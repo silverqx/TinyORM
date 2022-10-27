@@ -160,6 +160,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -224,6 +225,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -282,6 +284,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DatetimeColumn() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -343,6 +346,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -405,6 +409,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -463,6 +468,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimestampColumn() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -935,6 +941,7 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
@@ -988,6 +995,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DateColumn() const
         QCOMPARE(qtQuery.numRowsAffected(), 1);
 
         lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
     }
 
     // Verify
