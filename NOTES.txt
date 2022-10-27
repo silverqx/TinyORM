@@ -74,7 +74,8 @@ defined in the "qt_timezone" connection configuration option and then it convert
 instance to a string using the Model::u_dateFormat,
 look at the Model::setAttribute() -> Model::fromDateTime().
 
-Also look at the commit: QDateTime overhaul 🤯🤐🙃
+Also, look at the commit that has an extensive description:
+QDateTime overhaul 🤯🤐🙃 (1ded27bb)
 
 MySQL:
 ---
