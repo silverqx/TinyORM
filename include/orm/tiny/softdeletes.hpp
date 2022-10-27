@@ -180,23 +180,23 @@ namespace Orm::Tiny
         auto query = model.newModelQuery();
         model.setKeysForSaveQuery(*query);
 
-        const auto time = model.freshTimestamp();
-        auto timeString = model.fromDateTime(time);
+        const auto timestamp = model.freshTimestamp();
+        auto timestampString = model.fromDateTime(timestamp);
 
         QVector<UpdateItem> columns;
         columns.reserve(2);
 
-        columns.append({getDeletedAtColumn(), timeString});
+        columns.append({getDeletedAtColumn(), timestampString});
 
-        model.setAttribute(getDeletedAtColumn(), time);
+        model.setAttribute(getDeletedAtColumn(), timestamp);
 
         // Update also the updated_at column
         if (const auto &updatedAtColumn = model.getUpdatedAtColumn();
             model.usesTimestamps() && !updatedAtColumn.isEmpty()
         ) {
-            model.setUpdatedAt(time);
+            model.setUpdatedAt(timestamp);
 
-            columns.append({updatedAtColumn, std::move(timeString)});
+            columns.append({updatedAtColumn, std::move(timestampString)});
         }
 
         query->update(columns);
