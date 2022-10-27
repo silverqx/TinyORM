@@ -807,9 +807,7 @@ void tst_CastAttributes::defaultCast_double_NaN() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto driverName = DB::driverName(connection);
-
-    if (driverName != QPSQL)
+    if (DB::driverName(connection) != QPSQL)
         QSKIP("The NaN value for the double type column is supported only "
               "on the PostgreSQL database.", );
 
@@ -829,9 +827,7 @@ void tst_CastAttributes::defaultCast_double_Infinity() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto driverName = DB::driverName(connection);
-
-    if (driverName != QPSQL)
+    if (DB::driverName(connection) != QPSQL)
         QSKIP("The Infinity value for the double type column is supported only "
               "on the PostgreSQL database.", );
 
@@ -903,9 +899,7 @@ void tst_CastAttributes::defaultCast_decimal_NaN() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto driverName = DB::driverName(connection);
-
-    if (driverName != QPSQL)
+    if (DB::driverName(connection) != QPSQL)
         QSKIP("The NaN value for the double type column is supported only "
               "on the PostgreSQL database.", );
 
@@ -925,9 +919,7 @@ void tst_CastAttributes::defaultCast_decimal_Infinity() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto driverName = DB::driverName(connection);
-
-    if (driverName != QPSQL)
+    if (DB::driverName(connection) != QPSQL)
         QSKIP("The Infinity value for the double type column is supported only "
               "on the PostgreSQL database.", );
 
@@ -1340,9 +1332,7 @@ void tst_CastAttributes::defaultCast_Null_double_NaN() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto driverName = DB::driverName(connection);
-
-    if (driverName != QPSQL)
+    if (DB::driverName(connection) != QPSQL)
         QSKIP("The NaN value for the double type column is supported only "
               "on the PostgreSQL database.", );
 
@@ -1362,9 +1352,7 @@ void tst_CastAttributes::defaultCast_Null_double_Infinity() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto driverName = DB::driverName(connection);
-
-    if (driverName != QPSQL)
+    if (DB::driverName(connection) != QPSQL)
         QSKIP("The Infinity value for the double type column is supported only "
               "on the PostgreSQL database.", );
 
@@ -1410,9 +1398,7 @@ void tst_CastAttributes::defaultCast_Null_decimal_NaN() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto driverName = DB::driverName(connection);
-
-    if (driverName != QPSQL)
+    if (DB::driverName(connection) != QPSQL)
         QSKIP("The NaN value for the double type column is supported only "
               "on the PostgreSQL database.", );
 
@@ -1432,9 +1418,7 @@ void tst_CastAttributes::defaultCast_Null_decimal_Infinity() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto driverName = DB::driverName(connection);
-
-    if (driverName != QPSQL)
+    if (DB::driverName(connection) != QPSQL)
         QSKIP("The Infinity value for the double type column is supported only "
               "on the PostgreSQL database.", );
 
