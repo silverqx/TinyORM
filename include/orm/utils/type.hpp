@@ -79,6 +79,8 @@ namespace Orm::Utils
         classPureBasenameGcc(const QString &className, bool withNamespace);
     };
 
+    /* public */
+
     template<typename T>
     QString Type::classPureBasename(const bool withNamespace)
     {

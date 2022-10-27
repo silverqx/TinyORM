@@ -24,6 +24,8 @@ using Orm::Exceptions::RuntimeError;
 namespace Orm::Utils
 {
 
+/* public */
+
 QString
 Type::classPureBasename(const std::type_index typeIndex, const bool withNamespace)
 {
