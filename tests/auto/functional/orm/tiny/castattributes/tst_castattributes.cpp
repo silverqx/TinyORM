@@ -1485,9 +1485,7 @@ void tst_CastAttributes::defaultCast_Null_timestamp() const
     auto attribute = type.getAttribute("timestamp");
     auto typeId = typeIdWrapper(attribute);
 
-    if (const auto driverName = DB::driverName(connection);
-        driverName == QSQLITE
-    )
+    if (DB::driverName(connection) == QSQLITE)
         QCOMPARE(typeId(), QMetaType::QString);
     else
         QCOMPARE(typeId(), QMetaType::QDateTime);
@@ -1504,9 +1502,7 @@ void tst_CastAttributes::defaultCast_Null_datetime() const
     auto attribute = type.getAttribute("datetime");
     auto typeId = typeIdWrapper(attribute);
 
-    if (const auto driverName = DB::driverName(connection);
-        driverName == QSQLITE
-    )
+    if (DB::driverName(connection) == QSQLITE)
         QCOMPARE(typeId(), QMetaType::QString);
     else
         QCOMPARE(typeId(), QMetaType::QDateTime);
@@ -1523,9 +1519,7 @@ void tst_CastAttributes::defaultCast_Null_date() const
     auto attribute = type.getAttribute("date");
     auto typeId = typeIdWrapper(attribute);
 
-    if (const auto driverName = DB::driverName(connection);
-        driverName == QSQLITE
-    )
+    if (DB::driverName(connection) == QSQLITE)
         QCOMPARE(typeId(), QMetaType::QString);
     else
         QCOMPARE(typeId(), QMetaType::QDate);

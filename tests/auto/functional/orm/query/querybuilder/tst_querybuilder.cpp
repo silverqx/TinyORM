@@ -615,9 +615,7 @@ void tst_QueryBuilder::upsert() const
 
         QVERIFY(query);
         QVERIFY(!query->isValid() && !query->isSelect() && query->isActive());
-        if (const auto driverName = DB::driverName(connection);
-            driverName == QMYSQL
-        )
+        if (DB::driverName(connection) == QMYSQL)
             /* For MySQL the affected-rows value per row is 1 if the row is inserted
                as a new row, 2 if an existing row is updated, and 0 if an existing row
                is set to its current values. */
@@ -728,9 +726,7 @@ void tst_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
 
         QVERIFY(query);
         QVERIFY(!query->isValid() && !query->isSelect() && query->isActive());
-        if (const auto driverName = DB::driverName(connection);
-            driverName == QMYSQL
-        )
+        if (DB::driverName(connection) == QMYSQL)
             /* For MySQL the affected-rows value per row is 1 if the row is inserted
                as a new row, 2 if an existing row is updated, and 0 if an existing row
                is set to its current values. */
