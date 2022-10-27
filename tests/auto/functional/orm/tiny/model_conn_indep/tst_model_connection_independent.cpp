@@ -163,7 +163,7 @@ void tst_Model_Connection_Independent::subscriptOperator() const
     QCOMPARE((*torrent)[NAME], QVariant("test2"));
 
     QCOMPARE((*torrent)["added_on"],
-            QVariant(QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)));
+            QVariant(QDateTime::fromString("2020-08-02 20:11:10z", Qt::ISODate)));
 }
 
 void tst_Model_Connection_Independent::subscriptOperator_OnLhs() const
@@ -488,7 +488,7 @@ void tst_Model_Connection_Independent::defaultAttributeValues() const
         QCOMPARE(torrent[SIZE], QVariant(0));
         QCOMPARE(torrent["progress"], QVariant(0));
         QCOMPARE(torrent["added_on"],
-                QVariant(QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)));
+                QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
         QCOMPARE(torrent.getAttributes().size(), 3);
     }
     {
@@ -504,7 +504,7 @@ void tst_Model_Connection_Independent::defaultAttributeValues() const
         QCOMPARE(torrent[SIZE], QVariant(0));
         QCOMPARE(torrent["progress"], QVariant(0));
         QCOMPARE(torrent["added_on"],
-                QVariant(QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)));
+                QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
         QCOMPARE(torrent[NAME], QVariant(name));
         QCOMPARE(torrent["note"], QVariant(note));
         QCOMPARE(torrent.getAttributes().size(), 5);
@@ -522,7 +522,7 @@ void tst_Model_Connection_Independent::defaultAttributeValues() const
         QCOMPARE(torrent[SIZE], QVariant(0));
         QCOMPARE(torrent["progress"], QVariant(0));
         QCOMPARE(torrent["added_on"],
-                QVariant(QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)));
+                QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
         QCOMPARE(torrent[NAME], QVariant(name));
         QCOMPARE(torrent["note"], QVariant(note));
         QCOMPARE(torrent.getAttributes().size(), 5);
@@ -545,7 +545,7 @@ void tst_Model_Connection_Independent::massAssignment_Guarded() const
 {
     Torrent_GuardedAttribute torrent;
 
-    torrent.fill({{CREATED_AT, QDateTime::currentDateTime()}});
+    torrent.fill({{CREATED_AT, QDateTime::currentDateTimeUtc()}});
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent.getAttributes().size(), 0);
@@ -625,7 +625,7 @@ void tst_Model_Connection_Independent::
 {
     Torrent_GuardedAttribute torrent;
 
-    const auto createdAt = QDateTime::fromString("2021-02-02 10:11:12", Qt::ISODate);
+    const auto createdAt = QDateTime::fromString("2021-02-02 10:11:12z", Qt::ISODate);
 
     torrent.forceFill({{CREATED_AT, createdAt}});
 
@@ -810,12 +810,12 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
         auto result = Torrent::pluck("added_on");
 
         QVector<QVariant> expected {
-            QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-02 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-03 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-04 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-05 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-06 20:11:10z", Qt::ISODate),
         };
         QCOMPARE(result, expected);
     }
@@ -824,12 +824,12 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
         auto result = Torrent::pluck<quint64>("added_on", ID);
 
         std::map<quint64, QVariant> expected {
-            {1, QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate)},
-            {2, QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)},
-            {3, QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate)},
-            {4, QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate)},
-            {5, QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate)},
-            {6, QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate)},
+            {1, QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate)},
+            {2, QDateTime::fromString("2020-08-02 20:11:10z", Qt::ISODate)},
+            {3, QDateTime::fromString("2020-08-03 20:11:10z", Qt::ISODate)},
+            {4, QDateTime::fromString("2020-08-04 20:11:10z", Qt::ISODate)},
+            {5, QDateTime::fromString("2020-08-05 20:11:10z", Qt::ISODate)},
+            {6, QDateTime::fromString("2020-08-06 20:11:10z", Qt::ISODate)},
         };
         QCOMPARE(result, expected);
     }
@@ -838,12 +838,12 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
         auto result = Torrent::pluck<QDateTime>(ID, "added_on");
 
         std::map<QDateTime, QVariant> expected {
-            {QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate), 1},
-            {QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate), 2},
-            {QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate), 3},
-            {QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate), 4},
-            {QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate), 5},
-            {QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate), 6},
+            {QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate), 1},
+            {QDateTime::fromString("2020-08-02 20:11:10z", Qt::ISODate), 2},
+            {QDateTime::fromString("2020-08-03 20:11:10z", Qt::ISODate), 3},
+            {QDateTime::fromString("2020-08-04 20:11:10z", Qt::ISODate), 4},
+            {QDateTime::fromString("2020-08-05 20:11:10z", Qt::ISODate), 5},
+            {QDateTime::fromString("2020-08-06 20:11:10z", Qt::ISODate), 6},
         };
         QCOMPARE(result, expected);
     }
@@ -872,12 +872,12 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         auto result = Torrent::pluck("torrents.added_on");
 
         QVector<QVariant> expected {
-            QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-02 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-03 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-04 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-05 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-06 20:11:10z", Qt::ISODate),
         };
         QCOMPARE(result, expected);
     }
@@ -886,12 +886,12 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         auto result = Torrent::pluck<quint64>("torrents.added_on", ID);
 
         std::map<quint64, QVariant> expected {
-            {1, QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate)},
-            {2, QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)},
-            {3, QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate)},
-            {4, QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate)},
-            {5, QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate)},
-            {6, QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate)},
+            {1, QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate)},
+            {2, QDateTime::fromString("2020-08-02 20:11:10z", Qt::ISODate)},
+            {3, QDateTime::fromString("2020-08-03 20:11:10z", Qt::ISODate)},
+            {4, QDateTime::fromString("2020-08-04 20:11:10z", Qt::ISODate)},
+            {5, QDateTime::fromString("2020-08-05 20:11:10z", Qt::ISODate)},
+            {6, QDateTime::fromString("2020-08-06 20:11:10z", Qt::ISODate)},
         };
         QCOMPARE(result, expected);
     }
@@ -900,12 +900,12 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         auto result = Torrent::orderBy(ID)->pluck("added_on as added_on_alt");
 
         QVector<QVariant> expected {
-            QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate),
-            QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate),
+            QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-02 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-03 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-04 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-05 20:11:10z", Qt::ISODate),
+            QDateTime::fromString("2020-08-06 20:11:10z", Qt::ISODate),
         };
         QCOMPARE(result, expected);
     }
@@ -914,12 +914,12 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         auto result = Torrent::pluck<quint64>("added_on as added_on_alt", "id as id_alt");
 
         std::map<quint64, QVariant> expected {
-            {1, QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate)},
-            {2, QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)},
-            {3, QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate)},
-            {4, QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate)},
-            {5, QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate)},
-            {6, QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate)},
+            {1, QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate)},
+            {2, QDateTime::fromString("2020-08-02 20:11:10z", Qt::ISODate)},
+            {3, QDateTime::fromString("2020-08-03 20:11:10z", Qt::ISODate)},
+            {4, QDateTime::fromString("2020-08-04 20:11:10z", Qt::ISODate)},
+            {5, QDateTime::fromString("2020-08-05 20:11:10z", Qt::ISODate)},
+            {6, QDateTime::fromString("2020-08-06 20:11:10z", Qt::ISODate)},
         };
         QCOMPARE(result, expected);
     }
@@ -928,12 +928,12 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         auto result = Torrent::pluck<quint64>("torrents.added_on", "id as id_alt");
 
         std::map<quint64, QVariant> expected {
-            {1, QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate)},
-            {2, QDateTime::fromString("2020-08-02 20:11:10", Qt::ISODate)},
-            {3, QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate)},
-            {4, QDateTime::fromString("2020-08-04 20:11:10", Qt::ISODate)},
-            {5, QDateTime::fromString("2020-08-05 20:11:10", Qt::ISODate)},
-            {6, QDateTime::fromString("2020-08-06 20:11:10", Qt::ISODate)},
+            {1, QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate)},
+            {2, QDateTime::fromString("2020-08-02 20:11:10z", Qt::ISODate)},
+            {3, QDateTime::fromString("2020-08-03 20:11:10z", Qt::ISODate)},
+            {4, QDateTime::fromString("2020-08-04 20:11:10z", Qt::ISODate)},
+            {5, QDateTime::fromString("2020-08-05 20:11:10z", Qt::ISODate)},
+            {6, QDateTime::fromString("2020-08-06 20:11:10z", Qt::ISODate)},
         };
         QCOMPARE(result, expected);
     }

@@ -10,10 +10,17 @@ TINY_SYSTEM_HEADER
 #include <functional>
 
 #include "orm/macros/commonnamespace.hpp"
+#include "orm/macros/export.hpp"
+
+class QDateTime;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Utils
+namespace Orm
+{
+    struct QtTimeZoneConfig;
+
+namespace Utils
 {
     /*! Tests if the std::hash can hash T with noexcept. */
     template <class T, class = void>
@@ -28,7 +35,7 @@ namespace Orm::Utils
     {};
 
     /*! Helpers library class. */
-    class Helpers
+    class SHAREDLIB_EXPORT Helpers
     {
         Q_DISABLE_COPY(Helpers)
 
@@ -52,6 +59,17 @@ namespace Orm::Utils
         template <typename T>
         inline static std::size_t &hashCombine(std::size_t &seed, const T &value)
         noexcept(IsNothrowHashable<std::remove_const_t<T>>::value);
+
+        /* QDateTime related */
+        /*! Determine if the given value is a standard date format. */
+        static bool isStandardDateFormat(const QString &value);
+
+        /*! Convert the QDateTime's time zone to the given time zone. */
+        static QDateTime
+        convertTimeZone(const QDateTime &datetime, const QtTimeZoneConfig &timezone);
+        /*! Set the QDateTime's time zone to the given time zone. */
+        static QDateTime &
+        setTimeZone(QDateTime &datetime, const QtTimeZoneConfig &timezone);
     };
 
     /* public */
@@ -83,7 +101,8 @@ namespace Orm::Utils
         return seed ^= std::hash<T>()(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     }
 
-} // namespace Orm::Utils
+} // namespace Utils
+} // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 

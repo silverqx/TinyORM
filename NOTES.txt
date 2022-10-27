@@ -69,46 +69,99 @@ raw
 QDateTime and database date/time types:
 ---------------------------------------
 
-The TinyORM ignores QDateTime timezone, it simply converts the QDateTime instance
-to a string using the Model::u_dateFormat, look at the Model::setAttribute() -> Model::fromDateTime().
+The TinyORM handles the QDateTime's time zone correctly, it converts a time zone to the time zone
+defined in the "qt_timezone" connection configuration option and then it converts a QDateTime
+instance to a string using the Model::u_dateFormat,
+look at the Model::setAttribute() -> Model::fromDateTime().
+
+Also look at the commit: QDateTime overhaul 🤯🤐🙃
 
 MySQL:
-  It's not so simple, first, it ignores QDateTime timezone, it simply takes
-  a datetime value that was given during the QDateTime creation
-  (ctor/fromString/...) and exatly this value will be sent to the MySQL database.
-  datetime type : will save exactly the same value that was sent to DB.
-  timestamp type : is another story, here is important the timezone
-  MySQL session variable, the MySQL server converts the datetime value that was
-  sent to the UTC and this UTC value will be saved in the DB, the same is true
-  for retrieval of this value, so it converts it from UTC to session timezone.
+---
+  Qt QMYSQL driver:
+    It's not so simple, first, it ignores the QDateTime timezone, it simply takes
+    a DateTime value that was given during the QDateTime creation (ctor/fromString/...),
+    and exactly this value will be sent to the MySQL database.
 
-  MySQL database converts TIMESTAMP values from the current time zone to UTC
-  for storage, and back from UTC to the current time zone for retrieval.
-  This does not occur for other types such as DATETIME.
-  By default, the current time zone for each connection is the server's time.
-  The time zone can be set on a per-connection basis using the time_zone system
-  variable.
+    datetime column type:
+      - will save exactly the same value that was sent to the database
+
+    timestamp column type:
+      - is another story, here is important the MySQL timezone session variable,
+        the MySQL server converts the DateTime value that was sent to the UTC timezone
+        for storage and this UTC value will be saved in the database, the same is true during
+        retrieval of this value, so it converts it from the UTC to a session timezone
+
+  Database:
+    MySQL database converts TIMESTAMP values from the current timezone to UTC
+    for storage, and back from UTC to the current timezone for retrieval.
+    This does not occur for other types such as DATETIME.
+    By default, the current timezone for each connection is the server's time.
+    The timezone can be set on a per-connection basis using the time_zone system
+    variable.
+
+  Summary:
+    Sent:
+      It IGNORES the QDateTime timezone!
+      MYSQL_TIME *myTime = toMySqlDate(val.toDate(), val.toTime(), val.userType());
+      And the toMySqlDate() function picks internally the year, month, hour, minute, ...
+      one by one, so it calls date.year(), date.month(), time.hour(), ...
+    Retrieval:
+      Returns in the local timezone.
+      - for prepared statements:
+        return QDateTime(date, time);
+      - for non-prepared statements:
+        return qDateTimeFromString(val); it internally calls
+        return QVariant(QDateTime::fromString(val, Qt::ISODate));
 
 SQLite:
-  It's simple, it ignores QDateTime timezone, it simply takes a datetime value
-  that was given during the QDateTime creation (ctor/fromString/...) and exatly
-  this value will be saved to the SQLite database.
+---
+  Qt QSQLITE driver:
+    It doesn't ignore the QDateTime timezone, it converts the QDateTime to a string using
+    .toString(Qt::ISODateWithMs) and this string value is sent to the database and
+    will be saved as a string column.
 
-  SQLite database doesn't support a timezone for datetime-related types, but
-  has functions for converting between timezones (strftime).
+  Database:
+    The SQLite database doesn't support DateTime-related types but has functions
+    for working with or converting DateTimes; they also allow to convert between
+    different timezones (using eg. strftime()).
+
+  Summary:
+    Sent:
+      It DOESN'T ignore the QDateTime timezone.
+      dateTime.toString(Qt::ISODateWithMs);
+    Retrieval:
+      It returns QVariant(QMetaType::QString).
+      - so it's up to a user how it will instantiate a QDateTime object from this
+        string value
 
 PostgreSQL:
-  It's not so simple, all datetime-related types can be with or without timezone.
-  All datetime types without timezone behaves exatly the same like in the SQLite
-  database, so it ignores QDateTime timezone, it simply takes a datetime value
-  that was given during the QDateTime creation (ctor/fromString/...) and exatly
-  this value will be saved to the SQLite database.
+---
+  Qt QPSQL driver:
+    It's not so simple, it converts all QDateTime time zone to UTC and sends it to the database
+    in the ISO UTC format, for both for timestamps/datetime with or without time zone.
+    So the timestamps with time zone behave exactly like for the MySQL DB.
+    But timestamps without time zone don't, they are converted to the LOCAL DB server time zone
+    by DB before they are saved to DB storage.
 
-  The datetime types with timezone, behavior is the same like the MySQL timestamp
-  type.
+  Database:
+    The PostgreSQL server timezone can be set using the set TIME ZONE or set TIMEZONE TO
+    session variable or by the PGTZ environment variable, or of course using the main
+    configuration file and using the timezone configuration setting eg.
+    timezone = 'Europe/Bratislava'.
 
-  The PostgreSQL server timezone can be set using set TIME ZONE or set TIMEZONE
-  variable or by the PGTZ env. variable.
+  Summary:
+    Sent:
+      It DOESN'T ignore the QDateTime timezone.
+      // we force the value to be considered with a timezone information, and we force it to be UTC
+      // this is safe since postgresql stores only the UTC value and not the timezone offset (only used
+      // while parsing), so we have correct behavior in both case of with timezone and without tz
+      r = QStringLiteral("TIMESTAMP WITH TIME ZONE ") + QLatin1Char('\'') +
+                         QLocale::c().toString(field.value().toDateTime().toUTC(), u"yyyy-MM-ddThh:mm:ss.zzz") +
+                         QLatin1Char('Z') + QLatin1Char('\'');
+    Retrieval:
+      return QVariant(QDateTime::fromString(QString::fromLatin1(val),
+                                            Qt::ISODate).toLocalTime());
 
 
 Todos to check in TinyOrm:

@@ -6,7 +6,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <orm/constants.hpp>
-#include <orm/tiny/utils/string.hpp>
+#include <orm/utils/string.hpp>
 
 #include "tom/tomconstants.hpp"
 
@@ -14,7 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::UNDERSCORE;
 
-using StringUtils = Orm::Tiny::Utils::String;
+using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::DateTimePrefix;
 

@@ -5,18 +5,11 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/macros/export.hpp"
-#include "orm/ormtypes.hpp"
-
-class QSqlQuery;
+#include "orm/types/sqlquery.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Query
-{
-    class Builder;
-
-namespace Concerns
+namespace Orm::Query::Concerns
 {
 
     /*! More complex 'Retrieving results' methods that internally build queries. */
@@ -42,9 +35,9 @@ namespace Concerns
 
         /*! Chunk the results of the query. */
         bool chunk(int count,
-                   const std::function<bool(QSqlQuery &results, int page)> &callback);
+                   const std::function<bool(SqlQuery &results, int page)> &callback);
         /*! Execute a callback over each item while chunking. */
-        bool each(const std::function<bool(QSqlQuery &row, int index)> &callback,
+        bool each(const std::function<bool(SqlQuery &row, int index)> &callback,
                   int count = 1000);
 
         /*! Run a map over each item while chunking. */
@@ -53,17 +46,17 @@ namespace Concerns
 
         /*! Chunk the results of a query by comparing IDs. */
         bool chunkById(int count,
-                       const std::function<bool(QSqlQuery &results, int page)> &callback,
+                       const std::function<bool(SqlQuery &results, int page)> &callback,
                        const QString &column = "", const QString &alias = "");
         /*! Execute a callback over each item while chunking by ID. */
-        bool eachById(const std::function<bool(QSqlQuery &row, int index)> &callback,
+        bool eachById(const std::function<bool(SqlQuery &row, int index)> &callback,
                       int count = 1000, const QString &column = "",
                       const QString &alias = "");
 
 
         /*! Execute the query and get the first result if it's the sole matching
             record. */
-        QSqlQuery sole(const QVector<Column> &columns = {ASTERISK});
+        SqlQuery sole(const QVector<Column> &columns = {ASTERISK});
 
         /*! Pass the query to a given callback. */
         Builder &tap(const std::function<void(Builder &query)> &callback);
@@ -79,8 +72,7 @@ namespace Concerns
 
     BuildsQueries::~BuildsQueries() = default;
 
-} // namespace Concerns
-} // namespace Orm::Query
+} // namespace Orm::Query::Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 

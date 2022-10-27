@@ -1,15 +1,9 @@
 #pragma once
-#ifndef ORM_TINY_UTILS_STRING_HPP
-#define ORM_TINY_UTILS_STRING_HPP
+#ifndef ORM_UTILS_STRING_HPP
+#define ORM_UTILS_STRING_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
-
-#include <QString>
-
-#ifndef TINYORM_DISABLE_TOM
-#  include <vector>
-#endif
 
 #include "orm/constants.hpp"
 #include "orm/macros/commonnamespace.hpp"
@@ -18,7 +12,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny::Utils
+namespace Orm::Utils
 {
 
     /*! String related library class. */
@@ -32,25 +26,24 @@ namespace Orm::Tiny::Utils
         /*! Deleted destructor. */
         ~String() = delete;
 
+        /*! Check if the given string is the number, signed or unsigned. */
+        static bool isNumber(QStringView string, bool allowFloating = false,
+                             bool allowPlusMinus = false);
+
+#if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
         /*! Convert a string to snake case (snake_case). */
         static QString snake(QString string, QChar delimiter = '_');
+#endif
+
+#ifndef TINYORM_DISABLE_TOM
+        /*! Convert a value to camel case (camelCase). */
+        static QString camel(QString string);
         /*! Convert a value to studly caps case (StudlyCase). */
         static QString studly(QString string);
         /*! Convert values in the container to studly caps case (StudlyCase). */
         template<ColumnContainer T>
         static T studly(T &&strings);
-        /*! Convert a value to camel case (camelCase). */
-        static QString camel(QString string);
-        /*! Convert a string to kebab case. (kebab-case). */
-        inline static QString kebab(const QString &string);
 
-#if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
-        /*! Check if the given string is the number, signed or unsigned. */
-        static bool isNumber(QStringView string, bool allowFloating = false,
-                             bool allowPlusMinus = false);
-#endif
-
-#ifndef TINYORM_DISABLE_TOM
         /*! Split a string by the given width (not in the middle of a word). */
         static std::vector<QString>
         splitStringByWidth(const QString &string, int width);
@@ -66,14 +59,15 @@ namespace Orm::Tiny::Utils
                                  QChar lastCharacter);
 #endif
 
-#ifndef TINYORM_DISABLE_ORM
-        /*! Get the singular form of an English word. */
-        static QString singular(const QString &string);
-#endif
+//        /*! Convert a string to kebab case. (kebab-case). */
+//        inline static QString kebab(const QString &string);
+//        /*! Get the singular form of an English word. */
+//        static QString singular(const QString &string);
     };
 
     /* public */
 
+#ifndef TINYORM_DISABLE_TOM
     template<ColumnContainer T>
     T String::studly(T &&strings)
     {
@@ -84,14 +78,15 @@ namespace Orm::Tiny::Utils
 
         return result;
     }
+#endif
 
-    QString String::kebab(const QString &string)
-    {
-        return snake(string, Orm::Constants::DASH);
-    }
+//    QString String::kebab(const QString &string)
+//    {
+//        return snake(string, Orm::Constants::DASH);
+//    }
 
-} // namespace Orm::Tiny::Utils
+} // namespace Orm::Utils
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_TINY_UTILS_STRING_HPP
+#endif // ORM_UTILS_STRING_HPP

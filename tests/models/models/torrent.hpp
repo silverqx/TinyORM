@@ -163,7 +163,7 @@ private:
 //    inline static const QVector<AttributeItem> u_attributes {
 //        {SIZE,       0},
 //        {"progress", 0},
-//        {"added_on", QDateTime::fromString("2021-04-01 15:10:10", Qt::ISODate)},
+//        {"added_on", QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)},
 //    };
 
     /*! The attributes that are mass assignable. */

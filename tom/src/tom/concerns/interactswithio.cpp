@@ -3,7 +3,7 @@
 #include <QCommandLineParser>
 
 #include <orm/constants.hpp>
-#include <orm/tiny/utils/string.hpp>
+#include <orm/utils/string.hpp>
 
 #include "tom/terminal.hpp"
 #include "tom/tomconstants.hpp"
@@ -17,7 +17,7 @@ using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
 
-using StringUtils = Orm::Tiny::Utils::String;
+using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::ansi;
 using Tom::Constants::noansi;

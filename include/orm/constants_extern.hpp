@@ -82,11 +82,13 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString strict_;
     SHAREDLIB_EXPORT extern const QString engine_;
     SHAREDLIB_EXPORT extern const QString dont_drop;
+    SHAREDLIB_EXPORT extern const QString qt_timezone;
 
     SHAREDLIB_EXPORT extern const QString isolation_level;
     SHAREDLIB_EXPORT extern const QString foreign_key_constraints;
     SHAREDLIB_EXPORT extern const QString check_database_exists;
     SHAREDLIB_EXPORT extern const QString prefix_indexes;
+    SHAREDLIB_EXPORT extern const QString return_qdatetime;
 
     SHAREDLIB_EXPORT extern const QString H127001;
     SHAREDLIB_EXPORT extern const QString LOCALHOST;
@@ -94,8 +96,8 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString P5432;
     SHAREDLIB_EXPORT extern const QString ROOT;
     SHAREDLIB_EXPORT extern const QString UTC;
-    SHAREDLIB_EXPORT extern const QString LOCAL;
-    SHAREDLIB_EXPORT extern const QString SYSTEM;
+    SHAREDLIB_EXPORT extern const QString LOCAL; // PostgreSQL time zone
+    SHAREDLIB_EXPORT extern const QString SYSTEM; // MySQL time zone
     SHAREDLIB_EXPORT extern const QString TZ00;
     SHAREDLIB_EXPORT extern const QString PUBLIC;
     SHAREDLIB_EXPORT extern const QString UTF8;

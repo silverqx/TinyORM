@@ -51,9 +51,12 @@ sourcesList += \
     $$PWD/orm/schema/sqliteschemabuilder.cpp \
     $$PWD/orm/sqliteconnection.cpp \
     $$PWD/orm/support/configurationoptionsparser.cpp \
+    $$PWD/orm/types/sqlquery.cpp \
     $$PWD/orm/utils/configuration.cpp \
     $$PWD/orm/utils/fs.cpp \
+    $$PWD/orm/utils/helpers.cpp \
     $$PWD/orm/utils/query.cpp \
+    $$PWD/orm/utils/string.cpp \
     $$PWD/orm/utils/thread.cpp \
     $$PWD/orm/utils/type.cpp \
 
@@ -65,10 +68,6 @@ sourcesList += \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
         $$PWD/orm/tiny/tinytypes.cpp \
         $$PWD/orm/tiny/utils/attribute.cpp \
-
-!disable_orm|!disable_tom: \
-    sourcesList += \
-        $$PWD/orm/tiny/utils/string.cpp \
 
 SOURCES += $$sorted(sourcesList)
 

@@ -5,8 +5,8 @@
 #include <range/v3/view/transform.hpp>
 
 #include <orm/constants.hpp>
-#include <orm/tiny/utils/string.hpp>
 #include <orm/utils/container.hpp>
+#include <orm/utils/string.hpp>
 
 #include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
@@ -22,7 +22,7 @@ using Orm::Constants::NAME;
 using Orm::Constants::NOSPACE;
 
 using ContainerUtils = Orm::Utils::Container;
-using StringUtils = Orm::Tiny::Utils::String;
+using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::MakeMigration;
 using Tom::Constants::MakeSeeder;

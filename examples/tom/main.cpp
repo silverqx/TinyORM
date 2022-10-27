@@ -77,7 +77,10 @@ std::shared_ptr<DatabaseManager> setupManager()
             {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
             {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
             {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
+            // SYSTEM - set the time zone to your local MySQL server time zone
             {timezone_,       TZ00},
+            // Specifies what time zone all QDateTime-s will have
+            {qt_timezone,     QVariant::fromValue(Qt::UTC)},
             {prefix_,         EMPTY},
             {prefix_indexes,  true},
             {strict_,         true},
@@ -97,8 +100,18 @@ std::shared_ptr<DatabaseManager> setupManager()
             {username_,      qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
             {password_,      qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
             {charset_,       qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
-            // I don't use timezone types in postgres anyway
+            // LOCAL/DEFAULT - set the time zone to your local PostgreSQL server time zone
             {timezone_,      UTC},
+            // Specifies what time zone all QDateTime-s will have
+            {qt_timezone,    QVariant::fromValue(Qt::UTC)},
+            // Examples of qt_timezone
+//            {qt_timezone,     QVariant::fromValue(QTimeZone("Europe/Bratislava"))},
+//            {qt_timezone,     "Europe/Prague"}, // Will be converted to QTimeZone("Europe/Prague")
+//            {qt_timezone,     QVariant::fromValue(QTimeZone("UTC+04"))},
+//            {qt_timezone,     "-03:00"},
+//            {qt_timezone,     3600}, // Offset from UTC
+//            {qt_timezone,     QVariant::fromValue(Qt::LocalTime)},
+//            {qt_timezone,     {}}, // The same as Qt::LocalTime
             {prefix_,        EMPTY},
             {prefix_indexes, true},
             // ConnectionFactory provides a default value for this (for reference only)
@@ -112,6 +125,10 @@ std::shared_ptr<DatabaseManager> setupManager()
             {database_,               qEnvironmentVariable("DB_SQLITE_DATABASE", {})},
             {foreign_key_constraints, true},
             {check_database_exists,   true},
+            // Specifies what time zone all QDateTime-s will have
+            {qt_timezone,             QVariant::fromValue(Qt::UTC)},
+            // Return QDateTime with the correct time zone instead of QString
+            {return_qdatetime,        true},
             {prefix_,                 EMPTY},
         }}
     },

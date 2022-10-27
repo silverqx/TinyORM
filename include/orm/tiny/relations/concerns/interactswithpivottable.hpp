@@ -5,7 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QDateTime>
 #include <QtSql/QSqlRecord>
 
 #include <range/v3/algorithm/sort.hpp>

@@ -3,12 +3,14 @@
 #include <QtTest>
 
 #include "orm/db.hpp"
+#include "orm/sqliteconnection.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
 
 #include "models/type.hpp"
 
+using Orm::Constants::ID;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
@@ -16,6 +18,7 @@ using Orm::Constants::QSQLITE;
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::Exceptions::InvalidFormatError;
+using Orm::SQLiteConnection;
 
 using Orm::Tiny::CastItem;
 using Orm::Tiny::CastType;
@@ -136,6 +139,10 @@ private Q_SLOTS:
     void defaultCast_datetime() const;
     void defaultCast_date() const;
 
+    void defaultCast_timestamp_QSQLITE_OffReturnQDateTime() const;
+    void defaultCast_datetime_QSQLITE_OffReturnQDateTime() const;
+    void defaultCast_date_QSQLITE_OffReturnQDateTime() const;
+
     void defaultCast_blob() const;
 
     /* Default Null casts */
@@ -236,6 +243,11 @@ private:
 
     /*! Generate a call wrapped for the QVariant::typeId/userType for Qt5/6. */
     inline static auto typeIdWrapper(const QVariant &attribute);
+
+    /*! Disable the return_qdatetime for the current connection. */
+    static void disableReturnQDateTime(const QString &connection);
+    /*! Enable the return_qdatetime for the current connection. */
+    static void enableReturnQDateTime(const QString &connection);
 
     /*! Cache a Type model by a connection name and row type */
     mutable std::unordered_map<ModelCacheKey, Type> m_modelsCache {};
@@ -966,15 +978,13 @@ void tst_CastAttributes::defaultCast_timestamp() const
     auto attribute = type.getAttribute("timestamp");
     auto typeId = typeIdWrapper(attribute);
 
-    if (const auto driverName = DB::driverName(connection);
-        driverName == QSQLITE
-    )
-        QCOMPARE(typeId(), QMetaType::QString);
-    else
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+    QCOMPARE(typeId(), QMetaType::QDateTime);
 
-    QCOMPARE(attribute.value<QDateTime>(),
-             QDateTime::fromString("2022-09-09 08:41:28", Qt::ISODate));
+    auto datetimeActual = attribute.value<QDateTime>();
+
+    QCOMPARE(datetimeActual,
+             QDateTime::fromString("2022-09-09 08:41:28z", Qt::ISODate));
+    QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
 }
 
 void tst_CastAttributes::defaultCast_datetime() const
@@ -986,15 +996,13 @@ void tst_CastAttributes::defaultCast_datetime() const
     auto attribute = type.getAttribute("datetime");
     auto typeId = typeIdWrapper(attribute);
 
-    if (const auto driverName = DB::driverName(connection);
-        driverName == QSQLITE
-    )
-        QCOMPARE(typeId(), QMetaType::QString);
-    else
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+    QCOMPARE(typeId(), QMetaType::QDateTime);
 
-    QCOMPARE(attribute.value<QDateTime>(),
-             QDateTime::fromString("2022-09-10 08:41:28", Qt::ISODate));
+    auto timestampActual = attribute.value<QDateTime>();
+
+    QCOMPARE(timestampActual,
+             QDateTime::fromString("2022-09-10 08:41:28z", Qt::ISODate));
+    QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
 }
 
 void tst_CastAttributes::defaultCast_date() const
@@ -1006,15 +1014,95 @@ void tst_CastAttributes::defaultCast_date() const
     auto attribute = type.getAttribute("date");
     auto typeId = typeIdWrapper(attribute);
 
-    if (const auto driverName = DB::driverName(connection);
-        driverName == QSQLITE
-    )
-        QCOMPARE(typeId(), QMetaType::QString);
-    else
-        QCOMPARE(typeId(), QMetaType::QDate);
+    QCOMPARE(typeId(), QMetaType::QDate);
 
-    QCOMPARE(attribute.value<QDate>(),
-             QDateTime::fromString("2022-09-11", Qt::ISODate).date());
+    QCOMPARE(attribute.value<QDate>(), QDate::fromString("2022-09-11", Qt::ISODate));
+}
+
+void tst_CastAttributes::defaultCast_timestamp_QSQLITE_OffReturnQDateTime() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    if (DB::driverName(connection) != QSQLITE)
+        QSKIP("The return_qdatetime connection config. option is only supported "
+              "for the QSQLITE driver.", );
+
+    disableReturnQDateTime(connection);
+
+    // Skip model cache (I will not create special cache logic for this)
+    auto type = Type::on(connection)->find(1);
+    Q_ASSERT(type);
+    QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
+
+    auto attribute = type->getAttribute("timestamp");
+    auto typeId = typeIdWrapper(attribute);
+
+    QCOMPARE(typeId(), QMetaType::QString);
+
+    const auto datetimeActual = attribute.value<QDateTime>();
+
+    QCOMPARE(datetimeActual,
+             QDateTime::fromString("2022-09-09 08:41:28", Qt::ISODate));
+    QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+
+    // Restore
+    enableReturnQDateTime(connection);
+}
+
+void tst_CastAttributes::defaultCast_datetime_QSQLITE_OffReturnQDateTime() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    if (DB::driverName(connection) != QSQLITE)
+        QSKIP("The return_qdatetime connection config. option is only supported "
+              "for the QSQLITE driver.", );
+
+    disableReturnQDateTime(connection);
+
+    // Skip model cache (I will not create special cache logic for this)
+    auto type = Type::on(connection)->find(1);
+    Q_ASSERT(type);
+    QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
+
+    auto attribute = type->getAttribute("datetime");
+    auto typeId = typeIdWrapper(attribute);
+
+    QCOMPARE(typeId(), QMetaType::QString);
+
+    const auto timestampActual = attribute.value<QDateTime>();
+
+    QCOMPARE(timestampActual,
+             QDateTime::fromString("2022-09-10 08:41:28", Qt::ISODate));
+    QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+
+    // Restore
+    enableReturnQDateTime(connection);
+}
+
+void tst_CastAttributes::defaultCast_date_QSQLITE_OffReturnQDateTime() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    if (DB::driverName(connection) != QSQLITE)
+        QSKIP("The return_qdatetime connection config. option is only supported "
+              "for the QSQLITE driver.", );
+
+    disableReturnQDateTime(connection);
+
+    // Skip model cache (I will not create special cache logic for this)
+    auto type = Type::on(connection)->find(1);
+    Q_ASSERT(type);
+    QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
+
+    auto attribute = type->getAttribute("date");
+    auto typeId = typeIdWrapper(attribute);
+
+    QCOMPARE(typeId(), QMetaType::QString);
+
+    QCOMPARE(attribute.value<QDate>(), QDate::fromString("2022-09-11", Qt::ISODate));
+
+    // Restore
+    enableReturnQDateTime(connection);
 }
 
 void tst_CastAttributes::defaultCast_blob() const
@@ -2310,7 +2398,7 @@ void tst_CastAttributes::cast_timestamp_to_QDateTime() const
         Q_UNREACHABLE();
 
     QCOMPARE(attribute.value<QDateTime>(),
-             QDateTime::fromString("2022-09-09T08:41:28", Qt::ISODate));
+             QDateTime::fromString("2022-09-09 08:41:28z", Qt::ISODate));
 }
 
 void tst_CastAttributes::cast_timestamp_to_QString() const
@@ -2340,7 +2428,7 @@ void tst_CastAttributes::cast_timestamp_to_QString() const
        feature and then I'm converting it back to the QDateTime and comparing.
        At least, it tests that nothing weird happened during all these conversions. */
     QCOMPARE(attribute.value<QDateTime>().toString(Qt::ISODate),
-             QString("2022-09-09T08:41:28"));
+             QString("2022-09-09T08:41:28Z"));
 }
 
 void tst_CastAttributes::cast_timestamp_to_Timestamp() const
@@ -2365,27 +2453,10 @@ void tst_CastAttributes::cast_timestamp_to_Timestamp() const
     else
         Q_UNREACHABLE();
 
-    /* The reason why this unix timestamp has to be corrected:
-       The QDateTime instance is created from a datetime value (exactly timestamp column
-       type) returned from the database, but this QDateTime instance is Qt::LocalTime
-       and when this value is converted to the CastType::Timestamp using
-       asDateTime(value).toSecsSinceEpoch() (qint64) then this local timezone is involved
-       and the resulting unix timestamp is shifted.
-       Solution for this is to provide some global config that will correct this problem,
-       but the real solution would be if Qt would allow to configure this, so a user
-       could set that all QDateTime instances will be eg. UTC BY DEFAULT and not
-       Qt::LocalTime that is currently a default. */
-    auto correctedUnixTimestamp = attribute.value<qint64>();
-    if (const auto offsetFromUtc = QDateTime::currentDateTime().offsetFromUtc();
-        offsetFromUtc != 0
-    )
-        correctedUnixTimestamp = QDateTime::fromSecsSinceEpoch(correctedUnixTimestamp)
-                                 .addSecs(offsetFromUtc).toSecsSinceEpoch();
-
-    QCOMPARE(correctedUnixTimestamp, static_cast<qint64>(1662712888));
+    QCOMPARE(attribute.value<qint64>(), static_cast<qint64>(1662712888));
     // This is not 100% ok, but I want to do also this QCOMPARE()
-    QCOMPARE(QDateTime::fromSecsSinceEpoch(attribute.value<qint64>()),
-             QDateTime::fromString("2022-09-09 08:41:28", Qt::ISODate));
+    QCOMPARE(QDateTime::fromSecsSinceEpoch(attribute.value<qint64>(), Qt::UTC),
+             QDateTime::fromString("2022-09-09 08:41:28z", Qt::ISODate));
 }
 
 void tst_CastAttributes::cast_datetime_to_QDateTime() const
@@ -2411,7 +2482,7 @@ void tst_CastAttributes::cast_datetime_to_QDateTime() const
         Q_UNREACHABLE();
 
     QCOMPARE(attribute.value<QDateTime>(),
-             QDateTime::fromString("2022-09-10 08:41:28", Qt::ISODate));
+             QDateTime::fromString("2022-09-10 08:41:28z", Qt::ISODate));
 }
 
 void tst_CastAttributes::cast_datetime_to_QString() const
@@ -2441,7 +2512,7 @@ void tst_CastAttributes::cast_datetime_to_QString() const
        feature and then I'm converting it back to the QDateTime and comparing.
        At least, it tests that nothing weird happened during all these conversions. */
     QCOMPARE(attribute.value<QDateTime>().toString(Qt::ISODate),
-             QString("2022-09-10T08:41:28"));
+             QString("2022-09-10T08:41:28Z"));
 }
 
 void tst_CastAttributes::cast_date_to_QDate() const
@@ -2467,7 +2538,8 @@ void tst_CastAttributes::cast_date_to_QDate() const
         Q_UNREACHABLE();
 
     QCOMPARE(attribute.value<QDate>(),
-             QDateTime::fromString("2022-09-11", Qt::ISODate).date());
+             // QDate doesn't have a time zone
+             QDate::fromString("2022-09-11", Qt::ISODate));
 }
 
 void tst_CastAttributes::cast_date_to_QString() const
@@ -2715,6 +2787,18 @@ tst_CastAttributes::modelNull(const QString &connection) const
 Type &tst_CastAttributes::resetCasts(Type &type)
 {
     return type.resetCasts();
+}
+
+void tst_CastAttributes::disableReturnQDateTime(const QString &connection)
+{
+    dynamic_cast<SQLiteConnection &>(DB::connection(connection))
+            .setReturnQDateTime(false);
+}
+
+void tst_CastAttributes::enableReturnQDateTime(const QString &connection)
+{
+    dynamic_cast<SQLiteConnection &>(DB::connection(connection))
+            .setReturnQDateTime(true);
 }
 
 QTEST_MAIN(tst_CastAttributes)

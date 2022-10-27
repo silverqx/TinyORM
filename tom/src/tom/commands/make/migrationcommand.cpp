@@ -3,7 +3,7 @@
 #include <QCommandLineOption>
 
 #include <orm/constants.hpp>
-#include <orm/tiny/utils/string.hpp>
+#include <orm/utils/string.hpp>
 
 #include "tom/application.hpp"
 #include "tom/commands/make/support/tableguesser.hpp"
@@ -21,7 +21,7 @@ using Orm::Constants::DASH;
 using Orm::Constants::NAME;
 using Orm::Constants::UNDERSCORE;
 
-using StringUtils = Orm::Tiny::Utils::String;
+using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::create_;
 using Tom::Constants::create_up;

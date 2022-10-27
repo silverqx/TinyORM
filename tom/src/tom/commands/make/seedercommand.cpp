@@ -1,7 +1,7 @@
 #include "tom/commands/make/seedercommand.hpp"
 
 #include <orm/constants.hpp>
-#include <orm/tiny/utils/string.hpp>
+#include <orm/utils/string.hpp>
 
 #include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
@@ -15,7 +15,7 @@ using fspath = std::filesystem::path;
 
 using Orm::Constants::NAME;
 
-using StringUtils = Orm::Tiny::Utils::String;
+using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::force;
 using Tom::Constants::fullpath;

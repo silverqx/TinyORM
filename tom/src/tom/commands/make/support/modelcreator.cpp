@@ -12,8 +12,8 @@
 #include <range/v3/view/zip.hpp>
 
 #include <orm/constants.hpp>
-#include <orm/tiny/utils/string.hpp>
 #include <orm/utils/container.hpp>
+#include <orm/utils/string.hpp>
 
 #include "tom/commands/make/modelcommandconcepts.hpp"
 #include "tom/commands/make/stubs/modelstubs.hpp"
@@ -30,7 +30,7 @@ using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
 
 using ContainerUtils = Orm::Utils::Container;
-using StringUtils    = Orm::Tiny::Utils::String;
+using StringUtils    = Orm::Utils::String;
 
 using Tom::Commands::Make::Stubs::BelongsToManyStub;
 using Tom::Commands::Make::Stubs::BelongsToManyStub2;

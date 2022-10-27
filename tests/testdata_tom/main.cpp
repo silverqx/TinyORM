@@ -16,6 +16,7 @@
 #include "migrations/2022_05_11_171100_create_tag_torrent_table.hpp"
 #include "migrations/2022_05_11_171200_create_tag_properties_table.hpp"
 #include "migrations/2022_05_11_171300_create_types_table.hpp"
+#include "migrations/2022_05_11_171400_create_datetime_table.hpp"
 
 #include "seeders/databaseseeder.hpp"
 
@@ -52,7 +53,8 @@ int main(int argc, char *argv[])
                             CreateTorrentTagsTable,
                             CreateTagTorrentTable,
                             CreateTagPropertiesTable,
-                            CreateTypesTable>()
+                            CreateTypesTable,
+                            CreateDatetimeTable>()
                 .seeders<DatabaseSeeder>()
                 // Fire it up 🔥🚀✨
                 .run();
@@ -83,6 +85,8 @@ std::shared_ptr<DatabaseManager> setupManager()
             {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION",
                                                    UTF8MB40900aici)},
             {timezone_,       TZ00},
+            // Specifies what time zone all QDateTime-s will have
+            {qt_timezone,     QVariant::fromValue(Qt::UTC)},
             {prefix_,         EMPTY},
             {prefix_indexes,  true},
             {strict_,         true},
@@ -102,8 +106,9 @@ std::shared_ptr<DatabaseManager> setupManager()
             {username_,      qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
             {password_,      qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
             {charset_,       qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
-            // I don't use timezone types in postgres anyway
             {timezone_,      UTC},
+            // Specifies what time zone all QDateTime-s will have
+            {qt_timezone,    QVariant::fromValue(Qt::UTC)},
             {prefix_,        EMPTY},
             {prefix_indexes, true},
             // ConnectionFactory provides a default value for this (for reference only)
@@ -117,6 +122,9 @@ std::shared_ptr<DatabaseManager> setupManager()
             {database_,               qEnvironmentVariable("DB_SQLITE_DATABASE", {})},
             {foreign_key_constraints, true},
             {check_database_exists,   true},
+            // Specifies what time zone all QDateTime-s will have
+            {qt_timezone,             QVariant::fromValue(Qt::UTC)},
+            {return_qdatetime,        true},
             {prefix_,                 EMPTY},
         }}
     },

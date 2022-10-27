@@ -37,10 +37,12 @@ namespace Orm
 
 MySqlConnection::MySqlConnection(
         std::function<Connectors::ConnectionName()> &&connection,
-        const QString &database, const QString &tablePrefix,
-        const QVariantHash &config
+        QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
+        QVariantHash &&config
 )
-    : DatabaseConnection(std::move(connection), database, tablePrefix, config)
+    : DatabaseConnection(
+          std::move(connection), std::move(database), std::move(tablePrefix),
+          std::move(qtTimeZone), std::move(config))
     , m_isMaria(std::nullopt)
 {
     /* We need to initialize a query grammar that is a very important part

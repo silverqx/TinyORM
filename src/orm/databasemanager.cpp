@@ -115,14 +115,14 @@ QSqlQuery DatabaseManager::qtQuery(const QString &connection)
     return this->connection(connection).getQtQuery();
 }
 
-QSqlQuery
+SqlQuery
 DatabaseManager::select(const QString &query, const QVector<QVariant> &bindings,
                         const QString &connection)
 {
     return this->connection(connection).select(query, bindings);
 }
 
-QSqlQuery
+SqlQuery
 DatabaseManager::selectOne(const QString &query, const QVector<QVariant> &bindings,
                            const QString &connection)
 {
@@ -165,8 +165,8 @@ DatabaseManager::affectingStatement(
     return this->connection(connection).affectingStatement(query, bindings);
 }
 
-QSqlQuery DatabaseManager::unprepared(const QString &query,
-                                      const QString &connection)
+SqlQuery DatabaseManager::unprepared(const QString &query,
+                                     const QString &connection)
 {
     return this->connection(connection).unprepared(query);
 }
@@ -450,7 +450,7 @@ DatabaseManager::setReconnector(const ReconnectorType &reconnector)
     return *this;
 }
 
-/* Getters */
+/* Getters / Setters */
 
 QString DatabaseManager::driverName(const QString &connection)
 {
@@ -473,6 +473,29 @@ const QString &
 DatabaseManager::hostName(const QString &connection)
 {
     return this->connection(connection).getHostName();
+}
+
+const QtTimeZoneConfig &
+DatabaseManager::qtTimeZone(const QString &connection)
+{
+    return this->connection(connection).getQtTimeZone();
+}
+
+DatabaseConnection &
+DatabaseManager::setQtTimeZone(const QVariant &timezone, const QString &connection)
+{
+    return this->connection(connection).setQtTimeZone(timezone);
+}
+
+DatabaseConnection &
+DatabaseManager::setQtTimeZone(QtTimeZoneConfig &&timezone, const QString &connection)
+{
+    return this->connection(connection).setQtTimeZone(std::move(timezone));
+}
+
+bool DatabaseManager::isConvertingTimeZone(const QString &connection)
+{
+    return this->connection(connection).isConvertingTimeZone();
 }
 
 /* Connection configurations - saved in the DatabaseManager */

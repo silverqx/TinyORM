@@ -8,6 +8,7 @@ TINY_SYSTEM_HEADER
 #include <memory>
 
 #include "orm/connectors/connectorinterface.hpp"
+#include "orm/ormtypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -31,26 +32,29 @@ namespace Connectors
 
         /*! Establish a QSqlDatabase connection based on the configuration. */
         std::unique_ptr<DatabaseConnection>
-        make(QVariantHash &config, const QString &name = "") const;
+        make(QVariantHash &config, const QString &connection) const;
 
         /*! Create a connector instance based on the configuration. */
-        std::unique_ptr<ConnectorInterface>
-        createConnector(const QVariantHash &config) const;
+        static std::unique_ptr<ConnectorInterface>
+        createConnector(const QVariantHash &config);
 
     protected:
         /*! Parse and prepare the database configuration. */
-        QVariantHash &
-        parseConfig(QVariantHash &config, const QString &name) const;
+        QVariantHash
+        parseConfig(QVariantHash &config, const QString &connection) const;
+
         /*! Modify the driver name to uppercase. */
-        void normalizeDriverName(QVariantHash &config) const;
+        static void normalizeDriverName(QVariantHash &config);
+        /*! Parse the qt_timezone configuration option. */
+        static void parseQtTimeZone(QVariantHash &config, const QString &connection);
 
         /*! Create a single database connection  instance. */
         std::unique_ptr<DatabaseConnection>
-        createSingleConnection(QVariantHash &config) const;
+        createSingleConnection(QVariantHash &&config) const;
         /*! Create a new Closure that resolves to a QSqlDatabase instance
             ( only a connection name returned ). */
         std::function<ConnectionName()>
-        createQSqlDatabaseResolver(QVariantHash &config) const;
+        createQSqlDatabaseResolver(const QVariantHash &config) const;
 
         /*! Create a new Closure that resolves to a QSqlDatabase instance ( only
             a connection name returned ) with a specific host or a vector of hosts. */
@@ -62,16 +66,18 @@ namespace Connectors
         createQSqlDatabaseResolverWithoutHosts(const QVariantHash &config) const;
 
         /*! Create a new connection instance. */
-        std::unique_ptr<DatabaseConnection>
-        createConnection(const QString &driver,
-                std::function<ConnectionName()> &&connection,
-                const QString &database, const QString &prefix = "",
-                const QVariantHash &config = {}) const;
+        static std::unique_ptr<DatabaseConnection>
+        createConnection(
+                QString &&driver, std::function<ConnectionName()> &&connection,
+                QString &&database, QString &&tablePrefix = "",
+                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+                QVariantHash &&config = {},
+                std::optional<bool> &&returnQDateTime = std::nullopt);
 
         /*! Parse the hosts configuration item into the QStringList and validate hosts. */
         QStringList parseHosts(const QVariantHash &config) const;
         /*! Check if the hosts configuration item has right format. */
-        void validateHosts(const QStringList &hosts) const;
+        static void validateHosts(const QStringList &hosts);
     };
 
 } // namespace Connectors

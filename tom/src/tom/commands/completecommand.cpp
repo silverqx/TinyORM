@@ -10,7 +10,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <orm/constants.hpp>
-#include <orm/tiny/utils/string.hpp>
+#include <orm/utils/string.hpp>
 
 #include "tom/application.hpp"
 #include "tom/tomutils.hpp"
@@ -27,7 +27,7 @@ using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
 using Orm::Constants::database_;
 
-using StringUtils = Orm::Tiny::Utils::String;
+using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::DoubleDash;
 using Tom::Constants::Env;

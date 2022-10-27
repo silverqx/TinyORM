@@ -58,14 +58,14 @@ QSqlQuery DB::qtQuery(const QString &connection)
     return manager().connection(connection).getQtQuery();
 }
 
-QSqlQuery
+SqlQuery
 DB::select(const QString &query, const QVector<QVariant> &bindings,
            const QString &connection)
 {
     return manager().connection(connection).select(query, bindings);
 }
 
-QSqlQuery
+SqlQuery
 DB::selectOne(const QString &query, const QVector<QVariant> &bindings,
               const QString &connection)
 {
@@ -107,8 +107,8 @@ DB::affectingStatement(const QString &query, const QVector<QVariant> &bindings,
     return manager().connection(connection).affectingStatement(query, bindings);
 }
 
-QSqlQuery DB::unprepared(const QString &query,
-                         const QString &connection)
+SqlQuery DB::unprepared(const QString &query,
+                        const QString &connection)
 {
     return manager().connection(connection).unprepared(query);
 }
@@ -280,7 +280,7 @@ DB::setReconnector(const ReconnectorType &reconnector)
     return manager().setReconnector(reconnector);
 }
 
-/* Getters */
+/* Getters / Setters */
 
 QString DB::driverName(const QString &connection)
 {
@@ -300,6 +300,28 @@ const QString &DB::databaseName(const QString &connection)
 const QString &DB::hostName(const QString &connection)
 {
     return manager().connection(connection).getHostName();
+}
+
+const QtTimeZoneConfig &DB::qtTimeZone(const QString &connection)
+{
+    return manager().connection(connection).getQtTimeZone();
+}
+
+DatabaseConnection &
+DB::setQtTimeZone(const QVariant &timezone, const QString &connection)
+{
+    return manager().connection(connection).setQtTimeZone(timezone);
+}
+
+DatabaseConnection &
+DB::setQtTimeZone(QtTimeZoneConfig &&timezone, const QString &connection)
+{
+    return manager().connection(connection).setQtTimeZone(std::move(timezone));
+}
+
+bool DB::isConvertingTimeZone(const QString &connection)
+{
+    return manager().connection(connection).isConvertingTimeZone();
 }
 
 /* Connection configurations - saved in the DatabaseManager */

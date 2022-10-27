@@ -9,7 +9,6 @@ TINY_SYSTEM_HEADER
 
 #include <range/v3/action/transform.hpp>
 #include <range/v3/algorithm/contains.hpp>
-#include <range/v3/view/remove_if.hpp>
 
 #include "orm/databaseconnection.hpp"
 #include "orm/tiny/concerns/buildsqueries.hpp"
@@ -237,7 +236,7 @@ namespace Orm::Tiny
         void eagerLoadRelationVisited(Relation &&relation, QVector<Model> &models,
                                       const WithItem &relationItem) const;
         /*! Create a vector of models from the QSqlQuery. */
-        QVector<Model> hydrate(QSqlQuery &&result);
+        QVector<Model> hydrate(SqlQuery &&result);
 
         /*! Get the model instance being queried. */
         inline Model &getModel() noexcept;
@@ -1065,7 +1064,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     QVector<Model>
-    Builder<Model>::hydrate(QSqlQuery &&result)
+    Builder<Model>::hydrate(SqlQuery &&result)
     {
         auto instance = newModelInstance();
 

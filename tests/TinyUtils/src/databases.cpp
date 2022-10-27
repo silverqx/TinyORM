@@ -36,6 +36,8 @@ using Orm::Constants::port_;
 using Orm::Constants::postgres_;
 using Orm::Constants::prefix_;
 using Orm::Constants::prefix_indexes;
+using Orm::Constants::return_qdatetime;
+using Orm::Constants::qt_timezone;
 using Orm::Constants::schema_;
 using Orm::Constants::strict_;
 using Orm::Constants::timezone_;
@@ -167,6 +169,8 @@ Databases::mysqlConfiguration()
         {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
         // Very important for tests
         {timezone_,       TZ00},
+        // Specifies what time zone all QDateTime-s will have
+        {qt_timezone,     QVariant::fromValue(Qt::UTC)},
         {prefix_,         EMPTY},
         {prefix_indexes,  true},
         {strict_,         true},
@@ -203,6 +207,9 @@ Databases::sqliteConfiguration()
                                                        TINYORM_SQLITE_DATABASE)},
         {foreign_key_constraints, true},
         {check_database_exists,   true},
+        // Specifies what time zone all QDateTime-s will have
+        {qt_timezone,             QVariant::fromValue(Qt::UTC)},
+        {return_qdatetime,        true},
         {prefix_,                 EMPTY},
         // FUTURE schema sqlite, prefix_indexes and sqlite, works it? test silverqx
     };
@@ -231,8 +238,9 @@ Databases::postgresConfiguration()
         {username_,      qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
         {password_,      qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
         {charset_,       qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
-        // I don't use timezone types in postgres anyway
         {timezone_,      UTC},
+        // Specifies what time zone all QDateTime-s will have
+        {qt_timezone,    QVariant::fromValue(Qt::UTC)},
         {prefix_,        EMPTY},
         {prefix_indexes, true},
         // ConnectionFactory provides a default value for this, this is only for reference

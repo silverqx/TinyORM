@@ -5,11 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QVariant>
-#include <QVector>
-
-#include <memory>
-#include <variant>
+#include <QTimeZone>
 
 #include "orm/constants.hpp"
 #include "orm/query/expression.hpp"
@@ -167,16 +163,51 @@ namespace Query
         WhereBetweenColumnsItem       betweenColumns {};
     };
 
+    /*! Time zone type for the QtTimeZoneConfig connection configuration option. */
+    enum struct QtTimeZoneType
+    {
+        /*! Don't convert time zone. */
+        DontConvert,
+        /*! QtTimeZoneConfig contains Qt::TimeSpec, use toTimeSpec() for conversion. */
+        QtTimeSpec,
+        /*! QtTimeZoneConfig contains the QTimeZone, use toTimeZone() for conversion. */
+        QTimeZone,
+        /*! QtTimeZoneConfig contains seconds, use toOffesetFromUtc() for conversion. */
+        OffsetFromUtc,
+    };
+
+    /*! Determine how the QDateTime time zone will be converted, it's saved
+        in the qt_timezone database connection configuration option. */
+    struct QtTimeZoneConfig
+    {
+        /*! Time zone type saved in the value data member. */
+        QtTimeZoneType type  {QtTimeZoneType::DontConvert};
+        /*! Time zone value. */
+        QVariant       value {};
+
+        /*! Equality comparison operator for the QtTimeZoneConfig. */
+        inline bool operator==(const QtTimeZoneConfig &) const = default;
+    };
+
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 
+// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
+Q_DECLARE_METATYPE(QTimeZone)
+// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
+Q_DECLARE_METATYPE(Qt::TimeSpec)
+
 #ifdef TINYORM_COMMON_NAMESPACE
 // NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem)
+// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
+Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::QtTimeZoneConfig)
 #else
 // NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(Orm::WhereConditionItem)
+// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
+Q_DECLARE_METATYPE(Orm::QtTimeZoneConfig)
 #endif
 
 #endif // ORM_ORMTYPES_HPP

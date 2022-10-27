@@ -24,7 +24,7 @@ namespace Orm::Tiny::Relations
         friend Model<PivotModel>;
 
         /*! Alias for the string utils. */
-        using StringUtils = Orm::Tiny::Utils::String;
+        using StringUtils = Orm::Utils::String;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 

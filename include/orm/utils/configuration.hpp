@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_UTILS_CONFIG_HPP
-#define ORM_UTILS_CONFIG_HPP
+#ifndef ORM_UTILS_CONFIGURATION_HPP
+#define ORM_UTILS_CONFIGURATION_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -12,7 +12,11 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Utils
+namespace Orm
+{
+    struct QtTimeZoneConfig;
+
+namespace Utils
 {
 
     /*! Database configuration related library class. */
@@ -30,10 +34,26 @@ namespace Orm::Utils
         static bool hasValidConfigVersion(const QVariantHash &config);
         /*! Get a valid config. version value. */
         static QString getValidConfigVersion(const QVariantHash &config);
+
+        /*! Prepare the qt_timezone config. option on the base of the current value. */
+        static QtTimeZoneConfig
+        prepareQtTimeZone(const QVariantHash &config, const QString &connection);
+        /*! Prepare the qt_timezone config. option on the base of the current value. */
+        static QtTimeZoneConfig
+        prepareQtTimeZone(const QVariant &configValue, const QString &connection);
+
+    private:
+        /*! Prepare IANA ID for the QTimeZone constructor (prepends UTC if needed). */
+        static QByteArray
+        prepareTimeZoneId(QString &&timezoneId, const QString &connection);
+        /*! Throw if the given time zone ianaId is not available. */
+        static void
+        throwIfBadTimeZoneId(const QByteArray &ianaId, const QString &connection);
     };
 
-} // namespace Orm::Utils
+} // namespace Utils
+} // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_UTILS_CONFIG_HPP
+#endif // ORM_UTILS_CONFIGURATION_HPP

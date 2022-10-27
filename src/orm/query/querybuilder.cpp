@@ -22,7 +22,7 @@ Builder::Builder(DatabaseConnection &connection, const QueryGrammar &grammar)
 
 /* Retrieving results */
 
-QSqlQuery Builder::get(const QVector<Column> &columns)
+SqlQuery Builder::get(const QVector<Column> &columns)
 {
     return onceWithColumns(columns, [this]
     {
@@ -30,13 +30,13 @@ QSqlQuery Builder::get(const QVector<Column> &columns)
     });
 }
 
-QSqlQuery Builder::find(const QVariant &id, const QVector<Column> &columns)
+SqlQuery Builder::find(const QVariant &id, const QVector<Column> &columns)
 {
     return where(ID, EQ, id).first(columns);
 }
 
-QSqlQuery Builder::findOr(const QVariant &id, const QVector<Column> &columns,
-                          const std::function<void()> &callback)
+SqlQuery Builder::findOr(const QVariant &id, const QVector<Column> &columns,
+                         const std::function<void()> &callback)
 {
     auto query = find(id, columns);
 
@@ -52,7 +52,7 @@ QSqlQuery Builder::findOr(const QVariant &id, const QVector<Column> &columns,
     return query;
 }
 
-QSqlQuery Builder::first(const QVector<Column> &columns)
+SqlQuery Builder::first(const QVector<Column> &columns)
 {
     auto query = take(1).get(columns);
 
@@ -1418,9 +1418,9 @@ Builder &Builder::clearColumns()
     return *this;
 }
 
-QSqlQuery
+SqlQuery
 Builder::onceWithColumns(const QVector<Column> &columns,
-                         const std::function<QSqlQuery()> &callback)
+                         const std::function<SqlQuery()> &callback)
 {
     // Save orignal columns
     auto original = m_columns;
@@ -1525,7 +1525,7 @@ Builder &Builder::setAggregate(const QString &function, const QVector<Column> &c
 
 /* private */
 
-QSqlQuery Builder::runSelect()
+SqlQuery Builder::runSelect()
 {
     return m_connection.select(toSql(), getBindings());
 }

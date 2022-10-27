@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include <orm/tiny/utils/string.hpp>
+#include <orm/utils/string.hpp>
 
 #include "tom/commands/make/stubs/seederstubs.hpp"
 
@@ -10,7 +10,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using fspath = std::filesystem::path;
 
-using StringUtils = Orm::Tiny::Utils::String;
+using StringUtils = Orm::Utils::String;
 
 using Tom::Commands::Make::Stubs::SeederStub;
 

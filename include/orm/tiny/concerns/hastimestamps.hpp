@@ -6,10 +6,10 @@
 TINY_SYSTEM_HEADER
 
 #include <QDateTime>
-#include <QStringList>
 
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/tinyconcepts.hpp"
+#include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -26,6 +26,9 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasTimestamps
     {
+        /*! Alias for the helper utils. */
+        using Helpers = Orm::Utils::Helpers;
+
     public:
         /*! Equality comparison operator for the HasTimestamps concern. */
         inline bool operator==(const HasTimestamps &) const noexcept = default;
@@ -49,7 +52,7 @@ namespace Concerns
         /*! Get a fresh timestamp for the model. */
         inline QDateTime freshTimestamp() const;
         /*! Get a fresh timestamp for the model. */
-        inline QString freshTimestampString() const;
+        inline QVariant freshTimestampString() const;
 
         /*! Determine if the model uses timestamps. */
         inline bool usesTimestamps() const;
@@ -144,11 +147,13 @@ namespace Concerns
     QDateTime
     HasTimestamps<Derived, AllRelations...>::freshTimestamp() const
     {
-        return QDateTime::currentDateTime();
+        // Return a timestamp with the correct time zone right away
+        return Helpers::convertTimeZone(QDateTime::currentDateTime(),
+                                        basemodel().getQtTimeZone());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QString
+    QVariant
     HasTimestamps<Derived, AllRelations...>::freshTimestampString() const
     {
         return basemodel().fromDateTime(freshTimestamp());

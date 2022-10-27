@@ -1,7 +1,7 @@
 #include "tom/concerns/printsoptions.hpp"
 
 #include <orm/constants.hpp>
-#include <orm/tiny/utils/string.hpp>
+#include <orm/utils/string.hpp>
 
 #include "tom/application.hpp"
 #include "tom/commands/command.hpp"
@@ -15,7 +15,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using Orm::Constants::COMMA;
 using Orm::Constants::SPACE;
 
-using StringUtils = Orm::Tiny::Utils::String;
+using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::ShortOption;
 using Tom::Constants::LongOption;

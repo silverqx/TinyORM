@@ -16,7 +16,7 @@ namespace Orm::Query::Concerns
 /* public */
 
 bool BuildsQueries::chunk(const int count,
-                          const std::function<bool(QSqlQuery &, int)> &callback)
+                          const std::function<bool(SqlQuery &, int)> &callback)
 {
     builder().enforceOrderBy();
 
@@ -49,10 +49,10 @@ bool BuildsQueries::chunk(const int count,
     return true;
 }
 
-bool BuildsQueries::each(const std::function<bool(QSqlQuery &, int)> &callback,
+bool BuildsQueries::each(const std::function<bool(SqlQuery &, int)> &callback,
                          const int count)
 {
-    return chunk(count, [&callback](QSqlQuery &results, const int /*unused*/)
+    return chunk(count, [&callback](SqlQuery &results, const int /*unused*/)
     {
         int index = 0;
 
@@ -97,7 +97,7 @@ bool BuildsQueries::each(const std::function<bool(QSqlQuery &, int)> &callback,
 //}
 
 bool BuildsQueries::chunkById(
-            const int count, const std::function<bool(QSqlQuery &, int)> &callback,
+            const int count, const std::function<bool(SqlQuery &, int)> &callback,
             const QString &column, const QString &alias)
 {
     const auto columnName = column.isEmpty() ? builder().defaultKeyName() : column;
@@ -153,10 +153,10 @@ bool BuildsQueries::chunkById(
 }
 
 bool BuildsQueries::eachById(
-            const std::function<bool(QSqlQuery &, int)> &callback,
+            const std::function<bool(SqlQuery &, int)> &callback,
             const int count, const QString &column, const QString &alias)
 {
-    return chunkById(count, [&callback, count](QSqlQuery &results, const int page)
+    return chunkById(count, [&callback, count](SqlQuery &results, const int page)
     {
         int index = 0;
 
@@ -171,7 +171,7 @@ bool BuildsQueries::eachById(
     }, column, alias);
 }
 
-QSqlQuery BuildsQueries::sole(const QVector<Column> &columns)
+SqlQuery BuildsQueries::sole(const QVector<Column> &columns)
 {
     auto query = builder().take(2).get(columns);
 

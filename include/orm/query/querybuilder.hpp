@@ -5,11 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtSql/QSqlQuery>
-
 #include <unordered_set>
 
-#include "orm/ormconcepts.hpp"
 #include "orm/query/concerns/buildsqueries.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/utils/query.hpp"
@@ -58,29 +55,29 @@ namespace Orm::Query
 
         /* Retrieving results */
         /*! Execute the query as a "select" statement. */
-        QSqlQuery get(const QVector<Column> &columns = {ASTERISK});
+        SqlQuery get(const QVector<Column> &columns = {ASTERISK});
         /*! Execute a query for a single record by ID. */
-        QSqlQuery find(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
+        SqlQuery find(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
 
         /*! Execute a query for a single record by ID or call a callback. */
-        QSqlQuery findOr(const QVariant &id, const QVector<Column> &columns,
-                         const std::function<void()> &callback);
+        SqlQuery findOr(const QVariant &id, const QVector<Column> &columns,
+                        const std::function<void()> &callback);
         /*! Execute a query for a single record by ID or call a callback. */
-        inline QSqlQuery findOr(const QVariant &id,
-                                const std::function<void()> &callback);
+        inline SqlQuery findOr(const QVariant &id,
+                               const std::function<void()> &callback);
 
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
-        std::pair<QSqlQuery, R>
+        std::pair<SqlQuery, R>
         findOr(const QVariant &id, const QVector<Column> &columns,
                const std::function<R()> &callback);
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
-        std::pair<QSqlQuery, R>
+        std::pair<SqlQuery, R>
         findOr(const QVariant &id, const std::function<R()> &callback);
 
         /*! Execute the query and get the first result. */
-        QSqlQuery first(const QVector<Column> &columns = {ASTERISK});
+        SqlQuery first(const QVector<Column> &columns = {ASTERISK});
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
         /*! Get a single column's value from the first result of a query if it's
@@ -791,9 +788,9 @@ namespace Orm::Query
         /*! Remove all existing columns and column bindings. */
         Builder &clearColumns();
         /*! Execute the given callback while selecting the given columns. */
-        QSqlQuery
+        SqlQuery
         onceWithColumns(const QVector<Column> &columns,
-                        const std::function<QSqlQuery()> &callback);
+                        const std::function<SqlQuery()> &callback);
 
         /*! Creates a subquery and parse it. */
         std::pair<QString, QVector<QVariant>>
@@ -832,7 +829,7 @@ namespace Orm::Query
 
     private:
         /*! Run the query as a "select" statement against the connection. */
-        QSqlQuery runSelect();
+        SqlQuery runSelect();
 
         /*! Set the table which the query is targeting. */
         inline Builder &setFrom(const FromClause &from);
@@ -918,14 +915,14 @@ namespace Orm::Query
 
     /* Retrieving results */
 
-    QSqlQuery Builder::findOr(const QVariant &id,
-                              const std::function<void()> &callback)
+    SqlQuery Builder::findOr(const QVariant &id,
+                             const std::function<void()> &callback)
     {
         return findOr(id, {ASTERISK}, callback);
     }
 
     template<typename R>
-    std::pair<QSqlQuery, R>
+    std::pair<SqlQuery, R>
     Builder::findOr(const QVariant &id, const QVector<Column> &columns,
                     const std::function<R()> &callback)
     {
@@ -946,7 +943,7 @@ namespace Orm::Query
     }
 
     template<typename R>
-    std::pair<QSqlQuery, R>
+    std::pair<SqlQuery, R>
     Builder::findOr(const QVariant &id, const std::function<R()> &callback)
     {
         return findOr<R>(id, {ASTERISK}, callback);

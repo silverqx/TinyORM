@@ -147,7 +147,7 @@ void tst_Model::save_Insert() const
 
     Torrent torrent;
 
-    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
+    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10z", Qt::ISODate);
     torrent.setAttribute(NAME, "test50")
             .setAttribute(SIZE, 50)
             .setAttribute("progress", 50)
@@ -171,7 +171,7 @@ void tst_Model::save_Insert() const
     QVERIFY(torrent.getAttribute(CREATED_AT).isValid());
     QVERIFY(torrent.getAttribute(UPDATED_AT).isValid());
 
-    // Get the fresh record from the database
+    // Get the fresh model from the database
     auto torrentToVerify = Torrent::find(torrent.getAttribute(ID));
     QVERIFY(torrentToVerify);
     QVERIFY(torrentToVerify->exists);
@@ -200,7 +200,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
 
     Torrent torrent;
 
-    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
+    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10z", Qt::ISODate);
     torrent.setAttribute(NAME, "test51")
             .setAttribute("added_on", addedOn)
             .setAttribute("hash", "5179e3af2768cdf52ec84c1f320333f68401dc61");
@@ -220,7 +220,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
     QVERIFY(torrent.getAttribute(CREATED_AT).isValid());
     QVERIFY(torrent.getAttribute(UPDATED_AT).isValid());
 
-    // Get the fresh record from the database
+    // Get the fresh model from the database
     auto torrentToVerify = Torrent::find(torrent.getAttribute(ID));
     QVERIFY(torrentToVerify);
     QVERIFY(torrentToVerify->exists);
@@ -265,7 +265,7 @@ void tst_Model::save_Insert_TableWithoutAutoincrementKey() const
     QVERIFY(setting.getAttribute(CREATED_AT).isValid());
     QVERIFY(setting.getAttribute(UPDATED_AT).isValid());
 
-    // Get the fresh record from the database
+    // Get the fresh model from the database
     auto settingToVerify = Setting::whereEq(NAME, "setting1")->first();
     QVERIFY(settingToVerify);
     QVERIFY(settingToVerify->exists);
@@ -610,7 +610,7 @@ void tst_Model::whereEq() const
     {
         auto torrent = Torrent::whereEq(
                            "added_on",
-                           QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate))
+                           QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate))
                        ->first();
         QVERIFY(torrent);
         QCOMPARE(torrent->getAttribute(ID), QVariant(1));
@@ -1059,7 +1059,7 @@ void tst_Model::firstOrCreate_Found() const
         QCOMPARE(torrent["progress"], QVariant(300));
     }
     {
-        const auto addedOn = QDateTime::currentDateTime();
+        const auto addedOn = QDateTime::currentDateTimeUtc();
 
         auto torrent = Torrent::firstOrCreate(
                            {{NAME, "test3"}},
@@ -1076,7 +1076,7 @@ void tst_Model::firstOrCreate_Found() const
         QCOMPARE(torrent[SIZE], QVariant(13));
         QCOMPARE(torrent["progress"], QVariant(300));
         QCOMPARE(torrent["added_on"],
-                QVariant(QDateTime::fromString("2020-08-03 20:11:10", Qt::ISODate)));
+                QVariant(QDateTime::fromString("2020-08-03 20:11:10z", Qt::ISODate)));
         QCOMPARE(torrent["hash"], QVariant("3579e3af2768cdf52ec84c1f320333f68401dc6e"));
     }
 }
@@ -1087,7 +1087,7 @@ void tst_Model::firstOrCreate_NotFound() const
 
     ConnectionOverride::connection = connection;
 
-    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10", Qt::ISODate);
+    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10z", Qt::ISODate);
 
     auto torrent = Torrent::firstOrCreate(
                        {{NAME, "test100"}},
@@ -1209,7 +1209,7 @@ void tst_Model::create() const
 
     ConnectionOverride::connection = connection;
 
-    const auto addedOn = QDateTime::fromString("2021-02-01 20:22:10", Qt::ISODate);
+    const auto addedOn = QDateTime::fromString("2021-02-01 20:22:10z", Qt::ISODate);
 
     auto torrent = Torrent::create({
         {NAME,       "test100"},
@@ -1250,7 +1250,7 @@ void tst_Model::create_Failed() const
 
     ConnectionOverride::connection = connection;
 
-    const auto addedOn = QDateTime::fromString("2021-02-01 20:22:10", Qt::ISODate);
+    const auto addedOn = QDateTime::fromString("2021-02-01 20:22:10z", Qt::ISODate);
 
     Torrent torrent;
     QVERIFY_EXCEPTION_THROWN((torrent = Torrent::create({
@@ -1271,7 +1271,7 @@ void tst_Model::incrementAndDecrement() const
 
     ConnectionOverride::connection = connection;
 
-    auto timeBeforeIncrement = QDateTime::currentDateTime();
+    auto timeBeforeIncrement = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeIncrement.time();
@@ -1290,7 +1290,7 @@ void tst_Model::incrementAndDecrement() const
     QCOMPARE(sizeOriginal, QVariant(14));
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
+             QVariant(QDateTime::fromString("2021-01-04 18:46:31z", Qt::ISODate)));
 
     // Increment
     torrent4_1->increment(SIZE, 2, {{"progress", 444}});
@@ -1359,7 +1359,7 @@ void tst_Model::update() const
 
     ConnectionOverride::connection = connection;
 
-    auto timeBeforeUpdate = QDateTime::currentDateTime();
+    auto timeBeforeUpdate = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeUpdate.time();
@@ -1376,7 +1376,7 @@ void tst_Model::update() const
     QVERIFY(torrent->exists);
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
+             QVariant(QDateTime::fromString("2021-01-04 18:46:31z", Qt::ISODate)));
 
     auto result = torrent->update({{"progress", 449}});
 
@@ -1464,7 +1464,7 @@ void tst_Model::upsert() const
 
     ConnectionOverride::connection = connection;
 
-    auto timeBeforeUpdate = QDateTime::currentDateTime();
+    auto timeBeforeUpdate = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeUpdate.time();
@@ -1592,7 +1592,7 @@ void tst_Model::truncate() const
     QVERIFY(result);
     QVERIFY(setting.exists);
 
-    // Get the fresh record from the database
+    // Get the fresh model from the database
     auto settingToVerify = Setting::whereEq(NAME, "truncate")->first();
     QVERIFY(settingToVerify);
     QVERIFY(settingToVerify->exists);
@@ -1616,7 +1616,7 @@ void tst_Model::massAssignment_isGuardableColumn() const
 
     Torrent_GuardableColumn torrent;
 
-    torrent.fill({{UPDATED_AT, QDateTime::currentDateTime()}});
+    torrent.fill({{UPDATED_AT, QDateTime::currentDateTimeUtc()}});
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent.getAttributes().size(), 1);
@@ -1633,10 +1633,10 @@ void tst_Model::touch_WithAttribute() const
     // Verify an original added_on value
     auto addedOnOriginal = Torrent::find(1)->getAttribute("added_on");
     QCOMPARE(addedOnOriginal,
-             QVariant(QDateTime::fromString("2020-08-01 20:11:10", Qt::ISODate)));
+             QVariant(QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate)));
 
     // Save a time before touch
-    auto timeBeforeTouch = QDateTime::currentDateTime();
+    auto timeBeforeTouch = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeTouch.time();
@@ -1691,20 +1691,15 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates() const
     auto addedOn = role->getAttribute("added_on");
     QVERIFY(addedOn.isValid() && !addedOn.isNull());
 
+    // Also the SQLite returns the QDateTime
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    // SQLite doesn't return correct underlying type in the QVariant
-    if (DB::connection(connection).driverName() != QSQLITE)
-        QCOMPARE(addedOn.typeId(), QMetaType::QDateTime);
-    else
-        QVERIFY(addedOn.canConvert<QDateTime>());
+    QCOMPARE(addedOn.typeId(), QMetaType::QDateTime);
 #else
-    if (DB::connection(connection).driverName() != QSQLITE)
-        QCOMPARE(addedOn.userType(), QMetaType::QDateTime);
-    else
-        QVERIFY(addedOn.canConvert<QDateTime>());
+    QCOMPARE(addedOn.userType(), QMetaType::QDateTime);
 #endif
     // This is most important, should return QDateTime and not int
-    QCOMPARE(addedOn.value<QDateTime>(), QDateTime::fromSecsSinceEpoch(1659361016));
+    QCOMPARE(addedOn.value<QDateTime>(),
+             QDateTime::fromSecsSinceEpoch(1659361016, Qt::UTC));
 }
 
 void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates() const

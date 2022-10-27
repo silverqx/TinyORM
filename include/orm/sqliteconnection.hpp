@@ -21,13 +21,20 @@ namespace Orm
         /*! Constructor. */
         explicit SQLiteConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
-                const QString &database = "", const QString &tablePrefix = "",
-                const QVariantHash &config = {});
+                QString &&database = "", QString &&tablePrefix = "",
+                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+                std::optional<bool> &&returnQDateTime = true,
+                QVariantHash &&config = {});
         /*! Virtual destructor. */
         inline ~SQLiteConnection() final = default;
 
         /*! Get a schema builder instance for the connection. */
         std::unique_ptr<SchemaBuilder> getSchemaBuilder() final;
+
+        /*! Determine whether to return the QDateTime or QString (SQLite only). */
+        inline bool returnQDateTime() const noexcept;
+        /*! Set return the QDateTime or QString (override the return_qdatetime). */
+        SQLiteConnection &setReturnQDateTime(bool value);
 
     protected:
         /*! Get the default query grammar instance. */
@@ -37,6 +44,15 @@ namespace Orm
         /*! Get the default post processor instance. */
         std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const final;
     };
+
+    /* public */
+
+    bool SQLiteConnection::returnQDateTime() const noexcept
+    {
+        Q_ASSERT(m_returnQDateTime);
+
+        return *m_returnQDateTime;
+    }
 
 } // namespace Orm
 

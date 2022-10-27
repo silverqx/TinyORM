@@ -100,7 +100,7 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
         if (query.exec(QStringLiteral("set time zone %1").arg(timezone)))
             return;
     } else
-        if (query.exec(QStringLiteral("set time zone '%1'").arg(timezone)))
+        if (query.exec(QStringLiteral("set time zone '%1';").arg(timezone)))
             return;
 
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);

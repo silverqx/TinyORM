@@ -3785,7 +3785,7 @@ void tst_Model_Relations::upsert() const
 
     ConnectionOverride::connection = connection;
 
-    auto timeBeforeUpdate = QDateTime::currentDateTime();
+    auto timeBeforeUpdate = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeUpdate.time();

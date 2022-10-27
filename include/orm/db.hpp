@@ -63,11 +63,11 @@ namespace Orm
         inline static Query::Expression raw(const QVariant &value);
 
         /*! Run a select statement against the database. */
-        static QSqlQuery
+        static SqlQuery
         select(const QString &query, const QVector<QVariant> &bindings = {},
                const QString &connection = "");
         /*! Run a select statement and return a single result. */
-        static QSqlQuery
+        static SqlQuery
         selectOne(const QString &query, const QVector<QVariant> &bindings = {},
                   const QString &connection = "");
         /*! Run an insert statement against the database. */
@@ -93,7 +93,7 @@ namespace Orm
                            const QString &connection = "");
 
         /*! Run a raw, unprepared query against the database. */
-        static QSqlQuery
+        static SqlQuery
         unprepared(const QString &query, const QString &connection = "");
 
         /*! Start a new database transaction. */
@@ -179,7 +179,7 @@ namespace Orm
         /*! Set the database reconnector callback. */
         static DatabaseManager &setReconnector(const ReconnectorType &reconnector);
 
-        /* Getters */
+        /* Getters / Setters */
         /*! Return the connection's driver name. */
         static QString driverName(const QString &connection = "");
         /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
@@ -188,6 +188,18 @@ namespace Orm
         static const QString &databaseName(const QString &connection = "");
         /*! Return the host name of the connected database. */
         static const QString &hostName(const QString &connection = "");
+
+        /*! Get the QtTimeZoneConfig for the current connection. */
+        static const QtTimeZoneConfig &
+        qtTimeZone(const QString &connection = "");
+        /*! Set the QtTimeZoneConfig for the current connection (override qt_timezone). */
+        static DatabaseConnection &
+        setQtTimeZone(const QVariant &timezone, const QString &connection = "");
+        /*! Set the QtTimeZoneConfig for the current connection (override qt_timezone). */
+        static DatabaseConnection &
+        setQtTimeZone(QtTimeZoneConfig &&timezone, const QString &connection = "");
+        /*! Determine whether the QDateTime time zone should be converted. */
+        static bool isConvertingTimeZone(const QString &connection = "");
 
         /* Connection configurations - saved in the DatabaseManager */
         /*! Get a configuration option value from the configuration for a connection. */

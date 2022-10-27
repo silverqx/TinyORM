@@ -1,6 +1,7 @@
 add_subdirectory(castattributes)
 add_subdirectory(model)
 add_subdirectory(model_conn_indep)
+add_subdirectory(model_qdatetime)
 add_subdirectory(model_relations)
 add_subdirectory(relations_conn_indep)
 add_subdirectory(relations_insrt_updt)

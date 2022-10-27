@@ -132,7 +132,7 @@ void tst_MySql_TinyBuilder::initTestCase()
 
 void tst_MySql_TinyBuilder::touch() const
 {
-    auto timeBeforeTouch = QDateTime::currentDateTime();
+    auto timeBeforeTouch = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeTouch.time();
@@ -160,7 +160,7 @@ void tst_MySql_TinyBuilder::touch() const
 
 void tst_MySql_TinyBuilder::touch_CustomColumn() const
 {
-    auto timeBeforeTouch = QDateTime::currentDateTime();
+    auto timeBeforeTouch = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeTouch.time();
@@ -207,14 +207,14 @@ void tst_MySql_TinyBuilder::touch_NotUsesTimestamps() const
 
 void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_With_UDates_UDateFormat() const
 {
-    // 2022-08-03 15:36:56
+    // 2022-08-03 13:36:56 UTC
     qint64 timestamp = 1659533816;
 
     // QDateTime
     {
         Role role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp));
+        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC));
 
         const auto &attributes = role.getAttributes();
 
@@ -261,13 +261,13 @@ namespace
 void tst_MySql_TinyBuilder::
      setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat() const
 {
-    // 2022-08-03 15:36:56
+    // 2022-08-03 13:36:56 UTC
     qint64 timestamp = 1659533816;
     // Prepare without u_dateFormat but with u_dates
     Role_CustomUDate::u_dates = QStringList {"added_on"};
-    /* Expected format without u_dateFormat is - 2022-08-03 15:36:56, even if the input
-       is the unix timestamp. */
-    auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp)
+    /* Expected format without u_dateFormat is - 2022-08-03 15:36:56 UTC, even if
+       the input is the unix timestamp. */
+    auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC)
                              .toString(Role_CustomUDate()
                                        .setConnection(m_connection)
                                        .getDateFormat());
@@ -276,7 +276,7 @@ void tst_MySql_TinyBuilder::
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp));
+        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC));
 
         const auto &attributes = role.getAttributes();
 
@@ -308,23 +308,23 @@ void tst_MySql_TinyBuilder::
 
 void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
 {
-    // 2022-08-03 15:36:56
+    // 2022-08-03 13:36:56 UTC
     qint64 timestamp = 1659533816;
     // Prepare without u_dates and also without u_dateFormat
     Role_CustomUDate::u_dates.clear();
 
     // QDateTime
     {
-        /* Expected format without u_dateFormat is - 2022-08-03 15:36:56, even if
+        /* Expected format without u_dateFormat is - 2022-08-03 15:36:56 UTC, even if
            the input is the unix timestamp. */
-        auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp)
+        auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC)
                                  .toString(Role_CustomUDate()
                                            .setConnection(m_connection)
                                            .getDateFormat());
 
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp));
+        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC));
 
         const auto &attributes = role.getAttributes();
 

@@ -5,7 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QDateTime>
 #ifdef TINYORM_DEBUG
 #  include <QDebug>
 #endif
@@ -19,7 +18,9 @@ TINY_SYSTEM_HEADER
 #include "orm/ormtypes.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/utils/attribute.hpp"
-#include "orm/tiny/utils/string.hpp"
+#include "orm/utils/configuration.hpp"
+#include "orm/utils/helpers.hpp"
+#include "orm/utils/string.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -33,8 +34,12 @@ namespace Orm::Tiny::Concerns
     {
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
+        /*! Alias for the configuration utils. */
+        using ConfigUtils = Orm::Utils::Configuration;
+        /*! Alias for the helper utils. */
+        using Helpers = Orm::Utils::Helpers;
         /*! Alias for the string utils. */
-        using StringUtils = Orm::Tiny::Utils::String;
+        using StringUtils = Orm::Utils::String;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
@@ -113,10 +118,10 @@ namespace Orm::Tiny::Concerns
         const QString &getDateFormat() const;
         /*! Set the date format used by the model. */
         Derived &setDateFormat(const QString &format);
-        /*! Convert a DateTime to a storable string. */
+        /*! Convert a QDateTime or QDate to a storable string. */
         QVariant fromDateTime(const QVariant &value) const;
-        /*! Convert a DateTime to a storable string. */
-        QString fromDateTime(const QDateTime &value) const;
+        /*! Convert a QDateTime or QDate to a storable string. */
+        QVariant fromDateTime(const QDateTime &value) const;
         /*! Get the attributes that should be converted to dates. */
         QStringList getDates() const;
 
@@ -195,6 +200,16 @@ namespace Orm::Tiny::Concerns
         /*! Reset the Type::u_casts. */
         inline Derived &resetCasts();
 
+        /* QDateTime time zone */
+        /*! Get the QtTimeZoneConfig for the current connection. */
+        inline const QtTimeZoneConfig &getQtTimeZone() const;
+        /*! Set the QtTimeZoneConfig for the current connection (override qt_timezone). */
+        Derived &setQtTimeZone(const QVariant &timezone);
+        /*! Set the QtTimeZoneConfig for the current connection (override qt_timezone). */
+        Derived &setQtTimeZone(QtTimeZoneConfig &&timezone);
+        /*! Determine whether the QDateTime time zone should be converted. */
+        inline bool isConvertingTimeZone() const;
+
     protected:
         /*! Transform a raw model value using mutators, casts, etc. */
         QVariant transformModelValue(const QString &key, const QVariant &value) const;
@@ -222,8 +237,6 @@ namespace Orm::Tiny::Concerns
 
         /*! Determine if the given attribute is a date. */
         bool isDateAttribute(const QString &key) const;
-        /*! Determine if the given value is a standard date format. */
-        static bool isStandardDateFormat(const QString &value);
 
         /*! Return a timestamp as QDateTime object. */
         QDateTime asDateTime(const QVariant &value) const;
@@ -231,6 +244,16 @@ namespace Orm::Tiny::Concerns
         inline QDate asDate(const QVariant &value) const;
         /*! Return a timestamp as unix timestamp. */
         inline qint64 asTimestamp(const QVariant &value) const;
+
+        /*! Return a timestamp as QDateTime or QDate object. */
+        QVariant asDateOrDateTime(const QVariant &value) const;
+        /*! Convert a QDateTime or QDate to a storable string. */
+        QVariant fromDateOrDateTime(const QVariant &value,
+                                    const QString &format) const;
+
+        /*! Get the correct QVariant(null) by a type in the QVariant and format. */
+        static QVariant nullFor_fromDateTime(const QVariant &value,
+                                             const QString &format);
 
         /*! Rehash attribute positions from the given index. */
         void rehashAttributePositions(
@@ -288,6 +311,11 @@ namespace Orm::Tiny::Concerns
         /*! The attributes that should be cast. */
         std::unordered_map<QString, CastItem> u_casts;
 
+        /*! Determine how the QDateTime time zone will be converted. */
+        mutable std::optional<QtTimeZoneConfig> m_qtTimeZone = std::nullopt;
+        /*! Determine whether the QDateTime time zone should be converted. */
+        mutable std::optional<bool> m_isConvertingTimeZone = std::nullopt;
+
     private:
         /*! Throw if the m_attributesHash doesn't contain a given attribute. */
         static void throwIfNoAttributeInHash(
@@ -334,14 +362,15 @@ namespace Orm::Tiny::Concerns
         /* If an attribute is listed as a "date", we'll convert it from a DateTime
            instance into a form proper for storage on the database tables using
            the connection grammar's date format. We will auto set the values. */
-        if (value.isValid() && (isDateAttribute(key) ||
-            // NOTE api different, if the QDateTime is detected then take it as datetime silverqx
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            value.typeId() == QMetaType::QDateTime
+        if (const auto typeId = value.typeId();
 #else
-            value.userType() == QMetaType::QDateTime
+        if (const auto typeId = value.userType();
 #endif
-        ))
+            value.isValid() && (isDateAttribute(key) ||
+            // NOTE api different, if the QDateTime or QDate is detected then take it as datetime silverqx
+            typeId == QMetaType::QDateTime || typeId == QMetaType::QDate)
+        )
             value = fromDateTime(value);
 
         // Found
@@ -689,45 +718,44 @@ namespace Orm::Tiny::Concerns
         /* The value argument must be the QDateTime type, this is how this method
            is designed. */
         Q_ASSERT(value.isValid() &&
-                 (value.canConvert<QDateTime>() || value.canConvert<qint64>()));
+                 (value.canConvert<QDateTime>() || value.canConvert<QDate>() ||
+                  value.canConvert<qint64>()));
 
         const auto &format = getDateFormat();
 
-        // Special logic for the null values, fix a null value on the base of the format
-        if (value.isNull()) {
-            if (format == QChar('U'))
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-                return QVariant(QMetaType(QMetaType::LongLong));
-
-            return QVariant(QMetaType(QMetaType::QDateTime));
-#else
-                return QVariant(QVariant::LongLong); // NOLINT(modernize-return-braced-init-list)
-
-            return QVariant(QVariant::DateTime); // NOLINT(modernize-return-braced-init-list)
-#endif
-        }
-
-        const auto datetime = asDateTime(value);
+        /* Special logic for the null values, fix a null value on the base of the format
+           and the value type. */
+        if (value.isNull())
+            return nullFor_fromDateTime(value, format);
 
         // Support unix timestamps
-        if (format == QChar('U'))
-            return datetime.toSecsSinceEpoch();
+        if (format == QChar('U')) T_UNLIKELY
+            return asTimestamp(value);
 
-        return datetime.toString(format);
+        // Convert a QDateTime or QDate to a storable string
+        else T_LIKELY
+            return fromDateOrDateTime(value, format);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QString
+    QVariant
     HasAttributes<Derived, AllRelations...>::fromDateTime(const QDateTime &value) const
     {
         /* This method is called from the HasTimestamps and SoftDeletes and the given
            value argument will be a result from the HasTimestamps::freshTimestampString().
            So it's used to create/update model timestamps and it's internal, so special
-           logic for handling a user input and null values is not needed. */
+           logic for handling a user input and null values is not needed.
+           There is no need to call the Helpers::convertTimeZone() here because it's
+           already converted in the HasTimestamps::freshTimestamp(). */
 
         /* As this is the internal method a passed value must be valid and also the null
            value will never be passed into. */
         Q_ASSERT(value.isValid() && !value.isNull());
+        // Time zone must match the qt_timezone connection config. option
+        Q_ASSERT(m_qtTimeZone && value.timeZone() ==
+                 // Obtain QTimeZone() instance on the base of the m_qtTimeZone
+                 Helpers::convertTimeZone(QDateTime::currentDateTime(), *m_qtTimeZone)
+                 .timeZone());
 
         const auto &format = getDateFormat();
 
@@ -737,10 +765,11 @@ namespace Orm::Tiny::Concerns
            the getDateFormat() outside, so I will simply return QString, it's not a big
            deal, INSERT/UPDATE clauses with '1604xxx' for the bigint columns are totaly
            ok, instead of 1604xxx as integer type. */
-        if (format == QChar('U'))
-            return QString::number(value.toSecsSinceEpoch());
+        if (format == QChar('U')) T_UNLIKELY
+            return asTimestamp(value);
 
-        return value.toString(format);
+        else T_LIKELY
+            return value.toString(format);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -960,6 +989,52 @@ namespace Orm::Tiny::Concerns
         return model;
     }
 
+    /* QDateTime time zone */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QtTimeZoneConfig &
+    HasAttributes<Derived, AllRelations...>::getQtTimeZone() const
+    {
+        // Cache the value
+        if (!m_qtTimeZone)
+            m_qtTimeZone = basemodel().getConnection().getQtTimeZone();
+
+        return *m_qtTimeZone;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::setQtTimeZone(const QVariant &timezone)
+    {
+        m_qtTimeZone = ConfigUtils::prepareQtTimeZone(timezone,
+                                                      basemodel().getConnectionName());
+
+        m_isConvertingTimeZone = m_qtTimeZone->type != QtTimeZoneType::DontConvert;
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::setQtTimeZone(QtTimeZoneConfig &&timezone)
+    {
+        m_qtTimeZone = std::move(timezone);
+
+        m_isConvertingTimeZone = m_qtTimeZone->type != QtTimeZoneType::DontConvert;
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool HasAttributes<Derived, AllRelations...>::isConvertingTimeZone() const
+    {
+        // Cache the value
+        if (!m_isConvertingTimeZone)
+            m_isConvertingTimeZone = basemodel().getConnection().isConvertingTimeZone();
+
+        return *m_isConvertingTimeZone;
+    }
+
     /* protected */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -987,10 +1062,10 @@ namespace Orm::Tiny::Concerns
             return castAttribute(key, value);
 
         /* If the attribute is listed as a date, we will convert it to the QDateTime
-           instance on retrieval, which makes it quite convenient to work with
+           or QDate instance on retrieval, which makes it quite convenient to work with
            date fields without having to create a cast for each attribute. */
         if (!value.isNull() && getDates().contains(key))
-            return asDateTime(value);
+            return asDateOrDateTime(value);
 
         return value;
     }
@@ -1133,34 +1208,6 @@ namespace Orm::Tiny::Concerns
         return getDates().contains(key) || isDateCastable(key);
     }
 
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool
-    HasAttributes<Derived, AllRelations...>::isStandardDateFormat(const QString &value)
-    {
-        // Avoid RegEx for performance reasons
-        const auto splitted = value.split(DASH, Qt::KeepEmptyParts);
-
-        if (splitted.size() != 3)
-            return false;
-
-        // Year
-        if (const auto &year = splitted.at(0);
-            year.size() != 4 || !StringUtils::isNumber(year)
-        )
-            return false;
-
-        // Month
-        const auto &month = splitted.at(1);
-        const auto monthSize = month.size();
-        if ((monthSize != 1 && monthSize != 2) || !StringUtils::isNumber(month))
-            return false;
-
-        // Day
-        const auto &day = splitted.at(2);
-        const auto daySize = day.size();
-        return (daySize == 1 || daySize == 2) && StringUtils::isNumber(day);
-    }
-
     // TODO would be good to make it the c++ way, make overload for every type, asDateTime() is protected, so I have full control over it, but I leave it for now, because there will be more methods which will use this method in the future, and it will be more clear later on silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QDateTime
@@ -1180,7 +1227,7 @@ namespace Orm::Tiny::Concerns
             value.userType() == QMetaType::QDateTime
 #endif
         )
-            return value.value<QDateTime>();
+            return Helpers::convertTimeZone(value.value<QDateTime>(), getQtTimeZone());
 
         // The value has to be convertible to the QString so we can work with it
         if (!value.canConvert<QString>())
@@ -1199,32 +1246,33 @@ namespace Orm::Tiny::Concerns
             if (auto date = QDateTime::fromSecsSinceEpoch(value.value<qint64>());
                 date.isValid()
             )
-                return date;
+                return Helpers::convertTimeZone(date, getQtTimeZone());
 
         /* If the value is in simply year, month, day format, we will instantiate the
            QDate instances from that format. Again, this provides for simple date
            fields on the database, while still supporting QDateTime conversion. */
-        if (isStandardDateFormat(valueString))
+        if (Helpers::isStandardDateFormat(valueString))
             if (auto date = QDateTime::fromString(valueString,
                                                   QStringLiteral("yyyy-M-d"));
                 date.isValid()
             )
-                return date;
+                return Helpers::setTimeZone(date, getQtTimeZone());
 
         const auto &format = getDateFormat();
 
+        // CUR tz, add more formats? eg. with the t format expression and also for Qt::TextDate to be able transform more string dates to the QDateTime instance, but have to be carefull, at 100% this would be good for the setAttribute(), but need to think about originalIsEquiv() and other scenarios where this can collide or somehow change correct behavior silverqx
         /* Finally, we will just assume this date is in the format used by default on
            the database connection and use that format to create the QDateTime object
            that is returned back out to the developers after we convert it here. */
         if (auto date = QDateTime::fromString(valueString, format);
             date.isValid()
         )
-            return date;
+            return Helpers::setTimeZone(date, getQtTimeZone());
 
         throw Orm::Exceptions::InvalidFormatError(
                     QStringLiteral("Could not parse the datetime '%1' using "
-                                   "the given format '%2'.")
-                    .arg(valueString, format));
+                                   "the given format '%2' in %3().")
+                    .arg(valueString, format, __tiny_func__));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1235,10 +1283,78 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant
+    HasAttributes<Derived, AllRelations...>::asDateOrDateTime(
+            const QVariant &value) const
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        const auto typeId = value.typeId();
+#else
+        const auto typeId = value.userType();
+#endif
+
+        if (typeId == QMetaType::QDate ||
+            (typeId == QMetaType::QString &&
+             Helpers::isStandardDateFormat(value.value<QString>()))
+        ) T_UNLIKELY
+            return asDate(value);
+
+        else T_LIKELY
+            return asDateTime(value);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant
+    HasAttributes<Derived, AllRelations...>::fromDateOrDateTime(
+            const QVariant &value, const QString &format) const
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        if (const auto typeId = value.typeId();
+#else
+        if (const auto typeId = value.userType();
+#endif
+            typeId == QMetaType::QDate ||
+            (typeId == QMetaType::QString &&
+             Helpers::isStandardDateFormat(value.value<QString>()))
+        ) T_UNLIKELY
+            return asDate(value).toString(Qt::ISODate);
+
+        else T_LIKELY
+            return asDateTime(value).toString(format);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     qint64
     HasAttributes<Derived, AllRelations...>::asTimestamp(const QVariant &value) const
     {
         return asDateTime(value).toSecsSinceEpoch();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant
+    HasAttributes<Derived, AllRelations...>::nullFor_fromDateTime(
+            const QVariant &value, const QString &format)
+    {
+        if (format == QChar('U')) T_UNLIKELY
+            return QVariant(QMetaType(QMetaType::LongLong));
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        else if (const auto typeId = value.typeId();
+                 typeId == QMetaType::QDate
+        ) T_UNLIKELY
+            return QVariant(QMetaType(QMetaType::QDate));
+
+        else T_LIKELY
+            return QVariant(QMetaType(QMetaType::QDateTime));
+#else
+        else if (const auto typeId = value.userType();
+                 typeId == QMetaType::QDate
+        ) T_UNLIKELY
+            return QVariant(QVariant::Date); // NOLINT(modernize-return-braced-init-list)
+
+        else T_LIKELY
+            return QVariant(QVariant::DateTime); // NOLINT(modernize-return-braced-init-list)
+#endif
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

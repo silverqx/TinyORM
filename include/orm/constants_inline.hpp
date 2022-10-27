@@ -81,6 +81,7 @@ namespace Orm::Constants
     inline const QString strict_     = QStringLiteral("strict");
     inline const QString engine_     = QStringLiteral("engine");
     inline const QString dont_drop   = QStringLiteral("dont_drop");
+    inline const QString qt_timezone = QStringLiteral("qt_timezone");
 
     inline const QString
     isolation_level         = QStringLiteral("isolation_level");
@@ -90,6 +91,8 @@ namespace Orm::Constants
     check_database_exists   = QStringLiteral("check_database_exists");
     inline const QString
     prefix_indexes          = QStringLiteral("prefix_indexes");
+    inline const QString
+    return_qdatetime        = QStringLiteral("return_qdatetime");
 
     inline const QString H127001   = QStringLiteral("127.0.0.1");
     inline const QString LOCALHOST = QStringLiteral("localhost");
@@ -97,8 +100,8 @@ namespace Orm::Constants
     inline const QString P5432     = QStringLiteral("5432");
     inline const QString ROOT      = QStringLiteral("root");
     inline const QString UTC       = QStringLiteral("UTC");
-    inline const QString LOCAL     = QStringLiteral("LOCAL");
-    inline const QString SYSTEM    = QStringLiteral("SYSTEM");
+    inline const QString LOCAL     = QStringLiteral("LOCAL"); // PostgreSQL time zone
+    inline const QString SYSTEM    = QStringLiteral("SYSTEM"); // MySQL time zone
     inline const QString TZ00      = QStringLiteral("+00:00");
     inline const QString PUBLIC    = QStringLiteral("public");
     inline const QString UTF8      = QStringLiteral("utf8");

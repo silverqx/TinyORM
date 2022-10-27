@@ -96,12 +96,14 @@ function(tinyorm_sources out_headers out_sources)
         support/databaseconfiguration.hpp
         support/databaseconnectionsmap.hpp
         types/log.hpp
+        types/sqlquery.hpp
         types/statementscounter.hpp
         utils/configuration.hpp
         utils/container.hpp
         utils/fs.hpp
         utils/helpers.hpp
         utils/query.hpp
+        utils/string.hpp
         utils/thread.hpp
         utils/type.hpp
         version.hpp
@@ -147,13 +149,6 @@ function(tinyorm_sources out_headers out_sources)
             tiny/types/connectionoverride.hpp
             tiny/types/syncchanges.hpp
             tiny/utils/attribute.hpp
-        )
-    endif()
-
-    # Headers used in both ORM and TOM
-    if(ORM OR TOM)
-        list(APPEND headers
-            tiny/utils/string.hpp
         )
     endif()
 
@@ -215,9 +210,12 @@ function(tinyorm_sources out_headers out_sources)
         schema/sqliteschemabuilder.cpp
         sqliteconnection.cpp
         support/configurationoptionsparser.cpp
+        types/sqlquery.cpp
         utils/configuration.cpp
         utils/fs.cpp
+        utils/helpers.cpp
         utils/query.cpp
+        utils/string.cpp
         utils/thread.cpp
         utils/type.cpp
     )
@@ -230,13 +228,6 @@ function(tinyorm_sources out_headers out_sources)
             tiny/exceptions/relationnotloadederror.cpp
             tiny/tinytypes.cpp
             tiny/utils/attribute.cpp
-        )
-    endif()
-
-    # Sources needed in both ORM and TOM
-    if(ORM OR TOM)
-        list(APPEND sources
-            tiny/utils/string.cpp
         )
     endif()
 

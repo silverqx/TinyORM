@@ -171,7 +171,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
 
     ConnectionOverride::connection = connection;
 
-    auto timeBeforeIncrement = QDateTime::currentDateTime();
+    auto timeBeforeIncrement = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeIncrement.time();
@@ -190,7 +190,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QCOMPARE(sizeOriginal, QVariant(14));
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
+             QVariant(QDateTime::fromString("2021-01-04 18:46:31z", Qt::ISODate)));
 
     // Increment
     Torrent::whereEq(ID, 4)->increment(SIZE, 2, {{"progress", 444}});
@@ -221,7 +221,7 @@ void tst_TinyBuilder::update() const
 
     ConnectionOverride::connection = connection;
 
-    auto timeBeforeUpdate = QDateTime::currentDateTime();
+    auto timeBeforeUpdate = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeUpdate.time();
@@ -238,7 +238,7 @@ void tst_TinyBuilder::update() const
     QVERIFY(torrent->exists);
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime::fromString("2021-01-04 18:46:31", Qt::ISODate)));
+             QVariant(QDateTime::fromString("2021-01-04 18:46:31z", Qt::ISODate)));
 
     auto [affected, query] = Torrent::whereEq(ID, 4)->update({{"progress", 447}});
     QCOMPARE(affected, 1);
@@ -281,7 +281,7 @@ void tst_TinyBuilder::update_SameValue() const
 
     ConnectionOverride::connection = connection;
 
-    auto timeBeforeUpdate = QDateTime::currentDateTime();
+    auto timeBeforeUpdate = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeUpdate.time();

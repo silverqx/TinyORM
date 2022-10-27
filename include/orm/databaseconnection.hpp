@@ -5,8 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtSql/QSqlDatabase>
-
 #include "orm/concerns/countsqueries.hpp"
 #include "orm/concerns/detectslostconnections.hpp"
 #include "orm/concerns/logsqueries.hpp"
@@ -17,6 +15,7 @@ TINY_SYSTEM_HEADER
 #include "orm/query/processors/processor.hpp"
 #include "orm/schema/grammars/schemagrammar.hpp"
 #include "orm/schema/schemabuilder.hpp"
+#include "orm/types/sqlquery.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -58,8 +57,16 @@ namespace Orm
         /*! Constructor. */
         explicit DatabaseConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
-                const QString &database = "", const QString &tablePrefix = "",
-                const QVariantHash &config = {});
+                QString &&database = "", QString &&tablePrefix = "",
+                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+                QVariantHash &&config = {});
+        /*! Constructor for the SQLite connection. */
+        explicit DatabaseConnection(
+                std::function<Connectors::ConnectionName()> &&connection,
+                QString &&database = "", QString &&tablePrefix = "",
+                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+                std::optional<bool> &&returnQDateTime = true,
+                QVariantHash &&config = {});
         /*! Pure virtual destructor. */
         inline ~DatabaseConnection() override = 0;
 
@@ -82,15 +89,15 @@ namespace Orm
 
         /* Running SQL Queries */
         /*! Run a select statement against the database. */
-        QSqlQuery
+        SqlQuery
         select(const QString &queryString,
                const QVector<QVariant> &bindings = {});
         /*! Run a select statement against the database. */
-        inline QSqlQuery
+        inline SqlQuery
         selectFromWriteConnection(const QString &queryString,
                                   const QVector<QVariant> &bindings = {});
         /*! Run a select statement and return a single result. */
-        QSqlQuery
+        SqlQuery
         selectOne(const QString &queryString,
                   const QVector<QVariant> &bindings = {});
         /*! Run an insert statement against the database. */
@@ -116,7 +123,7 @@ namespace Orm
                            const QVector<QVariant> &bindings = {});
 
         /*! Run a raw, unprepared query against the database (good for DDL queries). */
-        QSqlQuery unprepared(const QString &queryString);
+        SqlQuery unprepared(const QString &queryString);
 
         /* Obtain connection instance */
         /*! Get underlying database connection (QSqlDatabase). */
@@ -191,6 +198,15 @@ namespace Orm
         /*! Get the host name of the connected database. */
         inline const QString &getHostName() const noexcept;
 
+        /*! Get the QtTimeZoneConfig for the current connection. */
+        inline const QtTimeZoneConfig &getQtTimeZone() const noexcept;
+        /*! Set the QtTimeZoneConfig for the current connection (override qt_timezone). */
+        DatabaseConnection &setQtTimeZone(const QVariant &timezone);
+        /*! Set the QtTimeZoneConfig for the current connection (override qt_timezone). */
+        DatabaseConnection &setQtTimeZone(QtTimeZoneConfig &&timezone) noexcept;
+        /*! Determine whether the QDateTime time zone should be converted. */
+        inline bool isConvertingTimeZone() const noexcept;
+
         /* Others */
         /*! Execute the given callback in "dry run" mode. */
         QVector<Log>
@@ -252,6 +268,12 @@ namespace Orm
         const QString m_database;
         /*! The table prefix for the connection. */
         QString m_tablePrefix;
+        /*! Determine how the QDateTime time zone will be converted. */
+        QtTimeZoneConfig m_qtTimeZone;
+        /*! Determine whether the QDateTime time zone should be converted. */
+        bool m_isConvertingTimeZone;
+        /*! Determine whether to return the QDateTime or QString (SQLite only). */
+        std::optional<bool> m_returnQDateTime = std::nullopt;
         /*! The database connection configuration options. */
         const QVariantHash m_config;
         /*! The reconnector instance for the connection. */
@@ -273,6 +295,9 @@ namespace Orm
         QSqlQuery prepareQuery(const QString &queryString);
         /*! Get a new invalid QSqlQuery instance for the pretend. */
         inline static QSqlQuery getQtQueryForPretend();
+
+        /*! Prepare the QDateTime query binding for execution. */
+        QDateTime prepareBinding(const QDateTime &binding) const;
 
         /*! Handle a query exception. */
         template<typename Return>
@@ -327,7 +352,7 @@ namespace Orm
 
     /* Running SQL Queries */
 
-    QSqlQuery
+    SqlQuery
     DatabaseConnection::selectFromWriteConnection(const QString &queryString,
                                                   const QVector<QVariant> &bindings)
     {
@@ -413,6 +438,18 @@ namespace Orm
     {
         return m_hostName;
     }
+
+    const QtTimeZoneConfig &DatabaseConnection::getQtTimeZone() const noexcept
+    {
+        return m_qtTimeZone;
+    }
+
+    bool DatabaseConnection::isConvertingTimeZone() const noexcept
+    {
+        return m_isConvertingTimeZone;
+    }
+
+    /* Others */
 
     bool DatabaseConnection::pretending() const
     {

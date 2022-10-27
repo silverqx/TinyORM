@@ -75,7 +75,9 @@ struct UserType
     bool exists;
     /*! Primary key ID. */
     quint64 id;
+    /*! Updated at timestamp. */
     QDateTime updatedAt;
+    /*! Created at timestamp. */
     QDateTime deletedAt;
     /*! Is model trashed? */
     bool trashed;
@@ -214,13 +216,13 @@ void tst_SoftDeletes::onlyTrashed() const
 
 namespace
 {
-    const auto UpdatedAt4Original = QDateTime::fromString("2022-01-04 17:46:31", // clazy:exclude=non-pod-global-static
+    const auto UpdatedAt4Original = QDateTime::fromString("2022-01-04 17:46:31z", // clazy:exclude=non-pod-global-static
                                                           Qt::ISODate);
-    const auto DeletedAt4Original = QDateTime::fromString("2022-01-04 20:46:31", // clazy:exclude=non-pod-global-static
+    const auto DeletedAt4Original = QDateTime::fromString("2022-01-04 20:46:31z", // clazy:exclude=non-pod-global-static
                                                           Qt::ISODate);
-    const auto UpdatedAt5Original = QDateTime::fromString("2022-01-05 17:46:31", // clazy:exclude=non-pod-global-static
+    const auto UpdatedAt5Original = QDateTime::fromString("2022-01-05 17:46:31z", // clazy:exclude=non-pod-global-static
                                                           Qt::ISODate);
-    const auto DeletedAt5Original = QDateTime::fromString("2022-01-05 20:46:31", // clazy:exclude=non-pod-global-static
+    const auto DeletedAt5Original = QDateTime::fromString("2022-01-05 20:46:31z", // clazy:exclude=non-pod-global-static
                                                           Qt::ISODate);
 } // namespace
 
@@ -240,7 +242,7 @@ void tst_SoftDeletes::restore_remove_OnModel() const
         QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), DeletedAt5Original);
         QVERIFY(user->trashed());
 
-        auto timeBeforeRestore = QDateTime::currentDateTime();
+        auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
         // Reset milliseconds to 0
         {
             auto time = timeBeforeRestore.time();
@@ -273,7 +275,7 @@ void tst_SoftDeletes::restore_remove_OnModel() const
             QVERIFY(!userValidate->trashed());
         }
 
-        auto timeBeforeRemove = QDateTime::currentDateTime();
+        auto timeBeforeRemove = QDateTime::currentDateTimeUtc();
         // Reset milliseconds to 0
         {
             auto time = timeBeforeRemove.time();
@@ -356,7 +358,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         QCOMPARE(actualValues, expectedValues);
     }
 
-    auto timeBeforeRestore = QDateTime::currentDateTime();
+    auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeRestore.time();
@@ -395,7 +397,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         QCOMPARE(actualIds, expectedIds);
     }
 
-    auto timeBeforeRemove = QDateTime::currentDateTime();
+    auto timeBeforeRemove = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeRemove.time();
@@ -499,7 +501,7 @@ void tst_SoftDeletes::restore_Trashed_OnModel() const
         QVERIFY(user->exists);
         QVERIFY(user->trashed());
 
-        auto timeBeforeRestore = QDateTime::currentDateTime();
+        auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
         // Reset milliseconds to 0
         {
             auto time = timeBeforeRestore.time();
@@ -574,7 +576,7 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
         QCOMPARE(actualValues, expectedValues);
     }
 
-    auto timeBeforeRestore = QDateTime::currentDateTime();
+    auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeRestore.time();
@@ -681,7 +683,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
         QVERIFY(user->exists);
         QVERIFY(!user->trashed());
 
-        auto timeBeforeRestore = QDateTime::currentDateTime();
+        auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
         // Reset milliseconds to 0
         {
             auto time = timeBeforeRestore.time();
@@ -733,7 +735,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
 {
     // Prepare (restore)
     {
-        auto timeBeforeRestore = QDateTime::currentDateTime();
+        auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
         // Reset milliseconds to 0
         {
             auto time = timeBeforeRestore.time();
@@ -773,7 +775,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
         }
     }
 
-    auto timeBeforeRestore = QDateTime::currentDateTime();
+    auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeRestore.time();
@@ -869,7 +871,7 @@ void tst_SoftDeletes::remove_Trashed_OnModel() const
         QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), DeletedAt5Original);
     }
 
-    auto timeBeforeRemove = QDateTime::currentDateTime();
+    auto timeBeforeRemove = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeRemove.time();
@@ -957,7 +959,7 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
         QCOMPARE(actualValues, expectedValues);
     }
 
-    auto timeBeforeRemove = QDateTime::currentDateTime();
+    auto timeBeforeRemove = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeRemove.time();
@@ -1057,7 +1059,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnModel() const
         QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
     }
 
-    auto timeBeforeRemove = QDateTime::currentDateTime();
+    auto timeBeforeRemove = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeRemove.time();
@@ -1122,7 +1124,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
 {
     // Prepare (restore)
     {
-        auto timeBeforeRestore = QDateTime::currentDateTime();
+        auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
         // Reset milliseconds to 0
         {
             auto time = timeBeforeRestore.time();
@@ -1162,7 +1164,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
         }
     }
 
-    auto timeBeforeRemove = QDateTime::currentDateTime();
+    auto timeBeforeRemove = QDateTime::currentDateTimeUtc();
     // Reset milliseconds to 0
     {
         auto time = timeBeforeRemove.time();

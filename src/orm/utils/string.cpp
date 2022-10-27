@@ -1,4 +1,4 @@
-#include "orm/tiny/utils/string.hpp"
+#include "orm/utils/string.hpp"
 
 #include <QStringList>
 
@@ -15,7 +15,7 @@ using Orm::Constants::PLUS;
 using Orm::Constants::SPACE;
 using Orm::Constants::UNDERSCORE;
 
-namespace Orm::Tiny::Utils
+namespace Orm::Utils
 {
 
 /* This is only one translation unit from the Tiny namespace also used in the tom
@@ -27,119 +27,6 @@ namespace Orm::Tiny::Utils
 
 /* public */
 
-namespace
-{
-    using SnakeCache = std::unordered_map<QString, QString>;
-
-    /*! Snake cache for already computed strings. */
-    Q_GLOBAL_STATIC(SnakeCache, snakeCache); // NOLINT(readability-redundant-member-init)
-} // namespace
-
-QString String::snake(QString string, const QChar delimiter)
-{
-    auto key = string;
-
-    if (snakeCache->contains(key))
-        return (*snakeCache)[key];
-
-    // RegExp not used for performance reasons
-    std::vector<QString::size_type> positions;
-    positions.reserve(static_cast<std::size_t>(string.size() / 2) + 2);
-
-    for (QString::size_type i = 0; i < string.size(); ++i) {
-        const auto ch = string.at(i);
-
-        if (i > 0 && ch >= QChar('A') && ch <= QChar('Z')) {
-            const auto previousChar = string.at(i - 1);
-
-            if ((previousChar >= QChar('a') && previousChar <= QChar('z')) ||
-                (previousChar >= QChar('0') && previousChar <= QChar('9'))
-            )
-                positions.push_back(i);
-        }
-    }
-
-    // Positions stay valid after inserts because reverse iterators used
-    std::ranges::for_each(positions,
-                          [&string, delimiter](const QString::size_type pos)
-    {
-        string.insert(pos, delimiter);
-    });
-
-    return (*snakeCache)[std::move(key)] = string.toLower();
-}
-
-namespace
-{
-    /*! Studly cache type. */
-    using StudlyCache = std::unordered_map<QString, QString>;
-    /*! Camel cache type. */
-    using CamelCache  = std::unordered_map<QString, QString>;
-
-    /*! Studly cache for already computed strings. */
-    Q_GLOBAL_STATIC(StudlyCache, studlyCache); // NOLINT(readability-redundant-member-init)
-    /*! Camel cache for already computed strings. */
-    Q_GLOBAL_STATIC(CamelCache, camelCache); // NOLINT(readability-redundant-member-init)
-} // namespace
-
-QString String::studly(QString string)
-{
-    auto value = string.trimmed();
-
-    // Nothing to do
-    if (value.isEmpty())
-        return string;
-
-    // Cache key
-    auto key = value;
-
-    if (studlyCache->contains(key))
-        return (*studlyCache)[key];
-
-    value.replace(DASH,       SPACE)
-         .replace(UNDERSCORE, SPACE);
-
-    auto size = value.size();
-
-    // Always upper a first character
-    if (size > 1)
-        value[0] = value[0].toUpper();
-
-    QString::size_type pos = 0;
-
-    while ((pos = value.indexOf(SPACE, pos)) != -1) {
-        // Avoid out of bound exception
-        if (++pos >= size)
-            break;
-
-        value[pos] = value[pos].toUpper();
-    }
-
-    return (*studlyCache)[std::move(key)] = value.replace(SPACE, "");
-}
-
-QString String::camel(QString string)
-{
-    auto value = string.trimmed();
-
-    // Nothing to do
-    if (value.isEmpty())
-        return string;
-
-    // Cache key
-    auto key = value;
-
-    if (camelCache->contains(key))
-        return (*camelCache)[key];
-
-    value = studly(value);
-
-    value[0] = value[0].toLower();
-
-    return (*camelCache)[std::move(key)] = value;
-}
-
-#if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
 bool String::isNumber(const QStringView string, const bool allowFloating,
                       const bool allowPlusMinus)
 {
@@ -183,9 +70,122 @@ bool String::isNumber(const QStringView string, const bool allowFloating,
 
     return nonDigit == string.cend();
 }
+
+#if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
+namespace
+{
+    using SnakeCache = std::unordered_map<QString, QString>;
+
+    /*! Snake cache for already computed strings. */
+    Q_GLOBAL_STATIC(SnakeCache, snakeCache); // NOLINT(readability-redundant-member-init)
+} // namespace
+
+QString String::snake(QString string, const QChar delimiter)
+{
+    auto key = string;
+
+    if (snakeCache->contains(key))
+        return (*snakeCache)[key];
+
+    // RegExp not used for performance reasons
+    std::vector<QString::size_type> positions;
+    positions.reserve(static_cast<std::size_t>(string.size() / 2) + 2);
+
+    for (QString::size_type i = 0; i < string.size(); ++i) {
+        const auto ch = string.at(i);
+
+        if (i > 0 && ch >= QChar('A') && ch <= QChar('Z')) {
+            const auto previousChar = string.at(i - 1);
+
+            if ((previousChar >= QChar('a') && previousChar <= QChar('z')) ||
+                (previousChar >= QChar('0') && previousChar <= QChar('9'))
+            )
+                positions.push_back(i);
+        }
+    }
+
+    // Positions stay valid after inserts because reverse iterators used
+    std::ranges::for_each(positions,
+                          [&string, delimiter](const QString::size_type pos)
+    {
+        string.insert(pos, delimiter);
+    });
+
+    return (*snakeCache)[std::move(key)] = string.toLower();
+}
 #endif
 
 #ifndef TINYORM_DISABLE_TOM
+namespace
+{
+    /*! Studly cache type. */
+    using StudlyCache = std::unordered_map<QString, QString>;
+    /*! Camel cache type. */
+    using CamelCache  = std::unordered_map<QString, QString>;
+
+    /*! Studly cache for already computed strings. */
+    Q_GLOBAL_STATIC(StudlyCache, studlyCache); // NOLINT(readability-redundant-member-init)
+    /*! Camel cache for already computed strings. */
+    Q_GLOBAL_STATIC(CamelCache, camelCache); // NOLINT(readability-redundant-member-init)
+} // namespace
+
+QString String::camel(QString string)
+{
+    auto value = string.trimmed();
+
+    // Nothing to do
+    if (value.isEmpty())
+        return string;
+
+    // Cache key
+    auto key = value;
+
+    if (camelCache->contains(key))
+        return (*camelCache)[key];
+
+    value = studly(value);
+
+    value[0] = value[0].toLower();
+
+    return (*camelCache)[std::move(key)] = value;
+}
+
+QString String::studly(QString string)
+{
+    auto value = string.trimmed();
+
+    // Nothing to do
+    if (value.isEmpty())
+        return string;
+
+    // Cache key
+    auto key = value;
+
+    if (studlyCache->contains(key))
+        return (*studlyCache)[key];
+
+    value.replace(DASH,       SPACE)
+         .replace(UNDERSCORE, SPACE);
+
+    auto size = value.size();
+
+    // Always upper a first character
+    if (size > 1)
+        value[0] = value[0].toUpper();
+
+    QString::size_type pos = 0;
+
+    while ((pos = value.indexOf(SPACE, pos)) != -1) {
+        // Avoid out of bound exception
+        if (++pos >= size)
+            break;
+
+        value[pos] = value[pos].toUpper();
+    }
+
+    return (*studlyCache)[std::move(key)] = value.replace(SPACE, "");
+}
+
 namespace
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -317,16 +317,14 @@ QString String::wrapValue(const QString &string, const QChar firstCharacter,
 }
 #endif
 
-#ifndef TINYORM_DISABLE_ORM
-QString String::singular(const QString &string)
-{
-    if (!string.endsWith(QChar('s')))
-        return string;
+//QString String::singular(const QString &string)
+//{
+//    if (!string.endsWith(QChar('s')))
+//        return string;
 
-    return string.chopped(1);
-}
-#endif
+//    return string.chopped(1);
+//}
 
-} // namespace Orm::Tiny::Utils
+} // namespace Orm::Utils
 
 TINYORM_END_COMMON_NAMESPACE

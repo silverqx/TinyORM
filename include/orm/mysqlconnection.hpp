@@ -21,8 +21,9 @@ namespace Orm
         /*! Constructor. */
         explicit MySqlConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
-                const QString &database = "", const QString &tablePrefix = "",
-                const QVariantHash &config = {});
+                QString &&database = "", QString &&tablePrefix = "",
+                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+                QVariantHash &&config = {});
         /*! Virtual destructor. */
         inline ~MySqlConnection() final = default;
 

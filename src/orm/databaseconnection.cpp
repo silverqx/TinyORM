@@ -1,14 +1,18 @@
 #include "orm/databaseconnection.hpp"
 
-#include <QDateTime>
 #if defined(TINYORM_MYSQL_PING)
 #  include <QDebug>
 #endif
 
+#include "orm/macros/likely.hpp"
 #include "orm/query/querybuilder.hpp"
+#include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using ConfigUtils = Orm::Utils::Configuration;
+using Helpers = Orm::Utils::Helpers;
 
 namespace Orm
 {
@@ -35,12 +39,31 @@ namespace Orm
 
 DatabaseConnection::DatabaseConnection(
         std::function<Connectors::ConnectionName()> &&connection,
-        const QString &database, const QString &tablePrefix, const QVariantHash &config // NOLINT(modernize-pass-by-value)
+        QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
+        QVariantHash &&config
 )
     : m_qtConnectionResolver(std::move(connection))
-    , m_database(database)
-    , m_tablePrefix(tablePrefix)
-    , m_config(config)
+    , m_database(std::move(database))
+    , m_tablePrefix(std::move(tablePrefix))
+    , m_qtTimeZone(std::move(qtTimeZone))
+    , m_isConvertingTimeZone(m_qtTimeZone.type != QtTimeZoneType::DontConvert)
+    , m_config(std::move(config))
+    , m_connectionName(getConfig(NAME).value<QString>())
+    , m_hostName(getConfig(host_).value<QString>())
+{}
+
+DatabaseConnection::DatabaseConnection(
+        std::function<Connectors::ConnectionName()> &&connection,
+        QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
+        std::optional<bool> &&returnQDateTime, QVariantHash &&config
+)
+    : m_qtConnectionResolver(std::move(connection))
+    , m_database(std::move(database))
+    , m_tablePrefix(std::move(tablePrefix))
+    , m_qtTimeZone(std::move(qtTimeZone))
+    , m_isConvertingTimeZone(m_qtTimeZone.type != QtTimeZoneType::DontConvert)
+    , m_returnQDateTime(std::move(returnQDateTime))
+    , m_config(std::move(config))
     , m_connectionName(getConfig(NAME).value<QString>())
     , m_hostName(getConfig(host_).value<QString>())
 {}
@@ -78,16 +101,17 @@ std::shared_ptr<QueryBuilder> DatabaseConnection::query()
 
 /* Running SQL Queries */
 
-QSqlQuery
+SqlQuery
 DatabaseConnection::select(const QString &queryString,
                            const QVector<QVariant> &bindings)
 {
     const auto functionName = __tiny_func__;
 
-    return run<QSqlQuery>(queryString, bindings, Prepared,
-               [this, &functionName]
-               (const QString &queryString_, const QVector<QVariant> &bindings_)
-               -> QSqlQuery
+    auto query = run<QSqlQuery>(
+                     queryString, bindings, Prepared,
+                     [this, &functionName]
+                     (const QString &queryString_, const QVector<QVariant> &bindings_)
+                     -> QSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -114,9 +138,11 @@ DatabaseConnection::select(const QString &queryString,
                         .arg(functionName),
                     query, bindings_);
     });
+
+    return {std::move(query), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
 }
 
-QSqlQuery
+SqlQuery
 DatabaseConnection::selectOne(const QString &queryString,
                               const QVector<QVariant> &bindings)
 {
@@ -207,14 +233,15 @@ DatabaseConnection::affectingStatement(const QString &queryString,
     });
 }
 
-QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
+SqlQuery DatabaseConnection::unprepared(const QString &queryString)
 {
     const auto functionName = __tiny_func__;
 
-    return run<QSqlQuery>(queryString, {}, Unprepared,
-               [this, &functionName]
-               (const QString &queryString_, const QVector<QVariant> &/*unused*/)
-               -> QSqlQuery
+    auto query = run<QSqlQuery>(
+                     queryString, {}, Unprepared,
+                     [this, &functionName]
+                     (const QString &queryString_, const QVector<QVariant> &/*unused*/)
+                     -> QSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -241,6 +268,8 @@ QSqlQuery DatabaseConnection::unprepared(const QString &queryString)
                         .arg(functionName),
                     query);
     });
+
+    return {std::move(query), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
 }
 
 /* Obtain connection instance */
@@ -320,12 +349,16 @@ DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
 #else
         switch (binding.userType()) {
 #endif
+        // QDate doesn't have a time zone
+        case QMetaType::QDate:
+            binding = binding.value<QDate>().toString(Qt::ISODate);
+            break;
+
         /* We need to transform all instances of QDateTime into the actual date string.
            Each query grammar maintains its own date string format so we'll just ask
            the grammar for the format to get from the date. */
-        case QMetaType::QDate:
         case QMetaType::QDateTime:
-            binding = binding.value<QDateTime>()
+            binding = prepareBinding(binding.value<QDateTime>())
                       .toString(m_queryGrammar->getDateFormat());
             break;
 
@@ -462,6 +495,26 @@ const QString &DatabaseConnection::driverNamePrintable()
     return *m_driverNamePrintable;
 }
 
+DatabaseConnection &
+DatabaseConnection::setQtTimeZone(const QVariant &qtTimeZone)
+{
+    m_qtTimeZone = ConfigUtils::prepareQtTimeZone(qtTimeZone, m_connectionName);
+
+    m_isConvertingTimeZone = m_qtTimeZone.type != QtTimeZoneType::DontConvert;
+
+    return *this;
+}
+
+DatabaseConnection &
+DatabaseConnection::setQtTimeZone(QtTimeZoneConfig &&qtTimeZone) noexcept
+{
+    m_qtTimeZone = std::move(qtTimeZone);
+
+    m_isConvertingTimeZone = m_qtTimeZone.type != QtTimeZoneType::DontConvert;
+
+    return *this;
+}
+
 QVector<Log>
 DatabaseConnection::pretend(const std::function<void()> &callback)
 {
@@ -551,6 +604,18 @@ QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
     query.prepare(queryString);
 
     return query;
+}
+
+QDateTime DatabaseConnection::prepareBinding(const QDateTime &binding) const
+{
+    /* Nothing to convert, the qt_timezone config. option is not valid or was not defined
+       or the QDateTime binding is null. */
+    if (!m_isConvertingTimeZone || binding.isNull())
+        return binding;
+
+    /* Convert to the time zone provided through the qt_timezone connection config. option
+       for QDateTime binding. It fixes buggy behavior of all QtSql database drivers. */
+    return Helpers::convertTimeZone(binding, m_qtTimeZone);
 }
 
 void DatabaseConnection::logConnected()
