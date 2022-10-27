@@ -19,7 +19,7 @@ class tst_Relations_Connection_Independent : public QObject // clazy:exclude=cto
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
 
     /* HasOne */

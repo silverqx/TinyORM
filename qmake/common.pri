@@ -10,7 +10,8 @@
 # Common Configuration ( also for tests )
 # ---
 
-CONFIG *= c++2a strict_c++ warn_on utf8_source hide_symbols tiny_system_headers
+CONFIG *= c++2a strict_c++ warn_on utf8_source hide_symbols no_keywords
+CONFIG *= tiny_system_headers
 CONFIG *= silent
 CONFIG -= c++11 app_bundle
 

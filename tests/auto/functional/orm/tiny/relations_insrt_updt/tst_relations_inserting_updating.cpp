@@ -34,7 +34,7 @@ class tst_Relations_Inserting_Updating : public QObject // clazy:exclude=ctor-mi
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase_data() const;
 
     void save_OnHasOneOrMany() const;

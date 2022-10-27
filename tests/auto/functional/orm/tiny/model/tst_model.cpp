@@ -44,7 +44,7 @@ class tst_Model : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase_data() const;
 
     void save_Insert() const;

@@ -27,7 +27,7 @@ class tst_TinyBuilder : public QObject // clazy:exclude=ctor-missing-parent-argu
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase_data() const;
 
     void get() const;

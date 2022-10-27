@@ -26,7 +26,7 @@ class tst_SoftDeletes : public QObject // clazy:exclude=ctor-missing-parent-argu
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
 
     void model_User_Extends_SoftDeletes();

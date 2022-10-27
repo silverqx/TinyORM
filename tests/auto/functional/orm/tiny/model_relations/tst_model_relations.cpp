@@ -63,7 +63,7 @@ class tst_Model_Relations : public QObject // clazy:exclude=ctor-missing-parent-
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase_data() const;
 
     void getRelation_EagerLoad_ManyAndOne() const;

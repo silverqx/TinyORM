@@ -37,7 +37,7 @@ class tst_MySql_TinyBuilder : public QObject // clazy:exclude=ctor-missing-paren
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
 
     /* Touching timestamps */

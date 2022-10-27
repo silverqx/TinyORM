@@ -44,7 +44,7 @@ class tst_Model_Connection_Independent : public QObject // clazy:exclude=ctor-mi
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
 
     void subscriptOperator() const;
