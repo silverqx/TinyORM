@@ -15,9 +15,6 @@ class Datetime final : public Model<Datetime>
     using Model::Model;
 
 private:
-    /*! The table associated with the model. */
-    QString u_table {"datetime"};
-
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         "datetime",

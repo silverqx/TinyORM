@@ -144,7 +144,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("datetime") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
         qtQuery.addBindValue(QDateTime::fromString("2022-08-28 13:14:15z", Qt::ISODate));
 
@@ -162,7 +162,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "datetime" from "datetime" where "id" = ?)"));
+                    R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -204,7 +204,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("datetime") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
         qtQuery.addBindValue(
                     QDateTime::fromString("2022-08-28 13:14:15+02:00", Qt::ISODate));
@@ -224,7 +224,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "datetime" from "datetime" where "id" = ?)"));
+                    R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -264,7 +264,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() co
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("datetime") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
         qtQuery.addBindValue(QString("2022-08-28 13:14:15"));
 
@@ -283,7 +283,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() co
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "datetime" from "datetime" where "id" = ?)"));
+                    R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -324,7 +324,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("timestamp") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
         qtQuery.addBindValue(QDateTime::fromString("2022-08-29 13:14:15z", Qt::ISODate));
 
@@ -343,7 +343,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "timestamp" from "datetime" where "id" = ?)"));
+                    R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -384,7 +384,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("timestamp") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
         qtQuery.addBindValue(
                     QDateTime::fromString("2022-08-29 13:14:15+02:00", Qt::ISODate));
@@ -404,7 +404,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "timestamp" from "datetime" where "id" = ?)"));
+                    R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -444,7 +444,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() c
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("timestamp") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
         qtQuery.addBindValue(QString("2022-08-29 13:14:15"));
 
@@ -463,7 +463,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() c
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "timestamp" from "datetime" where "id" = ?)"));
+                    R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -507,7 +507,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("datetime") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
         qtQuery.addBindValue(QDateTime::fromString("2022-08-28 13:14:15z", Qt::ISODate));
 
@@ -525,7 +525,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "datetime" from "datetime" where "id" = ?)"));
+                    R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -568,7 +568,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("datetime") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
         qtQuery.addBindValue(
                     QDateTime::fromString("2022-08-28 13:14:15+02:00", Qt::ISODate));
@@ -588,7 +588,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "datetime" from "datetime" where "id" = ?)"));
+                    R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -629,7 +629,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() c
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("datetime") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
         qtQuery.addBindValue(QString("2022-08-28 13:14:15"));
 
@@ -648,7 +648,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() c
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "datetime" from "datetime" where "id" = ?)"));
+                    R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -690,7 +690,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("timestamp") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
         qtQuery.addBindValue(QDateTime::fromString("2022-08-29 13:14:15z", Qt::ISODate));
 
@@ -709,7 +709,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "timestamp" from "datetime" where "id" = ?)"));
+                    R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -751,7 +751,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("timestamp") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
         qtQuery.addBindValue(
                     QDateTime::fromString("2022-08-29 13:14:15+02:00", Qt::ISODate));
@@ -771,7 +771,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "timestamp" from "datetime" where "id" = ?)"));
+                    R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -812,7 +812,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() 
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("timestamp") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
         qtQuery.addBindValue(QString("2022-08-29 13:14:15"));
 
@@ -831,7 +831,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() 
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "timestamp" from "datetime" where "id" = ?)"));
+                    R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -871,13 +871,13 @@ void tst_PostgreSQL_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"datetime", QDateTime::fromString("2022-08-28 13:14:15z",
                                                              Qt::ISODate)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -907,13 +907,13 @@ void tst_PostgreSQL_QDateTime::
 insert_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"datetime", QDateTime::fromString("2022-08-28 13:14:15+02:00",
                                                              Qt::ISODate)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -942,12 +942,12 @@ insert_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 void tst_PostgreSQL_QDateTime::insert_QString_DatetimeColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"datetime", QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -977,13 +977,13 @@ void tst_PostgreSQL_QDateTime::
 insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"timestamp", QDateTime::fromString("2022-08-28 13:14:15z",
                                                               Qt::ISODate)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1013,14 +1013,14 @@ void tst_PostgreSQL_QDateTime::
 insert_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"timestamp",
                            QDateTime::fromString("2022-08-28 13:14:15+02:00",
                                                  Qt::ISODate)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1049,12 +1049,12 @@ insert_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 void tst_PostgreSQL_QDateTime::insert_QString_TimestampColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"timestamp", QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1095,13 +1095,13 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"datetime", QDateTime::fromString("2022-08-28 13:14:15z",
                                                              Qt::ISODate)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1133,13 +1133,13 @@ insert_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"datetime", QDateTime::fromString("2022-08-28 13:14:15+02:00",
                                                              Qt::ISODate)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1170,12 +1170,12 @@ void tst_PostgreSQL_QDateTime::insert_QString_DatetimeColumn_0200OnServer() cons
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"datetime", QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "datetime"});
+        auto query = createQuery()->from("datetimes").first({ID, "datetime"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1207,13 +1207,13 @@ insert_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"timestamp", QDateTime::fromString("2022-08-28 13:14:15z",
                                                               Qt::ISODate)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1245,14 +1245,14 @@ insert_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"timestamp",
                            QDateTime::fromString("2022-08-28 13:14:15+02:00",
                                                  Qt::ISODate)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1283,12 +1283,12 @@ void tst_PostgreSQL_QDateTime::insert_QString_TimestampColumn_0200OnServer() con
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"timestamp", QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "timestamp"});
+        auto query = createQuery()->from("datetimes").first({ID, "timestamp"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1329,7 +1329,7 @@ tst_PostgreSQL_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("date") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
         qtQuery.addBindValue(QDate::fromString("2022-08-28", Qt::ISODate));
 
@@ -1347,7 +1347,7 @@ tst_PostgreSQL_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "date" from "datetime" where "id" = ?)"));
+                    R"(select "id", "date" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -1383,7 +1383,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("date") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
         qtQuery.addBindValue(QString("2022-08-28"));
 
@@ -1401,7 +1401,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "date" from "datetime" where "id" = ?)"));
+                    R"(select "id", "date" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -1442,7 +1442,7 @@ insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("date") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
         qtQuery.addBindValue(QDate::fromString("2022-08-28", Qt::ISODate));
 
@@ -1460,7 +1460,7 @@ insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "date" from "datetime" where "id" = ?)"));
+                    R"(select "id", "date" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -1498,7 +1498,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
     {
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
-        QVERIFY(qtQuery.prepare(R"(insert into "datetime" ("date") values (?))"));
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
         qtQuery.addBindValue(QString("2022-08-28"));
 
@@ -1516,7 +1516,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
         auto qtQuery = DB::connection(m_connection).getQtQuery();
 
         QVERIFY(qtQuery.prepare(
-                    R"(select "id", "date" from "datetime" where "id" = ?)"));
+                    R"(select "id", "date" from "datetimes" where "id" = ?)"));
 
         qtQuery.addBindValue(lastId);
 
@@ -1551,12 +1551,12 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 void tst_PostgreSQL_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"date", QDate::fromString("2022-08-28", Qt::ISODate)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").first({ID, "date"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1579,12 +1579,12 @@ void tst_PostgreSQL_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer()
 void tst_PostgreSQL_QDateTime::insert_QString_DateColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"date", QString("2022-08-28")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").first({ID, "date"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1612,12 +1612,12 @@ insert_QDate_UtcTimezone_DateColumn_0200OnServer() const
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"date", QDate::fromString("2022-08-28", Qt::ISODate)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").first({ID, "date"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1642,12 +1642,12 @@ void tst_PostgreSQL_QDateTime::insert_QString_DateColumn_0200OnServer() const
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetime").insertGetId(
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"date", QString("2022-08-28")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetime").first({ID, "date"});
+        auto query = createQuery()->from("datetimes").first({ID, "date"});
 
         QCOMPARE(query.size(), 1);
 
@@ -1705,7 +1705,7 @@ void tst_PostgreSQL_QDateTime::setTimezone(const QString &timezone,
 void tst_PostgreSQL_QDateTime::restore(const quint64 lastId,
                                        const bool restoreTimezone) const
 {
-    const auto [affected, query] = createQuery()->from("datetime").remove(lastId);
+    const auto [affected, query] = createQuery()->from("datetimes").remove(lastId);
 
     QVERIFY(!query.lastError().isValid());
     QVERIFY(!query.isValid() && query.isActive() && !query.isSelect());
