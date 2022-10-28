@@ -12,9 +12,17 @@
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::QMYSQL;
+using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
+using Orm::Constants::TZ00;
+using Orm::Constants::UTC;
+using Orm::Constants::qt_timezone;
+using Orm::Constants::timezone_;
+
 using Orm::DB;
 using Orm::MySqlConnection;
+using Orm::QtTimeZoneConfig;
+using Orm::QtTimeZoneType;
 
 using QueryBuilder = Orm::Query::Builder;
 using TypeUtils = Orm::Utils::Type;
@@ -42,6 +50,8 @@ private Q_SLOTS:
     void transaction_Savepoints_Commit_OneFailed() const;
     void transaction_Savepoints_Commit_AllFailed() const;
     void transaction_Savepoints_Commit_AllFailed_Double() const;
+
+    void autoTests_timezone_And_qt_timezone() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -780,6 +790,39 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         if (DB::driverName(connection) != QSQLITE)
             QVERIFY(query.size() == 0);
     }
+}
+
+void tst_DatabaseConnection::autoTests_timezone_And_qt_timezone() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto &connectionRef = DB::connection(connection);
+
+    // Original config. qt_timezone
+    QCOMPARE(DB::originalConfigValue(qt_timezone, connection),
+             QVariant::fromValue(Qt::UTC));
+
+    // Connection qt_timezone (parsed)
+    QCOMPARE(connectionRef.getQtTimeZone(),
+             (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC}));
+
+    // Time zone for the database connection (session variable)
+    const auto timezone = connectionRef.getConfig(timezone_);
+
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL
+    )
+        QCOMPARE(timezone, QVariant(TZ00));
+
+    else if (driverName == QPSQL)
+        QCOMPARE(timezone, QVariant(UTC));
+
+    else if (driverName == QSQLITE) {
+        QVERIFY(!timezone.isValid());
+        QVERIFY(!connectionRef.hasConfig(timezone_));
+
+    } else
+        Q_UNREACHABLE();
 }
 
 std::shared_ptr<QueryBuilder>
