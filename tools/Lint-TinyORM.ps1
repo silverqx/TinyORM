@@ -26,7 +26,7 @@ Param(
 
     [Parameter(HelpMessage = 'Specifies Qt version to use for compilation (sources qtenvX.ps1).')]
     [ValidateRange(5, 6)]
-    [int] $QtVersion = 5,
+    [int] $QtVersion = 6,
 
     [Parameter(HelpMessage = 'Clean CMake build (remove everything inside the -BuildPath).')]
     [switch] $Clean,
