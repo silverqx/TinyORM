@@ -13,6 +13,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/export.hpp"
 
 class QDateTime;
+class QVariant;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
