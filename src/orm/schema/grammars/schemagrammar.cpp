@@ -6,6 +6,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Helpers = Orm::Utils::Helpers;
+
 namespace Orm::SchemaNs::Grammars
 {
 
@@ -143,11 +145,7 @@ QString SchemaGrammar::getDefaultValue(const QVariant &value) const
                 "The default value has to be convertible to the QString.");
 
     // Send boolean values as '0'/'1'
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    return value.typeId() == QMetaType::Bool
-#else
-    return value.userType() == QMetaType::Bool
-#endif
+    return Helpers::qVariantTypeId(value) == QMetaType::Bool
             ? quoteString(QString::number(value.value<int>()))
             : quoteString(escapeString(value.value<QString>()));
 }

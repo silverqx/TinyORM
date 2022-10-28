@@ -4,6 +4,7 @@
 
 #include "orm/db.hpp"
 #include "orm/sqliteconnection.hpp"
+#include "orm/utils/helpers.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
@@ -23,6 +24,7 @@ using Orm::SQLiteConnection;
 using Orm::Tiny::CastItem;
 using Orm::Tiny::CastType;
 
+using Helpers = Orm::Utils::Helpers;
 using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
@@ -241,9 +243,6 @@ private:
     /*! Reset the Type::u_casts. */
     inline static Type &resetCasts(Type &type);
 
-    /*! Generate a call wrapped for the QVariant::typeId/userType for Qt5/6. */
-    inline static auto typeIdWrapper(const QVariant &attribute);
-
     /*! Disable the return_qdatetime for the current connection. */
     static void disableReturnQDateTime(const QString &connection);
     /*! Enable the return_qdatetime for the current connection. */
@@ -252,19 +251,6 @@ private:
     /*! Cache a Type model by a connection name and row type */
     mutable std::unordered_map<ModelCacheKey, Type> m_modelsCache {};
 };
-
-/* private */
-
-auto tst_CastAttributes::typeIdWrapper(const QVariant &attribute)
-{
-    /* It helps to avoid #ifdef-s for QT_VERSION in all test methods
-       for the QVariant::typeId/userType for Qt5/6. */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    return std::bind_front(&QVariant::typeId, attribute);
-#else
-    return std::bind_front(&QVariant::userType, attribute);
-#endif
-}
 
 /* private slots */
 
@@ -418,16 +404,16 @@ void tst_CastAttributes::withCasts_OnTinyBuilder() const
     QCOMPARE(type->getAttribute(Orm::ID).value<quint64>(), 1);
 
     auto attribute = type->getAttribute("smallint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else
         Q_UNREACHABLE();
 
@@ -447,16 +433,16 @@ void tst_CastAttributes::withCasts_OnModel() const
     QCOMPARE(type->getAttribute(Orm::ID).value<quint64>(), 1);
 
     auto attribute = type->getAttribute("smallint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else
         Q_UNREACHABLE();
 
@@ -505,16 +491,16 @@ void tst_CastAttributes::defaultCast_bool_true() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -528,16 +514,16 @@ void tst_CastAttributes::defaultCast_bool_false() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("bool_false");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -551,16 +537,16 @@ void tst_CastAttributes::defaultCast_smallint() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Short);
+        QCOMPARE(typeId, QMetaType::Short);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -574,16 +560,16 @@ void tst_CastAttributes::defaultCast_smallint_u() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("smallint_u");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::UShort);
+        QCOMPARE(typeId, QMetaType::UShort);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -597,16 +583,16 @@ void tst_CastAttributes::defaultCast_int() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("int");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -620,16 +606,16 @@ void tst_CastAttributes::defaultCast_int_u() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("int_u");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -643,16 +629,16 @@ void tst_CastAttributes::defaultCast_bigint() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -666,16 +652,16 @@ void tst_CastAttributes::defaultCast_bigint_u() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("bigint_u");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -689,16 +675,16 @@ void tst_CastAttributes::defaultCast_smallint_Negative() const
     auto &type = modelNegative(connection);
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Short);
+        QCOMPARE(typeId, QMetaType::Short);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -712,16 +698,16 @@ void tst_CastAttributes::defaultCast_int_Negative() const
     auto &type = modelNegative(connection);
 
     auto attribute = type.getAttribute("int");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -735,16 +721,16 @@ void tst_CastAttributes::defaultCast_bigint_Negative() const
     auto &type = modelNegative(connection);
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -761,16 +747,16 @@ void tst_CastAttributes::defaultCast_double() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("double");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else
         Q_UNREACHABLE();
 
@@ -787,16 +773,16 @@ void tst_CastAttributes::defaultCast_double_Negative() const
     auto &type = modelNegative(connection);
 
     auto attribute = type.getAttribute("double");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else
         Q_UNREACHABLE();
 
@@ -817,9 +803,9 @@ void tst_CastAttributes::defaultCast_double_NaN() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("double_nan");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::Double);
+    QCOMPARE(typeId, QMetaType::Double);
     QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::quiet_NaN());
 }
 
@@ -837,9 +823,9 @@ void tst_CastAttributes::defaultCast_double_Infinity() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("double_infinity");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::Double);
+    QCOMPARE(typeId, QMetaType::Double);
     QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::infinity());
 }
 
@@ -853,16 +839,16 @@ void tst_CastAttributes::defaultCast_decimal() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else
         Q_UNREACHABLE();
 
@@ -879,16 +865,16 @@ void tst_CastAttributes::defaultCast_decimal_Negative() const
     auto &type = modelNegative(connection);
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else
         Q_UNREACHABLE();
 
@@ -909,9 +895,9 @@ void tst_CastAttributes::defaultCast_decimal_NaN() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("decimal_nan");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::Double);
+    QCOMPARE(typeId, QMetaType::Double);
     QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::quiet_NaN());
 }
 
@@ -929,9 +915,9 @@ void tst_CastAttributes::defaultCast_decimal_Infinity() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("decimal_infinity");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::Double);
+    QCOMPARE(typeId, QMetaType::Double);
     QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::infinity());
 }
 
@@ -942,9 +928,9 @@ void tst_CastAttributes::defaultCast_string() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("string");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::QString);
+    QCOMPARE(typeId, QMetaType::QString);
     QCOMPARE(attribute.value<QString>(), QStringLiteral("string text"));
 }
 
@@ -955,9 +941,9 @@ void tst_CastAttributes::defaultCast_text() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("text");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::QString);
+    QCOMPARE(typeId, QMetaType::QString);
     QCOMPARE(attribute.value<QString>(), QStringLiteral("text text"));
 }
 
@@ -968,9 +954,9 @@ void tst_CastAttributes::defaultCast_timestamp() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::QDateTime);
+    QCOMPARE(typeId, QMetaType::QDateTime);
 
     auto datetimeActual = attribute.value<QDateTime>();
 
@@ -986,9 +972,9 @@ void tst_CastAttributes::defaultCast_datetime() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("datetime");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::QDateTime);
+    QCOMPARE(typeId, QMetaType::QDateTime);
 
     auto timestampActual = attribute.value<QDateTime>();
 
@@ -1004,9 +990,9 @@ void tst_CastAttributes::defaultCast_date() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("date");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::QDate);
+    QCOMPARE(typeId, QMetaType::QDate);
 
     QCOMPARE(attribute.value<QDate>(), QDate::fromString("2022-09-11", Qt::ISODate));
 }
@@ -1027,9 +1013,9 @@ void tst_CastAttributes::defaultCast_timestamp_QSQLITE_OffReturnQDateTime() cons
     QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
 
     auto attribute = type->getAttribute("timestamp");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::QString);
+    QCOMPARE(typeId, QMetaType::QString);
 
     const auto datetimeActual = attribute.value<QDateTime>();
 
@@ -1057,9 +1043,9 @@ void tst_CastAttributes::defaultCast_datetime_QSQLITE_OffReturnQDateTime() const
     QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
 
     auto attribute = type->getAttribute("datetime");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::QString);
+    QCOMPARE(typeId, QMetaType::QString);
 
     const auto timestampActual = attribute.value<QDateTime>();
 
@@ -1087,9 +1073,9 @@ void tst_CastAttributes::defaultCast_date_QSQLITE_OffReturnQDateTime() const
     QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
 
     auto attribute = type->getAttribute("date");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::QString);
+    QCOMPARE(typeId, QMetaType::QString);
 
     QCOMPARE(attribute.value<QDate>(), QDate::fromString("2022-09-11", Qt::ISODate));
 
@@ -1104,16 +1090,16 @@ void tst_CastAttributes::defaultCast_blob() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("binary");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QByteArray);
+        QCOMPARE(typeId, QMetaType::QByteArray);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QByteArray);
+        QCOMPARE(typeId, QMetaType::QByteArray);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QByteArray);
+        QCOMPARE(typeId, QMetaType::QByteArray);
     else
         Q_UNREACHABLE();
 
@@ -1142,18 +1128,18 @@ void tst_CastAttributes::defaultCast_Null_bool_true() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
         /* Look at QMYSQLResult::data(), if not null the it returns int, but the same
            logic is not true if (f.nullIndicator). */
-        QCOMPARE(typeId(), QMetaType::Char);
+        QCOMPARE(typeId, QMetaType::Char);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1167,16 +1153,16 @@ void tst_CastAttributes::defaultCast_Null_smallint() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Short);
+        QCOMPARE(typeId, QMetaType::Short);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1190,16 +1176,16 @@ void tst_CastAttributes::defaultCast_Null_smallint_u() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("smallint_u");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::UShort);
+        QCOMPARE(typeId, QMetaType::UShort);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1213,16 +1199,16 @@ void tst_CastAttributes::defaultCast_Null_int() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("int");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1236,16 +1222,16 @@ void tst_CastAttributes::defaultCast_Null_int_u() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("int_u");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1259,18 +1245,18 @@ void tst_CastAttributes::defaultCast_Null_bigint() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
         /* Look at QPSQLResult::data(), the logic for - and ULongLong is not applied
            for the null values, so it's everytime LongLong. */
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1284,18 +1270,18 @@ void tst_CastAttributes::defaultCast_Null_bigint_u() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("bigint_u");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QPSQL)
         /* Look at QPSQLResult::data(), the logic for - and ULongLong is not applied
            for the null values, so it's everytime LongLong. */
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1312,16 +1298,16 @@ void tst_CastAttributes::defaultCast_Null_double() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("double");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1342,9 +1328,9 @@ void tst_CastAttributes::defaultCast_Null_double_NaN() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("double_nan");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::Double);
+    QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
 }
 
@@ -1362,9 +1348,9 @@ void tst_CastAttributes::defaultCast_Null_double_Infinity() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("double_infinity");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::Double);
+    QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
 }
 
@@ -1378,16 +1364,16 @@ void tst_CastAttributes::defaultCast_Null_decimal() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1408,9 +1394,9 @@ void tst_CastAttributes::defaultCast_Null_decimal_NaN() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("decimal_nan");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::Double);
+    QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
 }
 
@@ -1428,9 +1414,9 @@ void tst_CastAttributes::defaultCast_Null_decimal_Infinity() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("decimal_infinity");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::Double);
+    QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
 }
 
@@ -1441,9 +1427,9 @@ void tst_CastAttributes::defaultCast_Null_string() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("string");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::QString);
+    QCOMPARE(typeId, QMetaType::QString);
     QVERIFY(attribute.isNull());
 }
 
@@ -1454,9 +1440,9 @@ void tst_CastAttributes::defaultCast_Null_text() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("text");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
-    QCOMPARE(typeId(), QMetaType::QString);
+    QCOMPARE(typeId, QMetaType::QString);
     QVERIFY(attribute.isNull());
 }
 
@@ -1467,12 +1453,12 @@ void tst_CastAttributes::defaultCast_Null_timestamp() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (DB::driverName(connection) == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(typeId, QMetaType::QDateTime);
 
     QVERIFY(attribute.isNull());
 }
@@ -1484,12 +1470,12 @@ void tst_CastAttributes::defaultCast_Null_datetime() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("datetime");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (DB::driverName(connection) == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(typeId, QMetaType::QDateTime);
 
     QVERIFY(attribute.isNull());
 }
@@ -1501,12 +1487,12 @@ void tst_CastAttributes::defaultCast_Null_date() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("date");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (DB::driverName(connection) == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(typeId, QMetaType::QDate);
 
     QVERIFY(attribute.isNull());
 }
@@ -1518,16 +1504,16 @@ void tst_CastAttributes::defaultCast_Null_blob() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("binary");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QByteArray);
+        QCOMPARE(typeId, QMetaType::QByteArray);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QByteArray);
+        QCOMPARE(typeId, QMetaType::QByteArray);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1545,16 +1531,16 @@ void tst_CastAttributes::cast_bool_true_to_bool() const
     type.mergeCasts({{"bool_true", CastType::Bool}});
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else
         Q_UNREACHABLE();
 
@@ -1570,16 +1556,16 @@ void tst_CastAttributes::cast_bool_true_to_int() const
     type.mergeCasts({{"bool_true", CastType::Integer}});
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else
         Q_UNREACHABLE();
 
@@ -1595,16 +1581,16 @@ void tst_CastAttributes::cast_bool_false_to_bool() const
     type.mergeCasts({{"bool_false", CastType::Bool}});
 
     auto attribute = type.getAttribute("bool_false");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else
         Q_UNREACHABLE();
 
@@ -1620,16 +1606,16 @@ void tst_CastAttributes::cast_bool_false_to_int() const
     type.mergeCasts({{"bool_false", CastType::Integer}});
 
     auto attribute = type.getAttribute("bool_false");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else
         Q_UNREACHABLE();
 
@@ -1645,16 +1631,16 @@ void tst_CastAttributes::cast_smallint_to_uint() const
     type.mergeCasts({{"smallint", CastType::UInteger}});
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else
         Q_UNREACHABLE();
 
@@ -1670,16 +1656,16 @@ void tst_CastAttributes::cast_smallint_u_to_ulonglong() const
     type.mergeCasts({{"smallint_u", CastType::ULongLong}});
 
     auto attribute = type.getAttribute("smallint_u");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else
         Q_UNREACHABLE();
 
@@ -1695,16 +1681,16 @@ void tst_CastAttributes::cast_int_to_ulonglong() const
     type.mergeCasts({{"int", CastType::ULongLong}});
 
     auto attribute = type.getAttribute("int");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else
         Q_UNREACHABLE();
 
@@ -1720,16 +1706,16 @@ void tst_CastAttributes::cast_int_u_to_ulonglong() const
     type.mergeCasts({{"int_u", CastType::ULongLong}});
 
     auto attribute = type.getAttribute("int_u");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::ULongLong);
+        QCOMPARE(typeId, QMetaType::ULongLong);
     else
         Q_UNREACHABLE();
 
@@ -1745,16 +1731,16 @@ void tst_CastAttributes::cast_bigint_to_QString() const
     type.mergeCasts({{"bigint", CastType::QString}});
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1770,16 +1756,16 @@ void tst_CastAttributes::cast_bigint_u_to_QString() const
     type.mergeCasts({{"bigint_u", CastType::QString}});
 
     auto attribute = type.getAttribute("bigint_u");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1795,16 +1781,16 @@ void tst_CastAttributes::cast_smallint_Negative_to_short() const
     type.mergeCasts({{"smallint", CastType::Short}});
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Short);
+        QCOMPARE(typeId, QMetaType::Short);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Short);
+        QCOMPARE(typeId, QMetaType::Short);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Short);
+        QCOMPARE(typeId, QMetaType::Short);
     else
         Q_UNREACHABLE();
 
@@ -1820,16 +1806,16 @@ void tst_CastAttributes::cast_smallint_Negative_to_int() const
     type.mergeCasts({{"smallint", CastType::Int}});
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else
         Q_UNREACHABLE();
 
@@ -1845,16 +1831,16 @@ void tst_CastAttributes::cast_smallint_Negative_to_QString() const
     type.mergeCasts({{"smallint", CastType::QString}});
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1870,16 +1856,16 @@ void tst_CastAttributes::cast_int_Negative_to_longlong() const
     type.mergeCasts({{"int", CastType::LongLong}});
 
     auto attribute = type.getAttribute("int");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -1895,16 +1881,16 @@ void tst_CastAttributes::cast_int_Negative_to_QString() const
     type.mergeCasts({{"int", CastType::QString}});
 
     auto attribute = type.getAttribute("int");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1920,16 +1906,16 @@ void tst_CastAttributes::cast_bigint_Negative_to_longlong() const
     type.mergeCasts({{"bigint", CastType::LongLong}});
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -1945,16 +1931,16 @@ void tst_CastAttributes::cast_bigint_Negative_to_QString() const
     type.mergeCasts({{"bigint", CastType::QString}});
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -1973,16 +1959,16 @@ void tst_CastAttributes::cast_double_to_longlong() const
     type.mergeCasts({{"double", CastType::LongLong}});
 
     auto attribute = type.getAttribute("double");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -2001,16 +1987,16 @@ void tst_CastAttributes::cast_double_to_QString() const
     type.mergeCasts({{"double", CastType::QString}});
 
     auto attribute = type.getAttribute("double");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -2029,16 +2015,16 @@ void tst_CastAttributes::cast_double_Negative_to_longlong() const
     type.mergeCasts({{"double", CastType::LongLong}});
 
     auto attribute = type.getAttribute("double");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -2057,16 +2043,16 @@ void tst_CastAttributes::cast_double_Negative_to_QString() const
     type.mergeCasts({{"double", CastType::QString}});
 
     auto attribute = type.getAttribute("double");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -2085,16 +2071,16 @@ void tst_CastAttributes::cast_decimal_to_Decimal() const
     type.mergeCasts({{"decimal", CastType::Decimal}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else
         Q_UNREACHABLE();
 
@@ -2113,16 +2099,16 @@ void tst_CastAttributes::cast_decimal_to_longlong() const
     type.mergeCasts({{"decimal", CastType::LongLong}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -2141,16 +2127,16 @@ void tst_CastAttributes::cast_decimal_to_QString() const
     type.mergeCasts({{"decimal", CastType::QString}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -2169,16 +2155,16 @@ void tst_CastAttributes::cast_decimal_Negative_to_Decimal() const
     type.mergeCasts({{"decimal", CastType::Decimal}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else
         Q_UNREACHABLE();
 
@@ -2197,16 +2183,16 @@ void tst_CastAttributes::cast_decimal_Negative_to_longlong() const
     type.mergeCasts({{"decimal", CastType::LongLong}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -2225,16 +2211,16 @@ void tst_CastAttributes::cast_decimal_Negative_to_QString() const
     type.mergeCasts({{"decimal", CastType::QString}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -2253,16 +2239,16 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down() const
     type.mergeCasts({{"decimal_down", {CastType::Decimal, 2}}});
 
     auto attribute = type.getAttribute("decimal_down");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else
         Q_UNREACHABLE();
 
@@ -2281,16 +2267,16 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up() const
     type.mergeCasts({{"decimal_up", {CastType::Decimal, 2}}});
 
     auto attribute = type.getAttribute("decimal_up");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else
         Q_UNREACHABLE();
 
@@ -2309,16 +2295,16 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down_Negative()
     type.mergeCasts({{"decimal_down", {CastType::Decimal, 2}}});
 
     auto attribute = type.getAttribute("decimal_down");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else
         Q_UNREACHABLE();
 
@@ -2337,16 +2323,16 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up_Negative() c
     type.mergeCasts({{"decimal_up", {CastType::Decimal, 2}}});
 
     auto attribute = type.getAttribute("decimal_up");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Double);
+        QCOMPARE(typeId, QMetaType::Double);
     else
         Q_UNREACHABLE();
 
@@ -2362,16 +2348,16 @@ void tst_CastAttributes::cast_timestamp_to_QDateTime() const
     type.mergeCasts({{"timestamp", CastType::QDateTime}});
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(typeId, QMetaType::QDateTime);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(typeId, QMetaType::QDateTime);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(typeId, QMetaType::QDateTime);
     else
         Q_UNREACHABLE();
 
@@ -2388,16 +2374,16 @@ void tst_CastAttributes::cast_timestamp_to_QString() const
     type.mergeCasts({{"timestamp", CastType::QString}});
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -2418,16 +2404,16 @@ void tst_CastAttributes::cast_timestamp_to_Timestamp() const
     type.mergeCasts({{"timestamp", CastType::Timestamp}});
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::LongLong);
+        QCOMPARE(typeId, QMetaType::LongLong);
     else
         Q_UNREACHABLE();
 
@@ -2446,16 +2432,16 @@ void tst_CastAttributes::cast_datetime_to_QDateTime() const
     type.mergeCasts({{"datetime", CastType::QDateTime}});
 
     auto attribute = type.getAttribute("datetime");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(typeId, QMetaType::QDateTime);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(typeId, QMetaType::QDateTime);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(typeId, QMetaType::QDateTime);
     else
         Q_UNREACHABLE();
 
@@ -2472,16 +2458,16 @@ void tst_CastAttributes::cast_datetime_to_QString() const
     type.mergeCasts({{"datetime", CastType::QString}});
 
     auto attribute = type.getAttribute("datetime");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -2502,16 +2488,16 @@ void tst_CastAttributes::cast_date_to_QDate() const
     type.mergeCasts({{"date", CastType::QDate}});
 
     auto attribute = type.getAttribute("date");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(typeId, QMetaType::QDate);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(typeId, QMetaType::QDate);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(typeId, QMetaType::QDate);
     else
         Q_UNREACHABLE();
 
@@ -2529,16 +2515,16 @@ void tst_CastAttributes::cast_date_to_QString() const
     type.mergeCasts({{"date", CastType::QString}});
 
     auto attribute = type.getAttribute("date");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -2554,16 +2540,16 @@ void tst_CastAttributes::cast_blob_to_QByteArray() const
     type.mergeCasts({{"binary", CastType::QByteArray}});
 
     auto attribute = type.getAttribute("binary");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QByteArray);
+        QCOMPARE(typeId, QMetaType::QByteArray);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QByteArray);
+        QCOMPARE(typeId, QMetaType::QByteArray);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QByteArray);
+        QCOMPARE(typeId, QMetaType::QByteArray);
     else
         Q_UNREACHABLE();
 
@@ -2580,16 +2566,16 @@ void tst_CastAttributes::cast_blob_to_QString() const
     type.mergeCasts({{"binary", CastType::QString}});
 
     auto attribute = type.getAttribute("binary");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::QString);
+        QCOMPARE(typeId, QMetaType::QString);
     else
         Q_UNREACHABLE();
 
@@ -2605,18 +2591,18 @@ void tst_CastAttributes::cast_null_bool_true_to_bool() const
     type.mergeCasts({{"bool_true", CastType::Bool}});
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     QVERIFY(attribute.isNull());
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Bool);
+        QCOMPARE(typeId, QMetaType::Bool);
     else
         Q_UNREACHABLE();
 
@@ -2634,18 +2620,18 @@ void tst_CastAttributes::cast_null_bool_true_to_int() const
     type.mergeCasts({{"bool_true", CastType::Integer}});
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     QVERIFY(attribute.isNull());
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::Int);
+        QCOMPARE(typeId, QMetaType::Int);
     else
         Q_UNREACHABLE();
 
@@ -2664,7 +2650,7 @@ void tst_CastAttributes::cast_existing_invalid_to_int() const
     type.mergeCasts({{"invalid", CastType::Integer}});
 
     auto attribute = type.getAttribute("invalid");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     QVERIFY(!attribute.isValid());
     QVERIFY(attribute.isNull());
@@ -2672,11 +2658,11 @@ void tst_CastAttributes::cast_existing_invalid_to_int() const
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::UnknownType);
+        QCOMPARE(typeId, QMetaType::UnknownType);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::UnknownType);
+        QCOMPARE(typeId, QMetaType::UnknownType);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::UnknownType);
+        QCOMPARE(typeId, QMetaType::UnknownType);
     else
         Q_UNREACHABLE();
 
@@ -2695,7 +2681,7 @@ void tst_CastAttributes::cast_non_existing_invalid_to_int() const
     type.mergeCasts({{"dummy-NON_EXISTENT", CastType::Integer}});
 
     auto attribute = type.getAttribute("dummy-NON_EXISTENT");
-    auto typeId = typeIdWrapper(attribute);
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     QVERIFY(!attribute.isValid());
     QVERIFY(attribute.isNull());
@@ -2703,11 +2689,11 @@ void tst_CastAttributes::cast_non_existing_invalid_to_int() const
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::UnknownType);
+        QCOMPARE(typeId, QMetaType::UnknownType);
     else if (driverName == QPSQL)
-        QCOMPARE(typeId(), QMetaType::UnknownType);
+        QCOMPARE(typeId, QMetaType::UnknownType);
     else if (driverName == QSQLITE)
-        QCOMPARE(typeId(), QMetaType::UnknownType);
+        QCOMPARE(typeId, QMetaType::UnknownType);
     else
         Q_UNREACHABLE();
 

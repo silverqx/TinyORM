@@ -37,6 +37,7 @@ using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 using Orm::Tiny::TinyBuilder;
 
+using Helpers = Orm::Utils::Helpers;
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
 
@@ -3914,22 +3915,16 @@ void tst_Model_Relations::withCasts_OnRelation() const
 
     auto attribute = torrentFile->getAttribute("progress");
 
-    /* It helps to avoid #ifdef-s for QT_VERSION for the QVariant::typeId/userType
-       for Qt5/6. */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    auto typeId = std::bind_front(&QVariant::typeId, attribute);
-#else
-    auto typeId = std::bind_front(&QVariant::userType, attribute);
-#endif
+    auto typeId = Helpers::qVariantTypeId(attribute);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else if (driverName == Orm::QPSQL)
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else if (driverName == Orm::QSQLITE)
-        QCOMPARE(typeId(), QMetaType::UInt);
+        QCOMPARE(typeId, QMetaType::UInt);
     else
         Q_UNREACHABLE();
 

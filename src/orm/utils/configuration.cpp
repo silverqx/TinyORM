@@ -4,9 +4,12 @@
 
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/ormtypes.hpp"
+#include "orm/utils/helpers.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using Helpers = Orm::Utils::Helpers;
 
 namespace Orm::Utils
 {
@@ -52,11 +55,7 @@ Configuration::prepareQtTimeZone(const QVariant &qtTimeZone, const QString &conn
     if (!qtTimeZone.isValid() || qtTimeZone.isNull())
         return {QtTimeZoneType::DontConvert, {}};
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    const auto typeId = qtTimeZone.typeId();
-#else
-    const auto typeId = qtTimeZone.userType();
-#endif
+    const auto typeId = Helpers::qVariantTypeId(qtTimeZone);
 
     if (typeId == QMetaType::fromType<Qt::TimeSpec>().id())
         return {QtTimeZoneType::QtTimeSpec, qtTimeZone.value<Qt::TimeSpec>()};

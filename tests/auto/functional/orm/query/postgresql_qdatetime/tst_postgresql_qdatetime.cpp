@@ -3,6 +3,7 @@
 
 #include "orm/db.hpp"
 #include "orm/query/querybuilder.hpp"
+#include "orm/utils/helpers.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
@@ -14,6 +15,7 @@ using Orm::DB;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 
+using Helpers = Orm::Utils::Helpers;
 using QueryBuilder = Orm::Query::Builder;
 using TypeUtils = Orm::Utils::Type;
 
@@ -87,9 +89,6 @@ private:
     [[nodiscard]] std::shared_ptr<QueryBuilder> createQuery() const;
 
     /* QDateTime with/without timezone */
-    /*! Generate a call wrapped for the QVariant::typeId/userType for Qt5/6. */
-    inline static auto typeIdWrapper(const QVariant &attribute);
-
     /*! Set the PostgreSQL timezone session variable to the UTC value. */
     inline void setUtcTimezone() const;
     /*! Set the PostgreSQL timezone session variable to the +02:00 value. */
@@ -104,19 +103,6 @@ private:
     /*! Connection name used in this test case. */
     QString m_connection {};
 };
-
-/* private */
-
-auto tst_PostgreSQL_QDateTime::typeIdWrapper(const QVariant &attribute)
-{
-    /* It helps to avoid #ifdef-s for QT_VERSION in all test methods
-       for the QVariant::typeId/userType for Qt5/6. */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    return std::bind_front(&QVariant::typeId, attribute);
-#else
-    return std::bind_front(&QVariant::userType, attribute);
-#endif
-}
 
 /* private slots */
 
@@ -180,8 +166,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 
         const auto datetimeDbVariant = qtQuery.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
@@ -242,8 +227,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 
         const auto datetimeDbVariant = qtQuery.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
@@ -302,8 +286,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() co
 
         const auto datetimeDbVariant = qtQuery.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
@@ -363,8 +346,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 
         const auto timestampDbVariant = qtQuery.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
@@ -425,8 +407,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 
         const auto timestampDbVariant = qtQuery.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
@@ -485,8 +466,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() c
 
         const auto timestampDbVariant = qtQuery.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
@@ -549,8 +529,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 
         const auto datetimeDbVariant = qtQuery.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
@@ -612,8 +591,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 
         const auto datetimeDbVariant = qtQuery.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
@@ -673,8 +651,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() c
 
         const auto datetimeDbVariant = qtQuery.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
@@ -735,8 +712,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 
         const auto timestampDbVariant = qtQuery.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
@@ -798,8 +774,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 
         const auto timestampDbVariant = qtQuery.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
@@ -859,8 +834,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() 
 
         const auto timestampDbVariant = qtQuery.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         // QPSQL ignores database TZ and returns the QDateTime in a local timezone
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
@@ -897,8 +871,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 
         const auto datetimeDbVariant = query.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -933,8 +906,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 
         const auto datetimeDbVariant = query.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -967,8 +939,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DatetimeColumn_UtcOnServer() const
 
         const auto datetimeDbVariant = query.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1003,8 +974,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 
         const auto timestampDbVariant = query.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1040,8 +1010,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 
         const auto timestampDbVariant = query.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1074,8 +1043,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_TimestampColumn_UtcOnServer() cons
 
         const auto timestampDbVariant = query.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1121,8 +1089,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 
         const auto datetimeDbVariant = query.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1159,8 +1126,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 
         const auto datetimeDbVariant = query.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1195,8 +1161,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DatetimeColumn_0200OnServer() cons
 
         const auto datetimeDbVariant = query.value("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1233,8 +1198,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 
         const auto timestampDbVariant = query.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1272,8 +1236,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 
         const auto timestampDbVariant = query.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1308,8 +1271,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_TimestampColumn_0200OnServer() con
 
         const auto timestampDbVariant = query.value("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1376,8 +1338,7 @@ tst_PostgreSQL_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
 
         const auto dateDbVariant = qtQuery.value("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
@@ -1431,8 +1392,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
 
         const auto dateDbVariant = qtQuery.value("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
@@ -1491,8 +1451,7 @@ insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() const
 
         const auto dateDbVariant = qtQuery.value("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
@@ -1548,8 +1507,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 
         const auto dateDbVariant = qtQuery.value("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
@@ -1580,8 +1538,7 @@ void tst_PostgreSQL_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer()
 
         const auto dateDbVariant = query.value("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
@@ -1608,8 +1565,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DateColumn_UtcOnServer() const
 
         const auto dateDbVariant = query.value("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
@@ -1641,8 +1597,7 @@ insert_QDate_UtcTimezone_DateColumn_0200OnServer() const
 
         const auto dateDbVariant = query.value("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
@@ -1671,8 +1626,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DateColumn_0200OnServer() const
 
         const auto dateDbVariant = query.value("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);

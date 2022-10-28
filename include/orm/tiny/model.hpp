@@ -1396,11 +1396,7 @@ namespace Orm::Tiny
 
         for (const auto &[key, value] : attributes)
             if (value.isValid() && !value.isNull() &&
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-                value.typeId() == QMetaType::QDateTime
-#else
-                value.userType() == QMetaType::QDateTime
-#endif
+                Helpers::qVariantTypeId(value) == QMetaType::QDateTime
             )
                 throw Orm::Exceptions::InvalidArgumentError(
                         message.arg(TypeUtils::classPureBasename<Derived>(), key));

@@ -26,6 +26,7 @@ using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
 using Orm::Tiny::Model;
 
+using Helpers = Orm::Utils::Helpers;
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
 
@@ -1690,11 +1691,7 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates() const
     QVERIFY(addedOn.isValid() && !addedOn.isNull());
 
     // Also the SQLite returns the QDateTime
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QCOMPARE(addedOn.typeId(), QMetaType::QDateTime);
-#else
-    QCOMPARE(addedOn.userType(), QMetaType::QDateTime);
-#endif
+    QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::QDateTime);
     // This is most important, should return QDateTime and not int
     QCOMPARE(addedOn.value<QDateTime>(),
              QDateTime::fromSecsSinceEpoch(1659361016, Qt::UTC));
@@ -1713,19 +1710,13 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates() const
     auto addedOn = role->getAttribute("added_on");
     QVERIFY(addedOn.isValid() && !addedOn.isNull());
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     /* Only MySQL returns correct underlying type, the SQLite doesn't care and PostgreSQL
        returns ULongLong. */
     if (DB::connection(connection).driverName() == QMYSQL)
-        QCOMPARE(addedOn.typeId(), QMetaType::LongLong);
+        QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::LongLong);
     else
         QVERIFY(addedOn.canConvert<qint64>());
-#else
-    if (DB::connection(connection).driverName() == QMYSQL)
-        QCOMPARE(addedOn.userType(), QMetaType::LongLong);
-    else
-        QVERIFY(addedOn.canConvert<qint64>());
-#endif
+
     // This is most important, should return int and not QDateTime
     QCOMPARE(addedOn, QVariant(static_cast<qint64>(1659361016)));
 }
@@ -1756,14 +1747,10 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates_Null() const
     QVERIFY(addedOn.isValid() && addedOn.isNull());
 
     // Compare also the type (excluding SQLite)
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     // SQLite doesn't return correct underlying type in the QVariant
     if (DB::connection(connection).driverName() != QSQLITE)
-        QCOMPARE(addedOn.typeId(), QMetaType::LongLong);
-#else
-    if (DB::connection(connection).driverName() != QSQLITE)
-        QCOMPARE(addedOn.userType(), QMetaType::LongLong);
-#endif
+        QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::LongLong);
+
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */
     if (DB::connection(connection).driverName() != QSQLITE)
@@ -1785,14 +1772,10 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates_Null() const
     QVERIFY(addedOn.isValid() && addedOn.isNull());
 
     // Compare also the type (excluding SQLite)
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     // SQLite doesn't return correct underlying type in the QVariant
     if (DB::connection(connection).driverName() != QSQLITE)
-        QCOMPARE(addedOn.typeId(), QMetaType::LongLong);
-#else
-    if (DB::connection(connection).driverName() != QSQLITE)
-        QCOMPARE(addedOn.userType(), QMetaType::LongLong);
-#endif
+        QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::LongLong);
+
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */
     if (DB::connection(connection).driverName() != QSQLITE)

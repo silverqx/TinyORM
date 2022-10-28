@@ -58,11 +58,7 @@ bool SqlQuery::shouldPrepareDateTime(const QVariant &value) const
     if (!m_isConvertingTimeZone || !value.isValid() || value.isNull())
         return false;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    const auto typeId = value.typeId();
-#else
-    const auto typeId = value.userType();
-#endif
+    const auto typeId = Helpers::qVariantTypeId(value);
 
     // If it's the QDateTime or if should return the QDateTime for QSQLITE
     return typeId == QMetaType::QDateTime ||

@@ -13,6 +13,15 @@ namespace Orm::Utils
 
 /* public */
 
+int Helpers::qVariantTypeId(const QVariant &value)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    return value.typeId();
+#else
+    return value.userType();
+#endif
+}
+
 /* QDateTime related */
 
 bool Helpers::isStandardDateFormat(const QString &value)

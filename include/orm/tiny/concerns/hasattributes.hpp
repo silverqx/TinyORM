@@ -362,11 +362,7 @@ namespace Orm::Tiny::Concerns
         /* If an attribute is listed as a "date", we'll convert it from a DateTime
            instance into a form proper for storage on the database tables using
            the connection grammar's date format. We will auto set the values. */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        if (const auto typeId = value.typeId();
-#else
-        if (const auto typeId = value.userType();
-#endif
+        if (const auto typeId = Helpers::qVariantTypeId(value);
             value.isValid() && (isDateAttribute(key) ||
             // NOTE api different, if the QDateTime or QDate is detected then take it as datetime silverqx
             typeId == QMetaType::QDateTime || typeId == QMetaType::QDate)
@@ -1220,13 +1216,7 @@ namespace Orm::Tiny::Concerns
         /* If this value is already a QDateTime instance, we shall just return it as is.
            This prevents us having to re-parse a QDateTime instance when we know
            it already is one. */
-        if (
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            value.typeId() == QMetaType::QDateTime
-#else
-            value.userType() == QMetaType::QDateTime
-#endif
-        )
+        if (Helpers::qVariantTypeId(value) == QMetaType::QDateTime)
             return Helpers::convertTimeZone(value.value<QDateTime>(), getQtTimeZone());
 
         // The value has to be convertible to the QString so we can work with it
@@ -1287,11 +1277,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::asDateOrDateTime(
             const QVariant &value) const
     {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        const auto typeId = value.typeId();
-#else
-        const auto typeId = value.userType();
-#endif
+        const auto typeId = Helpers::qVariantTypeId(value);
 
         if (typeId == QMetaType::QDate ||
             (typeId == QMetaType::QString &&
@@ -1308,11 +1294,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::fromDateOrDateTime(
             const QVariant &value, const QString &format) const
     {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        if (const auto typeId = value.typeId();
-#else
-        if (const auto typeId = value.userType();
-#endif
+        if (const auto typeId = Helpers::qVariantTypeId(value);
             typeId == QMetaType::QDate ||
             (typeId == QMetaType::QString &&
              Helpers::isStandardDateFormat(value.value<QString>()))
@@ -1338,18 +1320,13 @@ namespace Orm::Tiny::Concerns
         if (format == QChar('U')) T_UNLIKELY
             return QVariant(QMetaType(QMetaType::LongLong));
 
+        else if (Helpers::qVariantTypeId(value) == QMetaType::QDate) T_UNLIKELY
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        else if (const auto typeId = value.typeId();
-                 typeId == QMetaType::QDate
-        ) T_UNLIKELY
             return QVariant(QMetaType(QMetaType::QDate));
 
         else T_LIKELY
             return QVariant(QMetaType(QMetaType::QDateTime));
 #else
-        else if (const auto typeId = value.userType();
-                 typeId == QMetaType::QDate
-        ) T_UNLIKELY
             return QVariant(QVariant::Date); // NOLINT(modernize-return-braced-init-list)
 
         else T_LIKELY

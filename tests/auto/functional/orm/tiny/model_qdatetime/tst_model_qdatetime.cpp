@@ -2,6 +2,7 @@
 #include <QtTest>
 
 #include "orm/db.hpp"
+#include "orm/utils/helpers.hpp"
 
 #include "databases.hpp"
 
@@ -19,6 +20,7 @@ using Orm::QtTimeZoneType;
 
 using Orm::Tiny::ConnectionOverride;
 
+using Helpers = Orm::Utils::Helpers;
 using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
@@ -60,9 +62,6 @@ private Q_SLOTS:
 
     // NOLINTNEXTLINE(readability-redundant-access-specifiers)
     private:
-        /*! Generate a call wrapped for the QVariant::typeId/userType for Qt5/6. */
-        inline static auto typeIdWrapper(const QVariant &attribute);
-
         /*! Set the MySQL/PostgreSQL timezone session variable to the UTC value. */
         inline void setUtcTimezone(const QString &connection = {}) const;
 
@@ -86,19 +85,6 @@ private Q_SLOTS:
         void restore(quint64 lastId, bool restoreTimezone = false,
                      const QString &connection = {}) const;
 };
-
-/* private */
-
-auto tst_Model_QDateTime::typeIdWrapper(const QVariant &attribute)
-{
-    /* It helps to avoid #ifdef-s for QT_VERSION in all test methods
-       for the QVariant::typeId/userType for Qt5/6. */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    return std::bind_front(&QVariant::typeId, attribute);
-#else
-    return std::bind_front(&QVariant::userType, attribute);
-#endif
-}
 
 /* private slots */
 
@@ -150,8 +136,7 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_UtcOnServer() const
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -197,8 +182,7 @@ create_QDateTime_0200Timezone_DatetimeAttribute_UtcOnServer() const
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -242,8 +226,7 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_UtcOnServer() const
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -289,8 +272,7 @@ create_QDateTime_UtcTimezone_TimestampAttribute_UtcOnServer() const
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -336,8 +318,7 @@ create_QDateTime_0200Timezone_TimestampAttribute_UtcOnServer() const
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -381,8 +362,7 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_UtcOnServer() const
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -436,8 +416,7 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_0200OnServer() const
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -489,8 +468,7 @@ create_QDateTime_0200Timezone_DatetimeAttribute_0200OnServer() const
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -540,8 +518,7 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_0200OnServer() const
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
 
-        auto typeId = typeIdWrapper(datetimeDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -593,8 +570,7 @@ create_QDateTime_UtcTimezone_TimestampAttribute_0200OnServer() const
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -646,8 +622,7 @@ create_QDateTime_0200Timezone_TimestampAttribute_0200OnServer() const
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -697,8 +672,7 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_0200OnServer() const
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
 
-        auto typeId = typeIdWrapper(timestampDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDateTime);
+        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -746,8 +720,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateColumn_UtcOnServer() cons
 
         const auto dateDbVariant = datetime->getAttribute("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
@@ -786,8 +759,7 @@ void tst_Model_QDateTime::create_QString_DateColumn_UtcOnServer() const
 
         const auto dateDbVariant = datetime->getAttribute("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
@@ -829,8 +801,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateColumn_0200OnServer() con
 
         const auto dateDbVariant = datetime->getAttribute("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
@@ -871,8 +842,7 @@ void tst_Model_QDateTime::create_QString_DateColumn_0200OnServer() const
 
         const auto dateDbVariant = datetime->getAttribute("date");
 
-        auto typeId = typeIdWrapper(dateDbVariant);
-        QCOMPARE(typeId(), QMetaType::QDate);
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);

@@ -3,12 +3,15 @@
 #include "orm/connectors/connector.hpp"
 #include "orm/constants.hpp"
 #include "orm/exceptions/runtimeerror.hpp"
+#include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::EQ_C;
 using Orm::Constants::options_;
 using Orm::Constants::SEMICOLON;
+
+using Helpers = Orm::Utils::Helpers;
 
 namespace Orm::Support
 {
@@ -44,13 +47,8 @@ ConfigurationOptionsParser::parseConfiguration(const QVariantHash &config) const
 void
 ConfigurationOptionsParser::validateConfigOptions(const QVariant &options) const
 {
-    if (
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        (options.typeId() != QMetaType::QString)
-#else
-        (options.userType() != QMetaType::QString)
-#endif
-        && !options.canConvert<QVariantHash>()
+    if (Helpers::qVariantTypeId(options) != QMetaType::QString && !
+        options.canConvert<QVariantHash>()
     )
         throw Exceptions::RuntimeError(
                 "Passed unsupported 'options' type in the connection configuration, "
@@ -61,11 +59,7 @@ QVariantHash
 ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options) const
 {
     // Input is already validated, so I can be sure that options key is QVariantHash
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    if (options.typeId() != QMetaType::QString)
-#else
-    if (options.userType() != QMetaType::QString)
-#endif
+    if (Helpers::qVariantTypeId(options) != QMetaType::QString)
         return options.value<QVariantHash>();
 
     // Convert to the QVariantHash

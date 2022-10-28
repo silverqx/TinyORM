@@ -344,11 +344,7 @@ DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
         if (!binding.isValid() || binding.isNull())
             continue;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        switch (binding.typeId()) {
-#else
-        switch (binding.userType()) {
-#endif
+        switch (Helpers::qVariantTypeId(binding)) {
         // QDate doesn't have a time zone
         case QMetaType::QDate:
             binding = binding.value<QDate>().toString(Qt::ISODate);

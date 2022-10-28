@@ -60,6 +60,9 @@ namespace Utils
         inline static std::size_t &hashCombine(std::size_t &seed, const T &value)
         noexcept(IsNothrowHashable<std::remove_const_t<T>>::value);
 
+        /*! Get the storage type of the value stored in the QVariant. */
+        static int qVariantTypeId(const QVariant &value);
+
         /* QDateTime related */
         /*! Determine if the given value is a standard date format. */
         static bool isStandardDateFormat(const QString &value);

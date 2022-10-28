@@ -10,6 +10,7 @@ TINY_SYSTEM_HEADER
 #include "orm/constants.hpp"
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
+#include "orm/utils/helpers.hpp"
 
 class QSqlQuery;
 
@@ -31,6 +32,9 @@ namespace Orm::Utils
     class SHAREDLIB_EXPORT Query
     {
         Q_DISABLE_COPY(Query)
+
+        /*! Alias for the helper utils. */
+        using Helpers = Orm::Utils::Helpers;
 
     public:
         /*! Deleted default constructor, this is a pure library class. */
@@ -92,11 +96,7 @@ namespace Orm::Utils
                 bindingValue = Orm::Constants::null_;
             else
                 // Support for string quoting
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-                bindingValue = (binding.typeId() == QMetaType::QString)
-#else
-                bindingValue = (binding.userType() == QMetaType::QString)
-#endif
+                bindingValue = (Helpers::qVariantTypeId(binding) == QMetaType::QString)
                                ? QStringLiteral("\"%1\"")
                                  .arg(binding.template value<QString>())
                                : binding.template value<QString>();
