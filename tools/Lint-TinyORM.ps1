@@ -71,7 +71,7 @@ Set-Location -Path $BuildPath
 
 # Initialize build environment if it's not already there
 if (-not (Test-Path env:WindowsSDKLibVersion)) {
-    . "E:\dotfiles\bin\qtenv${QtVersion}.ps1"
+    . "qtenv${QtVersion}.ps1"
 }
 
 # Clean build
