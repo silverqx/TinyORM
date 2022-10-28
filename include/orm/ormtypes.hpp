@@ -193,21 +193,15 @@ namespace Query
 
 TINYORM_END_COMMON_NAMESPACE
 
-// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(QTimeZone)
-// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(Qt::TimeSpec)
+Q_DECLARE_METATYPE(QTimeZone) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
+Q_DECLARE_METATYPE(Qt::TimeSpec) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 
 #ifdef TINYORM_COMMON_NAMESPACE
-// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem)
-// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::QtTimeZoneConfig)
+Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
+Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::QtTimeZoneConfig) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 #else
-// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(Orm::WhereConditionItem)
-// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(Orm::QtTimeZoneConfig)
+Q_DECLARE_METATYPE(Orm::WhereConditionItem) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
+Q_DECLARE_METATYPE(Orm::QtTimeZoneConfig) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 #endif
 
 #endif // ORM_ORMTYPES_HPP

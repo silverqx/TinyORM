@@ -77,11 +77,9 @@ namespace Orm::Query
 TINYORM_END_COMMON_NAMESPACE
 
 #ifdef TINYORM_COMMON_NAMESPACE
-// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Query::Expression)
+Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Query::Expression) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 #else
-// NOLINTNEXTLINE(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(Orm::Query::Expression)
+Q_DECLARE_METATYPE(Orm::Query::Expression) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 #endif
 
 #endif // ORM_QUERY_EXPRESSION_HPP
