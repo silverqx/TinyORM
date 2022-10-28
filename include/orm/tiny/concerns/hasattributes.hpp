@@ -1321,7 +1321,11 @@ namespace Orm::Tiny::Concerns
             const QVariant &value, const QString &format)
     {
         if (format == QChar('U')) T_UNLIKELY
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             return QVariant(QMetaType(QMetaType::LongLong));
+#else
+            return QVariant(QVariant::LongLong); // NOLINT(modernize-return-braced-init-list)
+#endif
 
         else if (Helpers::qVariantTypeId(value) == QMetaType::QDate) T_UNLIKELY
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
