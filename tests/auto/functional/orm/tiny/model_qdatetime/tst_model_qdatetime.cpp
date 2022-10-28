@@ -731,9 +731,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateColumn_UtcOnServer() cons
     {
         Datetime datetime;
         datetime["date"] = QDate::fromString("2022-08-28", Qt::ISODate);
-        auto d = datetime.getAttribute("date");
         QVERIFY(datetime.save());
-        auto d1 = datetime.getAttribute("date");
 
         lastId = datetime[ID]->value<quint64>();
         QVERIFY(lastId != 0);
@@ -773,9 +771,7 @@ void tst_Model_QDateTime::create_QString_DateColumn_UtcOnServer() const
         Datetime datetime;
         // Will use isStandardDateFormat()
         datetime["date"] = QString("2022-08-28");
-        auto d = datetime.getAttribute("date");
         QVERIFY(datetime.save());
-        auto d1 = datetime.getAttribute("date");
 
         lastId = datetime[ID]->value<quint64>();
         QVERIFY(lastId != 0);
