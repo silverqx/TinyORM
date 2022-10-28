@@ -349,12 +349,11 @@ void tst_Model::save_Update_WithNullValue() const
     QVERIFY(peerVerify->getAttribute("total_seeds").isNull());
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */
+    if (DB::driverName(connection) != QSQLITE)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    if (DB::connection(connection).driverName() != QSQLITE)
         QCOMPARE(peerVerify->getAttribute("total_seeds"),
                  QVariant(QMetaType(QMetaType::Int)));
 #else
-    if (DB::connection(connection).driverName() != QSQLITE)
         QCOMPARE(peerVerify->getAttribute("total_seeds"), QVariant(QVariant::Int));
 #endif
 
@@ -1712,7 +1711,7 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates() const
 
     /* Only MySQL returns correct underlying type, the SQLite doesn't care and PostgreSQL
        returns ULongLong. */
-    if (DB::connection(connection).driverName() == QMYSQL)
+    if (DB::driverName(connection) == QMYSQL)
         QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::LongLong);
     else
         QVERIFY(addedOn.canConvert<qint64>());
@@ -1748,12 +1747,12 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates_Null() const
 
     // Compare also the type (excluding SQLite)
     // SQLite doesn't return correct underlying type in the QVariant
-    if (DB::connection(connection).driverName() != QSQLITE)
+    if (DB::driverName(connection) != QSQLITE)
         QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::LongLong);
 
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */
-    if (DB::connection(connection).driverName() != QSQLITE)
+    if (DB::driverName(connection) != QSQLITE)
         QCOMPARE(addedOn, NullLLong);
 }
 
@@ -1773,12 +1772,12 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates_Null() const
 
     // Compare also the type (excluding SQLite)
     // SQLite doesn't return correct underlying type in the QVariant
-    if (DB::connection(connection).driverName() != QSQLITE)
+    if (DB::driverName(connection) != QSQLITE)
         QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::LongLong);
 
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */
-    if (DB::connection(connection).driverName() != QSQLITE)
+    if (DB::driverName(connection) != QSQLITE)
         QCOMPARE(addedOn, NullLLong);
 }
 
