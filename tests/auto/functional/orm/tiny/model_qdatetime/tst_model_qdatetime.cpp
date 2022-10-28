@@ -121,6 +121,12 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_UtcOnServer() const
         Datetime datetime;
         datetime["datetime"] = QDateTime::fromString("2022-08-28 13:14:15z",
                                                      Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("datetime");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -167,6 +173,12 @@ create_QDateTime_0200Timezone_DatetimeAttribute_UtcOnServer() const
         Datetime datetime;
         datetime["datetime"] = QDateTime::fromString("2022-08-28 13:14:15+02:00",
                                                      Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("datetime");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 11:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -211,6 +223,12 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_UtcOnServer() const
     {
         Datetime datetime;
         datetime["datetime"] = QString("2022-08-28 13:14:15");
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("datetime");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -257,6 +275,12 @@ create_QDateTime_UtcTimezone_TimestampAttribute_UtcOnServer() const
         Datetime datetime;
         datetime["timestamp"] = QDateTime::fromString("2022-08-28 13:14:15z",
                                                       Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("timestamp");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -303,6 +327,12 @@ create_QDateTime_0200Timezone_TimestampAttribute_UtcOnServer() const
         Datetime datetime;
         datetime["timestamp"] = QDateTime::fromString("2022-08-28 13:14:15+02:00",
                                                       Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("timestamp");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 11:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -347,6 +377,12 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_UtcOnServer() const
     {
         Datetime datetime;
         datetime["timestamp"] = QString("2022-08-28 13:14:15");
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("timestamp");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -401,6 +437,12 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_0200OnServer() const
         Datetime datetime;
         datetime["datetime"] = QDateTime::fromString("2022-08-28 13:14:15z",
                                                      Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("datetime");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 15:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -453,6 +495,12 @@ create_QDateTime_0200Timezone_DatetimeAttribute_0200OnServer() const
         Datetime datetime;
         datetime["datetime"] = QDateTime::fromString("2022-08-28 13:14:15+02:00",
                                                      Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("datetime");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -503,6 +551,12 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_0200OnServer() const
     {
         Datetime datetime;
         datetime["datetime"] = QString("2022-08-28 13:14:15");
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("datetime");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -555,6 +609,12 @@ create_QDateTime_UtcTimezone_TimestampAttribute_0200OnServer() const
         Datetime datetime;
         datetime["timestamp"] = QDateTime::fromString("2022-08-28 13:14:15z",
                                                       Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("timestamp");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 15:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -607,6 +667,12 @@ create_QDateTime_0200Timezone_TimestampAttribute_0200OnServer() const
         Datetime datetime;
         datetime["timestamp"] = QDateTime::fromString("2022-08-28 13:14:15+02:00",
                                                       Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("timestamp");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -657,6 +723,12 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_0200OnServer() const
     {
         Datetime datetime;
         datetime["timestamp"] = QString("2022-08-28 13:14:15");
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("timestamp");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -705,6 +777,12 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateColumn_UtcOnServer() cons
     {
         Datetime datetime;
         datetime["date"] = QDate::fromString("2022-08-28", Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("date");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -744,6 +822,12 @@ void tst_Model_QDateTime::create_QString_DateColumn_UtcOnServer() const
         Datetime datetime;
         // Will use isStandardDateFormat()
         datetime["date"] = QString("2022-08-28");
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("date");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -786,6 +870,12 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateColumn_0200OnServer() con
     {
         Datetime datetime;
         datetime["date"] = QDate::fromString("2022-08-28", Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("date");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
@@ -827,6 +917,12 @@ void tst_Model_QDateTime::create_QString_DateColumn_0200OnServer() const
         Datetime datetime;
         // Will use isStandardDateFormat()
         datetime["date"] = QString("2022-08-28");
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("date");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28"));
+
         QVERIFY(datetime.save());
 
         lastId = datetime[ID]->value<quint64>();
