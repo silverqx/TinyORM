@@ -79,7 +79,7 @@ int SeedCommand::run()
         comment(QStringLiteral("Seeding: "), false);
         note(QStringLiteral("%1 (root)").arg(seederResult.name));
 
-        QElapsedTimer timer;
+        QElapsedTimer timer; // NOLINT(misc-const-correctness)
         timer.start();
 
         // Fire it up 🔥

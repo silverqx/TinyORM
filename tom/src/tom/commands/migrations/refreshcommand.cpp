@@ -70,7 +70,7 @@ int RefreshCommand::run()
     {
         // Database connection to use
         auto databaseCmd = longOption(database_, database);
-        int exitCode = EXIT_SUCCESS;
+        int exitCode = EXIT_SUCCESS; // NOLINT(misc-const-correctness)
 
         /* If the "step" option is specified it means we only want to rollback a small
            number of migrations before migrating again. For example, the user might

@@ -70,7 +70,7 @@ int FreshCommand::run()
     {
         auto databaseCmd = longOption(database_, database);
 
-        int exitCode = EXIT_SUCCESS;
+        int exitCode = EXIT_SUCCESS; // NOLINT(misc-const-correctness)
 
         exitCode |= call(DbWipe, {databaseCmd,
                                   longOption(force),

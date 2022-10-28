@@ -72,11 +72,11 @@ int MigrateCommand::run()
 
         info(QStringLiteral("Database migaration completed successfully."));
 
-        int exitCode = EXIT_SUCCESS;
+        int exitCode = EXIT_SUCCESS; // NOLINT(misc-const-correctness)
 
         /* Finally, if the "seed" option has been given, we will re-run the database
-               seed task to re-populate the database, which is convenient when adding
-               a migration and a seed at the same time, as it is only this command. */
+           seed task to re-populate the database, which is convenient when adding
+           a migration and a seed at the same time, as it is only this command. */
         if (needsSeeding())
             exitCode |= runSeeder(database);
 
