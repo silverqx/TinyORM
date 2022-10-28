@@ -148,8 +148,7 @@ namespace Concerns
     HasTimestamps<Derived, AllRelations...>::freshTimestamp() const
     {
         // Return a timestamp with the correct time zone right away
-        return Helpers::convertTimeZone(QDateTime::currentDateTime(),
-                                        basemodel().getQtTimeZone());
+        return basemodel().convertTimeZone(QDateTime::currentDateTime());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

@@ -255,6 +255,11 @@ namespace Orm::Tiny::Concerns
         static QVariant nullFor_fromDateTime(const QVariant &value,
                                              const QString &format);
 
+        /*! Convert the QDateTime's time zone to the Model's time zone. */
+        QDateTime convertTimeZone(QDateTime &&datetime) const;
+        /*! Set the QDateTime's time zone to the Model's time zone. */
+        QDateTime &setTimeZone(QDateTime &datetime) const;
+
         /*! Rehash attribute positions from the given index. */
         void rehashAttributePositions(
                 const QVector<AttributeItem> &attributes,
@@ -741,17 +746,15 @@ namespace Orm::Tiny::Concerns
            value argument will be a result from the HasTimestamps::freshTimestampString().
            So it's used to create/update model timestamps and it's internal, so special
            logic for handling a user input and null values is not needed.
-           There is no need to call the Helpers::convertTimeZone() here because it's
-           already converted in the HasTimestamps::freshTimestamp(). */
+           There is no need to call the convertTimeZone() here because it's already
+           converted in the HasTimestamps::freshTimestamp(). */
 
         /* As this is the internal method a passed value must be valid and also the null
            value will never be passed into. */
         Q_ASSERT(value.isValid() && !value.isNull());
         // Time zone must match the qt_timezone connection config. option
-        Q_ASSERT(m_qtTimeZone && value.timeZone() ==
-                 // Obtain QTimeZone() instance on the base of the m_qtTimeZone
-                 Helpers::convertTimeZone(QDateTime::currentDateTime(), *m_qtTimeZone)
-                 .timeZone());
+        // Obtain a QTimeZone() instance on the base of the qtTimeZone
+        Q_ASSERT(value.timeZone() == basemodel().freshTimestamp().timeZone());
 
         const auto &format = getDateFormat();
 
@@ -1217,7 +1220,7 @@ namespace Orm::Tiny::Concerns
            This prevents us having to re-parse a QDateTime instance when we know
            it already is one. */
         if (Helpers::qVariantTypeId(value) == QMetaType::QDateTime)
-            return Helpers::convertTimeZone(value.value<QDateTime>(), getQtTimeZone());
+            return convertTimeZone(value.value<QDateTime>());
 
         // The value has to be convertible to the QString so we can work with it
         if (!value.canConvert<QString>())
@@ -1236,7 +1239,7 @@ namespace Orm::Tiny::Concerns
             if (auto date = QDateTime::fromSecsSinceEpoch(value.value<qint64>());
                 date.isValid()
             )
-                return Helpers::convertTimeZone(date, getQtTimeZone());
+                return convertTimeZone(std::move(date));
 
         /* If the value is in simply year, month, day format, we will instantiate the
            QDate instances from that format. Again, this provides for simple date
@@ -1246,7 +1249,7 @@ namespace Orm::Tiny::Concerns
                                                   QStringLiteral("yyyy-M-d"));
                 date.isValid()
             )
-                return Helpers::setTimeZone(date, getQtTimeZone());
+                return setTimeZone(date);
 
         const auto &format = getDateFormat();
 
@@ -1257,7 +1260,7 @@ namespace Orm::Tiny::Concerns
         if (auto date = QDateTime::fromString(valueString, format);
             date.isValid()
         )
-            return Helpers::setTimeZone(date, getQtTimeZone());
+            return setTimeZone(date);
 
         throw Orm::Exceptions::InvalidFormatError(
                     QStringLiteral("Could not parse the datetime '%1' using "
@@ -1332,6 +1335,26 @@ namespace Orm::Tiny::Concerns
         else T_LIKELY
             return QVariant(QVariant::DateTime); // NOLINT(modernize-return-braced-init-list)
 #endif
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QDateTime
+    HasAttributes<Derived, AllRelations...>::convertTimeZone(QDateTime &&datetime) const
+    {
+        if (!isConvertingTimeZone())
+            return std::move(datetime);
+
+        return Helpers::convertTimeZone(datetime, getQtTimeZone());
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QDateTime &
+    HasAttributes<Derived, AllRelations...>::setTimeZone(QDateTime &datetime) const
+    {
+        if (!isConvertingTimeZone())
+            return datetime;
+
+        return Helpers::setTimeZone(datetime, getQtTimeZone());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
