@@ -4,6 +4,7 @@ WarningsAsErrors:    '*'
 HeaderFilterRegex:   '(orm|tom|migrations)/.+\.(h|hpp)$'
 FormatStyle:         none
 InheritParentConfig: false
+UseColor:            true
 CheckOptions:
   - key:             google-readability-namespace-comments.ShortNamespaceLines
     value:           '5'

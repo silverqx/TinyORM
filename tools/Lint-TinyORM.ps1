@@ -117,7 +117,7 @@ if (-not $SkipClangTidy) {
     Write-Host 'Clang Tidy' -ForegroundColor DarkBlue
     Write-Host
 
-    & 'E:\dotfiles\bin\run-clang-tidy.ps1' -extra-arg-before='-Qunused-arguments' `
+    & 'E:\dotfiles\bin\run-clang-tidy.ps1' -use-color -extra-arg-before='-Qunused-arguments' `
         -j $Script:numberOfProcesses -p="$BuildPath" $Script:RegEx
 }
 
