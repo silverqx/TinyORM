@@ -119,7 +119,7 @@ std::optional<QDateTime> SqlQuery::asDateTime(const QString &value) const
     /* Finally, we will just assume this date is in the format used by default on
        the database connection and use that format to create the QDateTime object
        that is returned back out to the developers after we convert it here. */
-    if (auto date = QDateTime::fromString(value, *m_dateFormat);
+    if (auto date = QDateTime::fromString(value, *m_dateFormat); // NOLINT(bugprone-unchecked-optional-access)
         date.isValid()
     )
         return date;

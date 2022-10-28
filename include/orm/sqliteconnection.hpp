@@ -51,7 +51,7 @@ namespace Orm
     {
         Q_ASSERT(m_returnQDateTime);
 
-        return *m_returnQDateTime;
+        return m_returnQDateTime.value_or(true);
     }
 
 } // namespace Orm

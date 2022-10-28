@@ -40,7 +40,7 @@ namespace Utils
         prepareQtTimeZone(const QVariantHash &config, const QString &connection);
         /*! Prepare the qt_timezone config. option on the base of the current value. */
         static QtTimeZoneConfig
-        prepareQtTimeZone(const QVariant &configValue, const QString &connection);
+        prepareQtTimeZone(const QVariant &qtTimeZone, const QString &connection);
 
     private:
         /*! Prepare IANA ID for the QTimeZone constructor (prepends UTC if needed). */
