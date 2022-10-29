@@ -26,5 +26,5 @@ HEADERS += \
     $$PWD/models/type.hpp \
     $$PWD/models/user.hpp \
 
-SOURCES += \
-    $$PWD/models/torrent.cpp \
+#SOURCES += \
+#    $$PWD/models/torrent.cpp \
