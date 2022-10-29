@@ -30,6 +30,12 @@ DatabaseManager::DatabaseManager(const QString &defaultConnection)
     Concerns::HasConnectionResolver::setConnectionResolver(this);
 
     setupDefaultReconnector();
+
+    /* I couldn't find a better place for this, even though this place is ideal because
+       it guarantees that it will be called only once per whole application. */
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QMetaType::registerEqualsComparator<QtTimeZoneConfig>();
+#endif
 }
 
 DatabaseManager::DatabaseManager(const QVariantHash &config, const QString &connection,
