@@ -1,7 +1,5 @@
 #include "orm/postgresconnection.hpp"
 
-#include <QtSql/QSqlDriver>
-
 #include "orm/query/grammars/postgresgrammar.hpp"
 #include "orm/query/processors/postgresprocessor.hpp"
 #include "orm/schema/grammars/postgresschemagrammar.hpp"

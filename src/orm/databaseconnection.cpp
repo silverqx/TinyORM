@@ -4,7 +4,6 @@
 #  include <QDebug>
 #endif
 
-#include "orm/macros/likely.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"

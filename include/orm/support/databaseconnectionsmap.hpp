@@ -5,8 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <unordered_map>
-
 #include "orm/databaseconnection.hpp"
 #include "orm/macros/threadlocal.hpp"
 

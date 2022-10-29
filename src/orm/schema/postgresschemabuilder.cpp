@@ -1,6 +1,5 @@
 #include "orm/schema/postgresschemabuilder.hpp"
 
-#include <QSet>
 #include <QtSql/QSqlDriver>
 #include <QtSql/QSqlRecord>
 
