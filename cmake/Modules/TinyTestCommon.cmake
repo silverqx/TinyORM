@@ -1,4 +1,5 @@
 include(TinyResourceAndManifest)
+include(TinySources)
 
 # Configure passed auto test
 function(tiny_configure_test name)
@@ -59,11 +60,24 @@ ${TINY_UNPARSED_ARGUMENTS}")
         target_include_directories(${name}
             PRIVATE "${${TinyOrm_ns}_SOURCE_DIR}/tests/database"
         )
+
+        # Migrations header files
+        tiny_tests_migration_sources(${name}_headers)
+        target_sources(${name} PRIVATE
+            ${${name}_headers}
+        )
     endif()
 
     if(TINY_INCLUDE_MODELS)
         target_include_directories(${name}
             PRIVATE "${${TinyOrm_ns}_SOURCE_DIR}/tests/models"
+        )
+
+        # Models header and source files
+        tiny_model_sources(${name}_headers ${name}_sources)
+        target_sources(${name} PRIVATE
+            ${${name}_headers}
+            ${${name}_sources}
         )
     endif()
 

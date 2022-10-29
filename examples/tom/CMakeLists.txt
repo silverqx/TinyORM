@@ -30,6 +30,16 @@ add_executable(${TomExample_target}
 )
 add_executable(${TomExample_ns}::${TomExample_target} ALIAS ${TomExample_target})
 
+# Tom example migrations and seeders header files
+# ---
+
+include(TinySources)
+tiny_tom_example_database_sources(${TomExample_target}_headers)
+
+target_sources(${TomExample_target} PRIVATE
+    ${${TomExample_target}_headers}
+)
+
 # Tom command-line application specific configuration
 # ---
 

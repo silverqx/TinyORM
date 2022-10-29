@@ -30,6 +30,16 @@ add_executable(${TomTestData_target}
 )
 add_executable(${TomTestData_ns}::${TomTestData_target} ALIAS ${TomTestData_target})
 
+# Tom testdata migrations and seeder header files
+# ---
+
+include(TinySources)
+tiny_tom_testdata_database_sources(${TomTestData_target}_headers)
+
+target_sources(${TomTestData_target} PRIVATE
+    ${${TomTestData_target}_headers}
+)
+
 # Tom migrations for unit tests specific configuration
 # ---
 
