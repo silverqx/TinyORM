@@ -416,7 +416,7 @@ set_target_properties(\${Tom_target}
         VERSION \${PROJECT_VERSION}
 )\n
 target_include_directories(\${Tom_target} PRIVATE
-    "\$<BUILD_INTERFACE:\${CMAKE_SOURCE_DIR}/database>"
+    "\$<BUILD_INTERFACE:\${PROJECT_SOURCE_DIR}/database>"
 )\n
 # Tom command-line application defines
 # ---\n
@@ -500,7 +500,7 @@ set_target_properties(\${Tom_target}
         VERSION \${PROJECT_VERSION}
 )\n
 target_include_directories(\${Tom_target} PRIVATE
-    "\$<BUILD_INTERFACE:\${CMAKE_SOURCE_DIR}/database>"
+    "\$<BUILD_INTERFACE:\${PROJECT_SOURCE_DIR}/database>"
 )\n
 # Tom command-line application defines
 # ---\n
