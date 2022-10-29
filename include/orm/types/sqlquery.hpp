@@ -7,6 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include <QtSql/QSqlQuery>
 
+#include <optional>
+
 #include "orm/macros/export.hpp"
 #include "orm/ormtypes.hpp"
 
