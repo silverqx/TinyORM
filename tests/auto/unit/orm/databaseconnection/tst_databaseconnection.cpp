@@ -807,18 +807,18 @@ void tst_DatabaseConnection::autoTests_timezone_And_qt_timezone() const
              (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC}));
 
     // Time zone for the database connection (session variable)
-    const auto timezone = connectionRef.getConfig(timezone_);
+    const auto timeZone = connectionRef.getConfig(timezone_);
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
     )
-        QCOMPARE(timezone, QVariant(TZ00));
+        QCOMPARE(timeZone, QVariant(TZ00));
 
     else if (driverName == QPSQL)
-        QCOMPARE(timezone, QVariant(UTC));
+        QCOMPARE(timeZone, QVariant(UTC));
 
     else if (driverName == QSQLITE) {
-        QVERIFY(!timezone.isValid());
+        QVERIFY(!timeZone.isValid());
         QVERIFY(!connectionRef.hasConfig(timezone_));
 
     } else

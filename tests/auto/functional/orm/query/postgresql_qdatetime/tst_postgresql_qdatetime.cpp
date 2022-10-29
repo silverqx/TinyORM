@@ -94,7 +94,7 @@ private:
     /*! Set the PostgreSQL timezone session variable to the +02:00 value. */
     inline void setEUBratislavaTimezone() const;
     /*! Set the PostgreSQL timezone session variable to the given value. */
-    void setTimezone(const QString &timezone, QtTimeZoneConfig &&qtTimeZone) const;
+    void setTimezone(const QString &timeZone, QtTimeZoneConfig &&qtTimeZone) const;
 
     /*! Restore the database after a QDateTime-related test. */
     void restore(quint64 lastId, bool restoreTimezone = false) const;
@@ -1660,11 +1660,11 @@ void tst_PostgreSQL_QDateTime::setEUBratislavaTimezone() const
                 {QtTimeZoneType::QTimeZone, QVariant::fromValue(*TimeZoneEUBratislava)});
 }
 
-void tst_PostgreSQL_QDateTime::setTimezone(const QString &timezone,
+void tst_PostgreSQL_QDateTime::setTimezone(const QString &timeZone,
                                            QtTimeZoneConfig &&qtTimeZone) const
 {
     const auto qtQuery = DB::unprepared(
-                             QStringLiteral("set time zone '%1';").arg(timezone),
+                             QStringLiteral("set time zone '%1';").arg(timeZone),
                              m_connection);
 
     QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());

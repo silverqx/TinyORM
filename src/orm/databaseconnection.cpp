@@ -106,11 +106,11 @@ DatabaseConnection::select(const QString &queryString,
 {
     const auto functionName = __tiny_func__;
 
-    auto query = run<QSqlQuery>(
-                     queryString, bindings, Prepared,
-                     [this, &functionName]
-                     (const QString &queryString_, const QVector<QVariant> &bindings_)
-                     -> QSqlQuery
+    auto query_ = run<QSqlQuery>(
+                      queryString, bindings, Prepared,
+                      [this, &functionName]
+                      (const QString &queryString_, const QVector<QVariant> &bindings_)
+                      -> QSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -138,7 +138,7 @@ DatabaseConnection::select(const QString &queryString,
                     query, bindings_);
     });
 
-    return {std::move(query), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
+    return {std::move(query_), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
 }
 
 SqlQuery
@@ -236,11 +236,11 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
 {
     const auto functionName = __tiny_func__;
 
-    auto query = run<QSqlQuery>(
-                     queryString, {}, Unprepared,
-                     [this, &functionName]
-                     (const QString &queryString_, const QVector<QVariant> &/*unused*/)
-                     -> QSqlQuery
+    auto query_ = run<QSqlQuery>(
+                      queryString, {}, Unprepared,
+                      [this, &functionName]
+                      (const QString &queryString_, const QVector<QVariant> &/*unused*/)
+                      -> QSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -268,7 +268,7 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
                     query);
     });
 
-    return {std::move(query), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
+    return {std::move(query_), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
 }
 
 /* Obtain connection instance */

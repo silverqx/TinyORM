@@ -94,7 +94,7 @@ private:
     /*! Set the MySQL timezone session variable to the +02:00 value. */
     inline void set0200Timezone() const;
     /*! Set the MySQL timezone session variable to the given value. */
-    void setTimezone(const QString &timezone, QtTimeZoneConfig &&qtTimeZone) const;
+    void setTimezone(const QString &timeZone, QtTimeZoneConfig &&qtTimeZone) const;
 
     /*! Restore the database after a QDateTime-related test. */
     void restore(quint64 lastId, bool restoreTimezone = false) const;
@@ -1666,11 +1666,11 @@ void tst_MySql_QDateTime::set0200Timezone() const
                                            QVariant::fromValue(*TimeZone0200)});
 }
 
-void tst_MySql_QDateTime::setTimezone(const QString &timezone,
+void tst_MySql_QDateTime::setTimezone(const QString &timeZone,
                                       Orm::QtTimeZoneConfig &&qtTimeZone) const
 {
     const auto qtQuery = DB::unprepared(
-                             QStringLiteral("set time_zone=\"%1\";").arg(timezone),
+                             QStringLiteral("set time_zone=\"%1\";").arg(timeZone),
                              m_connection);
 
     QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());

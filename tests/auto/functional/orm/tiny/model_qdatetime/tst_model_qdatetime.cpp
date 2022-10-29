@@ -73,7 +73,7 @@ private Q_SLOTS:
         inline void setEUBratislavaTimezoneForPSQL(const QString &connection = {}) const;
 
         /*! Set the MySQL/PostgreSQL timezone session variable to the given value. */
-        static void setTimezone(const QString &timezone, QtTimeZoneConfig &&qtTimeZone,
+        static void setTimezone(const QString &timeZone, QtTimeZoneConfig &&qtTimeZone,
                                 const QString &connection);
         /*! Get a SQL query string to set a database time zone session variable. */
         static QString getSetTimezoneQueryString(const QString &connection);
@@ -995,11 +995,11 @@ void tst_Model_QDateTime::setEUBratislavaTimezoneForPSQL(const QString &connecti
 }
 
 void tst_Model_QDateTime::setTimezone(
-        const QString &timezone, Orm::QtTimeZoneConfig &&qtTimeZone,
+        const QString &timeZone, Orm::QtTimeZoneConfig &&qtTimeZone,
         const QString &connection)
 {
     const auto qtQuery = DB::unprepared(
-                             getSetTimezoneQueryString(connection).arg(timezone),
+                             getSetTimezoneQueryString(connection).arg(timeZone),
                              connection);
 
     QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
