@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include <memory>
+#include <optional>
 
 #include "orm/connectors/connectorinterface.hpp"
 #include "orm/ormtypes.hpp"
