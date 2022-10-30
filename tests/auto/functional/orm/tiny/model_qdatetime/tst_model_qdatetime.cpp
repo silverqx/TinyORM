@@ -53,12 +53,12 @@ private Q_SLOTS:
 
     /* QDate */
     /* Server timezone UTC */
-    void create_QDate_UtcTimezone_DateColumn_UtcOnServer() const;
-    void create_QString_DateColumn_UtcOnServer() const;
+    void create_QDate_UtcTimezone_DateAttribute_UtcOnServer() const;
+    void create_QString_DateAttribute_UtcOnServer() const;
 
     /* Server timezone +02:00 */
-    void create_QDate_UtcTimezone_DateColumn_0200OnServer() const;
-    void create_QString_DateColumn_0200OnServer() const;
+    void create_QDate_UtcTimezone_DateAttribute_0200OnServer() const;
+    void create_QString_DateAttribute_0200OnServer() const;
 
     // NOLINTNEXTLINE(readability-redundant-access-specifiers)
     private:
@@ -765,7 +765,7 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_0200OnServer() const
 
 /* Server timezone UTC */
 
-void tst_Model_QDateTime::create_QDate_UtcTimezone_DateColumn_UtcOnServer() const
+void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_UtcOnServer() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -809,7 +809,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateColumn_UtcOnServer() cons
     restore(lastId);
 }
 
-void tst_Model_QDateTime::create_QString_DateColumn_UtcOnServer() const
+void tst_Model_QDateTime::create_QString_DateAttribute_UtcOnServer() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -856,7 +856,7 @@ void tst_Model_QDateTime::create_QString_DateColumn_UtcOnServer() const
 
 /* Server timezone +02:00 */
 
-void tst_Model_QDateTime::create_QDate_UtcTimezone_DateColumn_0200OnServer() const
+void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_0200OnServer() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -902,7 +902,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateColumn_0200OnServer() con
     restore(lastId, true, connection);
 }
 
-void tst_Model_QDateTime::create_QString_DateColumn_0200OnServer() const
+void tst_Model_QDateTime::create_QString_DateAttribute_0200OnServer() const
 {
     QFETCH_GLOBAL(QString, connection);
 
