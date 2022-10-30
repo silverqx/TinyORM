@@ -171,7 +171,7 @@ Handling NULL values:
 Also look qsqlresult.cpp -> QSqlResultPrivate::isVariantNull()
 
 Also, look at the commit:
-tests QDateTime null values (xyz)
+tests QDateTime null values (e8b3c3c5)
 
 MySQL:
 ---
