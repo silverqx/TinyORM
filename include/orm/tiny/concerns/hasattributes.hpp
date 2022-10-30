@@ -20,6 +20,7 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/utils/attribute.hpp"
 #include "orm/utils/configuration.hpp"
 #include "orm/utils/helpers.hpp"
+#include "orm/utils/nullvariant.hpp"
 #include "orm/utils/string.hpp"
 #include "orm/utils/type.hpp"
 
@@ -38,6 +39,8 @@ namespace Orm::Tiny::Concerns
         using ConfigUtils = Orm::Utils::Configuration;
         /*! Alias for the helper utils. */
         using Helpers = Orm::Utils::Helpers;
+        /*! Alias for the null QVariant-s utils. */
+        using NullVariant = Orm::Utils::NullVariant;
         /*! Alias for the string utils. */
         using StringUtils = Orm::Utils::String;
         /*! Alias for the type utils. */
@@ -1321,24 +1324,13 @@ namespace Orm::Tiny::Concerns
             const QVariant &value, const QString &format)
     {
         if (format == QChar('U')) T_UNLIKELY
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            return QVariant(QMetaType(QMetaType::LongLong));
-#else
-            return QVariant(QVariant::LongLong); // NOLINT(modernize-return-braced-init-list)
-#endif
+            return NullVariant::LongLong();
 
         else if (Helpers::qVariantTypeId(value) == QMetaType::QDate) T_UNLIKELY
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            return QVariant(QMetaType(QMetaType::QDate));
+            return NullVariant::QDate();
 
         else T_LIKELY
-            return QVariant(QMetaType(QMetaType::QDateTime));
-#else
-            return QVariant(QVariant::Date); // NOLINT(modernize-return-braced-init-list)
-
-        else T_LIKELY
-            return QVariant(QVariant::DateTime); // NOLINT(modernize-return-braced-init-list)
-#endif
+            return NullVariant::QDateTime();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

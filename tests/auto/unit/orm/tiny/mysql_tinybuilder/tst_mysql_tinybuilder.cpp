@@ -2,6 +2,7 @@
 #include <QtTest>
 
 #include "orm/tiny/tinybuilder.hpp"
+#include "orm/utils/nullvariant.hpp"
 
 #include "databases.hpp"
 
@@ -17,6 +18,7 @@ using Orm::Exceptions::InvalidArgumentError;
 using Orm::QueryBuilder;
 using Orm::Tiny::Model;
 using Orm::Tiny::TinyBuilder;
+using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
 
@@ -351,17 +353,6 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
     }
 }
 
-namespace
-{
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            const auto NullLLong =    QVariant(QMetaType(QMetaType::LongLong)); // clazy:exclude=non-pod-global-static
-            const auto NullQDateTime = QVariant(QMetaType(QMetaType::QDateTime)); // clazy:exclude=non-pod-global-static
-#else
-            const auto NullLLong =    QVariant(QVariant::LongLong); // clazy:exclude=non-pod-global-static
-            const auto NullQDateTime = QVariant(QVariant::DateTime); // clazy:exclude=non-pod-global-static
-#endif
-} // namespace
-
 void tst_MySql_TinyBuilder::
      setAttribute_UnixTimestamp_With_UDates_UDateFormat_Null() const
 {
@@ -371,27 +362,27 @@ void tst_MySql_TinyBuilder::
     {
         Role role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullQDateTime);
+        role.setAttribute("added_on", NullVariant::QDateTime());
 
         const auto &attributes = role.getAttributes();
 
         QVERIFY(attributes.size() == 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
-        QCOMPARE(addedOn, NullLLong);
+        QCOMPARE(addedOn, NullVariant::LongLong());
     }
     // qint64 - QVariant
     {
         Role role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullLLong);
+        role.setAttribute("added_on", NullVariant::LongLong());
 
         const auto &attributes = role.getAttributes();
 
         QVERIFY(attributes.size() == 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
-        QCOMPARE(addedOn, NullLLong);
+        QCOMPARE(addedOn, NullVariant::LongLong());
     }
 }
 
@@ -408,20 +399,20 @@ void tst_MySql_TinyBuilder::
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullQDateTime);
+        role.setAttribute("added_on", NullVariant::QDateTime());
 
         const auto &attributes = role.getAttributes();
 
         QVERIFY(attributes.size() == 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
-        QCOMPARE(addedOn, NullQDateTime);
+        QCOMPARE(addedOn, NullVariant::QDateTime());
     }
     // qint64 - QVariant
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullLLong);
+        role.setAttribute("added_on", NullVariant::LongLong());
 
         const auto &attributes = role.getAttributes();
 
@@ -431,7 +422,7 @@ void tst_MySql_TinyBuilder::
         /* Here comes into the play the variant.typeId() == QDateTime in setAttribute()
            and special handling for pure number string in asDateTime(), so the QDateTime
            is autodetected. */
-        QCOMPARE(addedOn, NullQDateTime);
+        QCOMPARE(addedOn, NullVariant::QDateTime());
     }
 }
 
@@ -446,27 +437,27 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates_Null() con
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullQDateTime);
+        role.setAttribute("added_on", NullVariant::QDateTime());
 
         const auto &attributes = role.getAttributes();
 
         QVERIFY(attributes.size() == 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
-        QCOMPARE(addedOn, NullQDateTime);
+        QCOMPARE(addedOn, NullVariant::QDateTime());
     }
     // qint64 - QVariant
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullLLong);
+        role.setAttribute("added_on", NullVariant::LongLong());
 
         const auto &attributes = role.getAttributes();
 
         QVERIFY(attributes.size() == 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
-        QCOMPARE(addedOn, NullLLong);
+        QCOMPARE(addedOn, NullVariant::LongLong());
     }
 }
 

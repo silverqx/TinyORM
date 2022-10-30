@@ -8,6 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QVariant>
 
 #include "orm/tiny/tinyconcepts.hpp"
+#include "orm/utils/nullvariant.hpp"
 
 class QSqlQuery;
 
@@ -33,6 +34,9 @@ namespace Concerns
     template<ModelConcept Model, bool T = true>
     class BuildsSoftDeletes
     {
+        /*! Alias for the null QVariant-s utils. */
+        using NullVariant = Orm::Utils::NullVariant;
+
     public:
         /*! Default constructor. */
         inline BuildsSoftDeletes() = default;
@@ -208,11 +212,7 @@ namespace Concerns
 
         return builder().update({{builder().getModel().getDeletedAtColumn(),
                                   // Null QDateTime value
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-                                  QVariant(QMetaType(QMetaType::QDateTime))}});
-#else
-                                  QVariant(QVariant::DateTime)}});
-#endif
+                                  NullVariant::QDateTime()}});
     }
 
     template<ModelConcept Model, bool T>

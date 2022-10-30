@@ -11,6 +11,7 @@ TINY_SYSTEM_HEADER
 #include "orm/ormtypes.hpp"
 #include "orm/tiny/tinyconcepts.hpp"
 #include "orm/utils/helpers.hpp"
+#include "orm/utils/nullvariant.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -23,6 +24,8 @@ namespace Orm::Tiny
     {
         /*! Alias for the helper utils. */
         using Helpers = Orm::Utils::Helpers;
+        /*! Alias for the null QVariant-s utils. */
+        using NullVariant = Orm::Utils::NullVariant;
 
     public:
         /*! Default constructor. */
@@ -111,13 +114,7 @@ namespace Orm::Tiny
             return false;
 
         // Clear the deleted timestamp
-        model.setAttribute(getDeletedAtColumn(),
-                           // Null QDateTime value
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-                           QVariant(QMetaType(QMetaType::QDateTime)));
-#else
-                           QVariant(QVariant::DateTime));
-#endif
+        model.setAttribute(getDeletedAtColumn(), NullVariant::QDateTime());
 
         return model.save();
     }

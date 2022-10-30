@@ -55,6 +55,7 @@ sourcesList += \
     $$PWD/orm/utils/configuration.cpp \
     $$PWD/orm/utils/fs.cpp \
     $$PWD/orm/utils/helpers.cpp \
+    $$PWD/orm/utils/nullvariant.cpp \
     $$PWD/orm/utils/query.cpp \
     $$PWD/orm/utils/string.cpp \
     $$PWD/orm/utils/thread.cpp \

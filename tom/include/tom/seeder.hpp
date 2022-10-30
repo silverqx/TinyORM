@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include <orm/db.hpp>
 #include <orm/query/querybuilder.hpp>
+#include <orm/utils/nullvariant.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -163,6 +164,8 @@ namespace Seeders
 {
     /*! Alias for the DB facade. */
     using TINYORM_COMMON_NAMESPACE::Orm::DB; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the null QVariant-s utils. */
+    using TINYORM_COMMON_NAMESPACE::Orm::Utils::NullVariant; // NOLINT(misc-unused-using-decls)
     /*! Alias for the Tom Seeder. */
     using TINYORM_COMMON_NAMESPACE::Tom::Seeder; // NOLINT(misc-unused-using-decls)
 

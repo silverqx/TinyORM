@@ -3,6 +3,7 @@
 #include <QtTest>
 
 #include "orm/db.hpp"
+#include "orm/utils/nullvariant.hpp"
 #include "orm/utils/query.hpp"
 
 #include "databases.hpp"
@@ -25,6 +26,7 @@ using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
 using Orm::Tiny::Model;
+using Orm::Utils::NullVariant;
 
 using Helpers = Orm::Utils::Helpers;
 using QueryUtils = Orm::Utils::Query;
@@ -350,12 +352,7 @@ void tst_Model::save_Update_WithNullValue() const
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */
     if (DB::driverName(connection) != QSQLITE)
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        QCOMPARE(peerVerify->getAttribute("total_seeds"),
-                 QVariant(QMetaType(QMetaType::Int)));
-#else
-        QCOMPARE(peerVerify->getAttribute("total_seeds"), QVariant(QVariant::Int));
-#endif
+        QCOMPARE(peerVerify->getAttribute("total_seeds"), NullVariant::Int());
 
     // Revert
     peer->setAttribute("total_seeds", 4);
@@ -1720,17 +1717,6 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates() const
     QCOMPARE(addedOn, QVariant(static_cast<qint64>(1659361016)));
 }
 
-namespace
-{
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            const auto NullLLong     = QVariant(QMetaType(QMetaType::LongLong)); // clazy:exclude=non-pod-global-static
-            const auto NullQDateTime = QVariant(QMetaType(QMetaType::QDateTime)); // clazy:exclude=non-pod-global-static
-#else
-            const auto NullLLong     = QVariant(QVariant::LongLong); // clazy:exclude=non-pod-global-static
-            const auto NullQDateTime = QVariant(QVariant::DateTime); // clazy:exclude=non-pod-global-static
-#endif
-} // namespace
-
 void tst_Model::getAttribute_UnixTimestamp_With_UDates_Null() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -1753,7 +1739,7 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates_Null() const
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */
     if (DB::driverName(connection) != QSQLITE)
-        QCOMPARE(addedOn, NullLLong);
+        QCOMPARE(addedOn, NullVariant::LongLong());
 }
 
 void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates_Null() const
@@ -1778,7 +1764,7 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates_Null() const
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */
     if (DB::driverName(connection) != QSQLITE)
-        QCOMPARE(addedOn, NullLLong);
+        QCOMPARE(addedOn, NullVariant::LongLong());
 }
 
 QTEST_MAIN(tst_Model)

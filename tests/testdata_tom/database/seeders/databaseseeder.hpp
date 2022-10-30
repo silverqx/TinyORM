@@ -11,38 +11,11 @@ namespace Seeders
         /*! Run the database seeders. */
         void run() override
         {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            const auto NullBool       = QVariant(QMetaType(QMetaType::Bool));
-            const auto NullString     = QVariant(QMetaType(QMetaType::QString));
-            const auto NullShort      = QVariant(QMetaType(QMetaType::Short));
-            const auto NullUShort     = QVariant(QMetaType(QMetaType::UShort));
-            const auto NullInt        = QVariant(QMetaType(QMetaType::Int));
-            const auto NullUInt       = QVariant(QMetaType(QMetaType::UInt));
-            const auto NullLLong      = QVariant(QMetaType(QMetaType::LongLong));
-            const auto NullULLong     = QVariant(QMetaType(QMetaType::ULongLong));
-            const auto NullDouble     = QVariant(QMetaType(QMetaType::Double));
-            const auto NullQDateTime  = QVariant(QMetaType(QMetaType::QDateTime));
-            const auto NullQByteArray = QVariant(QMetaType(QMetaType::QByteArray));
-#else
-            const auto NullBool       = QVariant(QVariant::Bool);
-            const auto NullString     = QVariant(QVariant::String);
-            // Qt5 QVariant doesn't support unsigned/ short int
-            const auto NullShort      = QVariant(QVariant::Int);
-            const auto NullUShort     = QVariant(QVariant::UInt);
-            const auto NullInt        = QVariant(QVariant::Int);
-            const auto NullUInt       = QVariant(QVariant::UInt);
-            const auto NullLLong      = QVariant(QVariant::LongLong);
-            const auto NullULLong     = QVariant(QVariant::ULongLong);
-            const auto NullDouble     = QVariant(QVariant::Double);
-            const auto NullQDateTime  = QVariant(QVariant::DateTime);
-            const auto NullQByteArray = QVariant(QVariant::ByteArray);
-#endif
-
             DB::table("users")->insert({ID, NAME, "is_banned", "note", CREATED_AT, UPDATED_AT, DELETED_AT},
             {
-                {1, "andrej", false, NullString,             "2022-01-01 14:51:23", "2022-01-01 17:46:31", NullQDateTime},
-                {2, "silver", false, NullString,             "2022-01-02 14:51:23", "2022-01-02 17:46:31", NullQDateTime},
-                {3, "peter",  true,  "no torrents no roles", "2022-01-03 14:51:23", "2022-01-03 17:46:31", NullQDateTime},
+                {1, "andrej", false, NullVariant::QString(), "2022-01-01 14:51:23", "2022-01-01 17:46:31", NullVariant::QDateTime()},
+                {2, "silver", false, NullVariant::QString(), "2022-01-02 14:51:23", "2022-01-02 17:46:31", NullVariant::QDateTime()},
+                {3, "peter",  true,  "no torrents no roles", "2022-01-03 14:51:23", "2022-01-03 17:46:31", NullVariant::QDateTime()},
                 {4, "jack",   false, "test SoftDeletes",     "2022-01-04 14:51:23", "2022-01-04 17:46:31", "2022-01-04 20:46:31"},
                 {5, "obiwan", true,  "test SoftDeletes",     "2022-01-05 14:51:23", "2022-01-05 17:46:31", "2022-01-05 20:46:31"},
             });
@@ -51,7 +24,7 @@ namespace Seeders
             {
                 {1, "role one",   1659361016},
                 {2, "role two",   1659447416},
-                {3, "role three", NullULLong},
+                {3, "role three", NullVariant::ULongLong()},
             });
 
             DB::table("role_user")->insert({"role_id", "user_id", "active"},
@@ -71,9 +44,9 @@ namespace Seeders
 
             DB::table("torrents")->insert({ID, "user_id", NAME, SIZE_, "progress", "added_on", "hash", "note", CREATED_AT, UPDATED_AT},
             {
-                {1, 1, "test1", 11, 100, "2020-08-01 20:11:10", "1579e3af2768cdf52ec84c1f320333f68401dc6e", NullString,                       "2021-01-01 14:51:23", "2021-01-01 18:46:31"},
-                {2, 1, "test2", 12, 200, "2020-08-02 20:11:10", "2579e3af2768cdf52ec84c1f320333f68401dc6e", NullString,                       "2021-01-02 14:51:23", "2021-01-02 18:46:31"},
-                {3, 1, "test3", 13, 300, "2020-08-03 20:11:10", "3579e3af2768cdf52ec84c1f320333f68401dc6e", NullString,                       "2021-01-03 14:51:23", "2021-01-03 18:46:31"},
+                {1, 1, "test1", 11, 100, "2020-08-01 20:11:10", "1579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2021-01-01 14:51:23", "2021-01-01 18:46:31"},
+                {2, 1, "test2", 12, 200, "2020-08-02 20:11:10", "2579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2021-01-02 14:51:23", "2021-01-02 18:46:31"},
+                {3, 1, "test3", 13, 300, "2020-08-03 20:11:10", "3579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2021-01-03 14:51:23", "2021-01-03 18:46:31"},
                 {4, 1, "test4", 14, 400, "2020-08-04 20:11:10", "4579e3af2768cdf52ec84c1f320333f68401dc6e", "after update revert updated_at", "2021-01-04 14:51:23", "2021-01-04 18:46:31"},
                 {5, 2, "test5", 15, 500, "2020-08-05 20:11:10", "5579e3af2768cdf52ec84c1f320333f68401dc6e", "no peers",                       "2021-01-05 14:51:23", "2021-01-05 18:46:31"},
                 {6, 2, "test6", 16, 600, "2020-08-06 20:11:10", "6579e3af2768cdf52ec84c1f320333f68401dc6e", "no files no peers",              "2021-01-06 14:51:23", "2021-01-06 18:46:31"},
@@ -81,23 +54,23 @@ namespace Seeders
 
             DB::table("torrent_peers")->insert({ID, "torrent_id", "seeds", "total_seeds", "leechers", "total_leechers", CREATED_AT, UPDATED_AT},
             {
-                {1, 1, 1,       1, 1, 1, "2021-01-01 14:51:23", "2021-01-01 17:46:31"},
-                {2, 2, 2,       2, 2, 2, "2021-01-02 14:51:23", "2021-01-02 17:46:31"},
-                {3, 3, 3,       3, 3, 3, "2021-01-03 14:51:23", "2021-01-03 17:46:31"},
-                {4, 4, NullInt, 4, 4, 4, "2021-01-04 14:51:23", "2021-01-04 17:46:31"},
+                {1, 1, 1,                  1, 1, 1, "2021-01-01 14:51:23", "2021-01-01 17:46:31"},
+                {2, 2, 2,                  2, 2, 2, "2021-01-02 14:51:23", "2021-01-02 17:46:31"},
+                {3, 3, 3,                  3, 3, 3, "2021-01-03 14:51:23", "2021-01-03 17:46:31"},
+                {4, 4, NullVariant::Int(), 4, 4, 4, "2021-01-04 14:51:23", "2021-01-04 17:46:31"},
             });
 
             DB::table("torrent_previewable_files")->insert({ID, "torrent_id", "file_index", "filepath", SIZE_, "progress", "note", CREATED_AT, UPDATED_AT},
             {
-                {1, 1,          0, "test1_file1.mkv", 1024, 200,  "no file properties",                    "2021-01-01 14:51:23", "2021-01-01 17:46:31"},
-                {2, 2,          0, "test2_file1.mkv", 2048, 870,  NullString,                              "2021-01-02 14:51:23", "2021-01-02 17:46:31"},
-                {3, 2,          1, "test2_file2.mkv", 3072, 1000, NullString,                              "2021-01-02 14:51:23", "2021-01-02 17:46:31"},
-                {4, 3,          0, "test3_file1.mkv", 5568, 870,  NullString,                              "2021-01-03 14:51:23", "2021-01-03 17:46:31"},
-                {5, 4,          0, "test4_file1.mkv", 4096, 0,    NullString,                              "2021-01-04 14:51:23", "2021-01-04 17:46:31"},
-                {6, 5,          0, "test5_file1.mkv", 2048, 999,  NullString,                              "2021-01-05 14:51:23", "2021-01-05 17:46:31"},
-                {7, 5,          1, "test5_file2.mkv", 2560, 890,  "for tst_BaseModel::remove()/destroy()", "2021-01-02 14:55:23", "2021-01-02 17:47:31"},
-                {8, 5,          2, "test5_file3.mkv", 2570, 896,  "for tst_BaseModel::destroy()",          "2021-01-02 14:56:23", "2021-01-02 17:48:31"},
-                {9, NullULLong, 0, "test0_file0.mkv", 1440, 420,  "no torrent parent model",               "2021-01-02 14:56:23", "2021-01-02 17:48:31"},
+                {1, 1,                        0, "test1_file1.mkv", 1024, 200,  "no file properties",                    "2021-01-01 14:51:23", "2021-01-01 17:46:31"},
+                {2, 2,                        0, "test2_file1.mkv", 2048, 870,  NullVariant::QString(),                  "2021-01-02 14:51:23", "2021-01-02 17:46:31"},
+                {3, 2,                        1, "test2_file2.mkv", 3072, 1000, NullVariant::QString(),                  "2021-01-02 14:51:23", "2021-01-02 17:46:31"},
+                {4, 3,                        0, "test3_file1.mkv", 5568, 870,  NullVariant::QString(),                  "2021-01-03 14:51:23", "2021-01-03 17:46:31"},
+                {5, 4,                        0, "test4_file1.mkv", 4096, 0,    NullVariant::QString(),                  "2021-01-04 14:51:23", "2021-01-04 17:46:31"},
+                {6, 5,                        0, "test5_file1.mkv", 2048, 999,  NullVariant::QString(),                  "2021-01-05 14:51:23", "2021-01-05 17:46:31"},
+                {7, 5,                        1, "test5_file2.mkv", 2560, 890,  "for tst_BaseModel::remove()/destroy()", "2021-01-02 14:55:23", "2021-01-02 17:47:31"},
+                {8, 5,                        2, "test5_file3.mkv", 2570, 896,  "for tst_BaseModel::destroy()",          "2021-01-02 14:56:23", "2021-01-02 17:48:31"},
+                {9, NullVariant::ULongLong(), 0, "test0_file0.mkv", 1440, 420,  "no torrent parent model",               "2021-01-02 14:56:23", "2021-01-02 17:48:31"},
             });
 
             DB::table("torrent_previewable_file_properties")->insert({ID, "previewable_file_id", NAME, SIZE_},
@@ -123,11 +96,11 @@ namespace Seeders
 
             DB::table("torrent_tags")->insert({ID, NAME, "note", CREATED_AT, UPDATED_AT},
             {
-                {1, "tag1", NullString, "2021-01-11 11:51:28", "2021-01-11 23:47:11"},
-                {2, "tag2", NullString, "2021-01-12 11:51:28", "2021-01-12 23:47:11"},
-                {3, "tag3", NullString, "2021-01-13 11:51:28", "2021-01-13 23:47:11"},
-                {4, "tag4", NullString, "2021-01-14 11:51:28", "2021-01-14 23:47:11"},
-                {5, "tag5", NullString, "2021-01-15 11:51:28", "2021-01-15 23:47:11"},
+                {1, "tag1", NullVariant::QString(), "2021-01-11 11:51:28", "2021-01-11 23:47:11"},
+                {2, "tag2", NullVariant::QString(), "2021-01-12 11:51:28", "2021-01-12 23:47:11"},
+                {3, "tag3", NullVariant::QString(), "2021-01-13 11:51:28", "2021-01-13 23:47:11"},
+                {4, "tag4", NullVariant::QString(), "2021-01-14 11:51:28", "2021-01-14 23:47:11"},
+                {5, "tag5", NullVariant::QString(), "2021-01-15 11:51:28", "2021-01-15 23:47:11"},
             });
 
             DB::table("tag_torrent")->insert({"torrent_id", "tag_id", "active", CREATED_AT, UPDATED_AT},
@@ -153,18 +126,18 @@ namespace Seeders
 
             QVariant double_nan = isPostgreSql
                                   ? std::numeric_limits<double>::quiet_NaN()
-                                  : NullDouble;
+                                  : NullVariant::Double();
             QVariant double_infinity = isPostgreSql
                                        ? std::numeric_limits<double>::infinity()
-                                       : NullDouble;
+                                       : NullVariant::Double();
 
             // Insert
             DB::table("types")->insert({ID, "bool_true", "bool_false", "smallint", "smallint_u", "int", "int_u", "bigint", "bigint_u", "double", "double_nan", "double_infinity", "decimal", "decimal_nan", "decimal_infinity", "decimal_down", "decimal_up", "string", "text", "timestamp", "datetime", "date", "binary"},
             {
                 {1, true, false, static_cast<int16_t>(32760), static_cast<uint16_t>(32761), static_cast<int>(2147483640), static_cast<uint>(2147483641), static_cast<qint64>(9223372036854775800), static_cast<quint64>(9223372036854775801), static_cast<double>(1000000.123), double_nan, double_infinity, static_cast<double>(100000.12), double_nan, double_infinity, static_cast<double>(100.124), static_cast<double>(100.125), "string text", "text text", "2022-09-09 08:41:28", "2022-09-10 08:41:28", "2022-09-11", QByteArray::fromHex("517420697320677265617421")},
-                {2, NullBool, NullBool, static_cast<int16_t>(-32762), NullUShort, static_cast<int>(-2147483642), NullUInt, static_cast<qint64>(-9223372036854775802), NullULLong, static_cast<double>(-1000000.123), NullDouble, NullDouble, static_cast<double>(-100000.12), NullDouble, NullDouble, static_cast<double>(-100.125), static_cast<double>(-100.124), NullString, NullString, NullQDateTime, NullQDateTime, NullQDateTime, NullQByteArray},
+                {2, NullVariant::Bool(), NullVariant::Bool(), static_cast<int16_t>(-32762), NullVariant::UShort(), static_cast<int>(-2147483642), NullVariant::UInt(), static_cast<qint64>(-9223372036854775802), NullVariant::ULongLong(), static_cast<double>(-1000000.123), NullVariant::Double(), NullVariant::Double(), static_cast<double>(-100000.12), NullVariant::Double(), NullVariant::Double(), static_cast<double>(-100.125), static_cast<double>(-100.124), NullVariant::QString(), NullVariant::QString(), NullVariant::QDateTime(), NullVariant::QDateTime(), NullVariant::QDateTime(), NullVariant::QByteArray()},
                 // All types null
-                {3, NullBool, NullBool, NullShort, NullUShort, NullInt, NullUInt, NullLLong, NullULLong, NullDouble, NullDouble, NullDouble, NullDouble, NullDouble, NullDouble, NullDouble, NullDouble, NullString, NullString, NullQDateTime, NullQDateTime, NullQDateTime, NullQByteArray},
+                {3, NullVariant::Bool(), NullVariant::Bool(), NullVariant::Short(), NullVariant::UShort(), NullVariant::Int(), NullVariant::UInt(), NullVariant::LongLong(), NullVariant::ULongLong(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::QString(), NullVariant::QString(), NullVariant::QDateTime(), NullVariant::QDateTime(), NullVariant::QDateTime(), NullVariant::QByteArray()},
             });
 
             // Fix sequence numbers for the PostgreSQL

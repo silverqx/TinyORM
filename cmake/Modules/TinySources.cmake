@@ -102,6 +102,7 @@ function(tinyorm_sources out_headers out_sources)
         utils/container.hpp
         utils/fs.hpp
         utils/helpers.hpp
+        utils/nullvariant.hpp
         utils/query.hpp
         utils/string.hpp
         utils/thread.hpp
@@ -214,6 +215,7 @@ function(tinyorm_sources out_headers out_sources)
         utils/configuration.cpp
         utils/fs.cpp
         utils/helpers.cpp
+        utils/nullvariant.cpp
         utils/query.cpp
         utils/string.cpp
         utils/thread.cpp
