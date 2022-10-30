@@ -80,6 +80,21 @@ private Q_SLOTS:
 
     /* Server timezone +02:00 - not supported by the SQLite database */
 
+    /* Null values QDateTime / QDate */
+    /* Raw QSqlQuery */
+    /* Server timezone UTC */
+    void insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const;
+    void insert_Qt_QDate_Null_DateColumn_UtcOnServer() const;
+
+    /* Server timezone +02:00 - not supported by the SQLite database */
+
+    /* Orm::QueryBuilder */
+    /* Server timezone UTC */
+    void insert_QDateTime_Null_DatetimeColumn_UtcOnServer() const;
+    void insert_QDate_Null_DateColumn_UtcOnServer() const;
+
+    /* Server timezone +02:00 - not supported by the SQLite database */
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /* Common */
@@ -1108,6 +1123,193 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OffReturnQDateTime() const
     // Restore
     restore(lastId);
     enableReturnQDateTime();
+}
+
+/* Null values QDateTime / QDate */
+
+/* Raw QSqlQuery */
+
+/* Server timezone UTC */
+
+void tst_SQLite_QDateTime::
+insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const
+{
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
+
+        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDateTime)));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto datetimeDbVariant = qtQuery.value("datetime");
+
+        // QSQLITE driver simply returns QVariant(QMetaType::QString)
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+
+        /* TZ is irrelevant for null values, but I will check them anyway, if something
+           weird happens and TZ changes then test fail, so I will know about that. */
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime();
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
+{
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
+
+        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDate)));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "date" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto dateDbVariant = qtQuery.value("date");
+
+        // QSQLITE driver simply returns QVariant(QMetaType::QString)
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+
+        const auto dateActual = dateDbVariant.value<QDate>();
+        const auto dateExpected = QDate();
+
+        QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+/* Orm::QueryBuilder */
+
+/* Server timezone UTC */
+
+void tst_SQLite_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() const
+{
+    // Insert
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"datetime", QVariant(QMetaType(QMetaType::QDateTime))}});
+
+    // Verify
+    {
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto datetimeDbVariant = query.value("datetime");
+
+        /* Following is not true for QSQLITE driver:
+           TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString.
+           Because there is no way we can detect a null datetime column. So instead
+           of returning the QVariant(QMetaType::QDateTime) we get
+           the QVariant(QMetaType::QString). */
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+
+        /* TZ is irrelevant for null values, but I will check them anyway, if something
+           weird happens and TZ changes then test fail, so I will know about that. */
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime();
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_SQLite_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
+{
+    // Insert
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"date", QVariant(QMetaType(QMetaType::QDate))}});
+
+    // Verify
+    {
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto dateDbVariant = query.value("date");
+
+        // QSQLITE driver simply returns QVariant(QMetaType::QString)
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+
+        const auto dateActual = dateDbVariant.value<QDate>();
+        const auto dateExpected = QDate();
+
+        QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId);
 }
 
 /* private */

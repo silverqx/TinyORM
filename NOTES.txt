@@ -165,6 +165,46 @@ PostgreSQL:
                                             Qt::ISODate).toLocalTime());
 
 
+Handling NULL values:
+---------------------
+
+Also look qsqlresult.cpp -> QSqlResultPrivate::isVariantNull()
+
+Also, look at the commit:
+tests QDateTime null values (xyz)
+
+MySQL:
+---
+  Summary:
+    Sent:
+      if (field.isNull())
+        r = QStringLiteral("NULL");
+    Retrieval:
+      return QVariant(f.type);
+
+SQLite:
+---
+  Summary:
+    Sent:
+      if (QSqlResultPrivate::isVariantNull(value))
+        res = sqlite3_bind_null(d->stmt, i + 1);
+    Retrieval:
+      case SQLITE_NULL:
+        values[i + idx] = QVariant(QMetaType::fromType<QString>());
+
+PostgreSQL:
+---
+  Summary:
+    Sent:
+      const auto nullStr = [](){ return QStringLiteral("NULL"); };
+      QString r;
+      if (field.isNull())
+        r = nullStr();
+    Retrieval:
+      if (PQgetisnull(d->result, currentRow, i))
+        return QVariant(type, nullptr);
+
+
 Todos to check in TinyOrm:
 --------------------------
 

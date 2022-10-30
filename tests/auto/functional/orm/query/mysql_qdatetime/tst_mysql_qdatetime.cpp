@@ -82,6 +82,25 @@ private Q_SLOTS:
     void insert_QDate_UtcTimezone_DateColumn_0200OnServer() const;
     void insert_QString_DateColumn_0200OnServer() const;
 
+    /* Null values QDateTime / QDate */
+    /* Raw QSqlQuery */
+    /* Server timezone UTC */
+    void insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const;
+    void insert_Qt_QDate_Null_DateColumn_UtcOnServer() const;
+
+    /* Server timezone +02:00 */
+    void insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer() const;
+    void insert_Qt_QDate_Null_DateColumn_0200OnServer() const;
+
+    /* Orm::QueryBuilder */
+    /* Server timezone UTC */
+    void insert_QDateTime_Null_DatetimeColumn_UtcOnServer() const;
+    void insert_QDate_Null_DateColumn_UtcOnServer() const;
+
+    /* Server timezone +02:00 */
+    void insert_QDateTime_Null_DatetimeColumn_0200OnServer() const;
+    void insert_QDate_Null_DateColumn_0200OnServer() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /* Common */
@@ -1636,6 +1655,376 @@ void tst_MySql_QDateTime::insert_QString_DateColumn_0200OnServer() const
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
+/* Null values QDateTime / QDate */
+
+/* Raw QSqlQuery */
+
+/* Server timezone UTC */
+
+void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const
+{
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
+
+        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDateTime)));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    "select `id`, `datetime` from `datetimes` where `id` = ?"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+        QCOMPARE(qtQuery.size(), 1);
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto datetimeDbVariant = qtQuery.value("datetime");
+
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+
+        /* TZ is irrelevant for null values, but I will check them anyway, if something
+           weird happens and TZ changes then test fail, so I will know about that. */
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime();
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
+{
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
+
+        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDate)));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    "select `id`, `date` from `datetimes` where `id` = ?"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+        QCOMPARE(qtQuery.size(), 1);
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto dateDbVariant = qtQuery.value("date");
+
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+
+        const auto dateActual = dateDbVariant.value<QDate>();
+        const auto dateExpected = QDate();
+
+        QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+/* Server timezone +02:00 */
+
+void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer() const
+{
+    set0200Timezone();
+
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
+
+        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDateTime)));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    "select `id`, `datetime` from `datetimes` where `id` = ?"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+        QCOMPARE(qtQuery.size(), 1);
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto datetimeDbVariant = qtQuery.value("datetime");
+
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+
+        /* TZ is irrelevant for null values, but I will check them anyway, if something
+           weird happens and TZ changes then test fail, so I will know about that. */
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime();
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
+void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
+{
+    set0200Timezone();
+
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
+
+        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDate)));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = DB::connection(m_connection).getQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    "select `id`, `date` from `datetimes` where `id` = ?"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+        QCOMPARE(qtQuery.size(), 1);
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto dateDbVariant = qtQuery.value("date");
+
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+
+        const auto dateActual = dateDbVariant.value<QDate>();
+        const auto dateExpected = QDate();
+
+        QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
+/* Orm::QueryBuilder */
+
+/* Server timezone UTC */
+
+void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() const
+{
+    // Insert
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"datetime", QVariant(QMetaType(QMetaType::QDateTime))}});
+
+    // Verify
+    {
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto datetimeDbVariant = query.value("datetime");
+
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+
+        /* TZ is irrelevant for null values, but I will check them anyway, if something
+           weird happens and TZ changes then test fail, so I will know about that. */
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime();
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
+{
+    // Insert
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"date", QVariant(QMetaType(QMetaType::QDate))}});
+
+    // Verify
+    {
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto dateDbVariant = query.value("date");
+
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+
+        const auto dateActual = dateDbVariant.value<QDate>();
+        const auto dateExpected = QDate();
+
+        QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+/* Server timezone +02:00 */
+
+void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_0200OnServer() const
+{
+    set0200Timezone();
+
+    // Insert
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"datetime", QVariant(QMetaType(QMetaType::QDateTime))}});
+
+    // Verify
+    {
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto datetimeDbVariant = query.value("datetime");
+
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+
+        /* TZ is irrelevant for null values, but I will check them anyway, if something
+           weird happens and TZ changes then test fail, so I will know about that. */
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime();
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
+void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
+{
+    set0200Timezone();
+
+    // Insert
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"date", QVariant(QMetaType(QMetaType::QDate))}});
+
+    // Verify
+    {
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto dateDbVariant = query.value("date");
+
+        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+
+        const auto dateActual = dateDbVariant.value<QDate>();
+        const auto dateExpected = QDate();
+
         QCOMPARE(dateActual, dateExpected);
     }
 

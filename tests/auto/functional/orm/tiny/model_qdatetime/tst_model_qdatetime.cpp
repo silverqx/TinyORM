@@ -3,6 +3,7 @@
 
 #include "orm/db.hpp"
 #include "orm/utils/helpers.hpp"
+#include "orm/utils/nullvariant.hpp"
 
 #include "databases.hpp"
 
@@ -17,6 +18,7 @@ using Orm::Constants::UTC;
 using Orm::DB;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
+using Orm::Utils::NullVariant;
 
 using Orm::Tiny::ConnectionOverride;
 
@@ -59,6 +61,15 @@ private Q_SLOTS:
     /* Server timezone +02:00 */
     void create_QDate_UtcTimezone_DateAttribute_0200OnServer() const;
     void create_QString_DateAttribute_0200OnServer() const;
+
+    /* Null values QDateTime / QDate */
+    /* Server timezone UTC */
+    void create_QDateTime_Null_DatetimeAttribute_UtcOnServer() const;
+    void create_QDate_Null_DateAttribute_UtcOnServer() const;
+
+    /* Server timezone +02:00 */
+    void create_QDateTime_Null_DatetimeAttribute_0200OnServer() const;
+    void create_QDate_Null_DateAttribute_0200OnServer() const;
 
     // NOLINTNEXTLINE(readability-redundant-access-specifiers)
     private:
@@ -942,6 +953,246 @@ void tst_Model_QDateTime::create_QString_DateAttribute_0200OnServer() const
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId, true, connection);
+}
+
+/* Null values QDateTime / QDate */
+
+/* Server timezone UTC */
+
+void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_UtcOnServer() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        Datetime datetime;
+        datetime["datetime"] = NullVariant::QDateTime();
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("datetime");
+        QVERIFY(attribute.isValid() && attribute.isNull());
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QDateTime);
+
+        QVERIFY(datetime.save());
+
+        lastId = datetime[ID]->value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        // Get the fresh model from the database
+        auto datetime = Datetime::find(lastId);
+        QVERIFY(datetime);
+        QVERIFY(datetime->exists);
+
+        const auto datetimeDbVariant = datetime->getAttribute("datetime");
+
+        /* Following is not true for QSQLITE driver:
+           TinyORM Model fixes this and returns the QDateTime instead of QString.
+           Would be possible to detect whether it's QSQLITE driver and a null attribute
+           and on the base of that return the QVariant(QMetaType::QDateTime), but
+           I have decided to leave it as it's now, I will not override this behavior.
+           QSQLITE driver simply returns QVariant(QMetaType::QString) for all null
+           values. */
+        if (DB::driverName(connection) == QSQLITE)
+            QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        else
+            QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+
+        /* TZ is irrelevant for null values, but I will check them anyway, if something
+           weird happens and TZ changes then test fail, so I will know about that. */
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime();
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_Model_QDateTime::create_QDate_Null_DateAttribute_UtcOnServer() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        Datetime datetime;
+        datetime["date"] = NullVariant::QDate();
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("date");
+        QVERIFY(attribute.isValid() && attribute.isNull());
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QDate);
+
+        QVERIFY(datetime.save());
+
+        lastId = datetime[ID]->value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        // Get the fresh model from the database
+        auto datetime = Datetime::find(lastId);
+        QVERIFY(datetime);
+        QVERIFY(datetime->exists);
+
+        const auto dateDbVariant = datetime->getAttribute("date");
+
+        /* Following is not true for QSQLITE driver:
+           TinyORM Model fixes this and returns the QDate instead of QString.
+           Would be possible to detect whether it's QSQLITE driver and a null attribute
+           and on the base of that return the QVariant(QMetaType::QDate), but
+           I have decided to leave it as it's now, I will not override this behavior.
+           QSQLITE driver simply returns QVariant(QMetaType::QString) for all null
+           values. */
+        if (DB::driverName(connection) == QSQLITE)
+            QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+        else
+            QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+
+        const auto dateActual = dateDbVariant.value<QDate>();
+        const auto dateExpected = QDate();
+        QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+/* Server timezone +02:00 */
+
+void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_0200OnServer() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    if (DB::driverName(connection) == QSQLITE)
+        QSKIP("SQLite database doesn't support setting a time zone on the database "
+              "server side.", );
+
+    ConnectionOverride::connection = connection;
+
+    set0200Timezone(connection);
+
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        Datetime datetime;
+        datetime["datetime"] = NullVariant::QDateTime();
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("datetime");
+        QVERIFY(attribute.isValid() && attribute.isNull());
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QDateTime);
+
+        QVERIFY(datetime.save());
+
+        lastId = datetime[ID]->value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        // Get the fresh model from the database
+        auto datetime = Datetime::find(lastId);
+        QVERIFY(datetime);
+        QVERIFY(datetime->exists);
+
+        const auto datetimeDbVariant = datetime->getAttribute("datetime");
+
+        /* Following is not true for QSQLITE driver:
+           TinyORM Model fixes this and returns the QDateTime instead of QString.
+           Would be possible to detect whether it's QSQLITE driver and a null attribute
+           and on the base of that return the QVariant(QMetaType::QDateTime), but
+           I have decided to leave it as it's now, I will not override this behavior.
+           QSQLITE driver simply returns QVariant(QMetaType::QString) for all null
+           values. */
+        if (DB::driverName(connection) == QSQLITE)
+            QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        else
+            QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+
+        /* TZ is irrelevant for null values, but I will check them anyway, if something
+           weird happens and TZ changes then test fail, so I will know about that. */
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime();
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId, true, connection);
+}
+
+void tst_Model_QDateTime::create_QDate_Null_DateAttribute_0200OnServer() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    set0200Timezone(connection);
+
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        Datetime datetime;
+        datetime["date"] = NullVariant::QDate();
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("date");
+        QVERIFY(attribute.isValid() && attribute.isNull());
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QDate);
+
+        QVERIFY(datetime.save());
+
+        lastId = datetime[ID]->value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        // Get the fresh model from the database
+        auto datetime = Datetime::find(lastId);
+        QVERIFY(datetime);
+        QVERIFY(datetime->exists);
+
+        const auto dateDbVariant = datetime->getAttribute("date");
+
+        /* Following is not true for QSQLITE driver:
+           TinyORM Model fixes this and returns the QDate instead of QString.
+           Would be possible to detect whether it's QSQLITE driver and a null attribute
+           and on the base of that return the QVariant(QMetaType::QDate), but
+           I have decided to leave it as it's now, I will not override this behavior.
+           QSQLITE driver simply returns QVariant(QMetaType::QString) for all null
+           values. */
+        if (DB::driverName(connection) == QSQLITE)
+            QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+        else
+            QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+
+        const auto dateActual = dateDbVariant.value<QDate>();
+        const auto dateExpected = QDate();
         QCOMPARE(dateActual, dateExpected);
     }
 
