@@ -13,7 +13,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/export.hpp"
 
 class QDateTime;
-class QVariant;
+class QVariant; // clazy:exclude=qt6-fwd-fixes
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
