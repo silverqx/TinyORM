@@ -152,6 +152,8 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_UtcOnServer() const
         QVERIFY(datetime->exists);
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
@@ -204,6 +206,8 @@ create_QDateTime_0200Timezone_DatetimeAttribute_UtcOnServer() const
         QVERIFY(datetime->exists);
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
@@ -254,6 +258,8 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_UtcOnServer() const
         QVERIFY(datetime->exists);
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
@@ -306,6 +312,8 @@ create_QDateTime_UtcTimezone_TimestampAttribute_UtcOnServer() const
         QVERIFY(datetime->exists);
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
@@ -358,6 +366,8 @@ create_QDateTime_0200Timezone_TimestampAttribute_UtcOnServer() const
         QVERIFY(datetime->exists);
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
@@ -408,6 +418,8 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_UtcOnServer() const
         QVERIFY(datetime->exists);
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
@@ -468,6 +480,8 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_0200OnServer() const
         QVERIFY(datetime->exists);
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
@@ -526,6 +540,8 @@ create_QDateTime_0200Timezone_DatetimeAttribute_0200OnServer() const
         QVERIFY(datetime->exists);
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
@@ -582,6 +598,8 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_0200OnServer() const
         QVERIFY(datetime->exists);
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
@@ -640,6 +658,8 @@ create_QDateTime_UtcTimezone_TimestampAttribute_0200OnServer() const
         QVERIFY(datetime->exists);
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
@@ -698,6 +718,8 @@ create_QDateTime_0200Timezone_TimestampAttribute_0200OnServer() const
         QVERIFY(datetime->exists);
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
@@ -754,6 +776,8 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_0200OnServer() const
         QVERIFY(datetime->exists);
 
         const auto timestampDbVariant = datetime->getAttribute("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
@@ -808,6 +832,8 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_UtcOnServer() c
         QVERIFY(datetime->exists);
 
         const auto dateDbVariant = datetime->getAttribute("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(!dateDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
@@ -853,6 +879,8 @@ void tst_Model_QDateTime::create_QString_DateAttribute_UtcOnServer() const
         QVERIFY(datetime->exists);
 
         const auto dateDbVariant = datetime->getAttribute("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(!dateDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
@@ -901,6 +929,8 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_0200OnServer() 
         QVERIFY(datetime->exists);
 
         const auto dateDbVariant = datetime->getAttribute("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(!dateDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
@@ -948,6 +978,8 @@ void tst_Model_QDateTime::create_QString_DateAttribute_0200OnServer() const
         QVERIFY(datetime->exists);
 
         const auto dateDbVariant = datetime->getAttribute("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(!dateDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
@@ -996,6 +1028,8 @@ void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_UtcOnServer() 
         QVERIFY(datetime->exists);
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(datetimeDbVariant.isNull());
 
         /* Following is not true for QSQLITE driver:
            TinyORM Model fixes this and returns the QDateTime instead of QString.
@@ -1055,6 +1089,8 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_UtcOnServer() const
         QVERIFY(datetime->exists);
 
         const auto dateDbVariant = datetime->getAttribute("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(dateDbVariant.isNull());
 
         /* Following is not true for QSQLITE driver:
            TinyORM Model fixes this and returns the QDate instead of QString.
@@ -1117,6 +1153,8 @@ void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_0200OnServer()
         QVERIFY(datetime->exists);
 
         const auto datetimeDbVariant = datetime->getAttribute("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(datetimeDbVariant.isNull());
 
         /* Following is not true for QSQLITE driver:
            TinyORM Model fixes this and returns the QDateTime instead of QString.
@@ -1178,6 +1216,8 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_0200OnServer() const
         QVERIFY(datetime->exists);
 
         const auto dateDbVariant = datetime->getAttribute("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(dateDbVariant.isNull());
 
         /* Following is not true for QSQLITE driver:
            TinyORM Model fixes this and returns the QDate instead of QString.

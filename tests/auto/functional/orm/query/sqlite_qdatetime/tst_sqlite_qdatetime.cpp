@@ -185,6 +185,8 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = qtQuery.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
 
@@ -247,6 +249,8 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn() const
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = qtQuery.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
 
@@ -305,6 +309,8 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DatetimeColumn() const
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = qtQuery.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
 
@@ -366,6 +372,8 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn() const
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
         const auto timestampDbVariant = qtQuery.value("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
 
@@ -428,6 +436,8 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn() const
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
         const auto timestampDbVariant = qtQuery.value("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
 
@@ -486,6 +496,8 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimestampColumn() const
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
         const auto timestampDbVariant = qtQuery.value("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
 
@@ -522,6 +534,8 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = query.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
@@ -553,6 +567,8 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OnReturnQDateTime() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = query.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
@@ -582,6 +598,8 @@ void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OnReturnQDateTime() con
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = query.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
 
@@ -613,6 +631,8 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OnReturnQDateTime() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto timestampDbVariant = query.value("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
@@ -645,6 +665,8 @@ insert_QDateTime_0200Timezone_TimestampColumn_OnReturnQDateTime() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto timestampDbVariant = query.value("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
@@ -674,6 +696,8 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OnReturnQDateTime() co
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto timestampDbVariant = query.value("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
 
@@ -709,6 +733,8 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OffReturnQDateTime() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = query.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
 
@@ -744,6 +770,8 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OffReturnQDateTime() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = query.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
 
@@ -777,6 +805,8 @@ void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OffReturnQDateTime() co
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = query.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
 
@@ -812,6 +842,8 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OffReturnQDateTime() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto timestampDbVariant = query.value("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
 
@@ -848,6 +880,8 @@ insert_QDateTime_0200Timezone_TimestampColumn_OffReturnQDateTime() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto timestampDbVariant = query.value("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
 
@@ -881,6 +915,8 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OffReturnQDateTime() c
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto timestampDbVariant = query.value("timestamp");
+        QVERIFY(timestampDbVariant.isValid());
+        QVERIFY(!timestampDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
 
@@ -946,6 +982,8 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn() const
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
         const auto dateDbVariant = qtQuery.value("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(!dateDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
 
@@ -999,6 +1037,8 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DateColumn() const
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
         const auto dateDbVariant = qtQuery.value("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(!dateDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
 
@@ -1029,6 +1069,8 @@ tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OnReturnQDateTime() co
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto dateDbVariant = query.value("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(!dateDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
@@ -1054,6 +1096,8 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OnReturnQDateTime() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto dateDbVariant = query.value("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(!dateDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
@@ -1084,6 +1128,8 @@ tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OffReturnQDateTime() c
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto dateDbVariant = query.value("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(!dateDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
 
@@ -1112,6 +1158,8 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OffReturnQDateTime() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto dateDbVariant = query.value("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(!dateDbVariant.isNull());
 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
 
@@ -1173,6 +1221,8 @@ insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = qtQuery.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(datetimeDbVariant.isNull());
 
         // QSQLITE driver simply returns QVariant(QMetaType::QString)
         QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
@@ -1232,6 +1282,8 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
         const auto dateDbVariant = qtQuery.value("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(dateDbVariant.isNull());
 
         // QSQLITE driver simply returns QVariant(QMetaType::QString)
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
@@ -1263,6 +1315,8 @@ void tst_SQLite_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() co
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto datetimeDbVariant = query.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(datetimeDbVariant.isNull());
 
         /* Following is not true for QSQLITE driver:
            TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString.
@@ -1298,6 +1352,8 @@ void tst_SQLite_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
         const auto dateDbVariant = query.value("date");
+        QVERIFY(dateDbVariant.isValid());
+        QVERIFY(dateDbVariant.isNull());
 
         // QSQLITE driver simply returns QVariant(QMetaType::QString)
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
