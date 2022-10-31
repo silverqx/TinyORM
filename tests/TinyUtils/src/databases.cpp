@@ -209,6 +209,8 @@ Databases::sqliteConfiguration()
         {check_database_exists,   true},
         // Specifies what time zone all QDateTime-s will have
         {qt_timezone,             QVariant::fromValue(Qt::UTC)},
+        /* Return a QDateTime with the correct time zone instead of the QString,
+           only works when the qt_timezone isn't set to the DontConvert. */
         {return_qdatetime,        true},
         {prefix_,                 EMPTY},
         // FUTURE schema sqlite, prefix_indexes and sqlite, works it? test silverqx

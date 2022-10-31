@@ -127,7 +127,8 @@ std::shared_ptr<DatabaseManager> setupManager()
             {check_database_exists,   true},
             // Specifies what time zone all QDateTime-s will have
             {qt_timezone,             QVariant::fromValue(Qt::UTC)},
-            // Return QDateTime with the correct time zone instead of QString
+            /* Return a QDateTime with the correct time zone instead of the QString,
+               only works when the qt_timezone isn't set to the DontConvert. */
             {return_qdatetime,        true},
             {prefix_,                 EMPTY},
         }}
