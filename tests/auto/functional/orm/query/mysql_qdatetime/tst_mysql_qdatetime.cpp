@@ -101,6 +101,11 @@ private Q_SLOTS:
     void insert_QDateTime_Null_DatetimeColumn_0200OnServer() const;
     void insert_QDate_Null_DateColumn_0200OnServer() const;
 
+    /* QtTimeZoneType::DontConvert */
+    /* Orm::QueryBuilder */
+    /* Server timezone UTC */
+    void insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /* Common */
@@ -112,6 +117,8 @@ private:
     inline void setUtcTimezone() const;
     /*! Set the MySQL timezone session variable to the +02:00 value. */
     inline void set0200Timezone() const;
+    /*! Set the qt_timezone to the QtTimeZoneType::DontConvert value. */
+    inline void setDontConvertTimezone() const;
     /*! Set the MySQL timezone session variable to the given value. */
     void setTimezone(const QString &timeZone, QtTimeZoneConfig &&qtTimeZone) const;
 
@@ -2112,6 +2119,52 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
     restore(lastId, true);
 }
 
+/* QtTimeZoneType::DontConvert */
+
+/* Orm::QueryBuilder */
+
+/* Server timezone UTC */
+
+void tst_MySql_QDateTime::
+insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
+{
+    setDontConvertTimezone();
+
+    QCOMPARE(DB::qtTimeZone(m_connection),
+             QtTimeZoneConfig {QtTimeZoneType::DontConvert});
+
+    // Insert
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"datetime", QDateTime::fromString("2022-08-28 13:14:15+03:00",
+                                                             Qt::ISODate)}});
+
+    // Verify
+    {
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto datetimeDbVariant = query.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+
+        // Practically it should behave as is the default QMYSQL driver behavior
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15",
+                                                            Qt::ISODate);
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
 /* private */
 
 /* Common */
@@ -2133,6 +2186,11 @@ void tst_MySql_QDateTime::set0200Timezone() const
 {
     setTimezone(QStringLiteral("+02:00"), {QtTimeZoneType::QTimeZone,
                                            QVariant::fromValue(*TimeZone0200)});
+}
+
+void tst_MySql_QDateTime::setDontConvertTimezone() const
+{
+    setTimezone(UTC, {QtTimeZoneType::DontConvert});
 }
 
 void tst_MySql_QDateTime::setTimezone(const QString &timeZone,

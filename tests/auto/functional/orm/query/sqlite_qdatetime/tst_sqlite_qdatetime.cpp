@@ -12,6 +12,8 @@
 using Orm::Constants::ID;
 
 using Orm::DB;
+using Orm::QtTimeZoneConfig;
+using Orm::QtTimeZoneType;
 using Orm::SQLiteConnection;
 
 using Helpers = Orm::Utils::Helpers;
@@ -95,6 +97,11 @@ private Q_SLOTS:
 
     /* Server timezone +02:00 - not supported by the SQLite database */
 
+    /* QtTimeZoneType::DontConvert */
+    /* Orm::QueryBuilder */
+    /* Server timezone None */
+    void insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /* Common */
@@ -103,7 +110,7 @@ private:
 
     /* QDateTime with/without timezone */
     /*! Restore the database after a QDateTime-related test. */
-    void restore(quint64 lastId, bool restoreTimezone = false) const;
+    void restore(quint64 lastId) const;
     /*! Disable the return_qdatetime for the current connection. */
     void disableReturnQDateTime() const;
     /*! Enable the return_qdatetime for the current connection. */
@@ -1368,6 +1375,59 @@ void tst_SQLite_QDateTime::insert_QDate_Null_DateColumn() const
     restore(lastId);
 }
 
+/* QtTimeZoneType::DontConvert */
+
+/* Orm::QueryBuilder */
+
+/* Server timezone None */
+
+void tst_SQLite_QDateTime::
+insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
+{
+    DB::connection(m_connection)
+            .setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::DontConvert});
+    QCOMPARE(DB::qtTimeZone(m_connection),
+             QtTimeZoneConfig {QtTimeZoneType::DontConvert});
+
+    // Insert
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"datetime", QDateTime::fromString("2022-08-28 13:14:15+03:00",
+                                                             Qt::ISODate)}});
+
+    // Verify
+    {
+        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto datetimeDbVariant = query.value("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+
+        /* Practically it should behave as is the default QSQLITE driver behavior,
+           so it also retuns QString because return_qdatetime only works when converting
+           TZ is enabled. */
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15",
+                                                            Qt::ISODate);
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId);
+
+    DB::connection(m_connection)
+            .setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
+                                             QVariant::fromValue(Qt::UTC)});
+    QCOMPARE(DB::qtTimeZone(m_connection),
+             (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
+                                QVariant::fromValue(Qt::UTC)}));
+}
+
 /* private */
 
 /* Common */
@@ -1380,17 +1440,13 @@ tst_SQLite_QDateTime::createQuery() const
 
 /* QDateTime with/without timezone */
 
-void tst_SQLite_QDateTime::restore(const quint64 lastId,
-                                   const bool restoreTimezone) const
+void tst_SQLite_QDateTime::restore(const quint64 lastId) const
 {
     const auto [affected, query] = createQuery()->from("datetimes").remove(lastId);
 
     QVERIFY(!query.lastError().isValid());
     QVERIFY(!query.isValid() && query.isActive() && !query.isSelect());
     QCOMPARE(affected, 1);
-
-    if (!restoreTimezone)
-        return;
 }
 
 void tst_SQLite_QDateTime::disableReturnQDateTime() const

@@ -71,6 +71,11 @@ private Q_SLOTS:
     void create_QDateTime_Null_DatetimeAttribute_0200OnServer() const;
     void create_QDate_Null_DateAttribute_0200OnServer() const;
 
+    /* QtTimeZoneType::DontConvert */
+    /* Orm::QueryBuilder */
+    /* Server timezone UTC */
+    void create_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const;
+
     // NOLINTNEXTLINE(readability-redundant-access-specifiers)
     private:
         /*! Set the MySQL/PostgreSQL timezone session variable to the UTC value. */
@@ -1240,6 +1245,76 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_0200OnServer() const
     restore(lastId, true, connection);
 }
 
+/* QtTimeZoneType::DontConvert */
+
+/* Orm::QueryBuilder */
+
+/* Server timezone UTC */
+
+void tst_Model_QDateTime::
+create_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::DontConvert}, connection);
+    QCOMPARE(DB::qtTimeZone(connection),
+             QtTimeZoneConfig {QtTimeZoneType::DontConvert});
+
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        Datetime datetime;
+        datetime["datetime"] = QDateTime::fromString("2022-08-28 13:14:15+03:00",
+                                                     Qt::ISODate);
+
+        // Check whether a stored value and type are correct
+        const auto attribute = datetime.getAttributeFromArray("datetime");
+        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
+
+        QVERIFY(datetime.save());
+
+        lastId = datetime[ID]->value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        // Get the fresh model from the database
+        auto datetime = Datetime::find(lastId);
+        QVERIFY(datetime);
+        QVERIFY(datetime->exists);
+
+        const auto datetimeDbVariant = datetime->getAttribute("datetime");
+        QVERIFY(datetimeDbVariant.isValid());
+        QVERIFY(!datetimeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+
+        /* The time zone must be as is defined in the qt_timezone connection
+           configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
+           behavior of all QtSql drivers. */
+        const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15",
+                                                            Qt::ISODate);
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+
+    // Restore
+    restore(lastId);
+
+    DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
+                                        QVariant::fromValue(Qt::UTC)}, connection);
+    QCOMPARE(DB::qtTimeZone(connection),
+             (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
+                                QVariant::fromValue(Qt::UTC)}));
+}
+
 /* private */
 
 void tst_Model_QDateTime::setUtcTimezone(const QString &connection) const
@@ -1335,7 +1410,8 @@ void tst_Model_QDateTime::restore(
     if (!restoreTimezone)
         return;
 
-    // Restore also the MySQL timezone session variable to auto tests default UTC value
+    /* Restore also the MySQL/PostgreSQL timezone session variable to auto tests
+       default UTC value. */
     if (!connection.isEmpty() && DB::driverName(connection) != QSQLITE)
         setUtcTimezone(connection);
 }
