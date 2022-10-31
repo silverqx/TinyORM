@@ -205,6 +205,47 @@ PostgreSQL:
         return QVariant(type, nullptr);
 
 
+Handling integer values:
+------------------------
+
+bool, smallint, bigint, ... are database types, _u suffix means unsigned.
+Int, Short, LongLong, ... are QMetaType-s.
+
+            bool      smallint  smallint_u  int       int_u     bigint    bigint_u   double  decimal
+MySQL       Int       Short     UShort      Int       UInt      LongLong  ULongLong  Double  Double
+PostgreSQL  Bool      Int       -           Int       -         -         -          Double  Double
+SQLite      LongLong  LongLong  LongLong    LongLong  LongLong  LongLong  LongLong   Double  Double
+
+Special rules:
+-----
+
+PostgreSQL:
+---
+ - doesn't have unsigned integer numbers.
+ - returns Int for all types <Int
+ - bigint has special handling, it returns LongLong for positive numbers and ULongLong for negative,
+   it simply detects - character at the beginning
+
+
+null values:
+-----
+
+In this case Int, Short, LongLong, ... are QMetaType-s that are passed to the QVariant ctor to
+create a null QVariant eg. QVariant(QMetaType(QMetaType::Int)).
+
+            bool      smallint  smallint_u  int       int_u     bigint    bigint_u   double   decimal
+MySQL       Char      Short     UShort      Int       UInt      LongLong  ULongLong  Double   Double
+PostgreSQL  Bool      Int       -           Int       -         LongLong  LongLong   Double   Double
+SQLite      QString   QString   QString     QString   QString   QString   QString    QString  QString
+
+Special rules:
+-----
+ - QSQLITE driver returns null QVariant(QMetaType(QMetaType::QString)) for all null values
+ - QMYSQL driver returns null QVariant(QMetaType(QMetaType::Char)) for tinyint database types
+ - QPSQL driver - the logic for - and ULongLong is not applied for the null values, so it's
+                  everytime LongLong
+
+
 Todos to check in TinyOrm:
 --------------------------
 

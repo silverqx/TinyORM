@@ -113,6 +113,8 @@ private Q_SLOTS:
     void defaultCast_bool_true() const;
     void defaultCast_bool_false() const;
 
+    /* Look at NOTES.txt how integer types are handled by QtSql drivers, section:
+       Handling integer values */
     void defaultCast_smallint() const;
     void defaultCast_smallint_u() const;
     void defaultCast_int() const;
