@@ -1215,9 +1215,15 @@ namespace Orm::Tiny::Concerns
     QDateTime
     HasAttributes<Derived, AllRelations...>::asDateTime(const QVariant &value) const
     {
+        /* This can never happen, null values must be handled outside of the asDateTime,
+           asDate, and asTimestamp methods. */
+        Q_ASSERT_X(!value.isNull(),
+                   qUtf8Printable(__tiny_func__),
+                   "null values must be handled outside of the asDateTime, asDate, "
+                   "and asTimestamp methods.");
         // CUR softdeletes fails with this, also check isNull() check in transformModelValue() silverqx
-//        if (value.isNull())
-//            return {};
+        if (value.isNull())
+            return {};
 
         /* If this value is already a QDateTime instance, we shall just return it as is.
            This prevents us having to re-parse a QDateTime instance when we know
@@ -1393,15 +1399,13 @@ namespace Orm::Tiny::Concerns
             // Throw if the given attribute can not be converted to the given cast type
             throwIfCanNotCastAttribute(key, castType, metaType, value_, functionName);
 
-            const auto wasNull = value_.isNull();
-
             /* Still check for the false value and log to the debug stream, but not if
                the value_ is null, because converting null QVariant will always return
                false and the QVariant type will be changed anyway. */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            if (!value_.convert(metaType) && !wasNull)
+            if (!value_.convert(metaType) && !value_.isNull())
 #else
-            if (!value_.convert(metaType.id()) && !wasNull)
+            if (!value_.convert(metaType.id()) && !value_.isNull())
 #endif
                 // Log if the QVariant::convert() for the given attribute failed
 #ifdef TINYORM_DEBUG
@@ -1430,13 +1434,17 @@ namespace Orm::Tiny::Concerns
         case CastType::UInteger:
             return convertAttribute(QMetaType(QMetaType::UInt));
         // QDateTime
+        // DateTime-related values need spacial null handling
         case CastType::QDate:
-            return asDate(value_);
+            return value_.isNull() ? NullVariant::QDate()
+                                   : asDate(value_);
         case CastType::QDateTime:
 //        case CastType::CustomQDateTime:
-            return asDateTime(value_);
+            return value_.isNull() ? NullVariant::QDateTime()
+                                   : asDateTime(value_);
         case CastType::Timestamp:
-            return asTimestamp(value_);
+            return value_.isNull() ? NullVariant::LongLong()
+                                   : asTimestamp(value_);
         // Bool
         case CastType::Bool:
         case CastType::Boolean:
