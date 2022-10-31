@@ -29,7 +29,7 @@ private Q_SLOTS:
 
     /* QDateTime with/without timezone */
     /* Raw QSqlQuery */
-    /* Server timezone UTC */
+    /* Server timezone None */
     void insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const;
     void insert_Qt_QDateTime_0200Timezone_DatetimeColumn() const;
     void insert_Qt_QString_DatetimeColumn() const;
@@ -41,7 +41,7 @@ private Q_SLOTS:
     /* Server timezone +02:00 - not supported by the SQLite database */
 
     /* Orm::QueryBuilder */
-    /* Server timezone UTC and enabled return_qdatetime */
+    /* Server timezone None and enabled return_qdatetime */
     void insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const;
     void insert_QDateTime_0200Timezone_DatetimeColumn_OnReturnQDateTime() const;
     void insert_QString_DatetimeColumn_OnReturnQDateTime() const;
@@ -50,7 +50,7 @@ private Q_SLOTS:
     void insert_QDateTime_0200Timezone_TimestampColumn_OnReturnQDateTime() const;
     void insert_QString_TimestampColumn_OnReturnQDateTime() const;
 
-    /* Server timezone UTC and disabled return_qdatetime */
+    /* Server timezone None and disabled return_qdatetime */
     void insert_QDateTime_UtcTimezone_DatetimeColumn_OffReturnQDateTime() const;
     void insert_QDateTime_0200Timezone_DatetimeColumn_OffReturnQDateTime() const;
     void insert_QString_DatetimeColumn_OffReturnQDateTime() const;
@@ -63,18 +63,18 @@ private Q_SLOTS:
 
     /* QDate */
     /* Raw QSqlQuery */
-    /* Server timezone UTC */
+    /* Server timezone None */
     void insert_Qt_QDate_UtcTimezone_DateColumn() const;
     void insert_Qt_QString_DateColumn() const;
 
     /* Server timezone +02:00 - not supported by the SQLite database */
 
     /* Orm::QueryBuilder */
-    /* Server timezone UTC and enabled return_qdatetime */
+    /* Server timezone None and enabled return_qdatetime */
     void insert_QDate_UtcTimezone_DateColumn_OnReturnQDateTime() const;
     void insert_QString_DateColumn_OnReturnQDateTime() const;
 
-    /* Server timezone UTC and disabled return_qdatetime */
+    /* Server timezone None and disabled return_qdatetime */
     void insert_QDate_UtcTimezone_DateColumn_OffReturnQDateTime() const;
     void insert_QString_DateColumn_OffReturnQDateTime() const;
 
@@ -82,16 +82,16 @@ private Q_SLOTS:
 
     /* Null values QDateTime / QDate */
     /* Raw QSqlQuery */
-    /* Server timezone UTC */
-    void insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const;
-    void insert_Qt_QDate_Null_DateColumn_UtcOnServer() const;
+    /* Server timezone None */
+    void insert_Qt_QDateTime_Null_DatetimeColumn() const;
+    void insert_Qt_QDate_Null_DateColumn() const;
 
     /* Server timezone +02:00 - not supported by the SQLite database */
 
     /* Orm::QueryBuilder */
-    /* Server timezone UTC */
-    void insert_QDateTime_Null_DatetimeColumn_UtcOnServer() const;
-    void insert_QDate_Null_DateColumn_UtcOnServer() const;
+    /* Server timezone None */
+    void insert_QDateTime_Null_DatetimeColumn() const;
+    void insert_QDate_Null_DateColumn() const;
 
     /* Server timezone +02:00 - not supported by the SQLite database */
 
@@ -140,7 +140,7 @@ namespace
 
 /* Raw QSqlQuery */
 
-/* Server timezone UTC */
+/* Server timezone None */
 void tst_SQLite_QDateTime::
 insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const
 {
@@ -517,7 +517,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimestampColumn() const
 
 /* Orm::QueryBuilder */
 
-/* Server timezone UTC and enabled return_qdatetime */
+/* Server timezone None and enabled return_qdatetime */
 
 void tst_SQLite_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const
@@ -714,7 +714,7 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OnReturnQDateTime() co
     restore(lastId);
 }
 
-/* Server timezone UTC and disabled return_qdatetime */
+/* Server timezone None and disabled return_qdatetime */
 
 void tst_SQLite_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_OffReturnQDateTime() const
@@ -939,7 +939,7 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OffReturnQDateTime() c
 
 /* Raw QSqlQuery */
 
-/* Server timezone UTC */
+/* Server timezone None */
 
 void tst_SQLite_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn() const
 {
@@ -1053,7 +1053,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DateColumn() const
 
 /* Orm::QueryBuilder */
 
-/* Server timezone UTC and enabled return_qdatetime */
+/* Server timezone None and enabled return_qdatetime */
 
 void
 tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OnReturnQDateTime() const
@@ -1110,7 +1110,7 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OnReturnQDateTime() const
     restore(lastId);
 }
 
-/* Server timezone UTC and disabled return_qdatetime */
+/* Server timezone None and disabled return_qdatetime */
 
 void
 tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OffReturnQDateTime() const
@@ -1177,10 +1177,10 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OffReturnQDateTime() const
 
 /* Raw QSqlQuery */
 
-/* Server timezone UTC */
+/* Server timezone None */
 
 void tst_SQLite_QDateTime::
-insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const
+insert_Qt_QDateTime_Null_DatetimeColumn() const
 {
     quint64 lastId = 0;
 
@@ -1241,7 +1241,7 @@ insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const
     restore(lastId);
 }
 
-void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
+void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn() const
 {
     quint64 lastId = 0;
 
@@ -1300,9 +1300,9 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
 
 /* Orm::QueryBuilder */
 
-/* Server timezone UTC */
+/* Server timezone None */
 
-void tst_SQLite_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() const
+void tst_SQLite_QDateTime::insert_QDateTime_Null_DatetimeColumn() const
 {
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
@@ -1339,7 +1339,7 @@ void tst_SQLite_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() co
     restore(lastId);
 }
 
-void tst_SQLite_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
+void tst_SQLite_QDateTime::insert_QDate_Null_DateColumn() const
 {
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
