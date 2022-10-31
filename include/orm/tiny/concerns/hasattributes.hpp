@@ -1220,9 +1220,6 @@ namespace Orm::Tiny::Concerns
                    qUtf8Printable(__tiny_func__),
                    "null values must be handled outside of the asDateTime, asDate, "
                    "and asTimestamp methods.");
-        // CUR softdeletes fails with this, also check isNull() check in transformModelValue() silverqx
-        if (value.isNull())
-            return {};
 
         /* If this value is already a QDateTime instance, we shall just return it as is.
            This prevents us having to re-parse a QDateTime instance when we know
