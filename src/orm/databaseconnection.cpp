@@ -157,10 +157,11 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
 {
     const auto functionName = __tiny_func__;
 
-    return run<QSqlQuery>(queryString, bindings, Prepared,
-               [this, &functionName]
-               (const QString &queryString_, const QVector<QVariant> &bindings_)
-               -> QSqlQuery
+    return run<QSqlQuery>(
+                queryString, bindings, Prepared,
+                [this, &functionName]
+                (const QString &queryString_, const QVector<QVariant> &bindings_)
+                -> QSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -196,10 +197,11 @@ DatabaseConnection::affectingStatement(const QString &queryString,
 {
     const auto functionName = __tiny_func__;
 
-    return run<std::tuple<int, QSqlQuery>>(queryString, bindings, Prepared,
-            [this, &functionName]
-            (const QString &queryString_, const QVector<QVariant> &bindings_)
-            -> std::tuple<int, QSqlQuery>
+    return run<std::tuple<int, QSqlQuery>>(
+               queryString, bindings, Prepared,
+               [this, &functionName]
+               (const QString &queryString_, const QVector<QVariant> &bindings_)
+               -> std::tuple<int, QSqlQuery>
     {
         if (m_pretending)
             return {-1, getQtQueryForPretend()};
