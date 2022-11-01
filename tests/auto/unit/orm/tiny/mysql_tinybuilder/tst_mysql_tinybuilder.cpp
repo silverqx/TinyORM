@@ -18,6 +18,7 @@ using Orm::Exceptions::InvalidArgumentError;
 using Orm::QueryBuilder;
 using Orm::Tiny::Model;
 using Orm::Tiny::TinyBuilder;
+using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
@@ -156,7 +157,9 @@ void tst_MySql_TinyBuilder::touch() const
              "set `updated_at` = ? "
              "where `status` = ? and `users`.`deleted_at` is null");
     QVERIFY(firstLog.boundValues.size() == 2);
-    QVERIFY(firstLog.boundValues.at(0).value<QDateTime>() >= timeBeforeTouch);
+    QVERIFY(Helpers::setTimeZone(firstLog.boundValues.at(0).value<QDateTime>(),
+                                 m_connection) >=
+            timeBeforeTouch);
     QCOMPARE(firstLog.boundValues.at(1), QVariant(QString("new")));
 }
 
@@ -184,7 +187,9 @@ void tst_MySql_TinyBuilder::touch_CustomColumn() const
              "set `updated_on` = ? "
              "where `status` = ? and `users`.`deleted_at` is null");
     QVERIFY(firstLog.boundValues.size() == 2);
-    QVERIFY(firstLog.boundValues.at(0).value<QDateTime>() >= timeBeforeTouch);
+    QVERIFY(Helpers::setTimeZone(firstLog.boundValues.at(0).value<QDateTime>(),
+                                 m_connection) >=
+            timeBeforeTouch);
     QCOMPARE(firstLog.boundValues.at(1), QVariant(QString("new")));
 }
 

@@ -22,7 +22,7 @@ namespace Orm::Concerns
 /* public */
 
 void LogsQueries::logQueryForPretend(
-        const QString &query, const QVector<QVariant> &bindings,
+        const QString &query, const QVector<QVariant> &preparedBindings,
 #ifdef TINYORM_DEBUG_SQL
         const QString &type) const
 #else
@@ -30,7 +30,7 @@ void LogsQueries::logQueryForPretend(
 #endif
 {
     if (m_loggingQueries && m_queryLog)
-        m_queryLog->append({query, bindings, Log::Type::NORMAL, ++m_queryLogId});
+        m_queryLog->append({query, preparedBindings, Log::Type::NORMAL, ++m_queryLogId});
 
 #ifdef TINYORM_DEBUG_SQL
     // Debugging SQL queries is disabled
@@ -42,8 +42,8 @@ void LogsQueries::logQueryForPretend(
     qDebug("Pretended %s query (%s) : %s",
            type.toUtf8().constData(),
            connectionName.isEmpty() ? "" : connectionName.toUtf8().constData(),
-           QueryUtils::parseExecutedQueryForPretend(query,
-                                                    bindings).toUtf8().constData());
+           QueryUtils::parseExecutedQueryForPretend(query, preparedBindings)
+           .toUtf8().constData());
 #endif
 }
 

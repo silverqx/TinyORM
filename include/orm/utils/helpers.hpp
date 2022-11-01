@@ -5,9 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtGlobal>
-
-#include <functional>
+#include <QString>
 
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
@@ -74,6 +72,19 @@ namespace Utils
         /*! Set the QDateTime's time zone to the given time zone. */
         static QDateTime &
         setTimeZone(QDateTime &datetime, const QtTimeZoneConfig &timezone);
+        /*! Set the QDateTime's time zone to the given time zone. */
+        static QDateTime
+        setTimeZone(QDateTime &&datetime, const QtTimeZoneConfig &timezone);
+
+        /*! Convert the QDateTime's time zone according to the given connection name. */
+        static QDateTime
+        convertTimeZone(const QDateTime &datetime, const QString &connection = "");
+        /*! Set the QDateTime's time zone according to the given connection. */
+        static QDateTime &
+        setTimeZone(QDateTime &datetime, const QString &connection = "");
+        /*! Set the QDateTime's time zone according to the given connection. */
+        static QDateTime
+        setTimeZone(QDateTime &&datetime, const QString &connection = "");
     };
 
     /* public */

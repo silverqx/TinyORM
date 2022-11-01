@@ -1,7 +1,7 @@
 #include "orm/utils/helpers.hpp"
 
+#include "orm/db.hpp"
 #include "orm/macros/likely.hpp"
-#include "orm/ormtypes.hpp"
 #include "orm/utils/string.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -101,6 +101,29 @@ Helpers::setTimeZone(QDateTime &datetime, const QtTimeZoneConfig &timezone)
     }
 
     return datetime;
+}
+
+QDateTime
+Helpers::setTimeZone(QDateTime &&datetime, const QtTimeZoneConfig &timezone)
+{
+    return setTimeZone(datetime, timezone);
+}
+
+QDateTime
+Helpers::convertTimeZone(const QDateTime &datetime, const QString &connection)
+{
+    return convertTimeZone(datetime, DB::qtTimeZone(connection));
+}
+
+QDateTime &
+Helpers::setTimeZone(QDateTime &datetime, const QString &connection)
+{
+    return setTimeZone(datetime, DB::qtTimeZone(connection));
+}
+
+QDateTime Helpers::setTimeZone(QDateTime &&datetime, const QString &connection)
+{
+    return setTimeZone(datetime, connection);
 }
 
 } // namespace Orm::Utils

@@ -106,11 +106,12 @@ DatabaseConnection::select(const QString &queryString,
 {
     const auto functionName = __tiny_func__;
 
-    auto query_ = run<QSqlQuery>(
-                      queryString, bindings, Prepared,
-                      [this, &functionName]
-                      (const QString &queryString_, const QVector<QVariant> &bindings_)
-                      -> QSqlQuery
+    auto queryResult = run<QSqlQuery>(
+                           queryString, bindings, Prepared,
+                           [this, &functionName]
+                           (const QString &queryString_,
+                            const QVector<QVariant> &preparedBindings)
+                           -> QSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -118,7 +119,7 @@ DatabaseConnection::select(const QString &queryString,
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString_);
 
-        bindValues(query, prepareBindings(bindings_));
+        bindValues(query, preparedBindings);
 
         if (query.exec()) {
             // Query statements counter
@@ -135,10 +136,10 @@ DatabaseConnection::select(const QString &queryString,
         throw Exceptions::QueryError(
                     QStringLiteral("Select statement in %1() failed.")
                         .arg(functionName),
-                    query, bindings_);
+                    query, preparedBindings);
     });
 
-    return {std::move(query_), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
+    return {std::move(queryResult), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
 }
 
 SqlQuery
@@ -160,7 +161,7 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
     return run<QSqlQuery>(
                 queryString, bindings, Prepared,
                 [this, &functionName]
-                (const QString &queryString_, const QVector<QVariant> &bindings_)
+                (const QString &queryString_, const QVector<QVariant> &preparedBindings)
                 -> QSqlQuery
     {
         if (m_pretending)
@@ -169,7 +170,7 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString_);
 
-        bindValues(query, prepareBindings(bindings_));
+        bindValues(query, preparedBindings);
 
         if (query.exec()) {
             // Query statements counter
@@ -187,7 +188,7 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
                     QStringLiteral("Statement in %1() failed.").arg(functionName),
-                    query, bindings_);
+                    query, preparedBindings);
     });
 }
 
@@ -200,7 +201,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
     return run<std::tuple<int, QSqlQuery>>(
                queryString, bindings, Prepared,
                [this, &functionName]
-               (const QString &queryString_, const QVector<QVariant> &bindings_)
+               (const QString &queryString_, const QVector<QVariant> &preparedBindings)
                -> std::tuple<int, QSqlQuery>
     {
         if (m_pretending)
@@ -209,7 +210,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString_);
 
-        bindValues(query, prepareBindings(bindings_));
+        bindValues(query, preparedBindings);
 
         if (query.exec()) {
             // Affecting statements counter
@@ -230,7 +231,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
         throw Exceptions::QueryError(
                     QStringLiteral("Affecting statement in %1() failed.")
                         .arg(functionName),
-                    query, bindings_);
+                    query, preparedBindings);
     });
 }
 
@@ -238,11 +239,12 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
 {
     const auto functionName = __tiny_func__;
 
-    auto query_ = run<QSqlQuery>(
-                      queryString, {}, Unprepared,
-                      [this, &functionName]
-                      (const QString &queryString_, const QVector<QVariant> &/*unused*/)
-                      -> QSqlQuery
+    auto queryResult = run<QSqlQuery>(
+                           queryString, {}, Unprepared,
+                           [this, &functionName]
+                           (const QString &queryString_,
+                            const QVector<QVariant> &/*unused*/)
+                           -> QSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -270,7 +272,7 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
                     query);
     });
 
-    return {std::move(query_), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
+    return {std::move(queryResult), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
 }
 
 /* Obtain connection instance */

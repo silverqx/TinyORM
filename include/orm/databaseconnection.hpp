@@ -253,7 +253,7 @@ namespace Orm
         /*! Run a SQL statement. */
         template<typename Return>
         Return runQueryCallback(
-                const QString &queryString, const QVector<QVariant> &bindings,
+                const QString &queryString, const QVector<QVariant> &preparedBindings,
                 const RunCallback<Return> &callback) const;
 
         /*! Reconnect to the database if a Qt connection is missing (doesn't create
@@ -303,13 +303,13 @@ namespace Orm
         template<typename Return>
         Return handleQueryException(
                 const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
-                const QString &queryString, const QVector<QVariant> &bindings,
+                const QString &queryString, const QVector<QVariant> &preparedBindings,
                 const RunCallback<Return> &callback) const;
         /*! Handle a query exception that occurred during query execution. */
         template<typename Return>
         Return tryAgainIfCausedByLostConnection(
                 const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
-                const QString &queryString, const QVector<QVariant> &bindings,
+                const QString &queryString, const QVector<QVariant> &preparedBindings,
                 const RunCallback<Return> &callback) const;
 
         /*! Determine if the elapsed time for queries should be counted. */
@@ -490,15 +490,19 @@ namespace Orm
 
         Return result;
 
+        /* Prepare bindings early so they will be prepared only once (for performance
+           reasons). */
+        const auto preparedBindings = prepareBindings(bindings);
+
         /* Here we will run this query. If an exception occurs we'll determine if it was
            caused by a connection that has been lost. If that is the cause, we'll try
            to re-establish connection and re-run the query with a fresh connection. */
         try {
-            result = runQueryCallback(queryString, bindings, callback);
+            result = runQueryCallback(queryString, preparedBindings, callback);
 
         }  catch (const Exceptions::QueryError &e) {
             result = handleQueryException(std::current_exception(), e,
-                                          queryString, bindings, callback);
+                                          queryString, preparedBindings, callback);
         }
 
         std::optional<qint64> elapsed;
@@ -514,7 +518,7 @@ namespace Orm
            to run and then log the query, bindings, and execution time. We'll
            log time in milliseconds. */
         if (m_pretending)
-            logQueryForPretend(queryString, bindings, type);
+            logQueryForPretend(queryString, preparedBindings, type);
         else
             logQuery(result, elapsed, type);
 
@@ -524,13 +528,13 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::runQueryCallback(
-            const QString &queryString, const QVector<QVariant> &bindings,
+            const QString &queryString, const QVector<QVariant> &preparedBindings,
             const RunCallback<Return> &callback) const
     {
         /* To execute the statement, we'll simply call the callback, which will actually
            run the SQL against the QSqlDatabase connection. Then we can calculate the time
            it took to execute and log the query SQL, bindings and time in our memory. */
-        return std::invoke(callback, queryString, bindings);
+        return std::invoke(callback, queryString, preparedBindings);
     }
 
     /* private */
@@ -544,21 +548,22 @@ namespace Orm
     Return
     DatabaseConnection::handleQueryException(
             const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
-            const QString &queryString, const QVector<QVariant> &bindings,
+            const QString &queryString, const QVector<QVariant> &preparedBindings,
             const RunCallback<Return> &callback) const
     {
         // FUTURE add info about in transaction into the exception that it was a reason why connection was not reconnected/recovered silverqx
         if (inTransaction())
             std::rethrow_exception(ePtr);
 
-        return tryAgainIfCausedByLostConnection(ePtr, e, queryString, bindings, callback);
+        return tryAgainIfCausedByLostConnection(ePtr, e, queryString, preparedBindings,
+                                                callback);
     }
 
     template<typename Return>
     Return
     DatabaseConnection::tryAgainIfCausedByLostConnection(
             const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
-            const QString &queryString, const QVector<QVariant> &bindings,
+            const QString &queryString, const QVector<QVariant> &preparedBindings,
             const RunCallback<Return> &callback) const
     {
         // TODO would be good to call KILL on lost connection to free locks, https://dev.mysql.com/doc/c-api/8.0/en/c-api-auto-reconnect.html silverqx
@@ -568,7 +573,7 @@ namespace Orm
             // BUG rethrow e when causedByLostConnection to correctly inform user, causedByLostConnection state lost during second runQueryCallback(), because it internally tries to connect to DB and throws "Unable to connect to database" instead of "Lost connection", probably another try-catch and if catched "Unable to connect to database" then rethrow e (Lost connection)? silverqx
             /* After the second failed attempt will be isOpen() == false because
                the m_qtConnection == std::nullopt. */
-            return runQueryCallback(queryString, bindings, callback);
+            return runQueryCallback(queryString, preparedBindings, callback);
         }
 
         std::rethrow_exception(ePtr);

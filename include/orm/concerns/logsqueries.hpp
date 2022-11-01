@@ -41,7 +41,8 @@ namespace Concerns
         inline void logQuery(const std::tuple<int, QSqlQuery> &queryResult,
                              std::optional<qint64> elapsed, const QString &type) const;
         /*! Log a query into the connection's query log in the pretending mode. */
-        void logQueryForPretend(const QString &query, const QVector<QVariant> &bindings,
+        void logQueryForPretend(const QString &query,
+                                const QVector<QVariant> &preparedBindings,
                                 const QString &type) const;
         /*! Log a transaction query into the connection's query log. */
         void logTransactionQuery(const QString &query,
