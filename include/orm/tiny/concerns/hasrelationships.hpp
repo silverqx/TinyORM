@@ -56,23 +56,25 @@ namespace Concerns
 
     public:
         /* HasRelationships related */
-        /*! Get a relationship for Many types relation. */
+        /*! Get a relationship for Many types relation (load a relationship lazily if
+            not loaded). */
         template<typename Related,
                  template<typename> typename Container = QVector>
         const Container<Related *>
         getRelationValue(const QString &relation);
-        /*! Get a relationship for a One type relation. */
+        /*! Get a relationship for a One type relation (load a relationship lazily if
+            not loaded). */
         template<typename Related, typename Tag> requires std::same_as<Tag, One>
         Related *
         getRelationValue(const QString &relation);
 
-        /*! Get a specified relationship. */
+        /*! Get a specified relationship (throw if a relationship is not loaded). */
         template<typename Related,
                  template<typename> typename Container = QVector>
         const Container<Related *>
         getRelation(const QString &relation);
         /*! Get a specified relationship as Related type, for use with HasOne and
-            BelongsTo relation types. */
+            BelongsTo relation types (throw if a relationship is not loaded). */
         template<typename Related, typename Tag> requires std::same_as<Tag, One>
         Related *getRelation(const QString &relation);
 
