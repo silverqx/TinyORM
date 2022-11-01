@@ -22,10 +22,10 @@ ForeignIdColumnDefinitionReference::constrained(const QString &table,
     // Guess table name, cut off _column from the foreign index name and make it plural
     const auto &foreignName = m_columnDefinition.get().name;
 
-    const auto guessTable =  QStringLiteral("%1s")
-                             .arg(foreignName.left(
-                                      foreignName.lastIndexOf(
-                                          QStringLiteral("_%1").arg(column))));
+    const auto guessTable = QStringLiteral("%1s")
+                            .arg(foreignName.left(
+                                     foreignName.lastIndexOf(
+                                         QStringLiteral("_%1").arg(column))));
 
     return references(QVector<QString> {column})
             .on(table.isEmpty() ? guessTable : table);
