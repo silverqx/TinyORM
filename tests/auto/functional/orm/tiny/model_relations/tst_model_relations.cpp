@@ -223,7 +223,10 @@ private Q_SLOTS:
     void upsert() const;
 
     /* Casting Attributes */
-    void withCasts_OnRelation() const;
+    void withCasts_OnRelation_OneToMany() const;
+    void withCasts_OnRelation_ManyToMany() const;
+
+    void u_casts_OnCustomPivotModel_ManyToMany() const;
 };
 
 void tst_Model_Relations::initTestCase_data() const
@@ -3899,7 +3902,7 @@ void tst_Model_Relations::upsert() const
 
 /* Casting Attributes */
 
-void tst_Model_Relations::withCasts_OnRelation() const
+void tst_Model_Relations::withCasts_OnRelation_OneToMany() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -3929,6 +3932,75 @@ void tst_Model_Relations::withCasts_OnRelation() const
         Q_UNREACHABLE();
 
     QCOMPARE(attribute.value<uint>(), 200);
+}
+
+void tst_Model_Relations::withCasts_OnRelation_ManyToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Torrent::find(2)->tags()
+               ->orderBy(ID)
+               .withCasts({{ID, Orm::Tiny::CastType::UInt}})
+               .first();
+
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+    QCOMPARE(tag->getAttribute(ID).value<quint64>(), 1);
+
+    auto attribute = tag->getAttribute(ID);
+
+    auto typeId = Helpers::qVariantTypeId(attribute);
+
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL
+    )
+        QCOMPARE(typeId, QMetaType::UInt);
+    else if (driverName == Orm::QPSQL)
+        QCOMPARE(typeId, QMetaType::UInt);
+    else if (driverName == Orm::QSQLITE)
+        QCOMPARE(typeId, QMetaType::UInt);
+    else
+        Q_UNREACHABLE();
+
+    QCOMPARE(attribute.value<uint>(), 1);
+}
+
+void tst_Model_Relations::u_casts_OnCustomPivotModel_ManyToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Torrent::find(2)->tags()
+               ->orderBy(ID)
+               .first();
+
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+    QCOMPARE(tag->getAttribute(ID).value<quint64>(), 1);
+
+    auto *tagged = tag->getRelation<Tagged, One>("tagged");
+    QVERIFY(tagged);
+    QVERIFY(tagged->exists);
+
+    auto attribute = tagged->getAttribute("active");
+
+    auto typeId = Helpers::qVariantTypeId(attribute);
+
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL
+    )
+        QCOMPARE(typeId, QMetaType::Bool);
+    else if (driverName == Orm::QPSQL)
+        QCOMPARE(typeId, QMetaType::Bool);
+    else if (driverName == Orm::QSQLITE)
+        QCOMPARE(typeId, QMetaType::Bool);
+    else
+        Q_UNREACHABLE();
+
+    QCOMPARE(attribute.value<bool>(), true);
 }
 
 QTEST_MAIN(tst_Model_Relations)
