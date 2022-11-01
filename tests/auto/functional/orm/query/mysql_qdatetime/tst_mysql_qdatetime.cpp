@@ -4,6 +4,7 @@
 #include "orm/db.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/helpers.hpp"
+#include "orm/utils/nullvariant.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
@@ -15,6 +16,7 @@ using Orm::DB;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::Utils::Helpers;
+using Orm::Utils::NullVariant;
 
 using QueryBuilder = Orm::Query::Builder;
 using TypeUtils = Orm::Utils::Type;
@@ -1749,7 +1751,7 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() 
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
-        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDateTime)));
+        qtQuery.addBindValue(NullVariant::QDateTime());
 
         QVERIFY(qtQuery.exec());
 
@@ -1810,7 +1812,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
-        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDate)));
+        qtQuery.addBindValue(NullVariant::QDate());
 
         QVERIFY(qtQuery.exec());
 
@@ -1871,7 +1873,7 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer()
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
-        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDateTime)));
+        qtQuery.addBindValue(NullVariant::QDateTime());
 
         QVERIFY(qtQuery.exec());
 
@@ -1934,7 +1936,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
-        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDate)));
+        qtQuery.addBindValue(NullVariant::QDate());
 
         QVERIFY(qtQuery.exec());
 
@@ -1989,7 +1991,7 @@ void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() con
 {
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", QVariant(QMetaType(QMetaType::QDateTime))}});
+                         {{"datetime", NullVariant::QDateTime()}});
 
     // Verify
     {
@@ -2023,7 +2025,7 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
 {
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QVariant(QMetaType(QMetaType::QDate))}});
+                         {{"date", NullVariant::QDate()}});
 
     // Verify
     {
@@ -2057,7 +2059,7 @@ void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_0200OnServer() co
 
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", QVariant(QMetaType(QMetaType::QDateTime))}});
+                         {{"datetime", NullVariant::QDateTime()}});
 
     // Verify
     {
@@ -2093,7 +2095,7 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
 
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QVariant(QMetaType(QMetaType::QDate))}});
+                         {{"date", NullVariant::QDate()}});
 
     // Verify
     {

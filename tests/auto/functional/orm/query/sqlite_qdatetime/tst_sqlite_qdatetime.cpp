@@ -5,6 +5,7 @@
 #include "orm/query/querybuilder.hpp"
 #include "orm/sqliteconnection.hpp"
 #include "orm/utils/helpers.hpp"
+#include "orm/utils/nullvariant.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
@@ -16,6 +17,7 @@ using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::SQLiteConnection;
 using Orm::Utils::Helpers;
+using Orm::Utils::NullVariant;
 
 using QueryBuilder = Orm::Query::Builder;
 using TypeUtils = Orm::Utils::Type;
@@ -1197,7 +1199,7 @@ insert_Qt_QDateTime_Null_DatetimeColumn() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
-        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDateTime)));
+        qtQuery.addBindValue(NullVariant::QDateTime());
 
         QVERIFY(qtQuery.exec());
 
@@ -1258,7 +1260,7 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
-        qtQuery.addBindValue(QVariant(QMetaType(QMetaType::QDate)));
+        qtQuery.addBindValue(NullVariant::QDate());
 
         QVERIFY(qtQuery.exec());
 
@@ -1313,7 +1315,7 @@ void tst_SQLite_QDateTime::insert_QDateTime_Null_DatetimeColumn() const
 {
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", QVariant(QMetaType(QMetaType::QDateTime))}});
+                         {{"datetime", NullVariant::QDateTime()}});
 
     // Verify
     {
@@ -1350,7 +1352,7 @@ void tst_SQLite_QDateTime::insert_QDate_Null_DateColumn() const
 {
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QVariant(QMetaType(QMetaType::QDate))}});
+                         {{"date", NullVariant::QDate()}});
 
     // Verify
     {
