@@ -14,8 +14,8 @@ using Orm::Constants::UTC;
 using Orm::DB;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
+using Orm::Utils::Helpers;
 
-using Helpers = Orm::Utils::Helpers;
 using QueryBuilder = Orm::Query::Builder;
 using TypeUtils = Orm::Utils::Type;
 

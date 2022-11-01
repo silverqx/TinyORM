@@ -11,7 +11,7 @@ using Orm::Constants::EQ_C;
 using Orm::Constants::options_;
 using Orm::Constants::SEMICOLON;
 
-using Helpers = Orm::Utils::Helpers;
+using Orm::Utils::Helpers;
 
 namespace Orm::Support
 {

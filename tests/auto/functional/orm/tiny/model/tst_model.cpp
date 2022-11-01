@@ -26,9 +26,9 @@ using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
 using Orm::Tiny::Model;
+using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
-using Helpers = Orm::Utils::Helpers;
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
 

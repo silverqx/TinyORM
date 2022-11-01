@@ -10,8 +10,9 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Orm::Utils::Helpers;
+
 using ConfigUtils = Orm::Utils::Configuration;
-using Helpers = Orm::Utils::Helpers;
 
 namespace Orm
 {

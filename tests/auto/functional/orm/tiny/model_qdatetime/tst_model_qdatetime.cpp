@@ -21,8 +21,8 @@ using Orm::QtTimeZoneType;
 using Orm::Utils::NullVariant;
 
 using Orm::Tiny::ConnectionOverride;
+using Orm::Utils::Helpers;
 
-using Helpers = Orm::Utils::Helpers;
 using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;

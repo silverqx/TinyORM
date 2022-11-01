@@ -36,8 +36,8 @@ using Orm::Tiny::Exceptions::RelationNotLoadedError;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 using Orm::Tiny::TinyBuilder;
+using Orm::Utils::Helpers;
 
-using Helpers = Orm::Utils::Helpers;
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
 
