@@ -72,7 +72,6 @@ private Q_SLOTS:
     void create_QDate_Null_DateAttribute_0200OnServer() const;
 
     /* QtTimeZoneType::DontConvert */
-    /* Orm::QueryBuilder */
     /* Server timezone UTC */
     void create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const;
 
@@ -1246,8 +1245,6 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_0200OnServer() const
 }
 
 /* QtTimeZoneType::DontConvert */
-
-/* Orm::QueryBuilder */
 
 /* Server timezone UTC */
 
