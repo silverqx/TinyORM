@@ -74,7 +74,7 @@ private Q_SLOTS:
     /* QtTimeZoneType::DontConvert */
     /* Orm::QueryBuilder */
     /* Server timezone UTC */
-    void create_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const;
+    void create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const;
 
     // NOLINTNEXTLINE(readability-redundant-access-specifiers)
     private:
@@ -1252,7 +1252,7 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_0200OnServer() const
 /* Server timezone UTC */
 
 void tst_Model_QDateTime::
-create_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
+create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const
 {
     QFETCH_GLOBAL(QString, connection);
 
