@@ -28,6 +28,8 @@ using Orm::Constants::UPDATED_AT;
 using Orm::DB;
 using Orm::Exceptions::RuntimeError;
 using Orm::One;
+using Orm::QtTimeZoneConfig;
+using Orm::QtTimeZoneType;
 using Orm::QueryBuilder;
 
 using Orm::Tiny::ConnectionOverride;
@@ -227,6 +229,14 @@ private Q_SLOTS:
     void withCasts_OnRelation_ManyToMany() const;
 
     void u_casts_OnCustomPivotModel_ManyToMany() const;
+
+    /* QDateTime with/without timezone */
+    /* Server timezone UTC */
+    void timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const;
+
+    /* QtTimeZoneType::DontConvert */
+    /* Server timezone UTC */
+    void timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const;
 };
 
 void tst_Model_Relations::initTestCase_data() const
@@ -4001,6 +4011,101 @@ void tst_Model_Relations::u_casts_OnCustomPivotModel_ManyToMany() const
         Q_UNREACHABLE();
 
     QCOMPARE(attribute.value<bool>(), true);
+}
+
+/* QDateTime with/without timezone */
+
+/* Server timezone UTC */
+
+void tst_Model_Relations::
+timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Get the fresh model from the database
+    auto tag = Torrent::find(2)->tags()
+               ->orderBy(ID)
+               .first();
+
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+    QCOMPARE(tag->getAttribute(ID).value<quint64>(), 1);
+
+    auto *tagged = tag->getRelation<Tagged, One>("tagged");
+    QVERIFY(tagged);
+    QVERIFY(tagged->exists);
+
+    // Test
+    const auto timestampDbVariant = tagged->getAttribute(CREATED_AT);
+    QVERIFY(timestampDbVariant.isValid());
+    QVERIFY(!timestampDbVariant.isNull());
+
+    QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+
+    /* The time zone must be as is defined in the qt_timezone connection
+       configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
+       behavior of all QtSql drivers. */
+    const auto timestampActual = timestampDbVariant.value<QDateTime>();
+    const auto timestampExpected = QDateTime::fromString("2021-02-21 17:31:58z",
+                                                         Qt::ISODate);
+    QCOMPARE(timestampActual, timestampExpected);
+    QCOMPARE(timestampActual, timestampExpected.toLocalTime());
+    QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
+}
+
+/* QtTimeZoneType::DontConvert */
+
+/* Server timezone UTC */
+
+void tst_Model_Relations::
+timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::DontConvert}, connection);
+    QCOMPARE(DB::qtTimeZone(connection),
+             QtTimeZoneConfig {QtTimeZoneType::DontConvert});
+
+    // Get the fresh model from the database
+    auto tag = Torrent::find(2)->tags()
+               ->orderBy(ID)
+               .first();
+
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+    QCOMPARE(tag->getAttribute(ID).value<quint64>(), 1);
+
+    auto *tagged = tag->getRelation<Tagged, One>("tagged");
+    QVERIFY(tagged);
+    QVERIFY(tagged->exists);
+
+    // Test
+    const auto timestampDbVariant = tagged->getAttribute(CREATED_AT);
+    QVERIFY(timestampDbVariant.isValid());
+    QVERIFY(!timestampDbVariant.isNull());
+
+    QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+
+    /* The time zone must be as is defined in the qt_timezone connection
+       configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
+       behavior of all QtSql drivers. */
+    const auto timestampActual = timestampDbVariant.value<QDateTime>();
+    const auto timestampExpected = QDateTime::fromString("2021-02-21 17:31:58",
+                                                         Qt::ISODate);
+    QCOMPARE(timestampActual, timestampExpected);
+    QCOMPARE(timestampActual, timestampExpected.toLocalTime());
+    QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+
+    // Restore
+    DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
+                                        QVariant::fromValue(Qt::UTC)}, connection);
+    QCOMPARE(DB::qtTimeZone(connection),
+             (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
+                                QVariant::fromValue(Qt::UTC)}));
 }
 
 QTEST_MAIN(tst_Model_Relations)
