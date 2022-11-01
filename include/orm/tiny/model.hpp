@@ -114,6 +114,12 @@ namespace Orm::Tiny
         static Derived instance(const QVector<AttributeItem> &attributes);
         /*! Create a new TinyORM model instance with given attributes. */
         static Derived instance(QVector<AttributeItem> &&attributes);
+        /*! Create a new TinyORM model instance with given attributes. */
+        static Derived instance(const QVector<AttributeItem> &attributes,
+                                const QString &connection);
+        /*! Create a new TinyORM model instance with given attributes. */
+        static Derived instance(QVector<AttributeItem> &&attributes,
+                                const QString &connection);
 
         /*! Begin querying the model. */
         static std::unique_ptr<TinyBuilder<Derived>> query();
@@ -455,6 +461,30 @@ namespace Orm::Tiny
         model.initializeSoftDeletes();
 
         model.fill(std::move(attributes));
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived
+    Model<Derived, AllRelations...>::instance(const QVector<AttributeItem> &attributes,
+                                              const QString &connection)
+    {
+        auto model = instance(attributes);
+
+        model.setConnection(connection);
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived
+    Model<Derived, AllRelations...>::instance(QVector<AttributeItem> &&attributes,
+                                              const QString &connection)
+    {
+        auto model = instance(std::move(attributes));
+
+        model.setConnection(connection);
 
         return model;
     }
