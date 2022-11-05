@@ -5,8 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtSql/QSqlQuery>
-
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 
