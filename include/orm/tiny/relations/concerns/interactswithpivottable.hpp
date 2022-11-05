@@ -822,7 +822,7 @@ namespace Concerns
     InteractsWithPivotTable<Model, Related, PivotType>::getAttachedPivot(
             const QVariant &id) const
     {
-        auto query = newPivotStatementForId(id)->first();
+        const auto query = newPivotStatementForId(id)->first();
 
         return std::move(
                     PivotType::fromRawAttributes(
