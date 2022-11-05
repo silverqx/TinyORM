@@ -101,7 +101,7 @@ namespace Concerns
 
     private:
         /*! Static cast *this to the TinyBuilder & derived type. */
-        Builder<Model> &builder();
+        inline Builder<Model> &builder();
     };
 
     /*! Builds queries for the SoftDeleting feature (specialization when the SoftDeletes
