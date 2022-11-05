@@ -161,7 +161,7 @@ namespace Orm::Tiny::Concerns
             template<RelationshipMethod<Derived> Method>
             void visited(Method /*unused*/) const;
 
-            /*! Models to push, the reference to the relation in m_relations hash. */
+            /*! Models to push, the reference to the relation in the m_relations hash. */
             RelationsType<AllRelations...> &m_models;
             /*! The result of a push. */
             bool m_result = false;
