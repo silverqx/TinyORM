@@ -109,7 +109,7 @@ namespace Orm::Tiny::Relations
         /* Getters */
         /*! Get the value of the model's foreign key. */
         template<ModelConcept M>
-        QVariant getRelatedKeyFrom(const M &model) const;
+        inline QVariant getRelatedKeyFrom(const M &model) const;
 
         /* Querying Relationship Existence/Absence */
         /*! Add the constraints for a relationship query. */
