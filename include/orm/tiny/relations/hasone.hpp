@@ -91,7 +91,8 @@ namespace Orm::Tiny::Relations
             std::unique_ptr<Related> &&related, Model &parent,
             const QString &foreignKey, const QString &localKey)
     {
-        auto instance = std::unique_ptr<HasOne<Model, Related>>(
+        auto instance =
+                std::unique_ptr<HasOne<Model, Related>>(
                     new HasOne(std::move(related), parent, foreignKey, localKey));
 
         instance->init();

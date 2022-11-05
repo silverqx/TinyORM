@@ -396,7 +396,8 @@ namespace Orm::Tiny::Relations
             const QString &relatedPivotKey, const QString &parentKey,
             const QString &relatedKey, const QString &relation)
     {
-        auto instance = std::unique_ptr<BelongsToMany<Model, Related, PivotType>>(
+        auto instance =
+                std::unique_ptr<BelongsToMany<Model, Related, PivotType>>(
                     new BelongsToMany<Model, Related, PivotType>(
                         std::move(related), parent, table, foreignPivotKey,
                         relatedPivotKey, parentKey, relatedKey, relation));

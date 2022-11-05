@@ -158,7 +158,8 @@ namespace Orm::Tiny::Relations
             std::unique_ptr<Related> &&related, Model &child,
             const QString &foreignKey, const QString &ownerKey, const QString &relation)
     {
-        auto instance = std::unique_ptr<BelongsTo<Model, Related>>(
+        auto instance =
+                std::unique_ptr<BelongsTo<Model, Related>>(
                     new BelongsTo(std::move(related), child, foreignKey,
                                   ownerKey, relation));
 
