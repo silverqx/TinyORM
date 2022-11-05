@@ -20,17 +20,17 @@ namespace Types
     /*! Used by tests to override connection in the Model. */
     struct ConnectionOverride
     {
-        /*! The connection to use in the Model, this data member is picked up
-            in the Model::getConnectionName(). */
-        T_THREAD_LOCAL
-        inline static QString connection;
+        Q_DISABLE_COPY(ConnectionOverride)
 
         /*! Deleted default constructor. */
         ConnectionOverride() = delete;
         /*! Deleted destructor. */
         ~ConnectionOverride() = delete;
 
-        Q_DISABLE_COPY(ConnectionOverride)
+        /*! The connection to use in the Model, this data member is picked up
+            in the Model::getConnectionName(). */
+        T_THREAD_LOCAL
+        inline static QString connection;
     };
 
 } // namespace Types
