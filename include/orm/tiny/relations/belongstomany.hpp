@@ -159,7 +159,7 @@ namespace Orm::Tiny::Relations
         findOr(const QVariant &id, const QVector<Column> &columns,
                const std::function<void()> &callback) const override;
         /*! Execute a query for a single record by ID or call a callback. */
-        std::optional<Related>
+        inline std::optional<Related>
         findOr(const QVariant &id, const std::function<void()> &callback) const override;
 
         /*! Execute a query for a single record by ID or call a callback. */
@@ -169,7 +169,7 @@ namespace Orm::Tiny::Relations
                const std::function<R()> &callback) const;
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
-        std::pair<std::optional<Related>, R>
+        inline std::pair<std::optional<Related>, R>
         findOr(const QVariant &id, const std::function<R()> &callback) const;
 
         /*! Execute the query and get the first result. */
@@ -191,7 +191,7 @@ namespace Orm::Tiny::Relations
         firstOr(const QVector<Column> &columns,
                 const std::function<void()> &callback = nullptr) const override;
         /*! Execute the query and get the first result or call a callback. */
-        std::optional<Related>
+        inline std::optional<Related>
         firstOr(const std::function<void()> &callback = nullptr) const override;
 
         /*! Execute the query and get the first result or call a callback. */
@@ -200,7 +200,7 @@ namespace Orm::Tiny::Relations
         firstOr(const QVector<Column> &columns, const std::function<R()> &callback) const;
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
-        std::pair<std::optional<Related>, R>
+        inline std::pair<std::optional<Related>, R>
         firstOr(const std::function<R()> &callback) const;
 
         /*! Add a basic where clause to the query, and return the first result. */
@@ -209,7 +209,7 @@ namespace Orm::Tiny::Relations
                    const QVariant &value,
                    const QString &condition = AND) const override;
         /*! Add a basic where clause to the query, and return the first result. */
-        std::optional<Related>
+        inline std::optional<Related>
         firstWhereEq(const Column &column, const QVariant &value,
                      const QString &condition = AND) const override;
 
@@ -303,7 +303,7 @@ namespace Orm::Tiny::Relations
         static QString resolveTableName(const QString &table);
 
         /*! Set the join clause for the relation query. */
-        const BelongsToMany &performJoin() const;
+        inline const BelongsToMany &performJoin() const;
         /*! Set the join clause for the relation query. */
         const BelongsToMany &performJoin(Builder<Related> &query) const;
         /*! Set the where clause for the relation query. */
