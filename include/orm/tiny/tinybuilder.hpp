@@ -784,7 +784,7 @@ namespace Orm::Tiny
     {
         // Remove relations in the "relations" vector from the m_eagerLoad vector
         m_eagerLoad = m_eagerLoad
-                      | ranges::views::remove_if([&relations](const WithItem &with)
+                | ranges::views::remove_if([&relations](const WithItem &with)
         {
             return relations.contains(with.name);
         })
