@@ -1408,7 +1408,7 @@ namespace Tiny
         /* We will actually pull the models from the database table and call delete on
            each of them individually so that their events get fired properly with a
            correct set of attributes in case the developers wants to check these. */
-        Derived instance;
+        auto instance = Derived::instance();
 
         std::size_t count = 0;
 

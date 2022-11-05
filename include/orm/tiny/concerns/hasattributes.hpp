@@ -511,7 +511,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::getOriginal(
             const QString &key, const QVariant &defaultValue) const
     {
-        return Derived().setRawAttributes(m_original, true)
+        return Derived::instance().setRawAttributes(m_original, true)
                 .getOriginalWithoutRewindingModel(key, defaultValue);
     }
 

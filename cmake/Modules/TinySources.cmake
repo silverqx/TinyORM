@@ -405,6 +405,7 @@ function(tiny_model_sources out_headers out_sources)
         torrenteager.hpp
         torrenteager_failed.hpp
         torrenteager_withdefault.hpp
+        torrenteager_without_qdatetime.hpp
         torrentpeer.hpp
         torrentpeereager.hpp
         torrentpeereager_norelations.hpp

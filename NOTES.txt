@@ -246,6 +246,36 @@ Special rules:
                   everytime LongLong
 
 
+All places where is created some Model instance:
+------------------------------------------------
+
+The following list contains only a direct Model's constructor calls like "Derived model;",
+these direct constructor calls have been replaced everywhere to Model::instance() related
+methods to support the Default Attribute values.
+All instance allocation are on the stack unless otherwise noted.
+
+Model:
+  ctors
+  instance()
+  on()
+  query()
+  newTinyBuilder()
+  newFromBuilder()
+  newInstance()
+
+HasAttributes:
+  getOriginal()
+
+HasRelationships:
+  newRelatedInstance() - heap allocation
+
+ModelProxies:
+  destroy()
+
+BasePivot:
+  fromAttributes()
+
+
 Todos to check in TinyOrm:
 --------------------------
 

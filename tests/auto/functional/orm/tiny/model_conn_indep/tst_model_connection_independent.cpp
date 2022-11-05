@@ -10,6 +10,7 @@
 #include "models/massassignmentmodels.hpp"
 #include "models/torrent.hpp"
 #include "models/torrenteager.hpp"
+#include "models/torrenteager_without_qdatetime.hpp"
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
@@ -18,6 +19,7 @@ using Orm::Constants::NAME;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
+using Orm::Exceptions::InvalidArgumentError;
 using Orm::Exceptions::MultipleRecordsFoundError;
 using Orm::Exceptions::RecordsNotFoundError;
 using Orm::One;
@@ -37,6 +39,7 @@ using Models::Torrent_AllowedMassAssignment;
 using Models::Torrent_GuardedAttribute;
 using Models::Torrent_TotallyGuarded;
 using Models::TorrentEager;
+using Models::TorrentEager_Without_QDateTime;
 using Models::TorrentPreviewableFileProperty;
 using Models::User;
 
@@ -46,25 +49,46 @@ class tst_Model_Connection_Independent : public QObject // clazy:exclude=ctor-mi
 
 private Q_SLOTS:
     void initTestCase();
+    void cleanupTestCase() const;
 
+    /* Model instantiation */
+    void defaultAttributeValues_WithQDateTime_DefaultCtor() const;
+    void defaultAttributeValues_WithQDateTime_ConvertingAttributesCtor() const;
+    void defaultAttributeValues_WithQDateTime_ListInitializationCtor() const;
+
+    void defaultAttributeValues_WithQDateTime_InstanceMethod() const;
+    void defaultAttributeValues_WithQDateTime_InstanceAttributesMethod() const;
+    void defaultAttributeValues_WithQDateTime_InstanceMethod_WithConnection() const;
+    void defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() const;
+
+    void defaultAttributeValues_WithoutQDateTime_DefaultCtor() const;
+    void defaultAttributeValues_WithoutQDateTime_ConvertingAttributesCtor() const;
+    void defaultAttributeValues_WithoutQDateTime_ListInitializationCtor() const;
+
+    void defaultAttributeValues_WithQDateTime_InstanceHeapMethod() const;
+    void defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod() const;
+    void defaultAttributeValues_WithQDateTime_InstanceHeapMethod_WithConnection() const;
+    void defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection() const;
+
+    void replicate() const;
+    void replicate_WithCreate() const;
+    void replicate_WithRelations() const;
+
+    /* Model operator[] */
     void subscriptOperator() const;
     void subscriptOperator_OnLhs() const;
     void subscriptOperator_OnLhs_AssignAttributeReference() const;
 
     void isCleanAndIsDirty() const;
 
+    /* Models comparison */
     void is() const;
     void isNot() const;
 
     void equalComparison() const;
     void notEqualComparison() const;
 
-    void replicate() const;
-    void replicate_WithCreate() const;
-    void replicate_WithRelations() const;
-
-    void defaultAttributeValues() const;
-
+    /* Mass assignment */
     void massAssignment_Fillable() const;
     void massAssignment_Guarded() const;
     void massAssignment_GuardedAll_NonExistentAttribute() const;
@@ -77,9 +101,11 @@ private Q_SLOTS:
     void massAssignment_forceFill_OnGuardedAttribute() const;
     void massAssignment_forceFill_NonExistentAttribute() const;
 
+    /* Eager loading */
     void with_WithSelectConstraint_QueryWithoutRelatedTable() const;
     void with_BelongsToMany_WithSelectConstraint_QualifiedColumnsForRelatedTable() const;
 
+    /* Retrieving results */
     void pluck() const;
     void pluck_EmptyResult() const;
     void pluck_QualifiedColumnOrKey() const;
@@ -143,6 +169,8 @@ private:
     QString m_connection {};
 };
 
+/* private slots */
+
 void tst_Model_Connection_Independent::initTestCase()
 {
     ConnectionOverride::connection = m_connection =
@@ -153,6 +181,429 @@ void tst_Model_Connection_Independent::initTestCase()
               .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
               .toUtf8().constData(), );
 }
+
+void tst_Model_Connection_Independent::cleanupTestCase() const
+{
+    // Reset connection override
+    ConnectionOverride::connection.clear();
+}
+
+/* Model instantiation */
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_DefaultCtor() const
+{
+    // Default ctor must throw because of the QDateTime
+    QVERIFY_EXCEPTION_THROWN(TorrentEager(), InvalidArgumentError);
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_ConvertingAttributesCtor() const
+{
+    // Attributes converting ctor must throw because of the QDateTime
+    QVERIFY_EXCEPTION_THROWN(TorrentEager({
+                                 {NAME, "test22"},
+                                 {"note", "Torrent::instance()"},
+                             }),
+                             InvalidArgumentError);
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_ListInitializationCtor() const
+{
+    /* List initialization using the std::initializer_list<AttributeItem> must throw
+       because of the QDateTime. */
+    QVERIFY_EXCEPTION_THROWN((TorrentEager {
+                                 {NAME, "test22"},
+                                 {"note", "Torrent::instance()"},
+                             }),
+                             InvalidArgumentError);
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_InstanceMethod() const
+{
+    // The Model::instance() method must work well
+    auto torrent = TorrentEager::instance();
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent[SIZE], QVariant(0));
+    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent["added_on"],
+             QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
+    QCOMPARE(torrent.getAttributes().size(), 3);
+
+    // Check also the connection name
+    QCOMPARE(torrent.getConnectionName(), m_connection);
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_InstanceAttributesMethod() const
+{
+    const auto name = QStringLiteral("test22");
+    const auto note = QStringLiteral("Torrent::instance()");
+
+    // The Model::instance(attributes) must work well
+    auto torrent = TorrentEager::instance({
+        {NAME, name},
+        {"note", note},
+    });
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent[SIZE], QVariant(0));
+    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent["added_on"],
+             QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
+    QCOMPARE(torrent[NAME], QVariant(name));
+    QCOMPARE(torrent["note"], QVariant(note));
+    QCOMPARE(torrent.getAttributes().size(), 5);
+
+    // Check also the connection name
+    QCOMPARE(torrent.getConnectionName(), m_connection);
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_InstanceMethod_WithConnection() const
+{
+    const auto connectionForInstance =
+            QStringLiteral(
+                "tinyorm_pgsql_tests-tst_Model_Connection_Independent-"
+                "defaultAttributeValues_WithQDateTime");
+
+    // The Model::instance() method must work well (with connection override)
+    auto torrent = TorrentEager::instance(connectionForInstance);
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent[SIZE], QVariant(0));
+    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent["added_on"],
+             QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
+    QCOMPARE(torrent.getAttributes().size(), 3);
+
+    // Check also the connection name
+    /* Reset the global connection override to be able test the Model::instance()
+       connection override. */
+    ConnectionOverride::connection.clear();
+    QCOMPARE(torrent.getConnectionName(), connectionForInstance);
+    // Restore
+    ConnectionOverride::connection = m_connection;
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() const
+{
+    const auto connectionForInstance =
+            QStringLiteral(
+                "tinyorm_pgsql_tests-tst_Model_Connection_Independent-"
+                "defaultAttributeValues_WithQDateTime");
+
+    const auto name = QStringLiteral("test22");
+    const auto note = QStringLiteral("Torrent::instance()");
+
+    // The Model::instance(attributes) must work well (with connection override)
+    auto torrent = TorrentEager::instance({
+        {NAME, name},
+        {"note", note},
+    },
+        connectionForInstance);
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent[SIZE], QVariant(0));
+    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent["added_on"],
+             QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
+    QCOMPARE(torrent[NAME], QVariant(name));
+    QCOMPARE(torrent["note"], QVariant(note));
+    QCOMPARE(torrent.getAttributes().size(), 5);
+
+    /* Reset the global connection override to be able test the Model::instance()
+       connection override. */
+    ConnectionOverride::connection.clear();
+    QCOMPARE(torrent.getConnectionName(), connectionForInstance);
+    // Restore
+    ConnectionOverride::connection = m_connection;
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithoutQDateTime_DefaultCtor() const
+{
+    // The default ctor without QDateTime must work well
+    TorrentEager_Without_QDateTime torrent;
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent[SIZE], QVariant(0));
+    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent.getAttributes().size(), 2);
+
+    // Check also the connection name
+    QCOMPARE(torrent.getConnectionName(), m_connection);
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithoutQDateTime_ConvertingAttributesCtor() const
+{
+    const auto name = QStringLiteral("test22");
+    const auto note = QStringLiteral("Torrent::instance()");
+
+    // The converting attributes ctor without QDateTime must work well
+    TorrentEager_Without_QDateTime torrent({
+        {NAME, name},
+        {"note", note},
+    });
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent[SIZE], QVariant(0));
+    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent[NAME], QVariant(name));
+    QCOMPARE(torrent["note"], QVariant(note));
+    QCOMPARE(torrent.getAttributes().size(), 4);
+
+    // Check also the connection name
+    QCOMPARE(torrent.getConnectionName(), m_connection);
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithoutQDateTime_ListInitializationCtor() const
+{
+    const auto name = QStringLiteral("test22");
+    const auto note = QStringLiteral("Torrent::instance()");
+
+    /* The list initialization ctor without QDateTime
+       using the std::initializer_list<AttributeItem> must work well. */
+    TorrentEager_Without_QDateTime torrent {
+        {NAME, name},
+        {"note", note},
+    };
+
+    QVERIFY(!torrent.exists);
+    QCOMPARE(torrent[SIZE], QVariant(0));
+    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent[NAME], QVariant(name));
+    QCOMPARE(torrent["note"], QVariant(note));
+    QCOMPARE(torrent.getAttributes().size(), 4);
+
+    // Check also the connection name
+    QCOMPARE(torrent.getConnectionName(), m_connection);
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_InstanceHeapMethod() const
+{
+    // The Model::instance() method must work well
+    auto torrent = TorrentEager::instanceHeap();
+
+    QVERIFY(!torrent->exists);
+    QCOMPARE((*torrent)[SIZE], QVariant(0));
+    QCOMPARE((*torrent)["progress"], QVariant(0));
+    QCOMPARE((*torrent)["added_on"],
+             QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
+    QCOMPARE((*torrent).getAttributes().size(), 3);
+
+    // Check also the connection name
+    QCOMPARE(torrent->getConnectionName(), m_connection);
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod() const
+{
+    const auto name = QStringLiteral("test22");
+    const auto note = QStringLiteral("Torrent::instance()");
+
+    // The Model::instance(attributes) must work well
+    auto torrent = TorrentEager::instanceHeap({
+        {NAME, name},
+        {"note", note},
+    });
+
+    QVERIFY(!torrent->exists);
+    QCOMPARE((*torrent)[SIZE], QVariant(0));
+    QCOMPARE((*torrent)["progress"], QVariant(0));
+    QCOMPARE((*torrent)["added_on"],
+             QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
+    QCOMPARE((*torrent)[NAME], QVariant(name));
+    QCOMPARE((*torrent)["note"], QVariant(note));
+    QCOMPARE(torrent->getAttributes().size(), 5);
+
+    // Check also the connection name
+    QCOMPARE(torrent->getConnectionName(), m_connection);
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_InstanceHeapMethod_WithConnection() const
+{
+    const auto connectionForInstance =
+            QStringLiteral(
+                "tinyorm_pgsql_tests-tst_Model_Connection_Independent-"
+                "defaultAttributeValues_WithQDateTime");
+
+    // The Model::instance() method must work well (with connection override)
+    auto torrent = TorrentEager::instanceHeap(connectionForInstance);
+
+    QVERIFY(!torrent->exists);
+    QCOMPARE((*torrent)[SIZE], QVariant(0));
+    QCOMPARE((*torrent)["progress"], QVariant(0));
+    QCOMPARE((*torrent)["added_on"],
+             QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
+    QCOMPARE(torrent->getAttributes().size(), 3);
+
+    // Check also the connection name
+    /* Reset the global connection override to be able test the Model::instance()
+       connection override. */
+    ConnectionOverride::connection.clear();
+    QCOMPARE(torrent->getConnectionName(), connectionForInstance);
+    // Restore
+    ConnectionOverride::connection = m_connection;
+}
+
+void tst_Model_Connection_Independent::
+defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection() const
+{
+    const auto connectionForInstance =
+            QStringLiteral(
+                "tinyorm_pgsql_tests-tst_Model_Connection_Independent-"
+                "defaultAttributeValues_WithQDateTime");
+
+    const auto name = QStringLiteral("test22");
+    const auto note = QStringLiteral("Torrent::instance()");
+
+    // The Model::instance(attributes) must work well (with connection override)
+    auto torrent = TorrentEager::instanceHeap({
+        {NAME, name},
+        {"note", note},
+    },
+        connectionForInstance);
+
+    QVERIFY(!torrent->exists);
+    QCOMPARE((*torrent)[SIZE], QVariant(0));
+    QCOMPARE((*torrent)["progress"], QVariant(0));
+    QCOMPARE((*torrent)["added_on"],
+             QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
+    QCOMPARE((*torrent)[NAME], QVariant(name));
+    QCOMPARE((*torrent)["note"], QVariant(note));
+    QCOMPARE(torrent->getAttributes().size(), 5);
+
+    /* Reset the global connection override to be able test the Model::instance()
+       connection override. */
+    ConnectionOverride::connection.clear();
+    QCOMPARE(torrent->getConnectionName(), connectionForInstance);
+    // Restore
+    ConnectionOverride::connection = m_connection;
+}
+
+void tst_Model_Connection_Independent::replicate() const
+{
+    auto user1 = User::find(1);
+    QVERIFY(user1);
+    QVERIFY(user1->exists);
+
+    auto user1Replicated = user1->replicate();
+
+    auto user1Attributes = AttributeUtils::exceptAttributesForReplicate(*user1);
+    auto user1ReplicatedAttributes = AttributeUtils::exceptAttributesForReplicate(
+                                         user1Replicated);
+
+    QVERIFY(!user1Replicated.exists);
+    QVERIFY(user1Attributes == user1ReplicatedAttributes);
+    QVERIFY(user1->getRelations().empty());
+    QVERIFY(user1Replicated.getRelations().empty());
+}
+
+void tst_Model_Connection_Independent::replicate_WithCreate() const
+{
+    // Following is the most used case for the replicate method so I will test it
+    auto user = User::create({{"name", "xyz"},
+                              {"is_banned", true},
+                              {"note", "test replicate"}});
+    QVERIFY(user.exists);
+
+    std::unordered_set except {NAME};
+
+    auto userReplicated = user.replicate(except);
+
+    auto userAttributes = AttributeUtils::exceptAttributesForReplicate(user, except);
+    auto userReplicatedAttributes = AttributeUtils::exceptAttributesForReplicate(
+                                         userReplicated);
+
+    QVERIFY(!userReplicated.exists);
+    QVERIFY(userAttributes == userReplicatedAttributes);
+
+    QCOMPARE(user.getAttribute(NAME), QVariant("xyz"));
+    QVERIFY(!userReplicated.getAttribute(NAME).isValid());
+
+    QVERIFY(user.getRelations().empty());
+    QVERIFY(userReplicated.getRelations().empty());
+
+    // Restore db
+    QVERIFY(user.forceDelete());
+}
+
+void tst_Model_Connection_Independent::replicate_WithRelations() const
+{
+    auto torrent2 = Torrent::with("torrentFiles.fileProperty")->find(2);
+    QVERIFY(torrent2);
+    QVERIFY(torrent2->exists);
+
+    auto torrent2Replicated = torrent2->replicate();
+
+    auto torrent2Attributes = AttributeUtils::exceptAttributesForReplicate(*torrent2);
+    auto torrent2ReplicatedAttributes = AttributeUtils::exceptAttributesForReplicate(
+                                            torrent2Replicated);
+
+    const auto &torrent2Relations = torrent2->getRelations();
+    const auto &torrent2ReplicatedRelations = torrent2Replicated.getRelations();
+
+    /* Crazy, but I'm going to check all relations 😮😎, yeah it's definitely crazy and
+       overmotivated, but it checks almost everything I wanted. 🙃🤙 */
+    // Torrent
+    QVERIFY(!torrent2Replicated.exists);
+    QVERIFY(torrent2Attributes == torrent2ReplicatedAttributes);
+    QVERIFY(torrent2Relations.size() == torrent2ReplicatedRelations.size());
+    QVERIFY(torrent2->relationLoaded("torrentFiles"));
+    QVERIFY(torrent2Replicated.relationLoaded("torrentFiles"));
+    // The Model::operator== was needed to make this real
+    QVERIFY(torrent2Relations == torrent2ReplicatedRelations);
+
+    // TorrentPreviewableFile
+    const auto torrentFiles2 =
+            torrent2->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    const auto torrentFiles2Replicated =
+            torrent2Replicated.getRelationValue<TorrentPreviewableFile>("torrentFiles");
+
+    QVERIFY(torrentFiles2.size() == torrentFiles2Replicated.size());
+
+    for (std::remove_cvref_t<decltype (torrentFiles2)>::size_type i = 0;
+         torrentFiles2.size() < i; ++i
+    ) {
+        auto *torrentFile = torrentFiles2.value(i);
+        QVERIFY(torrentFile->exists);
+        QVERIFY(torrentFile->relationLoaded("fileProperty"));
+
+        auto *torrentFileReplicated = torrentFiles2Replicated.value(i);
+        QVERIFY(torrentFileReplicated->exists);
+        QVERIFY(torrentFileReplicated->relationLoaded("fileProperty"));
+
+        QVERIFY(torrentFile->getAttributes() == torrentFileReplicated->getAttributes());
+        // The Model::operator== was needed to make this real
+        QVERIFY(torrentFile->getRelations() == torrentFileReplicated->getRelations());
+
+        // TorrentPreviewableFileProperty
+        auto *fileProperty =
+                torrentFile->getRelationValue<TorrentPreviewableFileProperty, One>(
+                    "fileProperty");
+        auto *filePropertyReplicated =
+                torrentFileReplicated->getRelationValue<TorrentPreviewableFileProperty,
+                                                        One>("fileProperty");
+
+        QVERIFY(fileProperty->exists);
+        QVERIFY(fileProperty->getRelations().empty());
+        QVERIFY(filePropertyReplicated->exists);
+        QVERIFY(filePropertyReplicated->getRelations().empty());
+        QVERIFY(fileProperty->getAttributes() ==
+                filePropertyReplicated->getAttributes());
+    }
+}
+
+/* Model operator[] */
 
 void tst_Model_Connection_Independent::subscriptOperator() const
 {
@@ -248,6 +699,8 @@ void tst_Model_Connection_Independent::isCleanAndIsDirty() const
     torrent->setAttribute(NAME, "test3");
     torrent->save();
 }
+
+/* Models comparison */
 
 void tst_Model_Connection_Independent::is() const
 {
@@ -366,168 +819,7 @@ void tst_Model_Connection_Independent::notEqualComparison() const
     }
 }
 
-void tst_Model_Connection_Independent::replicate() const
-{
-    auto user1 = User::find(1);
-    QVERIFY(user1);
-    QVERIFY(user1->exists);
-
-    auto user1Replicated = user1->replicate();
-
-    auto user1Attributes = AttributeUtils::exceptAttributesForReplicate(*user1);
-    auto user1ReplicatedAttributes = AttributeUtils::exceptAttributesForReplicate(
-                                         user1Replicated);
-
-    QVERIFY(!user1Replicated.exists);
-    QVERIFY(user1Attributes == user1ReplicatedAttributes);
-    QVERIFY(user1->getRelations().empty());
-    QVERIFY(user1Replicated.getRelations().empty());
-}
-
-void tst_Model_Connection_Independent::replicate_WithCreate() const
-{
-    // Following is the most used case for the replicate method so I will test it
-    auto user = User::create({{"name", "xyz"},
-                              {"is_banned", true},
-                              {"note", "test replicate"}});
-    QVERIFY(user.exists);
-
-    std::unordered_set except {NAME};
-
-    auto userReplicated = user.replicate(except);
-
-    auto userAttributes = AttributeUtils::exceptAttributesForReplicate(user, except);
-    auto userReplicatedAttributes = AttributeUtils::exceptAttributesForReplicate(
-                                         userReplicated);
-
-    QVERIFY(!userReplicated.exists);
-    QVERIFY(userAttributes == userReplicatedAttributes);
-
-    QCOMPARE(user.getAttribute(NAME), QVariant("xyz"));
-    QVERIFY(!userReplicated.getAttribute(NAME).isValid());
-
-    QVERIFY(user.getRelations().empty());
-    QVERIFY(userReplicated.getRelations().empty());
-
-    // Restore db
-    QVERIFY(user.forceDelete());
-}
-
-void tst_Model_Connection_Independent::replicate_WithRelations() const
-{
-    auto torrent2 = Torrent::with("torrentFiles.fileProperty")->find(2);
-    QVERIFY(torrent2);
-    QVERIFY(torrent2->exists);
-
-    auto torrent2Replicated = torrent2->replicate();
-
-    auto torrent2Attributes = AttributeUtils::exceptAttributesForReplicate(*torrent2);
-    auto torrent2ReplicatedAttributes = AttributeUtils::exceptAttributesForReplicate(
-                                            torrent2Replicated);
-
-    const auto &torrent2Relations = torrent2->getRelations();
-    const auto &torrent2ReplicatedRelations = torrent2Replicated.getRelations();
-
-    /* Crazy, but I'm going to check all relations 😮😎, yeah it's definitely crazy and
-       overmotivated, but it checks almost everything I wanted. 🙃🤙 */
-    // Torrent
-    QVERIFY(!torrent2Replicated.exists);
-    QVERIFY(torrent2Attributes == torrent2ReplicatedAttributes);
-    QVERIFY(torrent2Relations.size() == torrent2ReplicatedRelations.size());
-    QVERIFY(torrent2->relationLoaded("torrentFiles"));
-    QVERIFY(torrent2Replicated.relationLoaded("torrentFiles"));
-    // The Model::operator== was needed to make this real
-    QVERIFY(torrent2Relations == torrent2ReplicatedRelations);
-
-    // TorrentPreviewableFile
-    const auto torrentFiles2 =
-            torrent2->getRelationValue<TorrentPreviewableFile>("torrentFiles");
-    const auto torrentFiles2Replicated =
-            torrent2Replicated.getRelationValue<TorrentPreviewableFile>("torrentFiles");
-
-    QVERIFY(torrentFiles2.size() == torrentFiles2Replicated.size());
-
-    for (std::remove_cvref_t<decltype (torrentFiles2)>::size_type i = 0;
-         torrentFiles2.size() < i; ++i
-    ) {
-        auto *torrentFile = torrentFiles2.value(i);
-        QVERIFY(torrentFile->exists);
-        QVERIFY(torrentFile->relationLoaded("fileProperty"));
-
-        auto *torrentFileReplicated = torrentFiles2Replicated.value(i);
-        QVERIFY(torrentFileReplicated->exists);
-        QVERIFY(torrentFileReplicated->relationLoaded("fileProperty"));
-
-        QVERIFY(torrentFile->getAttributes() == torrentFileReplicated->getAttributes());
-        // The Model::operator== was needed to make this real
-        QVERIFY(torrentFile->getRelations() == torrentFileReplicated->getRelations());
-
-        // TorrentPreviewableFileProperty
-        auto *fileProperty =
-                torrentFile->getRelationValue<TorrentPreviewableFileProperty, One>(
-                    "fileProperty");
-        auto *filePropertyReplicated =
-                torrentFileReplicated->getRelationValue<TorrentPreviewableFileProperty,
-                                                        One>("fileProperty");
-
-        QVERIFY(fileProperty->exists);
-        QVERIFY(fileProperty->getRelations().empty());
-        QVERIFY(filePropertyReplicated->exists);
-        QVERIFY(filePropertyReplicated->getRelations().empty());
-        QVERIFY(fileProperty->getAttributes() ==
-                filePropertyReplicated->getAttributes());
-    }
-}
-
-void tst_Model_Connection_Independent::defaultAttributeValues() const
-{
-    {
-        TorrentEager torrent;
-
-        QVERIFY(!torrent.exists);
-        QCOMPARE(torrent[SIZE], QVariant(0));
-        QCOMPARE(torrent["progress"], QVariant(0));
-        QCOMPARE(torrent["added_on"],
-                QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
-        QCOMPARE(torrent.getAttributes().size(), 3);
-    }
-    {
-        const auto name = QStringLiteral("test22");
-        const auto note = QStringLiteral("Torrent::instance()");
-
-        auto torrent = TorrentEager::instance({
-            {NAME, name},
-            {"note", note},
-        });
-
-        QVERIFY(!torrent.exists);
-        QCOMPARE(torrent[SIZE], QVariant(0));
-        QCOMPARE(torrent["progress"], QVariant(0));
-        QCOMPARE(torrent["added_on"],
-                QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
-        QCOMPARE(torrent[NAME], QVariant(name));
-        QCOMPARE(torrent["note"], QVariant(note));
-        QCOMPARE(torrent.getAttributes().size(), 5);
-    }
-    {
-        const auto name = QStringLiteral("test22");
-        const auto note = QStringLiteral("Torrent::instance()");
-
-        TorrentEager torrent {
-            {NAME, name},
-            {"note", note},
-        };
-
-        QVERIFY(!torrent.exists);
-        QCOMPARE(torrent[SIZE], QVariant(0));
-        QCOMPARE(torrent["progress"], QVariant(0));
-        QCOMPARE(torrent["added_on"],
-                QVariant(QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)));
-        QCOMPARE(torrent[NAME], QVariant(name));
-        QCOMPARE(torrent["note"], QVariant(note));
-        QCOMPARE(torrent.getAttributes().size(), 5);
-    }
-}
+/* Mass assignment */
 
 void tst_Model_Connection_Independent::massAssignment_Fillable() const
 {
@@ -645,6 +937,8 @@ void tst_Model_Connection_Independent::
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
+/* Eager loading */
+
 void tst_Model_Connection_Independent::
      with_WithSelectConstraint_QueryWithoutRelatedTable() const
 {
@@ -691,6 +985,8 @@ void tst_Model_Connection_Independent::
                          "on `torrent_tags`.`id` = `tag_torrent`.`tag_id` "
                  "where `tag_torrent`.`torrent_id` in (?)"));
 }
+
+/* Retrieving results */
 
 void tst_Model_Connection_Independent::pluck() const
 {

@@ -156,7 +156,7 @@ namespace Orm::Tiny::Relations
         // Set timestamp column names from the parent if they are not the same
         syncTimestampsFromParent<Parent>(withTimestamps, createdAt, updatedAt);
 
-        PivotModel instance;
+        auto instance = PivotModel::instance();
 
         /* I will not store a pointer to the parent model because we don't have
            the reference to it, the parent argument is the reference to a copy and

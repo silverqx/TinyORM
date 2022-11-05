@@ -10,8 +10,10 @@
 namespace Models
 {
     class Phone final : public Orm::Tiny::Model<Phone>
-    {};
-}
+    {
+        using Model::Model;
+    };
+} // namespace Models
 #endif
 
 namespace Seeders

@@ -825,7 +825,7 @@ namespace Concerns
     std::unique_ptr<Related>
     HasRelationships<Derived, AllRelations...>::newRelatedInstance() const
     {
-        auto instance = std::make_unique<Related>();
+        auto instance = Related::instanceHeap();
 
         if (instance->getConnectionName().isEmpty())
             instance->setConnection(basemodel().getConnectionName());

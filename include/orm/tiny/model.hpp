@@ -85,7 +85,7 @@ namespace Orm::Tiny
         using DerivedType = Derived;
 
         /* Constructors */
-        /*! Create a new TinORM model instance. */
+        /*! Create a new TinORM model instance, default constructor. */
         Model();
 
         /*! Model's copy constructor. */
@@ -109,7 +109,15 @@ namespace Orm::Tiny
             (list initialization). */
         Model(std::initializer_list<AttributeItem> attributes);
 
+        /*! Create a new TinORM model instance, skip-filling default attribute
+            values. */
+        explicit Model(DontFillDefaultAttributes /*unused*/);
+
         /* Static operations on a model instance */
+        /*! Create a new TinyORM model instance. */
+        static Derived instance();
+        /*! Create a new TinyORM model instance. */
+        static Derived instance(const QString &connection);
         /*! Create a new TinyORM model instance with given attributes. */
         static Derived instance(const QVector<AttributeItem> &attributes);
         /*! Create a new TinyORM model instance with given attributes. */
@@ -120,6 +128,24 @@ namespace Orm::Tiny
         /*! Create a new TinyORM model instance with given attributes. */
         static Derived instance(QVector<AttributeItem> &&attributes,
                                 const QString &connection);
+
+        /*! Create a new TinyORM model instance on the heap. */
+        static std::unique_ptr<Derived> instanceHeap();
+        /*! Create a new TinyORM model instance on the heap. */
+        static std::unique_ptr<Derived> instanceHeap(const QString &connection);
+        /*! Create a new TinyORM model instance on the heap with given attributes. */
+        static std::unique_ptr<Derived>
+        instanceHeap(const QVector<AttributeItem> &attributes);
+        /*! Create a new TinyORM model instance on the heap with given attributes. */
+        static std::unique_ptr<Derived>
+        instanceHeap(QVector<AttributeItem> &&attributes);
+        /*! Create a new TinyORM model instance on the heap with given attributes. */
+        static std::unique_ptr<Derived>
+        instanceHeap(const QVector<AttributeItem> &attributes,
+                     const QString &connection);
+        /*! Create a new TinyORM model instance on the heap with given attributes. */
+        static std::unique_ptr<Derived>
+        instanceHeap(QVector<AttributeItem> &&attributes, const QString &connection);
 
         /*! Begin querying the model. */
         static std::unique_ptr<TinyBuilder<Derived>> query();
@@ -332,14 +358,20 @@ namespace Orm::Tiny
                     IncrementOrDecrement method, bool all);
 
         /* HasAttributes */
-        /*! Throw InvalidArgumentError if attributes passed to the constructor contain
-            some value, which will cause access of some data member in a derived
-            instance. */
+        /*! Fill the model with a vector of attributes with the CRTP check. */
+        void fillWithCRTPCheck(const QVector<AttributeItem> &attributes);
+        /*! Fill the model with a vector of attributes with the CRTP check. */
+        void fillWithCRTPCheck(QVector<AttributeItem> &&attributes);
+
+        /*! Throw an InvalidArgumentError if the attributes passed to the constructor
+            contain any value that causes access to some data member in the derived
+            instance that is not yet initialized. */
         inline static void
         throwIfCRTPctorProblem(const QVector<AttributeItem> &attributes);
         /*! The QDateTime attribute detected, causes CRTP ctor problem. */
         static void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes);
-        /*! Throw if an attempt to fill a guarded attribute is detected (mass assign.). */
+        /*! Throw if an attempt to fill a guarded attribute is detected
+            (mass assignment). */
         static void throwIfTotallyGuarded(QString &&key);
 
         /*! Get the u_dateFormat attribute from the Derived model. */
@@ -405,7 +437,7 @@ namespace Orm::Tiny
         initializeSoftDeletes();
 
         // Default Attribute Values
-        fill(Derived::u_attributes);
+        fillWithCRTPCheck(Derived::u_attributes);
 
         this->syncOriginal();
     }
@@ -414,18 +446,14 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::Model(const QVector<AttributeItem> &attributes)
         : Model()
     {
-        throwIfCRTPctorProblem(attributes);
-
-        fill(attributes);
+        fillWithCRTPCheck(attributes);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...>::Model(QVector<AttributeItem> &&attributes)
         : Model()
     {
-        throwIfCRTPctorProblem(attributes);
-
-        fill(std::move(attributes));
+        fillWithCRTPCheck(std::move(attributes));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -435,16 +463,48 @@ namespace Orm::Tiny
         : Model(QVector<AttributeItem>(attributes.begin(), attributes.end()))
     {}
 
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Model<Derived, AllRelations...>::Model(DontFillDefaultAttributes /*unused*/)
+    {
+        // Compile time check if a primary key type is supported by a QVariant
+        qMetaTypeId<typename Derived::KeyType>();
+
+        // Initialize the SoftDeletes (add the deleted_at column to the u_dates)
+        initializeSoftDeletes();
+    }
+
     /* Static operations on a model instance */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived
+    Model<Derived, AllRelations...>::instance()
+    {
+        Derived model(dontFillDefaultAttributes);
+
+        // Default Attribute Values
+        model.fill(Derived::u_attributes);
+
+        model.syncOriginal();
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived
+    Model<Derived, AllRelations...>::instance(const QString &connection)
+    {
+        auto model = instance();
+
+        model.setConnection(connection);
+
+        return model;
+    }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::instance(const QVector<AttributeItem> &attributes)
     {
-        Derived model;
-
-        // Initialize the SoftDeletes (add the deleted_at column to the u_dates)
-        model.initializeSoftDeletes();
+        auto model = instance();
 
         model.fill(attributes);
 
@@ -455,10 +515,7 @@ namespace Orm::Tiny
     Derived
     Model<Derived, AllRelations...>::instance(QVector<AttributeItem> &&attributes)
     {
-        Derived model;
-
-        // Initialize the SoftDeletes (add the deleted_at column to the u_dates)
-        model.initializeSoftDeletes();
+        auto model = instance();
 
         model.fill(std::move(attributes));
 
@@ -490,10 +547,82 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<Derived>
+    Model<Derived, AllRelations...>::instanceHeap()
+    {
+        auto model = std::make_unique<Derived>(dontFillDefaultAttributes);
+
+        // Default Attribute Values
+        model->fill(Derived::u_attributes);
+
+        model->syncOriginal();
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<Derived>
+    Model<Derived, AllRelations...>::instanceHeap(const QString &connection)
+    {
+        auto model = instanceHeap();
+
+        model->setConnection(connection);
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<Derived>
+    Model<Derived, AllRelations...>::instanceHeap(
+            const QVector<AttributeItem> &attributes)
+    {
+        auto model = instanceHeap();
+
+        model->fill(attributes);
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<Derived>
+    Model<Derived, AllRelations...>::instanceHeap(QVector<AttributeItem> &&attributes)
+    {
+        auto model = instanceHeap();
+
+        model->fill(std::move(attributes));
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<Derived>
+    Model<Derived, AllRelations...>::instanceHeap(
+            const QVector<AttributeItem> &attributes, const QString &connection)
+    {
+        auto model = instanceHeap(attributes);
+
+        model->setConnection(connection);
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<Derived>
+    Model<Derived, AllRelations...>::instanceHeap(
+            QVector<AttributeItem> &&attributes, const QString &connection)
+    {
+        auto model = instanceHeap(std::move(attributes));
+
+        model->setConnection(connection);
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::query()
     {
-        return Derived().newQuery();
+        return Derived::instance().newQuery();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -504,7 +633,7 @@ namespace Orm::Tiny
            set the connection on the model so that it is used for the queries we
            execute, as well as being set on every relation we retrieve without
            a custom connection name. */
-        Derived instance;
+        auto instance = Derived::instance();
 
         instance.setConnection(connection);
 
@@ -977,7 +1106,7 @@ namespace Orm::Tiny
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
            hydration of new objects via the QueryBuilder instances. */
-        Derived model;
+        auto model = Derived::instance();
 
         /* setAttribute() can call getDateFormat() inside and it tries to obtain
            the date format from grammar which is obtained from the connection, so
@@ -1002,7 +1131,7 @@ namespace Orm::Tiny
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
            hydration of new objects via the QueryBuilder instances. */
-        Derived model;
+        auto model = Derived::instance();
 
         /* setAttribute() can call getDateFormat() inside and it tries to obtain
            the date format from grammar which is obtained from the connection, so
@@ -1408,6 +1537,30 @@ namespace Orm::Tiny
     /* HasAttributes */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    void Model<Derived, AllRelations...>::fillWithCRTPCheck(
+            const QVector<AttributeItem> &attributes)
+    {
+        if (attributes.isEmpty())
+            return;
+
+        throwIfCRTPctorProblem(attributes);
+
+        fill(attributes);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void Model<Derived, AllRelations...>::fillWithCRTPCheck(
+            QVector<AttributeItem> &&attributes)
+    {
+        if (attributes.isEmpty())
+            return;
+
+        throwIfCRTPctorProblem(attributes);
+
+        fill(std::move(attributes));
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::throwIfCRTPctorProblem(
             const QVector<AttributeItem> &attributes)
     {
@@ -1419,10 +1572,12 @@ namespace Orm::Tiny
             const QVector<AttributeItem> &attributes)
     {
         static const auto message = QStringLiteral(
-            "Attributes passed to the '%1' model's constructor can't contain the "
+            "Attributes passed to the '%1' model's constructor or Default Attribute "
+            "Values defined in the '%1::u_attributes' data member can't contain the "
             "QDateTime attribute, to create a '%1' model instance with attributes that "
             "contain the QDateTime attribute use the %1::instance() method instead "
-            "or convert the '%2' QDateTime attribute to QString.");
+            "(recommended) or convert the '%2' QDateTime attribute to the QString "
+            "(not recommended).");
 
         for (const auto &[key, value] : attributes)
             if (value.isValid() && !value.isNull() &&

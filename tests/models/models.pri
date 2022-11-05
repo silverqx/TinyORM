@@ -15,6 +15,7 @@ HEADERS += \
     $$PWD/models/torrenteager.hpp \
     $$PWD/models/torrenteager_failed.hpp \
     $$PWD/models/torrenteager_withdefault.hpp \
+    $$PWD/models/torrenteager_without_qdatetime.hpp \
     $$PWD/models/torrentpeer.hpp \
     $$PWD/models/torrentpeereager.hpp \
     $$PWD/models/torrentpeereager_norelations.hpp \

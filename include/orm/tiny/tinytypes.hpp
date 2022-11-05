@@ -85,6 +85,17 @@ namespace Relations
     class IsModel
     {};
 
+    /*! Tag used to select a constructor without filling Default Attribute values. */
+    struct DontFillDefaultAttributes
+    {
+        /*! Default constructor. */
+        explicit DontFillDefaultAttributes() = default;
+    };
+
+    /*! Instance of the tag used to select a constructor without filling Default
+        Attribute values. */
+    inline constexpr DontFillDefaultAttributes dontFillDefaultAttributes {};
+
     /*! Cast types. */
     enum struct CastType
     {
