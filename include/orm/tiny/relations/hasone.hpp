@@ -91,6 +91,7 @@ namespace Orm::Tiny::Relations
             std::unique_ptr<Related> &&related, Model &parent,
             const QString &foreignKey, const QString &localKey)
     {
+        // Relations have private ctors, std::make_unique() can't be used
         auto instance =
                 std::unique_ptr<HasOne<Model, Related>>(
                     new HasOne(std::move(related), parent, foreignKey, localKey));
