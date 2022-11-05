@@ -1425,7 +1425,8 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     QVector<AttributeItem>
-    BelongsToMany<Model, Related, PivotType>::migratePivotAttributes(Related &model) const
+    BelongsToMany<Model, Related, PivotType>::migratePivotAttributes(
+            Related &model) const
     {
         const auto &modelAttributes = model.getAttributes();
 
