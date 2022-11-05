@@ -117,17 +117,17 @@ namespace Private
 
         /*! Add a relationship count / exists condition to the query with an "or". */
         template<typename Related = void>
-        TinyBuilder<Model> &
+        inline TinyBuilder<Model> &
         orHas(const QString &relation, const QString &comparison = GE, qint64 count = 1);
         /*! Add a relationship count / exists condition to the query. */
         template<typename Related = void>
-        TinyBuilder<Model> &
+        inline TinyBuilder<Model> &
         doesntHave(const QString &relation, const QString &condition = AND,
                    const std::function<void(
                        CallbackType<Related> &)> &callback = nullptr);
         /*! Add a relationship count / exists condition to the query with an "or". */
         template<typename Related = void>
-        TinyBuilder<Model> &
+        inline TinyBuilder<Model> &
         orDoesntHave(const QString &relation);
 
         /*! Add a relationship count / exists condition to the query. */
@@ -154,7 +154,7 @@ namespace Private
         template<typename Related, typename Method>
         requires std::is_member_function_pointer_v<Method>
 #endif
-        TinyBuilder<Model> &
+        inline TinyBuilder<Model> &
         has(Method relation, const QString &comparison = GE, qint64 count = 1,
             const QString &condition = AND,
             const std::function<void(TinyBuilder<Related> &)> &callback = nullptr);
@@ -162,7 +162,7 @@ namespace Private
         /*! Add a relationship count / exists condition to the query with where
             clauses. */
         template<typename Related = void>
-        TinyBuilder<Model> &
+        inline TinyBuilder<Model> &
         whereHas(const QString &relation,
                  const std::function<void(CallbackType<Related> &)> &callback = nullptr,
                  const QString &comparison = GE, qint64 count = 1);
@@ -170,7 +170,7 @@ namespace Private
         /*! Add a relationship count / exists condition to the query with where
             clauses and an "or". */
         template<typename Related = void>
-        TinyBuilder<Model> &
+        inline TinyBuilder<Model> &
         orWhereHas(const QString &relation,
                    const std::function<void(
                        CallbackType<Related> &)> &callback = nullptr,
@@ -178,14 +178,14 @@ namespace Private
         /*! Add a relationship count / exists condition to the query with where
             clauses. */
         template<typename Related = void>
-        TinyBuilder<Model> &
+        inline TinyBuilder<Model> &
         whereDoesntHave(const QString &relation,
                         const std::function<void(
                             CallbackType<Related> &)> &callback = nullptr);
         /*! Add a relationship count / exists condition to the query with where
             clauses and an "or". */
         template<typename Related = void>
-        TinyBuilder<Model> &
+        inline TinyBuilder<Model> &
         orWhereDoesntHave(const QString &relation,
                           const std::function<void(
                               CallbackType<Related> &)> &callback = nullptr);
@@ -199,7 +199,7 @@ namespace Private
         template<typename Related, typename Method>
         requires std::is_member_function_pointer_v<Method>
 #endif
-        TinyBuilder<Model> &
+        inline TinyBuilder<Model> &
         whereHas(Method relation,
                  const std::function<void(TinyBuilder<Related> &)> &callback = nullptr,
                  const QString &comparison = GE, qint64 count = 1);
@@ -237,14 +237,14 @@ namespace Private
         getHasQueryByExistenceCheck(const QString &comparison, qint64 count,
                                     Relation<Related> &relation) const;
         /*! Check if we can run an "exists" query to optimize performance. */
-        bool canUseExistsForExistenceCheck(const QString &comparison,
-                                           qint64 count) const;
+        inline bool
+        canUseExistsForExistenceCheck(const QString &comparison, qint64 count) const;
 
     private:
         /*! Static cast this to a child's instance TinyBuilder type. */
-        TinyBuilder<Model> &query();
+        inline TinyBuilder<Model> &query();
         /*! Static cast this to a child's instance TinyBuilder type, const version. */
-        const TinyBuilder<Model> &query() const;
+        inline const TinyBuilder<Model> &query() const;
 
         /*! Merge the where constraints from another query to the current query. */
         template<typename Related>
@@ -274,7 +274,7 @@ namespace Private
                 const std::function<void(TinyBuilder<Related> &)> &callback) const;
         /*! Destroy hasNested store. */
         template<typename Related>
-        void destroyHasNestedStore() const;
+        inline void destroyHasNestedStore() const;
         /*! Check if Related template argument passed to the has() method is correct. */
         template<typename Related>
         void checkNestedRelationType() const;
@@ -317,7 +317,7 @@ namespace Private
 
     template<typename Model>
     template<typename Related>
-    inline TinyBuilder<Model> &
+    TinyBuilder<Model> &
     QueriesRelationships<Model>::orHas(
             const QString &relation, const QString &comparison, const qint64 count)
     {
@@ -326,7 +326,7 @@ namespace Private
 
     template<typename Model>
     template<typename Related>
-    inline TinyBuilder<Model> &
+    TinyBuilder<Model> &
     QueriesRelationships<Model>::doesntHave(
             const QString &relation, const QString &condition,
             const std::function<void(CallbackType<Related> &)> &callback)
@@ -336,7 +336,7 @@ namespace Private
 
     template<typename Model>
     template<typename Related>
-    inline TinyBuilder<Model> &
+    TinyBuilder<Model> &
     QueriesRelationships<Model>::orDoesntHave(const QString &relation)
     {
         return doesntHave<Related>(relation, OR);
@@ -392,7 +392,7 @@ namespace Private
     template<typename Related, typename Method>
     requires std::is_member_function_pointer_v<Method>
 #endif
-    inline TinyBuilder<Model> &
+    TinyBuilder<Model> &
     QueriesRelationships<Model>::has(
             const Method relation, const QString &comparison, const qint64 count,
             const QString &condition,
@@ -404,7 +404,7 @@ namespace Private
 
     template<typename Model>
     template<typename Related>
-    inline TinyBuilder<Model> &
+    TinyBuilder<Model> &
     QueriesRelationships<Model>::whereHas(
             const QString &relation,
             const std::function<void(CallbackType<Related> &)> &callback,
@@ -415,7 +415,7 @@ namespace Private
 
     template<typename Model>
     template<typename Related>
-    inline TinyBuilder<Model> &
+    TinyBuilder<Model> &
     QueriesRelationships<Model>::orWhereHas(
             const QString &relation,
             const std::function<void(CallbackType<Related> &)> &callback,
@@ -426,7 +426,7 @@ namespace Private
 
     template<typename Model>
     template<typename Related>
-    inline TinyBuilder<Model> &
+    TinyBuilder<Model> &
     QueriesRelationships<Model>::whereDoesntHave(
             const QString &relation,
             const std::function<void(CallbackType<Related> &)> &callback)
@@ -436,7 +436,7 @@ namespace Private
 
     template<typename Model>
     template<typename Related>
-    inline TinyBuilder<Model> &
+    TinyBuilder<Model> &
     QueriesRelationships<Model>::orWhereDoesntHave(
             const QString &relation,
             const std::function<void(CallbackType<Related> &)> &callback)
@@ -452,7 +452,7 @@ namespace Private
     template<typename Related, typename Method>
     requires std::is_member_function_pointer_v<Method>
 #endif
-    inline TinyBuilder<Model> &
+    TinyBuilder<Model> &
     QueriesRelationships<Model>::whereHas(
             const Method relation,
             const std::function<void(TinyBuilder<Related> &)> &callback,
@@ -550,20 +550,20 @@ namespace Private
     }
 
     template<typename Model>
-    inline bool QueriesRelationships<Model>::canUseExistsForExistenceCheck(
+    bool QueriesRelationships<Model>::canUseExistsForExistenceCheck(
             const QString &comparison, const qint64 count) const
     {
         return (comparison == GE || comparison == LT) && count == 1;
     }
 
     template<typename Model>
-    inline TinyBuilder<Model> &QueriesRelationships<Model>::query()
+    TinyBuilder<Model> &QueriesRelationships<Model>::query()
     {
         return static_cast<TinyBuilder<Model> &>(*this);
     }
 
     template<typename Model>
-    inline const TinyBuilder<Model> &QueriesRelationships<Model>::query() const
+    const TinyBuilder<Model> &QueriesRelationships<Model>::query() const
     {
         return static_cast<const TinyBuilder<Model> &>(*this);
     }
@@ -686,7 +686,7 @@ namespace Private
 
     template<typename Model>
     template<typename Related>
-    inline void QueriesRelationships<Model>::destroyHasNestedStore() const
+    void QueriesRelationships<Model>::destroyHasNestedStore() const
     {
         Private::HasNestedStore::STORE_TYPEID.pop();
         Private::HasNestedStore::STORE<Related>.pop();
