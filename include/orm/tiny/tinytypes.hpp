@@ -26,6 +26,7 @@ namespace Relations
     template<typename Model>
     class Builder;
 
+    /*! Alias for the TinyBuilder. */
     template<typename Model>
     using TinyBuilder = Builder<Model>;
 
