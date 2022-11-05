@@ -53,7 +53,7 @@ namespace Orm::Tiny::Relations
 
         /* TinyBuilder proxy methods */
         /*! Find multiple models by their primary keys. */
-        QVector<Related>
+        inline QVector<Related>
         findMany(const QVector<QVariant> &ids,
                  const QVector<Column> &columns = {ASTERISK}) const;
 
