@@ -14,7 +14,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
-
 namespace Query
 {
     class JoinClause;
