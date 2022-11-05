@@ -11,7 +11,6 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/relations/concerns/interactswithpivottable.hpp"
 #include "orm/tiny/relations/relation.hpp"
-#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

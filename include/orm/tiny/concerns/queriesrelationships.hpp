@@ -11,7 +11,6 @@ TINY_SYSTEM_HEADER
 #include "orm/query/querybuilder.hpp"
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/tiny/tinytypes.hpp"
-#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

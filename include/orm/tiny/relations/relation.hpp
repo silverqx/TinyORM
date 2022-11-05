@@ -14,6 +14,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/threadlocal.hpp"
 #include "orm/tiny/relations/relationproxies.hpp"
 #include "orm/tiny/relations/relationtypes.hpp"
+#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -283,7 +284,7 @@ namespace Relations
         throw Orm::Exceptions::RuntimeError(
                     QStringLiteral("Method %1() is not implemented for '%2' "
                                    "relation type.")
-                    .arg(__func__, relationTypeName()));
+                    .arg(__tiny_func__, relationTypeName()));
     }
 
     /* Timestamps */
