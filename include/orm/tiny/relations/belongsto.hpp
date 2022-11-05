@@ -212,8 +212,8 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     void BelongsTo<Model, Related>::match(
-                QVector<Model> &models, QVector<Related> &&results,
-                const QString &relation) const
+            QVector<Model> &models, QVector<Related> &&results,
+            const QString &relation) const
     {
         /* First we will get to build a dictionary of the child models by their primary
            key of the relationship, then we can easily match the children back onto
