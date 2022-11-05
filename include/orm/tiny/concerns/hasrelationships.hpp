@@ -998,6 +998,7 @@ namespace Concerns
                             "%2<%3>() method overload without an 'Orm::One' tag.")
                         .arg(relation, source,
                              TypeUtils::classPureBasename<Related>()));
+
         } else if constexpr (std::is_same_v<Result, QVector<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::InvalidTemplateArgumentError(
@@ -1100,8 +1101,10 @@ namespace Concerns
         // Invoke pushVisited() on the base of hold alternative in the models
         if (std::holds_alternative<QVector<Related>>(models))
             pushVisited<Related, Many>();
+
         else if (std::holds_alternative<std::optional<Related>>(models))
             pushVisited<Related, One>();
+
         else
             throw Orm::Exceptions::RuntimeError(
                     "this->pushStore().models holds unexpected alternative.");
@@ -1233,7 +1236,7 @@ namespace Concerns
 
             // Skip pivot relations
             if (hasPivotRelation && m_pivots.contains(relationName))
-                    continue;
+                continue;
 
             relations.append({relationName});
         }
