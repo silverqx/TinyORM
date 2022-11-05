@@ -36,6 +36,8 @@ namespace Orm::Tiny::Exceptions
         QString formatMessage(const QString &model, const QString &relation) const;
     };
 
+    /* public */
+
     const QString &
     RelationNotLoadedError::getModel() const
     {

@@ -5,6 +5,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny::Exceptions
 {
 
+/* public */
+
 RelationNotFoundError::RelationNotFoundError(const QString &model,
                                              const QString &relation,
                                              const From from)
@@ -13,6 +15,8 @@ RelationNotFoundError::RelationNotFoundError(const QString &model,
     , m_relation(relation)
     , m_from(from)
 {}
+
+/* private */
 
 QString RelationNotFoundError::formatMessage(const QString &model,
                                              const QString &relation,

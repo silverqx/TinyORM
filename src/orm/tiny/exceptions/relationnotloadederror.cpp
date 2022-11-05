@@ -5,12 +5,16 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny::Exceptions
 {
 
+/* public */
+
 RelationNotLoadedError::RelationNotLoadedError(const QString &model,
                                                const QString &relation)
     : RuntimeError(formatMessage(model, relation))
     , m_model(model)
     , m_relation(relation)
 {}
+
+/* private */
 
 QString RelationNotLoadedError::formatMessage(const QString &model,
                                               const QString &relation) const

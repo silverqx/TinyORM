@@ -48,6 +48,8 @@ namespace Orm::Tiny::Exceptions
                               From from) const;
     };
 
+    /* public */
+
     const QString &
     RelationNotFoundError::getModel() const
     {

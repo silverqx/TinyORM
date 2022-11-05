@@ -44,6 +44,8 @@ namespace Orm::Tiny::Exceptions
                               const QVector<QVariant> &ids = {}) const;
     };
 
+    /* public */
+
     const QString &
     ModelNotFoundError::getModel() const
     {

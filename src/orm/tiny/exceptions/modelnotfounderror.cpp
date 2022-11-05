@@ -10,6 +10,8 @@ using Orm::Constants::DOT;
 namespace Orm::Tiny::Exceptions
 {
 
+/* public */
+
 ModelNotFoundError::ModelNotFoundError(const char *model,
                                        const QVector<QVariant> &ids)
     : RuntimeError(formatMessage(model, ids))
@@ -21,6 +23,8 @@ ModelNotFoundError::ModelNotFoundError(const QString &model,
                                        const QVector<QVariant> &ids)
     : ModelNotFoundError(model.toUtf8().constData(), ids)
 {}
+
+/* private */
 
 QString ModelNotFoundError::formatMessage(const char *model,
                                           const QVector<QVariant> &ids) const
