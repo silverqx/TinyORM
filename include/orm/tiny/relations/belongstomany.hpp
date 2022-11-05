@@ -962,7 +962,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     bool BelongsToMany<Model, Related, PivotType>::each(
-            const std::function<bool(Related &&, int)> &callback, int count) const
+            const std::function<bool(Related &&, int)> &callback, const int count) const
     {
         return chunk(count, [&callback](QVector<Related> &&models, const int /*unused*/)
         {
