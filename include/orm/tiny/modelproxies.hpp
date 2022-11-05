@@ -972,7 +972,7 @@ namespace Tiny
 
     private:
         /*! Begin querying the model, proxy to Model::query(). */
-        static std::unique_ptr<TinyBuilder<Derived>> query();
+        inline static std::unique_ptr<TinyBuilder<Derived>> query();
     };
 
     /* public */
