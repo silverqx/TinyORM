@@ -662,7 +662,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::HasRelationStore( // NOLINT(modernize-use-equals-delete)
 #ifdef TINYORM_DEBUG
-                const HasRelationStore &other)
+            const HasRelationStore &other)
     {
         // This is real porn 😂
         Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
@@ -673,7 +673,7 @@ namespace Orm::Tiny::Concerns
         m_relationStore = {};
     }
 #else
-                const HasRelationStore &/*unused*/)
+            const HasRelationStore &/*unused*/)
         : m_relationStore()
     {}
 #endif
@@ -682,14 +682,14 @@ namespace Orm::Tiny::Concerns
     HasRelationStore<Derived, AllRelations...> &
     HasRelationStore<Derived, AllRelations...>::operator=( // NOLINT(modernize-use-equals-delete)
 #ifdef TINYORM_DEBUG
-                const HasRelationStore &other)
+            const HasRelationStore &other)
     {
         Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
                    "Relation store copy assignment",
                    relationStoreCopyMoveTemplate(CopyMoveTemplateType::COPY)
                    .toUtf8().constData());
 #else
-                const HasRelationStore &/*unused*/)
+            const HasRelationStore &/*unused*/)
     {
 #endif
         m_relationStore = {};
@@ -700,7 +700,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::HasRelationStore( // NOLINT(modernize-use-equals-delete)
 #ifdef TINYORM_DEBUG
-                HasRelationStore &&other) noexcept
+            HasRelationStore &&other) noexcept
     {
         Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
                    "Relation store move constructor",
@@ -710,7 +710,7 @@ namespace Orm::Tiny::Concerns
         m_relationStore = {};
     }
 #else
-                HasRelationStore &&/*unused*/) noexcept
+            HasRelationStore &&/*unused*/) noexcept
         : m_relationStore()
     {}
 #endif
@@ -719,14 +719,14 @@ namespace Orm::Tiny::Concerns
     HasRelationStore<Derived, AllRelations...> &
     HasRelationStore<Derived, AllRelations...>::operator=( // NOLINT(modernize-use-equals-delete)
 #ifdef TINYORM_DEBUG
-                HasRelationStore &&other) noexcept
+            HasRelationStore &&other) noexcept
     {
         Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
                    "Relation store move assignment",
                    relationStoreCopyMoveTemplate(CopyMoveTemplateType::MOVE)
                    .toUtf8().constData());
 #else
-                HasRelationStore &&/*unused*/) noexcept
+            HasRelationStore &&/*unused*/) noexcept
     {
 #endif
         m_relationStore = {};
@@ -856,9 +856,9 @@ namespace Orm::Tiny::Concerns
     QString
     HasRelationStore<Derived, AllRelations...>::relationStoreCopyMoveTemplate(
 #ifdef TINYORM_DEBUG
-                const CopyMoveTemplateType type)
+            const CopyMoveTemplateType type)
 #else
-                const CopyMoveTemplateType /*unused*/)
+            const CopyMoveTemplateType /*unused*/)
 #endif
     {
 #ifdef TINYORM_DEBUG
