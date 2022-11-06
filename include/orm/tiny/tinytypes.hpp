@@ -89,7 +89,7 @@ namespace Relations
     struct DontFillDefaultAttributes
     {
         /*! Default constructor. */
-        explicit DontFillDefaultAttributes() = default;
+        inline DontFillDefaultAttributes() = default;
     };
 
     /*! Instance of the tag used to select a constructor without filling Default
