@@ -22,13 +22,18 @@ QString RelationNotFoundError::formatMessage(const QString &model,
                                              const QString &relation,
                                              const From from) const
 {
+    /* I was confused when I looked at this method after some time, but it's correct,
+       it shows two kind of messages, one for the belongsTo/belongsToMany and one
+       in the relationship was not found in the u_relation data member. So the default
+       section is ok and is called by the validateUserRelation() without the second
+       argument (UNDEFINED). */
     static const auto belongsToMessage =
             QStringLiteral(
                 "Can not guess the relationship name for '%2' relation type, "
                 "currently guessed relationship name is '%3', but it does not exist "
-                "in the '%1::u_relation' data member. Please pass the third parameter "
-                "to the 'Model::%2' method called from the '%1' model, the __func__ "
-                "predefined identifier is ideal for this.");
+                "in the '%1::u_relation' data member. Please pass the 'relation' "
+                "argument to the 'Model::%2' method called from the '%1' model, "
+                "the __func__ predefined identifier is ideal for this.");
 
     switch (from) {
     case From::BELONGS_TO:
