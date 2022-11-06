@@ -861,12 +861,12 @@ namespace Orm::Tiny::Concerns
 #endif
     {
 #ifdef TINYORM_DEBUG
-        const auto message =
+        static const auto message =
                 QStringLiteral(
                     "You can not %1 the %2 model in the middle of any relation store "
                     "operation.");
 
-        const auto className = TypeUtils::classPureBasename<Derived>();
+        static const auto className = TypeUtils::classPureBasename<Derived>();
 
         switch (type) {
         case CopyMoveTemplateType::COPY:
