@@ -5,6 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/config.hpp"
+
 #ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
 #  include <map>
 #else

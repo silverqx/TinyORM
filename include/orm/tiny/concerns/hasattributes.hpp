@@ -5,6 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/config.hpp"
+
 #ifdef TINYORM_DEBUG
 #  include <QDebug>
 #endif

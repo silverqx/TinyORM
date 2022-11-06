@@ -2,6 +2,8 @@
 
 #include <QString>
 
+#include "orm/config.hpp"
+
 #if !defined(__clang__) && \
     !defined(TINYORM_NO_DEBUG) && defined(_MSC_VER) && !defined(Q_OS_WINRT)
 #  include <qt_windows.h>

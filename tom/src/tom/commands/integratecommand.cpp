@@ -9,6 +9,7 @@
 #include <orm/constants.hpp>
 #include <orm/utils/type.hpp>
 
+#include "tom/config.hpp"
 #include "tom/commands/stubs/integratestubs.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 

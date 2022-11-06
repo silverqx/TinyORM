@@ -10,6 +10,7 @@ TINY_SYSTEM_HEADER
 #include <memory>
 #include <optional>
 
+#include "orm/config.hpp"
 #include "orm/macros/export.hpp"
 #include "orm/types/log.hpp"
 
