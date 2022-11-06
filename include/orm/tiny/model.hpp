@@ -213,6 +213,8 @@ namespace Orm::Tiny
         Derived &fill(QVector<AttributeItem> &&attributes);
         /*! Fill the model with a vector of attributes. Force mass assignment. */
         Derived &forceFill(const QVector<AttributeItem> &attributes);
+        /*! Fill the model with a vector of attributes. Force mass assignment. */
+        Derived &forceFill(QVector<AttributeItem> &&attributes);
 
         /* Model Instance methods */
         /*! Get a new query builder for the model's table. */
@@ -1038,6 +1040,22 @@ namespace Orm::Tiny
         GuardedModel::unguarded([this, &attributes]
         {
             fill(attributes);
+        });
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    Model<Derived, AllRelations...>::forceFill(QVector<AttributeItem> &&attributes)
+    {
+        // Prevent unnecessary unguard
+        if (attributes.isEmpty())
+            return model();
+
+        GuardedModel::unguarded([this, &attributes]
+        {
+            fill(std::move(attributes));
         });
 
         return model();
