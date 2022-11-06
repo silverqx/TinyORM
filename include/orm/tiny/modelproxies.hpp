@@ -217,11 +217,6 @@ namespace Tiny
         static std::tuple<int, std::optional<QSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
 
-        /*! Destroy the models for the given IDs. */
-        static std::size_t destroy(const QVector<QVariant> &ids);
-        /*! Destroy the model by the given ID. */
-        static std::size_t destroy(const QVariant &id);
-
         /*! Run a truncate statement on the table. */
         static void truncate();
 
@@ -1393,38 +1388,6 @@ namespace Tiny
             const QVector<QVariantMap> &values, const QStringList &uniqueBy)
     {
         return query()->upsert(values, uniqueBy);
-    }
-
-    // TODO cpp check all int types and use std::size_t where appropriate silverqx
-    // FEATURE dilemma primarykey, id should be Derived::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
-    // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::size_t
-    ModelProxies<Derived, AllRelations...>::destroy(const QVector<QVariant> &ids)
-    {
-        if (ids.isEmpty())
-            return 0;
-
-        /* We will actually pull the models from the database table and call delete on
-           each of them individually so that their events get fired properly with a
-           correct set of attributes in case the developers wants to check these. */
-        auto instance = Derived::instance();
-
-        std::size_t count = 0;
-
-        // Ownership of a unique_ptr()
-        for (auto &model : instance.whereIn(instance.getKeyName(), ids)->get())
-            if (model.remove())
-                ++count;
-
-        return count;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::size_t
-    ModelProxies<Derived, AllRelations...>::destroy(const QVariant &id)
-    {
-        return destroy(QVector<QVariant> {id});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

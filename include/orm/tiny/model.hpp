@@ -155,6 +155,11 @@ namespace Orm::Tiny
         /*! Get all of the models from the database. */
         static QVector<Derived> all(const QVector<Column> &columns = {ASTERISK});
 
+        /*! Destroy the models for the given IDs. */
+        static std::size_t destroy(const QVector<QVariant> &ids);
+        /*! Destroy the model by the given ID. */
+        inline static std::size_t destroy(const QVariant &id);
+
         /* Operations on a model instance */
         /*! Save the model to the database. */
         bool save(SaveOptions options = {});
@@ -645,6 +650,38 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::all(const QVector<Column> &columns)
     {
         return query()->get(columns);
+    }
+
+    // TODO cpp check all int types and use std::size_t where appropriate silverqx
+    // FEATURE dilemma primarykey, id should be Derived::KeyType, if I don't solve this problem, do runtime type check, QVariant type has to be the same type like KeyType and throw exception silverqx
+    // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::size_t
+    Model<Derived, AllRelations...>::destroy(const QVector<QVariant> &ids)
+    {
+        if (ids.isEmpty())
+            return 0;
+
+        /* We will actually pull the models from the database table and call delete on
+           each of them individually so that their events get fired properly with a
+           correct set of attributes in case the developers wants to check these. */
+        auto instance = Derived::instance();
+
+        std::size_t count = 0;
+
+        // Ownership of a unique_ptr()
+        for (auto &&model : instance.whereIn(instance.getKeyName(), ids)->get())
+            if (model.remove())
+                ++count;
+
+        return count;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::size_t
+    Model<Derived, AllRelations...>::destroy(const QVariant &id)
+    {
+        return destroy(QVector<QVariant> {id});
     }
 
     /* Operations on a model instance */
