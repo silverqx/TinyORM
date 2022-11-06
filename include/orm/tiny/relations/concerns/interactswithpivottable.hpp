@@ -227,13 +227,17 @@ namespace Concerns
                                       QVector<AttributeItem>> &idsWithAttributes) const;
 
         /*! Cast the given pivot attributes. */
-        QVector<AttributeItem> &
-        castAttributes(QVector<AttributeItem> &attributes) const
+        const QVector<AttributeItem> &
+        castAttributes(const QVector<AttributeItem> &attributes) const
         requires OurPivot<PivotType>;
         /*! Cast the given pivot attributes. */
         QVector<AttributeItem>
         castAttributes(const QVector<AttributeItem> &attributes) const
         requires CustomPivot<PivotType>;
+        /*! Cast the given pivot attributes. */
+//        QVector<AttributeItem>
+//        castAttributes(QVector<AttributeItem> &&attributes) const
+//        requires OurPivot<PivotType>;
 
         /*! Detach models from the relationship. */
         int detach(bool detachAll, const QVector<QVariant> &ids, bool touch) const;
@@ -566,7 +570,12 @@ namespace Concerns
         std::tie(updated, std::ignore) =
                 newPivotStatementForId(id)->update(
                     AttributeUtils::convertVectorToUpdateItem(
-                        castAttributes(attributes)));
+                        /* Cast attributes not needed, the if statement above will be
+                           executed for the custom pivot and we don't need casting
+                           for the non-custom normal pivots. */
+                        std::move(attributes)));
+//                        castAttributes(std::move(attributes))));
+        // FEATURE relations, the castAttributes() will be needed when following task will be done : add support for BelongsToMany::where/whereIn/whereNull silverqx
 
         /* It will not touch if attributes size is 0, because this function is called
            only when attributes are not empty. */
@@ -701,11 +710,25 @@ namespace Concerns
         auto baseAttributes = baseAttachRecord(id, hasTimestamps);
         baseAttributes.reserve(baseAttributes.size() + attributes.size());
 
-        for (const auto &attribute : attributes) {
+        /* I have to add a note here because this casting is really complex, for now,
+           it doesn't matter if the castAttributes() is called here.
+           First I'm going to describe why castAttributes() must be called,
+           it has to be called because the BasePivot::fromRawAttributes() is called
+           for the custom pivots and it internally calls the setRawAttributes(), so
+           it doesn't call all the casting logic that is in the setAttribute() method.
+           Now why is not needed in the TinyORM because we don't have any custom logic
+           now in the setAttribute() like the isEnumCastable(), isClassCastable(), or
+           isJsonCastable(), so at the end of the day it doesn't matter whether
+           the castAttributes() will be called, it will matter when any of these
+           will be implemented. 🤯
+           Ok, currently it's needed only for the fromDateTime() in the setAttribute(),
+           SO it matters and the castAttributes() must be called.
+           I leave all the comment above because it nicely describes the whole problem. */
+        for (auto &&attribute : castAttributes(attributes)) {
             // NOTE api different silverqx
             validateAttachAttribute(attribute, id);
 
-            baseAttributes << attribute;
+            baseAttributes << std::move(attribute);
         }
 
         return baseAttributes;
@@ -942,15 +965,23 @@ namespace Concerns
         return ids;
     }
 
+    /* These castAttributes() has very weird params/return values, but they are ok and
+       as effective as can be, I'm going to describe every overload to be more clear. */
+
+    /* The following two examples are called from the formatAttachRecord(), the problem
+       here is that we don't have the formatAttachRecord() overload that accepts
+       the attributes as a rvalue reference. */
     template<class Model, class Related, class PivotType>
-    QVector<AttributeItem> &
+    const QVector<AttributeItem> &
     InteractsWithPivotTable<Model, Related, PivotType>::castAttributes(
-            QVector<AttributeItem> &attributes) const
+            const QVector<AttributeItem> &attributes) const
     requires OurPivot<PivotType>
     {
         static_assert (std::is_same_v<PivotType, Pivot>,
                 "Bad castAttribute overload selected, PivotType != Pivot.");
 
+        /* We don't cast attributes for the non-custom pivot because the u_cast data
+           member can not be set, it can be set only on the custom pivot. */
         return attributes;
     }
 
@@ -966,6 +997,21 @@ namespace Concerns
 
         return newPivot().fill(attributes).getAttributes();
     }
+
+    /* This overload is called from the updateExistingPivot() and currently is not
+       needed, it will be needed when the pivotWheres/pivotWhereIns/pivotWhereNulls
+       will be implemented, so I'm currently disabling this overload. */
+//    template<class Model, class Related, class PivotType>
+//    QVector<AttributeItem>
+//    InteractsWithPivotTable<Model, Related, PivotType>::castAttributes(
+//            QVector<AttributeItem> &&attributes) const
+//    requires OurPivot<PivotType>
+//    {
+//        static_assert (std::is_same_v<PivotType, Pivot>,
+//                "Bad castAttribute overload selected, PivotType != Pivot.");
+
+//        return std::move(attributes);
+//    }
 
     template<class Model, class Related, class PivotType>
     int InteractsWithPivotTable<Model, Related, PivotType>::detach(
