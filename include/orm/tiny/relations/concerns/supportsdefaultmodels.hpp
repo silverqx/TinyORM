@@ -109,29 +109,42 @@ namespace Orm::Tiny::Relations::Concerns
     SupportsDefaultModels<Model, Related, RelationType>::getDefaultFor(
             const Model &parent) const
     {
-        const auto index = m_withDefault.index();
-
         // Defaul Model is disabled, return null
-        if (index == 0 && !std::get<bool>(m_withDefault))
+        if (std::holds_alternative<bool>(m_withDefault) &&
+            !std::get<bool>(m_withDefault)
+        )
             return std::nullopt;
 
         auto instance = newRelatedInstanceFor(parent);
 
-        // FUTURE pass callback to withDefault(), I will need proxy model or better attribute proxy, something similar or the same like Model::AttributeReference class silverqx
-        // Invoke passed callback
-//        if (index == 2) {
-//            std::invoke(std::get<Callback>(m_withDefault), instance, parent);
-
-//            return instance;
-//        }
-
         // If model attributes were passed then fill them
-        if (index == 1)
+        if (std::holds_alternative<QVector<AttributeItem>>(m_withDefault)) {
             if (const auto &attributes = std::get<QVector<AttributeItem>>(m_withDefault);
                 !attributes.isEmpty()
             )
+                /* Don't use the std::move() here because can happen that the Default
+                   Attribute values will be moved out from the m_withDefault and then
+                   on subsequent calls this attributes vector will be empty. */
                 instance.forceFill(attributes);
+        }
 
+        // FUTURE pass callback to withDefault(), I will need proxy model or better attribute proxy, something similar or the same like Model::AttributeReference class silverqx
+        // Invoke passed callback
+//        else if (std::holds_alternative<Callback>(m_withDefault))
+//            if (const auto &callback = std::get<Callback>(m_withDefault);
+//                callback
+//            )
+//                std::invoke(callback, instance, parent);
+
+        /* This check is not needed in prod. builds, it's practically useless also
+           in debug builds. */
+#ifdef TINYORM_DEBUG
+        // This should never happen :/
+        else if (!std::holds_alternative<bool>(m_withDefault))
+            Q_UNREACHABLE();
+#endif
+
+        // holds bool and has the true value
         return instance;
     }
 
