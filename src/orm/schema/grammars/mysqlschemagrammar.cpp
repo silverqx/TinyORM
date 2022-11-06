@@ -592,11 +592,10 @@ QString MySqlSchemaGrammar::getType(const ColumnDefinition &column) const
 //        return typeMultiPolygonZ(column);
 
     default:
-        break;
+        throw Exceptions::RuntimeError(
+                    QStringLiteral("Unsupported column type in %1().")
+                    .arg(__tiny_func__));
     }
-
-    throw Exceptions::RuntimeError(
-                QStringLiteral("Unsupported column type in %1().").arg(__tiny_func__));
 }
 
 QString MySqlSchemaGrammar::typeChar(const ColumnDefinition &column) const

@@ -413,13 +413,13 @@ namespace Orm::Tiny::Concerns
                 break;
 
             default:
-                break;
+                Q_UNREACHABLE();
             }
         }
             break;
 
         default:
-            throw Orm::Exceptions::RuntimeError("Unknown store type.");
+            Q_UNREACHABLE();
         }
     }
 
@@ -874,8 +874,7 @@ namespace Orm::Tiny::Concerns
         case CopyMoveTemplateType::MOVE:
             return message.arg(QStringLiteral("move"), className);
         default:
-            // This should never happen 🤔
-            qFatal("Bad type in relationStoreCopyMoveTemplate().");
+            Q_UNREACHABLE();
         }
 #endif
 

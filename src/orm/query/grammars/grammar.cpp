@@ -315,8 +315,7 @@ QString Grammar::compileHaving(const HavingConditionItem &having) const
 
     T_UNLIKELY
     default:
-        throw Exceptions::RuntimeError(QStringLiteral("Unknown HavingType (%1).")
-                                       .arg(static_cast<int>(having.type)));
+        Q_UNREACHABLE();
     }
 }
 

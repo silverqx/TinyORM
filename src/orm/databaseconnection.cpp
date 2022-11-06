@@ -371,7 +371,7 @@ DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
              sqlite3_bind_int(d->stmt, i + 1, value.toInt()); */
 
         default:
-            break;
+            break; // Don't use the Q_UNREACHABLE()
         }
     }
 

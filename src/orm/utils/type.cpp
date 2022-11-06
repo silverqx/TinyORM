@@ -77,8 +77,11 @@ Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withN
 namespace
 {
     /*! Throw when abi::__cxa_demangle() status < 0. */
-    void throwIfDemangleStatusFailed(int status)
+    void throwIfDemangleStatusFailed(const int status)
     {
+        if (status == 0)
+            return;
+
         switch (status) {
         case -1:
             throw RuntimeError(
@@ -91,7 +94,7 @@ namespace
             throw RuntimeError(
                         "One of the arguments for abi::__cxa_demangle() is invalid.");
         default:
-            break;
+            Q_UNREACHABLE();
         }
     }
 } // namespace
