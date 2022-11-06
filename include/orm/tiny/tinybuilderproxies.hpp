@@ -628,13 +628,13 @@ namespace Tiny
 
     private:
         /*! Static cast this to a child's instance TinyBuilder type. */
-        const TinyBuilder<Model> &builder() const;
+        inline const TinyBuilder<Model> &builder() const noexcept;
         /*! Static cast this to a child's instance TinyBuilder type, const version. */
-        TinyBuilder<Model> &builder();
+        inline TinyBuilder<Model> &builder() noexcept;
         /*! Get a base query builder instance with applied SoftDeletes. */
         QueryBuilder &toBase();
         /*! Get a base query builder instance with applied SoftDeletes. */
-        QueryBuilder &getQuery() const;
+        QueryBuilder &getQuery() const noexcept;
     };
 
     /* public */
@@ -2088,13 +2088,13 @@ namespace Tiny
        It would be possible to make all const, but it would not be correct. */
 
     template<typename Model>
-    const TinyBuilder<Model> &BuilderProxies<Model>::builder() const
+    const TinyBuilder<Model> &BuilderProxies<Model>::builder() const noexcept
     {
         return static_cast<const TinyBuilder<Model> &>(*this);
     }
 
     template<typename Model>
-    TinyBuilder<Model> &BuilderProxies<Model>::builder()
+    TinyBuilder<Model> &BuilderProxies<Model>::builder() noexcept
     {
         return static_cast<TinyBuilder<Model> &>(*this);
     }
@@ -2106,7 +2106,7 @@ namespace Tiny
     }
 
     template<typename Model>
-    QueryBuilder &BuilderProxies<Model>::getQuery() const
+    QueryBuilder &BuilderProxies<Model>::getQuery() const noexcept
     {
         return builder().getQuery();
     }

@@ -101,7 +101,7 @@ namespace Concerns
 
     private:
         /*! Static cast *this to the TinyBuilder & derived type. */
-        inline Builder<Model> &builder();
+        inline Builder<Model> &builder() noexcept;
     };
 
     /*! Builds queries for the SoftDeleting feature (specialization when the SoftDeletes
@@ -251,7 +251,7 @@ namespace Concerns
     /* private */
 
     template<ModelConcept Model, bool T>
-    Builder<Model> &BuildsSoftDeletes<Model, T>::builder()
+    Builder<Model> &BuildsSoftDeletes<Model, T>::builder() noexcept
     {
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
         return static_cast<Builder<Model> &>(*this);

@@ -69,9 +69,9 @@ namespace Orm::Tiny
 
     private:
         /*! Static cast this to a child's instance type (CRTP). */
-        inline Derived &model();
+        inline Derived &model() noexcept;
         /*! Static cast this to a child's instance type (CRTP), const version. */
-        inline const Derived &model() const;
+        inline const Derived &model() const noexcept;
     };
 
     /* public */
@@ -212,13 +212,13 @@ namespace Orm::Tiny
     /* private */
 
     template<typename Derived>
-    Derived &SoftDeletes<Derived>::model()
+    Derived &SoftDeletes<Derived>::model() noexcept
     {
         return static_cast<Derived &>(*this);
     }
 
     template<typename Derived>
-    const Derived &SoftDeletes<Derived>::model() const
+    const Derived &SoftDeletes<Derived>::model() const noexcept
     {
         return static_cast<const Derived &>(*this);
     }

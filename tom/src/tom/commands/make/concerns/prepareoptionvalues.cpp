@@ -48,7 +48,7 @@ std::vector<bool> PrepareOptionValues::btmBoolValues(const QString &optionName)
 
 /* private */
 
-ModelCommand &PrepareOptionValues::modelCommand()
+ModelCommand &PrepareOptionValues::modelCommand() noexcept
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
     return static_cast<ModelCommand &>(*this);

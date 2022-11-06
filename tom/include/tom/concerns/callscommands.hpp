@@ -49,7 +49,7 @@ namespace Concerns
 
     private:
         /*! Static cast *this to the Command & derived type, const version. */
-        const Commands::Command &command() const;
+        const Commands::Command &command() const noexcept;
     };
 
     /* public */

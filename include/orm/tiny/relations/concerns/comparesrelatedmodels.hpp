@@ -52,7 +52,7 @@ namespace Relations::Concerns
         bool compareKeys(const QVariant &parentKey, const QVariant &relatedKey) const;
 
         /*! Static cast *this to the HasOne/BelongsTo & derived type, const version. */
-        inline const RelationType<Model, Related> &relation() const;
+        inline const RelationType<Model, Related> &relation() const noexcept;
     };
 
     /* public */
@@ -102,7 +102,7 @@ namespace Relations::Concerns
 
     template<class Model, class Related, template<class, class> class RelationType>
     const RelationType<Model, Related> &
-    ComparesRelatedModels<Model, Related, RelationType>::relation() const
+    ComparesRelatedModels<Model, Related, RelationType>::relation() const noexcept
     {
         return static_cast<const RelationType<Model, Related> &>(*this);
     }

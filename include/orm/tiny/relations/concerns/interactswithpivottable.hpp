@@ -305,9 +305,9 @@ namespace Concerns
 
         /* InteractsWithPivotTable */
         /*! Static cast *this to the Relation & derived type. */
-        inline BelongsToManyType &relation();
+        inline BelongsToManyType &relation() noexcept;
         /*! Static cast *this to the Relation & derived type, const version. */
-        inline const BelongsToManyType &relation() const;
+        inline const BelongsToManyType &relation() const noexcept;
     };
 
     /* public */
@@ -1262,7 +1262,7 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     BelongsToMany<Model, Related, PivotType> &
-    InteractsWithPivotTable<Model, Related, PivotType>::relation()
+    InteractsWithPivotTable<Model, Related, PivotType>::relation() noexcept
     {
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
         return static_cast<BelongsToManyType &>(*this);
@@ -1270,7 +1270,7 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     const BelongsToMany<Model, Related, PivotType> &
-    InteractsWithPivotTable<Model, Related, PivotType>::relation() const
+    InteractsWithPivotTable<Model, Related, PivotType>::relation() const noexcept
     {
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
         return static_cast<const BelongsToManyType &>(*this);

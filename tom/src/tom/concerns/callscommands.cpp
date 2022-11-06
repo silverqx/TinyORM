@@ -108,7 +108,7 @@ QStringList CallsCommands::getCommonArguments(QStringList &&arguments) const
 
 /* private */
 
-const Commands::Command &CallsCommands::command() const
+const Commands::Command &CallsCommands::command() const noexcept
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
     return static_cast<const Commands::Command &>(*this);

@@ -80,9 +80,9 @@ namespace Concerns
 
     private:
         /*! Static cast *this to the QueryBuilder & derived type. */
-        Builder<Model> &builder();
+        inline Builder<Model> &builder() noexcept;
         /*! Static cast *this to the QueryBuilder & derived type, const version. */
-        const Builder<Model> &builder() const;
+        inline const Builder<Model> &builder() const noexcept;
     };
 
     /* The reason why two BuildsQueries classes exist.
@@ -304,14 +304,14 @@ namespace Concerns
     /* private */
 
     template<ModelConcept Model>
-    Builder<Model> &BuildsQueries<Model>::builder()
+    Builder<Model> &BuildsQueries<Model>::builder() noexcept
     {
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
         return static_cast<Builder<Model> &>(*this);
     }
 
     template<ModelConcept Model>
-    const Builder<Model> &BuildsQueries<Model>::builder() const
+    const Builder<Model> &BuildsQueries<Model>::builder() const noexcept
     {
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
         return static_cast<const Builder<Model> &>(*this);

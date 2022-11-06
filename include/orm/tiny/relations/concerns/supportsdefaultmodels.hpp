@@ -55,7 +55,7 @@ namespace Orm::Tiny::Relations::Concerns
 
     private:
         /*! Static cast *this to the HasOne/BelongsTo & derived type. */
-        inline RelationType<Model, Related> &relation();
+        inline RelationType<Model, Related> &relation() noexcept;
     };
 
     /* public */
@@ -152,7 +152,7 @@ namespace Orm::Tiny::Relations::Concerns
 
     template<class Model, class Related, template<class, class> class RelationType>
     RelationType<Model, Related> &
-    SupportsDefaultModels<Model, Related, RelationType>::relation()
+    SupportsDefaultModels<Model, Related, RelationType>::relation() noexcept
     {
         return static_cast<RelationType<Model, Related> &>(*this);
     }

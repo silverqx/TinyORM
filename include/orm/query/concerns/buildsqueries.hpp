@@ -63,9 +63,9 @@ namespace Orm::Query::Concerns
 
     private:
         /*! Static cast *this to the QueryBuilder & derived type. */
-        Builder &builder();
+        Builder &builder() noexcept;
         /*! Static cast *this to the QueryBuilder & derived type, const version. */
-        const Builder &builder() const;
+        const Builder &builder() const noexcept;
     };
 
     /* public */

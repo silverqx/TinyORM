@@ -201,13 +201,13 @@ Builder &BuildsQueries::tap(const std::function<void(Builder &)> &callback)
 
 /* private */
 
-Builder &BuildsQueries::builder()
+Builder &BuildsQueries::builder() noexcept
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
     return static_cast<Builder &>(*this);
 }
 
-const Builder &BuildsQueries::builder() const
+const Builder &BuildsQueries::builder() const noexcept
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
     return static_cast<const Builder &>(*this);

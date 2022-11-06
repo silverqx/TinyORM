@@ -958,13 +958,13 @@ namespace Tiny::Relations
 
     private:
         /*! Static cast this to a child's instance Relation type. */
-        const Relation<Model, Related> &relation() const;
+        inline const Relation<Model, Related> &relation() const noexcept;
         /*! Static cast this to a child's instance Relation type, const version. */
-        Relation<Model, Related> &relation();
+        inline Relation<Model, Related> &relation() noexcept;
         /*! Get the underlying query for the relation. */
-        TinyBuilder<Related> &getQuery() const;
+        inline TinyBuilder<Related> &getQuery() const noexcept;
         /*! Get the base QueryBuilder driving the TinyBuilder. */
-        QueryBuilder &getBaseQuery() const;
+        inline QueryBuilder &getBaseQuery() const noexcept;
     };
 
     /* public */
@@ -3180,28 +3180,28 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::relation() const
+    RelationProxies<Model, Related>::relation() const noexcept
     {
         return static_cast<const Relation<Model, Related> &>(*this);
     }
 
     template<class Model, class Related>
     Relation<Model, Related> &
-    RelationProxies<Model, Related>::relation()
+    RelationProxies<Model, Related>::relation() noexcept
     {
         return static_cast<Relation<Model, Related> &>(*this);
     }
 
     template<class Model, class Related>
     TinyBuilder<Related> &
-    RelationProxies<Model, Related>::getQuery() const
+    RelationProxies<Model, Related>::getQuery() const noexcept
     {
         return relation().getQuery();
     }
 
     template<class Model, class Related>
     QueryBuilder &
-    RelationProxies<Model, Related>::getBaseQuery() const
+    RelationProxies<Model, Related>::getBaseQuery() const noexcept
     {
         return getQuery().getQuery();
     }

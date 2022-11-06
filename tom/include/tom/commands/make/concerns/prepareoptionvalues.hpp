@@ -44,7 +44,7 @@ namespace Concerns
 
     private:
         /*! Static cast *this to the ModelCommand & derived type. */
-        ModelCommand &modelCommand();
+        ModelCommand &modelCommand() noexcept;
     };
 
     /* public */

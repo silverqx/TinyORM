@@ -110,7 +110,7 @@ namespace Orm::SchemaNs
 
     private:
         /*! Static cast this to a child's instance type (CRTP). */
-        ColumnReferenceType &columnReference();
+        inline ColumnReferenceType &columnReference() noexcept;
     };
 
     /* I had to make this class templated to be able call eg. foreignId().nullable(),
@@ -377,7 +377,7 @@ namespace Orm::SchemaNs
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::columnReference()
+    ColumnDefinitionReference<R>::columnReference() noexcept
     {
         return static_cast<ColumnDefinitionReference<R>::ColumnReferenceType &>(*this);
     }

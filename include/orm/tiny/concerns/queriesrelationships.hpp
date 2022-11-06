@@ -241,9 +241,9 @@ namespace Private
 
     private:
         /*! Static cast this to a child's instance TinyBuilder type. */
-        inline TinyBuilder<Model> &query();
+        inline TinyBuilder<Model> &query() noexcept;
         /*! Static cast this to a child's instance TinyBuilder type, const version. */
-        inline const TinyBuilder<Model> &query() const;
+        inline const TinyBuilder<Model> &query() const noexcept;
 
         /*! Merge the where constraints from another query to the current query. */
         template<typename Related>
@@ -556,13 +556,13 @@ namespace Private
     }
 
     template<typename Model>
-    TinyBuilder<Model> &QueriesRelationships<Model>::query()
+    TinyBuilder<Model> &QueriesRelationships<Model>::query() noexcept
     {
         return static_cast<TinyBuilder<Model> &>(*this);
     }
 
     template<typename Model>
-    const TinyBuilder<Model> &QueriesRelationships<Model>::query() const
+    const TinyBuilder<Model> &QueriesRelationships<Model>::query() const noexcept
     {
         return static_cast<const TinyBuilder<Model> &>(*this);
     }
