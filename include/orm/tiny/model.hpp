@@ -1265,7 +1265,7 @@ namespace Orm::Tiny
     DatabaseConnection &
     Model<Derived, AllRelations...>::getConnection() const
     {
-        return m_resolver->connection(getConnectionName());
+        return getConnectionResolver()->connection(getConnectionName());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

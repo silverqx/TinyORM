@@ -22,17 +22,13 @@ namespace Concerns
     {
     public:
         /*! Get the connection resolver instance. */
-        static ConnectionResolverInterface *getConnectionResolver();
+        static ConnectionResolverInterface *getConnectionResolver() noexcept;
 
         /*! Set the connection resolver instance. */
-        static void setConnectionResolver(ConnectionResolverInterface *resolver);
+        static void setConnectionResolver(ConnectionResolverInterface *resolver) noexcept;
 
         /*! Unset the connection resolver for models. */
-        static void unsetConnectionResolver();
-
-    protected:
-        /*! The connection resolver instance. */
-        inline static ConnectionResolverInterface *m_resolver = nullptr;
+        static void unsetConnectionResolver() noexcept;
     };
 
 } // namespace Concerns

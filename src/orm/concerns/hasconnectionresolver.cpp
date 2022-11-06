@@ -5,19 +5,28 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Concerns
 {
 
-ConnectionResolverInterface *HasConnectionResolver::getConnectionResolver()
+/* Hide the g_resolver pointer like in the guardedmodel.cpp to avoid different memory
+   addreses for the exe and dll, look also the note in the guardedmodel.cpp. */
+
+/*! The connection resolver instance. */
+static ConnectionResolverInterface *g_resolver = nullptr;
+
+/* public */
+
+ConnectionResolverInterface *HasConnectionResolver::getConnectionResolver() noexcept
 {
-    return m_resolver;
+    return g_resolver;
 }
 
-void HasConnectionResolver::setConnectionResolver(ConnectionResolverInterface *resolver)
+void HasConnectionResolver::setConnectionResolver(
+        ConnectionResolverInterface *resolver) noexcept
 {
-    m_resolver = resolver;
+    g_resolver = resolver;
 }
 
-void HasConnectionResolver::unsetConnectionResolver()
+void HasConnectionResolver::unsetConnectionResolver() noexcept
 {
-    m_resolver = nullptr;
+    g_resolver = nullptr;
 }
 
 } // namespace Orm::Concerns
