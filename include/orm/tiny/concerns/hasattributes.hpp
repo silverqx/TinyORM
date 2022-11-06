@@ -1048,12 +1048,12 @@ namespace Orm::Tiny::Concerns
     {
         /* Qt's SQLite driver doesn't apply any logic on the returned types, it returns
            them without type detection, and it is logical, because SQLite only supports
-           numeric and string types, it doesn't distinguish datetime type or any other
+           numeric and string types, it doesn't distinguish a datetime type or any other
            types.
            Qt's MySql driver behaves differently, QVariant already contains the QDateTime
-           values, because Qt's MySQL driver returns QDateTime when the value from
-           the database is datetime, the same is true for all other types, Qt's driver
-           detects it and creates QVariant with proper types. */
+           values, because Qt's MySQL/PostgreSQL drivers return a QDateTime when
+           the value from the database is datetime, the same is true for all other types,
+           Qt's driver detects it and creates a QVariant with proper types. */
 
         /* Nothing to do, no transformation possible, don't check for value.isNull()!
            (to support a null QVariant-s). */
