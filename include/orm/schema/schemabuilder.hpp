@@ -5,12 +5,9 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtSql/QSqlQuery>
-
-#include "orm/macros/commonnamespace.hpp"
-#include "orm/macros/export.hpp"
 // Include the blueprint here so a user doesn't have to (it can be forward declared)
 #include "orm/schema/blueprint.hpp"
+#include "orm/types/sqlquery.hpp"
 #include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -41,10 +38,10 @@ namespace Grammars
         inline virtual ~SchemaBuilder() = default;
 
         /*! Create a database in the schema. */
-        virtual std::optional<QSqlQuery>
+        virtual std::optional<SqlQuery>
         createDatabase(const QString &name) const;
         /*! Drop a database from the schema if the database exists. */
-        virtual std::optional<QSqlQuery>
+        virtual std::optional<SqlQuery>
         dropDatabaseIfExists(const QString &name) const;
 
         /*! Create a new table on the schema. */
@@ -81,14 +78,14 @@ namespace Grammars
         virtual void dropAllTypes() const;
 
         /*! Get all of the table names for the database. */
-        virtual QSqlQuery getAllTables() const;
+        virtual SqlQuery getAllTables() const;
         /*! Get all of the view names for the database. */
-        virtual QSqlQuery getAllViews() const;
+        virtual SqlQuery getAllViews() const;
 
         /*! Enable foreign key constraints. */
-        QSqlQuery enableForeignKeyConstraints() const;
+        SqlQuery enableForeignKeyConstraints() const;
         /*! Disable foreign key constraints. */
-        QSqlQuery disableForeignKeyConstraints() const;
+        SqlQuery disableForeignKeyConstraints() const;
 
         /*! Get the column listing for a given table. */
         virtual QStringList getColumnListing(const QString &table) const;

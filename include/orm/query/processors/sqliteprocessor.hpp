@@ -17,6 +17,9 @@ namespace Orm::Query::Processors
     {
         Q_DISABLE_COPY(SQLiteProcessor)
 
+        /*! Alias for the SqlQuery. */
+        using SqlQuery = Orm::Types::SqlQuery;
+
     public:
         /*! Default constructor. */
         inline SQLiteProcessor() = default;
@@ -24,7 +27,7 @@ namespace Orm::Query::Processors
         inline ~SQLiteProcessor() override = default;
 
         /*! Process the results of a column listing query. */
-        QStringList processColumnListing(QSqlQuery &query) const override;
+        QStringList processColumnListing(SqlQuery &query) const override;
     };
 
 } // namespace Orm::Query::Processors

@@ -1,14 +1,13 @@
 #include "orm/query/processors/postgresprocessor.hpp"
 
-#include <QVariant>
-#include <QtSql/QSqlQuery>
+#include "orm/types/sqlquery.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Query::Processors
 {
 
-QStringList PostgresProcessor::processColumnListing(QSqlQuery &query) const
+QStringList PostgresProcessor::processColumnListing(SqlQuery &query) const
 {
     QStringList columns;
 

@@ -12,13 +12,13 @@ namespace Orm::SchemaNs
 
 /* public */
 
-std::optional<QSqlQuery> MySqlSchemaBuilder::createDatabase(const QString &name) const
+std::optional<SqlQuery> MySqlSchemaBuilder::createDatabase(const QString &name) const
 {
     return m_connection.statement(
                 m_grammar.compileCreateDatabase(name, m_connection));
 }
 
-std::optional<QSqlQuery>
+std::optional<SqlQuery>
 MySqlSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 {
     return m_connection.statement(
@@ -73,13 +73,13 @@ void MySqlSchemaBuilder::dropAllViews() const
     m_connection.statement(m_grammar.compileDropAllViews(views));
 }
 
-QSqlQuery MySqlSchemaBuilder::getAllTables() const
+SqlQuery MySqlSchemaBuilder::getAllTables() const
 {
     // TODO schema, use postprocessor processColumnListing() silverqx
     return m_connection.selectFromWriteConnection(m_grammar.compileGetAllTables());
 }
 
-QSqlQuery MySqlSchemaBuilder::getAllViews() const
+SqlQuery MySqlSchemaBuilder::getAllViews() const
 {
     return m_connection.selectFromWriteConnection(m_grammar.compileGetAllViews());
 }

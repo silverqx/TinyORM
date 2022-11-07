@@ -25,10 +25,10 @@ namespace Orm::SchemaNs
         inline ~MySqlSchemaBuilder() override = default;
 
         /*! Create a database in the schema. */
-        std::optional<QSqlQuery>
+        std::optional<SqlQuery>
         createDatabase(const QString &name) const override;
         /*! Drop a database from the schema if the database exists. */
-        std::optional<QSqlQuery>
+        std::optional<SqlQuery>
         dropDatabaseIfExists(const QString &name) const override;
 
         /*! Drop all tables from the database. */
@@ -37,9 +37,9 @@ namespace Orm::SchemaNs
         void dropAllViews() const override;
 
         /*! Get all of the table names for the database. */
-        QSqlQuery getAllTables() const override;
+        SqlQuery getAllTables() const override;
         /*! Get all of the view names for the database. */
-        QSqlQuery getAllViews() const override;
+        SqlQuery getAllViews() const override;
 
         /*! Get the column listing for a given table. */
         QStringList getColumnListing(const QString &table) const override;

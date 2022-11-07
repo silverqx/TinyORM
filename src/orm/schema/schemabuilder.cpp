@@ -21,14 +21,14 @@ SchemaBuilder::SchemaBuilder(DatabaseConnection &connection)
     , m_grammar(connection.getSchemaGrammar())
 {}
 
-std::optional<QSqlQuery> SchemaBuilder::createDatabase(const QString &/*unused*/) const
+std::optional<SqlQuery> SchemaBuilder::createDatabase(const QString &/*unused*/) const
 {
     throw Exceptions::LogicError(
                 QStringLiteral("%1 database driver does not support creating databases.")
                 .arg(m_connection.driverName()));
 }
 
-std::optional<QSqlQuery>
+std::optional<SqlQuery>
 SchemaBuilder::dropDatabaseIfExists(const QString &/*unused*/) const
 {
     throw Exceptions::LogicError(
@@ -130,24 +130,24 @@ void SchemaBuilder::dropAllTypes() const
                 .arg(m_connection.driverName()));
 }
 
-QSqlQuery SchemaBuilder::getAllTables() const
+SqlQuery SchemaBuilder::getAllTables() const
 {
     throw Exceptions::LogicError(
                 QStringLiteral("%1 database driver does not support getting all tables.")
                 .arg(m_connection.driverName()));
 }
 
-QSqlQuery SchemaBuilder::getAllViews() const
+SqlQuery SchemaBuilder::getAllViews() const
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QSqlQuery SchemaBuilder::enableForeignKeyConstraints() const
+SqlQuery SchemaBuilder::enableForeignKeyConstraints() const
 {
     return m_connection.statement(m_grammar.compileEnableForeignKeyConstraints());
 }
 
-QSqlQuery SchemaBuilder::disableForeignKeyConstraints() const
+SqlQuery SchemaBuilder::disableForeignKeyConstraints() const
 {
     return m_connection.statement(m_grammar.compileDisableForeignKeyConstraints());
 }

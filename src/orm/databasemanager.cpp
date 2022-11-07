@@ -135,7 +135,7 @@ DatabaseManager::selectOne(const QString &query, const QVector<QVariant> &bindin
     return this->connection(connection).selectOne(query, bindings);
 }
 
-QSqlQuery
+SqlQuery
 DatabaseManager::insert(const QString &query, const QVector<QVariant> &bindings,
                         const QString &connection)
 {
@@ -156,7 +156,7 @@ DatabaseManager::remove(const QString &query, const QVector<QVariant> &bindings,
     return this->connection(connection).remove(query, bindings);
 }
 
-QSqlQuery
+SqlQuery
 DatabaseManager::statement(const QString &query, const QVector<QVariant> &bindings,
                            const QString &connection)
 {

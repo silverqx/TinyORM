@@ -72,7 +72,7 @@ DB::selectOne(const QString &query, const QVector<QVariant> &bindings,
     return manager().connection(connection).selectOne(query, bindings);
 }
 
-QSqlQuery
+SqlQuery
 DB::insert(const QString &query, const QVector<QVariant> &bindings,
            const QString &connection)
 {
@@ -93,7 +93,7 @@ DB::remove(const QString &query, const QVector<QVariant> &bindings,
     return manager().connection(connection).remove(query, bindings);
 }
 
-QSqlQuery
+SqlQuery
 DB::statement(const QString &query, const QVector<QVariant> &bindings,
               const QString &connection)
 {

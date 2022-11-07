@@ -5,10 +5,9 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtSql/QSqlQuery>
-
 #include "orm/ormconcepts.hpp"
 #include "orm/tiny/tinytypes.hpp"
+#include "orm/types/sqlquery.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -191,13 +190,13 @@ namespace Tiny::Relations
 
         /* Insert, Update, Delete */
         /*! Insert a new record into the database. */
-        std::optional<QSqlQuery>
+        std::optional<SqlQuery>
         insert(const QVector<AttributeItem> &values) const;
         /*! Insert new records into the database. */
-        std::optional<QSqlQuery>
+        std::optional<SqlQuery>
         insert(const QVector<QVector<AttributeItem>> &values) const;
         /*! Insert new records into the database (multi insert). */
-        std::optional<QSqlQuery>
+        std::optional<SqlQuery>
         insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values) const;
 
         /*! Insert a new record and get the value of the primary key. */
@@ -1302,14 +1301,14 @@ namespace Tiny::Relations
     /* Insert, Update, Delete */
 
     template<class Model, class Related>
-    std::optional<QSqlQuery>
+    std::optional<SqlQuery>
     RelationProxies<Model, Related>::insert(const QVector<AttributeItem> &values) const
     {
         return getQuery().insert(values);
     }
 
     template<class Model, class Related>
-    std::optional<QSqlQuery>
+    std::optional<SqlQuery>
     RelationProxies<Model, Related>::insert(
             const QVector<QVector<AttributeItem>> &values) const
     {
@@ -1317,7 +1316,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    std::optional<QSqlQuery>
+    std::optional<SqlQuery>
     RelationProxies<Model, Related>::insert(
             const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
     {

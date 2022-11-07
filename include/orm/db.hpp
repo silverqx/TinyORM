@@ -71,7 +71,7 @@ namespace Orm
         selectOne(const QString &query, const QVector<QVariant> &bindings = {},
                   const QString &connection = "");
         /*! Run an insert statement against the database. */
-        static QSqlQuery
+        static SqlQuery
         insert(const QString &query, const QVector<QVariant> &bindings = {},
                const QString &connection = "");
         /*! Run an update statement against the database. */
@@ -83,8 +83,8 @@ namespace Orm
         remove(const QString &query, const QVector<QVariant> &bindings = {},
                const QString &connection = "");
 
-        /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
-        static QSqlQuery
+        /*! Execute an SQL statement and return the boolean result and SqlQuery. */
+        static SqlQuery
         statement(const QString &query, const QVector<QVariant> &bindings = {},
                   const QString &connection = "");
         /*! Run an SQL statement and get the number of rows affected. */

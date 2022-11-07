@@ -13,14 +13,14 @@ namespace Orm::SchemaNs
 
 /* public */
 
-std::optional<QSqlQuery> PostgresSchemaBuilder::createDatabase(const QString &name) const
+std::optional<SqlQuery> PostgresSchemaBuilder::createDatabase(const QString &name) const
 {
     // DUP schema silverqx
     return m_connection.unprepared(
                 m_grammar.compileCreateDatabase(name, m_connection));
 }
 
-std::optional<QSqlQuery>
+std::optional<SqlQuery>
 PostgresSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 {
     // DUP schema silverqx
@@ -87,7 +87,7 @@ void PostgresSchemaBuilder::dropAllViews() const
     m_connection.unprepared(m_grammar.compileDropAllViews(views));
 }
 
-QSqlQuery PostgresSchemaBuilder::getAllTables() const
+SqlQuery PostgresSchemaBuilder::getAllTables() const
 {
     auto schemaList = m_connection.getConfig(schema_).value<QStringList>();
 
@@ -99,7 +99,7 @@ QSqlQuery PostgresSchemaBuilder::getAllTables() const
                 m_grammar.compileGetAllTables(std::move(schema)));
 }
 
-QSqlQuery PostgresSchemaBuilder::getAllViews() const
+SqlQuery PostgresSchemaBuilder::getAllViews() const
 {
     auto schemaList = m_connection.getConfig(schema_).value<QStringList>();
 

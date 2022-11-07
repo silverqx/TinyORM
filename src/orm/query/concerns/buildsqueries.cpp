@@ -122,7 +122,7 @@ bool BuildsQueries::chunkById(
             break;
 
         /* Obtain the lastId before the results is passed to the user's callback because
-           an user can leave the results (QSqlQuery) in the invalid/changed state. */
+           an user can leave the results (SqlQuery) in the invalid/changed state. */
         results.last();
         lastId = results.value(aliasName);
         // Restore a cursor position

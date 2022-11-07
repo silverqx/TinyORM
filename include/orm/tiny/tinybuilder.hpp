@@ -235,7 +235,7 @@ namespace Orm::Tiny
         template<typename Relation>
         void eagerLoadRelationVisited(Relation &&relation, QVector<Model> &models,
                                       const WithItem &relationItem) const;
-        /*! Create a vector of models from the QSqlQuery. */
+        /*! Create a vector of models from the SqlQuery. */
         QVector<Model> hydrate(SqlQuery &&result);
 
         /*! Get the model instance being queried. */

@@ -101,7 +101,7 @@ namespace Orm
         selectOne(const QString &queryString,
                   const QVector<QVariant> &bindings = {});
         /*! Run an insert statement against the database. */
-        inline QSqlQuery
+        inline SqlQuery
         insert(const QString &queryString,
                const QVector<QVariant> &bindings = {});
         /*! Run an update statement against the database. */
@@ -115,8 +115,8 @@ namespace Orm
 
         /*! Execute an SQL statement, should be used for DDL/DML queries, internally
             calls DatabaseConnection::recordsHaveBeenModified(). */
-        QSqlQuery statement(const QString &queryString,
-                            const QVector<QVariant> &bindings = {});
+        SqlQuery statement(const QString &queryString,
+                           const QVector<QVariant> &bindings = {});
         /*! Run an SQL statement and get the number of rows affected (for DML queries). */
         std::tuple<int, QSqlQuery>
         affectingStatement(const QString &queryString,
@@ -361,7 +361,7 @@ namespace Orm
         return select(queryString, bindings/*, false*/);
     }
 
-    QSqlQuery
+    SqlQuery
     DatabaseConnection::insert(const QString &queryString,
                                const QVector<QVariant> &bindings)
     {

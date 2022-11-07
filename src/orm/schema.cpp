@@ -18,13 +18,13 @@ std::shared_ptr<DatabaseManager> Schema::m_manager;
 
 /* Proxy methods to the SchemaBuilder */
 
-std::optional<QSqlQuery>
+std::optional<SqlQuery>
 Schema::createDatabase(const QString &name, const QString &connection)
 {
     return schemaBuilder(connection).createDatabase(name);
 }
 
-std::optional<QSqlQuery>
+std::optional<SqlQuery>
 Schema::dropDatabaseIfExists(const QString &name, const QString &connection)
 {
     return schemaBuilder(connection).dropDatabaseIfExists(name);
@@ -92,22 +92,22 @@ void Schema::dropAllTypes(const QString &connection)
     schemaBuilder(connection).dropAllTypes();
 }
 
-QSqlQuery Schema::getAllTables(const QString &connection)
+SqlQuery Schema::getAllTables(const QString &connection)
 {
     return schemaBuilder(connection).getAllTables();
 }
 
-QSqlQuery Schema::getAllViews(const QString &connection)
+SqlQuery Schema::getAllViews(const QString &connection)
 {
     return schemaBuilder(connection).getAllViews();
 }
 
-QSqlQuery Schema::enableForeignKeyConstraints(const QString &connection)
+SqlQuery Schema::enableForeignKeyConstraints(const QString &connection)
 {
     return schemaBuilder(connection).enableForeignKeyConstraints();
 }
 
-QSqlQuery Schema::disableForeignKeyConstraints(const QString &connection)
+SqlQuery Schema::disableForeignKeyConstraints(const QString &connection)
 {
     return schemaBuilder(connection).disableForeignKeyConstraints();
 }

@@ -1,7 +1,6 @@
 #include "orm/query/processors/mysqlprocessor.hpp"
 
-#include <QVariant>
-#include <QtSql/QSqlQuery>
+#include "orm/types/sqlquery.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -9,7 +8,7 @@ namespace Orm::Query::Processors
 {
 
 // DUP processor silverqx
-QStringList MySqlProcessor::processColumnListing(QSqlQuery &query) const
+QStringList MySqlProcessor::processColumnListing(SqlQuery &query) const
 {
     QStringList columns;
 

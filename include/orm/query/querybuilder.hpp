@@ -99,13 +99,13 @@ namespace Orm::Query
 
         /* Insert, Update, Delete */
         /*! Insert new records into the database (multi-rows insert). */
-        std::optional<QSqlQuery>
+        std::optional<SqlQuery>
         insert(const QVector<QVariantMap> &values);
         /*! Insert a new record into the database. */
-        std::optional<QSqlQuery>
+        std::optional<SqlQuery>
         insert(const QVariantMap &values);
         /*! Insert new records into the database (multi insert with separated columns). */
-        std::optional<QSqlQuery>
+        std::optional<SqlQuery>
         insert(const QVector<QString> &columns, const QVector<QVector<QVariant>> &values);
 
         /*! Insert a new record and get the value of the primary key. */
@@ -932,9 +932,9 @@ namespace Orm::Query
         if (query.isValid())
             return {std::move(query), R {}};
 
-        /* Return invalid QSqlQuery if a record was not found. Don't return
-           the QSqlQuery() as an user can still obtain some info from the invalid
-           QSqlQuery. */
+        /* Return invalid SqlQuery if a record was not found. Don't return
+           the SqlQuery() as an user can still obtain some info from the invalid
+           SqlQuery. */
 
         // Optionally invoke the callback
         if (callback)

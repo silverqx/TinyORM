@@ -11,6 +11,8 @@ using QueryUtils = Orm::Utils::Query;
 namespace Orm::Exceptions
 {
 
+// We don't need the Orm::SqlQuery overload as all bindings are already prepared
+
 /* public */
 
 QueryError::QueryError(const char *message, const QSqlQuery &query,

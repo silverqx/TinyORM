@@ -47,8 +47,8 @@ SqlQuery Builder::findOr(const QVariant &id, const QVector<Column> &columns,
     if (callback)
         std::invoke(callback);
 
-    /* Return invalid QSqlQuery if a record was not found. Don't return the QSqlQuery()
-       as an user can still obtain some info from the invalid QSqlQuery. */
+    /* Return invalid SqlQuery if a record was not found. Don't return the SqlQuery()
+       as an user can still obtain some info from the invalid SqlQuery. */
     return query;
 }
 
@@ -165,7 +165,7 @@ namespace
 /* Insert, Update, Delete */
 
 // TEST for insert silverqx
-std::optional<QSqlQuery>
+std::optional<SqlQuery>
 Builder::insert(const QVector<QVariantMap> &values)
 {
     if (values.isEmpty())
@@ -182,13 +182,13 @@ Builder::insert(const QVector<QVariantMap> &values)
                                cleanBindings(flatValuesForInsert(values)));
 }
 
-std::optional<QSqlQuery>
+std::optional<SqlQuery>
 Builder::insert(const QVariantMap &values)
 {
     return insert(QVector<QVariantMap> {values});
 }
 
-std::optional<QSqlQuery>
+std::optional<SqlQuery>
 Builder::insert(const QVector<QString> &columns,
                 const QVector<QVector<QVariant>> &values)
 {

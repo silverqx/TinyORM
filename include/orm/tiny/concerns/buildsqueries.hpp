@@ -88,9 +88,9 @@ namespace Concerns
     /* The reason why two BuildsQueries classes exist.
        I have merged QueryBuilder::BuildsQueries and TinyBuilder::BuildsQueries into
        the one templated class and it worked well, no problem, there were only a few
-       if constexpr() statements because the QSqlQuery can not be iterated using
+       if constexpr() statements because the SqlQuery can not be iterated using
        the ranged-loop or with iterators, BUT there was a big confusion with parameter
-       types passed to the chunk/each() methods, the QueryBuilder needs QSqlQuery & and
+       types passed to the chunk/each() methods, the QueryBuilder needs SqlQuery & and
        TinyBuilder Model && or QVector<Model> && and that is a big confusing problem.
        I was able to compute these types using the metaprogramming at compile time and
        I named them eg. Results but you know nothing from this 'Results' type, so when

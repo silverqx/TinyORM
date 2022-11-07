@@ -77,7 +77,7 @@ namespace Query
         selectOne(const QString &query, const QVector<QVariant> &bindings = {},
                   const QString &connection = "");
         /*! Run an insert statement against the database. */
-        QSqlQuery
+        SqlQuery
         insert(const QString &query, const QVector<QVariant> &bindings = {},
                const QString &connection = "");
         /*! Run an update statement against the database. */
@@ -89,8 +89,8 @@ namespace Query
         remove(const QString &query, const QVector<QVariant> &bindings = {},
                const QString &connection = "");
 
-        /*! Execute an SQL statement and return the boolean result and QSqlQuery. */
-        QSqlQuery
+        /*! Execute an SQL statement and return the boolean result and SqlQuery. */
+        SqlQuery
         statement(const QString &query, const QVector<QVariant> &bindings = {},
                   const QString &connection = "");
         /*! Run an SQL statement and get the number of rows affected. */

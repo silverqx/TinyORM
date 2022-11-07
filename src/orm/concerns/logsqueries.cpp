@@ -19,6 +19,8 @@ using QueryUtils = Orm::Utils::Query;
 namespace Orm::Concerns
 {
 
+// We don't need the Orm::SqlQuery overloads as all bindings are already prepared
+
 /* public */
 
 void LogsQueries::logQueryForPretend(

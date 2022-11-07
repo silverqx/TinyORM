@@ -154,16 +154,17 @@ DatabaseConnection::selectOne(const QString &queryString,
     return query;
 }
 
-QSqlQuery DatabaseConnection::statement(const QString &queryString,
-                                        const QVector<QVariant> &bindings)
+SqlQuery DatabaseConnection::statement(const QString &queryString,
+                                       const QVector<QVariant> &bindings)
 {
     const auto functionName = __tiny_func__;
 
-    return run<QSqlQuery>(
-                queryString, bindings, Prepared,
-                [this, &functionName]
-                (const QString &queryString_, const QVector<QVariant> &preparedBindings)
-                -> QSqlQuery
+    auto queryResult = run<QSqlQuery>(
+                           queryString, bindings, Prepared,
+                           [this, &functionName]
+                           (const QString &queryString_,
+                            const QVector<QVariant> &preparedBindings)
+                           -> QSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -191,6 +192,8 @@ QSqlQuery DatabaseConnection::statement(const QString &queryString,
                     QStringLiteral("Statement in %1() failed.").arg(functionName),
                     query, preparedBindings);
     });
+
+    return {std::move(queryResult), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
 }
 
 std::tuple<int, QSqlQuery>

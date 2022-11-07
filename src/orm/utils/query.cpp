@@ -12,6 +12,9 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Utils
 {
 
+/* We don't need the Orm::SqlQuery overloads for the parseExecutedQuery() and
+   logExecutedQuery() as all bindings are already prepared. */
+
 QString Query::parseExecutedQuery(const QSqlQuery &query)
 {
     auto executedQuery = query.executedQuery();

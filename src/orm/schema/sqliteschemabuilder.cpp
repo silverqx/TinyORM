@@ -18,7 +18,7 @@ namespace Orm::SchemaNs
 
 /* public */
 
-std::optional<QSqlQuery> SQLiteSchemaBuilder::createDatabase(const QString &name) const
+std::optional<SqlQuery> SQLiteSchemaBuilder::createDatabase(const QString &name) const
 {
     const fspath databaseName(name.toUtf8().constData());
 
@@ -38,7 +38,7 @@ std::optional<QSqlQuery> SQLiteSchemaBuilder::createDatabase(const QString &name
                 .arg(QString::fromStdString(databaseName.string()), __tiny_func__));
 }
 
-std::optional<QSqlQuery>
+std::optional<SqlQuery>
 SQLiteSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 {
     const fspath databasePath(name.toUtf8().constData());
@@ -84,13 +84,13 @@ void SQLiteSchemaBuilder::dropAllViews() const
     m_connection.selectFromWriteConnection(sqliteGrammar.compileRebuild());
 }
 
-QSqlQuery SQLiteSchemaBuilder::getAllTables() const
+SqlQuery SQLiteSchemaBuilder::getAllTables() const
 {
     // TODO schema, use postprocessor processColumnListing() silverqx
     return m_connection.selectFromWriteConnection(m_grammar.compileGetAllTables());
 }
 
-QSqlQuery SQLiteSchemaBuilder::getAllViews() const
+SqlQuery SQLiteSchemaBuilder::getAllViews() const
 {
     return m_connection.selectFromWriteConnection(m_grammar.compileGetAllViews());
 }

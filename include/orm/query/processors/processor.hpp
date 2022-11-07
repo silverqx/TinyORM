@@ -11,17 +11,25 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
-class QSqlQuery;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Query::Processors
+namespace Orm
+{
+namespace Types
+{
+    class SqlQuery;
+}
+
+namespace Query::Processors
 {
 
     /*! Base processor class, process sql result. */
     class SHAREDLIB_EXPORT Processor
     {
         Q_DISABLE_COPY(Processor)
+
+        /*! Alias for the SqlQuery. */
+        using SqlQuery = Orm::Types::SqlQuery;
 
     public:
         /*! Default constructor. */
@@ -30,10 +38,11 @@ namespace Orm::Query::Processors
         inline virtual ~Processor() = default;
 
         /*! Process the results of a column listing query. */
-        virtual QStringList processColumnListing(QSqlQuery &query) const;
+        virtual QStringList processColumnListing(SqlQuery &query) const;
     };
 
-} // namespace Orm::Query::Processors
+} // namespace Query::Processors
+} // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 

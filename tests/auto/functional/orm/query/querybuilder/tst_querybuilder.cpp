@@ -29,6 +29,7 @@ using Orm::Exceptions::MultipleRecordsFoundError;
 using Orm::Exceptions::RecordsNotFoundError;
 using Orm::Exceptions::RuntimeError;
 using Orm::Query::Builder;
+using Orm::Types::SqlQuery;
 
 using QueryBuilder = Orm::Query::Builder;
 using QueryUtils = Orm::Utils::Query;
@@ -1122,7 +1123,7 @@ void tst_QueryBuilder::chunk() const
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
-    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    const auto compareResultSize = [&expectedRows](SqlQuery &query, const int page)
     {
         QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
@@ -1132,7 +1133,7 @@ void tst_QueryBuilder::chunk() const
 
     auto result = createQuery(connection)->from("file_property_properties")
                   .orderBy(ID)
-                  .chunk(3, [&compareResultSize, &ids](QSqlQuery &query, const int page)
+                  .chunk(3, [&compareResultSize, &ids](SqlQuery &query, const int page)
     {
         compareResultSize(query, page);
 
@@ -1159,7 +1160,7 @@ void tst_QueryBuilder::chunk_ReturnFalse() const
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
-    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    const auto compareResultSize = [&expectedRows](SqlQuery &query, const int page)
     {
         QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
@@ -1169,7 +1170,7 @@ void tst_QueryBuilder::chunk_ReturnFalse() const
 
     auto result = createQuery(connection)->from("file_property_properties")
                   .orderBy(ID)
-                  .chunk(3, [&compareResultSize, &ids](QSqlQuery &query, const int page)
+                  .chunk(3, [&compareResultSize, &ids](SqlQuery &query, const int page)
     {
         compareResultSize(query, page);
 
@@ -1198,7 +1199,7 @@ void tst_QueryBuilder::chunk_EnforceOrderBy() const
     QFETCH_GLOBAL(QString, connection);
 
     QVERIFY_EXCEPTION_THROWN(createQuery(connection)->from("file_property_properties")
-                             .chunk(3, [](QSqlQuery &/*unused*/, const int /*unused*/)
+                             .chunk(3, [](SqlQuery &/*unused*/, const int /*unused*/)
     {
         return true;
     }),
@@ -1215,7 +1216,7 @@ void tst_QueryBuilder::chunk_EmptyResult() const
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunk(3, [&callbackInvoked]
-                            (QSqlQuery &/*unused*/, const int /*unused*/)
+                            (SqlQuery &/*unused*/, const int /*unused*/)
     {
         callbackInvoked = true;
 
@@ -1237,7 +1238,7 @@ void tst_QueryBuilder::each() const
 
     auto result = createQuery(connection)->from("file_property_properties")
                   .orderBy(ID)
-                  .each([&indexes, &ids](QSqlQuery &query, const int index)
+                  .each([&indexes, &ids](SqlQuery &query, const int index)
     {
         indexes.emplace_back(index);
         ids.emplace_back(query.value(ID).value<quint64>());
@@ -1267,7 +1268,7 @@ void tst_QueryBuilder::each_ReturnFalse() const
 
     auto result = createQuery(connection)->from("file_property_properties")
                   .orderBy(ID)
-                  .each([&indexes, &ids](QSqlQuery &query, const int index)
+                  .each([&indexes, &ids](SqlQuery &query, const int index)
     {
         indexes.emplace_back(index);
         ids.emplace_back(query.value(ID).value<quint64>());
@@ -1291,7 +1292,7 @@ void tst_QueryBuilder::each_EnforceOrderBy() const
     QFETCH_GLOBAL(QString, connection);
 
     QVERIFY_EXCEPTION_THROWN(createQuery(connection)->from("file_property_properties")
-                             .each([](QSqlQuery &/*unused*/, const int /*unused*/)
+                             .each([](SqlQuery &/*unused*/, const int /*unused*/)
     {
         return true;
     }),
@@ -1308,7 +1309,7 @@ void tst_QueryBuilder::each_EmptyResult() const
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .each([&callbackInvoked]
-                        (QSqlQuery &/*unused*/, const int /*unused*/)
+                        (SqlQuery &/*unused*/, const int /*unused*/)
     {
         callbackInvoked = true;
 
@@ -1328,7 +1329,7 @@ void tst_QueryBuilder::chunkById() const
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
-    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    const auto compareResultSize = [&expectedRows](SqlQuery &query, const int page)
     {
         QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
@@ -1339,7 +1340,7 @@ void tst_QueryBuilder::chunkById() const
     auto result = createQuery(connection)->from("file_property_properties")
                   .orderBy(ID)
                   .chunkById(3, [&compareResultSize, &ids]
-                                (QSqlQuery &query, const int page)
+                                (SqlQuery &query, const int page)
     {
         compareResultSize(query, page);
 
@@ -1366,7 +1367,7 @@ void tst_QueryBuilder::chunkById_ReturnFalse() const
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
-    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    const auto compareResultSize = [&expectedRows](SqlQuery &query, const int page)
     {
         QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
@@ -1377,7 +1378,7 @@ void tst_QueryBuilder::chunkById_ReturnFalse() const
     auto result = createQuery(connection)->from("file_property_properties")
                   .orderBy(ID)
                   .chunkById(3, [&compareResultSize, &ids]
-                                (QSqlQuery &query, const int page)
+                                (SqlQuery &query, const int page)
     {
         compareResultSize(query, page);
 
@@ -1411,7 +1412,7 @@ void tst_QueryBuilder::chunkById_EmptyResult() const
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
-                                (QSqlQuery &/*unused*/, const int /*unused*/)
+                                (SqlQuery &/*unused*/, const int /*unused*/)
     {
         callbackInvoked = true;
 
@@ -1431,7 +1432,7 @@ void tst_QueryBuilder::chunkById_WithAlias() const
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
-    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    const auto compareResultSize = [&expectedRows](SqlQuery &query, const int page)
     {
         QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
@@ -1443,7 +1444,7 @@ void tst_QueryBuilder::chunkById_WithAlias() const
                   .select({ASTERISK, "id as id_as"})
                   .orderBy(ID)
                   .chunkById(3, [&compareResultSize, &ids]
-                                (QSqlQuery &query, const int page)
+                                (SqlQuery &query, const int page)
     {
         compareResultSize(query, page);
 
@@ -1471,7 +1472,7 @@ void tst_QueryBuilder::chunkById_ReturnFalse_WithAlias() const
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
-    const auto compareResultSize = [&expectedRows](QSqlQuery &query, const int page)
+    const auto compareResultSize = [&expectedRows](SqlQuery &query, const int page)
     {
         QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
@@ -1483,7 +1484,7 @@ void tst_QueryBuilder::chunkById_ReturnFalse_WithAlias() const
                   .select({ASTERISK, "id as id_as"})
                   .orderBy(ID)
                   .chunkById(3, [&compareResultSize, &ids]
-                                (QSqlQuery &query, const int page)
+                                (SqlQuery &query, const int page)
     {
         compareResultSize(query, page);
 
@@ -1519,7 +1520,7 @@ void tst_QueryBuilder::chunkById_EmptyResult_WithAlias() const
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
-                                (QSqlQuery &/*unused*/, const int /*unused*/)
+                                (SqlQuery &/*unused*/, const int /*unused*/)
     {
         callbackInvoked = true;
 
@@ -1542,7 +1543,7 @@ void tst_QueryBuilder::eachById() const
 
     auto result = createQuery(connection)->from("file_property_properties")
                   .orderBy(ID)
-                  .eachById([&indexes, &ids](QSqlQuery &query, const int index)
+                  .eachById([&indexes, &ids](SqlQuery &query, const int index)
     {
         indexes.emplace_back(index);
         ids.emplace_back(query.value(ID).value<quint64>());
@@ -1572,7 +1573,7 @@ void tst_QueryBuilder::eachById_ReturnFalse() const
 
     auto result = createQuery(connection)->from("file_property_properties")
                   .orderBy(ID)
-                  .eachById([&indexes, &ids](QSqlQuery &query, const int index)
+                  .eachById([&indexes, &ids](SqlQuery &query, const int index)
     {
         indexes.emplace_back(index);
         ids.emplace_back(query.value(ID).value<quint64>());
@@ -1601,7 +1602,7 @@ void tst_QueryBuilder::eachById_EmptyResult() const
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
-                            (QSqlQuery &/*unused*/, const int /*unused*/)
+                            (SqlQuery &/*unused*/, const int /*unused*/)
     {
         callbackInvoked = true;
 
@@ -1624,7 +1625,7 @@ void tst_QueryBuilder::eachById_WithAlias() const
     auto result = createQuery(connection)->from("file_property_properties")
                   .select({ASTERISK, "id as id_as"})
                   .orderBy(ID)
-                  .eachById([&indexes, &ids](QSqlQuery &query, const int index)
+                  .eachById([&indexes, &ids](SqlQuery &query, const int index)
     {
         indexes.emplace_back(index);
         ids.emplace_back(query.value(ID).value<quint64>());
@@ -1656,7 +1657,7 @@ void tst_QueryBuilder::eachById_ReturnFalse_WithAlias() const
     auto result = createQuery(connection)->from("file_property_properties")
                   .select({ASTERISK, "id as id_as"})
                   .orderBy(ID)
-                  .eachById([&indexes, &ids](QSqlQuery &query, const int index)
+                  .eachById([&indexes, &ids](SqlQuery &query, const int index)
     {
         indexes.emplace_back(index);
         ids.emplace_back(query.value(ID).value<quint64>());
@@ -1687,7 +1688,7 @@ void tst_QueryBuilder::eachById_EmptyResult_WithAlias() const
                   .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
-                            (QSqlQuery &/*unused*/, const int /*unused*/)
+                            (SqlQuery &/*unused*/, const int /*unused*/)
     {
         callbackInvoked = true;
 

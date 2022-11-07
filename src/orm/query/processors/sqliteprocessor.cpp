@@ -1,18 +1,13 @@
 #include "orm/query/processors/sqliteprocessor.hpp"
 
-#include <QVariant>
-#include <QtSql/QSqlQuery>
-
-#include "orm/constants.hpp"
+#include "orm/types/sqlquery.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
-
-using Orm::Constants::NAME;
 
 namespace Orm::Query::Processors
 {
 
-QStringList SQLiteProcessor::processColumnListing(QSqlQuery &query) const
+QStringList SQLiteProcessor::processColumnListing(SqlQuery &query) const
 {
     QStringList columns;
 

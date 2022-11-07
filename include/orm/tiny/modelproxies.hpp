@@ -5,10 +5,9 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtSql/QSqlQuery>
-
 #include "orm/ormconcepts.hpp"
 #include "orm/tiny/tinytypes.hpp"
+#include "orm/types/sqlquery.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -184,13 +183,13 @@ namespace Tiny
 
         /* Insert, Update, Delete */
         /*! Insert a new record into the database. */
-        static std::optional<QSqlQuery>
+        static std::optional<SqlQuery>
         insert(const QVector<AttributeItem> &values);
         /*! Insert new records into the database. */
-        static std::optional<QSqlQuery>
+        static std::optional<SqlQuery>
         insert(const QVector<QVector<AttributeItem>> &values);
         /*! Insert new records into the database (multi insert). */
-        static std::optional<QSqlQuery>
+        static std::optional<SqlQuery>
         insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values);
 
         /*! Insert a new record and get the value of the primary key. */
@@ -1317,7 +1316,7 @@ namespace Tiny
     /* Insert, Update, Delete */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::optional<QSqlQuery>
+    std::optional<SqlQuery>
     ModelProxies<Derived, AllRelations...>::insert(
             const QVector<AttributeItem> &values)
     {
@@ -1325,7 +1324,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::optional<QSqlQuery>
+    std::optional<SqlQuery>
     ModelProxies<Derived, AllRelations...>::insert(
             const QVector<QVector<AttributeItem>> &values)
     {
@@ -1333,7 +1332,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::optional<QSqlQuery>
+    std::optional<SqlQuery>
     ModelProxies<Derived, AllRelations...>::insert(
             const QVector<QString> &columns, QVector<QVector<QVariant>> values)
     {

@@ -10,7 +10,6 @@
 
 #include "tom/tomtypes.hpp"
 
-class QSqlQuery;
 class QVariant; // clazy:exclude=qt6-fwd-fixes
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -18,6 +17,10 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query
 {
     class Builder;
+}
+namespace Orm::Types
+{
+    class SqlQuery;
 }
 
 namespace Tom
@@ -34,6 +37,8 @@ namespace Tom
         using DatabaseConnection = Orm::DatabaseConnection;
         /*! Alias for the QueryBuilder. */
         using QueryBuilder = Orm::Query::Builder;
+        /*! Alias for the SqlQuery. */
+        using SqlQuery = Orm::Types::SqlQuery;
 
     public:
         /*! Constructor. */
@@ -77,8 +82,8 @@ namespace Tom
         /*! Get a query builder for the migration table. */
         std::shared_ptr<QueryBuilder> table() const;
 
-        /*! Hydrate a vector of migration items from a raw QSqlQuery. */
-        std::vector<MigrationItem> hydrateMigrations(QSqlQuery &query) const;
+        /*! Hydrate a vector of migration items from a raw SqlQuery. */
+        std::vector<MigrationItem> hydrateMigrations(SqlQuery &query) const;
 
         /*! The database connection resolver instance. */
         std::shared_ptr<ConnectionResolverInterface> m_connectionResolver;

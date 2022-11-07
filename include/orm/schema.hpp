@@ -33,10 +33,10 @@ namespace Orm
 
         /* Proxy methods to the SchemaBuilder */
         /*! Create a database in the schema. */
-        static std::optional<QSqlQuery>
+        static std::optional<SqlQuery>
         createDatabase(const QString &name, const QString &connection = "");
         /*! Drop a database from the schema if the database exists. */
-        static std::optional<QSqlQuery>
+        static std::optional<SqlQuery>
         dropDatabaseIfExists(const QString &name, const QString &connection = "");
 
         /*! Create a new table on the schema. */
@@ -80,14 +80,14 @@ namespace Orm
         static void dropAllTypes(const QString &connection = "");
 
         /*! Get all of the table names for the database. */
-        static QSqlQuery getAllTables(const QString &connection = "");
+        static SqlQuery getAllTables(const QString &connection = "");
         /*! Get all of the view names for the database. */
-        static QSqlQuery getAllViews(const QString &connection = "");
+        static SqlQuery getAllViews(const QString &connection = "");
 
         /*! Enable foreign key constraints. */
-        static QSqlQuery enableForeignKeyConstraints(const QString &connection = "");
+        static SqlQuery enableForeignKeyConstraints(const QString &connection = "");
         /*! Disable foreign key constraints. */
-        static QSqlQuery disableForeignKeyConstraints(const QString &connection = "");
+        static SqlQuery disableForeignKeyConstraints(const QString &connection = "");
 
         /*! Get the column listing for a given table. */
         static QStringList getColumnListing(const QString &table,
