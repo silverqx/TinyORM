@@ -62,6 +62,7 @@ namespace Orm::Tiny::Concerns
                                   bool sync = false);
         /*! Sync the original attributes with the current. */
         Derived &syncOriginal();
+
         /*! Get all of the current attributes on the model (insert order). */
         inline const QVector<AttributeItem> &getAttributes() const;
         /*! Get all of the current attributes on the model (for fast lookup). */
@@ -72,6 +73,7 @@ namespace Orm::Tiny::Concerns
         QVariant getAttributeValue(const QString &key) const;
         /*! Get an attribute from the m_attributes vector. */
         QVariant getAttributeFromArray(const QString &key) const;
+
         /*! Get the model's original attribute value (transformed). */
         QVariant getOriginal(const QString &key,
                              const QVariant &defaultValue = {}) const;
@@ -84,6 +86,7 @@ namespace Orm::Tiny::Concerns
                                 const QVariant &defaultValue = {}) const;
         /*! Get the model's raw original attribute values (insert order). */
         inline const QVector<AttributeItem> &getRawOriginals() const;
+
         /*! Unset an attribute on the model, returns the number of attributes removed. */
         Derived &unsetAttribute(const AttributeItem &value);
         /*! Unset an attribute on the model. */
