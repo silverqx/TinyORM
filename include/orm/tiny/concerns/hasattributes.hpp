@@ -64,7 +64,7 @@ namespace Orm::Tiny::Concerns
         Derived &syncOriginal();
 
         /*! Get all of the current attributes on the model (insert order). */
-        inline const QVector<AttributeItem> &getAttributes() const;
+        inline const QVector<AttributeItem> &getAttributes() const noexcept;
         /*! Get all of the current attributes on the model (for fast lookup). */
         inline const std::unordered_map<QString, int> &getAttributesHash() const;
         /*! Get an attribute from the model. */
@@ -453,7 +453,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QVector<AttributeItem> &
-    HasAttributes<Derived, AllRelations...>::getAttributes() const
+    HasAttributes<Derived, AllRelations...>::getAttributes() const noexcept
     {
         // FEATURE castable silverqx
 //        mergeAttributesFromClassCasts();
