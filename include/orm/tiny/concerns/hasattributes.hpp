@@ -92,6 +92,11 @@ namespace Orm::Tiny::Concerns
         /*! Unset an attribute on the model. */
         Derived &unsetAttribute(const QString &key);
 
+        /*! Get a subset of the model's attributes. */
+        QVector<AttributeItem> only(const QStringList &attributes) const;
+        /*! Get a subset of the model's attributes. */
+        QVector<AttributeItem> only(QStringList &&attributes) const;
+
         /*! Get the attributes that have been changed since last sync
             (insert order). */
         QVector<AttributeItem> getDirty() const;
@@ -603,6 +608,34 @@ namespace Orm::Tiny::Concerns
         rehashAttributePositions(m_attributes, m_attributesHash, position);
 
         return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVector<AttributeItem>
+    HasAttributes<Derived, AllRelations...>::only(const QStringList &attributes) const
+    {
+        QVector<AttributeItem> result;
+        result.reserve(attributes.size());
+
+        for (const auto &attribute : attributes)
+            result.append({attribute, getAttribute(attribute)});
+
+        return result;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVector<AttributeItem>
+    HasAttributes<Derived, AllRelations...>::only(QStringList &&attributes) const
+    {
+        QVector<AttributeItem> result;
+        result.reserve(attributes.size());
+
+        for (auto &&attribute : attributes) {
+            auto value = getAttribute(attribute);
+            result.append({std::move(attribute), std::move(value)});
+        }
+
+        return result;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

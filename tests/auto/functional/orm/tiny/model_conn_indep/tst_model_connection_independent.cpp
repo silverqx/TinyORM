@@ -24,6 +24,7 @@ using Orm::Exceptions::MultipleRecordsFoundError;
 using Orm::Exceptions::RecordsNotFoundError;
 using Orm::One;
 
+using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::MassAssignmentError;
 
@@ -115,6 +116,9 @@ private Q_SLOTS:
     void pluck_QualifiedColumnOrKey_With_u_dates() const;
 
     void whereRowValues() const;
+
+    void only() const;
+    void only_NonExistentAttribute() const;
 
     /* Builds Queries */
     void chunk() const;
@@ -1242,6 +1246,52 @@ void tst_Model_Connection_Independent::whereRowValues() const
     QVERIFY(tag);
     QCOMPARE(tag->getAttribute(ID), QVariant(3));
     QCOMPARE(tag->getAttribute(NAME), QVariant("test3"));
+}
+
+void tst_Model_Connection_Independent::only() const
+{
+    auto torrent = Torrent::find(1);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto attributes = torrent->only({ID, NAME, SIZE, CREATED_AT});
+    QVERIFY(attributes.size() == 4);
+
+    /* The order must be the same as the requested order during only() method call and
+       as it internally calls getAttribute() all the casts will be applied. */
+    QVector<AttributeItem> expectedAttributes {
+        {ID,         1},
+        {NAME,       QString("test1")},
+        {SIZE,       11},
+        {CREATED_AT, QDateTime::fromString("2021-01-01 14:51:23z", Qt::ISODate)},
+    };
+    QCOMPARE(attributes, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::only_NonExistentAttribute() const
+{
+    auto torrent = Torrent::find(1);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    auto attributes = torrent->only({ID, NAME, "dummy-NON_EXISTENT"});
+    QVERIFY(attributes.size() == 3);
+
+    /* The order must be the same as the requested order during only() method call and
+       as it internally calls getAttribute() all the casts will be applied. */
+    QVector<AttributeItem> expectedAttributes {
+        {ID,   1},
+        {NAME, QString("test1")},
+        // Must return invalid QVariant for non-existent attribute
+        {"dummy-NON_EXISTENT", QVariant()},
+    };
+    QCOMPARE(attributes, expectedAttributes);
+
+    // Verify an invalid attribute 🤓
+    const auto &dummyAttribute = expectedAttributes.at(2);
+    QCOMPARE(dummyAttribute.key, QString("dummy-NON_EXISTENT"));
+    QVERIFY(!dummyAttribute.value.isValid());
+    QVERIFY(dummyAttribute.value.isNull());
 }
 
 /* Builds Queries */
