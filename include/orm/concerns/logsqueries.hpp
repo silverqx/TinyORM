@@ -53,25 +53,25 @@ namespace Concerns
         void logTransactionQueryForPretend(const QString &query) const;
 
         /*! Get the connection query log. */
-        inline std::shared_ptr<QVector<Log>> getQueryLog() const;
+        inline std::shared_ptr<QVector<Log>> getQueryLog() const noexcept;
         /*! Clear the query log. */
         void flushQueryLog();
         /*! Enable the query log on the connection. */
         void enableQueryLog();
         /*! Disable the query log on the connection. */
-        inline void disableQueryLog();
+        inline void disableQueryLog() noexcept;
         /*! Determine whether we're logging queries. */
-        inline bool logging() const;
+        inline bool logging() const noexcept;
         /*! The current order value for a query log record. */
-        inline static std::size_t getQueryLogOrder();
+        inline static std::size_t getQueryLogOrder() noexcept;
 
         /*! Determine whether debugging SQL queries is enabled/disabled (logging
             to the console using qDebug()). */
-        inline bool debugSql() const;
+        inline bool debugSql() const noexcept;
         /*! Disable debugging SQL queries (logging to the console using qDebug()). */
-        inline void disableDebugSql();
+        inline void disableDebugSql() noexcept;
         /*! Enable debugging SQL queries (logging to the console using qDebug()). */
-        inline void enableDebugSql();
+        inline void enableDebugSql() noexcept;
 
     protected:
         /*! Execute the given callback in "dry run" mode. */
@@ -129,37 +129,37 @@ namespace Concerns
         logQueryInternal(std::get<1>(queryResult), elapsed, type);
     }
 
-    std::shared_ptr<QVector<Log>> LogsQueries::getQueryLog() const
+    std::shared_ptr<QVector<Log>> LogsQueries::getQueryLog() const noexcept
     {
         return m_queryLog;
     }
 
-    void LogsQueries::disableQueryLog()
+    void LogsQueries::disableQueryLog() noexcept
     {
         m_loggingQueries = false;
     }
 
-    bool LogsQueries::logging() const
+    bool LogsQueries::logging() const noexcept
     {
         return m_loggingQueries;
     }
 
-    std::size_t LogsQueries::getQueryLogOrder()
+    std::size_t LogsQueries::getQueryLogOrder() noexcept
     {
         return m_queryLogId;
     }
 
-    bool LogsQueries::debugSql() const
+    bool LogsQueries::debugSql() const noexcept
     {
         return m_debugSql;
     }
 
-    void LogsQueries::disableDebugSql()
+    void LogsQueries::disableDebugSql() noexcept
     {
         m_debugSql = false;
     }
 
-    void LogsQueries::enableDebugSql()
+    void LogsQueries::enableDebugSql() noexcept
     {
         m_debugSql = true;
     }
