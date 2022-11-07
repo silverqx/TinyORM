@@ -16,7 +16,6 @@ TINY_SYSTEM_HEADER
 
 #include <range/v3/algorithm/contains.hpp>
 
-#include "orm/config.hpp"
 #include "orm/exceptions/invalidtemplateargumenterror.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
 #include "orm/tiny/exceptions/relationnotfounderror.hpp"

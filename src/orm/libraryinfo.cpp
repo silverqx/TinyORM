@@ -1,6 +1,7 @@
 #include "orm/libraryinfo.hpp"
 
 #include "orm/config.hpp"
+
 #include "orm/macros/archdetect.hpp"
 #include "orm/macros/compilerdetect.hpp"
 #include "orm/version.hpp"
