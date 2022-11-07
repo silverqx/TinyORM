@@ -5,6 +5,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
+/* public */
+
 RuntimeError::RuntimeError(const char *message)
     : std::runtime_error(message)
 {}

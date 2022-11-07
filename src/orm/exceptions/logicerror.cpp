@@ -5,6 +5,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
+/* public */
+
 LogicError::LogicError(const char *message)
     : std::logic_error(message)
 {}

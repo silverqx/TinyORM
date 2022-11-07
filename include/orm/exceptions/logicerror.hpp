@@ -37,6 +37,8 @@ namespace Orm::Exceptions
         QString m_message = what();
     };
 
+    /* public */
+
     const QString &LogicError::message() const noexcept
     {
         return m_message;

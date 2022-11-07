@@ -38,6 +38,8 @@ namespace Orm::Exceptions
         QSqlError m_sqlError;
     };
 
+    /* public */
+
     const QSqlError &SqlError::getSqlError() const noexcept
     {
         return m_sqlError;

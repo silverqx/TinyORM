@@ -11,6 +11,8 @@ using QueryUtils = Orm::Utils::Query;
 namespace Orm::Exceptions
 {
 
+/* public */
+
 QueryError::QueryError(const char *message, const QSqlQuery &query,
                        const QVector<QVariant> &bindings)
     : SqlError(formatMessage(message, query), query.lastError(), 1)
@@ -32,6 +34,8 @@ const QVector<QVariant> &QueryError::getBindings() const
 {
     return m_bindings;
 }
+
+/* protected */
 
 QString QueryError::formatMessage(const char *message, const QSqlQuery &query)
 {

@@ -37,6 +37,8 @@ namespace Orm::Exceptions
         QString m_message = what();
     };
 
+    /* public */
+
     const QString &RuntimeError::message() const noexcept
     {
         return m_message;

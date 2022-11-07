@@ -11,6 +11,8 @@ using Orm::Constants::COMMA;
 namespace Orm::Exceptions
 {
 
+/* public */
+
 SqlError::SqlError(const char *message, const QSqlError &error)
     : RuntimeError(formatMessage(message, error))
     , m_sqlError(error)
@@ -19,6 +21,8 @@ SqlError::SqlError(const char *message, const QSqlError &error)
 SqlError::SqlError(const QString &message, const QSqlError &error)
     : SqlError(message.toUtf8().constData(), error)
 {}
+
+/* protected */
 
 // NOLINTNEXTLINE(modernize-pass-by-value)
 SqlError::SqlError(const QString &message, const QSqlError &error, const int /*unused*/)
