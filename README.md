@@ -43,12 +43,14 @@ Whole library is documented as markdown documents:
 
 ### Features Summary
 
+The following list fastly summarizes all the `TinyORM` features.
+
 - __simple database connections management__ 🧬
   - database manager that helps with the database connections management
   - `Orm::DB` facade class for nicer and shorter syntax
   - MySQL, SQLite, and PostgreSQL support for all features
   - multi-threading support 👀
-- __overhauled query builder__ 🔧
+- __impressive query builder__ 🔧
   - allows passing sub-queries and raw expressions practically everywhere, to column names, values, and to every SQL clause as select, where, joins, group by, having, order by 🔥
   - a logical grouping that offers to wrap logical groups in parenthesis
   - chunked results for lower memory footprint ✨
@@ -58,12 +60,12 @@ Whole library is documented as markdown documents:
   - whereExists and exists methods for an existence queries
   - transactions and pessimistic locking 🔒
   - of course, insert, update, and delete SQL clauses support
-  - correct QDateTime time zone using `qt_timezone` connection configuration option 📅 (returned QDateTime instances will have the correct time zone, and also works for an ORM)
+  - __correct QDateTime time zone__ using the `qt_timezone` connection configuration option 📅 (returned QDateTime instances will have the correct time zone, and also works for an ORM)
     - this feature allows you to set up the database server time zone to the UTC and all returned QDateTime instances will have the correct UTC time zone
 - __clever ORM with all relation types support__ 🎉
   - one-to-one, one-to-many, and many-to-many relation types (also inverse relationships)
   - eager and lazy loading with custom select and constraints 🚀
-  - all query builder methods are proxied to the model instances and also to the relation instances 🤯 (everything that can be called on the query builder can also be called on the model and relation instances)
+  - all query builder methods are proxied from the model instances and also from the relation instances back to the query builder 🤯 (everything that can be called on the query builder can also be called on the model and relation instances)
   - clean active record pattern
   - advanced features like timestamps, touching parent timestamps, __soft deleting__, default models, default model attributes, and attribute casting
   - querying relationships existence/absence using the has, whereHas, and hasNested methods (using dot notation for selecting nested relationships _users.posts.comments_)
@@ -75,7 +77,7 @@ Whole library is documented as markdown documents:
   - supports creating, and dropping column indexes (primary, unique, fulltext, spatial)
 - __the `tom` console application with tab completion for all shells (pwsh, bash, zsh)__ 🥳
   - scaffolding of models, migrations, and seeders
-  - overhauled models scaffolding, every feature that is supported by models can be generated using the `tom make:model` cli command
+  - impressive models scaffolding, every feature that is supported by models can be generated using the `tom make:model` cli command
 - a huge amount of code is unit tested, currently __1749 unit tests__ 🤯
 - C++20 only, with all the latest features used like concepts/constraints, ranges, smart pointers (no `new` keyword in the whole code 😎), folding expressions
 - qmake and CMake build systems support
