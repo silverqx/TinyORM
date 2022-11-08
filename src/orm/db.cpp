@@ -66,10 +66,24 @@ DB::select(const QString &query, const QVector<QVariant> &bindings,
 }
 
 SqlQuery
+DB::selectFromWriteConnection(const QString &query, const QVector<QVariant> &bindings,
+                              const QString &connection)
+{
+    return manager().connection(connection).selectFromWriteConnection(query, bindings);
+}
+
+SqlQuery
 DB::selectOne(const QString &query, const QVector<QVariant> &bindings,
               const QString &connection)
 {
     return manager().connection(connection).selectOne(query, bindings);
+}
+
+QVariant
+DB::scalar(const QString &query, const QVector<QVariant> &bindings,
+           const QString &connection)
+{
+    return manager().connection(connection).scalar(query, bindings);
 }
 
 SqlQuery

@@ -66,10 +66,21 @@ namespace Orm
         static SqlQuery
         select(const QString &query, const QVector<QVariant> &bindings = {},
                const QString &connection = "");
+        /*! Run a select statement against the database. */
+        static SqlQuery
+        selectFromWriteConnection(
+                const QString &query, const QVector<QVariant> &bindings = {},
+                const QString &connection = "");
+
         /*! Run a select statement and return a single result. */
         static SqlQuery
         selectOne(const QString &query, const QVector<QVariant> &bindings = {},
                   const QString &connection = "");
+        /*! Run a select statement and return the first column of the first row. */
+        static QVariant
+        scalar(const QString &query, const QVector<QVariant> &bindings = {},
+               const QString &connection = "");
+
         /*! Run an insert statement against the database. */
         static SqlQuery
         insert(const QString &query, const QVector<QVariant> &bindings = {},

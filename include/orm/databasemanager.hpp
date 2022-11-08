@@ -72,10 +72,21 @@ namespace Query
         SqlQuery
         select(const QString &query, const QVector<QVariant> &bindings = {},
                const QString &connection = "");
+        /*! Run a select statement against the database. */
+        SqlQuery
+        selectFromWriteConnection(
+                const QString &query, const QVector<QVariant> &bindings = {},
+                const QString &connection = "");
+
         /*! Run a select statement and return a single result. */
         SqlQuery
         selectOne(const QString &query, const QVector<QVariant> &bindings = {},
                   const QString &connection = "");
+        /*! Run a select statement and return the first column of the first row. */
+        QVariant
+        scalar(const QString &query, const QVector<QVariant> &bindings = {},
+               const QString &connection = "");
+
         /*! Run an insert statement against the database. */
         SqlQuery
         insert(const QString &query, const QVector<QVariant> &bindings = {},
