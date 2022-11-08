@@ -340,7 +340,7 @@ By default, a newly instantiated model instance will not contain any attribute v
         inline static const QVector<AttributeItem> u_attributes {
             {"delayed",  false},
             {"progress", 0},
-            {"added_on", QDateTime::currentDateTime()},
+            {"added_on", QDateTime::currentDateTimeUtc()},
         };
     };
 

@@ -135,7 +135,7 @@ The `update` method should be used to update existing records in the database. T
 
     auto [affected, query] = DB::update(
         "update users set updated_at = ? where name = ?",
-        {QDateTime::currentDateTime(), "Anita"}
+        {QDateTime::currentDateTimeUtc(), "Anita"}
     );
 
     if (!affected)
